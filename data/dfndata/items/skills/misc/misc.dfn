@@ -43,7 +43,7 @@ name=easel
 id=0x0f69
 weight=2000
 movable=2
-
+}
 
 [0x0f6a]
 { N
@@ -176,7 +176,6 @@ get=base_item
 name=dipping stick
 id=0x1429
 weight=100
-colorlist=
 movable=1
 decay=1
 }

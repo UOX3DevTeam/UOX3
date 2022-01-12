@@ -8,7 +8,8 @@ struct resAmountPair
 	std::vector< UI16 > idList;
 	UI08 amountNeeded;
 	UI16 colour;
-	resAmountPair() : amountNeeded( 1 ), colour( 0 )
+	UI32 moreVal;
+	resAmountPair() : amountNeeded( 1 ), colour( 0 ), moreVal( 0 )
 	{
 		idList.resize( 0 );
 	}
@@ -144,9 +145,7 @@ public:
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
-	TargetFunc FishTarget;
 	TargetFunc GraveDig;
-	TargetFunc ItemIDTarget;
 	TargetFunc Mine;
 	TargetFunc Persecute;
 	TargetFunc RepairMetal;
@@ -158,7 +157,7 @@ public:
 
 	void NewMakeMenu( CSocket *s, SI32 menu, UI08 skill );
 	createEntry *FindItem( UI16 itemNum );
-	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry );
+	void MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 itemEntry, UI16 resourceColour = 0 );
 	void ApplyRank( CSocket *s, CItem *c, UI08 rank, UI08 maxrank );
 	void HandleMakeMenu( CSocket *s, SI32 button, SI32 menu );
 
@@ -167,11 +166,11 @@ public:
 	void Track( CChar *i );
 	void Tracking( CSocket *s, SI32 selection );
 	void MakeNecroReg( CSocket *nSocket, CItem *nItem, UI16 itemID );
-	void Fish( CSocket *mSock, CChar *mChar );
 
 	void Snooping( CSocket *s, CChar *target, CItem *pack );
 
-	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill );
+	UI16 CalculatePetControlChance( CChar *mChar, CChar *Npc );
+	bool CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool isCraftSkill = false );
 	void SkillUse( CSocket *s, UI08 x );
 	void updateSkillLevel( CChar *c, UI08 s) const;
 	void AdvanceStats( CChar *s, UI08 sk, bool skillsuccess );

@@ -44,13 +44,14 @@ void Script::reload( bool disp )
 		input.open( filename.c_str(), std::ios_base::in );
 		if( input.is_open() )
 		{
-			UString sLine;
+			std::string sLine;
 			SI32 count = 0;
 			while( !input.eof() && !input.fail() )
 			{
-				input.getline( line, 2048 );
-				sLine = line;
-				sLine = sLine.removeComment().stripWhiteSpace();
+				input.getline(line, 2047);
+				line[input.gcount()] = 0 ;
+				sLine = std::string(line);
+				sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -58,14 +59,15 @@ void Script::reload( bool disp )
 					if( sLine.substr( 0, 1 ) == "[" && sLine.substr( sLine.size() - 1 ) == "]" )
 					{
 						// Ok a section is starting here, get the name
-						UString sectionname = sLine.substr( 1, sLine.size() - 2 );
-						sectionname			= sectionname.simplifyWhiteSpace().upper();
+						std::string sectionname = sLine.substr( 1, sLine.size() - 2 );
+						sectionname				= strutil::upper( strutil::simplify( sectionname ));
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
-							input.getline( line, 2048 );
-							sLine = line;
-							sLine = sLine.removeComment().stripWhiteSpace();
+							input.getline(line, 2047);
+							line[input.gcount()] = 0 ;
+							sLine = std::string(line);
+							sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file
@@ -84,7 +86,7 @@ void Script::reload( bool disp )
 		}
 	}
 	if( disp ){
-		Console.print( format("Reloading %-15s: ", filename.c_str()) );
+		Console.print( strutil::format("Reloading %-15s: ", filename.c_str()) );
 	}
 
 	fflush( stdout );
@@ -123,8 +125,8 @@ Script::~Script()
 //o-----------------------------------------------------------------------------------------------o
 bool Script::isin( const std::string& section )
 {
-	UString temp( section );
-	SSMAP::const_iterator iSearch = defEntries.find( temp.upper() );
+	std::string temp(section);
+	SSMAP::const_iterator iSearch = defEntries.find(strutil::upper( temp ));
 	if( iSearch != defEntries.end() )
 		return true;
 	return false;
@@ -134,11 +136,11 @@ bool Script::isin( const std::string& section )
 //|	Function		-	ScriptSection *FindEntry( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose			-	Returns a ScriptSection * to the section named "section"
-//|						if it exists, otherwise returning NULL
+//|						if it exists, otherwise returning nullptr
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FindEntry( const std::string& section )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	SSMAP::const_iterator iSearch = defEntries.find( section );
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
@@ -153,9 +155,9 @@ ScriptSection *Script::FindEntry( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	auto usection = std::string( section );
-	usection = str_toupper(usection);
+	usection = strutil::upper( usection );
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!
@@ -174,7 +176,7 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::FirstEntry( void )
 {
-	ScriptSection *rvalue	= NULL;
+	ScriptSection *rvalue	= nullptr;
 	iSearch					= defEntries.begin();
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
@@ -188,7 +190,7 @@ ScriptSection *Script::FirstEntry( void )
 //o-----------------------------------------------------------------------------------------------o
 ScriptSection *Script::NextEntry( void )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	if( iSearch != defEntries.end() )
 	{
 		++iSearch;

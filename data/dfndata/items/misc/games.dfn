@@ -54,6 +54,7 @@ restock=100
 movable=1
 decay=1
 good=35
+type=1
 }
 
 [0x0FA6]
@@ -67,6 +68,27 @@ restock=100
 movable=1
 decay=1
 good=35
+type=1
+morey=2
+script=5024
+}
+
+[0x0FA6_chess]
+{
+get=base_item
+name=a chess board
+id=0x0FA6
+weight=500
+weightmax=1000
+value=2 1
+restock=100
+movable=1
+decay=1
+good=35
+maxitems=32
+type=1
+morey=1
+script=5024
 }
 
 [0x0FA7]
@@ -244,4 +266,145 @@ name=deck of tarot
 id=0x12ac
 weight=100
 movable=2
+}
+
+// Checker Pieces
+[0x3584]
+{
+get=base_item
+name=white checker
+id=0x3584
+weight=0
+script=5026
+}
+
+[0x358b]
+{
+get=base_item
+name=black checker
+id=0x358b
+weight=0
+script=5026
+}
+
+// White Chess Pieces
+[0x3585]
+{
+get=base_item
+name=white bishop
+id=0x3585
+weight=0
+script=5025
+}
+
+[0x3586]
+{
+get=base_item
+name=white rook
+id=0x3586
+weight=0
+script=5025
+}
+
+[0x3587]
+{
+get=base_item
+name=white king
+id=0x3587
+weight=0
+script=5025
+more=60
+morez=60
+}
+
+[0x3588]
+{
+get=base_item
+name=white knight
+id=0x3588
+weight=0
+script=5025
+more=60
+morez=60
+}
+
+[0x3589]
+{
+get=base_item
+name=white pawn
+id=0x3589
+weight=0
+script=5025
+more=60
+morez=35
+}
+
+[0x358a]
+{
+get=base_item
+name=white queen
+id=0x358a
+weight=0
+script=5025
+}
+
+// Black Chess Pieces
+[0x358c]
+{
+get=base_item
+name=black bishop
+id=0x358c
+weight=0
+script=5025
+}
+
+[0x358d]
+{
+get=base_item
+name=black rook
+id=0x358d
+weight=0
+script=5025
+}
+
+[0x358e]
+{
+get=base_item
+name=black king
+id=0x358e
+weight=0
+script=5025
+more=60
+morez=60
+}
+
+[0x358f]
+{
+get=base_item
+name=black knight
+id=0x358f
+weight=0
+script=5025
+more=60
+morez=60
+}
+
+[0x3590]
+{
+get=base_item
+name=black pawn
+id=0x3590
+weight=0
+script=5025
+more=60
+morez=35
+}
+
+[0x3591]
+{
+get=base_item
+name=black queen
+id=0x3591
+weight=0
+script=5025
 }

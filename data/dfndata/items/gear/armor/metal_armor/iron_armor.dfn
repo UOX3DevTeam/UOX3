@@ -1,463 +1,993 @@
 // Ringmail
 
+// Ringmail Gloves - N/S
 [0x13eb]
 {
-get=ring_gloves
+get=base_ring_gloves
 id=0x13eb
 }
 
+// Ringmail Gloves - E/W
+[0x13f2]
+{
+get=0x13eb
+id=0x13f2
+}
+
+// Ringmail Gloves - Alias
+[ringmailgloves]
+{
+get=0x13eb 0x13f2
+}
+
+// Ringmail Tunic - N/S
 [0x13ec]
-{ right facing
-get=ring_tunic
+{
+get=base_ring_tunic
 id=0x13ec
 }
 
+// Ringmail Tunic - E/W
 [0x13ed]
-{ left facing
-get=ring_tunic
+{
+get=0x13ec
 id=0x13ed
 }
 
+// Ringmail Tunic - Alias
+[ringmailtunic]
+{
+get=0x13ec 0x13ed
+}
+
+// Ringmail Sleeves - N/S
 [0x13ee]
-{ right facing
-get=ring_sleeves
+{
+get=base_ring_sleeves
 id=0x13ee
 }
 
+// Ringmail Sleeves - E/W
 [0x13ef]
-{ left facing
-get=ring_sleeves
+{
+get=0x13ee
 id=0x13ef
 }
 
+// Ringmail Sleeves - Alias
+[ringmailsleeves]
+{
+get=0x13ee 0x13ef
+}
+
+// Ringmail Leggings - N/S
 [0x13f0]
-{ right facing
-get=ring_leggings
+{
+get=base_ring_leggings
 id=0x13f0
 }
 
+// Ringmail Leggings - E/W
 [0x13f1]
-{ left facing
-get=ring_leggings
+{
+get=0x13f0
 id=0x13f1
 }
 
-[0x13f2]
+// Ringmail Leggings - Alias
+[ringmailleggings]
 {
-get=ring_gloves
-id=0x13f2
+get=0x13f0 0x13f1
 }
 
 // Chainmail
 
+// Chainmail Coif - N/S
 [0x13BB]
-{ Left facing chain coif
-get=chain_coif
+{
+get=base_chain_coif
 id=0x13bb
 }
 
-[0x13be]
-{ left facing
-get=chain_leggings
-id=0x13be
-}
-
-[0x13bf]
-{ left facing
-get=chain_tunic
-id=0x13bf
-}
-
+// Chainmail Coif - E/W
 [0x13c0]
-{ right facing chain coif
-get=chain_coif
+{
+get=0x13bb
 id=0x13c0
 }
 
+// Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb 0x13c0
+}
+
+// Chainmail Leggings - N/S
+[0x13be]
+{
+get=base_chain_leggings
+id=0x13be
+}
+
+// Chainmail Leggings - E/W
 [0x13c3]
-{ right facing
-get=chain_leggings
+{
+get=0x13be
 id=0x13c3
 }
 
+// Chainmail Leggings - Alias
+[chainmailleggings]
+{
+get=0x13be 0x13c3
+}
+
+// Chainmail Tunic - N/S
+[0x13bf]
+{
+get=base_chain_tunic
+id=0x13bf
+}
+
+// Chainmail Tunic - E/W
 [0x13c4]
-{ right facing
-get=chain_tunic
+{
+get=0x13bf
 id=0x13c4
+}
+
+// Chainmail Tunic - Alias
+[chainmailtunic]
+{
+get=0x13bf 0x13c4
 }
 
 // Female
 
+// Female Plate - N/S
 [0x1c04]
-{ left facing - Female
-get=fem_plate
+{
+get=base_fem_plate
 id=0x1c04
 }
 
+// Female Plate - E/W
 [0x1c05]
-{ right facing - Female
-get=fem_plate
+{
+get=0x1c04
 id=0x1c05
+}
+
+// Female Plate - Alias
+[femaleplate]
+{
+get=0x1c04 0x1c05
 }
 
 // Platemail
 
+// Platemail Arms - E/W
 [0x1410]
-{ left facing
-get=plate_arms
+{
+get=base_plate_arms
 id=0x1410
 }
 
-[0x1411]
-{ left facing
-get=plate_leggings
-id=0x1411
-}
-
-[0x1413]
-{
-get=plate_gorget
-id=0x1413
-}
-
-[0x1414]
-{ left facing
-get=plate_gloves
-id=0x1414
-}
-
-[0x1415]
-{ left facing
-get=plate_chest
-id=0x1415
-}
-
+// Platemail Arms - N/S
 [0x1417]
-{ right facing
-get=plate_arms
+{
+get=0x1410
 id=0x1417
 }
 
+// Platemail Arms - Alias
+[platemailarms]
+{
+get=0x1410 0x1417
+}
+
+// Platemail Leggings - E/W
+[0x1411]
+{
+get=base_plate_leggings
+id=0x1411
+}
+
+// Platemail Leggings - N/S
 [0x141a]
-{ right facing
-get=plate_leggings
+{
+get=0x1411
 id=0x141a
 }
 
+// Platemail Leggings - Alias
+[platemailleggings]
+{
+get=0x1411 0x141a
+}
+
+// Platemail Gorget
+[0x1413]
+{
+get=base_plate_gorget
+id=0x1413
+}
+
+// Platemail Gorget - Alias
+[platemailgorget]
+{
+get=0x1413
+}
+
+// Platemail Gloves - E/W
+[0x1414]
+{
+get=base_plate_gloves
+id=0x1414
+}
+
+// Platemail Gloves - N/S
 [0x1418]
-{ right facing
-get=plate_gloves
+{
+get=0x1414
 id=0x1418
 }
 
+// Platemail Gloves - Alias
+[platemailgloves]
+{
+get=0x1414 0x1418
+}
+
+// Platemail Chest - E/W
+[0x1415]
+{
+get=base_plate_chest
+id=0x1415
+}
+
+// Platemail Chest - N/S
 [0x1416]
-{ right facing
-get=plate_chest
+{
+get=0x1415
 id=0x1416
+}
+
+// Platemail Chest - Alias
+[platemailchest]
+{
+get=0x1415 0x1416
 }
 
 // Helmets
 
+// Close Helm(et) - N/S
 [0x1408]
-{ right facing
-get=close_helmet
+{
+get=base_close_helmet
 id=0x1408
 }
 
+// Close Helm(et) - E/W
 [0x1409]
-{ left facing
-get=CLOSE_HELMET
+{
+get=0x1408
 id=0x1409
 }
 
+// Close Helm(et) - Alias
+[closehelm]
+{
+get=0x1408 0x1409
+}
+
+// Helmet - N/S
 [0x140a]
-{ right facing
-get=helmet
+{
+get=base_helmet
 id=0x140a
 }
 
+// Helmet - E/W
 [0x140b]
-{ left facing
-get=helmet
+{
+get=0x140a
 id=0x140b
 }
 
+// Helmet - Alias
+[helmet]
+{
+get=0x140a 0x140b
+}
+
+// Bascinet - N/S
 [0x140c]
-{ right facing
-get=bascinet
+{
+get=base_bascinet
 id=0x140c
 }
 
+// Bascinet - E/W
 [0x140d]
-{ left facing
-get=bascinet
+{
+get=0x140c
 id=0x140d
 }
 
+// Bascinet - Alias
+[bascinet]
+{
+get=0x140c 0x140d
+}
+
+// Norse Helm - N/S
 [0x140e]
-{ right facing
-get=nose_helm
+{
+get=base_nose_helm
 id=0x140e
 }
 
+// Norse Helm - E/W
 [0x140f]
-{ left facing
-get=nose_helm
+{
+get=0x140e
 id=0x140f
 }
 
+// Norse Helm - Alias
+[norsehelm]
+{
+get=0x140e 0x140f
+}
+
+// Plate Helm - E/W
 [0x1412]
-{ left facing
-get=plate_helm
+{
+get=base_plate_helm
 id=0x1412
 }
 
+// Plate Helm - N/S
 [0x1419]
-{ right facing
-get=plate_helm
+{
+get=0x1412
 id=0x1419
+}
+
+// Plate Helm - Alias
+[platehelm]
+{
+get=0x1412 0x1419
 }
 
 // SE Armor
 
+// Heavy Platemail Jingasa - A
 [0x2777]
 {
-get=heavy_platemail_jingasa
-name=heavy platemail jingasa
+get=base_heavy_platemail_jingasa
 id=0x2777
 }
 
+// Heavy Platemail Jingasa - B
 [0x27c2]
 {
-get=heavy_platemail_jingasa
-name=heavy platemail jingasa
+get=0x27c2
 id=0x27c2
 }
 
+// Heavy Platemail Jingasa - Alias
+[heavyplatemailjingasa]
+{
+get=0x2777 0x27c2
+}
+
+// Decorative Platemail Kabuto - A
 [0x2778]
 {
-get=decorative_platemail_kabuto
-name=decorative platemail kabuto
+get=base_decorative_platemail_kabuto
 id=0x2778
 }
 
+// Decorative Platemail Kabuto - B
 [0x27c3]
 {
-get=decorative_platemail_kabuto
-name=decorative platemail kabuto
+get=0x2778
 id=0x27c3
 }
 
+// Decorative Platemail Kabuto - Alias
+[decorativeplatemailkabuto]
+{
+get=0x2778 0x27c3
+}
+
+// Platemail Do - A
 [0x277d]
 {
-get=platemail_do
-name=platemail do
+get=base_platemail_do
 id=0x277d
 }
 
+// Platemail Do - B
 [0x27c8]
 {
-get=platemail_do
-name=platemail do
+get=0x27c8
 id=0x27c8
 }
 
+// Platemail Do - Alias
+[platemaildo]
+{
+get=0x277d 0x27c8
+}
+
+// Platemail Hiro Sode - A
 [0x2780]
 {
-get=platemail_hiro_sode
-name=platemail hiro sode
+get=base_platemail_hiro_sode
 id=0x2780
 }
 
+// Platemail Hiro Sode - B
 [0x27cb]
 {
-get=platemail_hiro_sode
-name=platemail hiro sode
+get=0x2780
 id=0x27cb
 }
 
+// Platemail Hiro Sode - Alias
+[platemailhirosode]
+{
+get=0x2780 0x27cb
+}
+
+// Platemail Jingasa - A
 [0x2781]
 {
-get=light_platemail_jingasa
-name=light platemail jingasa
+get=base_light_platemail_jingasa
 id=0x2781
 }
 
+// Platemail Jingasa - B
 [0x27cc]
 {
-get=light_platemail_jingasa
-name=light platemail jingasa
+get=0x2781
 id=0x27cc
 }
 
+// Platemail Jingasa - Alias
+[platemailjingasa]
+{
+get=0x2781 0x27cc
+}
+
+// Small Platemail Jingasa - A
 [0x2784]
 {
-get=small_platemail_jingasa
-name=small platemail jingasa
+get=base_small_platemail_jingasa
 id=0x2784
 }
 
+// Small Platemail Jingasa - B
 [0x27cf]
 {
-get=small_platemail_jingasa
-name=small platemail jingasa
+get=0x2784
 id=0x27cf
 }
 
+// Small Platemail Jingasa - Alias
+[smallplatemailjingasa]
+{
+get=0x2784 0x27cf
+}
+
+// Platemail Battle Kabuto - A
 [0x2785]
 {
-get=battle_platemail_kabuto
-name=battle platemail kabuto
+get=base_battle_platemail_kabuto
 id=0x2785
 }
 
+// Platemail Battle Kabuto - B
 [0x27d0]
 {
-get=platemail_battle_kabuto
-name=platemail battle kabuto
+get=0x2785
 id=0x27d0
 }
 
+// Platemail Battle Kabuto - Alias
+[platemailbattlekabuto]
+{
+get=0x2785 0x27d0
+}
+
+// Platemail Suneate - A
 [0x2788]
 {
-get=platemail_suneate
-name=platemail suneate
+get=base_platemail_suneate
 id=0x2788
 }
 
+// Platemail Suneate - B
 [0x27d3]
 {
-get=platemail_suneate
-name=platemail suneate
+get=0x2788
 id=0x27d3
 }
 
+// Platemail Suneate - Alias
+[platemailsuneate]
+{
+get=0x2788 0x27d3
+}
+
+// Platemail Kabuto - A
 [0x2789]
 {
-get=platemail_kabuto
-name=platemail kabuto
+get=base_platemail_kabuto
 id=0x2789
 }
 
+// Platemail Kabuto - B
 [0x27d4]
 {
-get=platemail_kabuto
-name=platemail kabuto
+get=0x2789
 id=0x27d4
 }
 
+// Platemail Kabuto - Alias
+[platemailkabuto]
+{
+get=0x2789 0x27d4
+}
+
+// Kabuto - A
+[0x236c]
+{
+get=base_kabuto
+id=0x236c
+}
+
+// Kabuto - B
+[0x236d]
+{
+get=0x236c
+id=0x236d
+}
+
+// Kabuto - Alias
+[kabuto]
+{
+get=0x236c 0x236d
+}
+
+// Platemail Haidate - A
 [0x278d]
 {
-get=platemail_haidate
-name=platemail haidate
+get=base_platemail_haidate
 id=0x278d
 }
 
+// Platemail Haidate - B
 [0x27d8]
 {
-get=platemail_haidate
-name=platemail haidate
+get=0x278d
 id=0x27d8
+}
+
+// Platemail Haidate - Alias
+[platemailhaidate]
+{
+get=0x278d 0x27d8
+}
+
+// Chainmail Hatsuburi - A
+[0x2774]
+{
+get=base_chainmail_hatsuburi
+id=0x2774
+}
+
+// Chainmail Hatsuburi - B
+[0x27bf]
+{
+get=0x2774
+id=0x27bf
+}
+
+// Chainmail Hatsuburi - Alias
+[chainmailhatsuburi]
+{
+get=0x2774 0x27bf
+}
+
+// Platemail Hatsuburi - A
+[0x2775]
+{
+get=base_platemail_hatsuburi
+id=0x2775
+}
+
+// Platemail Hatsuburi - B
+[0x27c0]
+{
+get=0x2775
+id=0x27c0
+}
+
+// Platemail Hatsuburi - Alias
+[platemailhatsuburi]
+{
+get=0x2775 0x27c0
+}
+
+// Platemail Mempo - E/W
+[0x2779]
+{
+get=base_platemail_mempo
+id=0x2779
+}
+
+// Platemail Mempo - N/S
+[0x27c4]
+{
+get=0x2779
+id=0x27c4
+}
+
+// Platemail Mempo - Alias
+[platemailmempo]
+{
+get=0x2779 0x27c4
 }
 
 // Shields
 
+// Bronze Shield
 [0x1b72]
-{ Bronze Shield
-get=bronze_shield
+{
+get=base_bronze_shield
 id=0x1b72
 }
 
+// Bronze Shield - Alias
+[bronzeshield]
+{
+get=0x1b72
+}
+
+// Buckler
 [0x1b73]
-{ Buckler
-get=buckler
+{
+get=base_buckler
 id=0x1b73
 }
 
+// Buckler - Alias
+[buckler]
+{
+get=0x1b73
+}
+
+// Metal Kite Shield - N/S
 [0x1b74]
-{ Metal Kite Shield
-get=metal_kite_shield
+{
+get=base_metal_kite_shield
 id=0x1b74
 }
 
+// Metal Kite Shield - E/W
 [0x1b75]
-{ Metal Kite Shield
-get=metal_kite_shield
+{
+get=0x1b74
 id=0x1b75
 }
 
+// Metal Kite Shield - Alias
+[metalkiteshield]
+{
+get=0x1b74 0x1b75
+}
+
+// Heater Shield - N/S
 [0x1b76]
-{ Heater Shield
-get=heater_shield
+{
+get=base_heater_shield
 id=0x1b76
 }
 
+// Heater Shield - E/W
 [0x1b77]
-{ Heater Shield
-get=heater_shield
+{
+get=0x1b76
 id=0x1b77
 }
 
-[0x1b78]
-{ Wooden kite Shield
-get=base_item
-name=kite shield
-id=0x1b78
-weight=70
-value=110
-layer=2
-good=16
-def=12
-hp=58
-str=15
-restock=10
-movable=1
-decay=1
+// Heater Shield - Alias
+[heatershield]
+{
+get=0x1b76 0x1b77
 }
 
+// Metal Shield
+[0x1b7b]
+{
+get=base_metal_shield
+id=0x1b7b
+}
+
+// Metal Shield - Alias
+[metalshield]
+{
+get=0x1b7b
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78]
+{
+get=base_wooden_kite_shield
+id=0x1b78
+}
+
+// Kite Shield (wooden) - E/W
 [0x1b79]
-{ Wooden kite Shield
+{
 get=0x1b78
 id=0x1b79
 }
 
-[0x1b7A]
-{ Wooden Shield
-get=base_item
-name=wooden shield
+// Kite Shield (wooden) - Alias
+[woodenkiteshield]
+{
+get=0x1b78 0x1b79
+}
+
+// Wooden Shield
+[0x1b7a]
+{
+get=base_wooden_shield
 id=0x1b7a
-weight=50
-value=39
-layer=2
-good=16
-def=8
-hp=23
-str=5
-restock=10
-movable=1
-decay=1
 }
 
-[0x1b7b]
-{ Metal Shield
-get=metal_shield
-id=0x1b7b
+// Wooden Shield - Alias
+[woodenshield]
+{
+get=0x1b7a
 }
 
+// Chaos Shield
 [0x1bc3]
-{ Chaos Shield
-get=chaos_shield
+{
+get=base_chaos_shield
 id=0x1bc3
 }
 
+// Chaos Shield - Alias
+[chaosshield]
+{
+get=0x1bc3
+}
+
+// Order Shield - N/S
 [0x1bc4]
-{ Order Shield
-get=order_shield
+{
+get=base_order_shield
 id=0x1bc4
 }
 
+// Order Shield - E/W
 [0x1bc5]
-{ Order Shield
+{
 get=order_shield
 id=0x1bc5
+}
+
+// Order Shield - Alias
+[ordershield]
+{
+get=0x1bc4 0x1bc5
+}
+
+// SA Gargish Shields
+
+// Gargish Chaos Shield - E/W
+[0x4228]
+{
+get=base_gargish_chaos_shield
+id=0x4228
+}
+
+// Gargish Chaos Shield - N/S
+[0x4229]
+{
+get=0x4228
+id=0x4229
+}
+
+// Gargish Chaos Shield - Alias
+[gargishchaosshield]
+{
+get=0x4228 0x4229
+}
+
+// Gargish Kite Shield - N/S
+[0x4201]
+{
+get=base_gargish_kite_shield
+id=0x4201
+}
+
+// Gargish Kite Shield - E/W
+[0x4206]
+{
+get=0x4201
+id=0x4206
+}
+
+// Gargish Kite Shield - Alias
+[gargishkiteshield]
+{
+get=0x4201 0x4206
+}
+
+// Gargish Order Shield - E/W
+[0x422a]
+{
+get=base_gargish_order_shield
+id=0x422a
+}
+
+// Gargish Order Shield - N/S
+[0x422c]
+{
+get=0x422a
+id=0x422c
+}
+
+// Gargish Order Shield - Alias
+[gargishordershield]
+{
+get=0x422a 0x422c
+}
+
+// Large Plate Shield - N/S
+[0x4204]
+{
+get=base_large_plate_shield
+id=0x4204
+}
+
+// Large Plate Shield - E/W
+[0x4208]
+{
+get=0x4204
+id=0x4208
+}
+
+// Large Plate Shield - Alias
+[largeplateshield]
+{
+get=0x4204 0x4208
+}
+
+// Large Stone Shield - N/S
+[0x4205]
+{
+get=base_large_stone_shield
+id=0x4205
+}
+
+// Large Stone Shield - E/W
+[0x420b]
+{
+get=0x4205
+id=0x420b
+}
+
+// Large Stone Shield - Alias
+[largestoneshield]
+{
+get=0x4205 0x420b
+}
+
+// Medium Plate Shield - N/S
+[0x4203]
+{
+get=base_medium_plate_shield
+id=0x4203
+}
+
+// Medium Plate Shield - E/W
+[0x4209]
+{
+get=0x4203
+id=0x4209
+}
+
+// Medium Plate Shield - Alias
+[mediumplateshield]
+{
+get=0x4203 0x4209
+}
+
+// Small Plate Shield - N/S
+[0x4202]
+{
+get=base_small_plate_shield
+id=0x4202
+}
+
+// Small Plate Shield - E/W
+[0x420a]
+{
+get=0x4202
+id=0x420a
+}
+
+// Small Plate Shield - Alias
+[smallplateshield]
+{
+get=0x4202 0x420a
+}
+
+// Gargish Wooden Shield - N/S
+[0x4200]
+{
+get=base_gargish_wooden_shield
+id=0x4200
+}
+
+// Gargish Wooden Shield - E/W
+[0x4207]
+{
+get=0x4200
+id=0x4207
+}
+
+// Gargish Wooden Shield - Alias
+[gargishwoodenshield]
+{
+get=0x4200 0x4207
+}
+
+// ML Helmets
+
+// Circlet
+[0x2b6e]
+{
+get=base_circlet
+id=0x2b6e
+}
+
+// Circlet - Alias
+[circlet]
+{
+get=0x2b6e
+}
+
+// Royal Circlet
+[0x2b6f]
+{
+get=base_royal_circlet
+id=0x2b6f
+}
+
+// Royal Circlet - Alias
+[royalcirclet]
+{
+get=0x2b6f
+}
+
+// Gemmed Circlet
+[0x2b70]
+{
+get=base_gemmed_circlet
+}
+
+// Gemmed Circlet - Alias
+[gemmedcirclet]
+{
+get=0x2b70
 }

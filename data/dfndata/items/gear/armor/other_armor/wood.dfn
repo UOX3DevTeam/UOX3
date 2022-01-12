@@ -1,0 +1,181 @@
+// -----------= WOODLAND ARMS =----------- //
+// Woodland Arms - N/S
+[0x2b6c]
+{
+get=base_woodland_arms
+}
+
+// Woodland Arms - E/W
+[0x3163]
+{
+get=0x2b6c
+id=0x3163
+}
+
+// Woodland Arms - Alias
+[woodlandarms]
+{
+get=0x2b6c 0x3163
+}
+
+// -----------= WOODLAND CHEST =----------- //
+// Woodland Chest - E/W
+[0x2b67]
+{
+get=base_woodland_chest
+}
+
+// Woodland Chest - N/S
+[0x315e]
+{
+get=0x2b67
+id=0x315e
+}
+
+// Woodland Chest - Alias
+[woodlandchest]
+{
+get=0x2b67 0x315e
+}
+
+// -----------= WOODLAND ARMOR (Female) =----------- //
+// Woodland Armor (Female) - E/W
+[0x2b6d]
+{
+get=base_woodland_armor
+}
+
+// Woodland Armor (Female) - N/S
+[0x3164]
+{
+get=0x2b6d
+id=0x3164
+}
+
+// Woodland Armor (Female) - Alias
+[woodlandchest]
+{
+get=0x2b6d 0x3164
+}
+
+// -----------= WOODLAND GAUNTLETS =----------- //
+// Woodland Gauntlet - E/W
+[0x2b6a]
+{
+get=base_woodland_gauntlets
+}
+
+// Woodland Gauntlet - N/S
+[0x3161]
+{
+get=0x2b6a
+id=0x3161
+}
+
+// Woodland Gauntlet - Alias
+[woodlandgauntlets]
+{
+get=0x2b6a 0x3161
+}
+
+// -----------= WOODLAND LEGGINGS =----------- //
+// Woodland Leggings - E/W
+[0x2b6b]
+{
+get=base_woodland_leggings
+}
+
+// Woodland Leggings - N/S
+[0x3162]
+{
+get=0x2b6b
+id=0x3162
+}
+
+// Woodland Leggings - Alias
+[woodlandleggings]
+{
+get=0x2b6b 0x3162
+}
+
+// -----------= WOODLAND GORGET =----------- //
+
+// Woodland Gorget - E/W
+[0x2b69]
+{
+get=base_woodland_gorget
+}
+
+// Woodland Gorget - N/S
+[0x3160]
+{
+get=0x2b69
+id=0x3160
+}
+
+// Woodland Gorget - Alias
+[woodlandgorget]
+{
+get=0x2b69 0x3160
+}
+
+// -----------= RAVEN HELM =----------- //
+
+// Raven Helm - N/S
+[0x2b71]
+{
+get=base_raven_helm
+}
+
+// Raven Helm - E/W
+[0x3168]
+{
+get=0x2b71
+id=0x3168
+}
+
+// Raven Helm - Alias
+[ravenhelm]
+{
+get=0x2b71 0x3168
+}
+
+// -----------= VULTURE HELM =----------- //
+// Vulture Helm - N/S
+[0x2b72]
+{
+get=base_vulture_helm
+}
+
+// Vulture Helm - E/W
+[0x3169]
+{
+get=0x2b72
+id=0x3169
+}
+
+// Vulture Helm - Alias
+[vulturehelm]
+{
+get=0x2b72 0x3169
+}
+
+// -----------= WINGED HELM =----------- //
+// Winged Helm - N/S
+[0x2b73]
+{
+get=base_winged_helm
+}
+
+// Winged Helm - E/W
+[0x316a]
+{
+get=0x2b73
+id=0x316a
+}
+
+// - Alias
+[wingedhelm]
+{
+get=0x2b73 0x316a
+}

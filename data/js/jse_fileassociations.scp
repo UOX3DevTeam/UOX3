@@ -31,6 +31,10 @@
 
 [SCRIPT_LIST]
 {
+// Global script, events within triggered for all applicable objects
+0=server/global.js
+
+1=server/misc/admin_welcome.js
 //-------------------------------------------
 // CORE:[0-99] Rerserved for specific core server needs
 //-------------------------------------------
@@ -43,18 +47,18 @@
 // House addon[60-64]
 60=server/misc/furniture_destroy.js
 //-------------------------------------------
+61=server/misc/container_effects.js
+//-------------------------------------------
 // SYSTEM:[100-2999] Rerserved for specific core server needs
 //-------------------------------------------
 // Cooking start[100-129]
-101=skill/cooking/flour.js
-102=skill/cooking/dough.js
-103=skill/cooking/bread.js
-105=skill/cooking/cookedfish.js
-106=skill/cooking/cookedribs.js
-107=skill/cooking/cookedbird.js
-109=skill/cooking/cookedchicken.js
-110=skill/cooking/cookedlegoflamb.js
-111=skill/cooking/friedeggs.js
+101=skill/cooking/wheat.js
+102=skill/cooking/flour.js
+103=skill/cooking/dough.js
+104=skill/cooking/cooking.js
+105=skill/cooking/baking.js
+106=skill/cooking/heatsources.js
+107=skill/cooking/flourmill.js
 //-------------------------------------------
 // Tailoring and spinning start[130-159]
 131=skill/tailoring/scissors.js
@@ -66,7 +70,7 @@
 // Musicianship (Play Instrument)
 136=skill/musicianship.js
 //-------------------------------------------
-// Lightsources startSYSTEM[500-699]
+// Lightsources start [500-699]
 501=server/light/candle01_on.js
 502=server/light/candle01_off.js
 503=server/light/candle02_on.js
@@ -129,17 +133,30 @@
 // Water, milk containers[2100-2199]
 2100=server/resource/pitchers.js
 //-------------------------------------------
-// Server Data
+// Miscellaneous [2200-2499]
+2200=server/misc/uses_left_tooltip.js
+2201=server/misc/hint_tooltip.js
+2202=server/misc/warning_trigger.js
+
+// Server Data [2500-2749]
 2500=server/data/weapontypes.js
 2501=server/data/combatanims.js
+2503=server/data/map_coordinates.js
+2504=server/misc/dungeon_trap.js
+2505=server/misc/dungeon_treasure_decay.js
+2506=server/data/material_types.js
+
+// Server Teleporters [2750-2999]
+2750=server/teleporter/teleporter_wind_city_entrance.js
+2751=server/teleporter/teleporter_orc_caves_2_3.js
 
 //-------------------------------------------
-// NPC, and AI[3000-5999]
+// NPC, and AI [3000-3999]
 //-------------------------------------------
-// NPC Basic Speech[3000-3099]
+// NPC Basic Speech [3000-3099]
 3000=npc/speech/speech_001.js
 //-------------------------------------------
-// Pets, and Stable Hands[3100-3199]
+// Pets, and Stable Hands [3100-3199]
 3100=npc/pets/static_horse.js
 3101=npc/pets/static_ostard.js
 3102=npc/pets/static_llama.js
@@ -147,13 +164,40 @@
 3104=npc/pets/static_packllama.js
 // pets from pet static end
 3105=npc/ai/stablemaster.js
+3106=npc/pets/mount_restrictions.js
 // ------------------------
 
 // AI-Stuff
 3200=npc/ai/cow_tipping.js
 3201=npc/ai/banker.js
+3203=npc/ai/splitting_npc.js
+3204=npc/ai/hireling.js
+3205=npc/ai/monster/ethereal_warrior.js
+3206=npc/ai/pack_ai.js
 
-// General Skills
+// Magic Items
+3300=item/magic_items.js
+3301=item/magic_weapon_accbonus.js
+3302=item/magic_armor_equipeffects.js
+3303=item/magic_glacial_staff.js
+3304=item/magic_weapon_equip.js
+3305=item/magic_weapon_spell_attack.js
+
+// NPC Special Abilities/Effects
+3500=npc/special/dull_copper_elemental.js
+3501=npc/special/copper_elemental.js
+3502=npc/special/shadow_elemental.js
+3503=npc/special/damage_aura.js
+3504=npc/special/valorite_elemental.js
+3506=npc/special/corrosion_damage.js
+3507=npc/special/fire_breath.js
+3508=npc/special/life_drain_aura.js
+3509=npc/special/pixie_death.js
+3510=npc/special/immortality.js
+
+//-------------------------------------------
+// General Skills [4000-4499]
+//-------------------------------------------
 4000=skill/healing.js
 4001=skill/repairbow.js
 4002=skill/repairleather.js
@@ -167,11 +211,33 @@
 4010=skill/tinkerawg.js
 4011=skill/tinkerclock.js
 4012=skill/tinkersextant.js
+4013=skill/fishing.js
+4014=skill/healing_slip.js
+4015=skill/herding.js
+4023=skill/craft/blacksmithing.js
+4025=skill/craft/carpentry.js
+4026=skill/craft/itemdetailgump.js
+4027=skill/craft/craftgump.js
+4028=skill/craft/alchemy.js
+4029=skill/craft/fletching.js
+4030=skill/craft/tailoring.js
+4031=skill/craft/crafttool.js
+4032=skill/craft/tinkering.js
+4033=skill/craft/crafting_complete.js
+4034=skill/craft/cooking.js
 
 // Doors
 4500=item/doors.js
 
-// Miscellaneous Item Types
+//-------------------------------------------
+// Dungeon Specific [4750-4999]
+//-------------------------------------------
+4750=item/dungeons/switch_puzzle_covetous.js
+4751=item/dungeons/deceit_lvl1_brazier.js
+
+//-------------------------------------------
+// Miscellaneous Item Types [5000-5499]
+//-------------------------------------------
 5000=item/teleportrune.js
 5001=item/food.js
 5003=item/potion.js
@@ -194,6 +260,18 @@
 5020=item/diceandcup.js
 5021=item/bedroll.js
 5022=item/guildstone.js
+5024=item/gameboards.js
+5025=item/chesspiece.js
+5026=item/checkerpiece.js
+5027=item/interiordecorator.js
+5028=item/hairrestyle.js
+5029=item/runebook.js
+5030=item/magicfish.js
+5031=item/messageinabottle.js
+5032=item/waterstainedsos.js
+5033=item/sextant.js
+5034=item/iron_maiden.js
+5035=item/gate_opener.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
@@ -203,6 +281,7 @@
 15004=server/house/trashbarrel.js
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
+15007=server/house/houseAddonUse.js
 }
 
 //-------------------------------------------
@@ -264,7 +343,14 @@
 1051=commands/targeting/rndtile.js
 1052=commands/time.js
 1053=commands/accountlogins.js
-1054=commands/fixcontweight.js
+1054=commands/fixcont.js
+1055=commands/targeting/tweak.js
+1056=commands/targeting/get.js
+1057=commands/msgmod.js
+1058=commands/targeting/scptrig.js
+1059=commands/decorate.js
+1060=commands/custom/addsign.js
+1061=commands/spawn.js
 }
 
 //-------------------------------------------
@@ -275,6 +361,7 @@
 600=magic/clumsy.js
 601=magic/level1targ.js
 602=magic/createfood.js
+700=magic/wand_item_id.js
 }
 
 [SKILLUSE_SCRIPTS]
@@ -296,10 +383,14 @@
 814=skill/provocation.js
 815=skill/inscription.js
 816=skill/meditation.js
+817=skill/removetrap.js
+818=skill/itemid.js
 }
 
 [PACKET_SCRIPTS]
 { // 1500-1999
+1500=server/network/0xf1_connectUoServerPoll.js
+1501=server/network/0x7f_uogatewayServerPoll.js
 }
 
 [CONSOLE_SCRIPTS]

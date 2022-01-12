@@ -11,7 +11,7 @@ public:
 	UOXFile( const char* const, const char* const );
 	~UOXFile();
 
-	inline SI32	ready( void ) const { return ( memPtr != NULL ); }
+	inline SI32	ready( void ) const { return ( memPtr != nullptr ); }
 	void		rewind( void ) { bIndex = 0; }
 	void		seek( size_t, UI08 );
 	bool		eof( void ) const { return ( bIndex >= fileSize ); }

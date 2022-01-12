@@ -11,7 +11,7 @@ function command_JAIL( socket, cmdString )
 		socket.tempint = parseInt( cmdString );
 
 	var targMsg = GetDictionaryEntry( 180, socket.language );
-	socket.CustomTarget( 0, targMsg );
+	socket.CustomTarget( 0, targMsg, 1 );
 }
 
 function onCallback0( socket, ourObj )
@@ -23,7 +23,9 @@ function onCallback0( socket, ourObj )
 		else
 		{
 			ourObj.Jail( socket.tempint );
-			socket.SysMessage( ourObj.name + " has been jailed for " + (socket.tempint / 60 / 60) + " hours." );
+			var tempMsg = GetDictionaryEntry( 8087, socket.language ); // %s has been jailed for %i hours.
+			tempMsg = tempMsg.replace(/%s/gi, ourObj.name );
+			socket.SysMessage( tempMsg.replace(/%i/gi, (socket.tempint / 60 / 60)));
 		}
 	}
 	socket.tempint = 0;
@@ -32,7 +34,7 @@ function onCallback0( socket, ourObj )
 function command_RELEASE( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 181, socket.language );
-	socket.CustomTarget( 1, targMsg );
+	socket.CustomTarget( 1, targMsg, 2 );
 }
 
 function onCallback1( socket, ourObj )
@@ -44,7 +46,8 @@ function onCallback1( socket, ourObj )
 		else
 		{
 			ourObj.Release();
-			socket.SysMessage( "Released " + ourObj.name + " from jail." );
+			var tempMsg = GetDictionaryEntry( 8088, socket.language ); // Released %s from jail.
+			socket.SysMessage( tempMsg.replace(/%s/gi, ourObj.name ));
 		}
 	}
 }

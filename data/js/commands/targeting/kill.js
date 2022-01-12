@@ -2,6 +2,8 @@ function CommandRegistration()
 {
 	RegisterCommand( "kill", 2, true );
 	RegisterCommand( "resurrect", 2, true );
+	RegisterCommand( "shavehair", 2, true );
+	RegisterCommand( "shavebeard", 2, true );
 }
 
 function command_KILL( socket, cmdString )
@@ -9,10 +11,22 @@ function command_KILL( socket, cmdString )
 	if( cmdString )
 	{
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, "Select target to kill: " + cmdString );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8089, socket.language ) + " " + cmdString ); // Select target to kill:
 	}
 	else
-		socket.SysMessage( "This command takes at least 1 argument." );
+		socket.SysMessage( GetDictionaryEntry( 8090, socket.language )); // This command takes at least 1 argument.
+}
+
+// Alias of 'kill hair
+function command_SHAVEHAIR( socket, cmdString )
+{
+	command_KILL( socket, cmdString + "hair" );
+}
+
+// Alias of 'kill beard
+function command_SHAVEBEARD( socket, cmdString )
+{
+	command_KILL( socket, cmdString + "beard" );
 }
 
 function onCallback0( socket, ourObj )
@@ -39,10 +53,10 @@ function onCallback0( socket, ourObj )
 					ourObj.Kill();
 				}
 				else
-					socket.SysMessage( "That character is already dead!" );
+					socket.SysMessage( GetDictionaryEntry( 8091, socket.language )); // That character is already dead!
 				break;
 		default:
-				socket.SysMessage( "Invalid argument passed for KILL command" );
+				socket.SysMessage( GetDictionaryEntry( 8092, socket.language )); // Invalid argument passed for KILL command
 				break;
 		}
 		if( layer > 0 )

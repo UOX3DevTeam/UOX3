@@ -13,13 +13,14 @@ bool PartyEntry::IsLootable( void ) const	{	return settings.test( BIT_LOOTABLE )
 void PartyEntry::Member( CChar *valid )		{	member = valid;							}
 void PartyEntry::IsLeader( bool value )		{	settings.set( BIT_LEADER, true   );		}
 void PartyEntry::IsLootable( bool value )	{	settings.set( BIT_LOOTABLE, true );		}
-PartyEntry::PartyEntry() : member( NULL )	{	settings.reset();						}
+PartyEntry::PartyEntry() : member( nullptr )	{	settings.reset();						}
 PartyEntry::PartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 {
 	settings.set( BIT_LEADER, isLeader );
 	settings.set( BIT_LOOTABLE, isLootable );
 }
 
+void updateStats( CBaseObject *mObj, UI08 x );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool AddMember( CChar *i )
 //o-----------------------------------------------------------------------------------------------o
@@ -28,15 +29,62 @@ PartyEntry::PartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 bool Party::AddMember( CChar *i )
 {
 	bool retVal = false;
-	if( ValidateObject( i ) )
+	if( ValidateObject( i ) && isOnline( *i ))
 	{
 		if( !HasMember( i ) )
 		{
 			PartyEntry *toAdd	= new PartyEntry( i );
 			PartyFactory::getSingleton().AddLookup( this, i );
 			members.push_back( toAdd );
-			SendList( NULL );
+			SendList( nullptr );
 			retVal = true;
+
+			CSocket *newSock = i->GetSocket();
+			newSock->sysmessage( 9072 ); // You have been added to the party.
+
+			// Send status update to ALL party members
+			for( size_t j = 0; j < members.size(); ++j )
+			{
+				PartyEntry *toFind = members[j];
+				CChar * partyMember = toFind->Member();
+				if( partyMember != nullptr )
+				{
+					if( partyMember->GetSerial() != i->GetSerial() )
+					{
+						// If party member is online, send them info on the new member
+						if( isOnline( *partyMember ) )
+						{
+							CSocket *s = partyMember->GetSocket();
+							CBaseObject *baseObj = partyMember;
+
+							// Send stat window update for new member to existing party members
+							s->statwindow( i );
+
+							// Prepare the stat update packet for new member to existing party members
+							CPUpdateStat toSendHp( (*i), 0, true );
+							s->Send( &toSendHp );
+							CPUpdateStat toSendMana( (*i), 1, true );
+							s->Send( &toSendMana );
+							CPUpdateStat toSendStam( (*i), 2, true );
+							s->Send( &toSendStam );
+
+							// Also send info on the existing party member to the new member!
+								// Send stat window update packet for existing member to new party member
+							newSock->statwindow( partyMember );
+
+							// Prepare the stat update packet for existing member to new party members
+							CPUpdateStat toSendHp2( (*partyMember), 0, true );
+							newSock->Send( &toSendHp2 );
+							CPUpdateStat toSendMana2( (*partyMember), 1, true );
+							newSock->Send( &toSendMana2 );
+							CPUpdateStat toSendStam2( (*partyMember), 2, true );
+							newSock->Send( &toSendStam2 );
+
+							s->sysmessage( 9076, i->GetName().c_str() ); // %s joined the party.
+						}
+					}
+				}
+			}
 		}
 	}
 	return retVal;
@@ -56,17 +104,17 @@ PartyEntry *Party::Find( CChar *i, SI32 *location )
 			PartyEntry *toFind = members[j];
 			if( toFind->Member() == i )
 			{
-				if( location != NULL )
-					(*location) = j;
+				if( location != nullptr )
+					(*location) = static_cast<int>(j);
 				return toFind;
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 bool Party::HasMember( CChar *find )
 {
-	return ( Find( find ) != NULL );
+	return ( Find( find ) != nullptr );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -81,7 +129,7 @@ bool Party::RemoveMember( CChar *i )
 	{
 		SI32 removeSpot;
 		PartyEntry *toFind = Find( i, &removeSpot );
-		if( toFind != NULL )
+		if( toFind != nullptr )
 		{
 			delete members[removeSpot];
 			members.erase( members.begin() + removeSpot );
@@ -92,11 +140,16 @@ bool Party::RemoveMember( CChar *i )
 			{
 				PartyEntry *toFind = members[j];
 				toSend.AddMember( toFind->Member() );
+				if( isOnline( *toFind->Member() ) && !toFind->IsLeader() )
+					toFind->Member()->GetSocket()->sysmessage( 9075 ); // A player has been removed from your party.
 			}
 
-			SendPacket( &toSend, NULL );
-			if( i->GetSocket() != NULL )
+			SendPacket( &toSend, nullptr );
+			if( i->GetSocket() != nullptr )
+			{
 				SendPacket( &toSend, i->GetSocket() );
+				i->GetSocket()->sysmessage( 9074 ); // You have been removed from the party.
+			}
 			retVal = true;
 		}
 	}
@@ -112,13 +165,13 @@ void Party::Leader( CChar *member )
 {
 	SI32 newLeaderPos;
 	PartyEntry *newLeader = Find( member, &newLeaderPos );
-	if( newLeader != NULL )
+	if( newLeader != nullptr )
 	{
-		if( leader != NULL )
+		if( leader != nullptr )
 		{
 			SI32 oldLeaderPos;
 			PartyEntry *mFind = Find( leader, &oldLeaderPos );
-			if( mFind != NULL )
+			if( mFind != nullptr )
 			{
 				mFind->IsLeader( false );
 				// We need to swap their position in the array, because the first cab
@@ -133,8 +186,8 @@ void Party::Leader( CChar *member )
 	}
 }
 CChar *Party::Leader( void )	{	return leader;	}
-Party::Party( bool npc ) : leader( NULL ), isNPC( npc )	{					}
-Party::Party( CChar *ldr, bool npc ) : leader( NULL ), isNPC( npc )
+Party::Party( bool npc ) : leader( nullptr ), isNPC( npc )	{					}
+Party::Party( CChar *ldr, bool npc ) : leader( nullptr ), isNPC( npc )
 {
 	if( ValidateObject( ldr ) )
 	{
@@ -150,7 +203,7 @@ Party::Party( CChar *ldr, bool npc ) : leader( NULL ), isNPC( npc )
 //o-----------------------------------------------------------------------------------------------o
 void Party::SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo )
 {
-	if( toSendTo != NULL )
+	if( toSendTo != nullptr )
 		toSendTo->Send( toSend );
 	else
 	{
@@ -158,7 +211,7 @@ void Party::SendPacket( CPUOXBuffer *toSend, CSocket *toSendTo )
 		{
 			PartyEntry *toFind	= members[k];
 			CSocket *tSock		= toFind->Member()->GetSocket();
-			if( tSock != NULL )
+			if( tSock != nullptr )
 				tSock->Send( toSend );
 		}
 	}
@@ -218,12 +271,12 @@ PartyFactory::~PartyFactory()
 	for( Party *obj = parties.First(); !parties.Finished(); obj = parties.Next() )
 	{
 		delete obj;
-		obj = NULL;
+		obj = nullptr;
 	}
 }
 Party *PartyFactory::Create( CChar *leader )
 {
-	Party *toAdd	= NULL;
+	Party *toAdd	= nullptr;
 	if( ValidateObject( leader ) )
 	{
 		toAdd		= new Party( leader );
@@ -238,10 +291,10 @@ void PartyFactory::Destroy( CChar *member )
 }
 void PartyFactory::Destroy( Party *toRemove )
 {
-	if( toRemove != NULL )
+	if( toRemove != nullptr )
 	{
 		std::vector< PartyEntry * > *mList = toRemove->MemberList();
-		if( mList != NULL )
+		if( mList != nullptr )
 		{
 			for( size_t j = 0; j < mList->size(); ++j )
 			{
@@ -261,10 +314,10 @@ Party *PartyFactory::Get( CChar *member )
 		if( toFind != partyQuickLook.end() )
 			return toFind->second;
 		else
-			return NULL;
+			return nullptr;
 	}
 	else
-		return NULL;
+		return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -278,32 +331,32 @@ void PartyFactory::CreateInvite( CSocket *inviter )
 	CChar *toInvite	= calcCharObjFromSer( serial );
 	if( !ValidateObject( toInvite ) || toInvite->IsNpc() )
 	{
-		inviter->sysmessage( "You cannot invite an npc or unknown player" );
+		inviter->sysmessage( 9040 ); // You cannot invite an NPC or unknown player.
 		return;
 	}
 	CChar *inviterChar = inviter->CurrcharObj();
 	if( ValidateObject( inviterChar ) && inviterChar == toInvite )
 	{
-		inviter->sysmessage( "You cannot invite yourself to a party" );
+		inviter->sysmessage( 9041 ); // You cannot invite yourself to a party.
 		return;
 	}
 	Party *ourParty = Get( inviterChar );
-	if( ourParty == NULL )
+	if( ourParty == nullptr )
 	{
 		//Party *tParty = Create( inviterChar );
 		Create( inviterChar);
 	}
 	CSocket *targSock = toInvite->GetSocket();
-	if( targSock != NULL )
+	if( targSock != nullptr )
 	{
 		CPPartyInvitation toSend;
 		toSend.Leader( inviterChar );
 		targSock->Send( &toSend );
-		targSock->sysmessage( "You have been invited to join a party, type /accept or /decline to deal with the invitation" );
+		targSock->sysmessage( 9002 ); // You have been invited to join a party, type /accept or /decline to deal with the invitation
 	}
 	else
 	{
-		inviter->sysmessage( "That player is not online" );
+		inviter->sysmessage( 9042 ); // That player is not online.
 	}
 }
 
@@ -318,24 +371,24 @@ void PartyFactory::Kick( CSocket *inviter )
 	CChar *toRemove	= calcCharObjFromSer( serial );
 	if( !ValidateObject( toRemove ) || toRemove->IsNpc() )
 	{
-		inviter->sysmessage( "You cannot kick an npc or unknown player" );
+		inviter->sysmessage( 9043 ); // You cannot kick an NPC or unknown player.
 		return;
 	}
 	Party *ourParty = Get( inviter->CurrcharObj() );
-	if( ourParty == NULL )
+	if( ourParty == nullptr )
 	{
-		inviter->sysmessage( "You are not in a party and cannot kick them out" );
+		inviter->sysmessage( 9044 ); // You are not in a party and cannot kick them out.
 		return;
 	}
 	if( ( ourParty->Leader() != inviter->CurrcharObj() ) && ( inviter->CurrcharObj() != toRemove ) )
 	{
-		inviter->sysmessage( "Only the leader can kick someone out" );
+		inviter->sysmessage( 9045 ); // Only the leader can kick someone from a party.
 		return;
 	}
 	if( ourParty->HasMember( toRemove ) )
 	{	// even if they're offline, we can kick them out
 		ourParty->RemoveMember( toRemove );
-		inviter->sysmessage( "The player has been removed" );
+		inviter->sysmessage( 9046 ); // The player has been removed from the party.
 	}
 }
 

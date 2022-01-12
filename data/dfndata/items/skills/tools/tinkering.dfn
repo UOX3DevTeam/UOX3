@@ -10,6 +10,9 @@ value=8 4
 restock=20
 decay=1
 good=60
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1eb6]
@@ -46,6 +49,9 @@ value=2 1
 restock=20
 decay=1
 good=60
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1eb9]
@@ -58,6 +64,9 @@ value=2 1
 restock=20
 decay=1
 good=60
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1eba]
@@ -70,6 +79,9 @@ value=2 1
 restock=20
 decay=1
 good=60
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 [0x1ebb]
@@ -82,4 +94,7 @@ value=2 1
 restock=20
 decay=1
 good=60
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }

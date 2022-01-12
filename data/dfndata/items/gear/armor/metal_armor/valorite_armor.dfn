@@ -1,345 +1,463 @@
-// ringmail
+// Ringmail
 
+// Valorite Ringmail Tunic - N/S
 [0x13eb-va]
 {
-get=ring_gloves
-name=ringmail gloves
-id=0x13eb
+get=base_ring_gloves
 color=0x8ab
 }
 
-[0x13ec-va]
-{ right facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ec
-color=0x8ab
-}
-
-[0x13ed-va]
-{ left facing
-get=ring_tunic
-name=ringmail tunic
-id=0x13ed
-color=0x8ab
-}
-
-[0x13ee-va]
-{ right facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ee
-color=0x8ab
-}
-
-[0x13ef-va]
-{ left facing
-get=ring_sleeves
-name=ringmail sleeves
-id=0x13ef
-color=0x8ab
-}
-
-[0x13f0-va]
-{ right facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f0
-color=0x8ab
-}
-
-[0x13f1-va]
-{ left facing
-get=ring_leggings
-name=ringmail leggings
-id=0x13f1
-color=0x8ab
-}
-
+// Valorite Ringmail Gloves - E/W
 [0x13f2-va]
 {
-get=ring_gloves
-name=ringmail gloves
+get=0x13eb-va
 id=0x13f2
+}
+
+// Valorite Ringmail Gloves - Alias
+[valoriteringmailgloves]
+{
+get=0x13eb-va 0x13f2-va
+}
+
+// Valorite Ringmail Tunic - N/S
+[0x13ec-va]
+{ right facing
+get=base_ring_tunic
 color=0x8ab
 }
 
-// chainmail
+// Valorite Ringmail Tunic - E/W
+[0x13ed-va]
+{
+get=0x13ec-va
+id=0x13ed
+}
 
-[0x13BB-va]
-{ Left facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13bb
+// Valorite Ringmail Tunic - Alias
+[valoriteringmailtunic]
+{
+get=0x13ec-va 0x13ed-va
+}
+
+// Valorite Ringmail Sleeves - N/S
+[0x13ee-va]
+{ right facing
+get=base_ring_sleeves
 color=0x8ab
 }
 
+// Valorite Ringmail Sleeves - E/W
+[0x13ef-va]
+{
+get=0x13ee-va
+id=0x13ef
+}
+
+// Valorite Ringmail Sleeves - Alias
+[valoriteringmailsleeves]
+{
+get=0x13ee-va 0x13ef-va
+}
+
+// Valorite Ringmail Leggings - N/S
+[0x13f0-va]
+{ right facing
+get=base_ring_leggings
+color=0x8ab
+}
+
+// Valorite Ringmail Leggings - E/W
+[0x13f1-va]
+{
+get=0x13f0-va
+id=0x13f1
+}
+
+// Valorite Ringmail Leggings - Alias
+[valoriteringmailleggings]
+{
+get=0x13f0-va 0x13f1-va
+}
+
+// Chainmail
+
+// Valorite Chainmail Leggings - N/S
 [0x13be-va]
-{ left facing
-get=chain_leggings
-name=chainmail leggings
-id=0x13be
+{
+get=base_chain_leggings
 color=0x8ab
 }
 
-[0x13bf-va]
-{ left facing
-get=chain_tunic
-name=chainmail tunic
-id=0x13bf
-color=0x8ab
-}
-
-[0x13c0-va]
-{ right facing chain coif
-get=chain_coif
-name=chainmail coif
-id=0x13c0
-color=0x8ab
-}
-
+// Valorite Chainmail Leggings - E/W
 [0x13c3-va]
-{ right facing
-get=chain_leggings
-name=chainmail leggings
+{
+get=0x13be-va
 id=0x13c3
+}
+
+// Valorite Chainmail Leggings - Alias
+[valoritechainmailleggings]
+{
+get=0x13be-va 0x13c3-va
+}
+
+// Valorite Chainmail Tunic - N/S
+[0x13bf-va]
+{
+get=base_chain_tunic
 color=0x8ab
 }
 
+// Valorite Chainmail Tunic - E/W
 [0x13c4-va]
-{ right facing
-get=chain_tunic
-name=chainmail tunic
+{
+get=0x13bf-va
 id=0x13c4
+}
+
+// Valorite Chainmail Tunic - Alias
+[valoritechainmailtunic]
+{
+get=0x13bf-va 0x13c4-va
+}
+
+// Valorite Chainmail Coif - N/S
+[0x13BB-va]
+{
+get=base_chain_coif
 color=0x8ab
 }
 
-// Female Plate
+// Valorite Chainmail Coif - E/W
+[0x13c0-va]
+{
+get=0x13bb-va
+id=0x13c0
+}
 
+// Valorite Chainmail Coif - Alias
+[chainmailcoif]
+{
+get=0x13bb-va 0x13c0-va
+}
+
+// Female
+
+// Valorite Female Plate - N/S
 [0x1c04-va]
-{ left facing - Female
-get=fem_plate
-name=plate armor
-id=0x1c04
+{
+get=base_fem_plate
 color=0x8ab
 }
 
+// Valorite Female Plate - E/W
 [0x1c05-va]
-{ right facing - Female
-get=fem_plate
-name=plate armor
+{
+get=0x1c04-va
 id=0x1c05
-color=0x8ab
+}
+
+// Valorite Female Plate - Alias
+[valoritefemaleplate]
+{
+get=0x1c04-va 0x1c05-va
 }
 
 // platemail
 
+// Valorite Platemail Arms - E/W
 [0x1410-va]
-{ left facing
-get=plate_arms
-name=platemail arms
-id=0x1410
+{
+get=base_plate_arms
 color=0x8ab
 }
 
+// Valorite Platemail Arms - N/S
+[0x1417-va]
+{
+get=0x1410-va
+id=0x1417
+}
+
+// Valorite Platemail Arms - Alias
+[valoriteplatemailarms]
+{
+get=0x1410-va 0x1417-va
+}
+
+// Valorite Platemail Leggings - E/W
 [0x1411-va]
-{ left facing
-get=plate_leggings
-name=platemail leggings
-id=0x1411
+{
+get=base_plate_leggings
 color=0x8ab
 }
 
+// Valorite Platemail Leggings - N/S
+[0x141a-va]
+{
+get=0x1411-va
+id=0x141a
+}
+
+// Platemail Leggings - Alias
+[valoriteplatemailleggings]
+{
+get=0x1411-va 0x141a-va
+}
+
+// Valorite Platemail Gorget
 [0x1413-va]
 {
-get=plate_gorget
-name=platemail gorget
-id=0x1413
+get=base_plate_gorget
 color=0x8ab
 }
 
+// Valorite Platemail Gorget - Alias
+[valoriteplatemailgorget]
+{
+get=0x1413-va
+}
+
+// Valorite Platemail Gloves - E/W
 [0x1414-va]
-{ left facing
-get=plate_gloves
-name=platemail gloves
-id=0x1414
+{
+get=base_plate_gloves
 color=0x8ab
 }
 
-[0x1415-va]
-{ left facing
-get=plate_chest
-name=platemail
-id=0x1415
-color=0x8ab
-}
-
-[0x1417-va]
-{ right facing
-get=plate_arms
-name=platemail arms
-id=0x1417
-color=0x8ab
-}
-
-[0x141a-va]
-{ right facing
-get=plate_leggings
-name=platemail leggings
-id=0x141a
-color=0x8ab
-}
-
+// Valorite Platemail Gloves - N/S
 [0x1418-va]
-{ right facing
-get=plate_gloves
-name=platemail gloves
+{
+get=0x1414-va
 id=0x1418
+}
+
+// Valorite Platemail Gloves - Alias
+[valoriteplatemailgloves]
+{
+get=0x1414-va 0x1418-va
+}
+
+// Valorite Platemail Chest - E/W
+[0x1415-va]
+{
+get=base_plate_chest
 color=0x8ab
 }
 
+// Valorite Platemail Chest - N/S
 [0x1416-va]
-{ right facing
-get=plate_chest
-name=platemail
+{
+get=0x1415-va
 id=0x1416
-color=0x8ab
+}
+
+// Valorite Platemail Chest - Alias
+[valoriteplatemailchest]
+{
+get=0x1415-va 0x1416-va
 }
 
 // helmets
 
+// Valorite Close Helm(et) - N/S
 [0x1408-va]
-{ right facing
-get=CLOSE_HELMET
-name=close helmet
-id=0x1408
+{
+get=base_close_helmet
 color=0x8ab
 }
 
+// Valorite Close Helm(et) - E/W
 [0x1409-va]
-{ left facing
-get=CLOSE_HELMET
-name=close helm
+{
+get=0x1408-va
 id=0x1409
-color=0x8ab
 }
 
+// Valorite Close Helm(et) - Alias
+[valoriteclosehelm]
+{
+get=0x1408-va 0x1409-va
+}
+
+// Valorite Helmet - N/S
 [0x140a-va]
-{ right facing
-get=helmet
-name=helmet
-id=0x140a
+{
+get=base_helmet
 color=0x8ab
 }
 
+// Valorite Helmet - E/W
 [0x140b-va]
-{ left facing
-get=helmet
-name=helmet
+{
+get=0x140a-va
 id=0x140b
-color=0x8ab
 }
 
+// Valorite Helmet - Alias
+[valoritehelmet]
+{
+get=0x140a-va 0x140b-va
+}
+
+// Valorite Bascinet - N/S
 [0x140c-va]
-{ right facing
-get=bascient
-name=bascinet
-id=0x140c
+{
+get=base_bascinet
 color=0x8ab
 }
 
+// Valorite Bascinet - E/W
 [0x140d-va]
-{ left facing
-get=bascinet
-name=bascinet
+{
+get=0x140c-va
 id=0x140d
-color=0x8ab
 }
 
+// Valorite Bascinet - Alias
+[valoritebascinet]
+{
+get=0x140c-va 0x140d-va
+}
+
+// Valorite Norse Helm - N/S
 [0x140e-va]
-{ right facing
-get=nose_helm
-name=nose helm
-id=0x140e
+{
+get=base_nose_helm
 color=0x8ab
 }
 
+// Valorite Norse Helm - E/W
 [0x140f-va]
-{ left facing
-get=nose_helm
-name=nose helm
+{
+get=0x140e-va
 id=0x140f
-color=0x8ab
 }
 
+// Valorite Norse Helm - Alias
+[valoritenorsehelm]
+{
+get=0x140e-va 0x140f-va
+}
+
+// Valorite Plate Helm - E/W
 [0x1412-va]
-{ left facing
-get=plate_helm
-name=plate helm
-id=0x1412
+{
+get=base_plate_helm
 color=0x8ab
 }
 
+// Valorite Plate Helm - N/S
 [0x1419-va]
-{ right facing
-get=plate_helm
-name=plate helm
+{
+get=0x1412-va
 id=0x1419
-color=0x8ab
 }
 
-// shields
+// Valorite Plate Helm - Alias
+[valoriteplatehelm]
+{
+get=0x1412-va 0x1419-va
+}
 
+// Shields
+
+// Valorite Valorite Shield
 [0x1b72-va]
-{ Bronze shield
-get=bronze_shield
-name=bronze shield
-id=0x1b72
+{
+get=base_valorite_shield
 color=0x8ab
 }
 
+// Valorite Valorite Shield - Alias
+[valoritevaloriteshield]
+{
+get=0x1b72-va
+}
+
+// Valorite Buckler
 [0x1b73-va]
-{ Buckler
-get=buckler
-name=buckler
-id=0x1b73
+{
+get=base_buckler
 color=0x8ab
 }
 
+// Valorite Buckler - Alias
+[valoritebuckler]
+{
+get=0x1b73-va
+}
+
+// Valorite Metal Kite Shield - N/S
 [0x1b74-va]
-{ Kite shield
-get=metal_kite_shield
-name=kite shield
-id=0x1b74
+{
+get=base_metal_kite_shield
 color=0x8ab
 }
 
+// Valorite Metal Kite Shield - E/W
+[0x1b75-va]
+{
+get=0x1b74-va
+id=0x1b75
+}
+
+// Metal Kite Shield - Alias
+[valoritemetalkiteshield]
+{
+get=0x1b74-va 0x1b75-va
+}
+
+// Valorite Heater Shield - N/S
 [0x1b76-va]
-{ Heater shield
-get=heater_shield
-name=heater shield
-id=0x1b76
+{
+get=base_heater_shield
 color=0x8ab
 }
 
-[0x1b78-va]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b78
-color=0x8ab
+// Valorite Heater Shield - E/W
+[0x1b77-va]
+{
+get=0x1b76-va
+id=0x1b77
 }
 
-[0x1b79-va]
-{ Wooden kite Shield
-get=0x1b78
-id=0x1b79
-color=0x8ab
+// Valorite Heater Shield - Alias
+[valoriteheatershield]
+{
+get=0x1b76-va 0x1b77-va
 }
 
+// Valorite Metal Shield
 [0x1b7b-va]
-{ Metal shield
-get=metal_shield
-name=metal shield
-id=0x1b7b
+{
+get=base_metal_shield
 color=0x8ab
+}
+
+// Valorite Metal Shield - Alias
+[valoritemetalshield]
+{
+get=0x1b7b-va
+}
+
+// Kite Shield (wooden) - N/S
+[0x1b78-va]
+{
+get=base_wooden_kite_shield
+color=0x8ab
+}
+
+// Kite Shield (wooden) - E/W
+[0x1b79-va]
+{
+get=0x1b78-va
+id=0x1b79
+}
+
+// Kite Shield (wooden) - Alias
+[valoritewoodenkiteshield]
+{
+get=0x1b78-va 0x1b79-va
 }

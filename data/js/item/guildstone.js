@@ -3,6 +3,10 @@ function onUseChecked( pUser, iUsed )
 {
 	// Check if object is in player's backpack
 	var pSocket = pUser.socket;
+	if ( pUser.visible == 1 || pUser.visible == 2 )
+	{
+		pUser.visible = 0;
+	}
 	if( pSocket != null && ValidateObject( iUsed ) && iUsed.isItem )
 	{
 		if( iUsed.id == 0x14F0 || iUsed.id == 0x1869 )
@@ -19,7 +23,7 @@ function onUseChecked( pUser, iUsed )
 			if( !ValidateObject( iMulti ) || !iMulti.IsInMulti( pUser ))
 			{
 				// Player vendors can only be placed in houses!
-				pUser.SysMessage( "Guildstones can only be placed in houses!" );
+				pUser.SysMessage( GetDictionaryEntry( 2723, pSocket.language )); // Guildstones can only be placed in houses!
 				return false;
 			}
 
@@ -27,7 +31,7 @@ function onUseChecked( pUser, iUsed )
 			if( !iMulti.IsOwner( pUser ))
 			{
 				// Only the house owner can guildstones in a house!
-				pUser.SysMessage( "Only the house owner can place a guildstone in a house!" );
+				pUser.SysMessage( GetDictionaryEntry( 2724, pSocket.language )); // Only the house owner can place a guildstone in a house!
 				return false;
 			}
 
@@ -47,7 +51,7 @@ function onUseChecked( pUser, iUsed )
 
 				if( tempItem.type == 202 && tempItem.id == 0x0ED5 )
 				{
-					pSocket.SysMessage( "You cannot place any additional guildstones in this house!" );
+					pSocket.SysMessage( GetDictionaryEntry( 2725, pSocket.language )); // You cannot place any additional guildstones in this house!
 					return false;
 				}
 			}
@@ -57,7 +61,7 @@ function onUseChecked( pUser, iUsed )
 			var foundDoor = AreaItemFunction( "checkForNearbyDoors", pUser, 3, pSocket );
 			if( foundDoor )
 			{
-				pSocket.SysMessage( "You cannot place a guildstone adjacent to a door!" ); // You cannot place a guildstone adjacent to a door!
+				pSocket.SysMessage( GetDictionaryEntry( 2726, pSocket.language )); // You cannot place a guildstone adjacent to a door!
 				return false;
 			}
 

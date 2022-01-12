@@ -33,15 +33,20 @@ extern std::mt19937 generator;
 //o-----------------------------------------------------------------------------------------------o
 bool	objInRange( CSocket *mSock, CBaseObject *obj, UI16 distance );
 bool	objInRange( CBaseObject *a, CBaseObject *b, UI16 distance );
+bool	objInRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	objInOldRange( CBaseObject *a, CBaseObject *b, UI16 distance );
+bool	objInOldRangeSquare( CBaseObject *a, CBaseObject *b, UI16 distance );
 bool	charInRange( CChar *a, CChar *b );
 UI16	getDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist( point3 a, point3 b );
 UI16	getOldDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( CBaseObject *a, CBaseObject *b );
+UI16	getDist3D( point3 a, point3 b );
 SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );
 SOCKLIST	FindPlayersInOldVisrange( CBaseObject *myObj );
+SOCKLIST	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance );
 SOCKLIST	FindNearbyPlayers( CBaseObject *myObj, UI16 distance );
+SOCKLIST	FindNearbyPlayers( CBaseObject *myObj );
 SOCKLIST	FindNearbyPlayers( CChar *mChar );
 //o-----------------------------------------------------------------------------------------------o
 // Multi functions
@@ -80,19 +85,25 @@ void	doLight( CSocket *s, UI08 level );
 void	doLight( CChar *mChar, UI08 level );
 
 //o-----------------------------------------------------------------------------------------------o
+// Poison related functions
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonDuration( UI08 poisonStrength );
+TIMERVAL getPoisonTickTime( UI08 poisonStrength );
+
+//o-----------------------------------------------------------------------------------------------o
 // Amount related
 //o-----------------------------------------------------------------------------------------------o
-UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000 );
+UI32	GetItemAmount( CChar *s, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0, bool colorCheck = false );
 UI32	GetTotalItemCount( CItem *objCont );
-UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
-UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000 );
-UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000 );
-UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000 );
+UI32	DeleteItemAmount( CChar *s, UI32 amount, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	GetBankCount( CChar *p, UI16 itemID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
+UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000, UI32 realMoreVal = 0x0 );
 
 //o-----------------------------------------------------------------------------------------------o
 // Region related
 //o-----------------------------------------------------------------------------------------------o
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID );
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CChar *mChar = nullptr );
 void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff );
 
 //o-----------------------------------------------------------------------------------------------o
@@ -192,26 +203,33 @@ inline std::uint32_t CheckMilliTimer( std::uint32_t &Seconds, std::uint32_t &Mil
 	return static_cast<std::uint32_t>((1000 *(sec - Seconds)) + (milli - Milliseconds));
 }
 
+inline std::uint32_t GetMinutesSinceEpoch()
+{
+	return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now().time_since_epoch()).count());
+}
 
 //o-----------------------------------------------------------------------------------------------o
 // Misc Functions
 //o-----------------------------------------------------------------------------------------------o
-R32		roundNumber( R32 toRound);
-bool	FileExists( const std::string& filepath );
-void	DismountCreature( CChar *s );
-size_t	getTileName( CItem& mItem, std::string& itemname );
-bool	LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ );
-bool	checkItemLineOfSight( CChar *mChar, CItem *i );
-void	Shutdown( SI32 retCode );
-void	HandleDeath( CChar *mChar );
-void	NpcResurrectTarget( CChar *s );
+R32			roundNumber( R32 toRound);
+bool		isNumber( const std::string& str );
+bool		FileExists( const std::string& filepath );
+void		DismountCreature( CChar *s );
+size_t		getTileName( CItem& mItem, std::string& itemname );
+std::string	getNpcDictName( CChar *mChar, CSocket *tSock = nullptr );
+std::string	getNpcDictTitle( CChar *mChar, CSocket *tSock = nullptr );
+bool		LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ, SI08 z2Top = 0, bool checkDistance = true );
+bool		checkItemLineOfSight( CChar *mChar, CItem *i );
+void		Shutdown( SI32 retCode );
+void		HandleDeath( CChar *mChar, CChar *attacker );
+void		NpcResurrectTarget( CChar *s );
 
 inline bool ValidateObject( const CBaseObject *toValidate )
 {
 	bool rvalue = true;
 	try
 	{
-		if( toValidate == NULL )
+		if( toValidate == nullptr )
 			rvalue = false;
 		else if( toValidate->isDeleted() )
 			rvalue = false;
@@ -219,7 +237,7 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 	catch( ... )
 	{
 		rvalue = false;
-		Console.error( format("Invalid Object found: 0x%X", (UI64)toValidate) );
+		Console.error( strutil::format("Invalid Object found: 0x%X", (UI64)toValidate) );
 	}
 	return rvalue;
 }
@@ -236,8 +254,8 @@ inline T RandomNum( T nLowNum, T nHighNum )
 	}
 	auto distribution = std::uniform_int_distribution<T>(low, high);
 	return distribution(generator);
-
 }
+
 
 template< class T >
 inline T HalfRandomNum( T HighRange )

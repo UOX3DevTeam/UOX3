@@ -1,0 +1,178 @@
+// -----------= ARMS =----------- //
+
+// Gargish Leather Arms - N/S
+[0x0302]
+{
+get=base_gargish_leather_arms
+}
+
+// Gargish Leather Arms - E/W
+[0x4048]
+{
+get=0x0302
+id=0x4048
+}
+
+// Gargish Leather Arms - Alias
+[gargishleatherarms]
+{
+get=0x0302 0x4048
+}
+
+// Female Gargish Leather Arms - N/S
+[0x0301]
+{
+get=base_gargish_leather_arms
+}
+
+// Female Gargish Leather Arms - E/W
+[0x4047]
+{
+get=0x0301
+id=0x4047
+}
+
+// Female Gargish Leather Arms - Alias
+[femalegargishleatherarms]
+{
+get=0x0301 0x4047
+}
+
+// -----------= CHEST =----------- //
+
+// Gargish Leather Chest - N/S
+[0x0304]
+{
+get=base_gargish_leather_chest
+}
+
+// Gargish Leather Chest - N/S
+[0x404a]
+{
+get=0x0304
+id=0x404a
+}
+
+// Gargish Leather Chest - Alias
+[gargishleatherchest]
+{
+get=0x0304 0x404a
+}
+
+// Female Gargish Leather Chest - N/S
+[0x0303]
+{
+get=base_female_gargish_leather_chest
+}
+
+// Female Gargish Leather Chest - E/W
+[0x4049]
+{
+get=0x0303
+id=0x4049
+}
+
+// Female Gargish Leather Chest - Alias
+[femalegargishleatherchest]
+{
+get=0x0303 0x4049
+}
+
+// -----------= LEGS =----------- //
+
+// Gargish Leather Leggings - N/S
+[0x0306]
+{
+get=base_gargish_leather_leggings
+}
+
+// Gargish Leather Leggings - E/W
+[0x404e]
+{
+get=0x0306
+id=0x404e
+}
+
+// Gargish Leather Leggings - Alias
+[gargishleatherleggings]
+{
+get=0x0306 0x404e
+}
+
+// Female Gargish Leather Leggings - N/S
+[0x0305]
+{
+get=base_female_gargish_leather_leggings
+}
+
+// Female Gargish Leather Leggings - E/W
+[0x404d]
+{
+get=0x0305
+id=0x404d
+}
+
+// Female Gargish Leather Leggings - Alias
+[femalegargishleatherleggings]
+{
+get=0x0305 0x404d
+}
+
+// Gargish Leather Kilt - E/W
+[0x0311]
+{
+get=base_gargish_leather_kilt
+}
+
+// Gargish Leather Kilt - N/S
+[0x404c]
+{
+get=0x0311
+id=0x404c
+}
+
+// Gargish Leather Kilt - Alias
+[gargishleatherkilt]
+{
+get=0x0311 0x404c
+}
+
+// Female Gargish Leather Kilt - E/W
+[0x0310]
+{
+get=base_female_gargish_leather_kilt
+}
+
+// Female Gargish Leather Kilt - N/S
+[0x404b]
+{
+get=0x0310
+id=0x404b
+}
+
+// Female Gargish Leather Kilt - Alias
+[femalegargishleatherkilt]
+{
+get=0x0310 0x404b
+}
+
+// -----------= BACK =----------- //
+
+// Gargish Leather Wing Armor - N/S
+[0x457e]
+{
+get=base_gargish_leather_wing_armor
+}
+
+// Gargish Leather Wing Armor - E/W
+[0x457f]
+{
+get=0x457e
+id=0x457f
+}
+
+// Gargish Leather Wing Armor - Alias
+[gargishleatherwingarmor]
+{
+get=0x457e 0x457f
+}

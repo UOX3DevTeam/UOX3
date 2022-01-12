@@ -35,8 +35,10 @@
 #include "cScript.h"
 #include "regions.h"
 #include "cGuild.h"
+#include "skills.h"
 #include "StringUtility.hpp"
-
+#include <algorithm>
+#include <cctype>
 
 bool BuyShop( CSocket *s, CChar *c );
 void callGuards( CChar *mChar );
@@ -58,10 +60,10 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == NULL )
+		if( CellResponse == nullptr )
 			continue;
 
-		CDataList< CChar * > *regChars = CellResponse->GetCharList();
+		GenericList< CChar * > *regChars = CellResponse->GetCharList();
 		regChars->Push();
 		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
 		{
@@ -77,14 +79,14 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 
 ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
+//|	Function	-	UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if nearby NPCs run scripts that react to speech
 //o-----------------------------------------------------------------------------------------------o
-bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
+UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
-	CChar *Npc			= NULL;
-	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_INRANGE );
+	CChar *Npc			= nullptr;
+	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_CMDRANGE );
 	for( CHARLIST_ITERATOR nIter = nearbyNPCs.begin(); nIter != nearbyNPCs.end(); ++nIter )
 	{
 		Npc = (*nIter);
@@ -93,29 +95,32 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 
 		if( abs( mChar->GetZ() - Npc->GetZ() ) <= 9 )
 		{
-			UI16 speechTrig		= Npc->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( speechTrig );
-			if( toExecute != NULL )
+			std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
+			for( auto i : scriptTriggers )
 			{
-				//|				-1	=> No such function or bad call
-				//|				0	=> Let other NPCs and PCs see it
-				//|				1	=> Let other PCs see it
-				//|				2	=> Let no one else see it
-				SI08 rVal = -1;
-				if( Npc->isDisabled() )
-					Npc->TextMessage( NULL, 1291, TALK, false );
-				else
-					rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
-				switch( rVal )
+				cScript *toExecute	= JSMapping->GetScript( i );
+				if( toExecute != nullptr )
 				{
-					case 1:		// No other NPCs to see it, but PCs should
-						return true;
-					case 2:		// no one else to see it
-						return false;
-					case 0:		// Other NPCs and PCs to see it
-					case -1:	// no function, so do nothing... NOT handled!
-					default:
-						break;
+					//|				-1	=> No such function or bad call
+					//|				0	=> Let other NPCs and PCs see it
+					//|				1	=> Let other PCs see it
+					//|				2	=> Let no one else see it
+					SI08 rVal = -1;
+					if( Npc->isDisabled() )
+						Npc->TextMessage( nullptr, 1291, TALK, false );
+					else
+						rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
+					switch( rVal )
+					{
+						case 1:		// No other NPCs to see it, but PCs should
+							return 1;
+						case 2:		// no one else to see it
+							return 2;
+						case 0:		// Other NPCs and PCs to see it
+						case -1:	// no function, so do nothing... NOT handled!
+						default:
+							break;
+					}
 				}
 			}
 		}
@@ -124,8 +129,8 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 	// How about items?
 	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
 	{
-		CItem *Item			= NULL;
-		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_INRANGE );
+		CItem *Item			= nullptr;
+		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_CMDRANGE );
 		for( ITEMLIST_ITERATOR nIter = nearbyItems.begin(); nIter != nearbyItems.end(); ++nIter )
 		{
 			Item = (*nIter);
@@ -134,35 +139,34 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 
 			if( abs( mChar->GetZ() - Item->GetZ() ) <= 9 )
 			{
-				UI16 speechTrig		= Item->GetScriptTrigger();
-				cScript *toExecute	= JSMapping->GetScript( speechTrig );
-				if( toExecute != NULL )
+				std::vector<UI16> scriptTriggers = Item->GetScriptTriggers();
+				for( auto i : scriptTriggers )
 				{
-					//|				-1	=> No such function or bad call
-					//|				0	=> Let other NPCs and PCs see it
-					//|				1	=> Let other PCs see it
-					//|				2	=> Let no one else see it
-					SI08 rVal = -1;
-					if( Item->isDisabled() )
-						Item->TextMessage( NULL, 1291, TALK, false );
-					else
-						rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
-					switch( rVal )
+					cScript *toExecute	= JSMapping->GetScript( i );
+					if( toExecute != nullptr )
 					{
-					case 1:		// No other NPCs to see it, but PCs should
-						return true;
-					case 2:		// no one else to see it
-						return false;
-					case 0:		// Other NPCs and PCs to see it
-					case -1:	// no function, so do nothing... NOT handled!
-					default:
-						break;
+						SI08 rVal = -1;
+						if( Item->isDisabled() )
+							Item->TextMessage( nullptr, 1291, TALK, false );
+						else
+							rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
+						switch( rVal )
+						{
+							case 1:		// No other NPCs to see it, but PCs should
+								return 1;
+							case 2:		// no one else to see it
+								return 2;
+							case 0:		// Other NPCs and PCs to see it
+							case -1:	// no function, so do nothing... NOT handled!
+							default:
+								break;
+						}
 					}
 				}
 			}
 		}
 	}
-	return true;
+	return 0;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -170,12 +174,15 @@ bool DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle responses to keywords in player speech
 //o-----------------------------------------------------------------------------------------------o
-bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
+bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr )
 {
-	if( !DoJSResponse( mSock, mChar, text ) )
+	UI08 jsResponse = DoJSResponse( mSock, mChar, text );
+	if( jsResponse == 1 )
+		return true;
+	else if( jsResponse == 2 )
 		return false;
 
-	CBaseResponse *tResp	= NULL;
+	CBaseResponse *tResp	= nullptr;
 
 	for( UI16 trigWord = mSock->FirstTrigWord(); !mSock->FinishedTrigWords(); trigWord = mSock->NextTrigWord() )
 	{
@@ -184,48 +191,54 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 			case TW_COUNT:																						break;
 			case TW_GUARDS:				callGuards( mChar );													break;
 			case TW_KILLS:				tResp = new CKillsResponse();											break;
-			case TW_BANK:				tResp = new CBankResponse();											break;
-			case TW_BALANCE:			tResp = new CBankResponse( true );										break;
 			case TW_QUESTTAKE:			tResp = new CEscortResponse();											break;
 			case TW_QUESTDEST:			tResp = new CEscortResponse( true );									break;
-			case TW_TRAIN:				tResp = new CTrainingResponse( text );									break;
+			case TW_TRAIN:				tResp = new CTrainingResponse( trigWord, tChar );						break;
 			case TW_FOLLOW:
-			case TW_FOLLOW2:			tResp = new CPetMultiResponse( text, false, TARGET_FOLLOW, 1310 );		break;
+			case TW_FOLLOW2:			tResp = new CPetMultiResponse( strutil::upper( text ), false, TARGET_FOLLOW, 1310, false, true );	break;
 			case TW_COME:
-			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, text );							break;
-			case TW_ALLCOME:
-			case TW_ALLFOLLOW:
-			case TW_ALLFOLLOWME:		tResp = new CPetComeResponse( true, text );								break;
+			case TW_FOLLOWME:			tResp = new CPetComeResponse( false, strutil::upper( text ) );						break;
+			case TW_ALLFOLLOWME:
+			case TW_ALLCOME:			tResp = new CPetComeResponse( true, strutil::upper( text ) );							break;
+			case TW_ALLFOLLOW:			tResp = new CPetMultiResponse( strutil::upper( text ), false, TARGET_FOLLOW, 1310, true, true );	break;
 			case TW_KILL:
-			case TW_ATTACK:				tResp = new CPetAttackResponse( false, text );							break;
+			case TW_ATTACK:				tResp = new CPetAttackResponse( false, strutil::upper( text ) );						break;
 			case TW_ALLKILL:
-			case TW_ALLATTACK:			tResp = new CPetAttackResponse( true, text );							break;
+			case TW_ALLATTACK:			
+			/*{
+				tResp = new CPetAttackResponse( true, strutil::upper( text ) );
+				tResp->Handle( mSock, mChar );
+				delete tResp;
+				tResp = nullptr;
+				goto endResponseCheck;
+			}*/
+				tResp = new CPetAttackResponse( true, strutil::upper( text ) );						break;
 			case TW_FETCH:
 			case TW_GET:
-			case TW_BRING:				tResp = new CPetMultiResponse( text, false, TARGET_GUARD, 1316 );		break;
-			case TW_FRIEND:				tResp = new CPetMultiResponse( text, true, TARGET_FRIEND, 1620 );		break;
-			case TW_GUARD:				tResp = new CPetMultiResponse( text, true, TARGET_GUARD, 1104 );		break;
+			case TW_BRING:				tResp = new CPetMultiResponse( strutil::upper( text ), false, TARGET_GUARD, 1316, false, true );	break;
+			case TW_FRIEND:				tResp = new CPetMultiResponse( strutil::upper( text ), true, TARGET_FRIEND, 1620, false, true );	break;
+			case TW_GUARD:				tResp = new CPetMultiResponse( strutil::upper( text ), false, TARGET_GUARD, 1104, false, true );	break;
 			case TW_ALLGUARD:
-			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, text );							break;
+			case TW_ALLGUARDME:			tResp = new CPetGuardResponse( true, strutil::upper( text ) );							break;
 			case TW_STOP:
-			case TW_STAY:				tResp = new CPetStayResponse( false, text );							break;
+			case TW_STAY:				tResp = new CPetStayResponse( false, strutil::upper( text ) );							break;
 			case TW_ALLSTOP:
-			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, text );								break;
-			case TW_TRANSFER:			tResp = new CPetMultiResponse( text, true, TARGET_TRANSFER, 1323 );		break;
-			case TW_RELEASE:			tResp = new CPetReleaseResponse( text );								break;
-			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, text );							break;
-			case TW_BUY:				tResp = new CVendorBuyResponse( false, text );							break;
-			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, text );							break;
-			case TW_SELL:				tResp = new CVendorSellResponse( false, text );							break;
-			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, text );							break;
-			case TW_VIEW:				tResp = new CVendorViewResponse( false, text );							break;
-			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, text );							break;
+			case TW_ALLSTAY:			tResp = new CPetStayResponse( true, strutil::upper( text ) );							break;
+			case TW_TRANSFER:			tResp = new CPetMultiResponse( strutil::upper( text ), true, TARGET_TRANSFER, 1323, false, false );	break;
+			case TW_RELEASE:			tResp = new CPetReleaseResponse( strutil::upper( text ) );								break;
+			case TW_VENDORBUY:			tResp = new CVendorBuyResponse( true, strutil::upper( text ) );						break;
+			case TW_BUY:				tResp = new CVendorBuyResponse( false, strutil::upper( text ) );						break;
+			case TW_VENDORSELL:			tResp = new CVendorSellResponse( true, strutil::upper( text ) );						break;
+			case TW_SELL:				tResp = new CVendorSellResponse( false, strutil::upper( text ) );						break;
+			case TW_VENDORVIEW:			tResp = new CVendorViewResponse( true, strutil::upper( text ) );						break;
+			case TW_VIEW:				tResp = new CVendorViewResponse( false, strutil::upper( text ) );						break;
+			case TW_VENDORGOLD:			tResp = new CVendorGoldResponse( true, strutil::upper( text ) );						break;
 			case TW_COLLECT:
-			case TW_GOLD:				tResp = new CVendorGoldResponse( false, text );							break;
-			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, text );						break;
-			case TW_STATUS:				tResp = new CVendorStatusResponse( false, text );						break;
-			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, text );						break;
-			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, text );						break;
+			case TW_GOLD:				tResp = new CVendorGoldResponse( false, strutil::upper( text ) );						break;
+			case TW_VENDORSTATUS:		tResp = new CVendorStatusResponse( true, strutil::upper( text ) );						break;
+			case TW_STATUS:				tResp = new CVendorStatusResponse( false, strutil::upper( text ) );					break;
+			case TW_VENDORDISMISS:		tResp = new CVendorDismissResponse( true, strutil::upper( text ) );					break;
+			case TW_DISMISS:			tResp = new CVendorDismissResponse( false, strutil::upper( text ));					break;
 			case TW_HOUSEBAN:			tResp = new CHouseMultiResponse( TARGET_HOUSEBAN, 585 );				break;
 			case TW_HOUSEEJECT:			tResp = new CHouseMultiResponse( TARGET_HOUSEEJECT, 587 );				break;
 			case TW_HOUSELOCKDOWN:		tResp = new CHouseMultiResponse( TARGET_HOUSELOCKDOWN, 589 );			break;
@@ -238,43 +251,77 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text )
 				tResp = new CHouseMultiResponse( TARGET_HOUSESTRONGBOX, -1 );
 				tResp->Handle( mSock, mChar );
 				delete tResp;
-				tResp = NULL;
+				tResp = nullptr;
 				goto endResponseCheck; // :
 			}
 			case TW_TRASHBARREL:		tResp = new CHouseMultiResponse( TARGET_HOUSETRASHBARREL, -1 );			break;
 			case TW_BOATFORWARD:
-			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( 1 );									break;
-			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( 2 );									break;
+			case TW_BOATUNFURL:			tResp = new CBoatMultiResponse( BOAT_FORWARD );							break;
+			case TW_BOATBACKWARD:		tResp = new CBoatMultiResponse( BOAT_BACKWARD );						break;
+			case TW_BOATLEFT:			tResp = new CBoatMultiResponse( BOAT_LEFT );							break;
+			case TW_BOATRIGHT:			tResp = new CBoatMultiResponse( BOAT_RIGHT );							break;
+			case TW_BOATFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_FORWARDLEFT );						break;
+			case TW_BOATFORWARDRIGHT:	tResp = new CBoatMultiResponse( BOAT_FORWARDRIGHT );					break;
+			case TW_BOATBACKLEFT:		tResp = new CBoatMultiResponse( BOAT_BACKWARDLEFT );					break;
+			case TW_BOATBACKRIGHT:		tResp = new CBoatMultiResponse( BOAT_BACKWARDRIGHT );					break;
+			case TW_BOATONEFORWARD:		tResp = new CBoatMultiResponse( BOAT_ONEFORWARD );						break;
+			case TW_BOATONEBACK:		tResp = new CBoatMultiResponse( BOAT_ONEBACKWARD );						break;
+			case TW_BOATONELEFT:		tResp = new CBoatMultiResponse( BOAT_ONELEFT );							break;
+			case TW_BOATONERIGHT:		tResp = new CBoatMultiResponse( BOAT_ONERIGHT );						break;
+			case TW_BOATONEFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_ONEFORWARDLEFT );					break;
+			case TW_BOATONEFORWARDRIGHT:tResp = new CBoatMultiResponse( BOAT_ONEFORWARDRIGHT );					break;
+			case TW_BOATONEBACKLEFT:	tResp = new CBoatMultiResponse( BOAT_ONEBACKWARDLEFT );					break;
+			case TW_BOATONEBACKRIGHT:	tResp = new CBoatMultiResponse( BOAT_ONEBACKWARDRIGHT );				break;
+			case TW_BOATSLOWFORWARD:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARD );						break;
+			case TW_BOATSLOWBACK:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARD );					break;
+			case TW_BOATSLOWLEFT:		tResp = new CBoatMultiResponse( BOAT_SLOWLEFT );						break;
+			case TW_BOATSLOWRIGHT:		tResp = new CBoatMultiResponse( BOAT_SLOWRIGHT );						break;
+			case TW_BOATSLOWFORWARDLEFT:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARDLEFT );				break;
+			case TW_BOATSLOWFORWARDRIGHT:	tResp = new CBoatMultiResponse( BOAT_SLOWFORWARDRIGHT );			break;
+			case TW_BOATSLOWBACKLEFT:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARDLEFT );			break;
+			case TW_BOATSLOWBACKRIGHT:		tResp = new CBoatMultiResponse( BOAT_SLOWBACKWARDRIGHT );			break;
 			case TW_BOATSTOP:
 			case TW_STOP2:
-			case TW_BOATFURL:			tResp = new CBoatMultiResponse( 0 );									break;
+			case TW_BOATFURL:			//tResp = new CBoatMultiResponse( BOAT_STOP );							break;
+			{
+				tResp = new CBoatMultiResponse( BOAT_STOP );
+				tResp->Handle( mSock, mChar );
+				delete tResp;
+				tResp = nullptr;
+				goto endResponseCheck; // :
+			}
 			case TW_BOATTURNRIGHT:
 			case TW_BOATSTARBOARD:
 			case TW_BOATTURNLEFT:
 			case TW_BOATPORT:
 			case TW_BOATTURNAROUND:
-			case TW_BOATLEFT:
-			case TW_BOATRIGHT:
-			case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );							break;
-			case TW_RESIGN:				GuildSys->Resign( mSock );												break;
+			case TW_BOATANCHORDROP:
+			case TW_BOATANCHORRAISE:
+			case TW_SETNAME:			tResp = new CBoatResponse( text, trigWord );						break;
+			case TW_RESIGN:				GuildSys->Resign( mSock );											break;
 			default:
 				//This is to handle the "train <skill>" keywords
 				if(( trigWord >= 0x006D && trigWord <= 0x009C ) || trigWord == 0x154 || trigWord == 0x115 ||
 				   trigWord == 0x17C || trigWord == 0x17D || trigWord == 0x17E )
 				{
-					tResp = new CTrainingResponse( text );									break;
+					tResp = new CTrainingResponse( trigWord, tChar );
+					tResp->Handle( mSock, mChar );
+					delete tResp;
+					tResp = nullptr;
+					goto endResponseCheck; // :
+					break;
 				}
 #if defined( UOX_DEBUG_MODE )
-				Console.print( format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
+				Console.print( strutil::format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
 #endif
 				break;
 		}
 
-		if( tResp != NULL )
+		if( tResp != nullptr )
 		{
 			tResp->Handle( mSock, mChar );
 			delete tResp;
-			tResp = NULL;
+			tResp = nullptr;
 		}
 	}
 	endResponseCheck:
@@ -313,7 +360,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 					Npc->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTACTIVE ) );			// Set the expire time if nobody excepts the quest
 
 					// Send out the rant about accepting the escort
-					Npc->TextMessage( NULL, 1294, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
+					Npc->TextMessage( nullptr, 1294, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );
 
 					// Remove post from message board (Mark for deletion only - will be cleaned during cleanup)
 					MsgBoardQuestEscortRemovePost( Npc );
@@ -329,47 +376,13 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( findDest )
 			{
 				if( Npc->GetFTarg() == mChar )
-					Npc->TextMessage( NULL, 1295, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( nullptr, 1295, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
-					Npc->TextMessage( NULL, 1296, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
+					Npc->TextMessage( nullptr, 1296, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->TextMessage( NULL, 1297, TALK, false, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
-			}
-		}
-	}
-}
-
-CBankResponse::CBankResponse( bool newVal )
-{
-	checkBalance = newVal;
-}
-void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, UI08 type, UI16 hue, UI16 font, UI32 messageNum, bool sendAll, const char *types = "", ... );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles NPC bankers response to players wanting to use bank commands
-//o-----------------------------------------------------------------------------------------------o
-void CBankResponse::Handle( CSocket *mSock, CChar *mChar )
-{
-	if( !mChar->IsDead() )
-	{
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = (*npcCtr);
-			if( Npc->GetNPCAiType() == AI_BANKER )// if he's a banker and we're close!
-			{
-				if( !checkBalance )
-					mSock->openBank( mChar );
-				else
-				{
-					UI32 goldCount = GetBankCount( mChar, 0x0EED );
-					ClilocMessage( mSock, Npc, 0, 0x0040, FNT_NORMAL, 1042759, false, "i", goldCount );
-					//Npc->TextMessage( mSock, 1298, TALK, true, mChar->GetName().c_str(), goldCount );
-				}
-				break;
 			}
 		}
 	}
@@ -385,7 +398,7 @@ CKillsResponse::CKillsResponse( void )
 //o-----------------------------------------------------------------------------------------------o
 void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	if( !mChar->IsDead() && mSock != NULL )
+	if( !mChar->IsDead() && mSock != nullptr )
 	{
 		SI16 i = mChar->GetKills();
 		if( i == 0 )
@@ -397,9 +410,10 @@ void CKillsResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 }
 
-CTrainingResponse::CTrainingResponse( const std::string &text )
+CTrainingResponse::CTrainingResponse( UI16 trigWord, CChar *tChar )
 {
-	ourText = text;
+	trigChar = tChar;
+	ourTrigWord = trigWord;
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
@@ -410,128 +424,225 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	if( cwmWorldState->ServerData()->NPCTrainingStatus() ) //if the player wants to train
 	{
-		constexpr auto maxsize = 512 ;
-		std::string temp ;
-		std::string temp2 ;
+		constexpr auto maxsize = 512;
+		std::string temp;
+		std::string temp2;
 		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-		UString UText = UString( ourText ).upper();
-		UString skillName = "";
+
+		// Shuffle the npcList so it doesn't always trigger for the first NPC in the list
+		std::random_device rd;
+		std::mt19937 g( rd() );
+		std::shuffle( npcList.begin(), npcList.end(), g );
+
+		auto skillName = std::string("");
 		bool foundString = false;
 		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
 			CChar *Npc = (*npcCtr);
+
+			if( ValidateObject( trigChar ) )
+			{
+				Npc = trigChar;
+			}
 			if( cwmWorldState->creatures[Npc->GetID()].IsHuman() )
 			{
 				// Stop the NPC from moving for a minute while talking with the player
 				Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
-				mSock->TempObj( NULL ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
+				mSock->TempObj( nullptr ); //this is to prevent errors when a player says "train <skill>" then doesn't pay the npc
 				SI16 skill = -1;
-				if( UText.sectionCount( " " ) != 0 ) //Only if string has more than one word
+
+				// Language independent implementation of training keywords
+				switch( ourTrigWord )
 				{
-					//Search for perfect match first
-					for( UI08 i = 0; i < ALLSKILLS; ++i )
-					{
-						if( findString( UText, cwmWorldState->skill[i].name ))
-						{
-							skill = i;
-							break;
-						}
-					}
-					//Then combine first 4 letters in each
-					if( skill == -1 )
-					{
-						UText = (extractSection(UText, " ", 1, 1 )).substr(0,4); //search using first three letters only
-						for( UI08 i = 0; i < ALLSKILLS; ++i )
-						{
-							skillName = (cwmWorldState->skill[i].name).substr(0,4); //search using first three letters only
-							foundString = findString( UText, skillName );
-							if( foundString )
-							{
-								skill = i;
-								break;
-							}
-						}
-					}
-					//If we STILL didn't find a match, try a reverse lookup!
-					if( skill == -1 )
-					{
-						for( UI08 i = 0; i < ALLSKILLS; ++i )
-						{
-							skillName = cwmWorldState->skill[i].name;
-							foundString = findString( cwmWorldState->skill[i].name, UText );
-							if( foundString )
-							{
-								skill = i;
-								break;
-							}
-						}
-					}
+					case 340: // anatomy
+						skill = ANATOMY; break;
+					case 109: // parrying, parry, battle, defense
+						skill = PARRYING; break;
+					case 110: // first, aid, heal, healing, medicine
+						skill = HEALING; break;
+					case 111: // hide, hiding
+						skill = HIDING; break;
+					case 112: // steal, stealing
+						skill = STEALING; break;
+					case 113: // alchemy
+						skill = ALCHEMY; break;
+					case 114: // animal, animal lore
+						skill = ANIMALLORE; break;
+					case 115: // appraising, identifying, appraise, item, identification, identify
+						skill = ITEMID; break;
+					case 116: // armslore, arms
+						skill = ARMSLORE; break;
+					case 117: // beg, begging
+						skill = BEGGING; break;
+					case 118: // blacksmith, smith, blacksmithy, smithing, blacksmithing
+						skill = BLACKSMITHING; break;
+					case 119: // bower, bow, arrow, fletcher, bowcraft, fletching
+						skill = BOWCRAFT; break;
+					case 120: // calm, peace, peacemaking
+						skill = PEACEMAKING; break;
+					case 121: // camp, camping
+						skill = CAMPING; break;
+					case 122: // carpentry, woodwork, woodworking
+						skill = CARPENTRY; break;
+					case 123: // cartography, map, mapmaking
+						skill = CARTOGRAPHY; break;
+					case 124: // cooking, cook
+						skill = COOKING; break;
+					case 125: // detect, detect hidden, hidden
+						skill = DETECTINGHIDDEN; break;
+					case 126: // entice, enticement, enticing
+						skill = ENTICEMENT; break;
+					case 127: // evaluate, intelligence, evaluating
+						skill = EVALUATINGINTEL; break;
+					case 128: // fish, fishing
+						skill = FISHING; break;
+					case 129: // incite, provoke, provoking, provocation
+						skill = PROVOCATION; break;
+					case 130: // lockpicking, lock, pick, picking, locks
+						skill = LOCKPICKING; break;
+					case 131: // magic, magery, sorcery, wizardry, mage, wizard
+						skill = MAGERY; break;
+					case 132: // resist, resisting, spells
+						skill = MAGICRESISTANCE; break;
+					case 133: // battle, tactic, tactics, fight, fighting
+						skill = TACTICS; break;
+					case 134: // peek, peeking, snoop, snooping
+						skill = SNOOPING; break;
+					case 135: // disarm, disarming, remove, removing
+						skill = REMOVETRAP; break;
+					case 136: // play, instrument, playing, music, musician, musicianship
+						skill = MUSICIANSHIP; break;
+					case 137: // poisoning, poison
+						skill = POISONING; break;
+					case 138: // ranged, missile, missiles, shoot, shooting, archery, archer
+						skill = ARCHERY; break;
+					case 139: // spirit, ghost, seance, spiritualism
+						skill = SPIRITSPEAK; break;
+					case 140: // tailoring, tailor, clothier
+						skill = TAILORING; break;
+					case 141: // tame, taming
+						skill = TAMING; break;
+					case 142: // taste, tasting
+						skill = TASTEID; break;
+					case 143: // tinker, tinkering
+						skill = TINKERING; break;
+					case 144: // vet, veterinarian, veterinary
+						skill = VETERINARY; break;
+					case 145: // forensic, forensics
+						skill = FORENSICS; break;
+					case 146: // herd, herding
+						skill = HERDING; break;
+					case 147: // tracking, track, hunt, hunting
+						skill = TRACKING; break;
+					case 148: // stealth
+						skill = STEALTH; break;
+					case 149: // inscribe, scroll, inscribing, inscription
+						skill = INSCRIPTION; break;
+					case 150: // sword, swords, blade, blades, swordsman, swordsmanship
+						skill = SWORDSMANSHIP; break;
+					case 151: // club, clubs, mace, maces
+						skill = MACEFIGHTING; break;
+					case 152: // dagger, daggers, fence, fencing, spear
+						skill = FENCING; break;
+					case 153: // hand, wrestle, wrestling
+						skill = WRESTLING; break;
+					case 154: // lumberjack, lumberjacking, woodcuttingl
+						skill = LUMBERJACKING; break;
+					case 155: // mining, mine, smelt
+						skill = MINING; break;
+					case 156: // meditate
+						skill = MEDITATION; break;
+					case 380: // necromancy
+						skill = NECROMANCY; break;
+					case 381: // chivalry
+						skill = CHIVALRY; break;
+					case 382: // focus
+						skill = FOCUS; break;
+					default:
+						break;
 				}
+
 				if( skill == -1 ) // Didn't ask to be trained in a specific skill - Leviathan fix
 				{
 					if( !Npc->CanTrain() )
 					{
-						Npc->TextMessage( mSock, 1302, TALK, false );
+						Npc->TextMessage( mSock, 1302, TALK, false ); // I am sorry, but I have nothing to teach thee.
 						continue;
 					}
 					Npc->SetTrainingPlayerIn( 255 ); // Like above, this is to prevent  errors when a player says "train <skill>" then doesn't pay the npc
-					temp =  Dictionary->GetEntry( 1303 );
+					temp =  Dictionary->GetEntry( 1303 ); // I can teach thee the following skills:
 					UI08 skillsToTrainIn = 0;
+					UI08 lastCommaPos = 0;
 					for( UI08 j = 0; j < ALLSKILLS; ++j )
 					{
 						if( Npc->GetBaseSkill( j ) > 10 )
 						{
-							temp2= str_tolower(cwmWorldState->skill[j].name);
+							temp2= strutil::lower(cwmWorldState->skill[j].name);
 							if( !skillsToTrainIn ) {
-								temp2[1] = toupper( temp2[1] ); // If it's the first skill,  capitalize it.
+								temp2[0] = std::toupper( temp2[0] ); // If it's the first skill,  capitalize it, and add a space in front.
+								temp += (" " + temp2);
 							}
-							if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
+							else if( skillsToTrainIn <= 10 )
 							{
-								temp += std::string(" and possibly more ");
-
+								// Additional skills
+								lastCommaPos = static_cast<UI08>(temp.size()) + 1;
+								temp += (", " + temp2);
+							}
+							else if( skillsToTrainIn > 10 ) // to stop UOX3 from crashing/sentence being cut off if NPC is too knowledgable!
+							{
+								temp += std::string(" and possibly more");
 								break;
 							}
-							temp += temp2 ;
 							++skillsToTrainIn;
 						}
 					}
+					if( skillsToTrainIn <= 10 )
+					{
+						// Replace last comma with " and "
+						temp.replace( lastCommaPos, 1, " and " );
+					}
 					if( skillsToTrainIn )
 					{
-						temp[temp.size()- 1] = '.'; // Make last character a . not a ,  just to look nicer
+						temp += '.'; // Make last character a . just to look nicer
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
-						Npc->TextMessage( mSock, 1302, TALK, false );
+						Npc->TextMessage( mSock, 1302, TALK, false ); // I am sorry, but I have nothing to teach thee.
 				}
 				else // They do want to learn a specific skill
 				{
 					if( !Npc->CanTrain() )
 					{
-						Npc->TextMessage( mSock, 1302, TALK, false );
+						Npc->TextMessage( mSock, 1302, TALK, false ); // I am sorry, but I have nothing to teach thee.
 						continue;
 					}
-					if( Npc->GetBaseSkill( (UI08)skill ) > 10 )
+					if( Npc->GetBaseSkill( static_cast<UI08>( skill )) > 10 )
 					{
-						temp = format(maxsize, Dictionary->GetEntry( 1304 ), str_tolower(cwmWorldState->skill[skill].name ).c_str() );
-						if( mChar->GetBaseSkill( (UI08)skill ) >= 250 ){
-							temp += Dictionary->GetEntry( 1305 );
+						temp = strutil::format(maxsize, Dictionary->GetEntry( 1304 ), strutil::lower(cwmWorldState->skill[skill].name ).c_str() ); // Thou wishest to learn of  %s?
+						if( mChar->GetBaseSkill( static_cast<UI08>( skill )) >= 250 )
+						{
+							temp += Dictionary->GetEntry( 1305 ); // I can teach thee no more than thou already knowest!
 						}
 						else
 						{
-							if( Npc->GetBaseSkill( (UI08)skill ) <= 250){
-								temp2=format(maxsize, Dictionary->GetEntry( 1306 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
+							if( Npc->GetBaseSkill( static_cast<UI08>( skill) ) <= 250 )
+							{
+								// Very well I, can train thee up to the level of %i percent for %i gold. Pay for less and I shall teach thee less.
+								temp2=strutil::format(maxsize, Dictionary->GetEntry( 1306 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 / 10 ),(SI32)( Npc->GetBaseSkill( (UI08)skill ) / 2 ) - mChar->GetBaseSkill( (UI08)skill ) );
 							}
-							else {
-								temp2 = format(maxsize, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
+							else
+							{
+								// Very well I, can train thee up to the level of %i percent for %i gold. Pay for less and I shall teach thee less.
+								temp2 = strutil::format(maxsize, Dictionary->GetEntry( 1306 ), 25, 250 - mChar->GetBaseSkill( (UI08)skill ) );
 							}
-							temp += temp2 ;
+							temp += " " + temp2 ;
 							mSock->TempObj( Npc );
-							Npc->SetTrainingPlayerIn( (UI08)skill );
+							Npc->SetTrainingPlayerIn( static_cast<UI08>(skill) );
 						}
 						Npc->TextMessage( mSock, temp, TALK, false );
 					}
 					else
-						Npc->TextMessage( mSock, 1307, TALK, false );
+						Npc->TextMessage( mSock, 1307, TALK, false ); // I am sorry but I cannot train thee in that skill.
 				}
 				break;
 			}
@@ -550,42 +661,79 @@ CBasePetResponse::CBasePetResponse( const std::string &text )
 //o-----------------------------------------------------------------------------------------------o
 void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+	TAGMAPOBJECT petTagObj = mChar->GetTag( "petTagObjSerial" );
+	CChar *petCommandObj = calcCharObjFromSer( petTagObj.m_IntValue );
+	if( ValidateObject( petCommandObj ) )
 	{
-		CChar *Npc = (*npcCtr);
-		if( !Handle( mSock, mChar, Npc ) )
-			break;
+		petTagObj.m_Destroy = TRUE;
+		petTagObj.m_IntValue = 0;
+
+		mChar->SetTag( "petCommandObj", petTagObj );
+		Handle( mSock, mChar, petCommandObj );
 	}
-}
-bool CBasePetResponse::canControlPet( CChar *mChar, CChar *Npc, bool isRestricted )
-{
-	bool retVal = false;
-	if( ValidateObject( Npc->GetOwnerObj() ) && Npc->GetNPCAiType() != AI_PLAYERVENDOR && Npc->GetQuestType() == 0 )
+	else
 	{
-		if( Npc->GetOwnerObj() == mChar )
-			retVal = true;
-		else if( !isRestricted && Npcs->checkPetFriend( mChar, Npc ) )
-			retVal = true;
+		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
+		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
+		{
+			CChar *Npc = (*npcCtr);
+			if( !Handle( mSock, mChar, Npc ) )
+				break;
+		}
 	}
-	return retVal;
 }
 
-CPetMultiResponse::CPetMultiResponse( const std::string &text, bool restrictVal, TargetIDs targVal, SI32 dictVal ) : CBasePetResponse( text )
+CPetMultiResponse::CPetMultiResponse( const std::string &text, bool restrictVal, TargetIDs targVal, SI32 dictVal, bool saidAll, bool checkControlDifficulty ) : CBasePetResponse( text )
 {
 	isRestricted	= restrictVal;
 	targID			= targVal;
 	dictEntry		= dictVal;
+	allSaid			= saidAll;
+	checkDifficulty = checkControlDifficulty;
 }
 bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, isRestricted ) )
+	if( allSaid )
 	{
-		if( findString( ourText, UString(Npc->GetName()).upper() ) )
+		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
+		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
 		{
-			mSock->TempObj( Npc );
-			mSock->target( 0, targID, dictEntry );
-			return false;
+			CChar *Npc = ( *npcCtr );
+			if( ValidateObject( Npc ) && Npc->GetOwnerObj() == mChar )
+			{
+				if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ))
+				{
+					UI08 cursorType = 0;
+					if( targID == 25 ) // Guard
+						cursorType = 2; // helpful
+					mSock->TempObj( Npc );
+					mSock->TempInt( 1 );
+					mSock->target( 0, targID, cursorType, dictEntry );
+					return false;
+				}
+			}
+		}
+	}
+	else
+	{
+		std::string npcName = Npc->GetName();
+		if( npcName == "#" )
+		{
+			// If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID
+			npcName = Dictionary->GetEntry( 3000 + Npc->GetID() );
+		}
+
+		if( findString( ourText, strutil::upper( npcName )))
+		{
+			if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ) )
+			{
+				mSock->TempObj( Npc );
+				UI08 cursorType = 0;
+				if( targID == 25 ) // Guard
+					cursorType = 2; // helpful
+				mSock->target( 0, targID, cursorType, dictEntry );
+				return false;
+			}
 		}
 	}
 	return true;
@@ -601,20 +749,17 @@ CPetReleaseResponse::CPetReleaseResponse( const std::string &text ) : CBasePetRe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	std::string npcName = getNpcDictName( Npc, mSock );
+	if( findString( ourText, strutil::upper( npcName )))
 	{
-		if( findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( Npcs->canControlPet( mChar, Npc, true, false ))
 		{
-			Npcs->stopPetGuarding( Npc );
-			Npc->SetFTarg( NULL );
-			Npc->SetNpcWander( WT_FREE );
-			Npc->SetOwner( NULL );
-			Npc->TextMessage( NULL, 1325, TALK, false, Npc->GetName().c_str() );
-			if( Npc->GetTimer( tNPC_SUMMONTIME ) )
-			{
-				Effects->PlaySound( Npc, 0x01FE );
-				Npc->Delete();
-			}
+			// Reduce player's control slot usage by the amount of control slots taken up by the pet
+			mChar->SetControlSlotsUsed( std::max(0, mChar->GetControlSlotsUsed() - Npc->GetControlSlots()));
+
+			// Release the pet
+			Npcs->releasePet( Npc );
+
 			return false;
 		}
 	}
@@ -636,12 +781,13 @@ CPetGuardResponse::CPetGuardResponse( bool allVal, const std::string &text ) : C
 //o-----------------------------------------------------------------------------------------------o
 bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	std::string npcName = getNpcDictName( Npc, mSock );
+	if( saidAll || findString( ourText, strutil::upper( npcName )))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( Npcs->canControlPet( mChar, Npc, false, true ))
 		{
 			Npcs->stopPetGuarding( Npc );
-			mSock->sysmessage( 1321 );
+			mSock->sysmessage( 1321 ); // Your pet is now guarding you.
 			Npc->SetNPCAiType( AI_PET_GUARD );
 			Npc->SetGuarding( mChar );
 			mChar->SetGuarded( true );
@@ -664,14 +810,18 @@ CPetAttackResponse::CPetAttackResponse( bool allVal, const std::string &text ) :
 //o-----------------------------------------------------------------------------------------------o
 bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc, true ) )
+	std::string npcName = getNpcDictName( Npc, mSock );
+	if( saidAll || findString( ourText, strutil::upper( npcName )))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( Npcs->canControlPet( mChar, Npc, false, true ))
 		{
 			Npcs->stopPetGuarding( Npc );
 			mSock->TempObj( Npc );
-			mSock->target( 0, TARGET_ATTACK, 1313 );
-			if( !saidAll )
+			if( saidAll )
+				mSock->TempInt( 1 );
+			mSock->target( 0, TARGET_ATTACK, 1, 1313 );
+			//if( !saidAll )
+
 				return false;
 		}
 	}
@@ -688,9 +838,10 @@ CPetComeResponse::CPetComeResponse( bool allVal, const std::string &text ) : CPe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc ) )
+	std::string npcName = getNpcDictName( Npc, mSock );
+	if( saidAll || findString( ourText, strutil::upper( npcName )))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( Npcs->canControlPet( mChar, Npc, false, true ))
 		{
 			Npcs->stopPetGuarding( Npc );
 			Npc->SetFTarg( mChar );
@@ -713,16 +864,23 @@ CPetStayResponse::CPetStayResponse( bool allVal, const std::string &text ) : CPe
 //o-----------------------------------------------------------------------------------------------o
 bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-	if( canControlPet( mChar, Npc ) )
+	std::string npcName = getNpcDictName( Npc, mSock );
+	if( saidAll || findString( ourText, strutil::upper( npcName )))
 	{
-		if( saidAll || findString( ourText, UString(Npc->GetName()).upper() ) )
+		if( Npcs->canControlPet( mChar, Npc, false, true ))
 		{
 			Npcs->stopPetGuarding( Npc );
-			Npc->SetFTarg( NULL );
-			Npc->SetTarg( NULL );
+			Npc->SetFTarg( nullptr );
+			Npc->SetTarg( nullptr );
+			Npc->SetAttacker( nullptr );
 			if( Npc->IsAtWar() )
 				Npc->ToggleCombat();
+			Npc->SetOldNpcWander( WT_NONE );
 			Npc->SetNpcWander( WT_NONE );
+			if( mSock != nullptr )
+			{
+				mSock->sysmessage( 2413, npcName.c_str() ); // %s stays put.
+			}
 			if( !saidAll )
 				return false;
 		}
@@ -751,7 +909,8 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 				continue;
 
-			if( saidVendor || findString( ourText, UString(Npc->GetName()).upper() ) )
+			std::string npcName = getNpcDictName( Npc, mSock );
+			if( saidVendor || findString( ourText,strutil::upper( npcName )))
 			{
 				if( !Handle( mSock, mChar, Npc ) )
 					break;
@@ -793,14 +952,21 @@ CVendorSellResponse::CVendorSellResponse( bool vendVal, const std::string &text 
 //o-----------------------------------------------------------------------------------------------o
 bool CVendorSellResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
-
 	//Check if vendor has onSell script running
-	UI16 charTrig		= Npc->GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( charTrig );
-	if( toExecute != NULL )
+	std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnSell( mSock, Npc ) ) //if script returns true, don't continue
-			return false;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( toExecute->OnSell( mSock, Npc ) == 0 ) //if script returns false, don't continue
+			{
+				return false;
+			}
+		}
 	}
 
 	Npc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
@@ -825,7 +991,7 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 	{
-		CItem *pack		= NULL;
+		CItem *pack		= nullptr;
 		Npc->TextMessage( mSock, 385, TALK, false );
 		pack = Npc->GetPackItem();
 		if( ValidateObject( pack ) )
@@ -883,7 +1049,7 @@ bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 			if( give )
 				Items->CreateScriptItem( mSock, mChar, "0x0EED", give, OT_ITEM, true );
 
-			Npc->TextMessage( mSock, 1328, TALK, false, earned, pay, give );
+			Npc->TextMessage( mSock, 1328, TALK, 0, earned, pay, give );
 		}
 		else
 			Npc->TextMessage( mSock, 1329, TALK, false );
@@ -923,7 +1089,7 @@ bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 				{
 					pay = Npc->GetHoldG();
 				}
-				Npc->TextMessage( mSock, 1782, TALK, false, Npc->GetHoldG(), pay );
+				Npc->TextMessage( mSock, 1782, TALK, 0, Npc->GetHoldG(), pay );
 			}
 		}
 		else
@@ -972,24 +1138,30 @@ CHouseMultiResponse::CHouseMultiResponse( TargetIDs targVal, SI32 dictVal )
 void CHouseMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
 	CMultiObj *realHouse = findMulti( mChar );
-	if( ValidateObject( realHouse ) )
+	if( ValidateObject( realHouse ) && !realHouse->CanBeObjType( OT_BOAT ))
 	{
 		if( realHouse->CanBeObjType( OT_MULTI ))
 		{
-			UI16 targTrig		= realHouse->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
+			std::vector<UI16> scriptTriggers = realHouse->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( toExecute->OnHouseCommand( mSock, realHouse, targID ) )
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					return;
+					//-1 == event not found
+					// 0 == script returned false/0
+					// 1 == script returned true/1
+					if( toExecute->OnHouseCommand( mSock, realHouse, targID ) == 1 ) //if script returns true, don't continue
+					{
+						return;
+					}
 				}
 			}
 
 			if( realHouse->IsOwner( mChar ) )
 			{
 				mSock->TempObj( realHouse );
-				mSock->target( 0, targID, dictEntry );
+				mSock->target( 0, targID, 0, dictEntry );
 			}
 		}
 	}
@@ -1002,7 +1174,7 @@ CBoatResponse::CBoatResponse( const std::string &text, UI16 tW )
 }
 // void CBoatResponse::Handle( CSocket *mSock, CChar *mChar ) in Boats.cpp
 
-CBoatMultiResponse::CBoatMultiResponse( UI08 mType )
+CBoatMultiResponse::CBoatMultiResponse( BoatMoveType mType )
 {
 	moveType = mType;
 }
@@ -1014,13 +1186,37 @@ CBoatObj * GetBoat( CSocket *s );
 //o-----------------------------------------------------------------------------------------------o
 void CBoatMultiResponse::Handle( CSocket *mSock, CChar *mChar )
 {
+	// Let's do some spam-prevention here
+	if( mChar->GetTimer( tCHAR_ANTISPAM ) > cwmWorldState->GetUICurrentTime() )
+	{
+		return;
+	}
+	else
+	{
+		mChar->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
+	}
+
 	CBoatObj *boat = GetBoat( mSock );
 	if( !ValidateObject( boat ) )
+	{
 		return;
+	}
+
+	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
+	if( boat->GetMoveType() == BOAT_ANCHORED )
+	{
+		if( ValidateObject( tiller ) )
+		{
+			tiller->TextMessage( mSock, 2024 ); // Ar, the anchor is down sir!
+			mSock->sysmessage( 2023 ); // You must raise the anchor to pilot the ship.
+		}
+		return;
+	}
 
 	boat->SetMoveType( moveType );
 
-	CItem *tiller = calcItemObjFromSer( boat->GetTiller() );
 	if( ValidateObject( tiller ) )
-		tiller->TextMessage( mSock, 10 );
+	{
+		tiller->TextMessage( mSock, 10 ); // Aye, sir.
+	}
 }

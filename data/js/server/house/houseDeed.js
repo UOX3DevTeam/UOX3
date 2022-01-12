@@ -16,17 +16,19 @@ function onUseChecked( pUser, iUsed )
 	if( iUsed.morex == 0 )
 		return false;
 
+	var pSocket = pUser.socket;
+
 	// Check how many houses player already owns, before allowing placing any more houses
 	var housesOwned = pUser.housesOwned;
 	var housesCoOwned = pUser.housesCoOwned;
 	if( housesOwned >= maxHousesOwnable )
 	{
-		pUser.socket.SysMessage( GetDictionaryEntry( 1827, pSocket.language ), pUser.housesOwned, maxHousesOwnable, ( trackHousesPerAccount ? "account" : "character" )); // You already own %i houses, you may not place another (Max %i per %s)!
+		pSocket.SysMessage( GetDictionaryEntry( 1827, pSocket.language ), pUser.housesOwned, maxHousesOwnable, ( trackHousesPerAccount ? "account" : "character" )); // You already own %i houses, you may not place another (Max %i per %s)!
 		return false;
 	}
 	if( !canOwnAndCoOwnHouses && housesCoOwned > 0 )
 	{
-		pUser.socket.SysMessage( GetDictionaryEntry( 1828, pSocket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own
+		pSocket.SysMessage( GetDictionaryEntry( 1828, pSocket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own
 		return false;
 	}
 

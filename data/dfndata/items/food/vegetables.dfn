@@ -1,0 +1,245 @@
+//vegetables
+
+[0x0D39]
+{
+get=base_food
+name=turnip
+id=0x0D39
+value=6 3
+pileable=1
+}
+
+[0x0D3A]
+{
+get=base_food
+name=turnip
+id=0x0D3A
+weight=100
+value=6 3
+pileable=1
+}
+
+[0x0C63]
+{
+get=base_food
+name=turnip
+id=0x0C63
+value=6 3
+pileable=1
+}
+
+[0x0C64]
+{
+get=base_food
+name=gourd
+id=0x0C64
+value=3 1
+pileable=1
+}
+
+[0x0C65]
+{
+get=base_food
+name=gourd
+id=0x0C65
+value=3 1
+pileable=1
+}
+
+[0x0C66]
+{
+get=base_food
+name=gourd
+id=0x0C66
+value=3 1
+pileable=1
+}
+
+[0x0C67]
+{
+get=base_food
+name=gourd
+id=0x0c67
+value=3 1
+pileable=1
+}
+
+[0x0C6A]
+{
+get=base_food
+name=pumpkin
+id=0x0C6A
+value=13 6
+pileable=1
+}
+
+[0x0C6B]
+{
+get=base_food
+name=pumpkin
+id=0x0C6B
+value=13 6
+pileable=1
+}
+
+[0x0C6C]
+{
+get=base_food
+name=pumpkin
+id=0x0C6C
+value=13 6
+pileable=1
+}
+
+[0x0C6D]
+{
+get=base_food
+name=onion
+id=0x0C6D
+value=3 1
+pileable=1
+}
+
+[0x0C6E]
+{
+get=base_food
+name=onion
+id=0x0c6e
+value=3 1
+pileable=1
+}
+
+[0x0c70]
+{
+get=base_food
+name=head of lettuce
+id=0x0c70
+value=6 3
+pileable=1
+}
+
+[0x0c71]
+{
+get=base_food
+name=head of lettuce
+id=0x0c71
+value=6 3
+pileable=1
+}
+
+[0x0c72]
+{
+get=base_food
+name=squash
+id=0x0c72
+value=3 1
+pileable=1
+}
+
+[0x0c73]
+{
+get=base_food
+name=squash
+id=0x0c73
+value=3 1
+pileable=1
+}
+
+[0x0c74]
+{
+get=base_food
+name=honeydew melon
+id=0x0c74
+value=8 4
+pileable=1
+}
+
+[0x0c75]
+{
+get=base_food
+name=honeydew melon
+id=0x0c75
+value=8 4
+pileable=1
+}
+
+[0x0c77]
+{
+get=base_food
+name=carrot
+id=0x0c77
+value=3 1
+pileable=1
+}
+
+[0x0c78]
+{
+get=base_food
+name=carrot
+id=0x0c78
+value=3 1
+pileable=1
+}
+
+[0x0c79]
+{
+get=base_food
+name=canteloupe
+id=0x0c79
+value=6 3
+pileable=1
+}
+
+[0x0c7a]
+{
+get=base_food
+name=canteloupe
+id=0x0c7a
+value=6 3
+pileable=1
+}
+
+[0x0c7b]
+{
+get=base_food
+name=head of cabbage
+id=0x0c7b
+value=6 3
+pileable=1
+}
+
+[0x0c7c]
+{
+get=base_food
+name=head of cabbage
+id=0x0c7c
+value=6 3
+pileable=1
+}
+
+[0x0c7f]
+{
+get=base_food
+name=ear of corn
+id=0x0c7f
+value=3 1
+pileable=1
+}
+
+[0x0c81]
+{
+get=base_food
+name=ear of corn
+id=0x0c81
+value=3 1
+pileable=1
+}
+
+[0x0c82]
+{
+get=base_food
+name=ear of corn
+id=0x0c82
+value=3 1
+pileable=1
+}

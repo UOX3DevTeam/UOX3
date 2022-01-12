@@ -7,8 +7,10 @@
 #include "CJSMapping.h"
 #include "cScript.h"
 
+#include "cServerDefinitions.h"
 
 #include "ObjectFactory.h"
+#include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI32 calcValue( CItem *i, UI32 value )
@@ -52,7 +54,7 @@ UI32 calcValue( CItem *i, UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 {
-	if( tReg == NULL )
+	if( tReg == nullptr )
 		return value;
 
 	SI16 good			= i->GetGood();
@@ -79,6 +81,7 @@ UI32 calcGoodValue( CTownRegion *tReg, CItem *i, UI32 value, bool isSelling )
 	return value;
 }
 
+bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIBuyItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -114,9 +117,9 @@ bool CPIBuyItem::Handle( void )
 	for( i = 0; i < itemtotal; ++i )
 	{
 		baseOffset	= 7 * i;
-		layer[i]	= tSock->GetByte( 8 + baseOffset );
-		bitems[i]	= calcItemObjFromSer( tSock->GetDWord( 9 + baseOffset ) );
-		amount[i]	= tSock->GetWord( 13 + baseOffset );
+		layer[i]	= tSock->GetByte( 8 + static_cast<size_t>(baseOffset) );
+		bitems[i]	= calcItemObjFromSer( tSock->GetDWord( 9 + static_cast<size_t>(baseOffset) ) );
+		amount[i]	= tSock->GetWord( 13 + static_cast<size_t>(baseOffset) );
 		goldtotal	+= ( amount[i] * ( bitems[i]->GetBuyValue() ) );
 	}
 
@@ -133,33 +136,37 @@ bool CPIBuyItem::Handle( void )
 				soldout = true;
 
 			// Check if onBuyFromVendor JS event is present for each item being purchased
-			// If true, and a return false has been returned from the script, halt the purchase
-			UI16 targTrig		= bitems[i]->GetScriptTrigger();
-			cScript *toExecute	= JSMapping->GetScript( targTrig );
-			if( toExecute != NULL )
+			// If return false or 0 has been returned from the script, halt the purchase
+			std::vector<UI16> scriptTriggers = bitems[i]->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) )
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
 				{
-					bitems.clear(); //needed???
-					return true;
+					if( toExecute->OnBuyFromVendor( tSock, npc, bitems[i] ) == 0 )
+					{
+						bitems.clear();
+						bitems.shrink_to_fit();
+						return true;
+					}
 				}
 			}
 		}
 		if( soldout )
 		{
-			npc->TextMessage( tSock, 1336, TALK, false );
+			npc->TextMessage( tSock, 1336, TALK, false ); // Alas, I no longer have all those goods in stock.  Let me know if there is something else thou wouldst buy.
 			clear = true;
 		}
 		else
 		{
 			if( mChar->IsGM() )
-				npc->TextMessage( NULL, 1337, TALK, false, mChar->GetName().c_str() );
+				npc->TextMessage( nullptr, 1337, TALK, 0, mChar->GetName().c_str() ); // Here you are, %s. Someone as special as thee will receive my wares for free of course.
 			else
 			{
 				if( goldtotal == 1 )
-					npc->TextMessage( NULL, 1338, TALK, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), goldtotal ); // Here you are, %s. That will be %d gold coin.  I thank thee for thy business.
 				else
-					npc->TextMessage( NULL, 1339, TALK, false, mChar->GetName().c_str(), goldtotal );
+					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), goldtotal ); // Here you are, %s. That will be %d gold coins.  I thank thee for thy business.
 
 				Effects->goldSound( tSock, goldtotal );
 			}
@@ -173,18 +180,18 @@ bool CPIBuyItem::Handle( void )
 					DeleteItemAmount( mChar, goldtotal, 0x0EED );
 			}
 			CItem *biTemp;
-			CItem *iMade = NULL;
+			CItem *iMade = nullptr;
 			UI16 j;
 			for( i = 0; i < itemtotal; ++i )
 			{
 				biTemp	= bitems[i];
-				iMade	= NULL;
+				iMade	= nullptr;
 				if( biTemp->GetAmount() > amount[i] )
 				{
 					if( biTemp->isPileable() )
 					{
 						iMade = Items->DupeItem( tSock, biTemp, amount[i] );
-						if( iMade != NULL )
+						if( iMade != nullptr )
 						{
 							iMade->SetCont( p );
 							iMade->PlaceInPack();
@@ -196,8 +203,20 @@ bool CPIBuyItem::Handle( void )
 						for( j = 0; j < amount[i]; ++j )
 						{
 							iMade = Items->DupeItem( tSock, biTemp, 1 );
-							if( iMade != NULL )
+							if( iMade != nullptr )
 							{
+								CItem * biTempCont = static_cast<CItem *>(biTemp->GetCont());
+								if( biTempCont->GetLayer() == 0x1A )
+								{
+									// Only do this for new items sold from vendor's sell container
+									SI16 iMadeHP = iMade->GetHP();
+									SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+									if( iMadeMaxHP > iMadeHP )
+									{
+										// Randomize the item's HP from HP to MaxHP
+										iMade->SetHP( static_cast<SI16>( RandomNum( iMadeHP, iMadeMaxHP )));
+									}
+								}
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
 								boughtItems.push_back( iMade );
@@ -209,13 +228,14 @@ bool CPIBuyItem::Handle( void )
 				}
 				else
 				{
-					switch( layer[i] )
+					CItem * biTempCont = static_cast<CItem *>(biTemp->GetCont());
+					switch( biTempCont->GetLayer() )
 					{
 						case 0x1A: // Sell Container
 							if( biTemp->isPileable() )
 							{
 								iMade = Items->DupeItem( tSock, biTemp, amount[i] );
-								if( iMade != NULL )
+								if( iMade != nullptr )
 								{
 									iMade->SetCont( p );
 									iMade->PlaceInPack();
@@ -227,8 +247,15 @@ bool CPIBuyItem::Handle( void )
 								for( j = 0; j < amount[i]; ++j )
 								{
 									iMade = Items->DupeItem( tSock, biTemp, 1 );
-									if( iMade != NULL )
+									if( iMade != nullptr )
 									{
+										SI16 iMadeHP = iMade->GetHP();
+										SI16 iMadeMaxHP = static_cast<SI16>(iMade->GetMaxHP());
+										if( iMadeMaxHP > iMadeHP )
+										{
+											// Randomize the item's HP from HP to MaxHP
+											iMade->SetHP( static_cast<SI16>( RandomNum( iMadeHP, iMadeMaxHP )));
+										}
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );
@@ -249,7 +276,7 @@ bool CPIBuyItem::Handle( void )
 								for( j = 0; j < amount[i]-1; ++j )
 								{
 									iMade = Items->DupeItem( tSock, biTemp, 1 );
-									if( iMade != NULL )
+									if( iMade != nullptr )
 									{
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
@@ -271,15 +298,25 @@ bool CPIBuyItem::Handle( void )
 			{
 				if( boughtItems[i] )
 				{
-					cScript *toGrab = JSMapping->GetScript( boughtItems[i]->GetScriptTrigger() );
-					if( toGrab != NULL )
-						toGrab->OnBoughtFromVendor( tSock, npc, boughtItems[i] );
+					std::vector<UI16> scriptTriggers = boughtItems[i]->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns 1, prevent other scripts with event from running
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
 	}
 	else
-		npc->TextMessage( NULL, 1340, TALK, false );
+		npc->TextMessage( nullptr, 1340, TALK, false ); // Alas, thou dost not possess sufficient gold for this purchase!
 
 	if( clear )
 	{
@@ -308,49 +345,62 @@ bool CPISellItem::Handle( void )
 		CItem *sellPack		= n->GetItemAtLayer( IL_SELLCONTAINER );
 		if( !ValidateObject( buyPack ) || !ValidateObject( sellPack ) || !ValidateObject( boughtPack ) )
 			return true;
-		CItem *j = NULL, *k = NULL, *l = NULL;
+		CItem *j = nullptr, *k = nullptr, *l = nullptr;
 		UI16 amt = 0, maxsell = 0;
 		UI08 i = 0;
 		UI32 totgold = 0, value = 0;
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
-			amt = tSock->GetWord( 13 + (6*i) );
+			//j = calcItemObjFromSer( tSock->GetDWord( 9 + (6 * static_cast<size_t>(i)) ) );
+			amt = tSock->GetWord( 13 + ( 6 * static_cast<size_t>(i)) );
 			maxsell += amt;
 		}
 
 		if( maxsell > cwmWorldState->ServerData()->SellMaxItemsStatus() )
 		{
-			n->TextMessage( NULL, 1342, TALK, false, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() );
+			n->TextMessage( nullptr, 1342, TALK, 0, mChar->GetName().c_str(), cwmWorldState->ServerData()->SellMaxItemsStatus() ); // Sorry %s, but I can only buy %i items at a time!
 			return true;
 		}
 
+		// Loop through each item being sold
 		for( i = 0; i < tSock->GetByte( 8 ); ++i )
 		{
-			j = calcItemObjFromSer( tSock->GetDWord( 9 + (6*i) ) );
-			amt = tSock->GetWord( 13 + (6*i) );
+			j = calcItemObjFromSer( tSock->GetDWord( 9 + ( 6 * static_cast<size_t>(i)) ) );
+			amt = tSock->GetWord( 13 + ( 6 * static_cast<size_t>(i)) );
 			if( ValidateObject( j ) )
 			{
 				if( j->GetAmount() < amt || FindItemOwner( j ) != mChar )
 				{
-					n->TextMessage( NULL, 1343, TALK, false );
+					n->TextMessage( nullptr, 1343, TALK, false ); // Cheating scum! Leave now, before I call the guards!
 					return true;
 				}
 
-				// Check if onSellToVendor JS event is present for each item being sold
-				// If true, and a value of "false" has been returned from the script, halt the sale
-				UI16 targTrig		= j->GetScriptTrigger();
-				cScript *toExecute	= JSMapping->GetScript( targTrig );
-				if( toExecute != NULL )
+				// Check if onSellToVendor JS event is present for item being sold
+				// If present and a value of "false" or 0 was returned from the script, halt the sale
+				bool saleHalted = false;
+				std::vector<UI16> scriptTriggers = j->GetScriptTriggers();
+				for( auto scriptTrig : scriptTriggers )
 				{
-					if( toExecute->OnSellToVendor( tSock, n, j ) )
+					cScript *toExecute = JSMapping->GetScript( scriptTrig );
+					if( toExecute != nullptr )
 					{
-						return true; // LOOKATME - Should this be continue instead?
+						if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+						{
+							// Halt sale! 
+							saleHalted = true;
+							break;
+						}
 					}
 				}
 
-				CItem *join = NULL;
-				CDataList< CItem * > *pCont = boughtPack->GetContainsList();
+				// If sale was halted by onSellToVendor event, continue to next item
+				if( saleHalted )
+				{
+					continue;
+				}
+
+				CItem *join = nullptr;
+				GenericList< CItem * > *pCont = boughtPack->GetContainsList();
 				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ) )
@@ -396,13 +446,26 @@ bool CPISellItem::Handle( void )
 						l = j;
 
 					if( ValidateObject( l ) )
+					{
 						l->SetCont( boughtPack );
+						l->RemoveFromSight();
+					}
 				}
 				if( l )
 				{
-					cScript *toGrab = JSMapping->GetScript( l->GetScriptTrigger() );
-					if( toGrab != NULL )
-						toGrab->OnSoldToVendor( tSock, n, l );
+					std::vector<UI16> scriptTriggers = l->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns true/1, prevent other scripts with event from running
+							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -436,7 +499,7 @@ void restockNPC( CChar& i, bool stockAll )
 	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
 	if( ValidateObject( ci ) )
 	{
-		CDataList< CItem * > *ciCont = ci->GetContainsList();
+		GenericList< CItem * > *ciCont = ci->GetContainsList();
 		for( CItem *c = ciCont->First(); !ciCont->Finished(); c = ciCont->Next() )
 		{
 			if( ValidateObject( c ) )
@@ -448,7 +511,7 @@ void restockNPC( CChar& i, bool stockAll )
 				}
 				else if( c->GetRestock() )
 				{
-					UI16 stockAmt = UOX_MIN( c->GetRestock(), static_cast<UI16>(( c->GetRestock() / 2 ) + 1) );
+					UI16 stockAmt = std::min( c->GetRestock(), static_cast<UI16>(( c->GetRestock() / 2 ) + 1) );
 					c->IncAmount( stockAmt );
 					c->SetRestock( c->GetRestock() - stockAmt );
 				}
@@ -480,5 +543,5 @@ bool restockFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void restock( bool stockAll )
 {
 	UI32 b = (stockAll ? 1 : 0);
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &restockFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, nullptr, &restockFunctor );
 }

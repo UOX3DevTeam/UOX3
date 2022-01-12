@@ -8,9 +8,18 @@ function CommandRegistration()
 function command_ACTION( socket, cmdString )
 {
 	if( cmdString )
+	{
+		var splitString = cmdString.split( " " );
+		if( splitString[3] )
+			socket.currentChar.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]), ( parseInt(splitString[3]) == 1 ? true : false ));
+		else if( splitString[2] )
+			socket.currentChar.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]) );
+		else if( splitString[1] )
+			socket.currentChar.DoAction( parseInt(splitString[0]), parseInt(splitString[1]) );
+		else
 			socket.currentChar.DoAction( parseInt( cmdString ));
+	}
 }
-
 
 function command_BOLT( socket, cmdString )
 {
@@ -32,7 +41,7 @@ function command_NPCACTION( socket, cmdString )
 	if( cmdString )
 	{
 		var targMsg = GetDictionaryEntry( 213, socket.language );
-		socket.tempint = parseInt( cmdString );
+		socket.xtext = cmdString;
 		socket.CustomTarget( 0, targMsg );
 	}
 }
@@ -40,6 +49,17 @@ function command_NPCACTION( socket, cmdString )
 function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
-		ourObj.DoAction( socket.tempint );
-	socket.tempint = 0;
+	{
+		var cmdString = socket.xtext;
+		var splitString = cmdString.split( " " );
+		if( splitString[3] )
+			ourObj.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]), ( parseInt(splitString[3]) == 1 ? true : false ));
+		else if( splitString[2] )
+			ourObj.DoAction( parseInt(splitString[0]), null, parseInt(splitString[2]) );
+		else if( splitString[1] )
+			ourObj.DoAction( parseInt(splitString[0]), parseInt(splitString[1]) );
+		else
+			ourObj.DoAction( parseInt( cmdString ));
+	}
+	socket.xtext = "";
 }

@@ -400,3 +400,11 @@ FOODLIST=hay
 FOODLIST=fish
 FOODLIST=meat
 }
+
+[FOODLIST OMNIVORE]
+{
+FOODLIST=fish
+FOODLIST=fruit
+FOODLIST=meat
+FOODLIST=vegetables
+}

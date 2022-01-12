@@ -1,3 +1,4 @@
 .vs
 *.bak
 out
+*.ini

@@ -37,12 +37,12 @@ protected:
 
 	virtual bool		LoadRemnants( void ) override;
 
-	CDataList< CItem * >	itemInMulti;
-	CDataList< CChar * >	charInMulti;
-	CDataList< CChar * >	ownersOfMulti;
-	CDataList< CChar * >	friendsOfMulti;
-	CDataList< CChar * >	bannedFromMulti;
-	CDataList< CChar * >	guestsOfMulti;
+	GenericList< CItem * >	itemInMulti;
+	GenericList< CChar * >	charInMulti;
+	GenericList< CChar * >	ownersOfMulti;
+	GenericList< CChar * >	friendsOfMulti;
+	GenericList< CChar * >	bannedFromMulti;
+	GenericList< CChar * >	guestsOfMulti;
 
 public:
 	CMultiObj();
@@ -127,15 +127,15 @@ public:
 	SI16				GetBanY( void ) const;
 	void				SetBanY( const SI16 newVal );
 
-	UString				GetBuildTimestamp( void ) const;
+	std::string			GetBuildTimestamp( void ) const;
 	void				SetBuildTimestamp( time_t newTime );
-	UString				GetTradeTimestamp( void ) const;
+	std::string			GetTradeTimestamp( void ) const;
 	void				SetTradeTimestamp( time_t newTime );
 
 	virtual bool		Save( std::ofstream &outStream ) override;
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
-	virtual bool		HandleLine( UString &UTag, UString &data ) override;
+	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 	virtual void		SetOwner( CChar *newOwner ) override;
 
@@ -146,12 +146,12 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
-	CDataList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
-	CDataList< CChar * > *	GetCharsInMultiList( void );
-	CDataList< CItem * > *	GetItemsInMultiList( void );
+	GenericList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
+	GenericList< CChar * > *	GetCharsInMultiList( void );
+	GenericList< CItem * > *	GetItemsInMultiList( void );
 
 };
 
@@ -161,7 +161,7 @@ protected:
 	SERIAL				tiller;
 	SERIAL				planks[2];
 	SERIAL				hold;
-	UI08				moveType;
+	SI08				moveType;
 
 	TIMERVAL			nextMoveTime;
 
@@ -169,7 +169,7 @@ private:
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
-	virtual bool		HandleLine( UString &UTag, UString &data ) override;
+	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 public:
 	CBoatObj();
@@ -178,12 +178,12 @@ public:
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;
 	SERIAL				GetHold( void ) const;
-	UI08				GetMoveType( void ) const;
+	SI08				GetMoveType( void ) const;
 
 	void				SetPlank( UI08 plankNum, SERIAL newVal );
 	void				SetTiller( SERIAL newVal );
 	void				SetHold( SERIAL newVal );
-	void				SetMoveType( UI08 newVal );
+	void				SetMoveType( SI08 newVal );
 
 	TIMERVAL			GetMoveTime( void ) const;
 	void				SetMoveTime( TIMERVAL newVal );

@@ -4,6 +4,7 @@
 #include "scriptc.h"
 #include <filesystem>
 #include "StringUtility.hpp"
+#include "IP4Address.hpp"
 
 CServerDefinitions *FileLookup;
 
@@ -70,6 +71,8 @@ std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
 
 CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 {
+	// Load our device ips
+	IP4Address::loadIPs();
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
 	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>(g_mmapAddMenuMap.size()) << ")" << myendl;
@@ -81,6 +84,9 @@ CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 
 CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
 {
+	// Load our device ips
+	IP4Address::loadIPs();
+	
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts...." << myendl;
 
@@ -120,11 +126,11 @@ void CServerDefinitions::Cleanup( void )
 		VECSCRIPTLIST& toDel = (*slIter);
 		for( size_t j = 0; j < toDel.size(); ++j )
 		{
-			if( toDel[j] == NULL )
+			if( toDel[j] == nullptr )
 				continue;
 
 			delete toDel[j];
-			toDel[j] = NULL;
+			toDel[j] = nullptr;
 		}
 	}
 }
@@ -143,7 +149,7 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toDelete = (*dIter);
-			if( toDelete != NULL )
+			if( toDelete != nullptr )
 			{
 				retVal = true;
 				delete toDelete;
@@ -156,20 +162,20 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 
 ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		UString tUFind = UString( toFind ).upper();
+		auto tUFind = strutil::upper( toFind );
 
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toCheck = (*dIter);
-			if( toCheck != NULL )
+			if( toCheck != nullptr )
 			{
 				rvalue = toCheck->FindEntry( tUFind );
-				if( rvalue != NULL )
+				if( rvalue != nullptr )
 					break;
 			}
 		}
@@ -179,17 +185,17 @@ ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATE
 
 ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
 {
-	ScriptSection *rvalue = NULL;
+	ScriptSection *rvalue = nullptr;
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
 		{
 			Script *toCheck = (*dIter);
-			if( toCheck != NULL )
+			if( toCheck != nullptr )
 			{
 				rvalue = toCheck->FindEntrySubStr( toFind );
-				if( rvalue != NULL )
+				if( rvalue != nullptr )
 					break;
 			}
 		}
@@ -246,7 +252,7 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 	if( !mSort.empty() )
 	{
 		std::sort( mSort.begin(), mSort.end() );
-		Console.print( format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
+		Console.print( strutil::format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
 		Console.TurnYellow();
 
@@ -256,10 +262,10 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 			Console.print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
-			Console.print( format("%6i", iTotal) );
+			Console.print( strutil::format("%6i", iTotal) );
 		}
 
-		Console.print( format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
+		Console.print( strutil::format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
 		Console.TurnNormal();
 		Console.print( " entries" );
 		switch( wasPriod )
@@ -291,7 +297,7 @@ size_t CServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
 {
 	size_t sumEntries = 0;
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
-	if( toScan == NULL )
+	if( toScan == nullptr )
 		return 0;
 
 	for( VECSCRIPTLIST_CITERATOR cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
@@ -306,7 +312,7 @@ size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
 
 Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 {
-	Script *retScript = NULL;
+	Script *retScript = nullptr;
 	slIter = ScriptListings[typeToFind].begin();
 	if( !FinishedScripts( typeToFind ) )
 		retScript = (*slIter);
@@ -314,7 +320,7 @@ Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
 }
 Script * CServerDefinitions::NextScript( DEFINITIONCATEGORIES typeToFind )
 {
-	Script *retScript = NULL;
+	Script *retScript = nullptr;
 	if( !FinishedScripts( typeToFind ) )
 	{
 		++slIter;
@@ -343,22 +349,24 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		if( FileExists( filename ) )	// the file exists, so perhaps we do
 		{
 			Script *prio = new Script( filename, category, false );	// generate a script for it
-			if( prio != NULL )	// successfully made a script
+			if( prio != nullptr )	// successfully made a script
 			{
-				UString tag;
-				UString data;
+				std::string tag;
+				std::string data;
 				ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
-				if( prioInfo != NULL )
+				if( prioInfo != nullptr )
 				{
 					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
 					{
 						data = prioInfo->GrabData();
-						if( tag.upper() == "DEFAULTPRIORITY" )
-							defaultPriority = data.toShort();
+						if( strutil::upper( tag ) == "DEFAULTPRIORITY" )
+						{
+							defaultPriority = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
 						else
 						{
-							std::string filenametemp = tag.lower();
-							priorityMap[filenametemp] = data.toShort();
+							std::string filenametemp = strutil::lower( tag );
+							priorityMap[filenametemp] =static_cast<SI16>(std::stoi(data, nullptr, 0));
 						}
 					}
 					wasPrioritized = 0;
@@ -366,7 +374,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 				else
 					wasPrioritized = 1;
 				delete prio;	// remove script
-				prio = NULL;
+				prio = nullptr;
 			}
 			else
 				wasPrioritized = 2;
@@ -374,7 +382,7 @@ void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-	//	Console.Warning( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() );
+	//	Console.warning( strutil::format( "Failed to open priority.nfo for reading in %s DFN", dirnames[category].c_str() ));
 #endif
 	wasPrioritized = 2;
 }
@@ -394,7 +402,7 @@ void CServerDefinitions::DisplayPriorityMap( void )
 SI16 CServerDefinitions::GetPriority( const char *file )
 {
 	SI16 retVal = defaultPriority;
-	UString lowername = UString( file ).lower();
+	auto lowername = strutil::lower( file );
 	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
 	if( p != priorityMap.end() )
 		retVal = p->second;
@@ -417,13 +425,13 @@ bool cDirectoryListing::PushDir( std::string toMove )
 	{
 		std::filesystem::current_path( path );
 		currentDir = toMove;
-		replaceSlash( toMove );
+		toMove = strutil::replaceSlash( toMove );
 		shortCurrentDir = ShortDirectory( toMove );
 		return true;
 	}
 	else
 	{
-		Console.error(format( "DFN directory %s does not exist", toMove.c_str()) );
+		Console.error(strutil::format( "DFN directory %s does not exist", toMove.c_str()) );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	return false;

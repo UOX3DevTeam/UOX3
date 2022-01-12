@@ -30,7 +30,7 @@
 #include "ObjectFactory.h"
 
 
-CWorldMain						*cwmWorldState = NULL;
+CWorldMain						*cwmWorldState = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -69,6 +69,7 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLAS
 	teleLocs.resize( 0 );
 	escortRegions.resize( 0 );
 	logoutLocs.resize( 0 );
+	sosLocs.resize( 0 );
 	goPlaces.clear();
 	refreshQueue.clear();
 	deletionQueue.clear();
@@ -85,6 +86,7 @@ CWorldMain::~CWorldMain()
 	murdererTags.clear();
 	teleLocs.clear();
 	logoutLocs.clear();
+	sosLocs.clear();
 	escortRegions.clear();
 	creatures.clear();
 	goPlaces.clear();
@@ -504,7 +506,7 @@ void CWorldMain::SaveNewWorld( bool x )
 	while( spIter != spEnd )
 	{
 		CSpawnRegion *spawnReg = spIter->second;
-		if( spawnReg != NULL )
+		if( spawnReg != nullptr )
 			spawnReg->checkSpawned();
 		++spIter;
 	}
@@ -558,7 +560,7 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		char saveTimestamp[100];
 		time_t tempTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		tm *curtime = new tm( *std::localtime( &tempTimestamp ) );
+		struct tm *curtime = std::localtime( &tempTimestamp );
 		strftime( saveTimestamp, 50, "%F at %T", curtime );
 
 		Console << "World save complete on " << saveTimestamp << myendl;
@@ -579,7 +581,7 @@ void CWorldMain::RegionSave( void )
 	std::ofstream regionsDestination( regionsFile.c_str() );
 	if( !regionsDestination )
 	{
-		Console.error( format("Failed to open %s for writing", regionsFile.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", regionsFile.c_str()) );
 		return;
 	}
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -587,7 +589,7 @@ void CWorldMain::RegionSave( void )
 	while( tIter != tEnd )
 	{
 		CTownRegion *myReg = tIter->second;
-		if( myReg != NULL )
+		if( myReg != nullptr )
 			myReg->Save( regionsDestination );
 		++tIter;
 	}
@@ -617,7 +619,7 @@ void CWorldMain::SaveStatistics( void )
 	std::ofstream	statsDestination( statsFile.c_str() );
 	if( !statsDestination )
 	{
-		Console.error( format("Failed to open %s for writing", statsFile.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", statsFile.c_str()) );
 		return;
 	}
 	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';

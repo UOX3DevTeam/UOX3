@@ -4,20 +4,110 @@ get=base_item
 name=rolling pin
 id=0x1043
 weight=100
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
-[0x1039]
+// Skillet/Frying Pan
+[0x097f]
 {
 get=base_item
-name=sack of flour
-id=0x1039
-weight=200
+name=skillet
+id=0x097f
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
-[0x1045]
+// Skillet/Frying Pan
+[0x09e2]
+{
+get=0x097f
+id=0x09e2
+}
+
+// Sifter/Flour Sifter
+[0x103e]
 {
 get=base_item
-name=sack of flour
-id=0x1045
-weight=200
+name=sifter
+id=0x103e
+weight=100
+value=6 3
+restock=15
+decay=1
+good=4
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
+}
+
+[0x0461]
+{
+get=base_item
+name=oven
+id=0x0461
+weight=5000
+}
+
+[0x0462]
+{
+get=base_item
+name=oven
+id=0x0462
+weight=5000
+}
+
+[0x046c]
+{
+get=base_item
+name=oven
+id=0x046c
+weight=5000
+}
+
+[0x046f]
+{
+get=base_item
+name=oven
+id=0x046f
+weight=5000
+}
+
+[0x092b]
+{
+get=base_item
+name=oven
+id=0x092b
+weight=5000
+}
+
+[0x092c]
+{
+get=base_item
+name=oven
+id=0x092c
+weight=5000
+}
+
+[0x0931]
+{
+get=base_item
+name=oven
+id=0x0931
+weight=5000
+}
+
+[0x0930]
+{
+get=base_item
+name=oven
+id=0x0930
+weight=5000
 }

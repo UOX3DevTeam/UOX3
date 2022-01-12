@@ -17,6 +17,7 @@
 #include "cEffects.h"
 #include "regions.h"
 #include "combat.h"
+#include "Dictionary.h"
 #include "StringUtility.hpp"
 
 #undef DBGFILE
@@ -47,7 +48,7 @@ bool isValidAttackTarget( CChar& mChar, CChar *cTarget )
 			return false;
 		if( objInRange( &mChar, cTarget, cwmWorldState->ServerData()->CombatMaxRange() ) )
 		{
-			if( LineOfSight( NULL, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+			if( LineOfSight( nullptr, (&mChar), cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				if( isOnline( (*cTarget) ) || cTarget->IsNpc() )
 					return true;
@@ -86,9 +87,9 @@ void HandleGuardAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -97,7 +98,7 @@ void HandleGuardAI( CChar& mChar )
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
 					{
 						Combat->AttackTarget( &mChar, tempChar );
-						mChar.TextMessage( NULL, 313, TALK, true );
+						mChar.TextMessage( nullptr, 313, TALK, true );
 						regChars->Pop();
 						return;
 					}
@@ -122,9 +123,9 @@ void HandleFighterAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -158,20 +159,29 @@ void HandleHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar = mSock->CurrcharObj();
-		if( realChar->IsDead() )
+		CMultiObj *multiObj = realChar->GetMultiObj();
+		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				if( realChar->IsMurderer() )
-					mChar.TextMessage( NULL, 322, TALK, true );
+					mChar.TextMessage( nullptr, 322, TALK, true );
 				else if( realChar->IsCriminal() )
-					mChar.TextMessage( NULL, 770, TALK, true );
+					mChar.TextMessage( nullptr, 770, TALK, true );
 				else if( realChar->IsInnocent() )
 				{
-					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					if( mChar.GetBodyType() == BT_GARGOYLE ||
+						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					{
+						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+					}
+					else // Characters pre-v7.0.0.0
+					{
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
+					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
-					mChar.TextMessage( NULL, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+					mChar.TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 			}
 		}
@@ -191,19 +201,28 @@ void HandleEvilHealerAI( CChar& mChar )
 	{
 		CSocket *mSock	= (*cIter);
 		CChar *realChar	= mSock->CurrcharObj();
-		if( realChar->IsDead() )
+		CMultiObj *multiObj = realChar->GetMultiObj();
+		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
 		{
 			if( LineOfSight( mSock, realChar, mChar.GetX(), mChar.GetY(), ( mChar.GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 			{
 				if( realChar->IsMurderer() )
 				{
-					Effects->PlayCharacterAnimation( &mChar, 0x10 );
+					if( mChar.GetBodyType() == BT_GARGOYLE ||
+						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					{
+						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+					}
+					else // Characters pre-v7.0.0.0
+					{
+						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
+					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-					mChar.TextMessage( NULL, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
+					mChar.TextMessage( nullptr, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
 				}
 				else
-					mChar.TextMessage( NULL, 329, TALK, true );
+					mChar.TextMessage( nullptr, 329, TALK, true );
 			}
 		}
 	}
@@ -223,9 +242,14 @@ void HandleEvilAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+
+			// Chance to reverse list of chars
+			if( RandomNum( 0, 1 ))
+				regChars->Reverse();
+
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -271,9 +295,9 @@ void HandleChaoticAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			CMapRegion *MapArea = (*rIter);
-			if( MapArea == NULL )	// no valid region
+			if( MapArea == nullptr )	// no valid region
 				continue;
-			CDataList< CChar * > *regChars = MapArea->GetCharList();
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -305,20 +329,21 @@ void HandleAnimalAI( CChar& mChar )
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
 			const SI08 hunger = mChar.GetHunger();
-			if( hunger <= 4 )
+			if( hunger <= 3 )
 			{
 				CMapRegion *MapArea = (*rIter);
-				if( MapArea == NULL )	// no valid region
+				if( MapArea == nullptr )	// no valid region
 					continue;
-				CDataList< CChar * > *regChars = MapArea->GetCharList();
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
 				regChars->Push();
 				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
 					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						if( ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() != AI_ANIMAL ) || hunger < 2  )
+						if(( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE ) 
+							|| ( hunger <= 1 && ( tempChar->GetNPCAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetID()].IsHuman() )))
 						{
-							if( RandomNum( 0, 100 ) >= 50 ) // 50% chance to attack tempChar, 50% chance to attack next tempChar
+							if( RandomNum( 0, 100 ) >= 5 ) // 5% chance (per AI cycle to attack tempChar)
 								continue;
 							Combat->AttackTarget( &mChar, tempChar );
 							regChars->Pop();
@@ -340,13 +365,14 @@ void HandleAnimalAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void CheckAI( CChar& mChar )
 {
-	CChar *realChar			= NULL;
+	CChar *realChar			= nullptr;
 	switch( mChar.GetNPCAiType() )
 	{
-		case AI_BANKER:													// Banker
-		case AI_PLAYERVENDOR:											// Player Vendors.
 		case AI_NONE:													// No special AI, default NPC behavior
-		case AI_DUMMY:												// Passive AI - doesn't attack nor fight back
+		case AI_DUMMY:													// Passive AI - doesn't attack nor fight back
+		case AI_BANKER:													// Banker
+		case AI_STABLEMASTER:											// Stablemaster
+		case AI_PLAYERVENDOR:											// Player Vendors.
 			break;	// No AI for these special NPC's.
 		case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
 		case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
@@ -366,8 +392,11 @@ void CheckAI( CChar& mChar )
 				Combat->AttackTarget( &mChar, realChar->GetTarg() );
 			break;
 		default:
-			Console.error( format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
+		{
+			std::string mCharName = getNpcDictName( &mChar );
+			Console.error( strutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
 			return;
+		}
 	}
 }
 

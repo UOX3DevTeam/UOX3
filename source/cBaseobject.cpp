@@ -26,6 +26,7 @@
 #include "network.h"
 #include "ObjectFactory.h"
 #include "weight.h"
+#include "Dictionary.h"
 #include <bitset>
 
 
@@ -36,6 +37,7 @@ const UI32 BIT_SPAWNED		=	3;
 const UI32 BIT_SAVE			=	4;
 const UI32 BIT_DISABLED		=	5;
 const UI32 BIT_WIPEABLE		=	6;
+const UI32 BIT_DAMAGEABLE	=	7;
 
 
 //o-----------------------------------------------------------------------------------------------o
@@ -46,7 +48,7 @@ const UI32 BIT_WIPEABLE		=	6;
 //o-----------------------------------------------------------------------------------------------o
 CBaseObject::~CBaseObject()
 {
-	if( multis != NULL )
+	if( multis != nullptr )
 		RemoveFromMulti( false );
 	// Delete all tags.
 	tags.clear();
@@ -61,11 +63,12 @@ const UI16			DEFBASE_ID			= 1;
 const UI16			DEFBASE_COLOUR		= 0;
 const UI08			DEFBASE_DIR			= 0;
 const SERIAL		DEFBASE_SERIAL		= INVALIDSERIAL;
-CMultiObj *			DEFBASE_MULTIS		= NULL;
+CMultiObj *			DEFBASE_MULTIS		= nullptr;
 const SERIAL		DEFBASE_SPAWNSER	= INVALIDSERIAL;
 const SERIAL		DEFBASE_OWNER		= INVALIDSERIAL;
 const UI08			DEFBASE_WORLD		= 0;
 const UI16			DEFBASE_INSTANCEID	= 0;
+const UI16			DEFBASE_SUBREGION	= 0;
 const SI16			DEFBASE_STR			= 0;
 const SI16			DEFBASE_DEX			= 0;
 const SI16			DEFBASE_INT			= 0;
@@ -82,7 +85,7 @@ const SI16			DEFBASE_DEX2		= 0;
 const SI16			DEFBASE_INT2		= 0;
 const SI32			DEFBASE_FP			= -1;
 const UI08			DEFBASE_POISONED	= 0;
-const SI16			DEFBASE_CARVE		= -1;
+const SI16			DEFBASE_CARVE		= 0;
 const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
@@ -103,12 +106,15 @@ lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION )
 {
+	multis = nullptr;
+	tempmulti = INVALIDSERIAL;
 	objSettings.reset();
+	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
-	if( cwmWorldState != NULL && cwmWorldState->GetLoaded() )
+	if( cwmWorldState != nullptr && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
 	memset( &resistances[0], DEFBASE_RESIST, sizeof( UI16 ) * WEATHNUM );
@@ -161,6 +167,10 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		if( I->second.m_Destroy || tagval.m_Destroy )
 		{
 			tags.erase( I );
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
 			return;
 		}
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
@@ -170,7 +180,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= tagval.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
-			I->second.m_IntValue	= tagval.m_StringValue.length();
+			I->second.m_IntValue	= static_cast<SI32>(tagval.m_StringValue.length());
 		}
 		else
 		{
@@ -179,11 +189,96 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagval.m_IntValue;
 		}
+
+		if( CanBeObjType( OT_ITEM ))
+			(static_cast<CItem *>(this))->UpdateRegion();
+		else if( CanBeObjType( OT_CHAR ))
+			(static_cast<CChar *>(this))->UpdateRegion();
 	}
 	else
 	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
 		if( !tagval.m_Destroy )
+		{
 			tags[tagname] = tagval;
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+		}
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TAGMAPOBJECT GetTempTag( std::string tempTagName ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Fetch custom, temporary tag with specified name from object's temporary tag map
+//o-----------------------------------------------------------------------------------------------o
+TAGMAPOBJECT CBaseObject::GetTempTag( std::string tempTagName ) const
+{
+	TAGMAPOBJECT localObject;
+	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
+	localObject.m_IntValue		= 0;
+	localObject.m_Destroy		= FALSE;
+	localObject.m_StringValue	= "";
+	TAGMAP2_CITERATOR CI = tempTags.find( tempTagName );
+	if( CI != tempTags.end() )
+		localObject = CI->second;
+
+	return localObject;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Store custom, temporary string/int tag in an object's temporary tag map
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
+{
+	TAGMAP2_ITERATOR I = tempTags.find( tempTagName );
+	if( I != tempTags.end() )
+	{
+		// Check to see if this object needs to be destroyed
+		if( I->second.m_Destroy || tagVal.m_Destroy )
+		{
+			tempTags.erase( I );
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+			return;
+		}
+		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
+		else if( tagVal.m_ObjectType == TAGMAP_TYPE_STRING )
+		{
+			I->second.m_Destroy		= FALSE;
+			I->second.m_ObjectType	= tagVal.m_ObjectType;
+			I->second.m_StringValue	= tagVal.m_StringValue;
+			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
+			I->second.m_IntValue	= static_cast<SI32>(tagVal.m_StringValue.length());
+		}
+		else
+		{
+			I->second.m_Destroy		= FALSE;
+			I->second.m_ObjectType	= tagVal.m_ObjectType;
+			I->second.m_StringValue	= "";
+			I->second.m_IntValue	= tagVal.m_IntValue;
+		}
+
+		if( CanBeObjType( OT_ITEM ))
+			(static_cast<CItem *>(this))->UpdateRegion();
+		else if( CanBeObjType( OT_CHAR ))
+			(static_cast<CChar *>(this))->UpdateRegion();
+	}
+	else
+	{	// We need to create a TAGMAPOBJECT and initialize and store into the tagmap
+		if( !tagVal.m_Destroy )
+		{
+			tempTags[tempTagName] = tagVal;
+			if( CanBeObjType( OT_ITEM ))
+				(static_cast<CItem *>(this))->UpdateRegion();
+			else if( CanBeObjType( OT_CHAR ))
+				(static_cast<CChar *>(this))->UpdateRegion();
+		}
 	}
 }
 
@@ -299,6 +394,11 @@ UI16 CBaseObject::GetResist( WeatherType damage ) const
 void CBaseObject::SetResist( UI16 newValue, WeatherType damage )
 {
 	resistances[damage] = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -314,7 +414,7 @@ UI16 CBaseObject::GetID( void ) const
 }
 void CBaseObject::SetID( UI16 newValue )
 {
-	CBaseObject *checkCont = NULL;
+	CBaseObject *checkCont = nullptr;
 	if( isPostLoaded() && CanBeObjType( OT_ITEM ) )
 		checkCont = (static_cast<CItem *>(this))->GetCont();
 
@@ -372,6 +472,8 @@ void CBaseObject::SetColour( UI16 newValue )
 {
 	colour = newValue;
 	Dirty( UT_UPDATE );
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -437,7 +539,7 @@ void CBaseObject::SetMulti( SERIAL newSerial, bool fireTrigger )
 			AddToMulti( fireTrigger );
 		}
 		else
-			multis = NULL;
+			multis = nullptr;
 	}
 }
 //o-----------------------------------------------------------------------------------------------o
@@ -482,7 +584,7 @@ CSpawnItem *CBaseObject::GetSpawnObj( void ) const
 	CSpawnItem *ourSpawner = static_cast<CSpawnItem *>(calcItemObjFromSer( spawnserial ));
 	if( ValidateObject( ourSpawner ) && ourSpawner->GetObjType() == OT_SPAWNER )
 		return ourSpawner;
-	return NULL;
+	return nullptr;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -521,6 +623,17 @@ void CBaseObject::SetOwner( CChar *newOwner )
 	else
 		owner = INVALIDSERIAL;
 	AddSelfToOwner();
+
+	if( newOwner != nullptr && CanBeObjType( OT_CHAR ))
+	{
+		CChar *thisChar = static_cast<CChar *>(this);
+		UI08 maxPetOwners = cwmWorldState->ServerData()->MaxPetOwners();
+		if( !thisChar->IsDispellable() && maxPetOwners > 0 && thisChar->GetPetOwnerList()->Num() < maxPetOwners )
+		{
+			// Add new owner to list of players who have owned character
+			thisChar->AddPetOwnerToList( newOwner );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -535,6 +648,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	//static std::ostringstream objectDump( destination ); //static, construct only once
 	//objectDump.str(std::string()); // clear the stream
 	//destination = ""; // clear the string
+
 	SI16 temp_st2, temp_dx2, temp_in2;
 
 	// Hexadecimal Values
@@ -561,7 +675,18 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "Name=" << name << '\n';
+
+	std::string objName = name;
+	if( CanBeObjType( OT_CHAR ) )
+	{
+		if( objName == "#" )
+		{
+			// If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID
+			objName = "#//" + Dictionary->GetEntry( 3000 + id );
+		}
+	}
+
+	outStream << "Name=" << objName << '\n';
 	outStream << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << "," << (UI16)instanceID << '\n';
 	outStream << "Title=" << title << '\n';
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
@@ -598,16 +723,24 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	outStream << "Damage=" << lodamage << "," << hidamage << '\n';
 	outStream << "Poisoned=" << (SI16)poisoned << '\n';
 	outStream << "Carve=" << GetCarve() << '\n';
+	outStream << "Damageable=" << (isDamageable()?"1":"0") << '\n';
 	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
 	{
-		if( GetResist( (WeatherType)resist ) >= 10 )
-			outStream <<  GetResist( (WeatherType)resist ) << "," ;
-		else
-			outStream << "0" <<  GetResist( (WeatherType)resist ) << ",";
+		outStream << GetResist( (WeatherType)resist ) << ",";
 	}
 	outStream << "[END]" << '\n';
-	outStream << "ScpTrig=" << scriptTrig << '\n';
+	if( scriptTriggers.size() > 0 )
+	{
+		for( auto scriptTrig : scriptTriggers )
+		{
+			outStream << "ScpTrig=" + std::to_string(scriptTrig) + '\n';
+		}
+	}
+	else
+	{
+		outStream << "ScpTrig=" << scriptTrig << '\n';
+	}
 	outStream << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << '\n';
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
@@ -642,6 +775,11 @@ RACEID CBaseObject::GetRace( void ) const
 void CBaseObject::SetRace( RACEID newValue )
 {
 	race = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -659,6 +797,11 @@ void CBaseObject::SetName( std::string newName )
 {
 	name = newName.substr( 0, MAX_NAME - 1 );
 	Dirty( UT_UPDATE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -675,6 +818,9 @@ SI16 CBaseObject::GetStrength( void ) const
 void CBaseObject::SetStrength( SI16 newValue )
 {
 	strength = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -691,6 +837,9 @@ SI16 CBaseObject::GetDexterity( void ) const
 void CBaseObject::SetDexterity( SI16 newValue )
 {
 	dexterity = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -707,6 +856,9 @@ SI16 CBaseObject::GetIntelligence( void ) const
 void CBaseObject::SetIntelligence( SI16 newValue )
 {
 	intelligence = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -723,6 +875,8 @@ SI16 CBaseObject::GetHP( void ) const
 void CBaseObject::SetHP( SI16 newValue )
 {
 	hitpoints = newValue;
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -747,10 +901,16 @@ UI08 CBaseObject::GetDir( void ) const
 {
 	return dir;
 }
-void CBaseObject::SetDir( UI08 newDir )
+void CBaseObject::SetDir( UI08 newDir, bool sendUpdate )
 {
 	dir = newDir;
-	Dirty( UT_UPDATE );
+	if( sendUpdate )
+		Dirty( UT_UPDATE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -773,6 +933,11 @@ void CBaseObject::SetVisible( VisibleTypes newValue )
 {
 	visible = newValue;
 	Dirty( UT_HIDE );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -814,19 +979,42 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 			multis->RemoveFromMulti( this );
 			if( fireTrigger )
 			{
-				// First, trigger the onEntrance event for the multi an object is removed from
-				cScript *onMultiLeaving = JSMapping->GetScript( multis->GetScriptTrigger() );
-				if( onMultiLeaving != NULL )
-					onMultiLeaving->OnLeaving( multis, this );
+				// First, trigger the OnLeaving event for the multi an object is removed from
+				std::vector<UI16> scriptTriggers = multis->GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						// If script returns true/1, prevent other onLeaving events from triggering
+						if( toExecute->OnLeaving( multis, this ) == 1 )
+						{
+							break;
+						}
+
+					}
+				}
+				// Clear scriptTriggers vector so we can re-use it below
+				scriptTriggers.clear();
 
 				// Then, trigger the same event for the object being removed
-				cScript *onLeaving = JSMapping->GetScript( GetScriptTrigger() );
-				if( onLeaving != NULL )
-					onLeaving->OnLeaving( multis, this );
+				scriptTriggers = GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						// If script returns true/1, prevent other onLeaving events from triggering
+						if( toExecute->OnLeaving( multis, this ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		else
-			Console.error( format("Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial()) );
+			Console.error( strutil::format("Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial()) );
 	}
 }
 
@@ -840,7 +1028,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 {
 	if( CanBeObjType( OT_MULTI ) )
 	{
-		multis = NULL;
+		multis = nullptr;
 		return;
 	}
 	if( ValidateObject( multis ) )
@@ -851,18 +1039,43 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 			if( fireTrigger )
 			{
 				// First, trigger the onEntrance script attached to the multi, if any
-				cScript *onMultiEntrance = JSMapping->GetScript( multis->GetScriptTrigger() );
-				if( onMultiEntrance != NULL )
-					onMultiEntrance->OnEntrance( multis, this );
+				std::vector<UI16> scriptTriggers = multis->GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						// If script returns true/1, prevent other onEntrance events from triggering
+						if( toExecute->OnEntrance( multis, this ) == 1 )
+						{
+							break;
+						}
+
+					}
+				}
+
+				// Clear scriptTriggers vector so we can reuse it below
+				scriptTriggers.clear();
+				scriptTriggers.shrink_to_fit();
 
 				// Then, trigger the onEntrance script attached to the object entering the multi
-				cScript *onEntrance = JSMapping->GetScript( GetScriptTrigger() );
-				if( onEntrance != NULL )
-					onEntrance->OnEntrance( multis, this );
+				scriptTriggers = GetScriptTriggers();
+				for( auto i : scriptTriggers )
+				{
+					cScript *toExecute = JSMapping->GetScript( i );
+					if( toExecute != nullptr )
+					{
+						// If script returns true/1, prevent other onEntrance events from triggering
+						if( toExecute->OnEntrance( multis, this ) == 1 )
+						{
+							break;
+						}
+					}
+				}
 			}
 		}
 		else
-			Console.error(format( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() ));
+			Console.error(strutil::format( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() ));
 	}
 }
 
@@ -888,15 +1101,25 @@ void CBaseObject::SetMulti( CMultiObj *newMulti, bool fireTrigger )
 void CBaseObject::SetSpawn( SERIAL newSpawn )
 {
 	CSpawnItem *ourSpawner = GetSpawnObj();
-	if( ourSpawner != NULL )
+	if( ourSpawner != nullptr )
+	{
 		ourSpawner->spawnedList.Remove( this );
+		ourSpawner->UpdateRegion();
+	}
 	spawnserial = newSpawn;
 	if( newSpawn != INVALIDSERIAL )
 	{
 		ourSpawner = GetSpawnObj();
-		if( ourSpawner != NULL )
+		if( ourSpawner != nullptr )
+		{
 			ourSpawner->spawnedList.Add( this );
+			ourSpawner->UpdateRegion();
+		}
 	}
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -950,6 +1173,11 @@ SI16 CBaseObject::GetHiDamage( void ) const
 void CBaseObject::SetHiDamage( SI16 newValue )
 {
 	hidamage = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -966,6 +1194,11 @@ SI16 CBaseObject::GetLoDamage( void ) const
 void CBaseObject::SetLoDamage( SI16 newValue )
 {
 	lodamage = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1030,19 +1263,67 @@ void CBaseObject::SetTitle( std::string newtitle )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScriptTrigger( void ) const
-//|					void SetScriptTrigger( UI16 newValue )
-//|	Date		-	August 27th, 2000
+//|	Function	-	UI16 GetScriptTriggers( void ) const
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the object's script trigger value
+//|	Purpose		-	Gets list of script triggers on object
 //o-----------------------------------------------------------------------------------------------o
-UI16 CBaseObject::GetScriptTrigger( void ) const
+std::vector<UI16> CBaseObject::GetScriptTriggers( void )
 {
-	return scriptTrig;
+	return scriptTriggers;
 }
-void CBaseObject::SetScriptTrigger( UI16 newValue )
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void AddScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds a script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::AddScriptTrigger( UI16 newValue )
 {
-	scriptTrig = newValue;
+	if( std::find(scriptTriggers.begin(), scriptTriggers.end(), newValue) == scriptTriggers.end() )
+	{
+		// Add scriptID to scriptTriggers if not already present
+		scriptTriggers.push_back(newValue);
+	}
+
+	// Sort vector in ascending order, so order in which scripts are evaluated is predictable
+	std::sort(scriptTriggers.begin(), scriptTriggers.end());
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveScriptTrigger( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a specific script trigger to object's list of script triggers
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::RemoveScriptTrigger( UI16 newValue )
+{
+	// Remove all elements containing specified script trigger from vector
+	scriptTriggers.erase(std::remove(scriptTriggers.begin(), scriptTriggers.end(), newValue), scriptTriggers.end());
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void ClearScriptTriggers( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears out all script triggers from object
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::ClearScriptTriggers( void )
+{
+	scriptTriggers.clear();
+	scriptTriggers.shrink_to_fit();
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1069,6 +1350,9 @@ SI16 CBaseObject::GetStrength2( void ) const
 void CBaseObject::SetStrength2( SI16 nVal )
 {
 	st2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1085,6 +1369,9 @@ SI16 CBaseObject::GetDexterity2( void ) const
 void CBaseObject::SetDexterity2( SI16 nVal )
 {
 	dx2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1101,6 +1388,9 @@ SI16 CBaseObject::GetIntelligence2( void ) const
 void CBaseObject::SetIntelligence2( SI16 nVal )
 {
 	in2 = nVal;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1154,54 +1444,67 @@ bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads object from disk based on mode
 //o-----------------------------------------------------------------------------------------------o
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 bool CBaseObject::Load( std::ifstream &inStream )
 {
-	UString tag = "", data = "", UTag = "";
+	std::string tag = "", data = "", UTag = "";
 	while( tag != "o---o" )
 	{
 		ReadWorldTagData( inStream, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = tag.upper();
+			UTag = strutil::upper( tag );
 			if( !HandleLine( UTag, data ) )
-				Console.warning( format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()) );
+				Console.warning( strutil::format("Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str()) );
 		}
 	}
 	return LoadRemnants();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Used to handle world lines. Returns true if the tag is known. If known,
 //|					internal information updated and load routine continues to next tag.
 //|					Otherwise, passed up inheritance tree (if any)
 //o-----------------------------------------------------------------------------------------------o
-bool CBaseObject::HandleLine( UString &UTag, UString &data )
+bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 {
 	static std::string staticTagName = "";
 	bool rvalue = true;
-	size_t numSections = 0;
-
+	auto csecs = strutil::sections( data, "," );
+	
 	switch( (UTag[0]) )
 	{
+		case 'A':
+			if( UTag == "ATT" )
+			{
+				// For backwards compatibility with older UOX3 versions
+				lodamage = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) );
+				hidamage = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) );
+			}
+			else
+				rvalue = false;
+			break;
 		case 'B':
 			if( UTag == "BASEWEIGHT" )
 			{
-				(static_cast<CItem *>(this))->SetBaseWeight( data.toUInt() );
+				auto temp = static_cast<UI32>(std::stoul(data, nullptr, 0));
+				(static_cast<CItem *>(this))->SetBaseWeight( temp );
 			}
 			else
 				rvalue = false;
 			break;
 		case 'C':
-			if( UTag == "COLOUR" )
+			if( UTag == "COLOUR" || UTag == "COLOR" )
 			{
-				colour = data.toUShort();
+				auto temp = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				colour = temp;
 			}
 			else if( UTag == "CARVE" )
 			{
-				carve	= data.toShort();
+				auto temp = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				carve = temp;
 			}
 			else
 				rvalue = false;
@@ -1209,54 +1512,81 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'D':
 			if( UTag == "DAMAGE" )
 			{
-				hidamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
-				lodamage	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
+				if( csecs.size() >= 2 )
+				{
+					lodamage = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )) , nullptr, 0 ) );
+					hidamage = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ) );
+				}
+				else
+				{
+					// If there's only one value, set both to the same
+					lodamage = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) );
+					hidamage = lodamage;
+				}
 			}
-			else if( UTag == "DIRECTION" )
+			else if( UTag == "DAMAGEABLE" )
 			{
-				dir		= data.toUByte();
+				SetDamageable( strutil::value<std::uint8_t>(data) == 1 );
+			}
+			else if( UTag == "DIRECTION" || UTag == "DIR" )
+			{
+				auto temp = static_cast<UI08>(std::stoul(data, nullptr, 0));
+				dir	= temp;
 			}
 			else if( UTag == "DEXTERITY" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( csecs.size() >= 2  )
 				{
-					dexterity	= str_value<std::int16_t>(trim(extractSection(data, ",", 0, 0 )));
-					dx2			= str_value<std::int16_t>(trim(extractSection(data, ",", 1, 1 )));
+					dexterity = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+					dx2	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
 				}
 				else
-					dexterity = data.toShort();
+				{
+					dexterity = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+				}					
 			}
 			else if( UTag == "DEXTERITY2" )
 			{
-				dx2		= data.toShort();
+				dx2	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 			}
 			else if( UTag == "DEFENSE" )
 			{
-				numSections = data.sectionCount( "," );
-				if( numSections != 0 )
+				if( data.find( "," ) != std::string::npos )
 				{
-					for( UI08 resist = 0; resist < numSections; ++resist )
+					int count = 1;
+					for( auto &val : csecs )
 					{
-						if( extractSection(data, ",", resist, resist ).empty() )
-							break;
-
-						SetResist( str_value<std::int16_t>(trim(extractSection( data,",", resist, resist ))), (WeatherType)(resist + 1) );
+						if( !val.empty() )
+						{
+							auto temp = strutil::upper( strutil::trim( strutil::removeTrailing( val, "//" )));
+							if( temp == "[END]" )
+							{
+								break;
+							}
+							auto value = static_cast<SI16>(std::stoi(temp, nullptr, 0));
+							SetResist( value, static_cast<WeatherType>(count) );
+							count++ ;
+						}
 					}
 				}
 				else
-					SetResist( str_value<std::int16_t>(data), PHYSICAL );
+				{	
+					SetResist( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), PHYSICAL );
+				}	
 			}
 			else if( UTag == "DISABLED" )
 			{
-				SetDisabled( str_value<std::int16_t>(data) == 1 );
+				SetDisabled( strutil::value<std::int16_t>(data) == 1 );
 			}
 			else
+			{
 				rvalue = false;
+			}
 			break;
 		case 'F':
 			if( UTag == "FAME" )
 			{
-				SetFame( str_value<std::int16_t>(data) );
+				SetFame( strutil::value<std::int16_t>(data) );
 			}
 			else
 				rvalue = false;
@@ -1264,11 +1594,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
-				hitpoints	= str_value<std::int16_t>(data);
+				hitpoints	= strutil::value<std::int16_t>(data);
 			}
 			else if( UTag == "HIDAMAGE" )
 			{
-				hidamage	= str_value<std::int16_t>(data);
+				hidamage	= strutil::value<std::int16_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1276,21 +1606,23 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'I':
 			if( UTag == "ID" )
 			{
-				id		= str_value<std::int16_t>(data);
+				id		= strutil::value<std::int16_t>(data);
 			}
 			else if( UTag == "INTELLIGENCE" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( data.find( "," ) != std::string::npos )
 				{
-					intelligence	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-					in2				= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
+					intelligence = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+					in2 = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
 				}
 				else
-					intelligence = str_value<std::int16_t>(data);
+				{
+					intelligence = strutil::value<std::int16_t>(data);
+				}
 			}
 			else if( UTag == "INTELLIGENCE2" )
 			{
-				in2		= str_value<std::int16_t>(data);
+				in2		= strutil::value<std::int16_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1298,11 +1630,11 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'K':
 			if( UTag == "KARMA" )
 			{
-				SetKarma( str_value<std::int16_t>(data) );
+				SetKarma( strutil::value<std::int16_t>(data) );
 			}
 			else if( UTag == "KILLS" )
 			{
-				SetKills( str_value<std::int16_t>(data) );
+				SetKills( strutil::value<std::int16_t>(data) );
 			}
 			else
 				rvalue = false;
@@ -1310,15 +1642,15 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'L':
 			if( UTag == "LOCATION" )
 			{
-				x			= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				y			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				z			= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
-				worldNumber = data.section( ",", 3, 3 ).stripWhiteSpace().toUByte();
+				x			= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+				y			= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+				z			= static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+				worldNumber = static_cast<UI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
 
 				// Backwards compatibility with pre-instanceID worldfiles
-				if( data.sectionCount( "," ) == 4 )
+				if( csecs.size() >= 5 )
 				{
-					instanceID = data.section( ",", 4, 4 ).stripWhiteSpace().toUShort();
+					instanceID = static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
 				}
 				else
 				{
@@ -1327,7 +1659,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			}
 			else if( UTag == "LODAMAGE" )
 			{
-				lodamage	= str_value<std::int16_t>(data);
+				lodamage	= strutil::value<std::int16_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1335,11 +1667,12 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'M':
 			if( UTag == "MANA" )
 			{
-				mana	= str_value<std::int16_t>(data);
+				mana	= strutil::value<std::int16_t>(data);
 			}
 			else if( UTag == "MULTIID" )
 			{
-				multis = calcMultiFromSer((str_value<std::uint32_t>(data)));
+				tempmulti = (strutil::value<std::uint32_t>(data));
+				multis = nullptr;
 			}
 			else
 				rvalue = false;
@@ -1347,7 +1680,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'N':
 			if( UTag == "NAME" )
 			{
-				name = data.substr( 0, MAX_NAME );
+				name = data.substr( 0, MAX_NAME - 1 );
 			}
 			else
 				rvalue = false;
@@ -1355,7 +1688,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'O':
 			if( UTag == "OWNERID" )
 			{
-				owner	= str_value<std::uint32_t>(data);
+				owner	= strutil::value<std::uint32_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1363,7 +1696,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'P':
 			if( UTag == "POISONED" )
 			{
-				poisoned	= str_value<std::uint8_t>(data);
+				poisoned	= strutil::value<std::uint8_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1371,50 +1704,67 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'R':
 			if( UTag == "RACE" )
 			{
-				race	= str_value<std::uint16_t>(data);
+				race	= strutil::value<std::uint16_t>(data);
 			}
 			else if( UTag == "REPUTATION" )
 			{
-				if( data.sectionCount( "," ) == 2 )
+				if( csecs.size() == 3 )
 				{
-					SetFame( data.section( ",", 0, 0 ).stripWhiteSpace().toShort() );
-					SetKarma( data.section( ",", 1, 1 ).stripWhiteSpace().toShort() );
-					SetKills( data.section( ",", 2, 2 ).stripWhiteSpace().toShort() );
+					SetFame( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetKarma( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetKills( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
 				}
 			}
 			else
+			{
 				rvalue = false;
+			}
 			break;
 		case 'S':
 			if( UTag == "STAMINA" )
 			{
-				stamina	= str_value<std::int16_t>(data);
+				stamina	= strutil::value<std::int16_t>(data);
 			}
 			else if( UTag == "SPAWNERID" )
 			{
-				spawnserial = str_value<std::uint32_t>(data);
+				spawnserial = strutil::value<std::uint32_t>(data);
 			}
 			else if( UTag == "SERIAL" )
 			{
-				serial = str_value<std::uint32_t>(data);
+				serial = strutil::value<std::uint32_t>(data);
 			}
 			else if( UTag == "STRENGTH" )
 			{
-				if( data.sectionCount( "," ) != 0 )
+				if( csecs.size() >= 2 )
 				{
-					strength	= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-					st2			= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
+					strength	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+					st2			= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
 				}
 				else
-					strength = str_value<std::int16_t>(data);
+				{
+					strength = strutil::value<std::int16_t>(data);
+				}
 			}
 			else if( UTag == "STRENGTH2" )
 			{
-				st2		= str_value<std::int16_t>(data);
+				st2		= strutil::value<std::int16_t>(data);
 			}
 			else if( UTag == "SCPTRIG" )
 			{
-				scriptTrig	= str_value<std::uint16_t>(data);
+				//scriptTrig	= strutil::value<std::uint16_t>(data);
+				std::uint16_t scriptID = strutil::value<std::uint16_t>(data);
+				if( scriptID != 0 && scriptID != 65535 )
+				{
+					cScript *toExecute	= JSMapping->GetScript( scriptID );
+					if( toExecute == nullptr )
+					{
+						Console.warning( strutil::format("SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str()) );
+					}
+					else
+					{
+						this->AddScriptTrigger( strutil::value<std::uint16_t>(data) );
+					}
+				}
 			}
 			else
 				rvalue = false;
@@ -1422,7 +1772,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'T':
 			if( UTag == "TITLE" )
 			{
-				title = data.substr( 0, MAX_TITLE );
+				title = data.substr( 0, MAX_TITLE - 1 );
 			}
 			else if( UTag == "TAGNAME" )
 			{
@@ -1432,7 +1782,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 			{
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
-				tagvalObject.m_IntValue		= data.toInt();
+				tagvalObject.m_IntValue		= std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0);
 				tagvalObject.m_Destroy		= FALSE;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
@@ -1442,7 +1792,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 				std::string localString = data;
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType=TAGMAP_TYPE_STRING;
-				tagvalObject.m_IntValue=localString.length();
+				tagvalObject.m_IntValue= static_cast<SI32>(localString.size());
 				tagvalObject.m_Destroy=FALSE;
 				tagvalObject.m_StringValue=localString;
 				SetTag( staticTagName, tagvalObject );
@@ -1454,7 +1804,7 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'V':
 			if( UTag == "VISIBLE" )
 			{
-				visible	= (VisibleTypes)data.toByte();
+				visible	= static_cast<VisibleTypes>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" ))));
 			}
 			else
 				rvalue = false;
@@ -1462,15 +1812,15 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'W':
 			if( UTag == "WEIGHT" )
 			{
-				SetWeight( str_value<std::int32_t>(data) );
+				SetWeight( strutil::value<std::int32_t>(data) );
 			}
 			else if( UTag == "WIPE" )
 			{
-				SetWipeable( str_value<std::uint8_t>(data) == 1 );
+				SetWipeable( strutil::value<std::uint8_t>(data) == 1 );
 			}
 			else if( UTag == "WORLDNUMBER" )
 			{
-				worldNumber = str_value<std::uint8_t>(data);
+				worldNumber = strutil::value<std::uint8_t>(data);
 			}
 			else
 				rvalue = false;
@@ -1478,9 +1828,50 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 		case 'X':
 			if( UTag == "XYZ" )
 			{
-				x		= data.section( ",", 0, 0 ).stripWhiteSpace().toShort();
-				y		= data.section( ",", 1, 1 ).stripWhiteSpace().toShort();
-				z		= data.section( ",", 2, 2 ).stripWhiteSpace().toByte();
+				if( csecs.size() >= 1 )
+				{
+					x = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+				}
+				else
+				{
+					x = 0;
+				}
+				if( csecs.size() >= 2 )
+				{
+					y = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+				}
+				else
+				{
+					y = 0;
+				}
+				if( csecs.size() >= 3 )
+				{
+					z = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+				}
+				else
+				{
+					z = 0;
+				}
+			}
+			else if( UTag == "X" ) // For backwards compatibility with older UOX3 versions
+			{
+				x = strutil::value<std::uint16_t>( data );
+			}
+			else
+				rvalue = false;
+			break;
+		case 'Y':
+			if( UTag == "Y" ) // For backwards compatibility with older UOX3 versions
+			{
+				y = strutil::value<std::uint16_t>( data );
+			}
+			else
+				rvalue = false;
+			break;
+		case 'Z':
+			if( UTag == "Z" ) // For backwards compatibility with older UOX3 versions
+			{
+				z = strutil::value<std::uint16_t>( data );
 			}
 			else
 				rvalue = false;
@@ -1500,11 +1891,10 @@ bool CBaseObject::HandleLine( UString &UTag, UString &data )
 void CBaseObject::PostLoadProcessing( void )
 {
 	SERIAL tmpSerial = INVALIDSERIAL;
-	if( multis != NULL )
+	if( multis != nullptr )
 	{
-		tmpSerial	= (UI64)multis;
-		multis		= NULL;
-		SetMulti( tmpSerial, false );
+		multis		= nullptr;
+		SetMulti( tempmulti, false );
 	}
 	if( spawnserial != INVALIDSERIAL )
 	{
@@ -1539,6 +1929,11 @@ void CBaseObject::WorldNumber( UI08 value )
 {
 	worldNumber = value;
 	Dirty( UT_LOCATION );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1556,6 +1951,26 @@ void CBaseObject::SetInstanceID( UI16 value )
 {
 	instanceID = value;
 	Dirty( UT_LOCATION );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetSubRegion( void ) const
+//|					void SetSubRegion( UI16 value )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the subregion the character is in
+//o-----------------------------------------------------------------------------------------------o
+UI16 CBaseObject::GetSubRegion( void ) const
+{
+	return subRegion;
+}
+void CBaseObject::SetSubRegion( UI16 value )
+{
+	subRegion = value;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1571,6 +1986,9 @@ UI08 CBaseObject::GetPoisoned( void ) const
 void CBaseObject::SetPoisoned( UI08 newValue )
 {
 	poisoned = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1586,6 +2004,11 @@ SI16 CBaseObject::GetCarve( void ) const
 void CBaseObject::SetCarve( SI16 newValue )
 {
 	carve = newValue;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1676,6 +2099,11 @@ bool CBaseObject::isDisabled( void ) const
 void CBaseObject::SetDisabled( bool newVal )
 {
 	objSettings.set( BIT_DISABLED, newVal );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1690,10 +2118,13 @@ void CBaseObject::Cleanup( void )
 	SetY( 7000 );
 	SetZ( 0 );
 
-	UI16 scpNum			= GetScriptTrigger();
-	cScript *tScript	= JSMapping->GetScript( scpNum );
-	if( tScript != NULL )
-		tScript->OnDelete( this );
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto i : scriptTriggers )
+	{
+		cScript *tScript = JSMapping->GetScript( i );
+		if( tScript != nullptr )
+			tScript->OnDelete( this );
+	}
 
 	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )
@@ -1704,12 +2135,12 @@ void CBaseObject::Cleanup( void )
 
 	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 	{
-		if( iSock != NULL )
+		if( iSock != nullptr )
 		{
-			if( iSock->TempObj() != NULL && iSock->TempObj() == this )
-				iSock->TempObj( NULL );
-			if( iSock->TempObj2() != NULL && iSock->TempObj2() == this )
-				iSock->TempObj2( NULL );
+			if( iSock->TempObj() != nullptr && iSock->TempObj() == this )
+				iSock->TempObj( nullptr );
+			if( iSock->TempObj2() != nullptr && iSock->TempObj2() == this )
+				iSock->TempObj2( nullptr );
 		}
 	}
 }
@@ -1726,6 +2157,18 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 		Console.error( "Attempt was made to add deleted item to refreshQueue!" );
 	else if( isPostLoaded() )
 		++(cwmWorldState->refreshQueue[this]);
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void RemoveFromRefreshQueue( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes the object from the global refresh queue
+//o-----------------------------------------------------------------------------------------------o
+void CBaseObject::RemoveFromRefreshQueue()
+{
+	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	if( toFind != cwmWorldState->refreshQueue.end() )
+		cwmWorldState->refreshQueue.erase( toFind );
 }
 
 void CBaseObject::CopyData( CBaseObject *target )
@@ -1760,6 +2203,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 	target->SetFame( fame );
 	target->SetKills( kills );
 	target->SetWipeable( isWipeable() );
+	target->SetDamageable( isDamageable() );
 }
 
 point3 CBaseObject::GetOldLocation( void )
@@ -1780,6 +2224,11 @@ SI16 CBaseObject::GetKarma( void ) const
 void CBaseObject::SetKarma( SI16 value )
 {
 	karma = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1795,6 +2244,11 @@ SI16 CBaseObject::GetFame( void ) const
 void CBaseObject::SetFame( SI16 value )
 {
 	fame = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1810,6 +2264,11 @@ SI16 CBaseObject::GetKills( void ) const
 void CBaseObject::SetKills( SI16 value )
 {
 	kills = value;
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1827,3 +2286,22 @@ void CBaseObject::SetWipeable( bool newValue )
 	objSettings.set( BIT_WIPEABLE, newValue );
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isDamageable( void ) const
+//|					void SetDamageable( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's damageable state
+//o-----------------------------------------------------------------------------------------------o
+bool CBaseObject::isDamageable(void) const
+{
+	return objSettings.test( BIT_DAMAGEABLE );
+}
+void CBaseObject::SetDamageable(bool newValue)
+{
+	objSettings.set( BIT_DAMAGEABLE, newValue );
+
+	if( CanBeObjType( OT_ITEM ))
+		(static_cast<CItem *>(this))->UpdateRegion();
+	else if( CanBeObjType( OT_CHAR ))
+		(static_cast<CChar *>(this))->UpdateRegion();
+}

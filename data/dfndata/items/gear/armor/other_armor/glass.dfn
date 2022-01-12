@@ -1,0 +1,18 @@
+// Elven Glasses - E/W
+[0x2fb8]
+{
+get=base_elven_glasses
+}
+
+// Elven Glasses - N/S
+[0x3172]
+{
+get=0x2fb8
+id=0x3172
+}
+
+// Elven Glasses - Alias
+[elvenglasses]
+{
+get=0x2fb8 0x3172
+}

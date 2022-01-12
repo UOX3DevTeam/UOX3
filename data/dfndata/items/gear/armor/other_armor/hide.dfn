@@ -1,0 +1,186 @@
+// -----------= HIDE PAULDRONS =----------- //
+// Hide Pauldrons - N/S
+[0x2b77]
+{
+get=base_hide_pauldrons
+}
+
+// Hide Pauldrons - E/S
+[0x316e]
+{
+get=0x2b77
+id=0x316e
+}
+
+// Hide Pauldrons - Alias
+[hidepauldrons]
+{
+get=0x2b77 0x316e
+}
+
+// -----------= HIDE TUNIC =----------- //
+// Hide Tunic - E/W
+[0x2b74]
+{
+get=base_hide_tunic
+}
+
+// Hide Tunic - N/S
+[0x316b]
+{
+get=0x2b74
+id=0x316b
+}
+
+// Hide Tunic - Alias
+[hidetunic]
+{
+get=0x2b74 0x316b
+}
+
+// -----------= HIDE ARMOR (FEMALE) =----------- //
+// Hide Armor (Female) - E/W
+[0x2b79]
+{
+get=base_hide_armor
+}
+
+// Hide Armor (Female) - N/S
+[0x3170]
+{
+get=0x2b79
+id=0x3170
+}
+
+// Hide Armor (Female) - Alias
+[hidearmor]
+{
+get=0x2b79 0x3170
+}
+
+// -----------= HIDE GLOVES =----------- //
+// Hide Gloves - E/W
+[0x2b75]
+{
+get=base_hide_gloves
+}
+
+// Hide Gloves - N/S
+[0x316c]
+{
+get=0x2b75
+id=0x316c
+}
+
+// Hide Gloves - Alias
+[hidegloves]
+{
+get=0x2b75 0x316c
+}
+
+// -----------= HIDE PANTS =----------- //
+// Hide Pants - N/S
+[0x2b78]
+{
+get=base_hide_pants
+}
+
+// Hide Pants - E/W
+[0x316f]
+{
+get=0x2b78
+id=0x316f
+}
+
+// Hide Pants - Alias
+[hidepants]
+{
+get=0x2b78 0x316f
+}
+
+// -----------= HIDE GORGET =----------- //
+// Hide Gorget - E/W
+[0x2b76]
+{
+get=base_hide_gorget
+}
+
+// Hide Gorget - N/S
+[0x316d]
+{
+get=0x2b76
+id=0x316d
+}
+
+// Hide Gorget - Alias
+[hidegorget]
+{
+get=0x2b76 0x316d
+}
+
+// ToL Dragon Turtle Hide Armor
+
+// -----------= ARMS =----------- //
+// Dragon Turtle Hide Arms
+[0x782e]
+{
+get=base_dragon_turtle_hide_arms
+}
+
+// Dragon Turtle Hide Arms - Alias
+[dragonturtlehidearms]
+{
+get=0x782e
+}
+
+// -----------= CHEST =----------- //
+// Dragon Turtle Hide Chest
+[0x782a]
+{
+get=base_dragon_turtle_hide_chest
+}
+
+// Dragon Turtle Hide Chest - Alias
+[dragonturtlehidechest]
+{
+get=0x782a
+}
+
+// Dragon Turtle Hide Bustier
+[0x782b]
+{
+get=base_dragon_turtle_hide_bustier
+}
+
+// Dragon Turtle Hide Bustier - Alias
+[dragonturtlehidebustier]
+{
+get=0x782b
+}
+
+// -----------= HELM =----------- //
+// Dragon Turtle Hide Helm
+[0x782d]
+{
+get=base_dragon_turtle_hide_helm
+}
+
+// Dragon Turtle Hide Helm - Alias
+[dragonturtlehidehelm]
+{
+get=0x782d
+}
+
+// -----------= LEGS =----------- //
+
+// Dragon Turtle Hide Leggings
+[0x782c]
+{
+get=base_dragon_turtle_hide_leggings
+}
+
+// Dragon Turtle Hide Leggings - Alias
+[dragonturtlehideleggings]
+{
+get=0x782c
+}

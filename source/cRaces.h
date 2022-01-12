@@ -1,5 +1,6 @@
 #ifndef __Races__
 #define __Races__
+#include <unordered_set>
 
 class CRace
 {
@@ -18,6 +19,8 @@ private:
 
 	typedef std::vector< ColourPair >	COLOURLIST;
 	typedef std::vector< RaceRelate >	RACEIDLIST;
+	typedef std::unordered_set< UI16 > ALLOWEQUIPLIST;
+	typedef std::unordered_set< UI16 > BANEQUIPLIST;
 
 	SI16				HPMod;
 	SI16				ManaMod;
@@ -30,6 +33,7 @@ private:
 	COLOURLIST			beardColours;
 	COLOURLIST			hairColours;
 	COLOURLIST			skinColours;
+	COLOUR				bloodColour;
 
 	std::bitset< 8 >	bools;
 
@@ -42,6 +46,9 @@ private:
 	LIGHTLEVEL			nightVision;
 	ARMORCLASS			armourRestrict;
 
+	ALLOWEQUIPLIST		allowedEquipment;
+	BANEQUIPLIST		bannedEquipment;
+
 	std::bitset< WEATHNUM >	weatherAffected;
 	SECONDS					weathSecs[WEATHNUM];
 	SI08					weathDamage[WEATHNUM];
@@ -51,8 +58,11 @@ private:
 	R32				poisonResistance;	// % of poison to cancel
 	R32				magicResistance;	// % of magic to cancel
 	bool			doesHunger;
+	bool			doesThirst;
 	UI16			hungerRate;
+	UI16			thirstRate;
 	SI16			hungerDamage;
+	SI16			thirstDrain;
 
 public:
 
@@ -68,6 +78,7 @@ public:
 	bool			AffectedBy( WeatherType iNum ) const;
 	void			AffectedBy( bool value, WeatherType iNum );
 	bool			NoHair( void ) const;
+	bool			CanEquipItem( UI16 itemID ) const;
 
 	GENDER			GenderRestriction( void ) const;
 	LIGHTLEVEL		LightLevel( void ) const;
@@ -85,11 +96,17 @@ public:
 	RaceRelate		RaceRelation( RACEID race ) const;
 
 	UI16			GetHungerRate( void ) const;
+	UI16			GetThirstRate( void ) const;
 	void			SetHungerRate( UI16 newValue );
+	void			SetThirstRate( UI16 newValue );
 	SI16			GetHungerDamage( void ) const;
+	SI16			GetThirstDrain( void ) const;
 	void			SetHungerDamage( SI16 newValue );
+	void			SetThirstDrain( SI16 newValue );
 	bool			DoesHunger( void ) const;
+	bool			DoesThirst( void ) const;
 	void			DoesHunger( bool newValue );
+	void			DoesThirst( bool newValue );
 
 	void			Skill( SKILLVAL newValue, SI32 iNum );
 	void			Name( const std::string& newName );
@@ -97,6 +114,7 @@ public:
 	void			NoBeard( bool newValue );
 	void			IsPlayerRace( bool newValue );
 	void			NoHair( bool newValue );
+	void			RestrictGear( bool newValue );
 
 	SI16			HPModifier( void ) const;
 	void			HPModifier( SI16 value );
@@ -125,6 +143,8 @@ public:
 	COLOUR			RandomSkin( void ) const;
 	COLOUR			RandomHair( void ) const;
 	COLOUR			RandomBeard( void ) const;
+	COLOUR			BloodColour( void ) const;
+	void			BloodColour( COLOUR newValue );
 
 	bool			IsSkinRestricted( void ) const;
 	bool			IsHairRestricted( void ) const;
@@ -191,12 +211,16 @@ public:
 	COLDLEVEL		ColdLevel( RACEID race ) const;
 	HEATLEVEL		HeatLevel( RACEID race ) const;
 	bool			DoesHunger( RACEID race ) const;
+	bool			DoesThirst( RACEID race ) const;
 	UI16			GetHungerRate( RACEID race ) const;
+	UI16			GetThirstRate( RACEID race ) const;
 	SI16			GetHungerDamage( RACEID race ) const;
+	SI16			GetThirstDrain( RACEID race ) const;
 	ARMORCLASS		ArmorRestrict( RACEID race ) const;
 	COLOUR			RandomSkin( RACEID x ) const;
 	COLOUR			RandomHair( RACEID x ) const;
 	COLOUR			RandomBeard( RACEID x ) const;
+	COLOUR			BloodColour( RACEID x ) const;
 	SI32			DamageFromSkill( SI32 skill, RACEID x ) const;
 	SI32			FightPercent( SI32 skill, RACEID x ) const;
 	SKILLVAL		LanguageMin( RACEID x ) const;
@@ -216,13 +240,17 @@ public:
 	void			ColdLevel( RACEID race, COLDLEVEL value );
 	void			HeatLevel( RACEID race, HEATLEVEL value );
 	void			DoesHunger( RACEID race, bool value );
+	void			DoesThirst( RACEID race, bool value );
 	void			SetHungerRate( RACEID race, UI16 value );
+	void			SetThirstRate( RACEID race, UI16 value );
 	void			SetHungerDamage( RACEID race, SI16 value );
+	void			SetThirstDrain( RACEID race, SI16 value );
 	void			ArmorRestrict( RACEID race, ARMORCLASS value );
 	void			RacialEnemy( RACEID race, RACEID enemy );
 	void			RacialAlly( RACEID race, RACEID ally );
 	void			RacialNeutral( RACEID race, RACEID neutral );
 	void			LanguageMin( SKILLVAL toSetTo, RACEID race );
+	void			BloodColour( RACEID race, COLOUR newValue );
 
 	void			VisLevel( RACEID x, LIGHTLEVEL bonus );
 	void			VisRange( RACEID x, RANGE range );

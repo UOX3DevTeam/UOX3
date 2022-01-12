@@ -3,6 +3,7 @@
 
 #include "mapclasses.h"
 #include <climits>
+#include "MultiMul.hpp"
 
 const UI08 MAX_Z_STEP	= 9;
 const UI08 MAX_Z_FALL	= 20;
@@ -52,8 +53,8 @@ struct MapData_st
 	std::map< UI32, StaticsIndex_st > staticsDiffIndex;
 
 	MapData_st() : mapFile( "" ), mapFileUOPWrap( "" ), staticsFile( "" ), staidxFile( "" ), mapDiffFile( "" ), mapDiffListFile( "" ), staticsDiffFile( "" ),
-	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( NULL ), staticsObj( NULL ),
-	staidxObj( NULL ), mapDiffObj( NULL ), staticsDiffObj( NULL )
+	staticsDiffListFile( "" ), staticsDiffIndexFile( "" ), xBlock( 0 ), yBlock( 0 ), mapObj( nullptr ), staticsObj( nullptr ),
+	staidxObj( nullptr ), mapDiffObj( nullptr ), staticsDiffObj( nullptr )
 	{
 		mapDiffList.clear();
 		staticsDiffIndex.clear();
@@ -88,31 +89,8 @@ public:
 class CMulHandler
 {
 private:
-	struct MultiItemsIndex_st
-	{
-		Multi_st *	items;		// point into where the items begin.
-		SI32		size;				// # of items.
-		SI16		lx, ly, hx, hy;
-		SI08		lz, hz;
-		MultiItemsIndex_st() : items( NULL ), size( -1 ),
-		lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ),
-		lz( SCHAR_MAX ), hz( SCHAR_MIN )
-		{}
-		void		Include( SI16 x, SI16 y, SI08 z );
-	};
 
-	struct MultiItemsIndexHS_st
-	{
-		MultiHS_st *	items;		// point into where the items begin.
-		SI32		size;				// # of items.
-		SI16		lx, ly, hx, hy;
-		SI08		lz, hz;
-		MultiItemsIndexHS_st() : items( NULL ), size( -1 ),
-		lx( SHRT_MAX ), ly( SHRT_MAX ), hx( SHRT_MIN ), hy( SHRT_MIN ),
-		lz( SCHAR_MAX ), hz( SCHAR_MIN )
-		{}
-		void		Include( SI16 x, SI16 y, SI08 z );
-	};
+	MultiMul _multidata ;
 
 	typedef std::vector< MapData_st >					MAPLIST;
 	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
@@ -121,15 +99,7 @@ private:
 	// all the world's map and static Items.
 	// multiItem, tileSet, and verdata(patches really)
 	CLand    *			landTile;			// the 512*32 pieces of land tile
-	CLandHS *			landTileHS;			// the 512*32 pieces of land tile
 	CTile    *			staticTile;			// the 512*32 pieces of static tile set
-	CTileHS *			staticTileHS;		// the 512*32 pieces of static tile set
-	Multi_st *			multiItems;			// the multis cache(shadow) from files
-	MultiHS_st *		multiItemsHS;		// the multis cache(shadow) from files
-	MultiItemsIndex_st *multiIndex;			// here's our index to multiItems
-	MultiItemsIndexHS_st *multiIndexHS;		// here's our index to multiItems
-	size_t				multiIndexSize;		// the length of index
-	size_t				multiSize;
 	size_t				tileDataSize;
 
 	MAPLIST				MapList;
@@ -157,6 +127,7 @@ public:
 	bool			DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater, bool waterWalk, bool checkOnlyMultis, bool checkOnlyNonMultis );
 	bool			DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad );
 	bool			CheckStaticFlag( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface = false );
+	bool			CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck );
 	bool			CheckTileFlag( UI16 itemID, TileFlags flagToCheck );
 
 	// height functions
@@ -175,15 +146,12 @@ public:
 
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
-	SI32			SeekMulti( UI16 multinum );
-	SI32			SeekMultiHS( UI16 multinum );
-	Multi_st &		SeekIntoMulti( UI16 multinum, SI32 number );
-	MultiHS_st &	SeekIntoMultiHS( UI16 multinum, SI32 number );
+	bool			multiExists(UI16 multinum);
+
+	const multi_structure&	SeekMulti( UI16 multinum ) const;
 	bool			IsValidTile( UI16 tileNum );
 	CTile &			SeekTile( UI16 tileNum );
-	CTileHS &		SeekTileHS( UI16 tileNum );
 	CLand &			SeekLand( UI16 landNum );
-	CLandHS &		SeekLandHS( UI16 landNum );
 	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 
 	// misc functions

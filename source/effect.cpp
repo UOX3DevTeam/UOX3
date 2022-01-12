@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "skills.h"
+#include "magic.h"
 #include "cMagic.h"
 #include "CJSMapping.h"
 #include "mapstuff.h"
@@ -13,6 +14,7 @@
 #include "CJSMapping.h"
 #include "townregion.h"
 #include "StringUtility.hpp"
+#include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void deathAction( CChar *s, CItem *x, UI08 fallDirection )
@@ -32,6 +34,58 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SpawnBloodEffect( UI16 bloodColour )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spawns a blood effect item and returns the newly created object to caller
+//o-----------------------------------------------------------------------------------------------o
+CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodColour, BloodTypes bloodType )
+{
+	// Use default blood decay timer from ini setting
+	R32 bloodDecayTimer = static_cast<R32>(cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAY ));
+
+	// Blood effects, sorted by size of effect from small to large
+	std::vector<UI16> bloodIDs{ 0x1645, 0x122C, 0x122E, 0x122B, 0x122D, 0x122A, 0x122F };
+	UI16 bloodEffectID = 0x122c;
+
+	switch( bloodType )
+	{
+		case BLOOD_DEATH:
+			// Use corpse-specific blood decay timer instead of default one
+			bloodDecayTimer = static_cast<R32>( cwmWorldState->ServerData()->SystemTimer( tSERVER_BLOODDECAYCORPSE ) );
+
+			// Randomize between large blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 3 ), static_cast<UI16>( 6 ) )];
+			break;
+		case BLOOD_BLEED:
+			// Randomize between small blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 0 ), static_cast<UI16>( 3 ) )];
+			break;
+		case BLOOD_CRITICAL:
+			// Randomize between medium to large blood effects
+			bloodEffectID = bloodIDs[RandomNum( static_cast<UI16>( 2 ), static_cast<UI16>( 5 ) )];
+
+			// More blood, so increase the time it takes to decay
+			bloodDecayTimer *= 1.5;
+			break;
+		default:
+			break;
+	}
+	
+	// Spawn the blood effect item
+	CItem *blood = Items->CreateBaseItem( worldNum, OT_ITEM, instanceID, false );
+	if( ValidateObject( blood ) )
+	{
+		blood->SetID( bloodEffectID );
+		blood->SetColour( bloodColour );
+		blood->SetDecayable( true );
+		blood->SetDecayTime( BuildTimeValue( bloodDecayTimer ));
+		return blood;
+	}
+
+	return nullptr;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect,
 //|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
 //o-----------------------------------------------------------------------------------------------o
@@ -43,6 +97,8 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 		return;
 
 	CPGraphicalEffect2 toSend( 0, (*source), (*dest) );
+	if( source == dest )
+		toSend.Effect( 0x03 );
 	toSend.Model( effect );
 	toSend.SourceLocation( (*source) );
 	toSend.TargetLocation( (*dest) );
@@ -50,7 +106,7 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	toSend.Duration( loop );
 	toSend.ExplodeOnImpact( explode );
 	toSend.Hue( hue );
-	toSend.RenderMode( renderMode );
+	toSend.RenderMode( renderMode );//0x00000004
 
 	//std::scoped_lock lock(Network->internallock);
 
@@ -93,15 +149,63 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
+//|	Function	-	void PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect,
+//|										UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends a message to client to display a moving animation from source object to target location
+//o-----------------------------------------------------------------------------------------------o
+void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+{	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
+
+	CPGraphicalEffect2 toSend( 0 );
+	toSend.TargetSerial( INVALIDSERIAL );
+	toSend.Model( effect );
+	toSend.SourceLocation( srcX, srcY, srcZ );
+	toSend.TargetLocation( x, y, z );
+	toSend.Speed( speed );
+	toSend.Duration( loop );
+	toSend.ExplodeOnImpact( explode );
+	toSend.Hue( hue );
+	toSend.RenderMode( renderMode );
+
+	SOCKLIST nearbyChars = FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN );
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	{
+		(*cIter)->Send( &toSend );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay, bool playBackwards )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to make character perform specified action/anim
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay )
+void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay, UI08 frameCount, bool playBackwards )
 {
 	CPCharacterAnimation toSend = (*mChar);
 	toSend.Action( actionID );
 	toSend.FrameDelay( frameDelay );
+	toSend.FrameCount( frameCount );
+	toSend.DoBackwards( playBackwards );
+	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	{
+		(*cIter)->Send( &toSend );
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sends message to client to make character perform specified action/anim
+//|					in client versions above 7.0.0.0
+//o-----------------------------------------------------------------------------------------------o
+void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID, UI08 subSubActionID )
+{
+	CPNewCharacterAnimation toSend = (*mChar);
+	toSend.Action( actionID );
+	toSend.SubAction( subActionID );
+	toSend.SubSubAction( subSubActionID );
 	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
@@ -116,14 +220,37 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 {
-	if( mChar->IsOnHorse() && ( actionID == 0x10 || actionID == 0x11 ) )
+	if( mChar->GetBodyType() == BT_GARGOYLE || ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
+		&& ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
 	{
-		PlayCharacterAnimation( mChar, 0x1B );
+		if( mChar->GetBodyType() == BT_GARGOYLE )
+		{
+			if( actionID == 0x10 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_AREA ); // Action: 0x0b, SubAction: spell variation 0x01
+			else if( actionID == 0x11 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action: 0x0b, SubAction: spell variation 0x00
+		}
+		else
+		{
+			// Sub actions are in reverse order for humans!
+			if( actionID == 0x10 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action: 0x0b, SubAction: spell variation 0x00
+			else if( actionID == 0x11 )
+				PlayNewCharacterAnimation( mChar, N_ACT_SPELL, S_ACT_SPELL_AREA ); // Action: 0x0b, SubAction: spell variation 0x01
+		}
 		return;
 	}
-	if( ( mChar->IsOnHorse() || !cwmWorldState->creatures[mChar->GetID()].IsHuman() ) && actionID == 0x22 )
+	else if( mChar->IsOnHorse() )
+	{
+		if( actionID == 0x10 )
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
+		else if( actionID == 0x11 )
+			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_BOW, 0, 5 ); // 0x1B
 		return;
-	PlayCharacterAnimation( mChar, actionID );
+	}
+	if( !cwmWorldState->creatures[mChar->GetID()].IsHuman() && actionID == 0x22 )
+		return;
+	PlayCharacterAnimation( mChar, actionID, 0, 7 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -145,6 +272,8 @@ void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed
 	toSend.SourceLocation( (*target) );
 	if( target->GetObjType() != OT_CHAR )
 		toSend.TargetLocation( (*target) );
+	else
+		toSend.ZTrg( 15 );
 	toSend.Speed( speed );
 	toSend.Duration( loop );
 	toSend.AdjustDir( false );
@@ -213,10 +342,10 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	UI32 dmg = 0;
 	UI32 dx, dy, dz;
 	// - send the effect (visual and sound)
-	if( nItem->GetCont() != NULL )
+	if( nItem->GetCont() != nullptr )
 	{
 		Effects->PlayStaticAnimation( c, 0x36B0, 0x00, 0x09 );
-		nItem->SetCont( NULL );
+		nItem->SetCont( nullptr );
 		nItem->SetLocation( c );
 		Effects->PlaySound( c, 0x0207 );
 	}
@@ -240,7 +369,7 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 		CMapRegion *Cell = (*rIter);
 		bool chain = false;
 
-		CDataList< CChar * > *regChars = Cell->GetCharList();
+		GenericList< CChar * > *regChars = Cell->GetCharList();
 		regChars->Push();
 		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 		{
@@ -259,13 +388,13 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 				{
 					//UI08 hitLoc = Combat->CalculateHitLoc();
-					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - UOX_MIN( dx, dy ) ) ), true);
-					tempChar->Damage( damage, c, true );
+					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - std::min( dx, dy ) ) ), true);
+					tempChar->Damage( damage, HEAT, c, true );
 				}
 			}
 		}
 		regChars->Pop();
-		CDataList< CItem * > *regItems = Cell->GetItemList();
+		GenericList< CItem * > *regItems = Cell->GetItemList();
 		regItems->Push();
 		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 		{
@@ -303,30 +432,42 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 {
-	if( tMake == NULL )
+	if( tMake == nullptr )
 		return;
 
 	CChar *src			= calcCharObjFromSer( tMake->Source() );
 	UI16 iMaking		= tMake->More2();
 	createEntry *toMake = Skills->FindItem( iMaking );
-	if( toMake == NULL )
+	if( toMake == nullptr )
 		return;
 
 	CSocket *sock	= src->GetSocket();
-	UString addItem = toMake->addItem;
+	std::string addItem = toMake->addItem;
 	UI16 amount		= 1;
-	if( addItem.sectionCount( "," ) != 0 )
+	auto csecs = strutil::sections( addItem, "," );
+	if( csecs.size() > 1 )
 	{
-		amount		= str_value<std::uint16_t>(extractSection(addItem, ",", 1, 1 ));
-		addItem		= extractSection(addItem, ",", 0, 0 );
+		amount		= strutil::value<std::uint16_t>(strutil::extractSection(addItem, ",", 1, 1 ));
+		addItem		= strutil::extractSection(addItem, ",", 0, 0 );
 	}
 
-	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true );
+	UI16 iColour = 0;
+	if( ValidateObject( src ))
+	{
+		// Get colour of the resource targeted by player (if any), so it can be applied to the item being made
+		TAGMAPOBJECT tempTagObj = src->GetTempTag( "craftItemColor" );
+		if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+		{
+			iColour = static_cast<UI16>( tempTagObj.m_IntValue );
+		}
+	}
+
+	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true, iColour );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
-	if( targItem == NULL )
+	if( targItem == nullptr )
 	{
-		Console.error( format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
+		Console.error( strutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
 		return;
 	}
 	else
@@ -344,7 +485,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 			// Find the average of our player's skills
 			for( size_t resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
 				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
-			avgSkill = sumSkill / toMake->skillReqs.size();
+			avgSkill = static_cast<SI32>(sumSkill / toMake->skillReqs.size());
 			if( avgSkill > 950 )
 				targItem->SetMadeWith( toMake->skillReqs[0].skillNumber + 1 );
 			else
@@ -365,6 +506,17 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 
 	if( FindItemOwner( targItem ) == src )
 		sock->sysmessage( 985 ); // You create the item and place it in your backpack.
+
+	// Trigger onMakeItem() JS event for character who crafted the item
+	std::vector<UI16> scriptTriggers = src->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			toExecute->OnMakeItem( sock, src, targItem, iMaking );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -374,16 +526,16 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::checktempeffects( void )
 {
-	CItem *i = NULL;
-	CChar *s = NULL, *src = NULL;
-	CSocket *tSock = NULL;
-	CBaseObject *myObj = NULL;
+	CItem *i = nullptr;
+	CChar *s = nullptr, *src = nullptr;
+	CSocket *tSock = nullptr;
+	CBaseObject *myObj = nullptr;
 
 	const UI32 j = cwmWorldState->GetUICurrentTime();
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
 	{
-		if( Effect == NULL )
+		if( Effect == nullptr )
 		{
 			cwmWorldState->tempEffects.Remove( Effect );
 			continue;
@@ -408,68 +560,96 @@ void cEffects::checktempeffects( void )
 		}
 		bool equipCheckNeeded = false;
 
+		bool validChar = ValidateObject( s );
 		switch( Effect->Number() )
 		{
 			case 1: // Paralysis / Paralysis Field Spells
-				if( s->IsFrozen() )
+				if( validChar && s->IsFrozen() )
 				{
 					s->SetFrozen( false );
-					if( tSock != NULL )
+					if( tSock != nullptr )
 						tSock->sysmessage( 700 );
 				}
 				break;
 			case 2: // Nightsight Potion (JS) and Spell (code)
-				s->SetFixedLight( 255 );
-				doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+				if( validChar )
+				{
+					s->SetFixedLight( 255 );
+					doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+				}
 				break;
 			case 3: // Clumsy spell (JS)
-				s->IncDexterity2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncDexterity2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 4: // Feeblemind spell (JS)
-				s->IncIntelligence2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncIntelligence2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 5: // Weaken Spell
-				s->IncStrength2( Effect->More1() );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( Effect->More1() );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 6: // Agility Potion (JS) and Spell (code)
-				s->IncDexterity2( -Effect->More1() );
-				s->SetStamina( UOX_MIN( s->GetStamina(), s->GetMaxStam() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncDexterity2( -Effect->More1() );
+					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 7: // Cunning Spell
-				s->IncIntelligence2( -Effect->More1() );
-				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncIntelligence2( -Effect->More1() );
+					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 8: // Strength Potion (JS) and Spell (code)
-				s->IncStrength2( -Effect->More1() );
-				s->SetHP( UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP()) ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( -Effect->More1() );
+					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+					equipCheckNeeded = true;
+					}
 				break;
 			case 9:	// Grind potion (also used for necro stuff)
-				switch( Effect->More1() )
+				if( validChar )
 				{
-					case 0:
-						if( Effect->More2() != 0 )
-							s->TextMessage( NULL, 1270, EMOTE, true, s->GetName().c_str() );
-						PlaySound( s, 0x0242 );
-						break;
+					switch( Effect->More1() )
+					{
+						case 0:
+							if( Effect->More2() != 0 )
+								s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
+							PlaySound( s, 0x0242 );
+							break;
+					}
 				}
 				break;
 			case 11: // Bless Spell
-				s->IncStrength2( -Effect->More1() );
-				s->SetHP(  UOX_MIN( s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
-				s->IncDexterity2( -Effect->More2() );
-				s->SetStamina( UOX_MIN( s->GetStamina(), s->GetMaxStam() ) );
-				s->IncIntelligence2( -Effect->More3() );
-				s->SetMana( UOX_MIN( s->GetMana(), s->GetMaxMana() ) );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					s->IncStrength2( -Effect->More1() );
+					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+					s->IncDexterity2( -Effect->More2() );
+					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+					s->IncIntelligence2( -Effect->More3() );
+					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+					equipCheckNeeded = true;
+					}
 				break;
 			case 12: // Curse Spell
-				if( s != NULL )
+				if( validChar )
 				{
 					s->IncStrength2( Effect->More1() );
 					s->IncDexterity2( Effect->More2() );
@@ -480,16 +660,21 @@ void cEffects::checktempeffects( void )
 					equipCheckNeeded = false;
 				break;
 			case 15: // Reactive Armor Spell
-				s->SetReactiveArmour( false );
+				if( validChar )
+				{
+					s->SetReactiveArmour( false );
+				}
 				break;
 			case 16: // Explosion potion messages (JS)
 				src = calcCharObjFromSer( Effect->Source() );
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					UString mTemp = str_number( Effect->More3() );
-					if( tSock != NULL )
+					std::string mTemp = strutil::number( Effect->More3() );
+					if( tSock != nullptr )
+					{
 						tSock->sysmessage( mTemp.c_str() );
+					}
 				}
 				break;
 			case 17: // Explosion effect (JS and code)
@@ -497,45 +682,57 @@ void cEffects::checktempeffects( void )
 				explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
 				break;
 			case 18: // Polymorph Spell
-				s->SetID( s->GetOrgID() );
-				s->IsPolymorphed( false );
+				if( validChar )
+				{
+					s->SetID( s->GetOrgID() );
+					s->IsPolymorphed( false );
+				}
 				break;
 			case 19: // Incognito Spell
-				s->SetID( s->GetOrgID() );
-
-				// ------ NAME -----
-				s->SetName( s->GetOrgName() );
-
-				i = s->GetItemAtLayer( IL_HAIR );
-				if( ValidateObject( i ) )
+				if( validChar )
 				{
-					i->SetColour( s->GetHairColour() );
-					i->SetID( s->GetHairStyle() );
+					s->SetID( s->GetOrgID() );
+
+					// ------ NAME -----
+					s->SetName( s->GetOrgName() );
+
+					i = s->GetItemAtLayer( IL_HAIR );
+					if( ValidateObject( i ) )
+					{
+						i->SetColour( s->GetHairColour() );
+						i->SetID( s->GetHairStyle() );
+					}
+					i = s->GetItemAtLayer( IL_FACIALHAIR );
+					if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
+					{
+						i->SetColour( s->GetBeardColour() );
+						i->SetID( s->GetBeardStyle() );
+					}
+					if( tSock != nullptr )
+						s->SendWornItems( tSock );
+					s->IsIncognito( false );
 				}
-				i = s->GetItemAtLayer( IL_FACIALHAIR );
-				if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
-				{
-					i->SetColour( s->GetBeardColour() );
-					i->SetID( s->GetBeardStyle() );
-				}
-				if( tSock != NULL )
-					s->SendWornItems( tSock );
-				s->IsIncognito( false );
 				break;
 			case 21: // Protection Spell
-				UI16 toDrop;
-				toDrop = Effect->More1();
-				if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
-					s->SetBaseSkill( 0, PARRYING );
-				else
-					s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
-				equipCheckNeeded = true;
+				if( validChar )
+				{
+					UI16 toDrop;
+					toDrop = Effect->More1();
+					if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
+						s->SetBaseSkill( 0, PARRYING );
+					else
+						s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
+					equipCheckNeeded = true;
+				}
 				break;
 			case 25: // Temporarily set item as disabled
 				Effect->ObjPtr()->SetDisabled( false );
 				break;
 			case 26: // Disallow immediately using another potion (JS)
-				s->SetUsingPotion( false );
+				if( validChar )
+				{
+					s->SetUsingPotion( false );
+				}
 				break;
 			case 27: // Explosion Spell
 				src = calcCharObjFromSer( Effect->Source() );
@@ -547,12 +744,111 @@ void cEffects::checktempeffects( void )
 				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
 				equipCheckNeeded = true;
 				break;
+			case 28: // Magic Arrow Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 5 );
+				Magic->doMoveEffect( 5, s, src );
+				Magic->doStaticEffect( s, 5 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 29: // Harm Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 12 );
+				Magic->doMoveEffect( 12, s, src );
+				Magic->doStaticEffect( s, 12 );
+				Magic->MagicDamage( s, Effect->More1(), src, COLD );
+				equipCheckNeeded = true;
+				break;
+			case 30: // Fireball Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 18 );
+				Magic->doMoveEffect( 18, s, src );
+				Magic->doStaticEffect( s, 18 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 31: // Lightning Spell
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Effects->bolteffect( s );
+				Magic->playSound( src, 30 );
+				Magic->doMoveEffect( 30, s, src );
+				Magic->doStaticEffect( s, 30 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 32: // Mind Blast
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 37 );
+				Magic->doMoveEffect( 37, s, src );
+				Magic->doStaticEffect( s, 37 );
+				Magic->MagicDamage( s, Effect->More1(), src, COLD );
+				equipCheckNeeded = true;
+				break;
+			case 33: // Energy Bolt
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( s, 42 );
+				Magic->doMoveEffect( 42, s, src );
+				Magic->doStaticEffect( s, 42 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 34: // Chain Lightning
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Effects->bolteffect( s );
+				Magic->playSound( s, 49 );
+				Magic->doMoveEffect( 49, s, src );
+				Magic->doStaticEffect( s, 49 );
+				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+				equipCheckNeeded = true;
+				break;
+			case 35: // Flame Strike
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( s, 51 );
+				Magic->doMoveEffect( 51, s, src );
+				Magic->doStaticEffect( s, 51 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
+			case 36: // Meteor Swarm
+				src = calcCharObjFromSer( Effect->Source() );
+				if( !ValidateObject( src ) || !ValidateObject( s ) )
+					break;
+				Magic->playSound( src, 55 );
+				if( s != src )
+					Magic->doMoveEffect( 55, s, src );
+				Magic->doStaticEffect( s, 55 );
+				//Effects->PlaySound( target, 0x160 );
+				//Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+				equipCheckNeeded = true;
+				break;
 			case 40: // Used by JS timers
 			{
+				// Default/Global script ID
 				UI16 scpNum			= 0xFFFF;
+
+				// Get script associated with effect, if any
 				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
 
-				if( Effect->Source() >= BASEITEMSERIAL )	// item's have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				// items have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+				if( Effect->Source() >= BASEITEMSERIAL )	
 				{
 					myObj = calcItemObjFromSer( Effect->Source() );
 					equipCheckNeeded = false;
@@ -562,18 +858,30 @@ void cEffects::checktempeffects( void )
 					myObj = calcCharObjFromSer( Effect->Source() );
 					equipCheckNeeded = true;
 				}
-				if( !ValidateObject( myObj ) )	// item no longer exists!
+
+				// Check that object effect was running on still exists
+				if( !ValidateObject( myObj ) )
 					break;
-				if( tScript == NULL )	// No associated script, so it must be another callback variety
+
+				// No associated script, so it must be another callback variety
+				if( tScript == nullptr )
 				{
-					if( Effect->More2() != 0xFFFF )
+					if( Effect->More2() != 0xFFFF ) // A scriptID other than default one was found
+					{
 						scpNum = Effect->More2();
-					else
+						tScript = JSMapping->GetScript( scpNum );
+					}
+					/*else
+					{
+						// No specific script was associated with effect, so let's see if there's a script associated with object instead
+
 						scpNum = myObj->GetScriptTrigger();
-					tScript = JSMapping->GetScript( scpNum );
+					}
+					tScript = JSMapping->GetScript( scpNum );*/
 				}
-				//Make sure to check for a specific script when the previous checks ended in the global script.
-				if( ( tScript == NULL || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
+
+				// Make sure to check for a specific script via envoke system when the previous checks ended in the global script.
+				if( ( tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
 				{
 					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) )
 					{
@@ -586,8 +894,12 @@ void cEffects::checktempeffects( void )
 						tScript	= JSMapping->GetScript( scpNum );
 					}
 				}
-				if( tScript != NULL )				// do OnTimer stuff here
+
+				// Callback to onTimer event in script
+				if( tScript != nullptr )
+				{
 					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
+				}
 				break;
 			}
 			case 41: // Start of item crafting
@@ -607,10 +919,10 @@ void cEffects::checktempeffects( void )
 				src->SetID( 0xCF ); // Thats all we need to do
 				break;
 			default:
-				Console.error( format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
+				Console.error( strutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 				break;
 		}
-		if( ValidateObject( s ) && equipCheckNeeded )
+		if( validChar && equipCheckNeeded )
 			Items->CheckEquipment( s ); // checks equipments for stat requirements
 		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
@@ -705,14 +1017,17 @@ void reverseEffect( CTEffect *Effect )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
 {
-	if( !ValidateObject( source ) || !ValidateObject( dest ) )
+	//if( !ValidateObject( source ) || !ValidateObject( dest ) )
+	if( !ValidateObject( dest ) )
 		return;
 
 	bool spellResisted = false;
 	CTEffect *toAdd	= new CTEffect;
-	SERIAL sourSer	= source->GetSerial();
+	SERIAL sourceSerial	= 0;
+	if( source != nullptr )
+		sourceSerial = source->GetSerial();
 	SERIAL targSer	= dest->GetSerial();
-	toAdd->Source( sourSer );
+	toAdd->Source( sourceSerial );
 	toAdd->Destination( targSer );
 
 	cwmWorldState->tempEffects.Push();
@@ -750,75 +1065,181 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	switch( num )
 	{
 		case 1: // Paralyse Spell
+		{
 			dest->SetFrozen( true );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 100.0f ) );
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 100.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 2: // Nightsight Potion (JS) and Spell (code)
+		{
 			SI16 worldbrightlevel;
 			worldbrightlevel = cwmWorldState->ServerData()->WorldLightBrightLevel();
 			dest->SetFixedLight( static_cast<UI08>(worldbrightlevel) );
-			doLight( tSock, static_cast<char>(worldbrightlevel) );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 2.0f ) );
+			doLight( tSock, static_cast<SI08>(worldbrightlevel) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 2.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 3: // Clumsy Spell (JS)
+		{
 			if( dest->GetDexterity() < more1 )
 				more1 = dest->GetDexterity();
 			dest->IncDexterity2( -more1 );
-			dest->SetStamina( UOX_MIN( dest->GetStamina(), dest->GetMaxStam() ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 1 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+			dest->SetStamina( std::min( dest->GetStamina(), dest->GetMaxStam() ) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+				
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 1 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ) );
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 4: // Feeblemind Spell (JS)
+		{
 			if( dest->GetIntelligence() < more1 )
 				more1 = dest->GetIntelligence();
 			dest->IncIntelligence2( -more1 );
-			dest->SetMana( UOX_MIN(dest->GetMana(), dest->GetMaxMana() ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 1 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+			dest->SetMana( std::min(dest->GetMana(), dest->GetMaxMana() ));
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 3 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 5: // Weaken Spell
+		{
 			if( dest->GetStrength() < more1 )
 				more1 = dest->GetStrength();
 			dest->IncStrength2( -more1 );
-			dest->SetHP( UOX_MIN( dest->GetHP(), static_cast<SI16>(dest->GetMaxHP()) ) );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 4 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+			dest->SetHP( std::min( dest->GetHP(), static_cast<SI16>(dest->GetMaxHP()) ) );
+
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 1 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			{
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY ) / 10.0f);
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 1 );
+			}
+
+			//Halve effect-timer on resist
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 6: // Agility Potion (JS) and Spell (code)
+		{
 			dest->IncDexterity( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 7: // Cunning Spell
 			dest->IncIntelligence2( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
 		case 8: // Strength Potion (JS) and Spell (code)
 			dest->IncStrength2( more1 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source == nullptr )
+			{
+				// Use duration provided with effect call
+				toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(more2) ));
+			}
+			else
+			{
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			}
 			toAdd->More1( more1 );
 			toAdd->Dispellable( true );
 			break;
@@ -835,38 +1256,91 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( more2 );
 			break;
 		case 11: // Bless Spell
-			dest->IncStrength2( more1 );
-			dest->IncDexterity2( more2 );
-			dest->IncIntelligence2( more3 );
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
-			toAdd->More1( more1 );
-			toAdd->More2( more2 );
-			toAdd->More3( more3 );
+			if( source != nullptr )
+			{
+				// No source! Effect gotten from equipping an item?
+				// Apply same bonus to all stats
+				dest->IncStrength2( more1 );
+				dest->IncDexterity2( more1 );
+				dest->IncIntelligence2( more1 );
+				toAdd->ExpireTime( BuildTimeValue( more2 ));
+				toAdd->More1( more1 );
+				toAdd->More2( more1 );
+				toAdd->More3( more1 );
+			}
+			else
+			{
+				// Effect gotten from a spell cast by another character
+				dest->IncStrength2( more1 );
+				dest->IncDexterity2( more2 );
+				dest->IncIntelligence2( more3 );
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+				toAdd->More1( more1 );
+				toAdd->More2( more2 );
+				toAdd->More3( more3 );
+			}
 			toAdd->Dispellable( true );
 			break;
 		case 12: // Curse Spell
-			if( dest->GetStrength() < more1 )
-				more1 = dest->GetStrength();
-			if( dest->GetDexterity() < more2 )
-				more2 = dest->GetDexterity();
-			if( dest->GetIntelligence() < more3 )
-				more3 = dest->GetIntelligence();
-			dest->IncStrength2( -more1 );
-			dest->IncDexterity2( -more2 );
-			dest->IncIntelligence2( -more3 );
-			//Halve effect-timer on resist
-			spellResisted = Magic->CheckResist( source, dest, 4 );
-			if( spellResisted )
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 20.0f ) );
+		{
+			bool spellResisted = false;
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				auto effectStrength = more1;
+				if( dest->GetStrength() < more1 )
+					effectStrength = dest->GetStrength();
+				dest->IncStrength2( -effectStrength );
+				if( dest->GetDexterity() < more1 )
+					effectStrength = dest->GetDexterity();
+				dest->IncDexterity2( -effectStrength );
+				if( dest->GetIntelligence() < more1 )
+					effectStrength = dest->GetIntelligence();
+				dest->IncIntelligence2( -effectStrength );
+				toAdd->More1( more1 );
+				toAdd->More2( more1 );
+				toAdd->More3( more1 );
+
+				// Use duration provided with effect call
+				effectDuration = static_cast<R32>(more2);
+
+				// Halve effect-duration on resist
+				spellResisted = Magic->CheckResist( more3, dest, 4 );
+			}
 			else
-				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
-			toAdd->More1( more1 );
-			toAdd->More2( more2 );
-			toAdd->More3( more3 );
+			{
+				if( dest->GetStrength() < more1 )
+					more1 = dest->GetStrength();
+				if( dest->GetDexterity() < more2 )
+					more2 = dest->GetDexterity();
+				if( dest->GetIntelligence() < more3 )
+					more3 = dest->GetIntelligence();
+				dest->IncStrength2( -more1 );
+				dest->IncDexterity2( -more2 );
+				dest->IncIntelligence2( -more3 );
+				toAdd->More1( more1 );
+				toAdd->More2( more2 );
+				toAdd->More3( more3 );
+
+				effectDuration = static_cast<R32>(source->GetSkill( MAGERY )) / 10.0f;
+
+				//Halve effect-timer on resist
+				spellResisted = Magic->CheckResist( source, dest, 4 );
+			}
+
+			if( spellResisted )
+				toAdd->ExpireTime( BuildTimeValue( effectDuration / 2.0f ));
+			else
+				toAdd->ExpireTime( BuildTimeValue( effectDuration ));
+
 			toAdd->Dispellable( true );
 			break;
+		}
 		case 15: // Reactive Armor Spell
-			toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			if( source != nullptr )
+				toAdd->ExpireTime( BuildTimeValue( (R32)source->GetSkill( MAGERY ) / 10.0f ) );
+			else
+				toAdd->ExpireTime( BuildTimeValue( 6.0f ));
 			toAdd->Dispellable( true );
 			break;
 		case 16: // Explosion potion messages (JS)
@@ -885,6 +1359,8 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetTimer( tCHAR_CRIMFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_POLYMORPH ) );
 			if( dest->IsOnHorse() )
 				DismountCreature( dest );
+			else if( dest->IsFlying() )
+				dest->ToggleFlying();
 			k = ( more1<<8 ) + more2;
 
 			if( k <= 0x03e2 ) // body-values >0x3e1 crash the client
@@ -895,11 +1371,22 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->Dispellable( false );
 			break;
 		case 21: // Protection Spell
-			toAdd->ExpireTime( BuildTimeValue( 120.0f ) );
+		{
+			R32 effectDuration = 0;
+			if( source == nullptr )
+			{
+				effectDuration = static_cast<R32>(more2);
+			}
+			else
+			{
+				effectDuration = 120.0f;
+			}
+			toAdd->ExpireTime( BuildTimeValue( effectDuration ));
 			toAdd->Dispellable( true );
 			toAdd->More1( more1 );
 			dest->SetBaseSkill( dest->GetBaseSkill( PARRYING ) + more1, PARRYING );
 			break;
+		}
 		case 25: // Temporarily set item as disabled
 			toAdd->ExpireTime( BuildTimeValue( (R32)more1 ) );
 			toAdd->ObjPtr( dest );
@@ -911,7 +1398,43 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			dest->SetUsingPotion( true );
 			break;
 		case 27: // Explosion Spell
-			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->CombatExplodeDelay()) ) );
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[43].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 28: // Magic Arrow Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[5].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 29: // Harm Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[12].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 30: // Fireball Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[18].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 31: // Lightning Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[30].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 32: // Mind Blast Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[37].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 33: // Energy Bolt Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[42].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 34: // Chain Lightning Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[49].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 35: // Flamestrike Spell
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[51].DamageDelay() )));
+			toAdd->More1( more1 );
+			break;
+		case 36: // Meteor Swarm
+			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>(Magic->spells[55].DamageDelay() )));
 			toAdd->More1( more1 );
 			break;
 		case 40: // Used by JS timers
@@ -930,7 +1453,8 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
 			break;
 		default:
-			Console.error( format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+			Console.error( strutil::format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+			delete toAdd;
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -986,6 +1510,7 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			break;
 		default:
 			Console.error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
+			delete toAdd;
 			return;
 	}
 	cwmWorldState->tempEffects.Add( toAdd );
@@ -1010,14 +1535,14 @@ void cEffects::SaveEffects( void )
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.error( format("Failed to open %s for writing", filename.c_str()) );
+		Console.error( strutil::format("Failed to open %s for writing", filename.c_str()) );
 		return;
 	}
 
 	cwmWorldState->tempEffects.Push();
 	for( CTEffect *currEffect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); currEffect = cwmWorldState->tempEffects.Next() )
 	{
-		if( currEffect == NULL )
+		if( currEffect == nullptr )
 			continue;
 		currEffect->Save( effectDestination );
 		effectDestination << blockDiscriminator;
@@ -1029,10 +1554,10 @@ void cEffects::SaveEffects( void )
 	Console.PrintDone();
 
 	SI32 e_t = getclock();
-	Console.print( format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
+	Console.print( strutil::format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
 }
 
-void ReadWorldTagData( std::ifstream &inStream, UString &tag, UString &data );
+void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadEffects( void )
 //|	Date		-	16 March, 2002
@@ -1047,7 +1572,9 @@ void cEffects::LoadEffects( void )
 	input.open( filename.c_str(), std::ios_base::in );
 	input.seekg( 0, std::ios::beg );
 
-	UString tag, data, UTag;
+	std::string tag;
+	std::string data;
+	std::string UTag;
 
 	if( input.is_open() )
 	{
@@ -1056,12 +1583,15 @@ void cEffects::LoadEffects( void )
 
 		while( !input.eof() && !input.fail() )
 		{
-			input.getline( line, 1024 );
-			UString sLine( line );
-			sLine = sLine.removeComment().stripWhiteSpace();
+			input.getline(line, 1023);
+			line[input.gcount()] = 0;
+			std::string sLine(line);
+			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
+			auto usLine = strutil::upper( sLine );
+			
 			if( !sLine.empty() )
 			{
-				if( sLine.upper() == "[EFFECT]" )
+				if( usLine == "[EFFECT]" )
 				{
 					toLoad = new CTEffect;
 					while( tag != "o---o" )
@@ -1069,27 +1599,27 @@ void cEffects::LoadEffects( void )
 						ReadWorldTagData( input, tag, data );
 						if( tag != "o---o" )
 						{
-							UTag = tag.upper();
+							UTag = strutil::upper( tag );
 							switch( (UTag.data()[0]) )
 							{
 								case 'A':
 									if( UTag == "ASSOCSCRIPT" )
-										toLoad->AssocScript( data.toUShort() );
+										toLoad->AssocScript( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									break;
 								case 'D':
 									if( UTag == "DEST" )
-										toLoad->Destination( data.toUInt() );
+										toLoad->Destination( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									if( UTag == "DISPEL" )
-										toLoad->Dispellable( ( (data.toUInt() == 0) ? false : true ) );
+										toLoad->Dispellable((( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 0 ) ? false : true ));
 									break;
 								case 'E':
 									if( UTag == "EXPIRE" )
-										toLoad->ExpireTime( data.toUInt() + cwmWorldState->GetUICurrentTime() );
+										toLoad->ExpireTime( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
 									break;
 								case 'I':
 									if( UTag == "ITEMPTR" )
 									{
-										SERIAL objSer = data.toUInt();
+										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1098,25 +1628,25 @@ void cEffects::LoadEffects( void )
 												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
 										else
-											toLoad->ObjPtr( NULL );
+											toLoad->ObjPtr( nullptr );
 									}
 									break;
 								case 'M':
 									if( UTag == "MORE1" )
-										toLoad->More1( data.toUShort() );
+										toLoad->More1( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									if( UTag == "MORE2" )
-										toLoad->More2( data.toUShort() );
+										toLoad->More2( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									if( UTag == "MORE3" )
-										toLoad->More3( data.toUShort() );
+										toLoad->More3( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									break;
 								case 'N':
 									if( UTag == "NUMBER" )
-										toLoad->Number( data.toUByte() );
+										toLoad->Number( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 									break;
 								case 'O':
 									if( UTag == "OBJPTR" )
 									{
-										SERIAL objSer = data.toUInt();
+										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1125,14 +1655,15 @@ void cEffects::LoadEffects( void )
 												toLoad->ObjPtr( calcItemObjFromSer( objSer ) );
 										}
 										else
-											toLoad->ObjPtr( NULL );
+											toLoad->ObjPtr( nullptr );
 									}
+									break;
 								case 'S':
 									if( UTag == "SOURCE" )
-										toLoad->Source( data.toUInt() );
+										toLoad->Source( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									break;
 								default:
-									Console.error( format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
+									Console.error( strutil::format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
 									break;
 							}
 						}
@@ -1155,7 +1686,7 @@ void cEffects::LoadEffects( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
-	CBaseObject *getPtr = NULL;
+	CBaseObject *getPtr = nullptr;
 
 	effectDestination << "[EFFECT]" << '\n';
 

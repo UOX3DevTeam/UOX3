@@ -31,7 +31,7 @@ private:
 
 	void				InternalReset( void );
 	void				Init( void );
-	bool				beenParsed[JSOT_COUNT];
+	bool				beenParsed[JSOT_COUNT+1];
 	JSEncapsObjectType	nativeType;
 
 	SI32				intVal;

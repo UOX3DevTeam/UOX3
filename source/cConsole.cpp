@@ -30,17 +30,23 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+#include <iostream>
+#include <cctype>
 
-#if UOX_PLATFORM != PLATFORM_WIN32
-#include <stdio.h>
-
+#if PLATFORM != WINDOWS
+#include <termios.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
-typedef void *HANDLE;
+struct termios initial_terminal_state;
 #else
-#include <process.h>
-#include <conio.h>
-#endif
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <conio.h>
+#undef min
+#undef max
+DWORD initial_terminal_state;
+#endif
 
 CConsole						Console;	// no *, else we can't overload <<
 CEndL							myendl;
@@ -50,13 +56,7 @@ const UI08 WARNINGMODE			= 1;
 const UI08 ERRORMODE			= 2;
 //const UI08 COLOURMODE			= 3;
 
-bool cluox_io					= false;   // is cluox-IO enabled?
-bool cluox_nopipe_fill			= false;   // the stdin-pipe is known to be none-empty, no need to fill it.
-HANDLE cluox_stdin_writeback	= 0; // the write-end of the stdin-pipe
-
-
 // Forward function declarations
-
 void		endmessage( SI32 x );
 void		LoadCustomTitle( void );
 void		LoadSkills( void );
@@ -69,34 +69,143 @@ void		UnloadRegions( void );
 void		UnloadSpawnRegions( void );
 void		LoadTeleportLocations( void );
 
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CConsole()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Class Constructor and deconstructor
 //o-----------------------------------------------------------------------------------------------o
 CConsole::CConsole() : width( 80 ), height( 25 ),
-#if UOX_PLATFORM == PLATFORM_WIN32
 currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
-#else
-currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false ), forceNL( false )
-
-#endif
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	tcgetattr (0, &resetio);
-#endif
+	initialize();
 }
 
 CConsole::~CConsole()
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	setvbuf(stdout, NULL, _IONBF, 0);
-	tcsetattr(0, TCSANOW, &resetio);
-#endif
-
+	MoveTo(1,height);
+	reset();
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::initialize()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Prepare console/terminal for UOX3 output
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::initialize()
+{
+#if !defined(_WIN32)
+	tcgetattr(1, &initial_terminal_state); // get the current state of the terminal
+	auto temp = initial_terminal_state;
+	temp.c_lflag = temp.c_lflag & (~ECHO) & (~ICANON); // Disable echo and canonical (line) mode
+	temp.c_cc[VMIN] = 0;  		// in non canonical mode we non blocking read
+	temp.c_cc[VTIME] = 0; // in non canonical mode we non blocking read
+	tcsetattr(1, TCSANOW, &temp);
+#else
+	// Set the input to non echo and non canonical (line) mode
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleMode(hco, &initial_terminal_state);
+	auto temp = initial_terminal_state;
+	temp = (temp & (~ENABLE_ECHO_INPUT) & (~ENABLE_LINE_INPUT) & (~ENABLE_MOUSE_INPUT));
+	SetConsoleMode(hco,initial_terminal_state);
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::reset()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Reset console/terminal to its original state
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::reset()
+{
+	std::cout.flush();
+
+#if !defined(_WIN32)
+	tcsetattr(1, TCSAFLUSH, &initial_terminal_state);
+	std::cout << std::endl;
+#else
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleMode(hco,initial_terminal_state);
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::setTitle( const std::string &value )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Set console/terminal window title
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::setTitle( const std::string &value )
+{
+#if !defined(_WIN32)
+	auto cmd = SETTITLE;
+	auto loc = cmd.find("TITLE");
+	cmd.replace(loc, 5, value);
+	sendCMD(cmd);
+#else
+	SetConsoleTitle( value.c_str() );
+#endif
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::sendCMD( const std::string& cmd )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Send cmd to terminal
+//o-----------------------------------------------------------------------------------------------o
+CConsole& CConsole::sendCMD( const std::string& cmd )
+{
+	std::cout << cmd;
+	std::cout.flush();
+	return *this;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::windowSize()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Set window size in columns and rows
+//o-----------------------------------------------------------------------------------------------o
+std::tuple<int,int> CConsole::windowSize()
+{
+	int row =0;
+	int col =0;
+
+#if !defined(_WIN32)
+	// Get the window size
+	winsize winsz;
+	ioctl(0,TIOCGWINSZ,&winsz);
+	col = winsz.ws_col;
+	row = winsz.ws_row;
+#else
+	HANDLE hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+	GetConsoleScreenBufferInfo( hco, &csbi );
+	col	= csbi.dwSize.X;
+	row	= csbi.dwSize.Y;
+#endif
+
+	return std::make_tuple(row,col);
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	CConsole()::clearScreen()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Clears the screen
+//o-----------------------------------------------------------------------------------------------o
+void CConsole::clearScreen()
+{
+#if defined(_WIN32)
+	unsigned long y;
+	COORD xy;
+
+	xy.X = 0;
+	xy.Y = 0;
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
+	FillConsoleOutputCharacter( hco, ' ', width * height, xy, &y );
+	SetConsoleCursorPosition( hco, xy );
+#else
+	std::string cmd = CSI;
+	cmd = cmd + std::string("2J");
+	sendCMD(cmd);
+#endif
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	<< Overrriding
@@ -112,8 +221,9 @@ CConsole& CConsole::operator<<( const SI08 *outPut )
 CConsole& CConsole::operator<<( const char *outPut )
 {
 	StartOfLineCheck();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 	std::string toDisplay = outPut;
 	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X )
@@ -247,15 +357,17 @@ CConsole& CConsole::operator<<( const R64 &outPut )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void print(const std::string& msg) {
+//| Function	-	void print( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints the console with the "|"
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::print(const std::string& msg) {
-	StartOfLineCheck() ;
-	std::cout << msg ;
-	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n')) {
-		curLeft = 0 ;
+void CConsole::print( const std::string& msg )
+{
+	StartOfLineCheck();
+	std::cout << msg;
+	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n'))
+	{
+		curLeft = 0;
 	}
 }
 
@@ -266,17 +378,17 @@ void CConsole::print(const std::string& msg) {
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::log( const std::string& msg, const std::string& filename )
 {
-	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
+	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
 		return;
 
 	std::ofstream toWrite;
 	std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
-	if( cwmWorldState != NULL )
+	if( cwmWorldState != nullptr )
 		realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
 	else
 		realFileName = filename;
 
-	char timeStr[128];
+	char timeStr[256];
 	RealTime( timeStr );
 
 	toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );
@@ -285,7 +397,7 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 	toWrite.close();
 	if( LogEcho() )
 	{
-		print( format( "%s%s\n", timeStr, msg.c_str()));
+		print( strutil::format( "%s%s\n", timeStr, msg.c_str()));
 	}
 }
 
@@ -294,9 +406,9 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Log to the console.log file
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::log( const std::string& msg)
+void CConsole::log( const std::string& msg )
 {
-	if( !cwmWorldState->ServerData()->ServerConsoleLogStatus() )
+	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
 		return;
 
 	log( msg, "console.log" );
@@ -320,7 +432,6 @@ void CConsole::error( const std::string& msg )
 	CurrentMode( oldMode );
 }
 
-
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -336,12 +447,6 @@ void CConsole::PrintSectionBegin( void )
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
-#if UOX_PLATFORM != PLATFORM_WIN32
-	if( forceNL )
-	{
-		(*this) << myendl;
-	}
-#endif
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -352,43 +457,10 @@ void CConsole::PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::Start( const std::string& temp )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
-	hco		= GetStdHandle( STD_OUTPUT_HANDLE );
-	GetConsoleScreenBufferInfo( hco, &csbi );
-	width	= csbi.dwSize.X;
-	height	= csbi.dwSize.Y;
-	SetConsoleTitle( temp.c_str() );
-#else
-	// TODO: unix console handling should really be replaced by (n)curses or
-	// something
-
-	if (isatty (0))
-	{
-		struct termios tio;
-		struct winsize winsz;
-
-		// switch to raw mode
-		tcgetattr (0, &tio);
-
-		tio.c_lflag &= ~ICANON & ~ECHO;
-
-		tcsetattr (0, TCSAFLUSH, &tio); //ignore errors
-
-		// get window size
-		ioctl (0, TIOCGWINSZ, &winsz);
-
-		width = winsz.ws_col;
-		height = winsz.ws_row;
-
-		// disable stdout buffering
-		setvbuf (stdout, NULL, _IONBF, 0);
-	}
-	else
-	{
-		// produce readable log
-		forceNL = true;
-	}
-#endif
+	auto size = windowSize();
+	width = std::get<1>(size);
+	height = std::get<0>(size);
+	setTitle(temp);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -399,7 +471,8 @@ void CConsole::Start( const std::string& temp )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnYellow( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;33m";
@@ -415,7 +488,8 @@ void CConsole::TurnYellow( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnRed( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;31m";
@@ -431,7 +505,8 @@ void CConsole::TurnRed( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnGreen( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;32m";
@@ -447,7 +522,8 @@ void CConsole::TurnGreen( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBlue( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;34m";
@@ -463,7 +539,8 @@ void CConsole::TurnBlue( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnNormal( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
 #else
 	std::cout << "\033[0;37m";
@@ -479,7 +556,8 @@ void CConsole::TurnNormal( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::TurnBrightWhite( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
 #else
 	std::cout << "\033[1;37m";
@@ -530,17 +608,7 @@ void CConsole::PrintPassed( void )
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::ClearScreen( void )
 {
-#if UOX_PLATFORM == PLATFORM_WIN32
-	unsigned long y;
-	COORD xy;
-
-	xy.X = 0;
-	xy.Y = 0;
-	FillConsoleOutputCharacter( hco, ' ', width * height, xy, &y );
-	SetConsoleCursorPosition( hco, xy );
-#else
-	std::cout << "\033[H" ;
-#endif
+	clearScreen();
 }
 
 void CConsole::PrintBasedOnVal( bool value )
@@ -610,9 +678,10 @@ void CConsole::PrintStartOfLine( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o-----------------------------------------------------------------------------------------------o
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 void CConsole::MoveTo( SI32 x, SI32 y )
 {
+	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD Pos;
 	if( y == -1 )
 	{
@@ -725,54 +794,78 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 SI32 CConsole::cl_getch( void )
 {
-#if UOX_PLATFORM != PLATFORM_WIN32
-	// first the linux style, don't change it's behavoir
-	UI08 c = 0;
-	fd_set KEYBOARD;
-	FD_ZERO( &KEYBOARD );
-	FD_SET( 0, &KEYBOARD );
-	SI32 s = select( 1, &KEYBOARD, NULL, NULL, &cwmWorldState->uoxtimeout );
-	if( s < 0 )
+#if PLATFORM != WINDOWS
+	char data = 0 ;
+	auto a = ::read(0,&data, 1); // This doesn't block on getting a line due to initalization
+	if( a > 0 )
 	{
-		error( format("%c", "Error scanning key press") );
-		messageLoop << MSG_SHUTDOWN;
+		// Look for escape!
+		if( data == 27 )
+		{
+			// This was an escape, see if we have another item
+			a = ::read(0, &data, 1);
+			if( a > 0 )
+			{
+				// See if this is a CSI
+				if( data == '[' )
+				{
+					// It is an control sequence!
+					// Some sequences end with a ~, some dont.  So, we now get to see
+					a = ::read(0, &data, 1);
+					while( a > 0 )
+					{
+						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || ( data == 'H' ) && ( data == 'F' ) || ( data == '~' ))
+						{
+							break;
+						}
+						a = ::read(0, &data, 1);
+					}
+					return -1;
+				}
+				else if( data == 'O' ) // this could be F1-F4
+				{
+					a = ::read(0, &data, 1);
+					if( a > 0 )
+					{
+						if(( data == 'P' ) || ( data == 'Q' ) || ( data == 'R' ) || ( data == 'S' ))
+						{
+							// It was F1,F2,F3,F4
+							return -1;
+						}
+						// Soooooo, we have now lost two characters, this one and the preceeding O that where after the ESC
+						return 27;
+					}
+					// It wasnt, so we have a choice, return -1 (since we got ESC O, or return ESC and lose O
+					return 27;
+				}
+				else
+				{
+					// Ok, it isn't an CSI (Control Sequence).  But we have all ready lost/read the next
+					// character.  That will be lost, return escape
+					return 27;
+				}
+			}
+			else
+			{
+				// There was nothing after the escape, so just send the escape
+				return 27; // return escape
+			}
+		}
+		// Not escape if here, so just return it
+		return static_cast<SI32>(data);
 	}
-	if( s > 0 )
+	else
 	{
-		read( 0, &c, 1 );
-		if( c == 0x0A )
-			return -1;
+		return -1;
 	}
+
 #else
-	// now the windows one
-	if( !cluox_io )
-	{
 		// uox is not wrapped simply use the kbhit routine
 		if( _kbhit() )
 			return _getch();
 		else
 			return -1;
-	}
-	// the wiered cluox getter.
-	UI08 c = 0;
-	unsigned long bytes_written = 0;
-	SI32 asw = 0;
-	if( !cluox_nopipe_fill )
-		asw = WriteFile( cluox_stdin_writeback, &c, 1, &bytes_written, NULL );
-	if( bytes_written != 1 || asw == 0 )
-	{
-		warning( "Using cluox-io" );
-		messageLoop << MSG_SHUTDOWN;
-	}
-	c = (UI08)fgetc( stdin );
-	if( c == 0 )
-	{
-		cluox_nopipe_fill = false;
-		return -1;
-	}
 #endif
-	// here an actual charater is read in
-	return c;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -789,17 +882,7 @@ void CConsole::Poll( void )
 	SI32 c = cl_getch();
 	if( c > 0 )
 	{
-		if( (cluox_io) && ( c == 250 ) )
-		{	// force unsecure mode, need this since cluox can't know
-			//      how the toggle status is.
-			if( cwmWorldState->GetSecure() )
-			{
-				(*this) << "Secure mode disabled. Press ? for a commands list." << myendl;
-				cwmWorldState->SetSecure( false );
-				return;
-			}
-		}
-		c = toupper(c);
+		c = std::toupper(c);
 		Process( c );
 	}
 }
@@ -839,17 +922,18 @@ void CConsole::Process( SI32 c )
 			if( toFind->second.isEnabled )
 			{
 				cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-				if( toExecute != NULL )
+				if( toExecute != nullptr )
 				{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-					print(format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
+					print(strutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
 #endif
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), NULL, 0 );
+					jsval eventRetVal;
+					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
 				}
 				return;
 			}
 		}
-		CSocket *tSock	= NULL;
+		CSocket *tSock	= nullptr;
 		//char outputline[128], temp[1024];
 		std::string outputline, temp;
 		SI32 indexcount	= 0;
@@ -870,6 +954,7 @@ void CConsole::Process( SI32 c )
 			case 'Y':
 				SI32 keyresp;
 				std::cout << "System: ";
+				std::cout.flush();
 				while( !kill )
 				{
 					keyresp = cl_getch();
@@ -899,16 +984,15 @@ void CConsole::Process( SI32 c )
 							indexcount = 0;
 							kill = true;
 							std::cout << std::endl;
-							temp=format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
+							temp=strutil::format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
 							outputline = "";
 							messageLoop << temp;
 							break;
 						default:
-							if( static_cast<size_t>(indexcount) < sizeof( outputline ) )
-							{
-								outputline[indexcount++] = (UI08)(keyresp);
-								std::cout << (char)keyresp;
-							}
+							outputline = outputline + std::string(1, static_cast<SI08>(keyresp));
+							indexcount = indexcount + 1;
+							std::cout << static_cast<SI08>(keyresp);
+							std::cout.flush();
 							break;
 					}
 					keyresp = 0x00;
@@ -931,7 +1015,7 @@ void CConsole::Process( SI32 c )
 					{
 						localMap.insert( std::make_pair( CJ->first, 0 ) );
 						szBuffer = "";
-						szBuffer=format( "AddMenuGroup %u:", CJ->first );
+						szBuffer=strutil::format( "AddMenuGroup %u:", CJ->first );
 						messageLoop << szBuffer;
 						std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
 						SI32 count = 0;
@@ -940,7 +1024,7 @@ void CConsole::Process( SI32 c )
 							count++;
 						}
 						szBuffer = "";
-						szBuffer=format( "   Found %i Auto-AddMenu Item(s).", count );
+						szBuffer=strutil::format( "   Found %i Auto-AddMenu Item(s).", count );
 						messageLoop << szBuffer;
 					}
 				}
@@ -1017,7 +1101,7 @@ void CConsole::Process( SI32 c )
 				break;
 			case  'D':
 				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != NULL; tSock = Network->PrevSocket() )
+				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
 				{
 					if( tSock->AcctNo() == 0 )
 						Network->Disconnect( tSock );
@@ -1043,15 +1127,15 @@ void CConsole::Process( SI32 c )
 				LogEcho( true );
 				log( "--- Starting Performance Dump ---", "performance.log");
 				log( "\tPerformance Dump:", "performance.log");
-				log( format("\tNetwork code: %.2fmsec [%i samples]",(R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount), "performance.log" );
-				log( format("\tTimer code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount), "performance.log");
-				log( format("\tAuto code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount), "performance.log");
-				log( format("\tLoop Time: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount), "performance.log");
+				log( strutil::format("\tNetwork code: %.2fmsec [%i samples]",(R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount), "performance.log" );
+				log( strutil::format("\tTimer code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount), "performance.log");
+				log( strutil::format("\tAuto code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount), "performance.log");
+				log( strutil::format("\tLoop Time: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount), "performance.log");
 
-				log( format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
-				log( format("\tSimulation Cycles: %f per sec", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount)))), "performance.log");
-				log( format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
-				log( format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
+				log( strutil::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
+				log( strutil::format("\tSimulation Cycles: %f per sec", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount)))), "performance.log");
+				log( strutil::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
+				log( strutil::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
 				log( "--- Performance Dump Complete ---", "performance.log");
 				LogEcho( false );
 				break;
@@ -1069,13 +1153,13 @@ void CConsole::Process( SI32 c )
 						++j;
 						CChar *mChar = iSock->CurrcharObj();
 
-						temp = format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
+						temp = strutil::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
 						messageLoop << temp;
 					}
 					Network->popConn();
 				}
 
-				temp = format( "     Total users online: %i", j );
+				temp = strutil::format( "     Total users online: %i", j );
 				messageLoop << temp;
 				break;
 			}
@@ -1085,32 +1169,32 @@ void CConsole::Process( SI32 c )
 				tmp = 0;
 				messageLoop << "CMD: UOX Memory Information:";
 				messageLoop << "     Cache:";
-				temp = format( "        Tiles: %zu bytes", Map->GetTileMem() );
+				temp = strutil::format( "        Tiles: %zu bytes", Map->GetTileMem() );
 				messageLoop << temp;
-				temp = format( "        Multis: %zu bytes", Map->GetMultisMem() );
+				temp = strutil::format( "        Multis: %zu bytes", Map->GetMultisMem() );
 				messageLoop << temp;
 				UI32 m, n;
 				m = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ));
-				total += tmp = m + m*sizeof( CTEffect ) + m*sizeof(char) + m*sizeof( intptr_t )*5;
-				temp = format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
+				total += tmp = m + m*sizeof(CTEffect) + m*sizeof(SI08) + m*sizeof(intptr_t)*5;
+				temp = strutil::format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
 				messageLoop << temp;
 				n = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM ));
 				total += tmp = n + n * sizeof( intptr_t ) * 4;
-				temp = format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
+				temp = strutil::format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
 				messageLoop << temp;
-				temp = format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+				temp = strutil::format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 				total += tmp = 69 * sizeof( SpellInfo );
-				temp = format( temp, "     Spells: %i bytes", tmp );
+				temp = strutil::format( temp, "     Spells: %i bytes", tmp );
 				messageLoop << "     Sizes:";
-				temp = format("        CItem  : %lu bytes", sizeof( CItem ) );
+				temp = strutil::format("        CItem  : %lu bytes", sizeof( CItem ) );
 				messageLoop << temp;
-				temp = format( "        CChar  : %lu bytes", sizeof( CChar ) );
+				temp = strutil::format( "        CChar  : %lu bytes", sizeof( CChar ) );
 				messageLoop << temp;
-				temp = format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
+				temp = strutil::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
 				tmp = static_cast<std::uint32_t>(Map->GetTileMem() + Map->GetMultisMem());
 				total += tmp;
-				temp = format( "        Approximate Total: %i bytes", total );
+				temp = strutil::format( "        Approximate Total: %i bytes", total );
 				messageLoop << temp;
 				break;
 			case '?':
@@ -1152,11 +1236,11 @@ void CConsole::Process( SI32 c )
 					Network->pushConn();
 
 					CSocket *snSock		= Network->FirstSocket();
-					if( snSock != NULL )
+					if( snSock != nullptr )
 						loggingEnabled = !snSock->Logging();
 					for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
 					{
-						if( snSock != NULL )
+						if( snSock != nullptr )
 							snSock->Logging( !snSock->Logging() );
 					}
 					Network->popConn();
@@ -1177,26 +1261,11 @@ void CConsole::Process( SI32 c )
 				FileLookup->DisplayPriorityMap();
 				break;
 			default:
-				temp = format( "Key \'%c\' [%i] does not perform a function", (char)c, c );
+				temp = strutil::format( "Key \'%c\' [%i] does not perform a function", (SI08)c, c );
 				messageLoop << temp;
 				break;
 		}
 	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Cloak( char *callback )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Cloak UOX3 console within CLUOX
-//o-----------------------------------------------------------------------------------------------o
-void CConsole::Cloak( char *callback )
-{
-	(*this) << "Using CLUOX Streaming-IO" << myendl;
-	setvbuf( stdout, NULL, _IONBF, 0 );
-	setvbuf( stderr, NULL, _IONBF, 0 );
-	cluox_io = true;
-	char *dummy;
-	cluox_stdin_writeback = (void *)strtol( callback, &dummy, 16 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1244,6 +1313,7 @@ void CConsole::DisplaySettings( void )
 	(*this) << "   -Data:            " << cwmWorldState->ServerData()->Directory( CSDDP_DATA ) << myendl;
 	(*this) << "   -Defs:            " << cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) << myendl;
 	(*this) << "   -Scripts:         " << cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) << myendl;
+	(*this) << "   -ScriptData:      " << cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTDATA ) << myendl;
 	(*this) << "   -HTML:            " << cwmWorldState->ServerData()->Directory( CSDDP_HTML ) << myendl;
 	(*this) << "   -Books:           " << cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) << myendl;
 	(*this) << "   -MessageBoards:   " << cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) << myendl;
@@ -1258,7 +1328,7 @@ void CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
 
-	messageLoop << format("         Registering key \"%c\"", key );
+	messageLoop << strutil::format("         Registering key \"%c\"", key );
 #endif
 	JSKeyHandler[key] = JSConsoleEntry( scriptID, cmdName );
 }
@@ -1285,9 +1355,9 @@ void CConsole::SetKeyStatus( SI32 key, bool isEnabled )
 void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptID )
 {
 #if defined( UOX_DEBUG_MODE )
-	print(format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
+	print(strutil::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
 #endif
-	JSConsoleFunctions[str_toupper(cmdFunc)]	= JSConsoleEntry( scriptID, cmdName );
+	JSConsoleFunctions[strutil::upper(cmdFunc)]	= JSConsoleEntry( scriptID, cmdName );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1297,8 +1367,8 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 //o-----------------------------------------------------------------------------------------------o
 void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 {
-	UString upper						= cmdFunc;
-	upper								= upper.upper();
+	std::string upper					= cmdFunc;
+	upper								= strutil::upper( upper );
 	JSCONSOLEFUNCMAP_ITERATOR	toFind	= JSConsoleFunctions.find( upper );
 	if( toFind != JSConsoleFunctions.end() )
 	{
@@ -1316,7 +1386,7 @@ void CConsole::Registration( void )
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_CONSOLE );
 	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
 	{
-		if( ourScript != NULL )
+		if( ourScript != nullptr )
 			ourScript->ScriptRegistration( "Console" );
 	}
 }

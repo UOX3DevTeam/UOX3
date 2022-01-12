@@ -2,7 +2,7 @@
 
 [0xc37]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c37
 weight=1
@@ -10,7 +10,7 @@ weight=1
 
 [0xc38]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c38
 weight=1
@@ -18,7 +18,7 @@ weight=1
 
 [0xc3b]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c3b
 weight=5
@@ -26,7 +26,7 @@ weight=5
 
 [0xc3c]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c3c
 weight=5
@@ -34,7 +34,7 @@ weight=5
 
 [0xc3d]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c3d
 weight=5
@@ -42,7 +42,7 @@ weight=5
 
 [0xc3e]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c3e
 weight=5
@@ -50,7 +50,7 @@ weight=5
 
 [0xc3f]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c3f
 weight=5
@@ -58,7 +58,7 @@ weight=5
 
 [0xc40]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c40
 weight=5
@@ -66,7 +66,7 @@ weight=5
 
 [0xc41]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c41
 weight=5
@@ -74,7 +74,7 @@ weight=5
 
 [0xc42]
 {
-get=base_item
+get=base_plant
 name=dried flowers
 id=0x0c42
 weight=5
@@ -82,7 +82,7 @@ weight=5
 
 [0xc45]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c45
 weight=5
@@ -90,7 +90,7 @@ weight=5
 
 [0xc46]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c46
 weight=5
@@ -98,7 +98,7 @@ weight=5
 
 [0xc47]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c47
 weight=5
@@ -106,7 +106,7 @@ weight=5
 
 [0xc48]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c48
 weight=5
@@ -114,7 +114,7 @@ weight=5
 
 [0xc49]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c49
 weight=5
@@ -122,7 +122,7 @@ weight=5
 
 [0xc4a]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c4a
 weight=5
@@ -130,7 +130,7 @@ weight=5
 
 [0xc4b]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c4b
 weight=5
@@ -138,7 +138,7 @@ weight=5
 
 [0xc4c]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c4c
 weight=5
@@ -146,7 +146,7 @@ weight=5
 
 [0xc4d]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c4d
 weight=5
@@ -154,7 +154,7 @@ weight=5
 
 [0xc4e]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0c4e
 weight=5
@@ -162,7 +162,7 @@ weight=5
 
 [0xc83]
 {
-get=base_item
+get=base_plant
 name=campion flowers
 id=0x0c83
 weight=5
@@ -170,7 +170,7 @@ weight=5
 
 [0xc84]
 {
-get=base_item
+get=base_plant
 name=foxglove flowers
 id=0x0c84
 weight=5
@@ -178,7 +178,7 @@ weight=5
 
 [0xc85]
 {
-get=base_item
+get=base_plant
 name=orfluer flowers
 id=0x0c85
 weight=5
@@ -186,7 +186,7 @@ weight=5
 
 [0xc86]
 {
-get=base_item
+get=base_plant
 name=red poppies
 id=0x0c86
 weight=5
@@ -194,7 +194,7 @@ weight=5
 
 [0xc87]
 {
-get=base_item
+get=base_plant
 name=campion flowers
 id=0x0c87
 weight=5
@@ -202,7 +202,7 @@ weight=5
 
 [0xc88]
 {
-get=base_item
+get=base_plant
 name=snowdrops
 id=0x0c88
 weight=5
@@ -210,7 +210,7 @@ weight=5
 
 [0xc89]
 {
-get=base_item
+get=base_plant
 name=campion flowers
 id=0x0c89
 weight=5
@@ -218,7 +218,7 @@ weight=5
 
 [0xc8a]
 {
-get=base_item
+get=base_plant
 name=foxglove flowers
 id=0x0c8a
 weight=5
@@ -226,7 +226,7 @@ weight=5
 
 [0xc8b]
 {
-get=base_item
+get=base_plant
 name=white flowers
 id=0x0c8b
 weight=5
@@ -234,7 +234,7 @@ weight=5
 
 [0xc8c]
 {
-get=base_item
+get=base_plant
 name=white flowers
 id=0x0c8c
 weight=5
@@ -242,7 +242,7 @@ weight=5
 
 [0xc8d]
 {
-get=base_item
+get=base_plant
 name=white poppies
 id=0x0c8d
 weight=5
@@ -250,7 +250,7 @@ weight=5
 
 [0xc8e]
 {
-get=base_item
+get=base_plant
 name=snowdrops
 id=0x0c8e
 weight=5
@@ -258,7 +258,7 @@ weight=5
 
 [0xcbe]
 {
-get=base_item
+get=base_plant
 name=poppies
 id=0x0cbe
 weight=5
@@ -266,7 +266,7 @@ weight=5
 
 [0xcbf]
 {
-get=base_item
+get=base_plant
 name=poppies
 id=0x0cbf
 weight=5
@@ -274,7 +274,7 @@ weight=5
 
 [0xcc0]
 {
-get=base_item
+get=base_plant
 name=orfluer flowers
 id=0x0cc0
 weight=5
@@ -282,7 +282,7 @@ weight=5
 
 [0xcc1]
 {
-get=base_item
+get=base_plant
 name=orfluer flowers
 id=0x0cc1
 weight=5
@@ -290,7 +290,7 @@ weight=5
 
 [0xd29]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0d29
 weight=5
@@ -298,7 +298,7 @@ weight=5
 
 [0xd2b]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0d2b
 weight=5
@@ -306,7 +306,7 @@ weight=5
 
 [0xd2d]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0d2d
 weight=5
@@ -314,7 +314,7 @@ weight=5
 
 [0xd2f]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0d2f
 weight=5
@@ -322,7 +322,7 @@ weight=5
 
 [0xd36]
 {
-get=base_item
+get=base_plant
 name=flowers
 id=0x0d36
 weight=5
@@ -330,7 +330,7 @@ weight=5
 
 [0x11ca]
 {
-get=base_item
+get=base_plant
 name=flowerpot
 id=0x11ca
 weight=5
@@ -338,7 +338,7 @@ weight=5
 
 [0x11cb]
 {
-get=base_item
+get=base_plant
 name=flowerpot
 id=0x11cb
 weight=5
@@ -346,7 +346,7 @@ weight=5
 
 [0x11cc]
 {
-get=base_item
+get=base_plant
 name=flowerpot
 id=0x11cc
 weight=5

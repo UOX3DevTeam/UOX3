@@ -5,31 +5,31 @@
 typedef void *  va_list;
 #endif
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 #define MAX_PATH			268
 #endif
 
 #if defined( _DEBUG )
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
-Console.print( format("Socket failure at %s", __FILE__LINE__) );	\
+Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
-#define VALIDATESOCKET( s ) if( s == NULL ) \
+#define VALIDATESOCKET( s ) if( s == nullptr ) \
 return;
 #endif
 
 typedef float				R32;
 typedef double				R64;
-typedef unsigned int		UI32;
-typedef signed int			SI32;
-typedef unsigned short int	UI16;
-typedef signed short int	SI16;
-typedef unsigned char		UI08;
-typedef signed char			SI08;
-typedef unsigned long long	UI64;
-typedef signed long long	SI64;
+typedef unsigned char		UI08; // 0 to 255
+typedef signed char			SI08; // -128 to 127
+typedef unsigned short int	UI16; // 0 to 65535
+typedef signed short int	SI16; // -32768 to 32767
+typedef unsigned int		UI32; // 0 to 4294967295
+typedef signed int			SI32; // -2147483648 to 2147483647
+typedef unsigned long long	UI64; // 0 to 18446744073709551615
+typedef signed long long	SI64; // -9223372036854775808 to 9223372036854775807
 
 typedef UI08		GENDER;
 typedef UI08		LIGHTLEVEL;
@@ -45,7 +45,11 @@ typedef UI16		SKILLVAL;
 typedef UI16		weathID;
 typedef SI16		GUILDID;
 typedef UI32		TIMERVAL;
+#if defined(_WIN32)
 typedef UI32		UOXSOCKET;
+#else
+typedef SI32		UOXSOCKET;
+#endif
 typedef UI32		SERIAL;
 
 const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
@@ -76,6 +80,10 @@ typedef std::vector< CChar* >::const_iterator			CHARLIST_CITERATOR;
 typedef std::vector< CItem* >							ITEMLIST;
 typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
 typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
+//
+typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
+typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
+typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
 //
 typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
@@ -116,7 +124,7 @@ const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will
 const UI08 MAX_TITLE	= 60;
 const UI16 MAX_STACK	= 0xFFFF;
 const UI08 MAX_VISRANGE	= 18;
-const UI16 MAXBUFFER	= 2560;	// Buffer Size (For socket operations)
+const UI16 MAXBUFFER	= 4096;	// Buffer Size (For socket operations)
 const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
 
 const SI08 ILLEGAL_Z	= -128;

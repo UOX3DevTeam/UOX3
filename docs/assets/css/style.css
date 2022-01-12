@@ -75,6 +75,21 @@ input[id^="spoiler"] + label:hover {
 	font-size: 16px;
 }
 
+.title-maindoc {
+	border-top: 5px solid #578bb8;
+	border-bottom: 5px solid #578bb8;
+}
+
+.title-jsdoc {
+	border-top: 5px solid #b20000;
+	border-bottom: 5px solid #b20000;
+}
+
+.title-codedoc {
+	border-top: 5px solid #222;
+	border-bottom: 5px solid #222;
+}
+
 .cd-faq__title h1 {
 	color: white;
 }
@@ -85,7 +100,17 @@ input[id^="spoiler"] + label:hover {
 }
 
 .styleguide {
+	background-color: #222 !important;
+	color: white !important;
+}
+
+.jsdocs {
 	background-color: #b20000 !important;
+	color: white !important;
+}
+
+.docs {
+	background-color: #578bb8 !important;
 	color: white !important;
 }
 
@@ -93,8 +118,14 @@ input[id^="spoiler"] + label:hover {
 	padding-top: 10px;
 }
 
+.hl,
 .highlight {
 	color: #BD0000;
+	font-weight: bold;
+}
+
+.hlBlue {
+	color: #578bb8;
 	font-weight: bold;
 }
 
@@ -167,4 +198,49 @@ pre {
 
 .indent {
 	margin-left: 20px;
+}
+
+.topicListDocs {
+	border-top: 10px solid #578bb8;
+	border-bottom: 10px solid #578bb8;
+}
+
+.topicListJS {
+	border-top: 10px solid #b20000;
+	border-bottom: 10px solid #b20000;
+}
+
+.topicListStyleGuide {
+	border-top: 10px solid #222;
+	border-bottom: 10px solid #222;
+}
+
+[contenteditable][placeholder]:empty:before {
+  content: attr(placeholder);
+  position: absolute;
+  color: gray;
+  opacity:0.5;
+  background-color: transparent;
+}
+
+[contenteditable="true"] {
+    white-space: nowrap;
+    width:200px;
+    overflow: hidden;
+}
+[contenteditable="true"] br {
+    display:none;
+
+}
+[contenteditable="true"] * {
+    display:inline;
+    white-space:nowrap;
+}
+pre > code {
+	white-space: pre-wrap !important;
+}
+
+.cd-faq__content ul {
+	color: hsl(210, 14%, 49%);
+    color: var(--cd-color-3);
 }

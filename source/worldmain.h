@@ -7,8 +7,8 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
-#include "CDataList.h"
-#if UOX_PLATFORM == PLATFORM_WIN32
+#include "GenericList.h"
+#if PLATFORM == WINDOWS
 #include <winsock2.h>
 #undef min
 #undef max
@@ -20,6 +20,7 @@ enum CWM_TID
 	tWORLD_NEXTNPCAI,
 	tWORLD_SHOPRESTOCK,
 	tWORLD_HUNGERDAMAGE,
+	tWORLD_THIRSTDRAIN,
 	tWORLD_LIGHTTIME,
 	tWORLD_PETOFFLINECHECK,
 	tWORLD_COUNT
@@ -83,31 +84,6 @@ public:
 class CWorldMain
 {
 private:
-	struct skill_st
-	{
-		UI16 strength;
-		UI16 dexterity;
-		UI16 intelligence;
-		std::string madeword;
-		std::vector< advance_st > advancement;
-		UI16 jsScript;
-		std::string name;
-		skill_st()
-		{
-			ResetDefaults();
-		}
-		void ResetDefaults( void )
-		{
-			strength		= 0;
-			dexterity		= 0;
-			intelligence	= 0;
-			jsScript		= 0xFFFF;
-			madeword		= "made";
-			name			= "";
-			advancement.resize( 0 );
-		}
-	};
-
 	// Custom Titles
 	struct title_st
 	{
@@ -148,6 +124,26 @@ private:
 	bool		classesInitialized;
 
 public:
+	struct skill_st
+	{
+		UI16 strength			= 0;
+		UI16 dexterity			= 0;
+		UI16 intelligence		= 0;
+		SI32 skillDelay			= -1;
+		std::string madeword	= "made";
+		std::vector< advance_st > advancement;
+		UI16 jsScript			= 0xFFFF;
+		std::string name		= "";
+		skill_st()
+		{
+			ResetDefaults();
+		}
+		void ResetDefaults( void )
+		{
+			advancement.resize( 0 );
+		}
+	};
+
 	// Timers
 	void		SetTimer( CWM_TID timerID, TIMERVAL newVal );
 	TIMERVAL	GetTimer( CWM_TID timerID ) const;
@@ -214,11 +210,12 @@ public:
 	std::vector< TitlePair_st >			murdererTags;
 	std::vector< CTeleLocationEntry >	teleLocs;
 	std::vector< LogoutLocationEntry >	logoutLocs;
+	std::vector< SOSLocationEntry >		sosLocs;
 	std::vector< UI08 >					escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
 	SPAWNMAP							spawnRegions;
 	TOWNMAP								townRegions;
-	CDataList< CTEffect * >				tempEffects;
+	GenericList< CTEffect * >			tempEffects;
 
 	QUEUEMAP							refreshQueue;
 	QUEUEMAP							deletionQueue;

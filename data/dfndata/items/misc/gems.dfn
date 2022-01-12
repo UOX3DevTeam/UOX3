@@ -21,7 +21,6 @@ get=base_gem
 name=star sapphire
 id=0x0F0F
 value=150 75
-
 }
 
 [0x0F10]
@@ -51,7 +50,7 @@ value=120 60
 [0x0F13]
 { //ruby
 get=base_gem
-name=
+name=#
 id=0x0F13
 value=90 45
 }
@@ -59,7 +58,7 @@ value=90 45
 [0x0F14]
 { //ruby
 get=base_gem
-name=
+name=#
 id=0x0F14
 value=90 45
 }
@@ -107,7 +106,7 @@ value=120 60
 [0x0f1a]
 { // ruby
 get=base_gem
-name=
+name=#
 id=0x0f1a
 value=90 45
 }
@@ -123,7 +122,7 @@ value=150 75
 [0x0f1c]
 { // ruby
 get=base_gem
-name=
+name=#
 id=0x0f1c
 value=90 45
 }
@@ -131,7 +130,7 @@ value=90 45
 [0x0f1d]
 { // ruby
 get=base_gem
-name=
+name=#
 id=0x0f1d
 value=90 45
 }
@@ -195,7 +194,7 @@ value=60 30
 [0x0F25]
 { //piece of amber
 get=base_gem
-name=
+name=#
 id=0x0F25
 value=60 30
 }
@@ -235,7 +234,7 @@ value=240 120
 [0x0F2a]
 { // ruby
 get=base_gem
-name=
+name=#
 id=0x0F2a
 value=90 45
 }
@@ -243,7 +242,7 @@ value=90 45
 [0x0F2b]
 { // ruby
 get=base_gem
-name=
+name=#
 id=0x0F2b
 value=90 45
 }

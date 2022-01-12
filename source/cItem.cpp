@@ -45,13 +45,17 @@
 #include "msgboard.h"
 #include "books.h"
 #include "power.h"
+#include "cServerDefinitions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+
+#include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
 const UI32 BIT_DYEABLE		=	3;
 const UI32 BIT_CORPSE		=	4;
-//const UI32 BIT_UNUSED		=	5; //was wipeable
+const UI32 BIT_HELDONCURSOR	=	5;
 const UI32 BIT_GUARDED		=	6;
 const UI32 BIT_SPAWNERLIST	=	7;
 
@@ -78,7 +82,11 @@ const SI08			DEFITEM_GRIDLOC			= 0;
 const SERIAL		DEFITEM_CREATOR			= INVALIDSERIAL;
 const SI32			DEFITEM_WEIGHTMAX		= 0;
 const SI32			DEFITEM_BASEWEIGHT		= 0;
-const UI16			DEFITEM_MAXITEMS		= 125;
+const UI16			DEFITEM_MAXITEMS		= 0;
+const UI08			DEFITEM_MAXRANGE		= 0;
+const UI08			DEFITEM_BASERANGE		= 0;
+const UI16			DEFITEM_USESLEFT		= 0;
+const UI16			DEFITEM_MAXUSES			= 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -86,12 +94,13 @@ const UI16			DEFITEM_MAXITEMS		= 125;
 //|	Purpose		-	Constructor
 //o-----------------------------------------------------------------------------------------------o
 CItem::CItem() : CBaseObject(),
-contObj( NULL ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
+contObj( nullptr ), glow_effect( DEFITEM_GLOWEFFECT ), glow( DEFITEM_GLOW ), glowColour( DEFITEM_GLOWCOLOUR ),
 madewith( DEFITEM_MADEWITH ), rndvaluerate( DEFITEM_RANDVALUE ), good( DEFITEM_GOOD ), rank( DEFITEM_RANK ), armorClass( DEFITEM_ARMORCLASS ),
 restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMPTIMER ), decaytime( DEFITEM_DECAYTIME ),
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
-creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS )
+creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -103,6 +112,7 @@ creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGH
 	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
+	eventName.reserve( MAX_NAME );
 	id			= 0x0000;
 }
 
@@ -132,7 +142,7 @@ CBaseObject * CItem::GetCont( void ) const
 //o-----------------------------------------------------------------------------------------------o
 SERIAL CItem::GetContSerial( void ) const
 {
-	if( contObj != NULL )
+	if( contObj != nullptr )
 		return contObj->GetSerial();
 	return INVALIDSERIAL;
 }
@@ -151,6 +161,7 @@ SI08 CItem::GetGridLocation( void ) const
 void CItem::SetGridLocation( SI08 newLoc )
 {
 	gridLoc = newLoc;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -173,6 +184,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 		return;
 
 	tempVars[whichVar] = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -220,6 +232,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 		case 4:		part4 = newVal;		break;
 	}
 	tempVars[whichVar] = (part1<<24) + (part2<<16) + (part3<<8) + part4;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -241,7 +254,7 @@ bool CItem::SetContSerial( SERIAL newSerial )
 		else
 			return SetCont( calcCharObjFromSer( newSerial ) );
 	}
-	return SetCont( NULL );
+	return SetCont( nullptr );
 }
 bool CItem::SetCont( CBaseObject *newCont )
 {
@@ -277,13 +290,16 @@ bool CItem::SetCont( CBaseObject *newCont )
 						Weight->addItemWeight( charWearing, this );
 					if( this->GetLayer() == IL_MOUNT && charWearing->IsNpc() )
 						charWearing->SetOnHorse( true );
+
+					// Set new save flag on item based on save flag of new owner
+					ShouldSave( charWearing->ShouldSave() );
 				}
 			}
 		}
 		else
 		{
 			CItem *itemHolder = static_cast<CItem *>(newCont);
-			if( itemHolder != NULL )
+			if( itemHolder != nullptr )
 			{
 				contIsGround = false;
 				// ok heres what hair/beards should be handled like
@@ -297,10 +313,19 @@ bool CItem::SetCont( CBaseObject *newCont )
 							oldItem->Delete();
 
 						SetCont( itemPackOwner );
+
+						// Set new save flag on item based on save flag of new owner
+						ShouldSave( itemPackOwner->ShouldSave() );
 					}
 				}
 				else
-					itemHolder->GetContainsList()->Add( this );
+				{
+					//itemHolder->GetContainsList()->Add( this );
+					itemHolder->GetContainsList()->AddInFront( this );
+
+					// Set new save flag on item based on save flag of new container
+					ShouldSave( itemHolder->ShouldSave() );
+				}
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
 			}
@@ -309,12 +334,17 @@ bool CItem::SetCont( CBaseObject *newCont )
 
 	if( contIsGround )
 	{
-		contObj = NULL;
+		contObj = nullptr;
 		MapRegion->AddItem( this );
+
+		// If item has been moved to the ground, make sure we save it
+		ShouldSave( true );
 	}
 
 	if( GetGlow() != INVALIDSERIAL )
 		Items->GlowItem( this );
+
+	UpdateRegion();
 
 	return !contIsGround;
 }
@@ -332,6 +362,7 @@ bool CItem::isDoorOpen( void ) const
 void CItem::SetDoorOpen( bool newValue )
 {
 	bools.set( BIT_DOOROPEN, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -347,6 +378,7 @@ bool CItem::isPileable( void ) const
 void CItem::SetPileable( bool newValue )
 {
 	bools.set( BIT_PILEABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -362,6 +394,7 @@ bool CItem::isDyeable( void ) const
 void CItem::SetDye( bool newValue )
 {
 	bools.set( BIT_DYEABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -377,6 +410,23 @@ bool CItem::isCorpse( void ) const
 void CItem::SetCorpse( bool newValue )
 {
 	bools.set( BIT_CORPSE, newValue );
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isHeldOnCursor( void ) const
+//|					void SetHeldOnCursor( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether item is being held on cursor by a player
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::isHeldOnCursor( void ) const
+{
+	return bools.test( BIT_HELDONCURSOR );
+}
+void CItem::SetHeldOnCursor( bool newValue )
+{
+	bools.set( BIT_HELDONCURSOR, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -392,6 +442,7 @@ bool CItem::isGuarded( void ) const
 void CItem::SetGuarded( bool newValue )
 {
 	bools.set( BIT_GUARDED, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -407,6 +458,7 @@ bool CItem::isSpawnerList( void ) const
 void CItem::SetSpawnerList( bool newValue )
 {
 	bools.set( BIT_SPAWNERLIST, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -421,7 +473,8 @@ const char *CItem::GetName2( void ) const
 }
 void CItem::SetName2( const char *newValue )
 {
-	strncpy( name2, newValue, MAX_NAME );
+	strncpy( name2, newValue, MAX_NAME - 1 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -437,6 +490,7 @@ SERIAL CItem::GetCreator( void ) const
 void CItem::SetCreator( SERIAL newValue )
 {
 	creator = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -452,6 +506,23 @@ std::string CItem::GetDesc( void ) const
 void CItem::SetDesc( std::string newValue )
 {
 	desc = newValue.substr( 0, MAX_NAME - 1 );
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetEvent( void ) const
+//|					void SetEvent( std::string newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's event property - used to attach items to specific events
+//o-----------------------------------------------------------------------------------------------o
+std::string CItem::GetEvent( void ) const
+{
+	return eventName;
+}
+void CItem::SetEvent( std::string newValue )
+{
+	eventName = newValue.substr( 0, MAX_NAME - 1 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -462,6 +533,7 @@ void CItem::SetDesc( std::string newValue )
 void CItem::IncZ( SI16 newValue )
 {
 	SetZ( z + newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -484,6 +556,7 @@ void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 	oldLocX = newX;
 	oldLocY = newY;
 	oldLocZ = newZ;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -493,7 +566,7 @@ void CItem::SetOldLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetLocation( const CBaseObject *toSet )
 {
-	if( toSet == NULL )
+	if( toSet == nullptr )
 		return;
 	SetLocation( toSet->GetX(), toSet->GetY(), toSet->GetZ(), toSet->WorldNumber(), toSet->GetInstanceID() );
 }
@@ -515,7 +588,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instance_id )
 {
-	if( GetCont() == NULL )
+	if( GetCont() == nullptr )
 		MapRegion->ChangeRegion( this, newX, newY, world );
 	oldLocX = x;
 	oldLocY = y;
@@ -526,7 +599,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 	gridLoc = newLoc;
 	worldNumber = world;
 	instanceID = instance_id;
-	if( GetCont() == NULL )
+	if( GetCont() == nullptr )
 	{
 		if( !CanBeObjType( OT_MULTI ) )
 		{
@@ -545,6 +618,7 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 			}
 		}
 	}
+	UpdateRegion();
 	Dirty( UT_LOCATION );
 }
 
@@ -580,10 +654,12 @@ void CItem::SetLayer( ItemLayers newValue )
 				charAffected->TakeOffItem( layer );
 			layer = newValue;
 			charAffected->WearItem( this );
+			charAffected->UpdateRegion();
 			return;
 		}
 	}
 	layer = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -599,6 +675,7 @@ ItemTypes CItem::GetType( void ) const
 void CItem::SetType( ItemTypes newValue )
 {
 	type = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -614,6 +691,7 @@ SI08 CItem::GetOffSpell( void ) const
 void CItem::SetOffSpell( SI08 newValue )
 {
 	offspell = newValue;
+	UpdateRegion();
 }
 
 
@@ -641,6 +719,7 @@ void CItem::SetAmount( UI32 newValue )
 	if( ValidateObject( getCont ) )
 		Weight->addItemWeight( getCont, this );
 	Dirty( UT_UPDATE );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -681,6 +760,40 @@ UI16 CItem::GetMaxHP( void ) const
 void CItem::SetMaxHP( UI16 newValue )
 {
 	maxhp = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetMaxUses( void ) const
+//|					void SetMaxUses( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's max uses property
+//o-----------------------------------------------------------------------------------------------o
+UI16 CItem::GetMaxUses( void ) const
+{
+	return maxUses;
+}
+void CItem::SetMaxUses( UI16 newValue )
+{
+	maxUses = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 GetUsesLeft( void ) const
+//|					void SetUsesLeft( UI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's property for remaining uses
+//o-----------------------------------------------------------------------------------------------o
+UI16 CItem::GetUsesLeft( void ) const
+{
+	return usesLeft;
+}
+void CItem::SetUsesLeft( UI16 newValue )
+{
+	usesLeft = newValue;
+	Dirty( UT_UPDATE );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -696,6 +809,39 @@ UI08 CItem::GetSpeed( void ) const
 void CItem::SetSpeed( UI08 newValue )
 {
 	spd = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetMaxRange( void ) const
+//|					void SetMaxRange( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's maximum range - primarily used by throwing/archery weapons
+//o-----------------------------------------------------------------------------------------------o
+UI08 CItem::GetMaxRange( void ) const
+{
+	return maxRange;
+}
+void CItem::SetMaxRange( UI08 newValue )
+{
+	maxRange = newValue;
+	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI08 GetBaseRange( void ) const
+//|					void SetBaseRange( UI08 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's base range - primarily used by throwing weapons
+//o-----------------------------------------------------------------------------------------------o
+UI08 CItem::GetBaseRange( void ) const
+{
+	return baseRange;
+}
+void CItem::SetBaseRange( UI08 newValue )
+{
+	baseRange = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -711,6 +857,7 @@ SI08 CItem::GetMovable( void ) const
 void CItem::SetMovable( SI08 newValue )
 {
 	movable = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -756,6 +903,7 @@ UI08 CItem::GetPriv( void ) const
 void CItem::SetPriv( UI08 newValue )
 {
 	priv = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -771,6 +919,7 @@ UI32 CItem::GetSellValue( void ) const
 void CItem::SetSellValue( UI32 newValue )
 {
 	value[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -786,6 +935,7 @@ UI32 CItem::GetBuyValue( void ) const
 void CItem::SetBuyValue( UI32 newValue )
 {
 	value[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -801,6 +951,7 @@ UI16 CItem::GetRestock( void ) const
 void CItem::SetRestock( UI16 newValue )
 {
 	restock = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -816,6 +967,7 @@ ARMORCLASS CItem::GetArmourClass( void ) const
 void CItem::SetArmourClass( ARMORCLASS newValue )
 {
 	armorClass = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -831,6 +983,7 @@ SI08 CItem::GetRank( void ) const
 void CItem::SetRank( SI08 newValue )
 {
 	rank = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -846,6 +999,7 @@ SI16 CItem::GetGood( void ) const
 void CItem::SetGood( SI16 newValue )
 {
 	good = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -876,6 +1030,7 @@ SI08 CItem::GetMadeWith( void ) const
 void CItem::SetMadeWith( SI08 newValue )
 {
 	madewith = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -891,6 +1046,7 @@ SERIAL CItem::GetGlow( void ) const
 void CItem::SetGlow( SERIAL newValue )
 {
 	glow = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -906,6 +1062,7 @@ COLOUR CItem::GetGlowColour( void ) const
 void CItem::SetGlowColour( COLOUR newValue )
 {
 	glowColour = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -921,6 +1078,7 @@ UI08 CItem::GetGlowEffect( void ) const
 void CItem::SetGlowEffect( UI08 newValue )
 {
 	glow_effect = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -936,6 +1094,7 @@ UI16 CItem::GetAmmoID( void ) const
 void CItem::SetAmmoID( UI16 newValue )
 {
 	ammo[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -951,6 +1110,7 @@ UI16 CItem::GetAmmoHue( void ) const
 void CItem::SetAmmoHue( UI16 newValue )
 {
 	ammo[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -966,6 +1126,7 @@ UI16 CItem::GetAmmoFX( void ) const
 void CItem::SetAmmoFX( UI16 newValue )
 {
 	ammoFX[0] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -981,6 +1142,7 @@ UI16 CItem::GetAmmoFXHue( void ) const
 void CItem::SetAmmoFXHue( UI16 newValue )
 {
 	ammoFX[1] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -996,6 +1158,7 @@ UI16 CItem::GetAmmoFXRender( void ) const
 void CItem::SetAmmoFXRender( UI16 newValue )
 {
 	ammoFX[2] = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1011,6 +1174,7 @@ SI32 CItem::GetWeightMax( void ) const
 void CItem::SetWeightMax( SI32 newValue )
 {
 	weightMax = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1026,6 +1190,7 @@ SI32 CItem::GetBaseWeight( void ) const
 void CItem::SetBaseWeight( SI32 newValue )
 {
 	baseWeight = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1041,6 +1206,7 @@ UI16 CItem::GetMaxItems( void ) const
 void CItem::SetMaxItems( UI16 newValue )
 {
 	maxItems = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1095,6 +1261,7 @@ bool CItem::IsLockedDown( void ) const
 void CItem::LockDown( void )
 {
 	movable = 3;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1125,7 +1292,7 @@ bool CItem::Save( std::ofstream &outStream )
 	if( isFree() )
 		return false;
 	MapData_st& mMap = Map->GetMapData( worldNumber );
-	if( GetCont() != NULL || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+	if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
@@ -1148,8 +1315,14 @@ bool CItem::Save( std::ofstream &outStream )
 void CItem::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
-	if( oldOwner != NULL )
+	if( oldOwner != nullptr )
+	{
 		oldOwner->RemoveOwnedItem( this );
+		oldOwner->UpdateRegion();
+	}
+	
+	if( oldOwner == nullptr || oldOwner->ShouldSave() || ( !oldOwner->ShouldSave() && !isDeleted() ))
+		UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1163,7 +1336,11 @@ void CItem::AddSelfToOwner( void )
 	if( !ValidateObject( newOwner ) )
 		return;
 	if( newOwner->GetSerial() != GetSerial() )
+	{
 		newOwner->AddOwnedItem( this );
+		newOwner->UpdateRegion();
+	}
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1173,7 +1350,7 @@ void CItem::AddSelfToOwner( void )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::RemoveSelfFromCont( void )
 {
-	if( contObj != NULL )
+	if( contObj != nullptr )
 	{
 		if( contObj->GetObjType() == OT_CHAR )	// it's a char!
 		{
@@ -1182,6 +1359,11 @@ void CItem::RemoveSelfFromCont( void )
 			{
 				Weight->subtractItemWeight( targChar, this );
 				targChar->TakeOffItem( GetLayer() );
+				if( ShouldSave() && targChar->ShouldSave() )
+				{
+					UpdateRegion();
+					targChar->UpdateRegion();
+				}
 			}
 		}
 		else
@@ -1191,6 +1373,7 @@ void CItem::RemoveSelfFromCont( void )
 			{
 				Weight->subtractItemWeight( targItem, this );
 				targItem->GetContainsList()->Remove( this );
+				UpdateRegion();
 			}
 		}
 	}
@@ -1207,8 +1390,8 @@ void CItem::RemoveSelfFromCont( void )
 CItem * CItem::Dupe( ObjectType itemType )
 {
 	CItem *target = static_cast< CItem * >(ObjectFactory::getSingleton().CreateObject( itemType ));
-	if( target == NULL )
-		return NULL;
+	if( target == nullptr )
+		return nullptr;
 
 	CopyData( target );
 
@@ -1231,6 +1414,7 @@ void CItem::CopyData( CItem *target )
 	target->SetCorpse( isCorpse() );
 	target->SetDecayTime( GetDecayTime() );
 	target->SetDesc( GetDesc() );
+	target->SetEvent( GetEvent() );
 	target->SetDexterity( GetDexterity() );
 	target->SetDexterity2( GetDexterity2() );
 	target->SetResist( GetResist( PHYSICAL ), PHYSICAL );
@@ -1275,7 +1459,6 @@ void CItem::CopyData( CItem *target )
 	target->SetRank( GetRank() );
 	target->SetRestock( GetRestock() );
 	target->SetRndValueRate( GetRndValueRate() );
-	target->SetScriptTrigger( GetScriptTrigger() );
 	target->SetSpawn( GetSpawn() );
 	target->SetSpeed( GetSpeed() );
 	target->SetSpell( 0, GetSpell( 0 ) );
@@ -1295,9 +1478,19 @@ void CItem::CopyData( CItem *target )
 	target->SetMaxItems( GetMaxItems() );
 	//target->SetWipeable( isWipeable() );
 	target->SetPriv( GetPriv() );
+	target->SetBaseRange( GetBaseRange() );
+	target->SetMaxRange( GetMaxRange() );
+	target->SetMaxUses( GetMaxUses() );
+	target->SetUsesLeft( GetUsesLeft() );
 
+	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
+	{
 		target->SetWeatherDamage( (WeatherType)i, GetWeatherDamage( (WeatherType)i ) );
+	}
+
+	// Add any script triggers present on object to the new object
+	target->scriptTriggers = GetScriptTriggers();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1313,6 +1506,7 @@ bool CItem::GetWeatherDamage( WeatherType effectNum ) const
 void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
 {
 	weatherBools.set( effectNum, value );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1353,6 +1547,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << std::dec;
 	outStream << "Name2=" << GetName2() << '\n';
 	outStream << "Desc=" << GetDesc() << '\n';
+	outStream << "Event=" << GetEvent() << '\n';
 	outStream << "Type=" << static_cast<SI16>(GetType()) << '\n';
 	outStream << "Offspell=" << (SI16)GetOffSpell() << '\n';
 	outStream << "Amount=" << GetAmount() << '\n';
@@ -1371,6 +1566,9 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Bools=" << (SI16)(bools.to_ulong()) << '\n';
 	outStream << "Good=" << GetGood() << '\n';
 	outStream << "GlowType=" << (SI16)GetGlowEffect() << '\n';
+	outStream << "Range=" << static_cast<SI16>(GetBaseRange()) << "," << static_cast<SI16>(GetMaxRange()) << '\n';
+	outStream << "MaxUses=" << GetMaxUses() << '\n';
+	outStream << "UsesLeft=" << GetUsesLeft() << '\n';
 	outStream << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
 	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << '\n';
@@ -1379,43 +1577,44 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles loading in tags and values from world files on startup
 //o-----------------------------------------------------------------------------------------------o
-bool CItem::HandleLine( UString &UTag, UString &data )
+bool CItem::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		auto csecs = strutil::sections( data, "," );
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "AMMO" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() == 2 )
 					{
-						SetAmmoID( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-						SetAmmoHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						SetAmmoID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetAmmoHue( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoID( data.toUShort() );
+						SetAmmoID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 						SetAmmoHue( ( 0 ) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "AMMOFX" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() == 2 )
 					{
-						SetAmmoFX( data.section( ",", 0, 0 ).stripWhiteSpace().toUShort() );
-						SetAmmoFXHue( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
-						SetAmmoFXRender( data.section( ",", 1, 1 ).stripWhiteSpace().toUShort() );
+						SetAmmoFX( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetAmmoFXHue( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetAmmoFXRender( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetAmmoFX( data.toUShort() );
+						SetAmmoFX( static_cast<UI16>(std::stoul( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 )));
 						SetAmmoFXHue( ( 0 ) );
 						SetAmmoFXRender( ( 0 ) );
 					}
@@ -1423,41 +1622,41 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				else if( UTag == "AMOUNT" )
 				{
-					amount = data.toUShort();
+					amount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "AC" )
 				{
-					SetArmourClass( data.toUByte() );
+					SetArmourClass( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BOOLS" )
 				{
-					bools = data.toUByte();
+					bools = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "CONT" )
 				{
-					contObj = reinterpret_cast<CBaseObject *>( data.toUInt() );
+					temp_container_serial = static_cast<SERIAL>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "CREATOR" || UTag == "CREATER" )
 				{
-					SetCreator( data.toUInt() );
+					SetCreator( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CORPSE" )
 				{
-					SetCorpse( data.toUByte() == 1 );
+					SetCorpse( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "COLD" )
 				{
-					SetWeatherDamage( COLD, data.toUByte() == 1 );
+					SetWeatherDamage( COLD, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
@@ -1469,85 +1668,97 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 				}
 				if( UTag == "DIR" )
 				{
-					SetDir( data.toByte() );
+					SetDir( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "DYEABLE" )
 				{
-					SetDye( data.toUByte() == 1 );
+					SetDye( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "ENTRYMADEFROM" )
 				{
-					EntryMadeFrom( data.toUShort() );
+					EntryMadeFrom( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "EVENT" )
+				{
+					SetEvent( data.c_str() );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GRIDLOC" )
 				{
-					SetGridLocation( data.toByte() );
+					SetGridLocation( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWTYPE" )
 				{
-					SetGlowEffect( data.toUByte() );
+					SetGlowEffect( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOWBC" )
 				{
-					SetGlowColour( data.toUShort() );
+					SetGlowColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GLOW" )
 				{
-					SetGlow( data.toUInt() );
+					SetGlow( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GOOD" )
 				{
-					SetGood( data.toShort() );
+					SetGood( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HEAT" )
 				{
-					SetWeatherDamage( HEAT, data.toUByte() == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'L':
 				if( UTag == "LAYER" )
 				{
-					layer = static_cast<ItemLayers>(data.toUByte());
+					layer = static_cast<ItemLayers>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
 					rvalue = true;
 				}
 				else if( UTag == "LIGHT" )
 				{
-					SetWeatherDamage( LIGHT, data.toUShort() == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "LIGHTNING" )
 				{
-					SetWeatherDamage( LIGHTNING, data.toUShort() == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAXITEMS" )
 				{
-					SetMaxItems( data.toUInt() );
+					SetMaxItems( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MORE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-						SetTempVar( CITV_MORE, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
+					}
 					else
-						SetTempVar( CITV_MORE, data.toUInt() );
+					{
+						SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MORE2" )	// Depreciated
@@ -1556,34 +1767,69 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 					rvalue = true;
 				else if( UTag == "MOREXYZ" )
 				{
-					SetTempVar( CITV_MOREX, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-					SetTempVar( CITV_MOREY, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
-					SetTempVar( CITV_MOREZ, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
+					SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOREX" )
 				{
-					SetTempVar( CITV_MOREX, data.toUInt() );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOREY" )
 				{
-					SetTempVar( CITV_MOREY, data.toUInt() );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOREZ" )
 				{
-					SetTempVar( CITV_MOREZ, data.toUInt() );
+					if( csecs.size() >= 4 )
+					{
+						SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
+						SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "MOVABLE" )
 				{
-					SetMovable( data.toByte() );
+					SetMovable( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetMaxHP( data.toUShort() );
+					SetMaxHP( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				else if( UTag == "MAXUSES" )
+				{
+					SetMaxUses( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -1597,46 +1843,61 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'O':
 				if( UTag == "OFFSPELL" )
 				{
-					SetOffSpell( data.toByte() );
+					SetOffSpell( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIV" )
 				{
-					SetPriv( data.toUByte() );
+					SetPriv( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PILEABLE" )
 				{
-					SetPileable( data.toUByte() == 1 );
+					SetPileable( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "RESTOCK" )
 				{
-					SetRestock( data.toUShort() );
+					SetRestock( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RACEDAMAGE" )
 				{
-					SetWeatherDamage( LIGHT, data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( RAIN, data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( HEAT, data.section( ",", 2, 2 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( COLD, data.section( ",", 3, 3 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( SNOW, data.section( ",", 4, 4 ).stripWhiteSpace().toUByte() == 1 );
-					SetWeatherDamage( LIGHTNING, data.section( ",", 5, 5 ).stripWhiteSpace().toUByte() == 1 );
+					SetWeatherDamage( LIGHT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( HEAT, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( COLD, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0)) == 1 );
+					SetWeatherDamage( LIGHTNING, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "RANK" )
 				{
-					SetRank( data.toByte() );
+					SetRank( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RAIN" )
 				{
-					SetWeatherDamage( RAIN, data.toUByte() == 1 );
+					SetWeatherDamage( RAIN, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "RANGE" )
+				{
+					if( csecs.size() > 1 )
+					{
+						SetBaseRange( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetMaxRange( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					}
+					else
+					{
+						auto val = static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+						SetBaseRange( val );
+						SetMaxRange( val / 2 );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "REPUTATION" )
@@ -1645,51 +1906,63 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'S':
 				if( UTag == "SPEED" )
 				{
-					SetSpeed( data.toUByte() );
+					SetSpeed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SK_MADE" )
 				{
-					SetMadeWith( data.toByte() );
+					SetMadeWith( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SNOW" )
 				{
-					SetWeatherDamage( SNOW, data.toUByte() == 1 );
+					SetWeatherDamage( SNOW, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "SPELLS" )
 				{
-					SetSpell( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-					SetSpell( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
-					SetSpell( 2, data.section( ",", 2, 2 ).stripWhiteSpace().toUInt() );
+					SetSpell( 0, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetSpell( 1, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetSpell( 2, static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TYPE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
-						SetType( static_cast<ItemTypes>(data.section( ",", 0, 0 ).stripWhiteSpace().toUByte()) );
+					if( csecs.size() != 1 )
+					{
+						SetType( static_cast<ItemTypes>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					}
 					else
-						SetType( static_cast<ItemTypes>(data.toUByte()) );
+					{
+						SetType( static_cast<ItemTypes>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					}
 					rvalue = true;
 				}
 				else if( UTag == "TYPE2" )
 					rvalue = true;
 				break;
+			case 'U':
+				if( UTag == "USESLEFT" )
+				{
+					SetUsesLeft( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					rvalue = true;
+				}
+				break;
 			case 'V':
 				if( UTag == "VALUE" )
 				{
-					if( data.sectionCount( "," ) != 0 )
+					if( csecs.size() > 1 )
 					{
-						SetBuyValue( data.section( ",", 0, 0 ).stripWhiteSpace().toUInt() );
-						SetSellValue( data.section( ",", 1, 1 ).stripWhiteSpace().toUInt() );
+						SetBuyValue( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSellValue( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetBuyValue( data.toUInt() );
-						SetSellValue( (data.toUInt() / 2) );
+						auto val = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+						SetBuyValue( val );
+						SetSellValue( val / 2 );
 					}
 					rvalue = true;
 				}
@@ -1697,7 +1970,7 @@ bool CItem::HandleLine( UString &UTag, UString &data )
 			case 'W':
 				if( UTag == "WEIGHTMAX" )
 				{
-					SetWeightMax( data.toInt() );
+					SetWeightMax( static_cast<SI32>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -1761,19 +2034,23 @@ void CItem::PostLoadProcessing( void )
 	if( GetWeight() < 0 || GetWeight() > MAX_WEIGHT )
 		SetWeight( Weight->calcWeight( this ) );
 
-	SERIAL tempSerial	= (UI64)contObj;
-	CBaseObject *tmpObj	= NULL;
-	contObj				= NULL;
-	if( tempSerial != INVALIDSERIAL )
+	CBaseObject *tmpObj	= nullptr;
+	contObj				= nullptr;
+	
+	if( temp_container_serial != INVALIDSERIAL )
 	{
-		if( tempSerial >= BASEITEMSERIAL )
-			tmpObj = calcItemObjFromSer( tempSerial );
+		if( temp_container_serial >= BASEITEMSERIAL )
+		{
+			tmpObj = calcItemObjFromSer( temp_container_serial);
+		}
 		else
-			tmpObj	= calcCharObjFromSer( tempSerial );
+		{
+			tmpObj = calcCharObjFromSer( temp_container_serial );
+		}
 	}
 	SetCont( tmpObj );
 
-	Items->StoreItemRandomValue( this, NULL );
+	Items->StoreItemRandomValue( this, nullptr );
 	CheckItemIntegrity();
 	SetPostLoaded( true );
 }
@@ -1788,32 +2065,42 @@ void CItem::CheckItemIntegrity( void )
 	SERIAL getSerial = GetSerial();
 	if( getSerial == INVALIDSERIAL )
 	{
-		Console.warning(format( "Item (%s) has an invalid serial number, Deleting", GetName().c_str()) );
+		Console.warning(strutil::format( "Item (%s) has an invalid serial number, Deleting", GetName().c_str()) );
 		Delete();
 		return;
 	}
 
 	if( getSerial == GetContSerial() )
 	{
-		Console.warning( format("Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str()) );
-		SetCont( NULL );
+		Console.warning( strutil::format("Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str()) );
+		SetCont( nullptr );
 	}
 	if( getSerial == GetOwner() )
 	{
-		Console.warning( format("Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str()) );
-		SetOwner( NULL );
+		Console.warning( strutil::format("Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str()) );
+		SetOwner( nullptr );
 	}
 	if( getSerial == GetSpawn() )
 	{
-		Console.warning( format("Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() ));
+		Console.warning( strutil::format("Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() ));
 		SetSpawn( INVALIDSERIAL );
+	}
+
+	if( type == IT_CONTAINER && GetLayer() == IL_PACKITEM && (contObj != nullptr && contObj->CanBeObjType( OT_CHAR )))
+	{
+		UI16 maxItemsVal = GetMaxItems();
+		if( maxItemsVal == 0 )
+		{
+			SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
+			Console.warning(strutil::format("Container (%s) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string(GetSerial()).c_str(), std::to_string(contObj->GetSerial()).c_str()));
+		}
 	}
 }
 
 const UI32 BIT_DECAYABLE	=	0;
 const UI32 BIT_NEWBIE		=	1;
 const UI32 BIT_DISPELLABLE	=	2;
-const UI32 BIT_DEVINELOCK	=	3;
+const UI32 BIT_DIVINELOCK	=	3;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isDecayable( void ) const
@@ -1831,6 +2118,7 @@ void CItem::SetDecayable( bool newValue )
 		SetDecayTime( 0 );
 
 	priv.set( BIT_DECAYABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1846,6 +2134,7 @@ bool CItem::isNewbie( void ) const
 void CItem::SetNewbie( bool newValue )
 {
 	priv.set( BIT_NEWBIE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1861,21 +2150,23 @@ bool CItem::isDispellable( void ) const
 void CItem::SetDispellable( bool newValue )
 {
 	priv.set( BIT_DISPELLABLE, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool isDevineLocked( void ) const
-//|					void SetDevineLock( bool newValue )
+//|	Function	-	bool isDivineLocked( void ) const
+//|					void SetDivineLock( bool newValue )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether container was locked by a GM
 //o-----------------------------------------------------------------------------------------------o
-bool CItem::isDevineLocked( void ) const
+bool CItem::isDivineLocked( void ) const
 {
-	return priv.test( BIT_DEVINELOCK );
+	return priv.test( BIT_DIVINELOCK );
 }
-void CItem::SetDevineLock( bool newValue )
+void CItem::SetDivineLock( bool newValue )
 {
-	priv.set( BIT_DEVINELOCK, newValue );
+	priv.set( BIT_DIVINELOCK, newValue );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1892,6 +2183,7 @@ UI16 CItem::EntryMadeFrom( void ) const
 void CItem::EntryMadeFrom( UI16 newValue )
 {
 	entryMadeFrom = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1901,7 +2193,7 @@ void CItem::EntryMadeFrom( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 {
-	CBaseObject *checkCont = NULL;
+	CBaseObject *checkCont = nullptr;
 	if( isPostLoaded() && doWeightUpdate )
 		checkCont = GetCont();
 
@@ -1912,6 +2204,7 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 
 	if( ValidateObject( checkCont ) )
 		Weight->addItemWeight( checkCont, this );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1988,7 +2281,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	UnicodeTypes dictLang	= ZERO;
 	SERIAL speakTo			= INVALIDSERIAL;
 	SpeechTarget target		= SPTRG_PCNPC;
-	if( s != NULL )
+	if( s != nullptr )
 	{
 		dictLang = s->Language();
 		CChar *mChar	= s->CurrcharObj();
@@ -2000,40 +2293,65 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	if( txt.empty() )
 		return;
 
-	CSpeechEntry& toAdd = SpeechSys->Add();
-	toAdd.Speech( txt );
-	toAdd.Font( FNT_NORMAL );
-	toAdd.Speaker( GetSerial() );
-	toAdd.SpokenTo( speakTo );
-	toAdd.Type( OBJ );
-	toAdd.At( BuildTimeValue( secsFromNow ) );
-	toAdd.TargType( target );
-	if( Colour == 0x0 || Colour == 0x1700)
-		toAdd.Colour( 0x03B2 );
-	else
-		toAdd.Colour( Colour );
-}
+	if( s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages() )
+	{
+		bool sendAll = true;
+		if( target == SPTRG_INDIVIDUAL )
+			sendAll = false;
 
+		if( Colour == 0x0 || Colour == 0x1700)
+			Colour = 0x03B2;
+
+		CPUnicodeMessage unicodeMessage;
+		unicodeMessage.Message( txt );
+		unicodeMessage.Font( FNT_NORMAL );
+		unicodeMessage.Colour( 0x000B );
+		unicodeMessage.Type( SYSTEM );
+		unicodeMessage.Language( "ENG" );
+		unicodeMessage.Name( GetName() );
+		unicodeMessage.ID( GetID() );
+		unicodeMessage.Serial( GetSerial() );
+
+		s->Send( &unicodeMessage );
+	}
+	else
+	{
+		CSpeechEntry& toAdd = SpeechSys->Add();
+		toAdd.Speech( txt );
+		toAdd.Font( FNT_NORMAL );
+		toAdd.Speaker( GetSerial() );
+		toAdd.SpokenTo( speakTo );
+		toAdd.Type( OBJ );
+		toAdd.At( BuildTimeValue( secsFromNow ) );
+		toAdd.TargType( target );
+		if( Colour == 0x0 || Colour == 0x1700)
+			toAdd.Colour( 0x03B2 );
+		else
+			toAdd.Colour( Colour );
+	}
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void Update( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send this item to specified socket or all online people in range
 //o-----------------------------------------------------------------------------------------------o
-void CItem::Update( CSocket *mSock )
+void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 {
 	if( GetType() == IT_TRADEWINDOW )
 		return;
 
-	RemoveFromSight( mSock );
+	//RemoveFromSight( mSock );
+#pragma note( "To monitor: Commented out RemoveFromSight() in CItem::Update() to potentially fix a lot of flickering issues with animated items, boats, etc." )
+
 	if( GetCont() == this )
 	{
-		Console.warning( format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
-		SetCont( NULL );
+		Console.warning( strutil::format("Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
+		SetCont( nullptr );
 	}
 
 	CBaseObject *iCont = GetCont();
-	if( iCont == NULL )
+	if( iCont == nullptr )
 	{
 		SOCKLIST nearbyChars;
 		if( GetID( 1 ) >= 0x40 )
@@ -2049,17 +2367,22 @@ void CItem::Update( CSocket *mSock )
 	else if( iCont->GetObjType() == OT_CHAR )
 	{
 		CChar *charCont = static_cast<CChar *>(iCont);
-		if( charCont != NULL )
+		if( charCont != nullptr )
 		{
 			CPWornItem toWear = (*this);
-			CPToolTip pSend( GetSerial() );
 			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
 			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 			{
 				if( !(*cIter)->LoginComplete() )
 					continue;
 				(*cIter)->Send( &toWear );
-				(*cIter)->Send( &pSend );
+
+				// Only send tooltip if server feature for tooltips is enabled
+				if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+				{
+					CPToolTip pSend( GetSerial(), (*cIter) );
+					(*cIter)->Send( &pSend );
+				}
 			}
 			return;
 		}
@@ -2067,7 +2390,7 @@ void CItem::Update( CSocket *mSock )
 	else
 	{
 		CItem *itemCont = static_cast<CItem *>(iCont);
-		if( itemCont != NULL )
+		if( itemCont != nullptr )
 		{
 			ObjectType oType = OT_CBO;
 			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
@@ -2080,22 +2403,22 @@ void CItem::Update( CSocket *mSock )
 			return;
 		}
 	}
-	Console.error(format( " CItem::Update(0x%X): cannot determine container type!", GetSerial() ));
+	Console.error(strutil::format( " CItem::Update(0x%X): cannot determine container type!", GetSerial() ));
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendToSocket( CSocket *mSock )
+//|	Function	-	void SendToSocket( CSocket *mSock, bool drawGamePlayer )
 //|	Date		-	July 27, 2003
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item on the ground to specified socket
 //o-----------------------------------------------------------------------------------------------o
-void CItem::SendToSocket( CSocket *mSock )
+void CItem::SendToSocket( CSocket *mSock, bool drawGamePlayer )
 {
 	if( !mSock->LoginComplete() )
 		return;
 
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar != NULL )
+	if( mChar != nullptr )
 	{
 		if( !mChar->IsGM() )
 		{
@@ -2121,8 +2444,12 @@ void CItem::SendToSocket( CSocket *mSock )
 		}
 		if( !CanBeObjType( OT_MULTI ) )
 		{
-			CPToolTip pSend( GetSerial() );
-			mSock->Send( &pSend );
+			// Only send tooltip if server feature for tooltips is enabled
+			if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+			{
+				CPToolTip pSend( GetSerial(), mSock );
+				mSock->Send( &pSend );
+			}
 		}
 	}
 }
@@ -2136,7 +2463,7 @@ void CItem::SendToSocket( CSocket *mSock )
 void CItem::SendPackItemToSocket( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	if( mChar != NULL )
+	if( mChar != nullptr )
 	{
 		bool isGM = mChar->IsGM();
 		ItemLayers iLayer = GetLayer();
@@ -2153,8 +2480,12 @@ void CItem::SendPackItemToSocket( CSocket *mSock )
 			itemSend.Colour( 0x00C6 );
 		}
 		mSock->Send( &itemSend );
-		CPToolTip pSend( GetSerial() );
-		mSock->Send( &pSend );
+		// Only send tooltip if server feature for tooltips is enabled
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		{
+			CPToolTip pSend( GetSerial(), mSock );
+			mSock->Send( &pSend );
+		}
 	}
 }
 
@@ -2170,22 +2501,24 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	CBaseObject *iCont		= GetCont();
 
 	ObjectType oType	= OT_CBO;
-	CBaseObject *iOwner	= FindItemOwner( this, oType );
+	CBaseObject *iOwner	= nullptr;
+	if( this->GetOwner() != INVALIDSERIAL )
+		iOwner = FindItemOwner( this, oType );
 
-	if( iCont == NULL || oType == OT_ITEM )
+	if( iCont == nullptr || oType == OT_ITEM )
 	{
-		CItem *rItem = NULL;
-		if( iCont == NULL )
+		CItem *rItem = nullptr;
+		if( iCont == nullptr )
 			rItem = this;
 		else
 			rItem = static_cast<CItem *>(iOwner);
-		if( rItem != NULL )
+		if( rItem != nullptr )
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toRemove );
 			else
 			{
-				CChar *tChar			= NULL;
+				CChar *tChar			= nullptr;
 				SOCKLIST nearbyChars;
 				if( rItem == this )
 					nearbyChars = FindPlayersInOldVisrange( rItem );
@@ -2207,14 +2540,14 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	}
 	else if( iCont->GetObjType() == OT_CHAR || oType == OT_CHAR )
 	{
-		CChar *rChar = NULL;
+		CChar *rChar = nullptr;
 		if( iCont->GetObjType() == OT_CHAR )
 			rChar = static_cast<CChar *>(iCont);
 		else
 			rChar = static_cast<CChar *>(iOwner);
-		if( rChar != NULL )
+		if( rChar != nullptr )
 		{
-			if( mSock != NULL )
+			if( mSock != nullptr )
 				mSock->Send( &toRemove );
 			else
 			{
@@ -2230,7 +2563,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 	}
 	else
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->Send( &toRemove );
 		else
 		{
@@ -2255,9 +2588,89 @@ void CItem::RemoveFromSight( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 void CItem::PlaceInPack( void )
 {
-	SetX( static_cast<SI16>(50 + RandomNum( 0, 79 )) );
-	SetY( static_cast<SI16>(50 + RandomNum( 0, 79 )) );
+	auto itemCont = this->GetCont();
+	if( !ValidateObject( itemCont ))
+		return;
+
+	PackTypes packType = Items->getPackType( static_cast<CItem *>(itemCont) );
+	switch( packType )
+	{
+		case PT_PACK:
+			SetX(( RandomNum( 44, 142 )));
+			SetY(( RandomNum( 65, 127 )));
+			break;
+		case PT_BAG:
+			SetX(( RandomNum( 29, 93 )));
+			SetY(( RandomNum( 34, 96 )));
+			break;
+		case PT_SQBASKET:
+			SetX(( RandomNum( 19, 138 )));
+			SetY(( RandomNum( 47, 91 )));
+			break;
+		case PT_RBASKET:
+			SetX(( RandomNum( 40, 95 )));
+			SetY(( RandomNum( 30, 91 )));
+			break;
+		case PT_SEBASKET:
+			SetX(( RandomNum( 10, 112 )));
+			SetY(( RandomNum( 10, 73 )));
+			break;
+		case PT_BOOKCASE:
+			SetX(( RandomNum( 13, 36 )));
+			SetY(( RandomNum( 76, 96 )));
+			break;
+		case PT_FARMOIRE:
+		case PT_WARMOIRE:
+			SetX(( RandomNum( 24, 56 )));
+			SetY(( RandomNum( 18, 120 )));
+			break;
+		case PT_DRAWER:
+		case PT_DRESSER:
+			SetX(( RandomNum( 16, 110 )));
+			SetY(( RandomNum( 10, 62 )));
+			break;
+		case PT_SECHEST1:
+		case PT_SECHEST2:
+		case PT_SECHEST3:
+		case PT_SECHEST4:
+		case PT_SECHEST5:
+		case PT_SEARMOIRE1:
+		case PT_SEARMOIRE2:
+		case PT_SEARMOIRE3:
+			SetX(( RandomNum( 10, 115 )));
+			SetY(( RandomNum( 10, 73 )));
+			break;
+		case PT_MBOX:
+		case PT_WBOX:
+			SetY(( RandomNum( 51, 92 )));
+			SetX(( RandomNum( 16, 140 )));
+			break;
+		case PT_BARREL:
+			SetY(( RandomNum( 36, 116 )));
+			SetX(( RandomNum( 33, 98 )));
+			break;
+		case PT_CRATE:
+			SetY(( RandomNum( 10, 68 )));
+			SetX(( RandomNum( 20, 126 )));
+			break;
+		case PT_WCHEST:
+		case PT_SCHEST:
+		case PT_GCHEST:
+			SetY(( RandomNum( 105, 139 )));
+			SetX(( RandomNum( 18, 118 )));
+			break;
+		case PT_COFFIN:
+		case PT_SHOPPACK:
+		case PT_PACK2:
+		case PT_BANK:
+		case PT_UNKNOWN:
+		default:
+			SetX( static_cast<SI16>(25 + RandomNum( 0, 79 )) );
+			SetY( static_cast<SI16>(25 + RandomNum( 0, 79 )) );
+			break;
+	}
 	SetZ( 9 );
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2276,7 +2689,10 @@ UI32 CItem::GetSpell( UI08 part ) const
 void CItem::SetSpell( UI08 part, UI32 newValue )
 {
 	if( part < 3 )
+	{
 		spells[part] = newValue;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2315,13 +2731,13 @@ void CItem::Cleanup( void )
 				if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 				{
 					CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-					if( spawnReg != NULL )
+					if( spawnReg != nullptr )
 						spawnReg->deleteSpawnedItem( this );
 				}
 			}
 			SetSpawn( INVALIDSERIAL );
 		}
-		if( GetSpawnObj() != NULL )
+		if( GetSpawnObj() != nullptr )
 			SetSpawn( INVALIDSERIAL );
 
 		if( GetGlow() != INVALIDSERIAL )
@@ -2333,7 +2749,7 @@ void CItem::Cleanup( void )
 
 		if( isGuarded() )
 		{
-			CChar *owner = NULL;
+			CChar *owner = nullptr;
 			CMultiObj *multi = findMulti( this );
 			if( ValidateObject( multi ) )
 				owner = multi->GetOwnerObj();
@@ -2343,7 +2759,7 @@ void CItem::Cleanup( void )
 			{
 				CChar *petGuard = Npcs->getGuardingPet( owner, this );
 				if( ValidateObject( petGuard ) )
-					petGuard->SetGuarding( NULL );
+					petGuard->SetGuarding( nullptr );
 				SetGuarded( false );
 			}
 		}
@@ -2361,11 +2777,15 @@ void CItem::Cleanup( void )
 			if( ValidateObject( rootOwner ) && rootOwner->GetObjType() == OT_CHAR )
 			{
 				CSocket *ownerSocket = rootOwner->GetSocket();
-				if( ownerSocket != NULL )
+				if( ownerSocket != nullptr )
 				{
-					// Refresh container tooltip
-					CPToolTip pSend( iCont->GetSerial() );
-					ownerSocket->Send(&pSend);
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						// Refresh container tooltip
+						CPToolTip pSend( iCont->GetSerial(), ownerSocket );
+						ownerSocket->Send(&pSend);
+					}
 				}
 			}
 			else
@@ -2376,12 +2796,34 @@ void CItem::Cleanup( void )
 					if( !(*cIter)->LoginComplete() )
 						continue;
 
-					// Refresh container tooltip
-					CPToolTip pSend( iCont->GetSerial() );
-					(*cIter)->Send(&pSend);
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						// Refresh container tooltip
+						CPToolTip pSend( iCont->GetSerial(), (*cIter) );
+						(*cIter)->Send(&pSend);
+					}
 				}
 			}
 		}
+
+		//Ensure that object is removed from refreshQueue
+		RemoveFromRefreshQueue();
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool UpdateRegion( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Marks region item exists in as updated since last save
+//o-----------------------------------------------------------------------------------------------o
+void CItem::UpdateRegion( void )
+{
+	// Make sure to only mark region as changed if item is supposed to be saved
+	if( ShouldSave() )
+	{
+		CMapRegion *curCell = MapRegion->GetMapRegion( this );
+		curCell->HasRegionChanged( true );
 	}
 }
 
@@ -2416,10 +2858,11 @@ void CItem::Delete( void )
 		Cleanup();
 		SetDeleted( true );
 		ShouldSave( false );
+		UpdateRegion();
 	}
 }
 
-CDataList< CItem * > * CItem::GetContainsList( void )
+GenericList< CItem * > * CItem::GetContainsList( void )
 {
 	return &Contains;
 }
@@ -2462,7 +2905,10 @@ UI08 CSpawnItem::GetInterval( UI08 part ) const
 void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
 {
 	if( part < 2 )
+	{
 		Interval[part] = newVal;
+		UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2479,6 +2925,7 @@ std::string CSpawnItem::GetSpawnSection( void ) const
 void CSpawnItem::SetSpawnSection( const std::string &newVal )
 {
 	spawnSection = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2495,6 +2942,7 @@ bool CSpawnItem::IsSectionAList( void ) const
 void CSpawnItem::IsSectionAList( bool newVal )
 {
 	isSectionAList = newVal;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2525,28 +2973,29 @@ bool CSpawnItem::DumpBody( std::ofstream &outStream ) const
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleLine( UString &UTag, UString &data )
+//|	Function	-	bool HandleLine( std::string &UTag, std::string &data )
 //|	Date		-	6/29/2004
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads data from Worldfile into the class
 //o-----------------------------------------------------------------------------------------------o
-bool CSpawnItem::HandleLine( UString &UTag, UString &data )
+bool CSpawnItem::HandleLine( std::string &UTag, std::string &data )
 {
 	bool rvalue = CItem::HandleLine( UTag, data );
 	if( !rvalue )
 	{
+		auto csecs = strutil::sections( data, "," );
 		switch( (UTag.data()[0]) )
 		{
 			case 'I':
 				if( UTag == "INTERVAL" )
 				{
-					SetInterval( 0, data.section( ",", 0, 0 ).stripWhiteSpace().toUByte() );
-					SetInterval( 1, data.section( ",", 1, 1 ).stripWhiteSpace().toUByte() );
+					SetInterval( 0, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetInterval( 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSECTIONALIST" )
 				{
-					IsSectionAList( (data.toUByte() == 1) );
+					IsSectionAList( (static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
@@ -2610,7 +3059,7 @@ bool CSpawnItem::HandleItemSpawner( void )
 		if( !listObj.empty() )
 			Items->AddRespawnItem( this, listObj, false, IsSectionAList(), 1 );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, str_number( GetTempVar( CITV_MOREX ) ), false, 1 );
+			Items->AddRespawnItem( this, strutil::number( GetTempVar( CITV_MOREX ) ), false, 1 );
 		else
 		{
 			Console.warning( "Bad Item Spawner Found, Deleting" );
@@ -2629,10 +3078,10 @@ bool CSpawnItem::HandleNPCSpawner( void )
 		if( !listObj.empty() )
 			Npcs->CreateNPC( this, listObj );
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Npcs->CreateNPC( this, str_number( GetTempVar( CITV_MOREX ) ) );
+			Npcs->CreateNPC( this, strutil::number( GetTempVar( CITV_MOREX ) ) );
 		else
 		{
-			Console.warning( "Bad Npc/Area Spawner found; Spawnsection or MOREX values missing! Deleting Spawner." );
+			Console.warning( "Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -2645,17 +3094,140 @@ bool CSpawnItem::HandleSpawnContainer( void )
 	{
 		std::string listObj = GetSpawnSection();
 		if( GetType() == IT_SPAWNCONT )
+		{
 			SetType( IT_LOCKEDSPAWNCONT ); // Lock the container
+
+			if( GetTempVar( CITV_MOREZ, 2 ) > 0 )
+			{
+				// Part 2 of MOREZ being higher than 0 indicates container was previously trapped. Reapply trap!
+				SetTempVar( CITV_MOREZ, 1, 1 );
+			}
+		}
 		if( !listObj.empty() )
-			Items->AddRespawnItem( this, listObj, true, IsSectionAList(), 1 );
+		{
+			std::string sect	= "ITEMLIST " + listObj;
+			sect				= strutil::trim( strutil::removeTrailing( sect, "//" ));
+
+			// Look up the relevant ITEMLIST from DFNs
+			ScriptSection *itemList = FileLookup->FindEntry( sect, items_def );
+			if( itemList != nullptr )
+			{
+				// Count the number of entries in the list
+				const size_t itemListSize = itemList->NumEntries();
+				if( itemListSize > 0 )
+				{
+					// Spawn one instance of EACH entry in the list
+					std::string listEntry = "";
+					for( int i = 0; i < itemListSize; i++ )
+					{
+						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
+						STRINGLIST listObj = strutil::sections( strutil::trim( strutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
+						if( !listObj.empty() )
+						{
+							UI16 amountToSpawn = 1;
+							STRINGLIST itemListData;
+							if( strutil::upper( listObj[0] ) == "ITEMLIST" || strutil::upper( listObj[0] ) == "LOOTLIST" )
+							{
+								bool useLootList = strutil::upper( listObj[0] ) == "LOOTLIST";
+
+								// Itemlist/Lootlist
+								itemListData = strutil::sections( strutil::trim( strutil::removeTrailing( itemList->GrabData(), "//" )), "," );
+								listEntry = itemListData[0];
+
+								if( itemListData.size() > 1 )
+								{
+									// Also grab amount
+									std::string amountData = strutil::trim( strutil::removeTrailing( itemListData[1], "//" ));
+									auto tsects = strutil::sections( amountData, " " );
+									if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+									{
+										auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+										auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+										// Tag contained a minimum and maximum value for amount! Let's randomize!
+										amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+									}
+									else
+									{
+										amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+									}
+								}
+
+								// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
+								for( int i = 0; i < amountToSpawn; i++ )
+								{
+									CItem *iCreated = Items->CreateRandomItem( this, listEntry, this->WorldNumber(), this->GetInstanceID(), false, useLootList );
+									if( ValidateObject( iCreated ))
+									{
+										// Place item in container and randomize location
+										iCreated->SetCont( this );
+										iCreated->PlaceInPack();
+									}
+								}
+							}
+							else
+							{
+								// Direct item reference
+								listEntry = listObj[0];
+
+								if( listObj.size() > 1 )
+								{
+									// Grab amount
+									std::string amountData = strutil::trim( strutil::removeTrailing( listObj[1], "//" ));
+									auto tsects = strutil::sections( amountData, " " );
+									if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
+									{
+										auto first = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+										auto second = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+
+										// Tag contained a minimum and maximum value for amount! Let's randomize!
+										amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+									}
+									else
+									{
+										amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+									}
+								}
+
+								// We have a direct item reference, it seems like. Spawn it!
+								CItem *iCreated = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), amountToSpawn, this->GetInstanceID(), OT_ITEM, 0xFFFF, false );
+								if( ValidateObject( iCreated ))
+								{
+									// Place item in container and randomize location
+									iCreated->SetCont( this );
+									iCreated->PlaceInPack();
+								}
+
+								if( amountToSpawn > 1 && !iCreated->isPileable() )
+								{
+									// Eee, item cannot pile, we need to spawn individual ones
+									for( int i = 1; i < amountToSpawn; i++ )
+									{
+										CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceID(), OT_ITEM, 0xFFFF, false );
+										if( ValidateObject( iCreated2 ))
+										{
+											// Place item in container and randomize location
+											iCreated2->SetCont( this );
+											iCreated2->PlaceInPack();
+										}
+									}
+								}
+							}	
+						}
+					}
+				}
+			}
+		}
 		else if( GetTempVar( CITV_MOREX ) != 0 )
-			Items->AddRespawnItem( this, str_number( GetTempVar( CITV_MOREX ) ), true, 1 );
+			Items->AddRespawnItem( this, strutil::number( GetTempVar( CITV_MOREX ) ), true, 1 );
 		else
 		{
 			Console.warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
 			Delete();
 			return true;
 		}
+		RemoveFromSight();
+		Update();
 	}
 	return false;
 }
@@ -2703,8 +3275,8 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 CSpawnItem * CSpawnItem::Dupe( void )
 {
 	CSpawnItem *target = static_cast< CSpawnItem * >(ObjectFactory::getSingleton().CreateObject( OT_SPAWNER ));
-	if( target == NULL )
-		return NULL;
+	if( target == nullptr )
+		return nullptr;
 
 	CopyData( target );
 

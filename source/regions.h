@@ -25,8 +25,10 @@ struct MapResource_st
 	UI32	oreTime;
 	SI16	logAmt;
 	UI32	logTime;
+	SI16	fishAmt;
+	UI32	fishTime;
 
-	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 )
+	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 ), fishAmt( 0 ), fishTime( 0 )
 	{
 	}
 };
@@ -34,11 +36,17 @@ struct MapResource_st
 class CMapRegion
 {
 private:
-	CDataList< CItem * >	itemData;
-	CDataList< CChar * >	charData;
+	GenericList< CItem * >	itemData;
+	GenericList< CChar * >	charData;
+	RegionSerialList< SERIAL > regionSerialData;
+	bool hasRegionChanged = false;
+
 public:
-	CDataList< CItem * > *	GetItemList( void );
-	CDataList< CChar * > *	GetCharList( void );
+	GenericList< CItem * > *	GetItemList( void );
+	GenericList< CChar * > *	GetCharList( void );
+	RegionSerialList< SERIAL > *	GetRegionSerialList( void );
+	bool						HasRegionChanged( void );
+	void						HasRegionChanged( bool newVal );
 
 	CMapRegion()
 	{
@@ -65,6 +73,7 @@ public:
 	~CMapWorld( void );
 
 	CMapRegion *	GetMapRegion( SI16 xOffset, SI16 yOffset );
+	std::vector< CMapRegion > *		GetMapRegions();
 
 	MapResource_st&	GetResource( SI16 x, SI16 y );
 
@@ -81,7 +90,7 @@ private:
 	WORLDLIST		mapWorlds;
 	CMapRegion		overFlow;
 
-	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, SI32 maxSize );
+	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
 	CMapHandler();
 	~CMapHandler();

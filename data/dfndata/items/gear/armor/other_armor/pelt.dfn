@@ -1,0 +1,103 @@
+// -----------= TIGER PELT CHEST =----------- //
+// Tiger Pelt Chest
+[0x7822]
+{
+get=base_tiger_pelt_chest
+}
+
+// Tiger Pelt Chest - Alias
+[tigerpeltchest]
+{
+get=0x7822
+}
+
+// -----------= TIGER PELT BUSTIER (Female) =----------- //
+// Tiger Pelt Bustier
+[0x7823]
+{
+get=base_tiger_pelt_bustier
+}
+
+// Tiger Pelt Bustier - Alias
+[tigerpeltbustier]
+{
+get=0x7823
+}
+
+// -----------= TIGER PELT HELM =----------- //
+// Tiger Pelt Helm
+[0x7828]
+{
+get=base_tiger_pelt_helm
+}
+
+// Tiger Pelt Helm - Alias
+[tigerpelthelm]
+{
+get=0x7828
+}
+
+// -----------= TIGER PELT LEGGINGS =----------- //
+// Tiger Pelt Leggings
+[0x7824]
+{
+get=base_tiger_pelt_leggings
+}
+
+// Tiger Pelt Leggings - Alias
+[tigerpeltleggings]
+{
+get=0x7824
+}
+
+// -----------= TIGER PELT SHORTS =----------- //
+// Tiger Pelt Shorts
+[0x7825]
+{
+get=base_tiger_pelt_shorts
+}
+
+// Tiger Pelt Shorts - Alias
+[tigerpeltshorts]
+{
+get=0x7825
+}
+
+// -----------= TIGER PELT LONG SKIRT =----------- //
+// Tiger Pelt Long Skirt
+[0x7826]
+{
+get=base_tiger_pelt_long_skirt
+}
+
+// Tiger Pelt Long Skirt - Alias
+[tigerpeltlongskirt]
+{
+get=0x7826
+}
+
+// -----------= TIGER PELT SKIRT =----------- //
+// Tiger Pelt Skirt
+[0x7827]
+{
+get=base_tiger_pelt_skirt
+}
+
+// Tiger Pelt Skirt - Alias
+[tigerpeltskirt]
+{
+get=0x7827
+}
+
+// -----------= TIGER PELT COLLAR =----------- //
+// Tiger Pelt Collar
+[0x7829]
+{
+get=base_tiger_pelt_collar
+}
+
+// Tiger Pelt Collar - Alias
+[tigerpeltcollar]
+{
+get=0x7829
+}

@@ -22,8 +22,11 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback1( socket, ourObj )
 {
-	var mChar = socket.currentChar;
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
 
+	var mChar = socket.currentChar;
 	if( mChar && mChar.isChar )
 	{
 		var tileID = 0;
@@ -48,7 +51,7 @@ function onCallback1( socket, ourObj )
 			}
 			else if( ourObj )
 			{
-				if( ourObj.type == 1 && ourObj.movable == 2 ) // Strongbox
+				if( ourObj.type == 1 && ourObj.movable == 2 && !ourObj.GetTag( "addon" )) // Strongbox or Tent chest, and not an addon
 				{
 					var objMulti = ourObj.multi;
 					if( ValidateObject( objMulti ))
@@ -57,14 +60,42 @@ function onCallback1( socket, ourObj )
 						{
 							if( ourObj.itemsinside > 0 )
 							{
+								if( ourObj.id == 0x0e43 ) // Tent chest
+									socket.SysMessage( GetDictionaryEntry( 9115, socket.language )); // You must empty the chest before you can remove this tent!
+								else // Strongbox
 								socket.SysMessage( GetDictionaryEntry( 1964, socket.language )); // You must empty the strongbox before you can destroy it!
 								return;
 							}
 							else
 							{
+								if( mChar.visible == 1 || mChar.visible == 2 )
+								{
+									mChar.visible = 0;
+								}
 								socket.SoundEffect( 0x3B3, true);
 								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
+
+								if( ourObj.id == 0x0e43 ) // Tent chest
+								{
+									// First delete the chest
+									ourObj.Delete();
+
+									// Then add a new deed for the tent
+									var newDeed = CreateDFNItem( socket, mChar, objMulti.deed, 1, "ITEM", true );
+									if( newDeed )
+									{
+										socket.SysMessage( GetDictionaryEntry( 578, socket.language ), objMulti.name ); // Demolishing House %s.
+										socket.SysMessage( GetDictionaryEntry( 579, socket.language ), newDeed.name ); // Converted into a %s.
+									}
+
+									// Finally, remove the tent itself
+									objMulti.Delete();
+								}
+								else
+								{
+									// Strongbox
 								ourObj.Delete();
+								}
 							}
 						}
 					}
@@ -80,6 +111,10 @@ function onCallback1( socket, ourObj )
 								socket.SysMessage( GetDictionaryEntry( 1966, socket.language )); // You must unsecure the trash barrel before you can destroy it!
 							else
 							{
+								if( mChar.visible == 1 || mChar.visible == 2 )
+								{
+									mChar.visible = 0;
+								}
 								socket.SoundEffect( 0x3B3, true);
 								socket.SysMessage( GetDictionaryEntry( 1965, socket.language )); // You destroy the item.
 								objMulti.RemoveTrashCont( ourObj );
@@ -92,7 +127,7 @@ function onCallback1( socket, ourObj )
 					else
 						socket.SysMessage( GetDictionaryEntry( 1967, socket.language )); // You cannot chop that.
 				}
-				else if( ourObj.type == 201 )
+				else if( ourObj.GetTag( "addon" ) || ourObj.type == 201 ) // looks for item type for backwards compatibility only!
 				{
 					var addonParent;
 					if( ourObj.more == 0 )
@@ -139,11 +174,16 @@ function onCallback1( socket, ourObj )
 							if( !ValidateObject( tempItem.multi ))
 								continue;
 
-							if( tempItem.type != 201 )
+							if( !tempItem.GetTag( "addon" ) && tempItem.type != 201 )
 								continue;
 
 							if( tempItem.more == addonParent.serial )
 								tempItem.Delete();
+						}
+
+						if( mChar.visible == 1 || mChar.visible == 2 )
+						{
+							mChar.visible = 0;
 						}
 
 						// Finally delete the parent item for the house add-on
@@ -195,6 +235,11 @@ function ChopTree( socket, mChar )
 	{
 		socket.SysMessage( GetDictionaryEntry( 840, socket.language ) ); // There is no more wood here to chop.
 		return;
+	}
+
+	if( mChar.visible == 1 || mChar.visible == 2 )
+	{
+		mChar.visible = 0;
 	}
 
 	mChar.TurnToward( targX, targY );
@@ -261,6 +306,10 @@ function onTimer( mChar, timerID )
 				return;
 			}
 		}
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		if( mChar.isonhorse )
 			mChar.DoAction( 0x1C );
 		else
@@ -271,6 +320,10 @@ function onTimer( mChar, timerID )
 		mChar.StartTimer( 1500, 0, true );
 		break;
 	case 2:
+		if( mChar.visible == 1 || mChar.visible == 2 )
+		{
+			mChar.visible = 0;
+		}
 		if( mChar.isonhorse )
 			mChar.DoAction( 0x1C );
 		else

@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 	var isInRange = pUser.InRange( iUsed, 3 );
 	if( !isInRange )
  	{
-		pUser.SysMessage( "You are too far away to reach that." );
+		pUser.SysMessage( GetDictionaryEntry( 2500, pUser.socket.language )); // You are too far away to reach that.
 		return false;
 	}
 
@@ -27,25 +27,28 @@ function onUseChecked( pUser, iUsed )
 	var PearCount = iUsed.GetTag("PearCounter");
 	if (Pears == 0)
 	{	
-		pUser.SysMessage( "You find no ripe pears to pick. Try again later." );
+		pUser.SysMessage( GetDictionaryEntry( 2544, pUser.socket.language )); // You find no ripe pears to pick. Try again later.
 	}
 	if( Pears == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
-			pUser.SysMessage( "You fail to pick any pears." );
+			pUser.SysMessage( GetDictionaryEntry( 2545, pUser.socket.language )); // You fail to pick any pears.
 		if( loot == 3 || loot == 1 )
 	 	{
-			pUser.SysMessage( "You pick a pear from the tree." );
+			pUser.SysMessage( GetDictionaryEntry( 2546, pUser.socket.language )); // You pick a pear from the tree.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0994", 1, "ITEM", true );
 			PearCount--;
 			iUsed.SetTag( "PearCounter", PearCount );
 			if( PearCount == 1)
-				pUser.SysMessage( "There is "+PearCount+" ripe pear left on the tree." );
+				pUser.SysMessage(yEntry( 2547, pUser.socket.language )); // There is 1 ripe pear left on the tree.
 			else
-				pUser.SysMessage( "There are "+PearCount+" ripe pears left on the tree." );
-		    	if( PearCount == 0 )
+			{
+				var pearCountMsg = GetDictionaryEntry( 2548, pUser.socket.language ); // There are %i ripe pears left on the tree.
+				pUser.SysMessage( pearCountMsg.replace(/%i/gi, PearCount ));
+			}
+		    if( PearCount == 0 )
 			{
 				if( iUsed.id == 0x0da6 )
 					iUsed.id = 0x0da5;

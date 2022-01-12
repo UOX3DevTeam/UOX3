@@ -103,9 +103,9 @@ LAYER=25
 NEWBIE
 }
 
-[giantfirebeetle]
+[firebeetle]
 {
-NAME=a giant fire beetle
+NAME=a fire beetle
 ID=0x3E95
 LAYER=25
 NEWBIE
@@ -279,9 +279,9 @@ LAYER=25
 NEWBIE
 }
 
-[chimera]
+[reptalon]
 {
-NAME=a chimera
+NAME=a reptalon
 ID=0x3E90
 LAYER=25
 NEWBIE
@@ -339,6 +339,14 @@ NEWBIE
 {
 NAME=a horse
 ID=0x3EC6
+LAYER=25
+NEWBIE
+}
+
+[tiger]
+{
+NAME=a tiger
+ID=0x3EC7
 LAYER=25
 NEWBIE
 }

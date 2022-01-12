@@ -1,6 +1,6 @@
 // stoneart.dfn
 // Artwork made from stone. Fountains, statues, gravestones and the like.
-// v1.0; 02/04/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org 
+// v1.0; 02/04/01; initial release; Carsten Germer / Yeshe; yeshe@manofmystery.org
 // v1.1; 21/11/01; Updated id tags to add 0x prefix for hex values; Daniel Stratton / Abaddon; darkangelab@users.sourceforge.net
 // (add new version comments here, copy v1.0 please)
 // For use with the UOX emulator or any with permission from the author
@@ -1540,7 +1540,8 @@ weight=100
 movable=2
 }
 
-[0x1822]{
+[0x1822]
+{
 get=base_item
 name=alchemical symbol
 id=0x1822

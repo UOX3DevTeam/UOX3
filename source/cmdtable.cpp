@@ -34,7 +34,7 @@
 
 void CollectGarbage( void );
 void endmessage( SI32 x );
-void HandleGumpCommand( CSocket *s, UString cmd, UString data );
+void HandleGumpCommand( CSocket *s, std::string cmd, std::string data );
 void restock( bool stockAll );
 void sysBroadcast( const std::string& txt );
 void HandleHowTo( CSocket *sock, SI32 cmdNumber );
@@ -50,7 +50,7 @@ void closeCall( CSocket *s, bool isGM )
 	if( mChar->GetCallNum() != 0 )
 	{
 		UI16 sysMessage = 1285;
-		PageVector *tmpVector = NULL;
+		PageVector *tmpVector = nullptr;
 		if( isGM )
 			tmpVector = GMQueue;
 		else
@@ -80,7 +80,7 @@ void currentCall( CSocket *s, bool isGM )
 	CChar *mChar = s->CurrcharObj();
 	if( mChar->GetCallNum() != 0 )
 	{
-		PageVector *tmpVector = NULL;
+		PageVector *tmpVector = nullptr;
 		if( isGM )
 			tmpVector = GMQueue;
 
@@ -163,50 +163,45 @@ bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 void command_fixspawn( void )
 {
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FixSpawnFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &FixSpawnFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void command_addaccount( CSocket *s)
-//|	Date		-	10/17/2002
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	GM command for adding new user accounts while in-game
 //o-----------------------------------------------------------------------------------------------o
 void command_addaccount( CSocket *s)
 {
 	VALIDATESOCKET( s );
-	CAccountBlock actbTemp;
 	if( Commands->NumArguments() > 1 )
 	{
+		std::string newUsername = Commands->CommandString( 2, 2 );
+		std::string newPassword = Commands->CommandString( 3, 3 );
+		UI16 newFlags = 0x0000;
 
-		char *szCommandLine	= NULL;
-		char *szCommand		= NULL;
-		char *szUsername	= NULL;
-		char *szPassword	= NULL;
-		char *szPrivs		= NULL;
-		UI16 nFlags = 0x0000;
-		szCommandLine	= (char *)Commands->CommandString( 2 ).c_str();
-		szCommand		= strtok( szCommandLine, " " );
-		szUsername		= strtok( NULL, " " );
-		szPassword		= strtok( NULL, " " );
-		szPrivs			= strtok( NULL, "\0" );
-		if( szPassword == NULL || szUsername == NULL )
-			return;
-		if( szPrivs != NULL )
-			nFlags = atoi( szPrivs );
-		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
-		CAccountBlock &actbTemp = Accounts->GetAccountByName( szUsername );
-		if( actbTemp.wAccountIndex != AB_INVALID_ID )
+		if( Commands->NumArguments() > 2 )
+			newFlags = strutil::value<UI16>( Commands->CommandString( 4, 4 ));
+
+		if( newUsername == "" || newPassword == "" )
 		{
-			Accounts->AddAccount( szUsername, szPassword, "NA", nFlags );
-			Console << "o Account added ingame: " << szUsername << ":" << szPassword << ":" << nFlags << myendl;
+			s->sysmessage( 9018 ); // Unable to add account, insufficient data provided (syntax: [username] [password] [flags])
+			return;
+		}
 
-			s->sysmessage( format( "Account Added: %s:%s:%i", szUsername, szPassword, nFlags ) );
+		// ok we need to add the account now. We will rely in the internalaccountscreation system for this
+		CAccountBlock &actbTemp = Accounts->GetAccountByName( newUsername );
+		if( actbTemp.wAccountIndex == AB_INVALID_ID )
+		{
+			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
+			Console << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
+
+			s->sysmessage( 9019, newUsername.c_str(), newPassword.c_str(), newFlags ); // Account Added: %s:%s:%i
 		}
 		else
 		{
-			Console << "o Account was not added" << myendl;
-			s->sysmessage( "Account not added" );
+			Console << "o Account was not added, an account with that username already exists!" << myendl;
+			s->sysmessage( 9020 ); // Account not added, an account with that username already exists!
 		}
 	}
 }
@@ -227,7 +222,7 @@ void command_getlight( CSocket *s )
 	CTownRegion *tRegion	= mChar->GetRegion();
 	UI16 wID				= tRegion->GetWeather();
 	CWeather *sys			= Weather->Weather( wID );
-	if( sys != NULL )
+	if( sys != nullptr )
 	{
 		const R32 lightMin = sys->LightMin();
 		const R32 lightMax = sys->LightMax();
@@ -260,7 +255,7 @@ void command_setpost( CSocket *s )
 		return;
 
 	PostTypes type = PT_LOCAL;
-	UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+	std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 		type = PT_GLOBAL;
 	else if( upperCommand == "REGIONAL" ) // user's next post appears in all bulletin boards in current region
@@ -311,9 +306,9 @@ void command_showids( CSocket *s )
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
 	CMapRegion *Cell = MapRegion->GetMapRegion( mChar );
-	if( Cell == NULL )	// nothing to show
+	if( Cell == nullptr )	// nothing to show
 		return;
-	CDataList< CChar * > *regChars = Cell->GetCharList();
+	GenericList< CChar * > *regChars = Cell->GetCharList();
 	regChars->Push();
 	for( CChar *toShow = regChars->First(); !regChars->Finished(); toShow = regChars->Next() )
 	{
@@ -340,10 +335,29 @@ void command_tile( CSocket *s )
 	if( Commands->NumArguments() == 0 )
 		return;
 
-	UI16 targID = static_cast<UI16>(Commands->Argument( 1 ));
-
-	if( Commands->NumArguments() == 7 )
+	UI16 targID = 0;
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
 	{
+		targID = static_cast<UI16>(Commands->Argument( 2 ));
+	}
+	else
+	{
+		targID = static_cast<UI16>(Commands->Argument( 1 ));
+	}
+
+	// Reset tempint2 on socket
+	s->TempInt2( 0 );
+
+	if( Commands->NumArguments() == 7 || Commands->NumArguments() == 8 )
+	{
+		// tile itemID x1 y1 x2 y2 z rndVal
+		SI32 rndVal = 0;
+		UI16 rndID = 0;
+
+		if( Commands->NumArguments() == 8 )
+			rndVal = static_cast<SI32>(Commands->Argument( 7 ));
+
+		// tile itemID x1 y1 x2 y2 z
 		SI16 x1 = static_cast<SI16>(Commands->Argument( 2 ));
 		SI16 x2 = static_cast<SI16>(Commands->Argument( 3 ));
 		SI16 y1 = static_cast<SI16>(Commands->Argument( 4 ));
@@ -354,7 +368,8 @@ void command_tile( CSocket *s )
 		{
 			for( SI16 y = y1; y <= y2; ++y )
 			{
-				CItem *a = Items->CreateItem( NULL, s->CurrcharObj(), targID, 1, 0, OT_ITEM );
+				rndID = targID + RandomNum( static_cast<UI16>(0), static_cast<UI16>(rndVal) );
+				CItem *a = Items->CreateItem( nullptr, s->CurrcharObj(), rndID, 1, 0, OT_ITEM );
 				if( ValidateObject( a ) )	// crash prevention
 				{
 					a->SetLocation( x, y, z );
@@ -363,14 +378,41 @@ void command_tile( CSocket *s )
 			}
 		}
 	}
+	else if( Commands->NumArguments() == 4 )
+	{
+		// tile static itemID rndVal
+		s->ClickX( -1 );
+		s->ClickY( -1 );
+		s->TempInt2( static_cast<SI32>(Commands->Argument( 3 )));
+
+		s->AddID1( static_cast<UI08>(targID>>8) );
+		s->AddID2( static_cast<UI08>(targID%256) );
+		s->target( 0, TARGET_TILING, 0, 24 );
+	}
+	else if( Commands->NumArguments() == 3 )
+	{
+		// tile itemID rndVal
+		// tile static itemID
+		s->ClickX( -1 );
+		s->ClickY( -1 );
+		if( strutil::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
+		{
+			s->TempInt2( static_cast<SI32>(Commands->Argument( 2 )));
+		}
+
+		s->AddID1( static_cast<UI08>(targID>>8) );
+		s->AddID2( static_cast<UI08>(targID%256) );
+		s->target( 0, TARGET_TILING, 0, 24 );
+	}
 	else if( Commands->NumArguments() == 2 )
 	{
+		// tile itemID
 		s->ClickX( -1 );
 		s->ClickY( -1 );
 
 		s->AddID1( static_cast<UI08>(targID>>8) );
 		s->AddID2( static_cast<UI08>(targID%256) );
-		s->target( 0, TARGET_TILING, 24 );
+		s->target( 0, TARGET_TILING, 0, 24 );
 	}
 }
 
@@ -411,7 +453,7 @@ void command_dye( CSocket *s )
 		s->AddID1( 0xFF );
 		s->AddID2( 0xFF );
 	}
-	s->target( 0, TARGET_DYE, 31 );
+	s->target( 0, TARGET_DYE, 0, 31 );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -470,27 +512,48 @@ void command_tell( CSocket *s )
 	{
 		CSocket *i = Network->GetSockPtr( Commands->Argument( 1 ) );
 		std::string txt = Commands->CommandString( 3 );
-		if( i == NULL || txt.empty() )
+		if( i == nullptr || txt.empty() )
 			return;
 
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
 		std::string temp	= mChar->GetName() + " tells " + tChar->GetName() + ": " + txt;
-		CSpeechEntry& toAdd	= SpeechSys->Add();
-		toAdd.Font( (FontType)mChar->GetFontType() );
-		toAdd.Speech( temp );
-		toAdd.Speaker( mChar->GetSerial() );
-		toAdd.SpokenTo( tChar->GetSerial() );
-		toAdd.Type( TALK );
-		toAdd.At( cwmWorldState->GetUICurrentTime() );
-		toAdd.TargType( SPTRG_INDIVIDUAL );
-		if( mChar->GetSayColour() == 0x1700 )
-			toAdd.Colour( 0x5A );
-		else if( mChar->GetSayColour() == 0x0 )
-			toAdd.Colour( 0x5A );
-		else
-			toAdd.Colour( mChar->GetSayColour() );
 
+		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
+		{
+			CPUnicodeMessage unicodeMessage;
+			unicodeMessage.Message( temp );
+			unicodeMessage.Font( (FontType)mChar->GetFontType() );
+			if( mChar->GetSayColour() == 0x1700 )
+				unicodeMessage.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				unicodeMessage.Colour( 0x5A );
+			else
+				unicodeMessage.Colour( mChar->GetSayColour() );
+			unicodeMessage.Type( TALK );
+			unicodeMessage.Language( "ENG" );
+			unicodeMessage.Name( mChar->GetName() );
+			unicodeMessage.ID( INVALIDID );
+			unicodeMessage.Serial( mChar->GetSerial() );
+			s->Send( &unicodeMessage );
+		}
+		else
+		{
+			CSpeechEntry& toAdd	= SpeechSys->Add();
+			toAdd.Font( (FontType)mChar->GetFontType() );
+			toAdd.Speech( temp );
+			toAdd.Speaker( mChar->GetSerial() );
+			toAdd.SpokenTo( tChar->GetSerial() );
+			toAdd.Type( TALK );
+			toAdd.At( cwmWorldState->GetUICurrentTime() );
+			toAdd.TargType( SPTRG_INDIVIDUAL );
+			if( mChar->GetSayColour() == 0x1700 )
+				toAdd.Colour( 0x5A );
+			else if( mChar->GetSayColour() == 0x0 )
+				toAdd.Colour( 0x5A );
+			else
+				toAdd.Colour( mChar->GetSayColour() );
+		}
 	}
 }
 
@@ -518,7 +581,9 @@ void command_command( CSocket *s )
 {
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
-		HandleGumpCommand( s, Commands->CommandString( 2, 2 ).upper(), Commands->CommandString( 3 ).upper() );
+	{
+		HandleGumpCommand( s, strutil::upper( Commands->CommandString( 2, 2 )), strutil::upper( Commands->CommandString( 3 )) );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -539,25 +604,25 @@ void command_memstats( CSocket *s )
 	size_t total			= charsSize + itemsSize + spellsSize + cacheSize + regionsSize + spawnregionsSize + teffectsSize;
 	GumpDisplay cacheStats( s, 350, 345 );
 	cacheStats.SetTitle( "UOX Memory Information (sizes in bytes)" );
-	cacheStats.AddData( "Total Memory Usage: ", total );
-	cacheStats.AddData( " Cache Size: ", cacheSize );
-	cacheStats.AddData( "  Tiles: ", Map->GetTileMem() );
-	cacheStats.AddData( "  Multis: ", Map->GetMultisMem() );
+	cacheStats.AddData( "Total Memory Usage: ", static_cast<UI32>(total) );
+	cacheStats.AddData( " Cache Size: ", static_cast<UI32>(cacheSize ));
+	cacheStats.AddData( "  Tiles: ", static_cast<UI32>(Map->GetTileMem()) );
+	cacheStats.AddData( "  Multis: ", static_cast<UI32>(Map->GetMultisMem() ));
 	cacheStats.AddData( " Characters: ", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
-	cacheStats.AddData( "  Allocated Memory: ", charsSize );
+	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>(charsSize ));
 	cacheStats.AddData( "  CChar: ", sizeof( CChar ) );
 	cacheStats.AddData( " Items: ", ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
-	cacheStats.AddData( "  Allocated Memory: ", itemsSize );
+	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>(itemsSize ));
 	cacheStats.AddData( "  CItem: ", sizeof( CItem ) );
-	cacheStats.AddData( " Spells Size: ", spellsSize );
-	cacheStats.AddData( " TEffects: ",  cwmWorldState->tempEffects.Num() );
-	cacheStats.AddData( "  Allocated Memory: ", teffectsSize );
+	cacheStats.AddData( " Spells Size: ", static_cast<UI32>(spellsSize ));
+	cacheStats.AddData( " TEffects: ", static_cast<UI32>(cwmWorldState->tempEffects.Num() ));
+	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>(teffectsSize ));
 	cacheStats.AddData( "  TEffect: ", sizeof( CTEffect ) );
-	cacheStats.AddData( " Regions Size: ", cwmWorldState->townRegions.size() );
-	cacheStats.AddData( "  Allocated Memory: ", regionsSize );
+	cacheStats.AddData( " Regions Size: ", static_cast<UI32>(cwmWorldState->townRegions.size()) );
+	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>( regionsSize) );
 	cacheStats.AddData( "  CTownRegion: ", sizeof( CTownRegion ) );
-	cacheStats.AddData( " SpawnRegions ", cwmWorldState->spawnRegions.size() );
-	cacheStats.AddData( "  Allocated Memory: ", spawnregionsSize );
+	cacheStats.AddData( " SpawnRegions ", static_cast<UI32>(cwmWorldState->spawnRegions.size() ));
+	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>(spawnregionsSize ));
 	cacheStats.AddData( "  CSpawnRegion: ", sizeof( CSpawnRegion ) );
 	cacheStats.Send( 0, false, INVALIDSERIAL );
 }
@@ -570,7 +635,7 @@ void command_memstats( CSocket *s )
 void command_restock( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 	{
 		restock( true );
 		s->sysmessage( 55 );
@@ -637,13 +702,15 @@ void command_respawn( void )
 	while( spIter != spEnd )
 	{
 		CSpawnRegion *spawnReg = spIter->second;
-		if( spawnReg != NULL )
+		if( spawnReg != nullptr )
+		{
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
+		}
 		++spIter;
 	}
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &RespawnFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, nullptr, &RespawnFunctor );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -660,21 +727,21 @@ void command_regspawn( CSocket *s )
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
 
-		if( Commands->CommandString( 2, 2 ).upper() == "ALL" )
+		if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
 			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
 			while( spIter != spEnd )
 			{
 				CSpawnRegion *spawnReg = spIter->second;
-				if( spawnReg != NULL )
+				if( spawnReg != nullptr )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 				++spIter;
 			}
 			if( itemsSpawned || npcsSpawned )
-				s->sysmessage( "Spawned %u items and %u npcs in %u SpawnRegions", itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
 			else
-				s->sysmessage( "Failed to spawn any new items or npcs in %u SpawnRegions", cwmWorldState->spawnRegions.size() );
+				s->sysmessage( 9022, cwmWorldState->spawnRegions.size() ); // Failed to spawn any new items or npcs in %u SpawnRegions
 		}
 		else
 		{
@@ -682,17 +749,17 @@ void command_regspawn( CSocket *s )
 			if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 			{
 				CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-				if( spawnReg != NULL )
+				if( spawnReg != nullptr )
 				{
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 					if( itemsSpawned || npcsSpawned )
-						s->sysmessage( "Region: '%s'(%u) spawned %u items and %u npcs", spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned );
+						s->sysmessage( 9023, spawnReg->GetName().c_str(), spawnRegNum, itemsSpawned, npcsSpawned ); // Region: '%s'(%u) spawned %u items and %u npcs
 					else
-						s->sysmessage( "Region: '%s'(%u) failed to spawn any new items or npcs", spawnReg->GetName().c_str(), spawnRegNum );
+						s->sysmessage( 9024, spawnReg->GetName().c_str(), spawnRegNum ); // Region: '%s'(%u) failed to spawn any new items or npcs
 					return;
 				}
 			}
-			s->sysmessage( "Invalid SpawnRegion %u", spawnRegNum );
+			s->sysmessage( 9025, spawnRegNum ); // Invalid SpawnRegion %u
 		}
 	}
 }
@@ -718,13 +785,19 @@ void command_cq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
+		{
 			nextCall( s, false );
+		}
 		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
+		{
 			closeCall( s, false );
+		}
 		else if( upperCommand == "CURR" ) // Take Counselor to current call they are on
+		{
 			currentCall( s, false );
+		}
 		else if( upperCommand == "TRANSFER" ) // Transfer call from Counselor queue to GM queue
 		{
 			CChar *mChar = s->CurrcharObj();
@@ -733,12 +806,12 @@ void command_cq( CSocket *s )
 				if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( mChar->GetCallNum() ) ) )
 				{
 					HelpRequest pageToAdd;
-					HelpRequest *currentPage = NULL;
+					HelpRequest *currentPage = nullptr;
 					currentPage = CounselorQueue->Current();
 					pageToAdd.Reason( currentPage->Reason() );
 					pageToAdd.WhoPaging( currentPage->WhoPaging() );
 					pageToAdd.IsHandled( false );
-					pageToAdd.TimeOfPage( time( NULL ) );
+					pageToAdd.TimeOfPage( time( nullptr ) );
 					GMQueue->Add( &pageToAdd );
 					s->sysmessage( 74 );
 					closeCall( s, false );
@@ -765,16 +838,24 @@ void command_gq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		UString upperCommand = Commands->CommandString( 2, 2 ).upper();
+		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in GM queue
+		{
 			nextCall( s, true );
+		}
 		else if( upperCommand == "CLEAR" ) // Close and clear current call as resolved
+		{
 			closeCall( s, true );
+		}
 		else if( upperCommand == "CURR" ) // Take GM to current call they are on
+		{
 			currentCall( s, true );
+		}
 	}
 	else
+	{
 		GMQueue->SendAsGump( s );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -798,12 +879,12 @@ void command_minecheck( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_guards( void )
 {
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( true );
 		sysBroadcast( Dictionary->GetEntry( 61 ) );
 	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
+	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( false );
 		sysBroadcast( Dictionary->GetEntry( 62 ) );
@@ -817,12 +898,12 @@ void command_guards( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_announce( void )
 {
-	if( Commands->CommandString( 2, 2 ).upper() == "ON" )
+	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( true );
 		sysBroadcast( Dictionary->GetEntry( 63 ) );
 	}
-	else if( Commands->CommandString( 2, 2 ).upper() == "OFF" )
+	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( false );
 		sysBroadcast( Dictionary->GetEntry( 64 ) );
@@ -863,12 +944,12 @@ void command_spawnkill( CSocket *s )
 		if( cwmWorldState->spawnRegions.find( regNum ) == cwmWorldState->spawnRegions.end() )
 			return;
 		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
-		if( spawnReg == NULL )
+		if( spawnReg == nullptr )
 			return;
 		SI32 killed	= 0;
 
 		s->sysmessage( 349 );
-		CDataList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
+		GenericList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
 		for( CChar *i = spCharList->First(); !spCharList->Finished(); i = spCharList->Next() )
 		{
 			if( !ValidateObject( i ) )
@@ -881,7 +962,7 @@ void command_spawnkill( CSocket *s )
 				++killed;
 			}
 		}
-		s->sysmessage( "Done." );
+		s->sysmessage( 84 ); // Done.
 		s->sysmessage( 350, killed, regNum );
 	}
 }
@@ -905,7 +986,7 @@ void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 			CChar *iChar = iSock->CurrcharObj();
 			if( iChar->GetCommandLevel() >= commandLevel )
 			{
-				auto temp = format("%i) %s", j, iChar->GetName().c_str() );
+				auto temp = strutil::format("%i) %s", j, iChar->GetName().c_str() );
 				Who.AddData( temp, iChar->GetSerial(), 3 );
 			}
 			++j;
@@ -954,7 +1035,7 @@ void command_reportbug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error( format("Unable to open bugs log file %s!", logName.c_str()) );
+		Console.error( strutil::format("Unable to open bugs log file %s!", logName.c_str()) );
 		return;
 	}
 	char dateTime[1024];
@@ -1041,7 +1122,7 @@ void command_validcmd( CSocket *s )
 void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	UString commandStart = Commands->CommandString( 2 ).upper();
+	std::string commandStart = strutil::upper( Commands->CommandString( 2 ));
 	if( commandStart.empty() )
 	{
 		CChar *mChar = s->CurrcharObj();
@@ -1058,12 +1139,11 @@ void command_howto( CSocket *s )
 		toSend.UserID( INVALIDSERIAL );
 		toSend.GumpID( 13 );
 
-		toSend.addCommand( "noclose" );
-		toSend.addCommand( format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
+		toSend.addCommand( strutil::format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "HOWTO" );
-		toSend.addCommand( format("button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
+		toSend.addCommand( strutil::format("button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
 
 		UI08 currentLevel			= mChar->GetCommandLevel();
 		COMMANDMAP_ITERATOR gAdd	= CommandMap.begin();
@@ -1079,14 +1159,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( format("page %u", pagenum ));
+				toSend.addCommand( strutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( gAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( gAdd->first );
 				++numAdded;
 				++linenum;
@@ -1101,14 +1181,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( format("page %u", pagenum ));
+				toSend.addCommand( strutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( tAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( tAdd->first );
 				++numAdded;
 				++linenum;
@@ -1123,14 +1203,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( format("page %u", pagenum ));
+				toSend.addCommand( strutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( jAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( jAdd->first );
 				++numAdded;
 				++linenum;
@@ -1142,14 +1222,14 @@ void command_howto( CSocket *s )
 		pagenum = 1;
 		for( SI32 i = 0; i < numAdded; i += 10 )
 		{
-			toSend.addCommand( format("page %u", pagenum ));
+			toSend.addCommand( strutil::format("page %u", pagenum ));
 			if( i >= 10 )
 			{
-				toSend.addCommand(format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
+				toSend.addCommand(strutil::format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
 			}
 			if( ( numAdded > 10 ) && ( ( i + 10 ) < numAdded ) )
 			{
-				toSend.addCommand( format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
+				toSend.addCommand( strutil::format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
 			}
 			++pagenum;
 		}
@@ -1255,10 +1335,9 @@ void cCommands::CommandReset( void )
 	// Q
 	// R
 	// S
-	TargetMap["SETSCPTRIG"]		= TargetMapEntry( CL_ADMIN,			CMD_TARGETINT,	TARGET_SETSCPTRIG,		267);
 	TargetMap["SHOWSKILLS"]		= TargetMapEntry( CL_GM,			CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
 	// T
-	TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
+	//TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
 	// U
 	// V
 	// W
@@ -1340,16 +1419,16 @@ void cCommands::CommandReset( void )
 void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.print(format( "   UnRegistering command %s\n", cmdName.c_str()));
+	Console.print(strutil::format( "   UnRegistering command %s\n", cmdName.c_str()));
 #endif
-	UString upper		= cmdName;
-	upper				= upper.upper();
+	std::string upper	= cmdName;
+	upper				= strutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 		JSCommandMap.erase( p );
 #if defined( UOX_DEBUG_MODE )
 	else
-		Console.print( format("         Command \"%s\" was not found.\n", cmdName.c_str()));
+		Console.print( strutil::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
 #endif
 }
 
@@ -1370,11 +1449,11 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 	Console.MoveTo( 50 );
 	Console.print( "@ command level " );
 	Console.TurnYellow();
-	Console.print( format("%i\n", cmdLevel) );
+	Console.print( strutil::format("%i\n", cmdLevel) );
 	Console.TurnNormal();
 #endif
-	UString upper		= cmdName;
-	upper				= upper.upper();
+	std::string upper	= cmdName;
+	upper				= strutil::upper( upper );
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
@@ -1385,8 +1464,8 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 //o-----------------------------------------------------------------------------------------------o
 void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
-	UString upper					= cmdName;
-	upper							= upper.upper();
+	std::string upper				= cmdName;
+	upper							= strutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR	toFind	= JSCommandMap.find( upper );
 	if( toFind != JSCommandMap.end() )
 	{

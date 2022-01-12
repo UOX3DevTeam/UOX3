@@ -3,6 +3,7 @@
  Ultima Offline eXperiment III (UOX3)
  UO Server Emulation Program
 
+ Copyright 1998 - 2021 by UOX3 contributors
  Copyright 1997, 98 by Marcus Rating (Cironian)
 
  This program is free software; you can redistribute it and/or modify
@@ -69,18 +70,15 @@
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
 
-std::thread cons ;
+std::thread cons;
 std::thread netw;
 
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
 #endif
 
 std::chrono::time_point<std::chrono::system_clock> current;
-
-
-
 
 std::mt19937 generator;
 
@@ -105,6 +103,47 @@ void		MoveBoat( UI08 dir, CBoatObj *boat );
 bool		DecayItem( CItem& toDecay, const UI32 nextDecayItems, const UI32 nextDecayItemsInHouses );
 void		CheckAI( CChar& mChar );
 
+
+bool isWorldSaving = false;
+#if PLATFORM == WINDOWS
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	BOOL WINAPI exit_handler(DWORD dwCtrlType)
+//|					void app_stopped(int sig)
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Prevent closing of console via CTRL+C/or CTRL+BREAK keys during worldsaves
+//o-----------------------------------------------------------------------------------------------o
+BOOL WINAPI exit_handler( DWORD dwCtrlType )
+{
+	switch( dwCtrlType )
+	{
+		
+		case CTRL_C_EVENT:
+		case CTRL_BREAK_EVENT:
+		case CTRL_CLOSE_EVENT:
+			std::cout << std::endl << "World save in progress - closing UOX3 before it completes may result in corrupted save data!" << std::endl;
+
+			// Shutdown of the application will only be halted for as long as the exit_handler is doing something,
+			// so do some non-work while isWorldSaving is true to prevent shutdown during save
+			while( isWorldSaving == true ) {
+				Sleep(0);
+			}
+
+			return true;
+		default:
+			return false;
+	}
+}
+#else
+void app_stopped(int sig)
+{
+	// function called when signal is received.
+	if( isWorldSaving == false )
+	{
+		cwmWorldState->SetKeepRun( false );
+	}
+}
+#endif
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void UnloadSpawnRegions( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -116,7 +155,7 @@ void UnloadSpawnRegions( void )
 	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
 	while( spIter != spEnd )
 	{
-		if( spIter->second != NULL )
+		if( spIter->second != nullptr )
 			delete spIter->second;
 		++spIter;
 	}
@@ -134,7 +173,7 @@ void UnloadRegions( void )
 	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
 	while( tIter != tEnd )
 	{
-		if( tIter->second != NULL )
+		if( tIter->second != nullptr )
 			delete tIter->second;
 		++tIter;
 	}
@@ -291,21 +330,31 @@ bool isOnline( CChar& mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void updateStats( CChar *c, char x )
+//|	Function	-	void updateStats( CBaseObject *mObj, UI08 x )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Updates characters stats
+//|	Purpose		-	Updates object's stats
 //o-----------------------------------------------------------------------------------------------o
-void updateStats( CChar *mChar, UI08 x )
+void updateStats( CBaseObject *mObj, UI08 x )
 {
-	CPUpdateStat toSend( (*mChar), x );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
+	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
 	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
 	{
 		if( !(*cIter)->LoginComplete() )
 			continue;
+
+		// Normalize stats if we're updating our stats for other players
+		bool normalizeStats = true;
+		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+		{
+			( *cIter )->statwindow( mObj );
+			normalizeStats = false;
+		}
+
+		// Prepare the stat update packet
+		CPUpdateStat toSend( (*mObj), x, normalizeStats );
+
+		// Send the stat update packet
 		(*cIter)->Send( &toSend );
-		if( (*cIter)->CurrcharObj() == mChar )
-			(*cIter)->statwindow( mChar );
 	}
 }
 
@@ -324,7 +373,7 @@ void CollectGarbage( void )
 	{
 		CBaseObject *mObj = delqIter->first;
 		++delqIter;
-		if( mObj == NULL || mObj->isFree() || !mObj->isDeleted() )
+		if( mObj == nullptr || mObj->isFree() || !mObj->isDeleted() )
 		{
 			Console.warning( "Invalid object found in Deletion Queue" );
 			continue;
@@ -366,8 +415,10 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			s->ExposeToView();
 
 		s->SetOnHorse( true );
-		CItem *c = Items->CreateItem( NULL, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
-		c->SetName( x->GetName() );
+		CItem *c = Items->CreateItem( nullptr, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
+
+		std::string xName = getNpcDictName( x, sockPtr );
+		c->SetName( xName );
 		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
 
@@ -389,14 +440,14 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			s->SendWornItems( (*cIter) );
 		}
 
-		if( x->GetTarg() != NULL )	// zero out target, under all circumstances
+		if( x->GetTarg() != nullptr )	// zero out target, under all circumstances
 		{
-			x->SetTarg( NULL );
+			x->SetTarg( nullptr );
 			if( x->IsAtWar() )
 				x->ToggleCombat();
 		}
 		if( ValidateObject( x->GetAttacker() ) )
-			x->GetAttacker()->SetTarg( NULL );
+			x->GetAttacker()->SetTarg( nullptr );
 		x->SetFrozen( true );
 		x->SetMounted( true );
 		x->SetInvulnerable( true );
@@ -452,10 +503,10 @@ void endmessage( SI32 x )
 		cwmWorldState->SetEndTime( igetclock );
 
 
-	sysBroadcast( format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
+	sysBroadcast( strutil::format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
 }
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 void illinst( SI32 x = 0 ) //Thunderstorm linux fix
 {
 	sysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
@@ -500,9 +551,9 @@ void callGuards( CChar *mChar )
 	}
 
 	CMapRegion *toCheck = MapRegion->GetMapRegion( mChar );
-	if( toCheck == NULL )
+	if( toCheck == nullptr )
 		return;
-	CDataList< CChar * > *regChars = toCheck->GetCharList();
+	GenericList< CChar * > *regChars = toCheck->GetCharList();
 	regChars->Push();
 	for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 	{
@@ -551,27 +602,30 @@ void callGuards( CChar *mChar, CChar *targChar )
 //o-----------------------------------------------------------------------------------------------o
 bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool doWeather )
 {
-	UI16 dbScript = 0;
-
 	UI16 c;
 	if( !mChar.IsDead() )
 	{
-		if( mChar.GetHP() > mChar.GetMaxHP() )
-			mChar.SetHP( mChar.GetMaxHP() );
-		if( mChar.GetStamina() > mChar.GetMaxStam() )
-			mChar.SetStamina( mChar.GetMaxStam() );
-		if( mChar.GetMana() > mChar.GetMaxMana() )
-			mChar.SetMana( mChar.GetMaxMana() );
+		const auto maxHP = mChar.GetMaxHP();
+		const auto maxStam = mChar.GetMaxStam();
+		const auto maxMana = mChar.GetMaxMana();
+
+		if( mChar.GetHP() > maxHP )
+			mChar.SetHP( maxHP );
+		if( mChar.GetStamina() > maxStam )
+			mChar.SetStamina( maxStam );
+		if( mChar.GetMana() > maxMana )
+			mChar.SetMana( maxMana );
 
 		if( mChar.GetRegen( 0 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetHP() < mChar.GetMaxHP() )
+			if( mChar.GetHP() < maxHP )
 			{
-				if( mChar.GetHunger() > 0 || ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
+				if( !cwmWorldState->ServerData()->HungerSystemEnabled() || mChar.GetHunger() > 0 
+					|| ( !Races->DoesHunger( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_HUNGERRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-					for( c = 0; c < mChar.GetMaxHP() + 1; ++c )
+					for( c = 0; c < maxHP + 1; ++c )
 					{
-						if( mChar.GetHP() <= mChar.GetMaxHP() && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
+						if( mChar.GetHP() <= maxHP && ( mChar.GetRegen( 0 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_HITPOINTREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() )
 						{
 							if( mChar.GetSkill( HEALING ) < 500 )
 								mChar.IncHP( 1 );
@@ -579,9 +633,9 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 								mChar.IncHP( 2 );
 							else
 								mChar.IncHP( 3 );
-							if( mChar.GetHP() >= mChar.GetMaxHP() )
+							if( mChar.GetHP() >= maxHP )
 							{
-								mChar.SetHP( mChar.GetMaxHP() );
+								mChar.SetHP( maxHP );
 								break;
 							}
 						}
@@ -594,21 +648,27 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		}
 		if( mChar.GetRegen( 1 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetStamina() < mChar.GetMaxStam() )
+			auto mStamina = mChar.GetStamina();
+			if( mStamina < maxStam )
 			{
-				for( c = 0; c < mChar.GetMaxStam() + 1; ++c )
+				// Continue with stamina regen if  character is not yet fully parched, or if character is parched but has less than 25% stamina, or if char belongs to race that does not thirst
+				if( !cwmWorldState->ServerData()->ThirstSystemEnabled() || mChar.GetThirst() > 0 || ( mChar.GetThirst() == 0 && mStamina < static_cast<SI16>( maxStam * 0.25 ) ) 
+					|| ( !Races->DoesThirst( mChar.GetRace() ) && ( cwmWorldState->ServerData()->SystemTimer( tSERVER_THIRSTRATE ) == 0 || mChar.IsNpc() ) ) )
 				{
-					if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= mChar.GetMaxStam() )
+					for( c = 0; c < maxStam + 1; ++c )
 					{
-						mChar.IncStamina( 1 );
-						if( mChar.GetStamina() >= mChar.GetMaxStam() )
+						if( ( mChar.GetRegen( 1 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_STAMINAREGEN ) * 1000 ) ) <= cwmWorldState->GetUICurrentTime() && mChar.GetStamina() <= maxStam )
 						{
-							mChar.SetStamina( mChar.GetMaxStam() );
-							break;
+							mChar.IncStamina( 1 );
+							if( mChar.GetStamina() >= maxStam )
+							{
+								mChar.SetStamina( maxStam );
+								break;
+							}
 						}
+						else
+							break;
 					}
-					else
-						break;
 				}
 			}
 			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
@@ -617,19 +677,19 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
 		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			if( mChar.GetMana() < mChar.GetMaxMana() )
+			if( mChar.GetMana() < maxMana )
 			{
-				for( c = 0; c < mChar.GetMaxMana() + 1; ++c )
+				for( c = 0; c < maxMana + 1; ++c )
 				{
-					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= mChar.GetMaxMana() )
+					if( mChar.GetRegen( 2 ) + ( c * cwmWorldState->ServerData()->SystemTimer( tSERVER_MANAREGEN ) * 1000 ) <= cwmWorldState->GetUICurrentTime() && mChar.GetMana() <= maxMana )
 					{
 						Skills->CheckSkill( ( &mChar ), MEDITATION, 0, 1000 );	// Check Meditation for skill gain ala OSI
 						mChar.IncMana( 1 );	// Gain a mana point
-						if( mChar.GetMana() == mChar.GetMaxMana() )
+						if( mChar.GetMana() == maxMana )
 						{
 							if( mChar.IsMeditating() ) // Morrolan = Meditation
 							{
-								if( mSock != NULL )
+								if( mSock != nullptr )
 									mSock->sysmessage( 969 );
 								mChar.SetMeditating( false );
 							}
@@ -662,13 +722,20 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( mChar.IsNpc() && mChar.IsEvading() && mChar.GetTimer( tNPC_EVADETIME ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetEvadeState( false );
-		//Console.Warning( "EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() );
+#if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
+		std::string mCharName = getNpcDictName( &mChar );
+		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+#endif
 	}
 
-	// Hunger Code
 	if( !mChar.IsDead() )
 	{
+		// Hunger/Thirst Code
 		mChar.DoHunger( mSock );
+		mChar.DoThirst( mSock );
+
+		// Loyalty update for pets
+		mChar.DoLoyaltyUpdate();
 
 		if( !mChar.IsInvulnerable() && mChar.GetPoisoned() > 0 )
 		{
@@ -676,48 +743,75 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			{
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
-					SI16 pcalc = 0;
+					std::string mCharName = getNpcDictName( &mChar );
+
 					switch( mChar.GetPoisoned() )
 					{
-						case 1:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
+						case 1: // Lesser Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 2 ) );
+							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+							{
+								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 6 ) );
+								mChar.TextMessage( nullptr, 1240, EMOTE, 1, mCharName.c_str() ); // * %s looks a bit nauseous *
+							}
+							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(3), poisonDmg), POISON ); // Minimum 3 damage per tick
+							break;
+						}
+						case 2: // Normal Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1240, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1241, EMOTE, 1, mCharName.c_str() ); // * %s looks disoriented and nauseous! *
 							}
-							mChar.Damage( (SI16)RandomNum( 1, 2 ) );
+							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(5), poisonDmg), POISON ); // Minimum 5 damage per tick
 							break;
-						case 2:
+						}
+						case 3: // Greater Poison
+						{
 							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 4 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1241, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1242, EMOTE, 1, mCharName.c_str() ); // * %s is in severe pain! *
 							}
-							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 2, 5 ) / 100 ) + RandomNum( 0, 2 ) ); // damage: 1..2..5% of hp's+ 1..2 constant
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(8), poisonDmg), POISON ); // Minimum 8 damage per tick
 							break;
-						case 3:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						}
+						case 4: // Deadly Poison
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1242, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
-							pcalc = (SI16)( ( mChar.GetHP() * RandomNum( 5, 10 ) / 100 ) + RandomNum( 1, 3 ) ); // damage: 5..10% of hp's+ 1..2 constant
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(14), poisonDmg), POISON ); // Minimum 14 damage per tick
 							break;
-						case 4:
-							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 3 ) );
+						}
+						case 5: // Lethal Poison - Used by monsters only
+						{
+							mChar.SetTimer( tCHAR_POISONTIME, BuildTimeValue( 5 ) );
 							if( mChar.GetTimer( tCHAR_POISONTEXT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 							{
 								mChar.SetTimer( tCHAR_POISONTEXT, BuildTimeValue( 10 ) );
-								mChar.TextMessage( NULL, 1243, EMOTE, true, mChar.GetName().c_str() );
+								mChar.TextMessage( nullptr, 1243, EMOTE, 1, mCharName.c_str() ); // * %s looks extremely weak and is wrecked in pain! *
 							}
-							pcalc = (SI16)( mChar.GetHP() / 5 + RandomNum( 3, 6 ) ); // damage: 20% of hp's+ 3..6 constant, quite deadly <g>
-							mChar.Damage( (SI16)pcalc );
+							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
+							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
+							mChar.Damage( std::max(static_cast<SI16>(17), poisonDmg), POISON ); // Minimum 14 damage per tick
 							break;
+						}
 						default:
 							Console.error( " Fallout of switch statement without default. uox3.cpp, genericCheck(), mChar.GetPoisoned() not within valid range." );
 							mChar.SetPoisoned( 0 );
@@ -725,16 +819,24 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 					}
 					if( mChar.GetHP() < 1 && !mChar.IsDead() )
 					{
-						dbScript = mChar.GetScriptTrigger();
-						cScript *toExecute = JSMapping->GetScript( dbScript );
-						if( toExecute != NULL )
+						std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+						for( auto i : scriptTriggers )
 						{
-							if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
-								return false;
+							cScript *toExecute = JSMapping->GetScript( i );
+							if( toExecute != nullptr )
+							{
+								SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
+
+								// -1 == script doesn't exist, or returned -1
+								// 0 == script returned false, 0, or nothing - don't execute hard code
+								// 1 == script returned true or 1
+								if( retStatus == 0 )
+									return false;
+							}
 						}
 
-						HandleDeath( ( &mChar ) );
-						if( mSock != NULL )
+						HandleDeath( ( &mChar ), nullptr );
+						if( mSock != nullptr )
 							mSock->sysmessage( 1244 );
 					}
 				}
@@ -746,7 +848,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			if( mChar.GetPoisoned() > 0 )
 			{
 				mChar.SetPoisoned( 0 );
-				if( mSock != NULL )
+				if( mSock != nullptr )
 					mSock->sysmessage( 1245 );
 			}
 		}
@@ -755,13 +857,13 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	if( !mChar.GetCanAttack() && mChar.GetTimer( tCHAR_PEACETIMER ) <= cwmWorldState->GetUICurrentTime() )
 	{
 		mChar.SetCanAttack( true );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->sysmessage( 1779 );
 	}
 
 	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 			mSock->sysmessage( 1238 );
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
 		UpdateFlag( &mChar );
@@ -774,7 +876,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetTimer( tCHAR_MURDERRATE, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_MURDERDECAY ) );
 		else
 			mChar.SetTimer( tCHAR_MURDERRATE, 0 );
-		if( mSock != NULL && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
+		if( mSock != nullptr && mChar.GetKills() == cwmWorldState->ServerData()->RepMaxKills() )
 			mSock->sysmessage( 1239 );
 		UpdateFlag( &mChar );
 	}
@@ -812,15 +914,23 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		return true;
 	else if( mChar.GetHP() <= 0 )
 	{
-		dbScript	= mChar.GetScriptTrigger();
-		cScript *toExecute	= JSMapping->GetScript( dbScript );
-		if( toExecute != NULL )
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+		for( auto i : scriptTriggers )
 		{
-			if( toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() ) == 1 ) // if it exists and we don't want hard code, return
-				return false;
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
+			{
+				SI08 retStatus = toExecute->OnDeathBlow( &mChar, mChar.GetAttacker() );
+
+				// -1 == script doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( retStatus == 0 )
+					return false;
+			}
 		}
 
-		HandleDeath( (&mChar) );
+		HandleDeath( (&mChar), nullptr );
 		return true;
 	}
 	return false;
@@ -845,16 +955,26 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		}
 	}
 
-	if( mChar.IsCasting() && !mChar.IsJSCasting() )	// Casting a spell
+	if( mChar.IsCasting() && !mChar.IsJSCasting() && mChar.GetSpellCast() != -1 )	// Casting a spell
 	{
+		auto spellNum = mChar.GetSpellCast();
 		mChar.SetNextAct( mChar.GetNextAct() - 1 );
 		if( mChar.GetTimer( tCHAR_SPELLTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )//Spell is complete target it.
 		{
-			if( Magic->spells[mChar.GetSpellCast()].RequireTarget() )
+			// Set the recovery time before another spell can be cast
+			mChar.SetTimer( tCHAR_SPELLRECOVERYTIME, BuildTimeValue( static_cast<R32>( Magic->spells[spellNum].RecoveryDelay()) ));
+
+			if( Magic->spells[spellNum].RequireTarget() )
 			{
 				mChar.SetCasting( false );
 				mChar.SetFrozen( false );
-				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[mChar.GetSpellCast()].StringToSay().c_str() );
+				UI08 cursorType = 0;
+				if( Magic->spells[spellNum].AggressiveSpell() )
+					cursorType = 1;
+				else if( spellNum == 4 || spellNum == 6 || spellNum == 7 || spellNum == 9 || spellNum == 10 || spellNum == 11 || spellNum == 15 || spellNum == 16 || spellNum == 17
+					|| spellNum == 25 || spellNum == 26 || spellNum == 29 || spellNum == 44 || spellNum == 59 )
+					cursorType = 2;
+				mSock->target( 0, TARGET_CASTSPELL, Magic->spells[spellNum].StringToSay().c_str(), cursorType );
 			}
 			else
 			{
@@ -867,7 +987,7 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		else if( mChar.GetNextAct() <= 0 )//redo the spell action
 		{
 			mChar.SetNextAct( 75 );
-			if( !mChar.IsOnHorse() )
+			if( !mChar.IsOnHorse() && !mChar.IsFlying() ) // Consider Gargoyle flying as mounted here
 				Effects->PlaySpellCastingAnimation( &mChar, Magic->spells[mChar.GetSpellCast()].Action() );
 		}
 	}
@@ -908,15 +1028,6 @@ void checkPC( CSocket *mSock, CChar& mChar )
 		}
 	}
 
-	if( mSock->GetTimer( tPC_FISHING ) )
-	{
-		if( mSock->GetTimer( tPC_FISHING ) <= cwmWorldState->GetUICurrentTime() )
-		{
-			Skills->Fish( mSock, &mChar );
-			mSock->SetTimer( tPC_FISHING, 0 );
-		}
-	}
-
 	if( mChar.IsOnHorse() )
 	{
 		CItem *horseItem = mChar.GetItemAtLayer( IL_MOUNT );
@@ -927,6 +1038,13 @@ void checkPC( CSocket *mSock, CChar& mChar )
 			mChar.SetOnHorse( false );
 			horseItem->Delete();
 		}
+	}
+
+	if( mChar.GetTimer( tCHAR_FLYINGTOGGLE ) > 0 && mChar.GetTimer( tCHAR_FLYINGTOGGLE ) < cwmWorldState->GetUICurrentTime() )
+	{
+		mChar.SetTimer( tCHAR_FLYINGTOGGLE, 0 );
+		mChar.SetFrozen( false );
+		mChar.Teleport();
 	}
 }
 
@@ -941,14 +1059,21 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
 	// AI can never be faster than how often we check npcs
 
-	const UI16 AITrig	= mChar.GetScriptTrigger();
-	cScript *toExecute	= JSMapping->GetScript( AITrig );
-	bool doAICheck		= true;
-	if( toExecute != NULL )
+	bool doAICheck = true;
+	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		if( toExecute->OnAISliver( &mChar ) )
-			doAICheck = false;
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnAISliver( &mChar ) == 1 )
+			{
+				// Script returned true or 1, don't do hard-coded AI check
+				doAICheck = false;
+			}
+		}
 	}
+
 	if( doAICheck && checkAI )
 		CheckAI( mChar );
 	Movement->NpcMovement( mChar );
@@ -997,17 +1122,27 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 
 	if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ) )
 	{
-		mChar.SetOldNpcWander( mChar.GetNpcWander() );
-		mChar.SetNpcWander( WT_FLEE );
-		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+		CChar *mTarget = mChar.GetTarg();
+		if( ValidateObject( mTarget ) && !mTarget->IsDead() && objInRange( &mChar, mTarget, DIST_SAMESCREEN ))
+		{
+			mChar.SetOldNpcWander( mChar.GetNpcWander() );
+			mChar.SetNpcWander( WT_FLEE );
+			if( mChar.GetMounted() )
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ) );
+			else
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ) );
+		}
 	}
 	else if( mChar.GetNpcWander() == WT_FLEE && (mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100))
 	{
 		mChar.SetNpcWander( mChar.GetOldNpcWander() );
-		mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
+		if( mChar.GetMounted() )
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ) );
+		else
+			mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
 		mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
 	}
-	Combat->CombatLoop( NULL, mChar );
+	Combat->CombatLoop( nullptr, mChar );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1017,7 +1152,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o-----------------------------------------------------------------------------------------------o
 void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
 {
-	CDataList< CItem * > *regItems = toCheck->GetItemList();
+	GenericList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
 	for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 	{
@@ -1025,7 +1160,7 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 			continue;
 		if( checkItems )
 		{
-			if( itemCheck->isDecayable() && itemCheck->GetCont() == NULL )
+			if( itemCheck->isDecayable() && itemCheck->GetCont() == nullptr )
 			{
 				if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 )
 				{
@@ -1034,6 +1169,29 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 				}
 				if( itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 				{
+					std::vector<UI16> scriptTriggers = itemCheck->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							if( toExecute->OnDecay( itemCheck ) == 0 )	// if it exists and we don't want hard code, return
+							{
+								return;
+							}
+						}
+					}
+
+					// Check global script! Maybe there's another event there
+					cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+					if( toExecute != nullptr )
+					{
+						if( toExecute->OnDecay( itemCheck ) == 0 )	// if it exists and we don't want hard code, return
+						{
+							return;
+						}
+					}
+
 					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) )
 						continue;
 				}
@@ -1083,19 +1241,120 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 		if( itemCheck->CanBeObjType( OT_BOAT ) )
 		{
 			CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
-			if( ValidateObject( mBoat ) && mBoat->GetMoveType() &&
+			SI08 boatMoveType = mBoat->GetMoveType();
+			if( ValidateObject( mBoat ) && boatMoveType &&
 			   ( mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
 			{
-				if( mBoat->GetMoveType() == 1 )
-					MoveBoat( itemCheck->GetDir(), mBoat );
-				else if( mBoat->GetMoveType() == 2 )
+				if( boatMoveType != BOAT_ANCHORED )
 				{
-					UI08 dir = (UI08)( itemCheck->GetDir() + 4 );
-					if( dir > 7 )
-						dir %= 8;
-					MoveBoat( dir, mBoat );
+					switch( boatMoveType )
+					{
+						//case BOAT_ANCHORED:
+						//case BOAT_STOP:
+						case BOAT_FORWARD:
+						case BOAT_SLOWFORWARD:
+						case BOAT_ONEFORWARD:
+							MoveBoat( itemCheck->GetDir(), mBoat );
+							break;
+						case BOAT_BACKWARD:
+						case BOAT_SLOWBACKWARD:
+						case BOAT_ONEBACKWARD:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 4 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_LEFT:
+						case BOAT_SLOWLEFT:
+						case BOAT_ONELEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 2 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_RIGHT:
+						case BOAT_SLOWRIGHT:
+						case BOAT_ONERIGHT:
+						{
+							// Right / One Right
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 2 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_FORWARDLEFT:
+						case BOAT_SLOWFORWARDLEFT:
+						case BOAT_ONEFORWARDLEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 1 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_FORWARDRIGHT:
+						case BOAT_SLOWFORWARDRIGHT:
+						case BOAT_ONEFORWARDRIGHT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 1 );
+
+							dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_BACKWARDLEFT:
+						case BOAT_SLOWBACKWARDLEFT:
+						case BOAT_ONEBACKWARDLEFT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 5 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						case BOAT_BACKWARDRIGHT:
+						case BOAT_SLOWBACKWARDRIGHT:
+						case BOAT_ONEBACKWARDRIGHT:
+						{
+							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 3 );
+							if( dir > 7 )
+								dir %= 8;
+							MoveBoat( dir, mBoat );
+							break;
+						}
+						default:
+							break;
+					}
+
+					// One-step boat commands, so reset move type to 0 after the initial move
+					if( boatMoveType == BOAT_LEFT || boatMoveType == BOAT_RIGHT )
+					{
+						// Move 50% slower left/right than forward/back
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+					}
+					else if( boatMoveType >= BOAT_ONELEFT && boatMoveType <= BOAT_ONEBACKWARDRIGHT )
+					{
+						mBoat->SetMoveType( 0 );
+
+						// Set timer to restrict movement to normal boat speed if player spams command
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+					}
+					else if( boatMoveType >= BOAT_SLOWLEFT && boatMoveType <= BOAT_SLOWBACKWARDLEFT )
+					{
+						// Set timer to slowly move the boat forward
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 2.0 ) );
+					}
+					else
+					{
+						// Set timer to move the boat forward at normal speed
+						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
+					}
 				}
-				mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
 			}
 		}
 	}
@@ -1118,6 +1377,7 @@ void CWorldMain::CheckAutoTimers( void )
 	static UI32 accountFlush			= 0;
 	bool doWeather						= false;
 	bool doPetOfflineCheck				= false;
+	CServerData *serverData				= ServerData();
 
 	// modify this stuff to take into account more variables
 	if( accountFlush <= GetUICurrentTime() || GetOverflow() )
@@ -1153,7 +1413,7 @@ void CWorldMain::CheckAutoTimers( void )
 				}
 			}
 		}
-		accountFlush = BuildTimeValue( (R32)ServerData()->AccountFlushTimer() );
+		accountFlush = BuildTimeValue( (R32)serverData->AccountFlushTimer() );
 	}
 	//Network->On();   //<<<<<< WHAT the HECK, this is why you dont bury mutex locking
 					// PushConn and PopConn lock and unlock as well (yes, bad)
@@ -1185,9 +1445,9 @@ void CWorldMain::CheckAutoTimers( void )
 					tSock->WasIdleWarned( true );
 				}
 
-				if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
+				if( serverData->KickOnAssistantSilence() )
 				{
-					if( tSock->NegotiateTimeout() != -1 && (UI32)tSock->NegotiateTimeout() <= GetUICurrentTime() )
+					if( !tSock->NegotiatedWithAssistant() && tSock->NegotiateTimeout() != -1 && static_cast<UI32>(tSock->NegotiateTimeout()) <= GetUICurrentTime() )
 					{
 						const CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ) )
@@ -1195,10 +1455,57 @@ void CWorldMain::CheckAutoTimers( void )
 						if( !tChar->IsGM() )
 						{
 							tSock->IdleTimeout( -1 );
-							tSock->sysmessage( "Failed to negotiate features with assistant tool. Disconnecting client..." );
+							tSock->sysmessage( 9047 ); // Failed to negotiate features with assistant tool. Disconnecting client...
 							Network->Disconnect( tSock );
 						}
 					}
+				}
+
+				// Check player's network traffic usage versus caps set in ini
+				if( tSock->LoginComplete() && tSock->AcctNo() != 0 && tSock->GetTimer( tPC_TRAFFICWARDEN ) <= GetUICurrentTime() )
+				{
+					if( !ValidateObject( tSock->CurrcharObj() ) || tSock->CurrcharObj()->IsGM() )
+						continue;
+
+					bool tempTimeBan = false;
+					if( tSock->BytesReceived() > serverData->MaxClientBytesIn() )
+					{
+						// Player has exceeded the cap! Send one warning - next time kick player
+						tSock->sysmessage( Dictionary->GetEntry( 9082, tSock->Language() )); // Excessive data usage detected! Sending too many requests to the server in a short amount of time will get you banned.
+						tSock->BytesReceivedWarning( tSock->BytesReceivedWarning() + 1 );
+						if( tSock->BytesReceivedWarning() > 2 )
+						{
+							// If it happens 3 times in the same session, give player a temporary ban
+							tempTimeBan = true;
+						}
+					}
+
+					if( tSock->BytesSent() > serverData->MaxClientBytesOut() )
+					{
+						// This is data sent from server, so should be more lenient before a kick (though could still be initiated by player somehow)
+						tSock->sysmessage( Dictionary->GetEntry( 9082, tSock->Language() )); // Excessive data usage detected! Sending too many requests to the server in a short amount of time will get you banned.
+						tSock->BytesSentWarning( tSock->BytesSentWarning() + 1 );
+						if( tSock->BytesSentWarning() > 2 )
+						{
+							// If it happens 3 times or more in the same session, give player a temporary ban
+							tempTimeBan = true;
+						}
+					}
+
+					if( tempTimeBan )
+					{
+						// Give player a 30 minute temp ban
+						CAccountBlock& myAccount = Accounts->GetAccountByID( tSock->GetAccount().wAccountIndex );
+						myAccount.wFlags.set( AB_FLAGS_BANNED, true );
+						myAccount.wTimeBan = GetMinutesSinceEpoch() + serverData->NetTrafficTimeban();
+						Network->Disconnect( tSock );
+						continue;
+					}
+
+					// Reset amount of bytes received and sent, and restart timer
+					tSock->BytesReceived( 0 );
+					tSock->BytesSent( 0 );
+					tSock->SetTimer( tPC_TRAFFICWARDEN, BuildTimeValue( static_cast<R32>( 10 )) );
 				}
 			}
 			Network->popConn();
@@ -1211,7 +1518,7 @@ void CWorldMain::CheckAutoTimers( void )
 			Network->pushConn();
 			for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
 			{
-				if( wsSocket != NULL )
+				if( wsSocket != nullptr )
 				{
 					if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
 					{
@@ -1220,7 +1527,7 @@ void CWorldMain::CheckAutoTimers( void )
 					}
 					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
 					{
-						if( (UI32)wsSocket->NegotiateTimeout() < GetUICurrentTime() )
+						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>(wsSocket->NegotiateTimeout()) < GetUICurrentTime() )
 						{
 							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ) );
 						}
@@ -1239,7 +1546,7 @@ void CWorldMain::CheckAutoTimers( void )
 		while( tIter != tEnd )
 		{
 			CTownRegion *myReg = tIter->second;
-			if( myReg != NULL )
+			if( myReg != nullptr )
 				myReg->PeriodicCheck();
 			++tIter;
 		}
@@ -1247,7 +1554,7 @@ void CWorldMain::CheckAutoTimers( void )
 		JailSys->PeriodicCheck();
 	}
 
-	if( nextCheckSpawnRegions <= GetUICurrentTime() && ServerData()->CheckSpawnRegionSpeed() != -1 )//Regionspawns
+	if( nextCheckSpawnRegions <= GetUICurrentTime() && serverData->CheckSpawnRegionSpeed() != -1 )//Regionspawns
 	{
 		UI16 itemsSpawned	= 0;
 		UI16 npcsSpawned	= 0;
@@ -1256,19 +1563,19 @@ void CWorldMain::CheckAutoTimers( void )
 		while( spIter != spEnd )
 		{
 			CSpawnRegion *spawnReg = spIter->second;
-			if( spawnReg != NULL )
+			if( spawnReg != nullptr )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 			}
 			++spIter;
 		}
-		nextCheckSpawnRegions = BuildTimeValue( (R32)ServerData()->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
+		nextCheckSpawnRegions = BuildTimeValue( (R32)serverData->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
 	}
 
 	HTMLTemplates->Poll( ETT_ALLTEMPLATES );
 
-	const UI32 saveinterval = ServerData()->ServerSavesTimerStatus();
+	const UI32 saveinterval = serverData->ServerSavesTimerStatus();
 	if( saveinterval != 0 )
 	{
 		time_t oldTime = GetOldTime();
@@ -1276,11 +1583,11 @@ void CWorldMain::CheckAutoTimers( void )
 		{
 			SetAutoSaved( true );
 			time(&oldTime);
-			SetOldTime( oldTime );
+			SetOldTime( static_cast<UI32>(oldTime) );
 		}
 		time_t newTime = GetNewTime();
 		time(&newTime);
-		SetNewTime( newTime );
+		SetNewTime( static_cast<UI32>(newTime) );
 
 		if( difftime( GetNewTime(), GetOldTime() ) >= saveinterval )
 		{
@@ -1288,64 +1595,67 @@ void CWorldMain::CheckAutoTimers( void )
 			// After an automatic world save occurs, lets check to see if
 			// anyone is online (clients connected).  If nobody is connected
 			// Lets do some maintenance on the bulletin boards.
-			//
-			// !!!DISABLED!!! Either the MsgBoardMaintenance() function (or sub-functions)
-			// read in the messages incorrectly, or they get saved back out incorrectly.
-			// Either way, it completely messes up bulletin boards, so it's disabled for now.
-			//
-#pragma note( "MsgBoardMaintenance() disabled until someone can figure out why it breaks bullein boards!" )
-			/*if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
+			if( !GetPlayersOnline() && GetWorldSaveProgress() != SS_SAVING )
 			{
 				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
-				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
+				Console.log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
-			}*/
+			}
 
 			SetAutoSaved( false );
+
+#if PLATFORM == WINDOWS
+			SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
+			isWorldSaving = true;
 			SaveNewWorld( false );
+			isWorldSaving = false;
+#if PLATFORM == WINDOWS
+			SetConsoleCtrlHandler( exit_handler, false );
+#endif
 		}
 	}
 
-	time_t oldIPTime = GetOldIPTime();
+	/*time_t oldIPTime = GetOldIPTime();
 	if( !GetIPUpdated() )
 	{
 		SetIPUpdated( true );
 		time(&oldIPTime);
-		SetOldIPTime( oldIPTime );
+		SetOldIPTime( static_cast<UI32>(oldIPTime) );
 	}
 	time_t newIPTime = GetNewIPTime();
 	time(&newIPTime);
-	SetNewIPTime( newIPTime );
+	SetNewIPTime( static_cast<UI32>(newIPTime) );
 
 	if( difftime( GetNewIPTime(), GetOldIPTime() ) >= 120 )
 	{
 		ServerData()->RefreshIPs();
 		SetIPUpdated( false );
-	}
+	}*/
 
 	//Time functions
 	if( GetUOTickCount() <= GetUICurrentTime() || ( GetOverflow() ) )
 	{
-		UI08 oldHour = ServerData()->ServerTimeHours();
-		if( ServerData()->incMinute() )
+		UI08 oldHour = serverData->ServerTimeHours();
+		if( serverData->incMinute() )
 			Weather->NewDay();
-		if( oldHour != ServerData()->ServerTimeHours() )
+		if( oldHour != serverData->ServerTimeHours() )
 			Weather->NewHour();
 
-		SetUOTickCount( BuildTimeValue( ServerData()->ServerSecondsPerUOMinute() ) );
+		SetUOTickCount( BuildTimeValue( serverData->ServerSecondsPerUOMinute() ) );
 	}
 
 	if( GetTimer( tWORLD_LIGHTTIME ) <= GetUICurrentTime() || GetOverflow() )
 	{
 		doWorldLight();  //Changes lighting, if it is currently time to.
 		Weather->DoStuff();	// updates the weather types
-		SetTimer( tWORLD_LIGHTTIME, ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );
+		SetTimer( tWORLD_LIGHTTIME, serverData->BuildSystemTimeValue( tSERVER_WEATHER ) );
 		doWeather = true;
 	}
 
 	if( GetTimer( tWORLD_PETOFFLINECHECK ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_PETOFFLINECHECK, ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
+		SetTimer( tWORLD_PETOFFLINECHECK, serverData->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
 		doPetOfflineCheck = true;
 	}
 
@@ -1362,7 +1672,7 @@ void CWorldMain::CheckAutoTimers( void )
 		Network->pushConn();
 		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
 		{
-			if( iSock == NULL )
+			if( iSock == nullptr )
 				continue;
 			CChar *mChar		= iSock->CurrcharObj();
 			if( !ValidateObject( mChar ) )
@@ -1380,7 +1690,7 @@ void CWorldMain::CheckAutoTimers( void )
 					for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
 					{
 						CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
-						if( tC == NULL )
+						if( tC == nullptr )
 							continue;
 						regionList.insert( tC );
 					}
@@ -1394,24 +1704,24 @@ void CWorldMain::CheckAutoTimers( void )
 	bool setNPCFlags = false, checkItems = false, checkAI = false, doRestock = false;
 	if( nextSetNPCFlagTime <= GetUICurrentTime() || GetOverflow() )
 	{
-		nextSetNPCFlagTime = BuildTimeValue( 30 );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
+		nextSetNPCFlagTime = serverData->BuildSystemTimeValue( tSERVER_NPCFLAGUPDATETIMER );	// Slow down lag "needed" for setting flags, they are set often enough ;-)
 		setNPCFlags = true;
 	}
 	if( nextCheckItems <= GetUICurrentTime() || GetOverflow() )
 	{
-		nextCheckItems = BuildTimeValue( static_cast<R32>(ServerData()->CheckItemsSpeed()) );
-		nextDecayItems = ServerData()->BuildSystemTimeValue( tSERVER_DECAY );
-		nextDecayItemsInHouses = ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
+		nextCheckItems = BuildTimeValue( static_cast<R32>(serverData->CheckItemsSpeed()) );
+		nextDecayItems = serverData->BuildSystemTimeValue( tSERVER_DECAY );
+		nextDecayItemsInHouses = serverData->BuildSystemTimeValue( tSERVER_DECAYINHOUSE );
 		checkItems = true;
 	}
 	if( GetTimer( tWORLD_NEXTNPCAI ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)ServerData()->CheckNpcAISpeed() ) );
+		SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)serverData->CheckNpcAISpeed() ) );
 		checkAI = true;
 	}
 	if( GetTimer( tWORLD_SHOPRESTOCK ) <= GetUICurrentTime() || GetOverflow() )
 	{
-		SetTimer( tWORLD_SHOPRESTOCK, ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
+		SetTimer( tWORLD_SHOPRESTOCK, serverData->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
 		doRestock = true;
 	}
 
@@ -1419,7 +1729,7 @@ void CWorldMain::CheckAutoTimers( void )
 	while( tcCheck != regionList.end() )
 	{
 		CMapRegion *toCheck = (*tcCheck);
-		CDataList< CChar * > *regChars = toCheck->GetCharList();
+		GenericList< CChar * > *regChars = toCheck->GetCharList();
 		regChars->Push();
 		for( CChar *charCheck = regChars->First(); !regChars->Finished(); charCheck = regChars->Next() )
 		{
@@ -1427,7 +1737,7 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
-				if( !genericCheck( NULL, (*charCheck), checkFieldEffects, doWeather ) )
+				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) )
 				{
 					if( setNPCFlags )
 						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
@@ -1450,6 +1760,7 @@ void CWorldMain::CheckAutoTimers( void )
 						actbTemp.dwInGame = INVALIDSERIAL;
 						charCheck->SetTimer( tPC_LOGOUT, 0 );
 						charCheck->Update();
+						charCheck->Teleport();
 					}
 				}
 			}
@@ -1476,25 +1787,27 @@ void CWorldMain::CheckAutoTimers( void )
 				CChar *uChar = static_cast<CChar *>(mObj);
 
 				if( uChar->GetUpdate( UT_HITPOINTS ) )
-					updateStats( uChar, 0 );
+					updateStats( mObj, 0 );
 				if( uChar->GetUpdate( UT_STAMINA ) )
-					updateStats( uChar, 1 );
+					updateStats( mObj, 1 );
 				if( uChar->GetUpdate( UT_MANA ) )
-					updateStats( uChar, 2 );
+					updateStats( mObj, 2 );
 
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
 				else if( uChar->GetUpdate( UT_HIDE ) )
 				{
-					uChar->RemoveFromSight();
-					uChar->Update();
+					uChar->ClearUpdate();
+					if( uChar->GetVisible() != VT_VISIBLE )
+						uChar->RemoveFromSight();
+					uChar->Update( nullptr, false );
 				}
 				else if( uChar->GetUpdate( UT_UPDATE ) )
 					uChar->Update();
 				else if( uChar->GetUpdate( UT_STATWINDOW ) )
 				{
 					CSocket *uSock = uChar->GetSocket();
-					if( uSock != NULL )
+					if( uSock != nullptr )
 						uSock->statwindow( uChar );
 				}
 
@@ -1517,54 +1830,54 @@ void InitClasses( void )
 {
 	cwmWorldState->ClassesInitialized( true );
 
-	JSMapping		= NULL;	Effects		= NULL;
-	Commands		= NULL;	Combat		= NULL;
-	Items			= NULL;	Map			= NULL;
-	Npcs			= NULL;	Skills		= NULL;
-	Weight			= NULL;	JailSys		= NULL;
-	Network			= NULL;	Magic		= NULL;
-	Races			= NULL;	Weather		= NULL;
-	Movement		= NULL;	GuildSys	= NULL;
-	WhoList			= NULL;	OffList		= NULL;
-	Books			= NULL;	GMQueue		= NULL;
-	Dictionary		= NULL;	Accounts	= NULL;
-	MapRegion		= NULL;	SpeechSys	= NULL;
-	CounselorQueue	= NULL;
-	HTMLTemplates	= NULL;
-	FileLookup		= NULL;
+	JSMapping		= nullptr;	Effects		= nullptr;
+	Commands		= nullptr;	Combat		= nullptr;
+	Items			= nullptr;	Map			= nullptr;
+	Npcs			= nullptr;	Skills		= nullptr;
+	Weight			= nullptr;	JailSys		= nullptr;
+	Network			= nullptr;	Magic		= nullptr;
+	Races			= nullptr;	Weather		= nullptr;
+	Movement		= nullptr;	GuildSys	= nullptr;
+	WhoList			= nullptr;	OffList		= nullptr;
+	Books			= nullptr;	GMQueue		= nullptr;
+	Dictionary		= nullptr;	Accounts	= nullptr;
+	MapRegion		= nullptr;	SpeechSys	= nullptr;
+	CounselorQueue	= nullptr;
+	HTMLTemplates	= nullptr;
+	FileLookup		= nullptr;
 
 	JSEngine		= new CJSEngine;
 	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
-	if(( FileLookup		= new CServerDefinitions() )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
-	if(( Dictionary		= new CDictionaryContainer )			== NULL ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
-	if(( Combat			= new CHandleCombat )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
-	if(( Commands		= new cCommands )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
-	if(( Items			= new cItem )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
-	if(( Map			= new CMulHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAP );
-	if(( Npcs			= new cCharStuff )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
-	if(( Skills			= new cSkills )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
-	if(( Weight			= new CWeight )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
-	if(( Network		= new cNetworkStuff )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
-	if(( Magic			= new cMagic )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
-	if(( Races			= new cRaces )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_RACES );
-	if(( Weather		= new cWeatherAb )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
-	if(( Movement		= new cMovement )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
-	if(( WhoList		= new cWhoList )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
-	if(( OffList		= new cWhoList( false ) )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
-	if(( Books			= new cBooks )							== NULL ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
-	if(( GMQueue		= new PageVector( "GM Queue" ) )		== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== NULL ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( JSMapping		= new CJSMapping )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	if(( FileLookup		= new CServerDefinitions() )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
+	if(( Dictionary		= new CDictionaryContainer )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
+	if(( Combat			= new CHandleCombat )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
+	if(( Commands		= new cCommands )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
+	if(( Items			= new cItem )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
+	if(( Map			= new CMulHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAP );
+	if(( Npcs			= new cCharStuff )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
+	if(( Skills			= new cSkills )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
+	if(( Weight			= new CWeight )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
+	if(( Network		= new cNetworkStuff )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
+	if(( Magic			= new cMagic )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
+	if(( Races			= new cRaces )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_RACES );
+	if(( Weather		= new cWeatherAb )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
+	if(( Movement		= new cMovement )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
+	if(( WhoList		= new cWhoList )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
+	if(( OffList		= new cWhoList( false ) )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
+	if(( Books			= new cBooks )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
+	if(( GMQueue		= new PageVector( "GM Queue" ) )		== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
+	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
+	if(( JSMapping		= new CJSMapping )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
 	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
-	if(( MapRegion		= new CMapHandler )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
-	if(( Effects		= new cEffects )						== NULL ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
-	if(( HTMLTemplates	= new cHTMLTemplates )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
-	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == NULL ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
-	if(( SpeechSys		= new CSpeechQueue()	)				== NULL ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
-	if(( GuildSys		= new CGuildCollection() )				== NULL ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( JailSys		= new JailSystem() )					== NULL ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
+	if(( MapRegion		= new CMapHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
+	if(( Effects		= new cEffects )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
+	if(( HTMLTemplates	= new cHTMLTemplates )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
+	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == nullptr ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
+	if(( SpeechSys		= new CSpeechQueue()	)				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
+	if(( GuildSys		= new CGuildCollection() )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
+	if(( JailSys		= new JailSystem() )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1580,6 +1893,8 @@ void ParseArgs( SI32 argc, char *argv[] )
 	}
 }
 
+BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
@@ -1589,25 +1904,35 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
 	if( ValidateObject( a ) )
 	{
-		// Special case for house signs
-		if( a->GetObjType() == OT_ITEM
-			&& ( ( a->GetID() >= 0x0b95 && a->GetID() <= 0x0c0e ) || a->GetID() == 0x1f28 || a->GetID() == 0x1f29 ) )
+		if( a->CanBeObjType( OT_MULTI ))
 		{
-			// Reunite house signs with their multis
-			SERIAL houseSerial = static_cast<CItem *>( a )->GetTempVar( CITV_MORE );
-			CMultiObj *multi = calcMultiFromSer( houseSerial );
-			if( ValidateObject( multi ) )
+			CMultiObj *aMulti = static_cast<CMultiObj *>(a);
+			BASEOBJECTLIST objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
+			for( BASEOBJECTLIST_CITERATOR objectCtr = objectList.begin(); objectCtr != objectList.end(); ++objectCtr )
 			{
-				a->SetMulti( multi );
-				return true;
+				CBaseObject *objToCheck = (*objectCtr);
+
+				if( inMulti( objToCheck->GetX(), objToCheck->GetY(), objToCheck->GetZ(), aMulti ))
+					objToCheck->SetMulti( aMulti );
+				else if( objToCheck->GetObjType() == OT_ITEM
+					&& ( ( objToCheck->GetID() >= 0x0b95 && objToCheck->GetID() <= 0x0c0e ) || objToCheck->GetID() == 0x1f28 || objToCheck->GetID() == 0x1f29 ) )
+				{
+					// Reunite house signs with their multis
+					SERIAL houseSerial = static_cast<CItem *>( objToCheck )->GetTempVar( CITV_MORE );
+					CMultiObj *multi = calcMultiFromSer( houseSerial );
+					if( ValidateObject( multi ) )
+					{
+						objToCheck->SetMulti( multi );
+					}
+				}
+				else
+				{
+					// No other multi found where item is, safe to set item's multi to INVALIDSERIAL
+					if( findMulti( objToCheck ) == nullptr )
+						objToCheck->SetMulti( INVALIDSERIAL );
+				}
 			}
 		}
-
-		CMultiObj *multi = findMulti( a );
-		if( multi != NULL )
-			a->SetMulti( multi );
-		else
-			a->SetMulti( INVALIDSERIAL );
 	}
 	return true;
 }
@@ -1622,8 +1947,7 @@ void InitMultis( void )
 	Console << "Initializing multis            ";
 
 	UI32 b		= 0;
-	ObjectFactory::getSingleton().IterateOver( OT_ITEM, b, NULL, &FindMultiFunctor );
-	ObjectFactory::getSingleton().IterateOver( OT_CHAR, b, NULL, &FindMultiFunctor );
+	ObjectFactory::getSingleton().IterateOver( OT_MULTI, b, nullptr, &FindMultiFunctor );
 
 	Console.PrintDone();
 }
@@ -1638,7 +1962,7 @@ void DisplayBanner( void )
 	Console.PrintSectionBegin();
 
 
-	//auto idName = format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
+	//auto idName = strutil::format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
 
 	Console.TurnYellow();
 	Console << "Compiled on ";
@@ -1674,13 +1998,21 @@ void Shutdown( SI32 retCode )
 
 	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
+#if PLATFORM == WINDOWS
+	SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
+		isWorldSaving = true;
 		do
 		{
 			cwmWorldState->SaveNewWorld( true );
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
+		isWorldSaving = false;
+#if PLATFORM == WINDOWS
+	SetConsoleCtrlHandler( exit_handler, FALSE );
+#endif
 	}
 
-	if( cwmWorldState->ClassesInitialized() )
+	if( cwmWorldState && cwmWorldState->ClassesInitialized() )
 	{
 		if( HTMLTemplates )
 		{
@@ -1695,7 +2027,7 @@ void Shutdown( SI32 retCode )
 		Console.PrintDone();
 
 		Console << "Destroying class objects and pointers... ";
-		// delete any objects that were created (delete takes care of NULL check =)
+		// delete any objects that were created (delete takes care of nullptr check =)
 
 		delete Combat;
 		delete Commands;
@@ -1762,7 +2094,7 @@ void Shutdown( SI32 retCode )
 		Console.TurnRed();
 		Console << "Exiting UOX with errorlevel " << retCode << myendl;
 		Console.TurnNormal();
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 		Console << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline(std::cin, throwAway);
@@ -1791,20 +2123,20 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		UString sect				= std::string("ADVANCEMENT ") + str_number( advObj );
-		sect						= sect.stripWhiteSpace();
+		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
+		sect						= strutil::trim( strutil::removeTrailing( sect, "//" ));
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
-		if( Advancement == NULL )
+		if( Advancement == nullptr )
 		{
 			Console << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
 			applyTo->SetAdvObj( 0 );
 			return;
 		}
-		CItem *retitem		= NULL;
+		CItem *retItem		= nullptr;
 		CItem *hairobject	= applyTo->GetItemAtLayer( IL_HAIR );
 		CItem *beardobject	= applyTo->GetItemAtLayer( IL_FACIALHAIR );
 		DFNTAGS tag			= DFNTAG_COUNTOFTAGS;
-		UString cdata;
+		std::string cdata;
 		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
 		for( tag = Advancement->FirstTag(); !Advancement->AtEndTags(); tag = Advancement->NextTag() )
@@ -1840,13 +2172,13 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_ENTICEMENT:			skillToSet = ENTICEMENT;						break;
 				case DFNTAG_EVALUATINGINTEL:	skillToSet = EVALUATINGINTEL;					break;
 				case DFNTAG_EQUIPITEM:
-					retitem = Items->CreateBaseScriptItem( cdata, applyTo->WorldNumber(), 1 );
-					if( retitem != NULL )
+					retItem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1 );
+					if( retItem != nullptr )
 					{
-						if( !retitem->SetCont( applyTo ) )
+						if( !retItem->SetCont( applyTo ) )
 						{
-							retitem->SetCont( applyTo->GetPackItem() );
-							retitem->PlaceInPack();
+							retItem->SetCont( applyTo->GetPackItem() );
+							retItem->PlaceInPack();
 						}
 					}
 					break;
@@ -1864,19 +2196,19 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_INSCRIPTION:		skillToSet = INSCRIPTION;						break;
 				case DFNTAG_KARMA:				applyTo->SetKarma( static_cast<SI16>(ndata) );	break;
 				case DFNTAG_KILLHAIR:
-					retitem = applyTo->GetItemAtLayer( IL_HAIR );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_HAIR );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_KILLBEARD:
-					retitem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_FACIALHAIR );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_KILLPACK:
-					retitem = applyTo->GetItemAtLayer( IL_PACKITEM );
-					if( ValidateObject( retitem ) )
-						retitem->Delete();
+					retItem = applyTo->GetItemAtLayer( IL_PACKITEM );
+					if( ValidateObject( retItem ) )
+						retItem->Delete();
 					break;
 				case DFNTAG_LOCKPICKING:		skillToSet = LOCKPICKING;					break;
 				case DFNTAG_LUMBERJACKING:		skillToSet = LUMBERJACKING;					break;
@@ -1897,21 +2229,26 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_PACKITEM:
 					if( ValidateObject( applyTo->GetPackItem() ) )
 					{
+						auto csecs = strutil::sections( cdata, "," );
 						if( !cdata.empty() )
 						{
-							if( cdata.sectionCount( "," ) != 0 )
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata.section( ",", 0, 0 ).stripWhiteSpace(), str_value<std::uint16_t>(trim(extractSection(cdata, ",", 1, 1 ))), OT_ITEM, true );
+							if( csecs.size() > 1 )
+							{
+								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), strutil::value<std::uint16_t>( strutil::trim( strutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
+							}
 							else
-								retitem = Items->CreateScriptItem( NULL, applyTo, cdata, 1, OT_ITEM, true );
+							{
+								retItem = Items->CreateScriptItem( nullptr, applyTo, cdata, 1, OT_ITEM, true );
+							}
 						}
 					}
 					else
 						Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
 					break;
-				case DFNTAG_REMOVETRAPS:		skillToSet = REMOVETRAPS;					break;
+				case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;					break;
 				case DFNTAG_STRENGTH:			applyTo->SetStrength( static_cast<SI16>(RandomNum( ndata, odata )) );			break;
 				case DFNTAG_SKILL:				applyTo->SetBaseSkill( static_cast<UI16>(odata), static_cast<UI08>(ndata) );	break;
-				case DFNTAG_SKIN:				applyTo->SetSkin( cdata.toUShort() );		break;
+				case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>(std::stoul(cdata, nullptr, 0) ));			break;
 				case DFNTAG_SNOOPING:			skillToSet = SNOOPING;						break;
 				case DFNTAG_SPELLWEAVING:		skillToSet = SPELLWEAVING;					break;
 				case DFNTAG_SPIRITSPEAK:		skillToSet = SPIRITSPEAK;					break;
@@ -1940,7 +2277,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 	else
 	{
 		CSocket *sock = applyTo->GetSocket();
-		if( sock != NULL )
+		if( sock != nullptr )
 			sock->sysmessage( 1366 );
 	}
 }
@@ -1952,7 +2289,7 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 //o-----------------------------------------------------------------------------------------------o
 UI32 getclock( void )
 {
-	auto now = std::chrono::system_clock::now() ;
+	auto now = std::chrono::system_clock::now();
 	return static_cast<std::uint32_t>(std::chrono::duration_cast<std::chrono::milliseconds>(now-current).count());
 }
 
@@ -1970,13 +2307,23 @@ R32 roundNumber( R32 toRound)
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool isNumber( const std::string& str )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true if string is a number, false if not
+//o-----------------------------------------------------------------------------------------------o
+bool isNumber( const std::string& str )
+{
+	return str.find_first_not_of( "0123456789" ) == std::string::npos;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void doLight( CSocket *s, UI08 level )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets light level for player and applies relevant effects
 //o-----------------------------------------------------------------------------------------------o
 void doLight( CSocket *s, UI08 level )
 {
-	if( s == NULL )
+	if( s == nullptr )
 		return;
 
 	CChar *mChar = s->CurrcharObj();
@@ -1999,7 +2346,7 @@ void doLight( CSocket *s, UI08 level )
 
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 	// we have a valid weather system
-	if( wSys != NULL )
+	if( wSys != nullptr )
 	{
 		const R32 lightMin = wSys->LightMin();
 		const R32 lightMax = wSys->LightMax();
@@ -2028,16 +2375,28 @@ void doLight( CSocket *s, UI08 level )
 	}
 	s->Send( &toSend );
 
-	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL ) {
-		onLightChangeScp->OnLightChange( mChar, toShow );
-	}
-	else
+	bool eventFound = false;
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				eventFound = true;
+				break;
+			}
+		}
+	}
 
-		if( onLightChangeScp != NULL )
-			onLightChangeScp->OnLightChange( mChar, toShow );
+	if( !eventFound )
+	{
+		// Check global script! Maybe there's another event there
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+		if( toExecute != nullptr )
+			toExecute->OnLightChange( mChar, toShow );
 	}
 
 	Weather->DoPlayerStuff( s, mChar );
@@ -2061,7 +2420,7 @@ void doLight( CChar *mChar, UI08 level )
 	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
 
 	// we have a valid weather system
-	if( wSys != NULL )
+	if( wSys != nullptr )
 	{
 		const R32 lightMin = wSys->LightMin();
 		const R32 lightMax = wSys->LightMax();
@@ -2085,17 +2444,91 @@ void doLight( CChar *mChar, UI08 level )
 		}
 	}
 
-	cScript *onLightChangeScp = JSMapping->GetScript( mChar->GetScriptTrigger() );
-	if( onLightChangeScp != NULL )
-		onLightChangeScp->OnLightChange( mChar, toShow );
-	else
+	bool eventFound = false;
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
 	{
-		onLightChangeScp = JSMapping->GetScript( (UI16)0 );
-
-		if( onLightChangeScp != NULL )
-			onLightChangeScp->OnLightChange( mChar, toShow );
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnLightChange( mChar, toShow ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				eventFound = true;
+				break;
+			}
+		}
 	}
+
+	if( !eventFound )
+	{
+		// Check global script! Maybe there's another event there
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+		if( toExecute != nullptr )
+			toExecute->OnLightChange( mChar, toShow );
+	}
+
 	Weather->DoNPCStuff( mChar );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL getPoisonDuration( UI08 poisonStrength )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates the duration of poison based on its strength
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonDuration( UI08 poisonStrength )
+{
+	// Calculate duration of poison, based on the strength of the poison
+	TIMERVAL poisonDuration = 0;
+	switch( poisonStrength )
+	{
+		case 1: // Lesser poison - 9 to 13 pulses, 2 second frequency
+			poisonDuration = RandomNum( 9, 13 ) * 2;
+			break;
+		case 2: // Normal poison - 10 to 14 pulses, 3 second frequency
+			poisonDuration = RandomNum( 10, 14 ) * 3;
+			break;
+		case 3: // Greater poison - 11 to 15 pulses, 4 second frequency
+			poisonDuration = RandomNum( 11, 15 ) * 4;
+			break;
+		case 4: // Deadly poison - 12 to 16 pulses, 5 second frequency
+			poisonDuration = RandomNum( 12, 16 ) * 5;
+			break;
+		case 5: // Lethal poison - 13 to 17 pulses, 5 second frequency
+			poisonDuration = RandomNum( 13, 17 ) * 5;
+			break;
+	}
+	return poisonDuration;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	TIMERVAL getPoisonTickTime( UI08 poisonStrength )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculates the time between each tick of a poison, based on its strength
+//o-----------------------------------------------------------------------------------------------o
+TIMERVAL getPoisonTickTime( UI08 poisonStrength )
+{
+	// Calculate duration of poison, based on the strength of the poison
+	TIMERVAL poisonTickTime = 0;
+	switch( poisonStrength )
+	{
+		case 1: // Lesser poison - 2 second frequency
+			poisonTickTime = 2;
+			break;
+		case 2: // Normal poison - 3 second frequency
+			poisonTickTime = 3;
+			break;
+		case 3: // Greater poison - 4 second frequency
+			poisonTickTime = 4;
+			break;
+		case 4: // Deadly poison - 5 second frequency
+			poisonTickTime = 5;
+			break;
+		case 5: // Lethal poison - 5 second frequency
+			poisonTickTime = 5;
+			break;
+	}
+	return poisonTickTime;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2109,63 +2542,100 @@ void doLight( CChar *mChar, UI08 level )
 //o-----------------------------------------------------------------------------------------------o
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
-	UString temp	= mItem.GetName() ;
-	temp			= temp.simplifyWhiteSpace();
+	std::string temp	= mItem.GetName();
+	temp				= strutil::trim( strutil::removeTrailing( temp, "//" ));
 	const UI16 getAmount = mItem.GetAmount();
-	if( cwmWorldState->ServerData()->ServerUsingHSTiles() )
+	CTile& tile = Map->SeekTile( mItem.GetID() );
+	if( temp.substr( 0, 1 ) == "#" )
 	{
-		//7.0.9.0 data and later
-		CTileHS& tile = Map->SeekTileHS( mItem.GetID() );
-		if( temp.substr( 0, 1 ) == "#" )
-		{
-			temp =  static_cast< UString >( tile.Name() );
-		}
-
-		if( getAmount == 1 )
-		{
-			if( tile.CheckFlag( TF_DISPLAYAN ) )
-				temp = "an " + temp;
-			else if( tile.CheckFlag( TF_DISPLAYA ) )
-				temp = "a " + temp;
-		}
+		temp = tile.Name();
 	}
-	else
+	
+	if( getAmount == 1 )
 	{
-		//7.0.8.2 data and earlier
-		CTile& tile = Map->SeekTile( mItem.GetID() );
-		if( temp.substr( 0, 1 ) == "#" )
-		{
-			temp =  static_cast< UString >( tile.Name() );
-		}
-
-		if( getAmount == 1 )
-		{
-			if( tile.CheckFlag( TF_DISPLAYAN ) )
-				temp = "an " + temp;
-			else if( tile.CheckFlag( TF_DISPLAYA ) )
-				temp = "a " + temp;
-		}
+		if( tile.CheckFlag( TF_DISPLAYAN ) )
+			temp = "an " + temp;
+		else if( tile.CheckFlag( TF_DISPLAYA ) )
+			temp = "a " + temp;
 	}
 
+	auto psecs = strutil::sections( temp, "%" );
 	// Find out if the name has a % in it
-	if( temp.sectionCount( "%" ) > 0 )
+	if( psecs.size() > 2 )
 	{
-		UString single;
-		const UString first	= extractSection(temp,"%", 0, 0 );
-		UString plural		= extractSection( temp,"%", 1, 1 );
-		const UString rest	= extractSection( temp, "%", 2 );
-		if( plural.sectionCount( "/" ) > 0 )
+		std::string single;
+		const std::string first	= psecs[0];
+		std::string plural		= psecs[1];
+		const std::string rest	= psecs[2];
+		auto fssecs = strutil::sections( plural, "/" );
+		if( fssecs.size() > 1 )
 		{
-			single = extractSection(plural, "/", 1 );
-			plural = extractSection(plural, "/", 0, 0 );
+			single = fssecs[1];
+			plural = fssecs[0];
 		}
 		if( getAmount < 2 )
 			temp = first + single + rest;
 		else
 			temp = first + plural + rest;
 	}
-	itemname = static_cast< std::string >( temp.simplifyWhiteSpace() );
+	itemname = strutil::simplify( temp );
 	return itemname.size() + 1;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string getNpcDictName( CChar *mChar, CSocket *tSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the dictionary name for a given NPC, if their name equals # or a dictionary ID
+//o-----------------------------------------------------------------------------------------------o
+std::string getNpcDictName( CChar *mChar, CSocket *tSock )
+{
+	std::string dictName = mChar->GetName();
+	SI32 dictEntryID = 0;
+
+	if( dictName == "#" )
+	{
+		// If character name is #, get dictionary entry based on base dictionary entry for creature names (3000) plus character's ID
+		dictEntryID = static_cast<SI32>( 3000 + mChar->GetID() );
+		if( tSock != nullptr )
+			dictName = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictName = Dictionary->GetEntry( dictEntryID );
+	}
+	else if( isNumber( dictName ))
+	{
+		// If name is a number, assume it's a direct dictionary entry reference, and use that
+		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictName ));
+		if( tSock != nullptr )
+			dictName = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictName = Dictionary->GetEntry( dictEntryID );
+	}
+
+	return dictName;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the dictionary string for the title of a given NPC, if their title 
+//|					equals a dictionary ID
+//o-----------------------------------------------------------------------------------------------o
+std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
+{
+	std::string dictTitle = mChar->GetTitle();
+	SI32 dictEntryID = 0;
+
+	if( isNumber( dictTitle ) )
+	{
+		// If title is a number, assume it's a direct dictionary entry reference, and use that
+		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictTitle ) );
+		if( tSock != nullptr )
+			dictTitle = Dictionary->GetEntry( dictEntryID, tSock->Language() );
+		else
+			dictTitle = Dictionary->GetEntry( dictEntryID );
+	}
+
+	return dictTitle;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2175,41 +2645,49 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 //o-----------------------------------------------------------------------------------------------o
 void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 {
-	CTownRegion *iRegion	= mChar.GetRegion();
-	CTownRegion *calcReg	= calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
-	if( iRegion == NULL && calcReg != NULL )
+	// Get character's old/previous region
+	CTownRegion *iRegion = mChar.GetRegion();
+	UI16 oldSubRegionNum = mChar.GetSubRegion();
+
+	// Calculate character's current region
+	CTownRegion *calcReg = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID(), &mChar );
+
+	if( iRegion == nullptr && calcReg != nullptr )
 		mChar.SetRegion( calcReg->GetRegionNum() );
 	else if( calcReg != iRegion )
 	{
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
-			if( iRegion != NULL && calcReg != NULL )
+			if( iRegion != nullptr && calcReg != nullptr )
 			{
-				// Drake 08-30-99 If region name are the same, do not display message
-				//                for playing music when approaching Tavern
+				// Don't display left/entered region messages if name of region is identical
 				if( iRegion->GetName() != calcReg->GetName() )
 				{
 					if( !iRegion->GetName().empty() )
-						mSock->sysmessage( 1358, iRegion->GetName().c_str() );
+						mSock->sysmessage( 1358, iRegion->GetName().c_str() ); // You have left %s.
 
 					if( !calcReg->GetName().empty() )
-						mSock->sysmessage( 1359, calcReg->GetName().c_str() );
+						mSock->sysmessage( 1359, calcReg->GetName().c_str() ); // You have entered %s.
 				}
 				if( calcReg->IsGuarded() || iRegion->IsGuarded() )
 				{
 					if( calcReg->IsGuarded() )
 					{
-						if( calcReg->GetOwner().empty() )
-							mSock->sysmessage( 1360 );
-						else
-							mSock->sysmessage( 1361, calcReg->GetOwner().c_str() );
+						// Don't display change of guard message if guardowner is identical
+						if( !iRegion->IsGuarded() || ( iRegion->IsGuarded() && calcReg->GetOwner() != iRegion->GetOwner() ) )
+						{
+							if( calcReg->GetOwner().empty() )
+								mSock->sysmessage( 1360 ); // You are now under the protection of the guards.
+							else
+								mSock->sysmessage( 1361, calcReg->GetOwner().c_str() ); // You are now under the protection of %s guards.
+						}
 					}
 					else
 					{
 						if( iRegion->GetOwner().empty() )
-							mSock->sysmessage( 1362 );
+							mSock->sysmessage( 1362 ); // You are no longer under the protection of the guards.
 						else
-							mSock->sysmessage( 1363, iRegion->GetOwner().c_str() );
+							mSock->sysmessage( 1363, iRegion->GetOwner().c_str() ); // You are no longer under the protection of %s guards.
 					}
 					UpdateFlag( &mChar );
 				}
@@ -2220,11 +2698,11 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 				}
 				if( calcReg == cwmWorldState->townRegions[mChar.GetTown()] )	// enter our home town
 				{
-					mSock->sysmessage( 1364 );
+					mSock->sysmessage( 1364 ); // You feel loved and cherished under the protection of your home town.
 					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) )
 					{
-						CDataList< CItem * > *piCont = packItem->GetContainsList();
+						GenericList< CItem * > *piCont = packItem->GetContainsList();
 						for( CItem *toScan = piCont->First(); !piCont->Finished(); toScan = piCont->Next() )
 						{
 							if( ValidateObject( toScan ) )
@@ -2232,7 +2710,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 								if( toScan->GetType() == IT_TOWNSTONE )
 								{
 									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI16>(toScan->GetTempVar( CITV_MOREX ))];
-									mSock->sysmessage( 1365, targRegion->GetName().c_str() );
+									mSock->sysmessage( 1365, targRegion->GetName().c_str() ); // You have successfully returned the townstone of %s to your home town.
 									targRegion->DoDamage( targRegion->GetHealth() );	// finish it off
 									targRegion->Possess( calcReg );
 									mChar.SetFame( (SI16)( mChar.GetFame() + mChar.GetFame() / 5 ) );	// 20% fame boost
@@ -2244,37 +2722,64 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)
 				}
 			}
 		}
-		if( iRegion != NULL && calcReg != NULL )
+		if( iRegion != nullptr && calcReg != nullptr )
 		{
-			UI16 leaveScript = mChar.GetScriptTrigger();
-			cScript *tScript = JSMapping->GetScript( leaveScript );
-			if( tScript != NULL )
+			// Run onLeaveRegion/onEnterRegion for character
+			std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				tScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
-				tScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				}
 			}
 
-			UI16 regLeaveScript	= iRegion->GetScriptTrigger();
-			cScript *trScript	= JSMapping->GetScript( regLeaveScript );
-			if( trScript != NULL )
-				trScript->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+			// Run onLeaveRegion event for region being left
+			scriptTriggers.clear();
+			scriptTriggers.shrink_to_fit();
+			scriptTriggers = iRegion->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnLeaveRegion( &mChar, iRegion->GetRegionNum() );
+				}
+			}
 
-			UI16 regEnterScript	= calcReg->GetScriptTrigger();
-			cScript *teScript	= JSMapping->GetScript( regEnterScript );
-			if( teScript != NULL )
-				teScript->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+			// Run onEnterRegion event for region being entered
+			scriptTriggers.clear();
+			scriptTriggers.shrink_to_fit();
+			scriptTriggers = calcReg->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					toExecute->OnEnterRegion( &mChar, calcReg->GetRegionNum() );
+				}
+			}
 		}
-		if( calcReg != NULL )
+		if( calcReg != nullptr )
 			mChar.SetRegion( calcReg->GetRegionNum() );
-		if( mSock != NULL )
+		if( mSock != nullptr )
 		{
 			Effects->doSocketMusic( mSock );
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
 	}
-	else if( forceUpdateLight )
+	else
 	{
-		if( mSock != NULL )
+		// Main region didn't change, but subregion did! Update music
+		if( oldSubRegionNum != mChar.GetSubRegion() )
+		{
+			Effects->doSocketMusic( mSock );
+		}
+
+		// Update lighting
+		if( forceUpdateLight && mSock != nullptr )
 		{
 			doLight( mSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
@@ -2352,7 +2857,7 @@ void criminal( CChar *c )
 	if( !c->IsCriminal() && !c->IsMurderer() )
 	{
 		CSocket *cSock = c->GetSocket();
-		if( cSock != NULL )
+		if( cSock != nullptr )
 			cSock->sysmessage( 1379 );
 		UpdateFlag( c );
 	}
@@ -2378,7 +2883,7 @@ void UpdateFlag( CChar *mChar )
 		else
 		{
 			mChar->SetFlagBlue();
-			Console.warning( format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
+			Console.warning( strutil::format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
 		}
 	}
 	else
@@ -2426,10 +2931,19 @@ void UpdateFlag( CChar *mChar )
 	UI08 newFlag = mChar->GetFlag();
 	if( oldFlag != newFlag )
 	{
-		UI16 targTrig = mChar->GetScriptTrigger();
-		cScript *toExecute = JSMapping->GetScript( targTrig );
-		if( toExecute != NULL )
-			toExecute->OnFlagChange( mChar, newFlag, oldFlag );
+		std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				if( toExecute->OnFlagChange( mChar, newFlag, oldFlag ) == 1 )
+				{
+					break;
+				}
+			}
+		}
+
 		mChar->Dirty( UT_UPDATE );
 	}
 }
@@ -2441,7 +2955,7 @@ void UpdateFlag( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 {
-	if( sock == NULL )
+	if( sock == nullptr )
 		return;
 	CPMapChange mapChange( worldNumber );
 	if( !initialLogin && worldNumber > 1 )
@@ -2456,9 +2970,9 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 		}
 	}
 	sock->Send( &mapChange );
-	CChar *mChar = sock->CurrcharObj();
-	if( !initialLogin )
-		mChar->Teleport();
+	//CChar *mChar = sock->CurrcharObj();
+	/*if( !initialLogin )
+		mChar->Teleport();*/
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2468,17 +2982,35 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 //o-----------------------------------------------------------------------------------------------o
 void SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate )
 {
-	if( !ValidateObject( gate ) || ( sock == NULL && !ValidateObject( charMoving ) ) )
+	if( sock == nullptr )
+		return;
+	if( !ValidateObject( gate ) || !ValidateObject( charMoving ) )
 		return;
 	UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
 	UI16 tInstanceID = gate->GetInstanceID();
 	if( !Map->MapExists( tWorldNum ) )
 		return;
-	CChar *toMove = charMoving;
-	if( sock != NULL && !ValidateObject( charMoving ) )
+	CChar *toMove = nullptr;
+	if( ValidateObject( charMoving ) )
+		toMove = charMoving;
+	else
 		toMove = sock->CurrcharObj();
 	if( !ValidateObject( toMove ) )
 		return;
+
+	// Teleport pets to new location too!
+	GenericList< CChar * > *myPets = toMove->GetPetList();
+	for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+	{
+		if( !ValidateObject( myPet ) )
+			continue;
+		if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == toMove )
+		{
+			if( objInOldRange( toMove, myPet, DIST_CMDRANGE ) )
+				myPet->SetLocation( (SI16)gate->GetTempVar( CITV_MOREX ), (SI16)gate->GetTempVar( CITV_MOREY ), (SI08)gate->GetTempVar( CITV_MOREZ ), tWorldNum, tInstanceID );
+		}
+	}
+
 	switch( sock->ClientType() )
 	{
 		case CV_UO3D:
@@ -2519,9 +3051,9 @@ void DoorMacro( CSocket *s )
 	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 	{
 		CMapRegion *toCheck = (*rIter);
-		if( toCheck == NULL )	// no valid region
+		if( toCheck == nullptr )	// no valid region
 			continue;
-		CDataList< CItem * > *regItems = toCheck->GetItemList();
+		GenericList< CItem * > *regItems = toCheck->GetItemList();
 		regItems->Push();
 		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 		{
@@ -2536,8 +3068,8 @@ void DoorMacro( CSocket *s )
 					{
 						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
 						cScript *envExecute = JSMapping->GetScript( envTrig );
-						if( envExecute != NULL )
-							envExecute->OnUseChecked( mChar, itemCheck );
+						if( envExecute != nullptr )
+							[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
 
 						regItems->Pop();
 						return;
@@ -2549,7 +3081,6 @@ void DoorMacro( CSocket *s )
 	}
 }
 
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	int main( SI32 argc, char *argv[] )
 //o-----------------------------------------------------------------------------------------------o
@@ -2560,17 +3091,22 @@ int main( SI32 argc, char *argv[] )
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
 
+#if PLATFORM != WINDOWS
+	// Protection from server-shutdown during mid-worldsave
+	signal(SIGINT, app_stopped);
+#endif
+
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
 
 	// 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
-#if UOX_PLATFORM == PLATFORM_WIN32
+#if PLATFORM == WINDOWS
 	WSADATA wsaData;
-	WORD wVersionRequested = MAKEWORD( 2, 0 );
+	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err )
 	{
-		Console.error( "Winsock 2.0 not found on your system..." );
+		Console.error( "Winsock 2.2 not found on your system..." );
 		return 1;
 	}
 #endif
@@ -2580,11 +3116,10 @@ int main( SI32 argc, char *argv[] )
 	{// Error trapping....
 #endif
 		current = std::chrono::system_clock::now();
-		const UI32 currentTime = 0;
 
-		Console.Start( format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
+		Console.Start( strutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 
-#if UOX_PLATFORM != PLATFORM_WIN32
+#if PLATFORM != WINDOWS
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
 //		signal( SIGTERM, &endmessage );
 //		signal( SIGQUIT, &endmessage );
@@ -2596,13 +3131,13 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 		Console.PrintSectionBegin();
 
-		if(( cwmWorldState = new CWorldMain ) == NULL )
+		if(( cwmWorldState = new CWorldMain ) == nullptr )
 			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
 		cwmWorldState->ServerData()->Load();
 
 		Console << "Initializing and creating class pointers... " << myendl;
 		InitClasses();
-		cwmWorldState->SetUICurrentTime( currentTime );
+		cwmWorldState->SetUICurrentTime( getclock() );
 
 		ParseArgs( argc, argv );
 		Console.PrintSectionBegin();
@@ -2614,7 +3149,7 @@ int main( SI32 argc, char *argv[] )
 		Console.PrintDone();
 
 		// Moved BulkStartup here, dunno why that function was there...
-		Console << "Loading dictionaries...        " << myendl ;
+		Console << "Loading dictionaries...        " << myendl;
 		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
 
 		Console << "Loading teleport               ";
@@ -2632,7 +3167,7 @@ int main( SI32 argc, char *argv[] )
 		CJSMappingSection *packetSection = JSMapping->GetSection( SCPT_PACKET );
 		for( cScript *ourScript = packetSection->First(); !packetSection->Finished(); ourScript = packetSection->Next() )
 		{
-			if( ourScript != NULL )
+			if( ourScript != nullptr )
 				ourScript->ScriptRegistration( "Packet" );
 		}
 
@@ -2736,6 +3271,38 @@ int main( SI32 argc, char *argv[] )
 		Console.PrintDone();
 
 		Console.PrintSectionBegin();
+
+		// Shows information about IPs and ports being listened on
+		Console.TurnYellow();
+
+		auto externalIP = cwmWorldState->ServerData()->ExternalIP();
+		if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )
+		{
+			Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
+		}
+
+		auto deviceIPs = IP4Address::deviceIPs();
+		for( auto &entry : deviceIPs )
+		{
+			switch (entry.type())
+			{
+				case IP4Address::lan:
+					Console << "UOX: listening for incoming connections on LAN IP: " << entry.string() << myendl;
+					break;
+				case IP4Address::mine:
+				case IP4Address::local:
+					Console << "UOX: listening for incoming connections on Local IP: " << entry.string() << myendl;
+					break;
+				case IP4Address::wan:
+					Console << "UOX: listening for incoming connections on WAN IP: " << entry.string() << myendl;
+					break;
+				default:
+					Console << "UOX: listening for incoming connections on IP: " << entry.string() << myendl;
+					break;
+			}
+		}
+		Console.TurnNormal();
+
 		// we've really finished loading here
 		cwmWorldState->SetLoaded( true );
 
@@ -2744,7 +3311,9 @@ int main( SI32 argc, char *argv[] )
 
 		// Calculate startup time in milliseconds
 		auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
+		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
+		Console.TurnNormal();
 		Console.PrintSectionBegin();
 
 		// MAIN SYSTEM LOOP
@@ -2832,15 +3401,22 @@ int main( SI32 argc, char *argv[] )
 		Network->SockClose();
 		Console.PrintDone();
 
+#if PLATFORM == WINDOWS
+		SetConsoleCtrlHandler( exit_handler, TRUE );
+#endif
 		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 		{
+			isWorldSaving = true;
 			do
 			{
 				cwmWorldState->SaveNewWorld( true );
 			} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
+			isWorldSaving = false;
 		}
-
 		cwmWorldState->ServerData()->save();
+#if PLATFORM == WINDOWS
+		SetConsoleCtrlHandler( exit_handler, false );
+#endif
 
 		Console.log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 

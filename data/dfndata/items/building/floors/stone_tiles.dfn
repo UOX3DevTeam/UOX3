@@ -9,7 +9,7 @@
 // south blue slate tile
 [0x0491]
 {
-get=base_item
+get=base_floor
 name=blue slate tile
 id=0x0491
 }
@@ -17,7 +17,7 @@ id=0x0491
 // east blue slate tile
 [0x0492]
 {
-get=base_item
+get=base_floor
 name=blue slate tile
 id=0x0492
 }
@@ -25,7 +25,7 @@ id=0x0492
 // west blue slate tile
 [0x0493]
 {
-get=base_item
+get=base_floor
 name=blue slate tile
 id=0x0493
 }
@@ -33,7 +33,7 @@ id=0x0493
 // north blue slate tile
 [0x0494]
 {
-get=base_item
+get=base_floor
 name=blue slate tile
 id=0x0494
 }
@@ -41,28 +41,28 @@ id=0x0494
 // marble tiles
 [0x0495]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0495
 }
 
 [0x0496]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0496
 }
 
 [0x0497]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0497
 }
 
 [0x0498]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0498
 }
@@ -70,14 +70,14 @@ id=0x0498
 // blue whole slate tile
 [0x049B]
 {
-get=base_item
+get=base_floor
 name=blue slate tile
 id=0x049B
 }
 
 [0x049c]
 {
-get=base_item
+get=base_floor
 name=grey slate tile
 id=0x049C
 }
@@ -85,7 +85,7 @@ id=0x049C
 // light sandstone paver
 [0x049D]
 {
-get=base_item
+get=base_floor
 name=sandstone paver
 id=0x049D
 }
@@ -93,7 +93,7 @@ id=0x049D
 // dark sandstone paver
 [0x049E]
 {
-get=base_item
+get=base_floor
 name=sandstone paver
 id=0x049E
 }
@@ -101,7 +101,7 @@ id=0x049E
 // light sandstone paver
 [0x049F]
 {
-get=base_item
+get=base_floor
 name=sandstone paver
 id=0x049F
 }
@@ -109,7 +109,7 @@ id=0x049F
 // dark sandstone paver
 [0x04A0]
 {
-get=base_item
+get=base_floor
 name=sandstone paver
 id=0x04A0
 }
@@ -117,28 +117,28 @@ id=0x04A0
 // bricks center pieces
 [0x04E2]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E2
 }
 
 [0x04E3]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E3
 }
 
 [0x04E4]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E4
 }
 
 [0x04E5]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E5
 }
@@ -146,14 +146,14 @@ id=0x04E5
 // bricks north south
 [0x04E6]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E6
 }
 
 [0x04E7]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E7
 }
@@ -161,14 +161,14 @@ id=0x04E7
 // bricks east west
 [0x04E8]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E8
 }
 
 [0x04E9]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x04E9
 }
@@ -176,7 +176,7 @@ id=0x04E9
 // blue slate tile gold border north
 [0x04EA]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04EA
 }
@@ -184,7 +184,7 @@ id=0x04EA
 // blue slate tile gold border east
 [0x04EB]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04EB
 }
@@ -192,7 +192,7 @@ id=0x04EB
 // blue slate tile gold border south
 [0x04EC]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04EC
 }
@@ -200,7 +200,7 @@ id=0x04EC
 // blue slate tiles gold border south
 [0x04ED]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04ED
 }
@@ -208,7 +208,7 @@ id=0x04ED
 // blue slate tile gold border southwest
 [0x04EE]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04EE
 }
@@ -216,7 +216,7 @@ id=0x04EE
 // blue slate tiles gold border northwest
 [0x04EF]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04EF
 }
@@ -224,7 +224,7 @@ id=0x04EF
 // blue slate tiles gold border northeast
 [0x04F0]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04F0
 }
@@ -232,7 +232,7 @@ id=0x04F0
 // blue slate tile gold border southeast
 [0x04F1]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04F1
 }
@@ -240,7 +240,7 @@ id=0x04F1
 // blue slate tile gold border
 [0x04F2]
 {
-get=base_item
+get=base_floor
 name=blue tiles
 id=0x04F2
 }
@@ -248,7 +248,7 @@ id=0x04F2
 // red tiles grey border
 [0x04F3]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F3
 }
@@ -256,7 +256,7 @@ id=0x04F3
 // red tiles grey border west
 [0x04F4]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F4
 }
@@ -264,7 +264,7 @@ id=0x04F4
 // red tiles grey border north
 [0x04F5]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F5
 }
@@ -272,7 +272,7 @@ id=0x04F5
 // red tiles grey border east
 [0x04F6]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F6
 }
@@ -280,7 +280,7 @@ id=0x04F6
 // red tiles grey border south
 [0x04F7]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F7
 }
@@ -288,7 +288,7 @@ id=0x04F7
 // red tiles grey border grey border southeast
 [0x04F8]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F8
 }
@@ -296,7 +296,7 @@ id=0x04F8
 // red tiles grey border southwest
 [0x04F9]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04F9
 }
@@ -304,7 +304,7 @@ id=0x04F9
 // red tiles grey border northwest
 [0x04FA]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04FA
 }
@@ -312,7 +312,7 @@ id=0x04FA
 // red tiles grey border northeast
 [0x04FB]
 {
-get=base_item
+get=base_floor
 name=red tiles
 id=0x04FB
 }
@@ -320,7 +320,7 @@ id=0x04FB
 // grey flagstones north south
 [0x04FC]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x0x04FC
 }
@@ -328,7 +328,7 @@ id=0x0x04FC
 // grey flagstones east west
 [0x04FD]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x04FD
 }
@@ -336,7 +336,7 @@ id=0x04FD
 // grey flagstones north south
 [0x04FE]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x04FE
 }
@@ -344,7 +344,7 @@ id=0x04FE
 //  grey flagstones north south
 [0x04FF]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x04FF
 }
@@ -352,7 +352,7 @@ id=0x04FF
 // brown flagstones north south
 [0x0500]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x0500
 }
@@ -360,7 +360,7 @@ id=0x0500
 // brown flagstones east west
 [0x0501]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x0501
 }
@@ -368,7 +368,7 @@ id=0x0501
 // brown flagstones north south
 [0x0502]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x0502
 }
@@ -376,7 +376,7 @@ id=0x0502
 // brown flagstone east west
 [0x0503]
 {
-get=base_item
+get=base_floor
 name=flagstones
 id=0x0503
 }
@@ -384,14 +384,14 @@ id=0x0503
 // small white marble tiles
 [0x050D]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x050D
 }
 
 [0x050E]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x050E
 }
@@ -399,14 +399,14 @@ id=0x050E
 // small green marble tiles
 [0x050F]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x050F
 }
 
 [0x0510]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0510
 }
@@ -414,28 +414,28 @@ id=0x0510
 // small grey marble tiles
 [0x0511]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0511
 }
 
 [0x0512]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0512
 }
 
 [0x0513]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0513
 }
 
 [0x0514]
 {
-get=base_item
+get=base_floor
 name=marble floor
 id=0x0514
 }
@@ -443,28 +443,28 @@ id=0x0514
 // cobblestones
 [0x0515]
 {
-get=base_item
+get=base_floor
 name=cobblestones
 id=0x0515
 }
 
 [0x0516]
 {
-get=base_item
+get=base_floor
 name=cobblestones
 id=0x0516
 }
 
 [0x0517]
 {
-get=base_item
+get=base_floor
 name=cobblestones
 id=0x0517
 }
 
 [0x0518]
 {
-get=base_item
+get=base_floor
 name=cobblestones
 id=0x0518
 }
@@ -472,28 +472,28 @@ id=0x0518
 // light grey stone pavers
 [0x0519]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0519
 }
 
 [0x051A]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051A
 }
 
 [0x051B]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051B
 }
 
 [0x051C]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051C
 }
@@ -501,28 +501,28 @@ id=0x051C
 // medium grey stone pavers
 [0x051D]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051D
 }
 
 [0x051E]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051E
 }
 
 [0x051F]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x051F
 }
 
 [0x0520]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0520
 }
@@ -530,28 +530,28 @@ id=0x0520
 // dark grey stone pavers
 [0x0521]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0521
 }
 
 [0x0522]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0522
 }
 
 [0x0523]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0523
 }
 
 [0x0524]
 {
-get=base_item
+get=base_floor
 name=stone pavers
 id=0x0524
 }
@@ -559,28 +559,28 @@ id=0x0524
 // small light brown flagstones north south
 [0x0525]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0525
 }
 
 [0x0526]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0526
 }
 
 [0x0527]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0527
 }
 
 [0x0528]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0528
 }
@@ -588,28 +588,28 @@ id=0x0528
 // small light brown flagstones east west
 [0x0529]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0529
 }
 
 [0x052A]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x052A
 }
 
 [0x052B]
 {
-get=base_item
+get=base_floor
 name=sandstone fllor
 id=0x052B
 }
 
 [0x052C]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x052C
 }
@@ -617,28 +617,28 @@ id=0x052C
 // small dark brown flagstones north south
 [0x052F]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x052F
 }
 
 [0x0530]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0530
 }
 
 [0x0531]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0531
 }
 
 [0x0532]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0532
 }
@@ -646,28 +646,28 @@ id=0x0532
 // small dark brown flagstones east west
 [0x0533]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0533
 }
 
 [0x0534]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0534
 }
 
 [0x0535]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0535
 }
 
 [0x0536]
 {
-get=base_item
+get=base_floor
 name=sandstone floor
 id=0x0536
 }
@@ -675,14 +675,14 @@ id=0x0536
 // bricks north south
 [0x0537]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x0537
 }
 
 [0x0538]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x0538
 }
@@ -690,14 +690,14 @@ id=0x0538
 // bricks east west
 [0x0539]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x0539
 }
 
 [0x053A]
 {
-get=base_item
+get=base_floor
 name=bricks
 id=0x053A
 }

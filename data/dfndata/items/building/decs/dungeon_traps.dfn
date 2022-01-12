@@ -1,0 +1,248 @@
+[0x1108]
+{
+get=base_item
+name=wall spikes
+id=0x1108
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x111b]
+{
+get=base_item
+name=wall spikes
+id=0x111b
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x119a]
+{
+get=base_item
+name=floor spikes
+id=0x119a
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x11a0]
+{
+get=base_item
+name=floor spikes
+id=0x11a0
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x1103]
+{
+get=base_item
+name=floor saw
+id=0x1103
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x1116]
+{
+get=base_item
+name=floor saw
+id=0x1116
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x11ac]
+{
+get=base_item
+name=floor saw
+id=0x11ac
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x11b1]
+{
+get=base_item
+name=floor saw
+id=0x11b1
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x11c0]
+{
+get=base_item
+name=crumbling floor
+id=0x11c0
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x06 0x11 0x37
+script=2504
+}
+
+[0x113c]
+{
+get=base_item
+name=gas trap
+id=0x113c
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x1147]
+{
+get=base_item
+name=gas trap
+id=0x1147
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x11a8]
+{
+get=base_item
+name=gas trap
+id=0x11a8
+weight=255
+movable=2
+damage=1 6
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x10f5]
+{
+get=base_item
+name=stone face
+id=0x10f5
+weight=255
+movable=2
+damage=1 6
+dir=53
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x10fc]
+{
+get=base_item
+name=stone face
+id=0x10fc
+weight=255
+movable=2
+damage=1 6
+dir=53
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x110f]
+{
+get=base_item
+name=stone face
+id=0x110f
+weight=255
+movable=2
+damage=1 6
+dir=53
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x1125]
+{
+get=base_item
+name=mushroom
+id=0x1125
+weight=255
+movable=2
+damage=1 6
+dir=53
+decay=0
+morez=0x01 0x03 0x11 0x37
+script=2504
+}
+
+[0x11c4]
+{
+get=base_item
+name=FlameSpurtTrap_base
+id=0x11c4
+weight=255
+movable=2
+visible=1
+decay=0
+more=0x03 0x00 0x00 0x00
+script=2504
+}
+
+[flameSpurtTrap_FX]
+{
+get=base_item
+name=Fire
+id=0x3709
+weight=255
+movable=2
+decay=1
+dir=1
+}
+
+[0x1d99]
+{
+get=base_item
+name=giant floor spike
+id=0x1d99
+weight=255
+movable=2
+decay=0
+damage=10 70
+morez=0x01 0x01 0x11 0x37
+script=2504
+}

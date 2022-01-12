@@ -1,0 +1,157 @@
+// -----------= ARMS =----------- //
+
+// Gargish Stone Arms - E/W
+[0x0284]
+{
+get=base_gargish_stone_arms
+}
+
+// Gargish Stone Arms - N/S
+[0x4058]
+{
+get=0x0284
+id=0x4058
+}
+
+// Gargish Stone Arms - Alias
+[gargishstonearms]
+{
+get=0x0284 0x4058
+}
+
+// Female Gargish Stone Arms - E/W
+[0x0283]
+{
+get=base_female_gargish_stone_arms
+}
+
+// Female Gargish Stone Arms - N/S
+[0x4057]
+{
+get=0x0283
+id=0x4057
+}
+
+// Female Gargish Stone Arms - Alias
+[femalegargishstonearms]
+{
+get=0x0283 0x4057
+}
+
+// -----------= CHEST =----------- //
+
+// Gargish Stone Chest - E/W
+[0x0286]
+{
+get=base_gargish_stone_chest
+}
+
+// Gargish Stone Chest - N/S
+[0x405a]
+{
+get=0x0286
+id=0x405a
+}
+
+// Gargish Stone Chest - Alias
+[gargishstonechest]
+{
+get=0x0286 0x405a
+}
+
+// Female Gargish Stone Chest - E/W
+[0x0285]
+{
+get=base_female_gargish_stone_chest
+}
+
+// Female Gargish Stone Chest - N/S
+[0x4059]
+{
+get=0x0285
+id=0x4059
+}
+
+// Female Gargish Stone Chest - Alias
+[femalegargishstonechest]
+{
+get=0x0285 0x4059
+}
+
+// -----------= LEGS =----------- //
+
+// Gargish Stone Leggings - E/W
+[0x028a]
+{
+get=base_gargish_stone_leggings
+}
+
+// Gargish Stone Leggings - N/S
+[0x405e]
+{
+get=0x028a
+id=0x405e
+}
+
+// Gargish Stone Leggings - Alias
+[gargishstoneleggings]
+{
+get=0x028a 0x405e
+}
+
+// Female Gargish Stone Leggings - E/W
+[0x0289]
+{
+get=base_female_gargish_stone_leggings
+}
+
+// Female Gargish Stone Leggings - N/S
+[0x405d]
+{
+get=0x0289
+id=0x405d
+}
+
+// Female Gargish Stone Leggings - Alias
+[femalegargishstoneleggings]
+{
+get=0x0289 0x405d
+}
+
+// Gargish Stone Kilt - E/W
+[0x0288]
+{
+get=base_gargish_stone_kilt
+}
+
+// Gargish Stone Kilt - N/S
+[0x405c]
+{
+get=0x0288
+id=0x405c
+}
+
+// Gargish Stone Kilt - Alias
+[gargishstonekilt]
+{
+get=0x0288 0x405c
+}
+
+// Female Gargish Stone Kilt - E/W
+[0x0287]
+{
+get=base_female_gargish_stone_kilt
+}
+
+// Female Gargish Stone Kilt - N/S
+[0x405b]
+{
+get=0x0287
+id=0x405b
+}
+
+// Female Gargish Stone Kilt - Alias
+[femalegargishstonekilt]
+{
+get=0x0287 0x405b
+}

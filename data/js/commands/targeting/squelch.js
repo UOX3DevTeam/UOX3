@@ -42,19 +42,19 @@ function onCallback0( socket, ourObj )
 				ourObj.squelch = 0;
 				socket.SysMessage( GetDictionaryEntry( 1655 ) );
 				ourSock.SysMessage( GetDictionaryEntry( 1043 ) );
-				ourSock.SetTimer( 5, 0 );
+				ourSock.SetTimer( Timer.SOCK_MUTETIME, 0 );
 			}
 			else
 			{
 				if( socket.tempint )
 				{
 					ourSock.squelch = 2;
-					ourSock.SetTimer( 5, socket.tempint );
+					ourSock.SetTimer( Timer.SOCK_MUTETIME, socket.tempint );
 				}
 				else
 				{
 					ourObj.squelch = 1;
-					ourSock.SetTimer( 5, 0 );
+					ourSock.SetTimer( Timer.SOCK_MUTETIME, 0 );
 				}
 				socket.SysMessage( GetDictionaryEntry( 761, socket.language ) );
 				ourSock.SysMessage( GetDictionaryEntry( 1044, ourSock.language ) );

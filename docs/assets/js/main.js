@@ -114,7 +114,16 @@
 
   if( location.hash != '' ) {
   	// Open section referred to in hash in url and clear away hash
-  	var link = document.getElementById(window.location.href.split('#')[1]);
+  	var hash = window.location.href.split('#')[1];
+  	if( hash == "commandlist" )
+		{
+			hash = "commandList";
+		}
+		else if( hash == "usefirstgmcommands" )
+		{
+			hash = "useFirstGMCommands";
+		}
+  	var link = document.getElementById(hash);
 	setTimeout(function(){
 		link.click();
 		history.replaceState(null, null, ' ');
@@ -134,11 +143,14 @@
     	// parentElement.getElementsByClassName('cd-faq__trigger')[0].click();
 
     // Open new section and clear away hash
-	var targetLink = document.getElementById(e.target.href.split('#')[1]);
-    setTimeout(function(){
-    	targetLink.click();
-    	history.replaceState(null, null, ' ');
-    }, 1);
+		var targetLink = document.getElementById(e.target.href.split('#')[1]);
+		if( targetLink != null )
+		{
+		    setTimeout(function(){
+		    	targetLink.click();
+		    	history.replaceState(null, null, ' ');
+		    }, 1);
+		}
   }
 
   if (document.addEventListener)
