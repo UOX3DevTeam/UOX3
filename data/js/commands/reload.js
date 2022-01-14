@@ -7,10 +7,10 @@ function CommandRegistration()
 function command_RELOAD( socket, cmdString )
 {
 	var pUser = socket.currentChar;
-	if ( cmdString && pUser )
+	if( cmdString && pUser )
 	{
 		var splitString = cmdString.split(" ");
-		switch ( splitString[0] )
+		switch( splitString[0].toLowerCase() )
 		{
 			case "regions":
 				socket.SysMessage( GetDictionaryEntry( 8005, socket.language ) );
