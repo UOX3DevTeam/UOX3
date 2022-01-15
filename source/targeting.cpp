@@ -1631,12 +1631,12 @@ void MakeStatusTarget( CSocket *sock )
 	std::string playerName = targetChar->GetName();
 	if( targetCommand != origCommand && origLevel != nullptr )
 	{
-		const size_t position = playerName.find( origLevel->name );
+		const size_t position = playerName.find( origLevel->title );
 		if( position != std::string::npos )
-			playerName.replace( position, origLevel->name.size(), "" );
+			playerName.replace( position, origLevel->title.size(), "" );
 	}
 	if( targetCommand != 0 && targetCommand != origCommand ) {
-		targetChar->SetName( strutil::trim(strutil::format("%s %s", targLevel->name.c_str(), strutil::trim(playerName).c_str() )) );
+		targetChar->SetName( strutil::trim(strutil::format("%s %s", targLevel->title.c_str(), strutil::trim(playerName).c_str() )) );
 	}
 	else if( origCommand != 0 ){
 		targetChar->SetName( strutil::trim(playerName) );

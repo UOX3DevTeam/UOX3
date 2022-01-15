@@ -345,7 +345,7 @@ movable=1
 [0x27fa]
 {
 get=0x27af
-id=0x27fal
+id=0x27fa
 }
 
 // Sai - Alias

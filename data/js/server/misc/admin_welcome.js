@@ -2,7 +2,7 @@
 // Triggered for characters logging in with admin account (account 0) until a
 // choice has been made in these gumps, regarding starting with a blank world or loading default UOX3 world templates
 //
-// Last updated: 19th of October, 2021
+// Last updated: 15th of January, 2022
 
 // Backgrounds
 const gumpMainBackground = 5054;
@@ -21,6 +21,13 @@ const previousPageButtonOff = 2119;
 const previousPageButtonOn = 2120;
 const exitButtonOff = 4017;
 const exitButtonOn = 4018;
+
+const facetFelucca = 1;
+const facetTrammel = 0;
+const facetIlshenar = 0;
+const facetMalas = 0;
+const facetTokuno = 0;
+const facetTermur = 0;
 
 // Transparency for background gumps
 const enableTransparentGump = true;
@@ -62,17 +69,17 @@ function DisplayAdminWelcomeGump( socket, pChar )
 
 	// Add a background behind the htmlGump
 	// adminWelcome.AddBackground( 15, 30, 370, 80, 3000 );
-	adminWelcome.AddHTMLGump( 20, 30, 350, 80, true, false, "<p>Greetings, Administrator, and welcome to your brand new <basefont color=#2D61D6>Ultima Offline eXperiment 3</basefont> shard! If this is your first login, please take a moment to look through the following startup options:</p>" );
+	adminWelcome.AddHTMLGump( 20, 30, 350, 80, true, false, "<p>Greetings, Administrator, and welcome to your brand new <basefont color=#2D61D6>Ultima Offline eXperiment 3</basefont> shard! If this is your first login, please take a moment to look through the following options:</p>" );
 
 	// adminWelcome.AddBackground( 15, 117, 260, 80, 3000 );
-	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default world</basefont> to get a world that's already decorated with doors, signs, lights, other items, and a variety of NPCs!</p>" );
+	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default world</basefont> to get a world already decorated with doors, signs and other items, and a variety of NPCs!</p>" );
 	adminWelcome.AddHTMLGump( 120, 117, 120, 80, false, false, " " );
 		if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
 	adminWelcome.AddGump( -30, 150, 30065 );
 
 	// adminWelcome.AddBackground( 15, 205, 260, 80, 3000 );
-	adminWelcome.AddHTMLGump( 20, 205, 240, 80, true, false, "<p>Alternatively, start out from scratch with <basefont color=#AD3C3C>a blank slate</basefont>, with no pre-defined items or decorations added to the world.</p>" );
+	adminWelcome.AddHTMLGump( 20, 205, 240, 80, true, false, "<p>Alternatively, start out from scratch with <basefont color=#AD3C3C>a blank slate</basefont>, with no pre-defined decorations added to the world.</p>" );
 	adminWelcome.AddGump( -30, 230, 30070 );
 
 	adminWelcome.AddGump( 367, 0, 10410 );
@@ -89,30 +96,34 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddHTMLGump( 290, 210, 85, 30, false, false, "<basefont color=#AD3C3C>Blank Slate</basefont>" );
 
 	////////// PAGE 2 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 2, 0 );
+	if( facetFelucca )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 2, 0 );
 
 	////////// PAGE 3 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 3, 8 );
+	if( facetTrammel )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 3, 8 );
 
 	////////// PAGE 4 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 4, 16 );
+	if( facetIlshenar )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 4, 16 );
 
 	////////// PAGE 5 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 5, 24 );
+	if( facetMalas )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 5, 24 );
 
 	////////// PAGE 6 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 6, 32 );
+	if( facetTokuno )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 6, 32 );
 
 	////////// PAGE 7 //////////
-	adminWelcome = AddPageDetails( socket, adminWelcome, 7, 40 );
+	if( facetTermur )
+		adminWelcome = AddPageDetails( socket, adminWelcome, 7, 40 );
 
 	////////// PAGE 20 - Blank Slate //////////
 	// Add the first page, with greeting and basic options
 	adminWelcome.AddPage( 20 );
 	adminWelcome.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight, gumpMainBackground );
 	adminWelcome.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Close Gump" ); // Close Gump menu
 
 	adminWelcome.AddBackground( 10, 25, 140, 230, gumpSecondaryBackground );
 	// Add a checkered overlay over the background we just added
@@ -128,9 +139,9 @@ function DisplayAdminWelcomeGump( socket, pChar )
 
 
 	// Add some helpful text
-	adminWelcome.AddHTMLGump( 170, 30, 230, 225, true, true, "<p>Select this option to start with <basefont color=#AD3C3C>a blank slate</basefont>, an empty world in which you are in full control of what is added to your shard, and where. Note, though, that you can return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!<br><br>Also, be sure to check out the <basefont color=#2D61D6>resources <basefont color=black>on the left to get started! Have fun!</p>" );
+	adminWelcome.AddHTMLGump( 170, 30, 230, 225, true, false, "<p>Select this option to start with <basefont color=#AD3C3C>a blank slate</basefont>, an empty world in which you are in control of what is added, and where. Note that you can return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!<br><br>Also, be sure to check out the <basefont color=#2D61D6>resources <basefont color=black>on the left to get started! Have fun!</p>" );
 
-	adminWelcome.AddHTMLGump( 20, 30, 135, 225, false, false, '<center><h1><basefont color=#ffffff>Docs</basefont></h1></center><a href="https://www.uox3.org/docs">UOX3 Docs</a><br><a href="https://www.uox3.org/jsdocs">UOX3 JS Docs</a><br><a href="https://www.uox3.org/docs/index.html#commandList">Command List</a><br><a href="https://www.uox3.org/docs/index.html#useFirstGMCommands">First GM Commands</a><br><center><h1><basefont color=#ffffff>Community</basefont></h1></center><a href="https://www.uox3.org">UOX3.org</a><br><a href="https://www.uox3.org/forums">UOX3 Forums</a><br><a href="https://discord.gg/uBAXxhF">Discord</a>');
+	adminWelcome.AddHTMLGump( 20, 30, 135, 225, false, false, '<center><h1><basefont color=#ffffff>Docs</basefont></h1></center><a href="https://www.uox3.org/docs">UOX3 Docs</a><br><a href="https://www.uox3.org/docs/jsdocs.html">UOX3 JS Docs</a><br><a href="https://www.uox3.org/docs/index.html#commandList">Command List</a><br><a href="https://www.uox3.org/docs/index.html#useFirstGMCommands">First GM Commands</a><br><center><h1><basefont color=#ffffff>Community</basefont></h1></center><a href="https://www.uox3.org">UOX3.org</a><br><a href="https://www.uox3.org/forums">UOX3 Forums</a><br><a href="https://discord.gg/uBAXxhF">Discord</a>');
 
 	adminWelcome.AddGump( 367, 0, 10410 );
 	adminWelcome.AddGump( 367, 200, 10412 );
@@ -148,8 +159,6 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 
 	// Add background, and checkered overlay
 	adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 130, gumpMainBackground );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Close Gump" ); // Close Gump menu
 
 	if( enableTransparentGump )
 		adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 120 );
@@ -162,27 +171,36 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	// Add section with facet buttons
 	adminWelcome.AddBackground( 275, 30, 115, 275, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 280, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Facets</BASEFONT></BIG></CENTER>" );
-	adminWelcome.AddButton( 280, 60, (pageNum == 2 ? 10820 : 10800), (pageNum == 2 ? 10800 : 10820), 0, 2, 0 );
-	// adminWelcome.AddButton( 280, 100, (pageNum == 3 ? 10820 : 10800), (pageNum == 3 ? 10800 : 10820), 0, 3, 0 );
-	adminWelcome.AddButton( 280, 140, (pageNum == 4 ? 10820 : 10800), (pageNum == 4 ? 10800 : 10820), 0, 4, 0 );
-	// adminWelcome.AddButton( 280, 180, (pageNum == 5 ? 10820 : 10800), (pageNum == 5 ? 10800 : 10820), 0, 5, 0 );
-	// adminWelcome.AddButton( 280, 220, (pageNum == 6 ? 10820 : 10800), (pageNum == 6 ? 10800 : 10820), 0, 6, 0 );
-	// adminWelcome.AddButton( 280, 260, (pageNum == 7 ? 10820 : 10800), (pageNum == 7 ? 10800 : 10820), 0, 7, 0 );
-	adminWelcome.AddGump( 280, 100, 10840 );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
-	/*adminWelcome.AddGump( 280, 140, 10840 );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );*/
-	adminWelcome.AddGump( 280, 180, 10840 );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
-	adminWelcome.AddGump( 280, 220, 10840 );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
-	adminWelcome.AddGump( 280, 260, 10840 );
-	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "No decorations available yet." );
+	if( facetFelucca )
+		adminWelcome.AddButton( 280, 60, (pageNum == 2 ? 10820 : 10800), (pageNum == 2 ? 10800 : 10820), 0, 2, 0 );
+	else
+		adminWelcome.AddGump( 280, 60, 10840 );
+
+	if( facetTrammel )
+		adminWelcome.AddButton( 280, 100, (pageNum == 3 ? 10820 : 10800), (pageNum == 3 ? 10800 : 10820), 0, 3, 0 );
+	else
+		adminWelcome.AddGump( 280, 100, 10840 );
+
+	if( facetIlshenar )
+		adminWelcome.AddButton( 280, 140, (pageNum == 4 ? 10820 : 10800), (pageNum == 4 ? 10800 : 10820), 0, 4, 0 );
+	else
+		adminWelcome.AddGump( 280, 140, 10840 );
+
+	if( facetMalas )
+		adminWelcome.AddButton( 280, 180, (pageNum == 5 ? 10820 : 10800), (pageNum == 5 ? 10800 : 10820), 0, 5, 0 );
+	else
+		adminWelcome.AddGump( 280, 180, 10840 );
+
+	if( facetTokuno )
+		adminWelcome.AddButton( 280, 220, (pageNum == 6 ? 10820 : 10800), (pageNum == 6 ? 10800 : 10820), 0, 6, 0 );
+	else
+		adminWelcome.AddGump( 280, 220, 10840 );
+
+	if( facetTermur )
+		adminWelcome.AddButton( 280, 260, (pageNum == 7 ? 10820 : 10800), (pageNum == 7 ? 10800 : 10820), 0, 7, 0 );
+	else
+		adminWelcome.AddGump( 280, 260, 10840 );
+
 	adminWelcome.AddHTMLGump( 310, 65, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 2 ? "EEEEEE" : "BEBEBE") + ">FELUCCA</BASEFONT>" );
 	adminWelcome.AddHTMLGump( 310, 105, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 3 ? "EEEEEE" : "BEBEBE") + ">TRAMMEL</BASEFONT>" );
 	adminWelcome.AddHTMLGump( 310, 145, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 4 ? "EEEEEE" : "BEBEBE") + ">ILSHENAR</BASEFONT>" );
@@ -207,39 +225,41 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	}
 	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Doors, doors and more doors!<br> Almost every building has one - or more!" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Doors!<br> Almost every building has one - or more!" );
 	adminWelcome.AddHTMLGump( 445, 95, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Signs</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Signs on shop buildings, and roadsigns" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Shops signs, roadsigns, etc." );
 	adminWelcome.AddHTMLGump( 445, 125, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Lights</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Lights of all kinds:<br> lampposts, candles, wall-mounted torches, etc." );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Lights!<br> lampposts, candles, wall-mounted torches, etc." );
 	adminWelcome.AddHTMLGump(445, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Moongates placed at fixed locations around the world" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Moongates at fixed locations around the world" );
 	adminWelcome.AddHTMLGump( 445, 185, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Containers</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Containers of all kinds - bookcases, drawers, crates, etc." );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Containers! Bookcases, drawers, crates, etc." );
 	adminWelcome.AddHTMLGump( 445, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Teleporters</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Teleporter objects that teleport players<br> from one location to another" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Teleporters that teleport players<br> from one location to another" );
 	adminWelcome.AddHTMLGump( 445, 245, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Miscellanous items like plants,<br> and smaller decorations in houses, etc" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Misc items like plants,<br> and smaller decorations in houses, etc" );
 	adminWelcome.AddHTMLGump( 445, 275, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Spawns</BASEFONT>" );
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "Spawn Regions with NPCs, animals and monsters" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Spawn Regions with NPCs" );
 
 	adminWelcome.AddGump( 483, 0, 10410 );
 	adminWelcome.AddGump( 483, 200, 10412 );
 
 	// Add some helpful text
-	adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, true, "<p>Using the options on the right, select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> and NPC Spawns to load for each facet. By default <i>everything</i> is enabled, for <i>all</i> facets; if that sounds good, hit <basefont color=#3D9A2B><i>Okay</i></basefont> to start decorating your shard. Facets <basefont color=#AD3C3C>marked in red</basefont><basefont color=black> have no decorations available yet.<br><br>This process might take a minute.<br><br>Return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
+	//adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "Select which parts of the default UOX3 world and Spawns to load for each facet. By default everything is enabled for supported facets" );
+	adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "<p>Select which parts of the <basefont color=#3D9A2B>default UOX3 world</basefont> and Spawns to load for each facet. Facets <basefont color=#AD3C3C>in red</basefont><basefont color=black> have no decorations available yet.<br><br>This process might take a minute.<br><br>Return to this menu at any time via the <basefont color=#2D61D6>'welcome <basefont color=BLACK>command!</p>" );
+	//adminWelcome.AddHTMLGump( 15, 30, 250, 275, true, false, "Select which parts of the<br>default UOX3 world and spawns<br>to load for each facet." );
 
 	// Add buttons to cancel/get things going
 	adminWelcome.AddButton( 308, 313, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
 	if( enableTooltips )
-		adminWelcome.AddToolTip( tooltipClilocID, socket, "I changed my mind, go back!" );
+		adminWelcome.AddToolTip( tooltipClilocID, socket, "Go back!" );
 	adminWelcome.AddButton( 420, 305, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
 	if( enableTooltips )
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Load default UOX3 world" );
@@ -248,22 +268,22 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	switch( pageNum )
 	{
 		case 2: // Felucca
-			facetText = "<p><basefont color=#4B4B4B>Felucca - The original world of Britannia, and home of cities like Britain, Trinsic, Yew, Vesper and Minoc. Numerous dungeons can also be found here, like Covetous, Deceit and Shame. Traditionally lawless and dangerous outside the major cities.</basefont></p>";
+			facetText = "<p><basefont color=#4B4B4B>Felucca - Original world of Britannia. Home of cities like Britain, Trinsic and Yew. Numerous dungeons like Covetous, Deceit and Shame can be found here.</basefont></p>";
 			break;
 		case 3: // Trammel
-			facetText = "<p><basefont color=#4B4B4B>Trammel - An alternate version of Britannia, where non-consensual PvP and hostile actions against fellow players is traditionally both frowned upon and - in many cases - not even possible. Introduced with the UO: Renaissance expansion.</basefont></p>";
+			facetText = "<p><basefont color=#4B4B4B>Trammel - Alternate version of Britannia, where non-consensual PvP and hostile actions against fellow players is traditionally both frowned upon and - in many cases - not even possible. Introduced with the UO: Renaissance expansion.</basefont></p>";
 			break;
 		case 4: // Ilshenar
-			facetText = "<p><basefont color=#4B4B4B>Ilshenar - A new landmass added with the Third Dawn expansion, and originally only available to players with the Third Dawn 3D client, Ilshenar added new dungeons and monsters (over 30, designed by Todd McFarlane) to the UO world.</basefont></p>";
+			facetText = "<p><basefont color=#4B4B4B>Ilshenar - New landmass added with Third Dawn expansion. Originally only available to players with the Third Dawn 3D client, Ilshenar added new dungeons and monsters to the UO world.</basefont></p>";
 			break;
 		case 5: // Malas
-			facetText = "<p><basefont color=#4B4B4B>Malas - Introduced with the Age of Shadows expansion, Malas is a new landmass with lots of space for player housing, a PvP arena, the dungeon Doom - one of the largest in UO, and two cities - Luna and Umbra, the homes of Paladins and Necromancers respectively.</basefont></p>";
+			facetText = "<p><basefont color=#4B4B4B>Malas - A new landmass introduced with the Age of Shadows expansion, with lots of space for player housing, a PvP arena, the dungeon Doom - one of the largest in UO, and two cities - Luna and Umbra, the homes of Paladins and Necromancers respectively.</basefont></p>";
 			break;
 		case 6: // Tokuno
 			facetText = "<p><basefont color=#4B4B4B>Tokuno - The Tokuno islands, based on feudal era Japan, were added with the Samurai Empire expansion, and consist of three main islands (Isamu, Makoto and Homare) and many smaller ones. There's only one city - Zento - and the facet traditionally follows the Trammel ruleset.</basefont></p>";
 			break;
 		case 7: // Ter Mur
-			facetText = "<p><basefont color=#4B4B4B>Ter Mur - Land of the Gargoyles, added with the UO: Stygian Abyss expansion, comes with three new towns (Royal City, Holy City, Fishing Village), and three new dungeons (Tomb of Kings, Stygian Abyss and Underworld). With the Time of Legends expansion, a new area called Valley of Eodon was added to this facet.</basefont></p>";
+			facetText = "<p><basefont color=#4B4B4B>Ter Mur - Land of the Gargoyles, added with the UO: Stygian Abyss expansion. Comes with three new towns (Royal City, Holy City, Fishing Village), and three new dungeons (Tomb of Kings, Stygian Abyss and Underworld). With the Time of Legends expansion, a new area called Valley of Eodon was added to this facet.</basefont></p>";
 			break;
 		default:
 			facetText = "Invalid";
@@ -271,7 +291,7 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	}
 
 	adminWelcome.AddBackground( 15, gumpMainBackgroundHeight + 20, 150, 20, gumpSecondaryBackground );
-	adminWelcome.AddHTMLGump( 30, gumpMainBackgroundHeight + 20, 150, 20, false, false, "<p><basefont color=#ffffff>Facet Information:</basefont></p>" );
+	adminWelcome.AddHTMLGump( 30, gumpMainBackgroundHeight + 20, 150, 20, false, false, "<p><basefont color=#ffffff>Facet Info:</basefont></p>" );
 
 	adminWelcome.AddHTMLGump( 15, gumpMainBackgroundHeight + 40, 500, 80, true, false, facetText );
 

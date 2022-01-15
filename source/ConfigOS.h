@@ -66,8 +66,8 @@
 
 #ifdef _DEBUG
 #define UOX_DEBUG_MODE 1
-#define _ITERATOR_DEBUG_LEVEL 1
-#define _HAS_ITERATOR_DEBUGGING 0                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
+#define _ITERATOR_DEBUG_LEVEL 2
+#define _HAS_ITERATOR_DEBUGGING 1                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
 #define _SECURE_SCL 1
 
 #else
