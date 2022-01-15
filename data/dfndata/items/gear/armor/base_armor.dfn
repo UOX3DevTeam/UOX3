@@ -601,7 +601,7 @@ decay=1
 good=15
 }
 
-[base_base_helmet]
+[base_helmet]
 {
 get=base_item
 name=helmet
@@ -617,7 +617,7 @@ decay=1
 good=15
 }
 
-[base_base_bascinet]
+[base_bascinet]
 {
 get=base_item
 name=bascinet
