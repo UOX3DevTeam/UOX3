@@ -42,7 +42,7 @@ function command_RELOAD( socket, cmdString )
 			case "accounts":
 				socket.SysMessage( GetDictionaryEntry( 86, socket.language ) );
 				Reload( 9 ); break;
-			case "Dictionaries":
+			case "dictionaries":
 				socket.SysMessage( GetDictionaryEntry( 8009, socket.language ) );
 				Reload( 10 ); break;
 		}
