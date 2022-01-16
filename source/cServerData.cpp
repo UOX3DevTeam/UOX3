@@ -647,7 +647,7 @@ void CServerData::ResetDefaults( void )
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
 	SnoopIsCrime( false );
-	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 5 );
+	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 10 );
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
 	SystemTimer( tSERVER_PETOFFLINECHECK, 600 );
@@ -692,9 +692,9 @@ void CServerData::ResetDefaults( void )
 
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.38 );
-	NPCRunningSpeed( 0.2 );
-	NPCFleeingSpeed( 0.3 );
+	NPCWalkingSpeed( 0.5 );
+	NPCRunningSpeed( 0.3 );
+	NPCFleeingSpeed( 0.4 );
 	NPCMountedWalkingSpeed( 0.3 );
 	NPCMountedRunningSpeed( 0.12 );
 	NPCMountedFleeingSpeed( 0.2 );

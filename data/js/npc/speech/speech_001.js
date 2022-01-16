@@ -32,6 +32,10 @@ function onSpeech( myString, myPlayer, myNPC )
 // Handle custom speech keywords
 function HandleCustomKeyWords( myString, myPlayer, myNPC )
 {
+	var mySocket = myPlayer.socket;
+	if( mySocket == null )
+		return;
+
 	var Speech_Array = myString.split(" ");
 	var i = 0, currObj = 0;
 	for( i = 1; i <= Speech_Array.length; i++ )
@@ -134,6 +138,9 @@ function HandleCustomKeyWords( myString, myPlayer, myNPC )
 function HandleClientTriggerWords( myString, myPlayer, myNPC )
 {
 	var mySocket = myPlayer.socket;
+	if( mySocket == null )
+		return;
+
 	for( var trigWord = mySocket.FirstTriggerWord(); !mySocket.FinishedTriggerWords(); trigWord = mySocket.NextTriggerWord() )
 	{
 		switch( trigWord )

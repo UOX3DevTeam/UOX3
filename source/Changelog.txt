@@ -1,3 +1,21 @@
+15/01/2022 - Xuri
+	The 'make command will now strip clothes and hair/beard from characters that are turned into Counselors (dfndata/command/commands.dfn)
+	Adjusted default privileges for Admins, GMs and Counselors to not show skill titles in paperdoll (dfndata/command/commands.dfn)
+	Fixed incorrect section headers for base_bascinet and base_helmet (dfndata/items/gear/armor/base_armor.dfn)
+	Fixed incorrect ID in item definition for Sai weapon (dfndata/items/gear/weapons/fencing.dfn)
+	Fixed incorrect get tag value for a wand definition (dfndata/items/gear/weapons/wands.dfn)
+	Reduced the amount of townfolk, poorfolk and richfolk NPCs spawning in Britain (dfndata/spawn/spawn.dfn)
+	Fixed a bug with the Anatomy skill that allowed gaining skill from targeting self (js/skill/anatomy.js)
+	Fixed an issue with default NPC speech where a variable mySocket was not properly defined (js/npc/speech/speech_001.js)
+	Fixed an issue with the moongate JS script, which would not work reliably (js/item/moongate.js)
+	Added support for a new TITLE tag to the command privileges section of commands.dfn, to allow customizing the title added in front of a character's name when they become an Admin, GM or Counselor
+	Fixed a client crash caused by the admin welcome gump being too large!
+	Adjusted values of _ITERATOR_DEBUG_LEVEL and _HAS_ITERATOR_DEBUGGING in ConfigOS.h to better support debug mode in VS2022
+	Changed default value of NPCFLAGUPDATETIMER ini setting from 5 to 10 seconds
+	Changed default value of NPCMOVEMENTSPEED ini setting from 0.38 to 0.5
+	Changed default value of NPCRUNNINGSPEED ini setting from 0.2 to 0.3
+	Changed default value of NPCFLEEINGSPEED ini setting from 0.3 to 0.4
+
 12/01/2022 - Xuri (0.99.5)
 	Implemented Herding skill in JS (js/skill/herding.js) (Dragon Slayer)
 	Updated item stats like def, hp and value for all armors to match Pub15 era
