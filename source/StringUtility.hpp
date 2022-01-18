@@ -49,7 +49,6 @@ namespace strutil {
 
 	
 	std::vector<std::string> sections(const std::string& value, const std::string& sep=",", std::string::size_type start = 0, std::string::size_type end = std::string::npos) ;
-	std::vector<std::wstring> sections(const std::wstring& value, const std::wstring& sep=L",", std::wstring::size_type start = 0, std::wstring::size_type end = std::wstring::npos) ;
 	
 	//+++++++++++++++++++++++++++++++++++++++++++++++
 	// The next few are convience methods on the main method "sections".
