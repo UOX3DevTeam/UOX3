@@ -814,7 +814,7 @@ SI32 CConsole::cl_getch( void )
 					a = ::read(0, &data, 1);
 					while( a > 0 )
 					{
-						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || ( data == 'H' ) && ( data == 'F' ) || ( data == '~' ))
+						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || (( data == 'H' ) && ( data == 'F' )) || ( data == '~' ))
 						{
 							break;
 						}
