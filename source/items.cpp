@@ -1424,7 +1424,7 @@ void cItem::AddRespawnItem( CItem *mCont, const std::string& iString, const bool
 
 	// If item is stackable and amount is > 1, amount should have been set already
 	// However, if item is not stackable, spawn each item individually
-	if( itemAmount > 1 && ( !randomItem && !iCreated->isPileable() || randomItem ))
+	if( (itemAmount > 1) && ( (!randomItem && !iCreated->isPileable()) || randomItem ))
 	{
 		CItem *iCreated2 = nullptr;
 		for( UI08 i = 1; i < itemAmount; ++i )
