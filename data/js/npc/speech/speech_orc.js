@@ -12,11 +12,11 @@ var syllableCount = ["bu", "du", "fu", "ju", "gu", "ulg", "gug", "gub", "gur", "
 
 function onSpeech( myString, myPlayer, myNPC )
 {
-	if ( !myNPC.InRange( myPlayer, 2 ) )
+	if( !myNPC.InRange( myPlayer, 2 ) )
 		return;
 
 	var mySocket = myPlayer.socket;
-	if ( mySocket == null )
+	if( mySocket == null )
 		return;
 
 	HandleCustomKeyWords( myNPC );
@@ -25,7 +25,7 @@ function onSpeech( myString, myPlayer, myNPC )
 function onAttack( pAttacker, pDefender )
 {
 	var Random = RandomNumber( 1, 100 )
-	if ( Random >= 20 && Random <= 40 ) // 20% - 40 chance to talk
+	if( Random >= 20 && Random <= 40 ) // 20% - 40 chance to talk
 	{
 		Speech( pAttacker );
 	}
@@ -34,7 +34,7 @@ function onAttack( pAttacker, pDefender )
 function onDefense( pAttacker, pDefender )
 {
 	var Random = RandomNumber( 1, 99 )
-	if ( Random >= 20 && Random <= 40 ) // 20% chance to talk
+	if( Random >= 20 && Random <= 40 ) // 20% chance to talk
 	{
 		Speech( pDefender );
 	}
@@ -45,13 +45,13 @@ function Speech( myNPC )
 {
 	var mySentence = ""; // Prepare a variable for our sentence
 	var sentenceLength = RandomNumber( 2, 6 ); // Randomize amount of words in sentence
-	for ( var i = 0; i < sentenceLength; i++ )
+	for( var i = 0; i < sentenceLength; i++ )
 	{
 		// Build up a sentence from the randomly selected syllables
 		mySentence += GetRandomSyllable();
 
 		// Add a space between each syllable, except after the last one
-		if ( i < sentenceLength - 1 )
+		if( i < sentenceLength - 1 )
 			mySentence += " ";
 	}
 
