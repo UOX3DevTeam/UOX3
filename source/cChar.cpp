@@ -243,6 +243,7 @@ const UI32			DEFCHAR_LASTMOVETIME		= 0;
 //const UI16			DEFCHAR_POISONCHANCE 		= 0;
 const UI08			DEFCHAR_POISONSTRENGTH 		= 0;
 const BodyType		DEFCHAR_BODYTYPE			= BT_OTHER;
+const SI16			DEFNPC_NPCGUILD				= 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar constructor
@@ -258,7 +259,7 @@ emotecolor( DEFCHAR_EMOTECOLOUR ), cell( DEFCHAR_CELL ), packitem( nullptr ),
 targ( DEFCHAR_TARG ), attacker( DEFCHAR_ATTACKER ), hunger( DEFCHAR_HUNGER ), thirst( DEFCHAR_THIRST ), regionNum( DEFCHAR_REGIONNUM ), town( DEFCHAR_TOWN ),
 advobj( DEFCHAR_ADVOBJ ), guildfealty( DEFCHAR_GUILDFEALTY ), guildnumber( DEFCHAR_GUILDNUMBER ), flag( DEFCHAR_FLAG ),
 spellCast( DEFCHAR_SPELLCAST ), nextact( DEFCHAR_NEXTACTION ), stealth( DEFCHAR_STEALTH ), running( DEFCHAR_RUNNING ),
-raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME )
+raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), PoisonStrength( DEFCHAR_POISONSTRENGTH ), bodyType( DEFCHAR_BODYTYPE ), lastMoveTime( DEFCHAR_LASTMOVETIME ), npcguild( DEFNPC_NPCGUILD )
 {
 	ownedItems.clear();
 	itemLayers.clear();
@@ -2899,6 +2900,7 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 	outStream << "Thirst=" << (SI16)GetThirst() << '\n';
 	outStream << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << '\n';
 	outStream << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << '\n';
+	outStream << "NPCGuild=" << npcguild << '\n';
 	if ( GetMaxHPFixed() )
 		outStream << "MAXHP=" << (SI16)maxHP << '\n';
 	if ( GetMaxManaFixed() )
@@ -3927,6 +3929,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				{
 					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					UpdateFlag( this );
+					rvalue = true;
+				}
+				else if (UTag == "NPCGUILD")
+				{
+					SetNPCGuild(static_cast<SI16>(std::stoi(strutil::trim(strutil::removeTrailing(data, "//")), nullptr, 0)));
 					rvalue = true;
 				}
 				break;
@@ -7136,6 +7143,23 @@ void CChar::SetNPCFlag( cNPC_FLAG flagType )
 		mNPC->npcFlag = flagType;
 		UpdateRegion();
 	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	UI16 GetNPCGuild( void ) const
+//|					void SetNPCGuild( SI16 newValue )
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Get/Set ncpc guild
+//o-----------------------------------------------------------------------------------------------o
+SI16 CChar::GetNPCGuild( void ) const
+{
+	return npcguild;
+}
+
+void CChar::SetNPCGuild( SI16 newValue )
+{
+	npcguild = newValue;
+	UpdateRegion();
 }
 
 //o-----------------------------------------------------------------------------------------------o

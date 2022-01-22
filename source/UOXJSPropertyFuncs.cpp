@@ -1643,6 +1643,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPLITCHANCE:	*vp = INT_TO_JSVAL( gPriv->GetSplitChance() );				break;
 			case CCP_TRAINER:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanTrain() );				break;
 			case CCP_HIRELING:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanBeHired() );				break;
+			case CCP_NPCGUILD:		*vp = INT_TO_JSVAL( gPriv->GetNPCGuild() );					break;
 			case CCP_WEIGHT:		*vp = INT_TO_JSVAL( gPriv->GetWeight() );					break;
 			case CCP_SQUELCH:		*vp = INT_TO_JSVAL( gPriv->GetSquelched() );				break;
 			case CCP_ISJAILED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsJailed() );				break;
@@ -2038,6 +2039,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SPLIT:			gPriv->SetSplit( (UI08)encaps.toInt() );			break;
 			case CCP_SPLITCHANCE:	gPriv->SetSplitChance( (UI08)encaps.toInt() );		break;
 			case CCP_HIRELING:		gPriv->SetCanHire( encaps.toBool() );				break;
+			case CCP_NPCGUILD:		gPriv->SetNPCGuild( (SI16)encaps.toInt() );			break;
 			case CCP_TRAINER:		gPriv->SetCanTrain( encaps.toBool() );				break;
 			case CCP_WEIGHT:		gPriv->SetWeight( (SI32)encaps.toInt() );			break;
 			case CCP_SQUELCH:		gPriv->SetSquelched( (UI08)encaps.toInt() );		break;

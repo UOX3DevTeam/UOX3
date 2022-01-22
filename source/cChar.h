@@ -246,6 +246,7 @@ protected:
 	UI16		maxMana_oldint;
 	SI16		maxStam;
 	UI16		maxStam_olddex;
+	SI16		npcguild;			// The NPC Guild defined in both player and npcs.
 	RACEID		oldRace;
 
 	BodyType	bodyType;
@@ -651,6 +652,7 @@ public:
 	UI08		GetOwnerCount( void );
 	UI08		GetControlSlots( void ) const;
 	UI16		GetOrneriness( void ) const;
+	SI16		GetNPCGuild(void) const;
 
 	void		SetNPCAiType( SI16 newValue );
 	void		SetTaming( SI16 newValue );
@@ -662,6 +664,7 @@ public:
 	void		SetSplitChance( UI08 newValue );
 	void		SetControlSlots( UI08 newVal );
 	void		SetOrneriness( UI16 newVal );
+	void		SetNPCGuild(SI16 newVal);
 
 	SI08		GetPathFail( void ) const;
 	void		SetPathFail( SI08 newValue );

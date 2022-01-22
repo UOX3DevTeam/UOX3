@@ -1419,6 +1419,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				if( !isGate )
 					applyTo->SetProvoing( static_cast<SI16>(ndata) );
 				break;
+			case DFNTAG_NPCGUILD:
+				if ( !isGate )
+					applyTo->SetNPCGuild( static_cast<SI16>(ndata) );
+				break;
 			case DFNTAG_TOPEACE:
 				if( !isGate )
 					applyTo->SetPeaceing( static_cast<SI16>(ndata) );

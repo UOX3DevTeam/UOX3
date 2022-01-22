@@ -338,6 +338,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM },
 	{ "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM },
 	{ "hireling",		CCP_HIRELING,		JSPROP_ENUMANDPERM },
+	{ "npcguild",		CCP_NPCGUILD,		JSPROP_ENUMANDPERM },
 	{ "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM },
 	{ "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM },
 	{ "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM },
