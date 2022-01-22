@@ -28,7 +28,7 @@ function inRange(pCharacter, objInRange)
 	var iTime = GetCurrentClock();
 	var initSearchTime = pCharacter.GetTempTag( "initSearchTime" );
 	//If search has already been initiated, don't start a new search, unless an abnormal amount of time has passed 
-	if ( ( initSearchTime != null && initSearchTime != 0 ) && ( ( ( iTime - initSearchTime ) < searchTimer ) && !( initSearchTime > iTime ) ) )
+	if( ( initSearchTime != null && initSearchTime != 0 ) && ( ( ( iTime - initSearchTime ) < searchTimer ) && !( initSearchTime > iTime ) ) )
 	{
 		// pCharacter.TextMessage( initSearchTime + " " + iTime + " " + searchTimer ); 
 		// return; 
@@ -44,7 +44,7 @@ function inRange(pCharacter, objInRange)
 function onTimer(srcChar, timerID)
 {
 	if( timerID == 1 )
-	{ //Search for nearby characters the specified amount of times
+	{//Search for nearby characters the specified amount of times
 		if( i < searchAmount )
 		{
 			AreaCharacterFunction( "searchForPlayers", srcChar, searchRange );
@@ -65,6 +65,7 @@ function searchForPlayers( srcChar, trgChar, pSock )
 {
 	if( srcChar == trgChar )
 		return;
+
 	var Random = RandomNumber( 1, 100 )
 	if( Random >= 20 && Random <= 40 ) // 20% - 40 chance to talk
 	{
