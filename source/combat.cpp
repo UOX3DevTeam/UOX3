@@ -75,7 +75,7 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			{
 				// Otherwise, don't allow combat if both attacker and target have same race
 				return false;
-		}
+			}
 		}
 		else
 		{
@@ -2154,15 +2154,17 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( ourTarg->GetReactiveArmour() )
 				{
 					SI32 retDamage = (SI32)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
-					ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar );
-					if( ourTarg->IsNpc() )
-						retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
-					mChar.Damage( retDamage, PHYSICAL, &mChar );
-					Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
+					if( ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar ) )
+					{
+						if( ourTarg->IsNpc() )
+							retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
+						mChar.Damage( retDamage, PHYSICAL, &mChar );
+						Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
+					}
 				}
 				else
 				{
-					ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
+					[[maybe_unused]] bool retVal = ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
 				}
 			}
 			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )

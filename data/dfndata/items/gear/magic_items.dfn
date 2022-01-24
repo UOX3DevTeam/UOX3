@@ -258,7 +258,8 @@ value=50 25
 layer=0x6
 def=5
 hp=50
-dyeable=1
+dyeable=0
 decay=1
 good=20
+script=3306// orcish kin mask effects
 }

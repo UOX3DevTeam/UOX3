@@ -30,11 +30,11 @@ GUIINFORMATION
 {
 Web=Links
 SHARD=HOMEPAGE: Redirects you to this Shard's homepage.
-WEBLINK=http://www.yourshard.com
+WEBLINK=www.yourshard.com
 UOX3=HOMEPAGE: Redirects you to the UOX3 homepage.
-WEBLINK=http://http://www.uox3.org
+WEBLINK=www.uox3.org
 UO=HOMEPAGE: The official Ultima Online homepage.
-WEBLINK=http://www.uo.com
+WEBLINK=www.uo.com
 }
 
 [GMMENU 3]

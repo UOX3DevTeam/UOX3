@@ -1162,7 +1162,7 @@ void HandleObjectCollisions( CSocket *mSock, CChar *mChar, CItem *itemCheck, Ite
 		case IT_DAMAGEOBJECT:														// damage objects
 			if( !mChar->IsInvulnerable() )
 			{
-				mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), PHYSICAL, nullptr );
+				[[maybe_unused]] bool retVal = mChar->Damage( itemCheck->GetTempVar( CITV_MOREX ) + RandomNum( itemCheck->GetTempVar( CITV_MOREY ), itemCheck->GetTempVar( CITV_MOREZ ) ), PHYSICAL, nullptr );
 			}
 			break;
 		case IT_SOUNDOBJECT:														// sound objects
@@ -2291,13 +2291,9 @@ void cMovement::GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& 
 //|	Purpose		-	Checks that target location has no blocking tiles within range of
 //|						character's potential new Z and the top of their head
 //o-----------------------------------------------------------------------------------------------o
-bool cMovement::IsOk( UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk )
+bool cMovement::IsOk( CTileUni *xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk )
 {
 	CTileUni *tb;
-	CTileUni xyblock[XYMAX];
-	UI16 xycount		= 0;
-	GetBlockingStatics( x, y, xyblock, xycount, world );
-	GetBlockingDynamics( x, y, xyblock, xycount, world, instanceID );
 
 	for( SI32 i = 0; i < xycount; ++i )
 	{
@@ -2554,7 +2550,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 					continue;
 
 				// Check if target location is OK and doesn't have any tiles on it with blocking flags within the range of character's potential new Z and the top of their head
-				if( IsOk( c->WorldNumber(), potentialNewZ, testTop, x, y, c->GetInstanceID(), isGM, waterWalk ))
+				if( IsOk( xyblock, xycount, c->WorldNumber(), potentialNewZ, testTop, x, y, c->GetInstanceID(), isGM, waterWalk ))
 				{
 					newz = potentialNewZ;
 					landCenter = potentialNewZ;
@@ -2582,7 +2578,7 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 		}
 
 		// Check if there are any blocking objects at the target landtile location
-		if( shouldCheck && IsOk( c->WorldNumber(), potentialNewZ, testTop, x, y, c->GetInstanceID(), isGM, waterWalk ))
+		if( shouldCheck && IsOk( xyblock, xycount, c->WorldNumber(), potentialNewZ, testTop, x, y, c->GetInstanceID(), isGM, waterWalk ))
 		{
 			newz = potentialNewZ;
 			moveIsOk = true;
