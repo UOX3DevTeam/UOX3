@@ -1,6 +1,83 @@
 UOX3 Changelog
 ------------------------
 -==============================-
+-= 24/01/2022 - UOX3 0.99.5a  =-
+-==============================-
+Contributors: Xuri, punt
+
+Source Changes/Fixes:
+	Adjusted values of _ITERATOR_DEBUG_LEVEL and _HAS_ITERATOR_DEBUGGING in ConfigOS.h to better support debug mode in VS2022
+	Added support for a new TITLE tag to the command privileges section of commands.dfn, to allow customizing the title added in front of a character's name when they become an Admin, GM or Counselor
+	Updated .gitignore, and removed redundant jaspi.h (use the one in spider monkey, no need to duplicate the header).
+	Removed a prototype that had no implementation
+	Added parenthesis on some simple logical and/or to make clear precedence (and eliminate warnings)
+	Replace int with auto for some results to prevent size casting, across the different platforms (and eliminate warnings).
+	Improved overall performance of NPC pathfinding (by nearly 60%!) by eliminating some double-work done when checking for blocking dynamics and statics
+	Optimized how the system for determining which internal map regions should have active NPCs; instead of there always being 9 active map regions surrounding any given player who's online, that number will now vary between 3 to 6 map regions, depending on how far the player is from boundaries between such map regions. This should reduce the amount of NPCs active and trying to pathfind at any given point when players are online.
+	UOX3 now adapts the time between each time it checks Spawn Regions based on how "full" the Spawn Regions are on average - the nearer they are to max capacity, the longer time between each time Spawn Regions are checked
+	Fixed an issue with reloading of spawn regions where UOX3 would forget about previously spawned NPCs/Items and respawn everything all over again. As part of the reload process, UOX3 now iterates over previously spawned objects and deletes these where appropriate
+	Added support for NPCs engaging other NPCs in combat if they are marked as racial enemies via races.dfn
+	Extended the amount of JS events supported by UOX3's JS engine from 96 to 192
+	Added new JS Event to allow overriding behaviour from Help button in paperdoll:
+		onHelpGump( pChar )			// Overrides default gump menu when pressing Help button in paperdoll
+	Added new JS Event to allow preventing characters from toggling on/off war/combat mode
+		onWarModeToggle( p Char )	// return false to prevent war mode toggle
+	Added new JS Event to allow overriding target selection in combat for default AI behaviours:
+		onAICombatTarget( pAttacker, pTarget ) // return true to select current target, or false to skip and look for another
+	Updated JS onDamage() JS event to allow returning false to override and prevent damage dealt to a character. Event must now return true to allow damage to go through
+	Updated JS Event onSwing to work for characters with no weapon equipped (iSwinging will be null, in this case)
+	Updated JS Object Method .KillTimers() to also work for Characters, not just Items
+	Fixed an issue with initialization of wander areas for NPCs spawned via object spawners, which caused NPCs to not stick to their assigned areas, but wander according to their own free will. Can't have that!
+	Fixed an issue where information on newly spawned characters would get sent twice to each nearby player
+	Misc minor cleanup of console messages during startup and shutdown
+
+JScript Changes/Fixes:
+	Fixed a client crash caused by the admin welcome gump being too large! (js/server/misc/admin_welcome.js)
+	Fixed a bug with the Anatomy skill that allowed gaining skill from targeting self (js/skill/anatomy.js)
+	Fixed an issue with default NPC speech where a variable mySocket was not properly defined (js/npc/speech/speech_001.js)
+	Fixed an issue with the moongate JS script, which would not work reliably (js/item/moongate.js)
+	Updated Provocation skill to disallow directing provoked creatures at targets with the custom tag provImmune present
+	Added JS script that renders characters it's attached to immune to physical damage (js/npc/special/physical_immunity.js)
+	Renamed shadow_elemental.js to magical_immunity.js, as it's generic script that can be attached to any NPC
+	Added script that allows Tinkerers to craft golem followers via Clockwork Assembly items (js/item/clockwork_assembly.js)
+	Added script for mask of orcish kin, which when worn prevents all orcs from attacking the wearer (js/item/orcish_kin_mask.js)
+	Added AI script for Exodus clockwork NPCs, which amongst a few other things makes them spawn with a magical shield that prevents physical damage being dealt to them until the shield has been brought down by magic damage (js/npc/ai/monster/exodus_clockwork.js)
+	Added AI script for orc NPCs which prevent them from attacking characters wearing masks of orcish kin (js/npc/ai/monster/orc.js)
+	Added AI script for orc brute NPCs, which makes the NPCs toss orc lords (up to 10 in total) when attacked by magic spells (js/npc/ai/monster/orc_brute.js)
+	Added AI script for orc chopper NPCs, which makes the NPCs hit all nearby valid targets with their melee attacks (js/npc/ai/monster/orc_chopper.js)
+	Added script for NPC special ability Colossal Blow, which both stuns and adds a temporary peacemaking effect to targets (js/npc/special/colossal_blow.js)
+
+DFN Changes/Fixes:
+	The 'make command will now strip clothes and hair/beard from characters that are turned into Counselors (dfndata/command/commands.dfn)
+	Adjusted default privileges for Admins, GMs and Counselors to not show skill titles in paperdoll (dfndata/command/commands.dfn)
+	Fixed incorrect section headers for base_bascinet and base_helmet (dfndata/items/gear/armor/base_armor.dfn)
+	Fixed incorrect ID in item definition for Sai weapon (dfndata/items/gear/weapons/fencing.dfn)
+	Fixed incorrect get tag value for a wand definition (dfndata/items/gear/weapons/wands.dfn)
+	Reduced the amount of townfolk, poorfolk and richfolk NPCs spawning in Britain (dfndata/spawn/spawn.dfn)
+	Added two new races to races.dfn - Ophidian (RACE 25) and Terathan (RACE 26) - which have been setup as racial enemies
+	Updated the race ID of relevant Ophidian and Terathan NPCs (dfndata/npc/arachnids.dfn and dfndata/npc/reptiles.dfn)
+	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
+		A Welcome (a_welcome)			// Book by Blackthorn, dropped as loot by Betrayers
+	Added definitions for additional NPCs, with scripted special abilities where applicable:
+		Orc Brute (orcbrute) 			// Throws Orc Lords, cannot be targeted by provoked creatures
+		Orc Chopper (orcchopper)		// Attacks deal AoE damage to nearby targets
+		Betrayer (betrayer)				// Colossal Blow (stuns and peacemakes), AoE poison (2m range)
+		Golem Controller (m_golemcontroller/f_golemcontroller)
+		Golem (golem)					// Colossal Blow (stuns and peacemakes)
+		Crafted Golem (craftedgolem)	// Crafted version of golem
+		Exodus Overseer (exodusoverseer) // Magical Shield (immune to physical damage until shield down)
+		Exodus Minion Lord (exodusminionlord) // Magical Shield (immune to physical damage until shield down)
+		Exodus Minion (exodusminion)	// Magical shield (immune to physical damage until shield down), periodic AoE burst
+	Fixed some issues with itemlists pointing to non-existing items (a turnip and 10 of each magical reagent)
+
+Misc Changes/Fixes:
+	Changed default value of NPCFLAGUPDATETIMER ini setting from 5 to 10 seconds
+	Changed default value of NPCMOVEMENTSPEED ini setting from 0.38 to 0.5
+	Changed default value of NPCRUNNINGSPEED ini setting from 0.2 to 0.3
+	Changed default value of NPCFLEEINGSPEED ini setting from 0.3 to 0.4
+	Changed default value of ACCOUNTFLUSH ini setting from 0.0 to 5.0 seconds
+
+-==============================-
 -= 12/01/2022 - UOX3 0.99.5  =-
 -==============================-
 Contributors: Xuri, punt, dragon slayer, giwo

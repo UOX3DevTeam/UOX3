@@ -317,7 +317,10 @@ void cCommands::Load( void )
 		}
 	}
 
-	Console << "   o Loading command levels" << myendl;
+	Console << "   o Loading command levels";
+#if defined( UOX_DEBUG_MODE )
+	Console << myendl;
+#endif
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == nullptr )
 		InitClearance();
@@ -347,6 +350,9 @@ void cCommands::Load( void )
 				data = cmdClearance->GrabData();
 				if( UTag == "NICKCOLOUR" ) {
 					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+				}
+				else if( UTag == "TITLE" ) {
+					ourClear->title = data;
 				}
 				else if( UTag == "DEFAULTPRIV" ) {
 					ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
@@ -461,43 +467,57 @@ UI16 cCommands::GetColourByLevel( UI08 commandLevel )
 //o-----------------------------------------------------------------------------------------------o
 void cCommands::InitClearance( void )
 {
-	clearance.push_back( new commandLevel_st );	// 0 -> 2
+	clearance.push_back( new commandLevel_st );	// 0 -> 3
+	clearance.push_back( new commandLevel_st );
 	clearance.push_back( new commandLevel_st );
 	clearance.push_back( new commandLevel_st );
 
-	clearance[0]->name = "GM";
-	clearance[1]->name = "COUNSELOR";
-	clearance[2]->name = "PLAYER";
+	clearance[0]->name = "ADMIN";
+	clearance[1]->name = "GM";
+	clearance[2]->name = "COUNSELOR";
+	clearance[3]->name = "PLAYER";
 
-	clearance[0]->commandLevel = 2;
-	clearance[1]->commandLevel = 1;
-	clearance[2]->commandLevel = 0;
+	clearance[0]->title = "Admin";
+	clearance[1]->title = "GM";
+	clearance[2]->title = "Counselor";
+	clearance[3]->title = "";
+
+	clearance[0]->commandLevel = 5;
+	clearance[1]->commandLevel = 2;
+	clearance[2]->commandLevel = 1;
+	clearance[3]->commandLevel = 0;
 
 	clearance[0]->targBody = 0x03DB;
 	clearance[1]->targBody = 0x03DB;
-	clearance[2]->targBody = 0;
+	clearance[2]->targBody = 0x03DB;
+	clearance[3]->targBody = 0;
 
-	clearance[0]->bodyColour = 0x8021;
-	clearance[1]->bodyColour = 0x8002;
+	clearance[0]->bodyColour = 0x8001;
+	clearance[1]->bodyColour = 0x8021;
+	clearance[2]->bodyColour = 0x8002;
 
-	clearance[0]->defaultPriv = 0xFD;
-	clearance[1]->defaultPriv = 0x8DB6;
-	clearance[2]->defaultPriv = 0;
+	clearance[0]->defaultPriv = 0x786F;
+	clearance[1]->defaultPriv = 0x786F;
+	clearance[2]->defaultPriv = 0x0094;
+	clearance[3]->defaultPriv = 0;
 
-	clearance[0]->nickColour = 0x03;
+	clearance[0]->nickColour = 0x1332;
 	clearance[1]->nickColour = 0x03;
-	clearance[2]->nickColour = 0x005A;
+	clearance[2]->nickColour = 0x03;
+	clearance[3]->nickColour = 0x005A;
 
 	clearance[0]->allSkillVals = 1000;
-	clearance[1]->allSkillVals = 0;
+	clearance[1]->allSkillVals = 1000;
 	clearance[2]->allSkillVals = 0;
+	clearance[3]->allSkillVals = 0;
 
-	// Strip Everything
+	// Strip Everything for Admins, GMs and Counselors
 	clearance[0]->stripOff.set( BIT_STRIPHAIR, true );
 	clearance[0]->stripOff.set( BIT_STRIPITEMS, true );
-
 	clearance[1]->stripOff.set( BIT_STRIPHAIR, true );
 	clearance[1]->stripOff.set( BIT_STRIPITEMS, true );
+	clearance[2]->stripOff.set( BIT_STRIPHAIR, true );
+	clearance[2]->stripOff.set( BIT_STRIPITEMS, true );
 }
 
 //o-----------------------------------------------------------------------------------------------o

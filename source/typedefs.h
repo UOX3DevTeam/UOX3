@@ -89,8 +89,8 @@ typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
 typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
 //
-typedef std::map< UI16, CSpawnRegion * >					SPAWNMAP;
-typedef std::map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
+typedef std::unordered_map< UI16, CSpawnRegion * >					SPAWNMAP;
+typedef std::unordered_map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
 //
 typedef std::map< UI16, CTownRegion * >						TOWNMAP;
 typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;

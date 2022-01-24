@@ -174,6 +174,11 @@
 3204=npc/ai/hireling.js
 3205=npc/ai/monster/ethereal_warrior.js
 3206=npc/ai/pack_ai.js
+3207=npc/ai/monster/orc.js
+3208=npc/ai/monster/orc_brute.js
+3209=npc/ai/monster/orc_brute_thrown_lord.js
+3210=npc/ai/monster/orc_chopper.js
+3211=npc/ai/monster/exodus_clockwork.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -182,11 +187,12 @@
 3303=item/magic_glacial_staff.js
 3304=item/magic_weapon_equip.js
 3305=item/magic_weapon_spell_attack.js
+3306=item/orcish_kin_mask.js
 
 // NPC Special Abilities/Effects
 3500=npc/special/dull_copper_elemental.js
 3501=npc/special/copper_elemental.js
-3502=npc/special/shadow_elemental.js
+3502=npc/special/magical_immunity.js
 3503=npc/special/damage_aura.js
 3504=npc/special/valorite_elemental.js
 3506=npc/special/corrosion_damage.js
@@ -194,6 +200,8 @@
 3508=npc/special/life_drain_aura.js
 3509=npc/special/pixie_death.js
 3510=npc/special/immortality.js
+3511=npc/special/colossal_blow.js
+3512=npc/special/physical_immunity.js
 
 //-------------------------------------------
 // General Skills [4000-4499]

@@ -26,7 +26,7 @@
 // Set to 0 to disable teleport locations for a certain map from appearing in the moongate menu
 var enableFelucca = 1;
 var enableTrammel = 0;
-var enableIlshenar = 1;
+var enableIlshenar = 0;
 var enableMalas = 0;
 var enableTokuno = 0;
 
@@ -48,14 +48,17 @@ function onUseChecked( pUser, iUsed )
 
 	//Get the stored serial from tag
 	var oldSerial = new Array;
-	var iCheck = pUser.GetTag( "ItemUsed" );
-	oldSerial = iCheck.split( ',' );
+	var iCheck = pUser.GetTempTag( "ItemUsed" );
+	if( iCheck )
+	{
+		oldSerial = iCheck.split( ',' );
+	}
 
 	//Compare the 2, if the same, then we are allready using this gate
-	if( Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
 		return false;
 	else
-		pUser.SetTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
 
 	// Create and display travel gump
 	DisplayTravelGump( srcSock, pUser );
@@ -73,12 +76,15 @@ function onCollide( srcSock, pUser, iUsed )
 	Serial[2] = iUsed.GetSerial( 3 );
 	Serial[3] = iUsed.GetSerial( 4 );
 	var oldSerial = new Array;
-	var iCheck = pUser.GetTag( "ItemUsed" );
-	oldSerial = iCheck.split( ',' );
-	if( Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	var iCheck = pUser.GetTempTag( "ItemUsed" );
+	if( iCheck )
+	{
+		oldSerial = iCheck.split( ',' );
+	}
+	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
 		return;
 	else
-		pUser.SetTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
 	DisplayTravelGump( srcSock, pUser );
 }
 
@@ -131,21 +137,36 @@ function onGumpPress( srcSock, myButton )
 	// Range check. Its possible to call up the gate and run away
 	// get the items's serial
 	var oldSerial = new Array;
-	var iCheck = srcChar.GetTag( "ItemUsed" );
-	oldSerial = iCheck.split( ',' );
+	var iCheck = srcChar.GetTempTag( "ItemUsed" );
+	if( iCheck )
+	{
+		oldSerial = iCheck.split( ',' );
 
-	// Convert serial into actual numbers not strings
-	oldSerial[0] = parseInt( oldSerial[0] );
-	oldSerial[1] = parseInt( oldSerial[1] );
-	oldSerial[2] = parseInt( oldSerial[2] );
-	oldSerial[3] = parseInt( oldSerial[3] );
+		// Convert serial into actual numbers not strings
+		oldSerial[0] = parseInt( oldSerial[0] );
+		oldSerial[1] = parseInt( oldSerial[1] );
+		oldSerial[2] = parseInt( oldSerial[2] );
+		oldSerial[3] = parseInt( oldSerial[3] );
+	}
 
 	// Find out what the item is from the serial
-	var iUsed = CalcItemFromSer( oldSerial[0], oldSerial[1], oldSerial[2], oldSerial[3] );
+	var iUsed = null;
+	if( oldSerial.length == 4 )
+	{
+		iUsed = CalcItemFromSer( oldSerial[0], oldSerial[1], oldSerial[2], oldSerial[3] );
+	}
+
+	if( !ValidateObject( iUsed ))
+	{
+		// Clear the tag so we can use gate again?
+		srcChar.SetTempTag( "ItemUsed", null );
+		return;
+	}
+
 	var inRange = iUsed.InRange( srcChar, 5 );
 
 	// Clear the tag so we can use gate again?
-	srcChar.SetTag( "ItemUsed", "0,0,0,0" );
+	srcChar.SetTempTag( "ItemUsed", null );
 
 	// Check var inRange and button (dont say anything if canceled)
 	if( inRange == false && myButton >= 0)

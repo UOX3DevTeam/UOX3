@@ -12,6 +12,7 @@ function onCombatStart( pAttacker, pDefender )
 function onDamage( damaged, attacker, damageValue, damageType )
 {
 	AreaCharacterFunction( "AlertPack", damaged, 18 );
+	return true;
 }
 
 function AlertPack( srcChar, packMember )

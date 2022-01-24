@@ -220,9 +220,9 @@ UI16 cAccountClass::CreateAccountSystem( void )
 		{
 			if( !r.empty() && r.length() != 0 )
 			{
-				actb.sUsername = strutil::lower( r );
+				actb.sUsername = r; //strutil::lower( r );
 				if( ssecs.size() > 2 )
-					actb.sUsername += strutil::lower( ssecs[2] );
+					actb.sUsername += ssecs[2]; // strutil::lower( ssecs[2] );
 
 				// Next thing were going to do is make sure there isn't a duplicate username.
 				while( isUser( actb.sUsername ) )
@@ -719,7 +719,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	std::string sTempPath( m_sAccountsDirectory );
 	if( sTempPath[sTempPath.length() - 1] == '\\' || sTempPath[sTempPath.length() - 1] == '/' )
 	{
-		auto szTempBuff	=    strutil::lower( sUsername );
+		auto szTempBuff	=    sUsername; // strutil::lower( sUsername );
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
 		sTempPath = strutil::replaceSlash( sTempPath );
@@ -727,7 +727,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	}
 	else
 	{
-		auto szTempBuff	= strutil::lower( sUsername );
+		auto szTempBuff	= sUsername; //strutil::lower( sUsername );
 		sTempPath			+= "/";
 		sTempPath			+= szTempBuff;
 		sTempPath			+= "/";
@@ -1027,7 +1027,7 @@ UI16 cAccountClass::Load(void)
 			// Ok strip the name and store it. We need to make it all the same case for comparisons
 			if( !r.empty() && r.length() != 0 )
 			{
-				actb.sUsername = strutil::lower( r );
+				actb.sUsername = r; //strutil::lower( r );
 			}
 			else
 			{
@@ -1737,7 +1737,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 			std::string sTempPath(m_sAccountsDirectory);
 			if( sTempPath[sTempPath.length()-1]=='\\'||sTempPath[sTempPath.length()-1]=='/' )
 			{
-				auto szTempBuff	= strutil::lower( actbID.sUsername );
+				auto szTempBuff	= actbID.sUsername; // strutil::lower( actbID.sUsername );
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
 				sTempPath = strutil::replaceSlash( sTempPath );
@@ -1745,7 +1745,7 @@ UI16 cAccountClass::Save( bool bForceLoad )
 			}
 			else
 			{
-				auto szTempBuff	= strutil::lower( actbID.sUsername );
+				auto szTempBuff	= actbID.sUsername; // strutil::lower( actbID.sUsername );
 				sTempPath			+= "/";
 				sTempPath			+= szTempBuff;
 				sTempPath			+= "/";
