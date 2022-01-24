@@ -17,6 +17,8 @@
 #include "cEffects.h"
 #include "regions.h"
 #include "combat.h"
+#include "CJSMapping.h"
+#include "cScript.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
 
