@@ -1,6 +1,8 @@
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
 
+#include <unordered_map>
+
 #ifdef __NEED_VALIST__
 typedef void *  va_list;
 #endif
