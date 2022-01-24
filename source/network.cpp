@@ -141,7 +141,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 		connClients[s]->FlushBuffer();
 		connClients[s]->ClearTimers();
 		connClients[s]->CloseSocket();
-		if( currConnIter != connClients.begin() && currConnIter >= ( connClients.begin() + s) )
+		if(( currConnIter != connClients.begin() ) && currConnIter >= ( connClients.begin() + s) )
 			--currConnIter;
 		for( size_t q = 0; q < connIteratorBackup.size(); ++q )
 		{
@@ -633,7 +633,32 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						Disconnect( s );
 						break;
 					case 0x72:// Combat Mode
+					{
 						mSock->Receive( 5 );
+
+						std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
+						for( auto scriptTrig : scriptTriggers )
+						{
+							cScript *toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute != nullptr )
+							{
+								if( toExecute->OnWarModeToggle( ourChar ) == 0 )
+								{
+									return;
+								}
+							}
+						}
+
+						// No individual scripts handling OnWarModeToggle returned true - let's check global script!
+						cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+						if( toExecute != nullptr )
+						{
+							if( toExecute->OnWarModeToggle( ourChar ) == 0 )
+							{
+								return;
+							}
+						}
+
 						ourChar->SetWar( buffer[1] != 0 );
 						ourChar->SetTarg( nullptr );
 						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
@@ -649,6 +674,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						Effects->doSocketMusic( mSock );
 						ourChar->BreakConcentration( mSock );
 						break;
+					}
 					case 0x12:// Ext. Command
 						mSock->Receive( 3 );
 						mSock->Receive( mSock->GetWord( 1 ) );

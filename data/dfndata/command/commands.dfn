@@ -48,33 +48,38 @@ PLAYER=0
 
 [ADMIN]
 {
-NICKCOLOUR=0x1332
-DEFAULTPRIV=0x787F
-ALLSKILL=0000
-BODYID=0x03db
-BODYCOLOUR=0x8001
-STRIPITEMS
-STRIPHAIR
+TITLE=Admin
+NICKCOLOUR=0x1332	// colour of person's nick (hex), value of 0x0 == no change
+DEFAULTPRIV=0x786F	// default privs assigned (hex)
+BODYID=0x03db		// default body ID assigned, value of 0x0 == no change
+ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
+BODYCOLOUR=0x8001	// colour of body person turns
+STRIPITEMS			// Strip off equipped items and place them in backpack
+STRIPHAIR			// Strips off hair & beard
 }
 
 [GM]
 {
+TITLE=GM
 NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
-DEFAULTPRIV=0x787F	// default privs assigned (hex)
+DEFAULTPRIV=0x786F	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8021	// colour of body person turns
-STRIPITEMS		//Strip off equipped items and place them in backpack
-STRIPHAIR		//Strips off hair & beard
+STRIPITEMS			// Strip off equipped items and place them in backpack
+STRIPHAIR			// Strips off hair & beard
 }
 
 [CNS]
 {
+TITLE=Counselor
 NICKCOLOUR=0x0000	// colour of person's nick (hex)
-DEFAULTPRIV=0x009C	// default privs assigned (hex)
+DEFAULTPRIV=0x0094	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8002	// colour of body person turns
+STRIPITEMS			// Strip off equipped items and place them in backpack
+STRIPHAIR			// Strips off hair & beard
 }
 
 [PLAYER]

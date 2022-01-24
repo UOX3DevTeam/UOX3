@@ -20,6 +20,8 @@ function onCallback0( pSock, ourObj )
 		var pLanguage = pSock.language;
 		if( ourObj.dead )
 			pSock.SysMessage( GetDictionaryEntry( 1571, pLanguage ) ); // That does not appear to be a living being.
+		else if( ourObj == pUser )
+			pSock.SysMessage( GetDictionaryEntry( 9123, pLanguage )); // You know yourself quite well enough already.
 		else if( !ourObj.InRange( pUser, 7 ) )
 			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage ) ); // That is too far away.
 		else if( !pUser.CheckSkill( 1, 0, 1000 ) )

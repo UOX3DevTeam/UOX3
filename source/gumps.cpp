@@ -884,6 +884,29 @@ bool CPIHelpRequest::Handle( void )
 	UI16 gmnumber	= 0;
 	CChar *mChar	= tSock->CurrcharObj();
 
+	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnHelpButton( mChar ) == 0 )
+			{
+				return true;
+			}
+		}
+	}
+
+	// No individual scripts handling OnHelpButton returned true - let's check global script!
+	cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnHelpButton( mChar ) == 0 )
+		{
+			return true;
+		}
+	}
+
 	std::string sect = std::string("GMMENU ") + strutil::number( menuNum );
 	ScriptSection *GMMenu = FileLookup->FindEntry( sect, menus_def );
 	if( GMMenu == nullptr )

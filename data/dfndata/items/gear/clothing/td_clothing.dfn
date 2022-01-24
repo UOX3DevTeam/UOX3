@@ -458,6 +458,12 @@ good=18
 get=0x26ad
 }
 
+[tdarcanecloak-newbie]
+{
+get=0x26ad
+newbie=1
+}
+
 // Arcane Robe
 [0x26ae]
 {
@@ -480,6 +486,12 @@ good=18
 get=0x26ae
 }
 
+[tdarcanerobe-newbie]
+{
+get=0x26ae
+newbie=1
+}
+
 // TD Arcane Gloves
 [0x26b0]
 {
@@ -500,6 +512,12 @@ good=18
 [tdarcanegloves]
 {
 get=0x26b0
+}
+
+[tdarcanegloves-newbie]
+{
+get=0x26b0
+newbie=1
 }
 
 // Fur Cape
