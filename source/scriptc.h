@@ -1,6 +1,7 @@
 #ifndef __SCRIPTC_H__
 #define __SCRIPTC_H__
 
+#include <unordered_map>
 
 typedef std::unordered_map< std::string, ScriptSection * >	SSMAP;
 
