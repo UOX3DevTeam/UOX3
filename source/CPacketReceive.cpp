@@ -5175,7 +5175,7 @@ bool CPIAOSCommand::Handle( void )
 				}
 			}
 
-			// No individual scripts handling OnSpecialMove returned true - let's check global script!
+			// No individual scripts handling OnQuestGump returned true - let's check global script!
 			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
 			if( toExecute != nullptr )
 			{

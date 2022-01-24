@@ -5,6 +5,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	{
 		AreaCharacterFunction( "DealAreaDamage", damaged, 2 );
 	}
+	return true;
 }
 
 function DealAreaDamage( srcObj, trgChar )

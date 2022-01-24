@@ -3148,6 +3148,8 @@
 5142=un demone minore
 5143=un cacodaemon
 5144=un demone bestiale
+5145=un mannaia orco
+5146=il controllore
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -3963,6 +3965,13 @@
 9121=L'animale cammina dove gli è stato ordinato.
 9122=Hai rotto il tuo bastone da pastore.
 9123=Ti conosci già abbastanza bene.
+9124=*Sei stato stordito da un colpo colossale!
+9125=*Riprendi i tuoi sensi.*
+9126=*L'essenza della malattia della creatura ti sta danneggiando!
+9127=Non puoi farlo mentre indossi la pittura di kin selvaggio
+9128=Non hai alcuna possibilità di provocare quella creatura.
+9129=Quel bersaglio è immune al danno fisico!
+9130=La tua arma non può penetrare la barriera magica della creatura.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!

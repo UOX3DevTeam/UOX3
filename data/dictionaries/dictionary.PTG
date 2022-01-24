@@ -3148,6 +3148,8 @@
 5142=um daemon menor
 5143=um cacodimão
 5144=um daemon besta
+5145=um cortador orc
+5146=o controlador
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -3962,6 +3964,13 @@
 9121=O animal caminha para onde foi instruído.
 9122=Quebrou o vigarista do seu pastor.
 9123=Você já se conhece bastante bem.
+9124=*Você foi atordoado por um golpe colossal!*
+9125=*Você recupera os seus sentidos.*
+9126=* A essência da doença da criatura está a prejudicar-te!*
+9127=Não podes fazer isso enquanto usas tinta de parentes selvagens
+9128=Não tem qualquer hipótese de provocar essa criatura.
+9129=Aquele alvo é imune a danos físicos!
+9130=Sua arma não consegue penetrar a barreira mágica da criatura.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
