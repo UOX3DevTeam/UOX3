@@ -156,7 +156,35 @@ void UnloadSpawnRegions( void )
 	while( spIter != spEnd )
 	{
 		if( spIter->second != nullptr )
+		{
+			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
+			auto spawnedCharsList = spIter->second->GetSpawnedCharsList();
+			for( auto cCheck = spawnedCharsList->First(); !spawnedCharsList->Finished(); cCheck = spawnedCharsList->Next() )
+			{
+				if( !ValidateObject( cCheck ) )
+					continue;
+
+				if( !ValidateObject( cCheck->GetOwnerObj() ))
+				{
+					cCheck->Delete();
+				}
+			}
+
+			// Iterate over list of spawned items and delete them if no player has picked them up
+			auto spawnedItemsList = spIter->second->GetSpawnedItemsList();
+			for( auto iCheck = spawnedItemsList->First(); !spawnedItemsList->Finished(); iCheck = spawnedItemsList->Next() )
+			{
+				if( !ValidateObject( iCheck ) )
+					continue;
+
+				if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() ))
+				{
+					iCheck->Delete();
+				}
+			}
+
 			delete spIter->second;
+		}
 		++spIter;
 	}
 	cwmWorldState->spawnRegions.clear();
@@ -383,9 +411,10 @@ void CollectGarbage( void )
 	}
 	cwmWorldState->deletionQueue.clear();
 
-	Console << " Removed " << objectsDeleted << " objects" << myendl;
+	Console << " Removed " << objectsDeleted << " objects";
 
 	JSEngine->CollectGarbage();
+	Console.PrintDone();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -757,7 +786,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 3, 6 ); // 3% to 6% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
-							mChar.Damage( std::max(static_cast<SI16>(3), poisonDmg), POISON ); // Minimum 3 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max(static_cast<SI16>(3), poisonDmg), POISON ); // Minimum 3 damage per tick
 							break;
 						}
 						case 2: // Normal Poison
@@ -770,7 +799,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 4, 8 ); // 4% to 8% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
-							mChar.Damage( std::max(static_cast<SI16>(5), poisonDmg), POISON ); // Minimum 5 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max(static_cast<SI16>(5), poisonDmg), POISON ); // Minimum 5 damage per tick
 							break;
 						}
 						case 3: // Greater Poison
@@ -783,7 +812,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 8, 12 ); // 8% to 12% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
-							mChar.Damage( std::max(static_cast<SI16>(8), poisonDmg), POISON ); // Minimum 8 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max(static_cast<SI16>(8), poisonDmg), POISON ); // Minimum 8 damage per tick
 							break;
 						}
 						case 4: // Deadly Poison
@@ -796,7 +825,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 12, 25 ); // 12% to 25% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
-							mChar.Damage( std::max(static_cast<SI16>(14), poisonDmg), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max(static_cast<SI16>(14), poisonDmg), POISON ); // Minimum 14 damage per tick
 							break;
 						}
 						case 5: // Lethal Poison - Used by monsters only
@@ -809,7 +838,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							}
 							SI16 poisonDmgPercent = RandomNum( 25, 50 ); // 25% to 50% of current health per tick
 							SI16 poisonDmg = static_cast<SI16>((mChar.GetHP() * poisonDmgPercent) / 100);
-							mChar.Damage( std::max(static_cast<SI16>(17), poisonDmg), POISON ); // Minimum 14 damage per tick
+							[[maybe_unused]] bool retVal = mChar.Damage( std::max(static_cast<SI16>(17), poisonDmg), POISON ); // Minimum 14 damage per tick
 							break;
 						}
 						default:
@@ -1556,8 +1585,13 @@ void CWorldMain::CheckAutoTimers( void )
 
 	if( nextCheckSpawnRegions <= GetUICurrentTime() && serverData->CheckSpawnRegionSpeed() != -1 )//Regionspawns
 	{
-		UI16 itemsSpawned	= 0;
-		UI16 npcsSpawned	= 0;
+		UI32 itemsSpawned		= 0;
+		UI32 npcsSpawned		= 0;
+		UI32 totalItemsSpawned	= 0;
+		UI32 totalNpcsSpawned	= 0;
+		UI32 maxItemsSpawned	= 0;
+		UI32 maxNpcsSpawned		= 0;
+
 		SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 		SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
 		while( spIter != spEnd )
@@ -1567,10 +1601,34 @@ void CWorldMain::CheckAutoTimers( void )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
+
+				// Grab some info from the spawn region anyway, even if it's not time to spawn
+				totalItemsSpawned += spawnReg->GetCurrentItemAmt();
+				totalNpcsSpawned += spawnReg->GetCurrentCharAmt();
+				maxItemsSpawned += spawnReg->GetMaxItemSpawn();
+				maxNpcsSpawned += spawnReg->GetMaxCharSpawn();
 			}
 			++spIter;
 		}
-		nextCheckSpawnRegions = BuildTimeValue( (R32)serverData->CheckSpawnRegionSpeed() );//Don't check them TOO often (Keep down the lag)
+
+		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
+		// the less frequently UOX3 will check spawn regions again. Similarly, the more room there is to spawn additional
+		// stuff, the more frequently UOX3 will check spawn regions
+		auto checkSpawnRegionSpeed = static_cast<R32>(serverData->CheckSpawnRegionSpeed());
+		UI16 itemSpawnCompletionRatio = ( maxItemsSpawned > 0 ? (( totalItemsSpawned * 100.0 ) / maxItemsSpawned ) : 100 );
+		UI16 npcSpawnCompletionRatio = ( maxNpcsSpawned > 0 ? (( totalNpcsSpawned * 100.0 ) / maxNpcsSpawned ) : 100 );
+		
+		SI32 avgCompletionRatio = ( itemSpawnCompletionRatio + npcSpawnCompletionRatio ) / 2;
+		if( avgCompletionRatio == 100 )
+			checkSpawnRegionSpeed *= 3;
+		else if( avgCompletionRatio >= 90 )
+			checkSpawnRegionSpeed *= 2;
+		else if( avgCompletionRatio >= 75 )
+			checkSpawnRegionSpeed *= 1.5;
+		else if( avgCompletionRatio >= 50 )
+			checkSpawnRegionSpeed *= 1.25;
+
+		nextCheckSpawnRegions = BuildTimeValue( checkSpawnRegionSpeed );//Don't check them TOO often (Keep down the lag)
 	}
 
 	HTMLTemplates->Poll( ETT_ALLTEMPLATES );
@@ -1685,9 +1743,27 @@ void CWorldMain::CheckAutoTimers( void )
 
 				SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
 				SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
+
+				// Restrict the amount of active regions based on how far player is from the border
+				// to the next one. This reduces active regions around a player from always 9 to
+				// varying between 3 to 6. Only regions on yOffset are considered, because the xOffset
+				// ones are too narrow
+				auto yOffsetUnrounded = static_cast<R32>(mChar->GetY()) / static_cast<R32>(MapRowSize);
+				SI08 counter2Start = 0, counter2End = 0;
+				if( yOffsetUnrounded < yOffset + 0.25 )
+				{
+					counter2Start = -1;
+					counter2End = 0;
+				}
+				else if( yOffsetUnrounded > yOffset + 0.75 )
+				{
+					counter2Start = 0;
+					counter2End = 1;
+				}
+
 				for( SI08 counter = -1; counter <= 1; ++counter ) // Check 3 x colums
 				{
-					for( SI08 ctr2 = -1; ctr2 <= 1; ++ctr2 ) // Check 3 y colums
+					for( SI08 ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2 ) // Check variable y colums
 					{
 						CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
 						if( tC == nullptr )
@@ -1994,7 +2070,7 @@ void DisplayBanner( void )
 void Shutdown( SI32 retCode )
 {
 	Console.PrintSectionBegin();
-	Console << myendl << "Beginning UOX final shut down sequence..." << myendl;
+	Console << "Beginning UOX final shut down sequence..." << myendl;
 
 	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
@@ -2016,8 +2092,9 @@ void Shutdown( SI32 retCode )
 	{
 		if( HTMLTemplates )
 		{
-			Console << "HTMLTemplates object detected. Writing Offline HTML Now..." << myendl;
+			Console << "HTMLTemplates object detected. Writing Offline HTML Now...";
 			HTMLTemplates->Poll( ETT_OFFLINE );
+			Console.PrintDone();
 		}
 		else
 			Console << "HTMLTemplates object not found." << myendl;
@@ -2028,6 +2105,7 @@ void Shutdown( SI32 retCode )
 
 		Console << "Destroying class objects and pointers... ";
 		// delete any objects that were created (delete takes care of nullptr check =)
+		UnloadSpawnRegions();
 
 		delete Combat;
 		delete Commands;
@@ -2064,12 +2142,10 @@ void Shutdown( SI32 retCode )
 		delete JailSys;
 		delete Effects;
 
-		UnloadSpawnRegions();
 		UnloadRegions();
+		Console.PrintDone();
 
 		delete JSEngine;
-
-		Console.PrintDone();
 	}
 
 	//Lets wait for console thread to quit here
@@ -3254,10 +3330,11 @@ int main( SI32 argc, char *argv[] )
 
 		Console << "Loading Accounts               ";
 		Accounts->Load();
+		Console.PrintDone();
 
 		Console.log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
-		Console << myendl << "Creating and Initializing Console Thread      ";
+		Console << "Creating and Initializing Console Thread      ";
 
 		cons = std::thread(&CheckConsoleKeyThread);
 #ifdef __LOGIN_THREAD__
@@ -3387,10 +3464,7 @@ int main( SI32 argc, char *argv[] )
 			DoMessageLoop();
 		}
 
-
-		Console.PrintSectionBegin();
 		sysBroadcast( "The server is shutting down." );
-		Console.PrintDone();
 		Console << "Closing sockets...";
 		netpollthreadclose = true;
 		///HERE

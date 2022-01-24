@@ -931,6 +931,64 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnHelpButton( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who activate Help button in paperdoll
+//|					Return false to prevent additional onHelpButton events from triggering
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnHelpButton( CChar *mChar )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnHelpButton, "onHelpButton" ) )
+		return RV_NOFUNC;
+
+	jsval rval, params[1];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHelpButton", 1, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnHelpButton, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnWarModeToggle( CChar *mChar )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character who toggle War Mode
+//|					Return false to prevent character from entering War Mode
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnWarModeToggle( CChar *mChar )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnWarModeToggle, "onWarModeToggle" ) )
+		return RV_NOFUNC;
+
+	jsval rval, params[1];
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onWarModeToggle", 1, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnWarModeToggle, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool SI08( CChar *mChar, UI08 abilityID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate special abilities in combat books etc
@@ -1091,12 +1149,12 @@ bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover
 SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( swinging ) || !ValidateObject( swinger ) || !ValidateObject( swingTarg ) )
+	if( !ValidateObject( swinger ) || !ValidateObject( swingTarg ) )
 		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnSwing, "onSwing" ) )
 		return RV_NOFUNC;
 
-	JSObject *itemObj	= JSEngine->AcquireObject( IUE_ITEM, swinging, runTime );
+	JSObject *itemObj	= ( ValidateObject( swinging ) ? JSEngine->AcquireObject( IUE_ITEM, swinging, runTime ) : nullptr );
 	JSObject *attObj	= JSEngine->AcquireObject( IUE_CHAR, swinger, runTime );
 	JSObject *defObj	= JSEngine->AcquireObject( IUE_CHAR, swingTarg, runTime );
 
@@ -3105,6 +3163,39 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnAICombatTarget( CChar *attacker, CChar *target )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for characters with event attached when selecting a target as part of
+//|					default AI behaviour
+//|	Notes		-	Returning FALSE will deem a target invalid, and it will be skipped
+//|					Returning TRUE will deem a target valid, and it will be selected
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( attacker ) || !ValidateObject( target ) )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnAICombatTarget, "onAICombatTarget" ) )
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+
+	JSObject *attObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
+	JSObject *targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( attObj );
+	params[1] = OBJECT_TO_JSVAL( targObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAICombatTarget", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnAICombatTarget, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnCombatStart( CChar *attacker, CChar *defender )
 //|	Date		-	23rd January, 2006
 //o-----------------------------------------------------------------------------------------------o
@@ -3249,17 +3340,18 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
+//|	Function	-	SI08 OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
 //|	Date		-	22nd March, 2006
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached takes damage
 //o-----------------------------------------------------------------------------------------------o
-bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType )
+SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType )
 {
+	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( damaged ) )
-		return false;
+		return RV_NOFUNC;
 	if( !ExistAndVerify( seOnDamage, "onDamage" ) )
-		return false;
+		return RV_NOFUNC;
 
 	jsval rval, params[4];
 	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
@@ -3278,9 +3370,12 @@ bool cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDamage", 4, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnDamage, false );
+		return RV_NOFUNC;
+	}
 
-	return ( retVal == JS_TRUE );
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3624,30 +3719,30 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 
 bool cScript::EventExists( ScriptEvent eventNum ) const
 {
-	UI32 index = eventNum / 32;
+	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return false;
-	return eventPresence[index].test( (eventNum % 32) );
+	return eventPresence[index].test( (eventNum % 64) );
 }
 void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 {
-	UI32 index = eventNum / 32;
+	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return;
-	eventPresence[index].set( (eventNum % 32), status );
+	eventPresence[index].set( (eventNum % 64), status );
 }
 
 bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 {
-	UI32 index = eventNum / 32;
+	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return false;
-	return needsChecking[index].test( (eventNum % 32) );
+	return needsChecking[index].test( (eventNum % 64) );
 }
 void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 {
-	UI32 index = eventNum / 32;
+	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return;
-	needsChecking[index].set( (eventNum % 32), status );
+	needsChecking[index].set( (eventNum % 64), status );
 }

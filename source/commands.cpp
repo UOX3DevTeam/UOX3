@@ -317,7 +317,10 @@ void cCommands::Load( void )
 		}
 	}
 
-	Console << "   o Loading command levels" << myendl;
+	Console << "   o Loading command levels";
+#if defined( UOX_DEBUG_MODE )
+	Console << myendl;
+#endif
 	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == nullptr )
 		InitClearance();

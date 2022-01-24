@@ -119,6 +119,9 @@ void HandleFighterAI( CChar& mChar )
 {
 	if( !mChar.IsAtWar() )
 	{
+		// Fetch scriptTriggers attached to mChar
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
@@ -131,9 +134,38 @@ void HandleFighterAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) )
 				{
-					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
+					// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+					// This event will override target selection entirely
+					bool invalidTarget = false;
+					for( auto scriptTrig : scriptTriggers )
 					{
-						if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+							if( retVal == -1 ) // No such event found, or returned -1
+								continue;
+							else if( retVal == 0 )
+							{
+								// Invalid target! But look through other scripts with event first
+								invalidTarget = true;
+								continue;
+							}
+							else if( retVal == 1 )
+							{
+								// Valid target!
+								Combat->AttackTarget( &mChar, tempChar );
+								regChars->Pop(); // restore before returning
+								return;
+							}
+						}
+					}
+					if( invalidTarget )
+						continue;
+					RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY ))
+					{
+						if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
 							continue;
 						Combat->AttackTarget( &mChar, tempChar );
 						regChars->Pop();
@@ -238,6 +270,9 @@ void HandleEvilAI( CChar& mChar )
 {
 	if( !mChar.IsAtWar() )
 	{
+		// Fetch scriptTriggers attached to mChar
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
@@ -255,7 +290,35 @@ void HandleEvilAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
-					if( tempChar->GetNPCAiType() == AI_EVIL || tempChar->GetNPCAiType() == AI_HEALER_G )
+					// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+					// This event will override target selection entirely
+					bool invalidTarget = false;
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+							if( retVal == -1 ) // No such event found, or returned -1
+								continue;
+							else if( retVal == 0 )
+							{
+								// Invalid target! But look through other scripts with event first
+								invalidTarget = true;
+								continue;
+							}
+							else if( retVal == 1 )
+							{
+								// Valid target!
+								Combat->AttackTarget( &mChar, tempChar );
+								regChars->Pop(); // restore before returning
+								return;
+							}
+						}
+					}
+					if( invalidTarget )
+						continue;
+					if( tempChar->GetNPCAiType() == AI_HEALER_G )
 						continue;
 					if( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() )
 					{
@@ -264,12 +327,14 @@ void HandleEvilAI( CChar& mChar )
 						else if( cwmWorldState->ServerData()->CombatAnimalsAttackChance() < RandomNum( 1, 1000 ) )
 							continue;
 					}
-					if( mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 0, 100 ) >= 10 )	// 10% chance of turning on own race
+					if( mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 1, 100 ) > 1 )	// 1% chance of turning on own race
 						continue;
 					RaceRelate raceComp = Races->Compare( tempChar, &mChar );
 					if( raceComp >= RACE_ALLY )	// Allies
 						continue;
-					if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+					if( tempChar->GetNPCAiType() == AI_EVIL && raceComp > RACE_ENEMY )
+						continue;
+					if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
 						continue;
 					Combat->AttackTarget( &mChar, tempChar );
 					regChars->Pop();	// restore before returning
@@ -291,6 +356,9 @@ void HandleChaoticAI( CChar& mChar )
 {
 	if( !mChar.IsAtWar() )
 	{
+		// Fetch scriptTriggers attached to mChar
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
@@ -303,7 +371,35 @@ void HandleChaoticAI( CChar& mChar )
 			{
 				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 				{
-					if( RandomNum( 0, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+					// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+					// This event will override target selection entirely
+					bool invalidTarget = false;
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+							if( retVal == -1 ) // No such event found, or returned -1
+								continue;
+							else if( retVal == 0 )
+							{
+								// Invalid target! But look through other scripts with event first
+								invalidTarget = true;
+								continue;
+							}
+							else if( retVal == 1 )
+							{
+								// Valid target!
+								Combat->AttackTarget( &mChar, tempChar );
+								regChars->Pop(); // restore before returning
+								return;
+							}
+						}
+					}
+					if( invalidTarget )
+						continue;
+					if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
 						continue;
 					Combat->AttackTarget( &mChar, tempChar );
 					regChars->Pop();
@@ -325,6 +421,9 @@ void HandleAnimalAI( CChar& mChar )
 {
 	if( !mChar.IsAtWar() )
 	{
+		// Fetch scriptTriggers attached to mChar
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
 		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
 		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
@@ -340,10 +439,39 @@ void HandleAnimalAI( CChar& mChar )
 				{
 					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						if(( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE ) 
+						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+						// This event will override target selection entirely
+						bool invalidTarget = false;
+						for( auto scriptTrig : scriptTriggers )
+						{
+							cScript *toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute != nullptr )
+							{
+								SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+								if( retVal == -1 ) // No such event found, or returned -1
+									continue;
+								else if( retVal == 0 )
+								{
+									// Invalid target! But look through other scripts with event first
+									invalidTarget = true;
+									continue;
+								}
+								else if( retVal == 1 )
+								{
+									// Valid target!
+									Combat->AttackTarget( &mChar, tempChar );
+									regChars->Pop(); // restore before returning
+									return;
+								}
+							}
+						}
+						if( invalidTarget )
+							continue;
+						RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+						if( raceComp <= RACE_ENEMY || ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE ) 
 							|| ( hunger <= 1 && ( tempChar->GetNPCAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetID()].IsHuman() )))
 						{
-							if( RandomNum( 0, 100 ) >= 5 ) // 5% chance (per AI cycle to attack tempChar)
+							if( RandomNum( 1, 100 ) <= 95 ) // 5% chance (per AI cycle to attack tempChar)
 								continue;
 							Combat->AttackTarget( &mChar, tempChar );
 							regChars->Pop();
