@@ -1,0 +1,783 @@
+// Britain Sewers
+[NPCLIST BritainSewers]
+{
+alligator
+bullfrog
+giantrat
+rat
+sewerrat
+}
+
+//Covetous
+[NPCLIST CovOutside]
+{
+ghoul
+shade
+skeleton
+boneaxeman
+spectre
+wraith
+}
+
+[NPCLIST CovLvlOne]
+{
+corpser
+corpser
+headless
+headless
+gazer
+headless
+corpser
+headless
+corpser
+headless
+headless
+corpser
+gazer
+}
+
+[NPCLIST CovLvlOneHarpyNests]
+{
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+stoneharpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+harpy
+}
+
+[NPCLIST CovLvlTwo]
+{
+corpser
+dreadspider
+eldergazer
+gazer
+harpy
+headless
+waterele
+}
+
+[NPCLIST CovLvlTwoLight]
+{
+corpser
+headless
+headless
+headless
+eldergazer
+headless
+corpser
+gazer
+headless
+headless
+headless
+corpser
+}
+
+[NPCLIST CovLvlThree]
+{
+boneknight
+lich
+mummy
+shade
+skeletalknight
+skeleton
+boneaxeman
+spectre
+wraith
+zombie
+}
+
+[NPCLIST CovLvlThreeLight]
+{
+shade
+skeleton
+boneaxeman
+spectre
+wraith
+zombie
+}
+
+[NPCLIST CovLvlThreeMedium]
+{
+skeletalknight
+skeleton
+boneaxeman
+zombie
+}
+
+[NPCLIST CovLvlThreeHeavy]
+{
+boneknight
+wraith
+skeletalknight
+skeleton
+boneaxeman
+zombie
+}
+
+[NPCLIST CovLvlFour]
+{
+mummy
+rottingcorpse
+shade
+spectre
+wraith
+zombie
+}
+
+[NPCLIST CovLvlFive]
+{
+graydragon
+reddragon
+graydrake
+reddrake
+}
+
+//Deceit
+[NPCLIST DeceitLvlOne]
+{
+mummy
+shade
+skeleton
+boneaxeman
+spectre
+wraith
+zombie
+}
+
+[NPCLIST DeceitLvlOneLight]
+{
+skeleton
+boneaxeman
+skeleton
+boneaxeman
+wraith
+zombie
+zombie
+zombie
+}
+
+[NPCLIST DeceitLvlOneMedium]
+{
+spectre
+spectre
+skeleton
+boneaxeman
+skeleton
+boneaxeman
+wraith
+zombie
+zombie
+zombie
+shade
+}
+
+[NPCLIST DeceitLvlTwo]
+{
+boneknight
+bonemagi
+mummy
+shade
+skeletalknight
+skeletalmage
+skeleton
+boneaxeman
+spectre
+wraith
+zombie
+}
+
+[NPCLIST DeceitLvlThree]
+{
+lich
+poisonele
+shade
+silverserpent
+spectre
+wraith
+}
+
+[NPCLIST DeceitLvlThreePoison]
+{
+poisonele
+shade
+silverserpent
+spectre
+wraith
+}
+
+[NPCLIST DeceitLvlThreeLight]
+{
+shade
+spectre
+wraith
+}
+
+[NPCLIST DeceitLvlFour]
+{
+fireelemental
+lich
+lichlord
+shade
+silverserpent
+spectre
+wraith
+}
+
+[NPCLIST DeceitLvlFourLight]
+{
+shade
+spectre
+silverserpent
+wraith
+spectre
+spectre
+}
+
+[NPCLIST DeceitLvlFourlichroom]
+{
+lich
+lichlord
+}
+
+//Despise
+[NPCLIST DespiseLvllOne]
+{
+lizardmen
+spearlizardman
+macelizardman
+}
+
+[NPCLIST DespiseLvlTwoEntrance]
+{
+}
+
+[NPCLIST DespiseLvlThree]
+{
+earthele
+ettin
+hammerettin
+}
+
+[NPCLIST DespiseLvlFour]
+{
+acidele
+cyclops
+ettin
+hammerettin
+ogre
+ogrelord
+titan
+troll
+axetroll
+}
+
+[NPCLIST DespiseLvlFourLight]
+{
+ettin
+hammerettin
+troll
+axetroll
+}
+
+[NPCLIST DespiseLvlFourHeavy]
+{
+cyclops
+ettin
+hammerettin
+ogre
+ogrelord
+titan
+troll
+axetroll
+}
+
+//Destard
+[NPCLIST DestardLvlOne]
+{
+graydragon
+reddragon
+graydrake
+reddrake
+giantserpent
+waterele
+wyvern
+}
+
+[NPCLIST DestardLvlOneLight]
+{
+graydragon
+reddragon
+graydrake
+reddrake
+giantserpent
+}
+
+[NPCLIST DestardLvlTwo]
+{
+graydrake
+reddrake
+daemon
+armeddaemon
+evilmage
+shadowwyrm
+wyvern
+}
+
+[NPCLIST DestardLvlThree]
+{
+ancientwyrm
+fireele
+giantserpent
+wyvern
+}
+
+//Hythloth
+[NPCLIST HythlothLvlOne]
+{
+firegargoyle
+gargoyle
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlOneHallWay]
+{
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlOneGargoyle]
+{
+firegargoyle
+gargoyle
+}
+
+[NPCLIST HythlothLvlTwo]
+{
+daemon
+armeddaemon
+gargoyle
+gazer
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlTwoLight]
+{
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlTwoMedium]
+{
+gargoyle
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlTwoHeavy]
+{
+gazer
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlTwoDeamonRoom]
+{
+daemon
+armeddaemon
+}
+
+[NPCLIST HythlothLvlTwoDeamonGarg]
+{
+daemon
+armeddaemon
+gargoyle
+}
+
+[NPCLIST HythlothLvlThree]
+{
+balron
+daemon
+armeddaemon
+gargoyle
+gazer
+hellhound
+imp
+stonegargoyle
+}
+
+[NPCLIST HythlothLvlThreeAreaOne]
+{
+gargoyle
+gazer
+}
+
+[NPCLIST HythlothLvlThreeAreaTwo]
+{
+daemon
+armeddaemon
+eldergazer
+gazer
+}
+
+[NPCLIST HythlothLvlThreeAreaThree]
+{
+eldergazer
+gazer
+}
+
+[NPCLIST HythlothLvlThreeAreaFour]
+{
+daemon
+armeddaemon
+gargoyle
+eldergazer
+gazer
+}
+
+[NPCLIST HythlothLvlThreeAreaFive]
+{
+stonegargoyle
+daemon
+armeddaemon
+gargoyle
+eldergazer
+gazer
+}
+
+
+[NPCLIST HythlothLvlThreeAreaSix]
+{
+daemon
+armeddaemon
+gargoyle
+hellhound
+imp
+}
+
+[NPCLIST HythlothLvlFour]
+{
+balron
+daemon
+armeddaemon
+firegargoyle
+gargoyle
+gazer
+hellhound
+imp
+stonegargoyle
+}
+
+[NPCLIST HythlothLvlFourHallway]
+{
+gargoyle
+stonegargoyle
+}
+
+[NPCLIST HythlothLvlFourAreaOne]
+{
+daemon
+armeddaemon
+firegargoyle
+gargoyle
+hellhound
+imp
+}
+
+//Shame
+[NPCLIST ShameLvlOne]
+{
+earthele
+scorpion
+}
+
+[NPCLIST ShameLvlTwo]
+{
+airele
+dullcopperele
+kraken
+seaserpent
+waterele
+}
+
+[NPCLIST ShameLvlThree]
+{
+airele
+dullcopperele
+evilmage
+fireele
+kraken
+poisonele
+scorpion
+seaserpent
+waterele
+}
+
+[NPCLIST ShameLvlThreeArea]
+{
+airele
+dullcopperele
+fireele
+poisonele
+scorpion
+waterele
+}
+
+[NPCLIST ShameLvlFour]
+{
+eldergazer
+}
+
+[NPCLIST ShameLvlFive]
+{
+acidele
+airele
+bloodele
+dullcopperele
+earthele
+eldergazer
+evilmage
+fireele
+kraken
+poisonele
+scorpion
+seaserpent
+waterele
+}
+
+[NPCLIST ShameLvlFiveLand]
+{
+airele
+dullcopperele
+earthele
+poisonele
+}
+
+[NPCLIST ShameLvlFiveLandtwo]
+{
+fireele
+acidele
+airele
+dullcopperele
+earthele
+poisonele
+}
+
+[NPCLIST ShameLvlFiveLandBlood]
+{
+bloodele
+airele
+dullcopperele
+earthele
+poisonele
+}
+
+[NPCLIST ShameLvlFiveWater]
+{
+kraken
+scorpion
+seaserpent
+waterele
+}
+
+//Wrong
+[NPCLIST WrongLvlOne]
+{
+m_brigand
+f_brigand
+lizardmen
+spearlizardman
+macelizardman
+}
+
+[NPCLIST WrongLvlTwo]
+{
+m_brigand
+f_brigand
+evilmage
+executioner
+}
+
+[NPCLIST WrongLvlThree]
+{
+}
+
+//Wrong LBR 2002
+[NPCLIST LBRWrongLvlOne]
+{
+f_golemcontroller
+m_golemcontroller
+//golem
+jukalord
+jukamage
+jukawarrior
+}
+
+[NPCLIST LBRWrongLvlTwo]
+{
+f_golemcontroller
+m_golemcontroller
+//golem
+jukalord
+jukamage
+jukawarrior
+}
+
+[NPCLIST LBRWrongLvlThree]
+{
+}
+
+[NPCLIST fireLevelOne]
+{
+bonemagi
+efreet
+evilmage
+evilmagelord
+fireelemental
+gianttats
+giantserpent
+hellhound
+//Large Hellcats
+lavalizard
+lavaserpent
+lavasnake
+lich
+lichlord
+skeletalmage
+slime
+hellcat
+}
+
+
+[NPCLIST fireLevelTwo]
+{
+bonemagi
+daemon
+efreet
+evilmage
+evilmagelord
+fireelemental
+hellhound
+//largehellcat
+lavalizards
+lavaserpent
+lavasnake
+lich
+lichlord
+skeletalmage
+helcat
+}
+
+[NPCLIST icelevelone]
+{
+arcticogrelord
+frostooze
+frostspider
+frosttroll
+iceele
+icesnake
+iceserpent
+snowele
+whitewyrm
+}
+
+[NPCLIST iceleveltwo]
+{
+npclist=allratmen
+}
+
+[NPCLIST icelevelthree]
+{
+icefiend
+}
+
+[NPCLIST deluciapassagelvlone]
+{
+blackwidow
+dreadspider
+fireele
+hellcat
+lavalizard
+lavasnake
+phoenixe
+}
+
+[NPCLIST terathankeeplvl1]
+{
+NPCLIST=allophidians
+NPCLIST=allterathans
+balron
+NPCLIST=allophidians
+NPCLIST=allterathans
+graydragon
+NPCLIST=allophidians
+NPCLIST=allterathans
+graydrake
+NPCLIST=allophidians
+NPCLIST=allterathans
+reddragon
+NPCLIST=allophidians
+NPCLIST=allterathans
+reddrake
+NPCLIST=allophidians
+NPCLIST=allterathans
+nightmare
+NPCLIST=allophidians
+NPCLIST=allterathans
+}
+
+[NPCLIST orcdungeonlvl1]
+{
+direwolf
+orc
+cluborc
+orcmage
+orcbomber
+orclord
+orcscout
+}
+
+[NPCLIST orcdungeonlvl2]
+{
+corpser
+direwolf
+giantrat
+giantspider
+orc
+cluborc
+orcbomber
+orccaptain
+orcchopper
+orclord
+orcmage
+orcscout
+}
+
+[NPCLIST orcdungeonlvl3]
+{
+earthele
+orc
+cluborc
+orcbomber
+orcbrute
+orclord
+}
+
+EOF

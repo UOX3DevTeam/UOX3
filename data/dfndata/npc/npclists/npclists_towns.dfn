@@ -1,0 +1,472 @@
+[NPCLIST escorts]
+{
+m_seeker
+f_seeker
+m_gypsy
+f_gypsy
+m_peasant
+f_peasant
+m_noble
+f_noble
+m_sailor
+f_sailor
+m_fighter
+f_fighter
+m_pirate
+f_pirate
+}
+
+[NPCLIST poorfolk]
+{
+m_sailor
+f_sailor
+m_beggar
+f_beggar
+m_peasant
+f_peasant
+m_gypsy
+f_gypsy
+m_seeker
+f_seeker
+}
+
+[NPCLIST richfolk]
+{
+m_fighter
+f_fighter
+m_noble
+f_noble
+m_townthief
+f_townthief
+m_peasant
+f_peasant
+}
+
+[NPCLIST alltownfolk]
+{
+npclist=poorfolk
+npclist=richfolk
+}
+
+[NPCLIST randomwhealer]
+{
+m_whealer
+f_whealer
+}
+
+[NPCLIST townlist]
+{
+bird
+bird
+crow
+canary
+cat
+dog
+dog
+dog
+rat
+raven
+}
+
+[NPCLIST randompeople]
+{
+f_guard
+m_guard
+f_pirate
+m_pirate
+f_brigand
+m_brigand
+f_fighter
+m_fighter
+f_sailor
+m_sailor
+f_beggar
+m_beggar
+f_noble
+m_noble
+f_thief
+m_thief
+f_peasant
+m_peasant
+f_gypsy
+m_gypsy
+f_seeker
+m_seeker
+f_jailer
+m_jailer
+f_artist
+m_artist
+}
+
+
+//NPCLists for Uni-sex vendor-spawners =)
+[NPCLIST banker]
+{
+m_banker
+f_banker
+}
+
+[NPCLIST bard]
+{
+m_bard
+f_bard
+}
+
+[NPCLIST miner]
+{
+m_miner
+f_miner
+}
+
+[NPCLIST weaponsmith]
+{
+m_weaponsmith
+f_weaponsmith
+}
+
+[NPCLIST baker]
+{
+m_baker
+f_baker
+}
+
+[NPCLIST provisioner]
+{
+m_provisioner
+f_provisioner
+}
+
+[NPCLIST cobbler]
+{
+m_cobbler
+f_cobbler
+}
+
+[NPCLIST innkeeper]
+{
+m_innkeeper
+f_innkeeper
+}
+
+[NPCLIST tavernkeeper]
+{
+m_tavernkeeper
+f_tavernkeeper
+}
+
+[NPCLIST waiter]
+{
+m_waiter
+f_waitress
+}
+
+[NPCLIST herbalist]
+{
+m_herbalist
+f_herbalist
+}
+
+[NPCLIST butcher]
+{
+m_butcher
+f_butcher
+}
+
+[NPCLIST tailor]
+{
+m_tailor
+f_tailor
+}
+
+[NPCLIST weaver]
+{
+m_weaver
+f_weaver
+}
+
+[NPCLIST bowyer]
+{
+m_bowyer
+f_bowyer
+}
+
+[NPCLIST jeweler]
+{
+m_jeweler
+f_jeweler
+}
+
+[NPCLIST leatherworker]
+{
+m_leatherworker
+f_leatherworker
+}
+
+[NPCLIST furtrader]
+{
+m_furtrader
+f_furtrader
+}
+
+[NPCLIST tanner]
+{
+m_tanner
+f_tanner
+}
+
+
+[NPCLIST mage]
+{
+m_mage
+f_mage
+}
+
+[NPCLIST scribe]
+{
+m_scribe
+f_scribe
+}
+
+[NPCLIST shipwright]
+{
+m_shipwright
+f_shipwright
+}
+
+[NPCLIST mapmaker]
+{
+m_mapmaker
+f_mapmaker
+}
+
+[NPCLIST spinner]
+{
+m_spinner
+f_spinner
+}
+
+[NPCLIST armourer]
+{
+m_armourer
+f_armourer
+}
+
+[NPCLIST blacksmith]
+{
+m_blacksmith
+f_blacksmith
+}
+
+[NPCLIST architect]
+{
+m_architect
+f_architect
+}
+
+[NPCLIST carpenter]
+{
+m_carpenter
+f_carpenter
+}
+
+[NPCLIST farmer]
+{
+m_farmer
+f_farmer
+}
+
+[NPCLIST cook]
+{
+m_cook
+f_cook
+}
+
+[NPCLIST animaltrainer]
+{
+m_animaltrainer
+f_animaltrainer
+}
+
+[NPCLIST fisher]
+{
+m_fisher
+f_fisher
+}
+
+[NPCLIST alchemist]
+{
+m_alchemist
+f_alchemist
+}
+
+[NPCLIST tinker]
+{
+m_tinker
+f_tinker
+}
+
+[NPCLIST beekeeper]
+{
+m_beekeeper
+f_beekeeper
+}
+
+[NPCLIST healer]
+{
+m_healer
+f_healer
+}
+
+//Non-vendor Human Spawns
+
+[NPCLIST basichuman]
+{
+male
+female
+}
+
+[NPCLIST guard]
+{
+m_guard
+f_guard
+}
+
+[NPCLIST murderer-archmage]
+{
+m_murderer-archmage
+f_murderer-archmage
+}
+
+[NPCLIST whealer]
+{
+m_whealer
+f_whealer
+}
+
+[NPCLIST pirate]
+{
+m_pirate
+f_pirate
+}
+
+[NPCLIST fighter]
+{
+m_fighter
+f_fighter
+}
+
+[NPCLIST ranger]
+{
+m_ranger
+f_ranger
+}
+
+[NPCLIST sailor]
+{
+m_sailor
+f_sailor
+}
+
+[NPCLIST gambler]
+{
+m_gambler
+f_gambler
+}
+
+[NPCLIST judge]
+{
+m_judge
+f_judge
+}
+
+[NPCLIST miller]
+{
+m_miller
+f_miller
+}
+
+[NPCLIST monk]
+{
+m_monk
+f_monk
+}
+
+[NPCLIST rancher]
+{
+m_rancher
+f_rancher
+}
+
+[NPCLIST prisoner]
+{
+m_prisoner
+f_prisoner
+}
+
+[NPCLIST sculptor]
+{
+m_sculptor
+f_sculptor
+}
+
+[NPCLIST brigand]
+{
+m_brigand
+f_brigand
+}
+
+[NPCLIST beggar]
+{
+m_beggar
+f_beggar
+}
+
+[NPCLIST noble]
+{
+m_noble
+f_noble
+}
+
+[NPCLIST thief]
+{
+m_thief
+f_thief
+}
+
+[NPCLIST peasant]
+{
+m_peasant
+f_peasant
+}
+
+[NPCLIST gypsy]
+{
+m_gypsy
+f_gypsy
+}
+
+[NPCLIST seeker]
+{
+m_seeker
+f_seeker
+}
+
+[NPCLIST jailer]
+{
+m_jailer
+f_jailer
+}
+
+[NPCLIST towncrier]
+{
+m_towncrier
+f_towncrier
+}
+
+[NPCLIST artist]
+{
+m_artist
+f_artist
+}
+
+EOF

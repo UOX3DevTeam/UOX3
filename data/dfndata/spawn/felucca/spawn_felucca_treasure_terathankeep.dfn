@@ -1,0 +1,36 @@
+// spawn_felucca_treasure_terathankeep.dfn
+// [2900-2999]
+
+[REGIONSPAWN 2900]
+{
+NAME=Terathan Keep 1-1
+ITEMLIST=dungeon_treasure_3-4
+ISSPAWNER=1
+MAXITEMS=3
+X1=5337
+Y1=1538
+X2=5351
+Y2=1555
+WORLD=0
+MINTIME=20
+MAXTIME=25
+CALL=1
+}
+
+[REGIONSPAWN 2901]
+{
+NAME=Terathan Keep 1-2
+ITEMLIST=dungeon_treasure_3-4
+ISSPAWNER=1
+MAXITEMS=3
+X1=5355
+Y1=1703
+X2=5361
+Y2=1715
+WORLD=0
+MINTIME=15
+MAXTIME=25
+CALL=1
+}
+
+EOF
