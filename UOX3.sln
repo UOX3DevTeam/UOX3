@@ -13,6 +13,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib.vcxproj", "{5A
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "jsengine", "jsengine.vcxproj", "{19C56495-39F2-4A28-82D4-FB48B418FEC5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F1DDBE7-DDB3-4E5B-B266-CDFEAB17CC40}"
+	ProjectSection(SolutionItems) = preProject
+		source\Changelog.txt = source\Changelog.txt
+		source\CMakeLists.txt = source\CMakeLists.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
