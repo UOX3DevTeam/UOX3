@@ -1,0 +1,243 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="spidermonkey\jsapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsarena.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsarray.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsatom.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsbool.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jscntxt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsdate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsdbgapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsdhash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsdtoa.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsemit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsexn.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsfun.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsgc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jshash.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsinterp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsiter.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jslock.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jslog2.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jslong.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsmath.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsnum.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsobj.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsopcode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsparse.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsprf.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsregexp.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsscan.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsscope.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsscript.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsstr.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsutil.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsxdrapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\jsxml.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spidermonkey\prmjtime.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="spidermonkey\jsapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsarena.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsarray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsatom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsbool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jscntxt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsdate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsdbgapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsdhash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsdtoa.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsemit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsexn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsfun.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsgc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jshash.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsinterp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsiter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jslock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jslong.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsobj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsopcode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsparse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsprf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsprvtd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jspubtd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsregexp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsscan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsscope.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsscript.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsstddef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsstr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jstypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsutil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsxdrapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\jsxml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spidermonkey\prmjtime.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="spidermonkey\jsopcode.tbl" />
+  </ItemGroup>
+</Project>
