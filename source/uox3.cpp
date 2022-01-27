@@ -3171,7 +3171,6 @@ int main( SI32 argc, char *argv[] )
 	// Protection from server-shutdown during mid-worldsave
 	signal(SIGINT, app_stopped);
 #endif
-
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
 
