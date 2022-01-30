@@ -564,6 +564,7 @@ TOPROV=820
 TOPEACE=820 5
 RACE=19
 FLAG=NEUTRAL
+SCRIPT=3001//monster speech
 }
 
 [shadowwisp]
@@ -593,6 +594,7 @@ TOPROV=464
 TOPEACE=464 5
 RACE=19
 FLAG=NEUTRAL
+SCRIPT=3001//monster speech
 }
 
 [evilmage]
