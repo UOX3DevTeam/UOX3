@@ -4,7 +4,7 @@
 [REGIONSPAWN 0]
 {
 NAME=The Hammer And Anvil
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=1422
 Y1=1547
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 1]
 {
 NAME=The Hammer And Anvil
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=1417
 Y1=1544
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 2]
 {
 NAME=Lord British's Conservatory Of Music
-NPCLIST=bard
+NPC=bard
 MAXNPCS=1
 X1=1436
 Y1=1550
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 3]
 {
 NAME=The Sorceror's Delight
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=1486
 Y1=1547
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 4]
 {
 NAME=The Sorceror's Delight
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=1491
 Y1=1548
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 5]
 {
 NAME=Britannia Animal Care
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=1508
 Y1=1565
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 6]
 {
 NAME=The Bucking Horse Stables
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=1520
 Y1=1546
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 7]
 {
 NAME=The North Side Inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1458
 Y1=1513
@@ -124,7 +124,7 @@ CALL=1
 [REGIONSPAWN 8]
 {
 NAME=Guard Post North
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1510
 Y1=1611
@@ -139,7 +139,7 @@ CALL=1
 [REGIONSPAWN 9]
 {
 NAME=Sweet Dreams Inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1493
 Y1=1610
@@ -154,7 +154,7 @@ CALL=1
 [REGIONSPAWN 10]
 {
 NAME=Healer Of Britain
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=1470
 Y1=1608
@@ -169,7 +169,7 @@ CALL=1
 [REGIONSPAWN 11]
 {
 NAME=Strength And Steal
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1480
 Y1=1583
@@ -184,7 +184,7 @@ CALL=1
 [REGIONSPAWN 12]
 {
 NAME=Quality Fletching
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=1469
 Y1=1576
@@ -199,7 +199,7 @@ CALL=1
 [REGIONSPAWN 13]
 {
 NAME=Good Eats
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=1449
 Y1=1609
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 14]
 {
 NAME=The Best Hides Of Britain
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=1429
 Y1=1609
@@ -229,7 +229,7 @@ CALL=1
 [REGIONSPAWN 15]
 {
 NAME=The Saw Horse
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=1429
 Y1=1593
@@ -244,7 +244,7 @@ CALL=1
 [REGIONSPAWN 16]
 {
 NAME=The Saw Horse
-NPCLIST=architect
+NPC=architect
 MAXNPCS=1
 X1=1434
 Y1=1593
@@ -259,7 +259,7 @@ CALL=1
 [REGIONSPAWN 17]
 {
 NAME=Miners Guild
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=1416
 Y1=1576
@@ -274,7 +274,7 @@ CALL=1
 [REGIONSPAWN 18]
 {
 NAME=The Tinkers Guild
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=1422
 Y1=1648
@@ -289,7 +289,7 @@ CALL=1
 [REGIONSPAWN 19]
 {
 NAME=Heavy Metal Armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1445
 Y1=1646
@@ -304,7 +304,7 @@ CALL=1
 [REGIONSPAWN 20]
 {
 NAME=Artist Guild
-NPCLIST=artist
+NPC=artist
 MAXNPCS=1
 X1=1443
 Y1=1660
@@ -320,7 +320,7 @@ CALL=1
 [REGIONSPAWN 21]
 {
 NAME=Premier Gems
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=1451
 Y1=1684
@@ -335,7 +335,7 @@ CALL=1
 [REGIONSPAWN 22]
 {
 NAME=Britains Premier Provisioner
-NPCLIST=cobbler
+NPC=cobbler
 MAXNPCS=1
 X1=1465
 Y1=1665
@@ -350,7 +350,7 @@ CALL=1
 [REGIONSPAWN 23]
 {
 NAME=Britains Premier Provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=1465
 Y1=1672
@@ -365,7 +365,7 @@ CALL=1
 [REGIONSPAWN 24]
 {
 NAME=Britains Premier Provisioner
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=1
 X1=1481
 Y1=1669
@@ -380,7 +380,7 @@ CALL=1
 [REGIONSPAWN 25]
 {
 NAME=Etheral Goods
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=1
 X1=1497
 Y1=1657
@@ -395,7 +395,7 @@ CALL=1
 [REGIONSPAWN 26]
 {
 NAME=The Blue Boar
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=1487
 Y1=1687
@@ -410,7 +410,7 @@ CALL=1
 [REGIONSPAWN 27]
 {
 NAME=The Lords Clothiers
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=1467
 Y1=1684
@@ -425,7 +425,7 @@ CALL=1
 [REGIONSPAWN 28]
 {
 NAME=The Lords Clothiers
-NPCLIST=spinner
+NPC=spinner
 MAXNPCS=1
 X1=1471
 Y1=1686
@@ -440,7 +440,7 @@ CALL=1
 [REGIONSPAWN 29]
 {
 NAME=The First Bank Of Britain
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1425
 Y1=1687
@@ -455,7 +455,7 @@ CALL=1
 [REGIONSPAWN 30]
 {
 NAME=The First Bank Of Britain
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1425
 Y1=1676
@@ -470,7 +470,7 @@ CALL=1
 [REGIONSPAWN 31]
 {
 NAME=The First Bank Of Britain
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1434
 Y1=1684
@@ -485,7 +485,7 @@ CALL=1
 [REGIONSPAWN 32]
 {
 NAME=Guard Post South
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1409
 Y1=1714
@@ -500,7 +500,7 @@ CALL=1
 [REGIONSPAWN 33]
 {
 NAME=The Cats Lair
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=1425
 Y1=1712
@@ -515,7 +515,7 @@ CALL=1
 [REGIONSPAWN 34]
 {
 NAME=The Oaken Oar
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=1413
 Y1=1746
@@ -530,7 +530,7 @@ CALL=1
 [REGIONSPAWN 35]
 {
 NAME=The Cleaver
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=1449
 Y1=1721
@@ -545,7 +545,7 @@ CALL=1
 [REGIONSPAWN 36]
 {
 NAME=The Oaken Oar
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=1472
 Y1=1737
@@ -560,7 +560,7 @@ CALL=1
 [REGIONSPAWN 37]
 {
 NAME=An Warriors Guild
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1340
 Y1=1731
@@ -575,7 +575,7 @@ CALL=1
 [REGIONSPAWN 38]
 {
 NAME=Sosorian Steeds
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=1289
 Y1=1757
@@ -590,7 +590,7 @@ CALL=1
 [REGIONSPAWN 39]
 {
 NAME=The Unicorn's Horn
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=1545
 Y1=1761
@@ -605,7 +605,7 @@ CALL=1
 [REGIONSPAWN 40]
 {
 NAME=The Watch Tower
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1616
 Y1=1762
@@ -620,7 +620,7 @@ CALL=1
 [REGIONSPAWN 41]
 {
 NAME=Profuse Provisions
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=1604
 Y1=1712
@@ -635,7 +635,7 @@ CALL=1
 [REGIONSPAWN 42]
 {
 NAME=Sage Advice
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=1569
 Y1=1703
@@ -650,7 +650,7 @@ CALL=1
 [REGIONSPAWN 43]
 {
 NAME=The Right Fit
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=1547
 Y1=1657
@@ -665,7 +665,7 @@ CALL=1
 [REGIONSPAWN 44]
 {
 NAME=A Mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=1594
 Y1=1648
@@ -680,7 +680,7 @@ CALL=1
 [REGIONSPAWN 45]
 {
 NAME=An Amourer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1632
 Y1=1689
@@ -695,7 +695,7 @@ CALL=1
 [REGIONSPAWN 46]
 {
 NAME=A Girl's Best Friend
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=1648
 Y1=1641
@@ -710,7 +710,7 @@ CALL=1
 [REGIONSPAWN 47]
 {
 NAME=The Salty Dog
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=1610
 Y1=1584
@@ -726,7 +726,7 @@ CALL=1
 [REGIONSPAWN 48]
 {
 NAME=The Salty Dog
-NPCLIST=waiter
+NPC=waiter
 MAXNPCS=1
 X1=1610
 Y1=1584
@@ -741,7 +741,7 @@ CALL=1
 [REGIONSPAWN 49]
 {
 NAME=The WayFarer's Inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1593
 Y1=1585
@@ -756,7 +756,7 @@ CALL=1
 [REGIONSPAWN 50]
 {
 NAME=The Blue Boar
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=1487
 Y1=1687
@@ -771,7 +771,7 @@ CALL=1
 [REGIONSPAWN 51]
 {
 NAME=The Blue Boar
-NPCLIST=waiter
+NPC=waiter
 MAXNPCS=1
 X1=1494
 Y1=1676

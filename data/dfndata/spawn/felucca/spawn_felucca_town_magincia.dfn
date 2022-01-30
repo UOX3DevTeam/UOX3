@@ -4,7 +4,7 @@
 [REGIONSPAWN 400]
 {
 NAME=Magincia shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=3666
 Y1=2256
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 401]
 {
 NAME=Magincia tavernkeeper
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=3690
 Y1=2246
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 402]
 {
 NAME=Magincia waiter
-NPCLIST=waiter
+NPC=waiter
 MAXNPCS=1
 X1=3690
 Y1=2249
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 403]
 {
 NAME=Magincia fisherman
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=4
 X1=3666
 Y1=2265

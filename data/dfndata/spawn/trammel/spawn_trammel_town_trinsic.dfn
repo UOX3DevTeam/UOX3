@@ -4,7 +4,7 @@
 [REGIONSPAWN 8101]
 {
 NAME=Trinsic provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=1846
 Y1=2795
@@ -18,7 +18,7 @@ CALL=1
 [REGIONSPAWN 8102]
 {
 NAME=Trinsic architect
-NPCLIST=architect
+NPC=architect
 MAXNPCS=1
 X1=1854
 Y1=2789
@@ -32,7 +32,7 @@ CALL=1
 [REGIONSPAWN 8103]
 {
 NAME=Trinsic banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=2
 X1=1811
 Y1=2820
@@ -46,7 +46,7 @@ CALL=1
 [REGIONSPAWN 8104]
 {
 NAME=Trinsic banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1813
 Y1=2825
@@ -60,7 +60,7 @@ CALL=1
 [REGIONSPAWN 8105]
 {
 NAME=Trinsic guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1823
 Y1=2825
@@ -74,7 +74,7 @@ CALL=1
 [REGIONSPAWN 8106]
 {
 NAME=Trinsic healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=1919
 Y1=2807
@@ -88,7 +88,7 @@ CALL=1
 [REGIONSPAWN 8107]
 {
 NAME=Trinsic jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=1897
 Y1=2804
@@ -102,7 +102,7 @@ CALL=1
 [REGIONSPAWN 8108]
 {
 NAME=Trinsic baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=1879
 Y1=2807
@@ -116,7 +116,7 @@ CALL=1
 [REGIONSPAWN 8109]
 {
 NAME=Trinsic tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=1980
 Y1=2840
@@ -130,7 +130,7 @@ CALL=1
 [REGIONSPAWN 8110]
 {
 NAME=Trinsic leatherworker
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=1986
 Y1=2866
@@ -144,7 +144,7 @@ CALL=1
 [REGIONSPAWN 8111]
 {
 NAME=Trinsic butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=1991
 Y1=2888
@@ -158,7 +158,7 @@ CALL=1
 [REGIONSPAWN 8112]
 {
 NAME=Trinsic guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1989
 Y1=2909
@@ -172,7 +172,7 @@ CALL=1
 [REGIONSPAWN 8113]
 {
 NAME=Trinsic fisherman
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=1
 X1=2024
 Y1=2845
@@ -186,7 +186,7 @@ CALL=1
 [REGIONSPAWN 8114]
 {
 NAME=Trinsic guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2045
 Y1=2777
@@ -200,7 +200,7 @@ CALL=1
 [REGIONSPAWN 8115]
 {
 NAME=Trinsic innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2019
 Y1=2803
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 8116]
 {
 NAME=Trinsic animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=2012
 Y1=2803
@@ -228,7 +228,7 @@ CALL=1
 [REGIONSPAWN 8117]
 {
 NAME=Trinsic cook
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=1926
 Y1=2794
@@ -242,7 +242,7 @@ CALL=1
 [REGIONSPAWN 8118]
 {
 NAME=Trinsic weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=1935
 Y1=2765
@@ -256,7 +256,7 @@ CALL=1
 [REGIONSPAWN 8119]
 {
 NAME=Trinsic innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1842
 Y1=2734
@@ -270,7 +270,7 @@ CALL=1
 [REGIONSPAWN 8120]
 {
 NAME=Trinsic animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=1821
 Y1=2732
@@ -284,7 +284,7 @@ CALL=1
 [REGIONSPAWN 8121]
 {
 NAME=Trinsic guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1823
 Y1=2674
@@ -298,7 +298,7 @@ CALL=1
 [REGIONSPAWN 8122]
 {
 NAME=Trinsic tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=1842
 Y1=2674
@@ -312,7 +312,7 @@ CALL=1
 [REGIONSPAWN 8123]
 {
 NAME=Trinsic mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=1846
 Y1=2715
@@ -326,7 +326,7 @@ CALL=1
 [REGIONSPAWN 8124]
 {
 NAME=Trinsic guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1865
 Y1=2643
@@ -340,7 +340,7 @@ CALL=1
 [REGIONSPAWN 8125]
 {
 NAME=Trinsic blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=1885
 Y1=2652
@@ -354,7 +354,7 @@ CALL=1
 [REGIONSPAWN 8126]
 {
 NAME=Trinsic banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1884
 Y1=2689
@@ -368,7 +368,7 @@ CALL=1
 [REGIONSPAWN 8127]
 {
 NAME=Trinsic banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=1893
 Y1=2689

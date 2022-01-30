@@ -1,0 +1,175 @@
+[alchemist]
+{
+GET=m_alchemist f_alchemist
+}
+
+[animaltrainer]
+{
+GET=m_animaltrainer f_animaltrainer
+}
+
+[architect]
+{
+GET=m_architect f_architect
+}
+
+[armourer]
+{
+GET=m_armourer f_armourer
+SCRIPT=3005
+}
+
+[baker]
+{
+GET=m_baker f_baker
+}
+
+[banker]
+{
+GET=m_banker f_banker
+}
+
+[bard]
+{
+GET=m_bard f_bard
+}
+
+[beekeeper]
+{
+GET=m_beekeeper f_beekeeper
+}
+
+[blacksmith]
+{
+GET=m_blacksmith f_blacksmith
+}
+
+[bowyer]
+{
+GET=m_bowyer f_bowyer
+}
+
+[butcher]
+{
+GET=m_butcher f_butcher
+}
+
+[carpenter]
+{
+GET=m_carpenter f_carpenter
+}
+
+[cobbler]
+{
+GET=m_cobbler f_cobbler
+}
+
+[cook]
+{
+GET=m_cook f_cook
+}
+
+[farmer]
+{
+GET=m_farmer f_farmer
+}
+
+[fisher]
+{
+GET=m_fisher f_fisher
+}
+
+[furtrader]
+{
+GET=m_furtrader f_furtrader
+}
+
+[healer]
+{
+GET=m_healer f_healer
+}
+
+[herbalist]
+{
+GET=m_herbalist f_herbalist
+}
+
+[innkeeper]
+{
+GET=m_innkeeper f_innkeeper
+}
+
+[jeweler]
+{
+GET=m_jeweler f_jeweler
+}
+
+[mage]
+{
+GET=m_mage f_mage
+}
+
+[miner]
+{
+GET=m_miner f_miner
+}
+
+[provisioner]
+{
+GET=m_provisioner f_provisioner
+}
+
+[scribe]
+{
+GET=m_scribe f_scribe
+}
+
+[shipwright]
+{
+GET=m_shipwright f_shipwright
+}
+
+[tailor]
+{
+GET=m_tailor f_tailor
+}
+
+[tanner]
+{
+GET=m_tanner f_tanner
+}
+
+[tavernkeeper]
+{
+GET=m_tavernkeeper f_tavernkeeper
+}
+
+[tinker]
+{
+GET=m_tinker f_tinker
+}
+
+//[vet]
+//{Note: Not implanted Yet
+//GET=m_vet f_vet
+//}
+
+[waiter]
+{
+GET=m_waiter f_waitress
+}
+
+[whealer]
+{
+GET=m_whealer f_whealer
+}
+
+[weaponsmith]
+{
+GET=m_weaponsmith f_weaponsmith
+}
+
+[weaver]
+{
+GET=m_weaver f_weaver
+}

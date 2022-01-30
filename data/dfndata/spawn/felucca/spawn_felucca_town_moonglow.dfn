@@ -4,7 +4,7 @@
 [REGIONSPAWN 600]
 {
 NAME=Moonglow baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=4385
 Y1=1058
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 601]
 {
 NAME=Moonglow healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=4385
 Y1=1081
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 602]
 {
 NAME=Moonglow provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=4409
 Y1=1057
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 603]
 {
 NAME=Moonglow carpenter
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=4409
 Y1=1090
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 604]
 {
 NAME=Moonglow mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=4409
 Y1=1108
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 605]
 {
 NAME=Moonglow weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=4385
 Y1=1104
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 606]
 {
 NAME=Moonglow butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=4385
 Y1=1131
@@ -108,7 +108,7 @@ CALL=1
 [REGIONSPAWN 607]
 {
 NAME=Moonglow innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=4400
 Y1=1160
@@ -122,7 +122,7 @@ CALL=1
 [REGIONSPAWN 608]
 {
 NAME=Moonglow herbalist
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=4409
 Y1=1137
@@ -136,7 +136,7 @@ CALL=1
 [REGIONSPAWN 609]
 {
 NAME=Moonglow armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=4437
 Y1=1153
@@ -150,7 +150,7 @@ CALL=1
 [REGIONSPAWN 610]
 {
 NAME=Moonglow alchemist
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=1
 X1=4453
 Y1=1081
@@ -164,7 +164,7 @@ CALL=1
 [REGIONSPAWN 611]
 {
 NAME=Moonglow farmer
-NPCLIST=farmer
+NPC=farmer
 MAXNPCS=1
 X1=4473
 Y1=1081
@@ -178,7 +178,7 @@ CALL=1
 [REGIONSPAWN 612]
 {
 NAME=Moonglow innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=4480
 Y1=1065
@@ -192,7 +192,7 @@ CALL=1
 [REGIONSPAWN 613]
 {
 NAME=Moonglow tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=4457
 Y1=1058
@@ -206,7 +206,7 @@ CALL=1
 [REGIONSPAWN 614]
 {
 NAME=Moonglow tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=4468
 Y1=1156
@@ -220,7 +220,7 @@ CALL=1
 [REGIONSPAWN 615]
 {
 NAME=Moonglow artist
-NPCLIST=artist
+NPC=artist
 MAXNPCS=1
 X1=4520
 Y1=1062

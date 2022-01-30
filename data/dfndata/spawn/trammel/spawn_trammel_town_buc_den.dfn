@@ -4,7 +4,7 @@
 [REGIONSPAWN 7100]
 {
 NAME=Buccaneer's Den Leatherworks
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=2705
 Y1=2177
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 7101]
 {
 NAME=Healer Of Buccaneers Den
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=2705
 Y1=2144
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 7102]
 {
 NAME=The Peg Leg Inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2713
 Y1=2097
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 7103]
 {
 NAME=Cutlass Smithing
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=2633
 Y1=2081
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 7104]
 {
 NAME=Voilente Woodworks
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=2624
 Y1=2097
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 7105]
 {
 NAME=Pirates Den
-NPCLIST=pirate
+NPC=pirate
 MAXNPCS=1
 X1=2656
 Y1=2197
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 7106]
 {
 NAME=Pirates Den
-NPCLIST=pirate
+NPC=pirate
 MAXNPCS=1
 X1=2656
 Y1=2185
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 7107]
 {
 NAME=The Pirates Plunder
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=2682
 Y1=2242
@@ -124,7 +124,7 @@ CALL=1
 [REGIONSPAWN 7108]
 {
 NAME=The Pirate's Provision
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2731
 Y1=2251
@@ -139,7 +139,7 @@ CALL=1
 [REGIONSPAWN 7109]
 {
 NAME=Buc Den Bank
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=2731
 Y1=2187
@@ -154,7 +154,7 @@ CALL=1
 [REGIONSPAWN 7110]
 {
 NAME=The Pirates Plunder
-NPCLIST=waiter
+NPC=waiter
 MAXNPCS=1
 X1=2672
 Y1=2232

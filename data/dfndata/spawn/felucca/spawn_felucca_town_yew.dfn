@@ -4,7 +4,7 @@
 [REGIONSPAWN 1300]
 {
 NAME=The Tanned Hide
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=513
 Y1=989
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 1301]
 {
 NAME=Healer Of Yew
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=531
 Y1=969
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 1302]
 {
 NAME=The Sturdy Bow
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=561
 Y1=962
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 1303]
 {
 NAME=The Jolly Baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=553
 Y1=985
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 1304]
 {
 NAME=Bloody Thumb Woodworks
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=563
 Y1=1009
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 1305]
 {
 NAME=Bloody Thumb Woodworks
-NPCLIST=architect
+NPC=architect
 MAXNPCS=1
 X1=567
 Y1=1012
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 1306]
 {
 NAME=Yews Finest Cuts
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=535
 Y1=1009
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 1307]
 {
 NAME=Yew Mill
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=549
 Y1=824
@@ -139,7 +139,7 @@ CALL=1
 [REGIONSPAWN 1309]
 {
 NAME=healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=642
 Y1=1081
@@ -154,7 +154,7 @@ CALL=1
 [REGIONSPAWN 1310]
 {
 NAME=Great Oak Bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=617
 Y1=1144
@@ -184,7 +184,7 @@ CALL=1
 [REGIONSPAWN 1312]
 {
 NAME=farmer
-NPCLIST=farmer
+NPC=farmer
 MAXNPCS=1
 X1=553
 Y1=1213
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 1314]
 {
 NAME=healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=329
 Y1=1243
@@ -229,7 +229,7 @@ CALL=1
 [REGIONSPAWN 1315]
 {
 NAME=docks
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=2
 X1=497
 Y1=769

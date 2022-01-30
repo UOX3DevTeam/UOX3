@@ -4,7 +4,7 @@
 [REGIONSPAWN 1500]
 {
 NAME=stables
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=5291
 Y1=4004
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 1501]
 {
 NAME=hut of magics
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=5293
 Y1=3975
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 1502]
 {
 NAME=ye olde eleventh bank
-NPCLIST=banker
+NPC=banker
 MAXNPCS=2
 X1=5270
 Y1=3972
@@ -49,7 +49,7 @@ CALL=2
 [REGIONSPAWN 1503]
 {
 NAME=tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=5232
 Y1=4015
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 1504]
 {
 NAME=zoots hammer
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=5223
 Y1=4002
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 1505]
 {
 NAME=the supply depot
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=5214
 Y1=4008
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 1506]
 {
 NAME=the barely inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=5195
 Y1=4054
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 1507]
 {
 NAME=Healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=5187
 Y1=3986

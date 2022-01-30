@@ -4,7 +4,7 @@
 [REGIONSPAWN 7200]
 {
 NAME=Farmers Market
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2213
 Y1=1192
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 7201]
 {
 NAME=Cove guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2274
 Y1=1196
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 7202]
 {
 NAME=Cove guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2282
 Y1=1224
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 7203]
 {
 NAME=The Healing Hand
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=2240
 Y1=1227
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 7204]
 {
 NAME=The Warrior's Supplies
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=2210
 Y1=1164
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 7205]
 {
 NAME=The Warrior's Supplies
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=2214
 Y1=1165
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 7206]
 {
 NAME=Bank Of Cove
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=2226
 Y1=1195
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 7207]
 {
 NAME=Cove guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2208
 Y1=1112

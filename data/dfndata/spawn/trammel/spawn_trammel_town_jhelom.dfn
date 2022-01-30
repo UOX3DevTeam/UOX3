@@ -4,7 +4,7 @@
 [REGIONSPAWN 7300]
 {
 NAME=Jehlom weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPC=1
 X1=1482
 Y1=3856
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 7301]
 {
 NAME=Jehlom jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=1312
 Y1=3778
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 7302]
 {
 NAME=Jehlom innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1369
 Y1=3809
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 7303]
 {
 NAME=Jehlom farmer
-NPCLIST=farmer
+NPC=farmer
 MAXNPCS=1
 X1=1385
 Y1=3824
@@ -64,7 +64,7 @@ CALL=1
 [REGIONSPAWN 7304]
 {
 NAME=Jehlom tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=1403
 Y1=3800
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 7305]
 {
 NAME=Jehlom guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=1378
 Y1=3792
@@ -94,7 +94,7 @@ CALL=1
 [REGIONSPAWN 7306]
 {
 NAME=Jehlom tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=1360
 Y1=3778
@@ -109,7 +109,7 @@ CALL=1
 [REGIONSPAWN 7307]
 {
 NAME=Jehlom spinner
-NPCLIST=spinner
+NPC=spinner
 MAXNPCS=1
 X1=1352
 Y1=3777
@@ -124,7 +124,7 @@ CALL=1
 [REGIONSPAWN 7308]
 {
 NAME=Jehlom weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=1352
 Y1=3753
@@ -139,7 +139,7 @@ CALL=1
 [REGIONSPAWN 7309]
 {
 NAME=Jehlom baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=1353
 Y1=3729
@@ -154,7 +154,7 @@ CALL=1
 [REGIONSPAWN 7310]
 {
 NAME=Jehlom armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1360
 Y1=3697
@@ -169,7 +169,7 @@ CALL=1
 [REGIONSPAWN 7311]
 {
 NAME=Jehlom armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1392
 Y1=3709
@@ -184,7 +184,7 @@ CALL=1
 [REGIONSPAWN 7312]
 {
 NAME=Jehlom armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1442
 Y1=3712
@@ -199,7 +199,7 @@ CALL=1
 [REGIONSPAWN 7313]
 {
 NAME=Jehlom fisherman
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=1
 X1=1432
 Y1=3744
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 7314]
 {
 NAME=Jehlom shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=1457
 Y1=3737
@@ -229,7 +229,7 @@ CALL=1
 [REGIONSPAWN 7315]
 {
 NAME=Jehlom tavernkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=1442
 Y1=3777
@@ -244,7 +244,7 @@ CALL=1
 [REGIONSPAWN 7316]
 {
 NAME=Jehlom healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=1409
 Y1=3770
@@ -259,7 +259,7 @@ CALL=1
 [REGIONSPAWN 7317]
 {
 NAME=Jehlom provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=1441
 Y1=3801
@@ -274,7 +274,7 @@ CALL=1
 [REGIONSPAWN 7318]
 {
 NAME=Jehlom carpenter
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=1433
 Y1=3825
@@ -289,7 +289,7 @@ CALL=1
 [REGIONSPAWN 7319]
 {
 NAME=Jehlom blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=1419
 Y1=3850
@@ -304,7 +304,7 @@ CALL=1
 [REGIONSPAWN 7320]
 {
 NAME=Jehlom armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1426
 Y1=3880
@@ -319,7 +319,7 @@ CALL=1
 [REGIONSPAWN 7321]
 {
 NAME=Jehlom armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=1448
 Y1=3849
@@ -334,7 +334,7 @@ CALL=1
 [REGIONSPAWN 7322]
 {
 NAME=Town People
-NPCLIST=alltownfolk
+NPC=alltownfolk
 MAXNPCS=50
 X1=1305
 Y1=3672
@@ -349,7 +349,7 @@ CALL=5
 [REGIONSPAWN 7323]
 {
 NAME=animal spawn
-NPCLIST=britainanimallist
+NPC=britainanimallist
 MAXNPCS=100
 X1=1305
 Y1=3672

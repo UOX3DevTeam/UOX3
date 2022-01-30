@@ -4,7 +4,7 @@
 [REGIONSPAWN 7900]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2939
 Y1=3370
@@ -18,7 +18,7 @@ CALL=1
 [REGIONSPAWN 7901]
 {
 NAME=Serpents hold baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=2973
 Y1=3352
@@ -32,7 +32,7 @@ CALL=1
 [REGIONSPAWN 7902]
 {
 NAME=Serpents hold herbalist
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=3009
 Y1=3352
@@ -46,7 +46,7 @@ CALL=1
 [REGIONSPAWN 7903]
 {
 NAME=Serpents hold mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=3001
 Y1=3354
@@ -60,7 +60,7 @@ CALL=1
 [REGIONSPAWN 7904]
 {
 NAME=Serpents hold healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=3000
 Y1=3346
@@ -74,7 +74,7 @@ CALL=1
 [REGIONSPAWN 7905]
 {
 NAME=Serpents hold provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=3004
 Y1=3385
@@ -88,7 +88,7 @@ CALL=1
 [REGIONSPAWN 7906]
 {
 NAME=Serpents hold blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=3001
 Y1=3405
@@ -102,7 +102,7 @@ CALL=1
 [REGIONSPAWN 7907]
 {
 NAME=Serpents hold healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=2992
 Y1=3427
@@ -116,7 +116,7 @@ CALL=1
 [REGIONSPAWN 7908]
 {
 NAME=Serpents hold tavernkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2968
 Y1=3416
@@ -130,7 +130,7 @@ CALL=1
 [REGIONSPAWN 7909]
 {
 NAME=Serpents hold innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2962
 Y1=3405
@@ -144,7 +144,7 @@ CALL=1
 [REGIONSPAWN 7910]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2956
 Y1=3443
@@ -158,7 +158,7 @@ CALL=1
 [REGIONSPAWN 7911]
 {
 NAME=Serpents hold weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=3015
 Y1=3425
@@ -172,7 +172,7 @@ CALL=1
 [REGIONSPAWN 7912]
 {
 NAME=Serpents hold tavernkeeper
-NPCLIST=tavernkeeper
+NPC=tavernkeeper
 MAXNPCS=1
 X1=3008
 Y1=3453
@@ -186,7 +186,7 @@ CALL=1
 [REGIONSPAWN 7913]
 {
 NAME=Serpents hold weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=3048
 Y1=3401
@@ -200,7 +200,7 @@ CALL=1
 [REGIONSPAWN 7914]
 {
 NAME=Serpents hold bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=3050
 Y1=3369
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 7915]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3061
 Y1=3338
@@ -228,7 +228,7 @@ CALL=1
 [REGIONSPAWN 7916]
 {
 NAME=Serpents hold animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=3027
 Y1=3471
@@ -242,7 +242,7 @@ CALL=1
 [REGIONSPAWN 7917]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2957
 Y1=3484
@@ -256,7 +256,7 @@ CALL=1
 [REGIONSPAWN 7918]
 {
 NAME=Serpents hold tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=2931
 Y1=3504
@@ -270,7 +270,7 @@ CALL=1
 [REGIONSPAWN 7919]
 {
 NAME=Serpents hold animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=2909
 Y1=3517
@@ -284,7 +284,7 @@ CALL=1
 [REGIONSPAWN 7920]
 {
 NAME=Serpents hold butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=2906
 Y1=3486
@@ -298,7 +298,7 @@ CALL=1
 [REGIONSPAWN 7921]
 {
 NAME=Serpents hold tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=2874
 Y1=3508
@@ -312,7 +312,7 @@ CALL=1
 [REGIONSPAWN 7922]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2876
 Y1=3469
@@ -326,7 +326,7 @@ CALL=1
 [REGIONSPAWN 7923]
 {
 NAME=Serpents hold guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3009
 Y1=3524

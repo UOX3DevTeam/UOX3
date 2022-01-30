@@ -4,7 +4,7 @@
 [REGIONSPAWN 8600]
 {
 NAME=The Just Inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=5762
 Y1=3155
@@ -20,7 +20,7 @@ CALL=1
 [REGIONSPAWN 8601]
 {
 NAME=Strange Rocks
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=5654
 Y1=3143
@@ -36,7 +36,7 @@ CALL=1
 [REGIONSPAWN 8602]
 {
 NAME=ye olde loan and savings
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=5660
 Y1=3123
@@ -52,7 +52,7 @@ CALL=1
 [REGIONSPAWN 8603]
 {
 NAME=the carpentry house
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=5689
 Y1=3204
@@ -68,7 +68,7 @@ CALL=1
 [REGIONSPAWN 8604]
 {
 NAME=the reagent shop
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=5713
 Y1=3198
@@ -84,7 +84,7 @@ CALL=1
 [REGIONSPAWN 8605]
 {
 NAME=tricks of the trade
-NPCLIST=mage
+NPC=mage
 MAXNPCS=2
 X1=5725
 Y1=3189
@@ -100,7 +100,7 @@ CALL=2
 [REGIONSPAWN 8606]
 {
 NAME=natures best baked goods
-NPCLIST=baker
+NPC=baker
 MAXNPCS=2
 X1=5744
 Y1=3191
@@ -116,7 +116,7 @@ CALL=2
 [REGIONSPAWN 8607]
 {
 NAME=the healing hand
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=5734
 Y1=3218
@@ -132,7 +132,7 @@ CALL=1
 [REGIONSPAWN 8608]
 {
 NAME=tinkers paradise
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=5724
 Y1=3240
@@ -148,7 +148,7 @@ CALL=1
 [REGIONSPAWN 8609]
 {
 NAME=adventure outfitters
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=5734
 Y1=3258
@@ -164,7 +164,7 @@ CALL=1
 [REGIONSPAWN 8610]
 {
 NAME=tailors
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=5751
 Y1=3269
@@ -180,7 +180,7 @@ CALL=1
 [REGIONSPAWN 8611]
 {
 NAME=pier 39
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=5797
 Y1=3265
@@ -196,7 +196,7 @@ CALL=1
 [REGIONSPAWN 8612]
 {
 NAME=the revenge shoppe
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=5795
 Y1=3296
@@ -212,7 +212,7 @@ CALL=1
 [REGIONSPAWN 8613]
 {
 NAME=the revenge shoppe
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=5795
 Y1=3296
@@ -228,7 +228,7 @@ CALL=1
 [REGIONSPAWN 8614]
 {
 NAME=the revenge shoppe
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=5795
 Y1=3296
@@ -244,7 +244,7 @@ CALL=1
 [REGIONSPAWN 8615]
 {
 NAME=the southside butchery
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=5696
 Y1=3280
@@ -260,7 +260,7 @@ CALL=1
 [REGIONSPAWN 8616]
 {
 NAME=southside stables
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=5667
 Y1=3284
@@ -276,7 +276,7 @@ CALL=1
 [REGIONSPAWN 8617]
 {
 NAME=docks
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=2
 X1=5821
 Y1=3239

@@ -4,7 +4,7 @@
 [REGIONSPAWN 8400]
 {
 NAME=inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=5306
 Y1=31
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 8401]
 {
 NAME=mages appetite
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=5346
 Y1=52
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 8402]
 {
 NAME=the alchemist of wind
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=1
 X1=5300
 Y1=89
@@ -49,7 +49,7 @@ CALL=1
 [REGIONSPAWN 8403]
 {
 NAME=wind healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=2
 X1=5260
 Y1=126
@@ -64,7 +64,7 @@ CALL=2
 [REGIONSPAWN 8404]
 {
 NAME=windy inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=5217
 Y1=173
@@ -79,7 +79,7 @@ CALL=1
 [REGIONSPAWN 8405]
 {
 NAME=the learned mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=2
 X1=5234
 Y1=143
@@ -94,7 +94,7 @@ CALL=2
 [REGIONSPAWN 8406]
 {
 NAME=seat of knowledge
-NPCLIST=mage
+NPC=mage
 MAXNPCS=2
 X1=5242
 Y1=177
@@ -109,7 +109,7 @@ CALL=2
 [REGIONSPAWN 8407]
 {
 NAME=magical supplies
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=2
 X1=5212
 Y1=114
@@ -124,7 +124,7 @@ CALL=2
 [REGIONSPAWN 8408]
 {
 NAME=mages things
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=5152
 Y1=95
@@ -139,7 +139,7 @@ CALL=1
 [REGIONSPAWN 8409]
 {
 NAME=windy clothes
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=5200
 Y1=87
@@ -154,7 +154,7 @@ CALL=1
 [REGIONSPAWN 8410]
 {
 NAME=wind alchemy
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=2
 X1=5146
 Y1=56
@@ -169,7 +169,7 @@ CALL=2
 [REGIONSPAWN 8411]
 {
 NAME=wind alchemy
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=5146
 Y1=56
@@ -184,7 +184,7 @@ CALL=1
 [REGIONSPAWN 8412]
 {
 NAME=seekers inn
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=5163
 Y1=19
