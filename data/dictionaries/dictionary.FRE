@@ -2321,6 +2321,8 @@
 2202=Pet Slots
 2203=Chance de contrôle
 2204=Liste d'amis
+2205=Les esprits des morts ne sont pas du ressort de la connaissance des animaux.
+2206=Vous ne pouvez pas penser à quelque chose que vous connaissez par cœur.
 // [2300-2449] Hirelings
 2300=%s a été supprimé de la liste d'amis de %s.
 2301=Vous avez été retiré de la liste d'amis de %s.
@@ -3312,6 +3314,8 @@
 5142=un petit démon
 5143=un cacodaemon
 5144=un daemon bestial
+5145=un hachoir orc
+5146=le contrôleur
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -3418,6 +3422,22 @@
 6102=Vous ne pouvez pas utiliser la pâte avec cela.
 6103=Le moulin à farine est actuellement occupé.
 6104=Farine prête pour la collecte.
+6200=Que voulez-vous goûter ?
+6201=Ce n'est pas quelque chose que vous pouvez goûter.
+6202=Vous êtes trop loin pour goûter cela.
+6203=Vous sentez un soupçon de saleté à propos de %s.
+6204=Vous ne détectez rien d'inhabituel dans cette substance.
+6205=Vous ne pouvez rien discerner de cette substance.
+6206=Cette potion a peut-être été fabriquée à partir d'ail.
+6207=Cette potion peut avoir été fabriquée à partir de soie d'araignée.
+6208=Cette potion peut avoir été faite à partir de mousse de sang.
+6209=Cette potion peut avoir été faite à partir de la mandragore.
+6210=Cette potion peut avoir été faite à partir de la morelle noire.
+6211=Cette potion peut avoir été faite à partir de la perle noire.
+6212=Cette potion peut avoir été faite à partir de ginseng.
+6213=Cette potion peut avoir été faite à partir de cendres sulfureuses.
+6214=Les ingrédients de cette potion vous sont inconnus.
+6215=Vous savez déjà de quel genre de potion il s'agit : %s
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4127,6 +4147,13 @@
 9121=L'animal marche là où on lui a demandé de le faire.
 9122=Vous avez cassé votre bâton de berger.
 9123=Tu te connais déjà assez bien.
+9124=*Vous avez été assommé par un coup colossal !*
+9125=*Vous retrouvez vos sens*.
+9126=*L'essence de maladie de la créature vous fait des dégâts !*
+9127=*Vous ne pouvez pas le faire en portant la peinture kin sauvage.
+9128=Vous n'avez aucune chance de provoquer cette créature.
+9129=Cette cible est immunisée aux dommages physiques !
+9130=Votre arme ne peut pas pénétrer la barrière magique de la créature.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

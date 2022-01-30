@@ -519,9 +519,11 @@ void CChar::DoHunger( CSocket *mSock )
 					else if( GetHP() > 0 && hungerDamage > 0)
 					{
 						mSock->sysmessage( 1228 );
-						Damage( hungerDamage, PHYSICAL );
-						if( GetHP() <= 0 )
-							mSock->sysmessage( 1229 );
+						if( Damage( hungerDamage, PHYSICAL ) )
+						{
+							if( GetHP() <= 0 )
+								mSock->sysmessage( 1229 );
+						}
 					}
 					SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 				}
@@ -541,7 +543,7 @@ void CChar::DoHunger( CSocket *mSock )
 				if( GetHunger() > 0 )
 					DecHunger();
 				else if( GetHP() > 0 && hungerDamage > 0)
-					Damage( hungerDamage, PHYSICAL );
+					[[maybe_unused]] bool retVal = Damage( hungerDamage, PHYSICAL );
 				SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>(hungerRate) ) );
 			}
 		}
@@ -6545,7 +6547,7 @@ SI08 CChar::GetNpcWander( void ) const
 		rVal = mNPC->wanderMode;
 	return rVal;
 }
-void CChar::SetNpcWander( SI08 newValue )
+void CChar::SetNpcWander( SI08 newValue, bool initArea )
 {
 	if( !IsValidNPC() )
 	{
@@ -6558,8 +6560,8 @@ void CChar::SetNpcWander( SI08 newValue )
 		UpdateRegion();
 	}
 
-	// Make shure the wanderarea is properly initialized
-	if( ( newValue == WT_BOX ) || ( newValue == WT_CIRCLE ) )
+	// Make sure the wanderarea is properly initialized
+	if( initArea && (( newValue == WT_BOX || newValue == WT_CIRCLE )))
 	{
 		if( ( mNPC->fx[0] == -1 ) || ( mNPC->fy[0] == -1 ) )
 		{
@@ -7434,18 +7436,23 @@ void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	void Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
+//| Function	-	bool Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Damage character, and keep track of attacker and damage amount
 //o-----------------------------------------------------------------------------------------------o
-void CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
+bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 {
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
 	for( auto i : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( i );
 		if( toExecute != nullptr )
-			toExecute->OnDamage(  this, attacker, damageValue, damageType );
+		{
+			// If event returns false, prevent damage!
+			auto retVal = toExecute->OnDamage(  this, attacker, damageValue, damageType );
+			if( retVal == 0 )
+				return false;
+		}
 	}
 
 	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
@@ -7557,6 +7564,8 @@ void CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 
 	if( GetHP() <= 0 )
 		Die( attacker, doRepsys );
+
+	return true;
 }
 
 //o-----------------------------------------------------------------------------------------------o

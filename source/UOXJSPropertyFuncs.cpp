@@ -702,6 +702,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_AMMOFXRENDER:	*vp = INT_TO_JSVAL( gPriv->GetAmmoFXRender() );			break;
 			case CIP_MAXRANGE:		*vp = INT_TO_JSVAL( gPriv->GetMaxRange() );				break;
 			case CIP_BASERANGE:		*vp = INT_TO_JSVAL( gPriv->GetBaseRange() );			break;
+			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->isHeldOnCursor() );		break;
 
 				// The following entries are specifically for CSpawnItem objects
@@ -1551,6 +1552,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ISCHAR:		*vp = JSVAL_TRUE;									break;
 			case CCP_ISITEM:		*vp = JSVAL_FALSE;									break;
 			case CCP_ISSPAWNER:		*vp = JSVAL_FALSE;									break;
+			case CCP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );			break;
 			case CCP_MAXHP:			*vp = INT_TO_JSVAL( gPriv->GetMaxHP() );			break;
 			case CCP_MAXSTAMINA:	*vp = INT_TO_JSVAL( gPriv->GetMaxStam() );			break;
 			case CCP_MAXMANA:		*vp = INT_TO_JSVAL( gPriv->GetMaxMana() );			break;
@@ -1978,7 +1980,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( (SI08)encaps.toInt() ); 	break;
-			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( (SI08)encaps.toInt() );		break;
+			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( (SI08)encaps.toInt(), true );	break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );				break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );			break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );				break;

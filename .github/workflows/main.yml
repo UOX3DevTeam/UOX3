@@ -2,7 +2,15 @@ name: Linux x64 Build
 
 on:
   push:
+    paths-ignore:
+      - '**.js'
+      - '**.dfn'
+      - '**.scp'
   pull_request:
+    paths-ignore:
+      - '**.js'
+      - '**.dfn'
+      - '**.scp'
 
 jobs:
   build:

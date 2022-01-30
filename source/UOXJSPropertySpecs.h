@@ -291,6 +291,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "isChar",			CCP_ISCHAR,			JSPROP_ENUMPERMRO  },
 	{ "isItem",			CCP_ISITEM,			JSPROP_ENUMPERMRO  },
 	{ "isSpawner",		CCP_ISSPAWNER,		JSPROP_ENUMPERMRO  },
+	{ "spawnSerial",	CCP_SPAWNSERIAL,	JSPROP_ENUMPERMRO  },
 	{ "maxhp",			CCP_MAXHP,			JSPROP_ENUMANDPERM },
 	{ "maxstamina",		CCP_MAXSTAMINA,		JSPROP_ENUMANDPERM },
 	{ "maxmana",		CCP_MAXMANA,		JSPROP_ENUMANDPERM },
@@ -505,6 +506,7 @@ static JSPropertySpec CItemProps[] =
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM },
+	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM },
 
 	// The Following vars are specific to CSpawnItem objects

@@ -2067,13 +2067,15 @@ bool cWeatherAb::doLightEffect( CSocket *mSock, CChar& mChar )
 
 		if( damage > 0 )
 		{
-			mChar.Damage( damage, LIGHT );
-			Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
-			Effects->PlaySound( (&mChar), 0x0208 );
-			didDamage = true;
+			if( mChar.Damage( damage, LIGHT ) )
+			{
+				Effects->PlayStaticAnimation( (&mChar), 0x3709, 0x09, 0x19 );
+				Effects->PlaySound( (&mChar), 0x0208 );
+				didDamage = true;
 
-			if( message != 0 && mSock != nullptr)
-				mSock->sysmessage( message );
+				if( message != 0 && mSock != nullptr)
+					mSock->sysmessage( message );
+			}
 		}
 		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), LIGHT )) )), LIGHT );
 	}
@@ -2180,7 +2182,8 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 
 		if( damage > 0 )
 		{
-				mChar.Damage( damage, element );
+			if( mChar.Damage( damage, element ) )
+			{
 				mChar.SetStamina( mChar.GetStamina() - 2 );
 				if( mSock != nullptr )
 					mSock->sysmessage( damageMessage );
@@ -2188,6 +2191,7 @@ bool cWeatherAb::doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType elem
 					Effects->PlayStaticAnimation( (&mChar), damageAnim, 0x09, 0x19 );
 				Effects->PlaySound( (&mChar), 0x0208 );
 				didDamage = true;
+			}
 		}
 		mChar.SetWeathDamage( static_cast<UI32>(BuildTimeValue( static_cast<R32>(Races->Secs( mChar.GetRace(), element )) )), element );
 	}

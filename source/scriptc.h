@@ -1,8 +1,9 @@
 #ifndef __SCRIPTC_H__
 #define __SCRIPTC_H__
 
+#include <unordered_map>
 
-typedef std::map< std::string, ScriptSection * >	SSMAP;
+typedef std::unordered_map< std::string, ScriptSection * >	SSMAP;
 
 class Script
 {

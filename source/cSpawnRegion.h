@@ -50,7 +50,7 @@ public:
 	~CSpawnRegion();
 
 	void		Load( ScriptSection *toScan );
-	void		doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned );
+	void		doRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned );
 
 	const std::string	GetName( void ) const;
 	UI16		GetRegionNum( void ) const;
