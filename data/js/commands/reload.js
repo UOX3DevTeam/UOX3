@@ -57,7 +57,7 @@ function command_RELOADREGIONS( socket, cmdString )
 
 function command_RELOADSPAWNREGIONS( socket, cmdString )
 {
-	socket.SysMessage( GetDictionaryEntry( 68, socket.language ));
+	socket.SysMessage( GetDictionaryEntry( 68, socket.language )); // Spawnregions reloaded.
 	Reload( 1 );
 }
 

@@ -52,6 +52,12 @@ good=18
 get=0x26af
 }
 
+[tdarcanethighboots-newbie]
+{
+get=0x26af
+newbie=1
+}
+
 // TD Waraji
 [0x2653]
 {

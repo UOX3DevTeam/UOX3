@@ -3148,6 +3148,8 @@
 5142=ein kleinerer Dämon
 5143=ein Kakadu-Dämon
 5144=ein bestialischer Dämon
+5145=ein Ork-Häcksler
+5146=der Kontrolleur
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3963,6 +3965,13 @@
 9121=Das Tier geht dorthin, wo man es angewiesen hat.
 9122=Sie haben Ihren Hirtenstab zerbrochen.
 9123=Du kennst dich selbst schon gut genug.
+9124=*Du wurdest durch einen kolossalen Schlag betäubt!*
+9125=*Du kommst wieder zu Sinnen!*
+9126=*Die Krankheitsessenz der Kreatur schadet dir!*
+9127=Das kannst du nicht tun, wenn du die Farbe der wilden Verwandtschaft trägst.
+9128=Du hast keine Chance, diese Kreatur zu provozieren.
+9129=Das Ziel ist immun gegen körperlichen Schaden!
+9130=Deine Waffe kann die magische Barriere der Kreatur nicht durchdringen.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!

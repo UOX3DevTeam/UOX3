@@ -256,6 +256,28 @@ PLAYERRACE=1
 BLOODCOLOUR=0xffff
 }
 
+[RACE 25]
+{
+NAME=Ophidian
+PLAYERRACE=1
+RACIALENEMY=26
+RACIALAID=6
+}
+
+[RACE 26]
+{
+NAME=Terathan
+PLAYERRACE=1
+RACIALENEMY=25
+RACIALAID=5
+}
+
+[RACE 27]
+{
+NAME=Clockwork
+PLAYERRACE=1
+}
+
 // Equipment Lists ----------------------------------------------------
 
 // Common Equipment, usable by all

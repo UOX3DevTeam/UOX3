@@ -45,3 +45,17 @@ pileable=1
 decay=1
 good=46
 }
+
+// Used as NPC loot
+[shadow_iron_ore]
+{ Large Pile
+get=base_item
+name=iron ore
+id=0x19B9
+colour=0x0966
+weight=1200
+movable=1
+pileable=1
+decay=1
+good=46
+}

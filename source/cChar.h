@@ -613,7 +613,7 @@ public:
 
 	FlagColors		FlagColour( CChar *toCompare );
 	void			Heal( SI16 healValue, CChar *healer = nullptr );
-	void			Damage( SI16 damageValue, WeatherType damageType, CChar *attacker = nullptr, bool doRepsys = false );
+	bool			Damage( SI16 damageValue, WeatherType damageType, CChar *attacker = nullptr, bool doRepsys = false );
 	SI16			GetKarma( void ) const;
 	void			ReactOnDamage( WeatherType damageType, CChar *attacker = nullptr );
 	void			Die( CChar *attacker, bool doRepsys );
@@ -687,7 +687,7 @@ public:
 	void		SetFx( SI16 newVal, UI08 part );
 	void		SetFy( SI16 newVal, UI08 part );
 	void		SetFz( SI08 newVal );
-	void		SetNpcWander( SI08 newValue );
+	void		SetNpcWander( SI08 newValue, bool initArea = false );
 	void		SetOldNpcWander( SI08 newValue );
 
 	CChar *		GetFTarg( void ) const;

@@ -622,11 +622,11 @@ void CSpawnRegion::Load( ScriptSection *toScan )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
+//|	Function	-	void doRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do spawn stuff for spawnregion
 //o-----------------------------------------------------------------------------------------------o
-void CSpawnRegion::doRegionSpawn( UI16& itemsSpawned, UI16& npcsSpawned )
+void CSpawnRegion::doRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 {
 	// Only perform the region spawn if the spawn region in question is active
 	if( !cwmWorldState->ServerData()->GetSpawnRegionsFacetStatus( static_cast<UI32>(WorldNumber()) ))
