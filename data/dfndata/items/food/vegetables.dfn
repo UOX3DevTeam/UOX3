@@ -19,6 +19,24 @@ value=6 3
 pileable=1
 }
 
+[0x0C61]
+{
+get=base_food
+name=turnip
+id=0x0C61
+value=6 3
+pileable=1
+}
+
+[0x0C62]
+{
+get=base_food
+name=turnip
+id=0x0C62
+value=6 3
+pileable=1
+}
+
 [0x0C63]
 {
 get=base_food

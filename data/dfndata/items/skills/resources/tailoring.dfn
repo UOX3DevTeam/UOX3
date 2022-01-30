@@ -450,3 +450,15 @@ weight=100
 decay=1
 good=49
 }
+
+[arcane_gem]
+{
+get=base_item
+name=arcane gem
+id=0x1ea7
+colour=0x0845
+weight=100
+decay=1
+pileable=1
+good=49
+}

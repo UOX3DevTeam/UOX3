@@ -90,6 +90,7 @@ enum ScriptEvent
 	seOnCharDoubleClick,	//	**  the event that replaces hardcoded character doubleclick-stuff
 	seOnSkillGump,			//	**	allows overriding client's request to open default skill gump
 	seOnCombatStart,		//	**	allows overriding what happens when combat is initiated
+	seOnAICombatTarget,		//	**	allows overriding target selection taking place for regular AI behaviours
 	seOnCombatEnd,			//	**	allows overriding what happens when combat ends
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
@@ -104,6 +105,8 @@ enum ScriptEvent
 	seOnPathfindEnd,
 	seOnEnterEvadeState,
 	seOnQuestGump,
+	seOnHelpButton,
+	seOnWarModeToggle,
 	seOnSpecialMove
 };
 
@@ -131,8 +134,8 @@ private:
 	UI08				runTime;
 
 	bool				isFiring;
-	std::bitset< 32 >	eventPresence[3];
-	std::bitset< 32 >	needsChecking[3];
+	std::bitset< 64 >	eventPresence[3];
+	std::bitset< 64 >	needsChecking[3];
 	bool				EventExists( ScriptEvent eventNum ) const;
 	bool				NeedsChecking( ScriptEvent eventNum ) const;
 	void				SetEventExists( ScriptEvent eventNum, bool status );
@@ -239,6 +242,8 @@ public:
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID );
 	SI08		OnQuestGump( CChar *mChar );
+	SI08		OnHelpButton( CChar *mChar );
+	SI08		OnWarModeToggle( CChar *mChar );
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityID );
 
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
@@ -252,13 +257,14 @@ public:
 	SI08		OnCharDoubleClick( CChar *currChar, CChar *targChar );
 	SI08		OnSkillGump( CChar *mChar );
 	SI08		OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem );
+	SI08		OnAICombatTarget( CChar *attacker, CChar *target );
 	SI08		OnCombatStart( CChar *attacker, CChar *defender );
 	SI08		OnCombatEnd( CChar *attacker, CChar *defender );
 
 	SI08		OnDeathBlow( CChar *mKilled, CChar *mKiller );
 
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
-	bool		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
+	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
 	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
 	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );

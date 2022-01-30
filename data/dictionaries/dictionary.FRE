@@ -3312,6 +3312,8 @@
 5142=un petit démon
 5143=un cacodaemon
 5144=un daemon bestial
+5145=un hachoir orc
+5146=le contrôleur
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -4127,6 +4129,13 @@
 9121=L'animal marche là où on lui a demandé de le faire.
 9122=Vous avez cassé votre bâton de berger.
 9123=Tu te connais déjà assez bien.
+9124=*Vous avez été assommé par un coup colossal !*
+9125=*Vous retrouvez vos sens*.
+9126=*L'essence de maladie de la créature vous fait des dégâts !*
+9127=*Vous ne pouvez pas le faire en portant la peinture kin sauvage.
+9128=Vous n'avez aucune chance de provoquer cette créature.
+9129=Cette cible est immunisée aux dommages physiques !
+9130=Votre arme ne peut pas pénétrer la barrière magique de la créature.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

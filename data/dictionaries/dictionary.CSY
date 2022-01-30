@@ -3151,6 +3151,8 @@
 5142=menší démon
 5143=akodaemon
 5144=zvířecí démon
+5145=orkský sekáček
+5146=ovladač
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3970,6 +3972,13 @@
 9121=Zvíře jde tam, kam mu bylo přikázáno.
 9122=Zlomil jsi pastýřský hák.
 9123=Sám sebe už znáš dost dobře.
+9124=*Byl jsi omráčen kolosální ranou!*
+9125=*Přišel jsi k sobě.*
+9126=*Nemocná esence stvoření tě poškozuje!*
+9127=Nemůžeš to udělat, když máš na sobě barvu divokého rodu.
+9128=Nemáš šanci toho tvora vyprovokovat.
+9129=Tento cíl je imunní vůči fyzickému poškození!
+9130=Tvá zbraň nemůže proniknout magickou bariérou tohoto tvora.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

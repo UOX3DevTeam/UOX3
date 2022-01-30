@@ -1863,11 +1863,12 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	//Apply bonus damage based on target distance from center of earthquake
 	spellDamage += dmgmod;
 
-	target->Damage( spellDamage, LIGHTNING, caster, true );
-
-	// If this killed the target, don't continue
-	if( target->IsDead() )
-		return;
+	if( target->Damage( spellDamage, LIGHTNING, caster, true ) )
+	{
+		// If this killed the target, don't continue
+		if( target->IsDead() )
+			return;
+	}
 
 	target->SetStamina( target->GetStamina() - ( RandomNum( 0, 9 ) + 5 ) );
 
@@ -2947,7 +2948,7 @@ void cMagic::MagicDamage( CChar *p, SI16 amount, CChar *attacker, WeatherType el
 		if( damage <= 0 )
 			damage = 1;
 
-		p->Damage( damage, element, attacker, true );
+		[[maybe_unused]] bool retVal = p->Damage( damage, element, attacker, true );
 		p->ReactOnDamage( element, attacker );
 	}
 }
