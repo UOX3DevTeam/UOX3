@@ -155,6 +155,7 @@
 //-------------------------------------------
 // NPC Basic Speech [3000-3099]
 3000=npc/speech/speech_001.js
+3001=npc/speech/speech_monster.js
 //-------------------------------------------
 // Pets, and Stable Hands [3100-3199]
 3100=npc/pets/static_horse.js
@@ -393,6 +394,7 @@
 816=skill/meditation.js
 817=skill/removetrap.js
 818=skill/itemid.js
+819=skill/tasteid.js
 }
 
 [PACKET_SCRIPTS]

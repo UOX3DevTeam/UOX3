@@ -2157,6 +2157,8 @@
 2202=Slot per animali domestici
 2203=Capacità di controllo
 2204=Lista amici
+2205=Gli spiriti dei morti non sono la provincia della tradizione animale.
+2206=Non ti viene in mente nulla che tu conosca su due piedi.
 // [2300-2449] Hirelings
 2300=%s è stato rimosso dalla lista degli amici di %s.
 2301=Sei stato rimosso dalla lista degli amici di %s.
@@ -3256,6 +3258,22 @@
 6102=Non puoi usare l'impasto con questo.
 6103=Il mulino della farina è attualmente occupato.
 6104=Farina pronta per la raccolta.
+6200=Cosa vorresti assaggiare?
+6201=Non è qualcosa che puoi assaggiare.
+6202=Sei troppo lontano per poterlo assaggiare.
+6203=Senti un accenno di ripugnanza su %s.
+6204=Non percepisci nulla di insolito su questa sostanza.
+6205=Non puoi discernere nulla di questa sostanza.
+6206=Questa pozione potrebbe essere stata fatta con l'aglio.
+6207=Questa pozione potrebbe essere stata fatta con seta di ragno.
+6208=Questa pozione potrebbe essere stata fatta dal muschio del sangue.
+6209=Questa pozione può essere stata fatta con la mandragola.
+6210=Questa pozione può essere stata fatta con la belladonna
+6211=Questa pozione può essere stata fatta con la perla nera.
+6212=Questa pozione può essere stata fatta con il ginseng.
+6213=Questa pozione può essere stata fatta con cenere sulfurea.
+6214=Gli ingredienti di questa pozione ti sono sconosciuti.
+6215=Sai già che tipo di pozione è questa: %s
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?

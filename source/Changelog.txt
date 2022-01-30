@@ -1,3 +1,14 @@
+30/01/2022 - Dragon Slayer, Xuri
+	Added speech scripts for Wisps, Orcs, Lizardmen and Ratmen (Dragon Slayer)
+	Merged monster speech scripts into one common script (Xuri)
+	Extended monster speech script to allow monsters to respond to specific keywords (Xuri)
+	Extended monster speech script to allow monster speech to trigger from them being damaged, dying or performing a killing blow (Xuri)
+	Adjusted monster speech script's sentence building to allow wisps to have more than one-letter words, and also include word-enders such as exclamation marks, full stops, question marks (Xuri)
+	Added monster speech script (ID 3001) to all orc, lizardmen, ratmen and wisps in DFNs (Xuri)
+	Implemented Taste ID skill in JS (Dragon Slayer)
+	Extended Taste ID skill to provide some extra messages for potion-testing (Xuri)
+	Fixes for Animal Lore skill, with updates to dictionaries (Xuri)
+
 24/01/2022 - Xuri (0.99.5a)
 	Improved overall performance of NPC pathfinding (by nearly 60%!) by eliminating some double-work done when checking for blocking dynamics and statics
 	Optimized how the system for determining which internal map regions should have active NPCs; instead of there always being 9 active map regions surrounding any given player who's online, that number will now vary between 3 to 6 map regions, depending on how far the player is from boundaries between such map regions. This should reduce the amount of NPCs active and trying to pathfind at any given point when players are online.
