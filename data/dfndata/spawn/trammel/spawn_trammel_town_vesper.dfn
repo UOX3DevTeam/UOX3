@@ -4,7 +4,7 @@
 [REGIONSPAWN 8200]
 {
 NAME=Vesper healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=2914
 Y1=851
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 8201]
 {
 NAME=Vesper guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=2738
 Y1=986
@@ -33,7 +33,7 @@ CALL=1
 [REGIONSPAWN 8202]
 {
 NAME=Vesper innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2775
 Y1=964
@@ -47,7 +47,7 @@ CALL=1
 [REGIONSPAWN 8204]
 {
 NAME=Vesper leatherworker
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=2857
 Y1=992
@@ -61,7 +61,7 @@ CALL=1
 [REGIONSPAWN 8205]
 {
 NAME=Vesper jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=2929
 Y1=970
@@ -75,7 +75,7 @@ CALL=1
 [REGIONSPAWN 8206]
 {
 NAME=Vesper armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=2928
 Y1=981
@@ -89,7 +89,7 @@ CALL=1
 [REGIONSPAWN 8207]
 {
 NAME=Vesper bard
-NPCLIST=bard
+NPC=bard
 MAXNPCS=1
 X1=2914
 Y1=985
@@ -103,7 +103,7 @@ CALL=1
 [REGIONSPAWN 8208]
 {
 NAME=Vesper shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=2946
 Y1=934
@@ -117,7 +117,7 @@ CALL=1
 [REGIONSPAWN 8209]
 {
 NAME=Vesper cook
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=2896
 Y1=913
@@ -131,7 +131,7 @@ CALL=1
 [REGIONSPAWN 8210]
 {
 NAME=Vesper provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2843
 Y1=865
@@ -145,7 +145,7 @@ CALL=1
 [REGIONSPAWN 8211]
 {
 NAME=Vesper tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=2841
 Y1=882
@@ -159,7 +159,7 @@ CALL=1
 [REGIONSPAWN 8212]
 {
 NAME=Vesper blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=2865
 Y1=849
@@ -173,7 +173,7 @@ CALL=1
 [REGIONSPAWN 8213]
 {
 NAME=Vesper armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=2843
 Y1=810
@@ -187,7 +187,7 @@ CALL=1
 [REGIONSPAWN 8214]
 {
 NAME=Vesper weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=2843
 Y1=793
@@ -201,7 +201,7 @@ CALL=1
 [REGIONSPAWN 8215]
 {
 NAME=Vesper bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=2864
 Y1=810
@@ -215,7 +215,7 @@ CALL=1
 [REGIONSPAWN 8216]
 {
 NAME=Vesper tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=2897
 Y1=786
@@ -229,7 +229,7 @@ CALL=1
 [REGIONSPAWN 8217]
 {
 NAME=Vesper carpenter
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=2913
 Y1=798
@@ -243,7 +243,7 @@ CALL=1
 [REGIONSPAWN 8218]
 {
 NAME=Vesper architect
-NPCLIST=architect
+NPC=architect
 MAXNPCS=1
 X1=2921
 Y1=794
@@ -257,7 +257,7 @@ CALL=1
 [REGIONSPAWN 8219]
 {
 NAME=Vesper jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=2874
 Y1=721
@@ -271,7 +271,7 @@ CALL=1
 [REGIONSPAWN 8220]
 {
 NAME=Vesper banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=2
 X1=2881
 Y1=675
@@ -285,7 +285,7 @@ CALL=1
 [REGIONSPAWN 8221]
 {
 NAME=Vesper mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=2913
 Y1=665
@@ -299,7 +299,7 @@ CALL=1
 [REGIONSPAWN 8222]
 {
 NAME=Vesper alchemist
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=1
 X1=2889
 Y1=650
@@ -313,7 +313,7 @@ CALL=1
 [REGIONSPAWN 8223]
 {
 NAME=Vesper tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=2961
 Y1=625
@@ -327,7 +327,7 @@ CALL=1
 [REGIONSPAWN 8224]
 {
 NAME=Vesper spinner
-NPCLIST=spinner
+NPC=spinner
 MAXNPCS=1
 X1=2955
 Y1=618
@@ -341,7 +341,7 @@ CALL=1
 [REGIONSPAWN 8225]
 {
 NAME=Vesper provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2993
 Y1=641
@@ -355,7 +355,7 @@ CALL=1
 [REGIONSPAWN 8226]
 {
 NAME=Vesper beekeeper
-NPCLIST=beekeeper
+NPC=beekeeper
 MAXNPCS=1
 X1=2958
 Y1=705
@@ -369,7 +369,7 @@ CALL=1
 [REGIONSPAWN 8227]
 {
 NAME=Vesper baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=2994
 Y1=761
@@ -383,7 +383,7 @@ CALL=1
 [REGIONSPAWN 8228]
 {
 NAME=Vesper butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=2987
 Y1=776
@@ -397,7 +397,7 @@ CALL=1
 [REGIONSPAWN 8229]
 {
 NAME=Vesper fisherlady
-NPCLIST=fisher
+NPC=fisher
 MAXNPCS=1
 X1=3016
 Y1=779
@@ -411,7 +411,7 @@ CALL=1
 [REGIONSPAWN 8230]
 {
 NAME=Vesper farmer
-NPCLIST=farmer
+NPC=farmer
 MAXNPCS=1
 X1=3017
 Y1=764
@@ -425,7 +425,7 @@ CALL=1
 [REGIONSPAWN 8231]
 {
 NAME=Vesper shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=2994
 Y1=810
@@ -439,7 +439,7 @@ CALL=1
 [REGIONSPAWN 8232]
 {
 NAME=Vesper mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=2993
 Y1=834
@@ -453,7 +453,7 @@ CALL=1
 [REGIONSPAWN 8233]
 {
 NAME=Vesper innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=2969
 Y1=883

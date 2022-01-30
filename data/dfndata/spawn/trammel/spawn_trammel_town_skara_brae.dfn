@@ -4,7 +4,7 @@
 [REGIONSPAWN 8000]
 {
 NAME=Skara Brae innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=601
 Y1=2233
@@ -18,7 +18,7 @@ CALL=1
 [REGIONSPAWN 8001]
 {
 NAME=Skara Brae shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=600
 Y1=2273
@@ -32,7 +32,7 @@ CALL=1
 [REGIONSPAWN 8002]
 {
 NAME=Skara Brae healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=617
 Y1=2216
@@ -46,7 +46,7 @@ CALL=1
 [REGIONSPAWN 8003]
 {
 NAME=Skara Brae tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=649
 Y1=2179
@@ -60,7 +60,7 @@ CALL=1
 [REGIONSPAWN 8004]
 {
 NAME=Skara Brae blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=625
 Y1=2192
@@ -74,7 +74,7 @@ CALL=1
 [REGIONSPAWN 8005]
 {
 NAME=Skara Brae carpenter
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=626
 Y1=2162
@@ -88,7 +88,7 @@ CALL=1
 [REGIONSPAWN 8006]
 {
 NAME=Skara Brae weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=649
 Y1=2160
@@ -102,7 +102,7 @@ CALL=1
 [REGIONSPAWN 8007]
 {
 NAME=Skara Brae alchemist
-NPCLIST=alchemist
+NPC=alchemist
 MAXNPCS=1
 X1=666
 Y1=2137
@@ -116,7 +116,7 @@ CALL=1
 [REGIONSPAWN 8008]
 {
 NAME=Skara Brae farmer
-NPCLIST=farmer
+NPC=farmer
 MAXNPCS=1
 X1=608
 Y1=2154
@@ -130,7 +130,7 @@ CALL=1
 [REGIONSPAWN 8009]
 {
 NAME=Skara Brae mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=601
 Y1=2177
@@ -144,7 +144,7 @@ CALL=1
 [REGIONSPAWN 8010]
 {
 NAME=Skara Brae bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=596
 Y1=2201
@@ -158,7 +158,7 @@ CALL=1
 [REGIONSPAWN 8011]
 {
 NAME=Skara Brae provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=579
 Y1=2225
@@ -172,7 +172,7 @@ CALL=1
 [REGIONSPAWN 8012]
 {
 NAME=Skara Brae butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=577
 Y1=2185
@@ -186,7 +186,7 @@ CALL=1
 [REGIONSPAWN 8013]
 {
 NAME=Skara Brae cook
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=553
 Y1=2171
@@ -200,7 +200,7 @@ CALL=1
 [REGIONSPAWN 8014]
 {
 NAME=Skara Brae armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=586
 Y1=2161
@@ -214,7 +214,7 @@ CALL=1
 [REGIONSPAWN 8015]
 {
 NAME=Skara Brae beekeeper
-NPCLIST=beekeeper
+NPC=beekeeper
 MAXNPCS=1
 X1=592
 Y1=2136
@@ -228,7 +228,7 @@ CALL=1
 [REGIONSPAWN 8016]
 {
 NAME=Skara Brae bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=560
 Y1=2153
@@ -242,7 +242,7 @@ CALL=1
 [REGIONSPAWN 8017]
 {
 NAME=Skara Brae animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=569
 Y1=2120

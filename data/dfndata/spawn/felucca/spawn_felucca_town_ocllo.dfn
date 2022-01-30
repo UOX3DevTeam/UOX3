@@ -4,7 +4,7 @@
 [REGIONSPAWN 801]
 {
 NAME=Occala cook
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=3665
 Y1=2649
@@ -18,7 +18,7 @@ CALL=1
 [REGIONSPAWN 802]
 {
 NAME=Occala shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=3633
 Y1=2634
@@ -32,7 +32,7 @@ CALL=1
 [REGIONSPAWN 803]
 {
 NAME=Occala innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=3667
 Y1=2618
@@ -46,7 +46,7 @@ CALL=1
 [REGIONSPAWN 804]
 {
 NAME=Occala healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=3625
 Y1=2604
@@ -60,7 +60,7 @@ CALL=1
 [REGIONSPAWN 805]
 {
 NAME=Occala leatherworker
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=3601
 Y1=2601
@@ -74,7 +74,7 @@ CALL=1
 [REGIONSPAWN 806]
 {
 NAME=Occala baker
-NPCLIST=baker
+NPC=baker
 MAXNPCS=1
 X1=3600
 Y1=2571
@@ -88,7 +88,7 @@ CALL=1
 [REGIONSPAWN 807]
 {
 NAME=Occala provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=3633
 Y1=2569
@@ -102,7 +102,7 @@ CALL=1
 [REGIONSPAWN 808]
 {
 NAME=Occala tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=3665
 Y1=2585
@@ -116,7 +116,7 @@ CALL=1
 [REGIONSPAWN 809]
 {
 NAME=Occala mage
-NPCLIST=mage
+NPC=mage
 MAXNPCS=1
 X1=3625
 Y1=2546
@@ -130,7 +130,7 @@ CALL=1
 [REGIONSPAWN 810]
 {
 NAME=Occala herbalist
-NPCLIST=herbalist
+NPC=herbalist
 MAXNPCS=1
 X1=3627
 Y1=2536
@@ -144,7 +144,7 @@ CALL=1
 [REGIONSPAWN 811]
 {
 NAME=Occala bard
-NPCLIST=bard
+NPC=bard
 MAXNPCS=1
 X1=3668
 Y1=2529
@@ -158,7 +158,7 @@ CALL=1
 [REGIONSPAWN 812]
 {
 NAME=Occala artist
-NPCLIST=artist
+NPC=artist
 MAXNPCS=1
 X1=3640
 Y1=2498
@@ -172,7 +172,7 @@ CALL=1
 [REGIONSPAWN 813]
 {
 NAME=Occala banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=3
 X1=3689
 Y1=2510

@@ -4,7 +4,7 @@
 [REGIONSPAWN 500]
 {
 NAME=Minoc carpenter
-NPCLIST=carpenter
+NPC=carpenter
 MAXNPCS=1
 X1=2507
 Y1=475
@@ -18,7 +18,7 @@ CALL=1
 [REGIONSPAWN 501]
 {
 NAME=Minoc miner
-NPCLIST=miner
+NPC=miner
 MAXNPCS=1
 X1=2460
 Y1=485
@@ -32,7 +32,7 @@ CALL=1
 [REGIONSPAWN 502]
 {
 NAME=Minoc jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=2453
 Y1=489
@@ -46,7 +46,7 @@ CALL=1
 [REGIONSPAWN 503]
 {
 NAME=Minoc tinker
-NPCLIST=tinker
+NPC=tinker
 MAXNPCS=1
 X1=2459
 Y1=451
@@ -60,7 +60,7 @@ CALL=1
 [REGIONSPAWN 504]
 {
 NAME=Minoc bard
-NPCLIST=bard
+NPC=bard
 MAXNPCS=1
 X1=2417
 Y1=544
@@ -74,7 +74,7 @@ CALL=1
 [REGIONSPAWN 505]
 {
 NAME=Minoc blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=2467
 Y1=559
@@ -88,7 +88,7 @@ CALL=1
 [REGIONSPAWN 506]
 {
 NAME=Minoc armorer
-NPCLIST=armourer
+NPC=armourer
 MAXNPCS=1
 X1=2532
 Y1=573
@@ -102,7 +102,7 @@ CALL=1
 [REGIONSPAWN 507]
 {
 NAME=Minoc healer
-NPCLIST=healer
+NPC=healer
 MAXNPCS=1
 X1=2571
 Y1=588
@@ -116,7 +116,7 @@ CALL=1
 [REGIONSPAWN 508]
 {
 NAME=Minoc provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2525
 Y1=546
@@ -130,7 +130,7 @@ CALL=1
 [REGIONSPAWN 509]
 {
 NAME=Minoc leatherworker
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=2518
 Y1=522
@@ -144,7 +144,7 @@ CALL=1
 [REGIONSPAWN 510]
 {
 NAME=Minoc miner
-NPCLIST=miner
+NPC=miner
 MAXNPCS=1
 X1=2497
 Y1=430
@@ -158,7 +158,7 @@ CALL=1
 [REGIONSPAWN 511]
 {
 NAME=Minoc provisioner
-NPCLIST=provisioner
+NPC=provisioner
 MAXNPCS=1
 X1=2449
 Y1=427
@@ -172,7 +172,7 @@ CALL=1
 [REGIONSPAWN 512]
 {
 NAME=Minoc butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=2433
 Y1=409
@@ -186,7 +186,7 @@ CALL=1
 [REGIONSPAWN 513]
 {
 NAME=Minoc cook
-NPCLIST=cook
+NPC=cook
 MAXNPCS=1
 X1=2458
 Y1=399
@@ -200,7 +200,7 @@ CALL=1
 [REGIONSPAWN 514]
 {
 NAME=Minoc animal trainer
-NPCLIST=animaltrainer
+NPC=animaltrainer
 MAXNPCS=1
 X1=2515
 Y1=375

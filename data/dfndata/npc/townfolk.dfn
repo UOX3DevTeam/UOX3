@@ -1,0 +1,169 @@
+//[actor]
+//{Note: Not implanted Yet
+//GET=m_actor f_actor
+//}
+
+[artist]
+{
+GET=m_artist f_artist
+}
+
+[brigand]
+{
+GET=m_brigand f_brigand
+}
+
+[beggar]
+{
+GET=m_beggar f_beggar
+}
+
+//[cashual]
+//{Note: Not Implanted Yet
+//GET=m_cashual f_cashual
+//}
+
+[fighter]
+{
+GET=m_fighter f_fighter
+}
+
+[gambler]
+{
+GET=m_gambler f_gambler
+}
+
+//[glassblower]
+//{Note: Not Implanted Yet
+//GET=m_glassblower f_glassblower
+//}
+
+[guard]
+{
+GET=m_guard f_guard
+}
+
+[gypsy]
+{
+GET=m_gypsy f_gypsy
+}
+
+[jailer]
+{
+GET=m_jailer f_jailer
+}
+
+[judge]
+{
+GET=m_judge f_judge
+}
+
+//[laborer]
+//{Note: Not Implanted Yet
+//GET=m_laborer f_laborer
+//}
+
+[mayor]
+{
+GET=m_mayor f_mayor
+}
+
+//[miller]
+//{Note: Not Implanted Yet
+//GET=m_miller f_miller
+//}
+
+//[minter]
+//{Note: Not Implanted Yet
+//GET=m_minter f_minter
+//}
+
+[monk]
+{
+GET=m_monk f_monk
+}
+
+[murderer-archmage]
+{
+GET=m_murderer-archmage f_murderer-archmage
+}
+
+[noble]
+{
+GET=m_noble f_noble
+}
+
+[paladin]
+{
+GET=m_paladin f_paladin
+}
+
+[prirate]
+{
+GET=m_prirate f_prirate
+}
+
+//[priest]
+//{Note: Not Implanted Yet
+//GET=m_priest f_priest
+//}
+
+[ranger]
+{
+GET=m_ranger f_ranger
+}
+
+[prisoner]
+{
+GET=m_prisoner f_prisoner
+}
+
+[sailor]
+{
+GET=m_sailor f_sailor
+}
+
+//[scholar]
+//{Note: Not Implanted Yet
+//GET=m_scholar f_scholar
+//}
+
+[sculptor]
+{
+GET=m_sculptor f_sculptor
+}
+
+//[servant]
+//{Note: Not Implanted Yet
+//GET=m_servant f_servant
+//}
+
+[seeker]
+{
+GET=m_seeker f_seeker
+}
+
+[shepherd]
+{
+GET=m_shepherd f_shepherd
+}
+
+[warrior]
+{
+GET=m_warrior f_warrior
+}
+
+[thief]
+{
+GET=m_thief f_thief
+}
+
+[townthief]
+{
+GET=m_townthief f_townthief
+}
+
+[towncrier]
+{
+GET=m_towncrier f_towncrier
+}

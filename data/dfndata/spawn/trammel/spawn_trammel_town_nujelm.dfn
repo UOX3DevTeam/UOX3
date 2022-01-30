@@ -4,7 +4,7 @@
 [REGIONSPAWN 7700]
 {
 NAME=Nujelm blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=3708
 Y1=1383
@@ -19,7 +19,7 @@ CALL=1
 [REGIONSPAWN 7701]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=3
 X1=3715
 Y1=1395
@@ -34,7 +34,7 @@ CALL=1
 [REGIONSPAWN 7702]
 {
 NAME=Nujelm butcher
-NPCLIST=butcher
+NPC=butcher
 MAXNPCS=1
 X1=3553
 Y1=1169
@@ -48,7 +48,7 @@ CALL=1
 [REGIONSPAWN 7703]
 {
 NAME=Nujelm leatherworker
-NPCLIST=leatherworker
+NPC=leatherworker
 MAXNPCS=1
 X1=3544
 Y1=1176
@@ -62,7 +62,7 @@ CALL=1
 [REGIONSPAWN 7704]
 {
 NAME=Nujelm weaponsmith
-NPCLIST=weaponsmith
+NPC=weaponsmith
 MAXNPCS=1
 X1=3545
 Y1=1185
@@ -76,7 +76,7 @@ CALL=1
 [REGIONSPAWN 7705]
 {
 NAME=Nujelm bowyer
-NPCLIST=bowyer
+NPC=bowyer
 MAXNPCS=1
 X1=3545
 Y1=1193
@@ -90,7 +90,7 @@ CALL=1
 [REGIONSPAWN 7706]
 {
 NAME=Nujelm blacksmith
-NPCLIST=blacksmith
+NPC=blacksmith
 MAXNPCS=1
 X1=3552
 Y1=1202
@@ -104,7 +104,7 @@ CALL=1
 [REGIONSPAWN 7707]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3656
 Y1=1219
@@ -118,7 +118,7 @@ CALL=1
 [REGIONSPAWN 7708]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3648
 Y1=1235
@@ -132,7 +132,7 @@ CALL=1
 [REGIONSPAWN 7709]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3656
 Y1=1186
@@ -146,7 +146,7 @@ CALL=1
 [REGIONSPAWN 7710]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3681
 Y1=1186
@@ -160,7 +160,7 @@ CALL=1
 [REGIONSPAWN 7711]
 {
 NAME=Nujelm guard
-NPCLIST=guard
+NPC=guard
 MAXNPCS=1
 X1=3696
 Y1=1178
@@ -174,7 +174,7 @@ CALL=1
 [REGIONSPAWN 7712]
 {
 NAME=Nujelm shipwright
-NPCLIST=shipwright
+NPC=shipwright
 MAXNPCS=1
 X1=3696
 Y1=1208
@@ -188,7 +188,7 @@ CALL=1
 [REGIONSPAWN 7713]
 {
 NAME=Nujelm bard
-NPCLIST=bard
+NPC=bard
 MAXNPCS=1
 X1=3736
 Y1=1184
@@ -202,7 +202,7 @@ CALL=1
 [REGIONSPAWN 7714]
 {
 NAME=Nujelm jeweler
-NPCLIST=jeweler
+NPC=jeweler
 MAXNPCS=1
 X1=3768
 Y1=1166
@@ -216,7 +216,7 @@ CALL=1
 [REGIONSPAWN 7715]
 {
 NAME=Nujelm tavernkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=3767
 Y1=1234
@@ -230,7 +230,7 @@ CALL=1
 [REGIONSPAWN 7716]
 {
 NAME=Nujelm tailor
-NPCLIST=tailor
+NPC=tailor
 MAXNPCS=1
 X1=3761
 Y1=1269
@@ -244,7 +244,7 @@ CALL=1
 [REGIONSPAWN 7717]
 {
 NAME=Nujelm innkeeper
-NPCLIST=innkeeper
+NPC=innkeeper
 MAXNPCS=1
 X1=3731
 Y1=1320
@@ -258,7 +258,7 @@ CALL=1
 [REGIONSPAWN 7718]
 {
 NAME=Nujelm banker
-NPCLIST=banker
+NPC=banker
 MAXNPCS=1
 X1=3762
 Y1=1313
