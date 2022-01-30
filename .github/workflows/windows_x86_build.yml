@@ -1,7 +1,15 @@
 name: Windows x86 Build
 on:
   push:
+    paths-ignore:
+      - '**.js'
+      - '**.dfn'
+      - '**.scp'
   pull_request:
+    paths-ignore:
+      - '**.js'
+      - '**.dfn'
+      - '**.scp'
 jobs:
   build:
     runs-on: windows-latest

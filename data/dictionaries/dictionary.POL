@@ -2157,6 +2157,8 @@
 2202=Gniazda dla zwierząt
 2203=Szansa na kontrolę
 2204=Lista Przyjaciół
+2205=Duchy zmarłych nie są domeną wiedzy o zwierzętach.
+2206=Nie możesz myśleć o niczym, co znasz od ręki.
 // [2300-2449] Najemnicy
 2300=%s został usunięty z listy przyjaciół %s.
 2301=Ty zostałeś usunięty z listy przyjaciół %s.
@@ -3256,6 +3258,22 @@
 6102=Nie możesz użyć ciasta do tego.
 6103=Młyn do mąki jest obecnie zajęty.
 6104=Mąka gotowa do odbioru.
+6200=Co chciałabyś spróbować?
+6201=To nie jest coś, czego możesz skosztować.
+6202=Jesteś zbyt daleko, żeby tego skosztować.
+6203=Wyczuwasz nutę nieświeżości w %s.
+6204=Nie wyczuwasz nic niezwykłego w tej substancji.
+6205=Nie możesz niczego rozpoznać w tej substancji.
+6206=Ta mikstura mogła być zrobiona z czosnku.
+6207=Ta mikstura mogła być zrobiona z pajęczego jedwabiu.
+6208=Ten eliksir mógł być zrobiony z mchu krwawnika.
+6209=Ten eliksir mógł być zrobiony z mandragory.
+6210=Ten eliksir mógł być zrobiony z koszyczka.
+6211=Ten eliksir mógł być zrobiony z czarnej perły.
+6212=Ta mikstura mogła być zrobiona z żeń-szenia.
+6213=Ta mikstura mogła być zrobiona z popiołu siarkowego.
+6214=Składniki tego eliksiru są dla ciebie nieznane.
+6215=Już wiesz jaki to rodzaj eliksiru: %s
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?

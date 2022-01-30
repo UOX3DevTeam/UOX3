@@ -2157,6 +2157,8 @@
 2202=Haustierschlitze
 2203=Kontrollmöglichkeit
 2204=Freundesliste
+2205=Die Geister der Verstorbenen gehören nicht in den Bereich der Tierkunde.
+2206=Ihnen fällt auf Anhieb nichts ein, was Sie wissen.
 // [2300-2449] Hirelings
 2300=%s wurde aus der Freundesliste von %s entfernt.
 2301=Du wurdest aus der Freundesliste von %s entfernt.
@@ -3256,6 +3258,22 @@
 6102=Damit können Sie den Teig nicht verwenden.
 6103=Die Mühle ist zurzeit besetzt.
 6104=Mehl steht zur Abholung bereit.
+6200=Was würdest du gerne probieren?
+6201=Das kann man nicht schmecken.
+6202=Du bist zu weit weg, um das zu schmecken.
+6203=Du spürst einen Hauch von Faulheit bei %s.
+6204=Du erkennst nichts Ungewöhnliches an dieser Substanz.
+6205=Du kannst nichts über diese Substanz erkennen.
+6206=Dieser Trank könnte aus Knoblauch hergestellt worden sein.
+6207=Dieser Trank könnte aus Spinnenseide hergestellt worden sein.
+6208=Dieser Trank kann aus Blutmoos hergestellt worden sein.
+6209=Dieser Trank könnte aus Alraune gemacht worden sein.
+6210=Dieser Trank kann aus Nachtschatten hergestellt worden sein.
+6211=Dieser Trank kann aus schwarzer Perle hergestellt worden sein.
+6212=Dieser Trank kann aus Ginseng hergestellt worden sein.
+6213=Dieser Trank kann aus schwefelhaltiger Asche hergestellt worden sein.
+6214=Die Zutaten dieses Trankes sind dir unbekannt.
+6215=Du weißt bereits, was das für ein Trank ist: %s
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
