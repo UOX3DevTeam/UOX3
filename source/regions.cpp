@@ -825,7 +825,7 @@ void CMapHandler::Save( void )
 			writeDestination.close();
 		}
 	}
-	Console << "\b\b\b" << (UI32)(100) << "%";
+	Console << "\b\b\b\b" << (UI32)(100) << "%";
 	houseDestination.close();
 
 	filename = basePath + "overflow.wsc";
@@ -930,6 +930,10 @@ void CMapHandler::Load( void )
 			readDestination.clear();
 		}
 	}
+
+	// If runningDone is still 0, there was nothing to load! 100% it
+	if( runningDone == 0 )
+		Console << "\b\b" << (UI32)(100) << "%";
 
 	Console.TurnNormal();
 	Console << "\b\b\b";

@@ -2157,6 +2157,8 @@
 2202=Pet Slots
 2203=Control Chance
 2204=Friend's List
+2205=The spirits of the dead are not the province of animal lore.
+2206=You can't think of anything you know offhand.
 // [2300-2449] Hirelings
 2300=%s has been removed from %s's friend list.
 2301=You have been removed from %s's friend list.
@@ -3148,6 +3150,8 @@
 5142=a lesser daemon
 5143=a cacodaemon
 5144=a beastly daemon
+5145=an orc chopper
+5146=the controller
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3254,6 +3258,22 @@
 6102=You cannot use the dough with that.
 6103=The flour mill is currently busy.
 6104=Flour ready for collection.
+6200=What would you like to taste?
+6201=That's not something you can taste.
+6202=You are too far away to taste that.
+6203=You sense a hint of foulness about %s.
+6204=You detect nothing unusual about this substance.
+6205=You cannot discern anything about this substance.
+6206=This potion may have been made from garlic.
+6207=This potion may have been made from spider silk.
+6208=This potion may have been made from bloodmoss.
+6209=This potion may have been made from mandrake.
+6210=This potion may have been made from nightshade
+6211=This potion may have been made from black pearl.
+6212=This potion may have been made from ginseng.
+6213=This potion may have been made from sulfurous ash.
+6214=This potion's ingredients are unknown to you.
+6215=You already know what kind of potion that is: %s
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3961,6 +3981,13 @@
 9121=The animal walks where it was instructed to.
 9122=You broke your shepherd's crook.
 9123=You know yourself quite well enough already.
+9124=*You have been stunned by a colossal blow!*
+9125=*You recover your senses.*
+9126=*The creature's essence of disease is damaging you!*
+9127=You can't do that while wearing savage kin paint
+9128=You have no chance of provoking that creature.
+9129=That target is immune to physical damage!
+9130=Your weapon cannot penetrate the creature's magical barrier.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!

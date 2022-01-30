@@ -695,8 +695,8 @@ bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
 //o-----------------------------------------------------------------------------------------------o
 void command_respawn( void )
 {
-	UI16 spawnedItems	= 0;
-	UI16 spawnedNpcs	= 0;
+	UI32 spawnedItems		= 0;
+	UI32 spawnedNpcs		= 0;
 	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
 	while( spIter != spEnd )
@@ -724,8 +724,8 @@ void command_regspawn( CSocket *s )
 
 	if( Commands->NumArguments() == 2 )
 	{
-		UI16 itemsSpawned	= 0;
-		UI16 npcsSpawned	= 0;
+		UI32 itemsSpawned	= 0;
+		UI32 npcsSpawned	= 0;
 
 		if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{

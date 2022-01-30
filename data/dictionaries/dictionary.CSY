@@ -2157,6 +2157,8 @@
 2202=Sloty pro zvířata
 2203=Šance na kontrolu
 2204=Seznam přátel
+2205=Duchové mrtvých nejsou doménou zvířecí vědy.
+2206=Nemůžeš si vzpomenout na nic, co bys věděl z hlavy.
 // [2300-2449] Hirelings
 2300=%s byl odstraněn ze seznamu přátel %s.
 2301=Byl jsi odstraněn ze seznamu přátel %s.
@@ -3151,6 +3153,8 @@
 5142=menší démon
 5143=akodaemon
 5144=zvířecí démon
+5145=orkský sekáček
+5146=ovladač
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3261,6 +3265,22 @@
 6102=Těsto k tomu nemůžete použít.
 6103=Mlýn na mouku je momentálně obsazen.
 6104=Mouka je připravena k odběru.
+6200=Co byste rádi ochutnali?
+6201=To není nic, co bys mohl ochutnat.
+6202=Jste příliš daleko na to, abyste to mohli ochutnat.
+6203=Cítíte z %s nádech nevábnosti.
+6204=Nezaznamenáváte na této látce nic neobvyklého.
+6205=Nemůžete na této látce nic rozeznat.
+6206=Tento lektvar mohl být vyroben z česneku.
+6207=Tento lektvar mohl být vyroben z pavoučího hedvábí.
+6208=Tento lektvar mohl být vyroben z krvavého mechu.
+6209=Tento lektvar mohl být vyroben z mandragory.
+6210=Tento lektvar mohl být vyroben z nočního lišejníku.
+6211=Tento lektvar mohl být vyroben z černé perly.
+6212=Tento lektvar mohl být vyroben z ženšenu.
+6213=Tento lektvar mohl být vyroben ze sirného popela.
+6214=Složení tohoto lektvaru ti není známo.
+6215=Již víš, o jaký lektvar se jedná: %s
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -3970,6 +3990,13 @@
 9121=Zvíře jde tam, kam mu bylo přikázáno.
 9122=Zlomil jsi pastýřský hák.
 9123=Sám sebe už znáš dost dobře.
+9124=*Byl jsi omráčen kolosální ranou!*
+9125=*Přišel jsi k sobě.*
+9126=*Nemocná esence stvoření tě poškozuje!*
+9127=Nemůžeš to udělat, když máš na sobě barvu divokého rodu.
+9128=Nemáš šanci toho tvora vyprovokovat.
+9129=Tento cíl je imunní vůči fyzickému poškození!
+9130=Tvá zbraň nemůže proniknout magickou bariérou tohoto tvora.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

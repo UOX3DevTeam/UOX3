@@ -284,3 +284,23 @@ name=spyglass
 id=0x14f6
 }
 
+[power_crystal]
+{
+get=base_item
+name=power crystal
+id=0x1f1c
+weight=100
+decay=1
+good=50
+}
+
+[clockwork_assembly]
+{
+get=base_item
+name=clockwork assembly
+id=0x1ea8
+colour=0x044e
+weight=5000
+decay=1
+good=50
+}

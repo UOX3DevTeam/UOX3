@@ -2157,6 +2157,8 @@
 2202=Ranuras para mascotas
 2203=Posibilidad de control
 2204=Lista de amigos
+2205=Los espíritus de los muertos no son competencia de la sabiduría animal.
+2206=No se te ocurre nada que conozcas de improviso.
 // [2300-2449] Contratados
 2300=%s ha sido eliminado de la lista de amigos de %s.
 2301=Has sido eliminado de la lista de amigos de %s.
@@ -3148,6 +3150,8 @@
 5142=un demonio menor
 5143=un cacodemonio
 5144=un demonio bestial
+5145=un cortador de orcos
+5146=el controlador
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -3254,6 +3258,22 @@
 6102=No puede usar la masa con eso.
 6103=El molino de harina está actualmente ocupado.
 6104=Harina lista para recoger.
+6200=¿Qué le gustaría probar?
+6201=Eso no se puede saborear.
+6202=Está demasiado lejos para probarlo.
+6203=Percibe una pizca de asquerosidad en %s.
+6204=No detecta nada inusual en esta sustancia.
+6205=No puedes discernir nada sobre esta sustancia.
+6206=Esta poción puede estar hecha de ajo.
+6207=Esta poción puede estar hecha de seda de araña.
+6208=Esta poción puede estar hecha de musgo de sangre.
+6209=Esta poción puede estar hecha de mandrágora.
+6210=Esta poción puede estar hecha de belladona
+6211=Esta poción puede estar hecha de perla negra.
+6212=Esta poción puede estar hecha de ginseng.
+6213=Esta poción puede estar hecha de ceniza sulfurosa.
+6214=Los ingredientes de esta poción son desconocidos para usted.
+6215=Ya sabe qué tipo de poción es: %s
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3963,6 +3983,13 @@
 9121=El animal camina hacia donde se le indicó.
 9122=Has roto tu cayado de pastor.
 9123=Ya te conoces bastante bien.
+9124=*¡Has sido aturdido por un golpe colosal!*
+9125=*Recuperas tus sentidos.*
+9126=*¡La esencia de la enfermedad de la criatura te está dañando!*
+9127=No puedes hacer eso mientras llevas pintura de kin salvaje
+9128=No tienes ninguna posibilidad de provocar a esa criatura.
+9129=¡Ese objetivo es inmune al daño físico!
+9130=Tu arma no puede penetrar la barrera mágica de la criatura.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!

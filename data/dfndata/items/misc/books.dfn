@@ -470,6 +470,16 @@ type=11
 more=0x00000024
 }
 
+[a_welcome]
+{
+get=base_item
+name=A Welcome
+id=0x0fef 0x0ff0 0x0ff1 0x0ff2 0x0ff3
+weight=100
+type=11
+more=0x00000025
+}
+
 [0x2254]
 {
 get=base_item

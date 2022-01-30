@@ -17,7 +17,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 			// ... and a melee weapon...
 			var weaponType = TriggerEvent( 2500, "getWeaponType", attacker, null );
 			if( weaponType == "WRESTLING" || weaponType == "BOWS" || weaponType == "XBOWS" || weaponType == "BLOWGUNS" || weaponType == "THROWN" )
-				return;
+				return true;
 
 			// ... apply some corrosive damage to the weapon!
 			var rnd = RandomNumber( 1, 4 );
@@ -33,4 +33,5 @@ function onDamage( damaged, attacker, damageValue, damageType )
 			}
 		}
 	}
+	return true;
 }
