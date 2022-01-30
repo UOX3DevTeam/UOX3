@@ -394,6 +394,7 @@
 816=skill/meditation.js
 817=skill/removetrap.js
 818=skill/itemid.js
+819=skill/tasteid.js
 }
 
 [PACKET_SCRIPTS]
