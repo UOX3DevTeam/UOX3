@@ -338,6 +338,7 @@ static JSFunctionSpec CGump_Methods[] =
 
 static JSFunctionSpec CChar_Methods[] =
 {
+	{ "KillTimers",			CBase_KillTimers,		1, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,		1, 0, 0 },
 	{ "YellMessage",		CChar_YellMessage,		1, 0, 0 },
 	{ "WhisperMessage",		CChar_WhisperMessage,	1, 0, 0 },
@@ -379,7 +380,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Follow",				CChar_Follow,			1, 0, 0 },
 	{ "Dismount",			CChar_Dismount,			0, 0, 0 },
 	{ "SetPoisoned",		CChar_SetPoisoned,		2, 0, 0 },
-	{ "ExplodeItem",		CChar_ExplodeItem,		1, 0, 0 },
+	{ "ExplodeItem",		CChar_ExplodeItem,		3, 0, 0 },
 	{ "SetInvisible",		CChar_SetInvisible,		2, 0, 0 },
 	{ "ApplySection",		CBase_ApplySection,		1, 0, 0 },
 	{ "Refresh",			CBase_Refresh,			0, 0, 0 },

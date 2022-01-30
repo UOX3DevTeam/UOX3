@@ -1,5 +1,7 @@
 // Decorate command - by Xuri (xuri@uox3.org)
-// v1.4
+// v1.5
+//		1.5 - 18/01/2022
+//			Added decayable = false as a condition for decorations to be saved/copied
 //
 //		1.4 - 08/11/2021
 // 			Added version system so updates won't break older template versions
@@ -376,8 +378,8 @@ function HandleDecorateCopy( socket, splitString )
 			if( totalCopied > 0 )
 			{
 				var tempMsg = GetDictionaryEntry( 8016, socket.language ); // %i decorations copied from %s to %t.
-				tempmsg = tempMsg.replace(/%i/gi, totalCopied.toString() );
-				tempmsg = tempMsg.replace(/%s/gi, sourceFacet );
+				tempMsg = tempMsg.replace(/%i/gi, totalCopied.toString() );
+				tempMsg = tempMsg.replace(/%s/gi, sourceFacet );
 				socket.SysMessage( tempMsg.replace(/%t/gi, targetFacet ));
 			}
 			else
@@ -1796,7 +1798,7 @@ function DecorateWorld( socket )
 
 function onIterate( toCheck )
 {
-	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave )
+	if( ValidateObject( toCheck ) && toCheck.isItem && toCheck.container == null && !toCheck.isMulti && !ValidateObject( toCheck.multi ) && toCheck.shouldSave && !toCheck.decayable )
 	{
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
