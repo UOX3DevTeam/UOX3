@@ -332,14 +332,14 @@ void cEffects::bolteffect( CChar *player )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void explodeItem( CSocket *mSock, CItem *nItem )
+//|	Function	-	void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting the item
 //o-----------------------------------------------------------------------------------------------o
-void explodeItem( CSocket *mSock, CItem *nItem )
+void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType = 0, bool explodeNearby = true )
 {
 	CChar *c = mSock->CurrcharObj();
-	UI32 dmg = 0;
+
 	UI32 dx, dy, dz;
 	// - send the effect (visual and sound)
 	if( nItem->GetCont() != nullptr )
@@ -356,71 +356,87 @@ void explodeItem( CSocket *mSock, CItem *nItem )
 	}
 	
 	UI32 len	= nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
-	dmg			= RandomNum( nItem->GetTempVar( CITV_MOREZ ) * 5, nItem->GetTempVar( CITV_MOREZ ) * 10 );
+	if( damage == 0 )
+	{
+		damage	= RandomNum( nItem->GetTempVar( CITV_MOREZ ) * 5, nItem->GetTempVar( CITV_MOREZ ) * 10 );
+	}
 
-	if( dmg < 5 )
-		dmg = RandomNum( 5, 10 );  // 5 points minimum damage
+	if( damage < 5 )
+		damage = RandomNum( 5, 10 );  // 5 points minimum damage
 	if( len < 2 )
 		len = 2;  // 2 square min damage range
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	if( explodeNearby )
 	{
-		CMapRegion *Cell = (*rIter);
-		bool chain = false;
-
-		GenericList< CChar * > *regChars = Cell->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+		// Explode for characters nearby
+		REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
+		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
 		{
-			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
-				continue;
-			if( tempChar->GetRegion()->IsSafeZone() )
+			CMapRegion *Cell = (*rIter);
+			bool chain = false;
+
+			GenericList< CChar * > *regChars = Cell->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
-				// Character is in a safe zone, ignore damage
-				continue;
-			}
-			dx = abs( tempChar->GetX() - nItem->GetX() );
-			dy = abs( tempChar->GetY() - nItem->GetY() );
-			dz = abs( tempChar->GetZ() - nItem->GetZ() );
-			if( dx <= len && dy <= len && dz <= len )
-			{
-				if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
+					continue;
+				if( tempChar->GetRegion()->IsSafeZone() )
 				{
-					//UI08 hitLoc = Combat->CalculateHitLoc();
-					SI16 damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( (SI32)dmg + ( 2 - std::min( dx, dy ) ) ), true);
-					tempChar->Damage( damage, HEAT, c, true );
+					// Character is in a safe zone, ignore damage
+					continue;
 				}
-			}
-		}
-		regChars->Pop();
-		GenericList< CItem * > *regItems = Cell->GetItemList();
-		regItems->Push();
-		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-		{
-			if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
-			{
-				// Item is in a different instanceID - ignore
-				continue;
-			}
-			if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
-			{
-				dx = abs( nItem->GetX() - tempItem->GetX() );
-				dy = abs( nItem->GetY() - tempItem->GetY() );
-				dz = abs( nItem->GetZ() - tempItem->GetZ() );
-
-				if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
+				dx = abs( tempChar->GetX() - nItem->GetX() );
+				dy = abs( tempChar->GetY() - nItem->GetY() );
+				dz = abs( tempChar->GetZ() - nItem->GetZ() );
+				if( dx <= len && dy <= len && dz <= len )
 				{
-					if( !( dx == 0 && dy == 0 && dz == 0 ) )
+					if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 					{
-						if( RandomNum( 0, 1 ) == 1 )
-							chain = true;
-						Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+						//UI08 hitLoc = Combat->CalculateHitLoc();
+						damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( static_cast<SI32>(damage) + ( 2 - std::min( dx, dy ))), true );
+						[[maybe_unused]] bool retVal = tempChar->Damage( static_cast<SI16>(damage), HEAT, c, true );
 					}
 				}
 			}
+			regChars->Pop();
+			GenericList< CItem * > *regItems = Cell->GetItemList();
+			regItems->Push();
+			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+			{
+				if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
+				{
+					// Item is in a different instanceID - ignore
+					continue;
+				}
+				if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
+				{
+					dx = abs( nItem->GetX() - tempItem->GetX() );
+					dy = abs( nItem->GetY() - tempItem->GetY() );
+					dz = abs( nItem->GetZ() - tempItem->GetZ() );
+
+					if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
+					{
+						if( !( dx == 0 && dy == 0 && dz == 0 ) )
+						{
+							if( RandomNum( 0, 1 ) == 1 )
+								chain = true;
+							Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+						}
+					}
+				}
+			}
+			regItems->Pop();
 		}
-		regItems->Pop();
+	}
+	else
+	{
+		// Only affect character associated with item
+		if( !c->IsGM() && !c->IsInvulnerable() && ( c->IsNpc() || isOnline( (*c) )))
+		{
+			damage = Combat->ApplyDefenseModifiers( HEAT, c, c, ALCHEMY, 0, static_cast<SI32>(damage), true );
+			[[maybe_unused]] bool retVal = c->Damage( static_cast<SI16>(damage), HEAT, c, true );
+		}
 	}
 	nItem->Delete();
 }

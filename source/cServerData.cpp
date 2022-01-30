@@ -692,13 +692,13 @@ void CServerData::ResetDefaults( void )
 
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
-	NPCWalkingSpeed( 0.5 );
+	NPCWalkingSpeed( 0.6 );
 	NPCRunningSpeed( 0.3 );
 	NPCFleeingSpeed( 0.4 );
 	NPCMountedWalkingSpeed( 0.3 );
 	NPCMountedRunningSpeed( 0.12 );
 	NPCMountedFleeingSpeed( 0.2 );
-	AccountFlushTimer( 0.0 );
+	AccountFlushTimer( 5.0 );
 
 	// RESOURCES
 	ResourceAreaSize( 8 );

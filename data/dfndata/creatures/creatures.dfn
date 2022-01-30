@@ -2052,7 +2052,7 @@ ANIMAL
 }
 
 [CREATURE 0xbd]
-{ Huge Orcish Lord
+{ Huge Orcish Lord/Orc Brute
 ICON=0x25b0
 SOUND_STARTATTACK=0x1b0
 SOUND_IDLE=0x1b1
@@ -3909,7 +3909,7 @@ FLIES
 }
 
 [CREATURE 0x2fb]
-{ Exodus/Clockwork Minion
+{ Exodus/Clockwork Minion Lord
 ICON=0x260b
 SOUND_STARTATTACK=0x26c
 SOUND_IDLE=0x218
@@ -3955,6 +3955,8 @@ MOVEMENT=LAND
 [CREATURE 0x2ff]
 { Blackthorn Cohort/Betrayer
 ICON=0x25f9
+SOUND_ATTACK=0x23b
+SOUND_DEFEND=0x140
 SOUND_DIE=0x15c
 MOVEMENT=LAND
 }

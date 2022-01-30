@@ -3148,6 +3148,8 @@
 5142=mniejszy demon
 5143=kakodaemon
 5144=potworny demon
+5145=orkowy tasak
+5146=kontroler
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -3963,6 +3965,13 @@
 9121=Zwierzę idzie tam, gdzie zostało poinstruowane.
 9122=Złamałeś swój pasterski rogacz.
 9123=Znasz siebie już wystarczająco dobrze.
+9124=*Zostałeś ogłuszony kolosalnym ciosem!*
+9125=*Odzyskujesz zmysły.*
+9126=*Chorobliwa esencja stwora uszkadza cię!*
+9127=Nie możesz tego zrobić, gdy masz na sobie farbę Dzikusa.
+9128=Nie masz szans na sprowokowanie tej istoty.
+9129=Ten cel jest odporny na obrażenia fizyczne!
+9130=Twoja broń nie może przebić się przez magiczną barierę tej istoty.
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

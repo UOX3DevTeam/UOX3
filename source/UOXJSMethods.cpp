@@ -4033,18 +4033,18 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	return JS_TRUE;
 }
 
-void explodeItem( CSocket *mSock, CItem *nItem );
+void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, bool explodeNearby );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
-//|	Prototype	-	void ExplodeItem( myItem )
+//|	Prototype	-	void ExplodeItem( myItem, damage, damageType, explodeNearby )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes specified item by exploding it, dealing 5-10 dmg to nearby characters
 //o-----------------------------------------------------------------------------------------------o
 JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 4 )
 	{
-		MethodError( "(ExplodeItem) Invalid Number of Arguments %d, needs: 1", argc );
+		MethodError( "(ExplodeItem) Invalid Number of Arguments %d, needs: 4", argc );
 		return JS_FALSE;
 	}
 
@@ -4058,7 +4058,11 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	explodeItem( myChar->GetSocket(), static_cast<CItem *>(trgObj) );
+	UI32 damage = static_cast<UI32>(JSVAL_TO_INT(argv[1]));
+	UI08 damageType = static_cast<UI08>(JSVAL_TO_INT(argv[2]));
+	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
+
+	explodeItem( myChar->GetSocket(), static_cast<CItem *>(trgObj), damage, damageType, explodeNearby );
 	return JS_TRUE;
 }
 
@@ -8533,7 +8537,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	{
 		doRepsys = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 	}
-	mChar->Damage( damage.toInt(), element, attacker, doRepsys );
+	[[maybe_unused]] bool retVal = mChar->Damage( damage.toInt(), element, attacker, doRepsys );
 	return JS_TRUE;
 }
 

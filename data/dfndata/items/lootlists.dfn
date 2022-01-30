@@ -718,6 +718,12 @@
 10|specialfishingnet
 }
 
+[LOOTLIST arcane_gems]
+{
+80|blank
+20|arcane_gem
+}
+
 // Lootlist shared by virtually all monsters, which has a chance to add "useless" junk to their loot,
 // such as torches, random food, etc
 [LOOTLIST random_useless_junk]
@@ -841,4 +847,60 @@
 125|0x19B8
 125|0x19B9
 125|0x19BA
+}
+
+// Betrayer loot
+[LOOTLIST betrayerLoot]
+{
+750|blank
+200|a_welcome
+50|power_crystal
+}
+
+// Juggernaut loot
+[LOOTLIST juggernautLoot]
+{
+960|blank
+20|clockwork_assembly
+20|power_crystal
+}
+
+// Golem loot
+[LOOTLIST golemLoot]
+{
+980|blank
+15|clockwork_assembly
+1|power_crystal
+}
+
+// Orc Brute loot
+[LOOTLIST orcbruteLoot]
+{
+750|blank
+50|orcishkinmask
+200|0x26ac
+}
+
+// Exodus Overseer loot
+[LOOTLIST exodusOverseerLoot]
+{
+800|blank
+150|clockwork_assembly
+50|power_crystal
+}
+
+// Exodus Minion Lord loot
+[LOOTLIST exodusMinionLordLoot]
+{
+600|blank
+300|clockwork_assembly
+100|power_crystal
+}
+
+// Exodus Minion loot
+[LOOTLIST exodusMinionLoot]
+{
+900|blank
+75|clockwork_assembly
+25|power_crystal
 }
