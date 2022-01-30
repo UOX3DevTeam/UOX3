@@ -7,4 +7,5 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		var dmgToReflect = RandomNumber(( damageValue / 4 ), ( damageValue / 4 ) * 3 );
 		attacker.Damage( dmgToReflect, 1, damaged );
 	}
+	return true;
 }

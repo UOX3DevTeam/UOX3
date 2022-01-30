@@ -90,7 +90,7 @@ SI32 CDictionary::LoadDictionary( void )
 		Console.print( " " );
 		Console.MoveTo( 15 );
 		Console << "Dictionary." << Language;
-		Console.PrintSpecial( CGREEN, "loaded" );
+		Console.PrintSpecial( CGREEN, "done" );
 	}
 	else
 	{
