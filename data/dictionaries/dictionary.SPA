@@ -3258,6 +3258,22 @@
 6102=No puede usar la masa con eso.
 6103=El molino de harina está actualmente ocupado.
 6104=Harina lista para recoger.
+6200=¿Qué le gustaría probar?
+6201=Eso no se puede saborear.
+6202=Está demasiado lejos para probarlo.
+6203=Percibe una pizca de asquerosidad en %s.
+6204=No detecta nada inusual en esta sustancia.
+6205=No puedes discernir nada sobre esta sustancia.
+6206=Esta poción puede estar hecha de ajo.
+6207=Esta poción puede estar hecha de seda de araña.
+6208=Esta poción puede estar hecha de musgo de sangre.
+6209=Esta poción puede estar hecha de mandrágora.
+6210=Esta poción puede estar hecha de belladona
+6211=Esta poción puede estar hecha de perla negra.
+6212=Esta poción puede estar hecha de ginseng.
+6213=Esta poción puede estar hecha de ceniza sulfurosa.
+6214=Los ingredientes de esta poción son desconocidos para usted.
+6215=Ya sabe qué tipo de poción es: %s
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
