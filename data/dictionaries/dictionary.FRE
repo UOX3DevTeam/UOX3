@@ -3422,6 +3422,22 @@
 6102=Vous ne pouvez pas utiliser la pâte avec cela.
 6103=Le moulin à farine est actuellement occupé.
 6104=Farine prête pour la collecte.
+6200=Que voulez-vous goûter ?
+6201=Ce n'est pas quelque chose que vous pouvez goûter.
+6202=Vous êtes trop loin pour goûter cela.
+6203=Vous sentez un soupçon de saleté à propos de %s.
+6204=Vous ne détectez rien d'inhabituel dans cette substance.
+6205=Vous ne pouvez rien discerner de cette substance.
+6206=Cette potion a peut-être été fabriquée à partir d'ail.
+6207=Cette potion peut avoir été fabriquée à partir de soie d'araignée.
+6208=Cette potion peut avoir été faite à partir de mousse de sang.
+6209=Cette potion peut avoir été faite à partir de la mandragore.
+6210=Cette potion peut avoir été faite à partir de la morelle noire.
+6211=Cette potion peut avoir été faite à partir de la perle noire.
+6212=Cette potion peut avoir été faite à partir de ginseng.
+6213=Cette potion peut avoir été faite à partir de cendres sulfureuses.
+6214=Les ingrédients de cette potion vous sont inconnus.
+6215=Vous savez déjà de quel genre de potion il s'agit : %s
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

@@ -3258,6 +3258,22 @@
 6102=You cannot use the dough with that.
 6103=The flour mill is currently busy.
 6104=Flour ready for collection.
+6200=What would you like to taste?
+6201=That's not something you can taste.
+6202=You are too far away to taste that.
+6203=You sense a hint of foulness about %s.
+6204=You detect nothing unusual about this substance.
+6205=You cannot discern anything about this substance.
+6206=This potion may have been made from garlic.
+6207=This potion may have been made from spider silk.
+6208=This potion may have been made from bloodmoss.
+6209=This potion may have been made from mandrake.
+6210=This potion may have been made from nightshade
+6211=This potion may have been made from black pearl.
+6212=This potion may have been made from ginseng.
+6213=This potion may have been made from sulfurous ash.
+6214=This potion's ingredients are unknown to you.
+6215=You already know what kind of potion that is: %s
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
