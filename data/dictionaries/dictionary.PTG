@@ -2157,6 +2157,8 @@
 2202=Pet Slots
 2203=Oportunidade de Controlo
 2204=Lista de amigos
+2205=Os espíritos dos mortos não são a província da sabedoria animal.
+2206=Não se pode pensar em nada que se saiba de improviso.
 // [2300-2449] Hirelings
 2300=%s foi removido da lista de amigos da %s.
 2301=Você foi removido da lista de amigos da %s.
@@ -3247,15 +3249,31 @@
 6093=Queima-se as %s a um estaladiço! Está arruinada.
 6094=Já estás a cozinhar alguma coisa.
 6095=Não se pode cozinhar as suas %s com isso.
-6096= Cozinha-se uma pizza.
+6096=Cozinha-se uma pizza.
 6097=Em que queres cozinhar isto?
-6098= Cozinhas um muffin.
-6099= Cozinhas uma tarte.
-6100= Cozinhas um bolo.
+6098=Cozinhas um muffin.
+6099=Cozinhas uma tarte.
+6100=Cozinhas um bolo.
 6101=Faz-se uma bolacha.
 6102=Não se pode usar a massa com isso.
 6103=O moinho de farinha está actualmente ocupado.
 6104=Flor pronto a ser recolhido.
+6200=O que gostaria de provar?
+6201=Isso não é algo que se possa saborear.
+6202=Está demasiado longe para saborear isso.
+6203=Sente-se uma ponta de sujidade cerca de %s.
+6204=Não detecta nada de anormal sobre esta substância.
+6205=Não se consegue discernir nada sobre esta substância.
+6206=Esta poção pode ter sido feita a partir de alho.
+6207=Esta poção pode ter sido feita a partir de seda de aranha.
+6208=Esta poção pode ter sido feita a partir de seda de aranha.
+6209=Esta poção pode ter sido feita a partir de mandrágora.
+6210=Esta poção pode ter sido feita a partir de seda de noite
+6211=Esta poção pode ter sido feita a partir de pérola negra.
+6212=Esta poção pode ter sido feita a partir de ginseng.
+6213=Esta poção pode ter sido feita de cinza sulfurosa.
+6214=Os ingredientes desta poção são desconhecidos para si.
+6215=Você já sabe que tipo de poção é esta: %s
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
