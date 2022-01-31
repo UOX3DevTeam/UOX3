@@ -16,7 +16,6 @@ GET=m_architect f_architect
 [armourer]
 {
 GET=m_armourer f_armourer
-SCRIPT=3005
 }
 
 [baker]
