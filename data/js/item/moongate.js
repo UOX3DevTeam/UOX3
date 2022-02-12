@@ -189,28 +189,28 @@ function onGumpPress( srcSock, myButton )
 		case 13:
 		{
 			// Britain
-			targetLocation = [ 1336, 1997, 5, tWorld ];
+			targetLocation = [ 1336, 1997, 5, tWorld, 0 ];
 			break;
 		}
 		case 6:
 		case 14:
 		{
 			// Magincia
-			targetLocation = [ 3563, 2139, 31, tWorld ];
+			targetLocation = [ 3563, 2139, 31, tWorld, 0 ];
 			break;
 		}
 		case 7:
 		case 15:
 		{
 			// Moonglow
-			targetLocation = [ 4467, 1283, 5, tWorld ];
+			targetLocation = [ 4467, 1283, 5, tWorld, 0 ];
 			break;
 		}
 		case 8:
 		case 16:
 		{
 			// Skara Brae
-			targetLocation = [ 643, 2067, 5, tWorld ];
+			targetLocation = [ 643, 2067, 5, tWorld, 0 ];
 			break;
 		}
 
@@ -218,28 +218,28 @@ function onGumpPress( srcSock, myButton )
 		case 17:
 		{
 			// Trinsic
-			targetLocation = [ 1828, 2948, -20, tWorld ];
+			targetLocation = [ 1828, 2948, -20, tWorld, 0 ];
 			break;
 		}
 		case 10:
 		case 18:
 		{
 			// Vesper
-			targetLocation = [ 2701, 692, 5, tWorld ];
+			targetLocation = [ 2701, 692, 5, tWorld, 0 ];
 			break;
 		}
 		case 11:
 		case 19:
 		{
 			// Yew
-			targetLocation = [ 771, 752, 5, tWorld ];
+			targetLocation = [ 771, 752, 5, tWorld, 0 ];
 			break;
 		}
 		case 12:
 		case 20:
 		{
 			// Jhelom
-			targetLocation = [ 1499, 3771, 5, tWorld ];
+			targetLocation = [ 1499, 3771, 5, tWorld, 0 ];
 			break;
 		}
 
@@ -247,93 +247,93 @@ function onGumpPress( srcSock, myButton )
 		case 21:
 		{
 			// Compassion
-			targetLocation = [ 1215, 467, -13, 2 ];
+			targetLocation = [ 1215, 467, -13, 2, 0 ];
 			break;
 		}
 		case 22:
 		{
 			// Honesty
-			targetLocation = [ 722, 1366, -60, 2 ];
+			targetLocation = [ 722, 1366, -60, 2, 0 ];
 			break;
 		}
 		case 23:
 		{
 			// Honor
-			targetLocation = [ 744, 724, -28, 2 ];
+			targetLocation = [ 744, 724, -28, 2, 0 ];
 			break;
 		}
 		case 24:
 		{
 			// Humility
-			targetLocation = [ 281, 1016, 0, 2 ];
+			targetLocation = [ 281, 1016, 0, 2, 0 ];
 			break;
 		}
 		case 25:
 		{
 			// Justice
-			targetLocation = [ 987, 1011, -32, 2 ];
+			targetLocation = [ 987, 1011, -32, 2, 0 ];
 			break;
 		}
 		case 26:
 		{
 			// Sacrifice
-			targetLocation = [ 1174, 1286, -30, 2 ];
+			targetLocation = [ 1174, 1286, -30, 2, 0 ];
 			break;
 		}
 		case 27:
 		{
 			// Sprirituality
-			targetLocation = [ 1532, 1340, -3, 2 ];
+			targetLocation = [ 1532, 1340, -3, 2, 0 ];
 			break;
 		}
 		case 28:
 		{
 			// Valor
-			targetLocation = [ 528, 216, -45, 2 ];
+			targetLocation = [ 528, 216, -45, 2, 0 ];
 			break;
 		}
 		case 29:
 		{
 			// Chaos
-			targetLocation = [ 1721, 218, 96, 2 ];
+			targetLocation = [ 1721, 218, 96, 2, 0 ];
 			break;
 		}
 		//Malas
 		case 30:
 		{
 			// New Luna
-			targetLocation = [ 1015, 527, -65, 3 ];
+			targetLocation = [ 1015, 527, -65, 3, 0 ];
 			break;
 		}
 		case 31:
 		{
 			//Old Luna
-			targetLocation = [ 1054, 358, -86, 3 ];
+			targetLocation = [ 1054, 358, -86, 3, 0 ];
 			break;
 		}
 		case 32:
 		{
 			// Umbra
-			targetLocation = [ 1997, 1386, -85, 3 ];
+			targetLocation = [ 1997, 1386, -85, 3, 0 ];
 			break;
 		}
 		//Tokuno Islands
 		case 33:
 		{
 			// Isamu~Jima
-			targetLocation = [ 1169, 998, 42, 4 ];
+			targetLocation = [ 1169, 998, 42, 4, 0 ];
 			break;
 		}
 		case 34:
 		{
 			// Makoto~Jima
-			targetLocation = [ 801, 1204, 25, 4 ];
+			targetLocation = [ 801, 1204, 25, 4, 0 ];
 			break;
 		}
 		case 35:
 		{
 			// Homare~Jima
-			targetLocation = [ 270, 628, 15, 4 ];
+			targetLocation = [ 270, 628, 15, 4, 0 ];
 			break;
 		}
 		default:
@@ -347,13 +347,14 @@ function onGumpPress( srcSock, myButton )
 		var tempPet = petList[i];
 		if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 12 ))
 		{
-			tempPet.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
+			tempPet.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], targetLocation[4] );
 			tempPet.Follow( srcChar );
 		}
 	}
 
 	// Teleport player
-	srcChar.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
+	srcChar.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3], targetLocation[4] );
+	srcChar.Refresh();
 }
 
 function DisplayTravelGump( srcSock, pUser )
