@@ -56,6 +56,7 @@ function onCallback0( socket, ourObj )
 	case "KILLS":
 		socket.SysMessage( ourObj.murdercount );
 		break;
+	case "HUE":
 	case "COLOR":
 	case "COLOUR":
 		socket.SysMessage( "0x" + (ourObj.colour).toString(16) + " (" + ourObj.colour + ")" );
