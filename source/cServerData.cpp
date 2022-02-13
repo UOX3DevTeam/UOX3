@@ -91,6 +91,7 @@ const UI32 BIT_TOOLUSELIMIT					= 70;
 const UI32 BIT_TOOLUSEBREAK					= 71;
 const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
 const UI32 BIT_HIDESTATSFORUNKNOWNMAGICITEMS = 73;
+const UI32 BIT_CRAFTCOLOUREDWEAPONS			= 74;
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -461,6 +462,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("TOOLUSEBREAK", 295);
 	regINIValue("ITEMREPAIRDURABILITYLOSS", 296);
 	regINIValue("HIDESTATSFORUNKNOWNMAGICITEMS", 297);
+	regINIValue("CRAFTCOLOUREDWEAPONS", 298);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -668,6 +670,7 @@ void CServerData::ResetDefaults( void )
 	ToolUseBreak( true );
 	ItemRepairDurabilityLoss( true );
 	HideStatsForUnknownMagicItems( true );
+	CraftColouredWeapons( false );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -2938,6 +2941,21 @@ void CServerData::HideStatsForUnknownMagicItems( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool CraftColouredWeapons( void ) const
+//|					void CraftColouredWeapons( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether players can craft weapons from coloured ore
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::CraftColouredWeapons( void ) const
+{
+	return boolVals.test( BIT_CRAFTCOLOUREDWEAPONS );
+}
+void CServerData::CraftColouredWeapons( bool newVal )
+{
+	boolVals.set( BIT_CRAFTCOLOUREDWEAPONS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI16 BackupRatio( void ) const
 //|					void BackupRatio( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
@@ -3826,6 +3844,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
 		ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
 		ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
+		ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -5055,6 +5074,9 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 297:    // HIDESTATSFORUNKNOWNMAGICITEMS
 			HideStatsForUnknownMagicItems( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		case 298:    // CRAFTCOLOUREDWEAPONS
+			CraftColouredWeapons( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		default:
 			rvalue = false;

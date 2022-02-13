@@ -62,7 +62,7 @@ function Baking( tSock, myTarget )
 			return;
 		}
 
-		if( pUser.GetTag( "CookingDelay" ) == 1 )
+		if( pUser.GetTempTag( "CookingDelay" ) == 1 )
 		{
 			tSock.SysMessage( GetDictionaryEntry( 6094, tSock.language )); // You are already cooking something.
 			return;
@@ -95,7 +95,7 @@ function Baking( tSock, myTarget )
 				pUser.StartTimer( 5000, 8, true );
 				break;
 		}
-		pUser.SetTag( "CookingDelay", 1 )
+		pUser.SetTempTag( "CookingDelay", 1 )
 		pUser.UseResource( 1, iUsed.id, foodColor );
 		pUser.SoundEffect( 0x0057, true );
 		return;
@@ -145,5 +145,5 @@ function onTimer( pUser, timerID )
 		default:
 			return;
 	}
-	pUser.SetTag( "CookingDelay", null );
+	pUser.SetTempTag( "CookingDelay", null );
 }

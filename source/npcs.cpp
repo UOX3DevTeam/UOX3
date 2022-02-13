@@ -241,7 +241,7 @@ CChar *cCharStuff::CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z,
 //o-----------------------------------------------------------------------------------------------o
 void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 {
-	CTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber(), cCreated->GetInstanceID() );
+	CTownRegion *tReg = calcRegionFromXY( cCreated->GetX(), cCreated->GetY(), cCreated->WorldNumber(), cCreated->GetInstanceID(), cCreated );
 	cCreated->SetRegion( tReg->GetRegionNum() );
 
 	for( UI08 z = 0; z < ALLSKILLS; ++z )

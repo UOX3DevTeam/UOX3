@@ -115,6 +115,9 @@ function onCallback0( socket, ourObj )
 	case "DAMAGEABLE":
 		socket.SysMessage( ourObj.isDamageable );
 		break;
+	case "REGION":
+		socket.SysMessage( ourObj.region.id + " (" + ourObj.region.name + ")" );
+		break;
 	case "SCRIPTTRIGGER":
 	{
 		// Get last script trigger in list of triggers on object

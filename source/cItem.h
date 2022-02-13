@@ -64,6 +64,8 @@ protected:
 	SI32			baseWeight; //Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems; // Maximum amount of items a container can hold
 
+	UI16			regionNum;
+
 	std::bitset< WEATHNUM >	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
 	void			RemoveSelfFromCont( void );
@@ -145,6 +147,12 @@ public:
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instanceID );
 	void			IncZ( SI16 newValue );
 	void			IncLocation( SI16 xInc, SI16 yInc );
+
+	void			SetRegion( UI16 newValue );
+	CTownRegion		*GetRegion( void ) const;
+	UI16			GetRegionNum( void ) const;
+
+	bool			inDungeon( void );
 
 	ItemLayers		GetLayer( void ) const;
 	void			SetLayer( ItemLayers newValue );

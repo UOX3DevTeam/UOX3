@@ -92,6 +92,10 @@ function command_ADD( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar )
 	{
@@ -116,6 +120,10 @@ function onCallback0( socket, ourObj )
 
 function onCallback1( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar )
 	{
@@ -170,6 +178,10 @@ function onCallback1( socket, ourObj )
 
 function onCallback2( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar )
 	{
@@ -205,6 +217,10 @@ function onCallback2( socket, ourObj )
 
 function onCallback3( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar )
 	{
@@ -235,6 +251,10 @@ function onCallback3( socket, ourObj )
 
 function onCallback4( socket, ourObj )
 {
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
 	var mChar = socket.currentChar;
 	if( mChar )
 	{

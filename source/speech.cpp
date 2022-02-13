@@ -409,9 +409,10 @@ bool CPITalkRequest::Handle( void )
 						else
 							tSock->Send( txtToSend );
 					}
-					else if( tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() )
+					else if( tChar->GetRace() != mChar->GetRace() && !tChar->IsGM() && !tChar->IsCounselor() )
 					{
-						if( Skills->CheckSkill( tChar, SPIRITSPEAK, Races->LanguageMin( mChar->GetRace() ), 1000 ) != 1 )
+						SKILLVAL raceLangMin = Races->LanguageMin( mChar->GetRace() );
+						if( raceLangMin > 0 && Skills->CheckSkill( tChar, SPIRITSPEAK, Races->LanguageMin( mChar->GetRace() ), 1000 ) != 1 )
 							tSock->Send( ghostedText );
 						else
 							tSock->Send( txtToSend );

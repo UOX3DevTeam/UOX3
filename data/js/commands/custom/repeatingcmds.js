@@ -413,7 +413,7 @@ function onCallback9( pSock, myTarget )
 		if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
 			targZ += GetTileHeight( pSock.GetWord( 17 ));
 
-		pUser.Teleport( targX, targY, targZ );
+		pUser.Teleport( targX, targY, targZ, pUser.worldnumber, pUser.instanceID );
 		pSock.CustomTarget( 9, GetDictionaryEntry( 8942, pSock.language )); // Select location to teleport to:
 	}
 	else

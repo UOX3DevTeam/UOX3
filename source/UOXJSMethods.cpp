@@ -2299,6 +2299,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			world = (UI08)JSVAL_TO_INT( argv[3] );
 			instanceID = (UI16)JSVAL_TO_INT( argv[4] );
 			break;
+
 		default:
 			MethodError( "Invalid number of arguments passed to Teleport, needs either 1, 2, 3, 4 or 5" );
 			break;
@@ -2344,6 +2345,9 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world, instanceID );
 			SendMapChange( world, mySock );
+
+			// Extra update needed for regular UO client
+			myChar->Update();
 		}
 		else
 		{
