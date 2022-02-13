@@ -2206,7 +2206,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		// Send player their own full stats
 		Serial( toCopy.GetSerial() );
-		Name( toCopy.GetName() );
+		Name( toCopy.GetNameRequest( &toCopy ));
 
 		bool isDead = toCopy.IsDead();
 		if( isDead )
@@ -2335,7 +2335,7 @@ CPStatWindow::CPStatWindow( CBaseObject &toCopy, CSocket &target )
 		pStream.ReserveSize(43);
 		pStream.WriteByte(2, 43);
 		Serial(itemObj->GetSerial());
-		Name(itemObj->GetName());
+		Name(itemObj->GetNameRequest( target.CurrcharObj() ));
 		SI16 currentHP = itemObj->GetHP();
 		UI16 maxHP = itemObj->GetMaxHP();
 		SI16 percentHP = 0;
@@ -5935,7 +5935,7 @@ void CPUnicodeMessage::CopyData( CBaseObject &toCopy )
 	ID( toCopy.GetID() );
 
 	std::string charName = toCopy.GetName();
-	if(charName == "#")
+	if( charName == "#" )
 	{
 		// If character name is #, display default name from dictionary files instead - using base entry 3000 + character's ID
 		charName = Dictionary->GetEntry( 3000 + toCopy.GetID() );
@@ -6722,10 +6722,11 @@ void CPToolTip::FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen )
 
 void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount, bool playerVendor )
 {
+	std::string cItemName = cItem.GetNameRequest( tSock->CurrcharObj() );
 	toolTipEntry tempEntry = {};
 	if( cItem.GetType() == IT_HOUSESIGN )
 		tempEntry.ourText = " \tA House Sign\t ";
-	else if( cItem.GetName()[0] == '#' )
+	else if( cItemName[0] == '#' )
 	{
 		std::string temp;
 		getTileName( cItem, temp );
@@ -6739,10 +6740,10 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else
 	{
 		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT ){
-			tempEntry.ourText = strutil::format( " \t%s : %i\t ", cItem.GetName().c_str(), cItem.GetAmount() );
+			tempEntry.ourText = strutil::format( " \t%s : %i\t ", cItemName.c_str(), cItem.GetAmount() );
 		}
 		else{
-			tempEntry.ourText = strutil::format(" \t%s\t ",cItem.GetName().c_str() );
+			tempEntry.ourText = strutil::format(" \t%s\t ", cItemName.c_str() );
 		}
 	}
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
@@ -6810,6 +6811,32 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		}
 	}
 
+	// Also check the global script!
+	cScript *toExecuteGlobal = JSMapping->GetScript( (UI16)0 );
+	if( toExecuteGlobal != nullptr )
+	{
+		std::string textFromGlobalScript = toExecuteGlobal->OnTooltip( &cItem );
+		if( !textFromGlobalScript.empty() )
+		{
+			UI32 clilocNumFromScript = 0;
+			TAGMAPOBJECT tempTagObj = cItem.GetTempTag( "tooltipCliloc" );
+			if( tempTagObj.m_ObjectType == TAGMAP_TYPE_INT && tempTagObj.m_IntValue > 0 )
+			{
+				// Use cliloc set in tooltipCliloc temptag, if present
+				clilocNumFromScript = tempTagObj.m_IntValue;
+			}
+			else
+			{
+				// Fallback to this cliloc if no other cliloc was set in temptag for object
+				clilocNumFromScript = 1042971; // ~1_NOTHING~
+			}
+			tempEntry.stringNum = clilocNumFromScript;
+			tempEntry.ourText = textFromGlobalScript;
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
+
+	CChar *mChar = tSock->CurrcharObj();
 	if( cItem.GetType() == IT_CONTAINER || cItem.GetType() == IT_LOCKEDCONTAINER )
 	{	
 		if( cItem.GetType() == IT_LOCKEDCONTAINER  )
@@ -6842,13 +6869,13 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	else if( cItem.GetType() == IT_HOUSESIGN )
 	{
 		tempEntry.stringNum = 1061112; // House Name: ~1_val~
-		tempEntry.ourText = cItem.GetName();
+		tempEntry.ourText = cItemName;
 		FinalizeData( tempEntry, totalStringLen );
 
 		if( cItem.GetOwnerObj() != nullptr )
 		{
 			tempEntry.stringNum = 1061113; // Owner: ~1_val~
-			tempEntry.ourText = cItem.GetOwnerObj()->GetName();
+			tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest( mChar );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -7066,8 +7093,8 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	// Is character Guarded?
 	if( mChar.IsGuarded() )
 	{
-		CTownRegion *itemTownRegion = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
-		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
+		CTownRegion *charTownRegion = calcRegionFromXY( mChar.GetX(), mChar.GetY(), mChar.WorldNumber(), mChar.GetInstanceID() );
+		if( !charTownRegion->IsGuarded() && !charTownRegion->IsSafeZone() )
 		{
 			tempEntry.stringNum = 1042971; // ~1_NOTHING~
 			tempEntry.ourText = strutil::format( "%s", Dictionary->GetEntry( 9051, tSock->Language() ).c_str() ); // [Guarded]

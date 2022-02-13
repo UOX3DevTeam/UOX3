@@ -45,7 +45,7 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	if( !ValidateObject( mPack ) )
 	{
 		mSock->sysmessage( 773 );
-		nSock->sysmessage( 1357, mChar->GetName().c_str() );
+		nSock->sysmessage( 1357, mChar->GetNameRequest( nSock->CurrcharObj() ).c_str() );
 		return nullptr;
 	}
 
@@ -103,11 +103,11 @@ CItem *startTrade( CSocket *mSock, CChar *nChar )
 	tradeWindowTwo->SetTempVar( CITV_MOREX, tw1Serial );
 
 	CPSecureTrading cpstOne( (*nChar), tw1Serial, tw2Serial );
-	cpstOne.Name( nChar->GetName() );
+	cpstOne.Name( nChar->GetNameRequest( mChar ));
 	mSock->Send( &cpstOne );
 
 	CPSecureTrading cpstTwo( (*mChar), tw2Serial, tw1Serial );
-	cpstTwo.Name( mChar->GetName() );
+	cpstTwo.Name( mChar->GetNameRequest( nChar ));
 	nSock->Send( &cpstTwo );
 
 	CPWornItem toWear = (*tradeWindowOne);

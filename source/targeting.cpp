@@ -1027,12 +1027,12 @@ void TransferTarget( CSocket *s )
 	{
 		s->sysmessage( 2379 ); // The pet refuses to be transferred because it will not obey you sufficiently.
 		if( targChar->GetSocket() != nullptr )
-			targChar->GetSocket()->sysmessage( 2382, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust %s.
+			targChar->GetSocket()->sysmessage( 2382, mChar->GetNameRequest( targChar ).c_str() ); // The pet will not accept you as a master because it does not trust %s.
 		return;
 	}
 	else if( targChar->IsCriminal() )
 	{
-		s->sysmessage( 2380, mChar->GetName().c_str() ); // The pet refuses to be transferred because it will not obey %s.
+		s->sysmessage( 2380, targChar->GetNameRequest( mChar ).c_str() ); // The pet refuses to be transferred because it will not obey %s.
 		if( targChar->GetSocket() != nullptr )
 			targChar->GetSocket()->sysmessage( 2381 ); // The pet will not accept you as a master because it does not trust you.
 		return;
@@ -1062,7 +1062,7 @@ void TransferTarget( CSocket *s )
 		s->sysmessage( 2379 ); // The pet refuses to be transferred because it will not obey you sufficiently.
 		if( targChar->GetSocket() != nullptr )
 		{
-			targChar->GetSocket()->sysmessage( 2382, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust %s.
+			targChar->GetSocket()->sysmessage( 2382, mChar->GetNameRequest( targChar ).c_str() ); // The pet will not accept you as a master because it does not trust %s.
 		}
 		return;
 	}
@@ -1073,7 +1073,7 @@ void TransferTarget( CSocket *s )
 		s->sysmessage( 2380 ); // The pet refuses to be transferred because it will not obey %s.
 		if( targChar->GetSocket() != nullptr )
 		{
-			targChar->GetSocket()->sysmessage( 2381, mChar->GetName().c_str() ); // The pet will not accept you as a master because it does not trust you.
+			targChar->GetSocket()->sysmessage( 2381, mChar->GetNameRequest( targChar ).c_str() ); // The pet will not accept you as a master because it does not trust you.
 		}
 		return;
 	}
@@ -1366,7 +1366,7 @@ void FriendTarget( CSocket *s )
 		s->sysmessage( 2417 ); // The pet refuses to accept a new friend because it will not obey you sufficiently.
 		if( targChar->GetSocket() != nullptr )
 		{
-			targChar->GetSocket()->sysmessage( 2418, mChar->GetName().c_str() ); // The pet will not accept you as a friend because it does not trust %s.
+			targChar->GetSocket()->sysmessage( 2418, mChar->GetNameRequest( targChar ).c_str() ); // The pet will not accept you as a friend because it does not trust %s.
 		}
 		return;
 	}
@@ -1374,7 +1374,7 @@ void FriendTarget( CSocket *s )
 	// Check loyalty of pet to new friend
 	if( cwmWorldState->ServerData()->CheckPetControlDifficulty() && !Npcs->canControlPet( targChar, pet, false, true, true ) )
 	{
-		s->sysmessage( 2419, targChar->GetName().c_str() ); // The pet refuses to accept %s as a friend because it will not obey them.
+		s->sysmessage( 2419, targChar->GetNameRequest( mChar ).c_str() ); // The pet refuses to accept %s as a friend because it will not obey them.
 		if( targChar->GetSocket() != nullptr )
 		{
 			targChar->GetSocket()->sysmessage( 2420 ); // The pet will not accept you as a friend because it does not trust you.
@@ -1386,7 +1386,7 @@ void FriendTarget( CSocket *s )
 	{
 		// %s will now treat %s as a friend.
 		std::string petName = getNpcDictName( pet, s );
-		s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetName().c_str() );
+		s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetNameRequest( mChar ).c_str() );
 
 		// Inform the player added as friend
 		CSocket *targSock = targChar->GetSocket();
@@ -1394,7 +1394,7 @@ void FriendTarget( CSocket *s )
 		{
 			// %s has befriended %s to you.
 			petName = getNpcDictName( pet, targSock );
-			targSock->sysmessage( 1625, mChar->GetName().c_str(), petName.c_str() );
+			targSock->sysmessage( 1625, mChar->GetNameRequest( targChar ).c_str(), petName.c_str() );
 		}
 	}
 	else
@@ -1442,7 +1442,7 @@ void RemoveFriendTarget( CSocket *s )
 	{
 		// %s has been removed from %s's friend list.
 		std::string petName = getNpcDictName( pet, s );
-		s->sysmessage( 2300, targChar->GetName().c_str(), petName.c_str() );
+		s->sysmessage( 2300, targChar->GetNameRequest( mChar ).c_str(), petName.c_str() );
 
 		// Inform the player removed as friend
 		CSocket *targSock = targChar->GetSocket();
@@ -1851,7 +1851,7 @@ void VialTarget( CSocket *mSock )
 				else
 				{
 					CSocket *nCharSocket = targChar->GetSocket();
-					nCharSocket->sysmessage( 746, mChar->GetName().c_str() ); // %s has pricked you with a dagger and sampled your blood
+					nCharSocket->sysmessage( 746, mChar->GetNameRequest( targChar ).c_str() ); // %s has pricked you with a dagger and sampled your blood
 				}
 				if( WillResultInCriminal( mChar, targChar ) )
 					criminal( mChar );
