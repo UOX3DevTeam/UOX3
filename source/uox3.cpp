@@ -1179,7 +1179,7 @@ void checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check item decay, spawn timers and boat movement in a given region
 //o-----------------------------------------------------------------------------------------------o
-void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
+void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses, bool doWeather )
 {
 	GenericList< CItem * > *regItems = toCheck->GetItemList();
 	regItems->Push();
@@ -1385,6 +1385,12 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					}
 				}
 			}
+		}
+
+		// Do JS Weather for item
+		if( doWeather )
+		{
+			doLight( itemCheck, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 		}
 	}
 	regItems->Pop();
@@ -1603,10 +1609,10 @@ void CWorldMain::CheckAutoTimers( void )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
 
 				// Grab some info from the spawn region anyway, even if it's not time to spawn
-				totalItemsSpawned += spawnReg->GetCurrentItemAmt();
-				totalNpcsSpawned += spawnReg->GetCurrentCharAmt();
-				maxItemsSpawned += spawnReg->GetMaxItemSpawn();
-				maxNpcsSpawned += spawnReg->GetMaxCharSpawn();
+				totalItemsSpawned += static_cast<UI32>(spawnReg->GetCurrentItemAmt());
+				totalNpcsSpawned += static_cast<UI32>(spawnReg->GetCurrentCharAmt());
+				maxItemsSpawned += static_cast<UI32>(spawnReg->GetMaxItemSpawn());
+				maxNpcsSpawned += static_cast<UI32>(spawnReg->GetMaxCharSpawn());
 			}
 			++spIter;
 		}
@@ -1843,7 +1849,7 @@ void CWorldMain::CheckAutoTimers( void )
 		}
 		regChars->Pop();
 
-		checkItem( toCheck, checkItems, nextDecayItems, nextDecayItemsInHouses );
+		checkItem( toCheck, checkItems, nextDecayItems, nextDecayItemsInHouses, doWeather );
 		++tcCheck;
 	}
 
@@ -2548,6 +2554,65 @@ void doLight( CChar *mChar, UI08 level )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void doLight( CItem *mItem, UI08 level )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Sets light level for items and applies relevant effects
+//o-----------------------------------------------------------------------------------------------o
+void doLight( CItem *mItem, UI08 level )
+{
+	CTownRegion *curRegion	= mItem->GetRegion();
+	CWeather *wSys			= Weather->Weather( curRegion->GetWeather() );
+
+	LIGHTLEVEL toShow = level;
+
+	LIGHTLEVEL dunLevel = cwmWorldState->ServerData()->DungeonLightLevel();
+
+	// we have a valid weather system
+	if( wSys != nullptr )
+	{
+		const R32 lightMin = wSys->LightMin();
+		const R32 lightMax = wSys->LightMax();
+		if( lightMin < 300 && lightMax < 300 )
+		{
+			toShow = static_cast<LIGHTLEVEL>(wSys->CurrentLight());
+		}
+	}
+	else
+	{
+		if( mItem->inDungeon() )
+		{
+			toShow = dunLevel;
+		}
+	}
+
+	bool eventFound = false;
+	std::vector<UI16> scriptTriggers = mItem->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnLightChange( mItem, toShow ) == 1 )
+			{
+				// A script with the event returned true; prevent other scripts from running
+				eventFound = true;
+				break;
+			}
+		}
+	}
+
+	if( !eventFound )
+	{
+		// Check global script! Maybe there's another event there
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+		if( toExecute != nullptr )
+			toExecute->OnLightChange( mItem, toShow );
+	}
+
+	Weather->DoItemStuff( mItem );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	TIMERVAL getPoisonDuration( UI08 poisonStrength )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculates the duration of poison based on its strength
@@ -2665,7 +2730,11 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 //o-----------------------------------------------------------------------------------------------o
 std::string getNpcDictName( CChar *mChar, CSocket *tSock )
 {
-	std::string dictName = mChar->GetName();
+	CChar *tChar = nullptr;
+	if( tSock != nullptr )
+		tChar = tSock->CurrcharObj();
+
+	std::string dictName = mChar->GetNameRequest( tChar );
 	SI32 dictEntryID = 0;
 
 	if( dictName == "#" )

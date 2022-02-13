@@ -4442,9 +4442,10 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 
 			SERIAL speakTo		= INVALIDSERIAL;
 			SpeechTarget target	= SPTRG_PCNPC;
+			CChar *mChar		= nullptr;
 			if( s != nullptr )
 			{
-				CChar *mChar	= s->CurrcharObj();
+				mChar			= s->CurrcharObj();
 				speakTo			= mChar->GetSerial();
 				target			= SPTRG_INDIVIDUAL;
 			}
@@ -4465,7 +4466,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				unicodeMessage.Colour( txtColor );
 				unicodeMessage.Type( msgType );
 				unicodeMessage.Language( "ENG" );
-				unicodeMessage.Name( this->GetName() );
+				unicodeMessage.Name( this->GetNameRequest( mChar ));
 				unicodeMessage.ID( INVALIDID );
 				unicodeMessage.Serial( GetSerial() );
 

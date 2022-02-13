@@ -1336,7 +1336,7 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 	std::string npcTargetName = getNpcDictName( npc );
 	std::string myNpcTargetName = getNpcDictName( npc, s );
 
-	s->sysmessage( 877, myNpcTargetName.c_str(), item->GetName().c_str() ); // You reach into %s's pack and try to take something...
+	s->sysmessage( 877, myNpcTargetName.c_str() ); // You reach into %s's pack and try to take something...
 	if( objInRange( mChar, npc, DIST_NEXTTILE ) )
 	{
 		if( Combat->calcDef( mChar, 0, false ) > 40 )
@@ -1399,16 +1399,16 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 
 			if( item->GetName()[0] != '#' )
 			{
-				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), item->GetName().c_str() ); // // You notice %s trying to steal %s from you!
-				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), item->GetName().c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
+				temp = strutil::format(512,Dictionary->GetEntry( 884 ), mChar->GetNameRequest( npc ).c_str(), item->GetNameRequest( npc ).c_str() ); // // You notice %s trying to steal %s from you!
+				temp2 = Dictionary->GetEntry( 885 ); // You notice %s trying to steal %s from %s!
 			}
 			else
 			{
 				std::string tileName;
 				tileName.reserve( MAX_NAME );
 				getTileName( (*item), tileName );
-				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetName().c_str(), tileName.c_str() ); // You notice %s trying to steal %s from you!
-				temp2 = strutil::format(512, Dictionary->GetEntry( 885 ), mChar->GetName().c_str(), tileName.c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
+				temp = strutil::format(512, Dictionary->GetEntry( 884 ), mChar->GetNameRequest( npc ).c_str(), tileName.c_str() ); // You notice %s trying to steal %s from you!
+				temp2 = Dictionary->GetEntry( 885 ); // You notice %s trying to steal %s from %s!
 			}
 
 			CSocket *npcSock = npc->GetSocket();
@@ -1421,7 +1421,10 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 				CSocket *iSock = (*cIter);
 				CChar *iChar = iSock->CurrcharObj();
 				if( iSock != s && ( RandomNum( 10, 20 ) == 17 || ( RandomNum( 0, 1 ) == 1 && iChar->GetIntelligence() >= mChar->GetIntelligence() ) ) )
+				{
+					temp2 = strutil::format(512, temp2, mChar->GetNameRequest( iChar ).c_str(), item->GetNameRequest( iChar ).c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 					iSock->sysmessage( temp2 );
+				}
 			}
 		}
 	}
@@ -2966,7 +2969,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 	{
 		s->sysmessage( 991 ); // You failed to peek into that container.
 		if( tSock != nullptr )
-			tSock->sysmessage( 992, mChar->GetName().c_str() ); // %s is snooping you!
+			tSock->sysmessage( 992, mChar->GetNameRequest( target ).c_str() ); // %s is snooping you!
 		return;
 	}
 
@@ -3042,7 +3045,7 @@ void cSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 				}
 			}
 			else if( tSock != nullptr )
-				tSock->sysmessage( 997, mChar->GetName().c_str() ); // You notice %s trying to peek into your pack!
+				tSock->sysmessage( 997, mChar->GetNameRequest( target ).c_str() ); // You notice %s trying to peek into your pack!
 			if( cwmWorldState->ServerData()->SnoopIsCrime() )
 				criminal( mChar );
 			if( mChar->GetKarma() <= 1000 )
