@@ -37,11 +37,13 @@
 #include "regions.h"
 #include "ObjectFactory.h"
 #include "speech.h"
+#include "townregion.h"
 #include "cRaces.h"
 #include "cSpawnRegion.h"
 #include "CJSEngine.h"
 #include "CJSMapping.h"
 #include "Dictionary.h"
+#include "regions.h"
 #include "msgboard.h"
 #include "books.h"
 #include "power.h"
@@ -87,6 +89,7 @@ const UI08			DEFITEM_MAXRANGE		= 0;
 const UI08			DEFITEM_BASERANGE		= 0;
 const UI16			DEFITEM_USESLEFT		= 0;
 const UI16			DEFITEM_MAXUSES			= 0;
+const UI16			DEFITEM_REGIONNUM 		= 255;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -100,7 +103,7 @@ restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMP
 spd( DEFITEM_SPEED ), maxhp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
-maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT )
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM )
 {
 	spells[0] = spells[1] = spells[2] = 0;
 	value[0] = value[1] = 0;
@@ -295,6 +298,10 @@ bool CItem::SetCont( CBaseObject *newCont )
 					ShouldSave( charWearing->ShouldSave() );
 				}
 			}
+
+			// Update item's townregion based on parent character's location
+			CTownRegion *tRegion = calcRegionFromXY( charWearing->GetX(), charWearing->GetY(), charWearing->WorldNumber(), charWearing->GetInstanceID(), this );
+			SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
 		}
 		else
 		{
@@ -303,13 +310,13 @@ bool CItem::SetCont( CBaseObject *newCont )
 			{
 				contIsGround = false;
 				// ok heres what hair/beards should be handled like
-				if( ( ( GetLayer() == IL_HAIR ) || ( GetLayer() == IL_FACIALHAIR ) ) && !itemHolder->isCorpse() )
+				if((( GetLayer() == IL_HAIR ) || ( GetLayer() == IL_FACIALHAIR ) ) && !itemHolder->isCorpse() )
 				{
 					CChar *itemPackOwner = FindItemOwner( itemHolder );
-					if( ValidateObject( itemPackOwner ) )
+					if( ValidateObject( itemPackOwner ))
 					{
 						CItem *oldItem = itemPackOwner->GetItemAtLayer( GetLayer() );
-						if( ValidateObject( oldItem ) )
+						if( ValidateObject( oldItem ))
 							oldItem->Delete();
 
 						SetCont( itemPackOwner );
@@ -328,6 +335,10 @@ bool CItem::SetCont( CBaseObject *newCont )
 				}
 				if( isPostLoaded() )
 					Weight->addItemWeight( itemHolder, this );
+
+				// Update item's townregion to match root container's location
+				CTownRegion *tRegion = calcRegionFromXY( itemHolder->GetX(), itemHolder->GetY(), itemHolder->WorldNumber(), itemHolder->GetInstanceID(), this );
+				SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
 			}
 		}
 	}
@@ -347,6 +358,19 @@ bool CItem::SetCont( CBaseObject *newCont )
 	UpdateRegion();
 
 	return !contIsGround;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool inDungeon( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Determine if item is inside a dungeon
+//o-----------------------------------------------------------------------------------------------o
+bool CItem::inDungeon( void )
+{
+	bool rValue = false;
+	if( GetRegion() != nullptr )
+		rValue = GetRegion()->IsDungeon();
+	return rValue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -601,6 +625,10 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 	instanceID = instance_id;
 	if( GetCont() == nullptr )
 	{
+		// Calculate which townregion item exists in, based on its own location
+		CTownRegion *tRegion = calcRegionFromXY( x, y, worldNumber, instanceID, this );
+		SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
+
 		if( !CanBeObjType( OT_MULTI ) )
 		{
 			// If it's a sign with a more value, assume that the more value contains the serial of the multi the sign belongs to
@@ -630,6 +658,29 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 worl
 void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID )
 {
 	SetLocation( newX, newY, newZ, GetGridLocation(), world, instanceID );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CTownRegion *GetRegion( void ) const
+//|					void SetRegion( UI16 newValue )
+//|					UI16 GetRegionNum( void ) const
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets the town region the item is in
+//o-----------------------------------------------------------------------------------------------o
+CTownRegion *CItem::GetRegion( void ) const
+{
+	if( cwmWorldState->townRegions.find( regionNum ) == cwmWorldState->townRegions.end() )
+		return cwmWorldState->townRegions[0xFF];
+	return cwmWorldState->townRegions[regionNum];
+}
+void CItem::SetRegion( UI16 newValue )
+{
+	regionNum = newValue;
+	UpdateRegion();
+}
+UI16 CItem::GetRegionNum( void ) const
+{
+	return regionNum;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1990,11 +2041,15 @@ bool CItem::LoadRemnants( void )
 	SetSerial( serial );
 
 	// Tauriel adding region pointers
-	if( (UI64)contObj == INVALIDSERIAL )
+	if( contObj == nullptr || (UI64)contObj == INVALIDSERIAL )
 	{
 		MapData_st& mMap = Map->GetMapData( worldNumber );
 		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
 			return false;
+
+		// Calculate which townregion item exists in, based on its own location
+		CTownRegion *tRegion = calcRegionFromXY( GetX(), GetY(), worldNumber, instanceID, this );
+		SetRegion( (tRegion != nullptr ? tRegion->GetRegionNum() : 0xFF) );
 	}
 	return true;
 }
@@ -2281,10 +2336,11 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	UnicodeTypes dictLang	= ZERO;
 	SERIAL speakTo			= INVALIDSERIAL;
 	SpeechTarget target		= SPTRG_PCNPC;
+	CChar *mChar			= nullptr;
 	if( s != nullptr )
 	{
-		dictLang = s->Language();
-		CChar *mChar	= s->CurrcharObj();
+		dictLang		= s->Language();
+		mChar			= s->CurrcharObj();
 		speakTo			= mChar->GetSerial();
 		target			= SPTRG_INDIVIDUAL;
 	}
@@ -2308,7 +2364,7 @@ void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 		unicodeMessage.Colour( 0x000B );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
-		unicodeMessage.Name( GetName() );
+		unicodeMessage.Name( GetNameRequest( mChar ));
 		unicodeMessage.ID( GetID() );
 		unicodeMessage.Serial( GetSerial() );
 

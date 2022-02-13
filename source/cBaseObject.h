@@ -109,6 +109,8 @@ protected:
 	
 	SERIAL			temp_container_serial;
 
+	bool			nameRequestActive;
+
 	void			CopyData( CBaseObject *target );
 
 public:
@@ -196,6 +198,7 @@ public:
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
 
+	std::string				GetNameRequest( CChar *nameRequester );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
 
@@ -279,6 +282,7 @@ public:
 	bool					isDisabled( void ) const;
 	bool					isWipeable( void ) const;
 	bool					isDamageable( void ) const;
+	bool					NameRequestActive( void ) const;
 
 	void					SetFree( bool newVal );
 	void					SetDeleted( bool newVal );
@@ -288,6 +292,7 @@ public:
 	void					SetDisabled( bool newVal );
 	void					SetWipeable( bool newValue );
 	void					SetDamageable( bool newValue );
+	void					NameRequestActive( bool newValue );
 
 	SI16					GetFame( void ) const;
 	void					SetFame( SI16 value );
