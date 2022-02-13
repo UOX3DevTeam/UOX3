@@ -380,7 +380,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 				else if( !ValidateObject( Npc->GetFTarg() ) )  // If nobody has been accepted for the quest yet
 					Npc->TextMessage( nullptr, 1296, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str() );	// Send out the rant about accepting the escort
 				else // The must be enroute
-					Npc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetName().c_str() );	// Send out a message saying we are already being escorted
+					Npc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[Npc->GetQuestDestRegion()]->GetName().c_str(), Npc->GetFTarg()->GetNameRequest( mChar ).c_str() );	// Send out a message saying we are already being escorted
 				// Return success ( we handled the message )
 				return;
 			}
@@ -716,7 +716,7 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 	}
 	else
 	{
-		std::string npcName = Npc->GetName();
+		std::string npcName = Npc->GetNameRequest( mChar );
 		if( npcName == "#" )
 		{
 			// If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID

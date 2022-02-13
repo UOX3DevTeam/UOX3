@@ -810,7 +810,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 {
 	if( !Map->InsideValidWorld( x, y, world ) )
 	{
-		Console.error( "ASSERT: CStaticIterator(); Not inside a valid world" );
+		Console.error( strutil::format( "ASSERT: CStaticIterator(); Not inside a valid world (x: %i, y: %i, world: %i", x, y, world ));
 		return;
 	}
 

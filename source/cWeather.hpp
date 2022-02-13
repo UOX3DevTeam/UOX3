@@ -231,7 +231,8 @@ public:
 	bool	doWeatherEffect( CSocket *mSock, CChar& mChar, WeatherType element );
 	bool	doLightEffect( CSocket *mSock, CChar& mChar );
 	bool	DoNPCStuff( CChar *p );
-	void	SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp );
+	bool	DoItemStuff( CItem *p );
+	void	SendJSWeather( CBaseObject *mObj, WeatherType weathType, SI08 currentTemp );
 
 	CWeather *Weather( weathID toCheck );
 };

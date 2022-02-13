@@ -1363,7 +1363,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			i->SetTag( "multiSerial", tagObject );
 			markedInMulti = true;
 
-			std::string tempRuneName = strutil::format( Dictionary->GetEntry( 684 ), multi->GetName().c_str() );
+			std::string tempRuneName = strutil::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster ).c_str() );
 			if( tempRuneName.length() > 0 )
 				i->SetName( tempRuneName );
 		}
