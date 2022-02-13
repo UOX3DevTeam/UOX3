@@ -20,7 +20,6 @@ function onUseChecked( pUser, iUsed )
 		}
 		else
 		{
-			pUser.TextMessage( pUser.isRunning );
 			socket.tempObj = iUsed;
 			socket.CustomTarget( 0, GetDictionaryEntry( 6029, socket.language )); // What do you want to use these scissors on?
 		}

@@ -56,15 +56,32 @@ CMultiObj *calcMultiFromSer( SERIAL targSerial )
 }
 
 //o--------------------------------------------------------------------------
-//|	Function	-	CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber )
+//|	Function	-	CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CBaseObject *mObj )
 //o--------------------------------------------------------------------------
-//|	Purpose		-	Find what region x and y are in
+//|	Purpose		-	Find what region x and y are in. This should be done for all items on world load, and when any of the
+//|					item's location and/or container properties change
 //o--------------------------------------------------------------------------
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CChar *mChar )
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CBaseObject *mObj )
 {
 	// Reset sub region of character
-	if( ValidateObject( mChar ))
-		mChar->SetSubRegion( 0 );
+	if( ValidateObject( mObj ) )
+	{
+		mObj->SetSubRegion( 0 );
+
+		// Check if object is an item, and if it's in a container
+		if( mObj->GetObjType() == OT_ITEM && static_cast<CItem *>(mObj)->GetContSerial() != INVALIDSERIAL )
+		{
+			// Item is in a container, so find the root container (whether character or item) and use its coordinates to calculate region
+			CBaseObject *rootContainer = FindItemOwner( static_cast<CItem *>(mObj) );
+			if( ValidateObject( rootContainer ))
+			{
+				x = rootContainer->GetX();
+				y = rootContainer->GetY();
+				worldNumber = rootContainer->WorldNumber();
+				instanceID = rootContainer->GetInstanceID();
+			}
+		}
+	}
 
 	const regLocs *getLoc	= nullptr;
 	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
@@ -79,12 +96,13 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 				getLoc = myReg->GetLocation( j );
 				if( getLoc != nullptr )
 				{
+					// Calculate the region/subregion of the object
 					if( getLoc->x1 <= x && getLoc->y1 <= y && getLoc->x2 >= x && getLoc->y2 >= y )
 					{
-						// If character is in a subregion, store a reference to it
-						if( myReg->IsSubRegion() && ValidateObject( mChar ))
+						// If object is in a subregion, store a reference to it
+						if( myReg->IsSubRegion() && ValidateObject( mObj ))
 						{
-							mChar->SetSubRegion( myReg->GetRegionNum() );
+							mObj->SetSubRegion( myReg->GetRegionNum() );
 							continue;
 						}
 						return myReg;
@@ -96,4 +114,5 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 	}
 	return cwmWorldState->townRegions[0xFF];
 }
+
 

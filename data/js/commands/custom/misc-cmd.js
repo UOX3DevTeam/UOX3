@@ -29,6 +29,8 @@ function CommandRegistration()
 	RegisterCommand( "addpack", 2, true ); //Will add a backpack to the targeted character, if it has none. Will add specified item-id(addpack <item-id> or hex id (addpack hex <hexid>) to backpack.
 	RegisterCommand( "settag", 2, true ); //used to specify a value for a specified tag on a targeted object
 	RegisterCommand( "gettag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
+	RegisterCommand( "settemptag", 2, true ); //used to specify a value for a specified tag on a targeted object
+	RegisterCommand( "gettemptag", 2, true ); //Used to retrieve the value of a specified tag from a targeted object
 	RegisterCommand( "nodecay", 2, true ); //Will turn off decay for the targeted item.
 	RegisterCommand( "decay", 2, true ); //Will turn on decay for the targeted item.
 	RegisterCommand( "xsay", 2, true ); //Targeted charcter or item will say specified text out loud
@@ -165,6 +167,32 @@ function command_GETTAG( pSock, execString )
 	{
 		pUser.SetTag( "TempTag", execString );
 		pUser.CustomTarget( 9, GetDictionaryEntry( 8865, pSock.language )); // Retrieve tag from which object?
+	}
+}
+
+function command_SETTEMPTAG( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	var Word = execString.split(",");
+	if(( execString == "" || execString == null ) || ( Word[0] == null || Word[0] == "" || Word[0] == " " || Word[1] == "" || Word[1] == null ))
+		pUser.SysMessage( GetDictionaryEntry( 8862, pSock.language )); // You need to specify a tag and a value for the tag, seperated by a comma.
+	else
+	{
+		pUser.SetTempTag( "Word0", Word[0] );
+		pUser.SetTempTag( "Word1", Word[1] );
+		pUser.CustomTarget( 27, GetDictionaryEntry( 8863, pSock.language )); // Apply tag to which object?
+	}
+}
+
+function command_GETTEMPTAG( pSock, execString )
+{
+	var pUser = pSock.currentChar;
+	if( execString == null || execString == "" )
+		pUser.SysMessage( GetDictionaryEntry( 8864, pSock.language )); // You need to specify a tagname to retrieve the value for
+	else
+	{
+		pUser.SetTempTag( "TempTag", execString );
+		pUser.CustomTarget( 28, GetDictionaryEntry( 8865, pSock.language )); // Retrieve tag from which object?
 	}
 }
 
@@ -828,6 +856,46 @@ function onCallback26( pSock, myTarget )
 	}
 	else
 		pUser.SysMessage( GetDictionaryEntry( 8885, pSock.language )); // That is not a character. Try again.
+}
+
+// SetTempTag
+function onCallback27( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var Word0 = pUser.GetTempTag( "Word0" );
+	var Word1 = pUser.GetTempTag( "Word1" );
+	if( !pSock.GetWord( 1 ))
+	{
+		if( Word1 == "null" )
+			myTarget.SetTempTag( Word0, null );
+		else
+			myTarget.SetTempTag( Word0, Word1 );
+
+		var tempMsg = GetDictionaryEntry( 8888, pSock.language ); // You have set a tag named '%s' with a value of '%t' on the targeted object.
+		tempMsg = tempMsg.replace(/%s/gi, Word0 );
+		pUser.SysMessage( tempMsg.replace(/%t/gi, Word1 ));
+	}
+	else
+		pUser.SysMessage( GetDictionaryEntry( 8889, pSock.language )); // You need to target a dynamic object (item or character).
+	pUser.SetTempTag( "Word0", null );
+	pUser.SetTempTag( "Word1", null );
+}
+
+// GetTempTag
+function onCallback28( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var TempTagName = pUser.GetTempTag( "TempTag" );
+	if( !pSock.GetWord( 1 ))
+	{
+		var TagData = myTarget.GetTempTag( TempTagName );
+
+		var tempMsg = GetDictionaryEntry( 8890, pSock.language ); // The value of the targeted object's '%s'-tag is: " + TagData
+		pUser.SysMessage( tempMsg.replace(/%s/gi, TempTagName ) + " " + TagData );
+	}
+	else
+		pUser.SysMessage( GetDictionaryEntry( 8891, pSock.language )); // You need to target a dynamic object (item or character).
+	pUser.SetTempTag( "TempTag", null );
 }
 
 function command_WELCOME( pSock, execString )

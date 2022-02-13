@@ -1,3 +1,29 @@
+13/02/2022 - Xuri (0.99.5b)
+	Fixed an issue where karma titles would inadvertently have the space behind the title trimmed before being displayed in paperdoll, resulting in erroneous display of title + name there
+	Fixed an issue with a cooking script (js/skill/cooking/cooking.js) where sweet dough would not get consumed properly on cooking (Dragon Slayer)
+	Updated C++ function calcRegionFromXY to work with CBaseObject instead of CChar, so it also works for Items
+	Items now have current town region stored as an object property during runtime. This is calculated on load, when container property is updated, and when an item is picked up or dropped. The region is also accessible via the (read-only) JS Item property .region
+	Added new JS Event to allow capturing button presses from the old-school gump displayed by client via packet 0x76, which was originally used by the old-school crafting menus in T2A. The requirement for this to work is that the gump in question must have a gumpID between 0x4000 and 0xffff (which can be set when manually creating a packet with this ID via JS), and the Event itself must be in the global script:
+		onScrollingGumpPress( pSock, gumpID, buttonID )
+	Added new JS Event to allow better control over which names UOX3 sends to the client for characters:
+		onNameRequest( myObj, requestedBy )	// return custom string, or return empty string/nothing/true/false to use default name
+	Updated JS Events to also work for Items (previously only worked for Characters)
+		onLightChange( myObj, lightLevel )
+		onTempChange( myObj, temp )
+		onWeatherChange( myObj, weatherType )
+	Adjusted default temperature for town regions with no weather systems defined from 0 to 20 degrees Celsius
+	Updated some JS scripts (fishing.js, baking.js and cooking.js) to make use of GetTempTag/SetTempTag rather than GetTag/SetTag
+	Added cancel-checks to targeting functions in command script for add-commands (js/commands/targeting/add.js)
+	Updated get command script (js/commands/targeting/get.js) to allow retrieving region ID and name using 'get region
+	Updated misc command script (js/commands/custom/misc-cmd.js) to add 'gettemptag and 'settemptag commands, used to retrieve/set temporary custom tags from/on objects
+	Fixed a bug where Spirit Speak skill would be checked for race languages even if the race had LANGUAGEMIN defined as 0 (or not defined at all)
+	Fixed an issue where players using regular UO client would get stuck in a black void after teleporting between worlds, by adding an additional character refresh after the teleport
+	Fixed an issue where crafting tools for Blacksmithing and Carpentry would attempt to fetch the value of an incorrectly named INI setting to handle durability loss for the tools
+	Added new setting under [settings] section of UOX.INI to control whether it should be possible to craft weapons from coloured ingots or not:
+		CRAFTCOLOUREDWEAPONS=0/1 	// If enabled(1), players can craft coloured weapons. Defaults to disabled(0)
+	Fixed an issue where the correct ingots were not consumed when attempting to craft items using colored ingots
+	Fixed a rogue debug message leftover in the scissor script
+
 30/01/2022 - Dragon Slayer, Xuri
 	Added speech scripts for Wisps, Orcs, Lizardmen and Ratmen (Dragon Slayer)
 	Merged monster speech scripts into one common script (Xuri)

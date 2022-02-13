@@ -233,7 +233,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 										itemCheck->SetCont( charPack );
 										itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
 										s->sysmessage( 550 );
-										targetRegion->TellMembers( 551, mChar->GetName().c_str() );
+										targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
 										regItems->Pop();
 										return;	// dump out
 									}
@@ -1215,12 +1215,18 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					{
 						// Stay in same world if already in world 0 or 1
 						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceID() );
+
+						// Additional update required for regular UO client
+						mChar->Update();
 					}
 					else if( toGoTo.worldNum != mChar->WorldNumber() )
 					{
 						// Change map!
 						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceID() );
 						SendMapChange( toGoTo.worldNum, s );
+
+						// Additional update required for regular UO client
+						mChar->Update();
 					}
 				}
 			}
@@ -1923,7 +1929,20 @@ bool CPIGumpChoice::Handle( void )
 	UI16 sub		= tSock->GetWord( 7 );
 	CChar *mChar	= tSock->CurrcharObj();
 
-	if( main >= POLYMORPHMENUOFFSET )
+	if( main >= JSGUMPMENUOFFSET ) // Between 0x4000 and 0xFFFF
+	{
+		// Handle button presses via global JS script
+		cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnScrollingGumpPress( tSock, main, sub ) == 0 )
+			{
+				return true;
+			}
+		}
+
+	}
+	else if( main >= POLYMORPHMENUOFFSET )
 	{
 		sect = std::string("POLYMORPHMENU ") + strutil::number( main );
 		data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
