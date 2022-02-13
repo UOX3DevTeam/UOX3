@@ -505,6 +505,7 @@ static JSPropertySpec CItemProps[] =
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM },
+	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO },
 	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM },
 
