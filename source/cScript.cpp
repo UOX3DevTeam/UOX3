@@ -735,6 +735,58 @@ std::string cScript::OnTooltip( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for objects which client has requested the name for
+//o-----------------------------------------------------------------------------------------------o
+std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
+{
+	if( !ValidateObject( myObj ))
+		return "";
+	if( !ExistAndVerify( seOnNameRequest, "onNameRequest" ) )
+		return "";
+
+	// Prevent infinite loop
+	if( myObj->NameRequestActive() )
+		return "";
+
+	// Mark object as having an active name lookup via onNameRequest
+	myObj->NameRequestActive( true );
+
+	jsval rval, params[2];
+
+	// Create JS object reference for myObj, based on whether it's an item or character
+	JSObject *nameRequestObj = nullptr;
+	if( myObj->CanBeObjType( OT_CHAR ))
+		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+	else if( myObj->CanBeObjType( OT_ITEM ))
+		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+
+	// Create JS object reference for the name requester (which might be nullptr!)
+	JSObject *nameRequesterObj = nullptr;
+	if( nameRequester != nullptr )
+		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
+	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnNameRequest, false );
+
+	JSString *str = JS_ValueToString( targContext, rval );
+	std::string returnString = JS_GetStringBytes( str );
+
+	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
+	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+		returnString = "";
+
+	// Clear flag that marks object as having an active name lookup via onNameRequest
+	myObj->NameRequestActive( false );
+
+	return returnString;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool OnAttack( CChar *attacker, CChar *defender )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when attacking someone
@@ -2387,6 +2439,35 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	params[1] = INT_TO_JSVAL( pressing->Index() );
 	params[2] = STRING_TO_JSVAL( gumpReply );
 	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 3, params, &rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached when clicking the old school horizontally scrolling gump
+//|					if ID of this gump is 0
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( tSock == nullptr )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnScrollingGumpPress, "onScrollingGumpPress" ) )
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = INT_TO_JSVAL( gumpID );
+	params[2] = INT_TO_JSVAL( buttonID );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollingGumpPress", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnScrollingGumpPress, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
 }
 
 //o-----------------------------------------------------------------------------------------------o

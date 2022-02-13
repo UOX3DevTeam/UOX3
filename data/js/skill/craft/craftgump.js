@@ -11,6 +11,11 @@ const Tailoring = 4030;
 const Tinkering = 4032;
 const Cooking = 4034;
 
+ // If enabled, players can craft coloured variants of weapons using Blacksmithing skill, though
+ // unless the craftItems array in blacksmithing.js is updated with specific create entries for the
+ // coloured weapon variants, they'll just be regular weapons with ore colour applied
+const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
+
 function craftinggump( myGump, socket )
 {
 	var pUser = socket.currentChar;
@@ -266,6 +271,10 @@ function craftinggump( myGump, socket )
 
 	for ( var i = 0; i < grouplist.length; i++ )
 	{
+		// Don't show weapon categories for blacksmithing menu if player has coloured ingots selected
+		if( !allowColouredWeapons && craftingSkillUsed == 5 && pUser.GetTempTag( "resourceHue" ) > 0 && i > 2 )
+			continue;
+
 		//myGump.AddButton( 15, 60, 0xfa5, 0, 4, 0 );
 		//myGump.AddXMFHTMLGumpColor( 50, 63, 150, 18, 1044014, false, false, LabelColor ); // LAST TEN
 		myGump.AddButton( 15, 80 + ( i * 20 ), 4005, 4007, 1, 0, 1 + i );
@@ -518,7 +527,6 @@ function onGumpPress( pSock, pButton, gumpData )
 			}
 			break;
 		case 49: // Repair Item - Blacksmithing
-			pSock.SysMessage( "HALFEKFJEKFJ" );
 			TriggerEvent( blacksmithID, "RepairTarget", pSock );
 			break;
 		case 51: // Repair Item - Carpentry
