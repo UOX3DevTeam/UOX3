@@ -23,6 +23,8 @@
 		CRAFTCOLOUREDWEAPONS=0/1 	// If enabled(1), players can craft coloured weapons. Defaults to disabled(0)
 	Fixed an issue where the correct ingots were not consumed when attempting to craft items using colored ingots
 	Fixed a rogue debug message leftover in the scissor script
+	Missing the type to work with the hammer and tongs to use new menu (Dragon Slayer)
+	Added aliases for getting/setting colour via 'set hue # and 'get hue # (Dragon Slayer)
 
 30/01/2022 - Dragon Slayer, Xuri
 	Added speech scripts for Wisps, Orcs, Lizardmen and Ratmen (Dragon Slayer)
