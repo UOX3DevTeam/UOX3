@@ -40,7 +40,7 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		// Store some info for later
-		pUser.SetTag( "fishingToolSerial", (iUsed.serial).toString() );
+		pUser.SetTempTag( "fishingToolSerial", (iUsed.serial).toString() );
 		iUsed.more = pUser.serial;
 
 		socket.CustomTarget( 1, GetDictionaryEntry( 9310, socket.language )); // What water do you want to fish in?
@@ -93,7 +93,7 @@ function onCallback1( socket, ourObj )
 		return;
 
 	// Retrieve fishing tool that was used to initiate the fishing action
-	var fishingTool = CalcItemFromSer( mChar.GetTag( "fishingToolSerial" ));
+	var fishingTool = CalcItemFromSer( mChar.GetTempTag( "fishingToolSerial" ));
 
 	// Let's repeat some of the same checks as before to make sure this process is still valid
 	if( !DoItemChecks( socket, mChar, fishingTool ))
@@ -221,7 +221,7 @@ function onCallback1( socket, ourObj )
 
 		// Shallow water fishing
 		// TODO: Skill checks easier in shallow water than deep water
-		mChar.SetTag( "IsDeepSeaFishing", false );
+		mChar.SetTempTag( "IsDeepSeaFishing", false );
 		FishingWithPole( socket, mChar, fishingTool, targX, targY, targZ );
 		return;
 	}
@@ -229,7 +229,7 @@ function onCallback1( socket, ourObj )
 	{
 		// Deep water fishing
 		// TODO: Skill checks more difficult in deep water than shallow water
-		mChar.SetTag( "IsDeepSeaFishing", true );
+		mChar.SetTempTag( "IsDeepSeaFishing", true );
 		if( fishingTool.id == 0x0dca ) // special fishing net
 		{
 			FishingWithNet( socket, mChar, fishingTool, targX, targY, targZ );
@@ -389,7 +389,7 @@ function onTimer( fishingTool, timerID )
 					{
 						if( ValidateObject( mItem ))
 						{
-							if( mItem.id == 0x14ee && mItem.morex != 0 && mItem.morey != 0 && GetTag( "treasureLevel" ) != 0 ) // waterstained SOS
+							if( mItem.id == 0x14ee && mItem.morex != 0 && mItem.morey != 0 && mItem.GetTag( "treasureLevel" ) != 0 ) // waterstained SOS
 							{
 								if( DistanceBetween( targX, targY, mItem.morex, mItem.morey ) <= 4 ) // Within 4 tiles of the shipwreck location, allow
 								{
@@ -412,7 +412,7 @@ function onTimer( fishingTool, timerID )
 
 				// NOTE: Should the skill check be moved to after system has determined what to fish up? That way, can run different skill checks
 				// depending on the type of item being fished up, and prevent highly skilled fishermen from gaining more skill from fishing up boots
-				var isDeepSeaFishing = mChar.GetTag( "IsDeepSeaFishing" );
+				var isDeepSeaFishing = mChar.GetTempTag( "IsDeepSeaFishing" );
 				if(( isDeepSeaFishing && mChar.CheckSkill( 18, 0, 1000 )) || ( !isDeepSeaFishing && mChar.CheckSkill( 18, 0, 750 )))// Player cannot gain skill in shallow water if skill is over 75.0
 				{
 					// Do another effect on water to simulate fish being caught!
@@ -1003,5 +1003,5 @@ function CleanUp( socket, mChar )
 	socket.clickX = 0;
 	socket.clickY = 0;
 	socket.clickZ = 0;
-	mChar.SetTag( "IsDeepSeaFishing", null );
+	mChar.SetTempTag( "IsDeepSeaFishing", null );
 }

@@ -4352,6 +4352,9 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 297:	 // HIDESTATSFORUNKNOWNMAGICITEMS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HideStatsForUnknownMagicItems() );
 				break;
+			case 298:	 // CRAFTCOLOUREDWEAPONS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CraftColouredWeapons() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;

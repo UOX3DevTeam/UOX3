@@ -1547,10 +1547,10 @@ void cItem::CheckEquipment( CChar *p )
 				if( i->GetStrength() > StrengthToCompare )//if strength required > character's strength
 				{
 					std::string itemname;
-					if( i->GetName() == "#" )
+					if( i->GetNameRequest( p ) == "#" )
 						getTileName( (*i), itemname );
 					else
-						itemname = i->GetName();
+						itemname = i->GetNameRequest( p );
 
 					i->SetCont( nullptr );
 					i->SetLocation( p );
@@ -1560,7 +1560,7 @@ void cItem::CheckEquipment( CChar *p )
 					{
 						p->SendWornItems( (*cIter) );
 					}
-					pSock->sysmessage( 1604, itemname.c_str() );
+					pSock->sysmessage( 1604, itemname.c_str() ); // You are not strong enough to keep %s equipped!
 					Effects->itemSound( pSock, i );
 				}
 			}
