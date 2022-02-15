@@ -2,6 +2,7 @@ function CommandRegistration()
 {
 	RegisterCommand( "kill", 2, true );
 	RegisterCommand( "resurrect", 2, true );
+	RegisterCommand( "res", 2, true );
 	RegisterCommand( "shavehair", 2, true );
 	RegisterCommand( "shavebeard", 2, true );
 }
@@ -69,6 +70,12 @@ function onCallback0( socket, ourObj )
 }
 
 function command_RESURRECT( socket, cmdString )
+{
+	var targMsg = GetDictionaryEntry( 194, socket.language );
+	socket.CustomTarget( 1, targMsg );
+}
+
+function command_RES( socket, cmdString )
 {
 	var targMsg = GetDictionaryEntry( 194, socket.language );
 	socket.CustomTarget( 1, targMsg );
