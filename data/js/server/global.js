@@ -17,6 +17,27 @@ function onLogin( socket, pChar )
 	}
 }
 
+function onQuestGump(pUser)
+{
+    if( ValidateObject( pUser ))
+    {
+      TriggerEvent( 19803, "questbutton", pUser);
+    }
+    else
+    {
+      pUser.SysMessage( "Something is wrong, pUser is not valid." );
+    }
+}
+
+function onCreateDFN( objMade, objType )
+{
+	var pUser = objMade; 
+	if (objType == 1 && !pUser.npc)
+	{
+		pUser.SetTag( "QuestTracker", "0");
+	}
+}
+
 // Generic global-script function to look up data in /shared/jsWorldData/ folder
 function CheckCustomGlobalData( fileName, dataToCheck )
 {

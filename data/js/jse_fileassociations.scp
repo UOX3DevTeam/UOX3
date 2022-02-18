@@ -291,6 +291,18 @@
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
 15007=server/house/houseAddonUse.js
+
+// Quest System
+// Core
+19800=custom/quests/core/questlog.js
+19801=custom/quests/core/questgump.js
+19802=custom/quests/core/convoeventgump.js
+19803=custom/quests/core/questbutton.js
+19804=custom/quests/core/questtitles.js
+19805=custom/quests/core/ondeathEvent.js
+// Quests
+20000=custom/quests/solenquest.js
+20001=custom/quests/newplayerquest.js
 }
 
 //-------------------------------------------
