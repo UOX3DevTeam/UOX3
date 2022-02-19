@@ -42,7 +42,7 @@ function questobjective( questGump )
 function questprogress( questGump, myPlayer )
 {
 	//completed
-	if (myPlayer.GetTag( "QuestStatus" ) == "SQ_5" )
+	if (myPlayer.GetTag( "QuestStatus" ) == "NPQ_5" )
 	{
 		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1049077, false, false, 19777215);// completed
 		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_NUMTOKILL" ) );
@@ -100,7 +100,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			var itemLevel = myPlayer.GetTag( "NPQ_LEVEL" );
 			if ( npcLevel )
 			{
-				var numToKill = myPlayer.GetTag( "SQ_NUMTOKILL" );
+				var numToKill = myPlayer.GetTag( "NPQ_NUMTOKILL" );
 				if ( numToKill > 0 )
 				{
 					myPlayer.SetTag( "QuestStatus", "NPQ_2" )
