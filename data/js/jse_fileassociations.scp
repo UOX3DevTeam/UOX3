@@ -299,7 +299,7 @@
 19802=custom/quests/core/convoeventgump.js
 19803=custom/quests/core/questbutton.js
 19804=custom/quests/core/questtitles.js
-19805=custom/quests/core/ondeathEvent.js
+19805=custom/quests/core/ondeathevent.js
 // Quests
 20000=custom/quests/solenquest.js
 20001=custom/quests/newplayerquest.js

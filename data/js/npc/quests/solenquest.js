@@ -1,7 +1,7 @@
-function questoffer(questGump)
+function questoffer( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(160, 108, 250, 20, 1054146, false, false, 10000);//name of quest darkgreen
-	questGump.AddXMFHTMLGumpColor(98, 140, 312, 200, 1054060, false, true, 90000);//quest offer lightgreen
+	questGump.AddXMFHTMLGumpColor( 160, 108, 250, 20, 1054146, false, false, 10000 );//name of quest
+	questGump.AddXMFHTMLGumpColor( 98, 140, 312, 200, 1054060, false, true, 90000 );//quest offer
 	/* <I>The Solen queen considers you eagerly for a moment then says,</I><BR><BR>
 	* 
 	* Yes. Yes, I think you could be of use. Normally, of course, I would handle
@@ -28,9 +28,9 @@ function questoffer(questGump)
 	*/
 }
 
-function questaccept(questGump)
+function questaccept( questGump )
 {
-		questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054061, false, true, 90000);//quest convo
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054061, false, true, 90000 );//quest convo
 	/* <I>The Solen queen smiles as you decide to help her.</I><BR><BR>
 * 
 * Excellent. We'll worry about the zoogi fungus later - start by eliminating
@@ -47,9 +47,9 @@ function questaccept(questGump)
 */
 }
 
-function questduringnpckilling(questGump)
+function questduringnpckilling( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054066, false, true, 90000);//quest convo
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054066, false, true, 90000 );//quest convo
 					 /* <I>The Solen queen looks up as you approach.</I><BR><BR>
                 * 
                 * You're back, but you have not yet eliminated 5 queens from my colony.
@@ -62,9 +62,9 @@ function questduringnpckilling(questGump)
                 */
 }
 
-function questgathering(questGump)
+function questgathering( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054068, false, true, 90000);//quest convo
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054068, false, true, 90000 );//quest convo
 					/* <I>The Solen queen looks pleased to see you.</I><BR><BR>
                 * 
                 * Splendid! You've done quite well in reducing my competition to become
@@ -78,9 +78,9 @@ function questgathering(questGump)
                 */
 }
 
-function questduringgathering(questGump)
+function questduringgathering( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054070, false, true, 90000);//quest convo
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054070, false, true, 90000 );//quest convo
 	/* <I>The Solen queen looks up as you approach.</I><BR><BR>
 * 
 * Do you have the zoogi fungus?<BR><BR>
@@ -89,9 +89,9 @@ function questduringgathering(questGump)
 */
 }
 
-function questend(questGump)
+function questend( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054073, false, true, 90000);//quest convo
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054073, false, true, 90000 );//quest convo
 			 /* <I>The Solen queen smiles as she takes the zoogi fungus from you.</I><BR><BR>
                 * 
                 * Wonderful! I greatly appreciate your help with these tasks. My plans are beginning
@@ -104,9 +104,9 @@ function questend(questGump)
                 */
 }
 
-function questbusy(questGump) 
+function questbusy( questGump ) 
 {
-	questGump.AddXMFHTMLGumpColor(70, 110, 365, 220, 1054059, false, true, 90000);
+	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054059, false, true, 90000 );
 	/* <I>The Solen queen considers you for a moment then says,</I><BR><BR>
                 * 
                 * Hmmm... I could perhaps benefit from your assistance, but you seem to be
@@ -115,108 +115,108 @@ function questbusy(questGump)
                 */
 }
 
-function questobjective(questGump)
+function questobjective( questGump )
 {
-	questGump.AddXMFHTMLGumpColor(70, 130, 300, 100, 1054062, false, false, 19777215);//Red Solen Queens
+	questGump.AddXMFHTMLGumpColor( 70, 130, 300, 100, 1054062, false, false, 19777215 );//Red Solen Queens
 	//questGump.AddXMFHTMLGumpColor(70, 130, 300, 100, 1054063, false, false, 19777215);//Black Solen Queens
 }
 
-function questprogress(questGump, myPlayer)
+function questprogress( questGump, myPlayer )
 {
 	//completed
-	if (myPlayer.GetTag("QuestStatus") == "SQ_5")
+	if ( myPlayer.GetTag( "QuestStatus" ) == "SQ_5" )
 	{
 		questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1049077, false, false, 19777215);// completed
-		questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_NUMTOKILL"));
-		questGump.AddText(100, 280, 0x64, "/");
-		questGump.AddText(130, 280, 0x64, "5");
+		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "SQ_NUMTOKILL" ) );
+		questGump.AddText( 100, 280, 0x64, "/" );
+		questGump.AddText( 130, 280, 0x64, "5" );
 		//questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1049078, false, false, 19777215);// has not been completed
 	}
 	else
 	{
-		//questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054065, false, false, 19777215);//black queens
-		questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
-		questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_NUMTOKILL"));
-		questGump.AddText(100, 280, 0x64, "/");
-		questGump.AddText(130, 280, 0x64, "5");
+		//questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054065, false, false, 19777215 );//black queens
+		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054064, false, false, 19777215 );//red queens
+		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "SQ_NUMTOKILL" ) );
+		questGump.AddText( 100, 280, 0x64, "/" );
+		questGump.AddText( 130, 280, 0x64, "5" );
 	}
 }
 
-function onSpeech(myString, myPlayer, myNPC, pSock) 
+function onSpeech( myString, myPlayer, myNPC, pSock ) 
 {
-	if (!myNPC.InRange(myPlayer, 2))
+	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
 
 	var questTrackString = "";
 	var questNumber = 1; //Is the number of quest
 	var questStatus = "1"; //changes the postion of the number
 	var tempString = myPlayer.GetTag( "QuestTracker" );
-	questTrackString = tempString.substr(questNumber-1, 1); // syntax: substr( stringPosition, length )
+	questTrackString = tempString.substr( questNumber-1, 1 ); // syntax: substr( stringPosition, length )
 
 	var Speech_Array = myString.split(" ");
 	var i = 0, currObj = 0;
 
-	for (i = 1; i <= Speech_Array.length; i++) 
+	for ( i = 1; i <= Speech_Array.length; i++ ) 
 	{
-		if (Speech_Array[currObj].match(/\bQuest\b/i) || Speech_Array[currObj].match(/\bAdventure\b/i) || Speech_Array[currObj].match(/\bTask\b/i) || Speech_Array[currObj].match(/\bquest\b/i) || Speech_Array[currObj].match(/\badventure\b/i) || Speech_Array[currObj].match(/\btask\b/i))
+		if ( Speech_Array[currObj].match( /\bQuest\b/i ) || Speech_Array[currObj].match( /\bAdventure\b/i ) || Speech_Array[currObj].match( /\bTask\b/i ) || Speech_Array[currObj].match( /\bquest\b/i ) || Speech_Array[currObj].match( /\badventure\b/i ) || Speech_Array[currObj].match( /\btask\b/i ) )
 		{
-			myPlayer.TextMessage( "QuestTracker string: "+ questTrackString);
+			myPlayer.TextMessage( "QuestTracker string: "+ questTrackString );
 
-			myNPC.TurnToward(myPlayer);
-			if (questTrackString == "1" )
+			myNPC.TurnToward( myPlayer );
+			if ( questTrackString == "1" )
 			{
-				myPlayer.SetTag("QuestStatus", "SQ_6")
-				TriggerEvent(19802, "convoeventgump", myPlayer);
+				myPlayer.SetTag( "QuestStatus", "SQ_6" )
+				TriggerEvent( 19802, "convoeventgump", myPlayer );
 				return false;
 			}
 			else
 			{
-				questTrackString = tempString.substr(0, questNumber - 1) + questStatus + tempString.substr(questNumber); 
-				myPlayer.SetTag( "QuestTracker", questTrackString);
-				TriggerEvent(19801, "questgump", myPlayer);
+				questTrackString = tempString.substr( 0, questNumber - 1 ) + questStatus + tempString.substr( questNumber ); 
+				myPlayer.SetTag( "QuestTracker", questTrackString );
+				TriggerEvent( 19801, "questgump", myPlayer );
 				return false;
 			}
 		}
-		else if (Speech_Array[currObj].match(/\bReward\b/i) || Speech_Array[currObj].match(/\breward\b/i))
+		else if ( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) )
 		{
-			myNPC.TurnToward(myPlayer);
-			var npcLevel = myPlayer.GetTag("SQ_NPCLEVEL");
-			var itemLevel = myPlayer.GetTag("SQ_LEVEL");
+			myNPC.TurnToward( myPlayer );
+			var npcLevel = myPlayer.GetTag( "SQ_NPCLEVEL" );
+			var itemLevel = myPlayer.GetTag( "SQ_LEVEL" );
 			if (npcLevel)
 			{
-				var numToKill = myPlayer.GetTag("SQ_NUMTOKILL");
+				var numToKill = myPlayer.GetTag( "SQ_NUMTOKILL" );
 				if (numToKill > 0)
 				{
-					myPlayer.SetTag("QuestStatus", "SQ_2")
-					TriggerEvent(19802, "convoeventgump", myPlayer);
+					myPlayer.SetTag( "QuestStatus", "SQ_2" )
+					TriggerEvent( 19802, "convoeventgump", myPlayer );
 					return false;
 				}
 				else 
 				{
-					myPlayer.SetTag("SQ_NPCLEVEL", 0);
-					myPlayer.SetTag("SQ_NUMTOKILL", 0);
-					myPlayer.SetTag("QuestStatus", "SQ_3")
-					TriggerEvent(19802, "convoeventgump", myPlayer);
+					myPlayer.SetTag( "SQ_NPCLEVEL", 0 );
+					myPlayer.SetTag( "SQ_NUMTOKILL", 0 );
+					myPlayer.SetTag( "QuestStatus", "SQ_3" )
+					TriggerEvent( 19802, "convoeventgump", myPlayer );
 					return false;
 				}
 			}
-			if (itemLevel)
+			if ( itemLevel )
 			{
-				var numToGet = myPlayer.GetTag("SQ_numToGet");
-				if (numToGet > 0)
+				var numToGet = myPlayer.GetTag( "SQ_numToGet" );
+				if ( numToGet > 0 )
 				{
-					myPlayer.SetTag("QuestStatus", "SQ_4")
-					TriggerEvent(19802, "convoeventgump", myPlayer);
+					myPlayer.SetTag( "QuestStatus", "SQ_4" )
+					TriggerEvent( 19802, "convoeventgump", myPlayer );
 					return false;
 				}
 			}
 			else 
 			{
-				myNPC.TextMessage("I don't give rewards");
+				myNPC.TextMessage( "I do not offer rewards." );
 			}
 			return false;
 		}
-		else if (Speech_Array[currObj].match(/\bQuite\b/i) || Speech_Array[currObj].match(/\bquite\b/i))
+		else if ( Speech_Array[currObj].match( /\bQuite\b/i ) || Speech_Array[currObj].match( /\bquite\b/i ) )
 		{
 			myNPC.TurnToward(myPlayer);
 			decline(myPlayer);
@@ -225,49 +225,49 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 	}
 }
 
-function onDropItemOnNpc(pDropper, pDroppedOn, iDropped)
+function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
-	pDroppedOn.TurnToward(pDropper);
-	var taskLevel = pDropper.GetTag("SQ_LEVEL");
-	if (taskLevel)
+	pDroppedOn.TurnToward( pDropper );
+	var taskLevel = pDropper.GetTag( "SQ_LEVEL" );
+	if ( taskLevel )
 	{
 		var numZoogiFungus = pDropper.ResourceCount(0x26B7);
-		if (numZoogiFungus >= 50)
+		if ( numZoogiFungus >= 50 )
 		{
-			myPlayer.SetTag("QuestStatus", "SQ_5")
-			TriggerEvent(19802, "convoeventgump", myPlayer);
+			myPlayer.SetTag( "QuestStatus", "SQ_5" )
+			TriggerEvent( 19802, "convoeventgump", myPlayer );
 			var goldToGive = 0;
-			switch (RandomNumber(0, 2))
+			switch ( RandomNumber( 0, 2 ) )
 			{
 				case 0: goldToGive = 50; break;
 				case 1: goldToGive = 75; break;
 				case 2: goldToGive = 100; break;
 			}
-			CreateDFNItem(pDropper.socket, pDropper, "0x0EED", goldToGive, "ITEM", true);
-			pDropper.SoundEffect(0x0037, false);
-			decline(pDropper);
-			pDropper.UseResource(50, 0x26B7);
+			CreateDFNItem( pDropper.socket, pDropper, "0x0EED", goldToGive, "ITEM", true );
+			pDropper.SoundEffect( 0x0037, false );
+			decline( pDropper );
+			pDropper.UseResource( 50, 0x26B7 );
 			return 0;
 		}
-		else if (numZoogiFungus <= 50) 
+		else if ( numZoogiFungus <= 50 ) 
 		{
-			pDropper.SetTag("QuestStatus", "SQ_4")
-			TriggerEvent(19802, "convoeventgump", pDropper);
+			pDropper.SetTag( "QuestStatus", "SQ_4" )
+			TriggerEvent( 19802, "convoeventgump", pDropper );
 			return 0;
 		}
 	}
 	else
-		pDroppedOn.TextMessage("Our arrangement was for 50 of the zoogi fungus. Please return to me when you have that amount.");
+		pDroppedOn.TextMessage( "Our arrangement was for 50 of the zoogi fungus. Please return to me when you have that amount." );
 	return 0;
 }
 
-function decline(myPlayer)
+function decline( myPlayer )
 {
-	myPlayer.SetTag("SQ_numToGet", 0);
-	myPlayer.SetTag("SQ_IDTOGET", 0);
-	myPlayer.SetTag("SQ_LEVEL", 0);
-	myPlayer.SetTag("SQ_NPCLEVEL", 0);
-	myPlayer.SetTag("SQ_IDTOKILL", 0);
-	myPlayer.SetTag("SQ_NUMTOKILL", 0);
-	myPlayer.SetTag("QuestStatus", null)
+	myPlayer.SetTag( "SQ_numToGet", 0 );
+	myPlayer.SetTag( "SQ_IDTOGET", 0 );
+	myPlayer.SetTag( "SQ_LEVEL", 0 );
+	myPlayer.SetTag( "SQ_NPCLEVEL", 0 );
+	myPlayer.SetTag( "SQ_IDTOKILL", 0 );
+	myPlayer.SetTag( "SQ_NUMTOKILL", 0 );
+	myPlayer.SetTag( "QuestStatus", null )
 }
