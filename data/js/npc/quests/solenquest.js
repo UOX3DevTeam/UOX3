@@ -1,6 +1,6 @@
 function questoffer( questGump )
 {
-	questGump.AddXMFHTMLGumpColor( 160, 108, 250, 20, 1054146, false, false, 10000 );//name of quest
+	questGump.AddXMFHTMLGumpColor( 160, 108, 250, 20, 1054146, false, false, 10000 );//name of quest//Ambitious Solen Queen Quest
 	questGump.AddXMFHTMLGumpColor( 98, 140, 312, 200, 1054060, false, true, 90000 );//quest offer
 	/* <I>The Solen queen considers you eagerly for a moment then says,</I><BR><BR>
 	* 
@@ -148,7 +148,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
 	var QuestSlot = 1;
-	var questName = "Solen Queen Quest";
+	var questName = "Ambitious Solen Queen Quest";
 	var killAmount = 5;
 	var collectAmount = 50;
 
