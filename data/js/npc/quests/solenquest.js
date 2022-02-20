@@ -144,7 +144,6 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 {
 	// Read Quests Log
 	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
-
 	// Next up, we want to loop through myArray, and make sure our friend is not already there
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;

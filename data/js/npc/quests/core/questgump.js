@@ -5,7 +5,7 @@ function questgump( pUser, myNPC)
 	var questGump = new Gump;
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	
+	pUser.SetTempTag( "QuestSlotTemp", myNPC.GetTag( "QuestSlot" ) );
 	questGump.AddPage( 0 );
 	questGump.AddTiledGump( 50, 20, 400, 400, 2624 );
 	questGump.AddCheckerTrans( 50, 20, 400, 400 );
@@ -23,8 +23,8 @@ function questgump( pUser, myNPC)
 		{
 			switch ( parseInt(questSlot ) )
 			{
-				case 1: TriggerEvent( 20000, "questoffer", questGump ); break;
-				case 2: TriggerEvent( 20001, "questoffer", questGump ); break;
+				case 1:TriggerEvent( 20000, "questoffer", questGump ); break;
+				case 2:TriggerEvent( 20001, "questoffer", questGump ); break;
 			}
 			break;
 		}
@@ -141,10 +141,6 @@ function CreateNpcQuest( pUser, npcLevel, numToKill )
 			case 2:
 				pUser.SetTag( "NPQ_NUMTOKILL", numToKill );
 				pUser.SetTag( "NPQ_NPCLEVEL", npcLevel );
-				break;
-			case 3:
-				pUser.SetTag( "TTTQ_NUMTOKILL", numToKill );
-				pUser.SetTag( "TTTQ_NPCLEVEL", npcLevel );
 				break;
 		}
 	}

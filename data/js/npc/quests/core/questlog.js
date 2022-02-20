@@ -16,9 +16,9 @@ function questlog( mKiller )
 function progress( pUser )
 {
 	var questGump = new Gump;
+
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-
 	questGump.AddPage( 0 );
 	questGump.AddGump( 0, 0, 3600 );
 	questGump.AddTiledGump( 0, 14, 15, 375, 3603 );
@@ -52,17 +52,22 @@ function progress( pUser )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
-
-		switch (parseInt(questSlot))
+		var questName = myQuestData[4];
+		// Max Quests for the Log is 10
+		if (questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
 		{
-			case 1: TriggerEvent(20000, "questobjective", questGump); break;
-			case 2: TriggerEvent(20001, "questobjective", questGump); break;
-		}
-		//Progress
-		switch (parseInt(questSlot))
-		{
-			case 1: TriggerEvent(20000, "questprogress", questGump, pUser); break;
-			case 2: TriggerEvent(20001, "questprogress", questGump, pUser); break;
+			switch ( parseInt(questSlot ) )
+			{
+				case 1: TriggerEvent( 20000, "questobjective", questGump ); break;
+				case 2: TriggerEvent( 20001, "questobjective", questGump ); break;
+			}
+			//Progress
+			switch ( parseInt( questSlot ) )
+			{
+				case 1: TriggerEvent( 20000, "questprogress", questGump, pUser ); break;
+				case 2: TriggerEvent( 20001, "questprogress", questGump, pUser ); break;
+			}
+			break;
 		}
 	}
 
@@ -77,7 +82,7 @@ function progress( pUser )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
-	switch ( pButton )
+	switch ( pButton ) 
 	{
 		case 0:break;
 		case 1:progress( pUser ); break;

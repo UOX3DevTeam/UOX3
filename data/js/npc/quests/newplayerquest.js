@@ -31,12 +31,12 @@ function questend( questGump )
 
 function questbusy( questGump ) 
 {
-	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>I see you busy come back later</BASEFONT>" );
+	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>I see you busy come back later</BASEFONT>" );
 }
 
 function questobjective( questGump )
 {
-	questGump.AddXMFHTMLGumpColor( 70, 130, 300, 100, false, false, "<BASEFONT color=#ffffff>Kill 5 Mongbats</BASEFONT>" );
+	questGump.AddHTMLGump( 70, 130, 300, 100, false, false, "<BASEFONT color=#ffffff>Kill 5 Mongbats</BASEFONT>" );
 }
 
 function questprogress( questGump, myPlayer )
@@ -51,7 +51,7 @@ function questprogress( questGump, myPlayer )
 	}
 	else
 	{
-		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, false, false, "<BASEFONT color=#ffffff>Mongbats left to kill</BASEFONT>" );
+		questGump.AddHTMLGump( 70, 260, 270, 100, false, false, "<BASEFONT color=#ffffff>Mongbats left to kill</BASEFONT>" );
 		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_NUMTOKILL" ) );
 		questGump.AddText( 100, 280, 0x64, "/" );
 		questGump.AddText( 130, 280, 0x64, "5" );
@@ -62,7 +62,6 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 {
 	// Read Quests Log
 	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
-
 	// Next up, we want to loop through myArray, and make sure our friend is not already there
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
