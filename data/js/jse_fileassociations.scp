@@ -298,8 +298,10 @@
 19801=npc/quests/core/questgump.js
 19802=npc/quests/core/convoeventgump.js
 19803=npc/quests/core/questbutton.js
-19804=npc/quests/core/questtitles.js
+
 19805=npc/quests/core/ondeathevent.js
+19806=npc/quests/core/questdata.js
+
 // Quests
 20000=npc/quests/solenquest.js
 20001=npc/quests/newplayerquest.js

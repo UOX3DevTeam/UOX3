@@ -1,7 +1,11 @@
-function questgump( pUser )
+function questgump( pUser, myNPC)
 {
+	var socket = pUser.socket;
+	socket.tempObj = myNPC;
 	var questGump = new Gump;
-
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	
 	questGump.AddPage( 0 );
 	questGump.AddTiledGump( 50, 20, 400, 400, 2624 );
 	questGump.AddCheckerTrans( 50, 20, 400, 400 );
@@ -10,10 +14,20 @@ function questgump( pUser )
 	questGump.AddTiledGump( 130, 65, 175, 1, 9101 );
 	questGump.AddGump( 140, 110, 1209 );
 
-	switch ( pUser.GetTag( "QuestTracker" ) )
+	for ( let i = 0; i < myArray.length; i++ )
 	{
-		case "1":TriggerEvent( 20000, "questoffer", questGump );break;
-		case "2":TriggerEvent( 20001, "questoffer", questGump );break;
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+
+		if ( questSlot == myNPC.GetTag( "QuestSlot" ) ) 
+		{
+			switch ( parseInt(questSlot ) )
+			{
+				case 1: TriggerEvent( 20000, "questoffer", questGump ); break;
+				case 2: TriggerEvent( 20001, "questoffer", questGump ); break;
+			}
+			break;
+		}
 	}
 
 	questGump.AddRadio( 85, 350, 0x25f8, 0, 1 );
@@ -43,6 +57,9 @@ function questgump( pUser )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
+	var myNPC = socket.tempObj;
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
 	switch ( pButton )
 	{
 		case 0:break; // abort and do nothing if gump is closed with right click
@@ -50,22 +67,32 @@ function onGumpPress( socket, pButton, gumpData )
 			var OtherButton = gumpData.getButton(0);
 			switch ( OtherButton )
 			{
-				case 0:pUser.SysMessage( "You have declined the Quest." );break; //decline
+				case 0:pUser.SysMessage( "Such a pity, if you change your mind, I'll be here." );break; //decline
 				case 1:// Accept
-					switch (pUser.GetTag( "QuestTracker" ) )
+					for ( let i = 0; i < myArray.length; i++ )
 					{
-						case "1":
-							pUser.SetTag( "QuestStatus", "SQ_1" );					// setting what status the players is in during the Quest.
-							TriggerEvent( 19802, "convoeventgump", pUser );	//accept gump
-							CreateNpcQuest( pUser, 1, 5 );					// creating the quest setup  Example: Player,level,amount
-							CreateItemQuest( pUser, 1, 50 );
+						var myQuestData = myArray[i].split(",");
+						var questSlot = myQuestData[0];
+						var killAmount = myQuestData[4];
+						var collectAmount = myQuestData[4];
+
+						if ( questSlot == myNPC.GetTag( "QuestSlot" ) )
+						{
+							switch (parseInt(questSlot))
+							{
+								case 1:
+									TriggerEvent( 19802, "convoeventgump", pUser, myNPC );			//accept gump
+									CreateNpcQuest( pUser, parseInt( questSlot ), parseInt (killAmount ) );			// creating the quest setup  Example: Player,level,amount
+									CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ) );
+									break;
+								case 2:
+									TriggerEvent(19802, "convoeventgump", pUser, myNPC);	//accept gump
+									CreateNpcQuest(pUser, parseInt( questSlot ), parseInt( killAmount ) );					// creating the quest setup  Example: Player,level,amount
+									CreateItemQuest(pUser, parseInt( questSlot ), parseInt( collectAmount ) );
+									break;
+							}
 							break;
-						case "2":
-							pUser.SetTag( "QuestStatus", "NPQ_1" );					// setting what status the players is in during the Quest.
-							TriggerEvent( 19802, "convoeventgump", pUser );	//accept gump
-							CreateNpcQuest( pUser, 2, 5 );					// creating the quest setup  Example: Player,level,amount
-							CreateItemQuest( pUser, 2, 5 );
-							break;
+						}
 					}
 			}
 			break;
@@ -75,16 +102,23 @@ function onGumpPress( socket, pButton, gumpData )
 function CreateItemQuest( pUser, questLevel, numToGet )
 {
 	var typeToGet = GetItemType( pUser, questLevel );
-	switch ( pUser.GetTag( "QuestTracker" ) )
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case "1":
-			pUser.SetTag( "SQ_numToGet", numToGet );
-			pUser.SetTag( "SQ_LEVEL", questLevel );
-			break;
-		case "2":
-			pUser.SetTag( "NPQ_numToGet", numToGet );
-			pUser.SetTag( "NPQ_LEVEL", questLevel );
-			break;
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+		switch (parseInt(questSlot))
+		{
+			case 1:
+				pUser.SetTag("SQ_numToGet", numToGet);
+				pUser.SetTag("SQ_LEVEL", questLevel);
+				break;
+			case 2:
+				pUser.SetTag( "NPQ_numToGet", numToGet );
+				pUser.SetTag( "NPQ_LEVEL", questLevel );
+				break;
+		}
 	}
 	return typeToGet;
 }
@@ -92,16 +126,27 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 function CreateNpcQuest( pUser, npcLevel, numToKill )
 {
 	var typeToKill = GetMonsterType(pUser, npcLevel );
-	switch (pUser.GetTag( "QuestTracker" ) )
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case "1":
-			pUser.SetTag( "SQ_NUMTOKILL", numToKill );
-			pUser.SetTag( "SQ_NPCLEVEL", npcLevel );
-			break;
-		case "2":
-			pUser.SetTag( "NPQ_NUMTOKILL", numToKill );
-			pUser.SetTag( "NPQ_NPCLEVEL", npcLevel );
-			break;
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+		switch (parseInt(questSlot))
+		{
+			case 1:
+				pUser.SetTag("SQ_NUMTOKILL", numToKill);
+				pUser.SetTag("SQ_NPCLEVEL", npcLevel);
+				break;
+			case 2:
+				pUser.SetTag( "NPQ_NUMTOKILL", numToKill );
+				pUser.SetTag( "NPQ_NPCLEVEL", npcLevel );
+				break;
+			case 3:
+				pUser.SetTag( "TTTQ_NUMTOKILL", numToKill );
+				pUser.SetTag( "TTTQ_NPCLEVEL", npcLevel );
+				break;
+		}
 	}
 	return typeToKill;
 }

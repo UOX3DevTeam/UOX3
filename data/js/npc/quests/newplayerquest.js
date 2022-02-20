@@ -42,7 +42,7 @@ function questobjective( questGump )
 function questprogress( questGump, myPlayer )
 {
 	//completed
-	if (myPlayer.GetTag( "QuestStatus" ) == "NPQ_5" )
+	if (myPlayer.GetTag( "NPQStatus" ) == 5 )
 	{
 		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1049077, false, false, 19777215);// completed
 		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_NUMTOKILL" ) );
@@ -60,40 +60,62 @@ function questprogress( questGump, myPlayer )
 
 function onSpeech( myString, myPlayer, myNPC, pSock ) 
 {
+	// Read Quests Log
+	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
+
+	// Next up, we want to loop through myArray, and make sure our friend is not already there
+	var questslotUsed = false;
+	var indexOfquestSlot = -1;
+	var QuestSlot = 2;
+	var questName = "New Player Quest";
+	var killAmount = 5;
+	var collectAmount = 5;
+
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
 
-	var questTrackString = "";
-	var questNumber = 2; //Is the number of quest
-	var questStatus = "2"; //changes the postion of the number
-	var tempString = myPlayer.GetTag( "QuestTracker" );
-	questTrackString = tempString.substr( questNumber-1, 1 ); // syntax: substr( stringPosition, length )
-
 	var Speech_Array = myString.split(" ");
-	var i = 0, currObj = 0;
+	var s = 0, currObj = 0;
 
-	for ( i = 1; i <= Speech_Array.length; i++ ) 
+	for (s = 1; s <= Speech_Array.length; s++)
 	{
 		if ( Speech_Array[currObj].match( /\bQuest\b/i ) || Speech_Array[currObj].match( /\bAdventure\b/i ) || Speech_Array[currObj].match( /\bTask\b/i ) || Speech_Array[currObj].match( /\bquest\b/i ) || Speech_Array[currObj].match( /\badventure\b/i ) || Speech_Array[currObj].match( /\btask\b/i ) )
 		{
-			myPlayer.TextMessage( "QuestTracker string: "+ questTrackString );
-
-			myNPC.TurnToward( myPlayer );
-			if ( questTrackString == "2" )
+			myNPC.TurnToward(myPlayer);
+			for ( let i = 0; i < myArray.length; i++ ) 
 			{
-				myPlayer.SetTag( "QuestStatus", "NPQ_6" )
-				TriggerEvent( 19802, "convoeventgump", myPlayer );
-				return false;
+				var myQuest = myArray[i].split(",");
+				if (myQuest[1] == myPlayer.serial)
+				{
+					// Quest is already in the log! Abort
+					myPlayer.SetTag( "NPQStatus", 6 )
+					TriggerEvent(19802, "convoeventgump", myPlayer);
+					return false;
+				}
+				else if (myQuest[0] == QuestSlot)
+				{
+					questslotUsed = true;
+					indexOfquestSlot = i;
+				}
 			}
-			else
+
+			// Next, remove the existing entry for the selected slot from myArray!
+			if (questslotUsed) 
 			{
-				questTrackString = tempString.substr(0, questNumber - 1) + questStatus + tempString.substr(questNumber); 
-				myPlayer.SetTag( "QuestTracker", questTrackString );
-				TriggerEvent( 19801, "questgump", myPlayer );
+				myArray.splice( indexOfquestSlot, 1 );
+			}
+
+			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
+			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString());
+			if (TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ) )
+			{
+				myNPC.SetTag( "QuestSlot", QuestSlot );
+				myPlayer.SetTag("NPQStatus", 1);
+				TriggerEvent(19801, "questgump", myPlayer, myNPC );
 				return false;
 			}
 		}
-		else if ( Speech_Array[currObj].match(/\bReward\b/i ) || Speech_Array[currObj].match(/\breward\b/i ) )
+		else if ( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) )
 		{
 			myNPC.TurnToward( myPlayer );
 			var npcLevel = myPlayer.GetTag( "NPQ_NPCLEVEL" );
@@ -103,16 +125,16 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				var numToKill = myPlayer.GetTag( "NPQ_NUMTOKILL" );
 				if ( numToKill > 0 )
 				{
-					myPlayer.SetTag( "QuestStatus", "NPQ_2" )
-					TriggerEvent( 19802, "convoeventgump", myPlayer );
+					myPlayer.SetTag( "NPQStatus", 2 )
+					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC);
 					return false;
 				}
 				else 
 				{
 					myPlayer.SetTag( "NPQ_NPCLEVEL", 0 );
 					myPlayer.SetTag( "NPQ_NUMTOKILL", 0 );
-					myPlayer.SetTag( "QuestStatus", "NPQ_3" )
-					TriggerEvent( 19802, "convoeventgump", myPlayer );
+					myPlayer.SetTag( "NPQStatus", 3 )
+					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
 			}
@@ -121,8 +143,8 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				var numToGet = myPlayer.GetTag( "NPQ_numToGet" );
 				if ( numToGet > 0 )
 				{
-					myPlayer.SetTag( "QuestStatus", "NPQ_4" )
-					TriggerEvent( 19802, "convoeventgump", myPlayer );
+					myPlayer.SetTag( "NPQStatus", 4 )
+					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
 			}
@@ -150,8 +172,8 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 		var numIronIngots = pDropper.ResourceCount( 0x1bef );
 		if ( numIronIngots >= 5 )
 		{
-			myPlayer.SetTag( "QuestStatus", "NPQ_5" )
-			TriggerEvent( 19802, "convoeventgump", myPlayer );
+			myPlayer.SetTag( "NPQStatus", 5 )
+			TriggerEvent( 19802, "convoeventgump", myPlayer, pDroppedOn );
 			var goldToGive = 0;
 			switch (RandomNumber(0, 2))
 			{
@@ -167,8 +189,8 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 		}
 		else if ( numIronIngots <= 5 ) 
 		{
-			pDropper.SetTag( "QuestStatus", "NPQ_4" )
-			TriggerEvent( 19802, "convoeventgump", pDropper );
+			pDropper.SetTag( "NPQStatus", 4 )
+			TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
 			return 0;
 		}
 	}
@@ -185,4 +207,5 @@ function decline(myPlayer)
 	myPlayer.SetTag( "NPQ_NPCLEVEL", 0 );
 	myPlayer.SetTag( "NPQ_IDTOKILL", 0 );
 	myPlayer.SetTag( "NPQ_NUMTOKILL", 0 );
+	myPlayer.SetTag( "NPQStatus", null );
 }

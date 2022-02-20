@@ -1,4 +1,4 @@
-function convoeventgump( pUser )
+function convoeventgump( pUser, myNPC)
 {
 	var questGump = new Gump;
 
@@ -15,30 +15,41 @@ function convoeventgump( pUser )
 	questGump.AddCheckerTrans( 55, 40, 388, 323 );
 	questGump.AddXMFHTMLGumpColor( 110, 60, 200, 20, 1049069, false, false, 0x7FFF ); // <STRONG>Conversation Event</STRONG>
 
-	switch ( pUser.GetTag( "QuestTracker" ) )// tracker for the quest
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case "1":
-			switch ( pUser.GetTag( "QuestStatus" ) )// status of each part of the quest
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+		if (questSlot == myNPC.GetTag("QuestSlot"))
+		{
+			switch (parseInt(questSlot))
 			{
-				case "SQ_1": TriggerEvent( 20000, "questaccept", questGump ); break;
-				case "SQ_2": TriggerEvent( 20000, "questduringnpckilling", questGump ); break;
-				case "SQ_3": TriggerEvent( 20000, "questgathering", questGump ); break;
-				case "SQ_4": TriggerEvent( 20000, "questduringgathering", questGump ); break;
-				case "SQ_5": TriggerEvent( 20000, "questend", questGump ); break;
-				case "SQ_6": TriggerEvent( 20000, "questbusy", questGump ); break;
+				case 1:
+					switch (pUser.GetTag("SQStatus"))// status of each part of the quest
+					{
+						case 1: TriggerEvent(20000, "questaccept", questGump); break;
+						case 2: TriggerEvent(20000, "questduringnpckilling", questGump); break;
+						case 3: TriggerEvent(20000, "questgathering", questGump); break;
+						case 4: TriggerEvent(20000, "questduringgathering", questGump); break;
+						case 5: TriggerEvent(20000, "questend", questGump); break;
+						case 6: TriggerEvent(20000, "questbusy", questGump); break;
+					}
+					break;
+				case 2:
+					switch (pUser.GetTag("NPQStatus"))// status of each part of the quest
+					{
+						case 1: TriggerEvent(20001, "questaccept", questGump); break;
+						case 2: TriggerEvent(20001, "questduringnpckilling", questGump); break;
+						case 3: TriggerEvent(20001, "questgathering", questGump); break;
+						case 4: TriggerEvent(20001, "questduringgathering", questGump); break;
+						case 5: TriggerEvent(20001, "questend", questGump); break;
+						case 6: TriggerEvent(20001, "questbusy", questGump); break;
+					}
+					break;
 			}
 			break;
-		case "2":
-			switch ( pUser.GetTag( "QuestStatus" ) )// status of each part of the quest
-			{
-				case "NPQ_1": TriggerEvent( 20001, "questaccept", questGump ); break;
-				case "NPQ_2": TriggerEvent( 20001, "questduringnpckilling", questGump ); break;
-				case "NPQ_3": TriggerEvent( 20001, "questgathering", questGump ); break;
-				case "NPQ_4": TriggerEvent( 20001, "questduringgathering", questGump ); break;
-				case "NPQ_5": TriggerEvent( 20001, "questend", questGump ); break;
-				case "NPQ_6": TriggerEvent( 20001, "questbusy", questGump ); break;
-			}
-			break;
+		}
 	}
 
 	questGump.AddGump( 65, 14, 10102 );

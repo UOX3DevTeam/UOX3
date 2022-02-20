@@ -16,6 +16,8 @@ function questlog( mKiller )
 function progress( pUser )
 {
 	var questGump = new Gump;
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
 
 	questGump.AddPage( 0 );
 	questGump.AddGump( 0, 0, 3600 );
@@ -46,17 +48,22 @@ function progress( pUser )
 	questGump.AddPage( 1 );
 
 	//Objectives
-	switch ( pUser.GetTag( "QuestTracker" ) )
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case "1":TriggerEvent( 20000, "questobjective", questGump );break;
-		case "2":TriggerEvent( 20001, "questobjective", questGump );break;
-	}
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
 
-	//Progress
-	switch (pUser.GetTag( "QuestTracker" ) )
-	{
-		case "1":TriggerEvent( 20000, "questprogress", questGump, pUser );break;
-		case "2":TriggerEvent( 20001, "questprogress", questGump, pUser );break;
+		switch (parseInt(questSlot))
+		{
+			case 1: TriggerEvent(20000, "questobjective", questGump); break;
+			case 2: TriggerEvent(20001, "questobjective", questGump); break;
+		}
+		//Progress
+		switch (parseInt(questSlot))
+		{
+			case 1: TriggerEvent(20000, "questprogress", questGump, pUser); break;
+			case 2: TriggerEvent(20001, "questprogress", questGump, pUser); break;
+		}
 	}
 
 	//questGump.AddButton(55, 346, 9909, 9911, 1, 0, 1);
