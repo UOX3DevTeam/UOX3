@@ -29,15 +29,6 @@ function onQuestGump(pUser)
     }
 }
 
-function onCreateDFN( objMade, objType )
-{
-	var pUser = objMade; 
-	if (objType == 1 && !pUser.npc)
-	{
-		pUser.SetTag( "QuestTracker", "0");
-	}
-}
-
 // Generic global-script function to look up data in /shared/jsWorldData/ folder
 function CheckCustomGlobalData( fileName, dataToCheck )
 {
