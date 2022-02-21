@@ -26,11 +26,21 @@ name=clumsy scroll
 id=0x1F2E
 }
 
+[clumsyscroll]
+{
+get=0x1F2E
+}
+
 [0x1f2f]
 {
 get=base_first_scroll
 name=create food scroll
 id=0x1F2F
+}
+
+[createfoodscroll]
+{
+get=0x1F2F
 }
 
 [0x1f30]
@@ -40,11 +50,21 @@ name=feeblemind scroll
 id=0x1F30
 }
 
+[feeblemindscroll]
+{
+get=0x1F30
+}
+
 [0x1f31]
 {
 get=base_first_scroll
 name=heal scroll
 id=0x1F31
+}
+
+[healscroll]
+{
+get=0x1F31
 }
 
 [0x1F32]
@@ -54,11 +74,21 @@ name=magic arrow scroll
 id=0x1F32
 }
 
+[magicarrowscroll]
+{
+get=0x1F32
+}
+
 [0x1F33]
 {
 get=base_first_scroll
 name=night sight scroll
 id=0x1F33
+}
+
+[nightsightscroll]
+{
+get=0x1F33
 }
 
 [0x1F2D]
@@ -68,11 +98,21 @@ name=reactive armor scroll
 id=0x1F2D
 }
 
+[reactivearmorscroll]
+{
+get=0x1F2d
+}
+
 [0x1F34]
 {
 get=base_first_scroll
 name=weaken scroll
 id=0x1F34
+}
+
+[weakenscroll]
+{
+get=0x1F34
 }
  
 //Scroll (Second Circle)
@@ -89,11 +129,21 @@ name=agility scroll
 id=0x1F35
 }
 
+[agilityscroll]
+{
+get=0x1F35
+}
+
 [0x1F36]
 {
 get=base_second_scroll
 name=cunning scroll
 id=0x1F36
+}
+
+[cunningscroll]
+{
+get=0x1F36
 }
 
 [0x1F37]
@@ -103,11 +153,21 @@ name=cure scroll
 id=0x1F37
 }
 
+[curescroll]
+{
+get=0x1F37
+}
+
 [0x1F38]
 {
 get=base_second_scroll
 name=harm scroll
 id=0x1F38
+}
+
+[harmscroll]
+{
+get=0x1F38
 }
 
 [0x1F39]
@@ -117,11 +177,21 @@ name=magic trap scroll
 id=0x1F39
 }
 
+[magictrapscroll]
+{
+get=0x1F39
+}
+
 [0x1F3A]
 {
 get=base_second_scroll
 name=magic untrap scroll
 id=0x1F3A
+}
+
+[magicuntrapscroll]
+{
+get=0x1F3A
 }
 
 [0x1F3B]
@@ -131,11 +201,21 @@ name=protection scroll
 id=0x1F3B
 }
 
+[protctionscroll]
+{
+get=0x1F3B
+}
+
 [0x1F3C]
 {
 get=base_second_scroll
 name=strength scroll
 id=0x1F3C
+}
+
+[strengthscroll]
+{
+get=0x1F3C
 }
 
 //Scroll (Third Circle)
@@ -152,11 +232,21 @@ name=bless scroll
 id=0x1F3D
 }
 
+[blessscroll]
+{
+get=0x1F3D
+}
+
 [0x1F3E]
 {
 get=base_third_scroll
 name=fireball scroll
 id=0x1F3E
+}
+
+[fireballscroll]
+{
+get=0x1F3E
 }
 
 [0x1F3F]
@@ -166,11 +256,21 @@ name=magic lock scroll
 id=0x1F3F
 }
 
+[magiclockscroll]
+{
+get=0x1F3F
+}
+
 [0x1F40]
 {
 get=base_third_scroll
 name=poison scroll
 id=0x1F40
+}
+
+[poisonscroll]
+{
+get=0x1F40
 }
 
 [0x1F41]
@@ -180,11 +280,21 @@ name=telekinisis scroll
 id=0x1F41
 }
 
+[telekinisisscroll]
+{
+get=0x1F41
+}
+
 [0x1F42]
 {
 get=base_third_scroll
 name=teleport scroll
 id=0x1F42
+}
+
+[teleportscroll]
+{
+get=0x1F42
 }
 
 [0x1F43]
@@ -194,12 +304,22 @@ name=unlock scroll
 id=0x1F43
 }
 
+[unlockscroll]
+{
+get=0x1F43
+}
+
 [0x1F44]
 {
 get=base_third_scroll
 name=wall of stone scroll
 id=0x1F44
-} 
+}
+
+[wallofstonescroll]
+{
+get=0x1F44
+}
 
 //Scroll (Fourth Circle)
 [base_fourth_scroll]
@@ -215,11 +335,21 @@ name=archcure scroll
 id=0x1F45
 }
 
+[archcurescroll]
+{
+get=0x1F45
+}
+
 [0x1F46]
 {
 get=base_fourth_scroll
 name=archprotection scroll
 id=0x1F46
+}
+
+[archprotectionscroll]
+{
+get=0x1F46
 }
 
 [0x1F47]
@@ -229,11 +359,21 @@ name=curse scroll
 id=0x1F47
 }
 
+[cursescroll]
+{
+get=0x1F47
+}
+
 [0x1F48]
 {
 get=base_fourth_scroll
 name=fire field scroll
 id=0x1F48
+}
+
+[firefieldscroll]
+{
+get=0x1F48
 }
 
 [0x1F49]
@@ -243,11 +383,21 @@ name=greater heal scroll
 id=0x1F49
 }
 
+[greaterhealscroll]
+{
+get=0x1F49
+}
+
 [0x1F4A]
 {
 get=base_fourth_scroll
 name=lightning scroll
 id=0x1F4A
+}
+
+[lightningscroll]
+{
+get=0x1F4A
 }
 
 [0x1F4B]
@@ -257,11 +407,21 @@ name=mana drain scroll
 id=0x1F4B
 }
 
+[manadrainscroll]
+{
+get=0x1F4B
+}
+
 [0x1F4C]
 {
 get=base_fourth_scroll
 name=recall scroll
 id=0x1F4C
+}
+
+[recallscroll]
+{
+get=0x1F4C
 }
  
 //Scroll (Fifth Circle) 52
@@ -278,11 +438,21 @@ name=blade spirits scroll
 id=0x1F4D
 }
 
+[bladespiritscroll]
+{
+get=0x1F4D
+}
+
 [0x1F4E]
 {
 get=base_fifth_scroll
 name=dispel field scroll
 id=0x1F4E
+}
+
+[dispelfieldscroll]
+{
+get=0x1F4E
 }
 
 [0x1F4F]
@@ -292,11 +462,21 @@ name=incognito scroll
 id=0x1F4F
 }
 
+[incognitoscroll]
+{
+get=0x1F4F
+}
+
 [0x1F50]
 {
 get=base_fifth_scroll
 name=magic reflection scroll
 id=0x1F50
+}
+
+[magicreflectionscroll]
+{
+get=0x1F50
 }
 
 [0x1F51]
@@ -306,11 +486,21 @@ name=mind blast scroll
 id=0x1F51
 }
 
+[mindblastscroll]
+{
+get=0x1F51
+}
+
 [0x1F52]
 {
 get=base_fifth_scroll
 name=paralyze scroll
 id=0x1F52
+}
+
+[paralyzescroll]
+{
+get=0x1F52
 }
 
 [0x1F53]
@@ -320,11 +510,21 @@ name=poison field scroll
 id=0x1F53
 }
 
+[poisonfieldscroll]
+{
+get=0x1F53
+}
+
 [0x1F54]
 {
 get=base_fifth_scroll
 name=summon creature scroll
 id=0x1F54
+}
+
+[summoncreaturescroll]
+{
+get=0x1F54
 }
 
 //Scroll (Sixth Circle)
@@ -341,11 +541,21 @@ name=dispel scroll
 id=0x1F55
 }
 
+[dispelscroll]
+{
+get=0x1F55
+}
+
 [0x1F56]
 {
 get=base_sixth_scroll
 name=energy bolt scroll
 id=0x1F56
+}
+
+[energyboltscroll]
+{
+get=0x1F56
 }
 
 [0x1F57]
@@ -355,11 +565,21 @@ name=explosion scroll
 id=0x1F57
 }
 
+[explosionscroll]
+{
+get=0x1F57
+}
+
 [0x1F58]
 {
 get=base_sixth_scroll
 name=invisibility scroll
 id=0x1F58
+}
+
+[invisibilityscroll]
+{
+get=0x1F58
 }
 
 [0x1F59]
@@ -369,11 +589,21 @@ name=mark scroll
 id=0x1F59
 }
 
+[markscroll]
+{
+get=0x1F59
+}
+
 [0x1F5A]
 {
 get=base_sixth_scroll
 name=mass curse scroll
 id=0x1F5A
+}
+
+[masscursescroll]
+{
+get=0x1F5A
 }
 
 [0x1F5B]
@@ -383,11 +613,21 @@ name=paralyze field scroll
 id=0x1F5B
 }
 
+[paralyzefieldscroll]
+{
+get=0x1F5B
+}
+
 [0x1F5C]
 {
 get=base_sixth_scroll
 name=reveal scroll
 id=0x1F5C
+}
+
+[revealscroll]
+{
+get=0x1F5C
 }
 
 //Scroll (Seventh Circle)
@@ -404,11 +644,21 @@ name=chain lightning scroll
 id=0x1F5D
 }
 
+[chainlightningscroll]
+{
+get=0x1F5D
+}
+
 [0x1F5E]
 {
 get=base_seventh_scroll
 name=energy field scroll
 id=0x1F5E
+}
+
+[energygfieldscroll]
+{
+get=0x1F5E
 }
 
 [0x1F5F]
@@ -418,11 +668,21 @@ name=flamestrike scroll
 id=0x1F5F
 }
 
+[flamestrikescroll]
+{
+get=0x1F5F
+}
+
 [0x1F60]
 {
 get=base_seventh_scroll
 name=gate travel scroll
 id=0x1F60
+}
+
+[gatetravelscroll]
+{
+get=0x1F60
 }
 
 [0x1F61]
@@ -432,11 +692,21 @@ name=mana vampire scroll
 id=0x1F61
 }
 
+[manavampirescroll]
+{
+get=0x1F61
+}
+
 [0x1F62]
 {
 get=base_seventh_scroll
 name=mass dispel scroll
 id=0x1F62
+}
+
+[massdispelscroll]
+{
+get=0x1F62
 }
 
 [0x1F63]
@@ -446,11 +716,21 @@ name=meteor storm scroll
 id=0x1F63
 }
 
+[meteorstormscroll]
+{
+get=0x1F63
+}
+
 [0x1F64]
 {
 get=base_seventh_scroll
 name=polymorph scroll
 id=0x1F64
+}
+
+[polymorphscroll]
+{
+get=0x1F65
 }
 
 //Scroll (Eighth Circle) 
@@ -467,6 +747,11 @@ name=earthquake scroll
 id=0x1F65
 }
 
+[earthquakescroll]
+{
+get=0x1F65
+}
+
 [0x1F66]
 {
 get=base_eighth_scroll
@@ -474,12 +759,21 @@ name=energy vortex scroll
 id=0x1F66
 }
 
+[energyvortexscroll]
+{
+get=0x1F66
+}
+
 [0x1F67]
 {
 get=base_eighth_scroll
 name=resurrection scroll
 id=0x1F67
-weight=1
+}
+
+[resurrectionscroll]
+{
+get=0x1F68
 }
 
 [0x1F68]
@@ -487,7 +781,11 @@ weight=1
 get=base_eighth_scroll
 name=summon air elemental scroll
 id=0x1F68
-weight=1
+}
+
+[summonairelementalscroll]
+{
+get=0x1F68
 }
 
 [0x1F69]
@@ -497,11 +795,21 @@ name=summon daemon scroll
 id=0x1F69
 }
 
+[summondaemonscroll]
+{
+get=0x1F69
+}
+
 [0x1F6A]
 {
 get=base_eighth_scroll
 name=summon earth elemental scroll
 id=0x1F6A
+}
+
+[summonearthelementalscroll]
+{
+get=0x1F6A
 }
 
 [0x1F6B]
@@ -511,6 +819,11 @@ name=summon fire elemental scroll
 id=0x1F6B
 }
 
+[summonfireelementalscroll]
+{
+get=0x1F6B
+}
+
 [0x1F6C]
 {
 get=base_eighth_scroll
@@ -518,8 +831,12 @@ name=summon water elemental scroll
 id=0x1F6C
 }
 
-// GM Related
+[summonwaterelementalscroll]
+{
+get=0x1F6C
+}
 
+// GM Related
 [0x1f6d]
 {
 get=base_item
@@ -528,4 +845,9 @@ id=0x1f6d
 pileable=1
 amount=1
 decay=1
+}
+
+[allspellscroll]
+{
+get=0x1f6d
 }
