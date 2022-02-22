@@ -23,7 +23,7 @@ function questgump( pUser, myNPC)
 		{
 			switch ( parseInt(questSlot ) )
 			{
-				case parseInt(questSlot ):TriggerEvent( parseInt( questTrg ), "questoffer", questGump ); break;
+				case parseInt(questSlot ):TriggerEvent( parseInt( questTrg ), "questOffer", questGump ); break;
 			}
 			break;
 		}
@@ -152,50 +152,19 @@ function CreateNpcQuest( pUser, npcLevel, numToKill )
 
 function GetItemType( pUser, questLevel ) 
 {
-	var retVal = "";
-	switch ( questLevel ) 
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	for (let i = 0; i < myArray.length; i++) 
 	{
-		case 1:
-			switch ( RandomNumber( 0, 1 ) ) 
-			{
-				case 0:
-					pUser.SetTag( "SQ_IDTOGET", 0x26B7 ); //Item ID of the Zoogie Fungus
-					retVal = "Zoogi Fungus";
-					break;
-				case 1:
-					pUser.SetTag( "SQ_IDTOGET", 0x26B7 );
-					retVal = "Zoogi Fungus";
-					break;
-			}
-			break;
-		case 2:
-			switch (RandomNumber(0, 1)) 
-			{
-				case 0:
-					pUser.SetTag( "NPQ_IDTOGET", 0x1bef ); //Item ID of the ingots
-					retVal = "iron ingot";
-					break;
-				case 1:
-					pUser.SetTag( "NPQ_IDTOGET", 0x1bef );
-					retVal = "iron ingot";
-					break;
-			}
-			break;
-		case 3:break;
-		case 4:
-			case 0:
-				pUser.SetTag( "NPQ_IDTOGET", 0x0f8d );
-				retVal = "Spider Slik";
-				break;
-			break;
-		case 5:
-			case 0:
-				pUser.SetTag( "LMQ_IDTOGET", 0x1bef );
-				retVal = "iron ingot";
-				break;
-			break;
+		var myQuestData = myArray[i].split(",");
+		var ItemId = myQuestData[11];
+		var iIdToGet = myQuestData[12];
+		switch (questLevel)
+		{
+			case questLevel:
+				pUser.SetTag(iIdToGet, ItemId);
+		}
 	}
-	return retVal;
 }
 
 function GetMonsterType( pUser, npcLevel ) 

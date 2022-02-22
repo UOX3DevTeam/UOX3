@@ -59,12 +59,12 @@ function progress( pUser )
 		{
 			switch ( parseInt( questSlot ) )
 			{
-				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questobjective", questGump ); break;
+				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questObjective", questGump ); break;
 			}
 			//Progress
 			switch ( parseInt( questSlot ) )
 		{
-				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questprogress", questGump, pUser ); break;
+				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questProgress", questGump, pUser ); break;
 			}
 			break;
 		}

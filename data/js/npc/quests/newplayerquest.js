@@ -1,45 +1,45 @@
-function questoffer( questGump )
+function questOffer( questGump )
 {
-	questGump.AddHTMLGump( 160, 108, 250, 20, false, false, "<BASEFONT color=#ffffff>New Player Task</BASEFONT>" );// Name of Quest
+	questGump.AddHTMLGump( 160, 108, 250, 20, false, false, "<BASEFONT color=#ffffff>New Player Quest</BASEFONT>" );// Name of Quest
 	questGump.AddHTMLGump( 98, 140, 312, 200, false, true, "<BASEFONT color=#ffffff>Hey there you look pretty new, Do you want to make a little gold and help me out with a task</BASEFONT>" );// Quest Offer
 }
 
-function questaccept( questGump )
+function questAccept( questGump )
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>So i am looking for some one to kill me 5 mongbats do you think you are up to the task, if not you can say no and ill leave you alone. Oh I also need 5 iron ingots if you dont mind getting me some</BASEFONT>" );//quest Accept
 }
 
-function questduringnpckilling( questGump )
+function questDuringNpcKilling( questGump )
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>what cant handle a couple mongbats get back out there you are a champion in my eyes.</BASEFONT>" );//quest convo
 }
 
-function questgathering( questGump )
+function questGathering( questGump )
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>Very fine in dead now could you go get my iorn ingots we talked about, dont be lazy and i am not lazy i am just busy</BASEFONT>" );//quest convo
 }
 
-function questduringgathering( questGump )
+function questDuringGathering( questGump )
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>Do you have my ingots if not what are you waiting for next year get to stepping young lad.</BASEFONT>" );//quest convo
 }
 
-function questend( questGump )
+function questEnd( questGump )
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>I knew you can do all i ask you are a great person now take you reward and move on.</BASEFONT>" );//quest convo
 }
 
-function questbusy( questGump ) 
+function questBusy( questGump ) 
 {
 	questGump.AddHTMLGump( 70, 110, 365, 220, false, true, "<BASEFONT color=#ffffff>I see you busy come back later</BASEFONT>" );
 }
 
-function questobjective( questGump )
+function questObjective( questGump )
 {
 	questGump.AddHTMLGump( 70, 130, 300, 100, false, false, "<BASEFONT color=#ffffff>Kill 5 Mongbats</BASEFONT>" );
 }
 
-function questprogress( questGump, myPlayer )
+function questProgress( questGump, myPlayer )
 {
 	var numToKill = myPlayer.GetTag( "NPQ_numToKill" );
 	if ( numToKill >= 1 )
@@ -56,12 +56,27 @@ function questprogress( questGump, myPlayer )
 	}
 	else
 	{
-		questGump.AddHTMLGump( 70, 260, 270, 100, false, false, "<BASEFONT color=#ffffff>Mongbats left to kill</BASEFONT>" );
-		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_numToKill" ) );
-		questGump.AddText( 100, 280, 0x64, "/" );
-		questGump.AddText( 130, 280, 0x64, "5" );
+		if (numToKill < killAmount)
+		{
+			questGump.AddHTMLGump(70, 260, 270, 100, false, false, "<BASEFONT color=#ffffff>Mongbats left to kill</BASEFONT>");
+			questGump.AddText(70, 280, 0x64, myPlayer.GetTag("NPQ_numToKill"));
+			questGump.AddText(100, 280, 0x64, "/");
+			questGump.AddText(130, 280, 0x64, "5");
+		}
+		else
+		{
+			questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
+			questGump.AddText(70, 280, 0x64, myPlayer.GetTag("NPQ_numToGet"));
+			questGump.AddText(100, 280, 0x64, "/");
+			questGump.AddText(130, 280, 0x64, collectAmount.toString());
+		}
 	}
 }
+
+const questName = "New Player Quest";
+const itemId = 0x1bef;
+const killAmount = 5;
+const collectAmount = 5;
 
 function onSpeech( myString, myPlayer, myNPC, pSock ) 
 {
@@ -71,14 +86,12 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
 	var QuestSlot = 2;
-	var questName = "New Player Quest";
-	var killAmount = 5;
-	var collectAmount = 5;
 	var Questtrg = 20001;
 	var iNumToGet = "NPQ_numToGet";
 	var iLevel = "NPQ_Level";
 	var nNumToKill = "NPQ_numToKill";
 	var nLevel = "NPQ_npcLevel";
+	var iIdToGet = "NPQ_idToGet";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -115,7 +128,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + Questtrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel);
+			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + Questtrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet);
 			if (TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ) )
 			{
 				myNPC.SetTag( "QuestSlot", QuestSlot );
@@ -178,7 +191,7 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 	var taskLevel = pDropper.GetTag( "NPQ_Level" );
 	if ( taskLevel )
 	{
-		var numIronIngots = pDropper.ResourceCount( 0x1bef );
+		var numIronIngots = pDropper.ResourceCount( itemId );
 		if ( numIronIngots >= 5 )
 		{
 			myPlayer.SetTag( "QuestStatus", 5 )
@@ -193,7 +206,7 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 			CreateDFNItem( pDropper.socket, pDropper, "0x0EED", goldToGive, "ITEM", true );
 			pDropper.SoundEffect( 0x0037, false );
 			decline( pDropper );
-			pDropper.UseResource( 5, 0x1bef );
+			pDropper.UseResource( 5, itemId );
 			return 0;
 		}
 		else if ( numIronIngots <= 5 ) 

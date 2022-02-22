@@ -1,4 +1,4 @@
-function questoffer( questGump )
+function questOffer( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 160, 108, 250, 20, 1054146, false, false, 10000 );//name of quest//Ambitious Solen Queen Quest
 	questGump.AddXMFHTMLGumpColor( 98, 140, 312, 200, 1054060, false, true, 90000 );//quest offer
@@ -28,7 +28,7 @@ function questoffer( questGump )
 	*/
 }
 
-function questaccept( questGump )
+function questAccept( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054061, false, true, 90000 );//quest convo
 	/* <I>The Solen queen smiles as you decide to help her.</I><BR><BR>
@@ -47,7 +47,7 @@ function questaccept( questGump )
 */
 }
 
-function questduringnpckilling( questGump )
+function questDuringNpcKilling( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054066, false, true, 90000 );//quest convo
 					 /* <I>The Solen queen looks up as you approach.</I><BR><BR>
@@ -62,7 +62,7 @@ function questduringnpckilling( questGump )
                 */
 }
 
-function questgathering( questGump )
+function questGathering( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054068, false, true, 90000 );//quest convo
 					/* <I>The Solen queen looks pleased to see you.</I><BR><BR>
@@ -78,7 +78,7 @@ function questgathering( questGump )
                 */
 }
 
-function questduringgathering( questGump )
+function questDuringGathering( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054070, false, true, 90000 );//quest convo
 	/* <I>The Solen queen looks up as you approach.</I><BR><BR>
@@ -89,7 +89,7 @@ function questduringgathering( questGump )
 */
 }
 
-function questend( questGump )
+function questEnd( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054073, false, true, 90000 );//quest convo
 			 /* <I>The Solen queen smiles as she takes the zoogi fungus from you.</I><BR><BR>
@@ -104,7 +104,7 @@ function questend( questGump )
                 */
 }
 
-function questbusy( questGump ) 
+function questBusy( questGump ) 
 {
 	questGump.AddXMFHTMLGumpColor( 70, 110, 365, 220, 1054059, false, true, 90000 );
 	/* <I>The Solen queen considers you for a moment then says,</I><BR><BR>
@@ -115,16 +115,16 @@ function questbusy( questGump )
                 */
 }
 
-function questobjective( questGump )
+function questObjective( questGump )
 {
 	questGump.AddXMFHTMLGumpColor( 70, 130, 300, 100, 1054062, false, false, 19777215 );//Red Solen Queens
 	//questGump.AddXMFHTMLGumpColor(70, 130, 300, 100, 1054063, false, false, 19777215);//Black Solen Queens
 }
 
-function questprogress(questGump, myPlayer)
+function questProgress(questGump, myPlayer)
 {
 	var numToKill = myPlayer.GetTag( "SQ_numToKill" );
-	if ( numToKill >= 5 )
+	if ( numToKill >= killAmount )
 	{
 		myPlayer.SetTag( "QuestStatus", 5 )// end
 	}
@@ -132,35 +132,51 @@ function questprogress(questGump, myPlayer)
 	if (myPlayer.GetTag( "QuestStatus" ) == 5)
 	{
 		questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1049077, false, false, 19777215);// completed
-		questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToKill"));
+		//questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToKill"));
 		//questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1049078, false, false, 19777215);// has not been completed
 	}
 	else
 	{
-		//questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054065, false, false, 19777215 );//black queens
-		questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
-		questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToKill"));
-		//questGump.AddText(100, 280, 0x64, "/");
-		//questGump.AddText(130, 280, 0x64, myPlayer.GetTag(QnNumToKill.toString()));
+		if (numToKill < killAmount)
+		{
+			//questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054065, false, false, 19777215 );//black queens
+			questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
+			questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToKill"));
+			//questGump.AddText(100, 280, 0x64, "/");
+			//questGump.AddText(130, 280, 0x64, myPlayer.GetTag(QnNumToKill.toString()));
+		}
+		else
+		{
+			questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
+			questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToGet"));
+			questGump.AddText(100, 280, 0x64, "/");
+			questGump.AddText(130, 280, 0x64, collectAmount.toString());
+		}
+
 	}
 }
+
+const itemId = 0x26B7;
+const collectAmount = 50;
+const questName = "Ambitious Solen Queen Quest";
+const killAmount = 5;
 
 function onSpeech(myString, myPlayer, myNPC, pSock) 
 {
 	// Read Quests Log
 	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
-	// Next up, we want to loop through myArray, and make sure our friend is not already there
+
+	// Next up, we want to loop through myArray, and make sure our quest is not already there
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
-	var QuestSlot = 1;
-	var questName = "Ambitious Solen Queen Quest";
-	var killAmount = 5;
-	var collectAmount = 50;
-	var Questtrg = 20000;
+
+	var questSlot = 1;
+	var questTrg = 20000;
 	var iNumToGet = "SQ_numToGet";
 	var iLevel = "SQ_level";
 	var nNumToKill = "SQ_numToKill";
 	var nLevel = "SQ_npcLevel";
+	var iIdToGet = "SQ_idToGet";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -183,7 +199,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 					TriggerEvent(19802, "convoeventgump", myPlayer, myNPC);
 					return false;
 				}
-				else if ( myQuest[0] == QuestSlot )
+				else if ( myQuest[0] == questSlot )
 				{
 					questslotUsed = true;
 					indexOfquestSlot = i;
@@ -197,10 +213,10 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + Questtrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel);
+			myArray.push(questSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + questTrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet);
 			if (TriggerEvent(19806, "WriteQuestLog", myPlayer, myArray))
 			{
-				myNPC.SetTag( "QuestSlot", QuestSlot );
+				myNPC.SetTag( "QuestSlot", questSlot );
 				myPlayer.SetTag( "QuestStatus", 1 );
 				TriggerEvent( 19801, "questgump", myPlayer, myNPC );
 				return false;
@@ -213,7 +229,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 			var itemLevel = myPlayer.GetTag( "SQ_level" );
 			if ( npcLevel ) 
 			{
-				var numToKill = myPlayer.GetTag( "SQ_NUMTOKILL" );
+				var numToKill = myPlayer.GetTag( "SQ_numToKill" );
 				if (numToKill > 0)
 				{
 					myPlayer.SetTag( "QuestStatus", 2 );
@@ -224,7 +240,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 				{
 					myPlayer.SetTag( "QuestStatus", 3 );
 					myPlayer.SetTag( "SQ_npcLevel", 0 );
-					myPlayer.SetTag( "SQ_NUMTOKILL", 0 );
+					myPlayer.SetTag( "SQ_numToKill", 0 );
 					TriggerEvent(19802, "convoeventgump", myPlayer, myNPC);
 					return false;
 
@@ -261,8 +277,8 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 	var taskLevel = pDropper.GetTag( "SQ_level" );
 	if ( taskLevel )
 	{
-		var numZoogiFungus = pDropper.ResourceCount(0x26B7);
-		if ( numZoogiFungus >= 50 )
+		var numZoogiFungus = pDropper.ResourceCount(itemId);
+		if ( numZoogiFungus >= collectAmount )
 		{
 			myPlayer.SetTag( "QuestStatus", 5 )
 			TriggerEvent( 19802, "convoeventgump", myPlayer , pDroppedOn);
@@ -276,10 +292,10 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 			CreateDFNItem( pDropper.socket, pDropper, "0x0EED", goldToGive, "ITEM", true );
 			pDropper.SoundEffect( 0x0037, false );
 			decline( pDropper );
-			pDropper.UseResource( 50, 0x26B7 );
+			pDropper.UseResource( collectAmount, itemId );
 			return 0;
 		}
-		else if ( numZoogiFungus <= 50 ) 
+		else if ( numZoogiFungus < collectAmount ) 
 		{
 			pDropper.SetTag( "QuestStatus", 4 )
 			TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn);

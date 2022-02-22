@@ -30,12 +30,12 @@ function convoeventgump( pUser, myNPC)
 				case parseInt( questSlot ):
 					switch ( pUser.GetTag( "QuestStatus" ) )// status of each part of the quest
 					{
-						case 1: TriggerEvent(parseInt( questTrg ), "questaccept", questGump ); break;
-						case 2: TriggerEvent(parseInt( questTrg ), "questduringnpckilling", questGump ); break;
-						case 3: TriggerEvent(parseInt( questTrg ), "questgathering", questGump ); break;
-						case 4: TriggerEvent(parseInt( questTrg ), "questduringgathering", questGump ); break;
-						case 5: TriggerEvent(parseInt( questTrg ), "questend", questGump ); break;
-						case 6: TriggerEvent(parseInt( questTrg ), "questbusy", questGump ); break;
+						case 1: TriggerEvent(parseInt( questTrg ), "questAccept", questGump ); break;
+						case 2: TriggerEvent(parseInt( questTrg ), "questDuringNpcKilling", questGump ); break;
+						case 3: TriggerEvent(parseInt( questTrg ), "questGathering", questGump ); break;
+						case 4: TriggerEvent(parseInt( questTrg ), "questDuringGathering", questGump ); break;
+						case 5: TriggerEvent(parseInt( questTrg ), "questEnd", questGump ); break;
+						case 6: TriggerEvent(parseInt( questTrg ), "questBusy", questGump ); break;
 					}
 					break;
 			}
