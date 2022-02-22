@@ -77,8 +77,7 @@ function command_RESURRECT( socket, cmdString )
 
 function command_RES( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 194, socket.language );
-	socket.CustomTarget( 1, targMsg );
+	command_RESURRECT( socket, cmdString );
 }
 
 function onCallback1( socket, ourObj )
