@@ -41,18 +41,23 @@ function questobjective( questGump )
 
 function questprogress( questGump, myPlayer )
 {
+	var numToKill = myPlayer.GetTag( "NPQ_numToKill" );
+	if ( numToKill >= 1 )
+	{
+		myPlayer.SetTag( "QuestStatus", 5 )// end
+	}
 	//completed
-	if (myPlayer.GetTag( "NPQStatus" ) == 5 )
+	if (myPlayer.GetTag( "QuestStatus" ) == 5 )
 	{
 		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1049077, false, false, 19777215);// completed
-		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_NUMTOKILL" ) );
+		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_numToKill" ) );
 		questGump.AddText( 100, 280, 0x64, "/" );
 		questGump.AddText( 130, 280, 0x64, "5" );
 	}
 	else
 	{
 		questGump.AddHTMLGump( 70, 260, 270, 100, false, false, "<BASEFONT color=#ffffff>Mongbats left to kill</BASEFONT>" );
-		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_NUMTOKILL" ) );
+		questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "NPQ_numToKill" ) );
 		questGump.AddText( 100, 280, 0x64, "/" );
 		questGump.AddText( 130, 280, 0x64, "5" );
 	}
@@ -70,6 +75,10 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 	var killAmount = 5;
 	var collectAmount = 5;
 	var Questtrg = 20001;
+	var iNumToGet = "NPQ_numToGet";
+	var iLevel = "NPQ_Level";
+	var nNumToKill = "NPQ_numToKill";
+	var nLevel = "NPQ_npcLevel";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -88,7 +97,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				if (myQuest[1] == myPlayer.serial)
 				{
 					// Quest is already in the log! Abort
-					myPlayer.SetTag( "NPQStatus", 6 )
+					myPlayer.SetTag( "QuestStatus", 6 )
 					TriggerEvent(19802, "convoeventgump", myPlayer);
 					return false;
 				}
@@ -106,11 +115,11 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString() + "," + Questtrg.toString());
+			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + Questtrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel);
 			if (TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ) )
 			{
 				myNPC.SetTag( "QuestSlot", QuestSlot );
-				myPlayer.SetTag("NPQStatus", 1);
+				myPlayer.SetTag("QuestStatus", 1);
 				TriggerEvent(19801, "questgump", myPlayer, myNPC );
 				return false;
 			}
@@ -118,22 +127,22 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 		else if ( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) )
 		{
 			myNPC.TurnToward( myPlayer );
-			var npcLevel = myPlayer.GetTag( "NPQ_NPCLEVEL" );
-			var itemLevel = myPlayer.GetTag( "NPQ_LEVEL" );
+			var npcLevel = myPlayer.GetTag( "NPQ_npcLevel" );
+			var itemLevel = myPlayer.GetTag( "NPQ_Level" );
 			if ( npcLevel )
 			{
-				var numToKill = myPlayer.GetTag( "NPQ_NUMTOKILL" );
+				var numToKill = myPlayer.GetTag( "NPQ_numToKill" );
 				if ( numToKill > 0 )
 				{
-					myPlayer.SetTag( "NPQStatus", 2 )
+					myPlayer.SetTag( "QuestStatus", 2 )
 					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC);
 					return false;
 				}
 				else 
 				{
-					myPlayer.SetTag( "NPQ_NPCLEVEL", 0 );
-					myPlayer.SetTag( "NPQ_NUMTOKILL", 0 );
-					myPlayer.SetTag( "NPQStatus", 3 )
+					myPlayer.SetTag( "NPQ_npcLevel", 0 );
+					myPlayer.SetTag( "NPQ_numToKill", 0 );
+					myPlayer.SetTag( "QuestStatus", 3 )
 					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
@@ -143,7 +152,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				var numToGet = myPlayer.GetTag( "NPQ_numToGet" );
 				if ( numToGet > 0 )
 				{
-					myPlayer.SetTag( "NPQStatus", 4 )
+					myPlayer.SetTag( "QuestStatus", 4 )
 					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
@@ -166,13 +175,13 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
 	pDroppedOn.TurnToward( pDropper );
-	var taskLevel = pDropper.GetTag( "NPQ_LEVEL" );
+	var taskLevel = pDropper.GetTag( "NPQ_Level" );
 	if ( taskLevel )
 	{
 		var numIronIngots = pDropper.ResourceCount( 0x1bef );
 		if ( numIronIngots >= 5 )
 		{
-			myPlayer.SetTag( "NPQStatus", 5 )
+			myPlayer.SetTag( "QuestStatus", 5 )
 			TriggerEvent( 19802, "convoeventgump", myPlayer, pDroppedOn );
 			var goldToGive = 0;
 			switch (RandomNumber(0, 2))
@@ -189,7 +198,7 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 		}
 		else if ( numIronIngots <= 5 ) 
 		{
-			pDropper.SetTag( "NPQStatus", 4 )
+			pDropper.SetTag( "QuestStatus", 4 )
 			TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
 			return 0;
 		}
@@ -203,9 +212,9 @@ function decline(myPlayer)
 {
 	myPlayer.SetTag( "NPQ_numToGet", 0 );
 	myPlayer.SetTag( "NPQ_IDTOGET", 0 );
-	myPlayer.SetTag( "NPQ_LEVEL", 0 );
-	myPlayer.SetTag( "NPQ_NPCLEVEL", 0 );
+	myPlayer.SetTag( "NPQ_Level", 0 );
+	myPlayer.SetTag( "NPQ_npcLevel", 0 );
 	myPlayer.SetTag( "NPQ_IDTOKILL", 0 );
-	myPlayer.SetTag( "NPQ_NUMTOKILL", 0 );
-	myPlayer.SetTag( "NPQStatus", null );
+	myPlayer.SetTag( "NPQ_numToKill", 0 );
+	myPlayer.SetTag( "QuestStatus", null );
 }

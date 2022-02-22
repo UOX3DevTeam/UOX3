@@ -21,30 +21,21 @@ function convoeventgump( pUser, myNPC)
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
-		if (questSlot == myNPC.GetTag("QuestSlot"))
+		var questTrg = myQuestData[6];
+
+		if ( questSlot == myNPC.GetTag("QuestSlot" ) )
 		{
-			switch (parseInt(questSlot))
+			switch (parseInt( questSlot ) )
 			{
-				case 1:
-					switch (pUser.GetTag("SQStatus"))// status of each part of the quest
+				case parseInt( questSlot ):
+					switch ( pUser.GetTag( "QuestStatus" ) )// status of each part of the quest
 					{
-						case 1: TriggerEvent(20000, "questaccept", questGump); break;
-						case 2: TriggerEvent(20000, "questduringnpckilling", questGump); break;
-						case 3: TriggerEvent(20000, "questgathering", questGump); break;
-						case 4: TriggerEvent(20000, "questduringgathering", questGump); break;
-						case 5: TriggerEvent(20000, "questend", questGump); break;
-						case 6: TriggerEvent(20000, "questbusy", questGump); break;
-					}
-					break;
-				case 2:
-					switch (pUser.GetTag("NPQStatus"))// status of each part of the quest
-					{
-						case 1: TriggerEvent(20001, "questaccept", questGump); break;
-						case 2: TriggerEvent(20001, "questduringnpckilling", questGump); break;
-						case 3: TriggerEvent(20001, "questgathering", questGump); break;
-						case 4: TriggerEvent(20001, "questduringgathering", questGump); break;
-						case 5: TriggerEvent(20001, "questend", questGump); break;
-						case 6: TriggerEvent(20001, "questbusy", questGump); break;
+						case 1: TriggerEvent(parseInt( questTrg ), "questaccept", questGump ); break;
+						case 2: TriggerEvent(parseInt( questTrg ), "questduringnpckilling", questGump ); break;
+						case 3: TriggerEvent(parseInt( questTrg ), "questgathering", questGump ); break;
+						case 4: TriggerEvent(parseInt( questTrg ), "questduringgathering", questGump ); break;
+						case 5: TriggerEvent(parseInt( questTrg ), "questend", questGump ); break;
+						case 6: TriggerEvent(parseInt( questTrg ), "questbusy", questGump ); break;
 					}
 					break;
 			}

@@ -1,46 +1,31 @@
 function onDeathBlow( mKilled, mKiller ) 
 {
 	var socket = mKiller.socket;
-	//Solen Quest
-	var oldSqToKill = mKiller.GetTag( "SQ_NUMTOKILL" );
-	// New Player Quest Custom
-	var oldNpqToKill = mKiller.GetTag( "NPQ_NUMTOKILL" );
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", mKiller );
 
-	if (oldSqToKill && mKiller.GetTag( "SQ_IDTOKILL" ) == mKilled.id)
+	for (let i = 0; i < myArray.length; i++) 
 	{
-		var newNumToKill = (oldSqToKill - 1);
-		mKiller.SetTag( "SQ_NUMTOKILL", newNumToKill );
-		mKiller.SetTempTag( "QuestSlotTemp", 1);
-		if (newNumToKill)
-		{
-			socket.SysMessage( "You have " + NumToString(newNumToKill) + " more creatures to kill." );
-			TriggerEvent( 19800, "questlog", mKiller );
-			return true;
-		}
-		else
-		{
-			mKiller.SysMessage( "You've completed your task of slaying solen queens. Return to the ambitious queen who asked for your help." );
-			TriggerEvent(19800, "questlog", mKiller );
-		}
-		return true;
-	}
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+		var QnNumToKill = myQuestData[9];
 
-	if (oldNpqToKill && mKiller.GetTag( "NPQ_IDTOKILL" ) == mKilled.id )
-	{
-		var newNumToKill = ( oldNpqToKill - 1 );
-		mKiller.SetTag( "NPQ_NUMTOKILL", newNumToKill );
-		mKiller.SetTempTag( "QuestSlotTemp", 2);
-		if ( newNumToKill )
+		if ( questSlot == mKiller.GetTempTag( "QuestSlotTemp" ) ) 
 		{
-			socket.SysMessage( "You have " + NumToString(newNumToKill) + " more creatures to kill." );
-			TriggerEvent(19800, "questlog", mKiller );
-			return true;
+			switch ( parseInt( questSlot ) ) 
+			{
+				case parseInt( questSlot ):
+					var oldSqToKill = mKiller.GetTag( QnNumToKill.toString() );
+					var newNumToKill = ( oldSqToKill - 1 );
+					mKiller.SetTag(QnNumToKill.toString(), - newNumToKill );
+					mKiller.SetTempTag( "QuestSlotTemp", parseInt( questSlot ) );
+					socket.SysMessage( "You have " + NumToString( newNumToKill ) + " more creatures to kill." );
+					TriggerEvent( 19800, "questlog", mKiller );
+					break;
+
+			}
+			break;
 		}
-		else
-		{
-			mKiller.SysMessage( "You've completed your task of slaying mongbats. Return to who asked for your help." );
-			TriggerEvent( 19800, "questlog", mKiller );
-		}
-		return true;
 	}
+	return true;
 }

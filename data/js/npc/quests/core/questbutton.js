@@ -27,7 +27,7 @@ function questbutton( pUser )
 	myGump.AddGump( 90, 33, 0x232D );
 	myGump.AddTiledGump( 130, 65, 175, 1, 0x238D );
 
-	for (let i = 0; i < myArray.length; i++)
+	for ( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var myQuestSlot = myQuestData[0];
@@ -35,8 +35,8 @@ function questbutton( pUser )
 		var myQuestName = myQuestData[3];
 		var index = i % 10;
 
-		myGump.AddHTMLGump(98, 140 + (index * 20), 270, 21, false, false, "<BASEFONT color=#FFFFFF>"+myQuestName+"</BASEFONT>");
-		myGump.AddButton(368, 140 + (index * 20), 0x26B0, 0x26B1, 1, 0, 1 * myQuestSlot);
+		myGump.AddHTMLGump( 98, 140 + ( index * 20 ), 270, 21, false, false, "<BASEFONT color=#FFFFFF>"+myQuestName+"</BASEFONT>" );
+		myGump.AddButton( 368, 140 + ( index * 20 ), 0x26B0, 0x26B1, 1, 0, 1 * myQuestSlot );
 	}
 
 	myGump.AddButton( 313, 395, 0x2EEC, 0x2EEE, 1, 0, 0 );//close button
@@ -49,16 +49,16 @@ function onGumpPress( pSock, pButton, gumpData )
 	var pUser = pSock.currentChar;
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for (let i = 0; i < myArray.length; i++)
+	for ( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var myQuestSlot = myQuestData[0];
-		switch (pButton)
+		switch ( pButton )
 		{
 			case 0: break;// abort and do nothing
-			case parseInt(myQuestSlot ):
-				pUser.SetTempTag("QuestSlotTemp", myQuestSlot);
-				TriggerEvent(19800, "progress", pUser);
+			case parseInt( myQuestSlot ):
+				pUser.SetTempTag( "QuestSlotTemp", myQuestSlot );
+				TriggerEvent( 19800, "progress", pUser );
 				break;//accept
 		}
 	}

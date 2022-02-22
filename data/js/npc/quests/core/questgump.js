@@ -79,15 +79,13 @@ function onGumpPress( socket, pButton, gumpData )
 						{
 							switch (parseInt(questSlot))
 							{
-								case 1:
+								case parseInt(questSlot):
+									pUser.SetTempTag("QuestSlotTemp", questSlot);
 									TriggerEvent( 19802, "convoeventgump", pUser, myNPC );			//accept gump
-									CreateNpcQuest( pUser, parseInt( questSlot ), parseInt (killAmount ) );			// creating the quest setup  Example: Player,level,amount
-									CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ) );
-									break;
-								case 2:
-									TriggerEvent(19802, "convoeventgump", pUser, myNPC);	//accept gump
-									CreateNpcQuest(pUser, parseInt( questSlot ), parseInt( killAmount ) );					// creating the quest setup  Example: Player,level,amount
-									CreateItemQuest(pUser, parseInt( questSlot ), parseInt( collectAmount ) );
+									if(killAmount >= 1)
+										CreateNpcQuest( pUser, parseInt( questSlot ), parseInt ( killAmount ) );			// creating the quest setup  Example: Player,level,amount
+									if(collectAmount >= 1)
+										CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ) );
 									break;
 							}
 							break;
@@ -107,16 +105,19 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
-		switch (parseInt(questSlot))
+		var QiNumToGet = myQuestData[7];
+		var QiLevel = myQuestData[8];
+
+		if ( questSlot == pUser.GetTempTag("QuestSlotTemp" ) )
 		{
-			case 1:
-				pUser.SetTag("SQ_numToGet", numToGet);
-				pUser.SetTag("SQ_LEVEL", questLevel);
-				break;
-			case 2:
-				pUser.SetTag( "NPQ_numToGet", numToGet );
-				pUser.SetTag( "NPQ_LEVEL", questLevel );
-				break;
+			switch ( parseInt( questSlot ) )
+			{
+				case parseInt( questSlot ):
+					pUser.SetTag( QiNumToGet.toString(), numToGet );
+					pUser.SetTag( QiLevel.toString(), questLevel );
+					break;
+			}
+			break;
 		}
 	}
 	return typeToGet;
@@ -127,20 +128,23 @@ function CreateNpcQuest( pUser, npcLevel, numToKill )
 	var typeToKill = GetMonsterType(pUser, npcLevel );
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for (let i = 0; i < myArray.length; i++)
+	for ( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
-		switch (parseInt(questSlot))
+		var QnNumToKill = myQuestData[9];
+		var QnLevel = myQuestData[10];
+
+		if ( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
 		{
-			case 1:
-				pUser.SetTag("SQ_NUMTOKILL", numToKill);
-				pUser.SetTag("SQ_NPCLEVEL", npcLevel);
-				break;
-			case 2:
-				pUser.SetTag( "NPQ_NUMTOKILL", numToKill );
-				pUser.SetTag( "NPQ_NPCLEVEL", npcLevel );
-				break;
+			switch (parseInt( questSlot ) )
+			{
+				case parseInt( questSlot ):
+					pUser.SetTag( QnNumToKill.toString(), numToKill );
+					pUser.SetTag( QnLevel.toString(), npcLevel );
+					break;
+			}
+			break;
 		}
 	}
 	return typeToKill;
@@ -177,6 +181,19 @@ function GetItemType( pUser, questLevel )
 					break;
 			}
 			break;
+		case 3:break;
+		case 4:
+			case 0:
+				pUser.SetTag( "NPQ_IDTOGET", 0x0f8d );
+				retVal = "Spider Slik";
+				break;
+			break;
+		case 5:
+			case 0:
+				pUser.SetTag( "LMQ_IDTOGET", 0x1bef );
+				retVal = "iron ingot";
+				break;
+			break;
 	}
 	return retVal;
 }
@@ -211,6 +228,10 @@ function GetMonsterType( pUser, npcLevel )
 					retVal = "a mongbat";
 					break;
 			}
+			break;
+		case 3:
+			pUser.SetTag( "TTTQ_IDTOKILL", 0x00ce ); // alligator npc id
+			retVal = "Vice Jaw";
 			break;
 	}
 	return retVal;

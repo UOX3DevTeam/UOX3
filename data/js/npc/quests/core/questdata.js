@@ -7,7 +7,7 @@ function WriteQuestLog( pUser, myArray )
     var fileName = "QuestLog_"+userAccount.id+".jsdata";
 
     mFile.Open(fileName, "w", "Quests"); // Open file for Writing
-    if (mFile != null)
+    if ( mFile != null )
     {
         // Loop through each entry in myArray and save it to a new line
         for( let i = 0; i < myArray.length; i++ )
