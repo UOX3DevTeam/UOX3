@@ -31,7 +31,7 @@ decay=1
 good=28
 }
 
-[Usedrecallrune]
+[usedrecallrune]
 {
 get=0x1f14
 }
