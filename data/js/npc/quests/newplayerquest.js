@@ -75,6 +75,7 @@ function questProgress( questGump, myPlayer )
 
 const questName = "New Player Quest";
 const itemId = 0x1bef;
+const npcId = 0x0027;
 const killAmount = 5;
 const collectAmount = 5;
 
@@ -85,13 +86,14 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 	// Next up, we want to loop through myArray, and make sure our friend is not already there
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
-	var QuestSlot = 2;
-	var Questtrg = 20001;
+	var questSlot = 2;
+	var questTrg = 20001;
 	var iNumToGet = "NPQ_numToGet";
 	var iLevel = "NPQ_Level";
 	var nNumToKill = "NPQ_numToKill";
 	var nLevel = "NPQ_npcLevel";
 	var iIdToGet = "NPQ_idToGet";
+	var iIdToKill = "NPQ_IdToKill";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -114,7 +116,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 					TriggerEvent(19802, "convoeventgump", myPlayer);
 					return false;
 				}
-				else if (myQuest[0] == QuestSlot)
+				else if (myQuest[0] == questSlot)
 				{
 					questslotUsed = true;
 					indexOfquestSlot = i;
@@ -128,10 +130,10 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + Questtrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet);
+			myArray.push(questSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + questTrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet + "," + npcId.toString() + "," + iIdToKill);
 			if (TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ) )
 			{
-				myNPC.SetTag( "QuestSlot", QuestSlot );
+				myNPC.SetTag( "QuestSlot", questSlot );
 				myPlayer.SetTag("QuestStatus", 1);
 				TriggerEvent(19801, "questgump", myPlayer, myNPC );
 				return false;

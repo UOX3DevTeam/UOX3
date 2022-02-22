@@ -161,47 +161,25 @@ function GetItemType( pUser, questLevel )
 		var iIdToGet = myQuestData[12];
 		switch (questLevel)
 		{
-			case questLevel:
-				pUser.SetTag(iIdToGet, ItemId);
+			case questLevel: pUser.SetTag(iIdToGet, ItemId);break;
 		}
+		break;
 	}
 }
 
 function GetMonsterType( pUser, npcLevel ) 
 {
-	var retVal = "";
-	switch ( npcLevel ) 
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case 1:
-			switch ( RandomNumber( 0, 1 ) )
-			{
-				case 0:
-					pUser.SetTag( "SQ_IDTOKILL", 0x0327 ); //red or black ant queen npc id
-					retVal = "a red solen queen";
-					break;
-				case 1:
-					pUser.SetTag( "SQ_IDTOKILL", 0x0327 );
-					retVal = "a red solen queen";
-					break;
-			}
-			break;
-		case 2:
-			switch ( RandomNumber( 0, 1 ) )
-			{
-				case 0:
-					pUser.SetTag( "NPQ_IDTOKILL", 0x0027 ); // mongbat npc id
-					retVal = "a mongbat";
-					break;
-				case 1:
-					pUser.SetTag( "NPQ_IDTOKILL", 0x0027 );
-					retVal = "a mongbat";
-					break;
-			}
-			break;
-		case 3:
-			pUser.SetTag( "TTTQ_IDTOKILL", 0x00ce ); // alligator npc id
-			retVal = "Vice Jaw";
-			break;
+		var myQuestData = myArray[i].split(",");
+		var npcId = myQuestData[13];
+		var iIdToKill = myQuestData[14];
+		switch (npcLevel) 
+		{
+			case npcLevel: pUser.SetTag(iIdToKill, npcId); break;
+		}
 	}
-	return retVal;
 }

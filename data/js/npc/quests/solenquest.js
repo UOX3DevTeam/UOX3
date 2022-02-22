@@ -156,9 +156,10 @@ function questProgress(questGump, myPlayer)
 	}
 }
 
-const itemId = 0x26B7;
-const collectAmount = 50;
 const questName = "Ambitious Solen Queen Quest";
+const itemId = 0x26B7;
+const npcId = 0x0327;
+const collectAmount = 50;
 const killAmount = 5;
 
 function onSpeech(myString, myPlayer, myNPC, pSock) 
@@ -177,6 +178,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 	var nNumToKill = "SQ_numToKill";
 	var nLevel = "SQ_npcLevel";
 	var iIdToGet = "SQ_idToGet";
+	var iIdToKill = "SQ_IdToKill";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -213,7 +215,7 @@ function onSpeech(myString, myPlayer, myNPC, pSock)
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(questSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + questTrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet);
+			myArray.push(questSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + questTrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet + "," + npcId.toString() + "," + iIdToKill);
 			if (TriggerEvent(19806, "WriteQuestLog", myPlayer, myArray))
 			{
 				myNPC.SetTag( "QuestSlot", questSlot );
