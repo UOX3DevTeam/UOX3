@@ -69,6 +69,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 	var questName = "New Player Quest";
 	var killAmount = 5;
 	var collectAmount = 5;
+	var Questtrg = 20001;
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
 		return;
@@ -105,7 +106,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			}
 
 			// Ok, if quest log wasn't found in the array, store quest in the questslot we selected earlier
-			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString());
+			myArray.push(QuestSlot.toString() + "," + (myPlayer.serial).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString() + "," + Questtrg.toString());
 			if (TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ) )
 			{
 				myNPC.SetTag( "QuestSlot", QuestSlot );

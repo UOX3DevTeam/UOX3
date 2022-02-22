@@ -17,13 +17,13 @@ function questgump( pUser, myNPC)
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
+		var questTrg = myQuestData[6];
 
 		if ( questSlot == myNPC.GetTag( "QuestSlot" ) ) 
 		{
 			switch ( parseInt(questSlot ) )
 			{
-				case 1:TriggerEvent( 20000, "questoffer", questGump ); break;
-				case 2:TriggerEvent( 20001, "questoffer", questGump ); break;
+				case parseInt(questSlot ):TriggerEvent( parseInt( questTrg ), "questoffer", questGump ); break;
 			}
 			break;
 		}
@@ -73,7 +73,7 @@ function onGumpPress( socket, pButton, gumpData )
 						var myQuestData = myArray[i].split(",");
 						var questSlot = myQuestData[0];
 						var killAmount = myQuestData[4];
-						var collectAmount = myQuestData[4];
+						var collectAmount = myQuestData[5];
 
 						if ( questSlot == myNPC.GetTag( "QuestSlot" ) )
 						{

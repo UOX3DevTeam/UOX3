@@ -16,6 +16,7 @@ function questlog( mKiller )
 function progress( pUser )
 {
 	var questGump = new Gump;
+	var socket = pUser.socket;
 
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
@@ -52,20 +53,18 @@ function progress( pUser )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
-		var questName = myQuestData[4];
+		var questTrg = myQuestData[6];
 		// Max Quests for the Log is 10
-		if (questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
+		if ( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
 		{
-			switch ( parseInt(questSlot ) )
+			switch ( parseInt( questSlot ) )
 			{
-				case 1: TriggerEvent( 20000, "questobjective", questGump ); break;
-				case 2: TriggerEvent( 20001, "questobjective", questGump ); break;
+				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questobjective", questGump ); break;
 			}
 			//Progress
 			switch ( parseInt( questSlot ) )
-			{
-				case 1: TriggerEvent( 20000, "questprogress", questGump, pUser ); break;
-				case 2: TriggerEvent( 20001, "questprogress", questGump, pUser ); break;
+		{
+				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questprogress", questGump, pUser ); break;
 			}
 			break;
 		}
