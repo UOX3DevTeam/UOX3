@@ -90,9 +90,9 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 	var questTrg = 20001;
 	var iNumToGet = "NPQ_numToGet";
 	var iLevel = "NPQ_Level";
+	var iIdToGet = "NPQ_idToGet";
 	var nNumToKill = "NPQ_numToKill";
 	var nLevel = "NPQ_npcLevel";
-	var iIdToGet = "NPQ_idToGet";
 	var iIdToKill = "NPQ_IdToKill";
 
 	if ( !myNPC.InRange( myPlayer, 2 ) )
@@ -226,10 +226,10 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 function decline(myPlayer)
 {
 	myPlayer.SetTag( "NPQ_numToGet", 0 );
-	myPlayer.SetTag( "NPQ_IDTOGET", 0 );
+	myPlayer.SetTag( "NPQ_idToGet", 0 );
 	myPlayer.SetTag( "NPQ_Level", 0 );
 	myPlayer.SetTag( "NPQ_npcLevel", 0 );
-	myPlayer.SetTag( "NPQ_IDTOKILL", 0 );
+	myPlayer.SetTag( "NPQ_IdToKill", 0 );
 	myPlayer.SetTag( "NPQ_numToKill", 0 );
 	myPlayer.SetTag( "QuestStatus", null );
 }

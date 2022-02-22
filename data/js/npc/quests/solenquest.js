@@ -312,10 +312,10 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 function decline( myPlayer )
 {
 	myPlayer.SetTag( "SQ_numToGet", 0 );
-	myPlayer.SetTag( "SQ_IDTOGET", 0 );
+	myPlayer.SetTag( "SQ_idToGet", 0 );
 	myPlayer.SetTag( "SQ_level", 0 );
 	myPlayer.SetTag( "SQ_npcLevel", 0 );
-	myPlayer.SetTag( "SQ_IDTOKILL", 0 );
+	myPlayer.SetTag( "SQ_IdToKill", 0 );
 	myPlayer.SetTag( "SQ_numToKill", 0 );
 	myPlayer.SetTag( "QuestStatus", null );
 }
