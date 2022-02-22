@@ -10,6 +10,7 @@ function onDeathBlow( mKilled, mKiller )
 	{
 		var newNumToKill = (oldSqToKill - 1);
 		mKiller.SetTag( "SQ_NUMTOKILL", newNumToKill );
+		mKiller.SetTempTag( "QuestSlotTemp", 1);
 		if (newNumToKill)
 		{
 			socket.SysMessage( "You have " + NumToString(newNumToKill) + " more creatures to kill." );
@@ -28,6 +29,7 @@ function onDeathBlow( mKilled, mKiller )
 	{
 		var newNumToKill = ( oldNpqToKill - 1 );
 		mKiller.SetTag( "NPQ_NUMTOKILL", newNumToKill );
+		mKiller.SetTempTag( "QuestSlotTemp", 2);
 		if ( newNumToKill )
 		{
 			socket.SysMessage( "You have " + NumToString(newNumToKill) + " more creatures to kill." );

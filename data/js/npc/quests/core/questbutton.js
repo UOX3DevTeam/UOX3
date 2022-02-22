@@ -1,4 +1,4 @@
-function questbutton( pUser, iUsed )
+function questbutton( pUser )
 {
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
@@ -47,10 +47,19 @@ function questbutton( pUser, iUsed )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	switch ( pButton )
+	// Read Quests Log
+    var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+	for (let i = 0; i < myArray.length; i++)
 	{
-		case 0:
-			break;// abort and do nothing
-		case 1:TriggerEvent( 19800, "progress", pUser ); break;//accept
+		var myQuestData = myArray[i].split(",");
+		var myQuestSlot = myQuestData[0];
+		switch (pButton)
+		{
+			case 0: break;// abort and do nothing
+			case parseInt(myQuestSlot ):
+				pUser.SetTempTag("QuestSlotTemp", myQuestSlot);
+				TriggerEvent(19800, "progress", pUser);
+				break;//accept
+		}
 	}
 }
