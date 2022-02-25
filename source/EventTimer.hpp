@@ -13,6 +13,18 @@
 constexpr auto TIMER_##varname = state ; \
 auto varname = EventTimer()
 
+#if !defined(EVENT_TIMER_ON)
+#define EVENT_TIMER_ON 1
+#endif
+#if !defined(EVENT_TIMER_OFF)
+#define EVENT_TIMER_OFF 0
+#endif
+#if !defined(EVENT_TIMER_CLEAR)
+#define EVENT_TIMER_CLEAR 1
+#endif
+#if !defined(EVENT_TIMER_KEEP)
+#define EVENT_TIMER_KEEP 0
+#endif
 
 // This prints out the delta time in millisconds for the timer since the last reset.
 // The msg variable is the message you want with the time (no quotes around it, just text (so you cant use , in the message)
