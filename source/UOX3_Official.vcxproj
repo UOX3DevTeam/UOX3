@@ -867,6 +867,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="EventTimer.cpp" />
     <ClCompile Include="fileio.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1414,6 +1415,7 @@
     <ClInclude Include="cWeather.hpp" />
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="enums.h" />
+    <ClInclude Include="EventTimer.hpp" />
     <ClInclude Include="fileio.h" />
     <ClInclude Include="funcdecl.h" />
     <ClInclude Include="GenericList.h" />
