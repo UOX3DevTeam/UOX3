@@ -11,17 +11,18 @@
 // A few instrumentation macros
 // This estabishs a timer, and state determins if on/off
 #define EVENT_TIMER(varname,state) \
-auto varname = EventTimer() ; \
-constexpr auto TIMER_##varname = state
+constexpr auto TIMER_##varname = state ; \
+auto varname = EventTimer()
+
 
 // This prints out the delta time in millisconds for the timer since the last reset.
 // The msg variable is the message you want with the time (no quotes around it, just text (so you cant use , in the message)
 // reset tells the timer if it should reset the time count, or continue without resetting
 #define EVENT_TIMER_NOW(varname,msg,reset) \
-if constexpr (TIMER_##varname) varname.output(STRINGIFY(msg),reset)
+if constexpr (TIMER_##varname) {varname.output(STRINGIFY(msg),reset);}
 
 // This resets the timer 
-#define EVENT_TIMER_RESET(varname) if constexpr (TIMER_##varname) varname.elapsed(true)
+#define EVENT_TIMER_RESET(varname) if constexpr (TIMER_##varname) {varname.elapsed(true);}
 
 /*
 #define EVENT_TIMER_OFF ( #varnam, #msg) \

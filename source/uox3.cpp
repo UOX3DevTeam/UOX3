@@ -31,7 +31,7 @@
 #include <chrono>
 #include <random>
 #include <thread>
-#include "EventTimer.hpp"
+
 #include "uox3.h"
 #include "weight.h"
 #include "books.h"
@@ -69,6 +69,7 @@
 #include "PartySystem.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
+#include "EventTimer.hpp"
 
 std::thread cons;
 std::thread netw;
@@ -3461,7 +3462,7 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
-		EVENT_TIMER(stopwatch,0) ;
+		EVENT_TIMER(stopwatch,1) ;
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
