@@ -192,6 +192,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 		damaged.TextMessage( speechString, true, GetTextHue( damaged ), 2 );
 		damaged.SoundEffect( GetTextSound( damaged ), true );
 	}
+	return true;
 }
 
 // Triggers when NPC dies
