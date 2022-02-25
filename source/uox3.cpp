@@ -3462,6 +3462,7 @@ int main( SI32 argc, char *argv[] )
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
 		auto stopwatch = EventTimer() ;
+		auto stopauto = EventTimer();
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
@@ -3521,8 +3522,11 @@ int main( SI32 argc, char *argv[] )
 			}
 			StartMilliTimer( tempSecs, tempMilli );
 
-			if( !cwmWorldState->GetReloadingScripts() )
+			if( !cwmWorldState->GetReloadingScripts() ){
+				stopauto.elapsed();
 				cwmWorldState->CheckAutoTimers();
+				stopauto.output("CheckAutoTimers only");
+			}
 
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );

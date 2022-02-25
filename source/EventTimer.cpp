@@ -18,5 +18,5 @@ auto EventTimer::elapsed() -> long long {
 
 //=========================================================
 auto EventTimer::output(const std::string &label = "Delta from last call")->void {
-	std::cout <<label <<" - "s <<elapsed()<<"(ms)"s<<std::endl;
+	std::cout <<label <<" - "s <<elapsed()<<"(ms)\n"s;
 }
