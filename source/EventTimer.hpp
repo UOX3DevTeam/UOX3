@@ -5,14 +5,18 @@
 #include <chrono>
 #include <cstdint>
 #include <string>
-#if defined(TIMER_ON)
+
 #define STRINGIFY(variable) #variable
-#define EVENT_TIMER_ON(varname) auto varname = EventTimer()
-#define EVENT_TIMER_NOW(varname,msg) varname.output(STRINGIFY(msg))
-#else
-#define EVENT_TIMER_ON(varname)
-#define EVENT_TIMER_NOW(varname,msg)
-#endif
+
+#define EVENT_TIMER(varname,state) \
+auto varname = EventTimer() ; \
+constexpr auto TIMER_##varname = state
+
+#define EVENT_TIMER_NOW(varname,msg,reset) \
+if constexpr (TIMER_##varname) varname.output(STRINGIFY(msg),reset)
+
+#define EVENT_TIMER_RESET(varname) if constexpr (TIMER_##varname) varname.elapsed(true)
+
 /*
 #define EVENT_TIMER_OFF ( #varnam, #msg) \
 #if defined(TIMER_ON) \
@@ -28,7 +32,7 @@ private:
 	std::chrono::high_resolution_clock::time_point _now ;
 public:
 	EventTimer() ;
-	[[maybe_unused]] auto elapsed() -> long long ;
-	auto output(const std::string &label)->void ;
+	[[maybe_unused]] auto elapsed(bool reset=true) -> long long ;
+	auto output(const std::string &label,bool reset=true)->void ;
 };
 #endif /* EventTimer_hpp */

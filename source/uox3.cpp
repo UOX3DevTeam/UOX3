@@ -3461,8 +3461,7 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
-		auto stopwatch = EventTimer() ;
-		auto stopauto = EventTimer();
+		EVENT_TIMER(stopwatch,0) ;
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
@@ -3483,7 +3482,7 @@ int main( SI32 argc, char *argv[] )
 			}
 
 			StartMilliTimer( tempSecs, tempMilli );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
 
 #ifndef __LOGIN_THREAD__
 			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
@@ -3495,7 +3494,7 @@ int main( SI32 argc, char *argv[] )
 #else
 			Network->CheckMessage();
 #endif
-			stopwatch.output("Complete net checkmessages");
+			EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,0) ;
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
@@ -3524,25 +3523,25 @@ int main( SI32 argc, char *argv[] )
 
 			if( !cwmWorldState->GetReloadingScripts() ){
 				//auto stopauto = EventTimer() ;
-				EVENT_TIMER_ON(stopauto) ;
+				EVENT_TIMER(stopauto,0) ;
 				cwmWorldState->CheckAutoTimers();
-				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only);
+				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,1);
 			}
 
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
 			cwmWorldState->ServerProfile()->IncAutoTimeCount();
 			StartMilliTimer( tempSecs, tempMilli );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
  			Network->ClearBuffers();
-			stopwatch.output("Delta for ClearBuffers");
+			EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,1);
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			tempTime = CheckMilliTimer( loopSecs, loopMilli );
 			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
 			DoMessageLoop();
-			stopwatch.output("Delta for DoMessageLoop");
+			EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,1);
 
 		}
 
