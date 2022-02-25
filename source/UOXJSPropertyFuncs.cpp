@@ -987,10 +987,10 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					CBaseObject *myObj = static_cast<CBaseObject*>(encaps.toObject());
 					if( !ValidateObject( myObj ) )
 						break;
-					gPriv->SetCont( myObj );
+					gPriv->SetCont( myObj, true );
 				}
 				else
-					gPriv->SetCont( nullptr );
+					gPriv->SetCont( nullptr, true );
 				break;
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
 			case CIP_MORE:

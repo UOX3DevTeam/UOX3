@@ -259,7 +259,7 @@ bool CItem::SetContSerial( SERIAL newSerial )
 	}
 	return SetCont( nullptr );
 }
-bool CItem::SetCont( CBaseObject *newCont )
+bool CItem::SetCont( CBaseObject *newCont, bool removeFromView )
 {
 	if( isPostLoaded() )
 	{
@@ -327,6 +327,17 @@ bool CItem::SetCont( CBaseObject *newCont )
 				}
 				else
 				{
+					if( removeFromView )
+					{
+						// Update old location of item
+						oldLocX = x;
+						oldLocY = y;
+						oldLocZ = z;
+
+						// Remove item from view of all nearby players
+						RemoveFromSight();
+					}
+
 					//itemHolder->GetContainsList()->Add( this );
 					itemHolder->GetContainsList()->AddInFront( this );
 

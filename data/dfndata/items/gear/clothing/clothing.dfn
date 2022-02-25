@@ -258,7 +258,7 @@ id=0x153A
 
 [longpants]
 {
-0x1539 0x153a
+get=0x1539 0x153a
 }
 
 // Plain Dress
