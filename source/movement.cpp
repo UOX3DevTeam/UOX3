@@ -1373,9 +1373,10 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 								[[maybe_unused]] SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
 							}
 						}
-						else if( EffRange && !scriptExecuted )
+
+						// Ok let's trigger onCollide for the character as well
+						if( EffRange )
 						{
-							// Item being stepped on didn't have a script, so let's check if character has one instead
 							std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
 							for( auto scriptTrig : charScriptTriggers )
 							{
@@ -2824,25 +2825,25 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		if( mChar->IsAtWar() )
 		{
 			if( getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) >= 30 )
-				maxSteps = 300;
-			else
 				maxSteps = 150;
+			else
+				maxSteps = 50;
 		}
 		else
 		{
 			if( npcWanderType == WT_FREE || npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE )
 			{
 				if( mChar->IsEvading() ) // If they are evading, they might be attempting to move back to original wanderZone
-					maxSteps = 100;
+					maxSteps = 75;
 				else
-					maxSteps = 30;
+					maxSteps = 2; // Out of combat wandering
 			}
 			else if( npcWanderType == WT_FLEE )
-				maxSteps = 75;
+				maxSteps = 37;
 			else if( npcWanderType == WT_FOLLOW )
-				maxSteps = 150;
+				maxSteps = 50;
 			else
-				maxSteps = 500;
+				maxSteps = 250;
 		}
 	}
 

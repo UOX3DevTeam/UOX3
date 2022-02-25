@@ -1360,6 +1360,41 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 HandleAutoStack( CItem *mItem, CItem *mCont )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Automatically stack an item with existing items in a container
+//o-----------------------------------------------------------------------------------------------o
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar )
+{
+	// Check that container can hold more weight
+	if( mItem != mCont->GetCont() && !Weight->checkPackWeight( mChar, mCont, mItem ))
+	{
+		if( mSock != nullptr && ValidateObject( mChar ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, mItem );
+			mSock->sysmessage( 1385 ); // That pack cannot hold any more weight
+			Bounce( mSock, mItem );
+			return mItem->GetAmount();
+		}
+	}
+
+	// Attempt to autostack item in container
+	bool stackDeleted = ( autoStack( mSock, mItem, mCont ) != mItem );
+	if( !stackDeleted )
+	{
+		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+		{
+			Weight->subtractItemWeight( mChar, mItem );
+		}
+
+		return mItem->GetAmount();
+	}
+
+	return 0;
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when item is dropped on a container
@@ -1489,21 +1524,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 	}
 	else // Drop directly on a container, placing it randomly inside
 	{
-		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
-		{
-			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( &mChar, &iDropped );
-			mSock.sysmessage( 1385 ); // That pack cannot hold any more weight
-			Bounce( &mSock, &iDropped );
-			return false;
-		}
-		iDropped.SetCont( &droppedOn );
-		stackDeleted = ( autoStack( &mSock, &iDropped, &droppedOn ) != &iDropped );
-		if( !stackDeleted )
-		{
-			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( &mChar, &iDropped );
-		}
+		[[maybe_unused]] UI16 amountLeft = HandleAutoStack( &iDropped, &droppedOn, &mSock, &mChar );
 
 		// Only send tooltip if server feature for tooltips is enabled
 		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )

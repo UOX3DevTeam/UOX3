@@ -5555,7 +5555,7 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int GetMapElevation( x, y, z, world );</em></p>
+									<p><em>int GetMapElevation( x, y, world );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5563,7 +5563,7 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var mapElev = GetMapElevation( pUser.x, pUser.y, pUser.z, pUser.worldnumber );</code></pre>
+									<pre><code class="language-javascript">var mapElev = GetMapElevation( pUser.x, pUser.y, pUser.worldnumber );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -5579,6 +5579,10 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
 									<p>Returns the height of the static tile with specified ID.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Among other things, useful for getting the surface Z of targeted statics in client version 7.0.8.2 or lower, as these don't automatically include this in the target Z for socket as more recent clients do.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7596,7 +7600,10 @@ value = mItem.Resist( 1 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>SoundID is the ID of the sound to play. If bAllHear is true, then everyone nearby hears it. If it's false, then only the Character hears it.</p>
+									<ul>
+										<li>SoundID is the ID of the sound to play. If bAllHear is true, then everyone nearby hears it. If it's false, then only the Character hears it.</li>
+										<li>Beware that if you use sound IDs from UOFiddler, the sound IDs you see there are offset by +1 from what the client will play when you use those sound IDs. Subtract -1 from the sound ID when using it with UOX3 to get the correct sound!</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -11099,15 +11106,23 @@ myPlank.OpenPlank();</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void PlaceInPack();</em></p>
+									<p><em>void PlaceInPack( autoStackBool );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>	Randomly sets the placement of an item inside the container it is in.</p>
+									<p>Randomly sets the placement of an item inside the container it is in.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If autoStackBool is set to true, UOX3 will attempt to stack the item with existing similar items in its container before randomly placing it.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myItem.PlaceInPack();</code></pre>
+									<pre><code class="language-javascript">// Randomly place item in container
+myItem.PlaceInPack();
+
+// Attempt to autostack item with similar items
+myItem.PlaceInPack( true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -14718,7 +14733,7 @@ myObject.propertyName = newValue;
 							Get/Set whether Teleport spell can be used in this region</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.sDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							<p><span class="hl">.isDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether region is considered a dungeon. Primarily used for light level stuff, and to determine if houses can be placed in a region (houses cannot be placed in dungeons)</p>
 						</div>
 						<div class="settingsDiv">
