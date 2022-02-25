@@ -31,7 +31,7 @@
 #include <chrono>
 #include <random>
 #include <thread>
-
+#include "EventTimer.hpp"
 #include "uox3.h"
 #include "weight.h"
 #include "books.h"
@@ -3461,11 +3461,12 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
-
+		auto stopwatch = EventTimer() ;
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
+			stopwatch.output("Time to top of loop");
 			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
@@ -3482,6 +3483,7 @@ int main( SI32 argc, char *argv[] )
 			}
 
 			StartMilliTimer( tempSecs, tempMilli );
+			stopwatch.output("Time to starting net check");
 #ifndef __LOGIN_THREAD__
 			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
 			{
@@ -3492,7 +3494,7 @@ int main( SI32 argc, char *argv[] )
 #else
 			Network->CheckMessage();
 #endif
-
+			stopwatch.output("Complete net checkmessages");
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
@@ -3506,6 +3508,7 @@ int main( SI32 argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 
 			cwmWorldState->CheckTimers();
+			stopwatch.output("Delta for CheckTimers");
 			cwmWorldState->SetUICurrentTime( getclock() );
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
@@ -3525,12 +3528,15 @@ int main( SI32 argc, char *argv[] )
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
 			cwmWorldState->ServerProfile()->IncAutoTimeCount();
 			StartMilliTimer( tempSecs, tempMilli );
-			Network->ClearBuffers();
+ 			Network->ClearBuffers();
+			stopwatch.output("Delta for ClearBuffers");
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			tempTime = CheckMilliTimer( loopSecs, loopMilli );
 			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
 			DoMessageLoop();
+			stopwatch.output("Delta for DoMessageLoop");
+
 		}
 
 		sysBroadcast( "The server is shutting down." );
