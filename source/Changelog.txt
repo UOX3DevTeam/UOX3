@@ -1,3 +1,6 @@
+25/02/2022 - punt
+	Timing instrumentation added to allow obtaining information to aid in analyzing performance issues
+
 25/02/2022 - Xuri (0.99.5b-1)
 	Fixed an issue with monster speech script that prevented orcs, lizardmen, ratmen and wisps from taking damage in combat
 	Fixed an issue where the body ID for Shadow Lords (0x2c0) was missing the 0x prefix in its Creature DFN entry, causing UOX3 to overwrite the data (primarily sounds) for the Ettin (0x2) entry
