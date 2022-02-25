@@ -3462,7 +3462,7 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
-		EVENT_TIMER(stopwatch,1) ;
+		EVENT_TIMER(stopwatch,EVENT_TIMER_OFF) ;
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
@@ -3495,7 +3495,7 @@ int main( SI32 argc, char *argv[] )
 #else
 			Network->CheckMessage();
 #endif
-			EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,0) ;
+			EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,EVENT_TIMER_KEEP) ;
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
@@ -3524,9 +3524,9 @@ int main( SI32 argc, char *argv[] )
 
 			if( !cwmWorldState->GetReloadingScripts() ){
 				//auto stopauto = EventTimer() ;
-				EVENT_TIMER(stopauto,0) ;
+				EVENT_TIMER(stopauto,EVENT_TIMER_OFF) ;
 				cwmWorldState->CheckAutoTimers();
-				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,1);
+				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,EVENT_TIMER_CLEAR);
 			}
 
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
@@ -3535,14 +3535,14 @@ int main( SI32 argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 			EVENT_TIMER_RESET(stopwatch) ;
  			Network->ClearBuffers();
-			EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,1);
+			EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,EVENT_TIMER_CLEAR);
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			tempTime = CheckMilliTimer( loopSecs, loopMilli );
 			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
 			EVENT_TIMER_RESET(stopwatch) ;
 			DoMessageLoop();
-			EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,1);
+			EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,EVENT_TIMER_CLEAR);
 
 		}
 
