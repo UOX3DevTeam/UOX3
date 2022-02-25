@@ -3467,7 +3467,6 @@ int main( SI32 argc, char *argv[] )
 		while( cwmWorldState->GetKeepRun() )
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
-			stopwatch.output("Time to top of loop");
 			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 			{
 				cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
@@ -3484,7 +3483,8 @@ int main( SI32 argc, char *argv[] )
 			}
 
 			StartMilliTimer( tempSecs, tempMilli );
-			stopwatch.output("Time to starting net check");
+			stopwatch.elapsed();
+
 #ifndef __LOGIN_THREAD__
 			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
 			{
@@ -3509,7 +3509,7 @@ int main( SI32 argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 
 			cwmWorldState->CheckTimers();
-			stopwatch.output("Delta for CheckTimers");
+			//stopwatch.output("Delta for CheckTimers");
 			cwmWorldState->SetUICurrentTime( getclock() );
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
@@ -3532,12 +3532,14 @@ int main( SI32 argc, char *argv[] )
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
 			cwmWorldState->ServerProfile()->IncAutoTimeCount();
 			StartMilliTimer( tempSecs, tempMilli );
+			stopwatch.elapsed();
  			Network->ClearBuffers();
 			stopwatch.output("Delta for ClearBuffers");
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			tempTime = CheckMilliTimer( loopSecs, loopMilli );
 			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
+			stopwatch.elapsed();
 			DoMessageLoop();
 			stopwatch.output("Delta for DoMessageLoop");
 
