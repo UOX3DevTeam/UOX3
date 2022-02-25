@@ -2314,6 +2314,9 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 			return JS_FALSE;
 		}
 
+		// Update old location of item, which will be used by RemoveFromSight()
+		myItem->SetOldLocation( myItem->GetX(), myItem->GetY(), myItem->GetZ() );
+		myItem->RemoveFromSight();
 		myItem->SetLocation( x, y, z, world, instanceID );
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -2351,7 +2354,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		}
 		else
 		{
-			if( myChar->GetInstanceID() != instanceID )
+			if( myChar->GetInstanceID() != instanceID)
 				myChar->RemoveFromSight();
 			myChar->SetLocation( x, y, z, world, instanceID );
 		}
@@ -4788,17 +4791,20 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	return JS_TRUE;
 }
 
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CChar *mChar = nullptr );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void PlaceInPack()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Randomly sets the placement/position of an item inside the container it is in.
+//|					If second parameter is true, UOX3 will attempt to stack the item with an existing item
+//|					instead.
 //o-----------------------------------------------------------------------------------------------o
 JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 0 )
+	if( argc > 1 )
 	{
-		MethodError( "(PlaceInPack) Invalid Number of Arguments %d, needs: 0", argc );
+		MethodError( "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
 		return JS_FALSE;
 	}
 	CItem *myItem = static_cast<CItem *>(JS_GetPrivate( cx, obj ));
@@ -4807,6 +4813,21 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		MethodError( "(PlaceInPack) Invalid object assigned" );
 		return JS_FALSE;
 	}
+
+	bool stackSuccess = false;
+	bool autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+	if( autoStack && ValidateObject( myItem->GetCont() ))
+	{
+		// Attempt to stack the item with existing items. If item has any left-over amount after, it
+		// will be placed randomly in pack
+		CItem *myCont = static_cast<CItem *>(myItem->GetCont());
+		if( ValidateObject( myCont ))
+		{
+			*rval = INT_TO_JSVAL( HandleAutoStack( myItem, myCont, nullptr, nullptr ));
+		}
+	}
+
+	// Place item (or left-over item) randomly in pack
 	myItem->PlaceInPack();
 	return JS_TRUE;
 }
