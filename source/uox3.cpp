@@ -3523,9 +3523,10 @@ int main( SI32 argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 
 			if( !cwmWorldState->GetReloadingScripts() ){
-				stopauto.elapsed();
+				//auto stopauto = EventTimer() ;
+				EVENT_TIMER_ON(stopauto) ;
 				cwmWorldState->CheckAutoTimers();
-				stopauto.output("CheckAutoTimers only");
+				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only);
 			}
 
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
