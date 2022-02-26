@@ -9,6 +9,7 @@
 	Added new UOX.INI settings to control safe teleport for stuck players via the Help menu in Paperdoll:
 		MAXSAFETELEPORTSPERDAY=1 		// Max teleports per day, defaults to 1
 		TELEPORTNEARESTSAFELOC=1 		// Teleport player to nearest safe location (1) or random safe location (0)
+	Added 'res as an alias of 'resurrect command
 
 26/02/2022 - punt
 	Added some error checking for sockets
