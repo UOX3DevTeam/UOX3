@@ -23,6 +23,11 @@ hidamage=5
 speed=3
 }
 
+[lesserexplosionpotion]
+{
+get=0x0F0D
+}
+
 [0x0F0D-b]
 {
 get=base_potion
@@ -35,6 +40,11 @@ morez=2
 lodamage=6
 hidamage=10
 speed=3
+}
+
+[explosionpotion]
+{
+get=0x0F0D-b
 }
 
 [0x0F0D-c]
@@ -51,6 +61,11 @@ hidamage=20
 speed=3
 }
 
+[greaterexplosionpotion]
+{
+get=0x0F0D-c
+}
+
 [0x0F0B]
 {
 get=base_potion
@@ -60,6 +75,11 @@ value=60 30
 type=19
 morey=7
 morez=1
+}
+
+[refreshmentpotion]
+{
+get=0x0F0B
 }
 
 [0x0F0B-b]
@@ -73,6 +93,11 @@ morey=7
 morez=2
 }
 
+[totalrefreshmentpotion]
+{
+get=0x0F0B-b
+}
+
 [0x0F06]
 {
 get=base_potion
@@ -81,6 +106,11 @@ id=0x0F06
 value=30 15
 type=19
 morey=5
+}
+
+[nightsightpotion]
+{
+get=0x0F06
 }
 
 [0x0F07]
@@ -94,6 +124,11 @@ morey=2
 morez=1
 }
 
+[lessercurepotion]
+{
+get=0x0F07
+}
+
 [0x0F07-b]
 {
 get=base_potion
@@ -103,6 +138,11 @@ value=40 20
 type=19
 morey=2
 morez=2
+}
+
+[curepotion]
+{
+get=0x0F07-b
 }
 
 [0x0F07-c]
@@ -116,6 +156,11 @@ morey=2
 morez=3
 }
 
+[greatercurepotion]
+{
+get=0x0F07-c
+}
+
 [0x0F08]
 {
 get=base_potion
@@ -125,6 +170,11 @@ value=30 15
 type=19
 morey=1
 morez=1
+}
+
+[agilitypotion]
+{
+get=0x0F08
 }
 
 [0x0F08-b]
@@ -138,6 +188,11 @@ morey=1
 morez=2
 }
 
+[greateragilitypotion]
+{
+get=0x0F08-b
+}
+
 [0x0F09]
 {
 get=base_potion
@@ -147,6 +202,11 @@ value=30 15
 type=19
 morey=8
 morez=1
+}
+
+[strengthpotion]
+{
+get=0x0F09
 }
 
 [0x0F09-b]
@@ -160,6 +220,11 @@ morey=8
 morez=2
 }
 
+[greaterstrengthpotion]
+{
+get=0x0F09-b
+}
+
 [0x0F0A]
 {
 get=base_potion
@@ -169,6 +234,11 @@ value=30 15
 type=19
 morey=6
 morez=1
+}
+
+[lesserpoisonpotion]
+{
+get=0x0F0A
 }
 
 [0x0F0A-b]
@@ -182,6 +252,11 @@ morey=6
 morez=2
 }
 
+[poisonpotion]
+{
+get=0x0F0A-b
+}
+
 [0x0F0A-c]
 {
 get=base_potion
@@ -191,6 +266,11 @@ value=50 25
 type=19
 morey=6
 morez=3
+}
+
+[greaterpoisonpotion]
+{
+get=0x0F0A-c
 }
 
 [0x0F0A-d]
@@ -204,6 +284,11 @@ morey=6
 morez=4
 }
 
+[deadlypoisonpotion]
+{
+get=0x0F0A-d
+}
+
 [0x0F0C]
 {
 get=base_potion
@@ -213,6 +298,11 @@ value=30 15
 type=19
 morey=4
 morez=1
+}
+
+[lesserhealpotion]
+{
+get=0x0F0C
 }
 
 [0x0F0C-b]
@@ -226,6 +316,11 @@ morey=4
 morez=2
 }
 
+[healpotion]
+{
+get=0x0F0C-b
+}
+
 [0x0F0C-c]
 {
 get=base_potion
@@ -235,4 +330,9 @@ value=70 35
 type=19
 morey=4
 morez=3
+}
+
+[greaterhealpotion]
+{
+get=0x0F0C-c
 }

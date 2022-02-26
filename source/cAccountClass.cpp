@@ -686,9 +686,9 @@ void cAccountClass::WriteAccountSection( CAccountBlock& actbTemp, std::fstream& 
 UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, const std::string &sContact, UI16 wAttributes )
 {
 	// First were going to make sure that the needed fields are sent in with at least data
-	if( sUsername.length() < 4 || sPassword.length() < 4 )
+	if( sUsername.length() < 4 || sPassword.length() < 5 )
 	{
-		// Username, and or password must both be 4 characters or more in length
+		// Username and password must be 4 and 5 characters or more in length, respectively
 		Console.log(strutil::format("ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short",sUsername.c_str(),sPassword.c_str()),"accounts.log");
 		return 0x0000;
 	}

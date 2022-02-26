@@ -702,6 +702,18 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_AMMOFXRENDER:	*vp = INT_TO_JSVAL( gPriv->GetAmmoFXRender() );			break;
 			case CIP_MAXRANGE:		*vp = INT_TO_JSVAL( gPriv->GetMaxRange() );				break;
 			case CIP_BASERANGE:		*vp = INT_TO_JSVAL( gPriv->GetBaseRange() );			break;
+			case CIP_REGION:
+			{
+				CTownRegion *myReg = gPriv->GetRegion();
+				if( myReg == nullptr )
+					*vp = JSVAL_NULL;
+				else
+				{
+					JSObject *myTown = JSEngine->AcquireObject( IUE_REGION, myReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					*vp = OBJECT_TO_JSVAL( myTown );
+				}
+				break;
+			}
 			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->isHeldOnCursor() );		break;
 
@@ -975,10 +987,10 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					CBaseObject *myObj = static_cast<CBaseObject*>(encaps.toObject());
 					if( !ValidateObject( myObj ) )
 						break;
-					gPriv->SetCont( myObj );
+					gPriv->SetCont( myObj, true );
 				}
 				else
-					gPriv->SetCont( nullptr );
+					gPriv->SetCont( nullptr, true );
 				break;
 			case CIP_TYPE:			gPriv->SetType( static_cast<ItemTypes>(encaps.toInt()) ); 	break;
 			case CIP_MORE:
@@ -1134,6 +1146,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_AMMOFXRENDER:	gPriv->SetAmmoFXRender( (UI16)encaps.toInt() );				break;
 			case CIP_MAXRANGE:		gPriv->SetMaxRange( (UI08)encaps.toInt() );					break;
 			case CIP_BASERANGE:		gPriv->SetBaseRange( (UI08)encaps.toInt() );				break;
+			case CIP_REGION:		gPriv->SetRegion( (UI16)encaps.toInt() );					break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
 
 				// The following entries are specifically for CSpawnItem objects

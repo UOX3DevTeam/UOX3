@@ -83,6 +83,7 @@ bool	isOnline( CChar& mChar );
 //o-----------------------------------------------------------------------------------------------o
 void	doLight( CSocket *s, UI08 level );
 void	doLight( CChar *mChar, UI08 level );
+void	doLight( CItem *mItem, UI08 level );
 
 //o-----------------------------------------------------------------------------------------------o
 // Poison related functions
@@ -103,7 +104,7 @@ UI32	DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 realColour = 0x0000, 
 //o-----------------------------------------------------------------------------------------------o
 // Region related
 //o-----------------------------------------------------------------------------------------------o
-CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CChar *mChar = nullptr );
+CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, CBaseObject *mObj = nullptr );
 void CheckCharInsideBuilding( CChar *c, CSocket *mSock, bool doWeatherStuff );
 
 //o-----------------------------------------------------------------------------------------------o

@@ -488,7 +488,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	}
 	else
 	{
-		targItem->SetName2( targItem->GetName().c_str() );
+		// targItem->SetName2( targItem->GetName().c_str() ); // Why was this here?
 		SI32 rank = Skills->CalcRankAvg( src, (*toMake) );
 		SI32 maxrank = toMake->maxRank;
 		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank) );

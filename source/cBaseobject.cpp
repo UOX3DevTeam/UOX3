@@ -90,6 +90,7 @@ const SI16			DEFBASE_KARMA		= 0;
 const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
+const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -106,7 +107,7 @@ lodamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE )
 {
 	multis = nullptr;
 	tempmulti = INVALIDSERIAL;
@@ -780,6 +781,32 @@ void CBaseObject::SetRace( RACEID newValue )
 		(static_cast<CItem *>(this))->UpdateRegion();
 	else if( CanBeObjType( OT_CHAR ))
 		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string GetNameRequest( CChar *nameRequester )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the name of the object, but checks for presence of onNameRequest JS event
+//o-----------------------------------------------------------------------------------------------o
+std::string CBaseObject::GetNameRequest( CChar *nameRequester )
+{
+	std::vector<UI16> scriptTriggers = GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			std::string textFromScript = toExecute->OnNameRequest( this, nameRequester );
+			if( !textFromScript.empty() )
+			{
+				// If a string was returned from the event, return that as the object's name
+				return textFromScript;
+			}
+		}
+	}
+	
+	// Otherwise, just return the actual name of the object
+	return GetName();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2304,4 +2331,20 @@ void CBaseObject::SetDamageable(bool newValue)
 		(static_cast<CItem *>(this))->UpdateRegion();
 	else if( CanBeObjType( OT_CHAR ))
 		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool NameRequestActive( void ) const
+//|					void NameRequestActive( bool newValue )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's damageable state
+//o-----------------------------------------------------------------------------------------------o
+bool CBaseObject::NameRequestActive(void) const
+{
+	return nameRequestActive;
+}
+void CBaseObject::NameRequestActive(bool newValue)
+{
+	nameRequestActive = newValue;
 }

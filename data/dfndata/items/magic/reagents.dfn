@@ -46,12 +46,22 @@ id=0x0f7a
 value=6 2
 }
 
+[blackpearl]
+{
+get=0x0f7a
+}
+
 [0x0f7b]
 {
 get=base_reagent
 name=blood moss
 id=0x0f7b
 value=6 3
+}
+
+[bloodmoss]
+{
+get=0x0f7b
 }
 
 [0x0f84]
@@ -61,11 +71,21 @@ name=garlic
 id=0x0f84
 }
 
+[garlic]
+{
+get=0x0f84
+}
+
 [0x0f85]
 {
 get=base_reagent
 name=ginseng
 id=0x0f85
+}
+
+[ginseng]
+{
+get=0x0f85
 }
 
 [0x0f86]
@@ -75,11 +95,21 @@ name=mandrake root
 id=0x0f86
 }
 
+[mandrakeroot]
+{
+get=0x0f86
+}
+
 [0x0f88]
 {
 get=base_reagent
 name=nightshade
 id=0x0f88
+}
+
+[nightshade]
+{
+get=0x0f88
 }
 
 [0x0f8c]
@@ -89,11 +119,21 @@ name=sulfurous ash
 id=0x0f8c
 }
 
+[sulfurousash]
+{
+get=0x0f8c
+}
+
 [0x0f8d]
 {
 get=base_reagent
 name=spider silk
 id=0x0f8d
+}
+
+[spidersilk]
+{
+get=0x0f8d
 }
 
 // pagan reagents:
@@ -105,11 +145,21 @@ name=bat wing
 id=0x0f78
 }
 
+[batwing]
+{
+get=0x0f78
+}
+
 [0x0f79]
 {
 get=base_reagent
 name=blackmoore
 id=0x0f79
+}
+
+[blackmoore]
+{
+get=0x0f79
 }
 
 [0x0f7c]
@@ -119,11 +169,21 @@ name=blood spawn
 id=0x0f7c
 }
 
+[bloodspawn]
+{
+get=0x0f7c
+}
+
 [0x0f7e]
 {
 get=base_reagent
 name=bone
 id=0x0f7e
+}
+
+[bonereg]
+{
+get=0x0f7e
 }
 
 [0x0f7f]
@@ -133,11 +193,21 @@ name=brimstone
 id=0x0f7f
 }
 
+[brimstone]
+{
+get=0x0f7f
+}
+
 [0x0f80]
 {
 get=base_reagent
 name=daemon bone
 id=0x0f80
+}
+
+[daemonbone]
+{
+get=0x0f80
 }
 
 [0x0f90]
@@ -147,11 +217,21 @@ name=dead wood
 id=0x0f90
 }
 
+[deadwood]
+{
+get=0x0f90
+}
+
 [0x0f82]
 {
 get=base_reagent
 name=dragon's blood
 id=0x0f82
+}
+
+[dragonsblood]
+{
+get=0x0f82
 }
 
 [0x0f83]
@@ -161,11 +241,21 @@ name=executioner's cap
 id=0x0f83
 }
 
+[executionerscap]
+{
+get=0x0f83
+}
+
 [0x0f87]
 {
 get=base_reagent
 name=eye of newt
 id=0x0f87
+}
+
+[eyeofnewt]
+{
+get=0x0f87
 }
 
 [0x0f81]
@@ -175,11 +265,21 @@ name=fertile dirt
 id=0x0f81
 }
 
+[fertiledirt]
+{
+get=0x0f81
+}
+
 [0x0f89]
 {
 get=base_reagent
 name=obsidian
 id=0x0f89
+}
+
+[obsidian]
+{
+get=0x0f89
 }
 
 [0x0f8a]
@@ -189,11 +289,21 @@ name=pig iron
 id=0x0f8a
 }
 
+[pigiron]
+{
+get=0x0f8a
+}
+
 [0x0f8b]
 {
 get=base_reagent
 name=pumice
 id=0x0f8b
+}
+
+[pumice]
+{
+get=0x0f8b
 }
 
 [0x0f8e]
@@ -203,11 +313,21 @@ name=nox crystal
 id=0x0f8e
 }
 
+[noxcrystal]
+{
+get=0x0f8e
+}
+
 [0x0f7d]
 {
 get=base_reagent
 name=daemon blood
 id=0x0f7d
+}
+
+[daemonblood]
+{
+get=0x0f7d
 }
 
 [0x0f8f]
@@ -217,6 +337,11 @@ name=grave dust
 id=0x0f8f
 }
 
+[gravedust]
+{
+get=0x0f8f
+}
+
 [0x0f91]
 {
 get=base_reagent
@@ -224,6 +349,10 @@ name=wyrm's heart
 id=0x0f91
 }
 
+[wyrmsheart]
+{
+get=0x0f91
+}
 
 // 10 of each reagent
 

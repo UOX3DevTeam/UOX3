@@ -49,6 +49,9 @@ restock=10
 decay=1
 good=26
 movable=1
+maxuses=75
+usesleft=25
+script=2200// uses left tooltip
 }
 
 // Smith's Hammer - N/S
