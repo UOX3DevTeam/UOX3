@@ -10,6 +10,9 @@
 		MAXSAFETELEPORTSPERDAY=1 		// Max teleports per day, defaults to 1
 		TELEPORTNEARESTSAFELOC=1 		// Teleport player to nearest safe location (1) or random safe location (0)
 
+26/02/2022 - punt
+	Added some error checking for sockets
+
 25/02/2022 - punt
 	Timing instrumentation added to allow obtaining information to aid in analyzing performance issues
 
