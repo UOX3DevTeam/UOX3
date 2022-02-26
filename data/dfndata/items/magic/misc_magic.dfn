@@ -12,6 +12,11 @@ good=28
 layer=1
 }
 
+[spellbook]
+{
+get=0x0efa
+}
+
 // Used recall rune
 [0x1f14]
 {
@@ -24,6 +29,11 @@ type=50
 restock=15
 decay=1
 good=28
+}
+
+[usedrecallrune]
+{
+get=0x1f14
 }
 
 // Blank recall rune
@@ -40,6 +50,11 @@ decay=1
 good=28
 }
 
+[recallrune]
+{
+get=0x1f17
+}
+
 [0x0e2d]
 {
 get=base_item
@@ -49,6 +64,11 @@ weight=100
 value=2 1
 movable=2
 good=28
+}
+
+[crystalball]
+{
+get=0x0e2d
 }
 
 [0x0e2e]
@@ -62,6 +82,11 @@ movable=2
 good=28
 }
 
+[sparklingcrystalball]
+{
+get=0x0e2e
+}
+
 [0x2252]
 {
 get=base_item
@@ -71,6 +96,11 @@ weight=100
 value=22 11
 decay=1
 good=28
+}
+
+[paladinspellbook]
+{
+get=0x2252
 }
 
 [0x2253]
@@ -84,6 +114,11 @@ decay=1
 good=28
 }
 
+[necromancerbook]
+{
+get=0x2253
+}
+
 [0x2d9d]
 {
 get=base_item
@@ -93,6 +128,11 @@ weight=100
 value=22 11
 decay=1
 good=28
+}
+
+[mysticbook]
+{
+get=0x2d9d
 }
 
 [moonstone]
