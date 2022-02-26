@@ -10,13 +10,15 @@ EventTimer::EventTimer() {
 }
 //=========================================================
 
-auto EventTimer::elapsed() -> long long {
+auto EventTimer::elapsed(bool reset) -> long long {
 	auto delta =std::chrono::high_resolution_clock::now()-_now ;
-	_now =std::chrono::high_resolution_clock::now();
+	if (reset){
+		_now =std::chrono::high_resolution_clock::now();
+	}
 	return std::chrono::duration_cast<std::chrono::milliseconds>(delta).count();
 }
 
 //=========================================================
-auto EventTimer::output(const std::string &label = "Delta from last call")->void {
-	std::cout <<label <<" - "s <<elapsed()<<"(ms)\n"s;
+auto EventTimer::output(const std::string &label = "Delta from last call",bool reset)->void {
+	std::cout <<label <<" - "s <<elapsed(reset)<<"(ms)\n"s;
 }

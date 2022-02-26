@@ -31,7 +31,7 @@
 #include <chrono>
 #include <random>
 #include <thread>
-#include "EventTimer.hpp"
+
 #include "uox3.h"
 #include "weight.h"
 #include "books.h"
@@ -69,6 +69,7 @@
 #include "PartySystem.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
+#include "EventTimer.hpp"
 
 std::thread cons;
 std::thread netw;
@@ -3461,8 +3462,7 @@ int main( SI32 argc, char *argv[] )
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
 		Console.PrintSectionBegin();
-		auto stopwatch = EventTimer() ;
-		auto stopauto = EventTimer();
+		EVENT_TIMER(stopwatch,EVENT_TIMER_OFF) ;
 		// MAIN SYSTEM LOOP
 		while( cwmWorldState->GetKeepRun() )
 		{
@@ -3483,7 +3483,7 @@ int main( SI32 argc, char *argv[] )
 			}
 
 			StartMilliTimer( tempSecs, tempMilli );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
 
 #ifndef __LOGIN_THREAD__
 			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) // Cut lag on CheckConn by not doing it EVERY loop.
@@ -3495,7 +3495,7 @@ int main( SI32 argc, char *argv[] )
 #else
 			Network->CheckMessage();
 #endif
-			stopwatch.output("Complete net checkmessages");
+			EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,EVENT_TIMER_KEEP) ;
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
@@ -3523,25 +3523,26 @@ int main( SI32 argc, char *argv[] )
 			StartMilliTimer( tempSecs, tempMilli );
 
 			if( !cwmWorldState->GetReloadingScripts() ){
-				stopauto.elapsed();
+				//auto stopauto = EventTimer() ;
+				EVENT_TIMER(stopauto,EVENT_TIMER_OFF) ;
 				cwmWorldState->CheckAutoTimers();
-				stopauto.output("CheckAutoTimers only");
+				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,EVENT_TIMER_CLEAR);
 			}
 
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
 			cwmWorldState->ServerProfile()->IncAutoTimeCount();
 			StartMilliTimer( tempSecs, tempMilli );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
  			Network->ClearBuffers();
-			stopwatch.output("Delta for ClearBuffers");
+			EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,EVENT_TIMER_CLEAR);
 			tempTime = CheckMilliTimer( tempSecs, tempMilli );
 			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
 			tempTime = CheckMilliTimer( loopSecs, loopMilli );
 			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
-			stopwatch.elapsed();
+			EVENT_TIMER_RESET(stopwatch) ;
 			DoMessageLoop();
-			stopwatch.output("Delta for DoMessageLoop");
+			EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,EVENT_TIMER_CLEAR);
 
 		}
 
