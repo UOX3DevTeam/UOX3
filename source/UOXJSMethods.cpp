@@ -7094,6 +7094,57 @@ JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	return JS_TRUE;
 }
 
+void CPage( CSocket *s, const std::string& reason );
+void GMPage( CSocket *s, const std::string& reason );
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//|	Prototype	-	void Page( pageType )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers a page based on provided pageType
+//o-----------------------------------------------------------------------------------------------o
+JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc > 1 )
+	{
+		MethodError( "Page: Invalid number of arguments (takes 1, pageType)" );
+		return JS_FALSE;
+	}
+
+	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ) );
+	if( mySock == nullptr )
+	{
+		MethodError( "SysMessage: Invalid socket" );
+		return JS_FALSE;
+	}
+
+	UI08 pageType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	switch( pageType )
+	{
+		case 0: // Counselor page - Free Text
+			CPage( mySock, "OTHER" );
+			break;
+		case 1: // GM page - Free Text
+			GMPage( mySock, "OTHER" );
+			break;
+		case 2: // GM page, stuck
+			GMPage( mySock, "Stuck" );
+			break;
+		case 3: // GM page, item problem
+			GMPage( mySock, "Item Problem" );
+			break;
+		case 4: // GM page, harassment
+			GMPage( mySock, "Harassment" );
+			break;
+		case 5: // GM page, report exploit
+			GMPage( mySock, "Exploit" );
+			break;
+		default:
+			break;
+	}
+
+	return JS_TRUE;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //|	Prototype	-	void Print( string )
