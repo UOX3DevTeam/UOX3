@@ -49,6 +49,7 @@
 #include "cWeather.hpp"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "EventTimer.hpp"
 
 cMovement *Movement;
 
@@ -1373,9 +1374,10 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 								[[maybe_unused]] SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
 							}
 						}
-						else if( EffRange && !scriptExecuted )
+
+						// Ok let's trigger onCollide for the character as well
+						if( EffRange )
 						{
-							// Item being stepped on didn't have a script, so let's check if character has one instead
 							std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
 							for( auto scriptTrig : charScriptTriggers )
 							{
@@ -2812,10 +2814,11 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	SI08 curZ			= mChar->GetZ();;
 	UI08 oldDir			= mChar->GetDir();
 	UI16 loopCtr		= 0;
-
+	EVENT_TIMER(mytimer, EVENT_TIMER_OFF);
 	// Set target location in NPC's mind
 	mChar->SetPathTargX( targX );
 	mChar->SetPathTargY( targY );
+	EVENT_TIMER_RESET(mytimer);
 
 	// If no maxSteps was provided, set appropriate value based on current scenario
 	if( maxSteps == 0 )
@@ -2824,25 +2827,25 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		if( mChar->IsAtWar() )
 		{
 			if( getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) >= 30 )
-				maxSteps = 300;
-			else
 				maxSteps = 150;
+			else
+				maxSteps = 50;
 		}
 		else
 		{
 			if( npcWanderType == WT_FREE || npcWanderType == WT_BOX || npcWanderType == WT_CIRCLE )
 			{
 				if( mChar->IsEvading() ) // If they are evading, they might be attempting to move back to original wanderZone
-					maxSteps = 100;
+					maxSteps = 75;
 				else
-					maxSteps = 30;
+					maxSteps = 2; // Out of combat wandering
 			}
 			else if( npcWanderType == WT_FLEE )
-				maxSteps = 75;
+				maxSteps = 37;
 			else if( npcWanderType == WT_FOLLOW )
-				maxSteps = 150;
+				maxSteps = 50;
 			else
-				maxSteps = 500;
+				maxSteps = 250;
 		}
 	}
 
@@ -2903,6 +2906,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
+		EVENT_TIMER_NOW(mytimer, Time when loopCtr == maxSteps, 1);
 		return false;
 	}
 	else if( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
@@ -2911,12 +2915,15 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		Console.warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
+		EVENT_TIMER_NOW(mytimer, Time when loopCtr == 0 and distance >1, 1);
 		return false;
 	}
 	else if( mChar->GetX() == startX && mChar->GetY() == startY && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
 	{
 		// NPC never moved, and target location is not nearby
 		mChar->SetPathResult( -1 ); // Pathfinding failed
+		EVENT_TIMER_NOW(mytimer, Time when NPC never moved, 1);
+
 		return false;
 	}
 	else
@@ -2929,5 +2936,6 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		else
 			mChar->SetPathResult( 1 ); // Pathfinding success
 	}
+	EVENT_TIMER_NOW(mytimer, Time when total pathfinding used , 1);
 	return true;
 }

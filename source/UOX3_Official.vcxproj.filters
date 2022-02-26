@@ -296,6 +296,9 @@
     <ClCompile Include="TimeUtility.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="EventTimer.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PartySystem.h">
@@ -543,6 +546,9 @@
     </ClInclude>
     <ClInclude Include="TimeUtility.hpp">
       <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="EventTimer.hpp">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

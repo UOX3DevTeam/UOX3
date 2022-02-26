@@ -231,6 +231,18 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			}
 			if( ValidateObject( hItem ) && hItem->GetCont() == nullptr )
 				hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceID );
+
+			if( hItem->GetMulti() == INVALIDSERIAL && hItem->GetType() != IT_HOUSESIGN && hItem->GetType() != IT_DOOR )
+			{
+				// Add item to multi. It's not a door, nor a sign - could be stairs in a custom foundation!
+				CMultiObj *mMulti = findMulti( house );
+				if( ValidateObject( mMulti ))
+				{
+					hItem->SetMulti( mMulti );
+					mMulti->AddToMulti( hItem );
+				}
+			}
+
 		}
 	}
 }
