@@ -1,3 +1,30 @@
+26/02/2022 - Dragon Slayer
+	Added JS-based help menu accessible via character paperdoll, with modernized style and UI, ability for players to change their password
+	Minor cleanup and addition of a few extra features to help menu, like a safe teleport option for players who are potentially stuck, updated server info details and integration with UOX3's existing GM paging system as support options (Xuri)
+	Added new JS functions to retrieve server data used for server stats in help menu:
+		GetItemCount()				// Gets number of items on server
+		GetMultiCount() 			// Gets number of multis on server
+		GetCharacterCount()			// Gets number of characters on server
+		GetServerVersionString() 	// Gets server version as a string
+	Added new UOX.INI settings to control safe teleport for stuck players via the Help menu in Paperdoll:
+		MAXSAFETELEPORTSPERDAY=1 		// Max teleports per day, defaults to 1
+		TELEPORTNEARESTSAFELOC=1 		// Teleport player to nearest safe location (1) or random safe location (0)
+
+26/02/2022 - punt
+	Added some error checking for sockets
+
+25/02/2022 - punt
+	Timing instrumentation added to allow obtaining information to aid in analyzing performance issues
+
+25/02/2022 - Xuri (0.99.5b-1)
+	Fixed an issue with monster speech script that prevented orcs, lizardmen, ratmen and wisps from taking damage in combat
+	Fixed an issue where the body ID for Shadow Lords (0x2c0) was missing the 0x prefix in its Creature DFN entry, causing UOX3 to overwrite the data (primarily sounds) for the Ettin (0x2) entry
+	Fixed an issue where the [longpants] definition (dfndata/items/gear/clothes/clothes.dfn) did use the get= tag correctly (Dragon Slayer)
+	Fixed an issue with the 'addpack command where it would try to add a pack/items to user of command instead of targeted character
+	Extended the .PlaceInPack() Item JS Method to support an optional boolean argument. If true, UOX3 will attempt to automatically stack the item in question with similar items in the item's current container. New syntax:
+		.PlaceInPack( autoStackFlag ) 	// autoStackFlag can be true/false
+	Reduced the default maxSteps properties of advanced NPC pathfinding to improve server performance. As a result, pathfinding calculations for NPCs that are out of combat will now take ~90% less time than before, though this still takes more time than is ideal. For NPCs in combat, the improvements are not as dramatic.
+
 13/02/2022 - Xuri (0.99.5b)
 	Fixed an issue where karma titles would inadvertently have the space behind the title trimmed before being displayed in paperdoll, resulting in erroneous display of title + name there
 	Fixed an issue with a cooking script (js/skill/cooking/cooking.js) where sweet dough would not get consumed properly on cooking (Dragon Slayer)
