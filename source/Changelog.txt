@@ -1,3 +1,7 @@
+26/02/2022 - Xuri
+	Fixed a server crash caused by a couple of items in "stone walls 4" section of add-menu that were missing their ID in ItemMenu.bulk.dfn (thanks, Humility)
+	Fixed an issue where items added to house (multi) definition would not be attached to the house if their coordinates were not within the boundaries of the house. This prevented the usage of house foundation multis with custom stairs, for instance.
+
 26/02/2022 - Dragon Slayer
 	Added JS-based help menu accessible via character paperdoll, with modernized style and UI, ability for players to change their password
 	Minor cleanup and addition of a few extra features to help menu, like a safe teleport option for players who are potentially stuck, updated server info details and integration with UOX3's existing GM paging system as support options (Xuri)
@@ -10,6 +14,7 @@
 		MAXSAFETELEPORTSPERDAY=1 		// Max teleports per day, defaults to 1
 		TELEPORTNEARESTSAFELOC=1 		// Teleport player to nearest safe location (1) or random safe location (0)
 	Added 'res as an alias of 'resurrect command
+	Added alias names for items in misc_magic.dfn, potions.dfn, reagents.dfn and scrolls.dfn, to allow adding these items using 'add item bloodmoss, or 'add item lesserexplosionpotion
 
 26/02/2022 - punt
 	Added some error checking for sockets
