@@ -2814,11 +2814,11 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	SI08 curZ			= mChar->GetZ();;
 	UI08 oldDir			= mChar->GetDir();
 	UI16 loopCtr		= 0;
-	EVENT_TIMER(mytimer, EVENT_TIMER_OFF)
+	EVENT_TIMER(mytimer, EVENT_TIMER_OFF);
 	// Set target location in NPC's mind
 	mChar->SetPathTargX( targX );
 	mChar->SetPathTargY( targY );
-	EVENT_TIMER_RESET(mytimer)
+	EVENT_TIMER_RESET(mytimer);
 
 	// If no maxSteps was provided, set appropriate value based on current scenario
 	if( maxSteps == 0 )
@@ -2906,7 +2906,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW(mytimer, Time when loopCtr == maxSteps, 1)
+		EVENT_TIMER_NOW(mytimer, Time when loopCtr == maxSteps, 1);
 		return false;
 	}
 	else if( loopCtr == 0 && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
@@ -2915,14 +2915,14 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		Console.warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW(mytimer, Time when loopCtr == 0 and distance >1, 1)
+		EVENT_TIMER_NOW(mytimer, Time when loopCtr == 0 and distance >1, 1);
 		return false;
 	}
 	else if( mChar->GetX() == startX && mChar->GetY() == startY && getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
 	{
 		// NPC never moved, and target location is not nearby
 		mChar->SetPathResult( -1 ); // Pathfinding failed
-		EVENT_TIMER_NOW(mytimer, Time when NPC never moved, 1)
+		EVENT_TIMER_NOW(mytimer, Time when NPC never moved, 1);
 
 		return false;
 	}
@@ -2936,6 +2936,6 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		else
 			mChar->SetPathResult( 1 ); // Pathfinding success
 	}
-	EVENT_TIMER_NOW(mytimer, Time when total pathfinding used , 1) 
+	EVENT_TIMER_NOW(mytimer, Time when total pathfinding used , 1);
 	return true;
 }

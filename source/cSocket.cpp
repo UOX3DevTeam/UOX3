@@ -735,16 +735,18 @@ bool CSocket::FlushBuffer( bool doLog )
 			UI08 xoutbuffer[MAXBUFFER*2];
 			len = Pack( outbuffer, xoutbuffer, outlength );
 			[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)xoutbuffer, len, 0 );
-			if (sendResult != len){
-				std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 739"<<std::endl;
+			if( sendResult != len )
+			{
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 739" << std::endl;
 			}
 		}
-		else{
+		else
+		{
 			[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&outbuffer[0], outlength, 0 );
-			if (sendResult != outlength){
-				std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 744"<<std::endl;
+			if( sendResult != outlength )
+			{
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 744" << std::endl;
 			}
-
 		}
 		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
@@ -787,17 +789,19 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 			largePackBuffer.resize( static_cast<size_t>(outlength) * static_cast<size_t>(2) );
 			SI32 len = Pack( &largeBuffer[0], &largePackBuffer[0], outlength );
 			[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largePackBuffer[0], len, 0 );
-			if (sendResult != len){
-				std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 789"<<std::endl;
+			if( sendResult != len )
+			{
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 789" << std::endl;
 			}
 
 		}
-		else {
+		else
+		{
 			[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)&largeBuffer[0], outlength, 0 );
-			if (sendResult != outlength){
-				std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 796"<<std::endl;
+			if( sendResult != outlength )
+			{
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 796" << std::endl;
 			}
-
 		}
 		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
 		{
@@ -1490,8 +1494,9 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	{
 		len = toSend->Pack();
 		[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->PackedPointer(), len, 0 );
-		if (sendResult != len){
-			std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 1492"<<std::endl;
+		if( sendResult != len )
+		{
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1492" << std::endl;
 		}
 
 	}
@@ -1499,10 +1504,10 @@ void CSocket::Send( CPUOXBuffer *toSend )
 	{
 		len = static_cast<UI32>(toSend->GetPacketStream().GetSize());
 		[[maybe_unused]] auto sendResult = send( static_cast<UOXSOCKET>(cliSocket), (char *)toSend->GetPacketStream().GetBuffer(), len, 0 );
-		if (sendResult != len){
-			std::cerr <<"DANGER DANGER WILL ROBINSON, socket send was less then requested at 1501"<<std::endl;
+		if( sendResult != len )
+		{
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1501" << std::endl;
 		}
-
 	}
 
 	bytesSent += len;
