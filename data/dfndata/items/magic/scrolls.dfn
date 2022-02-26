@@ -730,7 +730,7 @@ id=0x1F64
 
 [polymorphscroll]
 {
-get=0x1F65
+get=0x1F64
 }
 
 //Scroll (Eighth Circle) 
