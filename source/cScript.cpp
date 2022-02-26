@@ -165,6 +165,10 @@ static JSFunctionSpec my_functions[] =
 
 	{ "GetAccountCount",			SE_GetAccountCount,			0, 0, 0 },
 	{ "GetPlayerCount",				SE_GetPlayerCount,			0, 0, 0 },
+	{ "GetItemCount",				SE_GetItemCount,			0, 0, 0 },
+	{ "GetMultiCount",				SE_GetMultiCount,			0, 0, 0 },
+	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
+	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },

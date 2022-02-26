@@ -97,7 +97,7 @@ public:
 	CBaseObject *	GetCont(   void ) const;
 	SERIAL			GetContSerial( void ) const;
 
-	bool			SetCont(   CBaseObject *newCont );
+	bool			SetCont(   CBaseObject *newCont, bool removeFromView = false );
 	bool			SetContSerial( SERIAL newSerial );
 
 	SI08			GetGridLocation( void ) const;
