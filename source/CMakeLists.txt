@@ -80,6 +80,7 @@ add_library(uox
 		IDXMul.cpp
 		IP4Address.cpp
 		TimeUtility.cpp
+		EventTimer.cpp
 )
 
 target_include_directories(uox

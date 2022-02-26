@@ -35,6 +35,7 @@
 0=server/global.js
 
 1=server/misc/admin_welcome.js
+2=server/misc/helpgump.js
 //-------------------------------------------
 // CORE:[0-99] Rerserved for specific core server needs
 //-------------------------------------------
@@ -281,6 +282,11 @@
 5033=item/sextant.js
 5034=item/iron_maiden.js
 5035=item/gate_opener.js
+
+//-------------------------------------------
+// Combat Scripts [7000-7499]
+//-------------------------------------------
+7000=combat/peacemake_effect.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js

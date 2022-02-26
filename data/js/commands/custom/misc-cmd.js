@@ -342,8 +342,8 @@ function onCallback5( pSock, myTarget )
 		var tempObj = myTarget.FindItemLayer(21);
 		if( tempObj == null )
 		{
-			var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
-			newPack.container = pUser;
+			var newPack = CreateDFNItem( pUser.socket, myTarget, "0x09b2", 1, "ITEM", false );
+			newPack.container = myTarget;
 			newPack.layer = 21;
 			newPack.weight = 0;
 		}
@@ -352,7 +352,7 @@ function onCallback5( pSock, myTarget )
 	}
 	else
 	{ //add backpack on ground
-		var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
+		var newPack = CreateDFNItem( pUser.socket, myTarget, "0x09b2", 1, "ITEM", false );
 		newPack.x = targX;
 		newPack.y = targY;
 		newPack.z = targZ;
@@ -373,22 +373,22 @@ function onCallback6( pSock, myTarget )
 		if( tempObj != null )
 		{
 			if( AddFromHex != "Yep" )
-				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", true );
+				var tempItem = CreateDFNItem( pUser.socket, myTarget, TempItemID, 1, "ITEM", true );
 			else
-				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", true );
+				var tempItem = CreateBlankItem( pSock, myTarget, 1, "#", Word1, 0x0, "ITEM", true );
 		}
 		else
 		{
 			pUser.SysMessage( GetDictionaryEntry( 8887, pSock.language )); // That character has no backpack! Backpack being added before new item...
-			var newPack = CreateDFNItem( pUser.socket, pUser, "0x09b2", 1, "ITEM", false );
-			newPack.container = pUser;
+			var newPack = CreateDFNItem( pUser.socket, myTarget, "0x09b2", 1, "ITEM", false );
+			newPack.container = myTarget;
 			newPack.layer = 21;
 			newPack.weight = 0;
 			newPack.maxItems = parseInt( GetServerSetting( "MAXPLAYERPACKITEMS" ));
 			if( AddFromHex != "Yep" )
-				var tempItem = CreateDFNItem( pUser.socket, pUser, TempItemID, 1, "ITEM", true );
+				var tempItem = CreateDFNItem( pUser.socket, myTarget, TempItemID, 1, "ITEM", true );
 			else
-				var tempItem = CreateBlankItem( pSock, pUser, 1, "#", Word1, 0x0, "ITEM", true );
+				var tempItem = CreateBlankItem( pSock, myTarget, 1, "#", Word1, 0x0, "ITEM", true );
 		}
 	}
 	else
