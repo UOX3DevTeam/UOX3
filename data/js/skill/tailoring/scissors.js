@@ -2,7 +2,7 @@
 // 24/07/2021 Xuri; xuri@uox3.org
 // This script contains all the default functions of the scissors,
 // from sheep-shearing to cloth cutting.
-var AOSEnabled = 1;
+var AOSEnabled = 0;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -20,7 +20,6 @@ function onUseChecked( pUser, iUsed )
 		}
 		else
 		{
-			pUser.TextMessage( pUser.isRunning );
 			socket.tempObj = iUsed;
 			socket.CustomTarget( 0, GetDictionaryEntry( 6029, socket.language )); // What do you want to use these scissors on?
 		}

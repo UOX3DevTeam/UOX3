@@ -369,10 +369,25 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( i->IsGuarded() )
 			petGuardAttack( ourChar, i, i );
 
-		std::string attackerName = getNpcDictName( ourChar );
-		std::string targetName = getNpcDictName( i );
+		// Send attacker message to all nearby players
+		SOCKLIST nearbyChars = FindNearbyPlayers( ourChar );
+		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		{
+			if( (*cIter) != nullptr )
+			{
+				// Valid socket found
+				CChar *witness = (*cIter)->CurrcharObj();
+				if( ValidateObject( witness ))
+				{
+					// Fetch names of attacker and target
+					std::string attackerName = getNpcDictName( ourChar, (*cIter) );
+					std::string targetName = getNpcDictName( i, (*cIter) );
 
-		ourChar->TextMessage( nullptr, 334, EMOTE, 1, attackerName.c_str(), targetName.c_str() );	// Attacker emotes "You see attacker attacking target" to all nearby
+					// Send a TextMessage visible only to the witness
+					ourChar->TextMessage( (*cIter), 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+				}
+			}
+		}
 
 		if( !i->IsNpc() )
 		{
@@ -446,16 +461,32 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	}
 	if( cAttack->DidAttackFirst() )
 	{
-		std::string attackerName = getNpcDictName( cAttack );
-		std::string targetName = getNpcDictName( cTarget );
+		// Send attacker message to all nearby players
+		SOCKLIST nearbyChars = FindNearbyPlayers( cAttack );
+		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		{
+			if( (*cIter) != nullptr )
+			{
+				// Valid socket found
+				CChar *witness = (*cIter)->CurrcharObj();
+				if( ValidateObject( witness ))
+				{
+					// Fetch names of attacker and target
+					std::string attackerName = getNpcDictName( cAttack, (*cIter) );
+					std::string targetName = getNpcDictName( cTarget, (*cIter) );
 
-		cAttack->TextMessage( nullptr, 334, EMOTE, 1, attackerName.c_str(), targetName.c_str() );  // NPC should emote "Source is attacking Target" to all nearby
+					// Send a TextMessage visible only to the witness
+					cAttack->TextMessage( (*cIter), 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+				}
+			}
+		}
+
 		if( !cTarget->IsNpc() )
 		{
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != nullptr )
 			{
-				attackerName = getNpcDictName( cAttack, iSock );
+				std::string attackerName = getNpcDictName( cAttack, iSock );
 				cTarget->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() );	// Target should get an emote only to his socket "Target is attacking you!"
 			}
 		}

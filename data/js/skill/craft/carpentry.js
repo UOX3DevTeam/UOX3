@@ -112,7 +112,7 @@ function onCallback2( pSock, ourObj )
 			return;
 		}
 
-		var itemDurabilityLossEnabled = GetServerSetting( "ItemDurabilityLoss" );
+		var itemDurabilityLossEnabled = GetServerSetting( "ItemRepairDurabilityLoss" );
 		var repairID = ourObj.id;
 		var ownerObj = GetPackOwner( ourObj, 0 );
 		if( ownerObj && mChar.serial == ownerObj.serial )

@@ -81,6 +81,7 @@ function onCallback0( socket, ourObj )
 		ourObj.murdercount = nVal;
 		okMsg( socket );
 		break;
+	case "HUE":
 	case "COLOR":
 	case "COLOUR":
 		ourObj.colour = nVal;

@@ -646,7 +646,7 @@ Z=2
 
 [LOCATION 140]
 {
-// Center
+// Vesper - Center
 X=2882
 Y=788
 Z=0
@@ -654,7 +654,7 @@ Z=0
 
 [LOCATION 141]
 {
-// Docks
+// Vesper - Docks
 X=3013
 Y=828
 Z=-3
@@ -662,7 +662,7 @@ Z=-3
 
 [LOCATION 142]
 {
-// North
+// Vesper - North
 X=2907
 Y=603
 Z=0
@@ -670,17 +670,25 @@ Z=0
 
 [LOCATION 143]
 {
-// East
-X=276
-Y=981
+// Vesper - East
+X=2981
+Y=876
 Z=0
 }
 
 [LOCATION 144]
 {
-// Grave Yard
+// Vesper - Grave Yard
 X=2786
 Y=867
+Z=0
+}
+
+[LOCATION 145]
+{
+// Vesper - West
+X=2760
+Y=981
 Z=0
 }
 

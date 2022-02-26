@@ -844,14 +844,14 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 								tempBuffer[4] = buffer[5];
 								tempBuffer[5] = buffer[6];
 								tempBuffer[6] = buffer[7];
-								size_t plNameLen = player->GetName().size();
-								strncpy( (char *)&tempBuffer[7], player->GetName().c_str(), 30 );
+								size_t plNameLen = player->GetNameRequest( mSock->CurrcharObj() ).size();
+								strncpy( (char *)&tempBuffer[7], player->GetNameRequest( mSock->CurrcharObj() ).c_str(), 30 );
 								size_t mj = 8 + plNameLen;
-								size_t plTitleLen = player->GetName().size() + 1;
+								size_t plTitleLen = player->GetNameRequest( mSock->CurrcharObj() ).size() + 1;
 								for( size_t k = 0; k < plTitleLen; ++k )
 								{
 									tempBuffer[mj++] = 0;
-									tempBuffer[mj++] = player->GetName().data()[k];
+									tempBuffer[mj++] = player->GetNameRequest( mSock->CurrcharObj() ).data()[k];
 								}
 								mj += 2;
 								ourMessage = "Test of Char Profile";

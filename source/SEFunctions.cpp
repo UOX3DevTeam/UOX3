@@ -22,6 +22,7 @@
 #include "cThreadQueue.h"
 #include "cHTMLSystem.h"
 #include "cServerDefinitions.h"
+#include "cVersionClass.h"
 #include "Dictionary.h"
 #include "speech.h"
 #include "gump.h"
@@ -4352,6 +4353,15 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 297:	 // HIDESTATSFORUNKNOWNMAGICITEMS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HideStatsForUnknownMagicItems() );
 				break;
+			case 298:	 // CRAFTCOLOUREDWEAPONS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CraftColouredWeapons() );
+				break;
+			case 299:	// MAXSAFETELEPORTSPERDAY
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->MaxSafeTeleportsPerDay() ) );
+				break;
+			case 300:	 // TELEPORTONEARESTSAFELOCATION
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->TeleportToNearestSafeLocation() );
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
@@ -4420,6 +4430,52 @@ JSBool SE_GetAccountCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 JSBool SE_GetPlayerCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	*rval = INT_TO_JSVAL( cwmWorldState->GetPlayersOnline() );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetItemCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of items on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetItemCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetMultiCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of multis on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetMultiCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( ObjectFactory::getSingleton().CountOfObjects( OT_MULTI ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetCharacterCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets number of characters on server
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetCharacterCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = INT_TO_JSVAL( ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool SE_GetServerVersionString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets server version as a string
+//o-----------------------------------------------------------------------------------------------o
+JSBool SE_GetServerVersionString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
+	JSString *tString = JS_NewStringCopyZ( cx, versionString.c_str() );
+	*rval = STRING_TO_JSVAL( tString );
 	return JS_TRUE;
 }
 

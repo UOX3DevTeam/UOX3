@@ -177,7 +177,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 74 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 76 >	boolVals;						// Many values stored this way, rather than using bools.
 	std::bitset< 64 >	spawnRegionsFacets;			// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
@@ -249,6 +249,7 @@ private:
 	UI08		maxPetOwners;					//	The default max amount of different owners a pet may have in its lifetime
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
+	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 
 	// SpeedUp
 	R64			checkitems;						//	How often (in seconds) items are checked for decay and other things
@@ -767,6 +768,9 @@ public:
 	void		HideStatsForUnknownMagicItems( bool value );
 	bool		HideStatsForUnknownMagicItems( void ) const;
 
+	void		CraftColouredWeapons( bool value );
+	bool		CraftColouredWeapons( void ) const;
+
 	void		MaxControlSlots( UI08 value );
 	UI08		MaxControlSlots( void ) const;
 
@@ -781,6 +785,12 @@ public:
 
 	void		SetPetLoyaltyLossOnFailure( UI16 value );
 	UI16		GetPetLoyaltyLossOnFailure( void ) const;
+
+	void		MaxSafeTeleportsPerDay( UI08 value );
+	UI08		MaxSafeTeleportsPerDay( void ) const;
+
+	void		TeleportToNearestSafeLocation( bool value );
+	bool		TeleportToNearestSafeLocation( void ) const;
 
 	void		HungerSystemEnabled( bool value );
 	bool		HungerSystemEnabled( void ) const;

@@ -1,3 +1,64 @@
+26/02/2022 - Xuri
+	Fixed a server crash caused by a couple of items in "stone walls 4" section of add-menu that were missing their ID in ItemMenu.bulk.dfn (thanks, Humility)
+	Fixed an issue where items added to house (multi) definition would not be attached to the house if their coordinates were not within the boundaries of the house. This prevented the usage of house foundation multis with custom stairs, for instance.
+
+26/02/2022 - Dragon Slayer
+	Added JS-based help menu accessible via character paperdoll, with modernized style and UI, ability for players to change their password
+	Minor cleanup and addition of a few extra features to help menu, like a safe teleport option for players who are potentially stuck, updated server info details and integration with UOX3's existing GM paging system as support options (Xuri)
+	Added new JS functions to retrieve server data used for server stats in help menu:
+		GetItemCount()				// Gets number of items on server
+		GetMultiCount() 			// Gets number of multis on server
+		GetCharacterCount()			// Gets number of characters on server
+		GetServerVersionString() 	// Gets server version as a string
+	Added new UOX.INI settings to control safe teleport for stuck players via the Help menu in Paperdoll:
+		MAXSAFETELEPORTSPERDAY=1 		// Max teleports per day, defaults to 1
+		TELEPORTNEARESTSAFELOC=1 		// Teleport player to nearest safe location (1) or random safe location (0)
+	Added 'res as an alias of 'resurrect command
+	Added alias names for items in misc_magic.dfn, potions.dfn, reagents.dfn and scrolls.dfn, to allow adding these items using 'add item bloodmoss, or 'add item lesserexplosionpotion
+
+26/02/2022 - punt
+	Added some error checking for sockets
+
+25/02/2022 - punt
+	Timing instrumentation added to allow obtaining information to aid in analyzing performance issues
+
+25/02/2022 - Xuri (0.99.5b-1)
+	Fixed an issue with monster speech script that prevented orcs, lizardmen, ratmen and wisps from taking damage in combat
+	Fixed an issue where the body ID for Shadow Lords (0x2c0) was missing the 0x prefix in its Creature DFN entry, causing UOX3 to overwrite the data (primarily sounds) for the Ettin (0x2) entry
+	Fixed an issue where the [longpants] definition (dfndata/items/gear/clothes/clothes.dfn) did use the get= tag correctly (Dragon Slayer)
+	Fixed an issue with the 'addpack command where it would try to add a pack/items to user of command instead of targeted character
+	Extended the .PlaceInPack() Item JS Method to support an optional boolean argument. If true, UOX3 will attempt to automatically stack the item in question with similar items in the item's current container. New syntax:
+		.PlaceInPack( autoStackFlag ) 	// autoStackFlag can be true/false
+	Reduced the default maxSteps properties of advanced NPC pathfinding to improve server performance. As a result, pathfinding calculations for NPCs that are out of combat will now take ~90% less time than before, though this still takes more time than is ideal. For NPCs in combat, the improvements are not as dramatic.
+
+13/02/2022 - Xuri (0.99.5b)
+	Fixed an issue where karma titles would inadvertently have the space behind the title trimmed before being displayed in paperdoll, resulting in erroneous display of title + name there
+	Fixed an issue with a cooking script (js/skill/cooking/cooking.js) where sweet dough would not get consumed properly on cooking (Dragon Slayer)
+	Updated C++ function calcRegionFromXY to work with CBaseObject instead of CChar, so it also works for Items
+	Items now have current town region stored as an object property during runtime. This is calculated on load, when container property is updated, and when an item is picked up or dropped. The region is also accessible via the (read-only) JS Item property .region
+	Added new JS Event to allow capturing button presses from the old-school gump displayed by client via packet 0x76, which was originally used by the old-school crafting menus in T2A. The requirement for this to work is that the gump in question must have a gumpID between 0x4000 and 0xffff (which can be set when manually creating a packet with this ID via JS), and the Event itself must be in the global script:
+		onScrollingGumpPress( pSock, gumpID, buttonID )
+	Added new JS Event to allow better control over which names UOX3 sends to the client for characters:
+		onNameRequest( myObj, requestedBy )	// return custom string, or return empty string/nothing/true/false to use default name
+	Updated JS Events to also work for Items (previously only worked for Characters)
+		onLightChange( myObj, lightLevel )
+		onTempChange( myObj, temp )
+		onWeatherChange( myObj, weatherType )
+	Adjusted default temperature for town regions with no weather systems defined from 0 to 20 degrees Celsius
+	Updated some JS scripts (fishing.js, baking.js and cooking.js) to make use of GetTempTag/SetTempTag rather than GetTag/SetTag
+	Added cancel-checks to targeting functions in command script for add-commands (js/commands/targeting/add.js)
+	Updated get command script (js/commands/targeting/get.js) to allow retrieving region ID and name using 'get region
+	Updated misc command script (js/commands/custom/misc-cmd.js) to add 'gettemptag and 'settemptag commands, used to retrieve/set temporary custom tags from/on objects
+	Fixed a bug where Spirit Speak skill would be checked for race languages even if the race had LANGUAGEMIN defined as 0 (or not defined at all)
+	Fixed an issue where players using regular UO client would get stuck in a black void after teleporting between worlds, by adding an additional character refresh after the teleport
+	Fixed an issue where crafting tools for Blacksmithing and Carpentry would attempt to fetch the value of an incorrectly named INI setting to handle durability loss for the tools
+	Added new setting under [settings] section of UOX.INI to control whether it should be possible to craft weapons from coloured ingots or not:
+		CRAFTCOLOUREDWEAPONS=0/1 	// If enabled(1), players can craft coloured weapons. Defaults to disabled(0)
+	Fixed an issue where the correct ingots were not consumed when attempting to craft items using colored ingots
+	Fixed a rogue debug message leftover in the scissor script
+	Missing the type to work with the hammer and tongs to use new menu (Dragon Slayer)
+	Added aliases for getting/setting colour via 'set hue # and 'get hue # (Dragon Slayer)
+
 30/01/2022 - Dragon Slayer, Xuri
 	Added speech scripts for Wisps, Orcs, Lizardmen and Ratmen (Dragon Slayer)
 	Merged monster speech scripts into one common script (Xuri)
