@@ -1,17 +1,7 @@
 // spawn.dfn
-// v2.0; 18/01/22; initial release / total overhaul; ??? / Lynxx; 
-// (add new version comments here, use format of above line please!)
-// For use with the UOX emulator or any with permission from the author
-//
-//======= credits of original version =========
-// UOX Script version 35
-// Cestle - cestle@uoxdev.com
-// Sephiroth - seanhogberg@hotmail.com
-// RevolutionShadow - Emac@Mindspring.com
-// Infinity - ?@?.?
-// Folci - wezzer@nauticom.net
-// Calvin - rolynyk@hotmail.com
-// Dragon Slayer - arthenson37#hotmail.com
+// v3.0; 25/01/2022; major overhaul and rewrite by Dragon Slayer - arthenson37#hotmail.com
+// v2.0; 10/06/2005; conversion to UOX3 with additions and changes / Grimson & Fresshness
+// v1.0; 04/08/2001; initial release for LoneWolf / Ripper;
 //=============================================
 //
 // [REGIONSPAWN 0]		// This is the where the region is defined
