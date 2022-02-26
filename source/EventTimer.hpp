@@ -11,7 +11,7 @@
 // This estabishs a timer, and state determins if on/off
 #define EVENT_TIMER(varname,state) \
 constexpr auto TIMER_##varname = state ; \
-auto varname = EventTimer()
+auto varname = EventTimer();
 
 #if !defined(EVENT_TIMER_ON)
 #define EVENT_TIMER_ON 1
