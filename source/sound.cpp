@@ -260,6 +260,10 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void cEffects::doSocketMusic( CSocket *s )
 {
+	// Return if the socket is not valid
+	if( s == nullptr )
+		return;
+
 	SI32 i = 0;
 	char musicArray[50];
 	std::string sect;
