@@ -1,3 +1,6 @@
+27/02/2022 - Xuri
+	Fixed a server crash related to attempting to play music for non-existent sockets
+
 26/02/2022 - Xuri
 	Fixed a server crash caused by a couple of items in "stone walls 4" section of add-menu that were missing their ID in ItemMenu.bulk.dfn (thanks, Humility)
 	Fixed an issue where items added to house (multi) definition would not be attached to the house if their coordinates were not within the boundaries of the house. This prevented the usage of house foundation multis with custom stairs, for instance.
