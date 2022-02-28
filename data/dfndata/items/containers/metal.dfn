@@ -30,6 +30,11 @@ maxitems=125
 }
 
 [strongbox]
+{
+get=0x0e80 0x09a8
+}
+
+[strongbox]
 { E (strong box used in player houses)
 get=0x0e80
 name=strongbox
@@ -37,6 +42,11 @@ id=0x0e80
 movable=2
 maxitems=25
 script=15005
+}
+
+[playerstrongbox]
+{
+get=0x0e80
 }
 
 [ballotbox-east]
@@ -53,6 +63,11 @@ get=0x0e80
 name=ballot box
 id=0x09a8
 movable=2
+}
+
+[ballotbox]
+{
+get=ballotbox-east ballotbox-south
 }
 
 [0x09ab]
@@ -85,6 +100,11 @@ good=6
 maxitems=125
 }
 
+[metalchest]
+{
+get=0x09ab 0x0e7c
+}
+
 [0x0e40]
 { E goldparts
 get=base_item
@@ -115,4 +135,7 @@ good=6
 maxitems=125
 }
 
-
+[goldmetalchest]
+{
+get=0x0e40 0x0e41
+}

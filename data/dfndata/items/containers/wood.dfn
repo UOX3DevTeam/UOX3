@@ -31,6 +31,11 @@ good=8
 maxitems=125
 }
 
+[smallcrate]
+{
+get=0x09a9 0x0e7e
+}
+
 [0x09aa]
 { S
 get=base_item
@@ -61,6 +66,11 @@ movable=1
 decay=1
 good=8
 maxitems=125
+}
+
+[woodenbox]
+{
+get=0x09aa 0x0e7d
 }
 
 [0x0a2c]
@@ -221,6 +231,11 @@ script=50
 script=61
 }
 
+[armoire]
+{
+get=0x0a4f 0x0a53
+}
+
 [0x0a4d]
 { S fancy
 get=base_item
@@ -255,6 +270,11 @@ good=8
 maxitems=125
 script=50
 script=61
+}
+
+[fancyarmoire]
+{
+get=0x0a4d 0x0a51
 }
 
 [0x0a97]
@@ -417,6 +437,11 @@ good=8
 maxitems=125
 }
 
+[largecrate]
+{
+get=0x0e3c 0x0e3d
+}
+
 [0x0e3e]
 { E medium
 get=base_item
@@ -447,6 +472,11 @@ movable=1
 decay=1
 good=8
 maxitems=125
+}
+
+[mediumcrate]
+{
+get=0x0e3e 0x0e3f
 }
 
 [0x0e42]
@@ -481,4 +511,8 @@ good=8
 maxitems=125
 }
 
+[woodenchest]
+{
+get=0x0e42 0x0E43
+}
 
