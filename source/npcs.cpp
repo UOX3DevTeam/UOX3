@@ -1521,7 +1521,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					customTag.m_ObjectType = TAGMAP_TYPE_INT;
 					customTag.m_StringValue = "";
 					applyTo->SetTag( customTagName, customTag );
-					if( count > 1 )
+					if( count > 2 )
 					{
 						Console.warning( strutil::format( "Multiple values detected for CUSTOMINTTAG in NPC script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionID.c_str() ) );
 					}
