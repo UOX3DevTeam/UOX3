@@ -15,6 +15,11 @@ good=7
 maxitems=125
 }
 
+[roundbasket]
+{
+get=0x0990
+}
+
 [0x0e77]
 {
 get=base_item
@@ -29,6 +34,11 @@ movable=1
 decay=1
 good=7
 maxitems=125
+}
+
+[barrel]
+{
+get=0x0e77
 }
 
 [0x0e7f]
@@ -47,6 +57,11 @@ good=7
 maxitems=125
 }
 
+[keg]
+{
+get=0x0e7f
+}
+
 [0x0e83]
 {
 get=base_item
@@ -63,6 +78,11 @@ good=7
 maxitems=125
 }
 
+[emptytub]
+{
+get=0x0e83
+}
+
 [0x09ac]
 {
 get=base_item
@@ -77,6 +97,11 @@ movable=1
 decay=1
 good=7
 maxitems=125
+}
+
+[bushel]
+{
+get=0x09ac
 }
 
 [trash_barrel]
