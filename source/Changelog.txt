@@ -1,3 +1,22 @@
+28/02/2022 - Xuri
+	Updated UOX.INI setting NETWORKLOG to actually control logging of network traffic for all connected clients, without needing each socket to have logging enabled via the manual console command 'Z'. This console command can still be used, however, to override a disabled INI setting and enable network traffic logging for connected clients.
+	Updated 'get and 'set commands to support getting/setting a range of socket properties for a targeted (online) player:
+		tempInt 			// int (temporary value)
+		tempInt2 			// int (temporary value)
+		xText 				// string (temporary string)
+		clickX 				// int (x coordinate of where player clicked with targeting cursor)
+		clickY 				// int (y coordinate of where player clicked with targeting cursor)
+		clickZ 				// int (z coordinate of where player clicked with targeting cursor)
+		walkSequence 		// int (movement sequence number, between 0 and 255)
+		currentSpellType 	// int (current spell being cast by a player)
+		logging 			// bool (enable to override disabled NETWORKLOG setting)
+		pickupX 			// int (x coordinate of where player picked up an item from)
+		pickupY 			// int (y coordinate of where player picked up an item from)
+		pickupZ 			// int (z coordinate of where player picked up an item from)
+		pickupSpot 			// int (0 = nowhere, 1 = ground, 2 = ownpack, 3 = otherpack, 4 = paperdoll, 5 = bank)
+		language 			// string (language code)
+	Fixed an issue where CUSTOMINTTAG in NPC DFNs would not get read properly, but would instead print an (incorrect) warning about how the tag was formatted
+
 27/02/2022 - Xuri
 	Fixed a server crash related to attempting to play music for non-existent sockets
 

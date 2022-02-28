@@ -748,7 +748,7 @@ bool CSocket::FlushBuffer( bool doLog )
 				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 744" << std::endl;
 			}
 		}
-		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
+		if(( cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
@@ -803,7 +803,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 796" << std::endl;
 			}
 		}
-		if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() && doLog )
+		if(( cwmWorldState->ServerData()->ServerNetworkLog() || Logging()) && doLog )
 		{
 			SERIAL toPrint;
 			if( !ValidateObject( currCharObj ) )
@@ -984,7 +984,7 @@ void CSocket::FlushIncoming( void )
 //o-----------------------------------------------------------------------------------------------o
 void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 {
-	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() || Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )
@@ -1512,7 +1512,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 
 	bytesSent += len;
 
-	if( cwmWorldState->ServerData()->ServerNetworkLog() && Logging() )
+	if( cwmWorldState->ServerData()->ServerNetworkLog() || Logging() )
 	{
 		SERIAL toPrint;
 		if( !ValidateObject( currCharObj ) )
