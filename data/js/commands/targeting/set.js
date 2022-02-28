@@ -819,10 +819,65 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 	default:
 		if( ourChar.SetSkillByName( uKey, nVal ) )
 			okMsg( socket );
+		else if( HandleSetSocket( socket, uKey, splitString ))
+			okMsg( socket );
 		else
 			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 		break;
 	}
+}
+
+function HandleSetSocket( socket, uKey, splitString )
+{
+	var nVal 	= parseInt( splitString[1] );
+
+	switch( uKey )
+	{
+		case "TEMPINT":
+			socket.tempInt = parseInt(nVal);
+			break;
+		case "TEMPINT2":
+			socket.tempInt2 = parseInt(nVal);
+			break;
+		case "XTEXT":
+			socket.xText = nVal;
+			break;
+		case "CLICKX":
+			socket.clickX = parseInt(nVal);
+			break;
+		case "CLICKY":
+			socket.clickY = parseInt(nVal);
+			break;
+		case "CLICKZ":
+			socket.clickZ = parseInt(nVal);
+			break;
+		case "WALKSEQUENCE":
+			socket.walkSequence = parseInt(nVal);
+			break;
+		case "CURRENTSPELLTYPE":
+			socket.currentSpellType = parseInt(nVal);
+			break;
+		case "LOGGING":
+			socket.logging = parseInt(nVal);
+			break;
+		case "PICKUPX":
+			socket.pickupX = parseInt(nVal);
+			break;
+		case "PICKUPY":
+			socket.pickupY = parseInt(nVal);
+			break;
+		case "PICKUPZ":
+			socket.pickupZ = parseInt(nVal);
+			break;
+		case "PICKUPSPOT":
+			socket.pickupSpot = parseInt(nVal);
+			break;
+		default:
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
+			return false;
+	}
+
+	return true;
 }
 
 function onCallback1( socket, ourObj )

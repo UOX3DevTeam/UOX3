@@ -67,6 +67,9 @@ function onCallback0( socket, ourObj )
 	case "MANA":
 		socket.SysMessage( ourObj.mana );
 		break;
+	case "MULTI":
+		socket.SysMessage( ourObj.multi );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
 			socket.SysMessage( ourObj.owner.serial + " - " + ourObj.owner.name );
@@ -808,8 +811,59 @@ function HandleGetChar( socket, ourChar, uKey )
 		}
 		break;
 	default:
-		socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+		if( !HandleGetSocket( socket, uKey ))
+			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
 		break;
 	}
 }
 
+function HandleGetSocket( socket, uKey )
+{
+	switch( uKey )
+	{
+		case "TEMPINT":
+			socket.SysMessage( socket.tempInt );
+			break;
+		case "TEMPINT2":
+			socket.SysMessage( socket.tempInt2 );
+			break;
+		case "XTEXT":
+			socket.SysMessage( socket.xText );
+			break;
+		case "CLICKX":
+			socket.SysMessage( socket.clickX );
+			break;
+		case "CLICKY":
+			socket.SysMessage( socket.clickY );
+			break;
+		case "CLICKZ":
+			socket.SysMessage( socket.clickZ );
+			break;
+		case "WALKSEQUENCE":
+			socket.SysMessage( socket.walkSequence );
+			break;
+		case "CURRENTSPELLTYPE":
+			socket.SysMessage( socket.currentSpellType );
+			break;
+		case "LOGGING":
+			socket.SysMessage( socket.logging );
+			break;
+		case "PICKUPX":
+			socket.SysMessage( socket.pickupX );
+			break;
+		case "PICKUPY":
+			socket.SysMessage( socket.pickupY );
+			break;
+		case "PICKUPZ":
+			socket.SysMessage( socket.pickupZ );
+			break;
+		case "PICKUPSPOT":
+			socket.SysMessage( socket.pickupSpot );
+			break;
+		default:
+			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+			break;
+	}
+
+	return true;
+}
