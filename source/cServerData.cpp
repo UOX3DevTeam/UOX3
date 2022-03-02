@@ -93,6 +93,7 @@ const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
 const UI32 BIT_HIDESTATSFORUNKNOWNMAGICITEMS = 73;
 const UI32 BIT_CRAFTCOLOUREDWEAPONS			= 74;
 const UI32 BIT_TELEPORTTONEARESTSAFELOC		= 75;
+const UI32 BIT_ALLOWAWAKENPCS				= 76;
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -466,6 +467,7 @@ void	CServerData::regAllINIValues() {
 	regINIValue("CRAFTCOLOUREDWEAPONS", 298);
 	regINIValue("MAXSAFETELEPORTSPERDAY", 299);
 	regINIValue("TELEPORTTONEARESTSAFELOCATION", 300);
+	regINIValue("ALLOWAWAKENPCS", 301);
 }
 //+++++++++++++++++++++++++++++++++++++++++++++++
 void	CServerData::regINIValue(const std::string& tag, std::int32_t value){
@@ -676,6 +678,7 @@ void CServerData::ResetDefaults( void )
 	CraftColouredWeapons( false );
 	MaxSafeTeleportsPerDay( 1 );
 	TeleportToNearestSafeLocation( false );
+	AllowAwakeNPCs( false );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -2917,6 +2920,22 @@ void CServerData::TeleportToNearestSafeLocation( bool newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool AllowAwakeNPCs( void ) const
+//|					void AllowAwakeNPCs( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the feature that allows permanently awake NPCs (ones marked
+//|					as such) is enabled or not
+//o-----------------------------------------------------------------------------------------------o
+bool CServerData::AllowAwakeNPCs( void ) const
+{
+	return boolVals.test( BIT_ALLOWAWAKENPCS );
+}
+void CServerData::AllowAwakeNPCs( bool newVal )
+{
+	boolVals.set( BIT_ALLOWAWAKENPCS, newVal );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ToolUseLimit( void ) const
 //|					void ToolUseLimit( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
@@ -3883,6 +3902,7 @@ bool CServerData::save( std::string filename )
 		ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
 		ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<UI16>(MaxSafeTeleportsPerDay()) << '\n';
 		ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation()?1:0) << '\n';
+		ofsOutput << "ALLOWAWAKENPCS=" << (AllowAwakeNPCs()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -5122,7 +5142,10 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 300:    // TELEPORTONEARESTSAFELOCATION
 			TeleportToNearestSafeLocation( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
-		default:
+		case 301:    // ALLOWAWAKENPCS
+			AllowAwakeNPCs( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			break;
+		break;		default:
 			rvalue = false;
 			break;
 	}

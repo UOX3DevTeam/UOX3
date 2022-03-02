@@ -1808,6 +1808,7 @@ void CWorldMain::CheckAutoTimers( void )
 		doRestock = true;
 	}
 
+	bool allowAwakeNPCs = cwmWorldState->ServerData()->AllowAwakeNPCs();
 	std::set< CMapRegion * >::const_iterator tcCheck = regionList.begin();
 	while( tcCheck != regionList.end() )
 	{
@@ -1820,6 +1821,10 @@ void CWorldMain::CheckAutoTimers( void )
 				continue;
 			if( charCheck->IsNpc() )
 			{
+				if( charCheck->IsAwake() && allowAwakeNPCs )
+					continue;
+
+				// Only perform these checks on NPCs that are not permanently awake
 				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) )
 				{
 					if( setNPCFlags )
@@ -1852,6 +1857,29 @@ void CWorldMain::CheckAutoTimers( void )
 
 		checkItem( toCheck, checkItems, nextDecayItems, nextDecayItemsInHouses, doWeather );
 		++tcCheck;
+	}
+
+	// Check NPCs marked as always active, regardless of whether their region is "awake"
+	if( allowAwakeNPCs )
+	{
+		GenericList< CChar * > *alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+		alwaysAwakeChars->Push();
+		for( CChar *charCheck = alwaysAwakeChars->First(); !alwaysAwakeChars->Finished(); charCheck = alwaysAwakeChars->Next() )
+		{
+			if( !ValidateObject( charCheck ) || charCheck->isFree() || !charCheck->IsNpc() )
+			{
+				alwaysAwakeChars->Remove( charCheck );
+				continue;
+			}
+
+			if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) )
+			{
+				if( setNPCFlags )
+					UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
+				checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
+			}
+		}
+		alwaysAwakeChars->Pop();
 	}
 
 	Effects->checktempeffects();

@@ -18,7 +18,17 @@
 #include "ObjectFactory.h"
 
 cCharStuff *Npcs = nullptr;
+GenericList< CChar * >	alwaysAwakeNPCs;
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	GenericList< CChar * > * GetAlwaysAwakeNPCs( void )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns list of NPCs that are always awake
+//o-----------------------------------------------------------------------------------------------o
+GenericList< CChar * > * cCharStuff::GetAlwaysAwakeNPCs( void )
+{
+	return &alwaysAwakeNPCs;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CItem *addRandomLoot( CItem *s, std::string lootlist )
@@ -669,6 +679,10 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				}
 				else
 					Console.warning( strutil::format("Invalid data found in ATT/DAMAGE tag inside NPC script [%s]", sectionID.c_str() ));
+				break;
+			case DFNTAG_AWAKE:				
+				if( !isGate )
+					applyTo->SetAwake(ndata != 0);
 				break;
 			case DFNTAG_BACKPACK:
 				if( !isGate )

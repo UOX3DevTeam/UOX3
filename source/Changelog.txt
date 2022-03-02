@@ -1,3 +1,16 @@
+02/03/2022 - Xuri (0.99.5b-2)
+	Added a new feature that allows shard admins/scripters to mark specific NPCs as "permanently awake", in order to keep UOX3 running scripts, timers and updates for these NPCs even if they are in regions that are "asleep" because of no nearby online players.
+		A new UOX.INI setting has been added which can turn this feature on/off:
+			ALLOWAWAKENPCS=0/1 	// If disabled, NPCs marked as awake are treated as regular NPCs
+		New NPC DFN tag added to mark an NPC as awake or not:
+			AWAKE=0/1 		// 0 = disabled (default), 1 = enabled
+		New Character JS Property added to toggle an NPC's awake state via JS:
+			.isAwake 		// 0 = disabled (default), 1 = enabled
+		'get and 'set commands updated with the new awake property:
+			'get awake
+			'set awake 0/1
+	IP of shard in shard list is now sent to client in little endian instead of big endian, which should correct the ping displayed in shard list, which previously showed a timeout (punt)
+
 28/02/2022 - Xuri
 	Updated UOX.INI setting NETWORKLOG to actually control logging of network traffic for all connected clients, without needing each socket to have logging enabled via the manual console command 'Z'. This console command can still be used, however, to override a disabled INI setting and enable network traffic logging for connected clients.
 	Updated 'get and 'set commands to support getting/setting a range of socket properties for a targeted (online) player:
