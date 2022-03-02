@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 12. February, 2022</small></p>
+	<p style="margin:0"><small>Last Updated: 02. March, 2022</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
 </div>
 
@@ -1430,6 +1430,18 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">CRAFTCOLOUREDWEAPONS</span><strong>=0</strong><br>
 							If enabled, players can craft coloured weapons using coloured ingots with the Blacksmithing skill. Disabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXSAFETELEPORTSPERDAY</span><strong>=1</strong><br>
+							Defines the maximum amount of safe teleports players can use per day via the Help > Stuck menu, after which they'll need to rely on GM pages to get unstuck. Set to 1 by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">TELEPORTTONEARESTSAFELOCATION</span><strong>=0</strong><br>
+							If enabled, players will always be teleported to their nearest safe location (town, or shrine). If disabled, they will be teleported to a random safe location within their current facet. Disabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=0</strong><br>
+							If enabled, NPCs marked as awake will be checked by server (AI, timers, updates) regardless of whether the region they are in is inactive because of no nearby online players. If disabled, those NPCs are treated like any other NPCs. Disabled by default.</p>
 						</div>
 					</div>
 
@@ -6308,6 +6320,11 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">armslore</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
 							Set Arms Lore skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">awake</span>=<strong>[0/1]</strong><br>
+							Marks the NPC as permanently awake, which when combined with the ALLOWAWAKENPCS setting from UOX.INI being enabled, will have UOX3 always check on this NPC regardless of whether the region it is in is inactive due to no nearby online players
+							</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">backpack</span><br>
