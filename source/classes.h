@@ -98,6 +98,7 @@ public:
 	CChar *		getGuardingPet( CChar *mChar, CBaseObject *guarded );
 	bool		checkPetFriend( CChar *mChar, CChar *pet );
 	void		stopPetGuarding( CChar *pet );
+	GenericList< CChar * > *	GetAlwaysAwakeNPCs( void );
 };
 
 extern cItem *Items;

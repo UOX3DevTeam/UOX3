@@ -1502,6 +1502,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_DEAD:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsDead() );		break;
 			case CCP_NPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNpc() );		break;
+			case CCP_AWAKE:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsAwake() );		break;
 			case CCP_ONLINE:		*vp = BOOLEAN_TO_JSVAL( isOnline( (*gPriv) ) );	break;
 			case CCP_DIRECTION:		*vp = INT_TO_JSVAL( gPriv->GetDir() );			break;
 				// 3  objects: regions + towns + guilds
@@ -1970,6 +1971,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			case CCP_NPC:			gPriv->SetNpc( encaps.toBool() );					break;
+			case CCP_AWAKE:			gPriv->SetAwake( encaps.toBool() );					break;
 			case CCP_DIRECTION:		gPriv->SetDir( (UI08)encaps.toInt() );				break;
 			case CCP_REGION:		gPriv->SetRegion( (UI16)encaps.toInt() );			break;
 			case CCP_TOWN:

@@ -116,6 +116,7 @@ const UI32 BIT_HIRELING			=	32;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
+const UI32 BIT_AWAKE			=   2;
 
 // Player defaults
 
@@ -206,6 +207,10 @@ loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS )
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
 	foodList.reserve( MAX_NAME );
+
+	// Mark all characters as "non-awake" my default. This is used by UOX3 to see which
+	// NPCs are permanently awake and need updating outside of region-based checks
+	boolFlags.set( BIT_AWAKE, false );
 }
 
 const UI32			DEFCHAR_BOOLS 				= 0;
@@ -912,6 +917,40 @@ void CChar::SetNpc( bool newVal )
 {
 	bools.set( BIT_NPC, newVal );
 	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsAwake( void ) const
+//|					void SetAwake( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns/Sets whether the character (NPC) is permanently awake and updating outside
+//|					standard region-checks. If set, these NPCs are not updated as part of the 
+//|					regular region update loop, but in a separate loop directly after
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::IsAwake( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+		rVal = mNPC->boolFlags.test( BIT_AWAKE );
+	return rVal;
+}
+void CChar::SetAwake( bool newVal )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->boolFlags.set( BIT_AWAKE, newVal );
+		GenericList< CChar * > *alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+		if( newVal )
+		{
+			// NPC awake, add to awake list
+			alwaysAwakeChars->Add( this );
+		}
+		else
+		{
+			// NPC not awake, remove from awake list
+			alwaysAwakeChars->Remove( this );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2998,6 +3037,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "MaxLoyalty=" << static_cast<UI16>(maxLoyalty) << '\n';
 	outStream << "Loyalty=" << static_cast<UI16>(loyalty) << '\n';
 	outStream << "Orneriness=" << static_cast<UI16>(orneriness) << '\n';
+	outStream << "Awake=" << static_cast<SI16>(boolFlags.test( BIT_AWAKE )?1:0) << '\n';
 
 	// Loop through list of previous owners for pet and store a reference to each of those
 	for( CChar *tempChar = petOwnerList.First(); !petOwnerList.Finished(); tempChar = petOwnerList.Next() )
@@ -3616,6 +3656,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				else if( UTag == "ALLMOVE" )
 				{
 					SetAllMove( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "AWAKE" )
+				{
+					SetAwake( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;

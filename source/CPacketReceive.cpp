@@ -346,7 +346,7 @@ bool CPIFirstLogin::Handle( void )
 		auto address = IP4Address::respond( tSock->ipaddress );
 		
 		CPGameServerList toSend(1);
-		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.bigEndian() );
+		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.littleEndian() );
 		tSock->Send( &toSend );
 	}
 	// If socket's ClientType is still CV_DEFAULT, it's an old client,

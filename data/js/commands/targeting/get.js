@@ -457,6 +457,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "HUNGERRATE":
 		socket.SysMessage( ourChar.hungerRate );
 		break;
+	case "AWAKE":
+		socket.SysMessage( ourChar.isAwake );
+		break;
 	case "LANGUAGE":
 		if( !ourChar.npc );
 		{

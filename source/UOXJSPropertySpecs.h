@@ -279,6 +279,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM },
 	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO  },
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM },
+	{ "isAwake",		CCP_AWAKE,			JSPROP_ENUMANDPERM },
 	{ "online",			CCP_ONLINE,			JSPROP_ENUMPERMRO  },
 	{ "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM },
 	{ "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM },
