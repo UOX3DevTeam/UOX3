@@ -460,11 +460,11 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	CSocket *sock	= src->GetSocket();
 	std::string addItem = toMake->addItem;
 	UI16 amount		= 1;
-	auto csecs = strutil::sections( addItem, "," );
+	auto csecs = oldstrutil::sections( addItem, "," );
 	if( csecs.size() > 1 )
 	{
-		amount		= strutil::value<std::uint16_t>(strutil::extractSection(addItem, ",", 1, 1 ));
-		addItem		= strutil::extractSection(addItem, ",", 0, 0 );
+		amount		= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(addItem, ",", 1, 1 ));
+		addItem		= oldstrutil::extractSection(addItem, ",", 0, 0 );
 	}
 
 	UI16 iColour = 0;
@@ -483,7 +483,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
 	if( targItem == nullptr )
 	{
-		Console.error( strutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
+		Console.error( oldstrutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
 		return;
 	}
 	else
@@ -686,7 +686,7 @@ void cEffects::checktempeffects( void )
 				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
 				{
 					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					std::string mTemp = strutil::number( Effect->More3() );
+					std::string mTemp = oldstrutil::number( Effect->More3() );
 					if( tSock != nullptr )
 					{
 						tSock->sysmessage( mTemp.c_str() );
@@ -935,7 +935,7 @@ void cEffects::checktempeffects( void )
 				src->SetID( 0xCF ); // Thats all we need to do
 				break;
 			default:
-				Console.error( strutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
+				Console.error( oldstrutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 				break;
 		}
 		if( validChar && equipCheckNeeded )
@@ -1469,7 +1469,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( (R32)(more1) ) );
 			break;
 		default:
-			Console.error( strutil::format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+			Console.error( oldstrutil::format(" Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
 			delete toAdd;
 			return;
 	}
@@ -1551,7 +1551,7 @@ void cEffects::SaveEffects( void )
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.error( strutil::format("Failed to open %s for writing", filename.c_str()) );
+		Console.error( oldstrutil::format("Failed to open %s for writing", filename.c_str()) );
 		return;
 	}
 
@@ -1570,7 +1570,7 @@ void cEffects::SaveEffects( void )
 	Console.PrintDone();
 
 	SI32 e_t = getclock();
-	Console.print( strutil::format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
+	Console.print( oldstrutil::format("Effects saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f) );
 }
 
 void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
@@ -1602,8 +1602,8 @@ void cEffects::LoadEffects( void )
 			input.getline(line, 1023);
 			line[input.gcount()] = 0;
 			std::string sLine(line);
-			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
-			auto usLine = strutil::upper( sLine );
+			sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+			auto usLine = oldstrutil::upper( sLine );
 			
 			if( !sLine.empty() )
 			{
@@ -1615,27 +1615,27 @@ void cEffects::LoadEffects( void )
 						ReadWorldTagData( input, tag, data );
 						if( tag != "o---o" )
 						{
-							UTag = strutil::upper( tag );
+							UTag = oldstrutil::upper( tag );
 							switch( (UTag.data()[0]) )
 							{
 								case 'A':
 									if( UTag == "ASSOCSCRIPT" )
-										toLoad->AssocScript( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+										toLoad->AssocScript( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									break;
 								case 'D':
 									if( UTag == "DEST" )
-										toLoad->Destination( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+										toLoad->Destination( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									if( UTag == "DISPEL" )
-										toLoad->Dispellable((( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 0 ) ? false : true ));
+										toLoad->Dispellable((( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 0 ) ? false : true ));
 									break;
 								case 'E':
 									if( UTag == "EXPIRE" )
-										toLoad->ExpireTime( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
+										toLoad->ExpireTime( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) + cwmWorldState->GetUICurrentTime() );
 									break;
 								case 'I':
 									if( UTag == "ITEMPTR" )
 									{
-										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+										SERIAL objSer = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1649,20 +1649,20 @@ void cEffects::LoadEffects( void )
 									break;
 								case 'M':
 									if( UTag == "MORE1" )
-										toLoad->More1( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
+										toLoad->More1( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									if( UTag == "MORE2" )
-										toLoad->More2( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
+										toLoad->More2( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									if( UTag == "MORE3" )
-										toLoad->More3( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr, 0)) );
+										toLoad->More3( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )),nullptr, 0)) );
 									break;
 								case 'N':
 									if( UTag == "NUMBER" )
-										toLoad->Number( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
+										toLoad->Number( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)));
 									break;
 								case 'O':
 									if( UTag == "OBJPTR" )
 									{
-										SERIAL objSer = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+										SERIAL objSer = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
 										if( objSer != INVALIDSERIAL )
 										{
 											if( objSer < BASEITEMSERIAL )
@@ -1676,10 +1676,10 @@ void cEffects::LoadEffects( void )
 									break;
 								case 'S':
 									if( UTag == "SOURCE" )
-										toLoad->Source( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+										toLoad->Source( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 									break;
 								default:
-									Console.error( strutil::format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
+									Console.error( oldstrutil::format("Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str()) );
 									break;
 							}
 						}

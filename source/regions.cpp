@@ -339,7 +339,7 @@ void CMapWorld::LoadResources( UI08 worldNum )
 	const UI32 oreTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResOreTime()) );
 	const UI32 logTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResLogTime()) );
 	const UI32 fishTime				= BuildTimeValue( static_cast<R32>(cwmWorldState->ServerData()->ResFishTime()) );
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + strutil::number( worldNum ) + std::string("].bin");
+	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + oldstrutil::number( worldNum ) + std::string("].bin");
 
 	char rBuffer[2];
 	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
@@ -429,7 +429,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) || !curCell->GetItemList()->Remove( nItem ) )
 		{
 #if DEBUG_REGIONS
-			Console.warning( strutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+			Console.warning( oldstrutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
 		else
@@ -448,7 +448,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.warning( strutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+			Console.warning( oldstrutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		}
 	}
@@ -474,7 +474,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nChar->GetSerial() ) || !curCell->GetCharList()->Remove( nChar ) )
 		{
 #if DEBUG_REGIONS
-			Console.warning( strutil::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
+			Console.warning( oldstrutil::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
 		else
@@ -493,7 +493,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.warning( strutil::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
+			Console.warning( oldstrutil::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
 #endif
 		}
 	}
@@ -522,7 +522,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.warning( strutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+		Console.warning( oldstrutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 	}
 	return false;
@@ -548,7 +548,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.warning( strutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+		Console.warning( oldstrutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		return false;
 	}
@@ -577,7 +577,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.warning( strutil::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
+		Console.warning( oldstrutil::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
 #endif
 	}
 	return false;
@@ -603,7 +603,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.warning( strutil::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
+		Console.warning( oldstrutil::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
 #endif
 		return false;
 	}
@@ -761,7 +761,7 @@ void CMapHandler::Save( void )
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
 			const SI32 baseY	= counter2 * 8;								// calculate x grid offset
-			filename	= basePath + strutil::number( counter1 ) + std::string(".") + strutil::number( counter2 ) + std::string(".wsc");	// let's name our file
+			filename	= basePath + oldstrutil::number( counter1 ) + std::string(".") + oldstrutil::number( counter2 ) + std::string(".wsc");	// let's name our file
 
 			bool changesDetected = false;
 			for( UI08 xCnt = 0; !changesDetected && xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
@@ -791,7 +791,7 @@ void CMapHandler::Save( void )
 
 			if( !writeDestination )
 			{
-				Console.error( strutil::format("Failed to open %s for writing", filename.c_str()) );
+				Console.error( oldstrutil::format("Failed to open %s for writing", filename.c_str()) );
 				continue;
 			}
 
@@ -838,7 +838,7 @@ void CMapHandler::Save( void )
 	}
 	else
 	{
-		Console.error( strutil::format("Failed to open %s for writing", filename.c_str()) );
+		Console.error( oldstrutil::format("Failed to open %s for writing", filename.c_str()) );
 		return;
 	}
 
@@ -846,7 +846,7 @@ void CMapHandler::Save( void )
 	Console.PrintDone();
 
 	const UI32 e_t = getclock();
-	Console.print( strutil::format("World saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f ));
+	Console.print( oldstrutil::format("World saved in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f ));
 
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -891,7 +891,7 @@ void CMapHandler::Load( void )
 	{
 		for( SI16 cy = 0; cy < AreaY; ++cy )
 		{
-			filename			= basePath + strutil::number( cx ) + std::string(".") + strutil::number( cy ) + std::string(".wsc");	// let's name our file
+			filename			= basePath + oldstrutil::number( cx ) + std::string(".") + oldstrutil::number( cy ) + std::string(".wsc");	// let's name our file
 			fileSizes[cx][cy]	= FileSize( filename );
 			runningCount		+= fileSizes[cx][cy];
 		}
@@ -905,7 +905,7 @@ void CMapHandler::Load( void )
 	{
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
-			filename	= basePath + strutil::number( counter1 ) + std::string(".") + strutil::number( counter2 ) + std::string(".wsc");	// let's name our file
+			filename	= basePath + oldstrutil::number( counter1 ) + std::string(".") + oldstrutil::number( counter2 ) + std::string(".wsc");	// let's name our file
 			readDestination.open( filename.c_str());					// let's open it
 			readDestination.seekg( 0, std::ios::beg );
 
@@ -955,7 +955,7 @@ void CMapHandler::Load( void )
 	houseDestination.close();
 
 	UI32 e_t	= getclock();
-	Console.print( strutil::format("ASCII world loaded in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f ));
+	Console.print( oldstrutil::format("ASCII world loaded in %.02fsec\n", ((R32)(e_t-s_t))/1000.0f ));
 
 	UI08 i		= 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -984,12 +984,12 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 		readDestination.getline(line, 1023);
 		line[readDestination.gcount()] = 0;
 		std::string sLine(line);
-		sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
+		sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
 
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );
-			sLine = strutil::upper( strutil::trim( strutil::removeTrailing( sLine, "//" )));
+			sLine = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" )));
 			if( sLine == "CHARACTER" )
 				LoadChar( readDestination );
 			else if( sLine == "ITEM" )

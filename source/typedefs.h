@@ -14,7 +14,7 @@ typedef void *  va_list;
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
-Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
+Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else

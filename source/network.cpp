@@ -91,7 +91,7 @@ void cNetworkStuff::Disconnect( UOXSOCKET s )
 		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 		{
 
-			sysBroadcast( strutil::format(1024, Dictionary->GetEntry( 752 ), currChar->GetName().c_str() ) );//message upon leaving a server
+			sysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry( 752 ), currChar->GetName().c_str() ) );//message upon leaving a server
 		}
 	}
 	if( connClients[s]->AcctNo() != AB_INVALID_ID )
@@ -264,7 +264,7 @@ void cNetworkStuff::sockInit( void )
 	{
 		Console.error( " Unable to create socket");
 #if PLATFORM == WINDOWS
-		Console.error( strutil::format(" Code %i", WSAGetLastError()) );
+		Console.error( oldstrutil::format(" Code %i", WSAGetLastError()) );
 #else
 		Console << myendl;
 #endif
@@ -287,7 +287,7 @@ void cNetworkStuff::sockInit( void )
 
 	if( bcode < 0 )
 	{
-		Console.error( strutil::format(" Unable to bind socket 1 - Error code: %i", bcode) );
+		Console.error( oldstrutil::format(" Unable to bind socket 1 - Error code: %i", bcode) );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
@@ -392,14 +392,14 @@ void cNetworkStuff::CheckConn( void )
 		if( IsFirewallBlocked( part ) )
 		{
 
-			messageLoop << strutil::format( "FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!", part[0], part[1], part[2], part[3] );
+			messageLoop << oldstrutil::format( "FIREWALL: Blocking address %i.%i.%i.%i --> Blocked!", part[0], part[1], part[2], part[3] );
 			closesocket( static_cast<UOXSOCKET>(newClient) );
 			delete toMake;
 			return;
 		}
 		//Firewall-messages are really only needed when firewall blocks, not when it lets someone through. Leads to information overload in console. Commenting out.
 
-		messageLoop << strutil::format( "Client %zu [%i.%i.%i.%i] connected [Total:%lu]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
+		messageLoop << oldstrutil::format( "Client %zu [%i.%i.%i.%i] connected [Total:%lu]", cwmWorldState->GetPlayersOnline(), part[0], part[1], part[2], part[3], cwmWorldState->GetPlayersOnline() + 1 );
 		loggedInClients.push_back( toMake );
 		toMake->ClientIP( client_addr.sin_addr.s_addr );
 		return;
@@ -559,7 +559,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 			total -= mi * 60;
 			se = total;
 
-			auto uoxmonitor = strutil::format( "UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
+			auto uoxmonitor = oldstrutil::format( "UOX LoginServer\r\nUOX3 Server: up for %ih %im %is\r\n", ho, mi, se );
 			mSock->Send( uoxmonitor.c_str(), static_cast<SI32>(uoxmonitor.size()) );
 			mSock->NewClient( false );
 		}
@@ -592,7 +592,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 				return;
 			}
 #if _DEBUG_PACKET
-			Console.print( strutil::format( "Packet ID: 0x%x\n", packetID ));
+			Console.print( oldstrutil::format( "Packet ID: 0x%x\n", packetID ));
 #endif
 			if( packetID != 0x73 && packetID != 0xA4 && packetID != 0x80 && packetID != 0x91 )
 			{
@@ -908,7 +908,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( MAXBUFFER );
 
-						Console << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID ) << myendl;
+						Console << oldstrutil::format("Unknown message from client: 0x%02X - Ignored", packetID ) << myendl;
 						break;
 				}
 			}
@@ -972,7 +972,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 					{
 
 
-						messageLoop << strutil::format("Socket error: %i", blah.ErrorNumber() );
+						messageLoop << oldstrutil::format("Socket error: %i", blah.ErrorNumber() );
 					}
 #endif
 					LoginDisconnect( i );	// abnormal error
@@ -999,7 +999,7 @@ void cNetworkStuff::LoginDisconnect( UOXSOCKET s )
 {
 
 
-	messageLoop << strutil::format( "LoginClient %u disconnected.", s );
+	messageLoop << oldstrutil::format( "LoginClient %u disconnected.", s );
 	loggedInClients[s]->FlushBuffer();
 	loggedInClients[s]->CloseSocket();
 
@@ -1119,10 +1119,10 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			{
 				// April 5, 2004 - Hmmm there are two of these ?
 				if(cwmWorldState->ServerData()->ServerUOGEnabled()){
-					messageLoop << strutil::format("UOG Stats Sent or Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
+					messageLoop << oldstrutil::format("UOG Stats Sent or Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
 				}
 				else{
-					messageLoop <<strutil::format("Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
+					messageLoop <<oldstrutil::format("Encrypted client detected. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
 				}
 				LoginDisconnect( s );
 				return;
@@ -1130,7 +1130,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 			else if( mSock->FirstPacket() && packetID == 0 )
 			{
 
-				messageLoop << strutil::format("Buffer is empty, no packets to read. Disconnecting client. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
+				messageLoop << oldstrutil::format("Buffer is empty, no packets to read. Disconnecting client. [%i.%i.%i.%i]", mSock->ClientIP4(), mSock->ClientIP3(), mSock->ClientIP2(), mSock->ClientIP1() );
 				LoginDisconnect( s );
 				return;
 			}
@@ -1156,14 +1156,14 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				}
 				catch( socket_error& )
 				{
-					Console.warning(strutil::format("Bad packet request thrown! [packet ID: 0x%x]", packetID) );
+					Console.warning(oldstrutil::format("Bad packet request thrown! [packet ID: 0x%x]", packetID) );
 					mSock->FlushIncoming();
 					return;
 				}
 				if( test != nullptr )
 				{
 #ifdef _DEBUG_PACKET
-					Console.log( strutil::format("Logging packet ID: 0x%X", packetID), "loginthread.txt" );
+					Console.log( oldstrutil::format("Logging packet ID: 0x%X", packetID), "loginthread.txt" );
 #endif
 					mSock->ReceiveLogging( test );
 					if( test->Handle() )
@@ -1205,7 +1205,7 @@ void cNetworkStuff::GetLoginMsg( UOXSOCKET s )
 						nfds = static_cast<UOXSOCKET>(mSock->CliSocket()) + 1;
 						if( select( nfds, &all, nullptr, nullptr, &cwmWorldState->uoxtimeout ) > 0 )
 							mSock->Receive( MAXBUFFER );
-						messageLoop << strutil::format("Unknown message from client: 0x%02X - Ignored", packetID );
+						messageLoop << oldstrutil::format("Unknown message from client: 0x%02X - Ignored", packetID );
 						break;
 				}
 			}
@@ -1302,13 +1302,13 @@ void cNetworkStuff::LoadFirewallEntries( void )
 				{
 					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
 					{
-						if( strutil::upper( tag ) == "IP" )
+						if( oldstrutil::upper( tag ) == "IP" )
 						{
 							data = firewallSect->GrabData();
-							data = strutil::trim( strutil::removeTrailing( data, "//" ));
+							data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 							if( !data.empty() )
 							{
-								auto psecs = strutil::sections( data, "." );
+								auto psecs = oldstrutil::sections( data, "." );
 								if( psecs.size() == 4 )	// Wellformed IP address
 								{
 									for( UI08 i = 0; i < 4; ++i )
@@ -1326,7 +1326,7 @@ void cNetworkStuff::LoadFirewallEntries( void )
 									slEntries.push_back( FirewallEntry( p[0], p[1], p[2], p[3] ) );
 								}
 								else if( data != "\n" && data != "\r" )
-									Console.error( strutil::format("Malformed IP address in banlist.ini (line: %s)", data.c_str() ));
+									Console.error( oldstrutil::format("Malformed IP address in banlist.ini (line: %s)", data.c_str() ));
 							}
 						}
 					}

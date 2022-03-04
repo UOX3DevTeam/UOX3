@@ -50,9 +50,9 @@ std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 			CTownRegion *mbRegion;
 			msgBoard = calcItemObjFromSer( msgBoardSer );
 			mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(), msgBoard->GetInstanceID() );
-			fileName = std::string("region") + strutil::number( mbRegion->GetRegionNum() ) + std::string(".bbf");
+			fileName = std::string("region") + oldstrutil::number( mbRegion->GetRegionNum() ) + std::string(".bbf");
 			break;
-		case PT_LOCAL:			fileName = strutil::number( msgBoardSer, 16 ) + std::string(".bbf");					break;
+		case PT_LOCAL:			fileName = oldstrutil::number( msgBoardSer, 16 ) + std::string(".bbf");					break;
 		default:				Console.error( "GetMsgBoardFile() Invalid post type, aborting" );
 			break;
 	}
@@ -216,7 +216,7 @@ void MsgBoardList( CSocket *mSock )
 
 						if( file.fail() )
 						{
-							Console.warning( strutil::format("Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial ));
+							Console.warning( oldstrutil::format("Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial ));
 							file.close();
 						}
 						else
@@ -245,7 +245,7 @@ void MsgBoardList( CSocket *mSock )
 	if( !mSock->FinishedPostAck() )
 	{
 		mSock->PostClear();
-		Console.error( strutil::format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )) );
+		Console.error( oldstrutil::format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )) );
 	}
 }
 
@@ -279,7 +279,7 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes
 
 	if( nextMsgID[1] == 0xFF && nextMsgID[2] == 0xFF && nextMsgID[3] == 0xFF )
 	{
-		Console.warning(strutil::format("Maximum Posts reached for board %s, no further posts can be created", fileName.c_str()) );
+		Console.warning(oldstrutil::format("Maximum Posts reached for board %s, no further posts can be created", fileName.c_str()) );
 		return false;
 	}
 
@@ -385,7 +385,7 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 	auto timeOfPost = *std::localtime(&timet);
-	auto time			= strutil::format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
+	auto time			= oldstrutil::format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
 	time.resize( time.size()+1 );
 	const UI08 timeSize		= static_cast<UI08>(time.size());
 	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
@@ -635,7 +635,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.error( strutil::format("Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
+		Console.error( oldstrutil::format("Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
 	}
 
 	if( foundEntry )
@@ -645,7 +645,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.warning(strutil::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
+		Console.warning(oldstrutil::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
 	}
 }
 
@@ -708,7 +708,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 		{
 			mSock->sysmessage( 9038 ); // Failed to remove post; file size not found! Check server log for more details.
 		}
-		Console.error( strutil::format("Could not fetch file size for file %s", fileName.c_str()) );
+		Console.error( oldstrutil::format("Could not fetch file size for file %s", fileName.c_str()) );
 		return;
 	}
 
@@ -797,7 +797,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 	}
 	else
 	{
-		Console.error( strutil::format("Could not open file %s for reading", fileName.c_str()) );
+		Console.error( oldstrutil::format("Could not open file %s for reading", fileName.c_str()) );
 	}
 
 	// If we found the post to remove previously, remove it at this point, since all potential replies to it have been removed already
@@ -851,7 +851,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 {
 	msgBoardPost_st msgBoardPost;
 	std::string sect, tag, data;
-	std::string fileName		= std::string("region") + strutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
+	std::string fileName		= std::string("region") + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 	ScriptSection *EscortData	= nullptr, *Escort = nullptr;
 	size_t totalEntries			= 0;
 	std::string tmpSubject		= "";
@@ -879,7 +879,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
 			if( EscortData == nullptr )
 			{
-				Console.error( strutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
+				Console.error( oldstrutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
 				return false;
 			}
 			for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
@@ -896,7 +896,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 				position = fullLine.find( "%l" );
 				while( position != std::string::npos )
 				{
-					fullLine.replace( position, 2, strutil::format( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
+					fullLine.replace( position, 2, oldstrutil::format( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
 					position = fullLine.find( "%l" );
 				}
 
@@ -935,7 +935,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			msgBoardPost.Toggle		= QT_ITEMQUEST;
 			break;
 		default:
-			Console.error( strutil::format("MsgBoardPostQuest() Invalid questType %d", questType) );
+			Console.error( oldstrutil::format("MsgBoardPostQuest() Invalid questType %d", questType) );
 			return false;
 	}
 
@@ -977,7 +977,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( destRegion == 0 || destRegion == npcRegion )
 	{
-		Console.error( strutil::format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests") );
+		Console.error( oldstrutil::format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests") );
 		mNPC->Delete();
 		return;
 	}
@@ -999,7 +999,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ) )
 	{
-		Console.error(strutil::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
+		Console.error(oldstrutil::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
 		mNPC->Delete();
 	}
 }
@@ -1067,7 +1067,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 	}
 
-	fileName += std::string("region") + strutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
+	fileName += std::string("region") + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
 	std::size_t fileSize = 0;
 	try {
 		fileSize = std::filesystem::file_size( fileName );
@@ -1114,7 +1114,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 				}
 				else
 				{
-					Console.error( strutil::format("Attempting to seek past end of file in %s", fileName.c_str()) );
+					Console.error( oldstrutil::format("Attempting to seek past end of file in %s", fileName.c_str()) );
 					break;
 				}
 			}
@@ -1123,7 +1123,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 	}
 	else
 	{
-		Console.error( strutil::format("Could not open file %s for reading", fileName.c_str()) );
+		Console.error( oldstrutil::format("Could not open file %s for reading", fileName.c_str()) );
 	}
 }
 
@@ -1142,11 +1142,11 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 	}
 
-	fileName += strutil::number( msgBoardSer, 16 ) + std::string(".bbf");
+	fileName += oldstrutil::number( msgBoardSer, 16 ) + std::string(".bbf");
 
 	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 
-	Console.print( strutil::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer) );
+	Console.print( oldstrutil::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1219,7 +1219,7 @@ void MsgBoardMaintenance( void )
 				}
 				else
 				{
-					Console.error( strutil::format("Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
+					Console.error( oldstrutil::format("Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
 				}
 
 			}
