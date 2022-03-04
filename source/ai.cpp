@@ -524,7 +524,7 @@ void CheckAI( CChar& mChar )
 		default:
 		{
 			std::string mCharName = getNpcDictName( &mChar );
-			Console.error( strutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
+			Console.error( oldstrutil::format(" CheckAI() Error npc %s(0x%X) has invalid AI type %i", mCharName.c_str(), mChar.GetSerial(), mChar.GetNPCAiType() ));	//Morrolan
 			return;
 		}
 	}
