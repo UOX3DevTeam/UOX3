@@ -533,7 +533,7 @@ void endmessage( SI32 x )
 		cwmWorldState->SetEndTime( igetclock );
 
 
-	sysBroadcast( strutil::format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
+	sysBroadcast( oldstrutil::format( Dictionary->GetEntry( 1209 ), ((cwmWorldState->GetEndTime()-igetclock)/ 1000 ) / 60 ) );
 }
 
 #if PLATFORM != WINDOWS
@@ -754,7 +754,7 @@ bool genericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.SetEvadeState( false );
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
 		std::string mCharName = getNpcDictName( &mChar );
-		Console.print( strutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+		Console.print( oldstrutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
 
@@ -2073,7 +2073,7 @@ void DisplayBanner( void )
 	Console.PrintSectionBegin();
 
 
-	//auto idName = strutil::format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
+	//auto idName = oldstrutil::format( "%s v%s(%s) [%s]\n| Compiled by %s\n| Programmed by: %s", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str(), CVersionClass::GetProgrammers().c_str() );
 
 	Console.TurnYellow();
 	Console << "Compiled on ";
@@ -2234,8 +2234,8 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		std::string sect			= std::string("ADVANCEMENT ") + strutil::number( advObj );
-		sect						= strutil::trim( strutil::removeTrailing( sect, "//" ));
+		std::string sect			= std::string("ADVANCEMENT ") + oldstrutil::number( advObj );
+		sect						= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
 		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr )
 		{
@@ -2340,12 +2340,12 @@ void advanceObj( CChar *applyTo, UI16 advObj, bool multiUse )
 				case DFNTAG_PACKITEM:
 					if( ValidateObject( applyTo->GetPackItem() ) )
 					{
-						auto csecs = strutil::sections( cdata, "," );
+						auto csecs = oldstrutil::sections( cdata, "," );
 						if( !cdata.empty() )
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( nullptr, applyTo, strutil::trim(strutil::removeTrailing( csecs[0],"//") ), strutil::value<std::uint16_t>( strutil::trim( strutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, oldstrutil::trim(oldstrutil::removeTrailing( csecs[0],"//") ), oldstrutil::value<std::uint16_t>( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
 							}
 							else
 							{
@@ -2713,7 +2713,7 @@ TIMERVAL getPoisonTickTime( UI08 poisonStrength )
 size_t getTileName( CItem& mItem, std::string& itemname )
 {
 	std::string temp	= mItem.GetName();
-	temp				= strutil::trim( strutil::removeTrailing( temp, "//" ));
+	temp				= oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
 	const UI16 getAmount = mItem.GetAmount();
 	CTile& tile = Map->SeekTile( mItem.GetID() );
 	if( temp.substr( 0, 1 ) == "#" )
@@ -2729,7 +2729,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 			temp = "a " + temp;
 	}
 
-	auto psecs = strutil::sections( temp, "%" );
+	auto psecs = oldstrutil::sections( temp, "%" );
 	// Find out if the name has a % in it
 	if( psecs.size() > 2 )
 	{
@@ -2737,7 +2737,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		const std::string first	= psecs[0];
 		std::string plural		= psecs[1];
 		const std::string rest	= psecs[2];
-		auto fssecs = strutil::sections( plural, "/" );
+		auto fssecs = oldstrutil::sections( plural, "/" );
 		if( fssecs.size() > 1 )
 		{
 			single = fssecs[1];
@@ -2748,7 +2748,7 @@ size_t getTileName( CItem& mItem, std::string& itemname )
 		else
 			temp = first + plural + rest;
 	}
-	itemname = strutil::simplify( temp );
+	itemname = oldstrutil::simplify( temp );
 	return itemname.size() + 1;
 }
 
@@ -2778,7 +2778,7 @@ std::string getNpcDictName( CChar *mChar, CSocket *tSock )
 	else if( isNumber( dictName ))
 	{
 		// If name is a number, assume it's a direct dictionary entry reference, and use that
-		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictName ));
+		dictEntryID = static_cast<SI32>( oldstrutil::value<SI32>( dictName ));
 		if( tSock != nullptr )
 			dictName = Dictionary->GetEntry( dictEntryID, tSock->Language() );
 		else
@@ -2802,7 +2802,7 @@ std::string getNpcDictTitle( CChar *mChar, CSocket *tSock )
 	if( isNumber( dictTitle ) )
 	{
 		// If title is a number, assume it's a direct dictionary entry reference, and use that
-		dictEntryID = static_cast<SI32>( strutil::value<SI32>( dictTitle ) );
+		dictEntryID = static_cast<SI32>( oldstrutil::value<SI32>( dictTitle ) );
 		if( tSock != nullptr )
 			dictTitle = Dictionary->GetEntry( dictEntryID, tSock->Language() );
 		else
@@ -3057,7 +3057,7 @@ void UpdateFlag( CChar *mChar )
 		else
 		{
 			mChar->SetFlagBlue();
-			Console.warning( strutil::format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
+			Console.warning( oldstrutil::format("Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial()) );
 		}
 	}
 	else
@@ -3291,7 +3291,7 @@ int main( SI32 argc, char *argv[] )
 #endif
 		current = std::chrono::system_clock::now();
 
-		Console.Start( strutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
+		Console.Start( oldstrutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
 
 #if PLATFORM != WINDOWS
 		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection

@@ -55,7 +55,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	if( SpellID >= Magic->spells.size() )
 	{
-		Console.error( strutil::format( "Spells: Invalid Spell ID (%i) provided", SpellID )); // Revise please...
+		Console.error( oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", SpellID )); // Revise please...
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -63,7 +63,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	SpellInfo *mySpell = &Magic->spells[SpellID];
 	if( mySpell == nullptr )
 	{
-		Console.error( strutil::format( "Spells: Invalid Spell with SpellID %i", SpellID ));
+		Console.error( oldstrutil::format( "Spells: Invalid Spell with SpellID %i", SpellID ));
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -279,7 +279,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	createEntry *myCreateEntry = Skills->FindItem( createEntryID );
 	if( myCreateEntry == nullptr )
 	{
-		Console.error( strutil::format( "Invalid create entry ID (%i)", createEntryID ) );
+		Console.error( oldstrutil::format( "Invalid create entry ID (%i)", createEntryID ) );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -937,7 +937,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == nullptr )
 				{
-					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+					Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -954,7 +954,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == nullptr )
 					{
-						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+						Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -996,14 +996,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//" ));
-				auto encapsSections = strutil::sections( sEncaps, " " );
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1014,14 +1014,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREX:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//"));
-				auto encapsSections = strutil::sections( sEncaps, " " );
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//"));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1032,14 +1032,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREY:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//"));
-				auto encapsSections = strutil::sections( sEncaps, " " );
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//"));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1050,14 +1050,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREZ:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = strutil::trim( strutil::removeTrailing( sEncaps, "//" ));
-				auto encapsSections = strutil::sections( sEncaps, " " );
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1273,7 +1273,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 
 					std::string mCharName = getNpcDictName( gPriv, tSock );
-					std::string convertedString = strutil::stringToWstringToString( mCharName );
+					std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 
 					tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
 
@@ -1813,7 +1813,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == nullptr )
 				{
-					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+					Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -1830,7 +1830,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == nullptr )
 					{
-						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+						Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -2275,7 +2275,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptID );
 				if( toExecute == nullptr )
 				{
-					Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+					Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 				}
 				else
 				{
@@ -2292,7 +2292,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptID );
 					if( toExecute == nullptr )
 					{
-						Console.error( strutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", strutil::number(scriptID).c_str()) );
+						Console.error( oldstrutil::format("Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number(scriptID).c_str()) );
 					}
 					else
 					{
@@ -3160,10 +3160,10 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_LASTIP:
 			{
-				std::string ipString = strutil::number(static_cast<SI32>((myAccount->dwLastIP&0xFF000000)>>24)) 
-					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x00FF0000)>>16))
-					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x0000FF00)>>8))
-					+ "." + strutil::number(static_cast<SI32>((myAccount->dwLastIP&0x000000FF)%256));
+				std::string ipString = oldstrutil::number(static_cast<SI32>((myAccount->dwLastIP&0xFF000000)>>24)) 
+					+ "." + oldstrutil::number(static_cast<SI32>((myAccount->dwLastIP&0x00FF0000)>>16))
+					+ "." + oldstrutil::number(static_cast<SI32>((myAccount->dwLastIP&0x0000FF00)>>8))
+					+ "." + oldstrutil::number(static_cast<SI32>((myAccount->dwLastIP&0x000000FF)%256));
 				tString = JS_NewStringCopyZ( cx, ipString.c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;

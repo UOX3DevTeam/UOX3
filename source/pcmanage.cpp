@@ -491,17 +491,17 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
 		{
 			std::string data = newbieData->GrabData();
-			data = strutil::trim( strutil::removeTrailing( data, "//" ));
+			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 			if( !data.empty() )
 			{
-				auto UTag = strutil::upper( tag );
+				auto UTag = oldstrutil::upper( tag );
 				if( UTag == "PACKITEM" )
 				{
-					auto csecs = strutil::sections( data, "," );
+					auto csecs = oldstrutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{						
-						UI16 nAmount = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
-						n = Items->CreateScriptItem( socket, c, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
+						UI16 nAmount = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+						n = Items->CreateScriptItem( socket, c, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
 					}
 					else
 					{
@@ -512,11 +512,11 @@ void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 				{
 					UI16 itemHue = 0;
 					std::string itemSection;
-					auto csecs = strutil::sections( data, "," );
+					auto csecs = oldstrutil::sections( data, "," );
 					if( csecs.size() > 1 )
 					{
-						itemSection = strutil::trim( strutil::removeTrailing( csecs[0], "//" ));
-						itemHue = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+						itemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+						itemHue = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
 					}
 					else
 					{
@@ -642,7 +642,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	CreatedItems[BANK] = Items->CreateItem( tSock, mChar, 0x09AB, 1, 0, OT_ITEM );
 	if( CreatedItems[BANK] != nullptr )
 	{
-		CreatedItems[BANK]->SetName( strutil::format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
+		CreatedItems[BANK]->SetName( oldstrutil::format(1024,Dictionary->GetEntry( 1283 ), mChar->GetName().c_str() ) );
 		CreatedItems[BANK]->SetDecayable( false );
 		CreatedItems[BANK]->SetLayer( IL_BANKBOX );
 		CreatedItems[BANK]->SetType( IT_CONTAINER );
@@ -668,7 +668,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	{
 		if( vecSkills[i].value > 0 )
 		{
-			whichsect = strutil::format( "BESTSKILL %i", vecSkills[i].skill );
+			whichsect = oldstrutil::format( "BESTSKILL %i", vecSkills[i].skill );
 			addNewbieItem( tSock, mChar, whichsect.c_str(), 0, 0 );
 		}
 	}
@@ -932,7 +932,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			default:
-				Console.error( strutil::format("Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( oldstrutil::format("Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				break;
 		}
 	}
@@ -949,7 +949,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 80 )
 			{
 				// If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
-				Console.error( strutil::format("Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( oldstrutil::format("Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / (R32)totalstats );
 				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 80, 10.0f, 60.0f ) ) );
 				percheck = ( mChar->GetDexterity() / (R32)totalstats );
@@ -959,7 +959,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.error(strutil::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error(oldstrutil::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else if( totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats() )
@@ -967,7 +967,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 90 )
 			{
 				// If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
-				Console.error( strutil::format("Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
+				Console.error( oldstrutil::format("Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
 				percheck = ( mChar->GetStrength() / (R32)totalstats );
 				mChar->SetStrength( static_cast< UI08 >(Capped( percheck * 90, 10.0f, 60.0f ) ) );
 				percheck = ( mChar->GetDexterity() / (R32)totalstats );
@@ -977,7 +977,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.error( strutil::format("Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
+				Console.error( oldstrutil::format("Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str()) );
 			}
 		}
 
@@ -996,7 +996,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[2];
 			if( totalskills < 100 )
 			{
-				Console.error( strutil::format("Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( oldstrutil::format("Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
@@ -1011,7 +1011,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[3];
 			if( totalskills < 120 )
 			{
-				Console.error( strutil::format("Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.error( oldstrutil::format("Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 	}
@@ -1269,7 +1269,7 @@ void startChar( CSocket *mSock, bool onCreate )
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 			{
 				//message upon entering a server
-				sysBroadcast( strutil::format(1024,Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() ) );//message upon entering a server
+				sysBroadcast( oldstrutil::format(1024,Dictionary->GetEntry( 1208 ), mChar->GetName().c_str() ) );//message upon entering a server
 			}
 			updates( mSock );
 #if defined( _MSC_VER )
@@ -1386,7 +1386,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	if( !ValidateObject( iCorpse ) )
 		return nullptr;
 
-	iCorpse->SetName( strutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
+	iCorpse->SetName( oldstrutil::format(512, Dictionary->GetEntry( 1612 ), corpseName.c_str() ) );
 	iCorpse->SetCarve( mChar.GetCarve() );
 	iCorpse->SetMovable( 2 );//non-movable
 	if( fallDirection )

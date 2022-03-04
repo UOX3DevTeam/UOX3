@@ -495,7 +495,7 @@ DFNTAGS FindDFNTagFromStr( std::string strToFind )
 	{
 		InitStrToDFN();
 	}
-	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( strutil::upper( strToFind ) );
+	std::map< std::string, DFNTAGS >::const_iterator toFind = strToDFNTag.find( oldstrutil::upper( strToFind ) );
 	if( toFind != strToDFNTag.end() )
 	{
 		return toFind->second;
@@ -828,29 +828,29 @@ void ScriptSection::createSection( std::fstream& input )
 		line[input.gcount()] = 0;
 
 		sLine = line;
-		sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
+		sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
 			if( sLine.substr( 0, 1 ) != "}" )
 			{
-				auto secs = strutil::sections( sLine, "=" );
+				auto secs = oldstrutil::sections( sLine, "=" );
 				tag = "";
 				if( secs.size() >= 1 )
 				{
 					try {
-						tag = strutil::trim( strutil::removeTrailing( secs[0], "//" ));
+						tag = oldstrutil::trim( oldstrutil::removeTrailing( secs[0], "//" ));
 					}
 					catch (...)	{
 						tag = "";
 					}
 				}
-				auto utag = strutil::upper( tag );
+				auto utag = oldstrutil::upper( tag );
 				value = "";
 				if( secs.size() >= 2 )
 				{
 					try {
-						value = strutil::trim( strutil::removeTrailing( secs[1], "//" ));
+						value = oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" ));
 					}
 					catch (...) {
 						value = "";
@@ -875,7 +875,7 @@ void ScriptSection::createSection( std::fstream& input )
 							{
 								case DFN_UPPERSTRING:
 								{
-									value = strutil::upper( value );
+									value = oldstrutil::upper( value );
 									if( utag == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
@@ -883,8 +883,8 @@ void ScriptSection::createSection( std::fstream& input )
 										ADDMENUITEM amiLocalCopy;
 										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
 										amiLocalCopy.itemName = std::string( localName );
-										auto csecs = strutil::sections( value, "," );
-										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
+										auto csecs = oldstrutil::sections( value, "," );
+										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
 										if( amiLocalCopy.groupID != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupID;
@@ -895,10 +895,10 @@ void ScriptSection::createSection( std::fstream& input )
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
 
 										//if( amiLocalCopy.tileID == INVALIDSERIAL )
 											//amiLocalCopy.tileID = amiLocalCopy.objectID;
@@ -921,14 +921,14 @@ void ScriptSection::createSection( std::fstream& input )
 									}
 									catch (...) {
 										toAdd2->ndata = 0;
-										Console.warning( strutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+										Console.warning( oldstrutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
 									}
 									break;
 								case DFN_DOUBLENUMERIC:
 								{
 									// Best I can tell the seperator here is a space
-									value = strutil::simplify( value );
-									auto ssecs = strutil::sections( value, " " );
+									value = oldstrutil::simplify( value );
+									auto ssecs = oldstrutil::sections( value, " " );
 									if( ssecs.size() >= 2 )
 									{
 										try {

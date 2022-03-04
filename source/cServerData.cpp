@@ -610,7 +610,7 @@ void CServerData::ResetDefaults( void )
 
 	auto curWorkingDir = std::filesystem::current_path().string();
 
-	auto wDir = strutil::fixDirectory(curWorkingDir);
+	auto wDir = oldstrutil::fixDirectory(curWorkingDir);
 	std::string tDir;
 	Directory( CSDDP_ROOT, wDir );
 	tDir = wDir + std::string("muldata/");
@@ -1246,11 +1246,11 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		};
 		// First, let's normalize the path name and fix common errors
 		// remove all trailing and leading spaces...
-		auto sText = strutil::trim(value) ;
+		auto sText = oldstrutil::trim(value) ;
 
 		if( sText.empty() )
 		{
-			Console.error( strutil::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
+			Console.error( oldstrutil::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			return;
 		}
@@ -1259,7 +1259,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 		// Just incase it's not set in the .ini
 		// and convert the windows backward slashes to forward slashes
 
-		sText = strutil::fixDirectory(sText);
+		sText = oldstrutil::fixDirectory(sText);
 
 		bool error = false;
 		if( !resettingDefaults )
@@ -1281,7 +1281,7 @@ void CServerData::Directory( CSDDirectoryPaths dp, std::string value )
 
 		if( error )
 		{
-			Console.error( strutil::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()) );
+			Console.error( oldstrutil::format("%s %s does not exist", verboseDirectory.c_str(), sText.c_str()) );
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -4101,7 +4101,7 @@ bool CServerData::save( std::string filename )
 		rvalue = true;
 	}
 	else
-		Console.error( strutil::format("Unable to open file %s for writing", filename.c_str()) );
+		Console.error( oldstrutil::format("Unable to open file %s for writing", filename.c_str()) );
 	return rvalue;
 }
 
@@ -4213,10 +4213,10 @@ bool CServerData::ParseINI( const std::string& filename )
 				std::string tag, data;
 				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
 				{
-					data = strutil::simplify( sect->GrabData() );
+					data = oldstrutil::simplify( sect->GrabData() );
 					if( !HandleLine( tag, data ) )
 					{
-						Console.warning( strutil::format("Unhandled tag '%s'", tag.c_str()) );
+						Console.warning( oldstrutil::format("Unhandled tag '%s'", tag.c_str()) );
 					}
 				}
 			}
@@ -4225,7 +4225,7 @@ bool CServerData::ParseINI( const std::string& filename )
 		}
 		else
 		{
-			Console.warning( strutil::format("%s File not found, Using default settings.", filename.c_str() ));
+			Console.warning( oldstrutil::format("%s File not found, Using default settings.", filename.c_str() ));
 			cwmWorldState->ServerData()->save();
 		}
 	}
@@ -4619,13 +4619,13 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		{
 			/*std::string sname, sip, sport;
 			physicalServer toAdd;
-			auto csecs = strutil::sections( value, "," );
+			auto csecs = oldstrutil::sections( value, "," );
 			if( csecs.size() == 3 )
 			{
 				struct hostent *lpHostEntry = nullptr;
-				sname	= strutil::trim(strutil::removeTrailing( csecs[0],"//") );
-				sip		= strutil::trim(strutil::removeTrailing( csecs[1],"//") );
-				sport	= strutil::trim(strutil::removeTrailing( csecs[2],"//") );
+				sname	= oldstrutil::trim(oldstrutil::removeTrailing( csecs[0],"//") );
+				sip		= oldstrutil::trim(oldstrutil::removeTrailing( csecs[1],"//") );
+				sport	= oldstrutil::trim(oldstrutil::removeTrailing( csecs[2],"//") );
 
 				toAdd.setName( sname );
 				// Ok look up the data here see if its a number
@@ -4636,7 +4636,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == nullptr )
 					{
 						// We get here it wasn't a valid IP either.
-						Console.warning( strutil::format("Failed to translate %s", sip.c_str() ));
+						Console.warning( oldstrutil::format("Failed to translate %s", sip.c_str() ));
 						Console.warning( "This shard will not show up on the shard listing" );
 						break;
 					}
@@ -4661,7 +4661,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			}
 			else
 			{
-				Console.warning(strutil::format("Malformend Serverlist entry: %s", value.c_str() ));
+				Console.warning(oldstrutil::format("Malformend Serverlist entry: %s", value.c_str() ));
 				Console.warning( "This shard will not show up on the shard listing" );
 			}*/
 			break;
@@ -5299,20 +5299,20 @@ LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
 void CServerData::ServerLocation( std::string toSet )
 {
 	auto temp = toSet;
-	temp = strutil::trim( strutil::removeTrailing( temp, "//" ));
-	auto csecs = strutil::sections( temp, "," );
+	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
+	auto csecs = oldstrutil::sections( temp, "," );
 	
 	if( csecs.size() ==  7 )	// Wellformed server location
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
+		toAdd.x				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
 		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
 		strcpy( toAdd.newTown, toAdd.oldTown);
 		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
@@ -5320,14 +5320,14 @@ void CServerData::ServerLocation( std::string toSet )
 	else if( csecs.size() ==  8 )	// instanceID included
 	{
 		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
-		toAdd.instanceID	= static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
-		strcpy( toAdd.oldTown, strutil::trim( strutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcpy( toAdd.oldDescription, strutil::trim( strutil::removeTrailing( csecs[1], "//" )).c_str() );
+		toAdd.x				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
+		toAdd.instanceID	= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
+		strcpy( toAdd.oldTown, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcpy( toAdd.oldDescription, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
 		strcpy( toAdd.newTown, toAdd.oldTown);
 		strcpy( toAdd.newDescription, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
@@ -5452,7 +5452,7 @@ void CServerData::SaveTime( void )
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
 	{
-		Console.error( strutil::format("Failed to open %s for writing", timeFile.c_str()) );
+		Console.error( oldstrutil::format("Failed to open %s for writing", timeFile.c_str()) );
 		return;
 	}
 
@@ -5491,10 +5491,10 @@ void CServerData::LoadTime( void )
 			input.getline(line, 1023);
 			line[input.gcount()] = 0;
 			std::string sLine(line);
-			sLine = strutil::trim( strutil::removeTrailing( sLine, "//" ));
+			sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
 			if( !sLine.empty() )
 			{
-				if( strutil::upper( sLine ) == "[TIME]" )
+				if( oldstrutil::upper( sLine ) == "[TIME]" )
 					LoadTimeTags( input );
 			}
 		}
@@ -5510,7 +5510,7 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = strutil::upper(tag);
+			UTag = oldstrutil::upper(tag);
 			
 			if( UTag == "AMPM" )
 			{
@@ -5534,11 +5534,11 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 			}
 			else if( UTag == "MOON" )
 			{
-				auto csecs = strutil::sections( data, "," );
+				auto csecs = oldstrutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					ServerMoon( 1, static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					ServerMoon( 0, static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					ServerMoon( 1, static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 				}
 			}
 		}
