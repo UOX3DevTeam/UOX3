@@ -73,12 +73,12 @@ SI32 CDictionary::LoadDictionary( void )
 						data					= dictSect->GrabData();
 						if( data != "" )
 						{
-							Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = strutil::trim( strutil::removeTrailing( data, "//" ));
+							Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 							++count;
 						}
 						else
 						{
-							Console.warning( strutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
+							Console.warning( oldstrutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
 						}
 					}
 				}
@@ -140,7 +140,7 @@ std::string CDictionary::GetEntry( const SI32 Num )
 		if( toFind != Text2.end() )
 			rvalue = toFind->second;
 		else
-			Console.warning( strutil::format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
+			Console.warning( oldstrutil::format("Dictionary Reference %i not found in \"%s\"", Num, PathToDictionary.c_str() ));
 	}
 	return rvalue;
 }

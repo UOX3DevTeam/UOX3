@@ -308,7 +308,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	}
 	else
 	{
-		sect = std::string("MUSICLIST ") + strutil::number( musicList );
+		sect = std::string("MUSICLIST ") + oldstrutil::number( musicList );
 	}
 
 	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
@@ -320,7 +320,7 @@ void cEffects::doSocketMusic( CSocket *s )
 	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
 	{
 		data = MusicList->GrabData();
-		if( strutil::upper( tag ) == "MUSIC" )
+		if( oldstrutil::upper( tag ) == "MUSIC" )
 		{
 			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
 		}

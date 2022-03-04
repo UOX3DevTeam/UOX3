@@ -109,16 +109,16 @@ void CMulHandler::LoadMapsDFN( void )
 	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
-		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + strutil::number( i ), maps_def );
+		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + oldstrutil::number( i ), maps_def );
 		if( toFind == nullptr )
 			break;
 
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			UTag = strutil::upper( tag );
+			UTag = oldstrutil::upper( tag );
 			data = toFind->GrabData();
-			data = strutil::trim( strutil::removeTrailing( data, "//" ));
+			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 			switch( (UTag.data()[0]) )
 			{
 				case 'M':
@@ -742,7 +742,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 	//7.0.8.2 tiledata and earlier
 	if( !IsValidTile( tileNum ) )
 	{
-		Console.warning( strutil::format("Invalid tile access, the offending tile number is %u", tileNum) );
+		Console.warning( oldstrutil::format("Invalid tile access, the offending tile number is %u", tileNum) );
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -759,7 +759,7 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 {
 	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
 	{
-		Console.warning( strutil::format("Invalid land access, the offending land number is %u", landNum) );
+		Console.warning( oldstrutil::format("Invalid land access, the offending land number is %u", landNum) );
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -810,7 +810,7 @@ index( 0 ), length( 0 ), exactCoords( exact ), worldNumber( world ), useDiffs( f
 {
 	if( !Map->InsideValidWorld( x, y, world ) )
 	{
-		Console.error( strutil::format( "ASSERT: CStaticIterator(); Not inside a valid world (x: %i, y: %i, world: %i", x, y, world ));
+		Console.error( oldstrutil::format( "ASSERT: CStaticIterator(); Not inside a valid world (x: %i, y: %i, world: %i", x, y, world ));
 		return;
 	}
 
@@ -945,7 +945,7 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	if( mFile->eof() )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.warning( strutil::format("SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y ));
+		Console.warning( oldstrutil::format("SeekMap: Invalid map tile index %u at: X %i, Y %i", pos, x, y ));
 #endif
 	}
 	else
@@ -1356,8 +1356,8 @@ void CMulHandler::LoadDFNOverrides( void )
 				continue;
 			}
 			entryName	= mapScp->EntryName();
-			entryNum	= strutil::value<std::uint16_t>(strutil::extractSection(entryName," ", 1, 1 ));
-			titlePart	= strutil::upper( strutil::extractSection( entryName, " ", 0, 0 ));
+			entryNum	= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(entryName," ", 1, 1 ));
+			titlePart	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
@@ -1372,8 +1372,8 @@ void CMulHandler::LoadDFNOverrides( void )
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 					{
 						data	= toScan->GrabData();
-						data 	= strutil::trim( strutil::removeTrailing( data, "//" ));
-						UTag	= strutil::upper( tag );
+						data 	= oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+						UTag	= oldstrutil::upper( tag );
 						
 						// CTile properties
 						if( UTag == "WEIGHT" )

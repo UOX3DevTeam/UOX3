@@ -28,7 +28,7 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 {
 	UI16 houseID = 0;
 	std::string tag, data;
-	std::string sect		= std::string("HOUSE ") + strutil::number( houseEntry );
+	std::string sect		= std::string("HOUSE ") + oldstrutil::number( houseEntry );
 	ScriptSection *House	= FileLookup->FindEntry( sect, house_def );
 	if( House == nullptr )
 	{
@@ -37,15 +37,15 @@ void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
 		data = House->GrabData();
-		if( strutil::upper( tag ) == "ID" )
+		if( oldstrutil::upper( tag ) == "ID" )
 		{
-			houseID = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+			houseID = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
 			break;
 		}
 	}
 	if( !houseID )
 	{
-		Console.error(strutil::format( "Bad house script: #%u\n", houseEntry) );
+		Console.error(oldstrutil::format( "Bad house script: #%u\n", houseEntry) );
 	}
 	else
 	{
@@ -111,9 +111,9 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 			hItem = nullptr;	// clear it out
 			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
 			{
-				UTag = strutil::upper( tag );
+				UTag = oldstrutil::upper( tag );
 				data = HouseItem->GrabData();
-				data = strutil::trim( strutil::removeTrailing( data, "//" ));
+				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 				if( UTag == "ITEM" )
 				{
 					hItem = Items->CreateBaseScriptItem( nullptr, data, mChar->WorldNumber(), 1, hInstanceID );
@@ -474,7 +474,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	TAGMAPOBJECT customTag;
 	std::map<std::string, TAGMAPOBJECT> customTagMap;
 
-	std::string sect = "HOUSE " + strutil::number( houseEntry );
+	std::string sect = "HOUSE " + oldstrutil::number( houseEntry );
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
 	if( House == nullptr )
 		return;
@@ -482,9 +482,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	std::vector<UI16> scriptIDs;
 	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
 	{
-		UTag = strutil::upper( tag );
+		UTag = oldstrutil::upper( tag );
 		data = House->GrabData();
-		data = strutil::trim( strutil::removeTrailing( data, "//" ));
+		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 		
 		if( UTag == "ID" )
 		{
@@ -600,7 +600,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		}
 		else if( UTag == "CUSTOMSTRINGTAG" )
 		{
-			auto ssecs = strutil::sections( data, " " );
+			auto ssecs = oldstrutil::sections( data, " " );
 			auto count = 0;
 			std::string result;
 			for( auto &sec : ssecs )
@@ -609,16 +609,16 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				{
 					if( count == 1 )
 					{
-						result = strutil::trim( strutil::removeTrailing( sec, "//" ));
+						result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
 					else
 					{
-						result = result + " " + strutil::trim( strutil::removeTrailing( sec, "//" ));
+						result = result + " " + oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
 				}
 				count++;
 			}
-			customTagName			= strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
+			customTagName			= oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
 			customTagStringValue	= result;
 
 			if( !customTagName.empty() && !customTagStringValue.empty() )
@@ -631,13 +631,13 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			}
 			else
 			{
-				Console.warning( strutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ) );
+				Console.warning( oldstrutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ) );
 			}
 			break;
 		}
 		else if( UTag == "CUSTOMINTTAG" )
 		{
-			auto ssecs = strutil::sections( data, " " );
+			auto ssecs = oldstrutil::sections( data, " " );
 			auto count = 0;
 			std::string result;
 			for( auto &sec : ssecs )
@@ -646,35 +646,35 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				{
 					if( count == 1 )
 					{
-						result = strutil::trim( strutil::removeTrailing( sec, "//" ));
+						result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
 				}
 				count++;
 			}
-			customTagName			= strutil::trim( strutil::removeTrailing( ssecs[0], "//" ));
+			customTagName			= oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
 			customTagStringValue	= result;
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
 				customTag.m_Destroy		= FALSE;
-				customTag.m_IntValue 	= std::stoi(strutil::trim( strutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
+				customTag.m_IntValue 	= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
 				if( count > 1 )
 				{
-					Console.warning( strutil::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ) );
+					Console.warning( oldstrutil::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ) );
 				}
 			}
 			else
 			{
-				Console.warning( strutil::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ) );
+				Console.warning( oldstrutil::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ) );
 			}
 		}
 	}
 
 	if( !houseID )
 	{
-		Console.error( strutil::format("Bad house script # %u!", houseEntry) );
+		Console.error( oldstrutil::format("Bad house script # %u!", houseEntry) );
 		return;
 	}
 
@@ -692,7 +692,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	{
 		if( (houseID%256) > 20 )
 		{
-			temp = strutil::format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
+			temp = oldstrutil::format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 		}
 		else
 		{
@@ -921,7 +921,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 					{
 						std::string keyTag = "key" + std::to_string(j) + "more";
 						TAGMAPOBJECT keyMore = i->GetTag( keyTag );
-						if( strutil::value<SERIAL>(keyMore.m_StringValue) == targSerial )
+						if( oldstrutil::value<SERIAL>(keyMore.m_StringValue) == targSerial )
 						{
 							// More value of key in keyring matches house serial
 							TAGMAPOBJECT localObject;
@@ -990,7 +990,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 						{
 							std::string keyTag = "key" + std::to_string(j) + "more";
 							TAGMAPOBJECT keyMore = i->GetTag( keyTag );
-							if( strutil::value<SERIAL>(keyMore.m_StringValue) == targSerial )
+							if( oldstrutil::value<SERIAL>(keyMore.m_StringValue) == targSerial )
 							{
 								// More value of key in keyring matches house serial
 								TAGMAPOBJECT localObject;
