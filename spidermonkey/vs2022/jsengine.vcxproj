@@ -135,6 +135,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4090;5105;4047;4311</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -156,6 +157,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4090;5105;4047;4311</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>

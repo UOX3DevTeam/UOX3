@@ -93,6 +93,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -116,6 +117,7 @@
       <AdditionalIncludeDirectories>..\</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <DisableSpecificWarnings>4267</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>
