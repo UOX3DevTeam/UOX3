@@ -61,8 +61,8 @@
 
 // A quick define to overcome different names for the same function
 #define STDC99
-#define _CRT_SECURE_NO_DEPRECATE
-#define _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_NO_DEPRECATE
+//#define _CRT_SECURE_NO_WARNINGS
 
 #ifdef _DEBUG
 #define UOX_DEBUG_MODE 1

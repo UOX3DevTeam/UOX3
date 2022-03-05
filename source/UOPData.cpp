@@ -47,11 +47,11 @@ namespace UO {
 		for (std::size_t i = 0 ; i < maxhashes ; ++i) {
 			auto hash = buildHashString(hashkey, i);
 			auto hashvalue = HashLittle2(hash);
-			_chunk_id1.insert_or_assign(hashvalue, i);
+			_chunk_id1.insert_or_assign(hashvalue, static_cast<std::uint32_t>(i));
 			if (!hashkey2.empty()){
 				auto hash = buildHashString(hashkey2, i);
 				auto hashvalue = HashLittle2(hash);
-				_chunk_id2.insert_or_assign(hashvalue, i);
+				_chunk_id2.insert_or_assign(hashvalue, static_cast<std::uint32_t>(i));
 			}
 		}
 	}

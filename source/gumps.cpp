@@ -419,7 +419,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		today->tm_hour=12;
 	}
 	// Draw the current date to the gump
-	szBuffer = oldstrutil::format( "%s %.8s%s", tmpBuffer, asctime( today ) + 11, ( (isAM)?"Am":"Pm") );
+	char tbuffer[100];
+	szBuffer = oldstrutil::format( "%s %.8s%s", tmpBuffer, asciitime( tbuffer,100,*today ) + 11, ( (isAM)?"Am":"Pm") );
 	toSend.addCommand( oldstrutil::format("text %u %u %u %u",280,yStart+13, 25, linenum++));
 	toSend.addText( szBuffer );
 
