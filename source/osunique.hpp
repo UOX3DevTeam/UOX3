@@ -18,7 +18,7 @@ auto asciitime = [](char* buffer, size_t count, const struct tm &tmsource)->char
 	return asctime_r(  &tmsource,buffer);
 	
 };
-auto localtime = [](const time_t& source, struct tm& dest)->struct tm* {
+auto lcltime = [](const time_t& source, struct tm& dest)->struct tm* {
 	localtime_r(&source, &dest);
 	return &dest;
 };
