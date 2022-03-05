@@ -104,6 +104,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6452D32027D2E13B00E5AFB4 /* osunique.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = osunique.hpp; sourceTree = "<group>"; };
 		648AF6E427CFEF79009327DE /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		648AF6ED27CFEF94009327DE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		648AF6EF27CFF0F5009327DE /* libjs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs.a; path = ../spidermonkey/libjs.a; sourceTree = "<group>"; };
@@ -311,6 +312,7 @@
 		648AF6F527CFF1F2009327DE /* source */ = {
 			isa = PBXGroup;
 			children = (
+				6452D32027D2E13B00E5AFB4 /* osunique.hpp */,
 				648AF78A27CFF2CD009327DE /* ai.cpp */,
 				648AF71D27CFF2CC009327DE /* archive.cpp */,
 				648AF70127CFF2CC009327DE /* boats.cpp */,
