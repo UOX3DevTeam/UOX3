@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 24. January, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5a</small></p>
+	<p style="margin:0"><small>Last Updated: 12. February, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>February 12th, 2022</h4>
+						<ul>
+							<li>Added details about new JS Events: onNameRequest, onScrollingGumpPress</li>
+						</ul>
+						<h4>January 24th, 2022</h4>
+						<ul>
+							<li>Added details about new JS Events: onHelpButton, onWarModeToggle, onAICombatTarget</li>
+						</ul>
 						<h4>January 9th, 2022</h4>
 						<ul>
 							<li>Initial version of document completed</li>
@@ -613,7 +621,7 @@ function onCallback0( socket, ourObj )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onClick( pUser, objClicked )</em></p>
+							<p><em>function onClick( pSock, objClicked )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -621,7 +629,7 @@ function onCallback0( socket, ourObj )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pUser single-clicks objClicked, objClicked's script is activated</p>
+							<p>When a player single-clicks objClicked, objClicked's script is activated</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -632,13 +640,13 @@ function onCallback0( socket, ourObj )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>This event will also trigger for characters with script attached if AllNames client macro is used. Note that depending on client version, this event might not trigger when clicking certain types of items, because clients more recent than X (?) won't send requests on click, but will instead send requests for details (including names) for all items in range ahead of time, with name being displayed client-side on hover/click.</p>
+							<p>This event will also trigger for characters with script attached if AllNames client macro is used, and for incoming character names showing at edge of screen. Note that depending on client version, this event might not trigger when clicking certain types of objects, because clients more recent than X (?) won't send requests on click, but will instead send requests for details (including names) for all objects in range ahead of time, with name being displayed client-side on hover/click.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onClick( pUser, objClicked )
+<pre><code class="language-javascript">function onClick( pSock, objClicked )
 {
-	pUser.SysMessage("You have clicked on: "+objClicked.name );
+	pSock.SysMessage( "You have clicked on: "+objClicked.name );
 	objClicked.TextMessage( "Zug, zug!" );
 	return true;
 }</code></pre></p>
@@ -2324,6 +2332,60 @@ function onIterate( charCheck )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnNameRequest" id="eventOnNameRequest"><span>onNameRequest</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onNameRequest( myObj, requestedBy )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow better control of what names are sent to the client for a given object, by making it possible to override the object's name when it's requested. Can be used to create systems where players have to learn the names of other characters, or "incognito" systems, or even a setup where players can know each other by different names!</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Event triggers for myObj whenever their name is retrieved by UOX3, if they have a script attached with the event present - or if the event is present in the global script (ID 0), in which case it would trigger for _all_ characters and items.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return empty string/false/true</strong> to use default name of object</li>
+								<li><strong>return [string]</strong> to use custom name for object</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<ul>
+								<li>requestedBy is a reference to the character (if any) that requested the name, for instance via dragging myObj's health-bar, using all-names macro, opening of paperdoll or just from general client requests for info about myObj</li>
+								<li>If an attempt to retrieve myObj's name is done from within the onNameRequest event, it will return the real name of the object (to avoid infinite loop situations)</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onNameRequest( myObj, requestedBy )
+{
+	if( myObj.isChar )
+	{
+		if( ValidateObject( requestedBy ))
+		{
+			// Return "Unknown" as name when name is requested by another character who doesn't "know" myObj
+			if( requestedBy.serial != myObj.serial && !myObj.GetTag( "knowsMe" + requestedBy.serial ))
+			{
+				return "Unknown";
+			}
+		}
+
+		// Return an empty string (or true/false) to have UOX3 use/send the object's default name
+		return "";
+	}
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnPacketReceive" id="eventOnPacketReceive"><span>onPacketReceive</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -2614,6 +2676,94 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnScrollingGumpPress" id="eventOnScrollingGumpPress"><span>onScrollingGumpPress</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onScrollingGumpPress( pSock, gumpID, buttonID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow handling gump presses from old-school horizontally scrolling T2A gumps displayed in client via packet 0x76</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When player clicks an entry in the old-school horizontally scrolling T2A gump displayed in client via packet 0x76, as long as said gump uses a gumpID between 0x4000 and 0xFFFF, and the event itself is present in the global script (script ID 0)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// The below example sends instructions to the client to open
+// a horizontally scrolling gump with 4 options - one for Repair, one to craft Shields, one to craft
+// Armor, and one to craft Weapons. Note that this example does not handle submenus sent after player press an
+// initial option.
+
+// For testing purposes, we double-click an item to open the gump
+function onUseChecked( pUser, iUsed )
+{
+    var socket = pUser.socket;
+
+    var pStream = new Packet; // Create new packet stream and reserve a size of 83 bytes
+    pStream.ReserveSize( 83 );
+
+    // Register packet ID 0x7c
+    pStream.WriteByte( 0, 0x7C );
+
+    // Send size of packet
+    pStream.WriteShort( 1, 0x0053 ); // 83 bytes
+	pStream.WriteLong(  3, 0x00000000 ); // Irrelevant?
+	pStream.WriteShort( 7, 0x5000 ); // ID of gump, must be between 0x4000 and 0xffff
+
+	// Register text at top of menu window
+	pStream.WriteByte( 9, 0x1d );
+	pStream.WriteString( 10, "What would you like to make?", 0x1d );
+
+	// Inform client we want to show 4 menu options
+	pStream.WriteByte( 39, 4 );
+
+	// Register menu option 1
+	pStream.WriteShort( 40, 0x0faf );
+	pStream.WriteShort( 42, 0x0000 );
+	pStream.WriteByte( 44, 6 );
+	pStream.WriteString( 45, "Repair", 6 );
+
+	// Register menu option 2
+	pStream.WriteShort( 51, 0x1b72 );
+	pStream.WriteShort( 53, 0x0000 );
+	pStream.WriteByte( 55, 6 );
+	pStream.WriteString( 56, "Shield", 6 );
+
+	// Register menu option 3
+	pStream.WriteShort( 62, 0x1415 );
+	pStream.WriteShort( 64, 0x0000 );
+	pStream.WriteByte( 66, 5 );
+	pStream.WriteString( 67, "Armor", 5 );
+
+	// Register menu option 4
+	pStream.WriteShort( 72, 0x13b9 );
+	pStream.WriteShort( 74, 0x0000 );
+	pStream.WriteByte( 76, 6 );
+	pStream.WriteString( 77, "Weapon", 6 );
+
+	// Send menu to player
+    socket.Send( pStream );
+    pStream.Free();
+    return false;
+}
+
+// Let's handle the player's clicks in the gump
+function onScrollingGumpPress( pSock, gumpID, buttonID )
+{
+	pSock.SysMessage( "I pressed button: " + buttonID + " in gump with ID " + gumpID );
+	// ... craft additional packets with submenu content etc. based on which button player clicked
+}
+</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnSell" id="eventOnSell"><span>onSell</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -2727,96 +2877,6 @@ function onSoldToVendor( pSock, Vendor, iSold )
 	pUser.TextMessage( "I sold an item (" + iSold.name + ") to a vendor!" );
 	Vendor.TextMessage( "I just bought an item from some random dude!" );
 	return true;
-}</code></pre></p>
-						</div>
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpecialMove" id="eventOnSpecialMove"><span>onSpecialMove</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-						<div class="settingsDiv">
-							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpecialMove( pUser, abilityID )</em></p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Purpose</span></p>
-							<p>To allow implementation of special abilities used during combat (or otherwise) when players toggle these from client.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">When Triggered</span></p>
-							<p>Event triggers for pUser's script when player toggles a special move from a combat book in client</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Return Values</span></p>
-							<ul>
-								<li><strong>return false</strong> (or nothing) to allow other scripts with event to run</li>
-								<li><strong>return true</strong> to prevent other scripts with event from running</li>
-							</ul>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<p>Can be used in global scripts, or individual scripts attached to player characters. Lookup packet 0xD7, subCmd 0x19 in packet guides for updated details on special moves that are available, whose IDs range from 0x00 to 0x1D, or see list below (might be out of date):</p>
-							<input type="checkbox" id="spoiler_special_moves"/>
-							<label for="spoiler_special_moves">List of Special Moves sent from Client <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<p>0x00 = Cancel Ability Attempt<br>
-								0x01 = Armor Ignore<br>
-								0x02 = Bleed Attack<br>
-								0x03 = Concusion Blow<br>
-								0x04 = Crushing Blow<br>
-								0x05 = Disarm<br>
-								0x06 = Dismount<br>
-								0x07 = Double Strike<br>
-								0x08 = Infecting<br>
-								0x09 = Mortal Strike<br>
-								0x0A = Moving Shot<br>
-								0x0B = Paralyzing Blow<br>
-								0x0C = Shadow Strike<br>
-								0x0D = Whirlwind Attack<br>
-								0x0E = Riding Swipe<br>
-								0x0F = Frenzied Whirlwind<br>
-								0x10 = Block<br>
-								0x11 = Defense Mastery<br>
-								0x12 = Nerve Strike<br>
-								0x13 = Talon Strike<br>
-								0x14 = Feint<br>
-								0x15 = Dual Wield<br>
-								0x16 = Double shot<br>
-								0x17 = Armor Peirce<br>
-								0x18 = Bladeweave<br>
-								0x19 = Force Arrow<br>
-								0x1A = Lightning Arrow<br>
-								0x1B = Psychic Attack<br>
-								0x1C = Serpent Arrow<br>
-								0x1D = Force of Nature</p>
-							</div>
-							<p>Server can send packet 0xBF, subCommand 0x21 to cancel the red highlighted state of the ability icon in the client, and reset the status of them.</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">// Example where a timer is used to disable special move after two seconds
-function onSpecialMove( pUser, abilityID )
-{
-		pUser.TextMessage( "I'm activating ability #" + abilityID );
-		pUser.StartTimer( 2000, abilityID, true );
-		return true;
-}
-
-function onTimer( timerObj, timerID )
-{
-		// Toggle ability off after 2 second timer has elapsed
-		var toSend = new Packet;
-		toSend.ReserveSize( 7 )
-		toSend.WriteByte( 0, 0xbf ); // Packet
-		toSend.WriteShort( 1, 0x07 ); // Length
-		toSend.WriteShort( 3, 0x21 ); // SubCmd
-		toSend.WriteByte( 5, timerID ); // Ability ID
-		toSend.WriteByte( 6, 0 ); // On/off
-		timerObj.socket.Send( toSend );
-		toSend.Free();
 }</code></pre></p>
 						</div>
 					</div>
@@ -3046,68 +3106,6 @@ function onTimer( timerObj, timerID )
 			</li>
 
 			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpellGain" id="eventOnSpellGain"><span>onSpellGain</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-						<div class="settingsDiv">
-							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellGain( spellBook, spellNum )</em></p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Purpose</span></p>
-							<p>To allow doing something whenever spells are added to spellbooks</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">When Triggered</span></p>
-							<p>Triggered for spellbooks when spells are added to them</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<p>This event runs <strong>before</strong> the spell is actually added to the spellBook, and won't have any effect on whether this succeeds</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSpellGain( spellBook, spellNum )
-{
-	Console.Log( "Spell number " + spellNum + " was added to spellBook with serial " + spellBook.serial, "server.log" );
-}</code></pre></p>
-						</div>
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpellLoss" id="eventOnSpellLoss"><span>onSpellLoss</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-						<div class="settingsDiv">
-							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellLoss( spellBook, spellNum )</em></p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Purpose</span></p>
-							<p>To allow doing something whenever spells are removed from spellbooks</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">When Triggered</span></p>
-							<p>Triggered for spellbooks when spells are removed from them</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Notes</span></p>
-							<p>This event runs <strong>before</strong> the spell is actually removed from the spellBook, and won't have any effect on whether this succeeds</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSpellLoss( spellBook, spellNum )
-{
-	Console.Log( "Spell number " + spellNum + " was removed from spellBook with serial " + spellBook.serial, "server.log" );
-}</code></pre></p>
-						</div>
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnSnooped" id="eventOnSnooped"><span>onSnooped</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -3273,6 +3271,96 @@ function onSpeechInput( pUser, iUsed, pSpeech, pSpeechID )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpecialMove" id="eventOnSpecialMove"><span>onSpecialMove</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpecialMove( pUser, abilityID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow implementation of special abilities used during combat (or otherwise) when players toggle these from client.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Event triggers for pUser's script when player toggles a special move from a combat book in client</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or nothing) to allow other scripts with event to run</li>
+								<li><strong>return true</strong> to prevent other scripts with event from running</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>Can be used in global scripts, or individual scripts attached to player characters. Lookup packet 0xD7, subCmd 0x19 in packet guides for updated details on special moves that are available, whose IDs range from 0x00 to 0x1D, or see list below (might be out of date):</p>
+							<input type="checkbox" id="spoiler_special_moves"/>
+							<label for="spoiler_special_moves">List of Special Moves sent from Client <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<p>0x00 = Cancel Ability Attempt<br>
+								0x01 = Armor Ignore<br>
+								0x02 = Bleed Attack<br>
+								0x03 = Concusion Blow<br>
+								0x04 = Crushing Blow<br>
+								0x05 = Disarm<br>
+								0x06 = Dismount<br>
+								0x07 = Double Strike<br>
+								0x08 = Infecting<br>
+								0x09 = Mortal Strike<br>
+								0x0A = Moving Shot<br>
+								0x0B = Paralyzing Blow<br>
+								0x0C = Shadow Strike<br>
+								0x0D = Whirlwind Attack<br>
+								0x0E = Riding Swipe<br>
+								0x0F = Frenzied Whirlwind<br>
+								0x10 = Block<br>
+								0x11 = Defense Mastery<br>
+								0x12 = Nerve Strike<br>
+								0x13 = Talon Strike<br>
+								0x14 = Feint<br>
+								0x15 = Dual Wield<br>
+								0x16 = Double shot<br>
+								0x17 = Armor Peirce<br>
+								0x18 = Bladeweave<br>
+								0x19 = Force Arrow<br>
+								0x1A = Lightning Arrow<br>
+								0x1B = Psychic Attack<br>
+								0x1C = Serpent Arrow<br>
+								0x1D = Force of Nature</p>
+							</div>
+							<p>Server can send packet 0xBF, subCommand 0x21 to cancel the red highlighted state of the ability icon in the client, and reset the status of them.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Example where a timer is used to disable special move after two seconds
+function onSpecialMove( pUser, abilityID )
+{
+		pUser.TextMessage( "I'm activating ability #" + abilityID );
+		pUser.StartTimer( 2000, abilityID, true );
+		return true;
+}
+
+function onTimer( timerObj, timerID )
+{
+		// Toggle ability off after 2 second timer has elapsed
+		var toSend = new Packet;
+		toSend.ReserveSize( 7 )
+		toSend.WriteByte( 0, 0xbf ); // Packet
+		toSend.WriteShort( 1, 0x07 ); // Length
+		toSend.WriteShort( 3, 0x21 ); // SubCmd
+		toSend.WriteByte( 5, timerID ); // Ability ID
+		toSend.WriteByte( 6, 0 ); // On/off
+		timerObj.socket.Send( toSend );
+		toSend.Free();
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnSpellCast" id="eventOnSpellCast"><span>onSpellCast</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -3306,6 +3394,107 @@ function onSpellCast( pUser, spellID )
 		pUser.CustomTarget( 0, "What do you want to target with your fireball?" );
 		return -1;
 	}
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpellGain" id="eventOnSpellGain"><span>onSpellGain</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpellGain( spellBook, spellNum )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow doing something whenever spells are added to spellbooks</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered for spellbooks when spells are added to them</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This event runs <strong>before</strong> the spell is actually added to the spellBook, and won't have any effect on whether this succeeds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onSpellGain( spellBook, spellNum )
+{
+	Console.Log( "Spell number " + spellNum + " was added to spellBook with serial " + spellBook.serial, "server.log" );
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpellLoss" id="eventOnSpellLoss"><span>onSpellLoss</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpellLoss( spellBook, spellNum )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow doing something whenever spells are removed from spellbooks</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered for spellbooks when spells are removed from them</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This event runs <strong>before</strong> the spell is actually removed from the spellBook, and won't have any effect on whether this succeeds</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onSpellLoss( spellBook, spellNum )
+{
+	Console.Log( "Spell number " + spellNum + " was removed from spellBook with serial " + spellBook.serial, "server.log" );
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpellSuccess" id="eventOnSpellSuccess"><span>onSpellSuccess</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpellSuccess( pCaster, spellID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom behaviour (or effects) after a spell has successfully been cast</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When successfully casting a spell, event triggers in scripts attached to pCaster</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> (or nothing) to allow other scripts with event to also run</li>
+								<li><strong>return true</strong> to prevent other scripts with event from running</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">
+function onSpellSuccess( pCaster, spellID )
+{
+	if( spellID == 18 )
+	{
+		pCaster.TextMessage( "Yes! I managed to cast a fireball!" );
+	}
+	return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -3349,45 +3538,6 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 	if( socket != null )
 		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
 	return 2;
-}</code></pre></p>
-						</div>
-					</div>
-				</div> <!-- cd-faq__content -->
-			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#eventOnSpellSuccess" id="eventOnSpellSuccess"><span>onSpellSuccess</span></a>
-				<div class="cd-faq__content">
-					<div class="text-component">
-						<div class="settingsDiv">
-							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellSuccess( pCaster, spellID )</em></p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Purpose</span></p>
-							<p>To allow custom behaviour (or effects) after a spell has successfully been cast</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">When Triggered</span></p>
-							<p>When successfully casting a spell, event triggers in scripts attached to pCaster</p>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Return Values</span></p>
-							<ul>
-								<li><strong>return false</strong> (or nothing) to allow other scripts with event to also run</li>
-								<li><strong>return true</strong> to prevent other scripts with event from running</li>
-							</ul>
-						</div>
-						<div class="settingsDiv">
-							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">
-function onSpellSuccess( pCaster, spellID )
-{
-	if( spellID == 18 )
-	{
-		pCaster.TextMessage( "Yes! I managed to cast a fireball!" );
-	}
-	return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -4940,16 +5090,16 @@ function onUseChecked( pUser, iUsed )
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world );</em></p>
+									<p><em>ITEM FindItem( xLoc, yLoc, zLoc, world, idToCheck[, instanceID] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns ID of item closest to specified coordinates</p>
+									<p>Returns item reference to item of given ID that is closest (within immediate nearby internal map regions) to specified coordinates</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Find ID of item closest to player's location
-var closestItemID = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber );</code></pre>
+									<pre><code class="language-javascript">// Fetch item reference for item with id 0x04a9 closest to player's location
+var closestItem = FindItem( pUser.x, pUser.y, pUser.z, pUser.worldnumber, 0x04a9 );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -5405,7 +5555,7 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>int GetMapElevation( x, y, z, world );</em></p>
+									<p><em>int GetMapElevation( x, y, world );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5413,7 +5563,7 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">var mapElev = GetMapElevation( pUser.x, pUser.y, pUser.z, pUser.worldnumber );</code></pre>
+									<pre><code class="language-javascript">var mapElev = GetMapElevation( pUser.x, pUser.y, pUser.worldnumber );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -5429,6 +5579,10 @@ var doesTileBlock = CheckTileFlag( iUsed.id, 6 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
 									<p>Returns the height of the static tile with specified ID.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Among other things, useful for getting the surface Z of targeted statics in client version 7.0.8.2 or lower, as these don't automatically include this in the target Z for socket as more recent clients do.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7446,7 +7600,10 @@ value = mItem.Resist( 1 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>SoundID is the ID of the sound to play. If bAllHear is true, then everyone nearby hears it. If it's false, then only the Character hears it.</p>
+									<ul>
+										<li>SoundID is the ID of the sound to play. If bAllHear is true, then everyone nearby hears it. If it's false, then only the Character hears it.</li>
+										<li>Beware that if you use sound IDs from UOFiddler, the sound IDs you see there are offset by +1 from what the client will play when you use those sound IDs. Subtract -1 from the sound ID when using it with UOX3 to get the correct sound!</li>
+									</ul>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -10949,15 +11106,23 @@ myPlank.OpenPlank();</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void PlaceInPack();</em></p>
+									<p><em>void PlaceInPack( autoStackBool );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>	Randomly sets the placement of an item inside the container it is in.</p>
+									<p>Randomly sets the placement of an item inside the container it is in.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>If autoStackBool is set to true, UOX3 will attempt to stack the item with existing similar items in its container before randomly placing it.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myItem.PlaceInPack();</code></pre>
+									<pre><code class="language-javascript">// Randomly place item in container
+myItem.PlaceInPack();
+
+// Attempt to autostack item with similar items
+myItem.PlaceInPack( true );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13062,6 +13227,10 @@ myObject.propertyName = newValue;
 							Get/Set whether character is flagged as innocent</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.isAwake</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							Get/Set whether the character (NPC only) is marked as permanently awake or not. If true, NPC is always active regardless of the active status of the region it's in (which can be deactivated based on lack of player activity)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.isAnimal</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get whether character is flagged as an animal (Read-Only)</p>
 						</div>
@@ -14568,7 +14737,7 @@ myObject.propertyName = newValue;
 							Get/Set whether Teleport spell can be used in this region</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">.sDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
+							<p><span class="hl">.isDungeon</span> <strong>(bool, <em>true/false</em>)</strong><br>
 							Get/Set whether region is considered a dungeon. Primarily used for light level stuff, and to determine if houses can be placed in a region (houses cannot be placed in dungeons)</p>
 						</div>
 						<div class="settingsDiv">

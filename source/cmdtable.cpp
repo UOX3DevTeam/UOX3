@@ -181,7 +181,7 @@ void command_addaccount( CSocket *s)
 		UI16 newFlags = 0x0000;
 
 		if( Commands->NumArguments() > 2 )
-			newFlags = strutil::value<UI16>( Commands->CommandString( 4, 4 ));
+			newFlags = oldstrutil::value<UI16>( Commands->CommandString( 4, 4 ));
 
 		if( newUsername == "" || newPassword == "" )
 		{
@@ -255,7 +255,7 @@ void command_setpost( CSocket *s )
 		return;
 
 	PostTypes type = PT_LOCAL;
-	std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
+	std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
 	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 		type = PT_GLOBAL;
 	else if( upperCommand == "REGIONAL" ) // user's next post appears in all bulletin boards in current region
@@ -336,7 +336,7 @@ void command_tile( CSocket *s )
 		return;
 
 	UI16 targID = 0;
-	if( strutil::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
+	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
 	{
 		targID = static_cast<UI16>(Commands->Argument( 2 ));
 	}
@@ -395,7 +395,7 @@ void command_tile( CSocket *s )
 		// tile static itemID
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		if( strutil::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
+		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
 		{
 			s->TempInt2( static_cast<SI32>(Commands->Argument( 2 )));
 		}
@@ -517,7 +517,7 @@ void command_tell( CSocket *s )
 
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
-		std::string temp	= mChar->GetName() + " tells " + tChar->GetName() + ": " + txt;
+		std::string temp	= mChar->GetNameRequest( tChar ) + " tells " + tChar->GetNameRequest( mChar ) + ": " + txt;
 
 		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 		{
@@ -532,7 +532,7 @@ void command_tell( CSocket *s )
 				unicodeMessage.Colour( mChar->GetSayColour() );
 			unicodeMessage.Type( TALK );
 			unicodeMessage.Language( "ENG" );
-			unicodeMessage.Name( mChar->GetName() );
+			unicodeMessage.Name( mChar->GetNameRequest( tChar ));
 			unicodeMessage.ID( INVALIDID );
 			unicodeMessage.Serial( mChar->GetSerial() );
 			s->Send( &unicodeMessage );
@@ -582,7 +582,7 @@ void command_command( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
 	{
-		HandleGumpCommand( s, strutil::upper( Commands->CommandString( 2, 2 )), strutil::upper( Commands->CommandString( 3 )) );
+		HandleGumpCommand( s, oldstrutil::upper( Commands->CommandString( 2, 2 )), oldstrutil::upper( Commands->CommandString( 3 )) );
 	}
 }
 
@@ -635,7 +635,7 @@ void command_memstats( CSocket *s )
 void command_restock( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
+	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 	{
 		restock( true );
 		s->sysmessage( 55 );
@@ -727,7 +727,7 @@ void command_regspawn( CSocket *s )
 		UI32 itemsSpawned	= 0;
 		UI32 npcsSpawned	= 0;
 
-		if( strutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
+		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
 			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
 			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
@@ -785,7 +785,7 @@ void command_cq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
 		{
 			nextCall( s, false );
@@ -838,7 +838,7 @@ void command_gq( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = strutil::upper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in GM queue
 		{
 			nextCall( s, true );
@@ -879,12 +879,12 @@ void command_minecheck( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_guards( void )
 {
-	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( true );
 		sysBroadcast( Dictionary->GetEntry( 61 ) );
 	}
-	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( false );
 		sysBroadcast( Dictionary->GetEntry( 62 ) );
@@ -898,12 +898,12 @@ void command_guards( void )
 //o-----------------------------------------------------------------------------------------------o
 void command_announce( void )
 {
-	if( strutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( true );
 		sysBroadcast( Dictionary->GetEntry( 63 ) );
 	}
-	else if( strutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( false );
 		sysBroadcast( Dictionary->GetEntry( 64 ) );
@@ -986,7 +986,7 @@ void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 			CChar *iChar = iSock->CurrcharObj();
 			if( iChar->GetCommandLevel() >= commandLevel )
 			{
-				auto temp = strutil::format("%i) %s", j, iChar->GetName().c_str() );
+				auto temp = oldstrutil::format("%i) %s", j, iChar->GetName().c_str() );
 				Who.AddData( temp, iChar->GetSerial(), 3 );
 			}
 			++j;
@@ -1035,7 +1035,7 @@ void command_reportbug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error( strutil::format("Unable to open bugs log file %s!", logName.c_str()) );
+		Console.error( oldstrutil::format("Unable to open bugs log file %s!", logName.c_str()) );
 		return;
 	}
 	char dateTime[1024];
@@ -1122,7 +1122,7 @@ void command_validcmd( CSocket *s )
 void command_howto( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	std::string commandStart = strutil::upper( Commands->CommandString( 2 ));
+	std::string commandStart = oldstrutil::upper( Commands->CommandString( 2 ));
 	if( commandStart.empty() )
 	{
 		CChar *mChar = s->CurrcharObj();
@@ -1139,11 +1139,11 @@ void command_howto( CSocket *s )
 		toSend.UserID( INVALIDSERIAL );
 		toSend.GumpID( 13 );
 
-		toSend.addCommand( strutil::format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
+		toSend.addCommand( oldstrutil::format("resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic()) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "HOWTO" );
-		toSend.addCommand( strutil::format("button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
+		toSend.addCommand( oldstrutil::format("button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
 
 		UI08 currentLevel			= mChar->GetCommandLevel();
 		COMMANDMAP_ITERATOR gAdd	= CommandMap.begin();
@@ -1159,14 +1159,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( strutil::format("page %u", pagenum ));
+				toSend.addCommand( oldstrutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( gAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( oldstrutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( oldstrutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( gAdd->first );
 				++numAdded;
 				++linenum;
@@ -1181,14 +1181,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( strutil::format("page %u", pagenum ));
+				toSend.addCommand( oldstrutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( tAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( oldstrutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( oldstrutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( tAdd->first );
 				++numAdded;
 				++linenum;
@@ -1203,14 +1203,14 @@ void command_howto( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( strutil::format("page %u", pagenum ));
+				toSend.addCommand( oldstrutil::format("page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( jAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( strutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( strutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( oldstrutil::format("text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( oldstrutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( jAdd->first );
 				++numAdded;
 				++linenum;
@@ -1222,14 +1222,14 @@ void command_howto( CSocket *s )
 		pagenum = 1;
 		for( SI32 i = 0; i < numAdded; i += 10 )
 		{
-			toSend.addCommand( strutil::format("page %u", pagenum ));
+			toSend.addCommand( oldstrutil::format("page %u", pagenum ));
 			if( i >= 10 )
 			{
-				toSend.addCommand(strutil::format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
+				toSend.addCommand(oldstrutil::format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
 			}
 			if( ( numAdded > 10 ) && ( ( i + 10 ) < numAdded ) )
 			{
-				toSend.addCommand( strutil::format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
+				toSend.addCommand( oldstrutil::format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
 			}
 			++pagenum;
 		}
@@ -1419,16 +1419,16 @@ void cCommands::CommandReset( void )
 void cCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.print(strutil::format( "   UnRegistering command %s\n", cmdName.c_str()));
+	Console.print(oldstrutil::format( "   UnRegistering command %s\n", cmdName.c_str()));
 #endif
 	std::string upper	= cmdName;
-	upper				= strutil::upper( upper );
+	upper				= oldstrutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 		JSCommandMap.erase( p );
 #if defined( UOX_DEBUG_MODE )
 	else
-		Console.print( strutil::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
+		Console.print( oldstrutil::format("         Command \"%s\" was not found.\n", cmdName.c_str()));
 #endif
 }
 
@@ -1449,11 +1449,11 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 	Console.MoveTo( 50 );
 	Console.print( "@ command level " );
 	Console.TurnYellow();
-	Console.print( strutil::format("%i\n", cmdLevel) );
+	Console.print( oldstrutil::format("%i\n", cmdLevel) );
 	Console.TurnNormal();
 #endif
 	std::string upper	= cmdName;
-	upper				= strutil::upper( upper );
+	upper				= oldstrutil::upper( upper );
 	JSCommandMap[upper]	= JSCommandEntry( cmdLevel, scriptID, isEnabled );
 }
 
@@ -1465,7 +1465,7 @@ void cCommands::Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLev
 void cCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
 	std::string upper				= cmdName;
-	upper							= strutil::upper( upper );
+	upper							= oldstrutil::upper( upper );
 	JSCOMMANDMAP_ITERATOR	toFind	= JSCommandMap.find( upper );
 	if( toFind != JSCommandMap.end() )
 	{

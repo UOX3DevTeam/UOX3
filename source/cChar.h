@@ -343,6 +343,7 @@ public:
 
 	bool		isUnicode( void ) const;
 	bool		IsNpc( void ) const;
+	bool		IsAwake( void ) const;
 	bool		IsEvading( void ) const;
 	bool		IsShop( void ) const;
 	bool		IsDead( void ) const;
@@ -368,6 +369,7 @@ public:
 
 	void		setUnicode( bool newVal );
 	void		SetNpc( bool newVal );
+	void		SetAwake( bool newVal );
 	void		SetEvadeState( bool newVal );
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );

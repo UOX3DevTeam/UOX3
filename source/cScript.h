@@ -20,6 +20,7 @@ enum ScriptEvent
 	seOnSkill,
 	seOnStat,
 	seOnTooltip,
+	seOnNameRequest,
 	seOnAttack,
 	seOnDefense,
 	seOnSkillGain,			//	**
@@ -97,6 +98,7 @@ enum ScriptEvent
 	seOnDamage,
 	seOnGumpPress,
 	seOnGumpInput,
+	seOnScrollingGumpPress,
 	seOnDropItemOnItem,
 	seOnVirtueGumpPress,
 	seOnUseBandageMacro,	//	**	allows overriding what happens when client uses bandage macros
@@ -184,6 +186,7 @@ public:
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
 	std::string		OnTooltip( CBaseObject *myObj );
+	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
@@ -241,6 +244,7 @@ public:
 	SI08		OnDropItemOnNpc( CChar *srcChar, CChar *targChar, CItem *i );
 	SI08		OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest );
 	SI08		OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID );
+	SI08		OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID );
 	SI08		OnQuestGump( CChar *mChar );
 	SI08		OnHelpButton( CChar *mChar );
 	SI08		OnWarModeToggle( CChar *mChar );

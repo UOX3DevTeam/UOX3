@@ -112,3 +112,10 @@ function onDecay( iDecaying )
 	}
 	return true;
 }
+
+// Override the hard-coded help menu and display a JS based one
+function onHelpButton( pChar )
+{
+	TriggerEvent( 2, "DisplayHelpMenu", pChar );
+	return false;
+}

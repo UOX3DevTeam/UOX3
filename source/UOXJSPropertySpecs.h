@@ -279,6 +279,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM },
 	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO  },
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM },
+	{ "isAwake",		CCP_AWAKE,			JSPROP_ENUMANDPERM },
 	{ "online",			CCP_ONLINE,			JSPROP_ENUMPERMRO  },
 	{ "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM },
 	{ "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM },
@@ -506,6 +507,7 @@ static JSPropertySpec CItemProps[] =
 	{ "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM },
 	{ "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM },
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM },
+	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO },
 	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM },
 

@@ -116,6 +116,7 @@ const UI32 BIT_HIRELING			=	32;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
+const UI32 BIT_AWAKE			=   2;
 
 // Player defaults
 
@@ -206,6 +207,10 @@ loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS )
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
 	foodList.reserve( MAX_NAME );
+
+	// Mark all characters as "non-awake" my default. This is used by UOX3 to see which
+	// NPCs are permanently awake and need updating outside of region-based checks
+	boolFlags.set( BIT_AWAKE, false );
 }
 
 const UI32			DEFCHAR_BOOLS 				= 0;
@@ -913,6 +918,40 @@ void CChar::SetNpc( bool newVal )
 {
 	bools.set( BIT_NPC, newVal );
 	UpdateRegion();
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	bool IsAwake( void ) const
+//|					void SetAwake( bool newVal )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns/Sets whether the character (NPC) is permanently awake and updating outside
+//|					standard region-checks. If set, these NPCs are not updated as part of the 
+//|					regular region update loop, but in a separate loop directly after
+//o-----------------------------------------------------------------------------------------------o
+bool CChar::IsAwake( void ) const
+{
+	bool rVal = false;
+	if( IsValidNPC() )
+		rVal = mNPC->boolFlags.test( BIT_AWAKE );
+	return rVal;
+}
+void CChar::SetAwake( bool newVal )
+{
+	if( IsValidNPC() )
+	{
+		mNPC->boolFlags.set( BIT_AWAKE, newVal );
+		GenericList< CChar * > *alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+		if( newVal )
+		{
+			// NPC awake, add to awake list
+			alwaysAwakeChars->Add( this );
+		}
+		else
+		{
+			// NPC not awake, remove from awake list
+			alwaysAwakeChars->Remove( this );
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2732,7 +2771,7 @@ bool CChar::WearItem( CItem *toWear )
 		{
 #if defined( UOX_DEBUG_MODE )
 			std::string charName = getNpcDictName( this );
-			Console.warning( strutil::format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial ));
+			Console.warning( oldstrutil::format("Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial ));
 #endif
 			rvalue = false;
 		}
@@ -3000,6 +3039,7 @@ void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "MaxLoyalty=" << static_cast<UI16>(maxLoyalty) << '\n';
 	outStream << "Loyalty=" << static_cast<UI16>(loyalty) << '\n';
 	outStream << "Orneriness=" << static_cast<UI16>(orneriness) << '\n';
+	outStream << "Awake=" << static_cast<SI16>(boolFlags.test( BIT_AWAKE )?1:0) << '\n';
 
 	// Loop through list of previous owners for pet and store a reference to each of those
 	for( CChar *tempChar = petOwnerList.First(); !petOwnerList.Finished(); tempChar = petOwnerList.Next() )
@@ -3576,14 +3616,14 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 	bool rvalue = CBaseObject::HandleLine( UTag, data );
 	if( !rvalue )
 	{
-		auto csecs = strutil::sections( data, "," );
+		auto csecs = oldstrutil::sections( data, "," );
 		
 		switch( (UTag.data()[0]) )
 		{
 			case 'A':
 				if( UTag == "ACCOUNT" )
 				{
-					SetAccountNum( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetAccountNum( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ATROPHY" )
@@ -3591,7 +3631,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					int count = 0 ;
 					for( auto &value : csecs )
 					{
-						value = strutil::upper( strutil::trim( strutil::removeTrailing( value,"//" )));
+						value = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( value,"//" )));
 						if( value == "[END]" )
 						{
 							break;
@@ -3607,41 +3647,46 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "ADVANCEOBJECT" )
 				{
-					SetAdvObj( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
+					SetAdvObj( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ADVRACEOBJECT" )
 				{
-					SetRaceGate( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
+					SetRaceGate( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "ALLMOVE" )
 				{
-					SetAllMove( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetAllMove( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					rvalue = true;
+				}
+				else if( UTag == "AWAKE" )
+				{
+					SetAwake( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'B':
 				if( UTag == "BEARDSTYLE" )
 				{
-					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
+					SetBeardStyle( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BEARDCOLOUR" )
 				{
-					SetBeardColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)));
+					SetBeardColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)));
 					rvalue = true;
 				}
 				else if( UTag == "BASESKILLS" )
 				{
-					auto dsecs = strutil::sections( data, "-" );
+					auto dsecs = oldstrutil::sections( data, "-" );
 					for( auto &value : dsecs )
 					{
 						if( value.empty() )
 						{
 							break;
 						}
-						auto secs = strutil::sections( value, "," );
+						auto secs = oldstrutil::sections( value, "," );
 						if( secs.size() != 2 )
 						{
 							break;
@@ -3654,121 +3699,121 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "BEARD" )
 				{
-					SetBeardStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					SetBeardColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetBeardStyle( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetBeardColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCEGAIN" )
 				{
-					SetBrkPeaceChanceGain( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetBrkPeaceChanceGain( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "BRKPEACECHANCE" )
 				{
-					SetBrkPeaceChance( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )),nullptr,0)) );
+					SetBrkPeaceChance( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )),nullptr,0)) );
 					rvalue = true;
 				}
 				break;
 			case 'C':
 				if( UTag == "COMMANDLEVEL" )
 				{
-					SetCommandLevel( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetCommandLevel( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CANRUN" )
 				{
-					SetRun( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetRun( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANATTACK" )
 				{
-					SetCanAttack( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetCanAttack( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANTRAIN" )
 				{
-					SetCanTrain( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetCanTrain( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CANBEHIRED" )
 				{
-					SetCanHire( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetCanHire( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "CONTROLSLOTS" )
 				{
-					SetControlSlots( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetControlSlots( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CONTROLSLOTSUSED" )
 				{
-					SetControlSlotsUsed( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetControlSlotsUsed( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "CREATEDON" )
 				{
-					SetCreatedOn( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetCreatedOn( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'D':
 				if( UTag == "DEATHS" )
 				{
-					SetDeaths( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetDeaths( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "DEAD" )
 				{
-					SetDead( (static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
+					SetDead( (static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
 			case 'E':
 				if( UTag == "EMOTION" )
 				{
-					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetEmoteColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'F':
 				if( UTag == "FIXEDLIGHT" )
 				{
-					SetFixedLight( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFixedLight( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FX1" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
+					SetFx( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FX2" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
+					SetFx( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FY1" )
 				{
-					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
+					SetFy( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)), 0 );
 					rvalue = true;
 				}
 				else if( UTag == "FY2" )
 				{
-					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
+					SetFy( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)), 1 );
 					rvalue = true;
 				}
 				else if( UTag == "FZ1" )
 				{
-					SetFz( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFz( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEAT" )
 				{
-					SetFleeAt( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFleeAt( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FONTTYPE" )
 				{
-					SetFontType( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFontType( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "FOODLIST" )
@@ -3778,19 +3823,19 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "FLEEINGSPEED" )
 				{
-					SetFleeingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
+					SetFleeingSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				else if( UTag == "FLEEINGSPEEDMOUNTED" )
 				{
-					SetMountedFleeingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
+					SetMountedFleeingSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				break;
 			case 'G':
 				if( UTag == "GUILDFEALTY" )
 				{
-					SetGuildFealty( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetGuildFealty( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTITLE" )
@@ -3800,57 +3845,57 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "GUILDNUMBER" )
 				{
-					SetGuildNumber( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetGuildNumber( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "GUILDTOGGLE" )
 				{
-					SetGuildToggle( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetGuildToggle( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'H':
 				if( UTag == "HUNGER" )
 				{
-					SetHunger( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetHunger( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HOLDG" )
 				{
-					SetHoldG( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetHoldG( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRSTYLE" )
 				{
-					SetHairStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetHairStyle( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIRCOLOUR" )
 				{
-					SetHairColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetHairColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "HAIR" )
 				{
-					SetHairStyle( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					SetHairColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetHairStyle( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetHairColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'I':
 				if( UTag == "ISNPC" )
 				{
-					SetNpc( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
+					SetNpc( (static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISSHOP" )
 				{
-					SetShop( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
+					SetShop( (static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "ISWARRING" )
 				{
-					SetWar( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
+					SetWar( (static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				break;
@@ -3862,74 +3907,74 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "LASTONSECS" )
 				{
-					SetLastOnSecs( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetLastOnSecs( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "LOYALTY" )
 				{
-					SetLoyalty( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetLoyalty( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'M':
 				if( UTag == "MAYLEVITATE" )
 				{
-					SetLevitate( (static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
+					SetLevitate( (static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1) );
 					rvalue = true;
 				}
 				else if( UTag == "MURDERTIMER" )
 				{
-					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" ))))));
+					SetTimer( tCHAR_MURDERRATE, BuildTimeValue( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
 					rvalue = true;
 				}
 				else if( UTag == "MAXHP" )
 				{
-					SetFixedMaxHP( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFixedMaxHP( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXMANA" )
 				{
-					SetFixedMaxMana( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFixedMaxMana( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXLOYALTY" )
 				{
-					SetMaxLoyalty( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetMaxLoyalty( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MAXSTAM" )
 				{
-					SetFixedMaxStam( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetFixedMaxStam( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "MOUNTED" )
 				{
-					SetMounted( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetMounted( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'N':
 				if( UTag == "NPCAITYPE" )
 				{
-					SetNPCAiType( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetNPCAiType( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "NPCWANDER" )
 				{
 					if( csecs.size() >= 2 )
 					{
-						SetNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-						SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetNpcWander( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetOldNpcWander( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+						SetNpcWander( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "NPCFLAG" )
 				{
-					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetNPCFlag( static_cast<cNPC_FLAG>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					UpdateFlag( this );
 					rvalue = true;
 				}
@@ -3947,40 +3992,40 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "ORIGINALBODYID" )
 				{
-					SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetOrgID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALSKINID" )
 				{
-					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetOrgSkin( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORIGINALID" )
 				{
-					SetOrgID( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					SetOrgSkin( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetOrgID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetOrgSkin( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "ORNERINESS" )
 				{
-					SetOrneriness( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetOrneriness( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'P':
 				if( UTag == "PRIVILEGES" )
 				{
-					SetPriv( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetPriv( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PACKITEM" )
 				{
-					temp_container_serial = static_cast<SERIAL>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0) );
+					temp_container_serial = static_cast<SERIAL>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0) );
 					rvalue = true;
 				}
 				else if( UTag == "PETOWNER" )
 				{
-					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					CChar *cList = calcCharObjFromSer( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					if( ValidateObject( cList ) )
 					{
 						AddPetOwnerToList( cList );
@@ -3989,62 +4034,62 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "POISON" )
 				{
-					SetPoisoned( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetPoisoned( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "POISONSTRENGTH" )
 				{
-					SetPoisonStrength( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetPoisonStrength( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACEING" )
 				{
-					SetPeaceing( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetPeaceing( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PROVOING" )
 				{
-					SetProvoing( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetProvoing( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "PEACETIMER" )
 				{
-					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) ) );
+					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))) ) );
 					rvalue = true;
 				}
 				break;
 			case 'Q':
 				if( UTag == "QUESTTYPE" )
 				{
-					SetQuestType( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetQuestType( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTDESTINATIONREGION" )
 				{
-					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTORIGINALREGION" )
 				{
-					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "QUESTREGIONS" )
 				{
-					SetQuestOrigRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					SetQuestDestRegion( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetQuestOrigRegion( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetQuestDestRegion( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'R':
 				if( UTag == "ROBESERIAL" )
 				{
-					SetRobe( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetRobe( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RESERVED" )
 				{
-					SetCell( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetCell( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNING" )
@@ -4053,22 +4098,22 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "REGION" )
 				{
-					SetRegion(static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetRegion(static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "REATTACKAT" )
 				{
-					SetReattackAt( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetReattackAt( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNINGSPEED" )
 				{
-					SetRunningSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
+					SetRunningSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				else if( UTag == "RUNNINGSPEEDMOUNTED" )
 				{
-					SetMountedRunningSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))) );
+					SetMountedRunningSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))) );
 					rvalue = true;
 				}
 				break;
@@ -4077,62 +4122,62 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				{
 					if( csecs.size() >= 2 )
 					{
-						SetSplit( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-						SetSplitChance( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetSplit( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSplitChance( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetSplit( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+						SetSplit( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "SPLITCHANCE" )
 				{
-					SetSplitChance( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetSplitChance( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SUMMONTIMER" )
 				{
-					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>(std::stoul( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTimer( tNPC_SUMMONTIME, static_cast<UI32>(std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SAY" )
 				{
-					SetSayColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetSayColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STEALTH" )
 				{
-					SetStealth( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetStealth( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SPATTACK" )
 				{
 					if( csecs.size() >=2 )
 					{
-						SetSpAttack( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-						SetSpDelay( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+						SetSpAttack( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+						SetSpDelay( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					}
 					else
 					{
-						SetSpAttack( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+						SetSpAttack( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					}
 					rvalue = true;
 				}
 				else if( UTag == "SPECIALATTACKDELAY" )
 				{
-					SetSpDelay( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetSpDelay( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SQUELCHED" )
 				{
-					SetSquelched( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetSquelched( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "SKILLLOCKS" )
 				{
 					// Format: Baselocks=[0,34]-[1,255]-[END]
-					auto dsecs = strutil::sections( data, "-" );
+					auto dsecs = oldstrutil::sections( data, "-" );
 					
 					for( auto &value : dsecs )
 					{
@@ -4140,7 +4185,7 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 						{
 							break;
 						}
-						auto secs = strutil::sections( value, "," );
+						auto secs = oldstrutil::sections( value, "," );
 						if( secs.size() != 2 )
 						{
 							break;
@@ -4153,103 +4198,103 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 				}
 				else if( UTag == "SPEECH" )
 				{
-					SetSayColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
-					SetEmoteColour( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
+					SetSayColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)) );
+					SetEmoteColour( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "STABLED" )
 				{
-					SetStabled( static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetStabled( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				break;
 			case 'T':
 				if( UTag == "TAMING" )
 				{
-					SetTaming( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTaming( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERRATE" )
 				{
-					SetTamedHungerRate( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTamedHungerRate( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDHUNGERWILDCHANCE" )
 				{
-					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTamedHungerWildChance( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDTHIRSTRATE" )
 				{
-					SetTamedThirstRate( static_cast<SI08>( std::stoi( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
+					SetTamedThirstRate( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
 					rvalue = true;
 				}
 				else if( UTag == "TAMEDTHIRSTWILDCHANCE" )
 				{
-					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
+					SetTamedThirstWildChance( static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 ) ) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWN" )
 				{
-					SetTown( static_cast<UI08>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTown( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNVOTE" )
 				{
-					SetTownVote( static_cast<UI32>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTownVote( static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNPRIVILEGES" )
 				{
-					SetTownpriv( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetTownpriv( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "TOWNTITLE" )
 				{
-					SetTownTitle( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetTownTitle( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if (UTag == "THIRST")
 				{
-					SetThirst( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetThirst( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
 			case 'W':
 				if( UTag == "WANDERAREA" )
 				{
-					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )), nullptr, 0)), 0 );
-					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), 0 );
-					SetFx( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[2], "//" )), nullptr, 0)), 1 );
-					SetFy( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[3], "//" )), nullptr, 0)), 1 );
-					SetFz( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[4], "//" )), nullptr, 0)) );
+					SetFx( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)), 0 );
+					SetFy( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), 0 );
+					SetFx( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0)), 1 );
+					SetFy( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0)), 1 );
+					SetFz( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				else if( UTag == "WILLHUNGER" )
 				{
-					SetHungerStatus( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetHungerStatus( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if (UTag == "WILLTHIRST")
 				{
-					SetThirstStatus( static_cast<SI16>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
+					SetThirstStatus( static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) == 1 );
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEED" )
 				{
-					SetWalkingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))));
+					SetWalkingSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rvalue = true;
 				}
 				else if( UTag == "WALKINGSPEEDMOUNTED" )
 				{
-					SetMountedWalkingSpeed( static_cast<R32>(std::stof(strutil::trim( strutil::removeTrailing( data, "//" )))));
+					SetMountedWalkingSpeed( static_cast<R32>(std::stof(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )))));
 					rvalue = true;
 				}
 				break;
 			case 'X':
 				if( UTag == "XNPCWANDER" )
 				{
-					SetOldNpcWander( static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+					SetOldNpcWander( static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 					rvalue = true;
 				}
 				break;
@@ -4284,7 +4329,7 @@ bool CChar::LoadRemnants( void )
 		if( acct == AB_INVALID_ID )
 		{
 			std::string charName = getNpcDictName( this );
-			Console.warning( strutil::format("NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial()) );
+			Console.warning( oldstrutil::format("NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial()) );
 			rvalue = false;
 		}
 		else
@@ -4306,7 +4351,7 @@ bool CChar::LoadRemnants( void )
 			if( IsNpc() )
 			{
 				std::string charName = getNpcDictName( this );
-				Console.warning( strutil::format("NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial()) );
+				Console.warning( oldstrutil::format("NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial()) );
 				rvalue = false;
 			}
 			else
@@ -4449,9 +4494,10 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 
 			SERIAL speakTo		= INVALIDSERIAL;
 			SpeechTarget target	= SPTRG_PCNPC;
+			CChar *mChar		= nullptr;
 			if( s != nullptr )
 			{
-				CChar *mChar	= s->CurrcharObj();
+				mChar			= s->CurrcharObj();
 				speakTo			= mChar->GetSerial();
 				target			= SPTRG_INDIVIDUAL;
 			}
@@ -4472,7 +4518,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				unicodeMessage.Colour( txtColor );
 				unicodeMessage.Type( msgType );
 				unicodeMessage.Language( "ENG" );
-				unicodeMessage.Name( this->GetName() );
+				unicodeMessage.Name( this->GetNameRequest( mChar ));
 				unicodeMessage.ID( INVALIDID );
 				unicodeMessage.Serial( GetSerial() );
 
@@ -4532,7 +4578,7 @@ void CChar::TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spa
 	{
 		va_list argptr;
 		va_start( argptr, spamTimer );
-		auto msg = strutil::format(txt,argptr);
+		auto msg = oldstrutil::format(txt,argptr);
 		if (msg.size()>512){
 			msg = msg.substr(0,512);
 		}
@@ -7634,7 +7680,7 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 		}
 		if( (!attacker->IsNpc()) && (!IsNpc()) )
 		{
-			Console.log( strutil::format(Dictionary->GetEntry( 1617 ),GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
+			Console.log( oldstrutil::format(Dictionary->GetEntry( 1617 ),GetName().c_str(), attacker->GetName().c_str()), "PvP.log");
 		}
 
 		Combat->Kill( attacker, this );

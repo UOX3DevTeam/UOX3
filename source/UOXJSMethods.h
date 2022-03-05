@@ -226,6 +226,7 @@ JSMethodFunc CSocket_Music;
 JSMethodFunc CSocket_SendAddMenu;
 JSMethodFunc CSocket_Send;
 JSMethodFunc CSocket_DisplayDamage;
+JSMethodFunc CSocket_Page;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
@@ -346,8 +347,8 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Delete",				CBase_Delete,			0, 0, 0 },
 	{ "DoAction",			CChar_DoAction,			1, 0, 0 },
 	{ "StaticEffect",		CBase_StaticEffect,		3, 0, 0 },
-	{ "Teleport",			CBase_Teleport,			3, 0, 0 },
-	{ "SetLocation",		CBase_Teleport,			3, 0, 0 },
+	{ "Teleport",			CBase_Teleport,			5, 0, 0 },
+	{ "SetLocation",		CBase_Teleport,			5, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,		2, 0, 0 },
 	{ "SellTo",				CMisc_SellTo,			1, 0, 0 },
 	{ "BuyFrom",			CMisc_BuyFrom,			1, 0, 0 },
@@ -437,9 +438,9 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
-	{ "Teleport",			CBase_Teleport,				3, 0, 0 },
+	{ "Teleport",			CBase_Teleport,				5, 0, 0 },
 	{ "StaticEffect",		CBase_StaticEffect,			4, 0, 0 },
-	{ "SetLocation",		CBase_Teleport,				3, 0, 0 },
+	{ "SetLocation",		CBase_Teleport,				5, 0, 0 },
 	{ "SoundEffect",		CMisc_SoundEffect,			2, 0, 0 },
 	{ "HasSpell",			CMisc_HasSpell,				1, 0, 0 },
 	{ "RemoveSpell",		CMisc_RemoveSpell,			1, 0, 0 },
@@ -550,6 +551,7 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ "GetTimer",			CMisc_GetTimer,		1, 0, 0 },
 	{ "SetTimer",			CMisc_SetTimer,		2, 0, 0 },
 	{ "SendAddMenu",		CSocket_SendAddMenu,1, 0, 0 },
+	{ "Page",				CSocket_Page,		1, 0, 0 },
 	{ "MakeMenu",			CMisc_MakeMenu,		2, 0, 0 },
 	{ "Send",				CSocket_Send,		1, 0, 0 },
 	{ "CanSee",				CBase_CanSee,		1, 0, 0 },

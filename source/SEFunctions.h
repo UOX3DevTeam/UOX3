@@ -166,6 +166,10 @@ SEngineFunc SE_DeleteFile;
 // Account 
 SEngineFunc SE_GetAccountCount;			//										***
 SEngineFunc SE_GetPlayerCount;			//										***
+SEngineFunc SE_GetItemCount;			//										***
+SEngineFunc SE_GetMultiCount;			//										***
+SEngineFunc SE_GetCharacterCount;		//										***
+SEngineFunc SE_GetServerVersionString;	//										***
 
 // Server constants
 SEngineFunc SE_BASEITEMSERIAL;			//										***

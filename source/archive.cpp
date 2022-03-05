@@ -32,7 +32,7 @@ void fileArchive( void )
 {
 	Console << "Beginning backup... ";
 	auto mytime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto timenow = strutil::simplify(std::asctime(std::localtime(&mytime)));
+	auto timenow = oldstrutil::simplify(std::asctime(std::localtime(&mytime)));
 	timenow = std::regex_replace(timenow, std::regex("[\\s:]"), std::string("-"));
 
 	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
@@ -52,13 +52,13 @@ void fileArchive( void )
 		const SI16 AreaY = UpperY / 8;
 
 
-		auto backupPath = strutil::format ("%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timenow.c_str() );
+		auto backupPath = oldstrutil::format ("%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timenow.c_str() );
 
 		for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 		{
 			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 			{
-				auto filename1 = strutil::format("%i.%i.wsc", counter1, counter2 );
+				auto filename1 = oldstrutil::format("%i.%i.wsc", counter1, counter2 );
 				backupFile( filename1, backupRoot );
 			}
 		}

@@ -14,7 +14,7 @@ typedef void *  va_list;
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
-Console.print( strutil::format("Socket failure at %s", __FILE__LINE__) );	\
+Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
@@ -135,6 +135,7 @@ const SI08 ILLEGAL_Z	= -128;
 #define ITEMMENUOFFSET		256
 #define TRACKINGMENUOFFSET	4096
 #define POLYMORPHMENUOFFSET 8192
+#define JSGUMPMENUOFFSET	16384
 
 const UI08 NORTH		= 0x00;
 const UI08 NORTHEAST	= 0x01;

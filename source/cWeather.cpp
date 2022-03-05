@@ -905,7 +905,7 @@ bool cWeatherAb::Load( void )
 			}
 
 			entryName			= weathScp->EntryName();
-			auto ssecs 			= strutil::sections( entryName, " " );
+			auto ssecs 			= oldstrutil::sections( entryName, " " );
 			i					= static_cast<UI32>(std::stoul(ssecs[1], nullptr, 0));
 			if( i >= weather.size() )
 			{
@@ -914,7 +914,7 @@ bool cWeatherAb::Load( void )
 
 			for( tag = WeatherStuff->First(); !WeatherStuff->AtEnd(); tag = WeatherStuff->Next() )
 			{
-				UTag = strutil::upper( tag );
+				UTag = oldstrutil::upper( tag );
 				data = WeatherStuff->GrabData();
 				switch( tag[0] )
 				{
@@ -982,11 +982,11 @@ bool cWeatherAb::Load( void )
 						}
 						else if( UTag == "RAININTENSITY" ) // intensity of rain
 						{
-							auto csecs = strutil::sections( data, "," );
+							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								RainIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)) );
-								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)) );
+								RainIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )),nullptr,0)) );
+								RainIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )),nullptr,0)) );
 							}
 							else
 							{
@@ -1007,11 +1007,11 @@ bool cWeatherAb::Load( void )
 						}
 						else if( UTag == "SNOWINTENSITY" ) // intensity of snow
 						{
-							auto csecs = strutil::sections( data, "," );
+							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
-								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
 							}
 							else
 							{
@@ -1029,11 +1029,11 @@ bool cWeatherAb::Load( void )
 						}
 						else if( UTag == "STORMINTENSITY" ) // chance of a storm
 						{
-							auto csecs = strutil::sections( data, "," );
+							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
-								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(strutil::trim( strutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
+								SnowIntensityLow( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )),nullptr,0)));
+								SnowIntensityHigh( static_cast<weathID>(i), static_cast<SI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )),nullptr,0)));
 							}
 							else
 							{
@@ -1669,12 +1669,13 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 {
 	if( !ValidateObject( p ) || p->IsNpc() )
 		return true;
+	SI08 defaultTemp = 20;
 	weathID currval = p->GetRegion()->GetWeather();
 	if( currval > weather.size() || weather.empty() || p->inBuilding() )
 	{
 		if( s != nullptr )
 		{
-			CPWeather dry( 0xFF, 0x00, 0 );
+			CPWeather dry( 0xFF, 0x00, defaultTemp );
 			s->Send( &dry );
 			if( p->GetWeathDamage( SNOW ) != 0 )
 				p->SetWeathDamage( 0, SNOW );
@@ -1686,7 +1687,7 @@ bool cWeatherAb::DoPlayerStuff( CSocket *s, CChar *p )
 				p->SetWeathDamage( 0, COLD );
 			if( p->GetWeathDamage( HEAT ) != 0 )
 				p->SetWeathDamage( 0, HEAT );
-			SendJSWeather( p, LIGHT, 0 );
+			SendJSWeather( p, LIGHT, defaultTemp );
 		}
 		return false;
 	}
@@ -1828,21 +1829,64 @@ bool cWeatherAb::DoNPCStuff( CChar *p )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp )
+//|	Function	-	bool DoItemStuff( CItem *p )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates weather effects for items when light levels change
+//o-----------------------------------------------------------------------------------------------o
+bool cWeatherAb::DoItemStuff( CItem *mItem )
+{
+	if( !ValidateObject( mItem ) )
+		return true;
+
+	weathID currval = mItem->GetRegion()->GetWeather();
+	if( currval > weather.size() || weather.empty() )
+	{
+		SendJSWeather( mItem, LIGHT, 0 );
+		return true;
+	}
+
+	bool isStorm = StormActive( currval );
+	bool brewStorm = StormBrewing( currval );
+	bool isSnowing = SnowActive( currval );
+	bool isRaining = RainActive( currval );
+	SI08 temp	   = (SI08)Temp( currval );
+
+	if( isStorm )
+	{
+		SendJSWeather( mItem, STORM, temp );
+	}
+	else if( isSnowing && SnowThreshold( currval ) > Temp( currval ) )
+	{
+		SendJSWeather( mItem, SNOW, temp );
+	}
+	else if( isRaining )
+	{
+		SendJSWeather( mItem, RAIN, temp );
+	}
+	else
+	{
+		SendJSWeather( mItem, LIGHT, temp );
+	}
+
+	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void SendJSWeather( CBaseObject *mObj, WeatherType weathType, SI08 currentTemp )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends weather changes to JS engine and triggers relevant JS events
 //o-----------------------------------------------------------------------------------------------o
-void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 currentTemp )
+void cWeatherAb::SendJSWeather( CBaseObject *mObj, WeatherType weathType, SI08 currentTemp )
 {
-	// Check for events in specific scripts attached to character
-	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
+	// Check for events in specific scripts attached to object
+	std::vector<UI16> scriptTriggers = mObj->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OnWeatherChange( mChar, weathType );
-			toExecute->OnTempChange( mChar, currentTemp );
+			toExecute->OnWeatherChange( mObj, weathType );
+			toExecute->OnTempChange( mObj, currentTemp );
 		}
 	}
 
@@ -1850,8 +1894,8 @@ void cWeatherAb::SendJSWeather( CChar *mChar, WeatherType weathType, SI08 curren
 	cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>(0) );
 	if( toExecuteGlobal != nullptr )
 	{
-		toExecuteGlobal->OnWeatherChange( mChar, weathType );
-		toExecuteGlobal->OnTempChange( mChar, currentTemp );
+		toExecuteGlobal->OnWeatherChange( mObj, weathType );
+		toExecuteGlobal->OnTempChange( mObj, currentTemp );
 	}
 }
 

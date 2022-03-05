@@ -165,6 +165,10 @@ static JSFunctionSpec my_functions[] =
 
 	{ "GetAccountCount",			SE_GetAccountCount,			0, 0, 0 },
 	{ "GetPlayerCount",				SE_GetPlayerCount,			0, 0, 0 },
+	{ "GetItemCount",				SE_GetItemCount,			0, 0, 0 },
+	{ "GetMultiCount",				SE_GetMultiCount,			0, 0, 0 },
+	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
+	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -178,14 +182,14 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 {
 	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
 	// If we're loading the world then do NOT print out anything!
-	Console.error( strutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+	Console.error( oldstrutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
 	if( report == nullptr || report->filename == nullptr )
 	{
 		Console.error( "No detailed data" );
 		return;
 	}
-	Console.error( strutil::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno) );
-	Console.error( strutil::format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	Console.error( oldstrutil::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno) );
+	Console.error( oldstrutil::format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -448,7 +452,7 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	JSString *strSpeech 	= nullptr;
 	std::string lwrSpeech	= speech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = nullptr;
@@ -730,6 +734,58 @@ std::string cScript::OnTooltip( CBaseObject *myObj )
 
 	JSString *str = JS_ValueToString( targContext, rval );
 	std::string returnString = JS_GetStringBytes( str );
+
+	return returnString;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	std::string OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for objects which client has requested the name for
+//o-----------------------------------------------------------------------------------------------o
+std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
+{
+	if( !ValidateObject( myObj ))
+		return "";
+	if( !ExistAndVerify( seOnNameRequest, "onNameRequest" ) )
+		return "";
+
+	// Prevent infinite loop
+	if( myObj->NameRequestActive() )
+		return "";
+
+	// Mark object as having an active name lookup via onNameRequest
+	myObj->NameRequestActive( true );
+
+	jsval rval, params[2];
+
+	// Create JS object reference for myObj, based on whether it's an item or character
+	JSObject *nameRequestObj = nullptr;
+	if( myObj->CanBeObjType( OT_CHAR ))
+		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+	else if( myObj->CanBeObjType( OT_ITEM ))
+		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+
+	// Create JS object reference for the name requester (which might be nullptr!)
+	JSObject *nameRequesterObj = nullptr;
+	if( nameRequester != nullptr )
+		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
+	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
+	if( retVal == JS_FALSE )
+		SetEventExists( seOnNameRequest, false );
+
+	JSString *str = JS_ValueToString( targContext, rval );
+	std::string returnString = JS_GetStringBytes( str );
+
+	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
+	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+		returnString = "";
+
+	// Clear flag that marks object as having an active name lookup via onNameRequest
+	myObj->NameRequestActive( false );
 
 	return returnString;
 }
@@ -2068,7 +2124,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 		JS_SetGlobalObject( targContext, targObject );
 
 
-		JSBool retVal = JS_CallFunctionName( targContext, targObject, strutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, oldstrutil::format( "onCallback%i", callNum ).c_str(), 2, params, &rval );
 		return ( retVal == JS_TRUE );
 	}
 	catch( ... )
@@ -2390,6 +2446,35 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 }
 
 //o-----------------------------------------------------------------------------------------------o
+//|	Function	-	SI08 OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for character with event attached when clicking the old school horizontally scrolling gump
+//|					if ID of this gump is 0
+//o-----------------------------------------------------------------------------------------------o
+SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( tSock == nullptr )
+		return RV_NOFUNC;
+	if( !ExistAndVerify( seOnScrollingGumpPress, "onScrollingGumpPress" ) )
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+	params[0] = OBJECT_TO_JSVAL( myObj );
+	params[1] = INT_TO_JSVAL( gumpID );
+	params[2] = INT_TO_JSVAL( buttonID );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollingGumpPress", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnScrollingGumpPress, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool OnEnterRegion( CChar *entering, UI16 region )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when entering a region
@@ -2616,7 +2701,7 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	JSString *strSpeech		= nullptr;
 	std::string lwrSpeech	= mySpeech;
 
-	strSpeech = JS_NewStringCopyZ( targContext, strutil::lower( lwrSpeech ).c_str() );
+	strSpeech = JS_NewStringCopyZ( targContext, oldstrutil::lower( lwrSpeech ).c_str() );
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 
@@ -2851,7 +2936,7 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	jsval params[2], rval;
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	JSString *strCmd = nullptr;
-	strCmd = JS_NewStringCopyZ( targContext, strutil::lower( command ).c_str() );
+	strCmd = JS_NewStringCopyZ( targContext, oldstrutil::lower( command ).c_str() );
 	params[0]	= OBJECT_TO_JSVAL( myObj );
 	params[1]	= STRING_TO_JSVAL( strCmd );
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onCommand", 2, params, &rval );
@@ -2909,7 +2994,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JSVAL_VOID )
 	{
-		Console.warning( strutil::format("Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() ));
+		Console.warning( oldstrutil::format("Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() ));
 		return false;
 	}
 

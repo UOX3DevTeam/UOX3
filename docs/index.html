@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 24. January, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5a</small></p>
+	<p style="margin:0"><small>Last Updated: 02. March, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>February 12th, 2022</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on new settings: TOOLUSELIMIT, TOOLUSEBREAk, ITEMREPAIRDURABILITYLOSS and CRAFTCOLOUREDWEAPONS</li>
+						</ul>
 						<h4>December 26th, 2021</h4>
 						<ul>
 							<li>Updated <a href="#raceSystem">Race System</a> feature info with details on armor class restrictions</li>
@@ -515,6 +519,7 @@ packitem=0x0f8d,30
 						...
 					</div>
 					<p>This is account #0 on your shard, also known as the administrator account. Any character created on this account will <strong>automatically be granted all GM and Admin powers</strong>. As such, it would be a good idea to <span class="hl">change the username and password</span> from the default ADMIN/ADMIN to something more original, creative and most importantly - <strong>secure</strong>! Note that it can be a good idea to create a second, non-admin account to use for testing purposes, as GM/Admin characters are often not subject to the same gameplay rules as regular players.</p>
+					<p><span class="hl">Important Note:</span> The <strong>maximum</strong> password length accepted by the UO client's password-entry field is <strong>17</strong> characters, and the minimum password length accepted by UOX3 is <strong>5</strong> characters - so your password <span class="hl">should be between 5 to 17 characters long</span>.</p>
 					<p>Additional accounts can be created by <strong>copying an existing SECTION ACCOUNT #</strong> (like the default guest account) and pasting it at the bottom of the file, followed by <strong>manually incrementing the account number</strong> of the new account to the next available number (1 higher than the previous one), <strong>changing the username/password/contact info</strong> and ensuring all the character references are set to <strong>0xffffffff [UNKNOWN]</strong>.</p>
 					<p>If you make changes to this file while UOX3 is already running, you will have to reload the accounts from UOX3's console menu.</p>
 					<input type="checkbox" id="spoiler_acctCreationBonus"/>
@@ -1409,6 +1414,34 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">MAPDIFFSENABLED</span><strong>=0</strong><br>
 							If enabled, server will attempt to load diff files, and send "Enable Map-diff files" packet to client to also load these. Disabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">TOOLUSELIMIT</span><strong>=1</strong><br>
+							If enabled, crafting and harvesting tools will have limited amount of uses, after which they can no longer be used. Enabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">TOOLUSEBREAK</span><strong>=1</strong><br>
+							If enabled, various tools for harvesting and crafting will break if they reach zero HP. Enabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ITEMREPAIRDURABILITYLOSS</span><strong>=1</strong><br>
+							If enabled, items will lose max durability when repaired. Enabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CRAFTCOLOUREDWEAPONS</span><strong>=0</strong><br>
+							If enabled, players can craft coloured weapons using coloured ingots with the Blacksmithing skill. Disabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXSAFETELEPORTSPERDAY</span><strong>=1</strong><br>
+							Defines the maximum amount of safe teleports players can use per day via the Help > Stuck menu, after which they'll need to rely on GM pages to get unstuck. Set to 1 by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">TELEPORTTONEARESTSAFELOCATION</span><strong>=0</strong><br>
+							If enabled, players will always be teleported to their nearest safe location (town, or shrine). If disabled, they will be teleported to a random safe location within their current facet. Disabled by default.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=0</strong><br>
+							If enabled, NPCs marked as awake will be checked by server (AI, timers, updates) regardless of whether the region they are in is inactive because of no nearby online players. If disabled, those NPCs are treated like any other NPCs. Disabled by default.</p>
 						</div>
 					</div>
 
@@ -6287,6 +6320,11 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">armslore</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
 							Set Arms Lore skill (0 - 1000)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">awake</span>=<strong>[0/1]</strong><br>
+							Marks the NPC as permanently awake, which when combined with the ALLOWAWAKENPCS setting from UOX.INI being enabled, will have UOX3 always check on this NPC regardless of whether the region it is in is inactive due to no nearby online players
+							</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">backpack</span><br>

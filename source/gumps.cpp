@@ -41,7 +41,7 @@ void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlengt
 		return;
 	}
 
-	auto temp = strutil::format( "(%i chars max)", maxlength );
+	auto temp = oldstrutil::format( "(%i chars max)", maxlength );
 	CPGumpTextEntry toSend( txt, temp );
 	toSend.Serial( ser );
 	toSend.ParentID( type );
@@ -62,30 +62,30 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 	CPSendGumpMenu toSend;
 	toSend.UserID( INVALIDSERIAL );
 
-	std::string sect = std::string("GUMPMENU ") + strutil::number( m );
+	std::string sect = std::string("GUMPMENU ") + oldstrutil::number( m );
 	ScriptSection *gump = FileLookup->FindEntry( sect, misc_def );
 	if( gump == nullptr )
 		return;
 
 	UI08 targType	= 0x12;
 	std::string tag	= gump->First();
-	if( strutil::upper( strutil::extractSection( tag, " ", 0, 0 )) == "TYPE" )
+	if( oldstrutil::upper( oldstrutil::extractSection( tag, " ", 0, 0 )) == "TYPE" )
 	{
-		targType = strutil::value<std::uint8_t>(strutil::extractSection(tag, " ", 1, 1 ));
+		targType = oldstrutil::value<std::uint8_t>(oldstrutil::extractSection(tag, " ", 1, 1 ));
 		tag = gump->Next();
 	}
 	for( ; !gump->AtEnd(); tag = gump->Next() )
 	{
-		auto temp = strutil::format( "%s %s", tag.c_str(), gump->GrabData().c_str() );
+		auto temp = oldstrutil::format( "%s %s", tag.c_str(), gump->GrabData().c_str() );
 		toSend.addCommand( temp );
 	}
-	sect = std::string("GUMPTEXT ") + strutil::number( m );
+	sect = std::string("GUMPTEXT ") + oldstrutil::number( m );
 	gump = FileLookup->FindEntry( sect, misc_def );
 	if( gump == nullptr )
 		return;
 	for( tag = gump->First(); !gump->AtEnd(); tag = gump->Next() )
 	{
-		toSend.addText(strutil::format( "%s %s", tag.c_str(), gump->GrabData().c_str()) );
+		toSend.addText(oldstrutil::format( "%s %s", tag.c_str(), gump->GrabData().c_str()) );
 	}
 	toSend.GumpID( targType );
 	toSend.Finalize();
@@ -233,7 +233,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 										itemCheck->SetCont( charPack );
 										itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
 										s->sysmessage( 550 );
-										targetRegion->TellMembers( 551, mChar->GetName().c_str() );
+										targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
 										regItems->Pop();
 										return;	// dump out
 									}
@@ -311,7 +311,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 			case 1001:	password	= packet->GetTextString( i );	break;
 			case 1002:	emailAddy	= packet->GetTextString( i );	break;
 			default:
-				Console.warning( strutil::format("Unknown textID %i with string %s", textID, packet->GetTextString( i ).c_str()) );
+				Console.warning( oldstrutil::format("Unknown textID %i with string %s", textID, packet->GetTextString( i ).c_str()) );
 		}
 	}
 
@@ -321,7 +321,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		s->sysmessage( 555 );
 		return;
 	}
-	Console.print( strutil::format("Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str()) );
+	Console.print( oldstrutil::format("Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str()) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -357,7 +357,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	////////////////////////////////////////////////
 	s->TempInt( m );	// Store what menu they are in
 
-	std::string sect = std::string("ITEMMENU ") + strutil::number( m );
+	std::string sect = std::string("ITEMMENU ") + oldstrutil::number( m );
 	ScriptSection *ItemMenu = FileLookup->FindEntry( sect, items_def );
 	if( ItemMenu == nullptr )
 		return;
@@ -373,33 +373,33 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	UI32 bgImage	=	cwmWorldState->ServerData()->BackgroundPic();
 
 	// Set and resize the gumps background image.
-	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth) );
-	toSend.addCommand( strutil::format("checkertrans %u %u %u %u",xStart+5,yStart+5,xWidth-10,yWidth-11));
+	toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u",xStart,yStart, bgImage, xWidth, yWidth) );
+	toSend.addCommand( oldstrutil::format("checkertrans %u %u %u %u",xStart+5,yStart+5,xWidth-10,yWidth-11));
 
 	// Grab the first tag/value pair from the gump itemmenu respectivly
 	std::string tag		= ItemMenu->First();
 	std::string data	= ItemMenu->GrabData();
-	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",2,4,0xDAC,495,40));
+	toSend.addCommand(oldstrutil::format( "resizepic %u %u %u %u %u",2,4,0xDAC,495,40));
 	// Create the text stuff for what appears to be the title of the gump. This appears to change from page to page.
 
 	// Next we create and position the close window button as well set its Down, and Up states.
-	toSend.addCommand(strutil::format( "button %u %u %u %u %u %u %u",xWidth-32,yStart+10,0xA51, 0xA50, 1, 0, 1));
+	toSend.addCommand(oldstrutil::format( "button %u %u %u %u %u %u %u",xWidth-32,yStart+10,0xA51, 0xA50, 1, 0, 1));
 
 	linenum = 0;
-	toSend.addCommand( strutil::format("text %u %u %u %u",30,yStart+13, 39, linenum++));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",30,yStart+13, 39, linenum++));
 	toSend.addText( "Players: " );
 	// Player count
-	auto szBuffer = strutil::format( "%4i ", cwmWorldState->GetPlayersOnline() );
-	toSend.addCommand( strutil::format("text %u %u %u %u", 80, yStart+13, 25, linenum++ ));
+	auto szBuffer = oldstrutil::format( "%4i ", cwmWorldState->GetPlayersOnline() );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 80, yStart+13, 25, linenum++ ));
 	toSend.addText( szBuffer );
 	// Gm Pages
-	toSend.addCommand( strutil::format("text %u %u %u %u",118,yStart+13, 39, linenum++));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",118,yStart+13, 39, linenum++));
 	toSend.addText( "GM Pages: " );
 	szBuffer = "0";
-	toSend.addCommand( strutil::format("text %u %u %u %u",185,yStart+13, 25, linenum++));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",185,yStart+13, 25, linenum++));
 	toSend.addText( szBuffer );
 	// Current Time/Date
-	toSend.addCommand( strutil::format("text %u %u %u %u",230,yStart+13, 39, linenum++));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",230,yStart+13, 39, linenum++));
 	toSend.addText( "Time: " );
 	// Current server time
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -418,30 +418,30 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		today->tm_hour=12;
 	}
 	// Draw the current date to the gump
-	szBuffer = strutil::format( "%s %.8s%s", tmpBuffer, asctime( today ) + 11, ( (isAM)?"Am":"Pm") );
-	toSend.addCommand( strutil::format("text %u %u %u %u",280,yStart+13, 25, linenum++));
+	szBuffer = oldstrutil::format( "%s %.8s%s", tmpBuffer, asctime( today ) + 11, ( (isAM)?"Am":"Pm") );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",280,yStart+13, 25, linenum++));
 	toSend.addText( szBuffer );
 
 	// add the next gump portion. New server level services, in the form of a gump Configuration, and Accounts tabs to start. These are default tabs
-	toSend.addCommand(strutil::format( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 5054, 190, 300));
+	toSend.addCommand(oldstrutil::format( "resizepic %u %u %u %u %u",xStart+10,yStart+62, 5054, 190, 300));
 	UI32 tabNumber = 1;
 
 	// Do the shard tab
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",17,yStart+47,0x138E, 0x138F, 0, 1, 0));
 	szBuffer = "Objects";
-	toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",42,yStart+46, 47, linenum++));
 	toSend.addText( szBuffer );
 	// Do the server tab
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
-	toSend.addCommand( strutil::format("text %u %u %u %u",132,yStart+46, 47, linenum++));
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",105,yStart+47,0x138E, 0x138F, 0, 30, 1));
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",132,yStart+46, 47, linenum++));
 	toSend.addText( "Settings" );
 
 	// Need a seperator
-	toSend.addCommand( strutil::format("gumppictiled %u %u %u %u %u",xStart+22,yWidth-50,165,5,0x2393));
+	toSend.addCommand( oldstrutil::format("gumppictiled %u %u %u %u %u",xStart+22,yWidth-50,165,5,0x2393));
 
 	// Ok, now the job of pulling the rest of the first itemmenu information and making tabs for them
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 65, yWidth-40, 0x4B9, 0x4BA, 1, 0, 50002));
-	toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u", 85, yWidth-42, 150, 20, 94, linenum++ ));
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 65, yWidth-40, 0x4B9, 0x4BA, 1, 0, 50002));
+	toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u", 85, yWidth-42, 150, 20, 94, linenum++ ));
 	toSend.addText( "Home" );
 
 	// Ok here we have some conditions that we need to filter. First being the menu called.
@@ -457,53 +457,53 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		pagenum = 2;
 		toSend.addCommand( "page 1" );
 		// Do the shard tab
-		toSend.addCommand( strutil::format("gumppic %u %u %u ",17,yStart+47,0x138F));
+		toSend.addCommand( oldstrutil::format("gumppic %u %u %u ",17,yStart+47,0x138F));
 		szBuffer = "Objects";
-		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 70, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u",42,yStart+46, 70, linenum++) );
 		toSend.addText( szBuffer );
 
-		toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 245, 70, 220, 30, linenum++, 0, 0 ) );
+		toSend.addCommand( oldstrutil::format( "htmlgump %i %i %i %i %u %i %i", 245, 70, 220, 30, linenum++, 0, 0 ) );
 		toSend.addText( "<CENTER><BIG><BASEFONT color=#F64040>Ultima Offline eXperiment 3</BASEFONT></BIG></CENTER>" );
 
 		// Shard Menu Version
 		szBuffer = "v" + CVersionClass::GetVersion() + "." + CVersionClass::GetBuild();
-		toSend.addCommand( strutil::format("text %u %u %u %u", 320, 90, 27, linenum++));
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 320, 90, 27, linenum++));
 		toSend.addText( szBuffer );
 
 		// Shard Menu Description
 		szBuffer = "Greetings! Using these menus you can";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 120, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 120, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "quickly and easily add Items, Spawners,";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 135, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 135, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "NPCs and more to your shard, in order";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 150, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 150, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "to customize it to your needs.";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 165, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 165, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "Objects tab is used to find stuff to";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 190, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 190, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "add. Use Settings tab to configure";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 205, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 205, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "various options for this menu!";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 220, 94, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 220, 94, linenum++) );
 		toSend.addText( szBuffer );
 
 		szBuffer = "Don't forget to check out the UOX3 Docs!";
-		toSend.addCommand( strutil::format("text %u %u %u %u", 225, 260, 27, linenum++) );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u", 225, 260, 27, linenum++) );
 		toSend.addText( szBuffer );
 
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 295, 295, 0x5d1, 0x5d3, 1, 0, 50020));
 
 		// here we hunt tags to make sure that we get them all from the itemmenus etc.
 		UI08 numCounter = 0;
@@ -516,27 +516,27 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( numCounter > 0 && (!(numCounter % 12 ) ) )
 			{
 				position	= 80;
-				toSend.addCommand(strutil::format( "page %i", ++pagenum ));
+				toSend.addCommand(oldstrutil::format( "page %i", ++pagenum ));
 				xOffset		= SXOFFSET;
 				yOffset		= SYOFFSET;
 			}
 			// Drop in the page number text area image
-			toSend.addCommand(strutil::format( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
+			toSend.addCommand(oldstrutil::format( "gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
 			// Add the page number text to the text area for display
-			toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
-			szBuffer = strutil::format( "Menu %i - Page %i", m, pagenum-1 );
+			toSend.addCommand( oldstrutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
+			szBuffer = oldstrutil::format( "Menu %i - Page %i", m, pagenum-1 );
 			toSend.addText( szBuffer );
 			// Spin the tagged items loaded in from the dfn files.
-			toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum));
-			toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ));
+			toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum));
+			toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ));
 			toSend.addText( data );
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
-				toSend.addCommand( strutil::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
-				toSend.addCommand( strutil::format("tilepic %u %u %i",xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
-				toSend.addCommand(strutil::format( "croppedtext %u %u %u %u %u %u", xOffset, yOffset+65, 65, 20, 55, linenum++) );
+				toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
+				toSend.addCommand( oldstrutil::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
+				toSend.addCommand( oldstrutil::format("tilepic %u %u %i",xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
+				toSend.addCommand(oldstrutil::format( "croppedtext %u %u %u %u %u %u", xOffset, yOffset+65, 65, 20, 55, linenum++) );
 				toSend.addText( data );
 				xOffset += XOFFSET;
 				if( xOffset > 480 )
@@ -555,14 +555,14 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 
 		for( i = 0; i < numCounter; i += 12 )
 		{
-			toSend.addCommand(strutil::format( "page %i", currentPage ));
+			toSend.addCommand(oldstrutil::format( "page %i", currentPage ));
 			if( i >= 10 )
 			{
-				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1));
+				toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1));
 			}
 			if( ( numCounter > 12 ) && ( ( i + 12 ) < numCounter ) )
 			{
-				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
+				toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
 			}
 			currentPage++;
 		}
@@ -573,9 +573,9 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		pagenum = 2;
 		toSend.addCommand( "page 1" );
 		// Do the shard tab
-		toSend.addCommand(strutil::format( "gumppic %u %u %u ",17,yStart+47,0x138F));
+		toSend.addCommand(oldstrutil::format( "gumppic %u %u %u ",17,yStart+47,0x138F));
 		szBuffer = "Shard";
-		toSend.addCommand( strutil::format("text %u %u %u %u",42,yStart+46, 39, linenum++ ));
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u",42,yStart+46, 39, linenum++ ));
 		toSend.addText( szBuffer );
 		// here we hunt tags to make sure that we get them all from the itemmenus etc.
 		UI08 numCounter = 0;
@@ -584,10 +584,10 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		yOffset			= SYOFFSET;
 
 		// Drop in the page number text area image
-		toSend.addCommand( strutil::format("gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
+		toSend.addCommand( oldstrutil::format("gumppic %u %u %u",xStart+260,yWidth-28,0x98E));
 		// Add the page number text to the text area for display
-		toSend.addCommand( strutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
-		szBuffer = strutil::format( "Menu %i - Page %i", m, pagenum-1 );
+		toSend.addCommand( oldstrutil::format("text %u %u %u %u",xStart+295,yWidth-27,39,linenum++));
+		szBuffer = oldstrutil::format( "Menu %i - Page %i", m, pagenum-1 );
 		toSend.addText( szBuffer );
 
 		for( tag = ItemMenu->Next(); !ItemMenu->AtEnd(); tag = ItemMenu->Next() )
@@ -597,12 +597,12 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 			if( numCounter > 0 && (!(numCounter % 12 ) ) )
 			{
 				position = 80;
-				toSend.addCommand( strutil::format("page %i", pagenum++) );
+				toSend.addCommand( oldstrutil::format("page %i", pagenum++) );
 				xOffset=SXOFFSET;
 				yOffset=SYOFFSET;
 			}
 			// Drop in the page number text area image
-			if( strutil::upper( tag ) == "INSERTADDMENUITEMS" )
+			if( oldstrutil::upper( tag ) == "INSERTADDMENUITEMS" )
 			{
 				// Check to see if the desired menu has any items to add
 				if(g_mmapAddMenuMap.find(m)==g_mmapAddMenuMap.end())
@@ -613,17 +613,17 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				std::pair<ADDMENUMAP_CITERATOR,ADDMENUMAP_CITERATOR> pairRange = g_mmapAddMenuMap.equal_range( m );
 				for(ADDMENUMAP_CITERATOR CI = pairRange.first;CI!=pairRange.second;CI++)
 				{
-					toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA ,1,0, buttonnum));
-					toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 40, linenum) );
+					toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA ,1,0, buttonnum));
+					toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 40, linenum) );
 					toSend.addText( CI->second.itemName );
 					// check to make sure that we have an image now, seeing as we might not have one with the new changes in 0.98.01.2+
 					if(CI->second.tileID != 0)
 					{
 						// Draw a frame for the item to make it stand out a touch more.
-						toSend.addCommand( strutil::format("resizepic %u %u %u %u %u",xOffset,yOffset,0x53,65,100));
-						toSend.addCommand( strutil::format("checkertrans %u %u %u %u",xOffset+7,yOffset+9,52,82));
-						toSend.addCommand( strutil::format("tilepic %u %u %i", xOffset+5, yOffset+10, CI->second.tileID ));
-						toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u",xOffset,yOffset+65,65,20,55,linenum++));
+						toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u",xOffset,yOffset,0x53,65,100));
+						toSend.addCommand( oldstrutil::format("checkertrans %u %u %u %u",xOffset+7,yOffset+9,52,82));
+						toSend.addCommand( oldstrutil::format("tilepic %u %u %i", xOffset+5, yOffset+10, CI->second.tileID ));
+						toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u",xOffset,yOffset+65,65,20,55,linenum++));
 						toSend.addText( CI->second.itemName );
 						toSend.addText( CI->second.itemName.c_str() );
 						xOffset += XOFFSET;
@@ -640,16 +640,16 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 				}
 				continue;
 			}
-			toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum ));
-			toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ));
+			toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",15,position, 0x4B9, 0x4BA, 1, 0, buttonnum ));
+			toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u",35, position-3,150,20, 50, linenum++ ));
 			toSend.addText( data );
 			if( tag.data()[0] != '<' && tag.data()[0] != ' ' )	// it actually has a picture, well bugger me! :>
 			{
 				// Draw a frame for the item to make it stand out a touch more.
-				toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
-				toSend.addCommand( strutil::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
-				toSend.addCommand( strutil::format("tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
-				toSend.addCommand( strutil::format("croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ ));
+				toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xOffset, yOffset, 0x53, 65, 100 ));
+				toSend.addCommand( oldstrutil::format("checkertrans %u %u %u %u", xOffset + 7, yOffset + 9, 52, 82 ));
+				toSend.addCommand( oldstrutil::format("tilepic %u %u %i", xOffset + 5, yOffset + 10, std::stoi(tag, nullptr, 0) ));
+				toSend.addCommand( oldstrutil::format("croppedtext %u %u %u %u %u %u", xOffset, yOffset + 65, 65, 20, 55, linenum++ ));
 				toSend.addText( data );
 				xOffset += XOFFSET;
 				if( xOffset > 480 )
@@ -668,14 +668,14 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		UI32 currentPage = 1;
 		for( i = 0; i < numCounter; i += 12 )
 		{
-			toSend.addCommand( strutil::format("page %i", currentPage) );
+			toSend.addCommand( oldstrutil::format("page %i", currentPage) );
 			if( i >= 10 )
 			{
-				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1)); //back button
+				toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u",xStart+240,yWidth-25, 0x25EB, 0x25EA,0, currentPage-1)); //back button
 			}
 			if( ( numCounter > 12 ) && ( ( i + 12 ) < numCounter ) )
 			{
-				toSend.addCommand( strutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
+				toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u",xWidth-60,yWidth-25, 0x25E7, 0x25E6,0 ,currentPage+1));
 			}
 			++currentPage;
 		}
@@ -685,55 +685,55 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	// Reserved page # 800 - 899 for the server support pages
 	toSend.addCommand( "page 30" );
 	// Show the selected tab image for this page.
-	toSend.addCommand( strutil::format("gumppic %u %u %u",105, yStart + 47, 0x138F) );
-	toSend.addCommand( strutil::format("text %u %u %u %u",132, yStart + 46, 70, linenum++ ));
+	toSend.addCommand( oldstrutil::format("gumppic %u %u %u",105, yStart + 47, 0x138F) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",132, yStart + 46, 70, linenum++ ));
 	toSend.addText( "Settings" );
 
 	// Create the Quick Access Menu
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 57, yStart + 76, 52, linenum++) );
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 57, yStart + 76, 52, linenum++) );
 	toSend.addText( "Quick-Access" );
 
 	// Need a seperator
-	toSend.addCommand(strutil::format( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 ));
+	toSend.addCommand(oldstrutil::format( "gumppictiled %u %u %u %u %u", xStart + 21, yStart + 105, 165, 5, 0x2393 ));
 
 	// Create the Commandlist button
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 125, 0x2A30, 0x2A44, 1, 4, 50008 ));
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 65, yStart + 129, 52, linenum++) );
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 45, yStart + 125, 0x2A30, 0x2A44, 1, 4, 50008 ));
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 65, yStart + 129, 52, linenum++) );
 	toSend.addText( "Commandlist" );
 
 	// Create the Wholist Online button
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 155, 0x2A30, 0x2A44, 1, 4, 50009 ));
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 62, yStart + 159, 52, linenum++) );
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 45, yStart + 155, 0x2A30, 0x2A44, 1, 4, 50009 ));
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 62, yStart + 159, 52, linenum++) );
 	toSend.addText( "Who is Online" );
 
 	// Create the Wholist Offline button
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 185, 0x2A30, 0x2A44, 1, 4, 50010 ));
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 60, yStart + 189, 52, linenum++) );
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 45, yStart + 185, 0x2A30, 0x2A44, 1, 4, 50010 ));
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 60, yStart + 189, 52, linenum++) );
 	toSend.addText( "Who is Offline" );
 
 	// Create the Reload DFNs button
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 215, 0x2A30, 0x2A44, 1, 4, 50011 ));
-	toSend.addCommand(strutil::format( "text %u %u %u %u", 60, yStart + 219, 52, linenum++) );
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 45, yStart + 215, 0x2A30, 0x2A44, 1, 4, 50011 ));
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 60, yStart + 219, 52, linenum++) );
 	toSend.addText( "Reload DFNs" );
 
 	// Create the Server Shutdown button
 	if( mChar->GetCommandLevel() >= CL_ADMIN )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 45, yStart + 275, 0x2A58, 0x2A44, 1, 4, 50012 ));
-		toSend.addCommand(strutil::format( "text %u %u %u %u", 73, yStart + 279, 52, linenum++) );
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 45, yStart + 275, 0x2A58, 0x2A44, 1, 4, 50012 ));
+		toSend.addCommand(oldstrutil::format( "text %u %u %u %u", 73, yStart + 279, 52, linenum++) );
 		toSend.addText( "Shutdown" );
 	}
 
 	// Settings Backgrounds
-	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", 210, 55, 5120, 250, 150) );
-	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", 210, 205, 5120, 250, 150) );
+	toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", 210, 55, 5120, 250, 150) );
+	toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", 210, 205, 5120, 250, 150) );
 
 	// Settings Header 1
-	toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 60, 200, 60, linenum++, 0, 0 ) );
+	toSend.addCommand( oldstrutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 60, 200, 60, linenum++, 0, 0 ) );
 	toSend.addText( "<CENTER><BIG><BASEFONT color=#EECD8B>Menu Settings</BASEFONT></BIG></CENTER>" );
 
 	// Settings Header 2
-	toSend.addCommand( strutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 220, 200, 60, linenum++, 0, 0 ) );
+	toSend.addCommand( oldstrutil::format( "htmlgump %i %i %i %i %u %i %i", 235, 220, 200, 60, linenum++, 0, 0 ) );
 	toSend.addText( "<CENTER><BIG><BASEFONT color=#EECD8B>Item Settings</BASEFONT></BIG></CENTER>" );
 
 	// Settings Options START
@@ -741,130 +741,130 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	TAGMAPOBJECT addAtLoc = mChar->GetTag( "addAtLoc" );
 	if( addAtLoc.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x869, 0x867, 1, 0, 50000));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 225, 80, 0x867, 0x869, 1, 0, 50000));
 	}
 	szBuffer = "Add item at specific location";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 80, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 255, 80, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	szBuffer = "instead of in GM's backpack";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 95, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 255, 95, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Repeat Add Object
 	TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
 	if( repeatAdd.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x869, 0x867, 1, 0, 50001));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 250, 120, 0x867, 0x869, 1, 0, 50001));
 	}
 	szBuffer = "Add item repeatedly";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 280, 120, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 280, 120, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	szBuffer = "until cancelled";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 280, 135, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 280, 135, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Auto-reopen Menu
 	TAGMAPOBJECT reopenMenu = mChar->GetTag( "reopenMenu" );
 	if( reopenMenu.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x869, 0x867, 1, 0, 50003));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 225, 160, 0x867, 0x869, 1, 0, 50003));
 	}
 	szBuffer = "Automatically reopen menu";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 160, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 255, 160, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	szBuffer = "after selecting object to add";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 255, 175, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 255, 175, 94, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Force-Decayable Off
 	TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
 	if( forceDecayOff.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16ca, 0x16cb, 1, 0, 50004));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 240, 260, 0x16c6, 0x16c7, 1, 0, 50004));
 	}
 	// Force-Decayable On
 	TAGMAPOBJECT forceDecayOn = mChar->GetTag( "forceDecayOn" );
 	if( forceDecayOn.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c4, 0x16c5, 1, 0, 50005));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 350, 260, 0x16c0, 0x16c1, 1, 0, 50005));
 	}
 	szBuffer = "Default Decayable Status of Items";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 230, 240, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 230, 240, 94, linenum++) );
 	toSend.addText( szBuffer );
 	szBuffer = "Force OFF";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 275, 265, 27, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 275, 265, 27, linenum++) );
 	toSend.addText( szBuffer );
 	szBuffer = "Force ON";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 385, 265, 72, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 385, 265, 72, linenum++) );
 	toSend.addText( szBuffer );
 
 	// Force-Movable Off
 	TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
 	if( forceMovableOff.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16ca, 0x16cb, 1, 0, 50006));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 240, 320, 0x16c6, 0x16c7, 1, 0, 50006));
 	}
 	// Force-Movable On
 	TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
 	if( forceMovableOn.m_IntValue == 1 )
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c4, 0x16c5, 1, 0, 50007));
 	}
 	else
 	{
-		toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007));
+		toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u", 350, 320, 0x16c0, 0x16c1, 1, 0, 50007));
 	}
 	szBuffer = "Default Movable State of Items";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 230, 300, 94, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 230, 300, 94, linenum++) );
 	toSend.addText( szBuffer );
 	szBuffer = "Force OFF";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 275, 325, 27, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 275, 325, 27, linenum++) );
 	toSend.addText( szBuffer );
 	szBuffer = "Force ON";
-	toSend.addCommand( strutil::format("text %u %u %u %u", 385, 325, 72, linenum++) );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u", 385, 325, 72, linenum++) );
 	toSend.addText( szBuffer );
 	// Settings Options END
 
 	// Reserved pages 900-999 for the online help system. (comming soon)
 	toSend.addCommand( "page 31" );
 	// Ok display the scroll that we use to display our help information
-	toSend.addCommand( strutil::format("resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200) );
+	toSend.addCommand( oldstrutil::format("resizepic %u %u %u %u %u", xStart + 205, yStart + 62, 0x1432, 175, 200) );
 	// Write out what page were on (Mainly for debug purposes
-	szBuffer = strutil::format( "%5u", 31 );
-	toSend.addCommand( strutil::format("text %u %u %u %u",xWidth-58,yWidth-25,110, linenum++) );
+	szBuffer = oldstrutil::format( "%5u", 31 );
+	toSend.addCommand( oldstrutil::format("text %u %u %u %u",xWidth-58,yWidth-25,110, linenum++) );
 	toSend.addText( szBuffer );
 	// Ok, now the job of pulling the rest of the first itemmenu information and making tabs for them
 	szBuffer = "Page 31";
-	toSend.addCommand(strutil::format( "text %u %u %u %u",30, yStart + 200, 87, linenum++) );
+	toSend.addCommand(oldstrutil::format( "text %u %u %u %u",30, yStart + 200, 87, linenum++) );
 	toSend.addText( szBuffer );
-	toSend.addCommand( strutil::format("button %u %u %u %u %u %u %u",104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++) );
+	toSend.addCommand( oldstrutil::format("button %u %u %u %u %u %u %u",104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++) );
 
 #if defined( UOX_DEBUG_MODE )
 	Console << "==============================" << myendl;
@@ -907,7 +907,7 @@ bool CPIHelpRequest::Handle( void )
 		}
 	}
 
-	std::string sect = std::string("GMMENU ") + strutil::number( menuNum );
+	std::string sect = std::string("GMMENU ") + oldstrutil::number( menuNum );
 	ScriptSection *GMMenu = FileLookup->FindEntry( sect, menus_def );
 	if( GMMenu == nullptr )
 		return true;
@@ -972,7 +972,7 @@ void CPage( CSocket *s, const std::string& reason )
 					if( iChar->IsGMPageable() || iChar->IsCounselor() )
 					{
 						x = true;
-						iSock->sysmessage( strutil::format(1024, "Counselor Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
+						iSock->sysmessage( oldstrutil::format(1024, "Counselor Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
 					}
 				}
 				Network->popConn();
@@ -1026,7 +1026,7 @@ void GMPage( CSocket *s, const std::string& reason )
 					if( iChar->IsGMPageable() )
 					{
 						x = true;
-						iSock->sysmessage( strutil::format(1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
+						iSock->sysmessage( oldstrutil::format(1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
 					}
 				}
 				Network->popConn();
@@ -1051,8 +1051,8 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 
 	CChar *mChar = s->CurrcharObj();
 
-	cmd		= strutil::upper( cmd );
-	data	= strutil::upper( data );
+	cmd		= oldstrutil::upper( cmd );
+	data	= oldstrutil::upper( data );
 	std::string builtString;
 
 	switch( cmd.data()[0] )
@@ -1078,11 +1078,11 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					TAGMAPOBJECT forceDecayOff = mChar->GetTag( "forceDecayOff" );
 					TAGMAPOBJECT forceMovableOn = mChar->GetTag( "forceMovableOn" );
 					TAGMAPOBJECT forceMovableOff = mChar->GetTag( "forceMovableOff" );
-					auto secs = strutil::sections( data, "," );
+					auto secs = oldstrutil::sections( data, "," );
 					if( secs.size() > 1 )
 					{
-						std::string tmp		= strutil::trim( strutil::removeTrailing( secs[0], "//" ));
-						UI16 num			= strutil::value<std::uint16_t>(strutil::trim( strutil::removeTrailing( secs[1], "//" )));
+						std::string tmp		= oldstrutil::trim( oldstrutil::removeTrailing( secs[0], "//" ));
+						UI16 num			= oldstrutil::value<std::uint16_t>(oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )));
 
 						if( addAtLoc.m_IntValue == 1 )
 						{
@@ -1090,16 +1090,16 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 							if( repeatAdd.m_IntValue == 1 )
 							{
 								if( itemType == OT_SPAWNER )
-									addCmd = strutil::format( "raddspawner %s", tmp.c_str() );
+									addCmd = oldstrutil::format( "raddspawner %s", tmp.c_str() );
 								else
-									addCmd = strutil::format( "radditem %s", tmp.c_str() );
+									addCmd = oldstrutil::format( "radditem %s", tmp.c_str() );
 							}
 							else
 							{
 								if( itemType == OT_SPAWNER )
-									addCmd = strutil::format( "add spawner %s", tmp.c_str() );
+									addCmd = oldstrutil::format( "add spawner %s", tmp.c_str() );
 								else
-									addCmd = strutil::format( "add item %s", tmp.c_str() );
+									addCmd = oldstrutil::format( "add item %s", tmp.c_str() );
 							}
 							Commands->Command( s, mChar, addCmd );
 						}
@@ -1107,9 +1107,9 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						{
 							std::string addCmd = "";
 							if( itemType == OT_SPAWNER )
-								addCmd = strutil::format( "raddspawner %s", tmp.c_str() );
+								addCmd = oldstrutil::format( "raddspawner %s", tmp.c_str() );
 							else
-								addCmd = strutil::format( "radditem %s", tmp.c_str() );
+								addCmd = oldstrutil::format( "radditem %s", tmp.c_str() );
 							Commands->Command( s, mChar, addCmd );
 						}
 						else
@@ -1133,16 +1133,16 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 							if( repeatAdd.m_IntValue == 1 )
 							{
 								if( itemType == OT_SPAWNER )
-									addCmd = strutil::format( "raddspawner %s", data.c_str() );
+									addCmd = oldstrutil::format( "raddspawner %s", data.c_str() );
 								else
-									addCmd = strutil::format( "radditem %s", data.c_str() );
+									addCmd = oldstrutil::format( "radditem %s", data.c_str() );
 							}
 							else
 							{
 								if( itemType == OT_SPAWNER )
-									addCmd = strutil::format( "add spawner %s", data.c_str() );
+									addCmd = oldstrutil::format( "add spawner %s", data.c_str() );
 								else
-									addCmd = strutil::format( "add item %s", data.c_str() );
+									addCmd = oldstrutil::format( "add item %s", data.c_str() );
 							}
 							Commands->Command( s, mChar, addCmd );
 						}
@@ -1150,9 +1150,9 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						{
 							std::string addCmd = "";
 							if( itemType == OT_SPAWNER )
-								addCmd = strutil::format( "raddspawner %s", data.c_str() );
+								addCmd = oldstrutil::format( "raddspawner %s", data.c_str() );
 							else
-								addCmd = strutil::format( "radditem %s", data.c_str() );
+								addCmd = oldstrutil::format( "radditem %s", data.c_str() );
 							Commands->Command( s, mChar, addCmd );
 						}
 						else
@@ -1171,7 +1171,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				}
 				if( reopenMenu.m_IntValue == 1 )
 				{
-					std::string menuString = strutil::format( "itemmenu %d", s->TempInt() );
+					std::string menuString = oldstrutil::format( "itemmenu %d", s->TempInt() );
 					Commands->Command( s, mChar, menuString );
 				}
 			}
@@ -1191,7 +1191,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				CPIHelpRequest toHandle( s,static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+				CPIHelpRequest toHandle( s,static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 				toHandle.Handle();
 			}
 			else if( cmd == "GMPAGE" )
@@ -1206,7 +1206,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 			{
 				if( data.empty() )
 					return;
-				UI16 placeNum = static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0));
+				UI16 placeNum = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
 				if( cwmWorldState->goPlaces.find( placeNum ) != cwmWorldState->goPlaces.end() )
 				{
 					GoPlaces_st toGoTo = cwmWorldState->goPlaces[placeNum];
@@ -1215,12 +1215,18 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					{
 						// Stay in same world if already in world 0 or 1
 						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, mChar->WorldNumber(), mChar->GetInstanceID() );
+
+						// Additional update required for regular UO client
+						mChar->Update();
 					}
 					else if( toGoTo.worldNum != mChar->WorldNumber() )
 					{
 						// Change map!
 						mChar->SetLocation( toGoTo.x, toGoTo.y, toGoTo.z, toGoTo.worldNum, mChar->GetInstanceID() );
 						SendMapChange( toGoTo.worldNum, s );
+
+						// Additional update required for regular UO client
+						mChar->Update();
 					}
 				}
 			}
@@ -1246,7 +1252,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				BuildAddMenuGump( s, static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0)) );
+				BuildAddMenuGump( s, static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0)) );
 			}
 			else if( cmd == "INFORMATION" )
 			{
@@ -1261,7 +1267,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				{
 					return;
 				}
-				Skills->NewMakeMenu( s,std::stoi(strutil::trim( strutil::removeTrailing( data, "//" )), nullptr, 0), (UI08)s->AddID() );
+				Skills->NewMakeMenu( s,std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0), (UI08)s->AddID() );
 			}
 			break;
 		case 'N':
@@ -1270,13 +1276,13 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 				if( data.empty() )
 					return;
 
-				std::string menuString = strutil::format( "itemmenu %d", s->TempInt() );
+				std::string menuString = oldstrutil::format( "itemmenu %d", s->TempInt() );
 				Commands->Command( s, mChar, menuString );
 
 				TAGMAPOBJECT repeatAdd = mChar->GetTag( "repeatAdd" );
 				if( repeatAdd.m_IntValue == 1 )
 				{
-					std::string addCmd = strutil::format( "raddnpc %s", data.c_str() );
+					std::string addCmd = oldstrutil::format( "raddnpc %s", data.c_str() );
 					Commands->Command( s, mChar, addCmd );
 				}
 				else
@@ -1346,7 +1352,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 void HandleAddMenuButton( CSocket *s, UI32 button )
 {
 	SI32 addMenuLoc	= s->TempInt();
-	std::string sect = std::string("ITEMMENU ") + strutil::number( addMenuLoc );
+	std::string sect = std::string("ITEMMENU ") + oldstrutil::number( addMenuLoc );
 	CChar *mChar = s->CurrcharObj();
 
 	if( button >= 50000 && button <= 50020 )
@@ -1650,7 +1656,7 @@ void HandleHowTo( CSocket *sock, SI32 cmdNumber )
 		}
 
 
-		auto filename = strutil::format( "help/commands/%s.txt", cmdName.c_str() );
+		auto filename = oldstrutil::format( "help/commands/%s.txt", cmdName.c_str() );
 
 		std::ifstream toOpen( filename );
 		if( !toOpen.is_open() )
@@ -1923,9 +1929,22 @@ bool CPIGumpChoice::Handle( void )
 	UI16 sub		= tSock->GetWord( 7 );
 	CChar *mChar	= tSock->CurrcharObj();
 
-	if( main >= POLYMORPHMENUOFFSET )
+	if( main >= JSGUMPMENUOFFSET ) // Between 0x4000 and 0xFFFF
 	{
-		sect = std::string("POLYMORPHMENU ") + strutil::number( main );
+		// Handle button presses via global JS script
+		cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnScrollingGumpPress( tSock, main, sub ) == 0 )
+			{
+				return true;
+			}
+		}
+
+	}
+	else if( main >= POLYMORPHMENUOFFSET )
+	{
+		sect = std::string("POLYMORPHMENU ") + oldstrutil::number( main );
 		data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 		if( !data.empty() )
 		{
@@ -1951,7 +1970,7 @@ bool CPIGumpChoice::Handle( void )
 	{
 		if( main == TRACKINGMENUOFFSET )
 		{
-			sect = std::string("TRACKINGMENU ") + strutil::number( main );
+			sect = std::string("TRACKINGMENU ") + oldstrutil::number( main );
 			data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 			if( !data.empty() && tag != "What" )
 			{
@@ -1970,7 +1989,7 @@ bool CPIGumpChoice::Handle( void )
 	}
 	else if( main < ITEMMENUOFFSET ) // GM Menus
 	{
-		sect = std::string("GMMENU ") + strutil::number( main );
+		sect = std::string("GMMENU ") + oldstrutil::number( main );
 		data = GrabMenuData( sect, (static_cast<size_t>(sub) * 2), tag );
 		if( !tag.empty() )
 			HandleGumpCommand( tSock, tag, data );
@@ -2153,14 +2172,14 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 	UI08 ser1, ser2, ser3, ser4;
 	//--static pages
 	one.push_back( "page 0"  );
-	temp = strutil::format(maxsize, "resizepic 0 0 %i %i %i", cwmWorldState->ServerData()->BackgroundPic(), width, height );
+	temp = oldstrutil::format(maxsize, "resizepic 0 0 %i %i %i", cwmWorldState->ServerData()->BackgroundPic(), width, height );
 	one.push_back( temp );
-	temp = strutil::format(maxsize, "button %i 15 %i %i 1 0 1", width - 40, cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 );
+	temp = oldstrutil::format(maxsize, "button %i 15 %i %i 1 0 1", width - 40, cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 );
 	one.push_back( temp );
-	temp = strutil::format(maxsize, "text 45 15 %i 0", cwmWorldState->ServerData()->TitleColour() );
+	temp = oldstrutil::format(maxsize, "text 45 15 %i 0", cwmWorldState->ServerData()->TitleColour() );
 	one.push_back( temp );
 
-	temp = strutil::format(maxsize, "page %u", pagenum );
+	temp = oldstrutil::format(maxsize, "page %u", pagenum );
 	one.push_back( temp );
 
 	if( title.length() == 0 ){
@@ -2180,25 +2199,25 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 		{
 			position = 40;
 			++pagenum;
-			temp = strutil::format(maxsize, "page %u", pagenum );
+			temp = oldstrutil::format(maxsize, "page %u", pagenum );
 			one.push_back( temp );
 		}
 		if( gumpData[i]->type != 7 )
 		{
-			temp = strutil::format(maxsize, "text 50 %u %i %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
+			temp = oldstrutil::format(maxsize, "text 50 %u %i %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
 			one.push_back( temp );
 			if( isMenu )
 			{
-				temp = strutil::format(maxsize, "button 20 %u %i %i 1 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, buttonnum );
+				temp = oldstrutil::format(maxsize, "button 20 %u %i %i 1 0 %u", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, buttonnum );
 				one.push_back( temp );
 			}
-			temp = strutil::format(maxsize, "text %i %u %i %u", (width / 2) + 10, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
+			temp = oldstrutil::format(maxsize, "text %i %u %i %u", (width / 2) + 10, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
 			one.push_back( temp );
 			two.push_back( gumpData[i]->name );
 		}
 		else
 		{
-			temp = strutil::format(maxsize, "text 30 %u %i %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
+			temp = oldstrutil::format(maxsize, "text 30 %u %i %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
 			one.push_back( temp );
 		}
 
@@ -2209,21 +2228,21 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 				temp = std::to_string( value );
 				break;
 			case 1:
-				temp = strutil::format( "%x", static_cast<UI32>(value) );
+				temp = oldstrutil::format( "%x", static_cast<UI32>(value) );
 				break;
 			case 2:
 				ser1 = (UI08)(value>>24);
 				ser2 = (UI08)(value>>16);
 				ser3 = (UI08)(value>>8);
 				ser4 = (UI08)(value%256);
-				temp = strutil::format( "%i %i %i %i", ser1, ser2, ser3, ser4 );
+				temp = oldstrutil::format( "%i %i %i %i", ser1, ser2, ser3, ser4 );
 				break;
 			case 3:
 				ser1 = (UI08)(value>>24);
 				ser2 = (UI08)(value>>16);
 				ser3 = (UI08)(value>>8);
 				ser4 = (UI08)(value%256);
-				temp = strutil::format( "%x %x %x %x", ser1, ser2, ser3, ser4 );
+				temp = oldstrutil::format( "%x %x %x %x", ser1, ser2, ser3, ser4 );
 				break;
 			case 4:
 				if( gumpData[i]->stringValue.empty() ){
@@ -2247,7 +2266,7 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 						//LOOKATME
 						position += 20;
 						++lineForButton;
-						temp3 = strutil::format( "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
+						temp3 = oldstrutil::format( "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->RightTextColour(), linenum++ );
 						one.push_back( temp3 );
 						auto remaining = std::min<std::size_t>(( temp.size() - ( static_cast<size_t>(tempCounter) + 1 ) * static_cast<size_t>(stringWidth) * 2), static_cast<size_t>(stringWidth) * 2 );
 
@@ -2262,12 +2281,12 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 			case 5:
 				ser1 = (UI08)(value>>8);
 				ser2 = (UI08)(value%256);
-				temp = strutil::format( "0x%02x%02x", ser1, ser2 );
+				temp = oldstrutil::format( "0x%02x%02x", ser1, ser2 );
 				break;
 			case 6:
 				ser1 = (UI08)(value>>8);
 				ser2 = (UI08)(value%256);
-				temp = strutil::format("%i %i", ser1, ser2 );
+				temp = oldstrutil::format("%i %i", ser1, ser2 );
 				break;
 			case 7:
 				if( gumpData[i]->stringValue.empty() ){
@@ -2290,7 +2309,7 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 					{
 						position += 20;
 						++lineForButton;
-						temp3 = strutil::format(512, "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
+						temp3 = oldstrutil::format(512, "text %i %u %i %u", 30, position, cwmWorldState->ServerData()->LeftTextColour(), linenum++ );
 						one.push_back( temp3 );
 						auto remaining = std::min<std::size_t>(temp.size() - ( static_cast<size_t>(tempCounter) + 1 ) * static_cast<size_t>(sWidth), static_cast<std::size_t>( sWidth ));
 
@@ -2309,7 +2328,7 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 				}
 				else{
 
-					temp = strutil::format( "%.2f",  std::stof(gumpData[i]->stringValue ) );
+					temp = oldstrutil::format( "%.2f",  std::stof(gumpData[i]->stringValue ) );
 				}
 				break;
 			default:
@@ -2329,12 +2348,12 @@ void GumpDisplay::Send( UI32 gumpNum, bool isMenu, SERIAL serial )
 		one.push_back( temp );
 		if( i >= 10 )
 		{
-			temp = strutil::format( "button 10 %i %i %i 0 %u", height - 40, cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum-1 ); //back button
+			temp = oldstrutil::format( "button 10 %i %i %i 0 %u", height - 40, cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum-1 ); //back button
 			one.push_back( temp );
 		}
 		if( lineForButton > numToPage && static_cast<UI32>(( i + numToPage )) < lineForButton )
 		{
-			temp = strutil::format( "button %i %i %i %i 0 %u", width - 40, height - 40, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum+1 ); //forward button
+			temp = oldstrutil::format( "button %i %i %i %i 0 %u", width - 40, height - 40, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum+1 ); //forward button
 			one.push_back( temp );
 		}
 		++pagenum;

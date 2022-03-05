@@ -307,7 +307,7 @@ bool CPIGetItem::Handle( void )
 						Combat->petGuardAttack( ourChar, corpseTargChar, corpseTargChar );
 					else if( x->isGuarded() )
 					{
-						CTownRegion *itemTownRegion = calcRegionFromXY( x->GetX(), x->GetY(), x->WorldNumber(), x->GetInstanceID() );
+						CTownRegion *itemTownRegion = x->GetRegion();
 						if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 						{
 							Combat->petGuardAttack( ourChar, corpseTargChar, x );
@@ -353,7 +353,7 @@ bool CPIGetItem::Handle( void )
 	if( i->isGuarded() )
 	{
 		// Only care about guarded state if outside of a guarded/safezone region
-		CTownRegion *itemTownRegion = calcRegionFromXY( x->GetX(), x->GetY(), x->WorldNumber(), x->GetInstanceID() );
+		CTownRegion *itemTownRegion = x->GetRegion();
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			// Let's loop through a list of nearby characters to see if anyone is guarding the object
@@ -419,7 +419,15 @@ bool CPIGetItem::Handle( void )
 			}
 		}
 	}
-
+	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+	{
+		if( !Weight->checkCharWeight( nullptr, ourChar, i ) )
+		{
+			tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
+			Bounce( tSock, i );
+			return true;
+		}
+	}
 	Effects->PlaySound( tSock, 0x0057, true );
 	if( i->GetAmount() > 1 && i->GetObjType() != OT_SPAWNER )
 	{
@@ -444,15 +452,6 @@ bool CPIGetItem::Handle( void )
 				ourChar->Dirty( UT_STATWINDOW );
 		}
 	}
-	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
-	{
-		if( !Weight->checkCharWeight( nullptr, ourChar, i ) )
-		{
-			tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
-			Bounce( tSock, i );
-			return true;
-		}
-	}
 
 	if( iCont == nullptr )
 		MapRegion->RemoveItem( i );
@@ -460,6 +459,9 @@ bool CPIGetItem::Handle( void )
 
 	tSock->SetCursorItem( i );
 	i->SetHeldOnCursor( true );
+
+	// Update region of item to match that of the character holding it
+	i->SetRegion( ourChar->GetRegionNum() );
 
 	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
 		Weight->addItemWeight( ourChar, i );
@@ -735,7 +737,7 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
 		{
 			if( !tag.empty() )
 			{
-				if( strutil::upper( tag ) == "FOODLIST" )
+				if( oldstrutil::upper( tag ) == "FOODLIST" )
 				{
 					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
 				}
@@ -1270,7 +1272,7 @@ void DropOnSpellBook( CSocket& mSock, CChar& mChar, CItem& spellBook, CItem& iDr
 		return;
 	}
 
-	if( name == Dictionary->GetEntry( 1605 ) )
+	if( name == Dictionary->GetEntry( 1605 ) ) // All-Spell Scroll
 	{
 		if( spellBook.GetSpell( 0 ) == INVALIDSERIAL && spellBook.GetSpell( 1 ) == INVALIDSERIAL && spellBook.GetSpell( 2 ) == INVALIDSERIAL )
 		{
@@ -1355,6 +1357,41 @@ bool DropOnStack( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDroppe
 		Bounce( &mSock, &iDropped );
 
 	return true;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	UI16 HandleAutoStack( CItem *mItem, CItem *mCont )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Automatically stack an item with existing items in a container
+//o-----------------------------------------------------------------------------------------------o
+UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar )
+{
+	// Check that container can hold more weight
+	if( mItem != mCont->GetCont() && !Weight->checkPackWeight( mChar, mCont, mItem ))
+	{
+		if( mSock != nullptr && ValidateObject( mChar ) )
+		{
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				Weight->subtractItemWeight( mChar, mItem );
+			mSock->sysmessage( 1385 ); // That pack cannot hold any more weight
+			Bounce( mSock, mItem );
+			return mItem->GetAmount();
+		}
+	}
+
+	// Attempt to autostack item in container
+	bool stackDeleted = ( autoStack( mSock, mItem, mCont ) != mItem );
+	if( !stackDeleted )
+	{
+		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
+		{
+			Weight->subtractItemWeight( mChar, mItem );
+		}
+
+		return mItem->GetAmount();
+	}
+
+	return 0;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1487,21 +1524,7 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 	}
 	else // Drop directly on a container, placing it randomly inside
 	{
-		if( &droppedOn != iDropped.GetCont() && !Weight->checkPackWeight( &mChar, &droppedOn, &iDropped ) )
-		{
-			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( &mChar, &iDropped );
-			mSock.sysmessage( 1385 ); // That pack cannot hold any more weight
-			Bounce( &mSock, &iDropped );
-			return false;
-		}
-		iDropped.SetCont( &droppedOn );
-		stackDeleted = ( autoStack( &mSock, &iDropped, &droppedOn ) != &iDropped );
-		if( !stackDeleted )
-		{
-			if( mSock.PickupSpot() == PL_OTHERPACK || mSock.PickupSpot() == PL_GROUND )
-				Weight->subtractItemWeight( &mChar, &iDropped );
-		}
+		[[maybe_unused]] UI16 amountLeft = HandleAutoStack( &iDropped, &droppedOn, &mSock, &mChar );
 
 		// Only send tooltip if server feature for tooltips is enabled
 		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
@@ -1892,20 +1915,20 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				if( p->GetID( 2 ) == 0x91 )
 				{
-					FameTitle = strutil::format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+					FameTitle = oldstrutil::format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
 				else
 				{
-					FameTitle = strutil::format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
+					FameTitle = oldstrutil::format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string(" ");
 				}
 			}
 			else if( p->GetID( 2 ) == 0x91 )
 			{
-				FameTitle = strutil::format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
+				FameTitle = oldstrutil::format( Dictionary->GetEntry( 1179 ), thetitle.c_str() ) + std::string(" ");
 			}
 			else
 			{
-				FameTitle = strutil::format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
+				FameTitle = oldstrutil::format( Dictionary->GetEntry( 1180 ), thetitle.c_str() ) + std::string(" ");
 			}
 		}
 		else
@@ -1914,9 +1937,9 @@ void getFameTitle( CChar *p, std::string& FameTitle )
 			{
 				FameTitle = Dictionary->GetEntry( 1181 ) + std::string(" ");
 			}
-			else if( !( thetitle = strutil::trim( strutil::removeTrailing( thetitle, "//" ))).empty() )
+			else if( !( thetitle = oldstrutil::removeTrailing( thetitle, "//" )).empty() )
 			{
-				FameTitle = strutil::format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
+				FameTitle = oldstrutil::format( Dictionary->GetEntry( 1182 ), thetitle.c_str() );
 			}
 		}
 	}
@@ -1979,7 +2002,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			tempstr = FameTitle;
 		
 		// Then add actual name
-		tempstr += pdoll->GetName();
+		tempstr += pdoll->GetNameRequest( myChar );
 
 		// Append title, if one exists
 		if( pdoll->GetTitle() != "" )
@@ -1989,12 +2012,12 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 	}
 	else if( pdoll->IsDead() )
-		tempstr = pdoll->GetName();
+		tempstr = pdoll->GetNameRequest( myChar );
 	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
-			tempstr = strutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 			bContinue = true;
 		else
@@ -2009,22 +2032,22 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			if( kCtr >= cwmWorldState->murdererTags.size() )
 				bContinue = true;
 			else
-				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetName() + ", " + pdoll->GetTitle() + SkillProwessTitle;
+				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetNameRequest( myChar ) + ", " + pdoll->GetTitle() + SkillProwessTitle;
 		}
 	}
 	else if( pdoll->IsCriminal() )
-		tempstr = strutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetName().c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
+		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), SkillProwessTitle.c_str() );
 	else
 		bContinue = true;
 	if( bContinue )
 	{
-		tempstr = FameTitle + pdoll->GetName();	//Repuation + Name
+		tempstr = FameTitle + pdoll->GetNameRequest( myChar );	//Repuation + Name
 		if( pdoll->GetTownTitle() || pdoll->GetTownPriv() == 2 )	// TownTitle
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
-				tempstr = strutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetName().c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
+				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), SkillProwessTitle.c_str() );
 			else	// is Resident
-				tempstr = pdoll->GetName() + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
+				tempstr = pdoll->GetNameRequest( myChar ) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + SkillProwessTitle;
 		}
 		else	// No Town Title
 		{
@@ -2343,7 +2366,7 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			else	// Display Townstone gump
 			{
-				CTownRegion *useRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
+				CTownRegion *useRegion = iUsed->GetRegion();
 				if( useRegion != nullptr )
 					useRegion->DisplayTownMenu( iUsed, mSock );
 			}
@@ -2746,7 +2769,7 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 {
 	if( tagToItemType.empty() )	// if we haven't built our array yet
 		InitTagToItemType();
-	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( strutil::upper(strToFind) );
+	std::map< std::string, ItemTypes >::const_iterator toFind = tagToItemType.find( oldstrutil::upper(strToFind) );
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 	return IT_COUNT;
@@ -2766,7 +2789,7 @@ void InitIDToItemType( void )
 	for( std::string tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
 	{
 		data	= Itemtypes->GrabData();
-		auto comma_secs = strutil::sections( data, "," );
+		auto comma_secs = oldstrutil::sections( data, "," );
 		iType	= FindItemTypeFromTag( tag );
 		if( iType != IT_COUNT )
 		{
@@ -2775,7 +2798,7 @@ void InitIDToItemType( void )
 			{
 				for( SI32 i = 0; i <= sectionCount; i++ )
 				{
-					idToItemType[ strutil::value<std::uint16_t>(strutil::extractSection(data, ",", i, i ), 16 )] = iType;
+					idToItemType[ oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(data, ",", i, i ), 16 )] = iType;
 				}
 			}
 			else
@@ -2896,7 +2919,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 
 			if( ValidateObject( iChar ) )
 			{
-				CTownRegion *itemTownRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), iUsed->WorldNumber(), iUsed->GetInstanceID() );
+				CTownRegion *itemTownRegion = iUsed->GetRegion();
 				if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 				{
 					if( iChar->IsGuarded() ) // Is the corpse being guarded?
@@ -2917,7 +2940,7 @@ bool ItemIsUsable( CSocket *tSock, CChar *ourChar, CItem *iUsed, ItemTypes iType
 			}
 			else
 			{
-				CTownRegion *itemTownRegion = calcRegionFromXY( iUsed->GetX(), iUsed->GetY(), iUsed->WorldNumber(), iUsed->GetInstanceID() );
+				CTownRegion *itemTownRegion = iUsed->GetRegion();
 				if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 				{
 					if( ValidateObject( iChar ))
@@ -3078,13 +3101,13 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = std::string(" (") + strutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
+			dataToAdd = std::string(" (") + oldstrutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += oldstrutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = std::string(" (") + strutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += strutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
+			dataToAdd = std::string(" (") + oldstrutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
+			dataToAdd += oldstrutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
 			break;
 		case IT_LOCKEDDOOR:
 			dataToAdd = " " + Dictionary->GetEntry( 9050 ); // [Locked]
@@ -3103,7 +3126,7 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 
 	if( i->isGuarded() )
 	{
-		CTownRegion *itemTownRegion = calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID() );
+		CTownRegion *itemTownRegion = i->GetRegion();
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			dataToAdd += " " + Dictionary->GetEntry( 9051, s->Language() ); // [Guarded]
@@ -3207,7 +3230,7 @@ bool CPISingleClick::Handle( void )
 					if( ValidateObject( mCreator ) )
 					{
 						std::string creatorName = getNpcDictName( mCreator, tSock );
-						temp2 = strutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
+						temp2 = oldstrutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
 					}
 					else
 					{
@@ -3227,19 +3250,19 @@ bool CPISingleClick::Handle( void )
 #if defined( _MSC_VER )
 #pragma todo( "We need to update this to use getTileName almost exclusively, for plurality" )
 #endif
-	if( i->GetName()[0] != '#' )
+	if( i->GetNameRequest( tSock->CurrcharObj() )[0] != '#' )
 	{
 		if( i->GetID() == 0x0ED5 )//guildstone
-			realname = strutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetName().c_str() );
+			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
 		if( !i->isPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->isCorpse() && getAmount > 1 )
-				realname = strutil::format( "%s (%u)", i->GetName().c_str(), getAmount );
+				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
 			else
-				realname = i->GetName();
+				realname = i->GetNameRequest( tSock->CurrcharObj() );
 		}
 		else
-			realname = strutil::format( "%u %ss", getAmount, i->GetName().c_str() );
+			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
 	}
 	else
 	{
@@ -3253,7 +3276,7 @@ bool CPISingleClick::Handle( void )
 		std::string name2( i->GetName2() );
 		if( name2 == "#" || name2 == "" )
 		{
-			realname += strutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
+			realname += oldstrutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
 		}
 		else
 		{
@@ -3271,7 +3294,7 @@ bool CPISingleClick::Handle( void )
 		{
 			iCount = static_cast<SI32>(i->GetContainsList()->Num());
 		}
-		realname += strutil::format( ", (%u items, %u stones)", iCount, (i->GetWeight()/100) );
+		realname += oldstrutil::format( ", (%u items, %u stones)", iCount, (i->GetWeight()/100) );
 	}
 	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
 	{
@@ -3279,7 +3302,7 @@ bool CPISingleClick::Handle( void )
 		if( ValidateObject( mCreator ) )
 		{
 			std::string creatorName = getNpcDictName( mCreator, tSock );
-			temp2 = strutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
+			temp2 = oldstrutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
 		}
 		else
 		{
@@ -3300,7 +3323,7 @@ bool CPISingleClick::Handle( void )
 	}
 	if( i->isGuarded() )
 	{
-		CTownRegion *itemTownRegion = calcRegionFromXY( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID() );
+		CTownRegion *itemTownRegion = i->GetRegion();
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			tSock->objMessage( Dictionary->GetEntry( 9051, tSock->Language() ), i ); // [Guarded]

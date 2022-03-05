@@ -80,6 +80,7 @@ add_library(uox
 		IDXMul.cpp
 		IP4Address.cpp
 		TimeUtility.cpp
+		EventTimer.cpp
 )
 
 target_include_directories(uox
@@ -99,6 +100,5 @@ target_link_libraries(uox
 	PUBLIC
 		js32
 		zlibstatic
-		$<$<PLATFORM_ID:Windows>:wsock32>
 		$<$<PLATFORM_ID:Windows>:ws2_32>
 )
