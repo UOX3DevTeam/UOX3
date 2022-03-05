@@ -56,15 +56,15 @@ auto strcopy(char* dest, size_t size, const char* src)->void {
 	strcpy(dest, src);
 }
 auto strncopy(char* dest, size_t size, const char* src, size_t count)->void {
-	strncpy(dest, src, count, );
+	strncpy(dest, src, count );
 
 }
 auto mstrcat(char* dest, size_t size, const char* src) ->char* {
-	return strcat_s(dest, src);
+	return strcat(dest, src);
 	
 }
 auto mgmtime(struct tm* dest, const time_t* timer)->struct tm* {
-	return gmtime_r(dest, timer);
+	return gmtime(timer);
 	
 }
 auto mctime(char* buffer, size_t size, const time_t* timer) ->char* {
