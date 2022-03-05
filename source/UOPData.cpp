@@ -90,7 +90,7 @@ namespace UO {
 	std::vector<UOPData::UTableEntry> UOPData::gatherTableEntry(std::ifstream &input,std::uint32_t maxentry){
 		std::vector<UTableEntry> rvalue ;
 		rvalue.reserve(maxentry);
-		for (auto i = 0; i<maxentry;i++){
+		for (size_t i = 0; i<maxentry;i++){
 			rvalue.push_back(readTableEntry(input));
 		}
 		return rvalue ;
