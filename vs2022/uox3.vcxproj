@@ -149,6 +149,7 @@
     <ClCompile Include="..\source\network.cpp" />
     <ClCompile Include="..\source\npcs.cpp" />
     <ClCompile Include="..\source\ObjectFactory.cpp" />
+    <ClCompile Include="..\source\osunique.cpp" />
     <ClCompile Include="..\source\PartySystem.cpp" />
     <ClCompile Include="..\source\pcmanage.cpp" />
     <ClCompile Include="..\source\quantityfuncs.cpp" />
@@ -236,7 +237,7 @@
       <AdditionalOptions> /J</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -256,7 +257,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

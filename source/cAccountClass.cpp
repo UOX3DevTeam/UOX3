@@ -14,6 +14,7 @@
 #include <cstdint>
 #include <filesystem>
 #include "StringUtility.hpp"
+#include "osunique.hpp"
 #if PLATFORM != WINDOWS
 #include <arpa/inet.h>
 #endif
@@ -1456,8 +1457,9 @@ bool cAccountClass::DelAccount( UI16 wAccountID )
 	memset(szDirName,0x00,sizeof(SI08)*40);
 	memset(szDirPath,0x00,sizeof(SI08)*MAX_PATH);
 	// Ok copy only the username portion to this so we can build a correct rename path
-	strcpy(szDirName,&actbID.sPath[actbID.sPath.length()-actbID.sUsername.length()-1]);
-	strncpy(szDirPath,actbID.sPath.c_str(),actbID.sPath.length()-actbID.sUsername.length()-1);
+	strcopy(szDirName, 40, &actbID.sPath[actbID.sPath.length() - actbID.sUsername.length() - 1]);
+	//strcpy(szDirName,&actbID.sPath[actbID.sPath.length()-actbID.sUsername.length()-1]);
+	strncopy(szDirPath,MAX_PATH,actbID.sPath.c_str(),actbID.sPath.length()-actbID.sUsername.length()-1);
 	std::string sNewDir(szDirPath);
 	sNewDir += "_";
 	sNewDir += szDirName;

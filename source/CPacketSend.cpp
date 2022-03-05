@@ -16,7 +16,10 @@
 #include <string>
 #include <locale>
 #include <codecvt>
-
+#include "osunique.hpp"
+#if defined(_WIN32)
+#include <ws2tcpip.h>
+#endif
 // Unknown bytes
 // 5->8
 // 18->27
@@ -5013,7 +5016,7 @@ CPUpdScroll::CPUpdScroll( UI08 tType, UI08 tNum )
 
 void CPUpdScroll::AddString( const char *toAdd )
 {
-	strcat( tipData, toAdd );
+	mstrcat( tipData,2048, toAdd );
 }
 void CPUpdScroll::TipType( UI08 tType )
 {
@@ -6074,7 +6077,11 @@ void CPGameServerList::AddServer( UI16 servNum, physicalServer *data )
 	UI32 baseOffset = 6 + servNum * 40;
 	pStream.WriteShort(  baseOffset, servNum + 1 );
 	pStream.WriteString( static_cast<size_t>(baseOffset) + 2, data->getName(), data->getName().length() );
-	UI32 ip = inet_addr( data->getIP().c_str() );
+	auto ip = std::uint32_t(0);
+
+	inet_pton(AF_INET, data->getIP().c_str(), &ip);
+	
+	//UI32 ip = inet_addr( data->getIP().c_str() );
 	pStream.WriteLong( static_cast<size_t>(baseOffset) + 36, ip );
 }
 void CPGameServerList::addEntry( const std::string & name, UI32 addressBig )

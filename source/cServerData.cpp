@@ -12,7 +12,7 @@
 #include <arpa/inet.h>
 #endif
 #include "StringUtility.hpp"
-
+#include "osunique.hpp"
 #define	MAX_TRACKINGTARGETS	128
 #define SKILLTOTALCAP		7000
 #define SKILLCAP			1000
@@ -5311,10 +5311,10 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
 		toAdd.instanceID	= 0;
 		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
-		strcpy( toAdd.oldTown, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcpy( toAdd.oldDescription, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
-		strcpy( toAdd.newTown, toAdd.oldTown);
-		strcpy( toAdd.newDescription, toAdd.oldDescription );
+		strcopy( toAdd.oldTown,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcopy( toAdd.oldDescription,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcopy( toAdd.newTown,31, toAdd.oldTown);
+		strcopy( toAdd.newDescription,31, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else if( csecs.size() ==  8 )	// instanceID included
@@ -5326,10 +5326,10 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
 		toAdd.instanceID	= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
 		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
-		strcpy( toAdd.oldTown, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcpy( toAdd.oldDescription, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
-		strcpy( toAdd.newTown, toAdd.oldTown);
-		strcpy( toAdd.newDescription, toAdd.oldDescription );
+		strcopy( toAdd.oldTown,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
+		strcopy( toAdd.oldDescription,31 ,oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
+		strcopy( toAdd.newTown,31, toAdd.oldTown);
+		strcopy( toAdd.newDescription,31, toAdd.oldDescription );
 		startlocations.push_back( toAdd );
 	}
 	else

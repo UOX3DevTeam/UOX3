@@ -515,6 +515,9 @@
     <ClCompile Include="..\source\msgboard.cpp">
       <Filter>objects</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\osunique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\source\uox3.ico">
