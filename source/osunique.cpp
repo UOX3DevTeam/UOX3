@@ -64,11 +64,11 @@ auto mstrcat(char* dest, size_t size, const char* src) ->char* {
 	
 }
 auto mgmtime(struct tm* dest, const time_t* timer)->struct tm* {
-	return gmtime(timer);
+	return gmtime_r(timer,dest);
 	
 }
 auto mctime(char* buffer, size_t size, const time_t* timer) ->char* {
-	return ctime( timer);
+	return ctime_r( timer,buffer);
 	
 }
 auto mstrerror(char* buffer, size_t size, int errornum)->char* {
