@@ -270,6 +270,9 @@
     <ClInclude Include="..\source\msgboard.h">
       <Filter>objects</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\osunique.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\ai.cpp">

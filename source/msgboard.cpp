@@ -384,7 +384,10 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	}
 
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto timeOfPost = *std::localtime(&timet);
+	struct tm timeOfPost;
+	lcltime(timet, timeOfPost);
+
+	lcltime(timet,timeOfPost);
 	auto time			= oldstrutil::format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
 	time.resize( time.size()+1 );
 	const UI08 timeSize		= static_cast<UI08>(time.size());

@@ -62,6 +62,7 @@
     <ClInclude Include="..\source\MultiMul.hpp" />
     <ClInclude Include="..\source\network.h" />
     <ClInclude Include="..\source\ObjectFactory.h" />
+    <ClInclude Include="..\source\osunique.hpp" />
     <ClInclude Include="..\source\PageVector.h" />
     <ClInclude Include="..\source\PartySystem.h" />
     <ClInclude Include="..\source\power.h" />
@@ -255,7 +256,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-	  <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -270,7 +271,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-     <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies> ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
