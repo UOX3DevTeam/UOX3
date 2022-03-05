@@ -1,5 +1,5 @@
 add_library(js32
-	SHARED
+	STATIC
 		jsapi.c
 		jsarena.c
 		jsarray.c
@@ -37,18 +37,7 @@ add_library(js32
 		prmjtime.c
 )
 
-target_link_libraries(js32
-	PRIVATE
-		fdlibm
-)
 
-#target_link_options(js32
-#	PRIVATE
-#		$<$<PLATFORM_ID:Windows>:/dll>
-#		$<$<PLATFORM_ID:Windows>:/machine:I386>
-#		$<$<PLATFORM_ID:Windows>:/opt:ref,noicf>
-#		$<$<PLATFORM_ID:Windows>:/subsystem:windows>
-#)
 
 target_compile_definitions(js32
 	PRIVATE
@@ -58,15 +47,9 @@ target_compile_definitions(js32
 		$<$<PLATFORM_ID:Windows>:EXPORT_JS_API>
 )
 
-#target_compile_options(js32
-#	PRIVATE
-#		$<$<C_COMPILER_ID:MSVC>:/W3>
-#		$<$<C_COMPILER_ID:MSVC>:/EHsc>
-#)
+
 
 set_target_properties(js32
 	PROPERTIES
          RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}
 )
-
-add_subdirectory(fdlibm)

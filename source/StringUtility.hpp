@@ -15,7 +15,7 @@
 #include <cstdarg>
 #include <type_traits>
 
-namespace strutil {
+namespace oldstrutil {
 	// Uppercase the string
 	std::string lower(const std::string &value);
 	// Lowercase the string

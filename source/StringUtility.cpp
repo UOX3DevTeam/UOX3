@@ -16,7 +16,7 @@
 #include <codecvt>
 using namespace std::string_literals;
 
-namespace strutil {
+namespace oldstrutil {
 	
 	//=====================================================================
 	// Lowercase the string
@@ -149,7 +149,7 @@ namespace strutil {
 		
 		std::va_list argptr ;
 		va_start(argptr, fmtstring);
-		auto test = strutil::format(fmtstring,argptr) ;
+		auto test = oldstrutil::format(fmtstring,argptr) ;
 		if (maxsize>0){
 			if (test.size() > maxsize) {
 				test = test.substr(0,maxsize);
@@ -159,7 +159,7 @@ namespace strutil {
 	}
 	//++++++++++++++++++++++++++++++++++++++
 	std::string format(std::size_t maxsize,const std::string fmtstring,va_list& list){
-		auto temp = strutil::format(fmtstring,list);
+		auto temp = oldstrutil::format(fmtstring,list);
 		if (maxsize>0){
 			if (temp.size() > maxsize) {
 				temp = temp.substr(0,maxsize);
@@ -172,7 +172,7 @@ namespace strutil {
 		
 		std::va_list argptr ;
 		va_start(argptr, fmtstring);
-		return strutil::format(fmtstring,argptr) ;
+		return oldstrutil::format(fmtstring,argptr) ;
 	}
 	//++++++++++++++++++++++++++++++++++++++
 	std::string format(const std::string fmtstring,va_list& list){
@@ -186,7 +186,7 @@ namespace strutil {
 	//++++++++++++++++++++++++++++++++++++++++
 	std::string formatMessage(const std::string& uformat,const std::string& data){
 		
-		auto values = strutil::sections(data,",");
+		auto values = oldstrutil::sections(data,",");
 		auto format = uformat ;
 		auto pos = format.find_first_of("%") ;
 		if (pos == std::string::npos) {
@@ -231,16 +231,16 @@ namespace strutil {
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::uintmax_t sectionCount(const std::string& value, const std::string& sep, std::string::size_type start , std::string::size_type end ){
 		
-		return strutil::sections(value,sep,start,end).size() ;
+		return oldstrutil::sections(value,sep,start,end).size() ;
 	}
 	
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::string indexSection(const std::string& value, std::uintmax_t sectionindex,const std::string& sep, std::string::size_type start , std::string::size_type end ){
-		auto sec = strutil::sections(value,sep,start,end) ;
+		auto sec = oldstrutil::sections(value,sep,start,end) ;
 		if (sec.size() <= sectionindex) {
 			return sec[sectionindex];
 		}
-		throw std::runtime_error(strutil::format("Section index %ul exceeded size %ul from sections %s",sectionindex,sec.size(),value.c_str()));
+		throw std::runtime_error(oldstrutil::format("Section index %ul exceeded size %ul from sections %s",sectionindex,sec.size(),value.c_str()));
 	}
 	
 	//+++++++++++++++++++++++++++++++++++++++++

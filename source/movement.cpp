@@ -202,7 +202,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 	if( !isValidDirection( dir ) )
 	{
 		std::string charName = getNpcDictName( c );
-		Console.error( strutil::format("%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, charName.c_str(), dir, dir ));
+		Console.error( oldstrutil::format("%s (cMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, charName.c_str(), dir, dir ));
 		// If I don't do this, the NPC will keep trying to walk on the same step, which is
 		// where he's already at. Can cause an infinite loop. (Trust me, was one of the things
 		// that locked up NW Alpha 2)
@@ -243,9 +243,9 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		{
 #if DEBUG_WALKING
 			std::string charName = getNpcDictName( c );
-			Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, charName ));
-			Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
-			Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
+			Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Failed for %s\n", DBGFILE, charName ));
+			Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+			Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
 #endif
 			if( mSock != nullptr )
 				deny( mSock, c, sequence );
@@ -308,9 +308,9 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		}
 #if DEBUG_WALKING
 		std::string charName = getNpcDictName( c );
-		Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
-		Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
-		Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
+		Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
+		Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+		Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
 #endif
 
 		if( c->IsNpc() && CheckForCharacterAtXYZ( c, myx, myy, myz ) )
@@ -330,7 +330,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetPathResult( 0 ); // partial success
 #if DEBUG_WALKING
 					std::string charName = getNpcDictName( c );
-					Console.print( strutil::format("DEBUG: Walking() - NPC (%s) failed to pathfind (%d times). Calculating new path!\n", charName.c_str(), c->GetPathFail() ));
+					Console.print( oldstrutil::format("DEBUG: Walking() - NPC (%s) failed to pathfind (%d times). Calculating new path!\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				}
 				return;
@@ -339,10 +339,10 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			{
 #if DEBUG_WALKING
 				std::string charName = getNpcDictName( c );
-				Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
-				Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
-				Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
-				Console.print( strutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind (%d times, but less than 10). Invalidating old target location!\n", charName.c_str(), c->GetPathFail() ));
+				Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
+				Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
+				Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
+				Console.print( oldstrutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind (%d times, but less than 10). Invalidating old target location!\n", charName.c_str(), c->GetPathFail() ));
 #endif
 
 				c->FlushPath();
@@ -363,7 +363,7 @@ void cMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			{
 #if DEBUG_WALKING
 				std::string charName = getNpcDictName( c );
-				Console.print( strutil::format("DEBUG: Walking() - NPC (%s) failed to pathfind %d times! Pausing pathfinding for some time.\n", charName.c_str(), c->GetPathFail() ));
+				Console.print( oldstrutil::format("DEBUG: Walking() - NPC (%s) failed to pathfind %d times! Pausing pathfinding for some time.\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				c->FlushPath();
 				c->SetPathResult( 0 ); // partial success, but blocked by character
@@ -466,7 +466,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 		}
 #if DEBUG_WALKING
 		std::string charName = getNpcDictName( c );
-		Console.print( strutil::format( "DEBUG: %s (cMovement::isFrozen) casting char %s\n", DBGFILE, charName ));
+		Console.print( oldstrutil::format( "DEBUG: %s (cMovement::isFrozen) casting char %s\n", DBGFILE, charName ));
 #endif
 		return true;
 	}
@@ -479,7 +479,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 		}
 #if DEBUG_WALKING
 		std::string charName = getNpcDictName( c );
-		Console.print( strutil::format( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, charName ));
+		Console.print( oldstrutil::format( "DEBUG: %s (cMovement::isFrozen) frozen char %s\n", DBGFILE, charName ));
 #endif
 		return true;
 	}
@@ -515,7 +515,7 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 				deny( mSock, c, sequence );
 #if DEBUG_WALKING
 				std::string charName = getNpcDictName( c );
-				Console.print( strutil::format( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, charName ));
+				Console.print( oldstrutil::format( "DEBUG: %s (cMovement::Walking) overloaded char %s\n", DBGFILE, charName ));
 #endif
 				return true;
 			}
@@ -780,7 +780,7 @@ void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 			if( !tItem->CanBeObjType( OT_MULTI ) )
 			{
 #if DEBUG_WALKING
-				Console.print( strutil::format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
+				Console.print( oldstrutil::format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
 #endif
 				if( tItem->GetX() == x && tItem->GetY() == y )
 				{
@@ -1551,7 +1551,7 @@ void cMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 			}
 			break;
 		default:
-			Console.error( strutil::format("Bad NPC Wander type passed to NpcWalk: %i", getWander ));
+			Console.error( oldstrutil::format("Bad NPC Wander type passed to NpcWalk: %i", getWander ));
 			break;
 	}
 	// If path back can't be found, use alternative route - through the magical ether! (teleport)
@@ -1613,7 +1613,7 @@ void cMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 				{
 #if defined( UOX_DEBUG_MODE )
 					std::string charName = getNpcDictName( nChar );
-					Console.warning( strutil::format("NPC: %s with serial 0x%X was unable to path back to bounding box, teleporting NPC back.\n", charName.c_str(), nChar->GetSerial() ));
+					Console.warning( oldstrutil::format("NPC: %s with serial 0x%X was unable to path back to bounding box, teleporting NPC back.\n", charName.c_str(), nChar->GetSerial() ));
 #endif
 					nChar->SetLocation( m, n, fz1, nChar->WorldNumber(), nChar->GetInstanceID() );
 					nChar->SetNpcWander( nChar->GetOldNpcWander() );
@@ -1625,7 +1625,7 @@ void cMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 		// If a valid teleport-location hasn't been found at this point, despawn NPC
 #if defined( UOX_DEBUG_MODE )
 		std::string charName = getNpcDictName( nChar );
-		Console.warning(strutil::format("NPC: %s with serial 0x%X was unable to path back to bounding box, no valid teleport location found. Deleting NPC!\n", charName.c_str(), nChar->GetSerial()) );
+		Console.warning(oldstrutil::format("NPC: %s with serial 0x%X was unable to path back to bounding box, no valid teleport location found. Deleting NPC!\n", charName.c_str(), nChar->GetSerial()) );
 #endif
 		nChar->Delete();
 	}
@@ -2021,7 +2021,7 @@ void cMovement::NpcMovement( CChar& mChar )
 	{
 #if DEBUG_NPCWALK
 		std::string charName = getNpcDictName( mChar );
-		Console.print( strutil::format( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", charName, mChar.GetNpcWander(), mChar.IsAtWar(), j ));
+		Console.print( oldstrutil::format( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", charName, mChar.GetNpcWander(), mChar.IsAtWar(), j ));
 #endif
 		bool shouldRun		= false;
 		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
@@ -2060,7 +2060,7 @@ void cMovement::NpcMovement( CChar& mChar )
 						mChar.SetHP( mChar.GetMaxHP() );
 						mChar.SetEvadeState( true );
 						Combat->InvalidateAttacker( &mChar );
-						//Console.warning( strutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+						//Console.warning( oldstrutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i). Could no longer see or reach target.\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
 						std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 						for( auto scriptTrig : scriptTriggers )
@@ -2178,7 +2178,7 @@ void cMovement::NpcMovement( CChar& mChar )
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
 								Combat->InvalidateAttacker( &mChar );
-								//Console.warning( strutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+								//Console.warning( oldstrutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
 								std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 								for( auto scriptTrig : scriptTriggers )
@@ -2902,7 +2902,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	{
 #if defined( UOX_DEBUG_MODE )
 		std::string charName = getNpcDictName( mChar );
-		Console.warning( strutil::format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
+		Console.warning( oldstrutil::format("AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
 			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps) );
 #endif
 		mChar->SetPathResult( -1 ); // Pathfinding failed
@@ -2929,7 +2929,7 @@ bool cMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	else
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.print( strutil::format("AdvancedPathfinding: %u loops to find path.\n", loopCtr) );
+		Console.print( oldstrutil::format("AdvancedPathfinding: %u loops to find path.\n", loopCtr) );
 #endif
 		if( getDist( mChar->GetLocation(), point3( targX, targY, curZ ) ) > 1 )
 			mChar->SetPathResult( 0 ); // Partial pathfinding success

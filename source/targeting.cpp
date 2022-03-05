@@ -377,7 +377,7 @@ void WstatsTarget( CSocket *s )
 	wStat.AddData( "Y", i->GetY() );
 
 
-	wStat.AddData( "Z", strutil::format( "%d", i->GetZ() ) );
+	wStat.AddData( "Z", oldstrutil::format( "%d", i->GetZ() ) );
 	wStat.AddData( "Wander", i->GetNpcWander() );
 	wStat.AddData( "FX1", i->GetFx( 0 ) );
 	wStat.AddData( "FY1", i->GetFy( 0 ) );
@@ -665,7 +665,7 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictE
 	CItem *toCreate = Items->CreateScriptItem( nullptr, mChar, partID, 1, OT_ITEM, false, 0x0 );
 	if( !ValidateObject( toCreate ) )
 		return false;
-	toCreate->SetName( strutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetName( oldstrutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
 	toCreate->SetLocation( corpse );
 	toCreate->SetOwner( corpse->GetOwnerObj() );
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
@@ -709,14 +709,14 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( strutil::upper( tag ) == "ADDITEM" )
+			if( oldstrutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::trim( strutil::removeTrailing( data, "//" ));
-				auto csecs = strutil::sections( data, "," );
+				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+				auto csecs = oldstrutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{	
-					if( !CreateBodyPart( mChar, i, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0))))
+					if( !CreateBodyPart( mChar, i, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0))))
 					{
 						return;
 					}
@@ -743,7 +743,7 @@ void newCarveTarget( CSocket *s, CItem *i )
 	}
 	else
 	{
-		std::string sect		= std::string("CARVE ") + strutil::number( i->GetCarve() );
+		std::string sect		= std::string("CARVE ") + oldstrutil::number( i->GetCarve() );
 		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
 		if( toFind == nullptr )
 			return;
@@ -751,14 +751,14 @@ void newCarveTarget( CSocket *s, CItem *i )
 		std::string data;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
 		{
-			if( strutil::upper( tag ) == "ADDITEM" )
+			if( oldstrutil::upper( tag ) == "ADDITEM" )
 			{
 				data = toFind->GrabData();
-				data = strutil::trim( strutil::removeTrailing( data, "//" ));
-				auto csecs = strutil::sections( data, "," );
+				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+				auto csecs = oldstrutil::sections( data, "," );
 				if( csecs.size() > 1 )
 				{
-					Items->CreateScriptItem( s, mChar, strutil::trim( strutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(strutil::trim( strutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
+					Items->CreateScriptItem( s, mChar, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
 				}
 				else
 				{
@@ -1085,7 +1085,7 @@ void TransferTarget( CSocket *s )
 		if( ValidateObject( petTransferDeed ) )
 		{
 			std::string petName = getNpcDictName( petChar );
-			petTransferDeed->SetName( strutil::format( "a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry( 3000 + petChar->GetID(), targChar->GetSocket()->Language() ).c_str() )); //cwmWorldState->creatures[petChar->GetID()].CreatureType().c_str() ));
+			petTransferDeed->SetName( oldstrutil::format( "a transfer deed for %s (%s)", petName.c_str(), Dictionary->GetEntry( 3000 + petChar->GetID(), targChar->GetSocket()->Language() ).c_str() )); //cwmWorldState->creatures[petChar->GetID()].CreatureType().c_str() ));
 			petTransferDeed->SetTempVar( CITV_MORE, petChar->GetSerial() );
 			petTransferDeed->SetMovable( 2 ); // Disallow moving the deed out of the trade window
 			petTransferDeed->SetType( IT_PETTRANSFERDEED ); // Set a type to let us identify it later when trade is accepted
@@ -1177,7 +1177,7 @@ void NpcResurrectTarget( CChar *i )
 
 	if( i->IsNpc() )
 	{
-		Console.error( strutil::format(Dictionary->GetEntry( 1079 ), i));
+		Console.error( oldstrutil::format(Dictionary->GetEntry( 1079 ), i));
 		return;
 	}
 	CSocket *mSock = i->GetSocket();
@@ -1261,7 +1261,7 @@ void NpcResurrectTarget( CChar *i )
 			mSock->sysmessage( 1080 );
 	}
 	else
-		Console.warning( strutil::format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
+		Console.warning( oldstrutil::format("Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial()) );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1292,7 +1292,7 @@ void ShowSkillTarget( CSocket *s )
 			skillVal = mChar->GetSkill( i );
 
 		if( skillVal > 0 || dispType%2 == 0 ){
-			showSkills.AddData( cwmWorldState->skill[i].name, strutil::number( (R32)skillVal/10 ), 8 );
+			showSkills.AddData( cwmWorldState->skill[i].name, oldstrutil::number( (R32)skillVal/10 ), 8 );
 		}
 	}
 	showSkills.Send( 4, false, INVALIDSERIAL );
@@ -1592,8 +1592,8 @@ void MakeStatusTarget( CSocket *sock )
 	//char temp[1024], temp2[1024];
 
 	UI08 targetCommand = targLevel->commandLevel;
-	auto temp = strutil::format("account%i.log", mChar->GetAccount().wAccountIndex );
-	auto temp2 = strutil::format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
+	auto temp = oldstrutil::format("account%i.log", mChar->GetAccount().wAccountIndex );
+	auto temp2 = oldstrutil::format("%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
 
 	Console.log( temp2, temp );
 
@@ -1636,10 +1636,10 @@ void MakeStatusTarget( CSocket *sock )
 			playerName.replace( position, origLevel->title.size(), "" );
 	}
 	if( targetCommand != 0 && targetCommand != origCommand ) {
-		targetChar->SetName( strutil::trim(strutil::format("%s %s", targLevel->title.c_str(), strutil::trim(playerName).c_str() )) );
+		targetChar->SetName( oldstrutil::trim(oldstrutil::format("%s %s", targLevel->title.c_str(), oldstrutil::trim(playerName).c_str() )) );
 	}
 	else if( origCommand != 0 ){
-		targetChar->SetName( strutil::trim(playerName) );
+		targetChar->SetName( oldstrutil::trim(playerName) );
 	}
 
 	CItem *mypack	= targetChar->GetPackItem();
@@ -1754,7 +1754,7 @@ void SmeltTarget( CSocket *s )
 	for( UI32 skCtr = 0; skCtr < ourCreateEntry->resourceNeeded.size(); ++skCtr )
 	{
 		UI16 amtToRestore = ourCreateEntry->resourceNeeded[skCtr].amountNeeded / 2;
-		std::string itemID = strutil::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
+		std::string itemID = oldstrutil::number( ourCreateEntry->resourceNeeded[skCtr].idList.front(), 16 );
 		UI16 itemColour = ourCreateEntry->resourceNeeded[skCtr].colour;
 		sumAmountRestored += amtToRestore;
 		Items->CreateScriptItem( s, mChar, "0x"+itemID, amtToRestore, OT_ITEM, true, itemColour );

@@ -100,6 +100,5 @@ target_link_libraries(uox
 	PUBLIC
 		js32
 		zlibstatic
-		$<$<PLATFORM_ID:Windows>:wsock32>
 		$<$<PLATFORM_ID:Windows>:ws2_32>
 )
