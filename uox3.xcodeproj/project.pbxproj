@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6452D32227D3A7CB00E5AFB4 /* osunique.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D32127D3A7CB00E5AFB4 /* osunique.cpp */; };
 		648AF6EE27CFEFA3009327DE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 648AF6ED27CFEF94009327DE /* libz.tbd */; platformFilters = (maccatalyst, macos, ); };
 		648AF6F027CFF108009327DE /* libjs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648AF6EF27CFF0F5009327DE /* libjs.a */; };
 		648AF79627CFF2CD009327DE /* cConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6F627CFF2CC009327DE /* cConsole.cpp */; };
@@ -104,6 +105,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6452D32027D2E13B00E5AFB4 /* osunique.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = osunique.hpp; sourceTree = "<group>"; };
+		6452D32127D3A7CB00E5AFB4 /* osunique.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osunique.cpp; sourceTree = "<group>"; };
 		648AF6E427CFEF79009327DE /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		648AF6ED27CFEF94009327DE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		648AF6EF27CFF0F5009327DE /* libjs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs.a; path = ../spidermonkey/libjs.a; sourceTree = "<group>"; };
@@ -311,6 +314,8 @@
 		648AF6F527CFF1F2009327DE /* source */ = {
 			isa = PBXGroup;
 			children = (
+				6452D32127D3A7CB00E5AFB4 /* osunique.cpp */,
+				6452D32027D2E13B00E5AFB4 /* osunique.hpp */,
 				648AF78A27CFF2CD009327DE /* ai.cpp */,
 				648AF71D27CFF2CC009327DE /* archive.cpp */,
 				648AF70127CFF2CC009327DE /* boats.cpp */,
@@ -600,6 +605,7 @@
 				648AF79627CFF2CD009327DE /* cConsole.cpp in Sources */,
 				648AF7CE27CFF2CD009327DE /* cPlayerAction.cpp in Sources */,
 				648AF7DE27CFF2CD009327DE /* CGump.cpp in Sources */,
+				6452D32227D3A7CB00E5AFB4 /* osunique.cpp in Sources */,
 				648AF7D227CFF2CD009327DE /* vendor.cpp in Sources */,
 				648AF7C827CFF2CD009327DE /* cServerDefinitions.cpp in Sources */,
 				648AF7C127CFF2CD009327DE /* gumps.cpp in Sources */,

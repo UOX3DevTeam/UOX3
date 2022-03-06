@@ -50,7 +50,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
-
+#include "osunique.hpp"
 #include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;
@@ -110,7 +110,7 @@ maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_M
 	ammo[0] = ammo[1] = 0;
 	ammoFX[0] = ammoFX[1] = ammoFX[2] = 0;
 	objType		= OT_ITEM;
-	strcpy( name2, "#" );
+	strcopy( name2,128, "#" );
 	name		= "#";
 	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
@@ -508,7 +508,7 @@ const char *CItem::GetName2( void ) const
 }
 void CItem::SetName2( const char *newValue )
 {
-	strncpy( name2, newValue, MAX_NAME - 1 );
+	strncopy( name2,128, newValue, MAX_NAME - 1 );
 	UpdateRegion();
 }
 

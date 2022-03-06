@@ -1222,6 +1222,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="osunique.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="targeting.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1381,6 +1382,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="osunique.hpp" />
     <ClInclude Include="books.h" />
     <ClInclude Include="cAccountClass.h" />
     <ClInclude Include="cBaseObject.h" />

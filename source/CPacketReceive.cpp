@@ -2186,7 +2186,7 @@ void CPITalkRequestAscii::Receive( void )
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
-	strcpy( txtSaid, (char *)&(tSock->Buffer()[8]) );
+	strcopy( txtSaid, 4096,(char *)&(tSock->Buffer()[8]) );
 }
 
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
@@ -2296,9 +2296,9 @@ void CPITalkRequestUnicode::Receive( void )
 
 		myoffset = 15;
 		if( (numTrigWords % 2) == 1 )	// odd number ?
-			myoffset += ( numTrigWords / 2 ) * 3;
+			myoffset += ( static_cast<SI32>(numTrigWords )/ 2 ) * 3;
 		else
-			myoffset += ( ( numTrigWords / 2 ) * 3 ) - 1;
+			myoffset += ( (static_cast<SI32>(numTrigWords) / 2 ) * 3 ) - 1;
 
 		myj = 12;
 		SI32 mysize = blockLen - myoffset;

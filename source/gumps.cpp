@@ -20,7 +20,7 @@
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
 #include <algorithm>
-
+#include "osunique.hpp"
 
 void CollectGarbage( void );
 std::string GetUptime( void );
@@ -403,7 +403,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addText( "Time: " );
 	// Current server time
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto today = std::localtime(&timet);
+	struct tm ttoday;
+	auto today = lcltime(timet, ttoday);
 	char tmpBuffer[200];
 	bool isAM = true;
 	strftime(tmpBuffer,128,"%b %d, %Y",today);
@@ -418,7 +419,8 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		today->tm_hour=12;
 	}
 	// Draw the current date to the gump
-	szBuffer = oldstrutil::format( "%s %.8s%s", tmpBuffer, asctime( today ) + 11, ( (isAM)?"Am":"Pm") );
+	char tbuffer[100];
+	szBuffer = oldstrutil::format( "%s %.8s%s", tmpBuffer, asciitime( tbuffer,100,*today ) + 11, ( (isAM)?"Am":"Pm") );
 	toSend.addCommand( oldstrutil::format("text %u %u %u %u",280,yStart+13, 25, linenum++));
 	toSend.addText( szBuffer );
 

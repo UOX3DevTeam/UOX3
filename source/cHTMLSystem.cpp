@@ -12,7 +12,7 @@
 #include "scriptc.h"
 #include "CPacketSend.h"
 #include "ObjectFactory.h"
-
+#include "osunique.hpp"
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate() : UpdateTimer( 60 ), Loaded( false ), Type( ETT_INVALIDTEMPLATE ), ScheduledUpdate( 0 )
@@ -217,7 +217,8 @@ void cHTMLTemplate::Process( void )
 	// Timestamp
 	time_t currTime;
 	time( &currTime );
-	currTime = mktime( gmtime( &currTime ) );
+	struct tm dtime;
+	currTime = mktime( mgmtime(&dtime, &currTime ) );
 	std::string timestamp = oldstrutil::number( currTime );
 	Pos = ParsedContent.find( "%tstamp" );
 	while( Pos != std::string::npos )

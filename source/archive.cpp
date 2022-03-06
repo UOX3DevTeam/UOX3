@@ -4,7 +4,7 @@
 #include <chrono>
 #include <ctime>
 #include <regex>
-
+#include "osunique.hpp"
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void fileArchive( void )
@@ -32,7 +32,9 @@ void fileArchive( void )
 {
 	Console << "Beginning backup... ";
 	auto mytime = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto timenow = oldstrutil::simplify(std::asctime(std::localtime(&mytime)));
+	struct tm ttemp;
+	char tbuffer[100];
+	auto timenow = oldstrutil::simplify(asciitime(tbuffer,100,*lcltime(mytime,ttemp)));
 	timenow = std::regex_replace(timenow, std::regex("[\\s:]"), std::string("-"));
 
 	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
