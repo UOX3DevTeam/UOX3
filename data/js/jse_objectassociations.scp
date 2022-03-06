@@ -213,6 +213,89 @@
 // 1437 <> 1434, slim candle
 0x1437=545
 0x1434=545
+// 3D97 off <> 3D94 on, S, wall torch
+0x3D97=545
+0x3D94=545
+// 3D9B off <> 3D98 on, E, wall torch
+3D9B=545
+3D98=545
+// SE Lights
+// 24BB on <> 24BC off, paper lantern brown
+0x24BB=545
+0x24BC=545
+// 24BD on <> 24BE off, paper lantern yellow
+0x24BD=545
+0x24BE=545
+// 24BF on <> 24C0 off, lantern tall stone
+0x24BF=545
+0x24C0=545
+// 24C1 on <> 24C2 off, round hanging lantern red S
+0x24C1=545
+0x24C2=545
+// 24C3 on <> 24C4 off, round hanging lantern red E
+0x24C3=545
+0x24C4=545
+// 24C5 on <> 24C6 off, round hanging lantern white S
+0x24C5=545
+0x24C6=545
+// 24C7 on <> 24C8 off, round hanging lantern white E
+0x24C7=545
+0x24C8=545
+// 24C9 on <> 24CA off, round table lantern
+0x24C9=545
+0x24CA=545
+// ML lights
+// 2CFD off <> 2CFE on, Red beetle S
+0x2CFD=545
+0x2CFE=545
+// 2CFF off <> 2D00 on, Red beetle E
+0x2CFF=545
+0x2D00=545
+// 2D01 off <> 2D02 on, Green table beetle E
+0x2D01=545
+0x2D02=545
+// 2D03 off <> 2D04 on, Green table beetle S
+0x2D03=545
+0x2D04=545
+// 4C40 off <> 4C41 on, Lamp Dragon S
+0x4C40=545
+0x4C41=545
+// 4C42 off <> 4C43 on, Lamp Dragon E
+0x4C42=545
+0x4C43=545
+// 4C44 off <> 4C45 on, Lamp B Bird S
+0x4C44=545
+0x4C45=545
+// 4C46 off <> 4C47 on, Lamp B Bird E
+0x4C46=545
+0x4C47=545
+// 4C48 off <> 4C49 on, Lamp Koi S
+0x4C48=545
+0x4C49=545
+// 4C4A off <> 4C4B on, Lamp Koi E
+0x4C4A=545
+0x4C4B=545
+// 4C4C off <> 4C4D on, Dragon Egg S
+0x4C4C=545
+0x4C4D=545
+// 4C4E off <> 4C4F on, Dragon Egg E
+0x4C4E=545
+0x4C4F=545
+// 4C50 off <> 4C51 on, Lamp Stain Glass S
+0x4C50=545
+0x4C51=545
+// 4C52 off <> 4C53 on, Lamp Stand Classic S
+0x4C52=545
+0x4C53=545
+// 4C54 off <> 4C55 on, Lamp Stand Classic E
+0x4C54=545
+0x4C55=545
+// 4C56 off <> 4C57 on, Lamp Stand Bell S
+0x4C56=545
+0x4C57=545
+// 4C58 off <> 4C59 on, Lamp Stand Bell E
+0x4C58=545
+0x4C59=545
 // light sources end
 // -----------------
 // -----------------------------------

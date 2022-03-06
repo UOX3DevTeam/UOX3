@@ -1,5 +1,4 @@
 //Notes: in Custom UO Client You do not have to set a direction. direction is only used for OSI Clients.
-const debugMsg = false; // Turns on message for player
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
 const lightEnabled = false; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
@@ -47,437 +46,294 @@ function onUseChecked( pUser, iUsed )
 		case 0x0A27: //small candelabra id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0B1D;
 			break;
 		case 0x0B1D: //small candelabra id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A27;
 			break;
 		case 0x0A29: //large candelabra id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 29;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0B26;
 			break;
 		case 0x0B26: //large candelabra id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A29;
 			break;
 		case 0x09FB: //E, wall sconce id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 14;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			};
 			iUsed.id = 0x09FD;
 			break;
 		case 0x09FD: //E, wall sconce id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x09FB;
 			break;
 		case 0x0A00: //S, wall sconce id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 11;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A02;
 			break;
 		case 0x0A02: //S, wall sconce id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A00;
 			break;
 		case 0x0A26: //candlestick candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0B1A;
 			break;
 		case 0x0B1A: //candlestick candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A26;
 			break;
 		case 0x0A28: //player carryable candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A0F;
 			break;
 		case 0x0A0F: //player carryable candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A28;
 			break;
 		case 0x1853: //right skull with candle id unlit
-			pUser.SoundEffect( 0x03BE, true );
-			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
-			iUsed.id = 0x1854;
-			break;
-		case 0x1854: //right skull with candle id lit
-			pUser.SoundEffect( 0x0047, true );
-			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
-			iUsed.id = 0x1853;
-			break;
 		case 0x1857: //left skull with candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
-			iUsed.id = 0x1858;
+			iUsed.id++;
 			break;
+		case 0x1854: //right skull with candle id lit
 		case 0x1858: //left skull with candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
-			iUsed.id = 0x1857;
+			iUsed.id--;
 			break;
 		case 0x142F: //thick candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x142C;
 			break;
 		case 0x142C: //thick candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x142F;
 			break;
 		case 0x1433: //middle candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x1430;
 			break;
 		case 0x1430: //middle candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			pUser.TextMessage("I am turning off");
 			iUsed.id = 0x1433;
 			break;
 		case 0x1437: //slim candle id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 2;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x1434;
 			break;
 		case 0x1434: //slim candle id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x1437;
 			break;
 		case 0x1849: //SW heating stand id unlit
-			pUser.SoundEffect( 0x03BE, true );
-			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
-			iUsed.id = 0x184A;
-			break;
-		case 0x184A: //SW heating stand id lit
-			pUser.SoundEffect( 0x0047, true );
-			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
-			iUsed.id = 0x1849;
-			break;
-		case 0x1849: //SW heating stand id unlit
-			pUser.SoundEffect( 0x03BE, true );
-			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
-			iUsed.id = 0x184A;
-			break;
-		case 0x184A: //SW heating stand id lit
-			pUser.SoundEffect( 0x0047, true );
-			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
-			iUsed.id = 0x1849;
-			break;
 		case 0x184D: //NE heating stand id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
-			iUsed.id = 0x184E;
+			iUsed.id++;
 			break;
+		case 0x184A: //SW heating stand id lit
 		case 0x184E: //NE heating stand id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
-			iUsed.id = 0x184D;
+			iUsed.id--;
 			break;
 		case 0x0B21: //simple lamp post id unlit
+		case 0x0B23: //glass lamp post id unlit
+		case 0x0B25: //fancy lamp post id unlit
 			if ( dblClck == true )
 			{
 				pUser.SoundEffect( 0x03BE, true );
 				iUsed.dir = 29;
-				if ( debugMsg == true )
-				{
-					pUser.TextMessage( "I am turning on" );
-				}
-				iUsed.id = 0x0B20;
+				iUsed.id--;
 				break;
 			}
 			break;
 		case 0x0B20: //simple lamp post id lit
+		case 0x0B22: //glass lamp post id lit
+		case 0x0B24: //fancy lamp post id lit
 			if (dblClck == true) 
 			{
 				pUser.SoundEffect( 0x0047, true );
 				iUsed.dir = 99;
-				if ( debugMsg == true )
-				{
-					pUser.TextMessage( "I am turning off" );
-				}
-				iUsed.id = 0x0B21;
-				break;
-			}
-			break;
-		case 0x0B23: //glass lamp post id unlit
-			if ( dblClck == true )
-			{
-				pUser.SoundEffect( 0x03BE, true );
-				iUsed.dir = 29;
-				if ( debugMsg == true )
-				{
-					pUser.TextMessage( "I am turning on" );
-				}
-				iUsed.id = 0x0B22;
-				break;
-			}
-			break;
-		case 0x0B22: //glass lamp post id lit
-			if (dblClck == true)
-			{
-				pUser.SoundEffect( 0x0047, true );
-				iUsed.dir = 99;
-				if (debugMsg == true)
-				{
-					pUser.TextMessage( "I am turning off" );
-				}
-				iUsed.id = 0x0B23;
-				break;
-			}
-			break;
-		case 0x0B25: //fancy lamp post id unlit
-			if (dblClck == true)
-			{
-				pUser.SoundEffect( 0x03BE, true );
-				iUsed.dir = 29;
-				if ( debugMsg == true )
-				{
-					pUser.TextMessage( "I am turning on" );
-				}
-				iUsed.id = 0x0B24;
-				break;
-			}
-			break;
-		case 0x0B24: //fancy lamp post id lit
-			if (dblClck == true)
-			{
-				pUser.SoundEffect( 0x0047, true );
-				iUsed.dir = 99;
-				if ( debugMsg == true )
-				{
-					pUser.TextMessage( "I am turning off" );
-				}
-				iUsed.id = 0x0B25;
+				iUsed.id++;
 				break;
 			}
 			break;
 		case 0x0A18: //E, hanging lantern id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 8;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A15;
 			break;
 		case 0x0A15: //E, hanging lantern id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A18;
 			break;
 		case 0x0A1D: //S, hanging lantern id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 5;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A1A;
 			break;
 		case 0x0A1A: //S, hanging lantern id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A1D;
 			break;
 		case 0x0A25: //player carryable lantern id unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A22;
 			break;
 		case 0x0A22: //player carryable lantern id lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A25;
 			break;
 		case 0x0A05: //E, wall torch unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 8;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A07;
 			break;
 		case 0x0A05: //E, wall torch lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A25;
 			break;
 		case 0x0A0A: //S, wall torch unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 5;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A0C;
 			break;
 		case 0x0A0C: //S, wall torch lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0A0A;
 			break;
 		case 0x0F64: //player carryable torch unlit
 			pUser.SoundEffect( 0x03BE, true );
 			iUsed.dir = 1;
-			if ( debugMsg == true )
-			{
-				pUser.TextMessage( "I am turning on" );
-			}
 			iUsed.id = 0x0A12;
 			break;
 		case 0x0A12: //player carryable torch lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
-			if ( debugMsg == true ) 
-			{
-				pUser.TextMessage( "I am turning off" );
-			}
 			iUsed.id = 0x0F64;
+			break;
+		case 0x3D97: //S, wall torch unlit
+			pUser.SoundEffect( 0x03BE, true );
+			iUsed.dir = 1;
+			iUsed.id = 0x3D94;
+			break;
+		case 0x3D94: //S, wall torch lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x3D97;
+			break;
+		case 0x3D9B: //E, wall torch unlit
+			pUser.SoundEffect( 0x03BE, true );
+			iUsed.dir = 1;
+			iUsed.id = 0x3D98;
+			break;
+		case 0x3D98: //E, wall torch lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x3D9B;
+			break;
+		//SE Lights
+		case 0x24BC: //paper lantern brown unlit
+		case 0x24BE: //paper lantern yellow unlit
+		case 0x24C0: //lantern tall stone unlit
+		case 0x24C2: //round hanging lantern red S unlit
+		case 0x24C4: //round hanging lantern red E unlit
+		case 0x24C6: //round hanging lantern white S unlit
+		case 0x24C8: //round hanging lantern white E unlit
+		case 0x24CA: //round table lantern unlit
+			pUser.SoundEffect( 0x03BE, true );
+			iUsed.dir = 1;
+			iUsed.id--;
+			break;
+		case 0x24BB: //paper lantern brown lit
+		case 0x24BD: //paper lantern yellow lit
+		case 0x24BF: //lantern tall stone lit
+		case 0x24C1: //round hanging lantern red S lit
+		case 0x24C3: //round hanging lantern red E lit
+		case 0x24C5: //round hanging lantern white S lit
+		case 0x24C7: //round hanging lantern white E lit
+		case 0x24C9: //round table lantern lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id++;
+			break;
+		// ML Lights
+		case 0x2CFD: //Red beetle S unlit
+		case 0x2D00: //Red beetle E unlit
+		case 0x2D02: //Green table beetle E unlit
+		case 0x2D04: //Green table beetle S unlit
+			pUser.SoundEffect( 0x03BE, true );
+			iUsed.dir = 1;
+			iUsed.id--;
+			break;
+		case 0x2CFE: //Red beetle S lit
+		case 0x2CFF: //Red beetle E lit
+		case 0x2D01: //Green table beetle E lit
+		case 0x2D03: //Green table beetle S lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id++;
+			break;
+		case 0x4C40: //Lamp Dragon S unlit
+		case 0x4C42: //Lamp Dragon E unlit
+		case 0x4C44: //Lamp B Bird S unlit
+		case 0x4C46: //Lamp B Bird E unlit
+		case 0x4C48: //Lamp Koi S unlit
+		case 0x4C4A: //Lamp Koi E unlit
+		case 0x4C4C: //Dragon Egg S unlit
+		case 0x4C4E: //Dragon Egg E unlit
+		case 0x4C50: //Lamp Stain Glass S unlit
+		case 0x4C52: //Lamp Stand Classic S lit
+		case 0x4C54: //Lamp Stand Classic E lit
+		case 0x4C56: //Lamp Stand Bell S lit
+		case 0x4C58: //Lamp Stand Bell E lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id++;
+			break;
+		case 0x4C41: //Lamp Dragon S lit
+		case 0x4C43: //Lamp Dragon E lit
+		case 0x4C45: //Lamp B Bird S lit
+		case 0x4C47: //Lamp B Bird E lit
+		case 0x4C49: //Lamp Koi S lit
+		case 0x4C4B: //Lamp Koi E lit
+		case 0x4C4D: //Dragon Egg S lit
+		case 0x4C4F: //Dragon Egg E lit
+		case 0x4C51: //Lamp Stain Glass S lit
+		case 0x4C53: //Lamp Stand Classic S lit
+		case 0x4C55: //Lamp Stand Classic E lit
+		case 0x4C57: //Lamp Stand Bell S lit
+		case 0x4C59: //Lamp Stand Bell E lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id--;
 			break;
 	}
 	return false;
@@ -490,49 +346,21 @@ function onLightChange(iLight, lightLevel)
 		switch (iLight.id) 
 		{
 			case 0x0B21: //simple lamp post id unlit
+			case 0x0B23: //glass lamp post id unlit
+			case 0x0B25: //fancy lamp post id unlit
 				if ( lightLevel > brightLvl ) 
 				{
 					iLight.dir = 29;
-					iLight.id = 0x0B20;
+					iLight.id--;
 					break;
 				}
 			case 0x0B20: //simple lamp post id lit
-				if ( lightLevel < brightLvl )
-				{
-					iLight.dir = 99;
-					iLight.id = 0x0B21;
-					break;
-				}
-				break;
-			case 0x0B23: //glass lamp post id unlit
-				if ( lightLevel > brightLvl ) 
-				{
-					iLight.dir = 29;
-					iLight.id = 0x0B22;
-					break;
-				}
-				break;
 			case 0x0B22: //glass lamp post id lit
-				if ( lightLevel < brightLvl )
-				{
-					iLight.dir = 99;
-					iLight.id = 0x0B23;
-					break;
-				}
-				break;
-			case 0x0B25: //fancy lamp post id 
-				if ( lightLevel > brightLvl )
-				{
-					iLight.dir = 29;
-					iLight.id = 0x0B24;
-					break;
-				}
-				break;
 			case 0x0B24: //fancy lamp post id lit
 				if ( lightLevel < brightLvl )
 				{
 					iLight.dir = 99;
-					iLight.id = 0x0B25;
+					iLight.id++;
 					break;
 				}
 				break;
@@ -550,28 +378,16 @@ function onUnequip( pEquipper, iEquipped )
 			case 0x0A12: //player carryable torch lit
 				pEquipper.SoundEffect ( 0x0047, true );
 				iEquipped.dir = 99;
-				if ( debugMsg == true ) 
-				{
-					pEquipper.TextMessage( "I am turning off" );
-				}
 				iEquipped.id = 0x0F64;
 				break;
 			case 0x0A0F: //player carryable candle id lit
 				pEquipper.SoundEffect( 0x0047, true );
 				iEquipped.dir = 99;
-				if ( debugMsg == true )
-				{
-					pEquipper.TextMessage( "I am turning off" );
-				}
 				iEquipped.id = 0x0A28;
 				break;
 			case 0x0A22: //player carryable lantern id lit
 				pEquipper.SoundEffect( 0x0047, true );
 				iEquipped.dir = 99;
-				if ( debugMsg == true )
-				{
-					pEquipper.TextMessage( "I am turning off" );
-				}
 				iEquipped.id = 0x0A25;
 				break;
 		}
