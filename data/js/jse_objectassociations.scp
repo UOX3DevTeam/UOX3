@@ -263,6 +263,16 @@
 // 4C42 off <> 4C43 on, Lamp Dragon E
 0x4C42=545
 0x4C43=545
+// 4CDE on, Lamp Dragon S Anim
+0x4CDE=545
+0x4CDF=545
+0x4CE0=545
+0x4CE1=545
+// 4CE2 on, Lamp Dragon E Anim
+0x4CE2=545
+0x4CE3=545
+0x4CE4=545
+0x4CE5=545
 // 4C44 off <> 4C45 on, Lamp B Bird S
 0x4C44=545
 0x4C45=545

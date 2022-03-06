@@ -310,7 +310,15 @@ function onUseChecked( pUser, iUsed )
 			iUsed.id++;
 			break;
 		case 0x4C40: //Lamp Dragon S unlit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x4CDE;
+			break;
 		case 0x4C42: //Lamp Dragon E unlit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x4CE2;
+			break;
 		case 0x4C44: //Lamp B Bird S unlit
 		case 0x4C46: //Lamp B Bird E unlit
 		case 0x4C48: //Lamp Koi S unlit
@@ -326,8 +334,8 @@ function onUseChecked( pUser, iUsed )
 			iUsed.dir = 99;
 			iUsed.id++;
 			break;
-		case 0x4C41: //Lamp Dragon S lit
-		case 0x4C43: //Lamp Dragon E lit
+		case 0x4C41: //Lamp Dragon S lit non anima
+		case 0x4C43: //Lamp Dragon E lit non anima
 		case 0x4C45: //Lamp B Bird S lit
 		case 0x4C47: //Lamp B Bird E lit
 		case 0x4C49: //Lamp Koi S lit
@@ -342,6 +350,22 @@ function onUseChecked( pUser, iUsed )
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
 			iUsed.id--;
+			break;
+		case 0x4CDE: //Lamp Dragon S lit anima
+		case 0x4CDF:
+		case 0x4CE0:
+		case 0x4CE1:
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x4C40;
+			break;
+		case 0x4CE2: //Lamp Dragon S lit anima
+		case 0x4CE3:
+		case 0x4CE4:
+		case 0x4CE5:
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x4C42;
 			break;
 	}
 	return false;
