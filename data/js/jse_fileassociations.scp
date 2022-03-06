@@ -116,6 +116,7 @@
 542=server/light/candle08_off.js
 543=server/light/candle09_on.js
 544=server/light/candle09_off.js
+545=item/lights.js
 //-------------------------------------------
 // Resource Harvesting[2000-2099]
 2001=server/resource/apples.js

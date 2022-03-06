@@ -147,72 +147,72 @@
 // Later some of these should be enhanced to eat resources
 
 // 09fb <> 09fd, E, wall sconce
-0x9fb=501
-0x9fd=502
+0x9fb=545
+0x9fd=545
 // 0a00 <> 0a02, S, wall sconce
-0xa00=503
-0xa02=504
+0xa00=545
+0xa02=545
 // 0a05 <> 0a07, E, wall torch
-0xa05=505
-0xa07=506
+0xa05=545
+0xa07=545
 // 0a0a <> 0a0c, S, wall torch
-0xa0a=507
-0xa0c=508
+0xa0a=545
+0xa0c=545
 // 0f64 <> 0a12, player carryable torch
-0xf64=509
-0xf6b=509
-0xa12=510
+0xf64=545
+0xf6b=545
+0xa12=545
 // 0a18 <> 0a15, E, hanging lantern
-0xa18=511
-0xa15=512
+0xa18=545
+0xa15=545
 // 0a1d <> 0a1a, S, hanging lantern
-0xa1d=513
-0xa1a=514
+0xa1d=545
+0xa1a=545
 // 0a25 <> 0a22, lantern
-0xa25=515
-0xa22=516
+0xa25=545
+0xa22=545
 // 0a26 <> 0b1a, candlestick candle
-0xa26=517
-0xb1a=518
+0xa26=545
+0xb1a=545
 // 0a27 <> 0b1d, small candlabra
-0xa27=519
-0xb1d=520
+0xa27=545
+0xb1d=545
 // 0a28 <> 0a0f, player carryable candle
-0xa28=521
-0xa0f=522
+0xa28=545
+0xa0f=545
 // 0a29 <> 0b26, large candlabra
-0xa29=523
-0xb26=524
+0xa29=545
+0xb26=545
 // 0b21 <> 0b20, simple lamp post
-0xb21=525
-0xb20=526
+0xb21=545
+0xb20=545
 // 0b23 <> 0b22, glass lamp post
-0xb23=527
-0xb22=528
+0xb23=545
+0xb22=545
 // 0b25 <> 0b24, fancy lamp post
-0xb25=529
-0xb24=530
+0xb25=545
+0xb24=545
 // 1849 <> 184a, SW heating stand
-0x1849=531
-0x184a=532
+0x1849=545
+0x184a=545
 // 184d <> 184e, NE heating stand
-0x184d=533
-0x184e=534
+0x184d=545
+0x184e=545
 // 1853 <> 1854, right skull with candle
-0x1853=535
-0x1854=536
+0x1853=545
+0x1854=545
 // 1857 <> 1858, left skull with candle
-0x1857=537
-0x1858=538
+0x1857=545
+0x1858=545
 // 142f <> 142c, thick candle
-0x142f=539
-0x142c=540
+0x142f=545
+0x142c=545
 // 1433 <> 1430, middle candle
-0x1433=541
-0x1430=542
+0x1433=545
+0x1430=545
 // 1437 <> 1434, slim candle
-0x1437=543
-0x1434=544
+0x1437=545
+0x1434=545
 // light sources end
 // -----------------
 // -----------------------------------
