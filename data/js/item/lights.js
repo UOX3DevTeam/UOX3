@@ -285,18 +285,26 @@ function onUseChecked( pUser, iUsed )
 			iUsed.id++;
 			break;
 		// ML Lights
-		case 0x2CFD: //Red beetle S unlit
-		case 0x2D00: //Red beetle E unlit
-		case 0x2D02: //Green table beetle E unlit
-		case 0x2D04: //Green table beetle S unlit
+		case 0x2CFD: //Large Glowing Lady Bug Red S unlit
 			pUser.SoundEffect( 0x03BE, true );
-			iUsed.dir = 1;
+			iUsed.dir = 11;
+			iUsed.id = 0x2CFE;
+			break;
+		case 0x2D00: //Large Glowing Lady Bug Red E unlit
+		case 0x2D02: //Large Glowing Lady Bug Green table beetle E unlit
+		case 0x2D04: //Large Glowing Lady Bug Green table beetle S unlit
+			pUser.SoundEffect( 0x03BE, true );
+			iUsed.dir = 11;
 			iUsed.id--;
 			break;
-		case 0x2CFE: //Red beetle S lit
-		case 0x2CFF: //Red beetle E lit
-		case 0x2D01: //Green table beetle E lit
-		case 0x2D03: //Green table beetle S lit
+		case 0x2CFE: //Large Glowing Lady Bug Red S lit
+			pUser.SoundEffect( 0x0047, true );
+			iUsed.dir = 99;
+			iUsed.id = 0x2CFD;
+			break;
+		case 0x2CFF: //Large Glowing Lady Bug Red E lit
+		case 0x2D01: //Large Glowing Lady Bug Green table beetle E lit
+		case 0x2D03: //Large Glowing Lady Bug Green table beetle S lit
 			pUser.SoundEffect( 0x0047, true );
 			iUsed.dir = 99;
 			iUsed.id++;
