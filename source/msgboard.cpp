@@ -33,7 +33,7 @@
 #include "Dictionary.h"
 #include "StringUtility.hpp"
 #include <filesystem>
-
+#include "osunique.hpp"
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 //|	Date		-	8/6/2005
@@ -384,7 +384,10 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	}
 
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto timeOfPost = *std::localtime(&timet);
+	struct tm timeOfPost;
+	lcltime(timet, timeOfPost);
+
+	lcltime(timet,timeOfPost);
 	auto time			= oldstrutil::format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
 	time.resize( time.size()+1 );
 	const UI08 timeSize		= static_cast<UI08>(time.size());
@@ -399,7 +402,7 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 
 	msgBoardPost.Size			= totalSize;
 	msgBoardPost.DateLen		= timeSize;
-	strncpy( msgBoardPost.Date, time.c_str(), timeSize );
+	strncopy( msgBoardPost.Date, 256,time.c_str(), timeSize );
 	msgBoardPost.Serial			= msgID;
 
 	std::ofstream mFile ( fullFile.c_str(), std::ios::out | std::ios::app | std::ios::binary );
@@ -468,10 +471,10 @@ void MsgBoardPost( CSocket *tSock )
 	UI16 offset = 11;
 
 	msgBoardPost.PosterLen = static_cast<UI08>(tChar->GetName().size()) + 1;
-	strncpy( msgBoardPost.Poster, tChar->GetName().c_str(), msgBoardPost.PosterLen );
+	strncopy( msgBoardPost.Poster,128, tChar->GetName().c_str(), msgBoardPost.PosterLen );
 
 	msgBoardPost.SubjectLen = internalBuffer[++offset];
-	strncpy( msgBoardPost.Subject, (const char*)&internalBuffer[++offset], msgBoardPost.SubjectLen );
+	strncopy( msgBoardPost.Subject, 256,(const char*)&internalBuffer[++offset], msgBoardPost.SubjectLen );
 
 	offset += msgBoardPost.SubjectLen;
 
@@ -942,10 +945,10 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 	msgBoardPost.Lines = static_cast<UI08>(msgBoardPost.msgBoardLine.size());
 
 	msgBoardPost.SubjectLen = static_cast<UI08>(tmpSubject.size() + 1);
-	strncpy( msgBoardPost.Subject, tmpSubject.c_str(), tmpSubject.size() );
+	strncopy( msgBoardPost.Subject,256, tmpSubject.c_str(), tmpSubject.size() );
 
 	msgBoardPost.PosterLen = static_cast<UI08>(mNPC->GetName().size() + 1);
-	strncpy( msgBoardPost.Poster, mNPC->GetName().c_str(), mNPC->GetName().size() );
+	strncopy( msgBoardPost.Poster,128, mNPC->GetName().c_str(), mNPC->GetName().size() );
 
 	msgBoardPost.ParentSerial = mNPC->GetSerial();
 

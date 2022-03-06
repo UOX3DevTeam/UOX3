@@ -8,6 +8,7 @@
 #include "Dictionary.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
+#include "osunique.hpp"
 #ifndef va_start
 #include <cstdarg>
 #endif
@@ -172,11 +173,11 @@ void CGuild::Abbreviation( const char *txt )
 {
 	if( strlen( txt ) > 3 )
 	{
-		strncpy( abbreviation, txt, 3 );
+		strncopy( abbreviation,4, txt, 3 );
 		abbreviation[3] = 0;
 	}
 	else
-		strcpy( abbreviation, txt );
+		strcopy( abbreviation,4, txt );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1037,33 +1038,33 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	UI16 numButtons = 0, numText = 0, numColumns = 1;
 
 	char guildfealty[30], guildt[10], toggle[4];
-	strcpy( guildfealty, "yourself" );
+	strcopy( guildfealty,30, "yourself" );
 	if( mChar->GetGuildFealty() != mChar->GetSerial() && mChar->GetGuildFealty() != INVALIDSERIAL )
 	{
 		CChar *fChar = calcCharObjFromSer( mChar->GetGuildFealty() );
 		if( ValidateObject( fChar ) )
-			strcpy( guildfealty, fChar->GetNameRequest( mChar ).c_str() );
+			strcopy( guildfealty,30, fChar->GetNameRequest( mChar ).c_str() );
 	}
 	else
 		mChar->SetGuildFealty( mChar->GetSerial() );
 	switch( gList[trgGuild]->Type() )
 	{
 		case 0:
-			strcpy( guildt, " Standard" );
+			strcopy( guildt,10, " Standard" );
 			break;
 		case 1:
-			strcpy( guildt, "n Order" );
+			strcopy( guildt,10, "n Order" );
 			break;
 		case 2:
-			strcpy( guildt, " Chaos" );
+			strcopy( guildt,10, " Chaos" );
 			break;
 		default:
-			strcpy( guildt, "INVALID" );
+			strcopy( guildt,10, "INVALID" );
 			break;
 	}
-	strcpy( toggle, "Off" );
+	strcopy( toggle,4, "Off" );
 	if( mChar->GetGuildToggle() )
-		strcpy( toggle, "On" );
+		strcopy( toggle,4 ,"On" );
 
 	std::string gName	= gList[trgGuild]->Name();
 	UI16 tCtr			= 0;

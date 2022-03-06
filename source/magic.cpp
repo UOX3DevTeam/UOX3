@@ -22,7 +22,7 @@
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 #include <algorithm>
-
+#include "osunique.hpp"
 cMagic *Magic = nullptr;
 
 #define SPELL_MAX 68 // use define for now; can make autocount later
@@ -3249,7 +3249,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	char message[100] = { 0, };
 
 	// Copy dictionary message into char array
-	strcpy( message, Dictionary->GetEntry( 702 ).c_str() );
+	strcopy( message,100, Dictionary->GetEntry( 702 ).c_str() );
 
 	// Create temporary string to hold info on our missing reagents
 	std::string tempString;
@@ -3289,7 +3289,7 @@ bool cMagic::RegMsg( CChar *s, reag_st failmsg )
 	}
 
 	// Append our temporary string to the end of the char array and add an end-bracket
-	strcat( message, tempString.c_str() );
+	mstrcat( message,100, tempString.c_str() );
 	message[strlen( message ) - 2] = ']';
 
 	if( display )
