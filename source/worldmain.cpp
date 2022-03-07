@@ -28,7 +28,7 @@
 #include "jail.h"
 #include "Dictionary.h"
 #include "ObjectFactory.h"
-
+#include "osunique.hpp"
 
 CWorldMain						*cwmWorldState = nullptr;
 
@@ -560,8 +560,9 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		char saveTimestamp[100];
 		time_t tempTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-		struct tm *curtime = std::localtime( &tempTimestamp );
-		strftime( saveTimestamp, 50, "%F at %T", curtime );
+		struct tm curtime;
+		lcltime(tempTimestamp, curtime);
+		strftime( saveTimestamp, 50, "%F at %T", &curtime );
 
 		Console << "World save complete on " << saveTimestamp << myendl;
 		Console.PrintSectionBegin();

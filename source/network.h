@@ -82,7 +82,7 @@ public:
 		if( (pos+len) >= internalBuffer.size() )
 			internalBuffer.resize( pos+len );
 
-		strncpy( (char *)&internalBuffer[pos], toWrite.c_str(), len );
+		strncopy( (char *)&internalBuffer[pos],len+1, toWrite.c_str(), len);
 	}
 	void	WriteArray( size_t pos, const UI08 *toWrite, size_t len )
 	{

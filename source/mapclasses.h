@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <sstream>
 #include "MultiMul.hpp"
-
+#include "osunique.hpp"
 struct Static_st
 {
 	UI16 itemid;
@@ -165,7 +165,7 @@ public:
 	void Quantity( UI08 newVal )	{	quantity = newVal;		}
 	void Name( const char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncopy( (char *)name,21, newVal, 20 );
 	}
 
 };
@@ -196,7 +196,7 @@ public:
 	void TextureID( UI16 newVal )	{	textureID = newVal;		}
 	void Name( char *newVal )
 	{
-		strncpy( (char *)name, newVal, 20 );
+		strncopy( (char *)name, 21,newVal, 20 );
 	}
 };
 

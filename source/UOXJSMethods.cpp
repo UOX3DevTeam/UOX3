@@ -47,6 +47,7 @@
 #include "cThreadQueue.h"
 #include "combat.h"
 #include "PartySystem.h"
+#include "osunique.hpp"
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
@@ -5036,11 +5037,11 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	char toReturn[128];
 	if( length != -1 )
 	{
-		strncpy( toReturn, (char *)&(mSock->Buffer())[offset], length );
+		strncopy( toReturn,128, (char *)&(mSock->Buffer())[offset], length );
 		toReturn[length] = 0;
 	}
 	else
-		strcpy( toReturn, (char *)&(mSock->Buffer())[offset] );
+		strcopy( toReturn, 128,(char *)&(mSock->Buffer())[offset] );
 
 	JSString *strSpeech = nullptr;
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
@@ -5159,8 +5160,9 @@ JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		MethodError( "SetString: No string to set" );
 		return JS_FALSE;
 	}
-
-	strcpy( (char *)&(mSock->Buffer())[offset], trgMessage );
+	// FIXME
+	auto size = strlen(trgMessage);
+	strcopy( (char *)&(mSock->Buffer())[offset],size+1, trgMessage );
 	return JS_TRUE;
 }
 
@@ -5949,7 +5951,9 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	filePath.append( fileName );
-	mFile->mWrap = fopen( filePath.c_str(), oldstrutil::lower(mode).substr(0,1).c_str() );
+	FILE* stream;
+
+	mFile->mWrap = mfopen(&stream, filePath.c_str(), oldstrutil::lower(mode).substr(0,1).c_str() );
 	return JS_TRUE;
 }
 

@@ -17,6 +17,7 @@
 
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
+#include "osunique.hpp"
 
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
@@ -61,7 +62,8 @@ void cNetworkStuff::setLastOn( CSocket *s )
 
 	time_t ltime;
 	time( &ltime );
-	char *t = ctime( &ltime );
+	char buffer[100];
+	char *t = mctime( buffer,100,&ltime );
 
 	// some ctime()s like to stick \r\n on the end, we don't want that
 	size_t mLen = strlen( t );
@@ -505,7 +507,7 @@ void cNetworkStuff::CheckMessage( void )
 					else if( blah.ErrorNumber() != -1 )
 						Console << "Socket error: " << (SI32)blah.ErrorNumber() << myendl;
 #endif
-					Disconnect( i );	// abnormal error
+					Disconnect( static_cast<UOXSOCKET>(i) );	// abnormal error
 				}
 			}
 		}
@@ -845,7 +847,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 								tempBuffer[5] = buffer[6];
 								tempBuffer[6] = buffer[7];
 								size_t plNameLen = player->GetNameRequest( mSock->CurrcharObj() ).size();
-								strncpy( (char *)&tempBuffer[7], player->GetNameRequest( mSock->CurrcharObj() ).c_str(), 30 );
+								strncopy( (char *)&tempBuffer[7],30, player->GetNameRequest( mSock->CurrcharObj() ).c_str(), 30 );
 								size_t mj = 8 + plNameLen;
 								size_t plTitleLen = player->GetNameRequest( mSock->CurrcharObj() ).size() + 1;
 								for( size_t k = 0; k < plTitleLen; ++k )
@@ -861,7 +863,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 									tempBuffer[mj++] = ourMessage[j];
 								}
 								mj += 2;
-								tempBuffer[2] = mj;
+								tempBuffer[2] = static_cast<UI08>(mj);
 								mSock->Send( tempBuffer, static_cast<SI32>(mj) );
 #if defined( _MSC_VER )
 #pragma note( "Flush location" )
@@ -975,7 +977,7 @@ void cNetworkStuff::CheckLoginMessage( void )
 						messageLoop << oldstrutil::format("Socket error: %i", blah.ErrorNumber() );
 					}
 #endif
-					LoginDisconnect( i );	// abnormal error
+					LoginDisconnect( static_cast<UOXSOCKET>(i) );	// abnormal error
 				}
 			}
 		}
