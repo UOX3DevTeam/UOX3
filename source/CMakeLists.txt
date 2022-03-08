@@ -82,6 +82,7 @@ add_library(uox
 		TimeUtility.cpp
 		EventTimer.cpp
 		osunique.cpp
+		strutil.cpp
 )
 
 target_include_directories(uox

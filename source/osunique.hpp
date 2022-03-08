@@ -3,6 +3,9 @@
 #include <time.h>
 #include <string.h>
 #include <stdio.h>
+#if defined(__linux__)
+using rsize_t = size_t;
+#endif
 
 auto asciitime(char* buffer, size_t count, const struct tm& tmsource)->char*;
 // Beware, MSVC localtime_s is not the same as the standard localtime_s

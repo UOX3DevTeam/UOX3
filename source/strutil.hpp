@@ -2,7 +2,6 @@
 
 #ifndef strutil_hpp
 #define strutil_hpp
-#include "framework.h"
 #include <string>
 #include <utility>
 #include <algorithm>
