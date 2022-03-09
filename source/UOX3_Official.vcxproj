@@ -1442,11 +1442,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="scriptc.h" />
     <ClInclude Include="SEFunctions.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="skills.h" />
     <ClInclude Include="speech.h" />
     <ClInclude Include="ssection.h" />
-    <ClInclude Include="stream.h" />
     <ClInclude Include="StringUtility.hpp" />
     <ClInclude Include="teffect.h" />
     <ClInclude Include="townregion.h" />
