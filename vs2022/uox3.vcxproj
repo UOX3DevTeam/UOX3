@@ -185,8 +185,8 @@
     <ResourceCompile Include="..\source\uox3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\spidermonkey\VS2022\jsengine.vcxproj">
-      <Project>{4366f707-c296-4510-85aa-a61dd77de34b}</Project>
+    <ProjectReference Include="..\jsengine\jsengine.vcxproj">
+      <Project>{15699b09-1842-469e-9416-61998f37f798}</Project>
     </ProjectReference>
     <ProjectReference Include="..\zlib\vs2022\zlib.vcxproj">
       <Project>{7ddbf2dc-f199-4f38-b56d-c75270c3922d}</Project>
@@ -243,7 +243,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source;..\zlib;..\jsengine</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
@@ -267,7 +267,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\source;..\zlib;..\jsengine</AdditionalIncludeDirectories>
       <SupportJustMyCode>false</SupportJustMyCode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
