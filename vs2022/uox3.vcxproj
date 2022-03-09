@@ -75,6 +75,7 @@
     <ClInclude Include="..\source\speech.h" />
     <ClInclude Include="..\source\ssection.h" />
     <ClInclude Include="..\source\StringUtility.hpp" />
+    <ClInclude Include="..\source\strutil.hpp" />
     <ClInclude Include="..\source\teffect.h" />
     <ClInclude Include="..\source\TimeUtility.hpp" />
     <ClInclude Include="..\source\townregion.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="..\source\speech.cpp" />
     <ClCompile Include="..\source\ssection.cpp" />
     <ClCompile Include="..\source\StringUtility.cpp" />
+    <ClCompile Include="..\source\strutil.cpp" />
     <ClCompile Include="..\source\targeting.cpp" />
     <ClCompile Include="..\source\TimeUtility.cpp" />
     <ClCompile Include="..\source\townregion.cpp" />
