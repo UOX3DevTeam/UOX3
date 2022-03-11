@@ -14,11 +14,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
     - uses: actions/checkout@v2
-    - name: install zlib
-      run:  sudo apt install zlib1g
+    - name: zlib
+      run: sudo apt install zlib1g
     - name: cmake and build
-     run: |
+      run: |
           cmake  -DCMAKE_BUILD_TYPE=Release .
           make
