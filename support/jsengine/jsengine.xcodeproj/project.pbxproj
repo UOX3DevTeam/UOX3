@@ -1,0 +1,667 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6452D3FE27D8F5D100E5AFB4 /* jsarena.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3DF27D8F5D100E5AFB4 /* jsarena.h */; };
+		6452D3FF27D8F5D100E5AFB4 /* jsarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E027D8F5D100E5AFB4 /* jsarray.h */; };
+		6452D40027D8F5D100E5AFB4 /* jscntxt.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E127D8F5D100E5AFB4 /* jscntxt.h */; };
+		6452D40127D8F5D100E5AFB4 /* jsdhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3E227D8F5D100E5AFB4 /* jsdhash.c */; };
+		6452D40227D8F5D100E5AFB4 /* jsdhash.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E327D8F5D100E5AFB4 /* jsdhash.h */; };
+		6452D40327D8F5D100E5AFB4 /* jsclist.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E427D8F5D100E5AFB4 /* jsclist.h */; };
+		6452D40427D8F5D100E5AFB4 /* jsapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3E527D8F5D100E5AFB4 /* jsapi.c */; };
+		6452D40527D8F5D100E5AFB4 /* jsdbgapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E627D8F5D100E5AFB4 /* jsdbgapi.h */; };
+		6452D40627D8F5D100E5AFB4 /* jsbool.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3E727D8F5D100E5AFB4 /* jsbool.h */; };
+		6452D40727D8F5D100E5AFB4 /* jsatom.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3E827D8F5D100E5AFB4 /* jsatom.c */; };
+		6452D40827D8F5D100E5AFB4 /* jsdate.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3E927D8F5D100E5AFB4 /* jsdate.c */; };
+		6452D40927D8F5D100E5AFB4 /* jsemit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3EA27D8F5D100E5AFB4 /* jsemit.h */; };
+		6452D40A27D8F5D100E5AFB4 /* jscpucfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3EB27D8F5D100E5AFB4 /* jscpucfg.h */; };
+		6452D40B27D8F5D100E5AFB4 /* jscompat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3ED27D8F5D100E5AFB4 /* jscompat.h */; };
+		6452D40C27D8F5D100E5AFB4 /* jsautocfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3EE27D8F5D100E5AFB4 /* jsautocfg.h */; };
+		6452D40D27D8F5D100E5AFB4 /* jsbit.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3EF27D8F5D100E5AFB4 /* jsbit.h */; };
+		6452D40E27D8F5D100E5AFB4 /* jsautokw.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3F027D8F5D100E5AFB4 /* jsautokw.h */; };
+		6452D40F27D8F5D100E5AFB4 /* jsdate.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3F127D8F5D100E5AFB4 /* jsdate.h */; };
+		6452D41027D8F5D100E5AFB4 /* jsatom.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3F227D8F5D100E5AFB4 /* jsatom.h */; };
+		6452D41127D8F5D100E5AFB4 /* jsbool.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3F327D8F5D100E5AFB4 /* jsbool.c */; };
+		6452D41227D8F5D100E5AFB4 /* jsdbgapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3F427D8F5D100E5AFB4 /* jsdbgapi.c */; };
+		6452D41327D8F5D100E5AFB4 /* jscntxt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3F527D8F5D100E5AFB4 /* jscntxt.c */; };
+		6452D41427D8F5D100E5AFB4 /* jsconfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3F727D8F5D100E5AFB4 /* jsconfig.h */; };
+		6452D41527D8F5D100E5AFB4 /* jsdtoa.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3F827D8F5D100E5AFB4 /* jsdtoa.c */; };
+		6452D41627D8F5D100E5AFB4 /* jsemit.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3F927D8F5D100E5AFB4 /* jsemit.c */; };
+		6452D41727D8F5D100E5AFB4 /* jsdtoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3FA27D8F5D100E5AFB4 /* jsdtoa.h */; };
+		6452D41827D8F5D100E5AFB4 /* jsarray.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3FB27D8F5D100E5AFB4 /* jsarray.c */; };
+		6452D41927D8F5D100E5AFB4 /* jsarena.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D3FC27D8F5D100E5AFB4 /* jsarena.c */; };
+		6452D41A27D8F5D100E5AFB4 /* jsapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D3FD27D8F5D100E5AFB4 /* jsapi.h */; };
+		6452D45427D8F5ED00E5AFB4 /* jsosdep.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D41B27D8F5ED00E5AFB4 /* jsosdep.h */; };
+		6452D45527D8F5ED00E5AFB4 /* jsiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D41C27D8F5ED00E5AFB4 /* jsiter.h */; };
+		6452D45627D8F5ED00E5AFB4 /* jshash.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D41D27D8F5ED00E5AFB4 /* jshash.h */; };
+		6452D45727D8F5ED00E5AFB4 /* jsstddef.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D41E27D8F5ED00E5AFB4 /* jsstddef.h */; };
+		6452D45827D8F5ED00E5AFB4 /* jsutil.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42027D8F5ED00E5AFB4 /* jsutil.h */; };
+		6452D45927D8F5ED00E5AFB4 /* jsmath.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42127D8F5ED00E5AFB4 /* jsmath.h */; };
+		6452D45A27D8F5ED00E5AFB4 /* jstypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42227D8F5ED00E5AFB4 /* jstypes.h */; };
+		6452D45B27D8F5ED00E5AFB4 /* jsinterp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42327D8F5ED00E5AFB4 /* jsinterp.h */; };
+		6452D45C27D8F5ED00E5AFB4 /* jsxml.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42427D8F5ED00E5AFB4 /* jsxml.c */; };
+		6452D45D27D8F5ED00E5AFB4 /* jslock.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42627D8F5ED00E5AFB4 /* jslock.c */; };
+		6452D45E27D8F5ED00E5AFB4 /* jslong.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42727D8F5ED00E5AFB4 /* jslong.h */; };
+		6452D45F27D8F5ED00E5AFB4 /* jsinterp.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42827D8F5ED00E5AFB4 /* jsinterp.c */; };
+		6452D46027D8F5ED00E5AFB4 /* jsstr.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42927D8F5ED00E5AFB4 /* jsstr.c */; };
+		6452D46127D8F5ED00E5AFB4 /* jsnum.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42A27D8F5ED00E5AFB4 /* jsnum.c */; };
+		6452D46227D8F5ED00E5AFB4 /* jsscan.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42B27D8F5ED00E5AFB4 /* jsscan.h */; };
+		6452D46327D8F5ED00E5AFB4 /* jslock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42C27D8F5ED00E5AFB4 /* jslock.h */; };
+		6452D46427D8F5ED00E5AFB4 /* jsprvtd.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42D27D8F5ED00E5AFB4 /* jsprvtd.h */; };
+		6452D46527D8F5ED00E5AFB4 /* jsparse.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D42E27D8F5ED00E5AFB4 /* jsparse.h */; };
+		6452D46627D8F5ED00E5AFB4 /* jsscan.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D42F27D8F5ED00E5AFB4 /* jsscan.c */; };
+		6452D46727D8F5ED00E5AFB4 /* jsxdrapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D43027D8F5ED00E5AFB4 /* jsxdrapi.h */; };
+		6452D46827D8F5ED00E5AFB4 /* jsfun.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43127D8F5ED00E5AFB4 /* jsfun.c */; };
+		6452D46927D8F5ED00E5AFB4 /* jslog2.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43227D8F5ED00E5AFB4 /* jslog2.c */; };
+		6452D46A27D8F5ED00E5AFB4 /* jshash.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43327D8F5ED00E5AFB4 /* jshash.c */; };
+		6452D46B27D8F5ED00E5AFB4 /* jsscope.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D43427D8F5ED00E5AFB4 /* jsscope.h */; };
+		6452D46C27D8F5ED00E5AFB4 /* jsopcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D43527D8F5ED00E5AFB4 /* jsopcode.h */; };
+		6452D46D27D8F5ED00E5AFB4 /* jsregexp.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43627D8F5ED00E5AFB4 /* jsregexp.c */; };
+		6452D46E27D8F5ED00E5AFB4 /* jsiter.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43727D8F5ED00E5AFB4 /* jsiter.c */; };
+		6452D46F27D8F5ED00E5AFB4 /* jsprf.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43827D8F5ED00E5AFB4 /* jsprf.c */; };
+		6452D47027D8F5ED00E5AFB4 /* jsparse.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43927D8F5ED00E5AFB4 /* jsparse.c */; };
+		6452D47127D8F5ED00E5AFB4 /* jslong.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43A27D8F5ED00E5AFB4 /* jslong.c */; };
+		6452D47227D8F5ED00E5AFB4 /* jsutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43B27D8F5ED00E5AFB4 /* jsutil.c */; };
+		6452D47327D8F5ED00E5AFB4 /* jsopcode.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43C27D8F5ED00E5AFB4 /* jsopcode.c */; };
+		6452D47427D8F5ED00E5AFB4 /* jsprf.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D43D27D8F5ED00E5AFB4 /* jsprf.h */; };
+		6452D47527D8F5ED00E5AFB4 /* jsscript.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D43E27D8F5ED00E5AFB4 /* jsscript.c */; };
+		6452D47627D8F5ED00E5AFB4 /* prmjtime.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D43F27D8F5ED00E5AFB4 /* prmjtime.h */; };
+		6452D47727D8F5ED00E5AFB4 /* jsregexp.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44027D8F5ED00E5AFB4 /* jsregexp.h */; };
+		6452D47827D8F5ED00E5AFB4 /* jsobj.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44127D8F5ED00E5AFB4 /* jsobj.h */; };
+		6452D47927D8F5ED00E5AFB4 /* jsotypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44227D8F5ED00E5AFB4 /* jsotypes.h */; };
+		6452D47A27D8F5ED00E5AFB4 /* jsexn.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44327D8F5ED00E5AFB4 /* jsexn.h */; };
+		6452D47B27D8F5ED00E5AFB4 /* jsexn.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44427D8F5ED00E5AFB4 /* jsexn.c */; };
+		6452D47C27D8F5ED00E5AFB4 /* jsgc.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44527D8F5ED00E5AFB4 /* jsgc.c */; };
+		6452D47D27D8F5ED00E5AFB4 /* jsxdrapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44627D8F5ED00E5AFB4 /* jsxdrapi.c */; };
+		6452D47E27D8F5ED00E5AFB4 /* jsxml.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44727D8F5ED00E5AFB4 /* jsxml.h */; };
+		6452D47F27D8F5ED00E5AFB4 /* jsnum.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44827D8F5ED00E5AFB4 /* jsnum.h */; };
+		6452D48027D8F5ED00E5AFB4 /* prmjtime.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44927D8F5ED00E5AFB4 /* prmjtime.c */; };
+		6452D48127D8F5ED00E5AFB4 /* jsscript.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44A27D8F5ED00E5AFB4 /* jsscript.h */; };
+		6452D48227D8F5ED00E5AFB4 /* jsmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44B27D8F5ED00E5AFB4 /* jsmath.c */; };
+		6452D48327D8F5ED00E5AFB4 /* jspubtd.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44C27D8F5ED00E5AFB4 /* jspubtd.h */; };
+		6452D48427D8F5ED00E5AFB4 /* jsgc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44D27D8F5ED00E5AFB4 /* jsgc.h */; };
+		6452D48527D8F5ED00E5AFB4 /* jsobj.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D44E27D8F5ED00E5AFB4 /* jsobj.c */; };
+		6452D48627D8F5ED00E5AFB4 /* jsfun.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D44F27D8F5ED00E5AFB4 /* jsfun.h */; };
+		6452D48727D8F5ED00E5AFB4 /* jsstr.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D45027D8F5ED00E5AFB4 /* jsstr.h */; };
+		6452D48827D8F5ED00E5AFB4 /* jslibmath.h in Headers */ = {isa = PBXBuildFile; fileRef = 6452D45127D8F5ED00E5AFB4 /* jslibmath.h */; };
+		6452D48927D8F5ED00E5AFB4 /* jsscope.c in Sources */ = {isa = PBXBuildFile; fileRef = 6452D45327D8F5ED00E5AFB4 /* jsscope.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6452D3D827D8F54600E5AFB4 /* libjsengine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjsengine.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6452D3DF27D8F5D100E5AFB4 /* jsarena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsarena.h; sourceTree = "<group>"; };
+		6452D3E027D8F5D100E5AFB4 /* jsarray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsarray.h; sourceTree = "<group>"; };
+		6452D3E127D8F5D100E5AFB4 /* jscntxt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jscntxt.h; sourceTree = "<group>"; };
+		6452D3E227D8F5D100E5AFB4 /* jsdhash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsdhash.c; sourceTree = "<group>"; };
+		6452D3E327D8F5D100E5AFB4 /* jsdhash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsdhash.h; sourceTree = "<group>"; };
+		6452D3E427D8F5D100E5AFB4 /* jsclist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsclist.h; sourceTree = "<group>"; };
+		6452D3E527D8F5D100E5AFB4 /* jsapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsapi.c; sourceTree = "<group>"; };
+		6452D3E627D8F5D100E5AFB4 /* jsdbgapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsdbgapi.h; sourceTree = "<group>"; };
+		6452D3E727D8F5D100E5AFB4 /* jsbool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsbool.h; sourceTree = "<group>"; };
+		6452D3E827D8F5D100E5AFB4 /* jsatom.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsatom.c; sourceTree = "<group>"; };
+		6452D3E927D8F5D100E5AFB4 /* jsdate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsdate.c; sourceTree = "<group>"; };
+		6452D3EA27D8F5D100E5AFB4 /* jsemit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsemit.h; sourceTree = "<group>"; };
+		6452D3EB27D8F5D100E5AFB4 /* jscpucfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jscpucfg.h; sourceTree = "<group>"; };
+		6452D3EC27D8F5D100E5AFB4 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		6452D3ED27D8F5D100E5AFB4 /* jscompat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jscompat.h; sourceTree = "<group>"; };
+		6452D3EE27D8F5D100E5AFB4 /* jsautocfg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsautocfg.h; sourceTree = "<group>"; };
+		6452D3EF27D8F5D100E5AFB4 /* jsbit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsbit.h; sourceTree = "<group>"; };
+		6452D3F027D8F5D100E5AFB4 /* jsautokw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsautokw.h; sourceTree = "<group>"; };
+		6452D3F127D8F5D100E5AFB4 /* jsdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsdate.h; sourceTree = "<group>"; };
+		6452D3F227D8F5D100E5AFB4 /* jsatom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsatom.h; sourceTree = "<group>"; };
+		6452D3F327D8F5D100E5AFB4 /* jsbool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsbool.c; sourceTree = "<group>"; };
+		6452D3F427D8F5D100E5AFB4 /* jsdbgapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsdbgapi.c; sourceTree = "<group>"; };
+		6452D3F527D8F5D100E5AFB4 /* jscntxt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jscntxt.c; sourceTree = "<group>"; };
+		6452D3F627D8F5D100E5AFB4 /* js.msg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = js.msg; sourceTree = "<group>"; };
+		6452D3F727D8F5D100E5AFB4 /* jsconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsconfig.h; sourceTree = "<group>"; };
+		6452D3F827D8F5D100E5AFB4 /* jsdtoa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsdtoa.c; sourceTree = "<group>"; };
+		6452D3F927D8F5D100E5AFB4 /* jsemit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsemit.c; sourceTree = "<group>"; };
+		6452D3FA27D8F5D100E5AFB4 /* jsdtoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsdtoa.h; sourceTree = "<group>"; };
+		6452D3FB27D8F5D100E5AFB4 /* jsarray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsarray.c; sourceTree = "<group>"; };
+		6452D3FC27D8F5D100E5AFB4 /* jsarena.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsarena.c; sourceTree = "<group>"; };
+		6452D3FD27D8F5D100E5AFB4 /* jsapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsapi.h; sourceTree = "<group>"; };
+		6452D41B27D8F5ED00E5AFB4 /* jsosdep.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsosdep.h; sourceTree = "<group>"; };
+		6452D41C27D8F5ED00E5AFB4 /* jsiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsiter.h; sourceTree = "<group>"; };
+		6452D41D27D8F5ED00E5AFB4 /* jshash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jshash.h; sourceTree = "<group>"; };
+		6452D41E27D8F5ED00E5AFB4 /* jsstddef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsstddef.h; sourceTree = "<group>"; };
+		6452D41F27D8F5ED00E5AFB4 /* jsopcode.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = jsopcode.tbl; sourceTree = "<group>"; };
+		6452D42027D8F5ED00E5AFB4 /* jsutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsutil.h; sourceTree = "<group>"; };
+		6452D42127D8F5ED00E5AFB4 /* jsmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsmath.h; sourceTree = "<group>"; };
+		6452D42227D8F5ED00E5AFB4 /* jstypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jstypes.h; sourceTree = "<group>"; };
+		6452D42327D8F5ED00E5AFB4 /* jsinterp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsinterp.h; sourceTree = "<group>"; };
+		6452D42427D8F5ED00E5AFB4 /* jsxml.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsxml.c; sourceTree = "<group>"; };
+		6452D42527D8F5ED00E5AFB4 /* jsproto.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = jsproto.tbl; sourceTree = "<group>"; };
+		6452D42627D8F5ED00E5AFB4 /* jslock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jslock.c; sourceTree = "<group>"; };
+		6452D42727D8F5ED00E5AFB4 /* jslong.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jslong.h; sourceTree = "<group>"; };
+		6452D42827D8F5ED00E5AFB4 /* jsinterp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsinterp.c; sourceTree = "<group>"; };
+		6452D42927D8F5ED00E5AFB4 /* jsstr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsstr.c; sourceTree = "<group>"; };
+		6452D42A27D8F5ED00E5AFB4 /* jsnum.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsnum.c; sourceTree = "<group>"; };
+		6452D42B27D8F5ED00E5AFB4 /* jsscan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsscan.h; sourceTree = "<group>"; };
+		6452D42C27D8F5ED00E5AFB4 /* jslock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jslock.h; sourceTree = "<group>"; };
+		6452D42D27D8F5ED00E5AFB4 /* jsprvtd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsprvtd.h; sourceTree = "<group>"; };
+		6452D42E27D8F5ED00E5AFB4 /* jsparse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsparse.h; sourceTree = "<group>"; };
+		6452D42F27D8F5ED00E5AFB4 /* jsscan.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsscan.c; sourceTree = "<group>"; };
+		6452D43027D8F5ED00E5AFB4 /* jsxdrapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsxdrapi.h; sourceTree = "<group>"; };
+		6452D43127D8F5ED00E5AFB4 /* jsfun.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsfun.c; sourceTree = "<group>"; };
+		6452D43227D8F5ED00E5AFB4 /* jslog2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jslog2.c; sourceTree = "<group>"; };
+		6452D43327D8F5ED00E5AFB4 /* jshash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jshash.c; sourceTree = "<group>"; };
+		6452D43427D8F5ED00E5AFB4 /* jsscope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsscope.h; sourceTree = "<group>"; };
+		6452D43527D8F5ED00E5AFB4 /* jsopcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsopcode.h; sourceTree = "<group>"; };
+		6452D43627D8F5ED00E5AFB4 /* jsregexp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsregexp.c; sourceTree = "<group>"; };
+		6452D43727D8F5ED00E5AFB4 /* jsiter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsiter.c; sourceTree = "<group>"; };
+		6452D43827D8F5ED00E5AFB4 /* jsprf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsprf.c; sourceTree = "<group>"; };
+		6452D43927D8F5ED00E5AFB4 /* jsparse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsparse.c; sourceTree = "<group>"; };
+		6452D43A27D8F5ED00E5AFB4 /* jslong.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jslong.c; sourceTree = "<group>"; };
+		6452D43B27D8F5ED00E5AFB4 /* jsutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsutil.c; sourceTree = "<group>"; };
+		6452D43C27D8F5ED00E5AFB4 /* jsopcode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsopcode.c; sourceTree = "<group>"; };
+		6452D43D27D8F5ED00E5AFB4 /* jsprf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsprf.h; sourceTree = "<group>"; };
+		6452D43E27D8F5ED00E5AFB4 /* jsscript.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsscript.c; sourceTree = "<group>"; };
+		6452D43F27D8F5ED00E5AFB4 /* prmjtime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = prmjtime.h; sourceTree = "<group>"; };
+		6452D44027D8F5ED00E5AFB4 /* jsregexp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsregexp.h; sourceTree = "<group>"; };
+		6452D44127D8F5ED00E5AFB4 /* jsobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsobj.h; sourceTree = "<group>"; };
+		6452D44227D8F5ED00E5AFB4 /* jsotypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsotypes.h; sourceTree = "<group>"; };
+		6452D44327D8F5ED00E5AFB4 /* jsexn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsexn.h; sourceTree = "<group>"; };
+		6452D44427D8F5ED00E5AFB4 /* jsexn.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsexn.c; sourceTree = "<group>"; };
+		6452D44527D8F5ED00E5AFB4 /* jsgc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsgc.c; sourceTree = "<group>"; };
+		6452D44627D8F5ED00E5AFB4 /* jsxdrapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsxdrapi.c; sourceTree = "<group>"; };
+		6452D44727D8F5ED00E5AFB4 /* jsxml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsxml.h; sourceTree = "<group>"; };
+		6452D44827D8F5ED00E5AFB4 /* jsnum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsnum.h; sourceTree = "<group>"; };
+		6452D44927D8F5ED00E5AFB4 /* prmjtime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = prmjtime.c; sourceTree = "<group>"; };
+		6452D44A27D8F5ED00E5AFB4 /* jsscript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsscript.h; sourceTree = "<group>"; };
+		6452D44B27D8F5ED00E5AFB4 /* jsmath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsmath.c; sourceTree = "<group>"; };
+		6452D44C27D8F5ED00E5AFB4 /* jspubtd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jspubtd.h; sourceTree = "<group>"; };
+		6452D44D27D8F5ED00E5AFB4 /* jsgc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsgc.h; sourceTree = "<group>"; };
+		6452D44E27D8F5ED00E5AFB4 /* jsobj.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsobj.c; sourceTree = "<group>"; };
+		6452D44F27D8F5ED00E5AFB4 /* jsfun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsfun.h; sourceTree = "<group>"; };
+		6452D45027D8F5ED00E5AFB4 /* jsstr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsstr.h; sourceTree = "<group>"; };
+		6452D45127D8F5ED00E5AFB4 /* jslibmath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jslibmath.h; sourceTree = "<group>"; };
+		6452D45227D8F5ED00E5AFB4 /* jskeyword.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = jskeyword.tbl; sourceTree = "<group>"; };
+		6452D45327D8F5ED00E5AFB4 /* jsscope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsscope.c; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6452D3D627D8F54600E5AFB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6452D3CF27D8F54600E5AFB4 = {
+			isa = PBXGroup;
+			children = (
+				6452D44427D8F5ED00E5AFB4 /* jsexn.c */,
+				6452D44327D8F5ED00E5AFB4 /* jsexn.h */,
+				6452D43127D8F5ED00E5AFB4 /* jsfun.c */,
+				6452D44F27D8F5ED00E5AFB4 /* jsfun.h */,
+				6452D44527D8F5ED00E5AFB4 /* jsgc.c */,
+				6452D44D27D8F5ED00E5AFB4 /* jsgc.h */,
+				6452D43327D8F5ED00E5AFB4 /* jshash.c */,
+				6452D41D27D8F5ED00E5AFB4 /* jshash.h */,
+				6452D42827D8F5ED00E5AFB4 /* jsinterp.c */,
+				6452D42327D8F5ED00E5AFB4 /* jsinterp.h */,
+				6452D43727D8F5ED00E5AFB4 /* jsiter.c */,
+				6452D41C27D8F5ED00E5AFB4 /* jsiter.h */,
+				6452D45227D8F5ED00E5AFB4 /* jskeyword.tbl */,
+				6452D45127D8F5ED00E5AFB4 /* jslibmath.h */,
+				6452D42627D8F5ED00E5AFB4 /* jslock.c */,
+				6452D42C27D8F5ED00E5AFB4 /* jslock.h */,
+				6452D43227D8F5ED00E5AFB4 /* jslog2.c */,
+				6452D43A27D8F5ED00E5AFB4 /* jslong.c */,
+				6452D42727D8F5ED00E5AFB4 /* jslong.h */,
+				6452D44B27D8F5ED00E5AFB4 /* jsmath.c */,
+				6452D42127D8F5ED00E5AFB4 /* jsmath.h */,
+				6452D42A27D8F5ED00E5AFB4 /* jsnum.c */,
+				6452D44827D8F5ED00E5AFB4 /* jsnum.h */,
+				6452D44E27D8F5ED00E5AFB4 /* jsobj.c */,
+				6452D44127D8F5ED00E5AFB4 /* jsobj.h */,
+				6452D43C27D8F5ED00E5AFB4 /* jsopcode.c */,
+				6452D43527D8F5ED00E5AFB4 /* jsopcode.h */,
+				6452D41F27D8F5ED00E5AFB4 /* jsopcode.tbl */,
+				6452D41B27D8F5ED00E5AFB4 /* jsosdep.h */,
+				6452D44227D8F5ED00E5AFB4 /* jsotypes.h */,
+				6452D43927D8F5ED00E5AFB4 /* jsparse.c */,
+				6452D42E27D8F5ED00E5AFB4 /* jsparse.h */,
+				6452D43827D8F5ED00E5AFB4 /* jsprf.c */,
+				6452D43D27D8F5ED00E5AFB4 /* jsprf.h */,
+				6452D42527D8F5ED00E5AFB4 /* jsproto.tbl */,
+				6452D42D27D8F5ED00E5AFB4 /* jsprvtd.h */,
+				6452D44C27D8F5ED00E5AFB4 /* jspubtd.h */,
+				6452D43627D8F5ED00E5AFB4 /* jsregexp.c */,
+				6452D44027D8F5ED00E5AFB4 /* jsregexp.h */,
+				6452D42F27D8F5ED00E5AFB4 /* jsscan.c */,
+				6452D42B27D8F5ED00E5AFB4 /* jsscan.h */,
+				6452D45327D8F5ED00E5AFB4 /* jsscope.c */,
+				6452D43427D8F5ED00E5AFB4 /* jsscope.h */,
+				6452D43E27D8F5ED00E5AFB4 /* jsscript.c */,
+				6452D44A27D8F5ED00E5AFB4 /* jsscript.h */,
+				6452D41E27D8F5ED00E5AFB4 /* jsstddef.h */,
+				6452D42927D8F5ED00E5AFB4 /* jsstr.c */,
+				6452D45027D8F5ED00E5AFB4 /* jsstr.h */,
+				6452D42227D8F5ED00E5AFB4 /* jstypes.h */,
+				6452D43B27D8F5ED00E5AFB4 /* jsutil.c */,
+				6452D42027D8F5ED00E5AFB4 /* jsutil.h */,
+				6452D44627D8F5ED00E5AFB4 /* jsxdrapi.c */,
+				6452D43027D8F5ED00E5AFB4 /* jsxdrapi.h */,
+				6452D42427D8F5ED00E5AFB4 /* jsxml.c */,
+				6452D44727D8F5ED00E5AFB4 /* jsxml.h */,
+				6452D44927D8F5ED00E5AFB4 /* prmjtime.c */,
+				6452D43F27D8F5ED00E5AFB4 /* prmjtime.h */,
+				6452D3EC27D8F5D100E5AFB4 /* CMakeLists.txt */,
+				6452D3F627D8F5D100E5AFB4 /* js.msg */,
+				6452D3E527D8F5D100E5AFB4 /* jsapi.c */,
+				6452D3FD27D8F5D100E5AFB4 /* jsapi.h */,
+				6452D3FC27D8F5D100E5AFB4 /* jsarena.c */,
+				6452D3DF27D8F5D100E5AFB4 /* jsarena.h */,
+				6452D3FB27D8F5D100E5AFB4 /* jsarray.c */,
+				6452D3E027D8F5D100E5AFB4 /* jsarray.h */,
+				6452D3E827D8F5D100E5AFB4 /* jsatom.c */,
+				6452D3F227D8F5D100E5AFB4 /* jsatom.h */,
+				6452D3EE27D8F5D100E5AFB4 /* jsautocfg.h */,
+				6452D3F027D8F5D100E5AFB4 /* jsautokw.h */,
+				6452D3EF27D8F5D100E5AFB4 /* jsbit.h */,
+				6452D3F327D8F5D100E5AFB4 /* jsbool.c */,
+				6452D3E727D8F5D100E5AFB4 /* jsbool.h */,
+				6452D3E427D8F5D100E5AFB4 /* jsclist.h */,
+				6452D3F527D8F5D100E5AFB4 /* jscntxt.c */,
+				6452D3E127D8F5D100E5AFB4 /* jscntxt.h */,
+				6452D3ED27D8F5D100E5AFB4 /* jscompat.h */,
+				6452D3F727D8F5D100E5AFB4 /* jsconfig.h */,
+				6452D3EB27D8F5D100E5AFB4 /* jscpucfg.h */,
+				6452D3E927D8F5D100E5AFB4 /* jsdate.c */,
+				6452D3F127D8F5D100E5AFB4 /* jsdate.h */,
+				6452D3F427D8F5D100E5AFB4 /* jsdbgapi.c */,
+				6452D3E627D8F5D100E5AFB4 /* jsdbgapi.h */,
+				6452D3E227D8F5D100E5AFB4 /* jsdhash.c */,
+				6452D3E327D8F5D100E5AFB4 /* jsdhash.h */,
+				6452D3F827D8F5D100E5AFB4 /* jsdtoa.c */,
+				6452D3FA27D8F5D100E5AFB4 /* jsdtoa.h */,
+				6452D3F927D8F5D100E5AFB4 /* jsemit.c */,
+				6452D3EA27D8F5D100E5AFB4 /* jsemit.h */,
+				6452D3D927D8F54600E5AFB4 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6452D3D927D8F54600E5AFB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6452D3D827D8F54600E5AFB4 /* libjsengine.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		6452D3D427D8F54600E5AFB4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6452D40527D8F5D100E5AFB4 /* jsdbgapi.h in Headers */,
+				6452D45B27D8F5ED00E5AFB4 /* jsinterp.h in Headers */,
+				6452D40227D8F5D100E5AFB4 /* jsdhash.h in Headers */,
+				6452D47E27D8F5ED00E5AFB4 /* jsxml.h in Headers */,
+				6452D47427D8F5ED00E5AFB4 /* jsprf.h in Headers */,
+				6452D40927D8F5D100E5AFB4 /* jsemit.h in Headers */,
+				6452D45527D8F5ED00E5AFB4 /* jsiter.h in Headers */,
+				6452D46727D8F5ED00E5AFB4 /* jsxdrapi.h in Headers */,
+				6452D41427D8F5D100E5AFB4 /* jsconfig.h in Headers */,
+				6452D47627D8F5ED00E5AFB4 /* prmjtime.h in Headers */,
+				6452D46327D8F5ED00E5AFB4 /* jslock.h in Headers */,
+				6452D45627D8F5ED00E5AFB4 /* jshash.h in Headers */,
+				6452D40B27D8F5D100E5AFB4 /* jscompat.h in Headers */,
+				6452D48627D8F5ED00E5AFB4 /* jsfun.h in Headers */,
+				6452D40327D8F5D100E5AFB4 /* jsclist.h in Headers */,
+				6452D48827D8F5ED00E5AFB4 /* jslibmath.h in Headers */,
+				6452D40A27D8F5D100E5AFB4 /* jscpucfg.h in Headers */,
+				6452D48427D8F5ED00E5AFB4 /* jsgc.h in Headers */,
+				6452D47927D8F5ED00E5AFB4 /* jsotypes.h in Headers */,
+				6452D40E27D8F5D100E5AFB4 /* jsautokw.h in Headers */,
+				6452D47827D8F5ED00E5AFB4 /* jsobj.h in Headers */,
+				6452D46427D8F5ED00E5AFB4 /* jsprvtd.h in Headers */,
+				6452D40F27D8F5D100E5AFB4 /* jsdate.h in Headers */,
+				6452D41027D8F5D100E5AFB4 /* jsatom.h in Headers */,
+				6452D45E27D8F5ED00E5AFB4 /* jslong.h in Headers */,
+				6452D46527D8F5ED00E5AFB4 /* jsparse.h in Headers */,
+				6452D45427D8F5ED00E5AFB4 /* jsosdep.h in Headers */,
+				6452D47F27D8F5ED00E5AFB4 /* jsnum.h in Headers */,
+				6452D46C27D8F5ED00E5AFB4 /* jsopcode.h in Headers */,
+				6452D40C27D8F5D100E5AFB4 /* jsautocfg.h in Headers */,
+				6452D46227D8F5ED00E5AFB4 /* jsscan.h in Headers */,
+				6452D46B27D8F5ED00E5AFB4 /* jsscope.h in Headers */,
+				6452D45A27D8F5ED00E5AFB4 /* jstypes.h in Headers */,
+				6452D40027D8F5D100E5AFB4 /* jscntxt.h in Headers */,
+				6452D47A27D8F5ED00E5AFB4 /* jsexn.h in Headers */,
+				6452D41A27D8F5D100E5AFB4 /* jsapi.h in Headers */,
+				6452D48727D8F5ED00E5AFB4 /* jsstr.h in Headers */,
+				6452D41727D8F5D100E5AFB4 /* jsdtoa.h in Headers */,
+				6452D45727D8F5ED00E5AFB4 /* jsstddef.h in Headers */,
+				6452D3FE27D8F5D100E5AFB4 /* jsarena.h in Headers */,
+				6452D40D27D8F5D100E5AFB4 /* jsbit.h in Headers */,
+				6452D47727D8F5ED00E5AFB4 /* jsregexp.h in Headers */,
+				6452D3FF27D8F5D100E5AFB4 /* jsarray.h in Headers */,
+				6452D48327D8F5ED00E5AFB4 /* jspubtd.h in Headers */,
+				6452D45927D8F5ED00E5AFB4 /* jsmath.h in Headers */,
+				6452D40627D8F5D100E5AFB4 /* jsbool.h in Headers */,
+				6452D45827D8F5ED00E5AFB4 /* jsutil.h in Headers */,
+				6452D48127D8F5ED00E5AFB4 /* jsscript.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		6452D3D727D8F54600E5AFB4 /* jsengine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6452D3DC27D8F54600E5AFB4 /* Build configuration list for PBXNativeTarget "jsengine" */;
+			buildPhases = (
+				6452D3D427D8F54600E5AFB4 /* Headers */,
+				6452D3D527D8F54600E5AFB4 /* Sources */,
+				6452D3D627D8F54600E5AFB4 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jsengine;
+			productName = jsengine;
+			productReference = 6452D3D827D8F54600E5AFB4 /* libjsengine.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6452D3D027D8F54600E5AFB4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1320;
+				TargetAttributes = {
+					6452D3D727D8F54600E5AFB4 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 6452D3D327D8F54600E5AFB4 /* Build configuration list for PBXProject "jsengine" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6452D3CF27D8F54600E5AFB4;
+			productRefGroup = 6452D3D927D8F54600E5AFB4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6452D3D727D8F54600E5AFB4 /* jsengine */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6452D3D527D8F54600E5AFB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6452D46F27D8F5ED00E5AFB4 /* jsprf.c in Sources */,
+				6452D46627D8F5ED00E5AFB4 /* jsscan.c in Sources */,
+				6452D47327D8F5ED00E5AFB4 /* jsopcode.c in Sources */,
+				6452D48027D8F5ED00E5AFB4 /* prmjtime.c in Sources */,
+				6452D41627D8F5D100E5AFB4 /* jsemit.c in Sources */,
+				6452D46A27D8F5ED00E5AFB4 /* jshash.c in Sources */,
+				6452D47127D8F5ED00E5AFB4 /* jslong.c in Sources */,
+				6452D45D27D8F5ED00E5AFB4 /* jslock.c in Sources */,
+				6452D41127D8F5D100E5AFB4 /* jsbool.c in Sources */,
+				6452D40827D8F5D100E5AFB4 /* jsdate.c in Sources */,
+				6452D40127D8F5D100E5AFB4 /* jsdhash.c in Sources */,
+				6452D46127D8F5ED00E5AFB4 /* jsnum.c in Sources */,
+				6452D41327D8F5D100E5AFB4 /* jscntxt.c in Sources */,
+				6452D46027D8F5ED00E5AFB4 /* jsstr.c in Sources */,
+				6452D47227D8F5ED00E5AFB4 /* jsutil.c in Sources */,
+				6452D46D27D8F5ED00E5AFB4 /* jsregexp.c in Sources */,
+				6452D40727D8F5D100E5AFB4 /* jsatom.c in Sources */,
+				6452D47D27D8F5ED00E5AFB4 /* jsxdrapi.c in Sources */,
+				6452D48527D8F5ED00E5AFB4 /* jsobj.c in Sources */,
+				6452D46927D8F5ED00E5AFB4 /* jslog2.c in Sources */,
+				6452D45C27D8F5ED00E5AFB4 /* jsxml.c in Sources */,
+				6452D48227D8F5ED00E5AFB4 /* jsmath.c in Sources */,
+				6452D45F27D8F5ED00E5AFB4 /* jsinterp.c in Sources */,
+				6452D46827D8F5ED00E5AFB4 /* jsfun.c in Sources */,
+				6452D47C27D8F5ED00E5AFB4 /* jsgc.c in Sources */,
+				6452D41927D8F5D100E5AFB4 /* jsarena.c in Sources */,
+				6452D47527D8F5ED00E5AFB4 /* jsscript.c in Sources */,
+				6452D47B27D8F5ED00E5AFB4 /* jsexn.c in Sources */,
+				6452D47027D8F5ED00E5AFB4 /* jsparse.c in Sources */,
+				6452D41827D8F5D100E5AFB4 /* jsarray.c in Sources */,
+				6452D40427D8F5D100E5AFB4 /* jsapi.c in Sources */,
+				6452D41527D8F5D100E5AFB4 /* jsdtoa.c in Sources */,
+				6452D48927D8F5ED00E5AFB4 /* jsscope.c in Sources */,
+				6452D46E27D8F5ED00E5AFB4 /* jsiter.c in Sources */,
+				6452D41227D8F5D100E5AFB4 /* jsdbgapi.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6452D3DA27D8F54600E5AFB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SVR4,
+					SYSV,
+					_BSD_SOURCE,
+					POSIX_SOURCE,
+					HAVE_VA_LIST_AS_ARRAY,
+					XP_UNIX,
+					DEBUG,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-shift-negative-value";
+			};
+			name = Debug;
+		};
+		6452D3DB27D8F54600E5AFB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					SVR4,
+					SYSV,
+					_BSD_SOURCE,
+					POSIX_SOURCE,
+					HAVE_VA_LIST_AS_ARRAY,
+					XP_UNIX,
+					NDEBUG,
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				WARNING_CFLAGS = "-Wno-shift-negative-value";
+			};
+			name = Release;
+		};
+		6452D3DD27D8F54600E5AFB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_COMMA = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				EXECUTABLE_PREFIX = lib;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-logical-not-parentheses",
+					"-Wno-tautological-constant-out-of-range-compare",
+					"-Wno-non-literal-null-conversion",
+					"-Wno-void-pointer-to-enum-cast",
+					"-Wno-format",
+				);
+			};
+			name = Debug;
+		};
+		6452D3DE27D8F54600E5AFB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = NO;
+				CLANG_WARN_COMMA = NO;
+				CLANG_WARN_CONSTANT_CONVERSION = NO;
+				CLANG_WARN_ENUM_CONVERSION = NO;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = NO;
+				CLANG_WARN_STRICT_PROTOTYPES = NO;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				EXECUTABLE_PREFIX = lib;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
+				GCC_WARN_ABOUT_POINTER_SIGNEDNESS = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-logical-not-parentheses",
+					"-Wno-tautological-constant-out-of-range-compare",
+					"-Wno-non-literal-null-conversion",
+					"-Wno-void-pointer-to-enum-cast",
+					"-Wno-format",
+				);
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6452D3D327D8F54600E5AFB4 /* Build configuration list for PBXProject "jsengine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6452D3DA27D8F54600E5AFB4 /* Debug */,
+				6452D3DB27D8F54600E5AFB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6452D3DC27D8F54600E5AFB4 /* Build configuration list for PBXNativeTarget "jsengine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6452D3DD27D8F54600E5AFB4 /* Debug */,
+				6452D3DE27D8F54600E5AFB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6452D3D027D8F54600E5AFB4 /* Project object */;
+}
