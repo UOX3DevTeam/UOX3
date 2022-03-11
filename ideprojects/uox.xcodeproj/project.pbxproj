@@ -1,0 +1,866 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 55;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6452D55D27DA27DB00E5AFB4 /* trade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4BA27DA27DA00E5AFB4 /* trade.cpp */; };
+		6452D55E27DA27DB00E5AFB4 /* osunique.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4BB27DA27DA00E5AFB4 /* osunique.cpp */; };
+		6452D55F27DA27DB00E5AFB4 /* items.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4BC27DA27DA00E5AFB4 /* items.cpp */; };
+		6452D56027DA27DB00E5AFB4 /* CJSEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4BE27DA27DA00E5AFB4 /* CJSEngine.cpp */; };
+		6452D56127DA27DB00E5AFB4 /* commands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4C127DA27DA00E5AFB4 /* commands.cpp */; };
+		6452D56227DA27DB00E5AFB4 /* cHTMLSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4C227DA27DA00E5AFB4 /* cHTMLSystem.cpp */; };
+		6452D56327DA27DB00E5AFB4 /* calcfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4C427DA27DA00E5AFB4 /* calcfuncs.cpp */; };
+		6452D56427DA27DB00E5AFB4 /* cSpawnRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4C827DA27DA00E5AFB4 /* cSpawnRegion.cpp */; };
+		6452D56527DA27DB00E5AFB4 /* cDice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4C927DA27DA00E5AFB4 /* cDice.cpp */; };
+		6452D56627DA27DB00E5AFB4 /* UOXJSPropertyFuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4CA27DA27DA00E5AFB4 /* UOXJSPropertyFuncs.cpp */; };
+		6452D56727DA27DB00E5AFB4 /* lineofsight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4CB27DA27DA00E5AFB4 /* lineofsight.cpp */; };
+		6452D56827DA27DB00E5AFB4 /* worldmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4CE27DA27DA00E5AFB4 /* worldmain.cpp */; };
+		6452D56927DA27DB00E5AFB4 /* cMultiObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D027DA27DA00E5AFB4 /* cMultiObj.cpp */; };
+		6452D56A27DA27DB00E5AFB4 /* cRaces.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D227DA27DA00E5AFB4 /* cRaces.cpp */; };
+		6452D56B27DA27DB00E5AFB4 /* Dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D327DA27DA00E5AFB4 /* Dictionary.cpp */; };
+		6452D56C27DA27DB00E5AFB4 /* townregion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D627DA27DA00E5AFB4 /* townregion.cpp */; };
+		6452D56D27DA27DB00E5AFB4 /* cChar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D727DA27DA00E5AFB4 /* cChar.cpp */; };
+		6452D56E27DA27DB00E5AFB4 /* targeting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D827DA27DA00E5AFB4 /* targeting.cpp */; };
+		6452D56F27DA27DB00E5AFB4 /* TimeUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4D927DA27DA00E5AFB4 /* TimeUtility.cpp */; };
+		6452D57027DA27DB00E5AFB4 /* weight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4DA27DA27DA00E5AFB4 /* weight.cpp */; };
+		6452D57127DA27DB00E5AFB4 /* StringUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4DE27DA27DA00E5AFB4 /* StringUtility.cpp */; };
+		6452D57227DA27DB00E5AFB4 /* dist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E027DA27DA00E5AFB4 /* dist.cpp */; };
+		6452D57327DA27DB00E5AFB4 /* ssection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E127DA27DA00E5AFB4 /* ssection.cpp */; };
+		6452D57427DA27DB00E5AFB4 /* pcmanage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E227DA27DA00E5AFB4 /* pcmanage.cpp */; };
+		6452D57527DA27DB00E5AFB4 /* effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E627DA27DA00E5AFB4 /* effect.cpp */; };
+		6452D57627DA27DB00E5AFB4 /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E827DA27DA00E5AFB4 /* archive.cpp */; };
+		6452D57727DA27DB00E5AFB4 /* vendor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4E927DA27DA00E5AFB4 /* vendor.cpp */; };
+		6452D57827DA27DB00E5AFB4 /* books.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4EB27DA27DA00E5AFB4 /* books.cpp */; };
+		6452D57927DA27DB00E5AFB4 /* combat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F027DA27DA00E5AFB4 /* combat.cpp */; };
+		6452D57A27DA27DB00E5AFB4 /* EventTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F127DA27DA00E5AFB4 /* EventTimer.cpp */; };
+		6452D57B27DA27DB00E5AFB4 /* cServerData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F227DA27DA00E5AFB4 /* cServerData.cpp */; };
+		6452D57C27DA27DB00E5AFB4 /* UOPInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F327DA27DA00E5AFB4 /* UOPInterface.cpp */; };
+		6452D57D27DA27DB00E5AFB4 /* npcs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F827DA27DA00E5AFB4 /* npcs.cpp */; };
+		6452D57E27DA27DB00E5AFB4 /* CResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4F927DA27DA00E5AFB4 /* CResponse.cpp */; };
+		6452D57F27DA27DB00E5AFB4 /* CPacketSend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4FB27DA27DA00E5AFB4 /* CPacketSend.cpp */; };
+		6452D58027DA27DB00E5AFB4 /* cSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D4FC27DA27DA00E5AFB4 /* cSocket.cpp */; };
+		6452D58127DA27DB00E5AFB4 /* uox3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50127DA27DA00E5AFB4 /* uox3.cpp */; };
+		6452D58227DA27DB00E5AFB4 /* cGuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50427DA27DA00E5AFB4 /* cGuild.cpp */; };
+		6452D58327DA27DB00E5AFB4 /* magic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50527DA27DA00E5AFB4 /* magic.cpp */; };
+		6452D58427DA27DB00E5AFB4 /* cPlayerAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50627DA27DA00E5AFB4 /* cPlayerAction.cpp */; };
+		6452D58527DA27DB00E5AFB4 /* house.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50C27DA27DA00E5AFB4 /* house.cpp */; };
+		6452D58627DA27DB00E5AFB4 /* cAccountClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D50E27DA27DB00E5AFB4 /* cAccountClass.cpp */; };
+		6452D58727DA27DB00E5AFB4 /* JSEncapsulate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51027DA27DB00E5AFB4 /* JSEncapsulate.cpp */; };
+		6452D58827DA27DB00E5AFB4 /* regions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51227DA27DB00E5AFB4 /* regions.cpp */; };
+		6452D58927DA27DB00E5AFB4 /* mapstuff.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51427DA27DB00E5AFB4 /* mapstuff.cpp */; };
+		6452D58A27DA27DB00E5AFB4 /* cItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51527DA27DB00E5AFB4 /* cItem.cpp */; };
+		6452D58B27DA27DB00E5AFB4 /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51627DA27DB00E5AFB4 /* boats.cpp */; };
+		6452D58C27DA27DB00E5AFB4 /* IP4Address.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51827DA27DB00E5AFB4 /* IP4Address.cpp */; };
+		6452D58D27DA27DB00E5AFB4 /* cScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51927DA27DB00E5AFB4 /* cScript.cpp */; };
+		6452D58E27DA27DB00E5AFB4 /* sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51A27DA27DB00E5AFB4 /* sound.cpp */; };
+		6452D58F27DA27DB00E5AFB4 /* UOXJSMethods.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51D27DA27DB00E5AFB4 /* UOXJSMethods.cpp */; };
+		6452D59027DA27DB00E5AFB4 /* SEFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D51E27DA27DB00E5AFB4 /* SEFunctions.cpp */; };
+		6452D59127DA27DB00E5AFB4 /* wholist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52227DA27DB00E5AFB4 /* wholist.cpp */; };
+		6452D59227DA27DB00E5AFB4 /* cBaseobject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52327DA27DB00E5AFB4 /* cBaseobject.cpp */; };
+		6452D59327DA27DB00E5AFB4 /* quantityfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52527DA27DB00E5AFB4 /* quantityfuncs.cpp */; };
+		6452D59427DA27DB00E5AFB4 /* cThreadQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52627DA27DB00E5AFB4 /* cThreadQueue.cpp */; };
+		6452D59527DA27DB00E5AFB4 /* PartySystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52727DA27DB00E5AFB4 /* PartySystem.cpp */; };
+		6452D59627DA27DB00E5AFB4 /* gumps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52A27DA27DB00E5AFB4 /* gumps.cpp */; };
+		6452D59727DA27DB00E5AFB4 /* CGump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52B27DA27DB00E5AFB4 /* CGump.cpp */; };
+		6452D59827DA27DB00E5AFB4 /* findfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52C27DA27DB00E5AFB4 /* findfuncs.cpp */; };
+		6452D59927DA27DB00E5AFB4 /* skills.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52D27DA27DB00E5AFB4 /* skills.cpp */; };
+		6452D59A27DA27DB00E5AFB4 /* speech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D52E27DA27DB00E5AFB4 /* speech.cpp */; };
+		6452D59B27DA27DB00E5AFB4 /* cVersionClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53027DA27DB00E5AFB4 /* cVersionClass.cpp */; };
+		6452D59C27DA27DB00E5AFB4 /* strutil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53427DA27DB00E5AFB4 /* strutil.cpp */; };
+		6452D59D27DA27DB00E5AFB4 /* cServerDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53527DA27DB00E5AFB4 /* cServerDefinitions.cpp */; };
+		6452D59E27DA27DB00E5AFB4 /* IDXMul.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53A27DA27DB00E5AFB4 /* IDXMul.cpp */; };
+		6452D59F27DA27DB00E5AFB4 /* cConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53B27DA27DB00E5AFB4 /* cConsole.cpp */; };
+		6452D5A027DA27DB00E5AFB4 /* fileio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53D27DA27DB00E5AFB4 /* fileio.cpp */; };
+		6452D5A127DA27DB00E5AFB4 /* cWeather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53E27DA27DB00E5AFB4 /* cWeather.cpp */; };
+		6452D5A227DA27DB00E5AFB4 /* ObjectFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D53F27DA27DB00E5AFB4 /* ObjectFactory.cpp */; };
+		6452D5A327DA27DB00E5AFB4 /* msgboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54127DA27DB00E5AFB4 /* msgboard.cpp */; };
+		6452D5A427DA27DB00E5AFB4 /* cmdtable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54427DA27DB00E5AFB4 /* cmdtable.cpp */; };
+		6452D5A527DA27DB00E5AFB4 /* jail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54527DA27DB00E5AFB4 /* jail.cpp */; };
+		6452D5A627DA27DB00E5AFB4 /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54627DA27DB00E5AFB4 /* ai.cpp */; };
+		6452D5A727DA27DB00E5AFB4 /* CJSMapping.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54A27DA27DB00E5AFB4 /* CJSMapping.cpp */; };
+		6452D5A827DA27DB00E5AFB4 /* movement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54B27DA27DB00E5AFB4 /* movement.cpp */; };
+		6452D5A927DA27DB00E5AFB4 /* queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D54D27DA27DB00E5AFB4 /* queue.cpp */; };
+		6452D5AA27DA27DB00E5AFB4 /* UOPData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D55027DA27DB00E5AFB4 /* UOPData.cpp */; };
+		6452D5AB27DA27DB00E5AFB4 /* MultiMul.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D55527DA27DB00E5AFB4 /* MultiMul.cpp */; };
+		6452D5AC27DA27DB00E5AFB4 /* CPacketReceive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D55727DA27DB00E5AFB4 /* CPacketReceive.cpp */; };
+		6452D5AD27DA27DB00E5AFB4 /* scriptc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D55927DA27DB00E5AFB4 /* scriptc.cpp */; };
+		6452D5AE27DA27DB00E5AFB4 /* network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D55C27DA27DB00E5AFB4 /* network.cpp */; };
+		6452D5B227DA33C900E5AFB4 /* libjsengine.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6452D5B127DA33C900E5AFB4 /* libjsengine.a */; };
+		6452D5B327DA33D100E5AFB4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6452D5B027DA33AA00E5AFB4 /* libz.tbd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6452D4A427D9B5D600E5AFB4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		6452D4A627D9B5D600E5AFB4 /* uox */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox; sourceTree = BUILT_PRODUCTS_DIR; };
+		6452D4B927DA27DA00E5AFB4 /* UOXJSPropertyEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXJSPropertyEnums.h; path = ../uoxserver/UOXJSPropertyEnums.h; sourceTree = "<group>"; };
+		6452D4BA27DA27DA00E5AFB4 /* trade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = trade.cpp; path = ../uoxserver/trade.cpp; sourceTree = "<group>"; };
+		6452D4BB27DA27DA00E5AFB4 /* osunique.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = osunique.cpp; path = ../uoxserver/osunique.cpp; sourceTree = "<group>"; };
+		6452D4BC27DA27DA00E5AFB4 /* items.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = items.cpp; path = ../uoxserver/items.cpp; sourceTree = "<group>"; };
+		6452D4BD27DA27DA00E5AFB4 /* network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = network.h; path = ../uoxserver/network.h; sourceTree = "<group>"; };
+		6452D4BE27DA27DA00E5AFB4 /* CJSEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CJSEngine.cpp; path = ../uoxserver/CJSEngine.cpp; sourceTree = "<group>"; };
+		6452D4BF27DA27DA00E5AFB4 /* weight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = weight.h; path = ../uoxserver/weight.h; sourceTree = "<group>"; };
+		6452D4C027DA27DA00E5AFB4 /* PageVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PageVector.h; path = ../uoxserver/PageVector.h; sourceTree = "<group>"; };
+		6452D4C127DA27DA00E5AFB4 /* commands.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = commands.cpp; path = ../uoxserver/commands.cpp; sourceTree = "<group>"; };
+		6452D4C227DA27DA00E5AFB4 /* cHTMLSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cHTMLSystem.cpp; path = ../uoxserver/cHTMLSystem.cpp; sourceTree = "<group>"; };
+		6452D4C327DA27DA00E5AFB4 /* mapstuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapstuff.h; path = ../uoxserver/mapstuff.h; sourceTree = "<group>"; };
+		6452D4C427DA27DA00E5AFB4 /* calcfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = calcfuncs.cpp; path = ../uoxserver/calcfuncs.cpp; sourceTree = "<group>"; };
+		6452D4C527DA27DA00E5AFB4 /* CJSMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CJSMapping.h; path = ../uoxserver/CJSMapping.h; sourceTree = "<group>"; };
+		6452D4C627DA27DA00E5AFB4 /* cAccountClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cAccountClass.h; path = ../uoxserver/cAccountClass.h; sourceTree = "<group>"; };
+		6452D4C727DA27DA00E5AFB4 /* townregion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = townregion.h; path = ../uoxserver/townregion.h; sourceTree = "<group>"; };
+		6452D4C827DA27DA00E5AFB4 /* cSpawnRegion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cSpawnRegion.cpp; path = ../uoxserver/cSpawnRegion.cpp; sourceTree = "<group>"; };
+		6452D4C927DA27DA00E5AFB4 /* cDice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cDice.cpp; path = ../uoxserver/cDice.cpp; sourceTree = "<group>"; };
+		6452D4CA27DA27DA00E5AFB4 /* UOXJSPropertyFuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UOXJSPropertyFuncs.cpp; path = ../uoxserver/UOXJSPropertyFuncs.cpp; sourceTree = "<group>"; };
+		6452D4CB27DA27DA00E5AFB4 /* lineofsight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = lineofsight.cpp; path = ../uoxserver/lineofsight.cpp; sourceTree = "<group>"; };
+		6452D4CC27DA27DA00E5AFB4 /* combat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = combat.h; path = ../uoxserver/combat.h; sourceTree = "<group>"; };
+		6452D4CD27DA27DA00E5AFB4 /* uox3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uox3.h; path = ../uoxserver/uox3.h; sourceTree = "<group>"; };
+		6452D4CE27DA27DA00E5AFB4 /* worldmain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = worldmain.cpp; path = ../uoxserver/worldmain.cpp; sourceTree = "<group>"; };
+		6452D4CF27DA27DA00E5AFB4 /* cBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cBaseObject.h; path = ../uoxserver/cBaseObject.h; sourceTree = "<group>"; };
+		6452D4D027DA27DA00E5AFB4 /* cMultiObj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cMultiObj.cpp; path = ../uoxserver/cMultiObj.cpp; sourceTree = "<group>"; };
+		6452D4D127DA27DA00E5AFB4 /* commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = commands.h; path = ../uoxserver/commands.h; sourceTree = "<group>"; };
+		6452D4D227DA27DA00E5AFB4 /* cRaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cRaces.cpp; path = ../uoxserver/cRaces.cpp; sourceTree = "<group>"; };
+		6452D4D327DA27DA00E5AFB4 /* Dictionary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Dictionary.cpp; path = ../uoxserver/Dictionary.cpp; sourceTree = "<group>"; };
+		6452D4D427DA27DA00E5AFB4 /* cItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cItem.h; path = ../uoxserver/cItem.h; sourceTree = "<group>"; };
+		6452D4D527DA27DA00E5AFB4 /* teffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = teffect.h; path = ../uoxserver/teffect.h; sourceTree = "<group>"; };
+		6452D4D627DA27DA00E5AFB4 /* townregion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = townregion.cpp; path = ../uoxserver/townregion.cpp; sourceTree = "<group>"; };
+		6452D4D727DA27DA00E5AFB4 /* cChar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cChar.cpp; path = ../uoxserver/cChar.cpp; sourceTree = "<group>"; };
+		6452D4D827DA27DA00E5AFB4 /* targeting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = targeting.cpp; path = ../uoxserver/targeting.cpp; sourceTree = "<group>"; };
+		6452D4D927DA27DA00E5AFB4 /* TimeUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimeUtility.cpp; path = ../uoxserver/TimeUtility.cpp; sourceTree = "<group>"; };
+		6452D4DA27DA27DA00E5AFB4 /* weight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = weight.cpp; path = ../uoxserver/weight.cpp; sourceTree = "<group>"; };
+		6452D4DB27DA27DA00E5AFB4 /* cConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cConsole.h; path = ../uoxserver/cConsole.h; sourceTree = "<group>"; };
+		6452D4DC27DA27DA00E5AFB4 /* IP4Address.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IP4Address.hpp; path = ../uoxserver/IP4Address.hpp; sourceTree = "<group>"; };
+		6452D4DD27DA27DA00E5AFB4 /* uoxstruct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = uoxstruct.h; path = ../uoxserver/uoxstruct.h; sourceTree = "<group>"; };
+		6452D4DE27DA27DA00E5AFB4 /* StringUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StringUtility.cpp; path = ../uoxserver/StringUtility.cpp; sourceTree = "<group>"; };
+		6452D4DF27DA27DA00E5AFB4 /* cSpawnRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cSpawnRegion.h; path = ../uoxserver/cSpawnRegion.h; sourceTree = "<group>"; };
+		6452D4E027DA27DA00E5AFB4 /* dist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dist.cpp; path = ../uoxserver/dist.cpp; sourceTree = "<group>"; };
+		6452D4E127DA27DA00E5AFB4 /* ssection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ssection.cpp; path = ../uoxserver/ssection.cpp; sourceTree = "<group>"; };
+		6452D4E227DA27DA00E5AFB4 /* pcmanage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcmanage.cpp; path = ../uoxserver/pcmanage.cpp; sourceTree = "<group>"; };
+		6452D4E327DA27DA00E5AFB4 /* ObjectFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectFactory.h; path = ../uoxserver/ObjectFactory.h; sourceTree = "<group>"; };
+		6452D4E427DA27DA00E5AFB4 /* books.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = books.h; path = ../uoxserver/books.h; sourceTree = "<group>"; };
+		6452D4E527DA27DA00E5AFB4 /* cThreadQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cThreadQueue.h; path = ../uoxserver/cThreadQueue.h; sourceTree = "<group>"; };
+		6452D4E627DA27DA00E5AFB4 /* effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = effect.cpp; path = ../uoxserver/effect.cpp; sourceTree = "<group>"; };
+		6452D4E727DA27DA00E5AFB4 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = resource.h; path = ../uoxserver/resource.h; sourceTree = "<group>"; };
+		6452D4E827DA27DA00E5AFB4 /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = archive.cpp; path = ../uoxserver/archive.cpp; sourceTree = "<group>"; };
+		6452D4E927DA27DA00E5AFB4 /* vendor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vendor.cpp; path = ../uoxserver/vendor.cpp; sourceTree = "<group>"; };
+		6452D4EA27DA27DA00E5AFB4 /* cMagic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cMagic.h; path = ../uoxserver/cMagic.h; sourceTree = "<group>"; };
+		6452D4EB27DA27DA00E5AFB4 /* books.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = books.cpp; path = ../uoxserver/books.cpp; sourceTree = "<group>"; };
+		6452D4EC27DA27DA00E5AFB4 /* msgboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = msgboard.h; path = ../uoxserver/msgboard.h; sourceTree = "<group>"; };
+		6452D4ED27DA27DA00E5AFB4 /* cWeather.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = cWeather.hpp; path = ../uoxserver/cWeather.hpp; sourceTree = "<group>"; };
+		6452D4EE27DA27DA00E5AFB4 /* cSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cSocket.h; path = ../uoxserver/cSocket.h; sourceTree = "<group>"; };
+		6452D4EF27DA27DA00E5AFB4 /* strutil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = strutil.hpp; path = ../uoxserver/strutil.hpp; sourceTree = "<group>"; };
+		6452D4F027DA27DA00E5AFB4 /* combat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = combat.cpp; path = ../uoxserver/combat.cpp; sourceTree = "<group>"; };
+		6452D4F127DA27DA00E5AFB4 /* EventTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EventTimer.cpp; path = ../uoxserver/EventTimer.cpp; sourceTree = "<group>"; };
+		6452D4F227DA27DA00E5AFB4 /* cServerData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cServerData.cpp; path = ../uoxserver/cServerData.cpp; sourceTree = "<group>"; };
+		6452D4F327DA27DA00E5AFB4 /* UOPInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UOPInterface.cpp; path = ../uoxserver/UOPInterface.cpp; sourceTree = "<group>"; };
+		6452D4F427DA27DA00E5AFB4 /* UOPInterface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UOPInterface.hpp; path = ../uoxserver/UOPInterface.hpp; sourceTree = "<group>"; };
+		6452D4F527DA27DA00E5AFB4 /* JSEncapsulate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSEncapsulate.h; path = ../uoxserver/JSEncapsulate.h; sourceTree = "<group>"; };
+		6452D4F627DA27DA00E5AFB4 /* cScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cScript.h; path = ../uoxserver/cScript.h; sourceTree = "<group>"; };
+		6452D4F727DA27DA00E5AFB4 /* power.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = power.h; path = ../uoxserver/power.h; sourceTree = "<group>"; };
+		6452D4F827DA27DA00E5AFB4 /* npcs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = npcs.cpp; path = ../uoxserver/npcs.cpp; sourceTree = "<group>"; };
+		6452D4F927DA27DA00E5AFB4 /* CResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CResponse.cpp; path = ../uoxserver/CResponse.cpp; sourceTree = "<group>"; };
+		6452D4FA27DA27DA00E5AFB4 /* UOXJSPropertyFuncs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXJSPropertyFuncs.h; path = ../uoxserver/UOXJSPropertyFuncs.h; sourceTree = "<group>"; };
+		6452D4FB27DA27DA00E5AFB4 /* CPacketSend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CPacketSend.cpp; path = ../uoxserver/CPacketSend.cpp; sourceTree = "<group>"; };
+		6452D4FC27DA27DA00E5AFB4 /* cSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cSocket.cpp; path = ../uoxserver/cSocket.cpp; sourceTree = "<group>"; };
+		6452D4FD27DA27DA00E5AFB4 /* ssection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ssection.h; path = ../uoxserver/ssection.h; sourceTree = "<group>"; };
+		6452D4FE27DA27DA00E5AFB4 /* TimeUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = TimeUtility.hpp; path = ../uoxserver/TimeUtility.hpp; sourceTree = "<group>"; };
+		6452D4FF27DA27DA00E5AFB4 /* mapclasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mapclasses.h; path = ../uoxserver/mapclasses.h; sourceTree = "<group>"; };
+		6452D50027DA27DA00E5AFB4 /* cVersionClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cVersionClass.h; path = ../uoxserver/cVersionClass.h; sourceTree = "<group>"; };
+		6452D50127DA27DA00E5AFB4 /* uox3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = uox3.cpp; path = ../uoxserver/uox3.cpp; sourceTree = "<group>"; };
+		6452D50227DA27DA00E5AFB4 /* cHTMLSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cHTMLSystem.h; path = ../uoxserver/cHTMLSystem.h; sourceTree = "<group>"; };
+		6452D50327DA27DA00E5AFB4 /* EventTimer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = EventTimer.hpp; path = ../uoxserver/EventTimer.hpp; sourceTree = "<group>"; };
+		6452D50427DA27DA00E5AFB4 /* cGuild.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cGuild.cpp; path = ../uoxserver/cGuild.cpp; sourceTree = "<group>"; };
+		6452D50527DA27DA00E5AFB4 /* magic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = magic.cpp; path = ../uoxserver/magic.cpp; sourceTree = "<group>"; };
+		6452D50627DA27DA00E5AFB4 /* cPlayerAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cPlayerAction.cpp; path = ../uoxserver/cPlayerAction.cpp; sourceTree = "<group>"; };
+		6452D50727DA27DA00E5AFB4 /* regions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = regions.h; path = ../uoxserver/regions.h; sourceTree = "<group>"; };
+		6452D50827DA27DA00E5AFB4 /* cmdtable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cmdtable.h; path = ../uoxserver/cmdtable.h; sourceTree = "<group>"; };
+		6452D50927DA27DA00E5AFB4 /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = typedefs.h; path = ../uoxserver/typedefs.h; sourceTree = "<group>"; };
+		6452D50A27DA27DA00E5AFB4 /* worldmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = worldmain.h; path = ../uoxserver/worldmain.h; sourceTree = "<group>"; };
+		6452D50B27DA27DA00E5AFB4 /* funcdecl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = funcdecl.h; path = ../uoxserver/funcdecl.h; sourceTree = "<group>"; };
+		6452D50C27DA27DA00E5AFB4 /* house.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = house.cpp; path = ../uoxserver/house.cpp; sourceTree = "<group>"; };
+		6452D50D27DA27DA00E5AFB4 /* enums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = enums.h; path = ../uoxserver/enums.h; sourceTree = "<group>"; };
+		6452D50E27DA27DB00E5AFB4 /* cAccountClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cAccountClass.cpp; path = ../uoxserver/cAccountClass.cpp; sourceTree = "<group>"; };
+		6452D50F27DA27DB00E5AFB4 /* classes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = classes.h; path = ../uoxserver/classes.h; sourceTree = "<group>"; };
+		6452D51027DA27DB00E5AFB4 /* JSEncapsulate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSEncapsulate.cpp; path = ../uoxserver/JSEncapsulate.cpp; sourceTree = "<group>"; };
+		6452D51127DA27DB00E5AFB4 /* gump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gump.h; path = ../uoxserver/gump.h; sourceTree = "<group>"; };
+		6452D51227DA27DB00E5AFB4 /* regions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = regions.cpp; path = ../uoxserver/regions.cpp; sourceTree = "<group>"; };
+		6452D51327DA27DB00E5AFB4 /* SEFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SEFunctions.h; path = ../uoxserver/SEFunctions.h; sourceTree = "<group>"; };
+		6452D51427DA27DB00E5AFB4 /* mapstuff.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mapstuff.cpp; path = ../uoxserver/mapstuff.cpp; sourceTree = "<group>"; };
+		6452D51527DA27DB00E5AFB4 /* cItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cItem.cpp; path = ../uoxserver/cItem.cpp; sourceTree = "<group>"; };
+		6452D51627DA27DB00E5AFB4 /* boats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = boats.cpp; path = ../uoxserver/boats.cpp; sourceTree = "<group>"; };
+		6452D51727DA27DB00E5AFB4 /* PartySystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PartySystem.h; path = ../uoxserver/PartySystem.h; sourceTree = "<group>"; };
+		6452D51827DA27DB00E5AFB4 /* IP4Address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IP4Address.cpp; path = ../uoxserver/IP4Address.cpp; sourceTree = "<group>"; };
+		6452D51927DA27DB00E5AFB4 /* cScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cScript.cpp; path = ../uoxserver/cScript.cpp; sourceTree = "<group>"; };
+		6452D51A27DA27DB00E5AFB4 /* sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cpp; path = ../uoxserver/sound.cpp; sourceTree = "<group>"; };
+		6452D51B27DA27DB00E5AFB4 /* StringUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = StringUtility.hpp; path = ../uoxserver/StringUtility.hpp; sourceTree = "<group>"; };
+		6452D51C27DA27DB00E5AFB4 /* UOXJSClasses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXJSClasses.h; path = ../uoxserver/UOXJSClasses.h; sourceTree = "<group>"; };
+		6452D51D27DA27DB00E5AFB4 /* UOXJSMethods.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UOXJSMethods.cpp; path = ../uoxserver/UOXJSMethods.cpp; sourceTree = "<group>"; };
+		6452D51E27DA27DB00E5AFB4 /* SEFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SEFunctions.cpp; path = ../uoxserver/SEFunctions.cpp; sourceTree = "<group>"; };
+		6452D51F27DA27DB00E5AFB4 /* CPacketReceive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPacketReceive.h; path = ../uoxserver/CPacketReceive.h; sourceTree = "<group>"; };
+		6452D52027DA27DB00E5AFB4 /* Prerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Prerequisites.h; path = ../uoxserver/Prerequisites.h; sourceTree = "<group>"; };
+		6452D52127DA27DB00E5AFB4 /* skills.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skills.h; path = ../uoxserver/skills.h; sourceTree = "<group>"; };
+		6452D52227DA27DB00E5AFB4 /* wholist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wholist.cpp; path = ../uoxserver/wholist.cpp; sourceTree = "<group>"; };
+		6452D52327DA27DB00E5AFB4 /* cBaseobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cBaseobject.cpp; path = ../uoxserver/cBaseobject.cpp; sourceTree = "<group>"; };
+		6452D52427DA27DB00E5AFB4 /* jail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jail.h; path = ../uoxserver/jail.h; sourceTree = "<group>"; };
+		6452D52527DA27DB00E5AFB4 /* quantityfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = quantityfuncs.cpp; path = ../uoxserver/quantityfuncs.cpp; sourceTree = "<group>"; };
+		6452D52627DA27DB00E5AFB4 /* cThreadQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cThreadQueue.cpp; path = ../uoxserver/cThreadQueue.cpp; sourceTree = "<group>"; };
+		6452D52727DA27DB00E5AFB4 /* PartySystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PartySystem.cpp; path = ../uoxserver/PartySystem.cpp; sourceTree = "<group>"; };
+		6452D52827DA27DB00E5AFB4 /* CResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CResponse.h; path = ../uoxserver/CResponse.h; sourceTree = "<group>"; };
+		6452D52927DA27DB00E5AFB4 /* speech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = speech.h; path = ../uoxserver/speech.h; sourceTree = "<group>"; };
+		6452D52A27DA27DB00E5AFB4 /* gumps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = gumps.cpp; path = ../uoxserver/gumps.cpp; sourceTree = "<group>"; };
+		6452D52B27DA27DB00E5AFB4 /* CGump.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CGump.cpp; path = ../uoxserver/CGump.cpp; sourceTree = "<group>"; };
+		6452D52C27DA27DB00E5AFB4 /* findfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = findfuncs.cpp; path = ../uoxserver/findfuncs.cpp; sourceTree = "<group>"; };
+		6452D52D27DA27DB00E5AFB4 /* skills.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = skills.cpp; path = ../uoxserver/skills.cpp; sourceTree = "<group>"; };
+		6452D52E27DA27DB00E5AFB4 /* speech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = speech.cpp; path = ../uoxserver/speech.cpp; sourceTree = "<group>"; };
+		6452D52F27DA27DB00E5AFB4 /* osunique.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = osunique.hpp; path = ../uoxserver/osunique.hpp; sourceTree = "<group>"; };
+		6452D53027DA27DB00E5AFB4 /* cVersionClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cVersionClass.cpp; path = ../uoxserver/cVersionClass.cpp; sourceTree = "<group>"; };
+		6452D53127DA27DB00E5AFB4 /* movement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = movement.h; path = ../uoxserver/movement.h; sourceTree = "<group>"; };
+		6452D53227DA27DB00E5AFB4 /* cGuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cGuild.h; path = ../uoxserver/cGuild.h; sourceTree = "<group>"; };
+		6452D53327DA27DB00E5AFB4 /* cMultiObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cMultiObj.h; path = ../uoxserver/cMultiObj.h; sourceTree = "<group>"; };
+		6452D53427DA27DB00E5AFB4 /* strutil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = strutil.cpp; path = ../uoxserver/strutil.cpp; sourceTree = "<group>"; };
+		6452D53527DA27DB00E5AFB4 /* cServerDefinitions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cServerDefinitions.cpp; path = ../uoxserver/cServerDefinitions.cpp; sourceTree = "<group>"; };
+		6452D53627DA27DB00E5AFB4 /* UOPData.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = UOPData.hpp; path = ../uoxserver/UOPData.hpp; sourceTree = "<group>"; };
+		6452D53727DA27DB00E5AFB4 /* cEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cEffects.h; path = ../uoxserver/cEffects.h; sourceTree = "<group>"; };
+		6452D53827DA27DB00E5AFB4 /* cRaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cRaces.h; path = ../uoxserver/cRaces.h; sourceTree = "<group>"; };
+		6452D53927DA27DB00E5AFB4 /* Dictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dictionary.h; path = ../uoxserver/Dictionary.h; sourceTree = "<group>"; };
+		6452D53A27DA27DB00E5AFB4 /* IDXMul.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IDXMul.cpp; path = ../uoxserver/IDXMul.cpp; sourceTree = "<group>"; };
+		6452D53B27DA27DB00E5AFB4 /* cConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cConsole.cpp; path = ../uoxserver/cConsole.cpp; sourceTree = "<group>"; };
+		6452D53C27DA27DB00E5AFB4 /* cServerData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cServerData.h; path = ../uoxserver/cServerData.h; sourceTree = "<group>"; };
+		6452D53D27DA27DB00E5AFB4 /* fileio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = fileio.cpp; path = ../uoxserver/fileio.cpp; sourceTree = "<group>"; };
+		6452D53E27DA27DB00E5AFB4 /* cWeather.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cWeather.cpp; path = ../uoxserver/cWeather.cpp; sourceTree = "<group>"; };
+		6452D53F27DA27DB00E5AFB4 /* ObjectFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ObjectFactory.cpp; path = ../uoxserver/ObjectFactory.cpp; sourceTree = "<group>"; };
+		6452D54027DA27DB00E5AFB4 /* UOXJSMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXJSMethods.h; path = ../uoxserver/UOXJSMethods.h; sourceTree = "<group>"; };
+		6452D54127DA27DB00E5AFB4 /* msgboard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = msgboard.cpp; path = ../uoxserver/msgboard.cpp; sourceTree = "<group>"; };
+		6452D54227DA27DB00E5AFB4 /* wholist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wholist.h; path = ../uoxserver/wholist.h; sourceTree = "<group>"; };
+		6452D54327DA27DB00E5AFB4 /* UOXStdHeaders.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXStdHeaders.h; path = ../uoxserver/UOXStdHeaders.h; sourceTree = "<group>"; };
+		6452D54427DA27DB00E5AFB4 /* cmdtable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cmdtable.cpp; path = ../uoxserver/cmdtable.cpp; sourceTree = "<group>"; };
+		6452D54527DA27DB00E5AFB4 /* jail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = jail.cpp; path = ../uoxserver/jail.cpp; sourceTree = "<group>"; };
+		6452D54627DA27DB00E5AFB4 /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ai.cpp; path = ../uoxserver/ai.cpp; sourceTree = "<group>"; };
+		6452D54727DA27DB00E5AFB4 /* CPacketSend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CPacketSend.h; path = ../uoxserver/CPacketSend.h; sourceTree = "<group>"; };
+		6452D54827DA27DB00E5AFB4 /* magic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = magic.h; path = ../uoxserver/magic.h; sourceTree = "<group>"; };
+		6452D54927DA27DB00E5AFB4 /* fileio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fileio.h; path = ../uoxserver/fileio.h; sourceTree = "<group>"; };
+		6452D54A27DA27DB00E5AFB4 /* CJSMapping.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CJSMapping.cpp; path = ../uoxserver/CJSMapping.cpp; sourceTree = "<group>"; };
+		6452D54B27DA27DB00E5AFB4 /* movement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = movement.cpp; path = ../uoxserver/movement.cpp; sourceTree = "<group>"; };
+		6452D54C27DA27DB00E5AFB4 /* cChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cChar.h; path = ../uoxserver/cChar.h; sourceTree = "<group>"; };
+		6452D54D27DA27DB00E5AFB4 /* queue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = queue.cpp; path = ../uoxserver/queue.cpp; sourceTree = "<group>"; };
+		6452D54E27DA27DB00E5AFB4 /* scriptc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scriptc.h; path = ../uoxserver/scriptc.h; sourceTree = "<group>"; };
+		6452D54F27DA27DB00E5AFB4 /* IDXMul.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = IDXMul.hpp; path = ../uoxserver/IDXMul.hpp; sourceTree = "<group>"; };
+		6452D55027DA27DB00E5AFB4 /* UOPData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UOPData.cpp; path = ../uoxserver/UOPData.cpp; sourceTree = "<group>"; };
+		6452D55127DA27DB00E5AFB4 /* CJSEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CJSEngine.h; path = ../uoxserver/CJSEngine.h; sourceTree = "<group>"; };
+		6452D55227DA27DB00E5AFB4 /* cdice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cdice.h; path = ../uoxserver/cdice.h; sourceTree = "<group>"; };
+		6452D55327DA27DB00E5AFB4 /* GenericList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericList.h; path = ../uoxserver/GenericList.h; sourceTree = "<group>"; };
+		6452D55427DA27DB00E5AFB4 /* cServerDefinitions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cServerDefinitions.h; path = ../uoxserver/cServerDefinitions.h; sourceTree = "<group>"; };
+		6452D55527DA27DB00E5AFB4 /* MultiMul.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultiMul.cpp; path = ../uoxserver/MultiMul.cpp; sourceTree = "<group>"; };
+		6452D55627DA27DB00E5AFB4 /* cSkillClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cSkillClass.h; path = ../uoxserver/cSkillClass.h; sourceTree = "<group>"; };
+		6452D55727DA27DB00E5AFB4 /* CPacketReceive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CPacketReceive.cpp; path = ../uoxserver/CPacketReceive.cpp; sourceTree = "<group>"; };
+		6452D55827DA27DB00E5AFB4 /* MultiMul.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = MultiMul.hpp; path = ../uoxserver/MultiMul.hpp; sourceTree = "<group>"; };
+		6452D55927DA27DB00E5AFB4 /* scriptc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = scriptc.cpp; path = ../uoxserver/scriptc.cpp; sourceTree = "<group>"; };
+		6452D55A27DA27DB00E5AFB4 /* ConfigOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigOS.h; path = ../uoxserver/ConfigOS.h; sourceTree = "<group>"; };
+		6452D55B27DA27DB00E5AFB4 /* UOXJSPropertySpecs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UOXJSPropertySpecs.h; path = ../uoxserver/UOXJSPropertySpecs.h; sourceTree = "<group>"; };
+		6452D55C27DA27DB00E5AFB4 /* network.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = network.cpp; path = ../uoxserver/network.cpp; sourceTree = "<group>"; };
+		6452D5B027DA33AA00E5AFB4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		6452D5B127DA33C900E5AFB4 /* libjsengine.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjsengine.a; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6452D4A327D9B5D600E5AFB4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6452D5B327DA33D100E5AFB4 /* libz.tbd in Frameworks */,
+				6452D5B227DA33C900E5AFB4 /* libjsengine.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6452D49D27D9B5D600E5AFB4 = {
+			isa = PBXGroup;
+			children = (
+				6452D4B027DA26EE00E5AFB4 /* source */,
+				6452D4A727D9B5D600E5AFB4 /* Products */,
+				6452D5AF27DA33AA00E5AFB4 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		6452D4A727D9B5D600E5AFB4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6452D4A627D9B5D600E5AFB4 /* uox */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6452D4B027DA26EE00E5AFB4 /* source */ = {
+			isa = PBXGroup;
+			children = (
+				6452D55A27DA27DB00E5AFB4 /* ConfigOS.h */,
+				6452D55327DA27DB00E5AFB4 /* GenericList.h */,
+				6452D52027DA27DB00E5AFB4 /* Prerequisites.h */,
+				6452D50127DA27DA00E5AFB4 /* uox3.cpp */,
+				6452D54327DA27DB00E5AFB4 /* UOXStdHeaders.h */,
+				6452D4B827DA274B00E5AFB4 /* Utility */,
+				6452D4B727DA274300E5AFB4 /* UOData */,
+				6452D4B627DA273A00E5AFB4 /* Subsystem */,
+				6452D4B527DA272D00E5AFB4 /* Configuration */,
+				6452D4B427DA272300E5AFB4 /* Other */,
+				6452D4B327DA271A00E5AFB4 /* Network */,
+				6452D4B227DA270F00E5AFB4 /* JS Support */,
+				6452D4B127DA270400E5AFB4 /* Base Objects */,
+			);
+			name = source;
+			sourceTree = "<group>";
+		};
+		6452D4B127DA270400E5AFB4 /* Base Objects */ = {
+			isa = PBXGroup;
+			children = (
+				6452D4D627DA27DA00E5AFB4 /* townregion.cpp */,
+				6452D54D27DA27DB00E5AFB4 /* queue.cpp */,
+				6452D4C827DA27DA00E5AFB4 /* cSpawnRegion.cpp */,
+				6452D52627DA27DB00E5AFB4 /* cThreadQueue.cpp */,
+				6452D52327DA27DB00E5AFB4 /* cBaseobject.cpp */,
+				6452D4CF27DA27DA00E5AFB4 /* cBaseObject.h */,
+				6452D53F27DA27DB00E5AFB4 /* ObjectFactory.cpp */,
+				6452D4E327DA27DA00E5AFB4 /* ObjectFactory.h */,
+				6452D4D727DA27DA00E5AFB4 /* cChar.cpp */,
+				6452D54C27DA27DB00E5AFB4 /* cChar.h */,
+				6452D53B27DA27DB00E5AFB4 /* cConsole.cpp */,
+				6452D4DB27DA27DA00E5AFB4 /* cConsole.h */,
+				6452D50427DA27DA00E5AFB4 /* cGuild.cpp */,
+				6452D53227DA27DB00E5AFB4 /* cGuild.h */,
+				6452D51527DA27DB00E5AFB4 /* cItem.cpp */,
+				6452D4D427DA27DA00E5AFB4 /* cItem.h */,
+				6452D4D027DA27DA00E5AFB4 /* cMultiObj.cpp */,
+				6452D53327DA27DB00E5AFB4 /* cMultiObj.h */,
+				6452D4E527DA27DA00E5AFB4 /* cThreadQueue.h */,
+				6452D50B27DA27DA00E5AFB4 /* funcdecl.h */,
+				6452D4C027DA27DA00E5AFB4 /* PageVector.h */,
+				6452D52927DA27DB00E5AFB4 /* speech.h */,
+				6452D4DD27DA27DA00E5AFB4 /* uoxstruct.h */,
+			);
+			name = "Base Objects";
+			sourceTree = "<group>";
+		};
+		6452D4B227DA270F00E5AFB4 /* JS Support */ = {
+			isa = PBXGroup;
+			children = (
+				6452D51927DA27DB00E5AFB4 /* cScript.cpp */,
+				6452D4F627DA27DA00E5AFB4 /* cScript.h */,
+				6452D4BE27DA27DA00E5AFB4 /* CJSEngine.cpp */,
+				6452D55127DA27DB00E5AFB4 /* CJSEngine.h */,
+				6452D54A27DA27DB00E5AFB4 /* CJSMapping.cpp */,
+				6452D4C527DA27DA00E5AFB4 /* CJSMapping.h */,
+				6452D51027DA27DB00E5AFB4 /* JSEncapsulate.cpp */,
+				6452D4F527DA27DA00E5AFB4 /* JSEncapsulate.h */,
+				6452D51E27DA27DB00E5AFB4 /* SEFunctions.cpp */,
+				6452D51327DA27DB00E5AFB4 /* SEFunctions.h */,
+				6452D51C27DA27DB00E5AFB4 /* UOXJSClasses.h */,
+				6452D51D27DA27DB00E5AFB4 /* UOXJSMethods.cpp */,
+				6452D54027DA27DB00E5AFB4 /* UOXJSMethods.h */,
+				6452D4B927DA27DA00E5AFB4 /* UOXJSPropertyEnums.h */,
+				6452D4CA27DA27DA00E5AFB4 /* UOXJSPropertyFuncs.cpp */,
+				6452D4FA27DA27DA00E5AFB4 /* UOXJSPropertyFuncs.h */,
+				6452D55B27DA27DB00E5AFB4 /* UOXJSPropertySpecs.h */,
+			);
+			name = "JS Support";
+			sourceTree = "<group>";
+		};
+		6452D4B327DA271A00E5AFB4 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				6452D55727DA27DB00E5AFB4 /* CPacketReceive.cpp */,
+				6452D51F27DA27DB00E5AFB4 /* CPacketReceive.h */,
+				6452D4FB27DA27DA00E5AFB4 /* CPacketSend.cpp */,
+				6452D54727DA27DB00E5AFB4 /* CPacketSend.h */,
+				6452D4FC27DA27DA00E5AFB4 /* cSocket.cpp */,
+				6452D4EE27DA27DA00E5AFB4 /* cSocket.h */,
+				6452D51827DA27DB00E5AFB4 /* IP4Address.cpp */,
+				6452D4DC27DA27DA00E5AFB4 /* IP4Address.hpp */,
+				6452D55C27DA27DB00E5AFB4 /* network.cpp */,
+				6452D4BD27DA27DA00E5AFB4 /* network.h */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
+		6452D4B427DA272300E5AFB4 /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				6452D54627DA27DB00E5AFB4 /* ai.cpp */,
+				6452D4E827DA27DA00E5AFB4 /* archive.cpp */,
+				6452D4C427DA27DA00E5AFB4 /* calcfuncs.cpp */,
+				6452D4C927DA27DA00E5AFB4 /* cDice.cpp */,
+				6452D55227DA27DB00E5AFB4 /* cdice.h */,
+				6452D50F27DA27DB00E5AFB4 /* classes.h */,
+				6452D50827DA27DA00E5AFB4 /* cmdtable.h */,
+				6452D50627DA27DA00E5AFB4 /* cPlayerAction.cpp */,
+				6452D53827DA27DB00E5AFB4 /* cRaces.h */,
+				6452D4F927DA27DA00E5AFB4 /* CResponse.cpp */,
+				6452D52827DA27DB00E5AFB4 /* CResponse.h */,
+				6452D55627DA27DB00E5AFB4 /* cSkillClass.h */,
+				6452D4DF27DA27DA00E5AFB4 /* cSpawnRegion.h */,
+				6452D4E027DA27DA00E5AFB4 /* dist.cpp */,
+				6452D4E627DA27DA00E5AFB4 /* effect.cpp */,
+				6452D50D27DA27DA00E5AFB4 /* enums.h */,
+				6452D53D27DA27DB00E5AFB4 /* fileio.cpp */,
+				6452D54927DA27DB00E5AFB4 /* fileio.h */,
+				6452D52C27DA27DB00E5AFB4 /* findfuncs.cpp */,
+				6452D51127DA27DB00E5AFB4 /* gump.h */,
+				6452D4FF27DA27DA00E5AFB4 /* mapclasses.h */,
+				6452D4EC27DA27DA00E5AFB4 /* msgboard.h */,
+				6452D4F827DA27DA00E5AFB4 /* npcs.cpp */,
+				6452D4E227DA27DA00E5AFB4 /* pcmanage.cpp */,
+				6452D4F727DA27DA00E5AFB4 /* power.h */,
+				6452D4E727DA27DA00E5AFB4 /* resource.h */,
+				6452D4C727DA27DA00E5AFB4 /* townregion.h */,
+				6452D50927DA27DA00E5AFB4 /* typedefs.h */,
+				6452D4CD27DA27DA00E5AFB4 /* uox3.h */,
+			);
+			name = Other;
+			sourceTree = "<group>";
+		};
+		6452D4B527DA272D00E5AFB4 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				6452D53027DA27DB00E5AFB4 /* cVersionClass.cpp */,
+				6452D50027DA27DA00E5AFB4 /* cVersionClass.h */,
+				6452D4F227DA27DA00E5AFB4 /* cServerData.cpp */,
+				6452D53C27DA27DB00E5AFB4 /* cServerData.h */,
+				6452D53527DA27DB00E5AFB4 /* cServerDefinitions.cpp */,
+				6452D55427DA27DB00E5AFB4 /* cServerDefinitions.h */,
+				6452D4D327DA27DA00E5AFB4 /* Dictionary.cpp */,
+				6452D53927DA27DB00E5AFB4 /* Dictionary.h */,
+				6452D55927DA27DB00E5AFB4 /* scriptc.cpp */,
+				6452D54E27DA27DB00E5AFB4 /* scriptc.h */,
+				6452D4E127DA27DA00E5AFB4 /* ssection.cpp */,
+				6452D4FD27DA27DA00E5AFB4 /* ssection.h */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		6452D4B627DA273A00E5AFB4 /* Subsystem */ = {
+			isa = PBXGroup;
+			children = (
+				6452D54127DA27DB00E5AFB4 /* msgboard.cpp */,
+				6452D52B27DA27DB00E5AFB4 /* CGump.cpp */,
+				6452D51627DA27DB00E5AFB4 /* boats.cpp */,
+				6452D4EB27DA27DA00E5AFB4 /* books.cpp */,
+				6452D50E27DA27DB00E5AFB4 /* cAccountClass.cpp */,
+				6452D4C227DA27DA00E5AFB4 /* cHTMLSystem.cpp */,
+				6452D54427DA27DB00E5AFB4 /* cmdtable.cpp */,
+				6452D4F027DA27DA00E5AFB4 /* combat.cpp */,
+				6452D4C127DA27DA00E5AFB4 /* commands.cpp */,
+				6452D4D227DA27DA00E5AFB4 /* cRaces.cpp */,
+				6452D53E27DA27DB00E5AFB4 /* cWeather.cpp */,
+				6452D52A27DA27DB00E5AFB4 /* gumps.cpp */,
+				6452D50C27DA27DA00E5AFB4 /* house.cpp */,
+				6452D4BC27DA27DA00E5AFB4 /* items.cpp */,
+				6452D54527DA27DB00E5AFB4 /* jail.cpp */,
+				6452D4CB27DA27DA00E5AFB4 /* lineofsight.cpp */,
+				6452D50527DA27DA00E5AFB4 /* magic.cpp */,
+				6452D51427DA27DB00E5AFB4 /* mapstuff.cpp */,
+				6452D54B27DA27DB00E5AFB4 /* movement.cpp */,
+				6452D52727DA27DB00E5AFB4 /* PartySystem.cpp */,
+				6452D52527DA27DB00E5AFB4 /* quantityfuncs.cpp */,
+				6452D51227DA27DB00E5AFB4 /* regions.cpp */,
+				6452D52D27DA27DB00E5AFB4 /* skills.cpp */,
+				6452D51A27DA27DB00E5AFB4 /* sound.cpp */,
+				6452D4D827DA27DA00E5AFB4 /* targeting.cpp */,
+				6452D4BA27DA27DA00E5AFB4 /* trade.cpp */,
+				6452D4E927DA27DA00E5AFB4 /* vendor.cpp */,
+				6452D4DA27DA27DA00E5AFB4 /* weight.cpp */,
+				6452D52227DA27DB00E5AFB4 /* wholist.cpp */,
+				6452D4CE27DA27DA00E5AFB4 /* worldmain.cpp */,
+				6452D4BB27DA27DA00E5AFB4 /* osunique.cpp */,
+				6452D52F27DA27DB00E5AFB4 /* osunique.hpp */,
+				6452D52E27DA27DB00E5AFB4 /* speech.cpp */,
+				6452D4E427DA27DA00E5AFB4 /* books.h */,
+				6452D4C627DA27DA00E5AFB4 /* cAccountClass.h */,
+				6452D53727DA27DB00E5AFB4 /* cEffects.h */,
+				6452D50227DA27DA00E5AFB4 /* cHTMLSystem.h */,
+				6452D4EA27DA27DA00E5AFB4 /* cMagic.h */,
+				6452D4CC27DA27DA00E5AFB4 /* combat.h */,
+				6452D4D127DA27DA00E5AFB4 /* commands.h */,
+				6452D4ED27DA27DA00E5AFB4 /* cWeather.hpp */,
+				6452D52427DA27DB00E5AFB4 /* jail.h */,
+				6452D54827DA27DB00E5AFB4 /* magic.h */,
+				6452D4C327DA27DA00E5AFB4 /* mapstuff.h */,
+				6452D53127DA27DB00E5AFB4 /* movement.h */,
+				6452D51727DA27DB00E5AFB4 /* PartySystem.h */,
+				6452D50727DA27DA00E5AFB4 /* regions.h */,
+				6452D52127DA27DB00E5AFB4 /* skills.h */,
+				6452D4D527DA27DA00E5AFB4 /* teffect.h */,
+				6452D4BF27DA27DA00E5AFB4 /* weight.h */,
+				6452D54227DA27DB00E5AFB4 /* wholist.h */,
+				6452D50A27DA27DA00E5AFB4 /* worldmain.h */,
+			);
+			name = Subsystem;
+			sourceTree = "<group>";
+		};
+		6452D4B727DA274300E5AFB4 /* UOData */ = {
+			isa = PBXGroup;
+			children = (
+				6452D53A27DA27DB00E5AFB4 /* IDXMul.cpp */,
+				6452D54F27DA27DB00E5AFB4 /* IDXMul.hpp */,
+				6452D55527DA27DB00E5AFB4 /* MultiMul.cpp */,
+				6452D55827DA27DB00E5AFB4 /* MultiMul.hpp */,
+				6452D55027DA27DB00E5AFB4 /* UOPData.cpp */,
+				6452D53627DA27DB00E5AFB4 /* UOPData.hpp */,
+				6452D4F327DA27DA00E5AFB4 /* UOPInterface.cpp */,
+				6452D4F427DA27DA00E5AFB4 /* UOPInterface.hpp */,
+			);
+			name = UOData;
+			sourceTree = "<group>";
+		};
+		6452D4B827DA274B00E5AFB4 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				6452D4F127DA27DA00E5AFB4 /* EventTimer.cpp */,
+				6452D50327DA27DA00E5AFB4 /* EventTimer.hpp */,
+				6452D4DE27DA27DA00E5AFB4 /* StringUtility.cpp */,
+				6452D51B27DA27DB00E5AFB4 /* StringUtility.hpp */,
+				6452D53427DA27DB00E5AFB4 /* strutil.cpp */,
+				6452D4EF27DA27DA00E5AFB4 /* strutil.hpp */,
+				6452D4D927DA27DA00E5AFB4 /* TimeUtility.cpp */,
+				6452D4FE27DA27DA00E5AFB4 /* TimeUtility.hpp */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
+		6452D5AF27DA33AA00E5AFB4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6452D5B127DA33C900E5AFB4 /* libjsengine.a */,
+				6452D5B027DA33AA00E5AFB4 /* libz.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6452D4A527D9B5D600E5AFB4 /* uox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6452D4AD27D9B5D600E5AFB4 /* Build configuration list for PBXNativeTarget "uox" */;
+			buildPhases = (
+				6452D4A227D9B5D600E5AFB4 /* Sources */,
+				6452D4A327D9B5D600E5AFB4 /* Frameworks */,
+				6452D4A427D9B5D600E5AFB4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = uox;
+			productName = uox;
+			productReference = 6452D4A627D9B5D600E5AFB4 /* uox */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6452D49E27D9B5D600E5AFB4 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1320;
+				TargetAttributes = {
+					6452D4A527D9B5D600E5AFB4 = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
+				};
+			};
+			buildConfigurationList = 6452D4A127D9B5D600E5AFB4 /* Build configuration list for PBXProject "uox" */;
+			compatibilityVersion = "Xcode 13.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6452D49D27D9B5D600E5AFB4;
+			productRefGroup = 6452D4A727D9B5D600E5AFB4 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6452D4A527D9B5D600E5AFB4 /* uox */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6452D4A227D9B5D600E5AFB4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6452D58427DA27DB00E5AFB4 /* cPlayerAction.cpp in Sources */,
+				6452D5AC27DA27DB00E5AFB4 /* CPacketReceive.cpp in Sources */,
+				6452D59A27DA27DB00E5AFB4 /* speech.cpp in Sources */,
+				6452D59427DA27DB00E5AFB4 /* cThreadQueue.cpp in Sources */,
+				6452D59D27DA27DB00E5AFB4 /* cServerDefinitions.cpp in Sources */,
+				6452D58027DA27DB00E5AFB4 /* cSocket.cpp in Sources */,
+				6452D59B27DA27DB00E5AFB4 /* cVersionClass.cpp in Sources */,
+				6452D57A27DA27DB00E5AFB4 /* EventTimer.cpp in Sources */,
+				6452D5A127DA27DB00E5AFB4 /* cWeather.cpp in Sources */,
+				6452D59527DA27DB00E5AFB4 /* PartySystem.cpp in Sources */,
+				6452D5A327DA27DB00E5AFB4 /* msgboard.cpp in Sources */,
+				6452D58727DA27DB00E5AFB4 /* JSEncapsulate.cpp in Sources */,
+				6452D57B27DA27DB00E5AFB4 /* cServerData.cpp in Sources */,
+				6452D58327DA27DB00E5AFB4 /* magic.cpp in Sources */,
+				6452D56027DA27DB00E5AFB4 /* CJSEngine.cpp in Sources */,
+				6452D58E27DA27DB00E5AFB4 /* sound.cpp in Sources */,
+				6452D56427DA27DB00E5AFB4 /* cSpawnRegion.cpp in Sources */,
+				6452D57627DA27DB00E5AFB4 /* archive.cpp in Sources */,
+				6452D5A027DA27DB00E5AFB4 /* fileio.cpp in Sources */,
+				6452D58127DA27DB00E5AFB4 /* uox3.cpp in Sources */,
+				6452D59227DA27DB00E5AFB4 /* cBaseobject.cpp in Sources */,
+				6452D56D27DA27DB00E5AFB4 /* cChar.cpp in Sources */,
+				6452D57C27DA27DB00E5AFB4 /* UOPInterface.cpp in Sources */,
+				6452D57127DA27DB00E5AFB4 /* StringUtility.cpp in Sources */,
+				6452D59C27DA27DB00E5AFB4 /* strutil.cpp in Sources */,
+				6452D57D27DA27DB00E5AFB4 /* npcs.cpp in Sources */,
+				6452D58927DA27DB00E5AFB4 /* mapstuff.cpp in Sources */,
+				6452D5AA27DA27DB00E5AFB4 /* UOPData.cpp in Sources */,
+				6452D57027DA27DB00E5AFB4 /* weight.cpp in Sources */,
+				6452D56A27DA27DB00E5AFB4 /* cRaces.cpp in Sources */,
+				6452D55E27DA27DB00E5AFB4 /* osunique.cpp in Sources */,
+				6452D58C27DA27DB00E5AFB4 /* IP4Address.cpp in Sources */,
+				6452D58D27DA27DB00E5AFB4 /* cScript.cpp in Sources */,
+				6452D57827DA27DB00E5AFB4 /* books.cpp in Sources */,
+				6452D59927DA27DB00E5AFB4 /* skills.cpp in Sources */,
+				6452D56E27DA27DB00E5AFB4 /* targeting.cpp in Sources */,
+				6452D5A727DA27DB00E5AFB4 /* CJSMapping.cpp in Sources */,
+				6452D58627DA27DB00E5AFB4 /* cAccountClass.cpp in Sources */,
+				6452D5AE27DA27DB00E5AFB4 /* network.cpp in Sources */,
+				6452D55D27DA27DB00E5AFB4 /* trade.cpp in Sources */,
+				6452D57F27DA27DB00E5AFB4 /* CPacketSend.cpp in Sources */,
+				6452D56927DA27DB00E5AFB4 /* cMultiObj.cpp in Sources */,
+				6452D57E27DA27DB00E5AFB4 /* CResponse.cpp in Sources */,
+				6452D59127DA27DB00E5AFB4 /* wholist.cpp in Sources */,
+				6452D56F27DA27DB00E5AFB4 /* TimeUtility.cpp in Sources */,
+				6452D59027DA27DB00E5AFB4 /* SEFunctions.cpp in Sources */,
+				6452D59827DA27DB00E5AFB4 /* findfuncs.cpp in Sources */,
+				6452D58227DA27DB00E5AFB4 /* cGuild.cpp in Sources */,
+				6452D56327DA27DB00E5AFB4 /* calcfuncs.cpp in Sources */,
+				6452D59627DA27DB00E5AFB4 /* gumps.cpp in Sources */,
+				6452D59327DA27DB00E5AFB4 /* quantityfuncs.cpp in Sources */,
+				6452D5A627DA27DB00E5AFB4 /* ai.cpp in Sources */,
+				6452D57927DA27DB00E5AFB4 /* combat.cpp in Sources */,
+				6452D55F27DA27DB00E5AFB4 /* items.cpp in Sources */,
+				6452D56B27DA27DB00E5AFB4 /* Dictionary.cpp in Sources */,
+				6452D58F27DA27DB00E5AFB4 /* UOXJSMethods.cpp in Sources */,
+				6452D56627DA27DB00E5AFB4 /* UOXJSPropertyFuncs.cpp in Sources */,
+				6452D57727DA27DB00E5AFB4 /* vendor.cpp in Sources */,
+				6452D56127DA27DB00E5AFB4 /* commands.cpp in Sources */,
+				6452D5A827DA27DB00E5AFB4 /* movement.cpp in Sources */,
+				6452D5A227DA27DB00E5AFB4 /* ObjectFactory.cpp in Sources */,
+				6452D58527DA27DB00E5AFB4 /* house.cpp in Sources */,
+				6452D56C27DA27DB00E5AFB4 /* townregion.cpp in Sources */,
+				6452D5A527DA27DB00E5AFB4 /* jail.cpp in Sources */,
+				6452D58827DA27DB00E5AFB4 /* regions.cpp in Sources */,
+				6452D59F27DA27DB00E5AFB4 /* cConsole.cpp in Sources */,
+				6452D57527DA27DB00E5AFB4 /* effect.cpp in Sources */,
+				6452D57427DA27DB00E5AFB4 /* pcmanage.cpp in Sources */,
+				6452D59E27DA27DB00E5AFB4 /* IDXMul.cpp in Sources */,
+				6452D57227DA27DB00E5AFB4 /* dist.cpp in Sources */,
+				6452D5AB27DA27DB00E5AFB4 /* MultiMul.cpp in Sources */,
+				6452D5A927DA27DB00E5AFB4 /* queue.cpp in Sources */,
+				6452D57327DA27DB00E5AFB4 /* ssection.cpp in Sources */,
+				6452D56527DA27DB00E5AFB4 /* cDice.cpp in Sources */,
+				6452D5A427DA27DB00E5AFB4 /* cmdtable.cpp in Sources */,
+				6452D58A27DA27DB00E5AFB4 /* cItem.cpp in Sources */,
+				6452D56727DA27DB00E5AFB4 /* lineofsight.cpp in Sources */,
+				6452D58B27DA27DB00E5AFB4 /* boats.cpp in Sources */,
+				6452D59727DA27DB00E5AFB4 /* CGump.cpp in Sources */,
+				6452D5AD27DA27DB00E5AFB4 /* scriptc.cpp in Sources */,
+				6452D56227DA27DB00E5AFB4 /* cHTMLSystem.cpp in Sources */,
+				6452D56827DA27DB00E5AFB4 /* worldmain.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		6452D4AB27D9B5D600E5AFB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6452D4AC27D9B5D600E5AFB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6452D4AE27D9B5D600E5AFB4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = (
+					../uoxserver,
+					../support/jsengine,
+				);
+				WARNING_CFLAGS = "-Wno-shift-negative-value";
+			};
+			name = Debug;
+		};
+		6452D4AF27D9B5D600E5AFB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = CF264WE69M;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = (
+					../uoxserver,
+					../support/jsengine,
+				);
+				WARNING_CFLAGS = "-Wno-shift-negative-value";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6452D4A127D9B5D600E5AFB4 /* Build configuration list for PBXProject "uox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6452D4AB27D9B5D600E5AFB4 /* Debug */,
+				6452D4AC27D9B5D600E5AFB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6452D4AD27D9B5D600E5AFB4 /* Build configuration list for PBXNativeTarget "uox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6452D4AE27D9B5D600E5AFB4 /* Debug */,
+				6452D4AF27D9B5D600E5AFB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6452D49E27D9B5D600E5AFB4 /* Project object */;
+}
