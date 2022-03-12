@@ -3,11 +3,8 @@
 #include <time.h>
 #include <string.h>
 #include <stdio.h>
-#if defined(__linux__)
-using rsize_t = size_t;
-#endif
 
-#if defined(__linux__)
+#if !defined(_WIN32)
 using rsize_t = size_t;
 #endif
 

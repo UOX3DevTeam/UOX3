@@ -3185,7 +3185,7 @@ bool CSpawnItem::HandleSpawnContainer( void )
 				{
 					// Spawn one instance of EACH entry in the list
 					std::string listEntry = "";
-					for( int i = 0; i < itemListSize; i++ )
+					for( int i = 0; i < static_cast<int>(itemListSize); i++ )
 					{
 						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
 						STRINGLIST listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );

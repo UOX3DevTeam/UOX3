@@ -78,9 +78,9 @@
 #endif		// endif to _DEBUG
 
 #else       // A unix type system
-
+#if !defined(XP_UNIX)
 #define XP_UNIX            // JS API Requires we define OS we compile with
-
+#endif
 #ifdef __linux__
 
 #define PLATFORM LINUX

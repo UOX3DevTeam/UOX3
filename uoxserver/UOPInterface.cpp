@@ -90,7 +90,7 @@ std::tuple<std::uintmax_t,char*> UOP::loadUOP(const std::string& uopname,  std::
     }
     // we now have the file size
 
-    mapdata = new char[filesize] ;
+    mapdata = new char[static_cast<unsigned int>(filesize)] ;
 
     for (std::uint32_t i = 0 ; i<entries ; ++i){
         if (offsets[i].m_Offset != 0){

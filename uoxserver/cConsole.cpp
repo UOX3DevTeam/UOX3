@@ -226,14 +226,14 @@ CConsole& CConsole::operator<<( const char *outPut )
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 	std::string toDisplay = outPut;
-	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X )
+	if( ScrBuffInfo.dwCursorPosition.X + static_cast<int>(toDisplay.length()) > ScrBuffInfo.dwSize.X )
 	{
 		bool wrapDone = false;
 		while( !wrapDone )
 		{
 			GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 			SI32 diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
-			if( diff > toDisplay.length() )
+			if( diff > static_cast<int>(toDisplay.length()) )
 			{
 				std::cout << toDisplay;
 				wrapDone = true;

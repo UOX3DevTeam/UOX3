@@ -192,7 +192,7 @@ namespace oldstrutil {
 		if (pos == std::string::npos) {
 			return format ;
 		}
-		auto index = 0 ;
+		size_t index = 0 ;
 		while ( pos != std::string::npos) {
 			if (index >= values.size() ){
 				break;
@@ -238,7 +238,7 @@ namespace oldstrutil {
 	std::string indexSection(const std::string& value, std::uintmax_t sectionindex,const std::string& sep, std::string::size_type start , std::string::size_type end ){
 		auto sec = oldstrutil::sections(value,sep,start,end) ;
 		if (sec.size() <= sectionindex) {
-			return sec[sectionindex];
+			return sec[static_cast<const unsigned int>(sectionindex)];
 		}
 		throw std::runtime_error(oldstrutil::format("Section index %ul exceeded size %ul from sections %s",sectionindex,sec.size(),value.c_str()));
 	}

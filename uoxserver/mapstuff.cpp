@@ -1210,9 +1210,9 @@ bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool c
 					0x3FF8, 0x3FFB	// dirt
 				};
 
-				for( int i = 0; i < roadIDs.size(); i += 2 )
+				for( size_t i = 0; i < roadIDs.size(); i += 2 )
 				{
-					if( landID >= roadIDs[i] && landID <= roadIDs[static_cast<size_t>(i) + 1] )
+					if( landID >= roadIDs[i] && landID <= roadIDs[i + 1] )
 						return true;
 				}
 			}

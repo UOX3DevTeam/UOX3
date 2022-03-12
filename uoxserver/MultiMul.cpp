@@ -122,7 +122,7 @@ void MultiMul::load(const std::string &mulpath, const std::string &idxpath){
 	if (!mul.is_open()) {
 		throw std::runtime_error(std::string("Unable to open: ")+ mulpath) ;
 	}
-	for ( auto i = 0 ; i < size ; i++) {
+	for ( size_t i = 0 ; i < size ; i++) {
 		auto entry = idx[i] ;
 		if (entry.valid()) {
 			mul.seekg(entry.offset,std::ios::beg) ;

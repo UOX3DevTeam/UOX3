@@ -249,7 +249,7 @@ const IP4Address& IP4Address::bestMatch(const IP4Address &address){
 	}
 	auto matchcount = 0 ;
 	auto index = -1;
-	for (auto i = 0 ; i < _myIPs.size() ; i++){
+	for (size_t i = 0 ; i < _myIPs.size() ; i++){
 		auto count = 0 ;
 		for (auto j= 0 ; j<4 ; j++) {
 			if (_myIPs[i]._components[j] != address._components[j]) {

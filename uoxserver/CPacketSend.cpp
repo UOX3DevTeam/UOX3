@@ -4094,7 +4094,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				size_t numMembers = mGuild->NumMembers();
 
 				// First, look up the recruits to see who's online
-				for( auto i = 0; i < numRecruits; i++ )
+				for( auto i = 0; i < static_cast<int>(numRecruits); i++ )
 				{
 					SERIAL recruitSerial = mGuild->RecruitNumber( i );
 					CChar * guildRecruit = calcCharObjFromSer( recruitSerial );
@@ -4128,7 +4128,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				}
 
 				// Then, look up the guild members to see who's online
-				for( auto i = 0; i < numMembers; i++ )
+				for( auto i = 0; i < static_cast<int>(numMembers); i++ )
 				{
 					SERIAL memberSerial = mGuild->MemberNumber( i );
 					CChar * guildMember = calcCharObjFromSer( memberSerial );

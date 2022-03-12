@@ -31,10 +31,10 @@ void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 	auto i = 0;
 	pass1 = "";
 	auto pass0Len = pass0.length();
-	while( i < pass0Len && pass0[i] != '/' )
+	while( i < static_cast<int>(pass0Len) && pass0[i] != '/' )
 		++i;
 	pass1 = pass0.substr( 0, i );
-	if( i < pass0Len )
+	if( i < static_cast<int>(pass0Len) )
 		pass2 = pass0.substr( i );
 }
 

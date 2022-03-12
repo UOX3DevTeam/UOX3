@@ -1275,7 +1275,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 								if( subUTag == "ITEMS" )
 								{
 									auto csecs = oldstrutil::sections( subData, "," );
-									for( int i = 0; i < csecs.size() - 1; i++ )
+									for( int i = 0; i < static_cast<int>(csecs.size()) - 1; i++ )
 									{
 										UI16 temp = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
 										//allowedEquipment.push_back( temp );
@@ -1319,7 +1319,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 								if( subUTag == "ITEMS" )
 								{
 									auto csecs = oldstrutil::sections( subData, "," );
-									for( int i = 0; i < csecs.size() - 1; i++ )
+									for( int i = 0; i < static_cast<int>(csecs.size()) - 1; i++ )
 									{
 										UI16 temp = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[i], "//" )), nullptr, 0));
 										//bannedEquipment.push_back( temp );
