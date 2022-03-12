@@ -8,6 +8,19 @@ cmake_minimum_required(VERSION 3.12.3)
 project(jsengine VERSION 1.7 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 11)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if (WIN32)
+set(CMAKE_C_FLAGS_RELEASE "/O2")
+elseif (APPLE)
+set(CMAKE_C_FLAGS_RELEASE "-Os")
+else ()
+set(CMAKE_C_FLAGS_RELEASE "-O2")
+endif()
+
 add_library(jsengine 
 	STATIC
 		jsapi.c
@@ -61,9 +74,7 @@ target_link_libraries(jsengine
 		
 target_compile_options(jsengine 
 	PRIVATE
-		$<$<PLATFORM_ID:Windows>:/O2>
 		$<$<PLATFORM_ID:Windows>:/W3>
-		$<$<PLATFORM_ID:Windows>:/MT>
 		$<$<PLATFORM_ID:Windows>:/wd4090>
 		$<$<PLATFORM_ID:Windows>:/wd5105>
 		$<$<PLATFORM_ID:Windows>:/wd4047>
@@ -74,14 +85,12 @@ target_compile_options(jsengine
 		$<$<PLATFORM_ID:Windows>:/wd4311>
 		$<$<PLATFORM_ID:Windows>:/wd4146>
 
-		$<$<PLATFORM_ID:Linux>:-O2>
 		$<$<PLATFORM_ID:Linux>:-Wno-format>
 		$<$<PLATFORM_ID:Linux>:-Wno-unused-but-set-variable>
 		$<$<PLATFORM_ID:Linux>:-Wno-unused-local-typedefs>
 		$<$<PLATFORM_ID:Linux>:-Wno-pointer-sign>
 		$<$<PLATFORM_ID:Linux>:-Wno-switch>
 
-		$<$<PLATFORM_ID:Darwin>:-O2>
 		$<$<PLATFORM_ID:Darwin>:-Wno-format>
 		$<$<PLATFORM_ID:Darwin>:-Wno-unused-local-typedefs>
 		$<$<PLATFORM_ID:Darwin>:-Wno-pointer-sign>
