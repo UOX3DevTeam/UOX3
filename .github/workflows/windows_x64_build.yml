@@ -22,5 +22,11 @@ jobs:
           arch: x64
       - name: cmake and build
         run: |
-          cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=Release .
-          nmake
+          mkdir build
+          cd build
+          cmake -G "NMake Makefiles" ..
+          cmake --build .
+          cd ..
+          del /F/Q//S build\*.*
+          rmdir /Q/S build
+          
