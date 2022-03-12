@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\uoxserver\ai.cpp" />
+    <ClCompile Include="..\uoxserver\archive.cpp" />
+    <ClCompile Include="..\uoxserver\boats.cpp" />
+    <ClCompile Include="..\uoxserver\books.cpp" />
+    <ClCompile Include="..\uoxserver\cAccountClass.cpp" />
+    <ClCompile Include="..\uoxserver\calcfuncs.cpp" />
+    <ClCompile Include="..\uoxserver\cBaseobject.cpp" />
+    <ClCompile Include="..\uoxserver\cChar.cpp" />
+    <ClCompile Include="..\uoxserver\cConsole.cpp" />
+    <ClCompile Include="..\uoxserver\cDice.cpp" />
+    <ClCompile Include="..\uoxserver\cGuild.cpp" />
+    <ClCompile Include="..\uoxserver\CGump.cpp" />
+    <ClCompile Include="..\uoxserver\cHTMLSystem.cpp" />
+    <ClCompile Include="..\uoxserver\cItem.cpp" />
+    <ClCompile Include="..\uoxserver\CJSEngine.cpp" />
+    <ClCompile Include="..\uoxserver\CJSMapping.cpp" />
+    <ClCompile Include="..\uoxserver\cmdtable.cpp" />
+    <ClCompile Include="..\uoxserver\cMultiObj.cpp" />
+    <ClCompile Include="..\uoxserver\combat.cpp" />
+    <ClCompile Include="..\uoxserver\commands.cpp" />
+    <ClCompile Include="..\uoxserver\CPacketReceive.cpp" />
+    <ClCompile Include="..\uoxserver\CPacketSend.cpp" />
+    <ClCompile Include="..\uoxserver\cPlayerAction.cpp" />
+    <ClCompile Include="..\uoxserver\cRaces.cpp" />
+    <ClCompile Include="..\uoxserver\CResponse.cpp" />
+    <ClCompile Include="..\uoxserver\cScript.cpp" />
+    <ClCompile Include="..\uoxserver\cServerData.cpp" />
+    <ClCompile Include="..\uoxserver\cServerDefinitions.cpp" />
+    <ClCompile Include="..\uoxserver\cSocket.cpp" />
+    <ClCompile Include="..\uoxserver\cSpawnRegion.cpp" />
+    <ClCompile Include="..\uoxserver\cThreadQueue.cpp" />
+    <ClCompile Include="..\uoxserver\cVersionClass.cpp" />
+    <ClCompile Include="..\uoxserver\cWeather.cpp" />
+    <ClCompile Include="..\uoxserver\Dictionary.cpp" />
+    <ClCompile Include="..\uoxserver\dist.cpp" />
+    <ClCompile Include="..\uoxserver\effect.cpp" />
+    <ClCompile Include="..\uoxserver\EventTimer.cpp" />
+    <ClCompile Include="..\uoxserver\fileio.cpp" />
+    <ClCompile Include="..\uoxserver\findfuncs.cpp" />
+    <ClCompile Include="..\uoxserver\gumps.cpp" />
+    <ClCompile Include="..\uoxserver\house.cpp" />
+    <ClCompile Include="..\uoxserver\IDXMul.cpp" />
+    <ClCompile Include="..\uoxserver\IP4Address.cpp" />
+    <ClCompile Include="..\uoxserver\items.cpp" />
+    <ClCompile Include="..\uoxserver\jail.cpp" />
+    <ClCompile Include="..\uoxserver\JSEncapsulate.cpp" />
+    <ClCompile Include="..\uoxserver\lineofsight.cpp" />
+    <ClCompile Include="..\uoxserver\magic.cpp" />
+    <ClCompile Include="..\uoxserver\mapstuff.cpp" />
+    <ClCompile Include="..\uoxserver\movement.cpp" />
+    <ClCompile Include="..\uoxserver\msgboard.cpp" />
+    <ClCompile Include="..\uoxserver\MultiMul.cpp" />
+    <ClCompile Include="..\uoxserver\network.cpp" />
+    <ClCompile Include="..\uoxserver\npcs.cpp" />
+    <ClCompile Include="..\uoxserver\ObjectFactory.cpp" />
+    <ClCompile Include="..\uoxserver\osunique.cpp" />
+    <ClCompile Include="..\uoxserver\PartySystem.cpp" />
+    <ClCompile Include="..\uoxserver\pcmanage.cpp" />
+    <ClCompile Include="..\uoxserver\quantityfuncs.cpp" />
+    <ClCompile Include="..\uoxserver\queue.cpp" />
+    <ClCompile Include="..\uoxserver\regions.cpp" />
+    <ClCompile Include="..\uoxserver\scriptc.cpp" />
+    <ClCompile Include="..\uoxserver\SEFunctions.cpp" />
+    <ClCompile Include="..\uoxserver\skills.cpp" />
+    <ClCompile Include="..\uoxserver\sound.cpp" />
+    <ClCompile Include="..\uoxserver\speech.cpp" />
+    <ClCompile Include="..\uoxserver\ssection.cpp" />
+    <ClCompile Include="..\uoxserver\StringUtility.cpp" />
+    <ClCompile Include="..\uoxserver\strutil.cpp" />
+    <ClCompile Include="..\uoxserver\targeting.cpp" />
+    <ClCompile Include="..\uoxserver\TimeUtility.cpp" />
+    <ClCompile Include="..\uoxserver\townregion.cpp" />
+    <ClCompile Include="..\uoxserver\trade.cpp" />
+    <ClCompile Include="..\uoxserver\UOPData.cpp" />
+    <ClCompile Include="..\uoxserver\UOPInterface.cpp" />
+    <ClCompile Include="..\uoxserver\uox3.cpp" />
+    <ClCompile Include="..\uoxserver\UOXJSMethods.cpp" />
+    <ClCompile Include="..\uoxserver\UOXJSPropertyFuncs.cpp" />
+    <ClCompile Include="..\uoxserver\vendor.cpp" />
+    <ClCompile Include="..\uoxserver\weight.cpp" />
+    <ClCompile Include="..\uoxserver\wholist.cpp" />
+    <ClCompile Include="..\uoxserver\worldmain.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\uoxserver\books.h" />
+    <ClInclude Include="..\uoxserver\cAccountClass.h" />
+    <ClInclude Include="..\uoxserver\cBaseObject.h" />
+    <ClInclude Include="..\uoxserver\cChar.h" />
+    <ClInclude Include="..\uoxserver\cConsole.h" />
+    <ClInclude Include="..\uoxserver\cdice.h" />
+    <ClInclude Include="..\uoxserver\cEffects.h" />
+    <ClInclude Include="..\uoxserver\cGuild.h" />
+    <ClInclude Include="..\uoxserver\cHTMLSystem.h" />
+    <ClInclude Include="..\uoxserver\cItem.h" />
+    <ClInclude Include="..\uoxserver\CJSEngine.h" />
+    <ClInclude Include="..\uoxserver\CJSMapping.h" />
+    <ClInclude Include="..\uoxserver\classes.h" />
+    <ClInclude Include="..\uoxserver\cMagic.h" />
+    <ClInclude Include="..\uoxserver\cmdtable.h" />
+    <ClInclude Include="..\uoxserver\cMultiObj.h" />
+    <ClInclude Include="..\uoxserver\combat.h" />
+    <ClInclude Include="..\uoxserver\commands.h" />
+    <ClInclude Include="..\uoxserver\ConfigOS.h" />
+    <ClInclude Include="..\uoxserver\CPacketReceive.h" />
+    <ClInclude Include="..\uoxserver\CPacketSend.h" />
+    <ClInclude Include="..\uoxserver\cRaces.h" />
+    <ClInclude Include="..\uoxserver\CResponse.h" />
+    <ClInclude Include="..\uoxserver\cScript.h" />
+    <ClInclude Include="..\uoxserver\cServerData.h" />
+    <ClInclude Include="..\uoxserver\cServerDefinitions.h" />
+    <ClInclude Include="..\uoxserver\cSkillClass.h" />
+    <ClInclude Include="..\uoxserver\cSocket.h" />
+    <ClInclude Include="..\uoxserver\cSpawnRegion.h" />
+    <ClInclude Include="..\uoxserver\cThreadQueue.h" />
+    <ClInclude Include="..\uoxserver\cVersionClass.h" />
+    <ClInclude Include="..\uoxserver\cWeather.hpp" />
+    <ClInclude Include="..\uoxserver\Dictionary.h" />
+    <ClInclude Include="..\uoxserver\enums.h" />
+    <ClInclude Include="..\uoxserver\EventTimer.hpp" />
+    <ClInclude Include="..\uoxserver\fileio.h" />
+    <ClInclude Include="..\uoxserver\funcdecl.h" />
+    <ClInclude Include="..\uoxserver\GenericList.h" />
+    <ClInclude Include="..\uoxserver\gump.h" />
+    <ClInclude Include="..\uoxserver\IDXMul.hpp" />
+    <ClInclude Include="..\uoxserver\IP4Address.hpp" />
+    <ClInclude Include="..\uoxserver\jail.h" />
+    <ClInclude Include="..\uoxserver\JSEncapsulate.h" />
+    <ClInclude Include="..\uoxserver\magic.h" />
+    <ClInclude Include="..\uoxserver\mapclasses.h" />
+    <ClInclude Include="..\uoxserver\mapstuff.h" />
+    <ClInclude Include="..\uoxserver\movement.h" />
+    <ClInclude Include="..\uoxserver\msgboard.h" />
+    <ClInclude Include="..\uoxserver\MultiMul.hpp" />
+    <ClInclude Include="..\uoxserver\network.h" />
+    <ClInclude Include="..\uoxserver\ObjectFactory.h" />
+    <ClInclude Include="..\uoxserver\osunique.hpp" />
+    <ClInclude Include="..\uoxserver\PageVector.h" />
+    <ClInclude Include="..\uoxserver\PartySystem.h" />
+    <ClInclude Include="..\uoxserver\power.h" />
+    <ClInclude Include="..\uoxserver\Prerequisites.h" />
+    <ClInclude Include="..\uoxserver\regions.h" />
+    <ClInclude Include="..\uoxserver\resource.h" />
+    <ClInclude Include="..\uoxserver\scriptc.h" />
+    <ClInclude Include="..\uoxserver\SEFunctions.h" />
+    <ClInclude Include="..\uoxserver\skills.h" />
+    <ClInclude Include="..\uoxserver\speech.h" />
+    <ClInclude Include="..\uoxserver\ssection.h" />
+    <ClInclude Include="..\uoxserver\StringUtility.hpp" />
+    <ClInclude Include="..\uoxserver\strutil.hpp" />
+    <ClInclude Include="..\uoxserver\teffect.h" />
+    <ClInclude Include="..\uoxserver\TimeUtility.hpp" />
+    <ClInclude Include="..\uoxserver\townregion.h" />
+    <ClInclude Include="..\uoxserver\typedefs.h" />
+    <ClInclude Include="..\uoxserver\UOPData.hpp" />
+    <ClInclude Include="..\uoxserver\UOPInterface.hpp" />
+    <ClInclude Include="..\uoxserver\uox3.h" />
+    <ClInclude Include="..\uoxserver\UOXJSClasses.h" />
+    <ClInclude Include="..\uoxserver\UOXJSMethods.h" />
+    <ClInclude Include="..\uoxserver\UOXJSPropertyEnums.h" />
+    <ClInclude Include="..\uoxserver\UOXJSPropertyFuncs.h" />
+    <ClInclude Include="..\uoxserver\UOXJSPropertySpecs.h" />
+    <ClInclude Include="..\uoxserver\UOXStdHeaders.h" />
+    <ClInclude Include="..\uoxserver\uoxstruct.h" />
+    <ClInclude Include="..\uoxserver\weight.h" />
+    <ClInclude Include="..\uoxserver\wholist.h" />
+    <ClInclude Include="..\uoxserver\worldmain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\support\jsengine\jsengine.vcxproj">
+      <Project>{15699b09-1842-469e-9416-61998f37f798}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\support\zlib\zlib.vcxproj">
+      <Project>{cc7a5594-dd11-4c1c-b929-df07f9b80fbb}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\uoxserver\uox3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\uoxserver\uox3.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{09dc0316-a34c-48c0-8ac4-c84dbd89d84e}</ProjectGuid>
+    <RootNamespace>uox</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions> /J</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories>..\uoxserver;..\support\zlib;..\support\jsengine;..\uoxserver\resource</AdditionalIncludeDirectories>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions> /J</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories>..\uoxserver;..\support\zlib;..\support\jsengine;..\uoxserver\resource</AdditionalIncludeDirectories>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <StringPooling>true</StringPooling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions> /J</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories>..\uoxserver;..\support\zlib;..\support\jsengine;..\uoxserver\resource</AdditionalIncludeDirectories>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <WarningLevel>Level3</WarningLevel>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions> /J</AdditionalOptions>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories>..\uoxserver;..\support\zlib;..\support\jsengine;..\uoxserver\resource</AdditionalIncludeDirectories>
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BrowseInformation>true</BrowseInformation>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <StringPooling>true</StringPooling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,571 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\Base Objects">
+      <UniqueIdentifier>{6f2beadd-1b4e-4bf1-b8c9-a4f7bf88c84d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\JS Support">
+      <UniqueIdentifier>{1df42d36-da8f-499f-9779-04216114c3dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Network">
+      <UniqueIdentifier>{83c5fbc9-9190-4c83-8e42-7e351f48d73d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Other">
+      <UniqueIdentifier>{670ebfa4-a19e-4af5-93b9-90c441772331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Subsystem">
+      <UniqueIdentifier>{12675314-5d50-4a58-b12a-5d9e7dca481a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UOData">
+      <UniqueIdentifier>{fa6e4de5-793d-4219-b6f6-90f44d607d05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utility">
+      <UniqueIdentifier>{36c44bb6-0629-428f-a177-50d44f80b153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Configuration">
+      <UniqueIdentifier>{3f3312cf-e6d8-46c9-a825-67ec845fcdc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Base Objects">
+      <UniqueIdentifier>{c69e0ee4-c30e-407e-bce4-183f2abe6c3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\JS Support">
+      <UniqueIdentifier>{2d399577-2f4b-4eca-ba2d-6721f500bbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Network">
+      <UniqueIdentifier>{310ce084-d4c7-4f36-8b20-3045f62ff181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Other">
+      <UniqueIdentifier>{498120c5-1ac0-4765-bd64-baef942ba55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Subsystem">
+      <UniqueIdentifier>{744ece1f-1be3-4017-9f94-83a3336fde7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UOData">
+      <UniqueIdentifier>{4a0116ba-6937-4540-936e-2e41f9310100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utility">
+      <UniqueIdentifier>{c7062a1b-7ea2-4b35-9484-c83d74bd9931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Configuration">
+      <UniqueIdentifier>{e6eee898-0bc3-41d0-81cb-e821baaad7b2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\uoxserver\uox3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\strutil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cBaseobject.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cChar.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cConsole.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cGuild.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cItem.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cSpawnRegion.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cThreadQueue.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\queue.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\townregion.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CJSEngine.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CJSMapping.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cScript.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\JSEncapsulate.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\SEFunctions.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\UOXJSMethods.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\UOXJSPropertyFuncs.cpp">
+      <Filter>Source Files\JS Support</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cSocket.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CPacketReceive.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CPacketSend.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\IP4Address.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\network.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\EventTimer.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\StringUtility.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\TimeUtility.cpp">
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\IDXMul.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\MultiMul.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\UOPData.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\UOPInterface.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\boats.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\books.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cAccountClass.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CGump.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cHTMLSystem.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cmdtable.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\combat.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\commands.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cRaces.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cServerData.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cWeather.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\gumps.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\house.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\items.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\jail.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\lineofsight.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\magic.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\mapstuff.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\movement.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\msgboard.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\PartySystem.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\quantityfuncs.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\regions.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\skills.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\sound.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\targeting.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\trade.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\vendor.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\weight.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\wholist.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\worldmain.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cServerDefinitions.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\Dictionary.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cVersionClass.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\ssection.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\scriptc.cpp">
+      <Filter>Source Files\Configuration</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\ai.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\archive.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\calcfuncs.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cDice.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cPlayerAction.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\CResponse.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\dist.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\effect.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\fileio.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\findfuncs.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\npcs.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\pcmanage.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\cMultiObj.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\ObjectFactory.cpp">
+      <Filter>Source Files\Base Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\osunique.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\uoxserver\speech.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\uoxserver\ConfigOS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\GenericList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\ObjectFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\osunique.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\Prerequisites.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\strutil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXStdHeaders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cBaseObject.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cChar.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cConsole.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cGuild.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cItem.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cMultiObj.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cSocket.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cThreadQueue.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\funcdecl.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\PageVector.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\speech.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\uoxstruct.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\CJSEngine.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\CJSMapping.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cScript.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\JSEncapsulate.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\SEFunctions.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXJSClasses.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXJSMethods.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXJSPropertyEnums.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXJSPropertyFuncs.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOXJSPropertySpecs.h">
+      <Filter>Header Files\JS Support</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\CPacketReceive.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\CPacketSend.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\IP4Address.hpp">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\network.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\EventTimer.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\StringUtility.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\TimeUtility.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\IDXMul.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\MultiMul.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOPData.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\UOPInterface.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\books.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cAccountClass.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cEffects.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cHTMLSystem.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cMagic.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\combat.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\commands.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cWeather.hpp">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\jail.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\magic.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\mapstuff.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\movement.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\PartySystem.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\regions.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\skills.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\teffect.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\weight.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\wholist.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\worldmain.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cServerData.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cServerDefinitions.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\Dictionary.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\scriptc.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\ssection.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cdice.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\classes.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cmdtable.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cRaces.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\CResponse.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cSkillClass.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cSpawnRegion.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\enums.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\fileio.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\gump.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\mapclasses.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\msgboard.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\power.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\resource.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\townregion.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\typedefs.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\uox3.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uoxserver\cVersionClass.h">
+      <Filter>Header Files\Configuration</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\uoxserver\uox3.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\uoxserver\uox3.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
