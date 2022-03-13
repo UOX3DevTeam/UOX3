@@ -26,7 +26,4 @@ jobs:
           cd build
           cmake -G "NMake Makefiles" ..
           cmake --build .
-          cd ..
-          del /F/Q/S build\*.*
-          rmdir /Q/S build
           
