@@ -373,13 +373,13 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 		{
 			char search1[10];
-			strcopy( search1,10, "wood" );
+			strcpy( search1, "wood" );
 			if( strstr( tile.Name(), search1 ) )
 				tileType = TT_WOODEN;
-			strcopy( search1,10, "ston" );
+			strcpy( search1, "ston" );
 			if( strstr( tile.Name(), search1 ) )
 				tileType = TT_STONE;
-			strcopy( search1,10, "gras" );
+			strcpy( search1, "gras" );
 			if( strstr( tile.Name(), search1 ) )
 				tileType = TT_GRASS;
 		}

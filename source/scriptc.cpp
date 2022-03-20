@@ -10,7 +10,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool get_modification_date( const std::string& filename, time_t* mod_time )
@@ -81,8 +81,7 @@ void Script::reload( bool disp )
 		}
 		else
 		{
-			char buffer[200];
-			std::cerr<< "Cannot open "<< filename<<": "<< std::string(mstrerror(buffer,200, errno )) <<std::endl;
+			std::cerr<< "Cannot open "<< filename<<": "<< std::string(strerror( errno )) <<std::endl;
 			errorState = true;
 		}
 	}
@@ -103,8 +102,7 @@ Script::Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp 
 	filename = _filename;
 	if( !get_modification_date( filename, &last_modification ) )
 	{
-		char buffer[200];
-		std::cerr<< "Cannot open "<< filename<< ": "<< std::string(mstrerror( buffer,200,errno )) << std::endl;;
+		std::cerr<< "Cannot open "<< filename<< ": "<< std::string(strerror( errno )) << std::endl;;
 		errorState = true;
 	}
 	reload( disp );

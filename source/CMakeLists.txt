@@ -81,7 +81,6 @@ add_library(uox
 		IP4Address.cpp
 		TimeUtility.cpp
 		EventTimer.cpp
-		osunique.cpp
 )
 
 target_include_directories(uox

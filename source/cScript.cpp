@@ -11,7 +11,7 @@
 #include "JSEncapsulate.h"
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -2738,7 +2738,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	JSString *strSpeech = nullptr;
 
 	char *lwrSpeech = new char[strlen(mySpeech)+1];
-	strcopy( lwrSpeech, strlen(mySpeech) + 1, mySpeech );
+	strcpy( lwrSpeech, mySpeech );
 	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
 	delete[] lwrSpeech;
 

@@ -23,7 +23,7 @@
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "mapstuff.h"
-#include "osunique.hpp"
+
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;
@@ -681,9 +681,8 @@ std::string CMultiObj::GetBuildTimestamp( void ) const
 	if( buildTimestamp > 0 )
 	{
 		char tempTimestamp[100];
-		struct tm curtime;
-		lcltime( buildTimestamp,curtime );
-		strftime( tempTimestamp, 50, "%F at %T", &curtime );
+		struct tm * curtime = std::localtime( &buildTimestamp );
+		strftime( tempTimestamp, 50, "%F at %T", curtime );
 		return tempTimestamp;
 	}
 	else
@@ -706,9 +705,8 @@ std::string CMultiObj::GetTradeTimestamp( void ) const
 	if( tradeTimestamp > 0 )
 	{
 		char tempTimestamp[100];
-		struct tm curtime;
-		lcltime( tradeTimestamp,curtime );
-		strftime( tempTimestamp, 50, "%F at %T", &curtime );
+		struct tm * curtime = std::localtime( &tradeTimestamp );
+		strftime( tempTimestamp, 50, "%F at %T", curtime );
 		return tempTimestamp;
 	}
 	else

@@ -27,7 +27,7 @@
 #include "ssection.h"
 #include "CPacketSend.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+
 
 cBooks *Books = nullptr;
 
@@ -400,8 +400,8 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 	memset( titleBuff, 0x00, 62 );
 	memset( authBuff, 0x00, 32 );
 
-	strncopy( titleBuff, 62,title.c_str(), 61 );
-	strncopy( authBuff,32, author.c_str(), 31 );
+	strncpy( titleBuff, title.c_str(), 61 );
+	strncpy( authBuff, author.c_str(), 31 );
 
 	std::ofstream file( fileName.c_str(), std::ios::out | std::ios::binary | std::ios::trunc );
 

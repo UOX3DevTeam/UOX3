@@ -62,7 +62,6 @@
     <ClInclude Include="..\source\MultiMul.hpp" />
     <ClInclude Include="..\source\network.h" />
     <ClInclude Include="..\source\ObjectFactory.h" />
-    <ClInclude Include="..\source\osunique.hpp" />
     <ClInclude Include="..\source\PageVector.h" />
     <ClInclude Include="..\source\PartySystem.h" />
     <ClInclude Include="..\source\power.h" />
@@ -149,7 +148,6 @@
     <ClCompile Include="..\source\network.cpp" />
     <ClCompile Include="..\source\npcs.cpp" />
     <ClCompile Include="..\source\ObjectFactory.cpp" />
-    <ClCompile Include="..\source\osunique.cpp" />
     <ClCompile Include="..\source\PartySystem.cpp" />
     <ClCompile Include="..\source\pcmanage.cpp" />
     <ClCompile Include="..\source\quantityfuncs.cpp" />
@@ -237,7 +235,7 @@
       <AdditionalOptions> /J</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
@@ -246,7 +244,6 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -256,32 +253,31 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
-      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+	  <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
       <AdditionalOptions> /J</AdditionalOptions>
+      <BrowseInformation>true</BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-
-      <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <EnablePREfast>false</EnablePREfast>
+      <ExceptionHandling>Sync</ExceptionHandling>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
-      <SupportJustMyCode>false</SupportJustMyCode>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <BrowseInformation>true</BrowseInformation>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
-      <ExceptionHandling>Sync</ExceptionHandling>
-
-      <StringPooling>true</StringPooling>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+     <AdditionalIncludeDirectories>..\source;..\zlib;..\spidermonkey</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
       <AdditionalDependencies> ws2_32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

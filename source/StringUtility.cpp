@@ -388,28 +388,19 @@ namespace oldstrutil {
 		return conversion.str()  ;
 	}
 	
-#if defined( _MSC_VER )
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#endif
 	// Decode a UTF8 string into a wstring
 	std::wstring stringToWstring( const std::string& t_str )
 	{
-
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
 		
 		// use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
 		try {
-			auto rvalue = converter.from_bytes(t_str);
-			return rvalue;
+			return converter.from_bytes(t_str);
 		}
 		catch( ... ) {
 			return L"";
 		}
 	}
-#if defined( _MSC_VER )
-#pragma warning(pop)
-#endif	
 
 	// "Encode" a wstring into UTF8, while retaining any special wide characters
 	std::string wStringToString( const std::wstring& t_str )
@@ -418,7 +409,7 @@ namespace oldstrutil {
 
 		std::string resultString;
 		for( size_t i = 0; i < stringLen; ++i )
-			resultString.push_back(static_cast<char>(t_str[i]));
+			resultString += t_str[i];
 
 		return resultString;
 	}

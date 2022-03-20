@@ -24,8 +24,6 @@
 #include "cBaseObject.h"
 #include "cConsole.h"
 #include "worldmain.h"
-#include "osunique.hpp"
-
 extern CConsole Console;
 extern CWorldMain   *cwmWorldState;
 extern std::mt19937 generator;
@@ -145,25 +143,22 @@ UI32	getclock( void );
 inline char *	RealTime( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	struct tm curtime;
-	lcltime(timet,curtime);
-	strftime( time_str, 256, "%B %d %I:%M:%S %p", &curtime );
+	auto curtime = std::localtime(&timet);
+	strftime( time_str, 256, "%B %d %I:%M:%S %p", curtime );
 	return time_str;
 }
 inline char *	RealTime24( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	struct tm curtime;
-	lcltime(timet, curtime);
-	strftime( time_str, 256, "%B %d %H:%M:%S", &curtime );
+	auto curtime = std::localtime(&timet);
+	strftime( time_str, 256, "%B %d %H:%M:%S", curtime );
 	return time_str;
 }
 inline char *	RealTimeDate( char *time_str )
 {
 	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	struct tm curtime;
-	lcltime(timet, curtime);
-	strftime( time_str, 256, "%B %d", &curtime );
+	auto curtime = std::localtime(&timet);
+	strftime( time_str, 256, "%B %d", curtime );
 	return time_str;
 }
 
