@@ -36,11 +36,15 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
+<<<<<<< HEAD:UOX3-Timesink.xcodeproj/xcshareddata/xcschemes/UOX3.xcscheme
 <<<<<<< HEAD:uox3.xcodeproj/xcshareddata/xcschemes/uox3.xcscheme
       customWorkingDirectory = "$PROJECT_DIR/.."
 =======
       customWorkingDirectory = "/Volumes/UOXDevelopment/Development/OfficialUOX3/timesink"
 >>>>>>> parent of 89adf3c3 (Xcode updates):UOX3-Timesink.xcodeproj/xcshareddata/xcschemes/UOX3.xcscheme
+=======
+      customWorkingDirectory = "/Volumes/UOXDevelopment/Development/OfficialUOX3/timesink"
+>>>>>>> parent of 89adf3c3 (Xcode updates):uox3.xcodeproj/xcshareddata/xcschemes/uox3.xcscheme
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
