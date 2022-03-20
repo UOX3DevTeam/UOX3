@@ -1,9 +1,3 @@
-07/03/2022 - punt
-	Added all-in-one solution and project files for VS2022 that compiles both UOX3, Spidermonkey and zlib at the same time
-	Updated cmake project to compile static version of Spidermonkey library
-	Various source changes made to address warnings
-	Updated project files and filters to be more consistent between VS2017 and VS2022 solutions
-
 02/03/2022 - Xuri (0.99.5b-2)
 	Added a new feature that allows shard admins/scripters to mark specific NPCs as "permanently awake", in order to keep UOX3 running scripts, timers and updates for these NPCs even if they are in regions that are "asleep" because of no nearby online players.
 		A new UOX.INI setting has been added which can turn this feature on/off:

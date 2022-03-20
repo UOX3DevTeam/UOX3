@@ -261,6 +261,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalOptions> /J</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+
       <PreprocessorDefinitions>_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING;_CRT_NO_VA_START_VALIDATION;EXPORT_JS_API;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -271,10 +272,11 @@
       <BrowseInformation>true</BrowseInformation>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <ExceptionHandling>Sync</ExceptionHandling>
+
       <StringPooling>true</StringPooling>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
+
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
