@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "648AF6E327CFEF79009327DE"
-               BuildableName = "uox3"
-               BlueprintName = "uox3"
-               ReferencedContainer = "container:uox3.xcodeproj">
+               BlueprintIdentifier = "64B2477927A18D69001F8BA8"
+               BuildableName = "UOX3"
+               BlueprintName = "UOX3"
+               ReferencedContainer = "container:UOX3-Timesink.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,7 +36,11 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
+<<<<<<< HEAD:uox3.xcodeproj/xcshareddata/xcschemes/uox3.xcscheme
       customWorkingDirectory = "$PROJECT_DIR/.."
+=======
+      customWorkingDirectory = "/Volumes/UOXDevelopment/Development/OfficialUOX3/timesink"
+>>>>>>> parent of 89adf3c3 (Xcode updates):UOX3-Timesink.xcodeproj/xcshareddata/xcschemes/UOX3.xcscheme
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -46,12 +50,18 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "648AF6E327CFEF79009327DE"
-            BuildableName = "uox3"
-            BlueprintName = "uox3"
-            ReferencedContainer = "container:uox3.xcodeproj">
+            BlueprintIdentifier = "64B2477927A18D69001F8BA8"
+            BuildableName = "UOX3"
+            BlueprintName = "UOX3"
+            ReferencedContainer = "container:UOX3-Timesink.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "../uox.ini"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -63,10 +73,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "648AF6E327CFEF79009327DE"
-            BuildableName = "uox3"
-            BlueprintName = "uox3"
-            ReferencedContainer = "container:uox3.xcodeproj">
+            BlueprintIdentifier = "64B2477927A18D69001F8BA8"
+            BuildableName = "UOX3"
+            BlueprintName = "UOX3"
+            ReferencedContainer = "container:UOX3-Timesink.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
