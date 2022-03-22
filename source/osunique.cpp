@@ -17,8 +17,7 @@ auto strcopy(char* dest, rsize_t size, const char* src)->void {
 
 }
 auto strncopy(char* dest, size_t size, const char* src,size_t count )->void {
-	strncpy_s(dest, size, src,count);
-
+	strncpy(dest, src, count);
 }
 
 auto mstrcat(char* dest, size_t size, const char* src) ->char* {
@@ -64,15 +63,15 @@ auto mstrcat(char* dest, size_t size, const char* src) ->char* {
 	
 }
 auto mgmtime(struct tm* dest, const time_t* timer)->struct tm* {
-	return gmtime_r(timer,dest);
+	return gmtime_r(timer, dest);
 	
 }
 auto mctime(char* buffer, size_t size, const time_t* timer) ->char* {
-	return ctime_r( timer,buffer);
+	return ctime_r(timer, buffer);
 	
 }
 auto mstrerror(char* buffer, size_t size, int errornum)->char* {
-	return strerror( errornum);
+	return strerror(errornum);
 	
 }
 auto mfopen(FILE** stream, const char* filename, const char* mode)->FILE* {
