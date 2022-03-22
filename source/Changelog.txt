@@ -1,5 +1,6 @@
 22/03/2022 - Xuri
 	Reverted from using strncpy_s to strncpy due to some unforeseen side effects that could cause script errors and crashes. Additional work might be required in order to safely convert to strncpy_s
+	Updated 'radd command to provide better feedback when using incorrect syntax. Also added redirects to 'radditem and 'raddnpc commands when "item" or "npc" is detected as a parameter of this command
 
 07/03/2022 - punt
 	Added all-in-one solution and project files for VS2022 that compiles both UOX3, Spidermonkey and zlib at the same time

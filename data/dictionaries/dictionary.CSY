@@ -3528,6 +3528,9 @@
 8207=Základní dosah zbraně na dálku (pouze SA a novější)
 8208=Aktuální zbývající použití položky (nesmí překročit hodnotu vlastnosti maxUses)
 8209=Maximální počet použití, které může položka mít
+8210=Přesměrování na příkaz 'radditem...
+8211=Přesměrování na příkaz 'raddnpc...
+8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC

@@ -3519,6 +3519,11 @@
 8205=Value not set
 8206=Server event item is associated with
 8207=Base range of ranged weapon (SA and later only)
+8208=Item's current remaining uses (cannot exceed value of maxUses property)
+8209=Maximum amount of uses item can have
+8210=Redirecting to 'radditem command...
+8211=Redirecting to 'raddnpc command...
+8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

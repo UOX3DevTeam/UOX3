@@ -3521,6 +3521,9 @@
 8207=Basisreichweite der Fernkampfwaffe (nur SA und später)
 8208=Aktuell verbleibende Verwendungen des Artikels (kann den Wert der Eigenschaft maxUses nicht überschreiten)
 8209=Maximale Anzahl von Verwendungen, die ein Element haben kann
+8210=Weiterleitung zum Befehl 'radditem...
+8211=Weiterleitung zum 'raddnpc-Befehl...
+8212=Ungültige Befehlssyntax für wiederholtes Hinzufügen von Objekten: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ
