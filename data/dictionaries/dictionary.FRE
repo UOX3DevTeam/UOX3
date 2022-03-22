@@ -3685,6 +3685,9 @@
 8207=Portée de base de l'arme à distance (SA et suivants seulement)
 8208=Utilisations restantes de l'article (ne peut pas dépasser la valeur de la propriété maxUses)
 8209=Maximum d'utilisations que l'article peut avoir
+8210=Redirection vers la commande 'radditem...
+8211=Redirection vers la commande 'raddnpc'...
+8212=Syntaxe de commande valide pour l'ajout répété d'objets : 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection].
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ

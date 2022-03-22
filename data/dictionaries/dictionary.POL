@@ -3521,6 +3521,9 @@
 8207=Zasięg bazowy broni dystansowej (tylko SA i późniejsze)
 8208=Obecne pozostałe użycia elementu (nie może przekroczyć wartości właściwości maxUses)
 8209=Maksymalna ilość użyć, jakie może mieć element
+8210=Przekierowanie do 'polecenia radditem...
+8211=Przekierowanie do polecenia 'raddnpc...
+8212=Nieprawidłowa składnia polecenia powtarzającego dodawanie obiektów: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC

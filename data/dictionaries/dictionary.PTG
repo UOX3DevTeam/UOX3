@@ -3521,6 +3521,9 @@
 8207=Base de alcance de arma à distância (SA e mais tarde apenas)
 8208=Funções remanescentes actuais do ITEM (não pode exceder o valor da propriedade maxUses)
 8209=Máxima quantidade de utilizações que o artigo pode ter
+8210=Redireccionar para 'comando radditem...
+8211=Redireccionar para 'comando raddnpc...
+8212=Sintaxe de comando válida para repetir a adição de objectos: 'radd [hexID/decimalID], 'radditem [itemSecção], 'raddnpc [npcSecção]
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA

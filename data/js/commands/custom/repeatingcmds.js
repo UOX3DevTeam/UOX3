@@ -188,12 +188,22 @@ function command_RADD( pSock, execString )
 	// if( !isNaN(execString))
 	// {
 		var splitString = execString.split( " " );
-		if( isNaN(splitString[0]) && isNaN(splitString[1]) )
-			return;
-
 		if( splitString[0] == "item" )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 9111, pSock.language )); // Try the 'radditem command instead!
+			pSock.SysMessage( GetDictionaryEntry( 8210, pSock.language )); // Redirecting to 'radditem command...
+			command_RADDITEM( pSock, splitString[1] );
+			return;
+		}
+		if( splitString[0] == "npc" )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 8211, pSock.language )); // Redirecting to 'raddnpc command...
+			command_RADDNPC( pSock, splitString[1] );
+			return;
+		}
+
+		if( isNaN(splitString[0]) && isNaN(splitString[1]) )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 8212, pSock.language )); // Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 			return;
 		}
 
