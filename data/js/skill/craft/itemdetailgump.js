@@ -1708,7 +1708,7 @@ function ItemDetailGump( pUser )
 	// List out skill requirements
 	var primaryCraftSkill = -1;
 	var primaryCraftSkillVal = -1;
-	var exceptionalChance = -1;
+	var exceptionalChance = 0;
 	var rankSum = 0;
 	var rank = 0;
 	var rndNum1 = 0;
@@ -1744,7 +1744,7 @@ function ItemDetailGump( pUser )
 		{
 			// Rough estimate of exceptional chance based on rank system
 			var rankRange = maxRank - minRank;
-			var skillRange = 60 + pUser.skills[skillNumber] - minSkill;
+			var skillRange = pUser.skills[skillNumber] - minSkill;
 			if( skillRange < 0 )
 			{
 				skillRange = minRank * 10;
@@ -1754,16 +1754,28 @@ function ItemDetailGump( pUser )
 				skillRange = maxRank * 10;
 			}
 
-			exceptionalChance += skillRange;
+			// Calculate estimated exceptional chance for current skill with the help of a few
+			// constants that represent the average of some random numbers used in source code
+			// calculations, modified by the SkillLevel setting in UOX.INI, which is a modifier
+			// for how hard it is to craft items of exceptional quality (1 = easy, 10 = hard)
+			exceptionalChance += 499.5 - (( 499.5 - skillRange ) / ( 11 - parseInt( GetServerSetting( "SkillLevel" )))); // 436 at skill level 10
 		}
 	}
 
-	var chance = 0.5 + ((( mainSkill - minSkillReq ) / ( maxSkillReq - minSkillReq )) * 0.5 );
+	// Calculate success rate of crafting based on primary skill
+	var chance = (( mainSkill - minSkillReq ) / ( maxSkillReq - minSkillReq ));
+
 	if( GetServerSetting( "RankSystem" ))
 	{
-		// Rough estimate for exceptional chance
-		exceptionalChance = ( exceptionalChance / skills.length ) / ( 11 - parseInt( GetServerSetting( "SkillLevel" ) / 2 ));
+		// Estimate for exceptional chance, based on average exceptionalChance of all skills required
+		exceptionalChance = ( exceptionalChance / skills.length ) / 10;
+
+		// Modify exceptionalChance by base success rate of crafting
+		exceptionalChance *= chance;
 	}
+
+	// Give player a minimum chance of crafting at 50% since they met skill requirement
+	var chance = Math.max( 0.5, chance );
 
 	if( GetServerSetting( "StatsAffectSkillChecks" ))
 	{
@@ -1785,7 +1797,7 @@ function ItemDetailGump( pUser )
 		exceptionalChance = 0;
 	}
 	else if( chance > 1.0 )
-		chance = 1.0;
+		chance = 1.0; // Cap chance at 100%
 
 	itemGump.AddText( 430, 80, textHue, (chance * 100).toFixed( 1 ) + "%" ); // Success Chance:
 	if( !exceptionalWearablesOnly || CheckTileFlag( createID, 22 )) // TF_WEARABLE
