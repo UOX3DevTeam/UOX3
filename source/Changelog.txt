@@ -1,3 +1,9 @@
+03/04/2022 - Xuri
+	Fixed a bug with skill check code that resulted in much lower than expected success rate at using skills (non-crafting ones in particular)
+	Updated code for how the minimum 50% success-rate is calculated for crafters who meet all minimum skill requirements for crafting an item, which previously incorrectly gave crafters a much higher chance of success!
+	Tweaked how rank is calculated for crafted items to modify the final rank based on base chance of success at crafting item. This brings the chance of crafting exceptional (10/10 rank) items more in line with how difficult this was in LBR era on official shards
+	Adjusted how estimated chance for crafting exceptional items is calculated in crafting script (js/skill/craft/itemdetailgump.js) to be more in line with what actually takes place in code
+
 22/03/2022 - Xuri
 	Reverted from using strncpy_s to strncpy due to some unforeseen side effects that could cause script errors and crashes. Additional work might be required in order to safely convert to strncpy_s
 	Updated 'radd command to provide better feedback when using incorrect syntax. Also added redirects to 'radditem and 'raddnpc commands when "item" or "npc" is detected as a parameter of this command

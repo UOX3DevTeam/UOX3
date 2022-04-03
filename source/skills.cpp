@@ -35,28 +35,46 @@ const UI16 CREATE_MENU_OFFSET = 5000;	// This is how we differentiate a menu but
 //o-----------------------------------------------------------------------------------------------o
 SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 {
+	// If rank system is not enabled, assume perfectly crafted item each time
 	if( !cwmWorldState->ServerData()->RankSystemStatus() )
 		return 10;
 
 	R32 rankSum = 0;
-
+	R32 successSum = 0;
 	SI32 rk_range, rank;
 	R32 sk_range, randnum, randnum1;
 
+	// Calculate base chance of success at crafting based on primary skill, to use as a modifier for exceptional chance later
+	R32 chanceSkillSuccess = 0;
+	chanceSkillSuccess = static_cast<R32>(player->GetSkill( skillMake.skillReqs[0].skillNumber ) - skillMake.skillReqs[0].minSkill);
+	chanceSkillSuccess /= ( static_cast<R32>( skillMake.skillReqs[0].maxSkill ) - static_cast<R32>( skillMake.skillReqs[0].minSkill ));
+
+	// Loop through all skills required to craft the item and calculate average rank value for each
 	for( size_t i = 0; i < skillMake.skillReqs.size(); ++i )
 	{
+		// Fetch the range of rank (min/max) values the item being crafted can have
 		rk_range = skillMake.maxRank - skillMake.minRank;
-		sk_range = static_cast<R32>(50.00 + player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
+
+		// Fetch range of skill we have to work with for this skill based on player's skill value and minimum skill required to craft the item
+		sk_range = static_cast<R32>(player->GetSkill( skillMake.skillReqs[i].skillNumber ) - skillMake.skillReqs[i].minSkill);
 		if( sk_range <= 0 )
 			sk_range = skillMake.minRank * 10;
 		else if( sk_range >= 1000 )
 			sk_range = skillMake.maxRank * 10;
+
+		// If generated number is under skill range value...
 		randnum = static_cast<R32>(RandomNum( 0, 999 ));
 		if( randnum <= sk_range )
-			rank = skillMake.maxRank;
+			rank = skillMake.maxRank; // ...assume perfectly crafted item!
 		else
 		{
-			randnum1 = (R32)( RandomNum( 0, 999 ) ) - (( randnum - sk_range ) / ( 11 - cwmWorldState->ServerData()->SkillLevel() ) );
+			// ...otherwise, generate a random number modified by skill range and difficulty level of rank system from uox.ini
+			randnum1 = (R32)( RandomNum( 0, 999 )) - (( randnum - sk_range ) / ( 11 - cwmWorldState->ServerData()->SkillLevel() ));
+
+			// Modify random number based on base chance of success at crafting
+			randnum1 *= chanceSkillSuccess;
+
+			// Calculate rank value for this skill
 			rank = (SI32)( ( randnum1 * rk_range ) / 1000 );
 			rank += skillMake.minRank - 1;
 			if( rank > skillMake.maxRank )
@@ -64,8 +82,12 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 			if( rank < skillMake.minRank )
 				rank = skillMake.minRank;
 		}
+
+		// Add rank value for this skill to the total
 		rankSum += rank;
 	}
+
+	// Return the average rank value of all skills required to craft the item
 	return (SI32)(rankSum / skillMake.skillReqs.size());
 }
 
@@ -853,16 +875,21 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 
 		// Calculate base chance of success at using a skill
 		chanceSkillSuccess = ( static_cast<R32>( s->GetSkill( sk )) - static_cast<R32>( lowSkill ));
+
+		// Modify chance based on the range of highSkill vs lowSkill
+		chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
+
+		// Let's work with whole numbers again
+		chanceSkillSuccess *= 1000;
+
 		if( isCraftSkill )
 		{
-			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill )) * 1000;
-			chanceSkillSuccess += 500; // Base starting chance for crafting skills when player's skill is over lowSkill
+			// Give players at least 50% chance at success if this is a crafting skill and their skill is above minimum requirement
+			chanceSkillSuccess = std::max( static_cast<R32>( 500 ), chanceSkillSuccess );
 		}
-		else
-		{
-			chanceSkillSuccess /= ( static_cast<R32>( highSkill ) - static_cast<R32>( lowSkill ));
-		}
-		chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess ); // Cap chance of success at 1000 (100.0%)
+
+		// Cap chance of success at 1000 (100.0%)
+		chanceSkillSuccess = std::min( static_cast<R32>( 1000 ), chanceSkillSuccess );
 
 		if( cwmWorldState->ServerData()->StatsAffectSkillChecks() )
 		{
