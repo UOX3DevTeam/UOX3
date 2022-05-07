@@ -1,3 +1,6 @@
+08/05/2022 - Xuri
+	Fixed an issue where non-mounted NPCs didn't get proper default values set for mounted walking, running and fleeing speeds
+
 03/04/2022 - Xuri
 	Fixed a bug with skill check code that resulted in much lower than expected success rate at using skills (non-crafting ones in particular)
 	Updated code for how the minimum 50% success-rate is calculated for crafters who meet all minimum skill requirements for crafting an item, which previously incorrectly gave crafters a much higher chance of success!
