@@ -202,7 +202,8 @@ petGuarding( nullptr ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ),
 tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), 
 thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ), runningSpeed( DEFNPC_MOVEMENTSPEED ), 
 fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), 
-loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS )
+loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ), mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ),
+mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
