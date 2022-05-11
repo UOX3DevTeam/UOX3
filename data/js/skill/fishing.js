@@ -640,12 +640,19 @@ function onTimer( fishingTool, timerID )
 				}
 				else
 				{
-					let rndNum = RandomNumber( 1, 100 );
-					if( rndNum <= 5 ) // 5% chance of fishing sea serpent on failure
+					let rndNum = RandomNumber( 1, 1000 );
+					// 2.5% chance of fishing sea serpent from deep sea on failure, and 0.5% chance to fish one from shallow water on failure
+					if( isDeepSeaFishing && rndNum <= 25 || !isDeepSeaFishing && rndNum <= 5 )
 					{
 						// Spawn Sea Serpent
 						socket.SysMessage( GetDictionaryEntry( 9339, socket.language )); // You pull out a sea serpent!
-						var nSpawned = SpawnNPC( "seaserpent", targX, targY, targZ, mChar.worldnumber, mChar.instanceID );
+						var serpentToSpawn = "seaserpent";
+						if( isDeepSeaFishing )
+						{
+							// 5% chance that the serpent being fished up is of the deep sea variant
+							serpentToSpawn = ( RandomNumber( 1, 100 ) <= 5 ) ? "deepseaserpent" : "seaserpent";
+						}
+						var nSpawned = SpawnNPC( serpentToSpawn, targX, targY, targZ, mChar.worldnumber, mChar.instanceID );
 					}
 					else
 					{
