@@ -1,3 +1,8 @@
+11/05/2022 - Xuri
+	Fixed an issue where slips counted while using the Healing skill (js/skill/healing_slip.js) would never be reset (thanks Hughesbuddy!)
+	Adjusted fishing script (js/skill/fishing.js) to reduce the chance of fishing up sea serpents on failure in shallow and deep waters, and also added a chance for players to fish up deep sea serpents while in deep waters
+	Adjusted scissors script (js/skill/tailoring/scissors.js) to stop preventing use of scissors while the system thinks the player is running, but just show the associated message without any other impact
+
 08/05/2022 - Xuri
 	Fixed an issue where non-mounted NPCs didn't get proper default values set for mounted walking, running and fleeing speeds
 

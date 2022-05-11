@@ -8,6 +8,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	if( !damaged.skillsused.healing && !damaged.skillsused.veterinary )
 	{
 		// Player shouldn't have this script attached if they're not actively healing. Remove!
+		damaged.SetTempTag( "slipCount", null );
 		damaged.RemoveScriptTrigger( healSlipScriptID );
 	}
 

@@ -14,12 +14,13 @@ function onUseChecked( pUser, iUsed )
 	 	{
 			socket.SysMessage( GetDictionaryEntry( 389, socket.language ) ); // That is too far away and you cannot reach it.
 		}
-		else if( pUser.isRunning ) // Prevent player from using scissors while running
-		{
-			socket.SysMessage( GetDictionaryEntry( 2759, socket.language ) ); // Didn't your parents ever tell you not to run with scissors in your hand?!
-		}
 		else
 		{
+			if( pUser.isRunning ) // Taunt player about using scissors while running
+			{
+				socket.SysMessage( GetDictionaryEntry( 2759, socket.language ) ); // Didn't your parents ever tell you not to run with scissors in your hand?!
+			}
+
 			socket.tempObj = iUsed;
 			socket.CustomTarget( 0, GetDictionaryEntry( 6029, socket.language )); // What do you want to use these scissors on?
 		}
