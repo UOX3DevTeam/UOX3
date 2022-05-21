@@ -429,6 +429,21 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "Z":
 		socket.SysMessage( ourChar.z );
 		break;
+	case "FX1":
+		socket.SysMessage( ourChar.fx1 );
+		break;
+	case "FY1":
+		socket.SysMessage( ourChar.fy1 );
+		break;
+	case "FX2":
+		socket.SysMessage( ourChar.fx2 );
+		break;
+	case "FY2":
+		socket.SysMessage( ourChar.fy2 );
+		break;
+	case "FZ":
+		socket.SysMessage( ourChar.fz );
+		break;
 	case "CANTRAIN":
 		socket.SysMessage( ourChar.trainer );
 		break;

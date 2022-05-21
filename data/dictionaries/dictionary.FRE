@@ -3820,6 +3820,11 @@
 8428=Coordonnée X du personnage dans le monde
 84429=Coordonnée Y du personnage dans le monde
 8430=Coordonnée Z du personnage dans le monde
+8431=Coordonnée X supérieure gauche de la limite du type d'errance du personnage
+8432=Coordon Y supérieur gauche de la limite du type d'errance du personnage
+8433=Coord en X en bas à droite de la limite du wandertype du personnage
+8434=Coordon Y inférieur droit de la limite du wandertype du personnage
+8435=Z coord pour la limite du type d'errance du personnage
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Nombre actuel de joueurs bannis de Multi. Contrôlé par le serveur (en lecture seule)
 8501=Coordonnée X du lieu de bannissement de Multi

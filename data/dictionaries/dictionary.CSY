@@ -3663,6 +3663,11 @@
 8428=X souřadnice postavy ve světě
 8429=SouřadniceY postavy ve světě
 8430=Z souřadnice postavy ve světě
+8431=Vrchní levá souřadnice X pro hranici typu putování znaku
+8432=Vrchní levý souřadnice Y pro hranici typu putování znaku
+8433=Dole vpravo X coord pro hranici typu putování postavy
+8434=Souřadnice Y vpravo dole pro hranici typu putování postavy
+8435=Z coord pro hranici typu putování postavy
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuální počet hráčů se zákazem vstupu do Multi. Řízeno serverem (pouze pro čtení)
 8501=X souřadnice místa zákazu v Multi

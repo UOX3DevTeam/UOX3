@@ -1,3 +1,6 @@
+22/05/2022 - Xuri
+	Exposed the NPC wander properties FX1, FY1, FX2, FY2 and FZ to the JS engine, and updated get, set and tweak JS commands to handle these
+
 21/05/2022 - Xuri
 	The TOOLUSELIMIT and TOOLUSEBREAK ini settings now also properly affect mining tools when enabled
 

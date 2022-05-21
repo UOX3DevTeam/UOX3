@@ -3656,6 +3656,11 @@
 8428=X coordenada de carácter no mundo
 8429=Y coordenada de carácter no mundo
 8430=Z coordenada de carácter no mundo
+8431=Top left X coord para limite do tipo de personagem
+8432=Top left Y coord para limite do tipo de personagem
+8433=Bottom right X coord para o limite do tipo de personagem
+8434=Bottom right Y coord para o limite do tipo de personagem
+8435=Z coord para o limite do tipo de personagem deambulação
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Número actual de jogadores banidos da Multi. Controlado por Servidor (Read-Only)
 8501=X coordenada para a proibição-localização da Multi

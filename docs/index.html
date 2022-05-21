@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 02. March, 2022</small></p>
+	<p style="margin:0"><small>Last Updated: 22. May, 2022</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
 </div>
 
@@ -1079,8 +1079,8 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_skillsandstats">[skill & stats] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">SKILLLEVEL</span><strong>=5</strong><br>
-							Global difficulty level for crafting items. 1=Easiest, 5=Default, 10=Difficult.</p>
+							<p><span class="hl">SKILLLEVEL</span><strong>=7</strong><br>
+							Global difficulty level for crafting exceptional quality items. 1=Easiest, 7=Default, 10=Difficult (estimated to around same difficulty as official UO shards in LBR era).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SKILLCAP</span><strong>=7000</strong><br>
@@ -5042,7 +5042,7 @@ packitem=0x0f8d,30
 						<p>These properties are modified according to the following formula:<br>
 						<span class="hl">newPropertyVal = (( rank * propertyVal ) / 10 )</span></p>
 						<p>Thus, an item with a calculated final rank of 10 will not be modified, while any rank below 10 will reduce the values of the above properties for the item by -10% per rank below 10.</p>
-						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="hl">SKILLLEVEL=5</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items.</p>
+						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="hl">SKILLLEVEL=7</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items. A value of 10 makes the difficulty roughly similar to the difficulty of the official UO shards around the LBR era.</p>
 						<p>When a temporary rank has been calculated for all skills required to craft the item, the average of all these is chosen as the item's final rank, and the modifiers are permanently applied to the item's properties.</p>
 					</div>
 				  </div>
