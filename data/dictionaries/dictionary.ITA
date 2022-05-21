@@ -3656,6 +3656,11 @@
 8428=Coordinata X del carattere nel mondo
 8429=Coordinata Y del carattere nel mondo
 8430=Coordinata Z del carattere nel mondo
+8431=Coordinazione X in alto a sinistra per il confine del wandertype del personaggio
+8432=Coord Y in alto a sinistra per il confine del wandertype del personaggio
+8433=Coordinazione X in basso a destra per il confine del wandertype del personaggio
+8434=Coordinazione Y in basso a destra per il confine del wandertype del personaggio
+8435=Coordinazione Z per il confine del wandertype del personaggio
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Numero attuale di giocatori banditi da Multi. Controllato dal server (Solo lettura)
 8501=Coordinata X per la posizione di interdizione di Multi

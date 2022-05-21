@@ -563,6 +563,26 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.z = nVal;
 		okMsg( socket );
 		break;
+	case "FX1":
+		ourChar.fx1 = nVal;
+		okMsg( socket );
+		break;
+	case "FY1":
+		ourChar.fy1 = nVal;
+		okMsg( socket );
+		break;
+	case "FX2":
+		ourChar.fx2 = nVal;
+		okMsg( socket );
+		break;
+	case "FY2":
+		ourChar.fy2 = nVal;
+		okMsg( socket );
+		break;
+	case "FZ":
+		ourChar.fz = nVal;
+		okMsg( socket );
+		break;
 	case "CANTRAIN":
 		if( ourChar.npc )
 		{

@@ -1572,6 +1572,11 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAXMANA:		*vp = INT_TO_JSVAL( gPriv->GetMaxMana() );			break;
 			case CCP_OLDWANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetOldNpcWander() );		break;
 			case CCP_WANDERTYPE:	*vp = INT_TO_JSVAL( gPriv->GetNpcWander() );		break;
+			case CCP_FX1:			*vp = INT_TO_JSVAL( gPriv->GetFx( 0 ) );			break;
+			case CCP_FY1:			*vp = INT_TO_JSVAL( gPriv->GetFy( 0 ) );			break;
+			case CCP_FX2:			*vp = INT_TO_JSVAL( gPriv->GetFx( 1 ) );			break;
+			case CCP_FY2:			*vp = INT_TO_JSVAL( gPriv->GetFy( 1 ) );			break;
+			case CCP_FZ:			*vp = INT_TO_JSVAL( gPriv->GetFz() );				break;
 			case CCP_ISONHORSE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsOnHorse() );		break;
 			case CCP_ISFLYING:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsFlying() );		break;
 			case CCP_ISGUARDED:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsGuarded() );		break;
@@ -1995,6 +2000,11 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 			case CCP_OLDWANDERTYPE: gPriv->SetOldNpcWander( (SI08)encaps.toInt() ); 	break;
 			case CCP_WANDERTYPE: 	gPriv->SetNpcWander( (SI08)encaps.toInt(), true );	break;
+			case CCP_FX1:			gPriv->SetFx( (SI16)encaps.toInt(), 0 );			break;
+			case CCP_FY1:			gPriv->SetFy( (SI16)encaps.toInt(), 0 );			break;
+			case CCP_FX2:			gPriv->SetFx( (SI16)encaps.toInt(), 1 );			break;
+			case CCP_FY2:			gPriv->SetFy( (SI16)encaps.toInt(), 1 );			break;
+			case CCP_FZ:			gPriv->SetFz( (SI08)encaps.toInt() );				break;
 			case CCP_TDEXTERITY:	gPriv->SetDexterity2( encaps.toInt() );				break;
 			case CCP_TINTELLIGENCE:	gPriv->SetIntelligence2( encaps.toInt() );			break;
 			case CCP_TSTRENGTH:		gPriv->SetStrength2( encaps.toInt() );				break;

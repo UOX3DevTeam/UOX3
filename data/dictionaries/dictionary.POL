@@ -3656,6 +3656,11 @@
 8428=Współrzędna X postaci w świecie
 8429=Współrzędna Y postaci w świecie
 8430=Współrzędna Z postaci w świecie
+8431=Kordunek X do góry po lewej stronie dla granicy typu wędrówki postaci
+8432=Kordyna górnego lewego Y dla granicy wędrówki postaci
+8433=Prawa dolna współrzędna X dla granicy wędrówki postaci
+8434=Prawy dolny współrzędny Y dla granicy wędrówki postaci
+8435=Współrzędna Z dla granicy wędrówki postaci
 // [8500-8549] Menu Tweak - opisy właściwości Multi
 8500=Obecna liczba graczy zbanowanych w Multi. Kontrolowane przez serwer (tylko do odczytu)
 8501=Współrzędna X dla lokalizacji banów w Multi

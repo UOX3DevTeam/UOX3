@@ -154,110 +154,115 @@ var charProp = {
 	fontType:224,
 	foodList:225,
 	frozen:226,
-	gender:227,
-	guild:228,
-	guildTitle:229,
-	health:230,
-	hidamage:231,
-	houseicons:232,
-	housesCoOwned:233,
-	housesOwned:234,
-	hunger:235,
-	hungerWildChance:236,
-	innocent:237,
-	instanceID:238,
-	intelligence:239,
-	isAnimal:240,
-	isCasting:241,
-	isCounselor:242,
-	isDispellable:243,
-	isflying:244,
-	isGM:245,
-	isGMPageable:246,
-	isHuman:247,
-	isIncognito:248,
-	isJailed:249,
-	isMeditating:250,
-	isonhorse:251,
-	isPolymorphed:252,
-	isShop:253,
-	isUsingPotion:254,
-	karma:255,
-	lightlevel:256,
-	lodamage:257,
-	magicReflect:258,
-	mana:259,
-	maxhp:260,
-	maxmana:261,
-	maxstamina:262,
-	mounted:263,
-	multi:264,
-	murdercount:265,
-	murderer:266,
-	neutral:267,
-	nextAct:268,
-	noNeedMana:269,
-	noNeedReags:270,
-	noSkillTitles:271,
-	npc:272,
-	npcFlag:273,
-	oldWandertype:274,
-	online:275,
-	orgID:276,
-	orgSkin:277,
-	ownedItemsCount:278,
-	owner:279,
-	pack:280,
-	party:281,
-	partyLootable:282,
-	petCount:283,
-	poison:284,
-	poisonStrength:285,
-	race:286,
-	raceGate:287,
-	region:288,
-	sayColour:289,
-	scripttrigger:290,
-	singClickSer:291,
-	skillLock:292,
-	skills:293,
-	skillsused:294,
-	skillToPeace:295,
-	skillToProv:296,
-	skillToTame:297,
-	spattack:298,
-	spdelay:299,
-	spellCast:300,
-	split:301,
-	splitchance:302,
-	squelch:303,
-	stabled:304,
-	stamina:305,
-	stealth:306,
-	strength:307,
-	tamed:308,
-	tamedHungerRate:309,
-	tamedThirstRate:310,
-	target:311,
-	tempdex:312,
-	tempint:313,
-	tempstr:314,
-	thirst:315,
-	thirstWildChance:316,
-	title:317,
-	town:318,
-	townPriv:319,
-	trainer:320,
-	visible:321,
-	vulnerable:322,
-	wandertype:323,
-	weight:324,
-	willhunger:325,
-	willthirst:326,
-	worldnumber:327,
-	x:328,
-	y:329,
-	z:330
+	fx1:227,
+	fy1:228,
+	fx2:229,
+	fy2:230,
+	fz:231,
+	gender:232,
+	guild:233,
+	guildTitle:234,
+	health:235,
+	hidamage:236,
+	houseicons:237,
+	housesCoOwned:238,
+	housesOwned:239,
+	hunger:240,
+	hungerWildChance:241,
+	innocent:242,
+	instanceID:243,
+	intelligence:244,
+	isAnimal:245,
+	isCasting:246,
+	isCounselor:247,
+	isDispellable:248,
+	isflying:249,
+	isGM:250,
+	isGMPageable:251,
+	isHuman:252,
+	isIncognito:253,
+	isJailed:254,
+	isMeditating:255,
+	isonhorse:256,
+	isPolymorphed:257,
+	isShop:258,
+	isUsingPotion:259,
+	karma:260,
+	lightlevel:261,
+	lodamage:262,
+	magicReflect:263,
+	mana:264,
+	maxhp:265,
+	maxmana:266,
+	maxstamina:267,
+	mounted:268,
+	multi:269,
+	murdercount:270,
+	murderer:271,
+	neutral:272,
+	nextAct:273,
+	noNeedMana:274,
+	noNeedReags:275,
+	noSkillTitles:276,
+	npc:277,
+	npcFlag:278,
+	oldWandertype:279,
+	online:280,
+	orgID:281,
+	orgSkin:282,
+	ownedItemsCount:283,
+	owner:284,
+	pack:285,
+	party:286,
+	partyLootable:287,
+	petCount:288,
+	poison:289,
+	poisonStrength:290,
+	race:291,
+	raceGate:292,
+	region:293,
+	sayColour:294,
+	scripttrigger:295,
+	singClickSer:296,
+	skillLock:297,
+	skills:298,
+	skillsused:299,
+	skillToPeace:300,
+	skillToProv:301,
+	skillToTame:302,
+	spattack:303,
+	spdelay:304,
+	spellCast:305,
+	split:306,
+	splitchance:307,
+	squelch:308,
+	stabled:309,
+	stamina:310,
+	stealth:311,
+	strength:312,
+	tamed:313,
+	tamedHungerRate:314,
+	tamedThirstRate:315,
+	target:316,
+	tempdex:317,
+	tempint:318,
+	tempstr:319,
+	thirst:320,
+	thirstWildChance:321,
+	title:322,
+	town:323,
+	townPriv:324,
+	trainer:325,
+	visible:326,
+	vulnerable:327,
+	wandertype:328,
+	weight:329,
+	willhunger:330,
+	willthirst:331,
+	worldnumber:332,
+	x:333,
+	y:334,
+	z:335
 }
 
 // List of character skills to handle
@@ -428,7 +433,7 @@ var accountProp = {
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
 const itemPropCount = 84;
-const charPropCount = 131;
+const charPropCount = 136;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
@@ -1565,6 +1570,26 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.frozen:
 				charLabelTooltip 	= GetDictionaryEntry( 8326, pSocket.language ); // Toggles whether object is frozen (immovable) or not
 				charValue 			= (myTarget.frozen ? "true" : "false");
+				break;
+			case charProp.fx1:
+				charLabelTooltip 	= GetDictionaryEntry( 8431, pSocket.language ); // Top left X coord of character's wandertype boundary
+				charValue 			= (myTarget.fx1).toString();
+				break;
+			case charProp.fy1:
+				charLabelTooltip 	= GetDictionaryEntry( 8432, pSocket.language ); // Top left Y coord of character's wandertype boundary
+				charValue 			= (myTarget.fy1).toString();
+				break;
+			case charProp.fx2:
+				charLabelTooltip 	= GetDictionaryEntry( 8433, pSocket.language ); // Bottom right X coord of character's wandertype boundary
+				charValue 			= (myTarget.fx2).toString();
+				break;
+			case charProp.fy2:
+				charLabelTooltip 	= GetDictionaryEntry( 8434, pSocket.language ); // Bottom right Y coord of character's wandertype boundary
+				charValue 			= (myTarget.fy2).toString();
+				break;
+			case charProp.fz:
+				charLabelTooltip 	= GetDictionaryEntry( 8435, pSocket.language ); // Z coord of character's wandertype boundary
+				charValue 			= (myTarget.fz).toString();
 				break;
 			case charProp.gender:
 				charLabelTooltip 	= GetDictionaryEntry( 8327, pSocket.language ); // Gender of character (male/female)
@@ -4233,6 +4258,41 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = GetDictionaryEntry( 8324, pSocket.language ); // Font type used by character's speech
 			maxLength = 2;
 			maxVal = 12;
+			break;
+		case charProp.fx1:
+			propertyName = "fx1";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8431, pSocket.language ); // Top left X coord for character's wandertype boundary
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case charProp.fy1:
+			propertyName = "fy1";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8432, pSocket.language ); // Top left Y coord for character's wandertype boundary
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case charProp.fx2:
+			propertyName = "fx2";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8433, pSocket.language ); // Bottom right X coord for character's wandertype boundary
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case charProp.fy2:
+			propertyName = "fy2";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8434, pSocket.language ); // Bottom right Y coord for character's wandertype boundary
+			maxLength = 5;
+			maxVal = 32767;
+			break;
+		case charProp.fz:
+			propertyName = "fz";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8435, pSocket.language ); // Z coord for character's wandertype boundary
+			maxLength = 3;
+			maxVal = 128;
 			break;
 		case charProp.gender:
 			propertyName = "gender";

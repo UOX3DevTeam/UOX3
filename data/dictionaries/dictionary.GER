@@ -3656,6 +3656,11 @@
 8428=X-Koordinate des Charakters in der Welt
 8429=Y-Koordinate des Charakters in der Welt
 8430=Z-Koordinate des Charakters in der Welt
+8431=Obere linke X-Koordinate für die Grenze des Wandertyps des Zeichens
+8432=Oberer linker Y-Koordinatensatz für die Wandertyp-Grenze des Zeichens
+8433=Rechte untere X-Koordinate der Wandertyp-Grenze der Figur
+8434=Untere rechte Y-Koordinate für die Wandertypgrenze des Zeichens
+8435=Z-Koordinate für die Wandertyp-Grenze der Figur
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuelle Anzahl der Spieler, die für Multi gesperrt sind. Gesteuert vom Server (Read-Only)
 8501=X-Koordinate für Multis Bann-Ort

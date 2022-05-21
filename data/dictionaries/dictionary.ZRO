@@ -3656,6 +3656,11 @@
 8428=X coordinate of character in the world
 8429=Y coordinate of character in the world
 8430=Z coordinate of character in the world
+8431=Top left X coord for character's wandertype boundary
+8432=Top left Y coord for character's wandertype boundary
+8433=Bottom right X coord for character's wandertype boundary
+8434=Bottom right Y coord for character's wandertype boundary
+8435=Z coord for character's wandertype boundary
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Current number of players banned from Multi. Controlled by Server (Read-Only)
 8501=X coordinate for Multi's ban-location

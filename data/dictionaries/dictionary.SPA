@@ -3656,6 +3656,11 @@
 8428=coordenada X del personaje en el mundo
 8429=coordenada Y del personaje en el mundo
 8430=coordenada Z del personaje en el mundo
+8431=Coordenada X superior izquierda del límite del wandertype del personaje
+8432=Coordenada Y superior izquierda del límite del wandertype del personaje
+8433=Coordenada X inferior derecha del límite del wandertype del personaje
+8434=Coordenada Y inferior derecha para el límite de wandertype del personaje
+8435=Coordenada Z del límite del wandertype del personaje
 // [8500-8549] Menú de ajustes - Descripciones de propiedades múltiples
 8500=Número actual de jugadores vetados en Multi. Controlado por el servidor (sólo lectura)
 8501=coordenada X para la ubicación de prohibición de Multi
