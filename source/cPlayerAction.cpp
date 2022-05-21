@@ -2590,6 +2590,13 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				return true;
 			}
 
+			// Don't allow using tools with no usage left, if usage limits are enabled in ini
+			if( cwmWorldState->ServerData()->ToolUseLimit() && iUsed->GetUsesLeft() == 0 )
+			{
+				mSock->sysmessage( 9262 ); // This has no more charges
+				return true;
+			}
+
 			mSock->TempObj( iUsed );
 			mSock->target( 0, TARGET_MINE, 0, 446 );
 			return true;

@@ -1,4 +1,7 @@
-11/05/2022 - Xuri
+21/05/2022 - Xuri
+	The TOOLUSELIMIT and TOOLUSEBREAK ini settings now also properly affect mining tools when enabled
+
+12/05/2022 - Xuri
 	Fixed an issue where slips counted while using the Healing skill (js/skill/healing_slip.js) would never be reset (thanks Hughesbuddy!)
 	Adjusted fishing script (js/skill/fishing.js) to reduce the chance of fishing up sea serpents on failure in shallow and deep waters, and also added a chance for players to fish up deep sea serpents while in deep waters
 	Adjusted scissors script (js/skill/tailoring/scissors.js) to stop preventing use of scissors while the system thinks the player is running, but just show the associated message without any other impact
