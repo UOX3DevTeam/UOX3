@@ -294,16 +294,20 @@ void cSkills::Mine( CSocket *s )
 	CChar *mChar = s->CurrcharObj();
 
 	// Check if item used to initialize target cursor is still within range
-	CItem *tempObj = static_cast<CItem *>(s->TempObj());
+	CItem *miningTool = static_cast<CItem *>(s->TempObj());
 	s->TempObj( nullptr );
-	if( ValidateObject( tempObj ) )
+	if( ValidateObject( miningTool ) )
 	{
-		if( !checkItemRange( mChar, tempObj ) )
+		if( !checkItemRange( mChar, miningTool ) )
 		{
 			s->sysmessage( 400 ); // That is too far away!
 			return;
 		}
 	}
+
+	// Don't allow mining without a valid tool
+	if( !ValidateObject( miningTool ))
+		return;
 
 	if( mSock.GetDWord( 11 ) == INVALIDSERIAL )
 		return;
@@ -330,7 +334,7 @@ void cSkills::Mine( CSocket *s )
 
 	if( distX > 5 || distY > 5 )
 	{
-		mSock.sysmessage( 799 );
+		mSock.sysmessage( 799 ); // You are too far away to mine that!
 		return;
 	}
 
@@ -355,7 +359,7 @@ void cSkills::Mine( CSocket *s )
 
 	if( !MineCheck( mSock, mChar, targetX, targetY, targetZ, targetID1, targetID2 ) )
 	{
-		mSock.sysmessage( 801 );
+		mSock.sysmessage( 801 ); // You cannot mine there.
 		return;
 	}
 
@@ -363,7 +367,7 @@ void cSkills::Mine( CSocket *s )
 	MapResource_st *orePart = MapRegion->GetResource( targetX, targetY, mChar->WorldNumber() );
 	if( orePart->oreAmt <= 0 )
 	{
-		mSock.sysmessage( 802 );
+		mSock.sysmessage( 802 ); // There is no metal to mine here.
 		return;
 	}
 
@@ -377,6 +381,29 @@ void cSkills::Mine( CSocket *s )
 		Effects->PlayCharacterAnimation( mChar, ACT_ATT_1H_BASH, 0, 7 ); // 0x0B
 
 	Effects->PlaySound( &mSock, 0x0125, true );
+
+	// Consume uses on mining tool, if tool use limits are enabled in ini
+	if( cwmWorldState->ServerData()->ToolUseLimit() )
+	{
+		auto usesLeft = miningTool->GetUsesLeft();
+		if( usesLeft > 0 )
+		{
+			usesLeft -= 1;
+			miningTool->SetUsesLeft( usesLeft );
+
+			if( usesLeft == 0 )
+			{
+				mSock.sysmessage( 10202 ); // You have worn out your tool!
+
+				// If no uses left, break tool if tool breakage is enabled in ini
+				if( cwmWorldState->ServerData()->ToolUseBreak() )
+				{
+					miningTool->Delete();
+					// SFX of tool breaking
+				}
+			}
+		}
+	}
 
 	if( CheckSkill( mChar, MINING, 0, 1000 ) ) // check to see if our skill is good enough
 	{
@@ -396,7 +423,7 @@ void cSkills::Mine( CSocket *s )
 	}
 	else
 	{
-		mSock.sysmessage( 803 );
+		mSock.sysmessage( 803 ); // You sifted through the dirt and rocks, but found nothing usable.
 		if( orePart->oreAmt > 0 && RandomNum( 0, 1 ) )
 			--orePart->oreAmt;
 	}
