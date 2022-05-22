@@ -1,3 +1,6 @@
+23/05/2022 - Xuri
+	Fix for logic error that prevented stamina loss when shoving past other characters
+
 22/05/2022 - Xuri
 	Exposed the NPC wander properties FX1, FY1, FX2, FY2 and FZ to the JS engine, and updated get, set and tweak JS commands to handle these
 	Updated dictionary files with tweak-menu specific messages for NPC wander properties
