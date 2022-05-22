@@ -982,14 +982,24 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 			   && ( !IsGMBody( ourChar )
 				 && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
 			{
+				// Assume character shoved other character
+				didShove = true;
+
 				// Run onCollide event on character doing the shoving
 				for( auto scriptTrig : scriptTriggers )
 				{
 					toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						if( toExecute->OnCollide( mSock, c, ourChar ) == 1 )
+						auto retVal = toExecute->OnCollide( mSock, c, ourChar );
+						if( retVal == 0 )
 						{
+							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+							didShove = false;
+						}
+						else if( retVal == 1 )
+						{
+							// Event found, script returned true. Allow hardcoded functionality
 							didShove = true;
 							break;
 						}
@@ -1005,8 +1015,15 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 					toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						if( toExecute->OnCollide( ourChar->GetSocket(), c, ourChar ) == 1 )
+						auto retVal = toExecute->OnCollide( ourChar->GetSocket(), c, ourChar );
+						if( retVal == 0 )
 						{
+							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+							didShove = false;
+						}
+						else if( retVal == 1 )
+						{
+							// Event found, script returned true. Allow hardcoded functionality
 							didShove = true;
 							break;
 						}
@@ -1014,7 +1031,7 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				}
 
 				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
-					mSock->sysmessage( 1384 );
+					mSock->sysmessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
 				else
 				{
 					std::string charName = getNpcDictName( ourChar );
