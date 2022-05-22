@@ -276,7 +276,12 @@ function countBankContents( pTalking, bankBox )
 		if( mItem != null )
 		{
 			bankContents[0] = bankContents[0] + 1;
-			bankContents[1] = bankContents[1] + ( mItem.weight / 100 );
+			var mItemWeight = mItem.weight;
+			if( mItem.amount > 1 )
+			{
+				mItemWeight *= mItem.amount;
+			}
+			bankContents[1] = bankContents[1] + ( mItemWeight / 100 );
 		}
 	}
 	return bankContents;

@@ -1,5 +1,8 @@
 22/05/2022 - Xuri
 	Exposed the NPC wander properties FX1, FY1, FX2, FY2 and FZ to the JS engine, and updated get, set and tweak JS commands to handle these
+	Updated dictionary files with tweak-menu specific messages for NPC wander properties
+	Fixed an issue with weight calculation when picking up partial piles of items - now uses weight of the specific amount of items picked up on cursor, and not the weight of the full pile
+	Fixed an issue with weight calculation of bank box contents, which didn't take into account the amount of items in item piles
 
 21/05/2022 - Xuri
 	The TOOLUSELIMIT and TOOLUSEBREAK ini settings now also properly affect mining tools when enabled
