@@ -419,22 +419,24 @@ bool CPIGetItem::Handle( void )
 			}
 		}
 	}
-	if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
-	{
-		if( !Weight->checkCharWeight( nullptr, ourChar, i ) )
-		{
-			tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
-			Bounce( tSock, i );
-			return true;
-		}
-	}
-	Effects->PlaySound( tSock, 0x0057, true );
+
 	if( i->GetAmount() > 1 && i->GetObjType() != OT_SPAWNER )
 	{
 		UI16 amount = tSock->GetWord( 5 );
 		if( amount > i->GetAmount() )
 			amount = i->GetAmount();
-		else if( amount < i->GetAmount() )
+
+		if( tSock->PickupSpot() == PL_OTHERPACK || tSock->PickupSpot() == PL_GROUND )
+		{
+			if( !Weight->checkCharWeight( nullptr, ourChar, i, amount ))
+			{
+				tSock->sysmessage( 1743 ); // That person can not possibly hold more weight
+				Bounce( tSock, i );
+				return true;
+			}
+		}
+		
+		if( amount < i->GetAmount() )
 		{
 			CItem *c = i->Dupe();
 			if( c != nullptr )
@@ -452,6 +454,7 @@ bool CPIGetItem::Handle( void )
 				ourChar->Dirty( UT_STATWINDOW );
 		}
 	}
+	Effects->PlaySound( tSock, 0x0057, true );
 
 	if( iCont == nullptr )
 		MapRegion->RemoveItem( i );

@@ -16,7 +16,7 @@ public:
 
 	bool	isOverloaded( CChar *mChar ) const;
 	bool	checkPackWeight( CChar *ourChar, CItem *pack, CItem *item );
-	bool	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item );
+	bool	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount = 0 );
 
 	void	addItemWeight( CBaseObject *getObj, CItem *item );
 	void	addItemWeight( CChar *mChar, CItem *item );

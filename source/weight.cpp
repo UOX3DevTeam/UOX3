@@ -422,7 +422,7 @@ bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 //|	Purpose		-	Returns false if a character will be overloaded when items weight is added
 //|							or true if not based upon MAX_CHARWEIGHT
 //o-----------------------------------------------------------------------------------------------o
-bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
+bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount )
 {
 	if( !ValidateObject( mChar ) )
 		return true;
@@ -436,9 +436,20 @@ bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
 	const SI32 charWeight = mChar->GetWeight();
 	SI32 itemWeight = 0;
 	if( ourChar != mChar )	// Item weight has already been added to the character if we picked it up
+	{
 		itemWeight = item->GetWeight();
-	if( item->GetAmount() > 1 )
+	}
+
+	if( amount > 0 )
+	{
+		// Calculate weight based on amount of items (supplied as function parameter) picked up from pile
+		itemWeight *= amount;
+	}
+	else if( item->GetAmount() > 1 )
+	{
 		itemWeight *= item->GetAmount();
+	}
+
 	if( (itemWeight + charWeight) <= MAX_CHARWEIGHT )
 		return true;
 
