@@ -1301,10 +1301,10 @@ function SecureContainer( pSocket, iMulti )
 		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
 		{
 			pSocket.tempObj = iMulti;
-			pSocket.CustomTarget( 10, ictionaryEntry( 1903, pSocket.language )); // Select container to secure:
+			pSocket.CustomTarget( 10, GetDictionaryEntry( 1903, pSocket.language )); // Select container to secure:
 		}
 		else
-			pSocket.SysMessage( ictionaryEntry( 1904, pSocket.language )); // Only house owners and co-owners can secure containers in a house!
+			pSocket.SysMessage( GetDictionaryEntry( 1904, pSocket.language )); // Only house owners and co-owners can secure containers in a house!
 	}
 }
 

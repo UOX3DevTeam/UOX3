@@ -1,3 +1,6 @@
+28/05/2022 - Xuri
+	Fixed issue in js/server/house/houseCommands.js that caused any attempts to create secure containers in houses to fail (thanks Hughesbuddy!)
+
 23/05/2022 - Xuri
 	Fix for logic error that prevented stamina loss when shoving past other characters
 
