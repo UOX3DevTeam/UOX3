@@ -1,3 +1,6 @@
+31/05/2022 - Xuri
+	Fixed an issue with the provocation skill (skill/js/provocation.js) that prevented successfully provoked creatures from attacking one another
+
 28/05/2022 - Xuri
 	Fixed issue in js/server/house/houseCommands.js that caused any attempts to create secure containers in houses to fail (thanks Hughesbuddy!)
 
