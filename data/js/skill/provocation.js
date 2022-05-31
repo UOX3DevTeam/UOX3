@@ -143,6 +143,7 @@ function onCallback1( pSock, toAttack )
 							pSock.SysMessage( GetDictionaryEntry( 1451, pSock.language )); // Your music fails to incite enough anger.
 							willAttack = pUser;
 						}
+						initiateAttack = true;
 					}
 					else
 					{
