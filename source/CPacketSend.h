@@ -977,8 +977,8 @@ public:
 	CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
 	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
-	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset  );
-	virtual void	NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
+	virtual void	AddStartLocation( start_location *sLoc, UI08 locOffset  );
+	virtual void	NewAddStartLocation( start_location *sLoc, UI08 locOffset );
 	CPCharAndStartLoc& operator=( CAccountBlock& actbBlock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };

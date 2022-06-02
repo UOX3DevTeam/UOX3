@@ -4889,7 +4889,7 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
 	pStream.WriteByte( byteOffset, numLocations );
 }
 
-void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
+void CPCharAndStartLoc::AddStartLocation( start_location *sLoc, UI08 locOffset )
 {
 	if( sLoc == nullptr )
 		return;
@@ -4903,7 +4903,7 @@ void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
 	pStream.WriteString( static_cast<size_t>(baseOffset)+33, sLoc->oldDescription, 31 );
 }
 
-void CPCharAndStartLoc::NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
+void CPCharAndStartLoc::NewAddStartLocation( start_location *sLoc, UI08 locOffset )
 {
 	if( sLoc == nullptr )
 		return;
