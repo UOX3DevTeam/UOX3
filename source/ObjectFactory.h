@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <functional>
 
+// *******************************
+// Unfortunately Prerequisites.h includes EVERY header (almost), and we wonder why it is slow
+// Should be addressed
 #include "Prerequisites.h"
 #include "typedefs.h"
 using factory_collection = std::unordered_map<std::uint32_t, CBaseObject*>;
