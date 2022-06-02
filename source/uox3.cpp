@@ -365,25 +365,25 @@ bool isOnline( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updateStats( CBaseObject *mObj, UI08 x )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		if( !(*cIter)->LoginComplete() )
-			continue;
-
-		// Normalize stats if we're updating our stats for other players
-		bool normalizeStats = true;
-		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
-		{
-			( *cIter )->statwindow( mObj );
-			normalizeStats = false;
+	auto nearbyChars = FindNearbyPlayers( mObj );
+	for( auto &sock:nearbyChars ){
+		
+		if( sock->LoginComplete() ){
+			
+			// Normalize stats if we're updating our stats for other players
+			bool normalizeStats = true;
+			if( sock->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+			{
+				sock->statwindow( mObj );
+				normalizeStats = false;
+			}
+			
+			// Prepare the stat update packet
+			CPUpdateStat toSend( (*mObj), x, normalizeStats );
+			
+			// Send the stat update packet
+			sock->Send( &toSend );
 		}
-
-		// Prepare the stat update packet
-		CPUpdateStat toSend( (*mObj), x, normalizeStats );
-
-		// Send the stat update packet
-		(*cIter)->Send( &toSend );
 	}
 }
 
@@ -464,10 +464,9 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			return;
 		}
 
-		SOCKLIST nearbyChars = FindNearbyPlayers( s );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			s->SendWornItems( (*cIter) );
+		auto nearbyChars = FindNearbyPlayers( s );
+		for( auto &sock:nearbyChars ){
+			s->SendWornItems( sock );
 		}
 
 		if( x->GetTarg() != nullptr )	// zero out target, under all circumstances
@@ -1256,10 +1255,10 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					{
 						if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
 						{
-							SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
-							for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-							{
-								Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+							auto nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
+							for( auto &sock:nearbyChars ){
+							
+								Effects->PlaySound( sock, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
 							}
 						}
 					}
@@ -3221,37 +3220,37 @@ void DoorMacro( CSocket *s )
 		case 7 : { --xc; --yc; }	break;
 	}
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
-			if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
+	auto nearbyRegions = MapRegion->PopulateList( mChar );
+	for( auto &toCheck : nearbyRegions ){
+	
+		if( toCheck != nullptr ){	// no valid region
+			
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
+				if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
 				{
-					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+					if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
 					{
-						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
-						cScript *envExecute = JSMapping->GetScript( envTrig );
-						if( envExecute != nullptr )
-							[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
-
-						regItems->Pop();
-						return;
+						if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+						{
+							UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
+							cScript *envExecute = JSMapping->GetScript( envTrig );
+							if( envExecute != nullptr )
+								[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
+							
+							regItems->Pop();
+							return;
+						}
 					}
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 }
 

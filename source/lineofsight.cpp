@@ -606,37 +606,36 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	UI16 itemCount		= 0;
 
 	// We already have to run through all the collisions in this function, so lets just check and push the ID rather than coming back to it later.
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( startX, startY, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( startX, startY, worldNumber );
+	for( auto &MapArea : nearbyRegions)
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = MapArea->GetItemList();
-		regItems->Push();
-		for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
-		{
-			if( !ValidateObject( toCheck ) || toCheck->GetInstanceID() != instanceID )
-				continue;
-
-			// If item toCheck is at the exact same spot as the target location, it should not block LoS.
-			if( toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ )
-				continue;
-
-			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
-			if( idToPush != INVALIDID )
+		if (MapArea != nullptr){
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
+			regItems->Push();
+			for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
 			{
-				CTile& itemToCheck = Map->SeekTile( idToPush );
-				losItemList[itemCount].Height(itemToCheck.Height());
-				losItemList[itemCount].SetID( idToPush );
-				losItemList[itemCount].Flags( itemToCheck.Flags() );
-
-				++itemCount;
-				if( itemCount >= LOSXYMAX )	// don't overflow
-					break;
+				if( !ValidateObject( toCheck ) || toCheck->GetInstanceID() != instanceID )
+					continue;
+				
+				// If item toCheck is at the exact same spot as the target location, it should not block LoS.
+				if( toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ )
+					continue;
+				
+				const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
+				if( idToPush != INVALIDID )
+				{
+					CTile& itemToCheck = Map->SeekTile( idToPush );
+					losItemList[itemCount].Height(itemToCheck.Height());
+					losItemList[itemCount].SetID( idToPush );
+					losItemList[itemCount].Flags( itemToCheck.Flags() );
+					
+					++itemCount;
+					if( itemCount >= LOSXYMAX )	// don't overflow
+						break;
+				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 
 	for( i = 0; i < collisioncount; ++i )

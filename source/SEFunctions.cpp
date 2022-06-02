@@ -2075,25 +2075,24 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 
 	UI16 retCounter				= 0;
 	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcObject );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions	= MapRegion->PopulateList( srcObject );
+	for(auto &MapArea : nearbyRegions )
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) )
-				continue;
-			if( objInRange( srcObject, tempChar, (UI16)distance ) )
+		if( MapArea!= nullptr ){	// no valid region
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
-					++retCounter;
+				if( !ValidateObject( tempChar ) )
+					continue;
+				if( objInRange( srcObject, tempChar, (UI16)distance ) )
+				{
+					if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
+						++retCounter;
+				}
 			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
@@ -2144,25 +2143,24 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	UI16 retCounter					= 0;
 	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcObject );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions		= MapRegion->PopulateList( srcObject );
+	for( auto &MapArea:nearbyRegions )
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = MapArea->GetItemList();
-		regItems->Push();
-		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-		{
-			if( !ValidateObject( tempItem ) )
-				continue;
-			if( objInRange( srcObject, tempItem, (UI16)distance ) )
+		if( MapArea != nullptr ){	// no valid region
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
+			regItems->Push();
+			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
-					++retCounter;
+				if( !ValidateObject( tempItem ) )
+					continue;
+				if( objInRange( srcObject, tempItem, (UI16)distance ) )
+				{
+					if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
+						++retCounter;
+				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;

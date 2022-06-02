@@ -6,7 +6,6 @@
 
 #ifdef __NEED_VALIST__
 using va_list = void* ;
-
 #endif
 
 #if PLATFORM != WINDOWS
@@ -23,6 +22,7 @@ return;	\
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 return;
 #endif
+
 using R32 = float ;
 using R64 = double ;
 using UI08 = std::uint8_t ; // 0 to 255
@@ -34,48 +34,38 @@ using UI32 = std::uint32_t ; // 0 to 4294967295
 using SI64 = std::int64_t ; // -9223372036854775808 to 9223372036854775807
 using UI64 = std::uint64_t ; // 0 to 18446744073709551615
 
-using GENDER = std::uint8_t ;
-using LIGHTLEVEL = std::uint8_t ;
-using COLDLEVEL = std::uint8_t ;
-using HEATLEVEL = std::uint8_t ;
-using SECONDS = std::uint8_t ;
-using ARMORCLASS = std::uint8_t ;
-using RACEREL = std::uint8_t ;
-using RANGE = std::int8_t ;
-using RACEID = std::uint16_t ;
-using COLOUR = std::uint16_t ;
-using SKILLVAL = std::uint16_t ;
-using weathID = std::uint16_t ;
-using GUILDID = std::int16_t ;
-using TIMERVAL = std::uint32_t ;
-using SERIAL = std::uint32_t ;
+using GENDER	= std::uint8_t ;
+using LIGHTLEVEL	= std::uint8_t ;
+using COLDLEVEL	= std::uint8_t ;
+using HEATLEVEL	= std::uint8_t ;
+using SECONDS	= std::uint8_t ;
+using ARMORCLASS	= std::uint8_t ;
+using RACEREL	= std::uint8_t ;
+using RANGE		= std::int8_t ;
+using RACEID	= std::uint16_t ;
+using COLOUR	= std::uint16_t ;
+using SKILLVAL	= std::uint16_t ;
+using weathID	= std::uint16_t ;
+using GUILDID	= std::int16_t ;
+using TIMERVAL	= std::uint32_t ;
+using SERIAL	= std::uint32_t ;
 
 #if defined(_WIN32)
-using UOXSOCKET = std::uint32_t ;
+using UOXSOCKET	= std::uint32_t ;
 #else
-using UOXSOCKET = std::int32_t ;
+using UOXSOCKET	= std::int32_t ;
 #endif
 
-constexpr auto INVALIDSERIAL = std::uint32_t(0xFFFFFFFF) ;
+constexpr auto INVALIDSERIAL	= std::uint32_t(0xFFFFFFFF) ;
 constexpr auto BASEITEMSERIAL = std::uint32_t(0x40000000) ;
-constexpr auto INVALIDID = std::uint16_t(0xFFFF);
-constexpr auto INVALIDCOLOUR = std::uint16_t(0xFFFF);
+constexpr auto INVALIDID	= std::uint16_t(0xFFFF);
+constexpr auto INVALIDCOLOUR	= std::uint16_t(0xFFFF);
 
-class CMapRegion ;
-using REGIONLIST = std::vector< CMapRegion * >	;
-using REGIONLIST_ITERATOR = std::vector< CMapRegion * >::iterator;
-using REGIONLIST_CITERATOR = std::vector< CMapRegion * >::const_iterator;
-//typedef std::vector< CMapRegion * >						REGIONLIST;
-//typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
-//typedef std::vector< CMapRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
 typedef std::vector< CSocket * >						SOCKLIST;
 typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
-typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
 typedef std::vector< std::string >						STRINGLIST;
-typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
-typedef std::vector< std::string >::const_iterator		STRINGLIST_CITERATOR;
 //
 typedef std::vector< SERIAL >							SERLIST;
 typedef std::vector< SERIAL >::iterator					SERLIST_ITERATOR;
@@ -112,39 +102,39 @@ typedef void (TargetFunc)( CSocket *s );
 // Max values
 constexpr auto MAX_NAME = std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet size to 30 characters.
 								// Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
-constexpr auto MAX_TITLE = std::uint8_t(60);
-constexpr auto MAX_VISRANGE = std::uint8_t(18);
-constexpr auto MAXPOSTS = std::uint8_t(128); // Maximum number of posts on a messageboard
-constexpr auto MAX_STACK = std::uint16_t(0xFFFF);
-constexpr auto MAXBUFFER = std::uint16_t(4096); // Buffer Size (For socket operations)
-constexpr auto ILLEGAL_Z = std::int8_t(-128) ;
+constexpr auto MAX_TITLE	= std::uint8_t(60);
+constexpr auto MAX_VISRANGE	= std::uint8_t(18);
+constexpr auto MAXPOSTS		= std::uint8_t(128); // Maximum number of posts on a messageboard
+constexpr auto MAX_STACK	= std::uint16_t(0xFFFF);
+constexpr auto MAXBUFFER	= std::uint16_t(4096); // Buffer Size (For socket operations)
+constexpr auto ILLEGAL_Z	= std::int8_t(-128) ;
 
 // Offsets for Gump menu's (Relates to menus.dfn)
-constexpr auto ITEMMENUOFFSET = 256 ;
-constexpr auto TRACKINGMENUOFFSET = 4096 ;
-constexpr auto POLYMORPHMENUOFFSET = 8192 ;
-constexpr auto JSGUMPMENUOFFSET = 16384 ;
+constexpr auto ITEMMENUOFFSET		= 256 ;
+constexpr auto TRACKINGMENUOFFSET	= 4096 ;
+constexpr auto POLYMORPHMENUOFFSET	= 8192 ;
+constexpr auto JSGUMPMENUOFFSET	= 16384 ;
 
 
-constexpr auto NORTH = std::uint8_t(0x00) ;
-constexpr auto NORTHEAST = std::uint8_t(0x01) ;
-constexpr auto EAST = std::uint8_t(0x02) ;
-constexpr auto SOUTHEAST = std::uint8_t(0x03) ;
-constexpr auto SOUTH = std::uint8_t(0x04) ;
-constexpr auto SOUTHWEST = std::uint8_t(0x05) ;
-constexpr auto WEST = std::uint8_t(0x06) ;
-constexpr auto NORTHWEST = std::uint8_t(0x07) ;
-constexpr auto UNKNOWNDIR = std::uint8_t(0xFF) ;
+constexpr auto NORTH		= std::uint8_t(0x00) ;
+constexpr auto NORTHEAST	= std::uint8_t(0x01) ;
+constexpr auto EAST		= std::uint8_t(0x02) ;
+constexpr auto SOUTHEAST	= std::uint8_t(0x03) ;
+constexpr auto SOUTH		= std::uint8_t(0x04) ;
+constexpr auto SOUTHWEST	= std::uint8_t(0x05) ;
+constexpr auto WEST		= std::uint8_t(0x06) ;
+constexpr auto NORTHWEST	= std::uint8_t(0x07) ;
+constexpr auto UNKNOWNDIR	= std::uint8_t(0xFF) ;
 
 
 // Line Of Sight
-constexpr auto ITEM_TYPE_CHOICES = 6 ;
-constexpr auto TREES_BUSHES = 1 ; // Trees and other large vegetaion in the way
-constexpr auto WALLS_CHIMNEYS = 2 ; // Walls, chimineys, ovens, etc... in the way
-constexpr auto DOORS = 4 ; // Doors in the way
-constexpr auto ROOFING_SLANTED = 8 ; // So can't tele onto slanted roofs, basically
-constexpr auto FLOORS_FLAT_ROOFING = 16 ; // For attacking between floors
-constexpr auto LAVA_WATER = 32 ; // Don't know what all to use this for yet
+constexpr auto ITEM_TYPE_CHOICES	= 6 ;
+constexpr auto TREES_BUSHES		= 1 ; // Trees and other large vegetaion in the way
+constexpr auto WALLS_CHIMNEYS		= 2 ; // Walls, chimineys, ovens, etc... in the way
+constexpr auto DOORS			= 4 ; // Doors in the way
+constexpr auto ROOFING_SLANTED	= 8 ; // So can't tele onto slanted roofs, basically
+constexpr auto FLOORS_FLAT_ROOFING	= 16 ; // For attacking between floors
+constexpr auto LAVA_WATER		= 32 ; // Don't know what all to use this for yet
 
 #endif
 

@@ -2420,14 +2420,13 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 	CBaseObject *iCont = GetCont();
 	if( iCont == nullptr )
 	{
-		SOCKLIST nearbyChars;
+		std::vector<CSocket*> nearbyChars ;
 		if( GetID( 1 ) >= 0x40 )
 			nearbyChars = FindNearbyPlayers( this, DIST_BUILDRANGE );
 		else
 			nearbyChars = FindPlayersInVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			SendToSocket( (*cIter) );
+		for( auto &mSock:nearbyChars){
+			SendToSocket( mSock );
 		}
 		return;
 	}
@@ -2437,18 +2436,17 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		if( charCont != nullptr )
 		{
 			CPWornItem toWear = (*this);
-			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				if( !(*cIter)->LoginComplete() )
-					continue;
-				(*cIter)->Send( &toWear );
-
-				// Only send tooltip if server feature for tooltips is enabled
-				if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
-				{
-					CPToolTip pSend( GetSerial(), (*cIter) );
-					(*cIter)->Send( &pSend );
+			auto nearbyChars = FindNearbyPlayers( charCont );
+			for( auto &mSock:nearbyChars){
+				if( mSock->LoginComplete() ){
+					mSock->Send( &toWear );
+					
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						CPToolTip pSend( GetSerial(), mSock );
+						mSock->Send( &pSend );
+					}
 				}
 			}
 			return;
@@ -2460,12 +2458,11 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		if( itemCont != nullptr )
 		{
 			ObjectType oType = OT_CBO;
-			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				if( !(*cIter)->LoginComplete() )
-					continue;
-				SendPackItemToSocket( (*cIter) );
+			auto nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
+			for( auto &mSock : nearbyChars){
+				if( mSock->LoginComplete() ){
+					SendPackItemToSocket( mSock );
+				}
 			}
 			return;
 		}
@@ -2586,20 +2583,21 @@ void CItem::RemoveFromSight( CSocket *mSock )
 			else
 			{
 				CChar *tChar			= nullptr;
-				SOCKLIST nearbyChars;
+				std::vector<CSocket*> nearbyChars ;
 				if( rItem == this )
 					nearbyChars = FindPlayersInOldVisrange( rItem );
 				else
 					nearbyChars = FindPlayersInVisrange( rItem );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-
-					tChar = (*cIter)->CurrcharObj();
-					if( ValidateObject( tChar ) )
-					{
-						(*cIter)->Send( &toRemove );
+				for( auto &mSock:nearbyChars){
+					
+					if( mSock->LoginComplete() ){
+						
+						
+						tChar = mSock->CurrcharObj();
+						if( ValidateObject( tChar ) )
+						{
+							mSock->Send( &toRemove );
+						}
 					}
 				}
 			}
@@ -2618,12 +2616,12 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				mSock->Send( &toRemove );
 			else
 			{
-				SOCKLIST nearbyChars = FindNearbyPlayers( rChar );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-					(*cIter)->Send( &toRemove );
+				auto nearbyChars = FindNearbyPlayers( rChar );
+				for( auto &mSock:nearbyChars){
+					
+					if( mSock->LoginComplete() ){
+						mSock->Send( &toRemove );
+					}
 				}
 			}
 		}
@@ -2857,18 +2855,16 @@ void CItem::Cleanup( void )
 			}
 			else
 			{
-				SOCKLIST nearbyChars = FindNearbyPlayers( iCont, DIST_NEARBY );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-
-					// Only send tooltip if server feature for tooltips is enabled
-					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
-					{
-						// Refresh container tooltip
-						CPToolTip pSend( iCont->GetSerial(), (*cIter) );
-						(*cIter)->Send(&pSend);
+				auto nearbyChars = FindNearbyPlayers( iCont, DIST_NEARBY );
+				for( auto &mSock:nearbyChars ){
+					if( mSock->LoginComplete() ){
+						// Only send tooltip if server feature for tooltips is enabled
+						if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+						{
+							// Refresh container tooltip
+							CPToolTip pSend( iCont->GetSerial(), mSock );
+							mSock->Send(&pSend);
+						}
 					}
 				}
 			}

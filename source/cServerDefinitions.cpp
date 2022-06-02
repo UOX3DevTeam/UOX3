@@ -556,10 +556,10 @@ void cDirectoryListing::Flatten( bool isParent )
 {
 	ClearFlatten();
 	std::string temp;
-	STRINGLIST_ITERATOR sIter;
-	for( sIter = filenameList.begin(); sIter != filenameList.end(); ++sIter )
+	
+	for( auto &sIter : filenameList)
 	{
-		flattenedFull.push_back( (*sIter) );
+		flattenedFull.push_back( sIter );
 		if( isParent )
 			temp = "";
 		else
@@ -567,7 +567,7 @@ void cDirectoryListing::Flatten( bool isParent )
 			temp = shortCurrentDir;
 			temp += "/";
 		}
-		temp += (*sIter);
+		temp += sIter;
 		flattenedShort.push_back( temp );
 	}
 	DIRLIST_ITERATOR dIter;

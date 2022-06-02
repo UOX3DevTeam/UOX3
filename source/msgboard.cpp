@@ -329,14 +329,13 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 	// Write number of lines in post as next byte, and
 	// then loop through each line
 	mFile.write( (const char *)&msgBoardPost.Lines, 1 );
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
+	for( auto &lIter : msgBoardPost.msgBoardLine)
 	{
 		// Write length of line as next byte, and
 		// then write the line as next X bytes
-		const UI08 lineSize = static_cast<UI08>((*lIter).size());
+		const UI08 lineSize = static_cast<UI08>(lIter.size());
 		mFile.write( (const char *)&lineSize, 1 );
-		mFile.write( (*lIter).c_str(), lineSize );
+		mFile.write( lIter.c_str(), lineSize );
 	}
 
 	// Finally, add actual post serial to 4 bytes of buffer, and write buffer to file
@@ -394,10 +393,8 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
 	const UI08 subjSize		= static_cast<UI08>(msgBoardPost.SubjectLen);
 	UI16 totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
-	{
-		totalSize += 1 + static_cast<UI16>( ( *lIter ).size() );
+	for( auto &lIter : msgBoardPost.msgBoardLine){
+		totalSize += 1 + static_cast<UI16>( lIter.size() );
 	}
 
 	msgBoardPost.Size			= totalSize;

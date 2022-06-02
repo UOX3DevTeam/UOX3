@@ -130,23 +130,21 @@ SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
 CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 {
 	CHARLIST ourChars;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse:nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CChar * > *regChars = CellResponse->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
-				continue;
-			if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
-				ourChars.push_back( tempChar );
+		if (CellResponse != nullptr){
+			GenericList< CChar * > *regChars = CellResponse->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
+					continue;
+				if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
+					ourChars.push_back( tempChar );
+			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 	return ourChars;
 }
@@ -411,38 +409,37 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 	CMultiObj *multi = nullptr;
 	SI32 ret, dx, dy;
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &toCheck : nearbyRegions )
 	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-				continue;
-			if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
+		if (toCheck != nullptr){
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				dx = abs( x - itemCheck->GetX() );
-				dy = abs( y - itemCheck->GetY() );
-				ret = (SI32)( hypotenuse( dx, dy ) );
-				if( ret <= lastdist )
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
+					continue;
+				if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
 				{
-					lastdist = ret;
-					multi = static_cast<CMultiObj *>( itemCheck );
-					if( inMulti( x, y, z, multi ) )
+					dx = abs( x - itemCheck->GetX() );
+					dy = abs( y - itemCheck->GetY() );
+					ret = (SI32)( hypotenuse( dx, dy ) );
+					if( ret <= lastdist )
 					{
-						regItems->Pop();
-						return multi;
+						lastdist = ret;
+						multi = static_cast<CMultiObj *>( itemCheck );
+						if( inMulti( x, y, z, multi ) )
+						{
+							regItems->Pop();
+							return multi;
+						}
+						else
+							multi = nullptr;
 					}
-					else
-						multi = nullptr;
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return multi;
 }
@@ -485,30 +482,29 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 	UI16 currDist;
 	CItem *currItem		= nullptr;
 	point3 targLocation = point3( x, y, z );
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for(auto &toCheck : nearbyRegions)
 	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-				continue;
-			if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
+		if (toCheck != nullptr){
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				point3 difference	= itemCheck->GetLocation() - targLocation;
-				currDist			= static_cast<UI16>(difference.Mag());
-				if( currDist < oldDist)
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
+					continue;
+				if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
 				{
-					oldDist = currDist;
-					currItem = itemCheck;
+					point3 difference	= itemCheck->GetLocation() - targLocation;
+					currDist			= static_cast<UI16>(difference.Mag());
+					if( currDist < oldDist)
+					{
+						oldDist = currDist;
+						currItem = itemCheck;
+					}
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return currItem;
 }
@@ -521,23 +517,21 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 {
 	ITEMLIST ourItems;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mObj );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( mObj );
+	for( auto &CellResponse:nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
-				continue;
-			if( objInRange( mObj, Item, distance ) )
-				ourItems.push_back( Item );
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
+					continue;
+				if( objInRange( mObj, Item, distance ) )
+					ourItems.push_back( Item );
+			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return ourItems;
 }
@@ -550,23 +544,21 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 {
 	ITEMLIST ourItems;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse : nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-				ourItems.push_back( Item );
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+					ourItems.push_back( Item );
+			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return ourItems;
 }
@@ -579,34 +571,32 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
 {
 	BASEOBJECTLIST ourObjects;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse : nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-				ourObjects.push_back( Item );
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+					ourObjects.push_back( Item );
+			}
+			regItems->Pop();
+			
+			GenericList< CChar * > *regChars = CellResponse->GetCharList();
+			regItems->Push();
+			for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
+			{
+				if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
+					ourObjects.push_back( Character );
+			}
+			regChars->Pop();
 		}
-		regItems->Pop();
-
-		GenericList< CChar * > *regChars = CellResponse->GetCharList();
-		regItems->Push();
-		for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
-		{
-			if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
-				ourObjects.push_back( Character );
-		}
-		regChars->Pop();
 	}
 	return ourObjects;
 }

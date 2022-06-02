@@ -56,23 +56,21 @@ inline bool findString( std::string toCheck, std::string toFind )
 CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 {
 	CHARLIST ourNpcs;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( mChar );
+	for( auto &CellResponse : nearbyRegions)
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CChar * > *regChars = CellResponse->GetCharList();
-		regChars->Push();
-		for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
-		{
-			if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() || Npc->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			if( objInRange( mChar, Npc, distance ) )
-				ourNpcs.push_back( Npc );
+		if (CellResponse != nullptr){
+			GenericList< CChar * > *regChars = CellResponse->GetCharList();
+			regChars->Push();
+			for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
+			{
+				if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() || Npc->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				if( objInRange( mChar, Npc, distance ) )
+					ourNpcs.push_back( Npc );
+			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 	return ourNpcs;
 }

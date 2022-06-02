@@ -110,10 +110,9 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 			else
 				searchDistance = DIST_SAMESCREEN;
 
-			SOCKLIST nearbyChars = FindNearbyPlayers( &speaker, searchDistance );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				(*cIter)->Send( &unicodeMessage );
+			auto nearbyChars = FindNearbyPlayers( &speaker, searchDistance );
+			for( auto &sock:nearbyChars){
+				sock->Send( &unicodeMessage );
 			}
 		}
 		else

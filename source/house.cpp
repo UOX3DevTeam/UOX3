@@ -14,6 +14,8 @@
 
 #include "ObjectFactory.h"
 
+using namespace std::string_literals ;
+
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
 //o-----------------------------------------------------------------------------------------------o
@@ -97,10 +99,9 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
-	STRINGLIST_CITERATOR hiIter;
-	for( hiIter = houseItems.begin(); hiIter != houseItems.end(); ++hiIter )//Loop through the HOUSE_ITEMs
+	for( auto &hiIter :houseItems )//Loop through the HOUSE_ITEMs
 	{
-		std::string sect = "HOUSE ITEM " + (*hiIter);
+		std::string sect = "HOUSE ITEM "s + hiIter;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
 		if( HouseItem != nullptr )
 		{

@@ -654,48 +654,47 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 //o-----------------------------------------------------------------------------------------------o
 CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis )
 {
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for(auto CellResponse:nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( !checkOnlyNonMultis )
+		if( CellResponse != nullptr ){
+			
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 			{
-				if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( !checkOnlyNonMultis )
 				{
-					auto deetee = MultiTile( Item, x, y, oldz, false );
-					if( deetee > 0 )
+					if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
 					{
+						auto deetee = MultiTile( Item, x, y, oldz, false );
+						if( deetee > 0 )
+						{
+							regItems->Pop();
+							return Item;
+						}
+						else
+							continue;
+					}
+					else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
+					{
+						if( Item->GetX() != x && Item->GetY() != y )
+							continue;
+						
 						regItems->Pop();
 						return Item;
 					}
-					else
-						continue;
 				}
-				else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
+				else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
 				{
-					if( Item->GetX() != x && Item->GetY() != y )
-						continue;
-
 					regItems->Pop();
 					return Item;
 				}
 			}
-			else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
-			{
-				regItems->Pop();
-				return Item;
-			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return nullptr;
 }
@@ -1018,32 +1017,47 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck )
 {
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse:nearbyRegions)
 	{
-		CMapRegion *CellResponse = ( *rIter );
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-
-			if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
+		if( CellResponse != nullptr ){
+			
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 			{
-				// Found a multi
-				// Look for a multi item at specific location
-				UI16 multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
-				for( auto &multiItem : SeekMulti( multiID ).allItems() )
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				
+				if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
 				{
-					if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) )
+					// Found a multi
+					// Look for a multi item at specific location
+					UI16 multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
+					for( auto &multiItem : SeekMulti( multiID ).allItems() )
 					{
-						if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) )
+						if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) )
 						{
-							if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) )
+							if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) )
+							{
+								if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) )
+								{
+									return true;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					// Item is not a multi
+					if( Item->GetX() == x && Item->GetY() == y && Item->GetZ() == z )
+					{
+						UI16 itemZ = Item->GetZ();
+						const SI08 tileHeight = static_cast<SI08>( TileHeight( Item->GetID() ) );
+						if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
+						{
+							if( SeekTile( Item->GetID() ).CheckFlag( toCheck ) )
 							{
 								return true;
 							}
@@ -1051,24 +1065,8 @@ bool CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI
 					}
 				}
 			}
-			else
-			{
-				// Item is not a multi
-				if( Item->GetX() == x && Item->GetY() == y && Item->GetZ() == z )
-				{
-					UI16 itemZ = Item->GetZ();
-					const SI08 tileHeight = static_cast<SI08>( TileHeight( Item->GetID() ) );
-					if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
-					{
-						if( SeekTile( Item->GetID() ).CheckFlag( toCheck ) )
-						{
-							return true;
-						}
-					}
-				}
-			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return false;
 }

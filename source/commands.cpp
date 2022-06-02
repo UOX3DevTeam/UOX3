@@ -7,6 +7,7 @@
 #include "CPacketSend.h"
 #include "StringUtility.hpp"
 
+#include <algorithm>
 
 cCommands *Commands			= nullptr;
 
@@ -309,12 +310,10 @@ void cCommands::Load( void )
 	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		STRINGLIST_CITERATOR tablePos = badCommands.begin();
-		while( tablePos != badCommands.end() )
-		{
-			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
-			++tablePos;
-		}
+		std::for_each(badCommands.begin(), badCommands.end(),[] (const std::string &text){
+			Console << "Invalid command '" << text.c_str() << "' found in commands.dfn!" << myendl;
+
+		});
 	}
 
 	Console << "   o Loading command levels";

@@ -1469,10 +1469,8 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			if( npcSock != nullptr )
 				npcSock->sysmessage( temp );
 
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				CSocket *iSock = (*cIter);
+			auto nearbyChars = FindNearbyPlayers( mChar );
+			for( auto &iSock:nearbyChars ){
 				CChar *iChar = iSock->CurrcharObj();
 				if( iSock != s && ( RandomNum( 10, 20 ) == 17 || ( RandomNum( 0, 1 ) == 1 && iChar->GetIntelligence() >= mChar->GetIntelligence() ) ) )
 				{
@@ -1599,47 +1597,46 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	line = tag + " " + data;
 	toSend.Question( line );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			id = tempChar->GetID();
-			if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
+	auto nearbyRegions = MapRegion->PopulateList( mChar );
+	for( auto &MapArea: nearbyRegions ){
+		
+		if( MapArea!= nullptr ){	// no valid region
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
 			{
-				const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
-				if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				id = tempChar->GetID();
+				if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
 				{
-					mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
-					++MaxTrackingTargets;
-
-					SI32 dirMessage = 898;
-					switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) )
+					const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
+					if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
 					{
-						case NORTH:		dirMessage = 890;	break;
-						case NORTHWEST:	dirMessage = 891;	break;
-						case NORTHEAST:	dirMessage = 892;	break;
-						case SOUTH:		dirMessage = 893;	break;
-						case SOUTHWEST:	dirMessage = 894;	break;
-						case SOUTHEAST:	dirMessage = 895;	break;
-						case WEST:		dirMessage = 896;	break;
-						case EAST:		dirMessage = 897;	break;
-						default:		dirMessage = 898;	break;
+						mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
+						++MaxTrackingTargets;
+						
+						SI32 dirMessage = 898;
+						switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) )
+						{
+							case NORTH:		dirMessage = 890;	break;
+							case NORTHWEST:	dirMessage = 891;	break;
+							case NORTHEAST:	dirMessage = 892;	break;
+							case SOUTH:		dirMessage = 893;	break;
+							case SOUTHWEST:	dirMessage = 894;	break;
+							case SOUTHEAST:	dirMessage = 895;	break;
+							case WEST:		dirMessage = 896;	break;
+							case EAST:		dirMessage = 897;	break;
+							default:		dirMessage = 898;	break;
+						}
+						std::string tempName = getNpcDictName( tempChar );
+						line = tempName + " " + Dictionary->GetEntry( dirMessage, mLang );
+						toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 					}
-					std::string tempName = getNpcDictName( tempChar );
-					line = tempName + " " + Dictionary->GetEntry( dirMessage, mLang );
-					toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 				}
 			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 
 	if( MaxTrackingTargets == 0 )
@@ -1837,36 +1834,36 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	VALIDATESOCKET( s );
 	CChar *mChar = s->CurrcharObj();
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = MapArea->GetItemList();
-		regItems->Push();
-		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-		{
-			if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 )
+	auto nearbyRegions = MapRegion->PopulateList( mChar );
+	for( auto &MapArea:nearbyRegions ){
+		
+		if( MapArea != nullptr ){	// no valid region
+			
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
+			regItems->Push();
+			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
-				if( objInRange( mChar, tempItem, DIST_NEARBY ) )
+				if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 )
 				{
-					UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
-					if( getAmt == 0 )
+					if( objInRange( mChar, tempItem, DIST_NEARBY ) )
 					{
-						s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
+						UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
+						if( getAmt == 0 )
+						{
+							s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
+							regItems->Pop();
+							return;
+						}
+						NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
 						regItems->Pop();
 						return;
 					}
-					NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
-					regItems->Pop();
-					return;
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	s->sysmessage( 981 ); // The anvil is too far away.
 }
@@ -1913,10 +1910,8 @@ bool cSkills::LoadMiningData( void )
 		{
 			rvalue = true;
 			ScriptSection *individualOre = nullptr;
-			STRINGLIST_CITERATOR toCheck;
-			for( toCheck = oreNameList.begin(); toCheck != oreNameList.end(); ++toCheck )
-			{
-				std::string oreName = (*toCheck);
+			for( auto &oreName : oreNameList ){
+				
 				individualOre = FileLookup->FindEntry( oreName, skills_def );
 				if( individualOre != nullptr )
 				{
