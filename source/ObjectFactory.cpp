@@ -50,7 +50,7 @@ auto serialgen_t::operator=(std::int32_t value) ->serialgen_t& {
 // ObjectFactory
 //=========================================================
 //=========================================================
-ObjectFactory::ObjectFactory(){
+ObjectFactory::ObjectFactory():character_serials(1),item_serials(BASEITEMSERIAL){
 	
 }
 //=========================================================
