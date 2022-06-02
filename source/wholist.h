@@ -8,7 +8,7 @@ private:
 	SI32		gmCount;						// number of GMs already in it
 	bool		online;
 
-	SERLIST		whoMenuData;
+	std::vector<SERIAL>		whoMenuData;
 	std::vector<std::string> one, two;				// replacement for entries1, entries2
 
 	void Update( void );				// force the list to update
