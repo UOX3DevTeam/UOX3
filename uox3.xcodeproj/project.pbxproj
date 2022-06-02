@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		6452D32227D3A7CB00E5AFB4 /* osunique.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D32127D3A7CB00E5AFB4 /* osunique.cpp */; };
 		648AF6EE27CFEFA3009327DE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 648AF6ED27CFEF94009327DE /* libz.tbd */; platformFilters = (maccatalyst, macos, ); };
-		648AF6F027CFF108009327DE /* libjs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648AF6EF27CFF0F5009327DE /* libjs.a */; };
 		648AF79627CFF2CD009327DE /* cConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6F627CFF2CC009327DE /* cConsole.cpp */; };
 		648AF79727CFF2CD009327DE /* dist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6F727CFF2CC009327DE /* dist.cpp */; };
 		648AF79827CFF2CD009327DE /* calcfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6FA27CFF2CC009327DE /* calcfuncs.cpp */; };
@@ -90,6 +89,7 @@
 		648AF7E327CFF2CD009327DE /* weight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79127CFF2CD009327DE /* weight.cpp */; };
 		648AF7E427CFF2CD009327DE /* effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79327CFF2CD009327DE /* effect.cpp */; };
 		648AF7E527CFF2CD009327DE /* speech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79527CFF2CD009327DE /* speech.cpp */; };
+		64EAC33128484667004BF08B /* libjs32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64EAC33028484655004BF08B /* libjs32.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -270,6 +270,7 @@
 		648AF79327CFF2CD009327DE /* effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = effect.cpp; sourceTree = "<group>"; };
 		648AF79427CFF2CD009327DE /* cSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cSocket.h; sourceTree = "<group>"; };
 		648AF79527CFF2CD009327DE /* speech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = speech.cpp; sourceTree = "<group>"; };
+		64EAC33028484655004BF08B /* libjs32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs32.a; path = ../spidermonkey/libjs32.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -277,8 +278,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				648AF6F027CFF108009327DE /* libjs.a in Frameworks */,
 				648AF6EE27CFEFA3009327DE /* libz.tbd in Frameworks */,
+				64EAC33128484667004BF08B /* libjs32.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -305,6 +306,7 @@
 		648AF6EC27CFEF94009327DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				64EAC33028484655004BF08B /* libjs32.a */,
 				648AF6EF27CFF0F5009327DE /* libjs.a */,
 				648AF6ED27CFEF94009327DE /* libz.tbd */,
 			);
