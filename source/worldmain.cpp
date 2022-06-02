@@ -501,14 +501,9 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static UI32 save_counter = 0;
 
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		CSpawnRegion *spawnReg = spIter->second;
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 		if( spawnReg != nullptr )
 			spawnReg->checkSpawned();
-		++spIter;
 	}
 
 	if( GetWorldSaveProgress() != SS_SAVING )
@@ -585,14 +580,9 @@ void CWorldMain::RegionSave( void )
 		Console.error( oldstrutil::format("Failed to open %s for writing", regionsFile.c_str()) );
 		return;
 	}
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
+	for (auto [twnnum,myReg]:cwmWorldState->townRegions){
 		if( myReg != nullptr )
 			myReg->Save( regionsDestination );
-		++tIter;
 	}
 	regionsDestination.close();
 }

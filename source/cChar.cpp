@@ -3152,12 +3152,12 @@ GenericList< CChar * > *CChar::GetPetList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	ITEMLIST *GetOwnedItems( void )
+//| Function	-
 //| Date		-	13 March 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of items the char owns
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST *CChar::GetOwnedItems( void )
+auto  CChar::GetOwnedItems() ->std::vector< CItem* >*
 {
 	return &ownedItems;
 }
@@ -3171,14 +3171,12 @@ ITEMLIST *CChar::GetOwnedItems( void )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::AddOwnedItem( CItem *toAdd )
 {
-	ITEMLIST_CITERATOR i;
-	for( i = ownedItems.begin(); i != ownedItems.end(); ++i )
-	{
-		if( (*i) == toAdd )		// We already have it
-			break;
-	}
-	if( i == ownedItems.end() )
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toAdd](CItem *ptr){
+		return toAdd == ptr;
+	});
+	if (iter == ownedItems.end()){
 		ownedItems.push_back( toAdd );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3189,13 +3187,11 @@ void CChar::AddOwnedItem( CItem *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::RemoveOwnedItem( CItem *toRemove )
 {
-	for( ITEMLIST_ITERATOR rIter = ownedItems.begin(); rIter != ownedItems.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			ownedItems.erase( rIter );
-			break;
-		}
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toRemove](CItem *entry){
+		return toRemove == entry ;
+	});
+	if (iter != ownedItems.end()){
+		ownedItems.erase(iter);
 	}
 }
 
@@ -6912,7 +6908,7 @@ GenericList< CChar * > *CChar::GetPetOwnerList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearPetOwnerList( void )
+//| Function	-
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the pet's list of previous owners
 //o-----------------------------------------------------------------------------------------------o
@@ -6985,7 +6981,7 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearFriendList( void )
+//| Function	-
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
@@ -6996,14 +6992,14 @@ void CChar::ClearFriendList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *GetFriendList( void )
+//| Function	-	
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST *CChar::GetFriendList( void )
+auto CChar::GetFriendList() ->std::vector< CChar* >*
 {
-	CHARLIST *rVal = nullptr;
+	std::vector< CChar* > *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = &mNPC->petFriends;
 	return rVal;
@@ -7025,18 +7021,15 @@ bool CChar::AddFriend( CChar *toAdd )
 	}
 	if( IsValidNPC() )
 	{
-		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
-		while( i != mNPC->petFriends.end() )
-		{
-			if( (*i) == toAdd )
-				break;
-			++i;
+		
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toAdd](CChar *entry){
+			return entry == static_cast<const CChar*>(toAdd);
+		});
+		if (iter == mNPC->petFriends.end()){
+			mNPC->petFriends.push_back(toAdd);
+			return true ;
 		}
-		if( i == mNPC->petFriends.end() )
-		{
-			mNPC->petFriends.push_back( toAdd );
-			return true;
-		}
+		 
 	}
 	return false;
 }
@@ -7051,13 +7044,12 @@ bool CChar::RemoveFriend( CChar *toRemove )
 {
 	if( IsValidNPC() )
 	{
-		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
-		{
-			if( (*rIter) == toRemove )
-			{
-				mNPC->petFriends.erase( rIter );
-				return true;
-			}
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toRemove](CChar *entry){
+			return toRemove==entry ;
+		}) ;
+		if (iter != mNPC->petFriends.end() ){
+			mNPC->petFriends.erase( iter );
+			return true;
 		}
 	}
 	return false;
@@ -7857,10 +7849,8 @@ UI32 CChar::CountHousesOwned( bool countCoOwnedHouses )
 	else
 	{
 		// Count all houses owned by player by checking list of character's owned items!
-		ITEMLIST *ownedItems = GetOwnedItems();
-		for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
-		{
-			CBaseObject *oItem = ( *I );
+		auto ownedItems = GetOwnedItems();
+		for( auto &oItem : *ownedItems ){
 			if( ValidateObject( oItem ) && oItem->GetObjType() == OT_MULTI )
 			{
 				if( oItem->GetOwnerObj() == this )

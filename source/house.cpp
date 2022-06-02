@@ -418,8 +418,8 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	return true;
 }
 
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CChar* >;
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CItem* >;
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void BuildHouse( CSocket *mSock, UI08 houseEntry )
@@ -762,11 +762,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetBanY( by );
 
 		// Move characters out of the way
-		CHARLIST charList = findNearbyChars( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
-		{
-			CChar *ourChar = (*charCtr);
-			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) && 
+		auto charList = findNearbyChars( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
+		for( auto &ourChar: charList ){
+			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) &&
 				( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) && 
 				( ourChar->GetZ() >= house->GetZ() - 16 ))
 			{
@@ -776,10 +774,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		}
 
 		// Move items out of the way
-		ITEMLIST itemList = findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( ITEMLIST_CITERATOR itemCtr = itemList.begin(); itemCtr != itemList.end(); ++itemCtr )
-		{
-			CItem *ourItem = (*itemCtr);
+		auto itemList = findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
+		for( auto &ourItem:itemList){
 			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT )
 			{
 				if( ( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&

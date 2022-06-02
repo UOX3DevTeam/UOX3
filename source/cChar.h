@@ -99,7 +99,7 @@ private:
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
 		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
-		CHARLIST			petFriends;			// Temporary list of friends a pet has
+		std::vector< CChar* >	petFriends;			// Temporary list of friends a pet has
 		GenericList< CChar * >	petOwnerList;	// Persistent list of owners a pet has previously had
 		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
 		UI16				loyalty;			// Pet's current loyalty to its master
@@ -135,7 +135,7 @@ private:
 		SERIAL		robe;
 
 		SERIAL		trackingTarget; // Tracking target ID
-		CHARLIST	trackingTargets;
+		std::vector< CChar* >	trackingTargets;
 
 		UI16		accountNum;
 
@@ -236,7 +236,7 @@ protected:
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
 	GenericList< CChar * >	petsControlled;
-	ITEMLIST				ownedItems;
+	std::vector< CItem* >					ownedItems;
 	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
 	std::bitset< UT_COUNT >	updateTypes;
 
@@ -287,7 +287,7 @@ public:
 
 	GenericList< CChar * > *	GetPetList( void );
 	GenericList< CChar * > *	GetPetOwnerList( void );
-	ITEMLIST *	GetOwnedItems( void );
+	auto		GetOwnedItems() ->std::vector< CItem* >*;
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
@@ -628,13 +628,13 @@ public:
 
 	// NPC Characters
 protected:
-	virtual void	RemoveSelfFromOwner( void ) override;
-	virtual void	AddSelfToOwner( void ) override;
+	virtual void	RemoveSelfFromOwner() override;
+	virtual void	AddSelfToOwner() override;
 public:
-	void		ClearFriendList( void );
-	CHARLIST *	GetFriendList( void );
+	void		ClearFriendList();
+	auto 		GetFriendList() ->std::vector< CChar* >*;
 
-	void		ClearPetOwnerList( void );
+	void		ClearPetOwnerList();
 	bool		AddPetOwnerToList( CChar *toAdd );
 	bool		RemovePetOwnerFromList( CChar *toRemove );
 	bool		IsOnPetOwnerList( CChar *toCheck );
@@ -642,10 +642,10 @@ public:
 	bool		AddFriend( CChar *toAdd );
 	bool		RemoveFriend( CChar *toRemove );
 
-	SI16		GetNPCAiType( void ) const;
-	SI16		GetTaming( void ) const;
-	SI16		GetPeaceing( void ) const;
-	SI16		GetProvoing( void ) const;
+	SI16		GetNPCAiType() const;
+	SI16		GetTaming() const;
+	SI16		GetPeaceing() const;
+	SI16		GetProvoing() const;
 	UI08		GetTrainingPlayerIn( void ) const;
 	UI32		GetHoldG( void ) const;
 	UI08		GetSplit( void ) const;

@@ -152,14 +152,11 @@ void app_stopped(int sig)
 //o-----------------------------------------------------------------------------------------------o
 void UnloadSpawnRegions( void )
 {
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		if( spIter->second != nullptr )
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
+		if( spawnReg != nullptr )
 		{
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
-			auto spawnedCharsList = spIter->second->GetSpawnedCharsList();
+			auto spawnedCharsList = spawnReg->GetSpawnedCharsList();
 			for( auto cCheck = spawnedCharsList->First(); !spawnedCharsList->Finished(); cCheck = spawnedCharsList->Next() )
 			{
 				if( !ValidateObject( cCheck ) )
@@ -172,7 +169,7 @@ void UnloadSpawnRegions( void )
 			}
 
 			// Iterate over list of spawned items and delete them if no player has picked them up
-			auto spawnedItemsList = spIter->second->GetSpawnedItemsList();
+			auto spawnedItemsList = spawnReg->GetSpawnedItemsList();
 			for( auto iCheck = spawnedItemsList->First(); !spawnedItemsList->Finished(); iCheck = spawnedItemsList->Next() )
 			{
 				if( !ValidateObject( iCheck ) )
@@ -184,9 +181,9 @@ void UnloadSpawnRegions( void )
 				}
 			}
 
-			delete spIter->second;
+			delete spawnReg;
 		}
-		++spIter;
+		
 	}
 	cwmWorldState->spawnRegions.clear();
 }
@@ -198,13 +195,10 @@ void UnloadSpawnRegions( void )
 //o-----------------------------------------------------------------------------------------------o
 void UnloadRegions( void )
 {
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		if( tIter->second != nullptr )
-			delete tIter->second;
-		++tIter;
+	for (auto [twnnum,town]:cwmWorldState->townRegions ){
+		if (town != nullptr){
+			delete town ;
+		}
 	}
 	cwmWorldState->townRegions.clear();
 }
@@ -396,12 +390,8 @@ void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
 	UI32 objectsDeleted				= 0;
-	QUEUEMAP_CITERATOR delqIter		= cwmWorldState->deletionQueue.begin();
-	QUEUEMAP_CITERATOR delqIterEnd	= cwmWorldState->deletionQueue.end();
-	while( delqIter != delqIterEnd )
-	{
-		CBaseObject *mObj = delqIter->first;
-		++delqIter;
+	for (auto &entry : cwmWorldState->deletionQueue){
+		CBaseObject *mObj = entry.first;
 		if( mObj == nullptr || mObj->isFree() || !mObj->isDeleted() )
 		{
 			Console.warning( "Invalid object found in Deletion Queue" );
@@ -1576,14 +1566,9 @@ void CWorldMain::CheckAutoTimers( void )
 	//Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
-		TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-		TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-		while( tIter != tEnd )
-		{
-			CTownRegion *myReg = tIter->second;
+		for (auto [twnnum,myReg]:cwmWorldState->townRegions){
 			if( myReg != nullptr )
 				myReg->PeriodicCheck();
-			++tIter;
 		}
 		nextCheckTownRegions = BuildTimeValue( 10 );	// do checks every 10 seconds or so, rather than every single time
 		JailSys->PeriodicCheck();
@@ -1598,11 +1583,8 @@ void CWorldMain::CheckAutoTimers( void )
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 
-		SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
+		for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
+		
 			if( spawnReg != nullptr )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
@@ -1614,7 +1596,6 @@ void CWorldMain::CheckAutoTimers( void )
 				maxItemsSpawned += static_cast<UI32>(spawnReg->GetMaxItemSpawn());
 				maxNpcsSpawned += static_cast<UI32>(spawnReg->GetMaxCharSpawn());
 			}
-			++spIter;
 		}
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
@@ -1885,11 +1866,8 @@ void CWorldMain::CheckAutoTimers( void )
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / statwindow() queue here
-	QUEUEMAP_CITERATOR rqIter			= cwmWorldState->refreshQueue.begin();
-	QUEUEMAP_CITERATOR rqIterEnd		= cwmWorldState->refreshQueue.end();
-	while( rqIter != rqIterEnd )
-	{
-		CBaseObject *mObj = rqIter->first;
+	for (auto &entry : cwmWorldState->refreshQueue){
+		CBaseObject *mObj = entry.first;
 		if( ValidateObject( mObj ) )
 		{
 			if( mObj->CanBeObjType( OT_CHAR ) )
@@ -1926,7 +1904,6 @@ void CWorldMain::CheckAutoTimers( void )
 			else
 				mObj->Update();
 		}
-		++rqIter;
 	}
 	cwmWorldState->refreshQueue.clear();
 }
@@ -2003,7 +1980,7 @@ void ParseArgs( SI32 argc, char *argv[] )
 	}
 }
 
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CBaseObject* >	;
 bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
@@ -2017,10 +1994,8 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		if( a->CanBeObjType( OT_MULTI ))
 		{
 			CMultiObj *aMulti = static_cast<CMultiObj *>(a);
-			BASEOBJECTLIST objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
-			for( BASEOBJECTLIST_CITERATOR objectCtr = objectList.begin(); objectCtr != objectList.end(); ++objectCtr )
-			{
-				CBaseObject *objToCheck = (*objectCtr);
+			auto objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
+			for( auto &objToCheck:objectList){
 
 				if( inMulti( objToCheck->GetX(), objToCheck->GetY(), objToCheck->GetZ(), aMulti ))
 					objToCheck->SetMulti( aMulti );

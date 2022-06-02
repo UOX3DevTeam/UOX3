@@ -1733,13 +1733,11 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
-	CHARLIST *petFriends	= pet->GetFriendList();
+	auto petFriends	= pet->GetFriendList();
 	if( petFriends != nullptr )
 	{
-		CChar *getFriend		= nullptr;
-		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
-		{
-			getFriend = (*I);
+		
+		for( auto &getFriend:*petFriends){
 			if( ValidateObject( getFriend ) && getFriend == mChar )
 				return true;
 		}

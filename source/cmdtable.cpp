@@ -697,16 +697,11 @@ void command_respawn( void )
 {
 	UI32 spawnedItems		= 0;
 	UI32 spawnedNpcs		= 0;
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		CSpawnRegion *spawnReg = spIter->second;
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 		if( spawnReg != nullptr )
 		{
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
 		}
-		++spIter;
 	}
 
 	UI32 b		= 0;
@@ -729,14 +724,10 @@ void command_regspawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
-			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-			while( spIter != spEnd )
-			{
-				CSpawnRegion *spawnReg = spIter->second;
+			for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 				if( spawnReg != nullptr )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
-				++spIter;
+				
 			}
 			if( itemsSpawned || npcsSpawned )
 				s->sysmessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions

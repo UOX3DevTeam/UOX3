@@ -1,7 +1,7 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
 
-enum TargetIDs;
+enum TargetIDs:int;
 
 enum TriggerWords
 {
