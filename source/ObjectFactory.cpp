@@ -5,7 +5,11 @@
 #include <algorithm>
 #include <climits>
 
-#include "uox3.h"
+#include "cBaseObject.h"
+#include "cItem.h" // Includes CItem, CSpawnItem
+#include "cMultiObj.h" // Includes CMultiObj, CBoatObj
+#include "cChar.h" // Includes CChar
+
 
 //=========================================================
 // serialgen_t
