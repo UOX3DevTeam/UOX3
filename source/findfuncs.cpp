@@ -121,13 +121,13 @@ auto FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )->std::vector< CS
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CChar* >
 {
-	CHARLIST ourChars;
+	std::vector< CChar* > ourChars;
 	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( auto &CellResponse:nearbyRegions )
 	{
@@ -508,13 +508,12 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a given object
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
-{
-	ITEMLIST ourItems;
+auto findNearbyItems( CBaseObject *mObj, distLocs distance ) ->std::vector< CItem* > {
+	std::vector< CItem* >	ourItems;
 	auto nearbyRegions = MapRegion->PopulateList( mObj );
 	for( auto &CellResponse:nearbyRegions )
 	{
@@ -535,13 +534,13 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	ITEMLIST ourItems;
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CItem* > {
+
+	std::vector< CItem* >	 ourItems;
 	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( auto &CellResponse : nearbyRegions )
 	{
@@ -562,13 +561,12 @@ ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI1
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	BASOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	BASEOBJECTLIST ourObjects;
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CBaseObject* > {
+	std::vector< CBaseObject* >	 ourObjects;
 	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
 	for( auto &CellResponse : nearbyRegions )
 	{

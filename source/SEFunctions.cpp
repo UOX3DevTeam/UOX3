@@ -2486,16 +2486,11 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsv
 
 	if( myScript != nullptr )
 	{
-		SPAWNMAP_CITERATOR spIter = cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd = cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
+		for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 			if( spawnReg != nullptr )
 			{
 				SE_IterateSpawnRegionsFunctor( spawnReg, b, myScript );
 			}
-			++spIter;
 		}
 	}
 

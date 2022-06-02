@@ -49,13 +49,13 @@ inline bool findString( std::string toCheck, std::string toFind )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of NPCs that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
+auto findNearbyNPCs( CChar *mChar, distLocs distance )->std::vector< CChar* >
 {
-	CHARLIST ourNpcs;
+	std::vector< CChar* > ourNpcs;
 	auto nearbyRegions = MapRegion->PopulateList( mChar );
 	for( auto &CellResponse : nearbyRegions)
 	{
@@ -75,7 +75,7 @@ CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
 	return ourNpcs;
 }
 
-ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
+auto findNearbyItems( CBaseObject *mObj, distLocs distance )->std::vector< CItem* >	;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 //o-----------------------------------------------------------------------------------------------o
@@ -83,11 +83,8 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
 //o-----------------------------------------------------------------------------------------------o
 UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
-	CChar *Npc			= nullptr;
-	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_CMDRANGE );
-	for( CHARLIST_ITERATOR nIter = nearbyNPCs.begin(); nIter != nearbyNPCs.end(); ++nIter )
-	{
-		Npc = (*nIter);
+	auto nearbyNPCs = findNearbyNPCs( mChar, DIST_CMDRANGE );
+	for( auto &Npc: nearbyNPCs ){
 		if( !ValidateObject( Npc ) )
 			continue;
 
@@ -127,11 +124,9 @@ UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 	// How about items?
 	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
 	{
-		CItem *Item			= nullptr;
-		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_CMDRANGE );
-		for( ITEMLIST_ITERATOR nIter = nearbyItems.begin(); nIter != nearbyItems.end(); ++nIter )
-		{
-			Item = (*nIter);
+		
+		auto nearbyItems = findNearbyItems( mChar, DIST_CMDRANGE );
+		for( auto &Item: nearbyItems ){
 			if( !ValidateObject( Item ) )
 				continue;
 
@@ -340,10 +335,8 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() )
 		return;
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_NEARBY );
-	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-	{
-		CChar *Npc = (*npcCtr);
+	auto npcList = findNearbyNPCs( mChar, DIST_NEARBY );
+	for( auto &Npc:npcList ){
 		if( Npc->GetQuestType() == QT_ESCORTQUEST )
 		{
 			// I WILL TAKE THEE
@@ -425,7 +418,7 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		constexpr auto maxsize = 512;
 		std::string temp;
 		std::string temp2;
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
+		auto npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 
 		// Shuffle the npcList so it doesn't always trigger for the first NPC in the list
 		std::random_device rd;
@@ -433,10 +426,8 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		std::shuffle( npcList.begin(), npcList.end(), g );
 
 		auto skillName = std::string("");
-		bool foundString = false;
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = (*npcCtr);
+		//bool foundString = false;
+		for( auto &Npc: npcList){
 
 			if( ValidateObject( trigChar ) )
 			{
@@ -671,10 +662,8 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 	else
 	{
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = (*npcCtr);
+		auto npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
+		for( auto &Npc:npcList ){
 			if( !Handle( mSock, mChar, Npc ) )
 				break;
 		}
@@ -693,10 +682,8 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( allSaid )
 	{
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = ( *npcCtr );
+		auto npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
+		for( auto &Npc: npcList ){
 			if( ValidateObject( Npc ) && Npc->GetOwnerObj() == mChar )
 			{
 				if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ))
@@ -898,10 +885,8 @@ CBaseVendorResponse::CBaseVendorResponse( bool vendVal, const std::string &text 
 //o-----------------------------------------------------------------------------------------------o
 void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-	{
-		CChar *Npc = (*npcCtr);
+	auto npcList = findNearbyNPCs( mChar, DIST_INRANGE );
+	for( auto &Npc: npcList){
 		if( Npc->IsShop() || Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )

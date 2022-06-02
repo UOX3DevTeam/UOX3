@@ -1804,21 +1804,23 @@ void CTownRegion::SendEnemyTowns( CSocket *sock )
 	GumpDisplay Enemy( sock, 300, 300 );
 
 	UI08 enemyCount = 0;
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	TOWNMAP_CITERATOR ourTown = cwmWorldState->townRegions.find( regionNum );
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
+	CTownRegion *ourTown = nullptr ;
+	try {
+		ourTown = cwmWorldState->townRegions.at(regionNum) ;
+		
+	}
+	catch(...){
+		
+	}
+	for (auto [townnum,myReg]:cwmWorldState->townRegions){
 		if( myReg != nullptr )
 		{
-			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
+			if( (myReg != ourTown) && (Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY) )	// if we're racial enemies, and not the same as ourselves
 			{
 				++enemyCount;
 				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
 			}
 		}
-		++tIter;
 	}
 
 	Enemy.SetTitle( oldstrutil::format("Enemy Towns (%u)", enemyCount ) );

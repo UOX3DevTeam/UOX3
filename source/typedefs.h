@@ -3,6 +3,7 @@
 
 #include <unordered_map>
 #include <cstdint>
+#include <functional>
 
 #ifdef __NEED_VALIST__
 using va_list = void* ;
@@ -62,33 +63,9 @@ constexpr auto INVALIDID	= std::uint16_t(0xFFFF);
 constexpr auto INVALIDCOLOUR	= std::uint16_t(0xFFFF);
 
 
-//
-//
-typedef std::vector< CChar* >							CHARLIST;
-typedef std::vector< CChar* >::iterator					CHARLIST_ITERATOR;
-typedef std::vector< CChar* >::const_iterator			CHARLIST_CITERATOR;
-//
-typedef std::vector< CItem* >							ITEMLIST;
-typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
-typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
-//
-typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
-typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
-typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
-//
-typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
-typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
-typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
-//
-typedef std::unordered_map< UI16, CSpawnRegion * >					SPAWNMAP;
-typedef std::unordered_map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
-//
-typedef std::map< UI16, CTownRegion * >						TOWNMAP;
-typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
-
 
 typedef void (TargetFunc)( CSocket *s );
-
+//using TargetFunc  = std::function<void>(CSocket*) ;
 
 //	 	-	End
 
