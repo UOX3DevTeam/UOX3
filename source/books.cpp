@@ -185,7 +185,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				for( UI16 pageNum = 0; pageNum < numPages; ++pageNum )
 				{
 					UI08 blankLineCtr = 0;
-					STRINGLIST tempLines;
+					std::vector<std::string> tempLines;
 					tempLines.resize( 0 );
 					for( UI08 lineNum = 0; lineNum < 8; ++lineNum )
 					{

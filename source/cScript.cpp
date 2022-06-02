@@ -2322,8 +2322,8 @@ size_t cScript::NewGumpList( void )
 {
 	size_t retVal	= gumpDisplays.size();
 	SEGump *toAdd	= new SEGump;
-	toAdd->one		= new STRINGLIST;
-	toAdd->two		= new STRINGLIST;
+	toAdd->one		= new std::vector<std::string>();
+	toAdd->two		= new std::vector<std::string>();
 
 	gumpDisplays.push_back( toAdd );
 	return retVal;

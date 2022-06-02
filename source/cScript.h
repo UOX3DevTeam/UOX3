@@ -114,13 +114,13 @@ enum ScriptEvent
 
 struct SEGump
 {
-	STRINGLIST *one, *two;
+	std::vector<std::string> *one, *two;
 	UI32 TextID;
 };
 
 struct SEGumpData
 {
-	STRINGLIST			sEdits;
+	std::vector<std::string>			sEdits;
 	std::vector<SI32>	nButtons;
 	std::vector<SI16>	nIDs;
 };

@@ -6,8 +6,8 @@ class CSpawnRegion	//Regionspawns
 private:
 	std::string name;			// Any Name to show up when this region is spawned [512]
 
-	STRINGLIST	sNpcs;				// Individual Npcs
-	STRINGLIST 	sItems;				// Individual Items
+	std::vector<std::string>	sNpcs;				// Individual Npcs
+	std::vector<std::string> 	sItems;				// Individual Items
 
 	UI16		regionnum;			// Region Number
 
@@ -71,8 +71,8 @@ public:
 	UI16		GetCall( void ) const;
 	bool		GetOnlyOutside( void ) const;
 	bool		IsSpawner( void ) const;
-	STRINGLIST	GetNPC( void ) const;
-	STRINGLIST	GetItem( void ) const;
+	auto	GetNPC( void ) const ->std::vector<std::string>;
+	auto	GetItem( void ) const ->std::vector<std::string>;
 
 	void		SetName( const std::string& newName );
 	void		SetRegionNum( UI16 newVal );

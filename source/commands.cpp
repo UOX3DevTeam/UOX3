@@ -285,7 +285,7 @@ void cCommands::Load( void )
 	std::string data;
 	std::string UTag;
 
-	STRINGLIST	badCommands;
+	auto badCommands = std::vector<std::string>();
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data						= commands->GrabData();

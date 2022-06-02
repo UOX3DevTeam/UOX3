@@ -5,13 +5,12 @@
 #include "classes.h"
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
+//|	Function	-	std::vector< CSocket * > FindPlayersInOldVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who previously were in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
-{
-	SOCKLIST nearbyChars;
+auto FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >{
+	auto  nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -41,13 +40,13 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
+//|	Function	-	std::vector< CSocket * > FindPlayersInVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
+auto FindPlayersInVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >
 {
-	SOCKLIST nearbyChars;
+	auto nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -67,13 +66,12 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
+//|	Function	-	std::vector< CSocket * > FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who within a certain distance of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+auto FindNearbyPlayers( CBaseObject *myObj, UI16 distance )->std::vector< CSocket * >{
+	auto nearbyChars=std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -88,8 +86,8 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 	Network->popConn();
 	return nearbyChars;
 }
-SOCKLIST FindNearbyPlayers( CChar *mChar )
-{
+//===============================================================
+auto FindNearbyPlayers( CChar *mChar )->std::vector< CSocket * >{
 	UI16 visRange = MAX_VISRANGE;
 	if( mChar->GetSocket() != nullptr )
 		visRange = static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() ));
@@ -97,16 +95,16 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 		visRange += static_cast<UI16>(Races->VisRange( mChar->GetRace() ));
 	return FindNearbyPlayers( mChar, visRange );
 }
+//===============================================================
+auto FindNearbyPlayers( CBaseObject *mObj )->std::vector< CSocket * >{
 
-SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
-{
 	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mObj->GetRace() ));
 	return FindNearbyPlayers( mObj, visRange );
 }
+//========================================================================================
+auto FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )->std::vector< CSocket * >{
 
-SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+	auto nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )

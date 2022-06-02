@@ -62,10 +62,6 @@ constexpr auto INVALIDID	= std::uint16_t(0xFFFF);
 constexpr auto INVALIDCOLOUR	= std::uint16_t(0xFFFF);
 
 
-typedef std::vector< CSocket * >						SOCKLIST;
-typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
-//
-typedef std::vector< std::string >						STRINGLIST;
 //
 typedef std::vector< SERIAL >							SERLIST;
 typedef std::vector< SERIAL >::iterator					SERLIST_ITERATOR;

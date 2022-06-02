@@ -3184,17 +3184,17 @@ bool CSpawnItem::HandleSpawnContainer( void )
 					for( int i = 0; i < itemListSize; i++ )
 					{
 						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
-						STRINGLIST listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
+						auto listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
 						if( !listObj.empty() )
 						{
 							UI16 amountToSpawn = 1;
-							STRINGLIST itemListData;
+							
 							if( oldstrutil::upper( listObj[0] ) == "ITEMLIST" || oldstrutil::upper( listObj[0] ) == "LOOTLIST" )
 							{
 								bool useLootList = oldstrutil::upper( listObj[0] ) == "LOOTLIST";
 
 								// Itemlist/Lootlist
-								itemListData = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->GrabData(), "//" )), "," );
+								auto itemListData = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->GrabData(), "//" )), "," );
 								listEntry = itemListData[0];
 
 								if( itemListData.size() > 1 )

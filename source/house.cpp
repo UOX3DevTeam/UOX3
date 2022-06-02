@@ -90,11 +90,11 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+//|	Function	-	void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
-void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
@@ -450,7 +450,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
 	SI08 cz = 7;
-	STRINGLIST houseItems;
+	std::vector<std::string> houseItems;
 	houseItems.resize( 0 );
 	bool itemsWillDecay = false;
 	bool isBoat			= false;

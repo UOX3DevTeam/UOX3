@@ -372,8 +372,8 @@ JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval 
 {
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump *toAdd = new SEGump;
-	toAdd->one = new STRINGLIST;
-	toAdd->two = new STRINGLIST;
+	toAdd->one = new std::vector<std::string>();
+	toAdd->two = new std::vector<std::string>();
 	toAdd->TextID = 0;
 
 	JS_DefineFunctions( cx, obj, CGump_Methods );

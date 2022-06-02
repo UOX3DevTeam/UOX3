@@ -579,7 +579,7 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 			file.read( buffer, 1 );
 			file.read( tmpLine, buffer[0]);
 
-			// Stuff contents of tmpLine into msgBoardLine STRINGLIST in msgBoardPost struct, then add null terminator
+			// Stuff contents of tmpLine into msgBoardLine std::vector<std::string> in msgBoardPost struct, then add null terminator
 			msgBoardPost.msgBoardLine.push_back( tmpLine );
 			msgBoardPost.msgBoardLine[msgBoardPost.msgBoardLine.size()-1] += '\0';
 		}

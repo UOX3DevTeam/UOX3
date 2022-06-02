@@ -6288,7 +6288,7 @@ void CPBookPage::AddLine( const std::string& line )
 	IncLength( static_cast< UI08 >(strLen) );
 	pStream.WriteString( baseOffset, line, line.length() );
 }
-void CPBookPage::NewPage( SI16 pNum, const STRINGLIST *lines )
+void CPBookPage::NewPage( SI16 pNum, const std::vector<std::string> *lines )
 {
 	++pageCount;	// 1 based counter
 	UI16 baseOffset = bookLength;

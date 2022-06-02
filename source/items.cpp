@@ -813,7 +813,7 @@ CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, cons
 
 			int amountToSpawn = 1;
 			std::string k = "";
-			STRINGLIST csecs;
+			auto csecs = std::vector<std::string>();
 			if( itemEntryToSpawn != -1 )
 			{
 				// If an entry has been selected based on weights, use that

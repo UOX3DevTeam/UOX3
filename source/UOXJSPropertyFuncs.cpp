@@ -2352,7 +2352,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_ITEMLIST:
 			{
 				// This could potentially be a list of item ids - let's convert it to a comma-separated string!
-				STRINGLIST itemList = gPriv->GetItem();
+				auto itemList = gPriv->GetItem();
 				std::string s;
 				for( const auto &piece : itemList )
 				{
@@ -2369,7 +2369,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_NPCLIST:
 			{
 				// This could potentially be a list of NPC ids - let's convert it to a comma-separated string!
-				STRINGLIST npcList = gPriv->GetNPC();
+				auto npcList = gPriv->GetNPC();
 				std::string s;
 				for( const auto &piece : npcList )
 				{

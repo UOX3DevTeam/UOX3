@@ -1898,7 +1898,7 @@ bool cSkills::LoadMiningData( void )
 	bool rvalue = false;
 	if( oreList != nullptr )
 	{
-		STRINGLIST oreNameList;
+		auto  oreNameList = std::vector<std::string>();
 		std::string tag;
 		std::string data;
 		std::string UTag;

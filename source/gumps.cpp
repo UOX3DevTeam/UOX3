@@ -2135,7 +2135,7 @@ void GumpDisplay::SetTitle( const std::string& newTitle )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two is data
 //o-----------------------------------------------------------------------------------------------o
-void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, UI32 type, SERIAL serial )
+void SendVecsAsGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial )
 {
 	CPSendGumpMenu toSend;
 	toSend.GumpID( type );

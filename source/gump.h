@@ -6,8 +6,8 @@ void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 class CGump
 {
 private:
-	STRINGLIST TagList;
-	STRINGLIST TextList;
+	std::vector<std::string> TagList;
+	std::vector<std::string> TextList;
 	bool NoMove;
 	bool NoClose;
 	UI32 Serial;
@@ -56,7 +56,7 @@ private:
 	std::vector< GumpInfo * > gumpData;
 	UI16 width, height;	// gump width / height
 	CSocket *toSendTo;
-	STRINGLIST one, two;
+	std::vector<std::string> one, two;
 	std::string title;
 public:
 	void AddData( GumpInfo *toAdd );
