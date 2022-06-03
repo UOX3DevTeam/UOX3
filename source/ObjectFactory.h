@@ -12,21 +12,7 @@
 #include "Prerequisites.h"
 #include "typedefs.h"
 using factory_collection = std::unordered_map<std::uint32_t, CBaseObject*>;
-//=========================================================
-// serialgen_t
-//=========================================================
-//=========================================================
-struct serialgen_t {
-	std::uint32_t serial_number ;
-	serialgen_t(std::uint32_t initial=0) ;
-	auto next() -> std::uint32_t ;
-	auto registerSerial(std::uint32_t serial) ->void ;
-	// Note, this only frees up the serial number if
-	// deregisterd one was the last one created
-	auto unregisterSerial(std::uint32_t serial) ->void ;
-	auto operator=(std::uint32_t value) ->serialgen_t& ;
-	auto operator=(std::int32_t value) ->serialgen_t& ;
-};
+
 //=========================================================
 // ObjectFactory
 //=========================================================
@@ -37,12 +23,27 @@ class ObjectFactory {
 	factory_collection multis;
 	factory_collection items;
 	
-	
+	//=========================================================
+	// serialgen_t
+	//=========================================================
+	// Is is nested as we dont want to pollute the global namespace
+	//=========================================================
+	struct serialgen_t {
+		std::uint32_t serial_number ;
+		serialgen_t(std::uint32_t initial=0) ;
+		auto next() -> std::uint32_t ;
+		auto registerSerial(std::uint32_t serial) ->void ;
+		// Note, this only frees up the serial number if
+		// deregisterd one was the last one created
+		auto unregisterSerial(std::uint32_t serial) ->void ;
+		auto operator=(std::uint32_t value) ->serialgen_t& ;
+		auto operator=(std::int32_t value) ->serialgen_t& ;
+	};
 	serialgen_t item_serials ;
 	serialgen_t character_serials ;
 	
 	auto nextSerial(ObjectType type) -> std::uint32_t ;
-	auto removeObject(std::uint32_t serial,factory_collection &collection)->bool;
+	auto removeObject(std::uint32_t serial,factory_collection *collection)->bool;
 	ObjectFactory() ;
 	
 	auto findCharacter(std::uint32_t serial) ->CBaseObject*;
