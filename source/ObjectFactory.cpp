@@ -203,16 +203,28 @@ auto ObjectFactory::UnregisterObject(CBaseObject *object) ->bool {
 auto ObjectFactory::IterateOver(ObjectType type, std::uint32_t &b, void *extra, std::function<bool(CBaseObject*,std::uint32_t &,void *)> function) ->std::uint32_t{
 	auto collection = collectionForType(type) ;
 	if (collection) {
-		// What we want to do, is make a copy of the collection
-		auto copy = *collection ;
-		for (auto [serial,object] : copy){
-			auto realobject = collection->find(serial) ;
-			if (realobject != collection->end()){
-				if (!function(realobject->second,b,extra)){
+		// less save way
+		for (auto [serial,object] : *collection){
+			if (object){
+				if (!function(object,b,extra)){
 					break;
 				}
 			}
 		}
+		// safer way, it copys the collection so changes can be made under it
+		/*
+		auto copy = *collection ;
+		for (auto [serial,object] : copy){
+			auto realobject = collection->find(serial) ;
+			if (realobject != collection->end()){
+				if (realobject->second){
+					if (!function(realobject->second,b,extra)){
+						break;
+					}
+				}
+			}
+		}
+		 */
 		return 0 ;
 	}
 	return 0xFFFFFFFF ;
