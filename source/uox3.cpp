@@ -1,10 +1,11 @@
-/*
+/* *************************************************************************
 
  Ultima Offline eXperiment III (UOX3)
  UO Server Emulation Program
 
- Copyright 1998 - 2021 by UOX3 contributors
+ Copyright 1998 - 2022 by UOX3 contributors
  Copyright 1997, 98 by Marcus Rating (Cironian)
+ ***************************************************************************
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -27,7 +28,10 @@
 
  You can contact the author by sending email to <cironian@stratics.com>.
 
- */
+ *************************************************************************** */
+
+
+
 #include <chrono>
 #include <random>
 #include <thread>
