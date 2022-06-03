@@ -74,8 +74,8 @@
 #define ioctlsocket( s, b, c ) ioctl( s, b, c )
 #define closesocket( s ) close( s )
 
-#define FALSE 0L
-#define TRUE  1L
+//#define FALSE 0L
+//#define TRUE  1L
 
 #define SOCKET int
 #define INVALID_SOCKET -1
@@ -85,8 +85,8 @@
 #define ioctlsocket( s, b, c ) ioctl( s, b, c )
 #define closesocket( s ) close( s )
 
-#define FALSE 0L
-#define TRUE  1L
+//#define FALSE 0L
+//#define TRUE  1L
 
 #define SOCKET int
 #define INVALID_SOCKET -1
@@ -106,7 +106,7 @@
 /* Include all the standard header *after* all the configuration
  settings have been made.
  */
-#include "UOXStdHeaders.h"
+//#include "UOXStdHeaders.h"
 
 // define the real number values to be used
 // default to use 'float' unless precompiler option set
