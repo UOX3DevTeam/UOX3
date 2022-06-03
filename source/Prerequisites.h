@@ -1,11 +1,23 @@
 /*-------------------------------------------------------------------------
- This file is an adaptation of the file OgrePrerequisites.h from OGRE
- and customised to our own needs
+ There is a lot of confusion (including me) on this file and ConfigOS.  I "believe"
+ this ConfigOS should be focussed on just setting the minimum symbols based on 
+ the OS.  This file should be the one we use to define UOX3 specific
+ items (warnings, macros, etc).  That way ConfigOS can be used standalone
+ if desired in other projects.
+ 
+ I am not a fan of headers including headers to just allow one to include a single header.
+ If one is not careful, it can slow build time considerably.  Understand that each include,
+ the compilier has to open the file, and read it. THen if the symbol is defined, it ignores
+ it.  But the opening/reading multiple times (which can happen with recusrive headers)
+ can take a lot of time.  Why, one should forward declare, and then include headers 
+ in the implementation file if possible. Implementation files are not normally 
+ "included".
+
  -------------------------------------------------------------------------*/
 #ifndef __Prerequisites_H__
 #define __Prerequisites_H__
 
-// Platform-specific stuff
+// Platform-specific stuff - We will nest here, as I am living with migration approach, perhaps one day.
 #include "ConfigOS.h"
 
 #if PLATFORM == WINDOWS
@@ -21,28 +33,73 @@
 
 // disable: "<type> needs to have dll-interface to be used by clients'
 // Happens on STL member variables which are not public therefore is ok
-#   pragma warning (disable : 4251)
+//#   pragma warning (disable : 4251)
 
 // disable: "non dll-interface class used as base for dll-interface class"
 // Happens when deriving from Singleton because bug in compiler ignores
 // template export
-#   pragma warning (disable : 4275)
+//#   pragma warning (disable : 4275)
 
 // disable: "C++ Exception Specification ignored"
 // This is because MSVC 6 did not implement all the C++ exception
 // specifications in the ANSI C++ draft.
-#   pragma warning( disable : 4290 )
+//#   pragma warning( disable : 4290 )
 
 // disable: "no suitable definition provided for explicit template
 // instantiation request" Occurs in VC7 for no justifiable reason on all
 // #includes of Singleton
-#   pragma warning( disable: 4661)
+//#   pragma warning( disable: 4661)
 
-#pragma warning( disable : 4511 )	// copy constructor could not be generated
-#pragma warning( disable : 4512 )	// assignment operator could not be generated
-#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
+//#pragma warning( disable : 4511 )	// copy constructor could not be generated
+//#pragma warning( disable : 4512 )	// assignment operator could not be generated
+//#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
 
-#endif
+#ifdef _DEBUG
+#define UOX_DEBUG_MODE 1
+// The GOAL is to remove these!
+#define _ITERATOR_DEBUG_LEVEL 2
+// The GOAL is to remove these!
+#define _HAS_ITERATOR_DEBUGGING 1                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
+#define _SECURE_SCL 1
+
+#else
+// The GOAL is to remove these!
+#define _HAS_ITERATOR_DEBUGGING 0                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
+#define _SECURE_SCL 0
+
+#endif		// endif to _DEBUG
+
+#elif PLATFORM == LINUX
+
+#define ioctlsocket( s, b, c ) ioctl( s, b, c )
+#define closesocket( s ) close( s )
+
+#define FALSE 0L
+#define TRUE  1L
+
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+#elif PLATFORM == MACOS
+
+#define ioctlsocket( s, b, c ) ioctl( s, b, c )
+#define closesocket( s ) close( s )
+
+#define FALSE 0L
+#define TRUE  1L
+
+#define SOCKET int
+#define INVALID_SOCKET -1
+#define SOCKET_ERROR -1
+
+
+#endif // endif to Windows (OS Checks)
+
+// Unlike the Win32 compilers, Linux/macOS compilers use DEBUG for when
+// specifying a debug build.
+#ifdef DEBUG
+#define UOX_DEBUG_MODE 1
+#endif   //DEBUG
 
 
 
@@ -70,9 +127,39 @@
 #	define _TO_CHAR( x ) x
 #endif
 
-/// Useful macros
-#define UOX_DELETE(p)       { if(p) { delete (p);     (p)=nullptr; } }
-#define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=nullptr; } }
+
+// 
+// Define this if you don't want the accounts block to have a copy constructor
+//	or assignment operator
+
+#define _NOACTCOPY_ 0
+
+// Define this if we want to have time stamps associated with our packet logs
+
+#define P_TIMESTAMP 1
+
+
+
+
+// For generating compiler warnings - should work on any compiler
+// As a side note, if you start your message with 'Warning: ', the MSVC
+// IDE actually does catch a warning :)
+#define _QUOTE(x) # x
+#define QUOTE(x) _QUOTE(x)
+#define __FILE__LINE__ __FILE__ "(" QUOTE(__LINE__) ") : "
+#define NOTE( x )  message( x )
+#define FILE_LINE  message( __FILE__LINE__ )
+#define TODO( x )  message( __FILE__LINE__"\n"           \
+"+------------------------------------------------\n" \
+"|  TODO :   " #x "\n" \
+"+-------------------------------------------------\n" )
+#define FIXME( x )  message(  __FILE__LINE__"\n"           \
+"+------------------------------------------------\n" \
+"|  FIXME :  " #x "\n" \
+"+-------------------------------------------------\n" )
+#define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" )
+#define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" )
+#define note( x )  message( __FILE__LINE__" NOTE :   " #x "\n" )
 
 
 // Pre-declare classes
