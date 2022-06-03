@@ -1,3 +1,6 @@
+03/06/2022 - punt
+	Modernized ObjectFactory and replaced external hash with use of unordered_map
+
 31/05/2022 - Xuri
 	Fixed an issue with the provocation skill (skill/js/provocation.js) that prevented successfully provoked creatures from attacking one another
 
