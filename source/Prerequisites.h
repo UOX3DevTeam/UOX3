@@ -60,6 +60,8 @@
 #define UOX_VERSION_PATCH 0
 
 // define the Char type as either char or wchar_t
+// but beware, wchar_t is 16 bit on windows, and 32 bit on linux/mac.
+// probably should be using char16_t as I think that is what one wants
 #if UOX_WCHAR_T_STRINGS == 1
 #   define UOXChar wchar_t
 #	define _TO_CHAR( x ) L##x

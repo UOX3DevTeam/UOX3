@@ -1,6 +1,10 @@
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
-
+//================================================================
+//
+//		We want this to be as "independent" of other headers as possible.  So we dont
+//		use any symbols defined by ConfOS, etc.
+//
 #include <unordered_map>
 #include <cstdint>
 #include <functional>
@@ -9,11 +13,11 @@
 using va_list = void* ;
 #endif
 
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 constexpr auto MAX_PATH	= 268 ;
 #endif
 
-#if defined( _DEBUG )
+#if defined( _DEBUG ) || defined(DEBUG)
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
 Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
@@ -24,6 +28,9 @@ return;	\
 return;
 #endif
 
+//  We define these for now. But we all ready have a "standard" way to define data with fixed sizes.
+//  in <cstdint>. From a long term maintenance perspective, and training for others, it would make
+//  sense to use the "standard" way provided by the language distribution.  But for now, these are here
 using R32 = float ;
 using R64 = double ;
 using UI08 = std::uint8_t ; // 0 to 255
@@ -35,6 +42,8 @@ using UI32 = std::uint32_t ; // 0 to 4294967295
 using SI64 = std::int64_t ; // -9223372036854775808 to 9223372036854775807
 using UI64 = std::uint64_t ; // 0 to 18446744073709551615
 
+// Some of our unique data types, makes it consistent on data sizes (although a lot to be said to make everything
+// int, and then just in the packet/data file i/o convert to the correct size.  It would be faster in terms of execution.
 using GENDER	= std::uint8_t ;
 using LIGHTLEVEL	= std::uint8_t ;
 using COLDLEVEL	= std::uint8_t ;
@@ -63,7 +72,8 @@ constexpr auto INVALIDID	= std::uint16_t(0xFFFF);
 constexpr auto INVALIDCOLOUR	= std::uint16_t(0xFFFF);
 
 
-
+// Two things about this: 	1. Creates a dependency on CSocket knowledge which we dont want in this header
+//					2. Should use std::function, which we need to investigate on why it doesnt
 typedef void (TargetFunc)( CSocket *s );
 //using TargetFunc  = std::function<void>(CSocket*) ;
 
@@ -85,7 +95,7 @@ constexpr auto TRACKINGMENUOFFSET	= 4096 ;
 constexpr auto POLYMORPHMENUOFFSET	= 8192 ;
 constexpr auto JSGUMPMENUOFFSET	= 16384 ;
 
-
+// Directions
 constexpr auto NORTH		= std::uint8_t(0x00) ;
 constexpr auto NORTHEAST	= std::uint8_t(0x01) ;
 constexpr auto EAST		= std::uint8_t(0x02) ;

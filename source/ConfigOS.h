@@ -2,6 +2,8 @@
 #ifndef __ConfigOS_H_
 #define __ConfigOS_H_
 
+// Why are thse here? they should be in the network/account code
+
 // Define this if you don't want the accounts block to have a copy constructor
 //	or assignment operator
 
@@ -49,6 +51,11 @@
 
 #ifdef _WIN32 // Includes both 32 bit and 64 bit
 
+#undef min
+#undef max
+
+#define WIN32_LEAN_AND_MEAN
+
 #ifdef _WIN64
 #define OS_STR "Win64"
 #else 
@@ -66,12 +73,14 @@
 
 #ifdef _DEBUG
 #define UOX_DEBUG_MODE 1
+// The GOAL is to remove these!
 #define _ITERATOR_DEBUG_LEVEL 2
+// The GOAL is to remove these!
 #define _HAS_ITERATOR_DEBUGGING 1                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
 #define _SECURE_SCL 1
 
 #else
-
+// The GOAL is to remove these!
 #define _HAS_ITERATOR_DEBUGGING 0                    // Iterator debugging should only be enabled in debug, and WILL cause crashes if iterators are handled improperly.
 #define _SECURE_SCL 0
 
