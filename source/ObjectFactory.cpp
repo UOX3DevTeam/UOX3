@@ -12,36 +12,36 @@
 
 
 //=========================================================
-// serialgen_t
+// ObjectFactory::serialgen_t
 //=========================================================
 //=========================================================
-serialgen_t::serialgen_t(std::uint32_t initial) :serial_number(initial){
+ObjectFactory::serialgen_t::serialgen_t(std::uint32_t initial) :serial_number(initial){
 	
 }
 //=========================================================
-auto serialgen_t::next() -> std::uint32_t {
+auto ObjectFactory::serialgen_t::next() -> std::uint32_t {
 	return serial_number++;
 }
 //=========================================================
-auto serialgen_t::registerSerial(std::uint32_t serial) ->void {
+auto ObjectFactory::serialgen_t::registerSerial(std::uint32_t serial) ->void {
 	if (serial >= serial_number) {
 		serial_number = serial + 1 ;
 	}
 }
 //=========================================================
-auto serialgen_t::unregisterSerial(std::uint32_t serial) ->void {
+auto ObjectFactory::serialgen_t::unregisterSerial(std::uint32_t serial) ->void {
 	if (serial_number == (serial+1)){
 		serial_number = serial ;
 	}
 }
 
 //=========================================================
-auto serialgen_t::operator=(std::uint32_t value) ->serialgen_t& {
+auto ObjectFactory::serialgen_t::operator=(std::uint32_t value) ->serialgen_t& {
 	serial_number = value ;
 	return *this;
 }
 //=========================================================
-auto serialgen_t::operator=(std::int32_t value) ->serialgen_t& {
+auto ObjectFactory::serialgen_t::operator=(std::int32_t value) ->serialgen_t& {
 	serial_number = static_cast<std::uint32_t>(value) ;
 	return *this;
 }
@@ -71,14 +71,6 @@ auto ObjectFactory::nextSerial(ObjectType type) -> std::uint32_t {
 		default:
 			return std::numeric_limits<std::uint32_t>::max();
 	}
-}
-//=========================================================
-auto ObjectFactory::findCharacter(std::uint32_t serial) ->CBaseObject*{
-	auto iter = chars.find(serial) ;
-	if (iter != chars.end()){
-		return iter->second;
-	}
-	return nullptr ;
 }
 //=========================================================
 auto ObjectFactory::collectionForType(ObjectType type) -> factory_collection* {
@@ -124,6 +116,14 @@ auto ObjectFactory::collectionForType(ObjectType type) const -> const factory_co
 	return collection ;
 	
 }
+//=========================================================
+auto ObjectFactory::findCharacter(std::uint32_t serial) ->CBaseObject*{
+	auto iter = chars.find(serial) ;
+	if (iter != chars.end()){
+		return iter->second;
+	}
+	return nullptr ;
+}
 
 //=========================================================
 auto ObjectFactory::findItem(std::uint32_t serial) ->CBaseObject*{
@@ -143,12 +143,12 @@ auto ObjectFactory::findItem(std::uint32_t serial) ->CBaseObject*{
 }
 
 //=========================================================
-auto ObjectFactory::removeObject(std::uint32_t serial,factory_collection &collection)->bool{
+auto ObjectFactory::removeObject(std::uint32_t serial,factory_collection *collection)->bool{
 	auto rvalue = false ;
-	auto iter = collection.find(serial) ;
-	if (iter != collection.end()){
+	auto iter = collection->find(serial) ;
+	if (iter != collection->end()){
 		rvalue = true ;
-		collection.erase(iter);
+		collection->erase(iter);
 	}
 	return rvalue ;
 }
@@ -194,21 +194,8 @@ auto ObjectFactory::RegisterObject( CBaseObject *object, std::uint32_t serial) -
 auto ObjectFactory::UnregisterObject(CBaseObject *object) ->bool {
 	auto rvalue = false ;
 	if (object) {
-		switch (object->GetObjType()){
-			case OT_MULTI:
-			case OT_BOAT:
-				rvalue = removeObject(object->GetObjType(), multis);
-				break;
-			case OT_ITEM:
-			case OT_SPAWNER:
-				rvalue = removeObject(object->GetObjType(), items);
-				break;
-			case OT_CHAR:
-				rvalue = removeObject(object->GetObjType(), chars);
-				break;
-			default:
-				break;
-		}
+		auto collection = collectionForType(object->GetObjType());
+		rvalue = removeObject(object->GetSerial(), collection);
 	}
 	return rvalue ;
 }
@@ -216,22 +203,39 @@ auto ObjectFactory::UnregisterObject(CBaseObject *object) ->bool {
 auto ObjectFactory::IterateOver(ObjectType type, std::uint32_t &b, void *extra, std::function<bool(CBaseObject*,std::uint32_t &,void *)> function) ->std::uint32_t{
 	auto collection = collectionForType(type) ;
 	if (collection) {
-		auto cont = true ;
-		std::for_each(collection->begin(), collection->end(), [&cont, &b,&extra,&function](std::pair<std::uint32_t, CBaseObject*> entry){
-			if (cont){
-				cont = function(entry.second,b,extra);
+		// less save way
+		for (auto [serial,object] : *collection){
+			if (object){
+				if (!function(object,b,extra)){
+					break;
+				}
 			}
-		});
-		
+		}
+		// safer way, it copys the collection so changes can be made under it
+		/*
+		auto copy = *collection ;
+		for (auto [serial,object] : copy){
+			auto realobject = collection->find(serial) ;
+			if (realobject != collection->end()){
+				if (realobject->second){
+					if (!function(realobject->second,b,extra)){
+						break;
+					}
+				}
+			}
+		}
+		 */
+		return 0 ;
 	}
-	return 0 ;
+	return 0xFFFFFFFF ;
 }
 //=========================================================
 auto ObjectFactory::DestroyObject(CBaseObject *object) ->bool {
 	auto rvalue = false ;
 	if (object){
 		UnregisterObject(object);
-		delete object ; // pointers are passed by value, so no need to then set to nullptr
+		delete object ;
+		object = nullptr ;
 		rvalue = true ;
 	}
 	return rvalue ;
