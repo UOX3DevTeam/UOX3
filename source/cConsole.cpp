@@ -49,11 +49,11 @@
 struct termios initial_terminal_state;
 #else
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#ifdef GetObject
+#undef GetObject
+#endif
 #include <conio.h>
-#undef min
-#undef max
 DWORD initial_terminal_state;
 #endif
 

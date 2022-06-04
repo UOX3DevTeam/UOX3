@@ -27,6 +27,7 @@
 #include "cMultiObj.h"
 
 #include <algorithm>
+#include <cassert>
 
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>

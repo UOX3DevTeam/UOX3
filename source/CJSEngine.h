@@ -5,7 +5,9 @@
 
 #include <map>
 #include <vector>
-
+#ifdef GetObject
+#undef GetObject 
+#endif
 enum IUEEntries
 {
 	IUE_RACE = 0,
@@ -97,7 +99,7 @@ private:
 	typedef std::vector< CJSRuntime * >::iterator		RUNTIMELIST_ITERATOR;
 	typedef std::vector< CJSRuntime * >::const_iterator	RUNTIMELIST_CITERATOR;
 
-	RUNTIMELIST											runtimeList;
+	RUNTIMELIST	runtimeList;
 
 public:
 

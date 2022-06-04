@@ -62,7 +62,7 @@ enum CAccountBlock_Flags
 //|						dwCharacters[5]: straight ID number for this account
 //|						lpCharacters[5]:
 //o-----------------------------------------------------------------------------------------------o
-typedef struct CAccountBlock
+ struct CAccountBlock 
 {
 #if _NOACTCOPY_
 private:
@@ -115,7 +115,7 @@ public:
 	bool						bChanged;
 	UI32						dwCharacters[7];
 	CChar *						lpCharacters[7];
-} CAccountBlock;
+} ;
 
 // Class typdefs to help simplify the use of map STL
 typedef std::map< std::string, CAccountBlock * >					MAPUSERNAME;

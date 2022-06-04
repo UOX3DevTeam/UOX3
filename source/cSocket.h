@@ -7,7 +7,7 @@
 
 class CPInputBuffer;
 class CPUOXBuffer ;
-class CAccountBlock;
+struct CAccountBlock;
 
 enum ClientTypes
 {

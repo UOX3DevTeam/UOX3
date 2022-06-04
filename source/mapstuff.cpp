@@ -16,6 +16,8 @@
 
 
 #include <filesystem>
+#include <cassert>
+
 CMulHandler *Map				= nullptr;
 
 const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)

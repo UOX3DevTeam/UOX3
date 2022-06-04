@@ -31,6 +31,7 @@
 
 #include <chrono>
 #include <fstream>
+#include <cassert>
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )

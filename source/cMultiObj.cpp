@@ -30,6 +30,8 @@
 #include "mapstuff.h"
 #include "osunique.hpp"
 
+
+
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;
