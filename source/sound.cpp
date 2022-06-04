@@ -1,11 +1,17 @@
 #include "uox3.h"
-#include "townregion.h"
+
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "regions.h"
+#include "ssection.h"
+#include "townregion.h"
+
 
 
 cEffects *Effects;

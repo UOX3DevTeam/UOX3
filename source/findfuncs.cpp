@@ -1,9 +1,14 @@
 #include "uox3.h"
-#include "regions.h"
-#include "network.h"
+
+#include "cSocket.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
 #include "cRaces.h"
 #include "classes.h"
-
+#include "funcdecl.h"
+#include "network.h"
+#include "regions.h"
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::vector< CSocket * > FindPlayersInOldVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o

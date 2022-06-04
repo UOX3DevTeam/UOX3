@@ -1,23 +1,32 @@
-#include "uox3.h"
-#include "magic.h"
 #include "skills.h"
-#include "combat.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "cMagic.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "scriptc.h"
-#include "cScript.h"
-#include "cEffects.h"
+
 #include "CPacketSend.h"
+#include "CJSMapping.h"
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cSocket.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
 #include "classes.h"
-#include "regions.h"
+#include "combat.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "magic.h"
 #include "movement.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "townregion.h"
 #include "weight.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 
@@ -2836,7 +2845,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	{
 		// Store temp tag on player with colour of item to craft
 		TAGMAPOBJECT tagObject;
-		tagObject.m_Destroy = FALSE;
+		tagObject.m_Destroy = false;
 		tagObject.m_StringValue = "";
 		tagObject.m_IntValue = resourceColour;
 		tagObject.m_ObjectType = TAGMAP_TYPE_INT;

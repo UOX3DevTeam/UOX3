@@ -1,11 +1,20 @@
-#include "uox3.h"
 #include "cSpawnRegion.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "mapstuff.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "mapstuff.h"
+#include "worldmain.h"
+
+
 #include <sstream>
 #include <iostream>
 #include <regex>

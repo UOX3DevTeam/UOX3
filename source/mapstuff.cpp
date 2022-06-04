@@ -1,12 +1,21 @@
-#include "uox3.h"
-#include "regions.h"
-#include "townregion.h"
-#include "fileio.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "scriptc.h"
-#include <filesystem>
+#include "mapstuff.h"
 
+#include "cConsole.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "fileio.h"
+#include "funcdecl.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "worldmain.h"
+
+
+#include <filesystem>
 CMulHandler *Map				= nullptr;
 
 const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)

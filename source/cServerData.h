@@ -1,10 +1,12 @@
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
+#include "uox3.h"
+
 #include <map>
 #include <string>
-#include <cstdint>
-#include "StringUtility.hpp"
+#include <vector>
+#include <bitset>
 
 enum ClientFeatures
 {

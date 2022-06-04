@@ -1,5 +1,13 @@
 #ifndef __COMBAT_H__
 #define __COMBAT_H__
+#include "uox3.h"
+
+#include <string>
+
+class CSocket;
+class CChar;
+class CItem;
+class CBaseObject;
 
 enum WeaponTypes
 {

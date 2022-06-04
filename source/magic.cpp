@@ -1,28 +1,36 @@
-#include "uox3.h"
 #include "magic.h"
-#include "power.h"
-#include "weight.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "cMagic.h"
-#include "skills.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
 #include "classes.h"
-#include "regions.h"
 #include "combat.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
 #include "movement.h"
-#include "scriptc.h"
-#include "StringUtility.hpp"
 #include "ObjectFactory.h"
-#include <algorithm>
 #include "osunique.hpp"
+#include "power.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "weight.h"
+
+#include <algorithm>
+
 cMagic *Magic = nullptr;
 
 #define SPELL_MAX 68 // use define for now; can make autocount later
@@ -1356,7 +1364,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			// Let's allow marking the rune in the multi, and store multi's serial in a tag
 			auto mSerial = multi->GetSerial();
 			TAGMAPOBJECT tagObject;
-			tagObject.m_Destroy = FALSE;
+			tagObject.m_Destroy = false;
 			tagObject.m_StringValue = std::to_string(mSerial);
 			tagObject.m_IntValue = static_cast<SI32>( tagObject.m_StringValue.size() );
 			tagObject.m_ObjectType = TAGMAP_TYPE_STRING;

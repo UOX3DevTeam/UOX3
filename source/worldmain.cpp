@@ -16,21 +16,27 @@
 //|						Added a proper constructor rather than ResetDefaults()
 //|						Grouped timers together in an array using an enum.
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cSpawnRegion.h"
-#include "skills.h"
-#include "speech.h"
+#include "worldmain.h"
+
+#include "cAccountClass.h"
+#include "cBaseObject.h"
 #include "cEffects.h"
-#include "network.h"
-#include "regions.h"
-#include "jail.h"
+#include "cGuild.h"
+#include "cServerData.h"
+#include "cSpawnRegion.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "jail.h"
+#include "network.h"
 #include "ObjectFactory.h"
 #include "osunique.hpp"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "townregion.h"
 
-CWorldMain						*cwmWorldState = nullptr;
+
+CWorldMain	*cwmWorldState = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor

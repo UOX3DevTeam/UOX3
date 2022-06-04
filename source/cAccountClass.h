@@ -6,12 +6,13 @@
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __CACCOUNTCLASS_H__
 #define __CACCOUNTCLASS_H__
+#include "uox3.h"
 
-
+#include <string>
 #include <iosfwd>
-#include "typedefs.h"
+#include <map>
 
-
+class CChar ;
 
 // Enums
 

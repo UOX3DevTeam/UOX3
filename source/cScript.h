@@ -1,9 +1,19 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
+#include "uox3.h"
+#include "jsapi.h"
 
+#include <string>
+#include <vector>
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;
+class CBaseObject ;
+class CSpawnRegion;
+class CChar ;
+class CItem;
+class CMultiObj;
+
 
 enum ScriptEvent
 {

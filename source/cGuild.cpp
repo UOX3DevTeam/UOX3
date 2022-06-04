@@ -1,19 +1,28 @@
-#include "uox3.h"
 #include "cGuild.h"
+
+#include "CJSEngine.h"
+#include "CPacketSend.h"
+#include "CPacketReceive.h"
+#include "classes.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "osunique.hpp"
+#include "scriptc.h"
 #include "speech.h"
 #include "ssection.h"
-#include "scriptc.h"
-#include "classes.h"
-#include "CPacketSend.h"
-#include "Dictionary.h"
-#include "CJSEngine.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+
+#include <algorithm>
 #ifndef va_start
 #include <cstdarg>
 #endif
-
-#include <algorithm>
 
 CGuildCollection *GuildSys;
 

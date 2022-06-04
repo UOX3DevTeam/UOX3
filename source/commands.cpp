@@ -1,13 +1,20 @@
-#include "uox3.h"
 #include "commands.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "funcdecl.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "worldmain.h"
 
 #include <algorithm>
+#include <fstream>
 
 cCommands *Commands			= nullptr;
 

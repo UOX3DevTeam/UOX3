@@ -8,13 +8,19 @@
 //|					See xRFC0004 for complete specification and implementaion
 //|					information.
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
+#include "cAccountClass.h"
+
+#include "cChar.h"
 #include "cVersionClass.h"
-#include "enums.h"
+#include "funcdecl.h"
+#include "osunique.hpp"
+#include "StringUtility.hpp"
+
+#include <string>
+#include <fstream>
 #include <cstdint>
 #include <filesystem>
-#include "StringUtility.hpp"
-#include "osunique.hpp"
+
 #if PLATFORM != WINDOWS
 #include <arpa/inet.h>
 #endif

@@ -34,29 +34,38 @@
 //|						Organized many functions to their respective areas and added documentation for them.
 //|						Changed itemLayers to a map
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "power.h"
-#include "weight.h"
-#include "cGuild.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "skills.h"
+#include "cChar.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
+#include "CJSEngine.h"
 #include "CPacketSend.h"
+
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+
 #include "classes.h"
+#include "combat.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "power.h"
 #include "regions.h"
 #include "speech.h"
-#include "ObjectFactory.h"
-#include "teffect.h"
-#include "cSpawnRegion.h"
-#include "Dictionary.h"
-#include "movement.h"
-#include "CJSEngine.h"
-#include "combat.h"
+#include "skills.h"
 #include "StringUtility.hpp"
-#include "cEffects.h"
+#include "teffect.h"
+#include "townregion.h"
+#include "weight.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 #define DEBUGMOVEMULTIPLIER 1.75

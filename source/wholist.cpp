@@ -1,11 +1,14 @@
-#include "uox3.h"
 #include "wholist.h"
-#include "network.h"
-#include "CPacketSend.h"
-#include "Dictionary.h"
-#include "jail.h"
-#include "commands.h"
 
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "commands.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "jail.h"
+#include "network.h"
 
 cWhoList *WhoList;
 cWhoList *OffList;

@@ -1,8 +1,12 @@
 #include "uox3.h"
-#include "classes.h"
-#include "CPacketSend.h"
-#include "ObjectFactory.h"
 
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cSocket.h"
+#include "classes.h"
+#include "funcdecl.h"
+#include "ObjectFactory.h"
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void sendTradeStatus( CSocket *mSock, CSocket *nSock, CItem *tradeWindowOne, CItem *tradeWindowTwo )

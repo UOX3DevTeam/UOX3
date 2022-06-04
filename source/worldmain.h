@@ -6,13 +6,21 @@
 
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
-
+#include "uox3.h"
 #include "GenericList.h"
+
+#include <map>
+#include <string>
+
 #if PLATFORM == WINDOWS
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
+
+class CSpawnRegion;
+class CTownRegion;
+class CTEffect;
+class CServerData;
+class CBaseObject ;
 
 enum CWM_TID
 {

@@ -1,7 +1,18 @@
 #ifndef __CCHAR_H__
 #define __CCHAR_H__
+
+#include "uox3.h"
+
 #include "cBaseObject.h"
 #include "cAccountClass.h"
+#include "GenericList.h"
+
+#include <map>
+
+class CItem;
+class cScript;
+class CTownRegion;
+
 enum cNPC_FLAG
 {
 	fNPC_NEUTRAL = 0,

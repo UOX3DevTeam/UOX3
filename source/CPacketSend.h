@@ -1,7 +1,20 @@
 #ifndef __CPACKETSEND_H__
 #define __CPACKETSEND_H__
-
+#include "uox3.h"
 #include "CPacketReceive.h"
+
+#include <string>
+
+// Forward Declares
+class CSpeechEntry ;	// In speech.h
+class CBaseObject ;	// In cBaseobject.h
+class CItem ;		// In cItem.h
+class CTownRegion;	// In townregion.h
+class CMultiObj;		// In cMultiObj.h
+class physicalServer ;	// In cServerData.h ;
+struct start_location;	// In cServerData.h
+struct CAccountBlock;	// In cAccountClass
+
 
 
 class CPCharLocBody : public CPUOXBuffer

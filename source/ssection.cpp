@@ -4,8 +4,11 @@
 //| Script Section class implementation
 //o-----------------------------------------------------------------------------------------------o
 
-#include "uox3.h"
 #include "ssection.h"
+#include "cConsole.h"
+#include "StringUtility.hpp"
+
+#include <fstream>
 
 const UI08 DFN_STRING		= 0;
 const UI08 DFN_NUMERIC		= 1;

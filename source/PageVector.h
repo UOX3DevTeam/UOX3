@@ -8,6 +8,15 @@
 #ifndef __PAGEVECTOR_H__
 #define __PAGEVECTOR_H__
 
+#include "uox3.h"
+
+#include <string>
+#include <vector>
+#include <time.h>
+
+class CChar ;
+class CSocket ;
+
 class HelpRequest
 {
 private:

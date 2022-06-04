@@ -1,5 +1,11 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
+#include "uox3.h"
+
+class CTEffect;
+class CItem;
+class CBaseObject;
+
 
 class cEffects
 {

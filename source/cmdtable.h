@@ -11,7 +11,8 @@
 
 #ifndef __CMDTABLE_H
 #define __CMDTABLE_H
-
+#include "uox3.h"
+#include <map>
 
 // Types of commands
 enum commandTypes

@@ -1,20 +1,36 @@
-#include <algorithm>
-#include "uox3.h"
-#include "CPacketSend.h"
-#include "speech.h"
-#include "cRaces.h"
-#include "cGuild.h"
-#include "PartySystem.h"
-#include "commands.h"
-#include "combat.h"
-#include "classes.h"
-#include "Dictionary.h"
-#include "CJSEngine.h"
-#include "StringUtility.hpp"
-#include "typedefs.h"
+#include "cSocket.h"
 
+#include "CJSEngine.h"
+#include "CPacketSend.h"
+#include "CPacketReceive.h"
+
+#include "cAccountClass.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+
+#include "classes.h"
+#include "combat.h"
+#include "commands.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "network.h"
+#include "PartySystem.h"
+#include "speech.h"
+#include "StringUtility.hpp"
+#include "worldmain.h"
+
+#include <algorithm>
+#include <thread>
+#include <fstream>
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
+#include <unistd.h>
 #endif
 
 

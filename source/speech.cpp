@@ -1,17 +1,25 @@
-#include "uox3.h"
 #include "speech.h"
-#include "cVersionClass.h"
-#include "cRaces.h"
-#include "commands.h"
-#include "skills.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
 #include "CResponse.h"
-#include "movement.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cRaces.h"
+#include "cVersionClass.h"
+#include "commands.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "movement.h"
+#include "skills.h"
 #include "StringUtility.hpp"
+
+#include <thread>
+#include <fstream>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )

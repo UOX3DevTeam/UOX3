@@ -316,8 +316,6 @@
 		648AF6F527CFF1F2009327DE /* source */ = {
 			isa = PBXGroup;
 			children = (
-				6452D32127D3A7CB00E5AFB4 /* osunique.cpp */,
-				6452D32027D2E13B00E5AFB4 /* osunique.hpp */,
 				648AF78A27CFF2CD009327DE /* ai.cpp */,
 				648AF71D27CFF2CC009327DE /* archive.cpp */,
 				648AF70127CFF2CC009327DE /* boats.cpp */,
@@ -424,6 +422,8 @@
 				648AF78127CFF2CD009327DE /* npcs.cpp */,
 				648AF78027CFF2CD009327DE /* ObjectFactory.cpp */,
 				648AF72227CFF2CC009327DE /* ObjectFactory.h */,
+				6452D32127D3A7CB00E5AFB4 /* osunique.cpp */,
+				6452D32027D2E13B00E5AFB4 /* osunique.hpp */,
 				648AF77827CFF2CD009327DE /* PageVector.h */,
 				648AF76B27CFF2CD009327DE /* PartySystem.cpp */,
 				648AF78227CFF2CD009327DE /* PartySystem.h */,

@@ -1,30 +1,34 @@
 #ifndef __WEIGHT_H__
 #define __WEIGHT_H__
+#include "uox3.h"
+// Forward declares
+class CItem ;
+class CChar ;
+class CBaseObject;
 
-const SI32 MAX_WEIGHT = 6553500;	// Max weight (This number / 100, thus max actual weight is 65535.00)
+constexpr auto MAX_WEIGHT = std::int32_t(6553500);	// Max weight (This number / 100, thus max actual weight is 65535.00)
 
-class CWeight
-{
+class CWeight{
 private:
-	bool	calcAddWeight( CItem *item, SI32 &totalWeight );
-	bool	calcSubtractWeight( CItem *item, SI32 &totalWeight );
-	bool	IsWeightedContainer( CItem *toCheck );
+	auto	calcAddWeight( CItem *item, SI32 &totalWeight ) ->bool ;
+	auto	calcSubtractWeight( CItem *item, SI32 &totalWeight ) ->bool ;
+	auto	IsWeightedContainer( CItem *toCheck ) ->bool ;
 
 public:
-	SI32	calcCharWeight( CChar *mChar );
-	SI32	calcWeight( CItem *pack );
+	auto	calcCharWeight( CChar *mChar ) ->SI32 ;
+	auto	calcWeight( CItem *pack ) ->SI32 ;
 
-	bool	isOverloaded( CChar *mChar ) const;
-	bool	checkPackWeight( CChar *ourChar, CItem *pack, CItem *item );
-	bool	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount = 0 );
+	auto	isOverloaded( CChar *mChar ) const ->bool ;
+	auto	checkPackWeight( CChar *ourChar, CItem *pack, CItem *item ) ->bool ;
+	auto	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount = 0 ) ->bool ;
 
-	void	addItemWeight( CBaseObject *getObj, CItem *item );
-	void	addItemWeight( CChar *mChar, CItem *item );
-	void	addItemWeight( CItem *pack, CItem *item );
+	auto	addItemWeight( CBaseObject *getObj, CItem *item ) ->void ;
+	auto	addItemWeight( CChar *mChar, CItem *item ) ->void ;
+	auto	addItemWeight( CItem *pack, CItem *item ) ->void ;
 
-	void	subtractItemWeight( CBaseObject *getObj, CItem *item );
-	void	subtractItemWeight( CChar *mChar, CItem *item );
-	void	subtractItemWeight( CItem *pack, CItem *item );
+	auto	subtractItemWeight( CBaseObject *getObj, CItem *item ) ->void ;
+	auto	subtractItemWeight( CChar *mChar, CItem *item ) ->void ;
+	auto	subtractItemWeight( CItem *pack, CItem *item ) ->void ;
 };
 
 extern CWeight *Weight;

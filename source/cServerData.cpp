@@ -1,18 +1,20 @@
-#include "uox3.h"
+#include "cServerData.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "IP4Address.hpp"
+#include "osunique.hpp"
 #include "scriptc.h"
 #include "ssection.h"
-#include "Dictionary.h"
+#include "StringUtility.hpp"
+
 #include <filesystem>
-#include <cstdint>
 #include <limits>
-#include "IP4Address.hpp"
 #if PLATFORM != WINDOWS
 #include <netdb.h>
-
 #include <arpa/inet.h>
 #endif
-#include "StringUtility.hpp"
-#include "osunique.hpp"
+
 #define	MAX_TRACKINGTARGETS	128
 #define SKILLTOTALCAP		7000
 #define SKILLCAP			1000

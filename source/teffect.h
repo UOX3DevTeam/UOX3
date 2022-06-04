@@ -1,5 +1,10 @@
 #ifndef __TEFFECT_H__
 #define __TEFFECT_H__
+#include "uox3.h"
+
+#include <string>
+
+class CBaseObject;
 
 class CTEffect
 {

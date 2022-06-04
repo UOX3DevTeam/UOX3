@@ -1,14 +1,14 @@
 
 #include "ObjectFactory.h"
 
+#include "cItem.h" // Includes CItem, CSpawnItem
+#include "cMultiObj.h" // Includes CMultiObj, CBoatObj
+#include "cChar.h" // Includes CChar
+
 #include <iostream>
 #include <algorithm>
 #include <climits>
 
-#include "cBaseObject.h"
-#include "cItem.h" // Includes CItem, CSpawnItem
-#include "cMultiObj.h" // Includes CMultiObj, CBoatObj
-#include "cChar.h" // Includes CChar
 
 
 //=========================================================

@@ -1,11 +1,22 @@
 #ifndef __COMMANDS_H__
 #define __COMMANDS_H__
 
+#include "uox3.h"
 #include "cmdtable.h"
 
+#include <vector>
+#include <string>
+#include <bitset>
 
-const UI32 BIT_STRIPHAIR	= 1;
-const UI32 BIT_STRIPITEMS	= 2;
+// Forward declars
+class CSocket ;	// In cSocket.h
+class CChar ;	// In cChar.h
+class cScript ;	// In cScript.h
+
+
+
+constexpr auto BIT_STRIPHAIR	= std::uint32_t(1);
+constexpr auto BIT_STRIPITEMS	= std::uint32_t(2);
 
 struct commandLevel_st
 {

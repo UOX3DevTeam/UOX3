@@ -30,27 +30,37 @@
 //|						1.4		 		17th July, 2004
 //|						Added CSpawnItem to begin breaking CItem into smaller subclasses
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "weight.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
-#include "ObjectFactory.h"
-#include "speech.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cSpawnRegion.h"
+#include "cItem.h"
+
+#include "books.h"
+
 #include "CJSEngine.h"
 #include "CJSMapping.h"
-#include "Dictionary.h"
-#include "regions.h"
-#include "msgboard.h"
-#include "books.h"
-#include "power.h"
+#include "CPacketSend.h"
+#include "classes.h"
+
+#include "cMultiObj.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cChar.h"
+#include "cRaces.h"
+#include "cSpawnRegion.h"
 #include "cServerDefinitions.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "osunique.hpp"
+#include "power.h"
+#include "regions.h"
+#include "speech.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+#include "townregion.h"
+#include "weight.h"
+
+
 #include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;

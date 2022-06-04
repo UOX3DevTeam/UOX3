@@ -4,11 +4,14 @@
 //|	Purpose		-	Various functions to calculate objects from serials
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
-#include "townregion.h"
-#include "network.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
-
-
+#include "network.h"
+#include "townregion.h"
+#include "worldmain.h"
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
 //o-----------------------------------------------------------------------------------------------o

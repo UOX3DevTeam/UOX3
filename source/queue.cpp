@@ -6,8 +6,12 @@
 //o-----------------------------------------------------------------------------------------------o
 
 #include "uox3.h"
-#include "PageVector.h"
+
+#include "cChar.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "gump.h"
+#include "PageVector.h"
 
 PageVector *GMQueue;
 PageVector *CounselorQueue;

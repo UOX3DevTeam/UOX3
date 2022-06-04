@@ -1,5 +1,6 @@
 #ifndef __CSKILLCLASS_H__
 #define __CSKILLCLASS_H__
+#include "uox3.h"
 
 #include <algorithm>
 

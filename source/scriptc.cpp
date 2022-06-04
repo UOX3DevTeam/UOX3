@@ -6,12 +6,21 @@
 //	Calling Script::find() will then seek to that location directly rather
 //	than having to parse through all of the script
 //
-#include "uox3.h"
-#include "ssection.h"
+
+
 #include "scriptc.h"
+
+#include "cConsole.h"
+#include "cChar.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 
+
+#include <iostream>
+#if PLATFORM != WINDOWS
+#include <sys/stat.h>
+#endif
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool get_modification_date( const std::string& filename, time_t* mod_time )
 //o-----------------------------------------------------------------------------------------------o

@@ -1,5 +1,14 @@
 #ifndef __CJSMAPPING_H__
 #define __CJSMAPPING_H__
+#include "uox3.h"
+#include "jsapi.h"
+
+#include <map>
+
+// Foward Declares
+class cScript;
+class Script ;
+class CEnvoke;
 
 enum SCRIPTTYPE
 {

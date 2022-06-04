@@ -13,18 +13,26 @@
 //|						process of moving it out to JavaScript in the future.
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
-#include "cRaces.h"
-#include "cEffects.h"
-#include "regions.h"
 #include "combat.h"
 #include "CJSMapping.h"
+
+#include "cChar.h"
+#include "cMultiObj.h"
+#include "cEffects.h"
+#include "cRaces.h"
 #include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "regions.h"
 #include "StringUtility.hpp"
+
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"
 
+bool isOnline( CChar& mChar );
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isValidAttackTarget( CChar *mChar, CChar *cTarget )

@@ -1,8 +1,12 @@
-#include "uox3.h"
-#include "classes.h"
 #include "regions.h"
-#include "StringUtility.hpp"
+
+#include "cMultiObj.h"
+#include "cServerData.h"
+#include "classes.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
+#include "StringUtility.hpp"
+
 #include <filesystem>
 
 #define DEBUG_REGIONS		0

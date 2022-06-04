@@ -11,11 +11,16 @@
 //|					Moved global JSEngine loading code into the class.
 //|					Created CJSRuntime class to handle multiple runtimes (for threading purposes).
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "CJSEngine.h"
+
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
+#include "cConsole.h"
+#include "cServerData.h"
+#include "funcdecl.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 CJSEngine *JSEngine = nullptr;

@@ -6,12 +6,13 @@
 
 #ifndef __CHTMLSYSTEM_H__
 #define __CHTMLSYSTEM_H__
+#include "uox3.h"
 
-#if defined(_MSC_VER)
-#if _MSC_VER > 1000
-#pragma once
-#endif // _MSC_VER > 1000
-#endif
+#include <string>
+#include <vector>
+
+
+class ScriptSection ;
 
 enum ETemplateType
 {

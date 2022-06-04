@@ -1,5 +1,9 @@
 #ifndef __GUMP_H__
 #define __GUMP_H__
+#include "uox3.h"
+
+#include <string>
+#include <vector>
 
 void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 

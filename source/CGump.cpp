@@ -3,10 +3,11 @@
 /*  gump handling		   */
 /***************************/
 
-#include "uox3.h"
 #include "gump.h"
 #include "CPacketSend.h"
-#include <cstdint>
+#include "cSocket.h"
+#include "StringUtility.hpp"
+
 #include <algorithm>
 
 CGump::CGump( bool myNoMove, bool myNoClose )

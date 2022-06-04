@@ -4,6 +4,10 @@
 
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
+#include "uox3.h"
+
+#include <string>
+#include <map>
 
 class CDictionary
 {

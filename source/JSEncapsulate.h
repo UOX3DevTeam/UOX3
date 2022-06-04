@@ -1,5 +1,10 @@
-#include "Prerequisites.h"
-#include "typedefs.h"
+#ifndef JSEncapsulate_H
+#define JSEncapsulate_H
+#include "uox3.h"
+#include "jsapi.h"
+
+#include <string>
+
 enum JSEncapsObjectType
 {
 	JSOT_INT = 0,
@@ -49,3 +54,4 @@ private:
 
 	void Parse( JSEncapsObjectType typeConvert );
 };
+#endif

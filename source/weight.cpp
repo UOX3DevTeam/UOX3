@@ -1,5 +1,10 @@
-#include "uox3.h"
 #include "weight.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "cServerData.h"
+#include "funcdecl.h"
+
 #include "mapstuff.h"
 
 //o-----------------------------------------------------------------------------------------------o
@@ -67,7 +72,6 @@
 
 CWeight *Weight = nullptr;
 
-//const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 calcWeight( CItem *pack )
 //|	Date		-	2/23/2003
@@ -76,10 +80,9 @@ CWeight *Weight = nullptr;
 //|							their amounts, etc. This function should never need to be called
 //|							but is available for bruteforce weight updating
 //o-----------------------------------------------------------------------------------------------o
-SI32 CWeight::calcWeight( CItem *pack )
-{
-	SI32 totalWeight = 0;
-	SI32 contWeight = 0;
+auto CWeight::calcWeight( CItem *pack ) ->SI32{
+	auto totalWeight = std::int32_t(0);
+	auto contWeight = std::int32_t(0);
 
 	GenericList< CItem * > *pCont = pack->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )

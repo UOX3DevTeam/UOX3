@@ -1,6 +1,14 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
+#include "uox3.h"
 
+#include <string>
+#include <map>
+#include <deque>
+
+class CChar;
+class CSocket;
+class CTileUni;
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING

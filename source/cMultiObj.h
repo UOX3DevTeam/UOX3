@@ -1,6 +1,11 @@
 #ifndef __CMULTIOBJ_H__
 #define __CMULTIOBJ_H__
+#include "uox3.h"
+#include "cItem.h"
 
+#include <string>
+#include <map>
+#include <vector>
 
 class CMultiObj : public CItem
 {

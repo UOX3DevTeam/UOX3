@@ -21,9 +21,15 @@
 //| 					1.3		25th September 2003
 //|						Added CBoatObj as a derived class of CMultiObj to simplify some processes in the cBoat class
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
+#include "cMultiObj.h"
+
+#include "cChar.h"
+#include "cServerData.h"
+#include "funcdecl.h"
+#include "StringUtility.hpp"
 #include "mapstuff.h"
 #include "osunique.hpp"
+
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;

@@ -1,7 +1,13 @@
 #ifndef __SCRIPTC_H__
 #define __SCRIPTC_H__
+#include "uox3.h"
 
 #include <unordered_map>
+#include <string>
+#include <fstream>
+
+
+class ScriptSection;
 
 typedef std::unordered_map< std::string, ScriptSection * >	SSMAP;
 

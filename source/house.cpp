@@ -1,18 +1,23 @@
 // House code for deed creation
-#include<algorithm>
-
 #include "uox3.h"
-#include "mapstuff.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cMultiObj.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "classes.h"
-#include "regions.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "ObjectFactory.h"
+#include "regions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 
+#include<algorithm>
 
-#include "ObjectFactory.h"
 
 using namespace std::string_literals ;
 
@@ -136,7 +141,7 @@ void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 
 							// Store a custom tag on addon to mark it as a house addon
 							TAGMAPOBJECT addonTagObject;
-							addonTagObject.m_Destroy		= FALSE;
+							addonTagObject.m_Destroy		= false;
 							addonTagObject.m_IntValue 		= 1;
 							addonTagObject.m_ObjectType	= TAGMAP_TYPE_INT;
 							addonTagObject.m_StringValue	= "";
@@ -195,7 +200,7 @@ void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 					if( ValidateObject( hItem ) )
 					{
 						TAGMAPOBJECT frontDoorTag;
-						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "front";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -210,7 +215,7 @@ void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 					if( ValidateObject( hItem ) )
 					{
 						TAGMAPOBJECT frontDoorTag;
-						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "interior";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -624,7 +629,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
-				customTag.m_Destroy		= FALSE;
+				customTag.m_Destroy		= false;
 				customTag.m_StringValue	= customTagStringValue;
 				customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 				customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -656,7 +661,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			customTagStringValue	= result;
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
-				customTag.m_Destroy		= FALSE;
+				customTag.m_Destroy		= false;
 				customTag.m_IntValue 	= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
@@ -825,7 +830,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 		// Store name of deed in a custom tag on the addon
 		TAGMAPOBJECT deedObject;
-		deedObject.m_Destroy		= FALSE;
+		deedObject.m_Destroy		= false;
 		deedObject.m_StringValue	= houseDeed;
 		deedObject.m_IntValue		= static_cast<SI32>(deedObject.m_StringValue.size());
 		deedObject.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -922,7 +927,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 						{
 							// More value of key in keyring matches house serial
 							TAGMAPOBJECT localObject;
-							localObject.m_Destroy		= FALSE;
+							localObject.m_Destroy		= false;
 							localObject.m_IntValue		= 0;
 							localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 							localObject.m_StringValue	= "0";
@@ -991,7 +996,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 							{
 								// More value of key in keyring matches house serial
 								TAGMAPOBJECT localObject;
-								localObject.m_Destroy		= FALSE;
+								localObject.m_Destroy		= false;
 								localObject.m_IntValue		= 0;
 								localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 								localObject.m_StringValue	= "0";

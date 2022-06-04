@@ -1,7 +1,12 @@
 #include "PartySystem.h"
-#include "uox3.h"
-#include "network.h"
+
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cSocket.h"
+#include "funcdecl.h"
+#include "network.h"
+
+
 #include <mutex>
 // PartyEntry code goes here
 const size_t BIT_LEADER		= 0;

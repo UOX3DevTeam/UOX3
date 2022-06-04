@@ -1,19 +1,31 @@
-#include "uox3.h"
-#include "cGuild.h"
 #include "combat.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "cEffects.h"
+
+#include "cGuild.h"
+
+#include "CJSMapping.h"
 #include "CPacketSend.h"
 #include "classes.h"
-#include "regions.h"
-#include "magic.h"
-#include "Dictionary.h"
-#include "movement.h"
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cRaces.h"
+#include "cServerData.h"
 #include "cScript.h"
-#include "CJSMapping.h"
+#include "cSocket.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "regions.h"
+#include "skills.h"
+#include "townregion.h"
+#include "magic.h"
+#include "movement.h"
+
+#include "worldmain.h"
+
+
 #include <algorithm>
 
 #undef DBGFILE

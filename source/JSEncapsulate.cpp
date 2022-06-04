@@ -1,9 +1,11 @@
 #include "JSEncapsulate.h"
-#include <string>
+
 #include "StringUtility.hpp"
+
 #include "jsobj.h"
 #include "jsutil.h"
 
+#include <iostream>
 void JSEncapsulate::InternalReset( void )
 {
 	beenParsed[JSOT_INT]	= false;

@@ -1,5 +1,10 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
+#include "uox3.h"
+#include "jsapi.h"
+
+#include <map>
+#include <vector>
 
 enum IUEEntries
 {

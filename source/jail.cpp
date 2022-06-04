@@ -1,9 +1,14 @@
-#include "uox3.h"
 #include "jail.h"
+
+#include "cChar.h"
+#include "cConsole.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
+#include "funcdecl.h"
 #include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "worldmain.h"
 
 JailSystem *JailSys;
 

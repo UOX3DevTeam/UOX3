@@ -1,10 +1,17 @@
 #ifndef __PARTYFACTORY_H__
 #define __PARTYFACTORY_H__
 
-#include "Prerequisites.h"
-
+#include "uox3.h"
 #include "GenericList.h"
-#include "cChar.h"
+
+#include <bitset>
+#include <vector>
+#include <map>
+#include <string>
+
+class CPUOXBuffer;
+class CChar;
+
 class PartyEntry
 {
 protected:

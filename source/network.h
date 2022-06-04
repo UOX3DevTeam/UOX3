@@ -1,7 +1,12 @@
 #ifndef __CNETWORK_H__
 #define __CNETWORK_H__
+#include "uox3.h"
+#include "osunique.hpp"
 
 #include <mutex>
+#include <map>
+#include <vector>
+
 #if PLATFORM != WINDOWS
 #include <sys/socket.h>
 #include <netdb.h>
@@ -9,8 +14,6 @@
 #include <arpa/inet.h>
 #else
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
 class socket_error : public std::runtime_error
 {

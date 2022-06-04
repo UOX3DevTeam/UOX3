@@ -22,18 +22,27 @@
 //|						Added support for message board file deletion upon deleting the associated world object.
 //|
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "msgboard.h"
-#include "townregion.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
+
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "classes.h"
 #include "Dictionary.h"
-#include "StringUtility.hpp"
-#include <filesystem>
+#include "funcdecl.h"
 #include "osunique.hpp"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "worldmain.h"
+
+#include <filesystem>
+#include <fstream>
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 //|	Date		-	8/6/2005

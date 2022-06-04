@@ -1,5 +1,11 @@
 #ifndef __MSGBOARD_H__
 #define __MSGBOARD_H__
+#include "uox3.h"
+
+#include <vector>
+#include <string>
+
+class CChar ;
 
 // Different types of user posts
 enum PostTypes

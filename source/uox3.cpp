@@ -30,62 +30,70 @@
 
  *************************************************************************** */
 
+#include "uox3.h"
+
+#include "books.h"
+#include "CJSEngine.h"
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cHTMLSystem.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+#include "cThreadQueue.h"
+#include "cVersionClass.h"
+#include "cWeather.hpp"
+
+#include "classes.h"
+#include "combat.h"
+#include "commands.h"
+#include "Dictionary.h"
+#include "EventTimer.hpp"
+#include "funcdecl.h"
+#include "gump.h"
+#include "jail.h"
+#include "magic.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "PageVector.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "teffect.h"
+#include "weight.h"
+#include "wholist.h"
+#include "worldmain.h"
+
+
 
 
 #include <chrono>
 #include <random>
 #include <thread>
-
-#include "uox3.h"
-#include "weight.h"
-#include "books.h"
-#include "cGuild.h"
-#include "combat.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cWeather.hpp"
-#include "movement.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "skills.h"
-#include "commands.h"
-#include "cSpawnRegion.h"
-#include "wholist.h"
-#include "cMagic.h"
-#include "PageVector.h"
-#include "speech.h"
-#include "cVersionClass.h"
-#include "ssection.h"
-#include "cHTMLSystem.h"
-#include "gump.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "teffect.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "cThreadQueue.h"
-#include "regions.h"
-#include "magic.h"
-#include "jail.h"
-#include "Dictionary.h"
-#include "ObjectFactory.h"
-#include "PartySystem.h"
-#include "CJSEngine.h"
-#include "StringUtility.hpp"
-#include "EventTimer.hpp"
-
-std::thread cons;
-std::thread netw;
+#include <set>
+#include <string>
 
 #if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
 #endif
 
-std::chrono::time_point<std::chrono::system_clock> current;
 
-std::mt19937 generator;
 
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -110,6 +118,14 @@ void		CheckAI( CChar& mChar );
 
 
 bool isWorldSaving = false;
+
+std::thread cons;
+std::thread netw;
+
+std::chrono::time_point<std::chrono::system_clock> current;
+
+std::mt19937 generator;
+
 #if PLATFORM == WINDOWS
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	BOOL WINAPI exit_handler(DWORD dwCtrlType)

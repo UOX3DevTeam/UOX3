@@ -1,8 +1,12 @@
 #include "uox3.h"
-#include "cmath"
+
+#include "cChar.h"
+#include "cConsole.h"
+#include "cItem.h"
+#include "funcdecl.h"
 #include "regions.h"
 
-
+#include <cmath>
 #define MAX_COLLISIONS 1024
 #define LOSXYMAX		256		// Maximum items UOX can handle on one X/Y square
 

@@ -1,5 +1,8 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
+#include "uox3.h"
+
+class CChar;
 
 enum TargetIDs:int;
 

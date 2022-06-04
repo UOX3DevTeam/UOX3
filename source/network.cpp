@@ -14,15 +14,24 @@
 #include "cServerDefinitions.h"
 #include "Dictionary.h"
 #include "mapstuff.h"
-
+#include "cSocket.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "worldmain.h"
+#include "cAccountClass.h"
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
+#include "cServerData.h"
+#include "funcdecl.h"
 #include "osunique.hpp"
+#include "cMultiObj.h"
 
 #include <algorithm>
 
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
+#include <unistd.h>
+
 #endif
 
 

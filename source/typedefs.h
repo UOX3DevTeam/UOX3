@@ -8,25 +8,13 @@
 #include <unordered_map>
 #include <cstdint>
 #include <functional>
+class CSocket ;
 
-#ifdef __NEED_VALIST__
-using va_list = void* ;
-#endif
 
 #if !defined(_WIN32)
 constexpr auto MAX_PATH	= 268 ;
 #endif
 
-#if defined( _DEBUG ) || defined(DEBUG)
-#define VALIDATESOCKET( s ) if( s == nullptr ) \
-{ \
-Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
-return;	\
-}
-#else
-#define VALIDATESOCKET( s ) if( s == nullptr ) \
-return;
-#endif
 
 //  We define these for now. But we all ready have a "standard" way to define data with fixed sizes.
 //  in <cstdint>. From a long term maintenance perspective, and training for others, it would make

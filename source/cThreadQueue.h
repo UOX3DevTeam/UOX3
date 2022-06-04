@@ -1,6 +1,8 @@
 #ifndef __CTHREADQUEUE_H__
 #define __CTHREADQUEUE_H__
 
+#include "uox3.h"
+
 #include <string>
 #include <queue>
 #include <mutex>

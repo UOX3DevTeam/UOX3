@@ -1,6 +1,9 @@
 #ifndef __WHOLIST_H__
 #define __WHOLIST_H__
+#include "uox3.h"
 
+#include <vector>
+#include <string>
 class cWhoList
 {
 private:

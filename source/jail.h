@@ -1,6 +1,13 @@
 
 #ifndef __JAIL_H__
 #define __JAIL_H__
+#include "uox3.h"
+
+#include <vector>
+#include <string>
+
+class CChar;
+
 
 struct JailOccupant
 {

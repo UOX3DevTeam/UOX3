@@ -4,8 +4,14 @@
 // of course ALL books need a type of 11
 #ifndef __books_h
 #define __books_h
+#include "uox3.h"
 
-#include "cChar.h"
+#include <string>
+
+class CChar ;
+class CItem;
+class CSocket;
+
 class cBooks
 {
 public:

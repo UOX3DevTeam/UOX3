@@ -1,231 +1,224 @@
-#if !defined( __GENERICLIST_H__ )
-#define __GENERICLIST_H__
-//o-----------------------------------------------------------------------------------------------o
-//|	File	-	GenericList.h
-//|	Date	-	2021-05-04
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose	-	Created as a counterpart of CDataList, based on std::list this class will behave
-//|						as expected when removing records in the middle of the array.
-//|
-//|			-	Version Historyz
-//|
-//|					1.0		 		2021-05-04
-//|					Initial implementation.
-//o-----------------------------------------------------------------------------------------------o
+
+#ifndef GenericList_h
+#define GenericList_h
 #include <iostream>
 #include <cstdint>
 #include <unordered_set>
+#include <list>
+#include <algorithm>
+#include <queue>
+
+//===========================================================
+// GenericList
+//===========================================================
 
 template <typename T>
 class GenericList
 {
 private:
-	typedef std::list<T>							GENERICLIST;
-	typedef typename std::list<T>::iterator			GENERICLIST_ITERATOR;
-	typedef typename std::list<T>::const_iterator	GENERICLIST_CITERATOR;
-
-	GENERICLIST					objData;
-	GENERICLIST_ITERATOR		objIterator;
-	std::vector<GENERICLIST_ITERATOR>		objIteratorBackup;
-
-	GENERICLIST_ITERATOR FindEntry( T toFind )
-	{
-		return std::find(objData.begin(), objData.end(), toFind);
+	std::list<T> objData;
+	std::queue<T> stack ;
+	mutable T current = nullptr ;
+	
+	auto currentIterator() -> typename std::list<T>::iterator {
+		return std::find_if(objData.begin(),objData.end(),[this](T &value){
+			return (value) == this->current;
+		});
 	}
-
-	bool Begin( void )
-	{
-		return (objIterator == objData.begin());
-	}
+	
 public:
-	GenericList()
-	{
-		objData.resize(0);
-		objIteratorBackup.resize(0);
-		objIterator = objData.end();
-	}
-
-	~GenericList()
-	{
-		objData.clear();
-		objIteratorBackup.clear();
-	}
-
-	T GetCurrent( void )
-	{
-		T rvalue = nullptr;
-		if( objIterator != objData.end() )
-		{
-			rvalue = (*objIterator);
+	//===========================================================
+	GenericList():current(nullptr) {} ;
+	//===========================================================
+	~GenericList() = default ;
+	//=========================================================
+	auto storage() ->std::list<T>& {return objData;}
+	auto storage() const ->const std::list<T>& {return objData;}
+	//===========================================================
+	auto GetCurrent() ->T {
+		auto iter = currentIterator();
+		if (iter != objData.end()){
+			return *iter;
 		}
-		return rvalue;
+		return nullptr ;
 	}
-
-	T First( void )
-	{
-		objIterator = objData.end();
-		return Next();
+	//===========================================================
+	auto Push() ->void {
+		stack.push(current) ;
 	}
-
-	T Next( void )
-	{
-		T rvalue = nullptr;
-		if( !Begin() )
-		{
-			--objIterator;
-			rvalue = (*objIterator);
+	//===========================================================
+	auto Pop() ->void {
+		current = nullptr ;
+		if (!stack.empty()){
+			auto possible = current ;
+			
+			do{
+				possible = stack.front() ;
+				stack.pop() ;
+				auto iter = std::find_if(objData.begin(),objData.end(),[possible](T &value){
+					return value = possible ;
+				});
+				if (iter != objData.end()){
+					current = possible;
+					break;
+				}
+			}while (!stack.empty());
 		}
-		else
-		{
-			objIterator = objData.end();
-		}
-		return rvalue;
 	}
-
-	bool Finished( void )
-	{
-		return (objIterator == objData.end());
-	}
-
-	size_t Num( void ) const
-	{
-		return objData.size();
-	}
-
-	void Clear()
-	{
-		objData.clear();
-	}
-
-	bool Add( T toAdd, bool checkForExisting = true )
-	{
-		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
-		{
-			return false;
-		}
-
-		const bool updateCounter = (objIterator == objData.end());
-		objData.push_back(toAdd);
-		if( updateCounter )
-		{
-			objIterator = objData.end();
-		}
-
-		return true;
-	}
-
-	bool AddInFront( T toAdd, bool checkForExisting = true )
-	{
-		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
-		{
-			return false;
-		}
-
-		const bool updateCounter = (objIterator == objData.end());
-		objData.push_front(toAdd);
-		if( updateCounter )
-		{
-			objIterator = objData.end();
-		}
-
-		return true;
-	}
-
-	bool Remove( T toRemove, bool handleAlloc = false )
-	{
-		GENERICLIST_ITERATOR rIter = FindEntry( toRemove );
-		if( rIter != objData.end() )
-		{
-			if( objIterator != objData.end() && rIter == objIterator )
-			{
-				++objIterator;
+	//===========================================================
+	auto First(bool setcurrent = true) ->T{
+		auto iter = objData.begin() ;
+		if (iter != objData.end()){
+			if (setcurrent) {
+				current = *iter ;
 			}
-
-			for( size_t q = 0; q < objIteratorBackup.size(); ++q )
-			{
-				if( objIteratorBackup[q] != objData.end() && rIter == objIteratorBackup[q] )
-				{
-					++objIteratorBackup[q];
+			return *iter ;
+		}
+		return nullptr ;
+	}
+	
+	//===========================================================
+	auto Next(bool setcurrent = true ) ->T{
+		if (current == nullptr){
+			return First(setcurrent) ;
+		}
+		auto iter = currentIterator() ;
+		if (iter != objData.end()){
+			// It is valid, lets increment it
+			iter++ ;
+			current = nullptr ;
+			if (iter != objData.end()){
+				if (setcurrent){
+					current = *iter ;
+				}
+				return *iter ;
+			}
+		}
+		current = nullptr;
+		return nullptr ;
+	}
+	
+	//===========================================================
+	auto Finished() ->bool{
+		return current == nullptr;
+	}
+	
+	//===========================================================
+	auto Num() const ->size_t {
+		return objData.size() ;
+	}
+	
+	//===========================================================
+	auto Clear() ->void {
+		objData.clear() ;
+	}
+	
+	//===========================================================
+	auto Add( T toAdd, bool checkForExisting = true ) ->bool {
+		auto rvalue = true ;
+		// we always check for existing, or we break
+		// we have the method for compatability
+		
+		auto iter = std::find_if(objData.begin(),objData.end(),[toAdd](T &value){
+			return (value) == toAdd;
+		});
+		if (iter != objData.end() ){
+			rvalue = false ;
+		}
+		
+		if (rvalue) {
+			objData.push_back(toAdd) ;
+		}
+		return rvalue ;
+		
+	}
+	//===========================================================
+	auto AddInFront( T toAdd, bool checkForExisting = true ) ->bool{
+		auto rvalue = true ;
+		//if (checkForExisting){
+		auto iter = std::find_if(objData.begin(),objData.end(),[toAdd](T &value){
+			return (value) == toAdd;
+		});
+		if (iter != objData.end() ){
+			rvalue = false ;
+		}
+		//}
+		if (rvalue) {
+			objData.push_front(toAdd) ;
+		}
+		return rvalue ;
+	}
+	
+	//===========================================================
+	auto Remove( T toRemove, bool handleAlloc = false ) ->bool {
+		auto rvalue = false ;
+		auto iter = std::find_if(objData.begin(),objData.end(),[toRemove](T &value){
+			return (value) == toRemove;
+		});
+		if (iter !=  objData.end()){
+			rvalue = true ;
+			
+			auto temp = objData.erase(iter) ;
+			if (toRemove == current ) {
+				auto front = --temp ;
+				if (front != objData.end()){
+					current = *front ;
+				}
+				else {
+					current = nullptr ;
 				}
 			}
-			objData.erase(rIter);
-
-			if (handleAlloc)
-			{
-				delete toRemove;
+			if (handleAlloc) {
+				delete toRemove ;
 			}
-			return true;
+			
 		}
-		return false;
+		return rvalue ;
 	}
-
-	void Pop(void)
-	{
-		if( !objIteratorBackup.empty() )
-		{
-			objIterator = objIteratorBackup.back();
-			objIteratorBackup.pop_back();
-		}
-		else
-		{
-			objIterator = objData.end();
-		}
-	}
-
-	void Push( void )
-	{
-		objIteratorBackup.push_back(objIterator);
-	}
-
-	void Reverse( void )
-	{
+	//===========================================================
+	auto Reverse()  ->void {
 		objData.reverse();
 	}
-
-	void Sort( void )
-	{
+	
+	//===========================================================
+	auto Sort() ->void  {
 		objData.sort();
 	}
-
-	void Sort( bool Comparer( T one, T two ))
-	{
+	
+	//===========================================================
+	auto Sort( bool Comparer( T one, T two )) ->void {
 		objData.sort(Comparer);
 	}
 };
 
-template <typename SERIAL>
-class RegionSerialList
-{
+
+
+//===========================================================
+// RegionSerialList
+//===========================================================
+// I think someone was very confused about templates.  I believe they used
+// the typename as SERIAL (it orginally wasnt T, but SERIAL, I modified it to be more obvious.
+// If always type SERIAL, doedn't need to be a template.
+// Doesnt' look like in the code a lot to fix, probably should be done.
+template <typename T>
+class RegionSerialList {
 private:
-	typedef std::unordered_set<SERIAL>							REGIONSERIALLIST;
-	typedef typename std::unordered_set<SERIAL>::iterator		REGIONSERIALLIST_ITERATOR;
-	typedef typename std::unordered_set<SERIAL>::const_iterator	REGIONSERIALLIST_CITERATOR;
-
-	REGIONSERIALLIST					objSerials;
-	REGIONSERIALLIST_ITERATOR		objIterator;
-	std::pair<REGIONSERIALLIST_ITERATOR, bool> insertResult;
-
+	std::unordered_set<T> objSerials;
 public:
-	RegionSerialList()
-	{
-	}
-
-	~RegionSerialList()
-	{
-		objSerials.clear();
-	}
-
-	bool Add( SERIAL toAdd )
-	{
-		insertResult = objSerials.insert( toAdd );
+	RegionSerialList()=default;
+	
+	~RegionSerialList() = default ;
+	
+	//===========================================================
+	auto Add( T toAdd )->bool{
+		auto insertResult = objSerials.insert( toAdd );
 		return insertResult.second;
 	}
-
-	size_t Remove( SERIAL toRemove )
-	{
+	
+	//===========================================================
+	auto Remove(T toRemove) ->size_t {
 		return objSerials.erase( toRemove );
 	}
 };
 
-#endif // __GENERICLIST_H__
-
+#endif /* GenericList_h */

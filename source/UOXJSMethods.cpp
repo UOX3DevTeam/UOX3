@@ -12,42 +12,52 @@
 //|									- Item
 //|									- Socket
 //o-----------------------------------------------------------------------------------------------o
-#include <variant>
-#include <filesystem>
-#include "uox3.h"
-#include "UOXJSPropertySpecs.h"
-#include "SEFunctions.h"
-#include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
+#include "UOXJSPropertySpecs.h"
+#include "UOXJSClasses.h"
 #include "JSEncapsulate.h"
 #include "CJSEngine.h"
-
-#include "cMagic.h"
-#include "cGuild.h"
-#include "skills.h"
-#include "speech.h"
-#include "gump.h"
 #include "CJSMapping.h"
-#include "cScript.h"
+#include "CPacketSend.h"
+
+#include "SEFunctions.h"
+
+#include "cChar.h"
 #include "cEffects.h"
-#include "teffect.h"
-#include "network.h"
-#include "classes.h"
+#include "cItem.h"
+#include "cGuild.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
 #include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cThreadQueue.h"
+
+#include "classes.h"
+#include "combat.h"
 #include "commands.h"
-#include "movement.h"
-#include "wholist.h"
-#include "townregion.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "gump.h"
 #include "jail.h"
 #include "magic.h"
-#include "CPacketSend.h"
 #include "mapstuff.h"
-#include "cThreadQueue.h"
-#include "combat.h"
-#include "PartySystem.h"
+#include "movement.h"
+#include "network.h"
 #include "osunique.hpp"
+#include "PartySystem.h"
+
+#include "skills.h"
+#include "speech.h"
+#include "teffect.h"
+#include "townregion.h"
+#include "wholist.h"
+
+#include <variant>
+#include <filesystem>
+
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
@@ -2775,14 +2785,14 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			const std::string stringVal = encaps.toString();
 			if( stringVal == "" )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 				localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 				localObject.m_StringValue	= "";
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_StringValue	= stringVal;
 				localObject.m_IntValue		= static_cast<SI32>(localObject.m_StringValue.length());
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -2793,12 +2803,12 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			const bool boolVal = encaps.toBool();
 			if( !boolVal )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_IntValue		= 1;
 			}
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
@@ -2809,12 +2819,12 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			const SI32 intVal = encaps.toInt();
 			if( !intVal )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_IntValue		= intVal;
 			}
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
@@ -2822,7 +2832,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}
 		else if( encaps.isType( JSOT_NULL ) )
 		{
-			localObject.m_Destroy		= TRUE;
+			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
@@ -2833,7 +2843,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	}
 	else
 	{
-		localObject.m_Destroy		= TRUE;
+		localObject.m_Destroy		= true;
 		localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 		localObject.m_IntValue		= 0;
 		localObject.m_StringValue	= "";
@@ -2911,14 +2921,14 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			const std::string stringVal = encaps.toString();
 			if( stringVal == "" )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 				localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 				localObject.m_StringValue	= "";
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_StringValue	= stringVal;
 				localObject.m_IntValue		= static_cast<SI32>(localObject.m_StringValue.length());
 				localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -2929,12 +2939,12 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			const bool boolVal = encaps.toBool();
 			if( !boolVal )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_IntValue		= 1;
 			}
 			localObject.m_ObjectType	= TAGMAP_TYPE_BOOL;
@@ -2945,12 +2955,12 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			const SI32 intVal = encaps.toInt();
 			if( !intVal )
 			{
-				localObject.m_Destroy		= TRUE;
+				localObject.m_Destroy		= true;
 				localObject.m_IntValue		= 0;
 			}
 			else
 			{
-				localObject.m_Destroy		= FALSE;
+				localObject.m_Destroy		= false;
 				localObject.m_IntValue		= intVal;
 			}
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
@@ -2958,7 +2968,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 		else if( encaps.isType( JSOT_NULL ) )
 		{
-			localObject.m_Destroy		= TRUE;
+			localObject.m_Destroy		= true;
 			localObject.m_IntValue		= 0;
 			localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 			localObject.m_StringValue	= "";
@@ -2969,7 +2979,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	else
 	{
-		localObject.m_Destroy		= TRUE;
+		localObject.m_Destroy		= true;
 		localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 		localObject.m_IntValue		= 0;
 		localObject.m_StringValue	= "";

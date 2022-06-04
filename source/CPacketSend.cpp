@@ -1,24 +1,33 @@
-#include "uox3.h"
 #include "CPacketSend.h"
-#include "speech.h"
-#include "combat.h"
-#include "cMagic.h"
-#include "power.h"
-#include "msgboard.h"
-#include "mapstuff.h"
-#include "PartySystem.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "classes.h"
-#include "Dictionary.h"
-#include "cScript.h"
+
 #include "CJSMapping.h"
+
+#include "cChar.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cServerData.h"
+#include "cScript.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cSocket.h"
+#include "classes.h"
+#include "combat.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "PartySystem.h"
+#include "power.h"
+#include "mapstuff.h"
+#include "msgboard.h"
+#include "osunique.hpp"
+#include "speech.h"
+#include "townregion.h"
+
 
 #include <string>
 #include <locale>
 #include <codecvt>
 #include <algorithm>
-#include "osunique.hpp"
+#include <fstream>
 #if defined(_WIN32)
 #include <ws2tcpip.h>
 #endif

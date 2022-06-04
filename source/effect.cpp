@@ -1,19 +1,27 @@
 #include "uox3.h"
-#include "skills.h"
-#include "magic.h"
-#include "cMagic.h"
+
 #include "CJSMapping.h"
-#include "mapstuff.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "teffect.h"
 #include "CPacketSend.h"
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
 #include "classes.h"
-#include "regions.h"
 #include "combat.h"
-#include "CJSMapping.h"
-#include "townregion.h"
+#include "funcdecl.h"
+#include "regions.h"
+#include "skills.h"
 #include "StringUtility.hpp"
+#include "teffect.h"
+#include "townregion.h"
+#include "magic.h"
+#include "mapstuff.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o

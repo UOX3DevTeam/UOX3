@@ -4,8 +4,16 @@
 // In essence, CConsole is our nice generic class for outputting display
 // As long as the interface is kept the same, we can display whatever we wish to
 // We store a set of coordinates being the window corner and size, for systems with windowing support, which describes the window we are in
-#include <tuple>
+#include "uox3.h"
 
+
+#include <tuple>
+#include <iostream>
+#include <map>
+#include <string>
+
+class CBaseObject;
+class CEndL;
 
 #define MAX_CONSOLE_BUFF 512
 

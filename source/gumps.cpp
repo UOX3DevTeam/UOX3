@@ -1,26 +1,34 @@
-#include "uox3.h"
 #include "gump.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cServerDefinitions.h"
-#include "wholist.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "cVersionClass.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
-#include "regions.h"
+#include "cAccountClass.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cVersionClass.h"
 #include "classes.h"
 #include "commands.h"
 #include "Dictionary.h"
-#include "PageVector.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
-#include "StringUtility.hpp"
-#include <algorithm>
 #include "osunique.hpp"
+#include "PageVector.h"
+#include "regions.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "wholist.h"
+
+#include <algorithm>
 
 void CollectGarbage( void );
 std::string GetUptime( void );
@@ -1379,7 +1387,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 0;
 				if( repeatAdd.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1400,7 +1408,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( addAtLoc.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1425,7 +1433,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( reopenMenu.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1444,7 +1452,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1463,7 +1471,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1482,7 +1490,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1501,7 +1509,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1549,7 +1557,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 			Commands->Command( s, mChar, sect );
 			return;
 		}
-		customTag.m_Destroy		= FALSE;
+		customTag.m_Destroy		= false;
 		customTag.m_IntValue 	= tagVal;
 		customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 		customTag.m_StringValue	= "";

@@ -1,9 +1,17 @@
 #ifndef __MAPSTUFF_H__
 #define __MAPSTUFF_H__
+#include "uox3.h"
 
 #include "mapclasses.h"
-#include <climits>
 #include "MultiMul.hpp"
+
+#include <climits>
+#include <string>
+#include <map>
+#include <algorithm>
+
+class CItem;
+class CMultiObj;
 
 const UI08 MAX_Z_STEP	= 9;
 const UI08 MAX_Z_FALL	= 20;

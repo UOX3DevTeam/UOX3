@@ -22,21 +22,27 @@
 //|							We now make use of OSI's trigger words (the few that we actually handle,
 //|								currently), to remove the need to search through the text string
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "CResponse.h"
-#include "regions.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "classes.h"
+
 #include "cEffects.h"
-#include "Dictionary.h"
+#include "classes.h"
 #include "CPacketSend.h"
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "regions.h"
+#include "cChar.h"
 #include "cGuild.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "msgboard.h"
+#include "regions.h"
 #include "skills.h"
 #include "StringUtility.hpp"
+#include "townregion.h"
+
 #include <algorithm>
 #include <cctype>
 
@@ -654,7 +660,7 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 	CChar *petCommandObj = calcCharObjFromSer( petTagObj.m_IntValue );
 	if( ValidateObject( petCommandObj ) )
 	{
-		petTagObj.m_Destroy = TRUE;
+		petTagObj.m_Destroy = true;
 		petTagObj.m_IntValue = 0;
 
 		mChar->SetTag( "petCommandObj", petTagObj );

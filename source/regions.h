@@ -10,8 +10,12 @@
 
 #ifndef __Region_h
 #define __Region_h
+#include "uox3.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "GenericList.h"
+#include "mapstuff.h"  // check this, to see if we need in header
 
-#include "mapstuff.h"
 
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;

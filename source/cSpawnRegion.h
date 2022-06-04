@@ -1,5 +1,16 @@
 #ifndef __SpawnRegion__
 #define __SpawnRegion__
+#include "uox3.h"
+#include "GenericList.h"
+
+#include <string>
+#include <vector>
+#include <map>
+
+class CChar ;
+class CItem ;
+class ScriptSection;
+
 
 class CSpawnRegion	//Regionspawns
 {

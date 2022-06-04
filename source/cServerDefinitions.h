@@ -1,7 +1,14 @@
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
+#include "uox3.h"
 
+#include <vector>
+#include <string>
 #include <stack>
+#include <map>
+
+class Script ;	// In scriptc.h
+class ScriptSection;
 
 typedef std::vector< Script * > VECSCRIPTLIST;
 typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;

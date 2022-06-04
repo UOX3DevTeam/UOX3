@@ -1,4 +1,9 @@
 #include "uox3.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "funcdecl.h"
+#include "GenericList.h"
 #include "weight.h"
 
 //o-----------------------------------------------------------------------------------------------o

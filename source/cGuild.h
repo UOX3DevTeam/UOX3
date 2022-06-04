@@ -1,7 +1,18 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+#include "uox3.h"
+
+#include <map>
+#include <string>
+#include <vector>
+
+
 class CPIGumpInput;
+class CChar ;
+class CSocket;
+class CItem;
+class ScriptSection;
 
 enum GuildType
 {

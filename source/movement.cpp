@@ -33,23 +33,31 @@
 //| information to help out the future bug fixers. I will try to explain EVERY bit of logic
 //| behind what I've done to make things easier.
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "movement.h"
-#include "weight.h"
-#include "combat.h"
-#include "msgboard.h"
-#include "cRaces.h"
-#include "cMagic.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
+
 #include "CPacketSend.h"
-#include "regions.h"
+#include "CJSMapping.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "cWeather.hpp"
+#include "combat.h"
 #include "Dictionary.h"
-#include "StringUtility.hpp"
 #include "EventTimer.hpp"
+#include "funcdecl.h"
+#include "mapclasses.h"
+#include "msgboard.h"
+#include "regions.h"
+#include "StringUtility.hpp"
+#include "weight.h"
+#include "worldmain.h"
+
 
 cMovement *Movement;
 

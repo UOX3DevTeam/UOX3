@@ -1,12 +1,17 @@
-#include "uox3.h"
-#include "weight.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
-#include "CResponse.h"
-#include "Dictionary.h"
-#include "StringUtility.hpp"
+#include "cMultiObj.h"
 
+#include "CPacketSend.h"
+#include "CResponse.h"
+#include "classes.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cItem.h"
+#include "cSocket.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "regions.h"
+#include "StringUtility.hpp"
+#include "weight.h"
 
 #define XP 0
 #define YP 1
