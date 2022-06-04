@@ -91,6 +91,8 @@
 #if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
+#else
+#include <sys/signal.h>
 #endif
 
 

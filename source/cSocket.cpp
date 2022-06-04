@@ -31,6 +31,7 @@
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <errno.h>
 #endif
 
 

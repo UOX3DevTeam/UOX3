@@ -20,6 +20,7 @@
 #include <iostream>
 #if PLATFORM != WINDOWS
 #include <sys/stat.h>
+#include <errno.h>
 #endif
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool get_modification_date( const std::string& filename, time_t* mod_time )
