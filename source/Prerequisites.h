@@ -54,6 +54,9 @@
 //#pragma warning( disable : 4512 )	// assignment operator could not be generated
 //#pragma warning( disable : 4663 )	// C++ language change: to explicitly specialize class template '' use the following syntax...
 
+#undef max
+#undef min
+
 #ifdef _DEBUG
 #define UOX_DEBUG_MODE 1
 // The GOAL is to remove these!
