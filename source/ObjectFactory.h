@@ -7,7 +7,6 @@
 #include <functional>
 
 class CBaseObject;
-
 using factory_collection = std::unordered_map<std::uint32_t, CBaseObject*>;
 
 //=========================================================
@@ -96,5 +95,6 @@ public:
 	
 	auto SizeOfObjects(ObjectType type) const ->size_t;
 };
+
 
 #endif /* ObjectFactory_hpp */
