@@ -1,15 +1,13 @@
 
 #include "ObjectFactory.h"
 
+#include "cChar.h" // Includes CChar
+#include "cItem.h" // Includes CItem, CSpawnItem
+#include "cMultiObj.h" // Includes CMultiObj, CBoatObj
+
 #include <iostream>
 #include <algorithm>
 #include <climits>
-
-#include "cBaseObject.h"
-#include "cItem.h" // Includes CItem, CSpawnItem
-#include "cMultiObj.h" // Includes CMultiObj, CBoatObj
-#include "cChar.h" // Includes CChar
-
 
 //=========================================================
 // ObjectFactory::serialgen_t
@@ -211,20 +209,6 @@ auto ObjectFactory::IterateOver(ObjectType type, std::uint32_t &b, void *extra, 
 				}
 			}
 		}
-		// safer way, it copys the collection so changes can be made under it
-		/*
-		auto copy = *collection ;
-		for (auto [serial,object] : copy){
-			auto realobject = collection->find(serial) ;
-			if (realobject != collection->end()){
-				if (realobject->second){
-					if (!function(realobject->second,b,extra)){
-						break;
-					}
-				}
-			}
-		}
-		 */
 		return 0 ;
 	}
 	return 0xFFFFFFFF ;
