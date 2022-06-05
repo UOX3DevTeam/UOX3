@@ -34,29 +34,38 @@
 //|						Organized many functions to their respective areas and added documentation for them.
 //|						Changed itemLayers to a map
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "power.h"
-#include "weight.h"
-#include "cGuild.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "skills.h"
+#include "cChar.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
+#include "CJSEngine.h"
 #include "CPacketSend.h"
+
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+
 #include "classes.h"
+#include "combat.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "power.h"
 #include "regions.h"
 #include "speech.h"
-#include "ObjectFactory.h"
-#include "teffect.h"
-#include "cSpawnRegion.h"
-#include "Dictionary.h"
-#include "movement.h"
-#include "CJSEngine.h"
-#include "combat.h"
+#include "skills.h"
 #include "StringUtility.hpp"
-#include "cEffects.h"
+#include "teffect.h"
+#include "townregion.h"
+#include "weight.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 #define DEBUGMOVEMULTIPLIER 1.75
@@ -2422,13 +2431,13 @@ void CChar::RemoveFromSight( CSocket *mSock )
 		mSock->Send( &toSend );
 	else
 	{
-		SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( !(*cIter)->LoginComplete() )
-				continue;
-			if( (*cIter)->CurrcharObj() != this )
-				(*cIter)->Send( &toSend );
+		auto nearbyChars = FindPlayersInOldVisrange( this );
+		for( auto &mSock:nearbyChars ){
+			if( mSock->LoginComplete() ){
+				if( mSock->CurrcharObj() != this )
+					mSock->Send( &toSend );
+
+			}
 		}
 	}
 }
@@ -2445,7 +2454,7 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 	{
 		//CChar *myChar = mSock->CurrcharObj();
 		//mSock->CurrcharObj();
-
+		
 		// Calculate player's visibility range so we can use it to find nearby objects
 		UI16 visRange = mSock->Range() + Races->VisRange( GetRace() );
 		UI16 mCharX = this->GetX();
@@ -2454,64 +2463,61 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 		auto minY = mCharY - visRange;
 		auto maxX = mCharX + visRange;
 		auto maxY = mCharY + visRange;
-
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-
-			// First remove nearby characters from sight
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
+		
+		auto nearbyRegions = MapRegion->PopulateList(this );
+		for ( auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
+				// First remove nearby characters from sight
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					CPRemoveItem charToSend = (*tempChar);
-					auto tempX = tempChar->GetX();
-					auto tempY = tempChar->GetY();
-
-					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
-					   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
-						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 					{
-						mSock->Send( &charToSend );
-					}
-				}
-			}
-			regChars->Pop();
-
-			// Now remove nearby items and multis from sight
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-				{
-					CPRemoveItem itemToSend = (*tempItem);
-					auto tempItemX = tempItem->GetX();
-					auto tempItemY = tempItem->GetY();
-
-					if( tempItem->CanBeObjType( OT_MULTI ) )
-					{
-						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+						CPRemoveItem charToSend = (*tempChar);
+						auto tempX = tempChar->GetX();
+						auto tempY = tempChar->GetY();
+						
+						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
+						   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
 						{
-							mSock->Send( &itemToSend );
-						}
-					}
-					else
-					{
-						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
-						{
-							mSock->Send( &itemToSend );
+							mSock->Send( &charToSend );
 						}
 					}
 				}
+				regChars->Pop();
+				
+				// Now remove nearby items and multis from sight
+				GenericList< CItem * > *regItems = MapArea->GetItemList();
+				regItems->Push();
+				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+				{
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
+					{
+						CPRemoveItem itemToSend = (*tempItem);
+						auto tempItemX = tempItem->GetX();
+						auto tempItemY = tempItem->GetY();
+						
+						if( tempItem->CanBeObjType( OT_MULTI ) )
+						{
+							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+							{
+								mSock->Send( &itemToSend );
+							}
+						}
+						else
+						{
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+							{
+								mSock->Send( &itemToSend );
+							}
+						}
+					}
+				}
+				regItems->Pop();
 			}
-			regItems->Pop();
 		}
 	}
 }
@@ -2618,53 +2624,51 @@ void CChar::Teleport( void )
 		auto maxX = mCharX + visrange;
 		auto maxY = mCharY + visrange;
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
+		auto nearbyRegions = MapRegion->PopulateList(this );
+		for ( auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					auto tempX = tempChar->GetX();
-					auto tempY = tempChar->GetY();
-					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
-					   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
-						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
-						tempChar->SendToSocket( mSock );
-				}
-			}
-			regChars->Pop();
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-				{
-					auto tempItemX = tempItem->GetX();
-					auto tempItemY = tempItem->GetY();
-					if( tempItem->CanBeObjType( OT_MULTI ) )
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 					{
-						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
-						{
-							tempItem->SendToSocket( mSock );
-						}
+						auto tempX = tempChar->GetX();
+						auto tempY = tempChar->GetY();
+						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
+						   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
+							tempChar->SendToSocket( mSock );
 					}
-					else
+				}
+				regChars->Pop();
+				GenericList< CItem * > *regItems = MapArea->GetItemList();
+				regItems->Push();
+				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+				{
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
 					{
-						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+						auto tempItemX = tempItem->GetX();
+						auto tempItemY = tempItem->GetY();
+						if( tempItem->CanBeObjType( OT_MULTI ) )
 						{
-							tempItem->SendToSocket( mSock );
+							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+							{
+								tempItem->SendToSocket( mSock );
+							}
+						}
+						else
+						{
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+							{
+								tempItem->SendToSocket( mSock );
+							}
 						}
 					}
 				}
+				regItems->Pop();
 			}
-			regItems->Pop();
 		}
 	}
 	CheckCharInsideBuilding( this, mSock, false );
@@ -2706,20 +2710,20 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		SendToSocket( mSock, drawGamePlayer );
 	else
 	{
-		SOCKLIST nearbyChars = FindPlayersInVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( !(*cIter)->LoginComplete() )
-				continue;
-
-			// Send one extra update to self to fix potential issues with world changing
-			if( ( *cIter )->CurrcharObj() == this && sendToSelf )
-			{
-				SendToSocket( (*cIter), drawGamePlayer );
-				continue;
+		auto nearbyChars = FindPlayersInVisrange( this );
+		for( auto &mSock:nearbyChars){
+			
+			if( mSock->LoginComplete() ){
+				// Send one extra update to self to fix potential issues with world changing
+				if( mSock->CurrcharObj() == this && sendToSelf )
+				{
+					SendToSocket( mSock, drawGamePlayer );
+					
+				}
+				else {
+					SendToSocket( mSock, drawGamePlayer );
+				}
 			}
-
-			SendToSocket( (*cIter), drawGamePlayer );
 		}
 	}
 }
@@ -3157,12 +3161,12 @@ GenericList< CChar * > *CChar::GetPetList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	ITEMLIST *GetOwnedItems( void )
+//| Function	-
 //| Date		-	13 March 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of items the char owns
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST *CChar::GetOwnedItems( void )
+auto  CChar::GetOwnedItems() ->std::vector< CItem* >*
 {
 	return &ownedItems;
 }
@@ -3176,14 +3180,12 @@ ITEMLIST *CChar::GetOwnedItems( void )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::AddOwnedItem( CItem *toAdd )
 {
-	ITEMLIST_CITERATOR i;
-	for( i = ownedItems.begin(); i != ownedItems.end(); ++i )
-	{
-		if( (*i) == toAdd )		// We already have it
-			break;
-	}
-	if( i == ownedItems.end() )
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toAdd](CItem *ptr){
+		return toAdd == ptr;
+	});
+	if (iter == ownedItems.end()){
 		ownedItems.push_back( toAdd );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3194,13 +3196,11 @@ void CChar::AddOwnedItem( CItem *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 void CChar::RemoveOwnedItem( CItem *toRemove )
 {
-	for( ITEMLIST_ITERATOR rIter = ownedItems.begin(); rIter != ownedItems.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			ownedItems.erase( rIter );
-			break;
-		}
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toRemove](CItem *entry){
+		return toRemove == entry ;
+	});
+	if (iter != ownedItems.end()){
+		ownedItems.erase(iter);
 	}
 }
 
@@ -4528,12 +4528,11 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 					else if( msgType == EMOTE || msgType == ASCIIEMOTE )
 						searchDistance = DIST_INRANGE;
 
-					SOCKLIST nearbyChars = FindNearbyPlayers( this, searchDistance );
-					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-					{
-						if( (*cIter) == s && sendSock )
+					auto nearbyChars = FindNearbyPlayers( this, searchDistance );
+					for( auto &mSock:nearbyChars ){
+						if( mSock == s && sendSock )
 							sendSock = false;
-						(*cIter)->Send( &unicodeMessage );
+						mSock->Send( &unicodeMessage );
 					}
 				}
 
@@ -6918,7 +6917,7 @@ GenericList< CChar * > *CChar::GetPetOwnerList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearPetOwnerList( void )
+//| Function	-
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the pet's list of previous owners
 //o-----------------------------------------------------------------------------------------------o
@@ -6991,7 +6990,7 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearFriendList( void )
+//| Function	-
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
@@ -7002,14 +7001,14 @@ void CChar::ClearFriendList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *GetFriendList( void )
+//| Function	-	
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST *CChar::GetFriendList( void )
+auto CChar::GetFriendList() ->std::vector< CChar* >*
 {
-	CHARLIST *rVal = nullptr;
+	std::vector< CChar* > *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = &mNPC->petFriends;
 	return rVal;
@@ -7031,18 +7030,15 @@ bool CChar::AddFriend( CChar *toAdd )
 	}
 	if( IsValidNPC() )
 	{
-		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
-		while( i != mNPC->petFriends.end() )
-		{
-			if( (*i) == toAdd )
-				break;
-			++i;
+		
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toAdd](CChar *entry){
+			return entry == static_cast<const CChar*>(toAdd);
+		});
+		if (iter == mNPC->petFriends.end()){
+			mNPC->petFriends.push_back(toAdd);
+			return true ;
 		}
-		if( i == mNPC->petFriends.end() )
-		{
-			mNPC->petFriends.push_back( toAdd );
-			return true;
-		}
+		 
 	}
 	return false;
 }
@@ -7057,13 +7053,12 @@ bool CChar::RemoveFriend( CChar *toRemove )
 {
 	if( IsValidNPC() )
 	{
-		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
-		{
-			if( (*rIter) == toRemove )
-			{
-				mNPC->petFriends.erase( rIter );
-				return true;
-			}
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toRemove](CChar *entry){
+			return toRemove==entry ;
+		}) ;
+		if (iter != mNPC->petFriends.end() ){
+			mNPC->petFriends.erase( iter );
+			return true;
 		}
 	}
 	return false;
@@ -7863,10 +7858,8 @@ UI32 CChar::CountHousesOwned( bool countCoOwnedHouses )
 	else
 	{
 		// Count all houses owned by player by checking list of character's owned items!
-		ITEMLIST *ownedItems = GetOwnedItems();
-		for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
-		{
-			CBaseObject *oItem = ( *I );
+		auto ownedItems = GetOwnedItems();
+		for( auto &oItem : *ownedItems ){
 			if( ValidateObject( oItem ) && oItem->GetObjType() == OT_MULTI )
 			{
 				if( oItem->GetOwnerObj() == this )

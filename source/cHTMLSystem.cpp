@@ -1,18 +1,29 @@
 // HTML Template
 
-#include "uox3.h"
 #include "cHTMLSystem.h"
-#include "cVersionClass.h"
+
+#include "CPacketSend.h"
+
+#include "cAccountClass.h"
+#include "cChar.h"
 #include "cGuild.h"
-#include "townregion.h"
+#include "cItem.h"
 #include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
+#include "cSocket.h"
+#include "cVersionClass.h"
+#include "funcdecl.h"
 #include "gump.h"
 #include "scriptc.h"
-#include "CPacketSend.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
 #include "ObjectFactory.h"
 #include "osunique.hpp"
+#include "worldmain.h"
+
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate() : UpdateTimer( 60 ), Loaded( false ), Type( ETT_INVALIDTEMPLATE ), ScheduledUpdate( 0 )

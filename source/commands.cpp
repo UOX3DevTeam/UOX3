@@ -1,12 +1,20 @@
-#include "uox3.h"
 #include "commands.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "CPacketSend.h"
-#include "StringUtility.hpp"
 
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "funcdecl.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "worldmain.h"
+
+#include <algorithm>
+#include <fstream>
 
 cCommands *Commands			= nullptr;
 
@@ -284,7 +292,7 @@ void cCommands::Load( void )
 	std::string data;
 	std::string UTag;
 
-	STRINGLIST	badCommands;
+	auto badCommands = std::vector<std::string>();
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data						= commands->GrabData();
@@ -309,12 +317,10 @@ void cCommands::Load( void )
 	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		STRINGLIST_CITERATOR tablePos = badCommands.begin();
-		while( tablePos != badCommands.end() )
-		{
-			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
-			++tablePos;
-		}
+		std::for_each(badCommands.begin(), badCommands.end(),[] (const std::string &text){
+			Console << "Invalid command '" << text.c_str() << "' found in commands.dfn!" << myendl;
+
+		});
 	}
 
 	Console << "   o Loading command levels";

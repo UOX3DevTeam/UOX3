@@ -1,42 +1,52 @@
 // Here are the functions that are exposed to the Script Engine
-#include <filesystem>
-#include "uox3.h"
-#include "cdice.h"
 #include "SEFunctions.h"
-#include "cGuild.h"
-#include "combat.h"
-#include "movement.h"
-#include "townregion.h"
-#include "cWeather.hpp"
-#include "cRaces.h"
-#include "skills.h"
-#include "commands.h"
-#include "cMagic.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "classes.h"
-#include "regions.h"
-#include "magic.h"
-#include "ssection.h"
-#include "cThreadQueue.h"
-#include "cHTMLSystem.h"
-#include "cServerDefinitions.h"
-#include "cVersionClass.h"
-#include "Dictionary.h"
-#include "speech.h"
-#include "gump.h"
-#include "ObjectFactory.h"
-#include "network.h"
+#include "CJSEngine.h"
+#include "SEFunctions.h"
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
 #include "JSEncapsulate.h"
-#include "CJSEngine.h"
-#include "PartySystem.h"
-#include "cSpawnRegion.h"
 #include "CPacketSend.h"
 
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cHTMLSystem.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+#include "cThreadQueue.h"
+#include "cVersionClass.h"
+#include "cWeather.hpp"
 
+#include "cdice.h"
+#include "classes.h"
+#include "combat.h"
+#include "commands.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "gump.h"
+#include "magic.h"
+#include "movement.h"
+#include "network.h"
+#include "ObjectFactory.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+
+#include <filesystem>
 
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
@@ -2075,25 +2085,24 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 
 	UI16 retCounter				= 0;
 	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions	= MapRegion->PopulateList( srcObject );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions	= MapRegion->PopulateList( srcObject );
+	for(auto &MapArea : nearbyRegions )
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) )
-				continue;
-			if( objInRange( srcObject, tempChar, (UI16)distance ) )
+		if( MapArea!= nullptr ){	// no valid region
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
-					++retCounter;
+				if( !ValidateObject( tempChar ) )
+					continue;
+				if( objInRange( srcObject, tempChar, (UI16)distance ) )
+				{
+					if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
+						++retCounter;
+				}
 			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
@@ -2144,25 +2153,24 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	UI16 retCounter					= 0;
 	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	REGIONLIST nearbyRegions		= MapRegion->PopulateList( srcObject );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions		= MapRegion->PopulateList( srcObject );
+	for( auto &MapArea:nearbyRegions )
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = MapArea->GetItemList();
-		regItems->Push();
-		for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-		{
-			if( !ValidateObject( tempItem ) )
-				continue;
-			if( objInRange( srcObject, tempItem, (UI16)distance ) )
+		if( MapArea != nullptr ){	// no valid region
+			GenericList< CItem * > *regItems = MapArea->GetItemList();
+			regItems->Push();
+			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
 			{
-				if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
-					++retCounter;
+				if( !ValidateObject( tempItem ) )
+					continue;
+				if( objInRange( srcObject, tempItem, (UI16)distance ) )
+				{
+					if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
+						++retCounter;
+				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
@@ -2488,16 +2496,11 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsv
 
 	if( myScript != nullptr )
 	{
-		SPAWNMAP_CITERATOR spIter = cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd = cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
+		for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 			if( spawnReg != nullptr )
 			{
 				SE_IterateSpawnRegionsFunctor( spawnReg, b, myScript );
 			}
-			++spIter;
 		}
 	}
 

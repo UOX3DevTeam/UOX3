@@ -16,21 +16,27 @@
 //|						Added a proper constructor rather than ResetDefaults()
 //|						Grouped timers together in an array using an enum.
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cSpawnRegion.h"
-#include "skills.h"
-#include "speech.h"
+#include "worldmain.h"
+
+#include "cAccountClass.h"
+#include "cBaseObject.h"
 #include "cEffects.h"
-#include "network.h"
-#include "regions.h"
-#include "jail.h"
+#include "cGuild.h"
+#include "cServerData.h"
+#include "cSpawnRegion.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "jail.h"
+#include "network.h"
 #include "ObjectFactory.h"
 #include "osunique.hpp"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "townregion.h"
 
-CWorldMain						*cwmWorldState = nullptr;
+
+CWorldMain	*cwmWorldState = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -501,14 +507,9 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static UI32 save_counter = 0;
 
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		CSpawnRegion *spawnReg = spIter->second;
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 		if( spawnReg != nullptr )
 			spawnReg->checkSpawned();
-		++spIter;
 	}
 
 	if( GetWorldSaveProgress() != SS_SAVING )
@@ -585,14 +586,9 @@ void CWorldMain::RegionSave( void )
 		Console.error( oldstrutil::format("Failed to open %s for writing", regionsFile.c_str()) );
 		return;
 	}
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
+	for (auto [twnnum,myReg]:cwmWorldState->townRegions){
 		if( myReg != nullptr )
 			myReg->Save( regionsDestination );
-		++tIter;
 	}
 	regionsDestination.close();
 }

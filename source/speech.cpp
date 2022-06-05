@@ -1,17 +1,25 @@
-#include "uox3.h"
 #include "speech.h"
-#include "cVersionClass.h"
-#include "cRaces.h"
-#include "commands.h"
-#include "skills.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
 #include "CResponse.h"
-#include "movement.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cRaces.h"
+#include "cVersionClass.h"
+#include "commands.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "movement.h"
+#include "skills.h"
 #include "StringUtility.hpp"
+
+#include <thread>
+#include <fstream>
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ClilocMessage( CSocket *mSock, SpeechType speechType, UI16 hue, UI16 font, UI32 messageNum, const char *types = "", ... )
@@ -113,12 +121,12 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, 
 		else if( speechType == EMOTE || speechType == ASCIIEMOTE )
 			searchDistance = DIST_INRANGE;
 
-		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		auto nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
+		for( auto &sock:nearbyChars )
 		{
-			if( sendSock && (*cIter) == mSock )
+			if( sendSock && (sock == mSock) )
 				sendSock = false;
-			(*cIter)->Send( &toSend );
+			sock->Send( &toSend );
 		}
 	}
 
@@ -382,7 +390,7 @@ bool CPITalkRequest::Handle( void )
 			}
 			tSock->Send( txtToSend );
 
-			SOCKLIST nearbyChars;
+			std::vector<CSocket*> nearbyChars;
 			// Distance at which other players can hear the speech depends on speech-type
 			if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && !mChar->IsGM() && !mChar->IsCounselor() )
 				nearbyChars = FindNearbyPlayers( mChar, 1 );
@@ -393,9 +401,8 @@ bool CPITalkRequest::Handle( void )
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
 
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				CSocket *tSock	= (*cIter);
+			for( auto &tSock:nearbyChars){
+			
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
@@ -515,10 +522,8 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 				break;
 			if( ValidateObject( thisItem ) && thisItem->GetCont() != nullptr )	// not on ground, can't guarantee speech
 				break;
-			SOCKLIST nearbyChars = FindPlayersInVisrange( thisObj );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				mSock = (*cIter);
+			auto nearbyChars = FindPlayersInVisrange( thisObj );
+			for( auto &mSock : nearbyChars){
 				CChar *mChar = mSock->CurrcharObj();
 				if( ValidateObject( mChar ) )
 				{

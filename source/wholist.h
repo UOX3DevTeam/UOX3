@@ -1,6 +1,9 @@
 #ifndef __WHOLIST_H__
 #define __WHOLIST_H__
+#include "uox3.h"
 
+#include <vector>
+#include <string>
 class cWhoList
 {
 private:
@@ -8,8 +11,8 @@ private:
 	SI32		gmCount;						// number of GMs already in it
 	bool		online;
 
-	SERLIST		whoMenuData;
-	STRINGLIST one, two;				// replacement for entries1, entries2
+	std::vector<SERIAL>		whoMenuData;
+	std::vector<std::string> one, two;				// replacement for entries1, entries2
 
 	void Update( void );				// force the list to update
 	void ResetUpdateFlag( void );

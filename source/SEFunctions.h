@@ -15,6 +15,9 @@
 // 1.4 		3rd  November, 2001
 //			Addition of Tag functions.
 
+#include "uox3.h"
+#include "jsapi.h"
+
 typedef JSBool (SEngineFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // 90 functions so far

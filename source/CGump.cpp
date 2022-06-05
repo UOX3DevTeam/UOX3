@@ -3,11 +3,12 @@
 /*  gump handling		   */
 /***************************/
 
-#include "uox3.h"
 #include "gump.h"
 #include "CPacketSend.h"
-#include <cstdint>
+#include "cSocket.h"
+#include "StringUtility.hpp"
 
+#include <algorithm>
 
 CGump::CGump( bool myNoMove, bool myNoClose )
 {
@@ -47,13 +48,12 @@ void CGump::Send( CSocket *target )
 	toSend.GumpID( Type );
 	toSend.UserID( Serial );
 
-	STRINGLIST_CITERATOR tIter;
-	for( tIter = TagList.begin(); tIter != TagList.end(); ++tIter )
-		toSend.addCommand( (*tIter) );
-
-	for( tIter = TextList.begin(); tIter != TextList.end(); ++tIter )
-		toSend.addText( (*tIter) );
-
+	std::for_each(TagList.begin(),TagList.end(),[&toSend](const std::string& text){
+		toSend.addCommand(text);
+	});
+	std::for_each(TextList.begin(),TextList.end(),[&toSend](const std::string& text){
+		toSend.addCommand(text);
+	});
 	toSend.Finalize();
 	target->Send( &toSend );
 }

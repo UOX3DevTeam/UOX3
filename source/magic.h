@@ -1,5 +1,11 @@
 #ifndef __MAGIC_H
 #define __MAGIC_H
+#include "uox3.h"
+
+
+class CChar ;
+class CSocket;
+class CItem;
 
 class CMagicMove
 {

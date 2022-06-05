@@ -4,11 +4,14 @@
 //|	Purpose		-	Various functions to calculate objects from serials
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
-#include "townregion.h"
-#include "network.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
-
-
+#include "network.h"
+#include "townregion.h"
+#include "worldmain.h"
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CChar *calcCharObjFromSer( SERIAL targSerial )
 //o-----------------------------------------------------------------------------------------------o
@@ -84,11 +87,7 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 	}
 
 	const regLocs *getLoc	= nullptr;
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
+	for (auto [twnnum,myReg]:cwmWorldState->townRegions){
 		if( myReg != nullptr && myReg->WorldNumber() == worldNumber && myReg->GetInstanceID() == instanceID )
 		{
 			for( size_t j = 0; j < myReg->GetNumLocations(); ++j )
@@ -110,7 +109,6 @@ CTownRegion *calcRegionFromXY( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID
 				}
 			}
 		}
-		++tIter;
 	}
 	return cwmWorldState->townRegions[0xFF];
 }

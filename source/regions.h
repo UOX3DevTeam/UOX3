@@ -10,8 +10,12 @@
 
 #ifndef __Region_h
 #define __Region_h
+#include "uox3.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "GenericList.h"
+#include "mapstuff.h"  // check this, to see if we need in header
 
-#include "mapstuff.h"
 
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
@@ -113,8 +117,8 @@ public:
 	SI16		GetGridX( SI16 x );
 	SI16		GetGridY( SI16 y );
 
-	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-	REGIONLIST	PopulateList( CBaseObject *mObj );
+	auto	PopulateList( SI16 x, SI16 y, UI08 worldNumber ) ->std::vector< CMapRegion * >;
+	auto	PopulateList( CBaseObject *mObj ) ->std::vector< CMapRegion * >;
 
 	CMapWorld *	GetMapWorld( UI08 worldNum );
 

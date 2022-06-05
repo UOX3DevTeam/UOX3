@@ -6,35 +6,45 @@
 //|							Includes property getters for CItem and CChar, and property
 //|							setters for CChar
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
+#include "UOXJSPropertyFuncs.h"
+
 #include "UOXJSClasses.h"
 #include "UOXJSPropertySpecs.h"
 #include "UOXJSPropertyEnums.h"
-#include "UOXJSPropertyFuncs.h"
 #include "JSEncapsulate.h"
 #include "CJSEngine.h"
-
-#include "cGuild.h"
-#include "combat.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "skills.h"
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "regions.h"
-#include "magic.h"
+
+#include "cChar.h"
+#include "cConsole.h"
+#include "cGuild.h"
+#include "cItem.h"
 #include "cMagic.h"
-#include "scriptc.h"
-#include "ssection.h"
-#include "classes.h"
-#include "movement.h"
-#include "Dictionary.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cServerData.h"
+#include "cScript.h"
+#include "cSocket.h"
 #include "cSpawnRegion.h"
+
+#include "classes.h"
+#include "combat.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "magic.h"
+#include "movement.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "worldmain.h"
 
 #include "jsobj.h"
 #include "jsutil.h"
 
-#include "PartySystem.h"
 
 void MakeShop( CChar *c );
 
@@ -2352,7 +2362,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_ITEMLIST:
 			{
 				// This could potentially be a list of item ids - let's convert it to a comma-separated string!
-				STRINGLIST itemList = gPriv->GetItem();
+				auto itemList = gPriv->GetItem();
 				std::string s;
 				for( const auto &piece : itemList )
 				{
@@ -2369,7 +2379,7 @@ JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_NPCLIST:
 			{
 				// This could potentially be a list of NPC ids - let's convert it to a comma-separated string!
-				STRINGLIST npcList = gPriv->GetNPC();
+				auto npcList = gPriv->GetNPC();
 				std::string s;
 				for( const auto &piece : npcList )
 				{

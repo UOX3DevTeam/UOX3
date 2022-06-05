@@ -1,18 +1,25 @@
 // House code for deed creation
-#include<algorithm>
-
 #include "uox3.h"
-#include "mapstuff.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cMultiObj.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "classes.h"
-#include "regions.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "ObjectFactory.h"
+#include "regions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
 
+#include<algorithm>
 
-#include "ObjectFactory.h"
+
+using namespace std::string_literals ;
 
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
@@ -88,19 +95,18 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+//|	Function	-	void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
-void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+void CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
-	STRINGLIST_CITERATOR hiIter;
-	for( hiIter = houseItems.begin(); hiIter != houseItems.end(); ++hiIter )//Loop through the HOUSE_ITEMs
+	for( auto &hiIter :houseItems )//Loop through the HOUSE_ITEMs
 	{
-		std::string sect = "HOUSE ITEM " + (*hiIter);
+		std::string sect = "HOUSE ITEM "s + hiIter;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
 		if( HouseItem != nullptr )
 		{
@@ -135,7 +141,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 
 							// Store a custom tag on addon to mark it as a house addon
 							TAGMAPOBJECT addonTagObject;
-							addonTagObject.m_Destroy		= FALSE;
+							addonTagObject.m_Destroy		= false;
 							addonTagObject.m_IntValue 		= 1;
 							addonTagObject.m_ObjectType	= TAGMAP_TYPE_INT;
 							addonTagObject.m_StringValue	= "";
@@ -194,7 +200,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 					if( ValidateObject( hItem ) )
 					{
 						TAGMAPOBJECT frontDoorTag;
-						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "front";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -209,7 +215,7 @@ void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 h
 					if( ValidateObject( hItem ) )
 					{
 						TAGMAPOBJECT frontDoorTag;
-						frontDoorTag.m_Destroy		= FALSE;
+						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "interior";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -417,8 +423,8 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	return true;
 }
 
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CChar* >;
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CItem* >;
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void BuildHouse( CSocket *mSock, UI08 houseEntry )
@@ -449,7 +455,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
 	SI08 cz = 7;
-	STRINGLIST houseItems;
+	std::vector<std::string> houseItems;
 	houseItems.resize( 0 );
 	bool itemsWillDecay = false;
 	bool isBoat			= false;
@@ -623,7 +629,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
-				customTag.m_Destroy		= FALSE;
+				customTag.m_Destroy		= false;
 				customTag.m_StringValue	= customTagStringValue;
 				customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 				customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -655,7 +661,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 			customTagStringValue	= result;
 			if( !customTagName.empty() && !customTagStringValue.empty() )
 			{
-				customTag.m_Destroy		= FALSE;
+				customTag.m_Destroy		= false;
 				customTag.m_IntValue 	= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
@@ -761,11 +767,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetBanY( by );
 
 		// Move characters out of the way
-		CHARLIST charList = findNearbyChars( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
-		{
-			CChar *ourChar = (*charCtr);
-			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) && 
+		auto charList = findNearbyChars( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
+		for( auto &ourChar: charList ){
+			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) &&
 				( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) && 
 				( ourChar->GetZ() >= house->GetZ() - 16 ))
 			{
@@ -775,10 +779,8 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		}
 
 		// Move items out of the way
-		ITEMLIST itemList = findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( ITEMLIST_CITERATOR itemCtr = itemList.begin(); itemCtr != itemList.end(); ++itemCtr )
-		{
-			CItem *ourItem = (*itemCtr);
+		auto itemList = findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
+		for( auto &ourItem:itemList){
 			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT )
 			{
 				if( ( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&
@@ -828,7 +830,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 		// Store name of deed in a custom tag on the addon
 		TAGMAPOBJECT deedObject;
-		deedObject.m_Destroy		= FALSE;
+		deedObject.m_Destroy		= false;
 		deedObject.m_StringValue	= houseDeed;
 		deedObject.m_IntValue		= static_cast<SI32>(deedObject.m_StringValue.size());
 		deedObject.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -925,7 +927,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 						{
 							// More value of key in keyring matches house serial
 							TAGMAPOBJECT localObject;
-							localObject.m_Destroy		= FALSE;
+							localObject.m_Destroy		= false;
 							localObject.m_IntValue		= 0;
 							localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 							localObject.m_StringValue	= "0";
@@ -994,7 +996,7 @@ bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
 							{
 								// More value of key in keyring matches house serial
 								TAGMAPOBJECT localObject;
-								localObject.m_Destroy		= FALSE;
+								localObject.m_Destroy		= false;
 								localObject.m_IntValue		= 0;
 								localObject.m_ObjectType	= TAGMAP_TYPE_STRING;
 								localObject.m_StringValue	= "0";

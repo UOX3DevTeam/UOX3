@@ -1,18 +1,28 @@
-#include "uox3.h"
 #include "cGuild.h"
+
+#include "CJSEngine.h"
+#include "CPacketSend.h"
+#include "CPacketReceive.h"
+#include "classes.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "osunique.hpp"
+#include "scriptc.h"
 #include "speech.h"
 #include "ssection.h"
-#include "scriptc.h"
-#include "classes.h"
-#include "CPacketSend.h"
-#include "Dictionary.h"
-#include "CJSEngine.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+
+#include <algorithm>
 #ifndef va_start
 #include <cstdarg>
 #endif
-
 
 CGuildCollection *GuildSys;
 
@@ -24,8 +34,6 @@ CGuild::CGuild() : name( "" ), gType( GT_STANDARD ), charter( "" ), webpage( "" 
 	abbreviation[0] = 0;
 	recruits.resize( 0 );
 	members.resize( 0 );
-	recruitPtr		= recruits.end();
-	memberPtr		= members.end();
 	warPtr			= relationList.end();
 	allyPtr			= relationList.end();
 }
@@ -260,48 +268,6 @@ void CGuild::Master( SERIAL newMaster )
 	master = newMaster;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	SERIAL FirstRecruit( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the serial of the first recruit in the recruit list
-//|					If no recruits, returns INVALIDSERIAL
-//o-----------------------------------------------------------------------------------------------o
-SERIAL CGuild::FirstRecruit( void )
-{
-	SERIAL retVal	= INVALIDSERIAL;
-	recruitPtr		= recruits.begin();
-	if( !FinishedRecruits() )
-		retVal = (*recruitPtr);
-	return retVal;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	SERIAL NextRecruit( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the serial of the next recruit in the recruit list
-//|					If there are no more, it returns INVALIDSERIAL
-//o-----------------------------------------------------------------------------------------------o
-SERIAL CGuild::NextRecruit( void )
-{
-	SERIAL retVal = INVALIDSERIAL;
-	if( !FinishedRecruits() )
-	{
-		++recruitPtr;
-		if( !FinishedRecruits() )
-			retVal = (*recruitPtr);
-	}
-	return retVal;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	bool FinishedRecruits( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns true if there are no more recruits left
-//o-----------------------------------------------------------------------------------------------o
-bool CGuild::FinishedRecruits( void )
-{
-	return ( recruitPtr == recruits.end() );
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	SERIAL RecruitNumber( size_t rNum ) const
@@ -331,48 +297,6 @@ SERIAL CGuild::MemberNumber( size_t rNum ) const
 		return members[rNum];
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	SERIAL FirstMember( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the serial of the first member of the guild
-//|					If no members, returns INVALIDSERIAL
-//o-----------------------------------------------------------------------------------------------o
-SERIAL CGuild::FirstMember( void )
-{
-	SERIAL retVal	= INVALIDSERIAL;
-	memberPtr		= members.begin();
-	if( !FinishedMember() )
-		retVal = (*memberPtr);
-	return retVal;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	SERIAL NextMember( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the serial of the next member of the guild, if any
-//|					If none, it returns INVALIDSERIAL
-//o-----------------------------------------------------------------------------------------------o
-SERIAL CGuild::NextMember( void )
-{
-	SERIAL retVal = INVALIDSERIAL;
-	if( !FinishedMember() )
-	{
-		++memberPtr;	// post ++ forces a copy constructor
-		if( !FinishedMember() )
-			retVal = (*memberPtr);
-	}
-	return retVal;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	bool FinishedMember( void )
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns true if there are no more members left
-//o-----------------------------------------------------------------------------------------------o
-bool CGuild::FinishedMember( void )
-{
-	return ( memberPtr == members.end() );
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void Stone( CItem &newStone )
@@ -440,17 +364,11 @@ void CGuild::RemoveRecruit( CChar &newRecruit )
 }
 void CGuild::RemoveRecruit( SERIAL newRecruit )
 {
-	SERLIST_ITERATOR toFind = recruits.begin();
-	while( toFind != recruits.end() )
-	{
-		if( (*toFind) == newRecruit )
-		{
-			if( recruitPtr != recruits.begin() && recruitPtr >= toFind )
-				--recruitPtr;
-			recruits.erase( toFind );
-			return;
-		}
-		++toFind;
+	auto iter = std::find_if(recruits.begin(),recruits.end(),[newRecruit](const SERIAL &serial){
+		return serial == newRecruit;
+	});
+	if (iter != recruits.end() ){
+		recruits.erase(iter);
 	}
 }
 
@@ -466,18 +384,13 @@ void CGuild::RemoveMember( CChar &newMember )
 }
 void CGuild::RemoveMember( SERIAL newMember )
 {
-	SERLIST_ITERATOR toFind = members.begin();
-	while( toFind != members.end() )
-	{
-		if( (*toFind) == newMember )
-		{
-			if( memberPtr != members.begin() && memberPtr >= toFind )
-				--memberPtr;
-			members.erase( toFind );
-			return;
-		}
-		++toFind;
+	auto iter = std::find_if(members.begin(),members.end(),[newMember](const SERIAL &serial){
+		return serial == newMember;
+	});
+	if (iter != members.end() ){
+		members.erase(iter);
 	}
+
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -507,14 +420,11 @@ bool CGuild::IsRecruit( CChar &toCheck ) const
 {
 	return IsRecruit( toCheck.GetSerial() );
 }
-bool CGuild::IsRecruit( SERIAL toCheck ) const
-{
-	SERLIST_CITERATOR toFind = recruits.begin();
-	while( toFind != recruits.end() )
-	{
-		if( (*toFind) == toCheck )
-			return true;
-		++toFind;
+auto CGuild::IsRecruit( SERIAL toCheck ) const ->bool{
+	for (auto &serial:recruits){
+		if (serial == toCheck){
+			return true ;
+		}
 	}
 	return false;
 }
@@ -530,12 +440,10 @@ bool CGuild::IsMember( CChar &toCheck ) const
 }
 bool CGuild::IsMember( SERIAL toCheck ) const
 {
-	SERLIST_CITERATOR toFind = members.begin();
-	while( toFind != members.end() )
-	{
-		if( (*toFind) == toCheck )
-			return true;
-		++toFind;
+	for (auto &serial:members){
+		if (serial == toCheck){
+			return true ;
+		}
 	}
 	return false;
 }
@@ -609,19 +517,12 @@ void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
 	toSave << "WEBPAGE=" << webpage << '\n';
 	toSave << "STONE=" << stone << '\n';
 	toSave << "MASTER=" << master << '\n';
-	SERLIST_ITERATOR counter;
-	counter = recruits.begin();
-	while( counter != recruits.end() )
-	{
-		toSave << "RECRUIT=" << (*counter) << '\n';
-		++counter;
-	}
-	counter = members.begin();
-	while( counter != members.end() )
-	{
-		toSave << "MEMBER=" << (*counter) << '\n';
-		++counter;
-	}
+	std::for_each(recruits.begin(), recruits.end(), [&toSave](const SERIAL &serial){
+		toSave << "RECRUIT=" << serial << '\n';
+	});
+	std::for_each(members.begin(), members.end(), [&toSave](const SERIAL &serial){
+		toSave << "MEMBER=" << serial << '\n';
+	});
 	GUILDREL::const_iterator relly = relationList.begin();
 	while( relly != relationList.end() )
 	{
@@ -791,10 +692,9 @@ void CGuild::CalcMaster( void )
 //o-----------------------------------------------------------------------------------------------o
 void CGuild::TellMembers( SI32 dictEntry, ... )
 {
-	SERLIST_CITERATOR cIter;
-	for( cIter = members.begin(); cIter != members.end(); ++cIter )
-	{
-		CChar *targetChar	= calcCharObjFromSer( (*cIter) );
+	for (auto &serial:members){
+		
+		CChar *targetChar	= calcCharObjFromSer( serial );
 		CSocket *targetSock	= targetChar->GetSocket();
 		if( targetSock != nullptr )
 		{
@@ -826,7 +726,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 				toAdd.Speech( oldstrutil::format( 512, txt, argptr ));
 				toAdd.Font( FNT_NORMAL );
 				toAdd.Speaker( INVALIDSERIAL );
-				toAdd.SpokenTo( (*cIter) );
+				toAdd.SpokenTo( serial );
 				toAdd.Colour( 0x000B );
 				toAdd.Type( SYSTEM );
 				toAdd.At( cwmWorldState->GetUICurrentTime() );
@@ -848,10 +748,8 @@ void CGuild::SetGuildFaction( GuildType newFaction )
 
 	if( newFaction != GT_STANDARD )
 	{
-		SERLIST_CITERATOR cIter;
-		for( cIter = members.begin(); cIter != members.end(); ++cIter )
-		{
-			CChar *memberChar	= calcCharObjFromSer( (*cIter) );
+		for( auto &serial: members ){
+			CChar *memberChar	= calcCharObjFromSer( serial );
 			if( !memberChar->GetGuildToggle() )
 			{
 				memberChar->SetGuildToggle( true );
@@ -1129,55 +1027,50 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		case BasePage+6:								// List of recruits
 			toSend.addText( Dictionary->GetEntry( 143, sLang ) );
 			tCtr = 0;
-			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
-			{
-				toSend.addText( calcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+			for (auto serial:gList[trgGuild]->allRecruits()){
+				toSend.addText( calcCharObjFromSer( serial )->GetNameRequest( mChar ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			numButtons = ++tCtr;
+			numButtons = tCtr;
 			break;
 		case BasePage+7:								// List of members
 			toSend.addText( Dictionary->GetEntry( 144, sLang ) );
 			tCtr = 0;
-			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
-			{
-				toSend.addText( calcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+			for (auto serial:gList[trgGuild]->allMembers()){
+				toSend.addText(calcCharObjFromSer( serial )->GetNameRequest( mChar ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			numButtons = ++tCtr;
+			numButtons = tCtr;
 			break;
 		case BasePage+8:								// Member dismiss
 			toSend.addText( Dictionary->GetEntry( 145, sLang ) );
 			tCtr = 0;
-			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
-			{
-				toSend.addText( calcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+			for (auto serial:gList[trgGuild]->allMembers()){
+				toSend.addText( calcCharObjFromSer( serial )->GetNameRequest( mChar ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			numButtons = ++tCtr;	break;
+			numButtons = tCtr;	break;
 		case BasePage+9:								// Dismiss recruit
 			toSend.addText( Dictionary->GetEntry( 146, sLang ) );
 			tCtr = 0;
-			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
-			{
-				toSend.addText( calcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+			for (auto serial:gList[trgGuild]->allRecruits()){
+				toSend.addText( calcCharObjFromSer( serial )->GetNameRequest( mChar ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			numButtons = ++tCtr;	break;
+			numButtons = tCtr;	break;
 		case BasePage+10:								// Accept recruit
 			toSend.addText( Dictionary->GetEntry( 147, sLang ) );
 			tCtr = 0;
-			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
-			{
-				toSend.addText( calcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+			for (auto serial:gList[trgGuild]->allRecruits()){
+				toSend.addText( calcCharObjFromSer( serial )->GetNameRequest( mChar ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			numButtons = ++tCtr;	break;
+			numButtons = tCtr;	break;
 		case BasePage+11:								// War list
 			toSend.addText( Dictionary->GetEntry( 148, sLang ) );
 			tCtr	= 0;

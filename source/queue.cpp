@@ -6,8 +6,12 @@
 //o-----------------------------------------------------------------------------------------------o
 
 #include "uox3.h"
-#include "PageVector.h"
+
+#include "cChar.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "gump.h"
+#include "PageVector.h"
 
 PageVector *GMQueue;
 PageVector *CounselorQueue;
@@ -71,7 +75,7 @@ SERIAL PageVector::Add( HelpRequest *toAdd )
 	if( adding == nullptr )
 		return INVALIDSERIAL;
 #endif
-#pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
+#pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string, or any pointer, as it then shares data with the orginal)?" )
 	memcpy( adding, toAdd, sizeof( HelpRequest ) );
 	//*adding = *toAdd; // Maybe we should do this instead?
 	Queue.push_back( adding );

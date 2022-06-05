@@ -1,7 +1,12 @@
 #ifndef __CNETWORK_H__
 #define __CNETWORK_H__
+#include "uox3.h"
+#include "osunique.hpp"
 
 #include <mutex>
+#include <map>
+#include <vector>
+
 #if PLATFORM != WINDOWS
 #include <sys/socket.h>
 #include <netdb.h>
@@ -9,8 +14,6 @@
 #include <arpa/inet.h>
 #else
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
 class socket_error : public std::runtime_error
 {
@@ -242,14 +245,15 @@ private:
 	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
 	SI32					a_socket;
-	SOCKLIST				connClients, loggedInClients;
+	std::vector< CSocket * >	connClients, loggedInClients;
 
 	struct sockaddr_in		client_addr;
 
 	size_t					peakConnectionCount;
-
-	std::vector< SOCKLIST_ITERATOR >	connIteratorBackup, loggIteratorBackup;
-	SOCKLIST_ITERATOR					currConnIter, currLoggIter;
+	//*************************************************************************
+	// OMG, saving iterators again, will look into this as we unwind all the includes
+	std::vector< std::vector< CSocket * >::iterator >	connIteratorBackup, loggIteratorBackup;
+	std::vector< CSocket * >::iterator					currConnIter, currLoggIter;
 
 	void		LoadFirewallEntries( void );
 	void		GetMsg( UOXSOCKET s );

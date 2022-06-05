@@ -1,17 +1,24 @@
-#include "uox3.h"
 #include "cWeather.hpp"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "scriptc.h"
-#include "mapstuff.h"
-#include "cScript.h"
-#include "CJSMapping.h"
-#include "combat.h"
 
+#include "CPacketSend.h"
+#include "CJSMapping.h"
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "combat.h"
+#include "funcdecl.h"
+#include "scriptc.h"
+#include "ssection.h"
+#include "mapstuff.h"
+#include "townregion.h"
+
+#include <cstring>
 
 #define EFFECTIVE 2
 const UI08 MAXVAL	= 0;

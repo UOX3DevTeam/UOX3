@@ -1,9 +1,13 @@
-#include "uox3.h"
 #include "CJSMapping.h"
+
+#include "cConsole.h"
+#include "cServerData.h"
 #include "cScript.h"
+#include "funcdecl.h"
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include "worldmain.h"
 
 CJSMapping *JSMapping = nullptr;
 //o-----------------------------------------------------------------------------------------------o

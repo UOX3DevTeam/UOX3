@@ -1,7 +1,12 @@
 // All funcs in this file are used for item/char distance related situations
 // There's a chance that a number of these could become inline
 #include "uox3.h"
+
+#include "cChar.h"
+#include "cItem.h"
 #include "cRaces.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "regions.h"
 
 //o-----------------------------------------------------------------------------------------------o

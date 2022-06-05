@@ -1,7 +1,20 @@
 #ifndef __CPACKETSEND_H__
 #define __CPACKETSEND_H__
-
+#include "uox3.h"
 #include "CPacketReceive.h"
+
+#include <string>
+
+// Forward Declares
+class CSpeechEntry ;	// In speech.h
+class CBaseObject ;	// In cBaseobject.h
+class CItem ;		// In cItem.h
+class CTownRegion;	// In townregion.h
+class CMultiObj;		// In cMultiObj.h
+class physicalServer ;	// In cServerData.h ;
+struct start_location;	// In cServerData.h
+struct CAccountBlock;	// In cAccountClass
+
 
 
 class CPCharLocBody : public CPUOXBuffer
@@ -977,8 +990,8 @@ public:
 	CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
 	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
-	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset  );
-	virtual void	NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
+	virtual void	AddStartLocation( start_location *sLoc, UI08 locOffset  );
+	virtual void	NewAddStartLocation( start_location *sLoc, UI08 locOffset );
 	CPCharAndStartLoc& operator=( CAccountBlock& actbBlock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
@@ -1280,7 +1293,7 @@ public:
 	void			Object( CItem& obj );
 	void			Serial( SERIAL value );
 	void			NewPage( SI16 pNum = -1 );
-	void			NewPage( SI16 pNum, const STRINGLIST *lines );
+	void			NewPage( SI16 pNum, const std::vector<std::string> *lines );
 	void			AddLine( const std::string& line );
 	void			Finalize( void );
 };
@@ -1288,7 +1301,7 @@ public:
 class CPSendGumpMenu : public CPUOXBuffer
 {
 protected:
-	STRINGLIST		commands, text;
+	std::vector<std::string>		commands, text;
 public:
 	virtual			~CPSendGumpMenu()
 	{

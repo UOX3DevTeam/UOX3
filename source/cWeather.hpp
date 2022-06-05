@@ -1,5 +1,14 @@
 #ifndef __WeatherAb__
 #define __WeatherAb__
+#include "uox3.h"
+
+#include <vector>
+
+
+class CSocket ;
+class CChar ;
+class CItem;
+class CBaseObject;
 
 class CWeather
 {

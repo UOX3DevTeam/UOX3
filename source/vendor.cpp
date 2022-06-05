@@ -1,15 +1,22 @@
 #include "uox3.h"
-#include "commands.h"
-#include "cEffects.h"
+
 #include "CPacketSend.h"
-#include "classes.h"
-#include "townregion.h"
 #include "CJSMapping.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
 #include "cScript.h"
-
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-
+#include "cSocket.h"
+#include "classes.h"
+#include "commands.h"
+#include "funcdecl.h"
+#include "townregion.h"
 #include "ObjectFactory.h"
+#include "worldmain.h"
+
+
 #include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
@@ -97,7 +104,7 @@ bool CPIBuyItem::Handle( void )
 	if( !ValidateObject( p ) )
 		return true;
 
-	ITEMLIST bitems;
+	std::vector< CItem* >	bitems;
 	std::vector< UI08 > layer;
 	std::vector< UI16 > amount;
 

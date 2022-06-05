@@ -21,13 +21,23 @@
 //|					Slimmed down the cBook class making use of packet classes for handling data from the client.
 //|					Added support for the new book header packet removing support for the old book header packet.
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "books.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
+
 #include "CPacketSend.h"
-#include "StringUtility.hpp"
+
+#include "cItem.h"
+#include "cChar.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+
+#include "funcdecl.h"
 #include "osunique.hpp"
+#include "ssection.h"
+#include "StringUtility.hpp"
+
+
+#include <fstream>
 
 cBooks *Books = nullptr;
 
@@ -185,7 +195,7 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				for( UI16 pageNum = 0; pageNum < numPages; ++pageNum )
 				{
 					UI08 blankLineCtr = 0;
-					STRINGLIST tempLines;
+					std::vector<std::string> tempLines;
 					tempLines.resize( 0 );
 					for( UI08 lineNum = 0; lineNum < 8; ++lineNum )
 					{

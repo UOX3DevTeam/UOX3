@@ -6,8 +6,15 @@
 #ifndef __CBO_H__
 #define __CBO_H__
 
-#include "typedefs.h"
-#include "uoxstruct.h"
+#include "uox3.h"
+
+#include <map>
+#include <string>
+#include <vector>
+
+class CMultiObj ;
+class CSpawnItem;
+class CChar;
 
 enum TAGMAPOBJECT_TYPE
 {

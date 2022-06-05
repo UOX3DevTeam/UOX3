@@ -6,13 +6,21 @@
 
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
-
+#include "uox3.h"
 #include "GenericList.h"
+
+#include <map>
+#include <string>
+
 #if PLATFORM == WINDOWS
 #include <winsock2.h>
-#undef min
-#undef max
 #endif
+
+class CSpawnRegion;
+class CTownRegion;
+class CTEffect;
+class CServerData;
+class CBaseObject ;
 
 enum CWM_TID
 {
@@ -203,22 +211,22 @@ public:
 
 	// Structs
 	std::map< UI16, CCreatures >		creatures;
-	timeval								uoxtimeout;
-	skill_st							skill[INTELLECT+1];				// Skill data
-	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.dfn
-	std::vector< TitlePair_st >			prowessTitles;
-	std::vector< TitlePair_st >			murdererTags;
+	timeval					uoxtimeout;
+	skill_st					skill[INTELLECT+1];				// Skill data
+	title_st					title[ALLSKILLS+1];			// For custom titles reads titles.dfn
+	std::vector< TitlePair_st >		prowessTitles;
+	std::vector< TitlePair_st >		murdererTags;
 	std::vector< CTeleLocationEntry >	teleLocs;
 	std::vector< LogoutLocationEntry >	logoutLocs;
-	std::vector< SOSLocationEntry >		sosLocs;
-	std::vector< UI08 >					escortRegions;
+	std::vector< SOSLocationEntry >	sosLocs;
+	std::vector< UI08 >			escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
-	SPAWNMAP							spawnRegions;
-	TOWNMAP								townRegions;
-	GenericList< CTEffect * >			tempEffects;
+	std::unordered_map< UI16, CSpawnRegion * > spawnRegions;
+	std::map< UI16, CTownRegion * >	townRegions;
+	GenericList< CTEffect * >		tempEffects;
 
-	QUEUEMAP							refreshQueue;
-	QUEUEMAP							deletionQueue;
+	std::map< CBaseObject *, UI32 >	refreshQueue;
+	std::map< CBaseObject *, UI32 >	deletionQueue;
 
 	void		CheckTimers( void );
 	void		doWorldLight( void );

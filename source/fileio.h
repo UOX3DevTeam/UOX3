@@ -1,9 +1,11 @@
 #ifndef __FILEIO_H
 #define __FILEIO_H
 
-#include <cstdint>
+#include "uox3.h"
+
 #include <fstream>
 #include <tuple>
+#include <string>
 
 class UOXFile
 {

@@ -1,7 +1,14 @@
 #ifndef __CPACKETRECEIVE_H__
 #define __CPACKETRECEIVE_H__
 
+#include "uox3.h"
 #include "network.h"
+
+#include <fstream>
+
+// Forward Declares
+class CChar ;
+
 
 class CPIFirstLogin : public CPInputBuffer
 {

@@ -1,9 +1,19 @@
 #ifndef __CSCRIPT_H__
 #define __CSCRIPT_H__
+#include "uox3.h"
+#include "jsapi.h"
 
+#include <string>
+#include <vector>
 
 class CPIGumpMenuSelect;
 class CPIGumpInput;
+class CBaseObject ;
+class CSpawnRegion;
+class CChar ;
+class CItem;
+class CMultiObj;
+
 
 enum ScriptEvent
 {
@@ -114,13 +124,13 @@ enum ScriptEvent
 
 struct SEGump
 {
-	STRINGLIST *one, *two;
+	std::vector<std::string> *one, *two;
 	UI32 TextID;
 };
 
 struct SEGumpData
 {
-	STRINGLIST			sEdits;
+	std::vector<std::string>			sEdits;
 	std::vector<SI32>	nButtons;
 	std::vector<SI16>	nIDs;
 };

@@ -1,11 +1,16 @@
 #include "uox3.h"
+#include "cConsole.h"
+#include "cServerData.h"
+#include "osunique.hpp"
 #include "regions.h"
+#include "StringUtility.hpp"
+#include "worldmain.h"
+
+#include <string>
 #include <filesystem>
 #include <chrono>
 #include <ctime>
 #include <regex>
-#include "osunique.hpp"
-
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void fileArchive( void )
 //|	Date		-	11th April, 2002

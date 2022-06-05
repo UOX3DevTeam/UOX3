@@ -1,28 +1,36 @@
-#include "uox3.h"
 #include "magic.h"
-#include "power.h"
-#include "weight.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "cMagic.h"
-#include "skills.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
 #include "classes.h"
-#include "regions.h"
 #include "combat.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
 #include "movement.h"
-#include "scriptc.h"
-#include "StringUtility.hpp"
 #include "ObjectFactory.h"
-#include <algorithm>
 #include "osunique.hpp"
+#include "power.h"
+#include "regions.h"
+#include "scriptc.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "weight.h"
+
+#include <algorithm>
+
 cMagic *Magic = nullptr;
 
 #define SPELL_MAX 68 // use define for now; can make autocount later
@@ -1356,7 +1364,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			// Let's allow marking the rune in the multi, and store multi's serial in a tag
 			auto mSerial = multi->GetSerial();
 			TAGMAPOBJECT tagObject;
-			tagObject.m_Destroy = FALSE;
+			tagObject.m_Destroy = false;
 			tagObject.m_StringValue = std::to_string(mSerial);
 			tagObject.m_IntValue = static_cast<SI32>( tagObject.m_StringValue.size() );
 			tagObject.m_ObjectType = TAGMAP_TYPE_STRING;
@@ -1456,31 +1464,29 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 		//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
 		//5 tiles, if magery is maxed out at 100.0 (except for gms I suppose), range is 20
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
-					continue;
-				if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
+		auto nearbyRegions = MapRegion->PopulateList( caster );
+		for( auto &MapArea: nearbyRegions ){
+			if (MapArea != nullptr){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
-					if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range
+					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
+						continue;
+					if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
 					{
-						tempChar->ExposeToView();
-						CMagicStat temp = Magic->spells[48].StaticEffect();
-						if( temp.Effect() != INVALIDID )
-							Effects->PlayStaticAnimation( tempChar, temp.Effect(), temp.Speed(), temp.Loop() );
+						point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
+						if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range
+						{
+							tempChar->ExposeToView();
+							CMagicStat temp = Magic->spells[48].StaticEffect();
+							if( temp.Effect() != INVALIDID )
+								Effects->PlayStaticAnimation( tempChar, temp.Effect(), temp.Speed(), temp.Loop() );
+						}
 					}
 				}
+				regChars->Pop();
 			}
-			regChars->Pop();
 		}
 		if( Magic->spells[48].Effect() != INVALIDID )
 			Effects->PlaySound( sock, Magic->spells[48].Effect(), true );
@@ -1765,33 +1771,31 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 
 	Magic->BoxSpell( sock, caster, x1, x2, y1, y2, z1, z2 );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( caster );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
-				continue;
-
-			if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
-			   tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
+	auto nearbyRegions = MapRegion->PopulateList( caster );
+	for( auto &MapArea:nearbyRegions ){
+		if (MapArea != nullptr){
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
-				if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() )
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
+					continue;
+				
+				if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
+				   tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
 				{
-					//Store target candidates in targetList
-					targetList.push_back( tempChar );
-					//trgFunc( caster, tempChar, curSpell, targCount );
+					if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() )
+					{
+						//Store target candidates in targetList
+						targetList.push_back( tempChar );
+						//trgFunc( caster, tempChar, curSpell, targCount );
+					}
+					else if( sock != nullptr )
+						sock->sysmessage( 688 );
 				}
-				else if( sock != nullptr )
-					sock->sysmessage( 688 );
 			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 
 	// Iterate through list of valid targets, do damage
@@ -3167,35 +3171,33 @@ void cMagic::MagicTrap( CChar *s, CItem *i )
 		Effects->PlaySound( i, 0x0207 );
 
 		// Find nearby players and apply damage to them?
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( s );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != s->GetInstanceID() || tempChar->GetSerial() == s->GetSerial() )
-					continue;
-
-				if( objInRange( tempChar, i, DIST_NEARBY ) )
+		auto nearbyRegions = MapRegion->PopulateList( s );
+		for( auto &MapArea: nearbyRegions ){
+			if (MapArea != nullptr){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					if( CheckResist( nullptr, tempChar, 4 ) )
-						MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ) / 2, s, HEAT );
-					else
-						MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ), s, HEAT );
-
-					// Reveal hidden players impacted by the explosion
-					if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
+					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != s->GetInstanceID() || tempChar->GetSerial() == s->GetSerial() )
+						continue;
+					
+					if( objInRange( tempChar, i, DIST_NEARBY ) )
 					{
-						tempChar->ExposeToView();
+						if( CheckResist( nullptr, tempChar, 4 ) )
+							MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ) / 2, s, HEAT );
+						else
+							MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ), s, HEAT );
+						
+						// Reveal hidden players impacted by the explosion
+						if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
+						{
+							tempChar->ExposeToView();
+						}
 					}
+					
 				}
-
+				regChars->Pop();
 			}
-			regChars->Pop();
 		}
 	}
 

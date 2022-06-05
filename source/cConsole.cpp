@@ -12,24 +12,33 @@
 //o-----------------------------------------------------------------------------------------------o
 
 // Header
-#include "uox3.h"
 #include "cConsole.h"
-#include "cThreadQueue.h"
-#include "ObjectFactory.h"
-#include "network.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "teffect.h"
-#include "cMagic.h"
-#include "magic.h"
-#include "regions.h"
-#include "commands.h"
-#include "cServerDefinitions.h"
-#include "cHTMLSystem.h"
-#include "cRaces.h"
+
+#include "cAccountClass.h"
+#include "cChar.h"
 #include "cGuild.h"
+#include "cHTMLSystem.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cRaces.h"
 #include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cThreadQueue.h"
+#include "commands.h"
+#include "funcdecl.h"
+#include "ObjectFactory.h"
+#include "magic.h"
+#include "network.h"
+#include "regions.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "teffect.h"
+
+
 #include <iostream>
 #include <cctype>
 
@@ -40,11 +49,11 @@
 struct termios initial_terminal_state;
 #else
 
-#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#ifdef GetObject
+#undef GetObject
+#endif
 #include <conio.h>
-#undef min
-#undef max
 DWORD initial_terminal_state;
 #endif
 

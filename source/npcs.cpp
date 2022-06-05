@@ -1,19 +1,27 @@
 #include "uox3.h"
-#include "msgboard.h"
-#include "movement.h"
+
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+#include "cServerData.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cScript.h"
 #include "cServerDefinitions.h"
 #include "cSpawnRegion.h"
-#include "skills.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "teffect.h"
-#include "CPacketSend.h"
-#include "cEffects.h"
+#include "cSocket.h"
 #include "classes.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
 #include "regions.h"
 #include "townregion.h"
-#include "Dictionary.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "teffect.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "worldmain.h"
 
 #include "ObjectFactory.h"
 
@@ -1499,7 +1507,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_StringValue	= customTagStringValue;
 					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -1530,7 +1538,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				customTagStringValue = result;
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy = FALSE;
+					customTag.m_Destroy = false;
 					customTag.m_IntValue = std::stoi( customTagStringValue );
 					customTag.m_ObjectType = TAGMAP_TYPE_INT;
 					customTag.m_StringValue = "";
@@ -1733,13 +1741,11 @@ CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
 //o-----------------------------------------------------------------------------------------------o
 bool cCharStuff::checkPetFriend( CChar *mChar, CChar *pet )
 {
-	CHARLIST *petFriends	= pet->GetFriendList();
+	auto petFriends	= pet->GetFriendList();
 	if( petFriends != nullptr )
 	{
-		CChar *getFriend		= nullptr;
-		for( CHARLIST_CITERATOR I = petFriends->begin(); I != petFriends->end(); ++I )
-		{
-			getFriend = (*I);
+		
+		for( auto &getFriend:*petFriends){
 			if( ValidateObject( getFriend ) && getFriend == mChar )
 				return true;
 		}

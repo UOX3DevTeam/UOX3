@@ -1,10 +1,14 @@
-#include "uox3.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "scriptc.h"
-#include <filesystem>
-#include "StringUtility.hpp"
+
+#include "cConsole.h"
+#include "cServerData.h"
+#include "funcdecl.h"
 #include "IP4Address.hpp"
+#include "scriptc.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+
+#include <filesystem>
 
 CServerDefinitions *FileLookup;
 
@@ -241,8 +245,8 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 
 	cDirectoryListing fileList( toLoad, defExt );
 	fileList.Flatten( true );
-	STRINGLIST *shortListing	= fileList.FlattenedShortList();
-	STRINGLIST *longListing		= fileList.FlattenedList();
+	auto shortListing	= fileList.FlattenedShortList();
+	auto longListing	= fileList.FlattenedList();
 
 	std::vector< PrioScan >	mSort;
 	for( size_t i = 0; i < shortListing->size(); ++i )
@@ -341,7 +345,7 @@ void CServerDefinitions::CleanPriorityMap( void )
 void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
 {
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
-	STRINGLIST *longList = priorityFile.List();
+	auto longList = priorityFile.List();
 	if( !longList->empty() )
 	{
 		std::string filename = (*longList)[0];
@@ -496,23 +500,19 @@ void cDirectoryListing::Retrieve( DEFINITIONCATEGORIES dir )
 		PopDir();
 }
 
-STRINGLIST *cDirectoryListing::List( void )
-{
+auto cDirectoryListing::List( void )->std::vector<std::string>*{
 	return &filenameList;
 }
 
-STRINGLIST *cDirectoryListing::ShortList( void )
-{
+auto cDirectoryListing::ShortList( void )->std::vector<std::string>*{
 	return &shortList;
 }
 
-STRINGLIST *cDirectoryListing::FlattenedList( void )
-{
+auto cDirectoryListing::FlattenedList( void )->std::vector<std::string>*{
 	return &flattenedFull;
 }
 
-STRINGLIST *cDirectoryListing::FlattenedShortList( void )
-{
+auto cDirectoryListing::FlattenedShortList( void )->std::vector<std::string>*{
 	return &flattenedShort;
 }
 
@@ -556,10 +556,10 @@ void cDirectoryListing::Flatten( bool isParent )
 {
 	ClearFlatten();
 	std::string temp;
-	STRINGLIST_ITERATOR sIter;
-	for( sIter = filenameList.begin(); sIter != filenameList.end(); ++sIter )
+	
+	for( auto &sIter : filenameList)
 	{
-		flattenedFull.push_back( (*sIter) );
+		flattenedFull.push_back( sIter );
 		if( isParent )
 			temp = "";
 		else
@@ -567,15 +567,15 @@ void cDirectoryListing::Flatten( bool isParent )
 			temp = shortCurrentDir;
 			temp += "/";
 		}
-		temp += (*sIter);
+		temp += sIter;
 		flattenedShort.push_back( temp );
 	}
 	DIRLIST_ITERATOR dIter;
 	for( dIter = subdirectories.begin(); dIter != subdirectories.end(); ++dIter )
 	{
 		(*dIter).Flatten( false );
-		STRINGLIST *shortFlat	= (*dIter).FlattenedShortList();
-		STRINGLIST *longFlat	= (*dIter).FlattenedList();
+		auto shortFlat	= (*dIter).FlattenedShortList();
+		auto longFlat	= (*dIter).FlattenedList();
 		for( size_t k = 0; k < longFlat->size(); ++k )
 		{
 			flattenedFull.push_back( (*longFlat)[k] );

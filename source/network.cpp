@@ -14,13 +14,25 @@
 #include "cServerDefinitions.h"
 #include "Dictionary.h"
 #include "mapstuff.h"
-
+#include "cSocket.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "worldmain.h"
+#include "cAccountClass.h"
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
+#include "cServerData.h"
+#include "funcdecl.h"
 #include "osunique.hpp"
+#include "cMultiObj.h"
+
+#include <algorithm>
+#include <cassert>
 
 #if PLATFORM != WINDOWS
 #include <sys/ioctl.h>
+#include <unistd.h>
+#include <errno.h>
 #endif
 
 
@@ -43,11 +55,12 @@ void sysBroadcast( const std::string& txt );
 //o-----------------------------------------------------------------------------------------------o
 void cNetworkStuff::ClearBuffers( void )
 {
-	SOCKLIST_CITERATOR toClear;
-	for( toClear = connClients.begin(); toClear != connClients.end(); ++toClear )
-		(*toClear)->FlushBuffer();
-	for( toClear = loggedInClients.begin(); toClear != loggedInClients.end(); ++toClear )
-		(*toClear)->FlushBuffer();
+	std::for_each(connClients.begin(), connClients.end(), [](CSocket *mSock){
+		mSock->FlushBuffer();
+	});
+	std::for_each(loggedInClients.begin(), loggedInClients.end(), [](CSocket *mSock){
+		mSock->FlushBuffer();
+	});
 }
 
 //
@@ -312,10 +325,9 @@ void cNetworkStuff::sockInit( void )
 void cNetworkStuff::SockClose( void )
 {
 	closesocket( a_socket );
-	for( SOCKLIST_CITERATOR toClose = connClients.begin(); toClose != connClients.end(); ++toClose )
-	{
-		(*toClose)->CloseSocket();
-	}
+	std::for_each(connClients.begin(), connClients.end(), [](CSocket *mSock){
+		mSock->CloseSocket();
+	});
 }
 
 #if PLATFORM != WINDOWS
@@ -473,14 +485,14 @@ void cNetworkStuff::CheckMessage( void )
 	FD_ZERO(&all);
 	FD_ZERO(&errsock);
 	SI32 nfds = 0;
-	for( SOCKLIST_CITERATOR toCheck = connClients.begin(); toCheck != connClients.end(); ++toCheck )
-	{
-		UOXSOCKET clientSock = static_cast<UOXSOCKET>((*toCheck)->CliSocket());
+	std::for_each(connClients.begin(),connClients.end(),[this,&nfds](CSocket *toCheck){
+		UOXSOCKET clientSock = static_cast<UOXSOCKET>(toCheck->CliSocket());
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( static_cast<int>(clientSock) + 1 > nfds )
 			nfds = clientSock + 1;
-	}
+
+	});
 	SI32 s = select( nfds, &all, nullptr, &errsock, &cwmWorldState->uoxtimeout );
 	if( s > 0 )
 	{

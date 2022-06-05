@@ -13,18 +13,26 @@
 //|						process of moving it out to JavaScript in the future.
 //o-----------------------------------------------------------------------------------------------o
 #include "uox3.h"
-#include "cRaces.h"
-#include "cEffects.h"
-#include "regions.h"
 #include "combat.h"
 #include "CJSMapping.h"
+
+#include "cChar.h"
+#include "cMultiObj.h"
+#include "cEffects.h"
+#include "cRaces.h"
 #include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "regions.h"
 #include "StringUtility.hpp"
+
 
 #undef DBGFILE
 #define DBGFILE "ai.cpp"
 
+bool isOnline( CChar& mChar );
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isValidAttackTarget( CChar *mChar, CChar *cTarget )
@@ -85,28 +93,27 @@ void HandleGuardAI( CChar& mChar )
 {
 	if( !mChar.IsAtWar() )
 	{
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( isValidAttackTarget( mChar, tempChar ) )
+		auto nearbyRegions = MapRegion->PopulateList( &mChar );
+		for ( auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
+					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						Combat->AttackTarget( &mChar, tempChar );
-						mChar.TextMessage( nullptr, 313, TALK, true );
-						regChars->Pop();
-						return;
+						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
+						{
+							Combat->AttackTarget( &mChar, tempChar );
+							mChar.TextMessage( nullptr, 313, TALK, true );
+							regChars->Pop();
+							return;
+						}
 					}
 				}
+				regChars->Pop();
 			}
-			regChars->Pop();
+
 		}
 	}
 }
@@ -124,58 +131,57 @@ void HandleFighterAI( CChar& mChar )
 		// Fetch scriptTriggers attached to mChar
 		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( isValidAttackTarget( mChar, tempChar ) )
+		auto nearbyRegions = MapRegion->PopulateList( &mChar );
+		for (auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
-					// This event will override target selection entirely
-					bool invalidTarget = false;
-					for( auto scriptTrig : scriptTriggers )
+					if( isValidAttackTarget( mChar, tempChar ) )
 					{
-						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute != nullptr )
+						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+						// This event will override target selection entirely
+						bool invalidTarget = false;
+						for( auto scriptTrig : scriptTriggers )
 						{
-							SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
-							if( retVal == -1 ) // No such event found, or returned -1
-								continue;
-							else if( retVal == 0 )
+							cScript *toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute != nullptr )
 							{
-								// Invalid target! But look through other scripts with event first
-								invalidTarget = true;
-								continue;
-							}
-							else if( retVal == 1 )
-							{
-								// Valid target!
-								Combat->AttackTarget( &mChar, tempChar );
-								regChars->Pop(); // restore before returning
-								return;
+								SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+								if( retVal == -1 ) // No such event found, or returned -1
+									continue;
+								else if( retVal == 0 )
+								{
+									// Invalid target! But look through other scripts with event first
+									invalidTarget = true;
+									continue;
+								}
+								else if( retVal == 1 )
+								{
+									// Valid target!
+									Combat->AttackTarget( &mChar, tempChar );
+									regChars->Pop(); // restore before returning
+									return;
+								}
 							}
 						}
-					}
-					if( invalidTarget )
-						continue;
-					RaceRelate raceComp = Races->Compare( tempChar, &mChar );
-					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY ))
-					{
-						if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+						if( invalidTarget )
 							continue;
-						Combat->AttackTarget( &mChar, tempChar );
-						regChars->Pop();
-						return;
+						RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY ))
+						{
+							if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+								continue;
+							Combat->AttackTarget( &mChar, tempChar );
+							regChars->Pop();
+							return;
+						}
 					}
 				}
+				regChars->Pop();
 			}
-			regChars->Pop();
+
 		}
 	}
 }
@@ -188,10 +194,10 @@ void HandleFighterAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void HandleHealerAI( CChar& mChar )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *mSock	= (*cIter);
+	auto nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
+	for( auto mSock:nearbyChars ){
+	
+		
 		CChar *realChar = mSock->CurrcharObj();
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
@@ -230,10 +236,8 @@ void HandleHealerAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void HandleEvilHealerAI( CChar& mChar )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *mSock	= (*cIter);
+	auto nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
+	for( auto &mSock:nearbyChars ){
 		CChar *realChar	= mSock->CurrcharObj();
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
@@ -275,18 +279,14 @@ void HandleEvilAI( CChar& mChar )
 		// Fetch scriptTriggers attached to mChar
 		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
+		auto nearbyRegions = MapRegion->PopulateList( &mChar );
+		for (auto &MapArea : nearbyRegions) {
 			GenericList< CChar * > *regChars = MapArea->GetCharList();
-
+			
 			// Chance to reverse list of chars
 			if( RandomNum( 0, 1 ))
 				regChars->Reverse();
-
+			
 			regChars->Push();
 			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 			{
@@ -344,7 +344,9 @@ void HandleEvilAI( CChar& mChar )
 				}
 			}
 			regChars->Pop();
+
 		}
+
 	}
 }
 
@@ -361,85 +363,14 @@ void HandleChaoticAI( CChar& mChar )
 		// Fetch scriptTriggers attached to mChar
 		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
-				{
-					// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
-					// This event will override target selection entirely
-					bool invalidTarget = false;
-					for( auto scriptTrig : scriptTriggers )
-					{
-						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute != nullptr )
-						{
-							SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
-							if( retVal == -1 ) // No such event found, or returned -1
-								continue;
-							else if( retVal == 0 )
-							{
-								// Invalid target! But look through other scripts with event first
-								invalidTarget = true;
-								continue;
-							}
-							else if( retVal == 1 )
-							{
-								// Valid target!
-								Combat->AttackTarget( &mChar, tempChar );
-								regChars->Pop(); // restore before returning
-								return;
-							}
-						}
-					}
-					if( invalidTarget )
-						continue;
-					if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
-						continue;
-					Combat->AttackTarget( &mChar, tempChar );
-					regChars->Pop();
-					return;
-				}
-			}
-			regChars->Pop();
-		}
-	}
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleAnimalAI( CChar& mChar )
-//|	Date		-	21. Feb, 2006
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles Animal AI Type
-//o-----------------------------------------------------------------------------------------------o
-void HandleAnimalAI( CChar& mChar )
-{
-	if( !mChar.IsAtWar() )
-	{
-		// Fetch scriptTriggers attached to mChar
-		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
-
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( &mChar );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			const SI08 hunger = mChar.GetHunger();
-			if( hunger <= 3 )
-			{
-				CMapRegion *MapArea = (*rIter);
-				if( MapArea == nullptr )	// no valid region
-					continue;
+		auto nearbyRegions = MapRegion->PopulateList( &mChar );
+		for ( auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
 				GenericList< CChar * > *regChars = MapArea->GetCharList();
 				regChars->Push();
 				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					if( isValidAttackTarget( mChar, tempChar ) )
+					if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) )
 					{
 						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 						// This event will override target selection entirely
@@ -469,19 +400,87 @@ void HandleAnimalAI( CChar& mChar )
 						}
 						if( invalidTarget )
 							continue;
-						RaceRelate raceComp = Races->Compare( tempChar, &mChar );
-						if( raceComp <= RACE_ENEMY || ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE ) 
-							|| ( hunger <= 1 && ( tempChar->GetNPCAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetID()].IsHuman() )))
-						{
-							if( RandomNum( 1, 100 ) <= 95 ) // 5% chance (per AI cycle to attack tempChar)
-								continue;
-							Combat->AttackTarget( &mChar, tempChar );
-							regChars->Pop();
-							return;
-						}
+						if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
+							continue;
+						Combat->AttackTarget( &mChar, tempChar );
+						regChars->Pop();
+						return;
 					}
 				}
 				regChars->Pop();
+			}
+		}
+
+	}
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	void HandleAnimalAI( CChar& mChar )
+//|	Date		-	21. Feb, 2006
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Handles Animal AI Type
+//o-----------------------------------------------------------------------------------------------o
+void HandleAnimalAI( CChar& mChar )
+{
+	if( !mChar.IsAtWar() )
+	{
+		// Fetch scriptTriggers attached to mChar
+		std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
+
+		auto nearbyRegions = MapRegion->PopulateList( &mChar );
+		for ( auto &MapArea : nearbyRegions){
+			if (MapArea != nullptr){
+				const SI08 hunger = mChar.GetHunger();
+				if( hunger <= 3 )
+				{
+					GenericList< CChar * > *regChars = MapArea->GetCharList();
+					regChars->Push();
+					for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+					{
+						if( isValidAttackTarget( mChar, tempChar ) )
+						{
+							// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
+							// This event will override target selection entirely
+							bool invalidTarget = false;
+							for( auto scriptTrig : scriptTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != nullptr )
+								{
+									SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
+									if( retVal == -1 ) // No such event found, or returned -1
+										continue;
+									else if( retVal == 0 )
+									{
+										// Invalid target! But look through other scripts with event first
+										invalidTarget = true;
+										continue;
+									}
+									else if( retVal == 1 )
+									{
+										// Valid target!
+										Combat->AttackTarget( &mChar, tempChar );
+										regChars->Pop(); // restore before returning
+										return;
+									}
+								}
+							}
+							if( invalidTarget )
+								continue;
+							RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+							if( raceComp <= RACE_ENEMY || ( cwmWorldState->creatures[tempChar->GetID()].IsAnimal() && tempChar->GetNPCAiType() == AI_NONE )
+							   || ( hunger <= 1 && ( tempChar->GetNPCAiType() == AI_ANIMAL || cwmWorldState->creatures[tempChar->GetID()].IsHuman() )))
+							{
+								if( RandomNum( 1, 100 ) <= 95 ) // 5% chance (per AI cycle to attack tempChar)
+									continue;
+								Combat->AttackTarget( &mChar, tempChar );
+								regChars->Pop();
+								return;
+							}
+						}
+					}
+					regChars->Pop();
+				}
 			}
 		}
 	}

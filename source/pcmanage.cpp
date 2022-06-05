@@ -1,22 +1,31 @@
 #include "uox3.h"
-#include "cVersionClass.h"
-#include "cSkillClass.h"
+
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+#include "cAccountClass.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "wholist.h"
+#include "cSkillClass.h"
+#include "cSocket.h"
+#include "cVersionClass.h"
+#include "classes.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "ObjectFactory.h"
+#include "PartySystem.h"
 #include "skills.h"
 #include "ssection.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "CPacketSend.h"
-#include "PartySystem.h"
-#include "classes.h"
-#include "townregion.h"
-#include "Dictionary.h"
-#include "cEffects.h"
-#include "cRaces.h"
 #include "StringUtility.hpp"
+#include "townregion.h"
+#include "wholist.h"
+#include "worldmain.h"
 
-#include "ObjectFactory.h"
 #include <algorithm>
 
 
@@ -741,7 +750,7 @@ bool CPICreateCharacter::Handle( void )
 				locationNumber = clientFlags;
 
 			// Fetch player's chosen start location
-			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+			auto toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
 
 			CServerData *sd = cwmWorldState->ServerData();
 			size_t serverCount = sd->NumServerLocations();

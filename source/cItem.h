@@ -1,6 +1,15 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
+#include "uox3.h"
+#include "cBaseObject.h"
 #include "GenericList.h"
+
+#include <bitset>
+#include <string>
+#include <fstream>
+
+class CTownRegion;
+
 enum CITempVars
 {
 	CITV_MORE	= 0,

@@ -1,21 +1,28 @@
-#include "uox3.h"
 #include "townregion.h"
+
+#include "CJSEngine.h"
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+#include "cItem.h"
+#include "cChar.h"
 #include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "cSpawnRegion.h"
+#include "classes.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+#include "gump.h"
+#include "jail.h"
+#include "mapstuff.h"
+#include "scriptc.h"
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
-#include "gump.h"
-#include "mapstuff.h"
-#include "scriptc.h"
-#include "CPacketSend.h"
-#include "jail.h"
-#include "Dictionary.h"
-#include "classes.h"
-#include "CJSEngine.h"
-#include "CJSMapping.h"
 #include "StringUtility.hpp"
+
 // Implementation of town regions
 
 const SI08 MAYOR = 0x01;
@@ -1804,21 +1811,23 @@ void CTownRegion::SendEnemyTowns( CSocket *sock )
 	GumpDisplay Enemy( sock, 300, 300 );
 
 	UI08 enemyCount = 0;
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	TOWNMAP_CITERATOR ourTown = cwmWorldState->townRegions.find( regionNum );
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
+	CTownRegion *ourTown = nullptr ;
+	try {
+		ourTown = cwmWorldState->townRegions.at(regionNum) ;
+		
+	}
+	catch(...){
+		
+	}
+	for (auto [townnum,myReg]:cwmWorldState->townRegions){
 		if( myReg != nullptr )
 		{
-			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
+			if( (myReg != ourTown) && (Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY) )	// if we're racial enemies, and not the same as ourselves
 			{
 				++enemyCount;
 				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
 			}
 		}
-		++tIter;
 	}
 
 	Enemy.SetTitle( oldstrutil::format("Enemy Towns (%u)", enemyCount ) );

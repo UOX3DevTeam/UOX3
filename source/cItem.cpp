@@ -30,27 +30,37 @@
 //|						1.4		 		17th July, 2004
 //|						Added CSpawnItem to begin breaking CItem into smaller subclasses
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "weight.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
-#include "ObjectFactory.h"
-#include "speech.h"
-#include "townregion.h"
-#include "cRaces.h"
-#include "cSpawnRegion.h"
+#include "cItem.h"
+
+#include "books.h"
+
 #include "CJSEngine.h"
 #include "CJSMapping.h"
-#include "Dictionary.h"
-#include "regions.h"
-#include "msgboard.h"
-#include "books.h"
-#include "power.h"
+#include "CPacketSend.h"
+#include "classes.h"
+
+#include "cMultiObj.h"
+#include "cServerData.h"
+#include "cSocket.h"
+#include "cChar.h"
+#include "cRaces.h"
+#include "cSpawnRegion.h"
 #include "cServerDefinitions.h"
+#include "Dictionary.h"
+#include "funcdecl.h"
+
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "osunique.hpp"
+#include "power.h"
+#include "regions.h"
+#include "speech.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
-#include "osunique.hpp"
+#include "townregion.h"
+#include "weight.h"
+
+
 #include <charconv>
 
 const UI32 BIT_DOOROPEN		=	1;
@@ -2420,14 +2430,13 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 	CBaseObject *iCont = GetCont();
 	if( iCont == nullptr )
 	{
-		SOCKLIST nearbyChars;
+		std::vector<CSocket*> nearbyChars ;
 		if( GetID( 1 ) >= 0x40 )
 			nearbyChars = FindNearbyPlayers( this, DIST_BUILDRANGE );
 		else
 			nearbyChars = FindPlayersInVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			SendToSocket( (*cIter) );
+		for( auto &mSock:nearbyChars){
+			SendToSocket( mSock );
 		}
 		return;
 	}
@@ -2437,18 +2446,17 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		if( charCont != nullptr )
 		{
 			CPWornItem toWear = (*this);
-			SOCKLIST nearbyChars = FindNearbyPlayers( charCont );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				if( !(*cIter)->LoginComplete() )
-					continue;
-				(*cIter)->Send( &toWear );
-
-				// Only send tooltip if server feature for tooltips is enabled
-				if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
-				{
-					CPToolTip pSend( GetSerial(), (*cIter) );
-					(*cIter)->Send( &pSend );
+			auto nearbyChars = FindNearbyPlayers( charCont );
+			for( auto &mSock:nearbyChars){
+				if( mSock->LoginComplete() ){
+					mSock->Send( &toWear );
+					
+					// Only send tooltip if server feature for tooltips is enabled
+					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+					{
+						CPToolTip pSend( GetSerial(), mSock );
+						mSock->Send( &pSend );
+					}
 				}
 			}
 			return;
@@ -2460,12 +2468,11 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		if( itemCont != nullptr )
 		{
 			ObjectType oType = OT_CBO;
-			SOCKLIST nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				if( !(*cIter)->LoginComplete() )
-					continue;
-				SendPackItemToSocket( (*cIter) );
+			auto nearbyChars = FindNearbyPlayers( FindItemOwner( this, oType ), DIST_NEARBY );
+			for( auto &mSock : nearbyChars){
+				if( mSock->LoginComplete() ){
+					SendPackItemToSocket( mSock );
+				}
 			}
 			return;
 		}
@@ -2586,20 +2593,21 @@ void CItem::RemoveFromSight( CSocket *mSock )
 			else
 			{
 				CChar *tChar			= nullptr;
-				SOCKLIST nearbyChars;
+				std::vector<CSocket*> nearbyChars ;
 				if( rItem == this )
 					nearbyChars = FindPlayersInOldVisrange( rItem );
 				else
 					nearbyChars = FindPlayersInVisrange( rItem );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-
-					tChar = (*cIter)->CurrcharObj();
-					if( ValidateObject( tChar ) )
-					{
-						(*cIter)->Send( &toRemove );
+				for( auto &mSock:nearbyChars){
+					
+					if( mSock->LoginComplete() ){
+						
+						
+						tChar = mSock->CurrcharObj();
+						if( ValidateObject( tChar ) )
+						{
+							mSock->Send( &toRemove );
+						}
 					}
 				}
 			}
@@ -2618,12 +2626,12 @@ void CItem::RemoveFromSight( CSocket *mSock )
 				mSock->Send( &toRemove );
 			else
 			{
-				SOCKLIST nearbyChars = FindNearbyPlayers( rChar );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-					(*cIter)->Send( &toRemove );
+				auto nearbyChars = FindNearbyPlayers( rChar );
+				for( auto &mSock:nearbyChars){
+					
+					if( mSock->LoginComplete() ){
+						mSock->Send( &toRemove );
+					}
 				}
 			}
 		}
@@ -2857,18 +2865,16 @@ void CItem::Cleanup( void )
 			}
 			else
 			{
-				SOCKLIST nearbyChars = FindNearbyPlayers( iCont, DIST_NEARBY );
-				for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-				{
-					if( !(*cIter)->LoginComplete() )
-						continue;
-
-					// Only send tooltip if server feature for tooltips is enabled
-					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
-					{
-						// Refresh container tooltip
-						CPToolTip pSend( iCont->GetSerial(), (*cIter) );
-						(*cIter)->Send(&pSend);
+				auto nearbyChars = FindNearbyPlayers( iCont, DIST_NEARBY );
+				for( auto &mSock:nearbyChars ){
+					if( mSock->LoginComplete() ){
+						// Only send tooltip if server feature for tooltips is enabled
+						if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+						{
+							// Refresh container tooltip
+							CPToolTip pSend( iCont->GetSerial(), mSock );
+							mSock->Send(&pSend);
+						}
 					}
 				}
 			}
@@ -3188,17 +3194,17 @@ bool CSpawnItem::HandleSpawnContainer( void )
 					for( int i = 0; i < itemListSize; i++ )
 					{
 						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
-						STRINGLIST listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
+						auto listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );
 						if( !listObj.empty() )
 						{
 							UI16 amountToSpawn = 1;
-							STRINGLIST itemListData;
+							
 							if( oldstrutil::upper( listObj[0] ) == "ITEMLIST" || oldstrutil::upper( listObj[0] ) == "LOOTLIST" )
 							{
 								bool useLootList = oldstrutil::upper( listObj[0] ) == "LOOTLIST";
 
 								// Itemlist/Lootlist
-								itemListData = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->GrabData(), "//" )), "," );
+								auto itemListData = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->GrabData(), "//" )), "," );
 								listEntry = itemListData[0];
 
 								if( itemListData.size() > 1 )

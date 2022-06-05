@@ -1,5 +1,9 @@
 #ifndef __SPEECH_H__
 #define __SPEECH_H__
+#include "uox3.h"
+
+#include <string>
+#include <vector>
 
 enum SpeechTarget
 {

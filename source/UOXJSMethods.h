@@ -13,8 +13,9 @@
 //o-----------------------------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
+#include "uox3.h"
 
-
+#include "jsapi.h"
 typedef JSBool (JSMethodFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Object Constructors

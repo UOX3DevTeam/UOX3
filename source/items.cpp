@@ -1,17 +1,24 @@
 #include "uox3.h"
-#include "townregion.h"
+
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
 #include "cSpawnRegion.h"
-#include "ssection.h"
-#include "CJSMapping.h"
-#include "scriptc.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
+#include "cSocket.h"
 #include "classes.h"
-#include "regions.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
+#include "regions.h"
+#include "ssection.h"
+#include "scriptc.h"
 #include "StringUtility.hpp"
+#include "townregion.h"
 
 
 cItem *Items = nullptr;
@@ -448,7 +455,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_StringValue	= customTagStringValue;
 					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -479,7 +486,7 @@ bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 				customTagStringValue = result;
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= static_cast<SI32>(std::stoi(customTagStringValue, nullptr, 0));
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -813,7 +820,7 @@ CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, cons
 
 			int amountToSpawn = 1;
 			std::string k = "";
-			STRINGLIST csecs;
+			auto csecs = std::vector<std::string>();
 			if( itemEntryToSpawn != -1 )
 			{
 				// If an entry has been selected based on weights, use that
@@ -1555,10 +1562,9 @@ void cItem::CheckEquipment( CChar *p )
 					i->SetCont( nullptr );
 					i->SetLocation( p );
 
-					SOCKLIST nearbyChars = FindNearbyPlayers( p );
-					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-					{
-						p->SendWornItems( (*cIter) );
+					auto nearbyChars = FindNearbyPlayers( p );
+					for( auto &mSock:nearbyChars ){
+						p->SendWornItems( mSock );
 					}
 					pSock->sysmessage( 1604, itemname.c_str() ); // You are not strong enough to keep %s equipped!
 					Effects->itemSound( pSock, i );

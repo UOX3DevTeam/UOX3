@@ -1,10 +1,11 @@
-/*
+/* *************************************************************************
 
  Ultima Offline eXperiment III (UOX3)
  UO Server Emulation Program
 
- Copyright 1998 - 2021 by UOX3 contributors
+ Copyright 1998 - 2022 by UOX3 contributors
  Copyright 1997, 98 by Marcus Rating (Cironian)
+ ***************************************************************************
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -27,61 +28,74 @@
 
  You can contact the author by sending email to <cironian@stratics.com>.
 
- */
+ *************************************************************************** */
+
+#include "uox3.h"
+
+#include "books.h"
+#include "CJSEngine.h"
+#include "CJSMapping.h"
+#include "CPacketSend.h"
+
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cHTMLSystem.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+#include "cThreadQueue.h"
+#include "cVersionClass.h"
+#include "cWeather.hpp"
+
+#include "classes.h"
+#include "combat.h"
+#include "commands.h"
+#include "Dictionary.h"
+#include "EventTimer.hpp"
+#include "funcdecl.h"
+#include "gump.h"
+#include "jail.h"
+#include "magic.h"
+#include "movement.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "PageVector.h"
+#include "PartySystem.h"
+#include "regions.h"
+#include "skills.h"
+#include "speech.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "teffect.h"
+#include "weight.h"
+#include "wholist.h"
+#include "worldmain.h"
+
+
+
+
 #include <chrono>
 #include <random>
 #include <thread>
-
-#include "uox3.h"
-#include "weight.h"
-#include "books.h"
-#include "cGuild.h"
-#include "combat.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cWeather.hpp"
-#include "movement.h"
-#include "cRaces.h"
-#include "cServerDefinitions.h"
-#include "skills.h"
-#include "commands.h"
-#include "cSpawnRegion.h"
-#include "wholist.h"
-#include "cMagic.h"
-#include "PageVector.h"
-#include "speech.h"
-#include "cVersionClass.h"
-#include "ssection.h"
-#include "cHTMLSystem.h"
-#include "gump.h"
-#include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "teffect.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "cThreadQueue.h"
-#include "regions.h"
-#include "magic.h"
-#include "jail.h"
-#include "Dictionary.h"
-#include "ObjectFactory.h"
-#include "PartySystem.h"
-#include "CJSEngine.h"
-#include "StringUtility.hpp"
-#include "EventTimer.hpp"
-
-std::thread cons;
-std::thread netw;
+#include <set>
+#include <string>
 
 #if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
+#else
+#include <sys/signal.h>
 #endif
 
-std::chrono::time_point<std::chrono::system_clock> current;
 
-std::mt19937 generator;
 
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
@@ -106,6 +120,14 @@ void		CheckAI( CChar& mChar );
 
 
 bool isWorldSaving = false;
+
+std::thread cons;
+std::thread netw;
+
+std::chrono::time_point<std::chrono::system_clock> current;
+
+std::mt19937 generator;
+
 #if PLATFORM == WINDOWS
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	BOOL WINAPI exit_handler(DWORD dwCtrlType)
@@ -152,14 +174,11 @@ void app_stopped(int sig)
 //o-----------------------------------------------------------------------------------------------o
 void UnloadSpawnRegions( void )
 {
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		if( spIter->second != nullptr )
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
+		if( spawnReg != nullptr )
 		{
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
-			auto spawnedCharsList = spIter->second->GetSpawnedCharsList();
+			auto spawnedCharsList = spawnReg->GetSpawnedCharsList();
 			for( auto cCheck = spawnedCharsList->First(); !spawnedCharsList->Finished(); cCheck = spawnedCharsList->Next() )
 			{
 				if( !ValidateObject( cCheck ) )
@@ -172,7 +191,7 @@ void UnloadSpawnRegions( void )
 			}
 
 			// Iterate over list of spawned items and delete them if no player has picked them up
-			auto spawnedItemsList = spIter->second->GetSpawnedItemsList();
+			auto spawnedItemsList = spawnReg->GetSpawnedItemsList();
 			for( auto iCheck = spawnedItemsList->First(); !spawnedItemsList->Finished(); iCheck = spawnedItemsList->Next() )
 			{
 				if( !ValidateObject( iCheck ) )
@@ -184,9 +203,9 @@ void UnloadSpawnRegions( void )
 				}
 			}
 
-			delete spIter->second;
+			delete spawnReg;
 		}
-		++spIter;
+		
 	}
 	cwmWorldState->spawnRegions.clear();
 }
@@ -198,13 +217,10 @@ void UnloadSpawnRegions( void )
 //o-----------------------------------------------------------------------------------------------o
 void UnloadRegions( void )
 {
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		if( tIter->second != nullptr )
-			delete tIter->second;
-		++tIter;
+	for (auto [twnnum,town]:cwmWorldState->townRegions ){
+		if (town != nullptr){
+			delete town ;
+		}
 	}
 	cwmWorldState->townRegions.clear();
 }
@@ -365,25 +381,25 @@ bool isOnline( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updateStats( CBaseObject *mObj, UI08 x )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		if( !(*cIter)->LoginComplete() )
-			continue;
-
-		// Normalize stats if we're updating our stats for other players
-		bool normalizeStats = true;
-		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
-		{
-			( *cIter )->statwindow( mObj );
-			normalizeStats = false;
+	auto nearbyChars = FindNearbyPlayers( mObj );
+	for( auto &sock:nearbyChars ){
+		
+		if( sock->LoginComplete() ){
+			
+			// Normalize stats if we're updating our stats for other players
+			bool normalizeStats = true;
+			if( sock->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+			{
+				sock->statwindow( mObj );
+				normalizeStats = false;
+			}
+			
+			// Prepare the stat update packet
+			CPUpdateStat toSend( (*mObj), x, normalizeStats );
+			
+			// Send the stat update packet
+			sock->Send( &toSend );
 		}
-
-		// Prepare the stat update packet
-		CPUpdateStat toSend( (*mObj), x, normalizeStats );
-
-		// Send the stat update packet
-		(*cIter)->Send( &toSend );
 	}
 }
 
@@ -396,12 +412,8 @@ void CollectGarbage( void )
 {
 	Console << "Performing Garbage Collection...";
 	UI32 objectsDeleted				= 0;
-	QUEUEMAP_CITERATOR delqIter		= cwmWorldState->deletionQueue.begin();
-	QUEUEMAP_CITERATOR delqIterEnd	= cwmWorldState->deletionQueue.end();
-	while( delqIter != delqIterEnd )
-	{
-		CBaseObject *mObj = delqIter->first;
-		++delqIter;
+	for (auto &entry : cwmWorldState->deletionQueue){
+		CBaseObject *mObj = entry.first;
 		if( mObj == nullptr || mObj->isFree() || !mObj->isDeleted() )
 		{
 			Console.warning( "Invalid object found in Deletion Queue" );
@@ -464,10 +476,9 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			return;
 		}
 
-		SOCKLIST nearbyChars = FindNearbyPlayers( s );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			s->SendWornItems( (*cIter) );
+		auto nearbyChars = FindNearbyPlayers( s );
+		for( auto &sock:nearbyChars ){
+			s->SendWornItems( sock );
 		}
 
 		if( x->GetTarg() != nullptr )	// zero out target, under all circumstances
@@ -1256,10 +1267,10 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					{
 						if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
 						{
-							SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
-							for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-							{
-								Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+							auto nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
+							for( auto &sock:nearbyChars ){
+							
+								Effects->PlaySound( sock, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
 							}
 						}
 					}
@@ -1577,14 +1588,9 @@ void CWorldMain::CheckAutoTimers( void )
 	//Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
-		TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-		TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-		while( tIter != tEnd )
-		{
-			CTownRegion *myReg = tIter->second;
+		for (auto [twnnum,myReg]:cwmWorldState->townRegions){
 			if( myReg != nullptr )
 				myReg->PeriodicCheck();
-			++tIter;
 		}
 		nextCheckTownRegions = BuildTimeValue( 10 );	// do checks every 10 seconds or so, rather than every single time
 		JailSys->PeriodicCheck();
@@ -1599,11 +1605,8 @@ void CWorldMain::CheckAutoTimers( void )
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 
-		SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
+		for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
+		
 			if( spawnReg != nullptr )
 			{
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
@@ -1615,7 +1618,6 @@ void CWorldMain::CheckAutoTimers( void )
 				maxItemsSpawned += static_cast<UI32>(spawnReg->GetMaxItemSpawn());
 				maxNpcsSpawned += static_cast<UI32>(spawnReg->GetMaxCharSpawn());
 			}
-			++spIter;
 		}
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
@@ -1886,11 +1888,8 @@ void CWorldMain::CheckAutoTimers( void )
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / statwindow() queue here
-	QUEUEMAP_CITERATOR rqIter			= cwmWorldState->refreshQueue.begin();
-	QUEUEMAP_CITERATOR rqIterEnd		= cwmWorldState->refreshQueue.end();
-	while( rqIter != rqIterEnd )
-	{
-		CBaseObject *mObj = rqIter->first;
+	for (auto &entry : cwmWorldState->refreshQueue){
+		CBaseObject *mObj = entry.first;
 		if( ValidateObject( mObj ) )
 		{
 			if( mObj->CanBeObjType( OT_CHAR ) )
@@ -1927,7 +1926,6 @@ void CWorldMain::CheckAutoTimers( void )
 			else
 				mObj->Update();
 		}
-		++rqIter;
 	}
 	cwmWorldState->refreshQueue.clear();
 }
@@ -2004,7 +2002,7 @@ void ParseArgs( SI32 argc, char *argv[] )
 	}
 }
 
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CBaseObject* >	;
 bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
@@ -2018,10 +2016,8 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		if( a->CanBeObjType( OT_MULTI ))
 		{
 			CMultiObj *aMulti = static_cast<CMultiObj *>(a);
-			BASEOBJECTLIST objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
-			for( BASEOBJECTLIST_CITERATOR objectCtr = objectList.begin(); objectCtr != objectList.end(); ++objectCtr )
-			{
-				CBaseObject *objToCheck = (*objectCtr);
+			auto objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
+			for( auto &objToCheck:objectList){
 
 				if( inMulti( objToCheck->GetX(), objToCheck->GetY(), objToCheck->GetZ(), aMulti ))
 					objToCheck->SetMulti( aMulti );
@@ -3221,37 +3217,37 @@ void DoorMacro( CSocket *s )
 		case 7 : { --xc; --yc; }	break;
 	}
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
-			if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
+	auto nearbyRegions = MapRegion->PopulateList( mChar );
+	for( auto &toCheck : nearbyRegions ){
+	
+		if( toCheck != nullptr ){	// no valid region
+			
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
+				if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
 				{
-					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+					if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
 					{
-						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
-						cScript *envExecute = JSMapping->GetScript( envTrig );
-						if( envExecute != nullptr )
-							[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
-
-						regItems->Pop();
-						return;
+						if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+						{
+							UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
+							cScript *envExecute = JSMapping->GetScript( envTrig );
+							if( envExecute != nullptr )
+								[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
+							
+							regItems->Pop();
+							return;
+						}
 					}
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 }
 

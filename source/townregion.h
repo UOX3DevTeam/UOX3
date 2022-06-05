@@ -1,6 +1,17 @@
 #ifndef __TownRegion__
 #define __TownRegion__
 
+#include "uox3.h"
+
+#include <string>
+#include <vector>
+#include <map>
+
+class CItem;
+class CChar;
+class Script;
+class ScriptSection;
+
 struct	miningData;
 
 struct orePref

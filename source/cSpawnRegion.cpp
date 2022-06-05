@@ -1,11 +1,20 @@
-#include "uox3.h"
 #include "cSpawnRegion.h"
+
+#include "cChar.h"
+#include "cItem.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "mapstuff.h"
 #include "classes.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "mapstuff.h"
+#include "scriptc.h"
+#include "ssection.h"
 #include "StringUtility.hpp"
+#include "mapstuff.h"
+#include "worldmain.h"
+
+
 #include <sstream>
 #include <iostream>
 #include <regex>
@@ -365,17 +374,15 @@ void CSpawnRegion::SetCall( UI16 newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	STRINGLIST GetNPC( void ) const
-//|					void SetNPC( STRINGLIST newVal )
+//|	Function	-	auto GetNPC( void )  ->std::vector<std::string>const
+//|					void SetNPC( std::string &newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets stringlist of individual NPCs to spawn in a spawnregion
 //o-----------------------------------------------------------------------------------------------o
-STRINGLIST CSpawnRegion::GetNPC( void ) const
-{
+auto CSpawnRegion::GetNPC( void )const ->std::vector<std::string>{
 	return sNpcs;
 }
-void CSpawnRegion::SetNPC( const std::string &newVal )
-{
+auto CSpawnRegion::SetNPC( const std::string &newVal ) ->void {
 	// Clear old entries to make room for new ones
 	sNpcs.clear();
 	sNpcs.push_back( newVal );
@@ -408,13 +415,12 @@ void CSpawnRegion::SetNPCList( std::string newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	STRINGLIST GetItem( void ) const
-//|					void SetItem( STRINGLIST newVal )
+//|	Function	-	std::vector<std::string> GetItem( void ) const
+//|					void SetItem( const std::string &newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets stringlist of individual Items to spawn in a spawnregion
 //o-----------------------------------------------------------------------------------------------o
-STRINGLIST CSpawnRegion::GetItem( void ) const
-{
+auto CSpawnRegion::GetItem( void ) const ->std::vector<std::string>{
 	return sItems;
 }
 void CSpawnRegion::SetItem( const std::string &newVal )

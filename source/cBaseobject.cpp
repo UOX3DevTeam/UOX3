@@ -19,14 +19,25 @@
 //|							Addition of basic script trigger stuff. Function documentation
 //|							finished for all functions
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
-#include "power.h"
+#include "cBaseObject.h"
+
 #include "CJSMapping.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
+#include "cServerData.h"
 #include "cScript.h"
+#include "cSocket.h"
+
+#include "Dictionary.h"
+#include "funcdecl.h"
 #include "network.h"
 #include "ObjectFactory.h"
+#include "power.h"
 #include "weight.h"
-#include "Dictionary.h"
+#include "worldmain.h"
+
+#include <fstream>
 #include <bitset>
 
 
@@ -141,7 +152,7 @@ TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 	TAGMAPOBJECT localObject;
 	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 	localObject.m_IntValue		= 0;
-	localObject.m_Destroy		= FALSE;
+	localObject.m_Destroy		= false;
 	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tags.find( tagname );
 	if( CI != tags.end() )
@@ -177,7 +188,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
 		else if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= tagval.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
@@ -185,7 +196,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		}
 		else
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagval.m_IntValue;
@@ -219,7 +230,7 @@ TAGMAPOBJECT CBaseObject::GetTempTag( std::string tempTagName ) const
 	TAGMAPOBJECT localObject;
 	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 	localObject.m_IntValue		= 0;
-	localObject.m_Destroy		= FALSE;
+	localObject.m_Destroy		= false;
 	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tempTags.find( tempTagName );
 	if( CI != tempTags.end() )
@@ -251,7 +262,7 @@ void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
 		else if( tagVal.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagVal.m_ObjectType;
 			I->second.m_StringValue	= tagVal.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
@@ -259,7 +270,7 @@ void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
 		}
 		else
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagVal.m_ObjectType;
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagVal.m_IntValue;
@@ -1810,7 +1821,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
 				tagvalObject.m_IntValue		= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0);
-				tagvalObject.m_Destroy		= FALSE;
+				tagvalObject.m_Destroy		= false;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
 			}
@@ -1820,7 +1831,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType=TAGMAP_TYPE_STRING;
 				tagvalObject.m_IntValue= static_cast<SI32>(localString.size());
-				tagvalObject.m_Destroy=FALSE;
+				tagvalObject.m_Destroy=false;
 				tagvalObject.m_StringValue=localString;
 				SetTag( staticTagName, tagvalObject );
 
@@ -2153,7 +2164,7 @@ void CBaseObject::Cleanup( void )
 			tScript->OnDelete( this );
 	}
 
-	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	auto toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )
 		cwmWorldState->refreshQueue.erase( toFind );
 
@@ -2193,7 +2204,7 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 //o-----------------------------------------------------------------------------------------------o
 void CBaseObject::RemoveFromRefreshQueue()
 {
-	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	auto toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )
 		cwmWorldState->refreshQueue.erase( toFind );
 }

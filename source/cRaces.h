@@ -1,6 +1,12 @@
 #ifndef __Races__
 #define __Races__
+#include "uox3.h"
+
 #include <unordered_set>
+#include <vector>
+#include <string>
+
+class CChar ;
 
 class CRace
 {

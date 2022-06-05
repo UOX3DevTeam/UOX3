@@ -1,8 +1,12 @@
-#include "uox3.h"
-#include "classes.h"
 #include "regions.h"
-#include "StringUtility.hpp"
+
+#include "cMultiObj.h"
+#include "cServerData.h"
+#include "classes.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
+#include "StringUtility.hpp"
+
 #include <filesystem>
 
 #define DEBUG_REGIONS		0
@@ -687,25 +691,25 @@ MapResource_st * CMapHandler::GetResource( SI16 x, SI16 y, UI08 worldNum )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	REGIONLIST PopulateList( CBaseObject *mObj )
+//|	Function	-	auto PopulateList( CBaseObject *mObj ) ->std::vector< CMapRegion * >
 //|	Date		-	Unknown
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a list of nearby MapRegions based on the object provided
 //o-----------------------------------------------------------------------------------------------o
-REGIONLIST CMapHandler::PopulateList( CBaseObject *mObj )
+auto CMapHandler::PopulateList( CBaseObject *mObj ) -> std::vector< CMapRegion * >
 {
 	return PopulateList( mObj->GetX(), mObj->GetY(), mObj->WorldNumber() );
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	REGIONLIST PopulateList( SI16 x, SI16 y, UI08 worldNumber )
+//|	Function	-	auto PopulateList( SI16 x, SI16 y, UI08 worldNumber )->std::vector< CMapRegion * >
 //|	Date		-	Unknown
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a list of nearby MapRegions based on the coordinates provided
 //o-----------------------------------------------------------------------------------------------o
-REGIONLIST CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber )
+auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber )->std::vector< CMapRegion * >
 {
-	REGIONLIST nearbyRegions;
+	std::vector< CMapRegion * > nearbyRegions;
 	const SI16 xOffset	= MapRegion->GetGridX( x );
 	const SI16 yOffset	= MapRegion->GetGridY( y );
 	for( SI08 counter1 = -1; counter1 <= 1; ++counter1 )

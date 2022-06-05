@@ -1,17 +1,25 @@
-#include "uox3.h"
 #include "cScript.h"
-#include "power.h"
-#include "UOXJSClasses.h"
-#include "SEFunctions.h"
-#include "UOXJSMethods.h"
-#include "UOXJSPropertySpecs.h"
+
 #include "CJSMapping.h"
-#include "CPacketReceive.h"
 #include "CJSEngine.h"
 #include "JSEncapsulate.h"
+#include "UOXJSClasses.h"
+#include "UOXJSMethods.h"
+#include "UOXJSPropertySpecs.h"
+#include "CPacketReceive.h"
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cItem.h"
+#include "cMultiObj.h"
 #include "cSpawnRegion.h"
-#include "StringUtility.hpp"
+#include "funcdecl.h"
+#include "gump.h"
 #include "osunique.hpp"
+#include "power.h"
+#include "SEFunctions.h"
+#include "StringUtility.hpp"
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -2322,8 +2330,8 @@ size_t cScript::NewGumpList( void )
 {
 	size_t retVal	= gumpDisplays.size();
 	SEGump *toAdd	= new SEGump;
-	toAdd->one		= new STRINGLIST;
-	toAdd->two		= new STRINGLIST;
+	toAdd->one		= new std::vector<std::string>();
+	toAdd->two		= new std::vector<std::string>();
 
 	gumpDisplays.push_back( toAdd );
 	return retVal;

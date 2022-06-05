@@ -1,11 +1,17 @@
 #include "uox3.h"
-#include "townregion.h"
+
+#include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
 #include "cRaces.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
+#include "cSocket.h"
+#include "funcdecl.h"
 #include "regions.h"
+#include "ssection.h"
+#include "townregion.h"
+
 
 
 cEffects *Effects;
@@ -28,10 +34,9 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 
 	if( allHear )
 	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			(*cIter)->Send( &toSend );
+		auto nearbyChars = FindNearbyPlayers( mChar );
+		for( auto &mSock:nearbyChars ){
+			mSock->Send( &toSend );
 		}
 	}
 	mSock->Send( &toSend );
@@ -51,10 +56,10 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 
 	if( allHear )
 	{
-		SOCKLIST nearbyChars = FindPlayersInVisrange( baseObj );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			(*cIter)->Send( &toSend );
+		auto nearbyChars = FindPlayersInVisrange( baseObj );
+		for( auto &mSock:nearbyChars){
+		
+			mSock->Send( &toSend );
 		}
 	}
 	else
@@ -187,25 +192,24 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	std::vector< CChar * > inrange;
 	inrange.reserve( 11 );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( (&mChar) );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
-				continue;
-			if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
-				inrange.push_back( tempChar );
-
-			if( inrange.size() == 11 )
-				break;
+	auto nearbyRegions = MapRegion->PopulateList( (&mChar) );
+	for( auto &MapArea:nearbyRegions ){
+		
+		if( MapArea != nullptr ){	// no valid region
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
+					continue;
+				if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
+					inrange.push_back( tempChar );
+				
+				if( inrange.size() == 11 )
+					break;
+			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 
 	UI16 basesound = 0;
@@ -470,10 +474,9 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 		if( mSock == nullptr && ValidateObject( mChar ) )
 		{
 			// It's an NPC!
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				PlaySound( (*cIter), soundID, false );
+			auto nearbyChars = FindNearbyPlayers( mChar );
+			for( auto &sock: nearbyChars){
+				PlaySound( sock, soundID, false );
 			}
 			return;
 		}

@@ -1,5 +1,15 @@
 #ifndef __CMAGIC_H__
 #define __CMAGIC_H__
+#include "uox3.h"
+#include "magic.h"
+
+#include <string>
+#include <vector>
+
+class CItem;
+class CChar ;
+class cScript;
+class CBaseObject;
 
 struct reag_st;
 

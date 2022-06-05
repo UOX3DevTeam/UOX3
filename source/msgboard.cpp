@@ -22,18 +22,27 @@
 //|						Added support for message board file deletion upon deleting the associated world object.
 //|
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "msgboard.h"
-#include "townregion.h"
-#include "cServerDefinitions.h"
-#include "ssection.h"
-#include "cEffects.h"
+
 #include "CPacketSend.h"
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
 #include "classes.h"
 #include "Dictionary.h"
-#include "StringUtility.hpp"
-#include <filesystem>
+#include "funcdecl.h"
 #include "osunique.hpp"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "worldmain.h"
+
+#include <filesystem>
+#include <fstream>
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 //|	Date		-	8/6/2005
@@ -329,14 +338,13 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 	// Write number of lines in post as next byte, and
 	// then loop through each line
 	mFile.write( (const char *)&msgBoardPost.Lines, 1 );
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
+	for( auto &lIter : msgBoardPost.msgBoardLine)
 	{
 		// Write length of line as next byte, and
 		// then write the line as next X bytes
-		const UI08 lineSize = static_cast<UI08>((*lIter).size());
+		const UI08 lineSize = static_cast<UI08>(lIter.size());
 		mFile.write( (const char *)&lineSize, 1 );
-		mFile.write( (*lIter).c_str(), lineSize );
+		mFile.write( lIter.c_str(), lineSize );
 	}
 
 	// Finally, add actual post serial to 4 bytes of buffer, and write buffer to file
@@ -394,10 +402,8 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
 	const UI08 subjSize		= static_cast<UI08>(msgBoardPost.SubjectLen);
 	UI16 totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
-	{
-		totalSize += 1 + static_cast<UI16>( ( *lIter ).size() );
+	for( auto &lIter : msgBoardPost.msgBoardLine){
+		totalSize += 1 + static_cast<UI16>( lIter.size() );
 	}
 
 	msgBoardPost.Size			= totalSize;
@@ -582,7 +588,7 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 			file.read( buffer, 1 );
 			file.read( tmpLine, buffer[0]);
 
-			// Stuff contents of tmpLine into msgBoardLine STRINGLIST in msgBoardPost struct, then add null terminator
+			// Stuff contents of tmpLine into msgBoardLine std::vector<std::string> in msgBoardPost struct, then add null terminator
 			msgBoardPost.msgBoardLine.push_back( tmpLine );
 			msgBoardPost.msgBoardLine[msgBoardPost.msgBoardLine.size()-1] += '\0';
 		}

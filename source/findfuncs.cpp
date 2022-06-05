@@ -1,17 +1,21 @@
 #include "uox3.h"
-#include "regions.h"
-#include "network.h"
+
+#include "cSocket.h"
+#include "cChar.h"
+#include "cItem.h"
+#include "cMultiObj.h"
 #include "cRaces.h"
 #include "classes.h"
-
+#include "funcdecl.h"
+#include "network.h"
+#include "regions.h"
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
+//|	Function	-	std::vector< CSocket * > FindPlayersInOldVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who previously were in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
-{
-	SOCKLIST nearbyChars;
+auto FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >{
+	auto  nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -41,13 +45,13 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
+//|	Function	-	std::vector< CSocket * > FindPlayersInVisrange( CBaseObject *myObj )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
+auto FindPlayersInVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >
 {
-	SOCKLIST nearbyChars;
+	auto nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -67,13 +71,12 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
+//|	Function	-	std::vector< CSocket * > FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who within a certain distance of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+auto FindNearbyPlayers( CBaseObject *myObj, UI16 distance )->std::vector< CSocket * >{
+	auto nearbyChars=std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -88,8 +91,8 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 	Network->popConn();
 	return nearbyChars;
 }
-SOCKLIST FindNearbyPlayers( CChar *mChar )
-{
+//===============================================================
+auto FindNearbyPlayers( CChar *mChar )->std::vector< CSocket * >{
 	UI16 visRange = MAX_VISRANGE;
 	if( mChar->GetSocket() != nullptr )
 		visRange = static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() ));
@@ -97,16 +100,16 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 		visRange += static_cast<UI16>(Races->VisRange( mChar->GetRace() ));
 	return FindNearbyPlayers( mChar, visRange );
 }
+//===============================================================
+auto FindNearbyPlayers( CBaseObject *mObj )->std::vector< CSocket * >{
 
-SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
-{
 	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mObj->GetRace() ));
 	return FindNearbyPlayers( mObj, visRange );
 }
+//========================================================================================
+auto FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )->std::vector< CSocket * >{
 
-SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+	auto nearbyChars = std::vector< CSocket * >();
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -123,30 +126,28 @@ SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CChar* >
 {
-	CHARLIST ourChars;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	std::vector< CChar* > ourChars;
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse:nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CChar * > *regChars = CellResponse->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
-				continue;
-			if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
-				ourChars.push_back( tempChar );
+		if (CellResponse != nullptr){
+			GenericList< CChar * > *regChars = CellResponse->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
+					continue;
+				if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
+					ourChars.push_back( tempChar );
+			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 	return ourChars;
 }
@@ -411,38 +412,37 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 	CMultiObj *multi = nullptr;
 	SI32 ret, dx, dy;
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &toCheck : nearbyRegions )
 	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-				continue;
-			if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
+		if (toCheck != nullptr){
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				dx = abs( x - itemCheck->GetX() );
-				dy = abs( y - itemCheck->GetY() );
-				ret = (SI32)( hypotenuse( dx, dy ) );
-				if( ret <= lastdist )
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
+					continue;
+				if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
 				{
-					lastdist = ret;
-					multi = static_cast<CMultiObj *>( itemCheck );
-					if( inMulti( x, y, z, multi ) )
+					dx = abs( x - itemCheck->GetX() );
+					dy = abs( y - itemCheck->GetY() );
+					ret = (SI32)( hypotenuse( dx, dy ) );
+					if( ret <= lastdist )
 					{
-						regItems->Pop();
-						return multi;
+						lastdist = ret;
+						multi = static_cast<CMultiObj *>( itemCheck );
+						if( inMulti( x, y, z, multi ) )
+						{
+							regItems->Pop();
+							return multi;
+						}
+						else
+							multi = nullptr;
 					}
-					else
-						multi = nullptr;
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return multi;
 }
@@ -485,128 +485,119 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 	UI16 currDist;
 	CItem *currItem		= nullptr;
 	point3 targLocation = point3( x, y, z );
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for(auto &toCheck : nearbyRegions)
 	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-				continue;
-			if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
+		if (toCheck != nullptr){
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				point3 difference	= itemCheck->GetLocation() - targLocation;
-				currDist			= static_cast<UI16>(difference.Mag());
-				if( currDist < oldDist)
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
+					continue;
+				if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
 				{
-					oldDist = currDist;
-					currItem = itemCheck;
+					point3 difference	= itemCheck->GetLocation() - targLocation;
+					currDist			= static_cast<UI16>(difference.Mag());
+					if( currDist < oldDist)
+					{
+						oldDist = currDist;
+						currItem = itemCheck;
+					}
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return currItem;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a given object
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
-{
-	ITEMLIST ourItems;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mObj );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+auto findNearbyItems( CBaseObject *mObj, distLocs distance ) ->std::vector< CItem* > {
+	std::vector< CItem* >	ourItems;
+	auto nearbyRegions = MapRegion->PopulateList( mObj );
+	for( auto &CellResponse:nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
-				continue;
-			if( objInRange( mObj, Item, distance ) )
-				ourItems.push_back( Item );
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
+					continue;
+				if( objInRange( mObj, Item, distance ) )
+					ourItems.push_back( Item );
+			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return ourItems;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	ITEMLIST ourItems;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CItem* > {
 
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-				ourItems.push_back( Item );
+	std::vector< CItem* >	 ourItems;
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse : nearbyRegions )
+	{
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+					ourItems.push_back( Item );
+			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return ourItems;
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	BASOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )
+//|	Function	-
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	BASEOBJECTLIST ourObjects;
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CBaseObject* > {
+	std::vector< CBaseObject* >	 ourObjects;
+	auto nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
+	for( auto &CellResponse : nearbyRegions )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-				ourObjects.push_back( Item );
+		if (CellResponse != nullptr){
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
+			{
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
+					ourObjects.push_back( Item );
+			}
+			regItems->Pop();
+			
+			GenericList< CChar * > *regChars = CellResponse->GetCharList();
+			regItems->Push();
+			for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
+			{
+				if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
+					continue;
+				if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
+					ourObjects.push_back( Character );
+			}
+			regChars->Pop();
 		}
-		regItems->Pop();
-
-		GenericList< CChar * > *regChars = CellResponse->GetCharList();
-		regItems->Push();
-		for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
-		{
-			if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
-				continue;
-			if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
-				ourObjects.push_back( Character );
-		}
-		regChars->Pop();
 	}
 	return ourObjects;
 }

@@ -2,12 +2,16 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "uox3.h"
 #include "Dictionary.h"
-#include "speech.h"
+
+#include "cConsole.h"
+#include "cServerData.h"
+#include "funcdecl.h"
 #include "scriptc.h"
+#include "speech.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include "worldmain.h"
 
 CDictionaryContainer *Dictionary;
 

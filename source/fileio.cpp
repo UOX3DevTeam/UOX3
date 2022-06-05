@@ -1,25 +1,34 @@
-#include "uox3.h"
 #include "fileio.h"
+
+#include "cConsole.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
-#include "ssection.h"
 #include "cSpawnRegion.h"
+#include "funcdecl.h"
 #include "scriptc.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
 #include "townregion.h"
-#include <stdexcept>
-#include <vector>
-#include <map>
-#include <fstream>
+#include "UOPInterface.hpp"
+#include "worldmain.h"
+
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <filesystem>
-#include <cmath>
-#include <algorithm>
+#include <fstream>
 #include <sstream>
-#include "UOPInterface.hpp"
-#include <algorithm>
+#include <stdexcept>
+#include <map>
+#include <vector>
 
 #if PLATFORM != WINDOWS
-#  include <fcntl.h>     // open
-#  include <sys/mman.h>  // mmap, mmunmap
+#include <fcntl.h>     // open
+#include <sys/mman.h>  // mmap, mmunmap
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #endif
 
 

@@ -1,6 +1,13 @@
 #ifndef __CJSENGINE_H__
 #define __CJSENGINE_H__
+#include "uox3.h"
+#include "jsapi.h"
 
+#include <map>
+#include <vector>
+#ifdef GetObject
+#undef GetObject 
+#endif
 enum IUEEntries
 {
 	IUE_RACE = 0,
@@ -92,7 +99,7 @@ private:
 	typedef std::vector< CJSRuntime * >::iterator		RUNTIMELIST_ITERATOR;
 	typedef std::vector< CJSRuntime * >::const_iterator	RUNTIMELIST_CITERATOR;
 
-	RUNTIMELIST											runtimeList;
+	RUNTIMELIST	runtimeList;
 
 public:
 

@@ -1,160 +1,108 @@
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
-
+//================================================================
+//
+//		We want this to be as "independent" of other headers as possible.  So we dont
+//		use any symbols defined by ConfOS, etc.
+//
 #include <unordered_map>
+#include <cstdint>
+#include <functional>
+class CSocket ;
 
-#ifdef __NEED_VALIST__
-typedef void *  va_list;
+
+#if !defined(_WIN32)
+constexpr auto MAX_PATH	= 268 ;
 #endif
 
-#if PLATFORM != WINDOWS
-#define MAX_PATH			268
-#endif
 
-#if defined( _DEBUG )
-#define VALIDATESOCKET( s ) if( s == nullptr ) \
-{ \
-Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
-return;	\
-}
-#else
-#define VALIDATESOCKET( s ) if( s == nullptr ) \
-return;
-#endif
+//  We define these for now. But we all ready have a "standard" way to define data with fixed sizes.
+//  in <cstdint>. From a long term maintenance perspective, and training for others, it would make
+//  sense to use the "standard" way provided by the language distribution.  But for now, these are here
+using R32 = float ;
+using R64 = double ;
+using UI08 = std::uint8_t ; // 0 to 255
+using SI08 = std::int8_t ; // -128 to 127
+using SI16 = std::int16_t ; // -32768 to 32767
+using UI16 = std::uint16_t; // 0 to 65535
+using SI32 = std::int32_t ; // -2147483648 to 2147483647
+using UI32 = std::uint32_t ; // 0 to 4294967295
+using SI64 = std::int64_t ; // -9223372036854775808 to 9223372036854775807
+using UI64 = std::uint64_t ; // 0 to 18446744073709551615
 
-typedef float				R32;
-typedef double				R64;
-typedef unsigned char		UI08; // 0 to 255
-typedef signed char			SI08; // -128 to 127
-typedef unsigned short int	UI16; // 0 to 65535
-typedef signed short int	SI16; // -32768 to 32767
-typedef unsigned int		UI32; // 0 to 4294967295
-typedef signed int			SI32; // -2147483648 to 2147483647
-typedef unsigned long long	UI64; // 0 to 18446744073709551615
-typedef signed long long	SI64; // -9223372036854775808 to 9223372036854775807
+// Some of our unique data types, makes it consistent on data sizes (although a lot to be said to make everything
+// int, and then just in the packet/data file i/o convert to the correct size.  It would be faster in terms of execution.
+using GENDER	= std::uint8_t ;
+using LIGHTLEVEL	= std::uint8_t ;
+using COLDLEVEL	= std::uint8_t ;
+using HEATLEVEL	= std::uint8_t ;
+using SECONDS	= std::uint8_t ;
+using ARMORCLASS	= std::uint8_t ;
+using RACEREL	= std::uint8_t ;
+using RANGE		= std::int8_t ;
+using RACEID	= std::uint16_t ;
+using COLOUR	= std::uint16_t ;
+using SKILLVAL	= std::uint16_t ;
+using weathID	= std::uint16_t ;
+using GUILDID	= std::int16_t ;
+using TIMERVAL	= std::uint32_t ;
+using SERIAL	= std::uint32_t ;
 
-typedef UI08		GENDER;
-typedef UI08		LIGHTLEVEL;
-typedef UI08		COLDLEVEL;
-typedef UI08		HEATLEVEL;
-typedef UI08		SECONDS;
-typedef UI08		ARMORCLASS;
-typedef SI08		RACEREL;
-typedef SI08		RANGE;
-typedef UI16		RACEID;
-typedef UI16		COLOUR;
-typedef UI16		SKILLVAL;
-typedef UI16		weathID;
-typedef SI16		GUILDID;
-typedef UI32		TIMERVAL;
 #if defined(_WIN32)
-typedef UI32		UOXSOCKET;
+using UOXSOCKET	= std::uint32_t ;
 #else
-typedef SI32		UOXSOCKET;
+using UOXSOCKET	= std::int32_t ;
 #endif
-typedef UI32		SERIAL;
 
-const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
-const UI16			INVALIDID			= 0xFFFF;
-const UI16			INVALIDCOLOUR		= 0xFFFF;
-const SERIAL		BASEITEMSERIAL		= 0x40000000;
+constexpr auto INVALIDSERIAL	= std::uint32_t(0xFFFFFFFF) ;
+constexpr auto BASEITEMSERIAL = std::uint32_t(0x40000000) ;
+constexpr auto INVALIDID	= std::uint16_t(0xFFFF);
+constexpr auto INVALIDCOLOUR	= std::uint16_t(0xFFFF);
 
-typedef std::vector< CMapRegion * >						REGIONLIST;
-typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
-typedef std::vector< CMapRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
-typedef std::vector< CSocket * >						SOCKLIST;
-typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
-typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
-//
-typedef std::vector< std::string >						STRINGLIST;
-typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
-typedef std::vector< std::string >::const_iterator		STRINGLIST_CITERATOR;
-//
-typedef std::vector< SERIAL >							SERLIST;
-typedef std::vector< SERIAL >::iterator					SERLIST_ITERATOR;
-typedef std::vector< SERIAL >::const_iterator			SERLIST_CITERATOR;
-//
-typedef std::vector< CChar* >							CHARLIST;
-typedef std::vector< CChar* >::iterator					CHARLIST_ITERATOR;
-typedef std::vector< CChar* >::const_iterator			CHARLIST_CITERATOR;
-//
-typedef std::vector< CItem* >							ITEMLIST;
-typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
-typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
-//
-typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
-typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
-typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
-//
-typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
-typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
-typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
-//
-typedef std::unordered_map< UI16, CSpawnRegion * >					SPAWNMAP;
-typedef std::unordered_map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
-//
-typedef std::map< UI16, CTownRegion * >						TOWNMAP;
-typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
-
+// Two things about this: 	1. Creates a dependency on CSocket knowledge which we dont want in this header
+//					2. Should use std::function, which we need to investigate on why it doesnt
 typedef void (TargetFunc)( CSocket *s );
+//using TargetFunc  = std::function<void>(CSocket*) ;
 
-// December 27, 2000
-typedef struct __STARTLOCATIONDATA__
-{
-	__STARTLOCATIONDATA__()
-	{
-		memset( this, 0x00, sizeof( __STARTLOCATIONDATA__ ) );
-	}
-	char	oldTown[31];
-	char	oldDescription[31];
-	char	newTown[32];
-	char	newDescription[32];
-	SI16	x;
-	SI16	y;
-	SI16	z;
-	SI16	worldNum;
-	UI16	instanceID;
-	UI32	clilocDesc;
-
-} STARTLOCATION, *LPSTARTLOCATION;
 //	 	-	End
 
 // Max values
-const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
+constexpr auto MAX_NAME = std::uint8_t(128); // Several areas where we pass a character name will be restricted by packet size to 30 characters.
 								// Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
-const UI08 MAX_TITLE	= 60;
-const UI16 MAX_STACK	= 0xFFFF;
-const UI08 MAX_VISRANGE	= 18;
-const UI16 MAXBUFFER	= 4096;	// Buffer Size (For socket operations)
-const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
-
-const SI08 ILLEGAL_Z	= -128;
+constexpr auto MAX_TITLE	= std::uint8_t(60);
+constexpr auto MAX_VISRANGE	= std::uint8_t(18);
+constexpr auto MAXPOSTS		= std::uint8_t(128); // Maximum number of posts on a messageboard
+constexpr auto MAX_STACK	= std::uint16_t(0xFFFF);
+constexpr auto MAXBUFFER	= std::uint16_t(4096); // Buffer Size (For socket operations)
+constexpr auto ILLEGAL_Z	= std::int8_t(-128) ;
 
 // Offsets for Gump menu's (Relates to menus.dfn)
-#define ITEMMENUOFFSET		256
-#define TRACKINGMENUOFFSET	4096
-#define POLYMORPHMENUOFFSET 8192
-#define JSGUMPMENUOFFSET	16384
+constexpr auto ITEMMENUOFFSET		= 256 ;
+constexpr auto TRACKINGMENUOFFSET	= 4096 ;
+constexpr auto POLYMORPHMENUOFFSET	= 8192 ;
+constexpr auto JSGUMPMENUOFFSET	= 16384 ;
 
-const UI08 NORTH		= 0x00;
-const UI08 NORTHEAST	= 0x01;
-const UI08 EAST			= 0x02;
-const UI08 SOUTHEAST	= 0x03;
-const UI08 SOUTH		= 0x04;
-const UI08 SOUTHWEST	= 0x05;
-const UI08 WEST			= 0x06;
-const UI08 NORTHWEST	= 0x07;
-const UI08 UNKNOWNDIR	= 0xFF;
+// Directions
+constexpr auto NORTH		= std::uint8_t(0x00) ;
+constexpr auto NORTHEAST	= std::uint8_t(0x01) ;
+constexpr auto EAST		= std::uint8_t(0x02) ;
+constexpr auto SOUTHEAST	= std::uint8_t(0x03) ;
+constexpr auto SOUTH		= std::uint8_t(0x04) ;
+constexpr auto SOUTHWEST	= std::uint8_t(0x05) ;
+constexpr auto WEST		= std::uint8_t(0x06) ;
+constexpr auto NORTHWEST	= std::uint8_t(0x07) ;
+constexpr auto UNKNOWNDIR	= std::uint8_t(0xFF) ;
+
 
 // Line Of Sight
-#define ITEM_TYPE_CHOICES		6
-const UI08 TREES_BUSHES			= 1;	// Trees and other large vegetaion in the way
-const UI08 WALLS_CHIMNEYS		= 2;	// Walls, chimineys, ovens, etc... in the way
-const UI08 DOORS				= 4;	// Doors in the way
-const UI08 ROOFING_SLANTED		= 8;	// So can't tele onto slanted roofs, basically
-const UI08 FLOORS_FLAT_ROOFING	= 16;	// For attacking between floors
-const UI08 LAVA_WATER			= 32;	// Don't know what all to use this for yet
+constexpr auto ITEM_TYPE_CHOICES	= 6 ;
+constexpr auto TREES_BUSHES		= 1 ; // Trees and other large vegetaion in the way
+constexpr auto WALLS_CHIMNEYS		= 2 ; // Walls, chimineys, ovens, etc... in the way
+constexpr auto DOORS			= 4 ; // Doors in the way
+constexpr auto ROOFING_SLANTED	= 8 ; // So can't tele onto slanted roofs, basically
+constexpr auto FLOORS_FLAT_ROOFING	= 16 ; // For attacking between floors
+constexpr auto LAVA_WATER		= 32 ; // Don't know what all to use this for yet
 
 #endif
 

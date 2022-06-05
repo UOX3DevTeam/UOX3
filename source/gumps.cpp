@@ -1,26 +1,34 @@
-#include "uox3.h"
 #include "gump.h"
-#include "cGuild.h"
-#include "townregion.h"
-#include "cServerDefinitions.h"
-#include "wholist.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "cVersionClass.h"
-#include "ssection.h"
+
 #include "CJSMapping.h"
-#include "cScript.h"
-#include "cEffects.h"
 #include "CPacketSend.h"
-#include "regions.h"
+#include "cAccountClass.h"
+#include "cChar.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cGuild.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cVersionClass.h"
 #include "classes.h"
 #include "commands.h"
 #include "Dictionary.h"
-#include "PageVector.h"
+#include "funcdecl.h"
 #include "ObjectFactory.h"
-#include "StringUtility.hpp"
-#include <algorithm>
 #include "osunique.hpp"
+#include "PageVector.h"
+#include "regions.h"
+#include "skills.h"
+#include "ssection.h"
+#include "StringUtility.hpp"
+#include "townregion.h"
+#include "wholist.h"
+
+#include <algorithm>
 
 void CollectGarbage( void );
 std::string GetUptime( void );
@@ -213,33 +221,32 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 						// redo stealing code here
 						s->sysmessage( 549, targetRegion->GetName().c_str() );
 						targetRegion->DoDamage( targetRegion->GetHealth() / 2 );	// we reduce the region's health by half
-						REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-						for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+						auto nearbyRegions = MapRegion->PopulateList( mChar );
+						for( auto &toCheck : nearbyRegions )
 						{
-							CMapRegion *toCheck = (*rIter);
-							if( toCheck == nullptr )	// no valid region
-								continue;
-							GenericList< CItem * > *regItems = toCheck->GetItemList();
-							regItems->Push();
-							for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-							{
-								if( !ValidateObject( itemCheck ) )
-									continue;
-								if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 )
-								{	// found our townstone
-									CItem *charPack = mChar->GetPackItem();
-									if( ValidateObject( charPack ) )
-									{
-										itemCheck->SetCont( charPack );
-										itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
-										s->sysmessage( 550 );
-										targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
-										regItems->Pop();
-										return;	// dump out
+							if (toCheck != nullptr){
+								GenericList< CItem * > *regItems = toCheck->GetItemList();
+								regItems->Push();
+								for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
+								{
+									if( !ValidateObject( itemCheck ) )
+										continue;
+									if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 )
+									{	// found our townstone
+										CItem *charPack = mChar->GetPackItem();
+										if( ValidateObject( charPack ) )
+										{
+											itemCheck->SetCont( charPack );
+											itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
+											s->sysmessage( 550 );
+											targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
+											regItems->Pop();
+											return;	// dump out
+										}
 									}
 								}
+								regItems->Pop();
 							}
-							regItems->Pop();
 						}
 					}
 					else
@@ -1380,7 +1387,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 0;
 				if( repeatAdd.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1401,7 +1408,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( addAtLoc.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1426,7 +1433,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( reopenMenu.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1445,7 +1452,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1464,7 +1471,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1483,7 +1490,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1502,7 +1509,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1550,7 +1557,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 			Commands->Command( s, mChar, sect );
 			return;
 		}
-		customTag.m_Destroy		= FALSE;
+		customTag.m_Destroy		= false;
 		customTag.m_IntValue 	= tagVal;
 		customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 		customTag.m_StringValue	= "";
@@ -2136,7 +2143,7 @@ void GumpDisplay::SetTitle( const std::string& newTitle )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends to socket sock the data in one and two.  One is control, two is data
 //o-----------------------------------------------------------------------------------------------o
-void SendVecsAsGump( CSocket *sock, STRINGLIST& one, STRINGLIST& two, UI32 type, SERIAL serial )
+void SendVecsAsGump( CSocket *sock, std::vector<std::string>& one, std::vector<std::string>& two, UI32 type, SERIAL serial )
 {
 	CPSendGumpMenu toSend;
 	toSend.GumpID( type );

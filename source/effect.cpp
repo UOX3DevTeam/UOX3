@@ -1,19 +1,27 @@
 #include "uox3.h"
-#include "skills.h"
-#include "magic.h"
-#include "cMagic.h"
+
 #include "CJSMapping.h"
-#include "mapstuff.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "teffect.h"
 #include "CPacketSend.h"
+
+#include "cChar.h"
+#include "cEffects.h"
+#include "cItem.h"
+#include "cMagic.h"
+#include "cScript.h"
+#include "cServerData.h"
+#include "cSocket.h"
 #include "classes.h"
-#include "regions.h"
 #include "combat.h"
-#include "CJSMapping.h"
-#include "townregion.h"
+#include "funcdecl.h"
+#include "regions.h"
+#include "skills.h"
 #include "StringUtility.hpp"
+#include "teffect.h"
+#include "townregion.h"
+#include "magic.h"
+#include "mapstuff.h"
+#include "worldmain.h"
+
 #include <algorithm>
 
 //o-----------------------------------------------------------------------------------------------o
@@ -25,11 +33,10 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 {
 	CPDeathAction toSend( (*s), (*x) );
 	toSend.FallDirection( fallDirection );
-	SOCKLIST nearbyChars = FindNearbyPlayers( s );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		if( (*cIter)->CurrcharObj() != s )	// Death action screws up corpse display for the person who died.
-			(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( s );
+	for(auto &mSock:nearbyChars){
+		if( mSock->CurrcharObj() != s )	// Death action screws up corpse display for the person who died.
+			mSock->Send( &toSend );
 	}
 }
 
@@ -141,10 +148,9 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( source, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( source, DIST_SAMESCREEN );
+	for( auto &mSock:nearbyChars){
+		mSock->Send( &toSend );
 	}
 }
 
@@ -168,10 +174,9 @@ void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI1
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN );
+	for(auto &mSock:nearbyChars ){
+		mSock->Send( &toSend );
 	}
 }
 
@@ -187,10 +192,10 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 	toSend.FrameDelay( frameDelay );
 	toSend.FrameCount( frameCount );
 	toSend.DoBackwards( playBackwards );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( mChar );
+	for( auto &mSock:nearbyChars ){
+	
+		mSock->Send( &toSend );
 	}
 }
 
@@ -206,10 +211,9 @@ void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subA
 	toSend.Action( actionID );
 	toSend.SubAction( subActionID );
 	toSend.SubSubAction( subSubActionID );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( mChar );
+	for(auto &mSock:nearbyChars){
+		mSock->Send( &toSend );
 	}
 }
 
@@ -279,10 +283,10 @@ void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( target, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( target, DIST_SAMESCREEN );
+	for( auto &mSock:nearbyChars ){
+
+		mSock->Send( &toSend );
 	}
 }
 
@@ -324,10 +328,9 @@ void cEffects::bolteffect( CChar *player )
 	toSend.SourceLocation( (*player) );
 	toSend.ExplodeOnImpact( false );
 	toSend.AdjustDir( false );
-	SOCKLIST nearbyChars = FindNearbyPlayers( player );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	auto nearbyChars = FindNearbyPlayers( player );
+	for( auto &mSock:nearbyChars ){
+		mSock->Send( &toSend );
 	}
 }
 
@@ -369,64 +372,65 @@ void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType
 	if( explodeNearby )
 	{
 		// Explode for characters nearby
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+		auto nearbyRegions = MapRegion->PopulateList( nItem );
+		for( auto &Cell:nearbyRegions)
 		{
-			CMapRegion *Cell = (*rIter);
-			bool chain = false;
-
-			GenericList< CChar * > *regChars = Cell->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
-					continue;
-				if( tempChar->GetRegion()->IsSafeZone() )
+			if (Cell != nullptr){
+				bool chain = false;
+				
+				GenericList< CChar * > *regChars = Cell->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					// Character is in a safe zone, ignore damage
-					continue;
-				}
-				dx = abs( tempChar->GetX() - nItem->GetX() );
-				dy = abs( tempChar->GetY() - nItem->GetY() );
-				dz = abs( tempChar->GetZ() - nItem->GetZ() );
-				if( dx <= len && dy <= len && dz <= len )
-				{
-					if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
+					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
+						continue;
+					if( tempChar->GetRegion()->IsSafeZone() )
 					{
-						//UI08 hitLoc = Combat->CalculateHitLoc();
-						damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( static_cast<SI32>(damage) + ( 2 - std::min( dx, dy ))), true );
-						[[maybe_unused]] bool retVal = tempChar->Damage( static_cast<SI16>(damage), HEAT, c, true );
+						// Character is in a safe zone, ignore damage
+						continue;
 					}
-				}
-			}
-			regChars->Pop();
-			GenericList< CItem * > *regItems = Cell->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
-				{
-					// Item is in a different instanceID - ignore
-					continue;
-				}
-				if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
-				{
-					dx = abs( nItem->GetX() - tempItem->GetX() );
-					dy = abs( nItem->GetY() - tempItem->GetY() );
-					dz = abs( nItem->GetZ() - tempItem->GetZ() );
-
-					if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
+					dx = abs( tempChar->GetX() - nItem->GetX() );
+					dy = abs( tempChar->GetY() - nItem->GetY() );
+					dz = abs( tempChar->GetZ() - nItem->GetZ() );
+					if( dx <= len && dy <= len && dz <= len )
 					{
-						if( !( dx == 0 && dy == 0 && dz == 0 ) )
+						if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
 						{
-							if( RandomNum( 0, 1 ) == 1 )
-								chain = true;
-							Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+							//UI08 hitLoc = Combat->CalculateHitLoc();
+							damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( static_cast<SI32>(damage) + ( 2 - std::min( dx, dy ))), true );
+							[[maybe_unused]] bool retVal = tempChar->Damage( static_cast<SI16>(damage), HEAT, c, true );
 						}
 					}
 				}
+				regChars->Pop();
+				GenericList< CItem * > *regItems = Cell->GetItemList();
+				regItems->Push();
+				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+				{
+					if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
+					{
+						// Item is in a different instanceID - ignore
+						continue;
+					}
+					if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
+					{
+						dx = abs( nItem->GetX() - tempItem->GetX() );
+						dy = abs( nItem->GetY() - tempItem->GetY() );
+						dz = abs( nItem->GetZ() - tempItem->GetZ() );
+						
+						if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
+						{
+							if( !( dx == 0 && dy == 0 && dz == 0 ) )
+							{
+								if( RandomNum( 0, 1 ) == 1 )
+									chain = true;
+								Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+							}
+						}
+					}
+				}
+				regItems->Pop();
 			}
-			regItems->Pop();
 		}
 	}
 	else

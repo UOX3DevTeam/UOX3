@@ -1,7 +1,14 @@
 #ifndef __CSERVERDEFINITIONS__
 #define __CSERVERDEFINITIONS__
+#include "uox3.h"
 
+#include <vector>
+#include <string>
 #include <stack>
+#include <map>
+
+class Script ;	// In scriptc.h
+class ScriptSection;
 
 typedef std::vector< Script * > VECSCRIPTLIST;
 typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;
@@ -18,8 +25,8 @@ private:
 	bool			PushDir( std::string toMove );
 	void			PopDir( void );
 
-	STRINGLIST		filenameList, shortList;
-	STRINGLIST		flattenedShort, flattenedFull;
+	std::vector<std::string>		filenameList, shortList;
+	std::vector<std::string>		flattenedShort, flattenedFull;
 	dirList			dirs;
 	std::string		extension;
 	std::string		currentDir;
@@ -42,10 +49,10 @@ public:
 	void			Flatten( bool isParent );
 	void			ClearFlatten( void );
 
-	STRINGLIST *	List( void );
-	STRINGLIST *	ShortList( void );
-	STRINGLIST *	FlattenedList( void );
-	STRINGLIST *	FlattenedShortList( void );
+	auto	List( void ) ->std::vector<std::string>*;
+	auto	ShortList( void ) ->std::vector<std::string>*;
+	auto	FlattenedList( void ) ->std::vector<std::string>*;
+	auto	FlattenedShortList( void ) ->std::vector<std::string>*;
 };
 
 class CServerDefinitions

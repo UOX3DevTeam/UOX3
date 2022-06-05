@@ -11,13 +11,21 @@
 //|					Moved global JSEngine loading code into the class.
 //|					Created CJSRuntime class to handle multiple runtimes (for threading purposes).
 //o-----------------------------------------------------------------------------------------------o
-#include "uox3.h"
 #include "CJSEngine.h"
+
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
-#include <algorithm>
+#include "cConsole.h"  
+#include "cServerData.h"
+#include "funcdecl.h"
+#include "worldmain.h"
 
+#include <algorithm>
+// To prevent nasty windows.h from defining it to GetObjectA
+#ifdef GetObject
+#undef GetObject 
+#endif
 CJSEngine *JSEngine = nullptr;
 
 CJSEngine::CJSEngine( void )
@@ -91,7 +99,8 @@ JSContext *CJSEngine::GetContext( UI08 runTime ) const
 
 	return runtimeList[runTime]->GetContext();
 }
-JSObject *CJSEngine::GetObject( UI08 runTime ) const
+
+JSObject* CJSEngine::GetObject( UI08 runTime ) const
 {
 	if( runTime >= runtimeList.size() )
 		runTime = 0;

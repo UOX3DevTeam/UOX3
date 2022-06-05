@@ -1,7 +1,10 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
+#include "uox3.h"
 
-enum TargetIDs;
+class CChar;
+
+enum TargetIDs:int;
 
 enum TriggerWords
 {

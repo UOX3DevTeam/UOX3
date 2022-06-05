@@ -1,6 +1,14 @@
 #ifndef __SKILLS_H__
 #define __SKILLS_H__
+#include "uox3.h"
 
+#include <string>
+#include <map>
+#include <vector>
+
+class CSocket;
+class CChar;
+class CItem;
 
 // create DFN revisions
 struct resAmountPair

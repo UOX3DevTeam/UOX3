@@ -1,6 +1,21 @@
 #ifndef __Classes_h
 #define __Classes_h
 
+#include "uox3.h"
+#include "GenericList.h"
+
+#include <string>
+
+// Forward declars
+class CItem;		// cItem.h
+class CSocket ;		// cSocket.h
+class CChar ;		// cChar.h
+class CTownRegion;	// townregion.h
+class CMultiObj ;		// cMultiObj.h
+class CSpawnItem ;	// cItem.h
+class ScriptSection;	// ssection.h
+class CBaseObject;	// cBaseObject.h
+
 enum PackTypes
 {
 	PT_UNKNOWN = 0,
@@ -53,8 +68,7 @@ enum PackTypes
 	PT_MAILBOX9,
 };
 
-class cItem
-{
+class cItem {
 public:
 	CItem *		DupeItem( CSocket *s, CItem *i, UI32 amount );
 	void		GlowItem( CItem *i );

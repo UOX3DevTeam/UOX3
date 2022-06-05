@@ -1,7 +1,18 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+#include "uox3.h"
+
+#include <map>
+#include <string>
+#include <vector>
+
+
 class CPIGumpInput;
+class CChar ;
+class CSocket;
+class CItem;
+class ScriptSection;
 
 enum GuildType
 {
@@ -40,17 +51,19 @@ private:
 	std::string		webpage;
 	SERIAL			stone;
 	SERIAL			master;
-	SERLIST			recruits;
-	SERLIST			members;
+	std::vector<SERIAL>			recruits;
+	std::vector<SERIAL>			members;
 	GUILDREL		relationList;
 
-	SERLIST_ITERATOR	recruitPtr;
-	SERLIST_ITERATOR	memberPtr;
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
 public:
-
+	auto allMembers() ->std::vector<SERIAL>& {return members;}
+	auto allMembers() const ->const std::vector<SERIAL>& {return members;}
+	auto allRecruits() ->std::vector<SERIAL>& {return recruits;}
+	auto allRecruits() const ->const std::vector<SERIAL>& {return recruits;}
+	
 	GUILDID		FirstWar( void );
 	GUILDID		NextWar( void );
 	bool		FinishedWar( void );
@@ -68,13 +81,7 @@ public:
 	const std::string	Webpage( void ) const;
 	SERIAL		Stone( void ) const;
 	SERIAL		Master( void ) const;
-	SERIAL		FirstRecruit( void );
-	SERIAL		NextRecruit( void );
-	bool		FinishedRecruits( void );
 	SERIAL		RecruitNumber( size_t rNum ) const;
-	SERIAL		FirstMember( void );
-	SERIAL		NextMember( void );
-	bool		FinishedMember( void );
 	SERIAL		MemberNumber( size_t rNum ) const;
 
 	void		Name( std::string txt );

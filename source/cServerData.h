@@ -1,10 +1,12 @@
 
 #ifndef __CSERVERDATA__
 #define __CSERVERDATA__
+#include "uox3.h"
+
 #include <map>
 #include <string>
-#include <cstdint>
-#include "StringUtility.hpp"
+#include <vector>
+#include <bitset>
 
 enum ClientFeatures
 {
@@ -171,6 +173,29 @@ private:
 	UI16 port;
 };
 
+struct start_location
+{
+	start_location()
+	{
+		x= 0;
+		y=0;
+		z=0;
+		worldNum = 0;
+		instanceID = 0 ;
+		clilocDesc = 0 ;
+	}
+	std::string oldTown ; // 31
+	std::string	oldDescription; //31
+	std::string	newTown; //32
+	std::string	newDescription; //32
+	SI16	x;
+	SI16	y;
+	SI16	z;
+	SI16	worldNum;
+	UI16	instanceID;
+	UI32	clilocDesc;
+	
+};
 class CServerData
 {
 private:
@@ -332,7 +357,7 @@ private:
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 
 	// Start & Location Settings
-	std::vector< STARTLOCATION >	startlocations;
+	std::vector< start_location >	startlocations;
 	SI16		startgold;						//	Amount of gold created when a PC is made
 	UI16		startprivs;						//	Starting privileges of characters
 
@@ -955,7 +980,7 @@ public:
 	void		dumpPaths( void );
 
 	void			ServerLocation( std::string toSet );
-	LPSTARTLOCATION ServerLocation( size_t locNum );
+	auto		ServerLocation( size_t locNum ) ->start_location*;
 
 	size_t			NumServerLocations( void ) const;
 

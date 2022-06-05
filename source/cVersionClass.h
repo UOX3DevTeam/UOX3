@@ -7,6 +7,8 @@
 #ifndef __CVERSIONCLASS_H__
 #define __CVERSIONCLASS_H__
 
+#include <string>
+
 class CVersionClass
 {
 public:

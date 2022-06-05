@@ -1,11 +1,14 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
-
+#include "uox3.h"
+#include "osunique.hpp"
 #include "power.h"
+
 #include <cstdint>
 #include <sstream>
-#include "MultiMul.hpp"
-#include "osunique.hpp"
+class MultiMul;
+class UOXFile ;
+
 struct Static_st
 {
 	UI16 itemid;

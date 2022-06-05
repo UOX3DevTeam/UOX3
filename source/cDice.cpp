@@ -1,10 +1,11 @@
 #include "cdice.h"
+
+#include "funcdecl.h"
+
 #include <algorithm>
 #include <random>
 #include <stdlib.h>
-#include <string>
 
-#include "funcdecl.h"
 
 cDice::cDice() : dice( 1 ), sides( 1 ), addition( 0 )
 {

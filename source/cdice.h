@@ -1,9 +1,8 @@
 #ifndef __CDICE__
 #define __CDICE__
+#include "uox3.h"
 
 #include <string>
-#include "Prerequisites.h"
-#include "typedefs.h"
 
 class cDice
 {

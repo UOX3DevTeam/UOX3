@@ -1,26 +1,31 @@
 #include "uox3.h"
-#include "weight.h"
-#include "combat.h"
-#include "cRaces.h"
-#include "skills.h"
-#include "cMagic.h"
-#include "CJSMapping.h"
-#include "mapstuff.h"
-#include "cScript.h"
-#include "cEffects.h"
-#include "CPacketSend.h"
-#include "classes.h"
-#include "regions.h"
+
 #include "books.h"
-#include "magic.h"
-#include "townregion.h"
-#include "gump.h"
+#include "classes.h"
+#include "combat.h"
+#include "CJSMapping.h"
+#include "cEffects.h"
+#include "cChar.h"
 #include "cGuild.h"
-#include "ssection.h"
+#include "cScript.h"
+#include "cServerData.h"
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
+#include "cSocket.h"
+#include "cMagic.h"
+#include "cMultiObj.h"
+#include "cRaces.h"
+#include "CPacketSend.h"
 #include "Dictionary.h"
-
+#include "funcdecl.h"
+#include "gump.h"
+#include "regions.h"
+#include "skills.h"
+#include "ssection.h"
+#include "townregion.h"
+#include "magic.h"
+#include "mapstuff.h"
+#include "weight.h"
 
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
 CItem *		startTrade( CSocket *mSock, CChar *i );
@@ -180,7 +185,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	return iToStack;
 }
 
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CChar* >;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIGetItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -357,10 +362,8 @@ bool CPIGetItem::Handle( void )
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			// Let's loop through a list of nearby characters to see if anyone is guarding the object
-			CHARLIST charList = findNearbyChars( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID(), DIST_INRANGE );
-			for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
-			{
-				CChar *nearbyChar = ( *charCtr );
+			auto charList = findNearbyChars( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID(), DIST_INRANGE );
+			for (auto &nearbyChar:charList){
 
 				// Only proceed if the character is guarding the object
 				if( nearbyChar->GetGuarding() == i )

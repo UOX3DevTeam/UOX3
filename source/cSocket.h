@@ -1,6 +1,14 @@
 #ifndef __CSOCKET_H__
 #define __CSOCKET_H__
+#include "uox3.h"
+
 #include "IP4Address.hpp"
+#include "cScript.h"
+
+class CPInputBuffer;
+class CPUOXBuffer ;
+struct CAccountBlock;
+
 enum ClientTypes
 {
 	CV_DEFAULT = 0,

@@ -8,29 +8,33 @@
 //	messages for target commands, etc handled by a central system
 //
 //
-#include "uox3.h"
-#include "commands.h"
-#include "msgboard.h"
-#include "townregion.h"
-#include "cWeather.hpp"
-#include "cServerDefinitions.h"
-#include "wholist.h"
-#include "cSpawnRegion.h"
-#include "PageVector.h"
-#include "speech.h"
-#include "cHTMLSystem.h"
-#include "gump.h"
-#include "cEffects.h"
-#include "classes.h"
-#include "regions.h"
-#include "CPacketSend.h"
-#include "teffect.h"
-#include "magic.h"
-#include "ObjectFactory.h"
-#include "cRaces.h"
-#include "StringUtility.hpp"
+#include "cmdtable.h"
 
+#include "CPacketSend.h"
+#include "cConsole.h"
+#include "cEffects.h"
+#include "cHTMLSystem.h"
+#include "cRaces.h"
+#include "cServerData.h"
+#include "cServerDefinitions.h"
+#include "cSocket.h"
+#include "cSpawnRegion.h"
+#include "cWeather.hpp"
+#include "classes.h"
+#include "commands.h"
 #include "Dictionary.h"
+#include "funcdecl.h"
+#include "gump.h"
+#include "magic.h"
+#include "msgboard.h"
+#include "ObjectFactory.h"
+#include "PageVector.h"
+#include "regions.h"
+#include "speech.h"
+#include "StringUtility.hpp"
+#include "teffect.h"
+#include "townregion.h"
+#include "wholist.h"
 
 void CollectGarbage( void );
 void endmessage( SI32 x );
@@ -697,16 +701,11 @@ void command_respawn( void )
 {
 	UI32 spawnedItems		= 0;
 	UI32 spawnedNpcs		= 0;
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		CSpawnRegion *spawnReg = spIter->second;
+	for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 		if( spawnReg != nullptr )
 		{
 			spawnReg->doRegionSpawn( spawnedItems, spawnedNpcs );
 		}
-		++spIter;
 	}
 
 	UI32 b		= 0;
@@ -729,14 +728,10 @@ void command_regspawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
-			SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-			SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-			while( spIter != spEnd )
-			{
-				CSpawnRegion *spawnReg = spIter->second;
+			for (auto [spwnnum,spawnReg]:cwmWorldState->spawnRegions){
 				if( spawnReg != nullptr )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
-				++spIter;
+				
 			}
 			if( itemsSpawned || npcsSpawned )
 				s->sysmessage( 9021, itemsSpawned, npcsSpawned, cwmWorldState->spawnRegions.size() ); // Spawned %u items and %u npcs in %u SpawnRegions
