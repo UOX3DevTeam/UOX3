@@ -37,8 +37,8 @@ private:
 	using GENERICLIST_ITERATOR = typename std::list<T>::iterator;
 	using GENERICLIST_CITERATOR = typename std::list<T>::const_iterator ;
 
-	GENERICLIST	objData;
-	GENERICLIST_ITERATOR	objIterator;
+	std::list<T> objData;
+	typename std::list<T>::iterator	objIterator;
 	std::vector<GENERICLIST_ITERATOR>	objIteratorBackup;
 
 	//===================================================================
@@ -207,13 +207,8 @@ template <typename T>
 class RegionSerialList
 {
 private:
-	using REGIONSERIALLIST =  std::unordered_set<T> ;
-	using REGIONSERIALLIST_ITERATOR = typename std::unordered_set<T>::iterator;
-	using REGIONSERIALLIST_CITERATOR =  typename std::unordered_set<T>::const_iterator	;
+	std::unordered_set<T> objSerials;
 
-	REGIONSERIALLIST					objSerials;
-	REGIONSERIALLIST_ITERATOR		objIterator;
-	std::pair<REGIONSERIALLIST_ITERATOR, bool> insertResult;
 
 public:
 	//===================================================================
@@ -223,7 +218,7 @@ public:
 
 	//===================================================================
 	auto Add( T toAdd )->bool {
-		insertResult = objSerials.insert( toAdd );
+		auto insertResult = objSerials.insert( toAdd );
 		return insertResult.second;
 	}
 	//===================================================================
