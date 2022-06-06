@@ -2153,7 +2153,7 @@ void CBaseObject::Cleanup( void )
 			tScript->OnDelete( this );
 	}
 
-	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	auto toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )
 		cwmWorldState->refreshQueue.erase( toFind );
 
@@ -2193,7 +2193,7 @@ void CBaseObject::Dirty( UpdateTypes updateType )
 //o-----------------------------------------------------------------------------------------------o
 void CBaseObject::RemoveFromRefreshQueue()
 {
-	QUEUEMAP_ITERATOR toFind = cwmWorldState->refreshQueue.find( this );
+	auto toFind = cwmWorldState->refreshQueue.find( this );
 	if( toFind != cwmWorldState->refreshQueue.end() )
 		cwmWorldState->refreshQueue.erase( toFind );
 }

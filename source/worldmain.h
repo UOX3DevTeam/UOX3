@@ -217,8 +217,8 @@ public:
 	std::map< UI16, CTownRegion * >	townRegions;
 	GenericList< CTEffect * >			tempEffects;
 
-	QUEUEMAP							refreshQueue;
-	QUEUEMAP							deletionQueue;
+	std::map< CBaseObject *, UI32 >	refreshQueue;
+	std::map< CBaseObject *, UI32 >	deletionQueue;
 
 	void		CheckTimers( void );
 	void		doWorldLight( void );

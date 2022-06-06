@@ -385,24 +385,21 @@ void updateStats( CBaseObject *mObj, UI08 x )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes objects in the Deletion Queue
 //o-----------------------------------------------------------------------------------------------o
-void CollectGarbage( void )
-{
+auto CollectGarbage() ->void {
 	Console << "Performing Garbage Collection...";
 	UI32 objectsDeleted				= 0;
-	QUEUEMAP_CITERATOR delqIter		= cwmWorldState->deletionQueue.begin();
-	QUEUEMAP_CITERATOR delqIterEnd	= cwmWorldState->deletionQueue.end();
-	while( delqIter != delqIterEnd )
-	{
-		CBaseObject *mObj = delqIter->first;
-		++delqIter;
-		if( mObj == nullptr || mObj->isFree() || !mObj->isDeleted() )
-		{
-			Console.warning( "Invalid object found in Deletion Queue" );
-			continue;
+	std::for_each(cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(),[&objectsDeleted](std::pair<CBaseObject*,std::uint32_t> entry){
+		if (entry.first) {
+			if (entry.first->isFree() && entry.first->isDeleted()){
+				Console.warning( "Invalid object found in Deletion Queue" );
+			}
+			else {
+				ObjectFactory::getSingleton().DestroyObject( entry.first );
+				++objectsDeleted;
+			}
 		}
-		ObjectFactory::getSingleton().DestroyObject( mObj );
-		++objectsDeleted;
-	}
+	});
+
 	cwmWorldState->deletionQueue.clear();
 
 	Console << " Removed " << objectsDeleted << " objects";
@@ -1869,24 +1866,19 @@ void CWorldMain::CheckAutoTimers( void )
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / statwindow() queue here
-	QUEUEMAP_CITERATOR rqIter			= cwmWorldState->refreshQueue.begin();
-	QUEUEMAP_CITERATOR rqIterEnd		= cwmWorldState->refreshQueue.end();
-	while( rqIter != rqIterEnd )
-	{
-		CBaseObject *mObj = rqIter->first;
-		if( ValidateObject( mObj ) )
-		{
-			if( mObj->CanBeObjType( OT_CHAR ) )
+	std::for_each(cwmWorldState->refreshQueue.begin(),cwmWorldState->refreshQueue.end(),[](std::pair<CBaseObject*,std::uint32_t> entry){
+		if (ValidateObject(entry.first)){
+			if( entry.first->CanBeObjType( OT_CHAR ) )
 			{
-				CChar *uChar = static_cast<CChar *>(mObj);
-
+				auto uChar = static_cast<CChar *>(entry.first);
+				
 				if( uChar->GetUpdate( UT_HITPOINTS ) )
-					updateStats( mObj, 0 );
+					updateStats( entry.first, 0 );
 				if( uChar->GetUpdate( UT_STAMINA ) )
-					updateStats( mObj, 1 );
+					updateStats( entry.first, 1 );
 				if( uChar->GetUpdate( UT_MANA ) )
-					updateStats( mObj, 2 );
-
+					updateStats( entry.first, 2 );
+				
 				if( uChar->GetUpdate( UT_LOCATION ) )
 					uChar->Teleport();
 				else if( uChar->GetUpdate( UT_HIDE ) )
@@ -1904,14 +1896,14 @@ void CWorldMain::CheckAutoTimers( void )
 					if( uSock != nullptr )
 						uSock->statwindow( uChar );
 				}
-
+				
 				uChar->ClearUpdate();
 			}
 			else
-				mObj->Update();
+				entry.first->Update();
+
 		}
-		++rqIter;
-	}
+	});
 	cwmWorldState->refreshQueue.clear();
 }
 
