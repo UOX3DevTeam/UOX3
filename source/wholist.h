@@ -9,7 +9,7 @@ private:
 	bool		online;
 
 	std::vector< SERIAL >	whoMenuData;
-	STRINGLIST one, two;				// replacement for entries1, entries2
+	std::vector< std::string > one, two;				// replacement for entries1, entries2
 
 	void Update( void );				// force the list to update
 	void ResetUpdateFlag( void );

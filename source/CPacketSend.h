@@ -1280,7 +1280,7 @@ public:
 	void			Object( CItem& obj );
 	void			Serial( SERIAL value );
 	void			NewPage( SI16 pNum = -1 );
-	void			NewPage( SI16 pNum, const STRINGLIST *lines );
+	void			NewPage( SI16 pNum, const std::vector< std::string > *lines );
 	void			AddLine( const std::string& line );
 	void			Finalize( void );
 };
@@ -1288,7 +1288,7 @@ public:
 class CPSendGumpMenu : public CPUOXBuffer
 {
 protected:
-	STRINGLIST		commands, text;
+	std::vector< std::string >		commands, text;
 public:
 	virtual			~CPSendGumpMenu()
 	{

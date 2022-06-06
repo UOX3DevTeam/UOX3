@@ -329,15 +329,12 @@ void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPos
 	// Write number of lines in post as next byte, and
 	// then loop through each line
 	mFile.write( (const char *)&msgBoardPost.Lines, 1 );
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
-	{
-		// Write length of line as next byte, and
-		// then write the line as next X bytes
-		const UI08 lineSize = static_cast<UI08>((*lIter).size());
+	std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(),[&mFile](const std::string &entry){
+		auto lineSize = static_cast<std::uint8_t>(entry.size());
 		mFile.write( (const char *)&lineSize, 1 );
-		mFile.write( (*lIter).c_str(), lineSize );
-	}
+		mFile.write( entry.c_str(), lineSize );
+
+	});
 
 	// Finally, add actual post serial to 4 bytes of buffer, and write buffer to file
 	wBuffer[0] = static_cast<SI08>(msgBoardPost.Serial>>24);
@@ -393,12 +390,10 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 	const UI08 timeSize		= static_cast<UI08>(time.size());
 	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
 	const UI08 subjSize		= static_cast<UI08>(msgBoardPost.SubjectLen);
-	UI16 totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
-	{
-		totalSize += 1 + static_cast<UI16>( ( *lIter ).size() );
-	}
+	auto totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
+	std::for_each(msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(), [&totalSize](const std::string &entry){
+		totalSize += 1 + static_cast<std::uint16_t>(entry.size());
+	});
 
 	msgBoardPost.Size			= totalSize;
 	msgBoardPost.DateLen		= timeSize;
@@ -582,7 +577,7 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 			file.read( buffer, 1 );
 			file.read( tmpLine, buffer[0]);
 
-			// Stuff contents of tmpLine into msgBoardLine STRINGLIST in msgBoardPost struct, then add null terminator
+			// Stuff contents of tmpLine into msgBoardLine std::vector< std::string > in msgBoardPost struct, then add null terminator
 			msgBoardPost.msgBoardLine.push_back( tmpLine );
 			msgBoardPost.msgBoardLine[msgBoardPost.msgBoardLine.size()-1] += '\0';
 		}

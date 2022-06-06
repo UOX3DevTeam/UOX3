@@ -20,6 +20,8 @@
 #if defined(_WIN32)
 #include <ws2tcpip.h>
 #endif
+
+using namespace std::string_literals ;
 // Unknown bytes
 // 5->8
 // 18->27
@@ -6284,7 +6286,8 @@ void CPBookPage::AddLine( const std::string& line )
 	IncLength( static_cast< UI08 >(strLen) );
 	pStream.WriteString( baseOffset, line, line.length() );
 }
-void CPBookPage::NewPage( SI16 pNum, const STRINGLIST *lines )
+// Why do we use pointersfor collections. References are wonder things
+void CPBookPage::NewPage( SI16 pNum, const std::vector< std::string > *lines )
 {
 	++pageCount;	// 1 based counter
 	UI16 baseOffset = bookLength;
@@ -6295,10 +6298,9 @@ void CPBookPage::NewPage( SI16 pNum, const STRINGLIST *lines )
 		pStream.WriteShort( baseOffset, pNum );
 	pStream.WriteByte( static_cast<size_t>(baseOffset + 3), static_cast<UI08>(lines->size()) );	// 8 lines per page
 
-	for( STRINGLIST_CITERATOR lIter = lines->begin(); lIter != lines->end(); ++lIter )
-	{
-		AddLine( (*lIter) );
-	}
+	std::for_each(lines->begin(),lines->end(),[this](const std::string &entry){
+		AddLine( entry );
+	});
 }
 void CPBookPage::Finalize( void )
 {
@@ -6396,23 +6398,21 @@ void CPSendGumpMenu::Finalize( void )
 	UI16 lineLen	= 0;
 
 	std::string cmdString;
-
-	for( STRINGLIST_CITERATOR cIter = commands.begin(); cIter != commands.end(); ++cIter )
-	{
-		lineLen = static_cast<UI16>((*cIter).length());
-		if( lineLen == 0 )
-			break;
-		increment = static_cast<UI16>(lineLen + 4);
-		if( (length + increment) >= 0xFFFF )
-		{
-			Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
-			break;
+	for (auto &entry : commands){
+		if (!entry.empty()) {
+			lineLen = static_cast<UI16>(entry.length());
+			increment = static_cast<UI16>(lineLen + 4);
+			if( (length + increment) >= 0xFFFF )
+			{
+				Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+				break;
+			}
+			
+			pStream.ReserveSize( static_cast<size_t>(length) + static_cast<size_t>(increment) );
+			cmdString = "{ "s + entry + " }"s;
+			pStream.WriteString( length, cmdString, increment );
+			length	+= increment;
 		}
-
-		pStream.ReserveSize( static_cast<size_t>(length) + static_cast<size_t>(increment) );
-		cmdString = "{ " + (*cIter) + " }";
-		pStream.WriteString( length, cmdString, increment );
-		length	+= increment;
 	}
 
 	if( length > 65536 )
@@ -6425,27 +6425,25 @@ void CPSendGumpMenu::Finalize( void )
 	UI32 tlines = 0;
 
 	pStream.ReserveSize( length );	// match the 3 byte increase
-
-	for( STRINGLIST_CITERATOR tIter = text.begin(); tIter != text.end(); ++tIter )
-	{
-		lineLen = static_cast<UI16>((*tIter).length());
-		if( lineLen == 0 )
-			break;
-		// Unfortunately, unicode strings are... different
-		// so we can't use PackString
-		increment	= lineLen * 2 + 2;
-		if( (length + increment) >= 0xFFFF )
-		{
-			Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
-			break;
+	for (auto &entry : text){
+		if (!entry.empty()){
+			lineLen = static_cast<UI16>(entry.length());
+			// Unfortunately, unicode strings are... different
+			// so we can't use PackString
+			increment	= lineLen * 2 + 2;
+			if( (length + increment) >= 0xFFFF )
+			{
+				Console.warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+				break;
+			}
+			
+			pStream.ReserveSize( static_cast<size_t>(length) + static_cast<size_t>(increment) );
+			pStream.WriteShort( length, lineLen );
+			for( UI16 i = 0; i < lineLen; ++i )
+				pStream.WriteByte( static_cast<size_t>(length) + 3 + static_cast<size_t>(i)*2, entry[i] );
+			length += increment;
+			++tlines;
 		}
-
-		pStream.ReserveSize( static_cast<size_t>(length) + static_cast<size_t>(increment) );
-		pStream.WriteShort( length, lineLen );
-		for( UI16 i = 0; i < lineLen; ++i )
-			pStream.WriteByte( static_cast<size_t>(length) + 3 + static_cast<size_t>(i)*2, (*tIter)[i] );
-		length += increment;
-		++tlines;
 	}
 
 	if( length > 65536 )

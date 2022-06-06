@@ -365,15 +365,20 @@ void CSpawnRegion::SetCall( UI16 newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	STRINGLIST GetNPC( void ) const
-//|					void SetNPC( STRINGLIST newVal )
+//|	Function	-	auto GetNPC( void ) const ->std::vector< std::string >
+//|					void SetNPC( std::vector< std::string > &newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets stringlist of individual NPCs to spawn in a spawnregion
 //o-----------------------------------------------------------------------------------------------o
-STRINGLIST CSpawnRegion::GetNPC( void ) const
-{
+// WHy isn't this returning a const reference?
+auto CSpawnRegion::GetNPC( void ) const ->std::vector< std::string >{
+
 	return sNpcs;
 }
+// Believe this was a bug, it was taking a string?
+// if it is, then it gets cleared each time an entry is set,
+// So it can only have one entry, if you sue SetNPC
+// DANGER DANGER WILL ROBINSON 
 void CSpawnRegion::SetNPC( const std::string &newVal )
 {
 	// Clear old entries to make room for new ones
@@ -408,13 +413,25 @@ void CSpawnRegion::SetNPCList( std::string newVal )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	STRINGLIST GetItem( void ) const
-//|					void SetItem( STRINGLIST newVal )
+//|	Function	-	auto GetItem() const ->std::vector< std::string >
+//|					auto SetItem( std::vector< std::string > newVal ) ->void
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets stringlist of individual Items to spawn in a spawnregion
 //o-----------------------------------------------------------------------------------------------o
-STRINGLIST CSpawnRegion::GetItem( void ) const
-{
+// THIS SHOULD BE A reference return! If you need to handle  const/non const, include both types
+// Just changing all this wojuld prevent copys being made each time it is called!
+// Need to change the header as well of course
+// example
+/*
+ auto CSpawnRegion::GetItem() const -> const std::vector<std::string> & {
+ 	return sItems ;
+ }
+ auto CSpawnRegion::GetItem() -> std::vector<std::string> & {
+ 	return sItems ;
+ }
+ */
+auto CSpawnRegion::GetItem() const ->std::vector< std::string > {
+
 	return sItems;
 }
 void CSpawnRegion::SetItem( const std::string &newVal )
