@@ -113,12 +113,10 @@ void ClilocMessage( CSocket *mSock, CBaseObject *srcObj, SpeechType speechType, 
 		else if( speechType == EMOTE || speechType == ASCIIEMOTE )
 			searchDistance = DIST_INRANGE;
 
-		SOCKLIST nearbyChars = FindNearbyPlayers( srcObj, searchDistance );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( sendSock && (*cIter) == mSock )
+		for (auto &tmSock :FindNearbyPlayers( srcObj, searchDistance ) ){
+			if( sendSock && (tmSock == mSock ))
 				sendSock = false;
-			(*cIter)->Send( &toSend );
+			tmSock->Send( &toSend );
 		}
 	}
 
@@ -382,7 +380,7 @@ bool CPITalkRequest::Handle( void )
 			}
 			tSock->Send( txtToSend );
 
-			SOCKLIST nearbyChars;
+			std::vector< CSocket * > nearbyChars;
 			// Distance at which other players can hear the speech depends on speech-type
 			if(( Type() == WHISPER || Type() == ASCIIWHISPER ) && !mChar->IsGM() && !mChar->IsCounselor() )
 				nearbyChars = FindNearbyPlayers( mChar, 1 );
@@ -392,10 +390,7 @@ bool CPITalkRequest::Handle( void )
 				nearbyChars = FindNearbyPlayers( mChar, ( DIST_SAMESCREEN * 1.5 ));
 			else
 				nearbyChars = FindNearbyPlayers( mChar );
-
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				CSocket *tSock	= (*cIter);
+			for (auto &tSock : nearbyChars ){
 				CChar *tChar	= tSock->CurrcharObj();
 				if( mChar != tChar )
 				{
@@ -515,10 +510,8 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 				break;
 			if( ValidateObject( thisItem ) && thisItem->GetCont() != nullptr )	// not on ground, can't guarantee speech
 				break;
-			SOCKLIST nearbyChars = FindPlayersInVisrange( thisObj );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				mSock = (*cIter);
+
+			for (auto &mSock : FindPlayersInVisrange( thisObj )){
 				CChar *mChar = mSock->CurrcharObj();
 				if( ValidateObject( mChar ) )
 				{

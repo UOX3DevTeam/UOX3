@@ -370,21 +370,19 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			petGuardAttack( ourChar, i, i );
 
 		// Send attacker message to all nearby players
-		SOCKLIST nearbyChars = FindNearbyPlayers( ourChar );
-		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( (*cIter) != nullptr )
+		for (auto &tSock : FindNearbyPlayers( ourChar )){
+			if( tSock )
 			{
 				// Valid socket found
-				CChar *witness = (*cIter)->CurrcharObj();
+				CChar *witness = tSock->CurrcharObj();
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = getNpcDictName( ourChar, (*cIter) );
-					std::string targetName = getNpcDictName( i, (*cIter) );
+					std::string attackerName = getNpcDictName( ourChar, tSock );
+					std::string targetName = getNpcDictName( i, tSock );
 
 					// Send a TextMessage visible only to the witness
-					ourChar->TextMessage( (*cIter), 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
 				}
 			}
 		}
@@ -462,21 +460,19 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	if( cAttack->DidAttackFirst() )
 	{
 		// Send attacker message to all nearby players
-		SOCKLIST nearbyChars = FindNearbyPlayers( cAttack );
-		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( (*cIter) != nullptr )
+		for (auto &tSock : FindNearbyPlayers( cAttack )) {
+			if( tSock )
 			{
 				// Valid socket found
-				CChar *witness = (*cIter)->CurrcharObj();
+				CChar *witness = tSock->CurrcharObj();
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = getNpcDictName( cAttack, (*cIter) );
-					std::string targetName = getNpcDictName( cTarget, (*cIter) );
+					std::string attackerName = getNpcDictName( cAttack, tSock );
+					std::string targetName = getNpcDictName( cTarget, tSock );
 
 					// Send a TextMessage visible only to the witness
-					cAttack->TextMessage( (*cIter), 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
 				}
 			}
 		}
@@ -2038,11 +2034,10 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	if( checkDist )
 	{
 		CPFightOccurring tSend( mChar, (*ourTarg) );
-		SOCKLIST nearbyChars = FindNearbyPlayers( &mChar );
-		for( SOCKLIST_ITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( (*cIter) != nullptr )
-				(*cIter)->Send( &tSend );
+		for (auto &tSock : FindNearbyPlayers( &mChar ) ) {
+			if (tSock) {
+				tSock->Send(&tSend);
+			}
 		}
 
 		if( mChar.IsNpc() )

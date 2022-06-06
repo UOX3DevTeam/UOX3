@@ -122,10 +122,6 @@ constexpr auto LAVA_WATER		= std::uint8_t(32);	// Don't know what all to use thi
 //==============================================================================
 
 
-typedef std::vector< CSocket * >						SOCKLIST;
-typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
-typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
-//
 
 typedef void (TargetFunc)( CSocket *s );
 

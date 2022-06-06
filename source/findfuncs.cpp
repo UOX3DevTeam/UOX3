@@ -5,13 +5,13 @@
 #include "classes.h"
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
+//|	Function	-	auto FindPlayersInOldVisrange( CBaseObject *myObj )->std::vector< CSocket * >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who previously were in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
-{
-	SOCKLIST nearbyChars;
+auto FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >{
+
+	std::vector< CSocket * > nearbyChars;
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -41,13 +41,13 @@ SOCKLIST FindPlayersInOldVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
+//|	Function	-	auto FindPlayersInVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players in visual range of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
-{
-	SOCKLIST nearbyChars;
+auto FindPlayersInVisrange( CBaseObject *myObj )->std::vector< CSocket * >{
+
+	std::vector< CSocket * > nearbyChars;
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -67,13 +67,13 @@ SOCKLIST FindPlayersInVisrange( CBaseObject *myObj )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
+//|	Function	-	auto FindNearbyPlayers( CBaseObject *myObj, UI16 distance )->std::vector< CSocket * >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find players who within a certain distance of an object
 //o-----------------------------------------------------------------------------------------------o
-SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+auto FindNearbyPlayers( CBaseObject *myObj, UI16 distance ) ->std::vector< CSocket * >{
+
+	std::vector< CSocket * > nearbyChars;
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
@@ -88,8 +88,8 @@ SOCKLIST FindNearbyPlayers( CBaseObject *myObj, UI16 distance )
 	Network->popConn();
 	return nearbyChars;
 }
-SOCKLIST FindNearbyPlayers( CChar *mChar )
-{
+auto FindNearbyPlayers( CChar *mChar ) ->std::vector< CSocket * >{
+
 	UI16 visRange = MAX_VISRANGE;
 	if( mChar->GetSocket() != nullptr )
 		visRange = static_cast<UI16>(mChar->GetSocket()->Range() + Races->VisRange( mChar->GetRace() ));
@@ -98,15 +98,14 @@ SOCKLIST FindNearbyPlayers( CChar *mChar )
 	return FindNearbyPlayers( mChar, visRange );
 }
 
-SOCKLIST FindNearbyPlayers( CBaseObject *mObj )
-{
+auto FindNearbyPlayers( CBaseObject *mObj ) ->std::vector< CSocket * >{
+
 	UI16 visRange = static_cast<UI16>(MAX_VISRANGE + Races->VisRange( mObj->GetRace() ));
 	return FindNearbyPlayers( mObj, visRange );
 }
 
-SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
-{
-	SOCKLIST nearbyChars;
+auto FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )->std::vector< CSocket * > {
+	std::vector< CSocket * > nearbyChars;
 	//std::scoped_lock lock(Network->internallock);
 	Network->pushConn();
 	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )

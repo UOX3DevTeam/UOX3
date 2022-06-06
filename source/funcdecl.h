@@ -44,12 +44,12 @@ UI16	getDist( point3 a, point3 b );
 UI16	getOldDist( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( CBaseObject *a, CBaseObject *b );
 UI16	getDist3D( point3 a, point3 b );
-SOCKLIST	FindPlayersInVisrange( CBaseObject *myObj );
-SOCKLIST	FindPlayersInOldVisrange( CBaseObject *myObj );
-SOCKLIST	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance );
-SOCKLIST	FindNearbyPlayers( CBaseObject *myObj, UI16 distance );
-SOCKLIST	FindNearbyPlayers( CBaseObject *myObj );
-SOCKLIST	FindNearbyPlayers( CChar *mChar );
+auto	FindPlayersInVisrange( CBaseObject *myObj ) -> std::vector< CSocket * >;
+auto	FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >;
+auto	FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance ) ->std::vector< CSocket * >;
+auto	FindNearbyPlayers( CBaseObject *myObj, UI16 distance ) -> std::vector< CSocket * >;
+auto	FindNearbyPlayers( CBaseObject *myObj )->std::vector< CSocket * >;
+auto	FindNearbyPlayers( CChar *mChar )->std::vector< CSocket * >;
 //o-----------------------------------------------------------------------------------------------o
 // Multi functions
 //o-----------------------------------------------------------------------------------------------o

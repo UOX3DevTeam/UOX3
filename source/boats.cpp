@@ -574,11 +574,9 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 		return;
 
 	CPPauseResume prSend( 0 );
-	SOCKLIST nearbyChars = FindNearbyPlayers( boat, DIST_BUILDRANGE );
-	SOCKLIST_CITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		( *cIter )->Send( &prSend );
+	auto nearbyChars = FindNearbyPlayers( boat, DIST_BUILDRANGE );
+	for (auto &tSock:nearbyChars){
+		tSock->Send( &prSend );
 	}
 
 	SI16 tx = 0, ty = 0;
@@ -621,10 +619,9 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	if( BlockBoat( boat, tx, ty, dir, boat->GetDir(), false ) )
 	{
 		boat->SetMoveType( 0 );
-		for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
-		{
-			(*cIter)->Send( &prSend );
-			tiller->TextMessage( (*cIter), 9 );
+		for (auto &tSock:nearbyChars){
+			tSock->Send( &prSend );
+			tiller->TextMessage( tSock, 9 );
 		}
 		return;
 	}
@@ -682,9 +679,8 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 			bChar->Update();
 		}
 	}
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
-	{
-		(*cIter)->Send( &prSend );
+	for( auto &tSock: nearbyChars) {
+		tSock->Send( &prSend );
 	}
 }
 
@@ -721,11 +717,9 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 	UI08 olddir = b->GetDir();
 
 	CPPauseResume prSend( 0 );
-	SOCKLIST nearbyChars = FindNearbyPlayers( b, DIST_BUILDRANGE );
-	SOCKLIST_CITERATOR cIter;
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
-	{
-		(*cIter)->Send( &prSend );
+	auto nearbyChars =FindNearbyPlayers( b, DIST_BUILDRANGE );
+	for (auto &tSock :nearbyChars ){
+		tSock->Send( &prSend );
 	}
 
 	CItem *tiller = calcItemObjFromSer( b->GetTiller() );
@@ -762,10 +756,9 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		if( BlockBoat( b, 0, 0, b->GetDir(), olddir, true ) )
 		{
 			b->SetDir( olddir );
-			for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
-			{
-				(*cIter)->Send( &prSend );
-				tiller->TextMessage( (*cIter), 1410, 0, 0x0481 );
+			for (auto &tSock :nearbyChars ){
+				tSock->Send( &prSend );
+				tiller->TextMessage( tSock, 1410, 0, 0x0481 );
 			}
 			return;
 		}
@@ -834,8 +827,9 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		default: Console.error( oldstrutil::format("TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 ) ));
 	}
 
-	for( cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter  )
-		(*cIter)->Send( &prSend );
+	for (auto &tSock :nearbyChars ){
+		tSock->Send( &prSend );
+	}
 }
 
 void TurnBoat( CSocket *mSock, CBoatObj *myBoat, CItem *tiller, UI08 dir, bool rightTurn )

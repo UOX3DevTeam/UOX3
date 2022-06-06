@@ -182,10 +182,7 @@ void HandleFighterAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void HandleHealerAI( CChar& mChar )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *mSock	= (*cIter);
+	for (auto &mSock : FindNearbyPlayers( &mChar, DIST_NEARBY )){
 		CChar *realChar = mSock->CurrcharObj();
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
@@ -224,10 +221,7 @@ void HandleHealerAI( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void HandleEvilHealerAI( CChar& mChar )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( &mChar, DIST_NEARBY );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CSocket *mSock	= (*cIter);
+	for (auto &mSock : FindNearbyPlayers( &mChar, DIST_NEARBY )){
 		CChar *realChar	= mSock->CurrcharObj();
 		CMultiObj *multiObj = realChar->GetMultiObj();
 		if( realChar->IsDead() && ( !ValidateObject( multiObj ) || multiObj->GetOwner() == realChar->GetSerial() ))
