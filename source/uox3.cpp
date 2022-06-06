@@ -198,14 +198,11 @@ void UnloadSpawnRegions( void )
 //o-----------------------------------------------------------------------------------------------o
 void UnloadRegions( void )
 {
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		if( tIter->second != nullptr )
-			delete tIter->second;
-		++tIter;
-	}
+	std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [](const std::pair<std::uint16_t,CTownRegion *> &entry){
+		if (entry.second) {
+			delete entry.second ;
+		}
+	});
 	cwmWorldState->townRegions.clear();
 }
 
@@ -1577,15 +1574,11 @@ void CWorldMain::CheckAutoTimers( void )
 	//Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
-		TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-		TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-		while( tIter != tEnd )
-		{
-			CTownRegion *myReg = tIter->second;
-			if( myReg != nullptr )
-				myReg->PeriodicCheck();
-			++tIter;
-		}
+		std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[]( std::pair<const std::uint16_t,CTownRegion*> &town) {
+			if (town.second != nullptr){
+				town.second->PeriodicCheck();
+			}
+		});
 		nextCheckTownRegions = BuildTimeValue( 10 );	// do checks every 10 seconds or so, rather than every single time
 		JailSys->PeriodicCheck();
 	}
@@ -2004,7 +1997,7 @@ void ParseArgs( SI32 argc, char *argv[] )
 	}
 }
 
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )->std::vector< CBaseObject* >	;
 bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
@@ -2018,10 +2011,7 @@ bool FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData )
 		if( a->CanBeObjType( OT_MULTI ))
 		{
 			CMultiObj *aMulti = static_cast<CMultiObj *>(a);
-			BASEOBJECTLIST objectList = findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 );
-			for( BASEOBJECTLIST_CITERATOR objectCtr = objectList.begin(); objectCtr != objectList.end(); ++objectCtr )
-			{
-				CBaseObject *objToCheck = (*objectCtr);
+			for (auto &objToCheck : findNearbyObjects( aMulti->GetX(), aMulti->GetY(), aMulti->WorldNumber(), aMulti->GetInstanceID(), 20 )){
 
 				if( inMulti( objToCheck->GetX(), objToCheck->GetY(), objToCheck->GetZ(), aMulti ))
 					objToCheck->SetMulti( aMulti );

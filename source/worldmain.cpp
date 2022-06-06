@@ -585,15 +585,11 @@ void CWorldMain::RegionSave( void )
 		Console.error( oldstrutil::format("Failed to open %s for writing", regionsFile.c_str()) );
 		return;
 	}
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
-		if( myReg != nullptr )
-			myReg->Save( regionsDestination );
-		++tIter;
-	}
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination](const std::pair<std::uint16_t,CTownRegion*> &town){
+		if (town.second) {
+			town.second->Save(regionsDestination);
+		}
+	});
 	regionsDestination.close();
 }
 

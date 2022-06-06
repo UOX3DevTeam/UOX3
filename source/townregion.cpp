@@ -1799,27 +1799,17 @@ void CTownRegion::ForceEarlyElection( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends list of townregion's enemy townregions to client
 //o-----------------------------------------------------------------------------------------------o
-void CTownRegion::SendEnemyTowns( CSocket *sock )
-{
-	GumpDisplay Enemy( sock, 300, 300 );
+auto  CTownRegion::SendEnemyTowns( CSocket *sock ) ->void {
+	auto	Enemy = GumpDisplay( sock, 300, 300 );
 
 	UI08 enemyCount = 0;
-	TOWNMAP_CITERATOR tIter	= cwmWorldState->townRegions.begin();
-	TOWNMAP_CITERATOR tEnd	= cwmWorldState->townRegions.end();
-	TOWNMAP_CITERATOR ourTown = cwmWorldState->townRegions.find( regionNum );
-	while( tIter != tEnd )
-	{
-		CTownRegion *myReg = tIter->second;
-		if( myReg != nullptr )
-		{
-			if( tIter != ourTown && Races->CompareByRace( race, myReg->GetRace() ) <= RACE_ENEMY )	// if we're racial enemies, and not the same as ourselves
-			{
-				++enemyCount;
-				Enemy.AddData( myReg->GetName(), Races->Name( myReg->GetRace() ) );
-			}
+	std::for_each(cwmWorldState->townRegions.begin(),cwmWorldState->townRegions.end(),[this,&enemyCount, &Enemy](const std::pair<std::uint16_t,CTownRegion*> &entry){
+		if ( (entry.first != regionNum) && (Races->CompareByRace(race, entry.second->GetRace()) <= RACE_ENEMY)) {
+			++enemyCount;
+			Enemy.AddData( entry.second->GetName(), Races->Name( entry.second->GetRace() ));
+					
 		}
-		++tIter;
-	}
+	});
 
 	Enemy.SetTitle( oldstrutil::format("Enemy Towns (%u)", enemyCount ) );
 	Enemy.Send( 4, false, INVALIDSERIAL );

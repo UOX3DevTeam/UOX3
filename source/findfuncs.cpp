@@ -557,13 +557,12 @@ auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 di
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	BASOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )
+//|	Function	-	auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance  )->std::vector< CBaseObject* >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of BaseObjects that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-BASEOBJECTLIST findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	BASEOBJECTLIST ourObjects;
+auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CBaseObject* >{
+	std::vector< CBaseObject* >	 ourObjects;
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if(CellResponse){
 			
