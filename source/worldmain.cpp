@@ -501,15 +501,11 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static UI32 save_counter = 0;
 
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		CSpawnRegion *spawnReg = spIter->second;
-		if( spawnReg != nullptr )
-			spawnReg->checkSpawned();
-		++spIter;
-	}
+	std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [](std::pair<std::uint16_t,CSpawnRegion*> entry){
+		if (entry.second){
+			entry.second->checkSpawned();
+		}
+	});
 
 	if( GetWorldSaveProgress() != SS_SAVING )
 	{

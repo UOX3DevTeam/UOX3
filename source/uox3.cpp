@@ -152,14 +152,11 @@ void app_stopped(int sig)
 //o-----------------------------------------------------------------------------------------------o
 void UnloadSpawnRegions( void )
 {
-	SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-	SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-	while( spIter != spEnd )
-	{
-		if( spIter->second != nullptr )
+	for (auto &[regionnum,spawnregion]:cwmWorldState->spawnRegions) {
+		if( spawnregion != nullptr )
 		{
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
-			auto spawnedCharsList = spIter->second->GetSpawnedCharsList();
+			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
 			for( auto cCheck = spawnedCharsList->First(); !spawnedCharsList->Finished(); cCheck = spawnedCharsList->Next() )
 			{
 				if( !ValidateObject( cCheck ) )
@@ -172,7 +169,7 @@ void UnloadSpawnRegions( void )
 			}
 
 			// Iterate over list of spawned items and delete them if no player has picked them up
-			auto spawnedItemsList = spIter->second->GetSpawnedItemsList();
+			auto spawnedItemsList = spawnregion->GetSpawnedItemsList();
 			for( auto iCheck = spawnedItemsList->First(); !spawnedItemsList->Finished(); iCheck = spawnedItemsList->Next() )
 			{
 				if( !ValidateObject( iCheck ) )
@@ -184,9 +181,8 @@ void UnloadSpawnRegions( void )
 				}
 			}
 
-			delete spIter->second;
+			delete spawnregion;
 		}
-		++spIter;
 	}
 	cwmWorldState->spawnRegions.clear();
 }
@@ -1592,23 +1588,17 @@ void CWorldMain::CheckAutoTimers( void )
 		UI32 maxItemsSpawned	= 0;
 		UI32 maxNpcsSpawned		= 0;
 
-		SPAWNMAP_CITERATOR spIter	= cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd	= cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
-			if( spawnReg != nullptr )
-			{
+		for (auto &[regnum,spawnReg]:cwmWorldState->spawnRegions ){
+			if( spawnReg ){
 				if( spawnReg->GetNextTime() <= GetUICurrentTime() )
 					spawnReg->doRegionSpawn( itemsSpawned, npcsSpawned );
-
+				
 				// Grab some info from the spawn region anyway, even if it's not time to spawn
 				totalItemsSpawned += static_cast<UI32>(spawnReg->GetCurrentItemAmt());
 				totalNpcsSpawned += static_cast<UI32>(spawnReg->GetCurrentCharAmt());
 				maxItemsSpawned += static_cast<UI32>(spawnReg->GetMaxItemSpawn());
 				maxNpcsSpawned += static_cast<UI32>(spawnReg->GetMaxCharSpawn());
 			}
-			++spIter;
 		}
 
 		// Adaptive spawn region check timer. The closer spawn regions as a whole are to being at their defined max capacity,
