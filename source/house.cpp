@@ -418,7 +418,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 }
 
 auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CChar* >;
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) -> std::vector< CItem* >;
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void BuildHouse( CSocket *mSock, UI08 houseEntry )
@@ -772,10 +772,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		}
 
 		// Move items out of the way
-		ITEMLIST itemList = findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( ITEMLIST_CITERATOR itemCtr = itemList.begin(); itemCtr != itemList.end(); ++itemCtr )
-		{
-			CItem *ourItem = (*itemCtr);
+		for (auto &ourItem :findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ))){
 			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT )
 			{
 				if( ( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&

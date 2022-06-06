@@ -547,18 +547,18 @@ UI16 CMultiObj::GetMaxOwners( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item toLock
 //o-----------------------------------------------------------------------------------------------o
-void CMultiObj::LockDownItem( CItem *toLock )
-{
+auto CMultiObj::LockDownItem( CItem *toLock ) ->void {
 	if( lockedList.size() < maxLockdowns )
 	{
-		for( ITEMLIST_CITERATOR lIter = lockedList.begin(); lIter != lockedList.end(); ++lIter )
-		{
-			if( (*lIter) == toLock )
-				return;
+		auto iter = std::find_if(lockedList.begin(),lockedList.end(),[toLock](CItem *entry){
+			return entry == toLock;
+		});
+		if (iter == lockedList.end()){
+			toLock->LockDown();
+			toLock->Dirty( UT_UPDATE );
+			lockedList.push_back( toLock );
+
 		}
-		toLock->LockDown();
-		toLock->Dirty( UT_UPDATE );
-		lockedList.push_back( toLock );
 	}
 }
 
@@ -568,19 +568,18 @@ void CMultiObj::LockDownItem( CItem *toLock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unlocks a locked down item
 //o-----------------------------------------------------------------------------------------------o
-void CMultiObj::ReleaseItem( CItem *toRemove )
-{
-	for( ITEMLIST_ITERATOR rIter = lockedList.begin(); rIter != lockedList.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			toRemove->Dirty( UT_UPDATE );
-			lockedList.erase( rIter );
-			toRemove->SetMovable( 0 );
-			toRemove->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ));
-			return;
-		}
+auto CMultiObj::ReleaseItem( CItem *toRemove ) ->void {
+	auto iter = std::find_if(lockedList.begin(),lockedList.end(),[toRemove](const CItem *entry){
+		return toRemove == entry ;
+	});
+	if (iter != lockedList.end()){
+		toRemove->Dirty( UT_UPDATE );
+		lockedList.erase( iter );
+		toRemove->SetMovable( 0 );
+		toRemove->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ));
+
 	}
+
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -592,12 +591,13 @@ void CMultiObj::AddTrashContainer( CItem *toAdd )
 {
 	if( trashContainerList.size() < maxTrashContainers )
 	{
-		for( ITEMLIST_CITERATOR lIter = trashContainerList.begin(); lIter != trashContainerList.end(); ++lIter )
-		{
-			if( (*lIter) == toAdd )
-				return;
+		auto iter = std::find_if(trashContainerList.begin(),trashContainerList.end(),[toAdd](CItem *entry){
+			return entry == toAdd;
+		});
+		if (iter == trashContainerList.end()){
+			trashContainerList.push_back( toAdd );
+
 		}
-		trashContainerList.push_back( toAdd );
 	}
 }
 
@@ -606,15 +606,12 @@ void CMultiObj::AddTrashContainer( CItem *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unlocks a locked down item
 //o-----------------------------------------------------------------------------------------------o
-void CMultiObj::RemoveTrashContainer( CItem *toRemove )
-{
-	for( ITEMLIST_ITERATOR rIter = trashContainerList.begin(); rIter != trashContainerList.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			trashContainerList.erase( rIter );
-			return;
-		}
+auto CMultiObj::RemoveTrashContainer( CItem *toRemove )->void {
+	auto iter = std::find_if(trashContainerList.begin(),trashContainerList.end(),[toRemove](CItem *entry){
+		return toRemove == entry ;
+	});
+	if (iter != trashContainerList.end()){
+		trashContainerList.erase(iter);
 	}
 }
 
@@ -743,16 +740,15 @@ UI16 CMultiObj::GetMaxSecureContainers( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if item is a secure container
 //o-----------------------------------------------------------------------------------------------o
-bool CMultiObj::IsSecureContainer( CItem *toCheck )
-{
-	for( ITEMLIST_ITERATOR rIter = secureContainerList.begin(); rIter != secureContainerList.end(); ++rIter )
-	{
-		if( (*rIter) == toCheck )
-		{
-			return true;
-		}
+auto CMultiObj::IsSecureContainer( CItem *toCheck ) ->bool {
+	auto rvalue = false ;
+	auto iter = std::find_if(secureContainerList.begin(),secureContainerList.end(),[toCheck](CItem *entry){
+		return toCheck == entry ;
+	});
+	if (iter != secureContainerList.end()){
+		rvalue = true ;
 	}
-	return false;
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -764,18 +760,18 @@ void CMultiObj::SecureContainer( CItem *toSecure )
 {
 	if( secureContainerList.size() < maxSecureContainers )
 	{
-		for( ITEMLIST_CITERATOR lIter = secureContainerList.begin(); lIter != secureContainerList.end(); ++lIter )
-		{
-			if( (*lIter) == toSecure )
-				return;
-		}
+		auto iter = std::find_if(secureContainerList.begin(),secureContainerList.end(),[toSecure](CItem *entry){
+			return entry == toSecure;
+		});
+		if (iter == secureContainerList.end()){
+			secureContainerList.push_back( toSecure );
+			if( toSecure->GetType() != 87 ) // Don't lock down trash containers
+			{
+				toSecure->LockDown();
+			}
+			toSecure->Dirty( UT_UPDATE );
 
-		if( toSecure->GetType() != 87 ) // Don't lock down trash containers
-		{
-			toSecure->LockDown();
 		}
-		toSecure->Dirty( UT_UPDATE );
-		secureContainerList.push_back( toSecure );
 	}
 }
 
@@ -784,21 +780,19 @@ void CMultiObj::SecureContainer( CItem *toSecure )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unsecures a secured container
 //o-----------------------------------------------------------------------------------------------o
-void CMultiObj::UnsecureContainer( CItem *toUnsecure )
-{
-	for( ITEMLIST_ITERATOR rIter = secureContainerList.begin(); rIter != secureContainerList.end(); ++rIter )
-	{
-		if( (*rIter) == toUnsecure )
+auto CMultiObj::UnsecureContainer( CItem *toUnsecure ) ->void {
+	auto iter = std::find_if(secureContainerList.begin(),secureContainerList.end(),[toUnsecure](CItem *entry){
+		return toUnsecure == entry ;
+	});
+	if (iter != secureContainerList.end()){
+		toUnsecure->Dirty( UT_UPDATE );
+		secureContainerList.erase( iter );
+		if( toUnsecure->GetType() != 87 ) // Trash container
 		{
-			toUnsecure->Dirty( UT_UPDATE );
-			secureContainerList.erase( rIter );
-			if( toUnsecure->GetType() != 87 ) // Trash container
-			{
-				toUnsecure->SetMovable( 1 );
-				toUnsecure->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ));
-			}
-			return;
+			toUnsecure->SetMovable( 1 );
+			toUnsecure->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ));
 		}
+
 	}
 }
 
@@ -970,20 +964,18 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	outStream << "MaxBans=" << maxBans << '\n';
 	outStream << "MaxFriends=" << maxFriends << '\n';
 	outStream << "MaxGuests=" << maxGuests << '\n';
+	
+	std::for_each(lockedList.begin(), lockedList.end(), [this,&outStream](CItem *entry){
+		if( ValidateObject( entry) )
+			outStream << "LockedItem=" << entry->GetSerial() << '\n';
 
-	ITEMLIST_CITERATOR lIter;
-	for( lIter = lockedList.begin(); lIter != lockedList.end(); ++lIter )
-	{
-		if( ValidateObject( (*lIter) ) )
-			outStream << "LockedItem=" << (*lIter)->GetSerial() << '\n';
-	}
+	});
 
-	ITEMLIST_CITERATOR lIterSecure;
-	for( lIterSecure = secureContainerList.begin(); lIterSecure != secureContainerList.end(); ++lIterSecure )
-	{
-		if( ValidateObject( (*lIterSecure) ) )
-			outStream << "SecureContainer=" << (*lIterSecure)->GetSerial() << '\n';
-	}
+	std::for_each(secureContainerList.begin(),secureContainerList.end(),[this,&outStream](CItem *entry){
+		if( ValidateObject( entry ) )
+			outStream << "SecureContainer=" << entry->GetSerial() << '\n';
+
+	});
 
 	outStream << "MaxLockdowns=" << maxLockdowns << '\n';
 	outStream << "MaxSecureContainers=" << maxSecureContainers << '\n';

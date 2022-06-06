@@ -236,7 +236,7 @@ protected:
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
 	GenericList< CChar * >	petsControlled;
-	ITEMLIST				ownedItems;
+	std::vector< CItem* >	ownedItems;
 	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
 	std::bitset< UT_COUNT >	updateTypes;
 
@@ -287,7 +287,7 @@ public:
 
 	GenericList< CChar * > *	GetPetList( void );
 	GenericList< CChar * > *	GetPetOwnerList( void );
-	ITEMLIST *	GetOwnedItems( void );
+	auto		GetOwnedItems() ->std::vector< CItem* >*;
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );

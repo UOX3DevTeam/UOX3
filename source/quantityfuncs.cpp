@@ -178,11 +178,8 @@ UI32 GetBankCount( CChar *p, UI16 itemID, UI16 colour, UI32 moreVal )
 	if( !ValidateObject( p ) )
 		return 0;
 	UI32 goldCount = 0;
-	ITEMLIST *ownedItems = p->GetOwnedItems();
-	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
-	{
-		CItem *oItem = (*I);
-		if( ValidateObject( oItem ) || I == ownedItems->end() )
+	for (auto &oItem : *p->GetOwnedItems()){
+		if( ValidateObject( oItem )  )
 		{
 			if( oItem->GetType() == IT_CONTAINER && oItem->GetTempVar( CITV_MOREX ) == 1 )
 				goldCount += GetSubItemAmount( oItem, itemID, colour, moreVal, false );
@@ -202,11 +199,8 @@ UI32 DeleteBankItem( CChar *p, UI32 amt, UI16 itemID, UI16 colour, UI32 moreVal 
 {
 	if( !ValidateObject( p ) )
 		return amt;
-	ITEMLIST *ownedItems = p->GetOwnedItems();
-	for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end() && amt > 0; ++I )
-	{
-		CItem *oItem = (*I);
-		if( ValidateObject( oItem ) || I == ownedItems->end() )
+	for (auto &oItem : *p->GetOwnedItems()){
+		if( ValidateObject( oItem ) )
 		{
 			if( oItem->GetType() == IT_CONTAINER && oItem->GetTempVar( CITV_MOREX ) == 1 )
 			{

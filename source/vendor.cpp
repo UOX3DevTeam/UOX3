@@ -97,7 +97,7 @@ bool CPIBuyItem::Handle( void )
 	if( !ValidateObject( p ) )
 		return true;
 
-	ITEMLIST bitems;
+	std::vector< CItem* > bitems;
 	std::vector< UI08 > layer;
 	std::vector< UI16 > amount;
 
