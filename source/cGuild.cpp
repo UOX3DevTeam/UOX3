@@ -281,7 +281,7 @@ SERIAL CGuild::FirstRecruit( void )
 //| Purpose		-	Returns the serial of the next recruit in the recruit list
 //|					If there are no more, it returns INVALIDSERIAL
 //o-----------------------------------------------------------------------------------------------o
-SERIAL CGuild::NextRecruit( void )
+SERIAL CGuild::NextRecruit()
 {
 	SERIAL retVal = INVALIDSERIAL;
 	if( !FinishedRecruits() )
@@ -298,7 +298,7 @@ SERIAL CGuild::NextRecruit( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns true if there are no more recruits left
 //o-----------------------------------------------------------------------------------------------o
-bool CGuild::FinishedRecruits( void )
+bool CGuild::FinishedRecruits()
 {
 	return ( recruitPtr == recruits.end() );
 }
@@ -440,17 +440,11 @@ void CGuild::RemoveRecruit( CChar &newRecruit )
 }
 void CGuild::RemoveRecruit( SERIAL newRecruit )
 {
-	SERLIST_ITERATOR toFind = recruits.begin();
-	while( toFind != recruits.end() )
-	{
-		if( (*toFind) == newRecruit )
-		{
-			if( recruitPtr != recruits.begin() && recruitPtr >= toFind )
-				--recruitPtr;
-			recruits.erase( toFind );
-			return;
-		}
-		++toFind;
+	auto iter = std::find_if(recruits.begin(), recruits.end(),[newRecruit](SERIAL &entry){
+		return entry == newRecruit;
+	});
+	if (iter != recruits.end()){
+		recruits.erase(iter) ;
 	}
 }
 
@@ -466,17 +460,11 @@ void CGuild::RemoveMember( CChar &newMember )
 }
 void CGuild::RemoveMember( SERIAL newMember )
 {
-	SERLIST_ITERATOR toFind = members.begin();
-	while( toFind != members.end() )
-	{
-		if( (*toFind) == newMember )
-		{
-			if( memberPtr != members.begin() && memberPtr >= toFind )
-				--memberPtr;
-			members.erase( toFind );
-			return;
-		}
-		++toFind;
+	auto iter = std::find_if(members.begin(), members.end(),[newMember](SERIAL &entry){
+		return entry == newMember;
+	});
+	if (iter != members.end()){
+		members.erase(iter) ;
 	}
 }
 
@@ -507,16 +495,17 @@ bool CGuild::IsRecruit( CChar &toCheck ) const
 {
 	return IsRecruit( toCheck.GetSerial() );
 }
-bool CGuild::IsRecruit( SERIAL toCheck ) const
-{
-	SERLIST_CITERATOR toFind = recruits.begin();
-	while( toFind != recruits.end() )
-	{
-		if( (*toFind) == toCheck )
-			return true;
-		++toFind;
+
+//============================================================================================
+auto CGuild::IsRecruit( SERIAL toCheck ) const ->bool {
+	auto rvalue = false ;
+	auto iter = std::find_if(recruits.begin(),recruits.end(),[toCheck](const SERIAL &entry){
+		return toCheck == entry ;
+	});
+	if (iter != recruits.end()){
+		rvalue = true ;
 	}
-	return false;
+	return rvalue ;
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool IsMember( CChar &toCheck ) const
@@ -528,16 +517,16 @@ bool CGuild::IsMember( CChar &toCheck ) const
 {
 	return IsMember( toCheck.GetSerial() );
 }
-bool CGuild::IsMember( SERIAL toCheck ) const
-{
-	SERLIST_CITERATOR toFind = members.begin();
-	while( toFind != members.end() )
-	{
-		if( (*toFind) == toCheck )
-			return true;
-		++toFind;
+//============================================================================================
+auto CGuild::IsMember( SERIAL toCheck ) const ->bool {
+	auto rvalue = false ;
+	auto iter = std::find_if(members.begin(),members.end(),[toCheck](const SERIAL &entry){
+		return toCheck == entry ;
+	});
+	if (iter != members.end()){
+		rvalue = true ;
 	}
-	return false;
+	return rvalue ;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -609,19 +598,14 @@ void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
 	toSave << "WEBPAGE=" << webpage << '\n';
 	toSave << "STONE=" << stone << '\n';
 	toSave << "MASTER=" << master << '\n';
-	SERLIST_ITERATOR counter;
-	counter = recruits.begin();
-	while( counter != recruits.end() )
-	{
-		toSave << "RECRUIT=" << (*counter) << '\n';
-		++counter;
-	}
-	counter = members.begin();
-	while( counter != members.end() )
-	{
-		toSave << "MEMBER=" << (*counter) << '\n';
-		++counter;
-	}
+	std::for_each(recruits.begin(), recruits.end(),[&toSave] (SERIAL entry){
+		toSave << "RECRUIT=" << entry << '\n';
+
+	});
+	std::for_each(members.begin(), members.end(),[&toSave] (SERIAL entry){
+		toSave << "MEMBER=" << entry << '\n';
+		
+	});
 	GUILDREL::const_iterator relly = relationList.begin();
 	while( relly != relationList.end() )
 	{
@@ -791,10 +775,8 @@ void CGuild::CalcMaster( void )
 //o-----------------------------------------------------------------------------------------------o
 void CGuild::TellMembers( SI32 dictEntry, ... )
 {
-	SERLIST_CITERATOR cIter;
-	for( cIter = members.begin(); cIter != members.end(); ++cIter )
-	{
-		CChar *targetChar	= calcCharObjFromSer( (*cIter) );
+	for (auto &member: members){
+		CChar *targetChar	= calcCharObjFromSer( member );
 		CSocket *targetSock	= targetChar->GetSocket();
 		if( targetSock != nullptr )
 		{
@@ -826,7 +808,7 @@ void CGuild::TellMembers( SI32 dictEntry, ... )
 				toAdd.Speech( oldstrutil::format( 512, txt, argptr ));
 				toAdd.Font( FNT_NORMAL );
 				toAdd.Speaker( INVALIDSERIAL );
-				toAdd.SpokenTo( (*cIter) );
+				toAdd.SpokenTo( member );
 				toAdd.Colour( 0x000B );
 				toAdd.Type( SYSTEM );
 				toAdd.At( cwmWorldState->GetUICurrentTime() );
@@ -848,10 +830,8 @@ void CGuild::SetGuildFaction( GuildType newFaction )
 
 	if( newFaction != GT_STANDARD )
 	{
-		SERLIST_CITERATOR cIter;
-		for( cIter = members.begin(); cIter != members.end(); ++cIter )
-		{
-			CChar *memberChar	= calcCharObjFromSer( (*cIter) );
+		for (auto &member:members){
+			CChar *memberChar	= calcCharObjFromSer( member );
 			if( !memberChar->GetGuildToggle() )
 			{
 				memberChar->SetGuildToggle( true );

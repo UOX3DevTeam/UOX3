@@ -40,12 +40,12 @@ private:
 	std::string		webpage;
 	SERIAL			stone;
 	SERIAL			master;
-	SERLIST			recruits;
-	SERLIST			members;
+	std::vector< SERIAL >	recruits;
+	std::vector< SERIAL >	members;
 	GUILDREL		relationList;
 
-	SERLIST_ITERATOR	recruitPtr;
-	SERLIST_ITERATOR	memberPtr;
+	std::vector<SERIAL>::iterator	recruitPtr;
+	std::vector<SERIAL>::iterator	memberPtr;
 
 	GUILDREL_ITERATOR	warPtr;
 	GUILDREL_ITERATOR	allyPtr;
