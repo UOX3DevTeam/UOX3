@@ -2841,7 +2841,7 @@ void cSkills::MakeItem( createEntry &toMake, CChar *player, CSocket *sock, UI16 
 	{
 		// Store temp tag on player with colour of item to craft
 		TAGMAPOBJECT tagObject;
-		tagObject.m_Destroy = FALSE;
+		tagObject.m_Destroy = false;
 		tagObject.m_StringValue = "";
 		tagObject.m_IntValue = resourceColour;
 		tagObject.m_ObjectType = TAGMAP_TYPE_INT;

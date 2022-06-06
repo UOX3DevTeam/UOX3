@@ -1380,7 +1380,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 0;
 				if( repeatAdd.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1401,7 +1401,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( addAtLoc.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1426,7 +1426,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( reopenMenu.m_IntValue == 0 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 1;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1445,7 +1445,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1464,7 +1464,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceDecayOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1483,7 +1483,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOn.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1502,7 +1502,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 				tagVal = 1;
 				if( forceMovableOff.m_IntValue == 1 )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_IntValue 	= 0;
 					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 					customTag.m_StringValue	= "";
@@ -1550,7 +1550,7 @@ void HandleAddMenuButton( CSocket *s, UI32 button )
 			Commands->Command( s, mChar, sect );
 			return;
 		}
-		customTag.m_Destroy		= FALSE;
+		customTag.m_Destroy		= false;
 		customTag.m_IntValue 	= tagVal;
 		customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 		customTag.m_StringValue	= "";

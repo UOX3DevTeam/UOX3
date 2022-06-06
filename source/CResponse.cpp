@@ -665,7 +665,7 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 	CChar *petCommandObj = calcCharObjFromSer( petTagObj.m_IntValue );
 	if( ValidateObject( petCommandObj ) )
 	{
-		petTagObj.m_Destroy = TRUE;
+		petTagObj.m_Destroy = true;
 		petTagObj.m_IntValue = 0;
 
 		mChar->SetTag( "petCommandObj", petTagObj );
