@@ -654,48 +654,47 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 //o-----------------------------------------------------------------------------------------------o
 CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis )
 {
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( x, y, worldNumber );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( auto CellResponse:MapRegion->PopulateList( x, y, worldNumber ) )
 	{
-		CMapRegion *CellResponse = (*rIter);
-		if( CellResponse == nullptr )
-			continue;
-
-		GenericList< CItem * > *regItems = CellResponse->GetItemList();
-		regItems->Push();
-		for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-		{
-			if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-				continue;
-			if( !checkOnlyNonMultis )
+		if( CellResponse ) {
+			
+			GenericList< CItem * > *regItems = CellResponse->GetItemList();
+			regItems->Push();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
 			{
-				if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
+				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
+					continue;
+				if( !checkOnlyNonMultis )
 				{
-					auto deetee = MultiTile( Item, x, y, oldz, false );
-					if( deetee > 0 )
+					if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
 					{
+						auto deetee = MultiTile( Item, x, y, oldz, false );
+						if( deetee > 0 )
+						{
+							regItems->Pop();
+							return Item;
+						}
+						else
+							continue;
+					}
+					else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
+					{
+						if( Item->GetX() != x && Item->GetY() != y )
+							continue;
+						
 						regItems->Pop();
 						return Item;
 					}
-					else
-						continue;
 				}
-				else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
+				else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
 				{
-					if( Item->GetX() != x && Item->GetY() != y )
-						continue;
-
 					regItems->Pop();
 					return Item;
 				}
 			}
-			else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
-			{
-				regItems->Pop();
-				return Item;
-			}
+			
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 	return nullptr;
 }
