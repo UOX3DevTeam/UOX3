@@ -43,9 +43,11 @@
 
 // Finds the compiler type and version.
 #if defined( _MSC_VER )
-
+#define NOMINMAX		// Dont want min/max macros, use <algorithm>
 #define XP_WIN            // JS API Requires we define OS we compile with
 #define XP_PC
+
+#define WIN32_LEAN_AND_MEAN  // We NEVER want Winsock1, and the extra windows stuff
 
 #ifdef _WIN32 // Includes both 32 bit and 64 bit
 
