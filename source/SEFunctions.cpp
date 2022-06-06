@@ -2482,17 +2482,11 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsv
 
 	if( myScript != nullptr )
 	{
-		SPAWNMAP_CITERATOR spIter = cwmWorldState->spawnRegions.begin();
-		SPAWNMAP_CITERATOR spEnd = cwmWorldState->spawnRegions.end();
-		while( spIter != spEnd )
-		{
-			CSpawnRegion *spawnReg = spIter->second;
-			if( spawnReg != nullptr )
-			{
-				SE_IterateSpawnRegionsFunctor( spawnReg, b, myScript );
+		std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&myScript,&b](std::pair<std::uint16_t,CSpawnRegion*> entry){
+			if (entry.second){
+				SE_IterateSpawnRegionsFunctor( entry.second, b, myScript );
 			}
-			++spIter;
-		}
+		});
 	}
 
 	JS_MaybeGC( cx );
