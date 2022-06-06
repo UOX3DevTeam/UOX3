@@ -126,13 +126,6 @@ typedef std::vector< CSocket * >						SOCKLIST;
 typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
 typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
-//
-//
-typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
-typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
-typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
-//
-//
 
 typedef void (TargetFunc)( CSocket *s );
 
