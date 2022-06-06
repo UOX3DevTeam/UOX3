@@ -14,6 +14,8 @@
 
 #include "ObjectFactory.h"
 
+using namespace std::string_literals ;
+
 bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 
 //o-----------------------------------------------------------------------------------------------o
@@ -88,19 +90,18 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+//|	Function	-	void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
-void CreateHouseItems( CChar *mChar, STRINGLIST houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
+// when you exposethe actual collection, it highlights that you are passing this by value, not reference. WHich is costly
+void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
 {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
-	STRINGLIST_CITERATOR hiIter;
-	for( hiIter = houseItems.begin(); hiIter != houseItems.end(); ++hiIter )//Loop through the HOUSE_ITEMs
-	{
-		std::string sect = "HOUSE ITEM " + (*hiIter);
+	for (auto &entry : houseItems){
+		auto sect = "HOUSE ITEM "s + entry;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
 		if( HouseItem != nullptr )
 		{
@@ -449,7 +450,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
 	SI08 cz = 7;
-	STRINGLIST houseItems;
+	std::vector< std::string > houseItems;
 	houseItems.resize( 0 );
 	bool itemsWillDecay = false;
 	bool isBoat			= false;

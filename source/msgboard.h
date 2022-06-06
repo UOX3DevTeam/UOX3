@@ -42,7 +42,7 @@ struct msgBoardPost_st
 	UI32 ParentSerial;
 	UI08 Toggle;
 
-	STRINGLIST msgBoardLine;
+	std::vector< std::string > msgBoardLine;
 
 	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 ), Toggle( 0 )
 	{

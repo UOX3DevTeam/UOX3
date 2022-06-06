@@ -1895,7 +1895,7 @@ bool cSkills::LoadMiningData( void )
 	bool rvalue = false;
 	if( oreList != nullptr )
 	{
-		STRINGLIST oreNameList;
+		std::vector< std::string > oreNameList;
 		std::string tag;
 		std::string data;
 		std::string UTag;
@@ -1907,10 +1907,7 @@ bool cSkills::LoadMiningData( void )
 		{
 			rvalue = true;
 			ScriptSection *individualOre = nullptr;
-			STRINGLIST_CITERATOR toCheck;
-			for( toCheck = oreNameList.begin(); toCheck != oreNameList.end(); ++toCheck )
-			{
-				std::string oreName = (*toCheck);
+			for (auto &oreName : oreNameList){
 				individualOre = FileLookup->FindEntry( oreName, skills_def );
 				if( individualOre != nullptr )
 				{

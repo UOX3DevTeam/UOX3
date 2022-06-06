@@ -284,7 +284,7 @@ void cCommands::Load( void )
 	std::string data;
 	std::string UTag;
 
-	STRINGLIST	badCommands;
+	std::vector< std::string >	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data						= commands->GrabData();
@@ -309,12 +309,9 @@ void cCommands::Load( void )
 	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		STRINGLIST_CITERATOR tablePos = badCommands.begin();
-		while( tablePos != badCommands.end() )
-		{
-			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
-			++tablePos;
-		}
+		std::for_each(badCommands.begin(), badCommands.end(), [this](const std::string &entry){
+			Console << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
+		});
 	}
 
 	Console << "   o Loading command levels";

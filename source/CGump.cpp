@@ -47,12 +47,13 @@ void CGump::Send( CSocket *target )
 	toSend.GumpID( Type );
 	toSend.UserID( Serial );
 
-	STRINGLIST_CITERATOR tIter;
-	for( tIter = TagList.begin(); tIter != TagList.end(); ++tIter )
-		toSend.addCommand( (*tIter) );
+	std::for_each(TagList.begin(), TagList.end(), [&toSend](const std::string &entry){
+		toSend.addCommand(entry);
+	});
 
-	for( tIter = TextList.begin(); tIter != TextList.end(); ++tIter )
-		toSend.addText( (*tIter) );
+	std::for_each(TextList.begin(), TextList.end(), [&toSend](const std::string &entry){
+		toSend.addCommand(entry);
+	});
 
 	toSend.Finalize();
 	target->Send( &toSend );

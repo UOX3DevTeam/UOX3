@@ -126,10 +126,6 @@ typedef std::vector< CSocket * >						SOCKLIST;
 typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
 typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
-typedef std::vector< std::string >						STRINGLIST;
-typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
-typedef std::vector< std::string >::const_iterator		STRINGLIST_CITERATOR;
-//
 //
 typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
 typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
