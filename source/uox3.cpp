@@ -3221,37 +3221,34 @@ void DoorMacro( CSocket *s )
 		case 7 : { --xc; --yc; }	break;
 	}
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( mChar );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *toCheck = (*rIter);
-		if( toCheck == nullptr )	// no valid region
-			continue;
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
-				continue;
-			SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
-			if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
+	for (auto &toCheck : MapRegion->PopulateList( mChar )){
+		if(toCheck){
+			GenericList< CItem * > *regItems = toCheck->GetItemList();
+			regItems->Push();
+			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
 			{
-				if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
+				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != mChar->GetInstanceID() )
+					continue;
+				SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
+				if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 )
 				{
-					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+					if( itemCheck->GetType() == IT_DOOR || itemCheck->GetType() == IT_LOCKEDDOOR )	// only open doors
 					{
-						UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
-						cScript *envExecute = JSMapping->GetScript( envTrig );
-						if( envExecute != nullptr )
-							[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
-
-						regItems->Pop();
-						return;
+						if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) )
+						{
+							UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
+							cScript *envExecute = JSMapping->GetScript( envTrig );
+							if( envExecute != nullptr )
+								[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
+							
+							regItems->Pop();
+							return;
+						}
 					}
 				}
 			}
+			regItems->Pop();
 		}
-		regItems->Pop();
 	}
 }
 

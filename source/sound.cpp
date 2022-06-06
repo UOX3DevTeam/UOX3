@@ -187,25 +187,22 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	std::vector< CChar * > inrange;
 	inrange.reserve( 11 );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( (&mChar) );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-		{
-			if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
-				continue;
-			if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
-				inrange.push_back( tempChar );
-
-			if( inrange.size() == 11 )
-				break;
+	for (auto &MapArea : MapRegion->PopulateList( &mChar )){
+		if( MapArea){
+			GenericList< CChar * > *regChars = MapArea->GetCharList();
+			regChars->Push();
+			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+			{
+				if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
+					continue;
+				if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
+					inrange.push_back( tempChar );
+				
+				if( inrange.size() == 11 )
+					break;
+			}
+			regChars->Pop();
 		}
-		regChars->Pop();
 	}
 
 	UI16 basesound = 0;

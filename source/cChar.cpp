@@ -2455,63 +2455,60 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 		auto maxX = mCharX + visRange;
 		auto maxY = mCharY + visRange;
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-
-			// First remove nearby characters from sight
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
+		for (auto &MapArea : MapRegion->PopulateList( this )){
+			if(MapArea){
+				
+				// First remove nearby characters from sight
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					CPRemoveItem charToSend = (*tempChar);
-					auto tempX = tempChar->GetX();
-					auto tempY = tempChar->GetY();
-
-					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
-					   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
-						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 					{
-						mSock->Send( &charToSend );
-					}
-				}
-			}
-			regChars->Pop();
-
-			// Now remove nearby items and multis from sight
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-				{
-					CPRemoveItem itemToSend = (*tempItem);
-					auto tempItemX = tempItem->GetX();
-					auto tempItemY = tempItem->GetY();
-
-					if( tempItem->CanBeObjType( OT_MULTI ) )
-					{
-						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+						CPRemoveItem charToSend = (*tempChar);
+						auto tempX = tempChar->GetX();
+						auto tempY = tempChar->GetY();
+						
+						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
+						   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
 						{
-							mSock->Send( &itemToSend );
-						}
-					}
-					else
-					{
-						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
-						{
-							mSock->Send( &itemToSend );
+							mSock->Send( &charToSend );
 						}
 					}
 				}
+				regChars->Pop();
+				
+				// Now remove nearby items and multis from sight
+				GenericList< CItem * > *regItems = MapArea->GetItemList();
+				regItems->Push();
+				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+				{
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
+					{
+						CPRemoveItem itemToSend = (*tempItem);
+						auto tempItemX = tempItem->GetX();
+						auto tempItemY = tempItem->GetY();
+						
+						if( tempItem->CanBeObjType( OT_MULTI ) )
+						{
+							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+							{
+								mSock->Send( &itemToSend );
+							}
+						}
+						else
+						{
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+							{
+								mSock->Send( &itemToSend );
+							}
+						}
+					}
+				}
+				regItems->Pop();
 			}
-			regItems->Pop();
 		}
 	}
 }
@@ -2618,53 +2615,50 @@ void CChar::Teleport( void )
 		auto maxX = mCharX + visrange;
 		auto maxY = mCharY + visrange;
 
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( this );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *MapArea = (*rIter);
-			if( MapArea == nullptr )	// no valid region
-				continue;
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
+		for (auto &MapArea : MapRegion->PopulateList( this )){
+			if(MapArea){
+				GenericList< CChar * > *regChars = MapArea->GetCharList();
+				regChars->Push();
+				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
 				{
-					auto tempX = tempChar->GetX();
-					auto tempY = tempChar->GetY();
-					if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
-					   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
-						( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
-						tempChar->SendToSocket( mSock );
-				}
-			}
-			regChars->Pop();
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-				{
-					auto tempItemX = tempItem->GetX();
-					auto tempItemY = tempItem->GetY();
-					if( tempItem->CanBeObjType( OT_MULTI ) )
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
 					{
-						if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							&& tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
-						{
-							tempItem->SendToSocket( mSock );
-						}
+						auto tempX = tempChar->GetX();
+						auto tempY = tempChar->GetY();
+						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
+						   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
+							tempChar->SendToSocket( mSock );
 					}
-					else
+				}
+				regChars->Pop();
+				GenericList< CItem * > *regItems = MapArea->GetItemList();
+				regItems->Push();
+				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
+				{
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
 					{
-						if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+						auto tempItemX = tempItem->GetX();
+						auto tempItemY = tempItem->GetY();
+						if( tempItem->CanBeObjType( OT_MULTI ) )
 						{
-							tempItem->SendToSocket( mSock );
+							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
+							{
+								tempItem->SendToSocket( mSock );
+							}
+						}
+						else
+						{
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
+							{
+								tempItem->SendToSocket( mSock );
+							}
 						}
 					}
 				}
+				regItems->Pop();
 			}
-			regItems->Pop();
 		}
 	}
 	CheckCharInsideBuilding( this, mSock, false );

@@ -369,10 +369,7 @@ void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType
 	if( explodeNearby )
 	{
 		// Explode for characters nearby
-		REGIONLIST nearbyRegions = MapRegion->PopulateList( nItem );
-		for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
-		{
-			CMapRegion *Cell = (*rIter);
+		for (auto &Cell : MapRegion->PopulateList( nItem )){
 			bool chain = false;
 
 			GenericList< CChar * > *regChars = Cell->GetCharList();
