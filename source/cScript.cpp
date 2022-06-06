@@ -3252,8 +3252,8 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when selecting a target as part of
 //|					default AI behaviour
-//|	Notes		-	Returning FALSE will deem a target invalid, and it will be skipped
-//|					Returning TRUE will deem a target valid, and it will be selected
+//|	Notes		-	Returning false will deem a target invalid, and it will be skipped
+//|					Returning true will deem a target valid, and it will be selected
 //o-----------------------------------------------------------------------------------------------o
 SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 {
@@ -3285,8 +3285,8 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 //|	Date		-	23rd January, 2006
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when initiating combat
-//|	Notes		-	Returning FALSE will also run hard code for this scenario
-//|					Returning TRUE will override code's default handling of this scenario
+//|	Notes		-	Returning false will also run hard code for this scenario
+//|					Returning true will override code's default handling of this scenario
 //o-----------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 {
@@ -3318,8 +3318,8 @@ SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 //|	Date		-	23rd January, 2006
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when combat ends
-//|	Notes		-	Returning FALSE will also run hard code for this scenario
-//|					Returning TRUE will override code's default handling of this scenario
+//|	Notes		-	Returning false will also run hard code for this scenario
+//|					Returning true will override code's default handling of this scenario
 //o-----------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 {
@@ -3352,8 +3352,8 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 //|	Date		-	8th February, 2006
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when performing a death blow in combat
-//|	Notes		-	Returning FALSE will also run hard code for this scenario
-//|					Returning TRUE will override code's default handling of this scenario
+//|	Notes		-	Returning false will also run hard code for this scenario
+//|					Returning true will override code's default handling of this scenario
 //o-----------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 {

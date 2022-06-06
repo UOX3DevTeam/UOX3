@@ -141,7 +141,7 @@ TAGMAPOBJECT CBaseObject::GetTag( std::string tagname ) const
 	TAGMAPOBJECT localObject;
 	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 	localObject.m_IntValue		= 0;
-	localObject.m_Destroy		= FALSE;
+	localObject.m_Destroy		= false;
 	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tags.find( tagname );
 	if( CI != tags.end() )
@@ -177,7 +177,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
 		else if( tagval.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= tagval.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
@@ -185,7 +185,7 @@ void CBaseObject::SetTag( std::string tagname, TAGMAPOBJECT tagval )
 		}
 		else
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagval.m_ObjectType;
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagval.m_IntValue;
@@ -219,7 +219,7 @@ TAGMAPOBJECT CBaseObject::GetTempTag( std::string tempTagName ) const
 	TAGMAPOBJECT localObject;
 	localObject.m_ObjectType	= TAGMAP_TYPE_INT;
 	localObject.m_IntValue		= 0;
-	localObject.m_Destroy		= FALSE;
+	localObject.m_Destroy		= false;
 	localObject.m_StringValue	= "";
 	TAGMAP2_CITERATOR CI = tempTags.find( tempTagName );
 	if( CI != tempTags.end() )
@@ -251,7 +251,7 @@ void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
 		// Change the tag's TAGMAPOBJECT value. NOTE this will also change type should type be changed
 		else if( tagVal.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagVal.m_ObjectType;
 			I->second.m_StringValue	= tagVal.m_StringValue;
 			// Just because it seemed like a waste to leave it unused. I put the length of the string in the int member
@@ -259,7 +259,7 @@ void CBaseObject::SetTempTag( std::string tempTagName, TAGMAPOBJECT tagVal )
 		}
 		else
 		{
-			I->second.m_Destroy		= FALSE;
+			I->second.m_Destroy		= false;
 			I->second.m_ObjectType	= tagVal.m_ObjectType;
 			I->second.m_StringValue	= "";
 			I->second.m_IntValue	= tagVal.m_IntValue;
@@ -1810,7 +1810,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
 				tagvalObject.m_IntValue		= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0);
-				tagvalObject.m_Destroy		= FALSE;
+				tagvalObject.m_Destroy		= false;
 				tagvalObject.m_StringValue	= "";
 				SetTag( staticTagName, tagvalObject );
 			}
@@ -1820,7 +1820,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				TAGMAPOBJECT tagvalObject;
 				tagvalObject.m_ObjectType=TAGMAP_TYPE_STRING;
 				tagvalObject.m_IntValue= static_cast<SI32>(localString.size());
-				tagvalObject.m_Destroy=FALSE;
+				tagvalObject.m_Destroy=false;
 				tagvalObject.m_StringValue=localString;
 				SetTag( staticTagName, tagvalObject );
 

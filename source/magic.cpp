@@ -1356,7 +1356,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 			// Let's allow marking the rune in the multi, and store multi's serial in a tag
 			auto mSerial = multi->GetSerial();
 			TAGMAPOBJECT tagObject;
-			tagObject.m_Destroy = FALSE;
+			tagObject.m_Destroy = false;
 			tagObject.m_StringValue = std::to_string(mSerial);
 			tagObject.m_IntValue = static_cast<SI32>( tagObject.m_StringValue.size() );
 			tagObject.m_ObjectType = TAGMAP_TYPE_STRING;

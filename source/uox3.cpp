@@ -1670,7 +1670,7 @@ void CWorldMain::CheckAutoTimers( void )
 			SetAutoSaved( false );
 
 #if PLATFORM == WINDOWS
-			SetConsoleCtrlHandler( exit_handler, TRUE );
+			SetConsoleCtrlHandler( exit_handler, true );
 #endif
 			isWorldSaving = true;
 			SaveNewWorld( false );
@@ -2110,7 +2110,7 @@ void Shutdown( SI32 retCode )
 	if( retCode && cwmWorldState && cwmWorldState->GetLoaded() && cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 	{//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 #if PLATFORM == WINDOWS
-	SetConsoleCtrlHandler( exit_handler, TRUE );
+	SetConsoleCtrlHandler( exit_handler, true );
 #endif
 		isWorldSaving = true;
 		do
@@ -2119,7 +2119,7 @@ void Shutdown( SI32 retCode )
 		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
 		isWorldSaving = false;
 #if PLATFORM == WINDOWS
-	SetConsoleCtrlHandler( exit_handler, FALSE );
+	SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	}
 
@@ -3586,7 +3586,7 @@ int main( SI32 argc, char *argv[] )
 		Console.PrintDone();
 
 #if PLATFORM == WINDOWS
-		SetConsoleCtrlHandler( exit_handler, TRUE );
+		SetConsoleCtrlHandler( exit_handler, true );
 #endif
 		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING )
 		{

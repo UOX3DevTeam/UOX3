@@ -4242,7 +4242,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				{
 					// Set a tag on the player to reference the animal they're about to tame
 					TAGMAPOBJECT targCharSerial;
-					targCharSerial.m_Destroy = FALSE;
+					targCharSerial.m_Destroy = false;
 					targCharSerial.m_IntValue = targChar->GetSerial();
 					targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 					targCharSerial.m_StringValue = "";
@@ -4262,7 +4262,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4284,7 +4284,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4305,7 +4305,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4326,7 +4326,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4347,7 +4347,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4368,7 +4368,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4389,7 +4389,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4410,7 +4410,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";
@@ -4431,7 +4431,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
-				targCharSerial.m_Destroy = FALSE;
+				targCharSerial.m_Destroy = false;
 				targCharSerial.m_IntValue = targChar->GetSerial();
 				targCharSerial.m_ObjectType = TAGMAP_TYPE_INT;
 				targCharSerial.m_StringValue = "";

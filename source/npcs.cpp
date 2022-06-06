@@ -1499,7 +1499,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy		= FALSE;
+					customTag.m_Destroy		= false;
 					customTag.m_StringValue	= customTagStringValue;
 					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
@@ -1530,7 +1530,7 @@ bool cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 				customTagStringValue = result;
 				if( !customTagName.empty() && !customTagStringValue.empty() )
 				{
-					customTag.m_Destroy = FALSE;
+					customTag.m_Destroy = false;
 					customTag.m_IntValue = std::stoi( customTagStringValue );
 					customTag.m_ObjectType = TAGMAP_TYPE_INT;
 					customTag.m_StringValue = "";

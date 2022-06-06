@@ -489,7 +489,7 @@ bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Checks if character is overloaded with weight, and returns TRUE or FALSE
+//|	Purpose		-	Checks if character is overloaded with weight, and returns true or false
 //|	Notes		-	CheckForWeight was confusing...
 //|
 //|					Old code called check weight first then checked socket... I changed it the other way.

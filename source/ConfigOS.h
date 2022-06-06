@@ -116,8 +116,6 @@
 #define ioctlsocket( s, b, c ) ioctl( s, b, c )
 #define closesocket( s ) close( s )
 
-#define FALSE 0L
-#define TRUE  1L
 
 // Unlike the Win32 compilers, Linux/macOS compilers use DEBUG for when
 // specifying a debug build.

@@ -3687,7 +3687,7 @@ void CServerData::KickOnAssistantSilence( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save the uox.ini out. This is the default save
 //o-----------------------------------------------------------------------------------------------o
-//|	Returns		- [TRUE] If successfull
+//|	Returns		- [true] If successfull
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::save( void )
 {
