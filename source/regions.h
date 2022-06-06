@@ -113,8 +113,8 @@ public:
 	SI16		GetGridX( SI16 x );
 	SI16		GetGridY( SI16 y );
 
-	REGIONLIST	PopulateList( SI16 x, SI16 y, UI08 worldNumber );
-	REGIONLIST	PopulateList( CBaseObject *mObj );
+	auto	PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vector< CMapRegion * >;
+	auto	PopulateList( CBaseObject *mObj ) ->std::vector< CMapRegion * >;
 
 	CMapWorld *	GetMapWorld( UI08 worldNum );
 

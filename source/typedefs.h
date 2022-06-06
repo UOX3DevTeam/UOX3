@@ -121,9 +121,6 @@ constexpr auto LAVA_WATER		= std::uint8_t(32);	// Don't know what all to use thi
 // types we will get rid of - keeping for now
 //==============================================================================
 
-typedef std::vector< CMapRegion * >						REGIONLIST;
-typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
-typedef std::vector< CMapRegion * >::const_iterator		REGIONLIST_CITERATOR;
 
 typedef std::vector< CSocket * >						SOCKLIST;
 typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
