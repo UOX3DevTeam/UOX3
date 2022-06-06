@@ -9,13 +9,13 @@ protected:
 
 	std::map< CChar *, UI08 >	housePrivList;
 
-	ITEMLIST			lockedList;
+	std::vector< CItem* >	lockedList;
 	UI16				maxLockdowns;
 
-	ITEMLIST			secureContainerList;
+	std::vector< CItem* >	secureContainerList;
 	UI16				maxSecureContainers;
 
-	ITEMLIST			trashContainerList;
+	std::vector< CItem* >	trashContainerList;
 	UI16				maxTrashContainers;
 
 	std::vector< CChar* >	vendorList;

@@ -3151,13 +3151,12 @@ GenericList< CChar * > *CChar::GetPetList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	ITEMLIST *GetOwnedItems( void )
+//| Function	-	auto GetOwnedItems() ->std::vector< CItem* >*
 //| Date		-	13 March 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the list of items the char owns
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST *CChar::GetOwnedItems( void )
-{
+auto CChar::GetOwnedItems() ->std::vector< CItem* >* {
 	return &ownedItems;
 }
 
@@ -3168,16 +3167,13 @@ ITEMLIST *CChar::GetOwnedItems( void )
 //| Purpose		-	Adds the item toAdd to the player's owned list
 //|					ensuring that it is not ALREADY in the list
 //o-----------------------------------------------------------------------------------------------o
-void CChar::AddOwnedItem( CItem *toAdd )
-{
-	ITEMLIST_CITERATOR i;
-	for( i = ownedItems.begin(); i != ownedItems.end(); ++i )
-	{
-		if( (*i) == toAdd )		// We already have it
-			break;
+auto CChar::AddOwnedItem( CItem *toAdd ) ->void{
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toAdd](CItem *entry){
+		return toAdd == entry ;
+	});
+	if (iter == ownedItems.end()){
+		ownedItems.push_back(toAdd);
 	}
-	if( i == ownedItems.end() )
-		ownedItems.push_back( toAdd );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3186,15 +3182,12 @@ void CChar::AddOwnedItem( CItem *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Removes the item toRemove from the player's owned list
 //o-----------------------------------------------------------------------------------------------o
-void CChar::RemoveOwnedItem( CItem *toRemove )
-{
-	for( ITEMLIST_ITERATOR rIter = ownedItems.begin(); rIter != ownedItems.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			ownedItems.erase( rIter );
-			break;
-		}
+auto  CChar::RemoveOwnedItem( CItem *toRemove ) ->void {
+	auto iter = std::find_if(ownedItems.begin(),ownedItems.end(),[toRemove](CItem *entry){
+		return entry == toRemove ;
+	}) ;
+	if (iter != ownedItems.end()){
+		ownedItems.erase(iter);
 	}
 }
 
@@ -7834,9 +7827,8 @@ bool CountHousesOwnedFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	}
 	return true;
 }
-UI32 CChar::CountHousesOwned( bool countCoOwnedHouses )
-{
-	UI32 b		= 0;
+auto CChar::CountHousesOwned( bool countCoOwnedHouses ) -> std::uint32_t {
+	auto b = std::uint32_t(0) ;
 	if( cwmWorldState->ServerData()->TrackHousesPerAccount() || countCoOwnedHouses )
 	{
 		// Count all houses owned by characters on player's account by iterating over all multis on the server(!)
@@ -7848,17 +7840,13 @@ UI32 CChar::CountHousesOwned( bool countCoOwnedHouses )
 	}
 	else
 	{
-		// Count all houses owned by player by checking list of character's owned items!
-		ITEMLIST *ownedItems = GetOwnedItems();
-		for( ITEMLIST_CITERATOR I = ownedItems->begin(); I != ownedItems->end(); ++I )
-		{
-			CBaseObject *oItem = ( *I );
+		std::for_each(ownedItems.begin(), ownedItems.end(), [this,&b](CItem *oItem){
 			if( ValidateObject( oItem ) && oItem->GetObjType() == OT_MULTI )
 			{
 				if( oItem->GetOwnerObj() == this )
 					b++;
 			}
-		}
+		});
 	}
 	return b;
 }

@@ -74,7 +74,7 @@ auto findNearbyNPCs( CChar *mChar, distLocs distance ) ->std::vector< CChar* >{
 	return ourNpcs;
 }
 
-ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
+auto findNearbyItems( CBaseObject *mObj, distLocs distance ) ->std::vector< CItem* >;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 //o-----------------------------------------------------------------------------------------------o

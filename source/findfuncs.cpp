@@ -505,13 +505,13 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
+//|	Function	-	auto findNearbyItems( CBaseObject *mObj, distLocs distance )->std::vector< CItem* >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a given object
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
-{
-	ITEMLIST ourItems;
+auto findNearbyItems( CBaseObject *mObj, distLocs distance )->std::vector< CItem* >{
+
+	std::vector< CItem* > ourItems;
 	for (auto &CellResponse : MapRegion->PopulateList( mObj)){
 		if(CellResponse){
 			
@@ -531,13 +531,13 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
+//|	Function	-	auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CItem* >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of Items that are within a certain distance of a location
 //o-----------------------------------------------------------------------------------------------o
-ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	ITEMLIST ourItems;
+auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CItem* >{
+
+	std::vector< CItem* > ourItems;
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if(CellResponse){
 			
