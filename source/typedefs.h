@@ -130,10 +130,6 @@ typedef std::vector< std::string >						STRINGLIST;
 typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
 typedef std::vector< std::string >::const_iterator		STRINGLIST_CITERATOR;
 //
-typedef std::vector< SERIAL >							SERLIST;
-typedef std::vector< SERIAL >::iterator					SERLIST_ITERATOR;
-typedef std::vector< SERIAL >::const_iterator			SERLIST_CITERATOR;
-//
 typedef std::vector< CItem* >							ITEMLIST;
 typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
 typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
