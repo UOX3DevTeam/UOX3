@@ -127,9 +127,6 @@ typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
 typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
 //
 //
-typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
-typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
-typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
 //
 typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
 typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
@@ -138,8 +135,6 @@ typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
 typedef std::unordered_map< UI16, CSpawnRegion * >					SPAWNMAP;
 typedef std::unordered_map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
 //
-typedef std::map< UI16, CTownRegion * >						TOWNMAP;
-typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
 
 typedef void (TargetFunc)( CSocket *s );
 

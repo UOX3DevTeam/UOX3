@@ -213,8 +213,8 @@ public:
 	std::vector< SOSLocationEntry >		sosLocs;
 	std::vector< UI08 >					escortRegions;
 	std::map< UI16, GoPlaces_st >		goPlaces;
-	SPAWNMAP							spawnRegions;
-	TOWNMAP								townRegions;
+	SPAWNMAP	spawnRegions;
+	std::map< UI16, CTownRegion * >	townRegions;
 	GenericList< CTEffect * >			tempEffects;
 
 	QUEUEMAP							refreshQueue;
