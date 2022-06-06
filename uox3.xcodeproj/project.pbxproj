@@ -382,7 +382,6 @@
 				648AF78D27CFF2CD009327DE /* cVersionClass.h */,
 				648AF6F727CFF2CC009327DE /* dist.cpp */,
 				648AF79327CFF2CD009327DE /* effect.cpp */,
-				648AF78F27CFF2CD009327DE /* enums.h */,
 				648AF77027CFF2CD009327DE /* fileio.cpp */,
 				648AF77B27CFF2CD009327DE /* fileio.h */,
 				648AF73A27CFF2CD009327DE /* findfuncs.cpp */,
@@ -394,7 +393,6 @@
 				648AF78B27CFF2CD009327DE /* pcmanage.cpp */,
 				648AF73927CFF2CD009327DE /* power.h */,
 				648AF78327CFF2CD009327DE /* resource.h */,
-				648AF77C27CFF2CD009327DE /* typedefs.h */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -505,6 +503,8 @@
 				6452D32027D2E13B00E5AFB4 /* osunique.hpp */,
 				648AF6FE27CFF2CC009327DE /* ConfigOS.h */,
 				648AF75727CFF2CD009327DE /* Prerequisites.h */,
+				648AF77C27CFF2CD009327DE /* typedefs.h */,
+				648AF78F27CFF2CD009327DE /* enums.h */,
 			);
 			name = General;
 			sourceTree = "<group>";
