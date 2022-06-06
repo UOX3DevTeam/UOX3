@@ -1349,7 +1349,7 @@ void FriendTarget( CSocket *s )
 		return;
 	}
 
-	CHARLIST *petFriends = pet->GetFriendList();
+	auto petFriends = pet->GetFriendList();
 	// Make sure to cover the STL response
 	if( petFriends != nullptr )
 	{

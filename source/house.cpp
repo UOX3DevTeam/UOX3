@@ -417,7 +417,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	return true;
 }
 
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CChar* >;
 ITEMLIST findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
 UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
@@ -761,10 +761,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetBanY( by );
 
 		// Move characters out of the way
-		CHARLIST charList = findNearbyChars( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ));
-		for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
-		{
-			CChar *ourChar = (*charCtr);
+		for (auto &ourChar : findNearbyChars(x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max(sx,sy))){
 			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) && 
 				( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) && 
 				( ourChar->GetZ() >= house->GetZ() - 16 ))

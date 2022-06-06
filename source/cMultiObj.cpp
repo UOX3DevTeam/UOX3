@@ -627,13 +627,14 @@ void CMultiObj::AddVendor( CChar *toAdd )
 {
 	if( vendorList.size() < maxVendors )
 	{
-		for( CHARLIST_CITERATOR lIter = vendorList.begin(); lIter != vendorList.end(); ++lIter )
-		{
-			if( (*lIter) == toAdd )
-				return;
+		auto iter = std::find_if(vendorList.begin(),vendorList.end(),[toAdd](CChar *entry){
+			return entry == toAdd ;
+		});
+		if (iter == vendorList.end()){ // Wasnt found, add it
+			toAdd->Dirty( UT_UPDATE );
+			vendorList.push_back( toAdd );
+
 		}
-		toAdd->Dirty( UT_UPDATE );
-		vendorList.push_back( toAdd );
 	}
 }
 
@@ -644,14 +645,12 @@ void CMultiObj::AddVendor( CChar *toAdd )
 //o-----------------------------------------------------------------------------------------------o
 void CMultiObj::RemoveVendor( CChar *toRemove )
 {
-	for( CHARLIST_ITERATOR rIter = vendorList.begin(); rIter != vendorList.end(); ++rIter )
-	{
-		if( (*rIter) == toRemove )
-		{
-			toRemove->Dirty( UT_UPDATE );
-			vendorList.erase( rIter );
-			return;
-		}
+	auto iter = std::find_if(vendorList.begin(),vendorList.end(),[toRemove](CChar *entry){
+		return toRemove == entry ;
+	});
+	if (iter != vendorList.end()){
+		toRemove->Dirty(UT_UPDATE);
+		vendorList.erase(iter) ;
 	}
 }
 
@@ -989,11 +988,10 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	outStream << "MaxLockdowns=" << maxLockdowns << '\n';
 	outStream << "MaxSecureContainers=" << maxSecureContainers << '\n';
 
-	CHARLIST_CITERATOR lIterVendor;
-	for( lIterVendor = vendorList.begin(); lIterVendor != vendorList.end(); ++lIterVendor )
-	{
-		if( ValidateObject( (*lIterVendor) ) )
-			outStream << "Vendor=" << (*lIterVendor)->GetSerial() << '\n';
+	for (auto &vendor:vendorList){
+		if (ValidateObject(vendor)){
+			outStream << "Vendor=" << vendor->GetSerial() << '\n';
+		}
 	}
 
 	outStream << "MaxVendors=" << maxVendors << '\n';
