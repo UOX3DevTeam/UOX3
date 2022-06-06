@@ -2422,13 +2422,12 @@ void CChar::RemoveFromSight( CSocket *mSock )
 		mSock->Send( &toSend );
 	else
 	{
-		SOCKLIST nearbyChars = FindPlayersInOldVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( !(*cIter)->LoginComplete() )
-				continue;
-			if( (*cIter)->CurrcharObj() != this )
-				(*cIter)->Send( &toSend );
+		for (auto &tSock : FindPlayersInOldVisrange( this )) {
+			if (tSock->LoginComplete()){
+				if (tSock->CurrcharObj() != this) {
+					tSock->Send(&toSend) ;
+				}
+			}
 		}
 	}
 }
@@ -2700,20 +2699,20 @@ void CChar::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		SendToSocket( mSock, drawGamePlayer );
 	else
 	{
-		SOCKLIST nearbyChars = FindPlayersInVisrange( this );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			if( !(*cIter)->LoginComplete() )
-				continue;
-
-			// Send one extra update to self to fix potential issues with world changing
-			if( ( *cIter )->CurrcharObj() == this && sendToSelf )
-			{
-				SendToSocket( (*cIter), drawGamePlayer );
-				continue;
+		for (auto &tSock :FindPlayersInVisrange( this ) ){
+			if (tSock->LoginComplete()){
+				/*
+				// I dont think this is what the orignal author wanted.
+				// In either case, it Sends, so...
+				if ((tSock->CurrcharObj()== this) && sendToSelf) {
+					SendToSocket(tSock,drawGamePlayer) ;
+				}
+				else {
+					SendToSocket(tSock,drawGamePlayer) ;
+				}
+				 */
+				SendToSocket(tSock,drawGamePlayer) ;
 			}
-
-			SendToSocket( (*cIter), drawGamePlayer );
 		}
 	}
 }
@@ -4515,12 +4514,11 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 					else if( msgType == EMOTE || msgType == ASCIIEMOTE )
 						searchDistance = DIST_INRANGE;
 
-					SOCKLIST nearbyChars = FindNearbyPlayers( this, searchDistance );
-					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-					{
-						if( (*cIter) == s && sendSock )
-							sendSock = false;
-						(*cIter)->Send( &unicodeMessage );
+					for (auto &tSock : FindNearbyPlayers( this, searchDistance )){
+						if ((tSock == s) && sendSock) {
+							sendSock = false ;
+						}
+						tSock->Send(&unicodeMessage);
 					}
 				}
 

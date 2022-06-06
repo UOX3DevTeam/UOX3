@@ -1555,10 +1555,9 @@ void cItem::CheckEquipment( CChar *p )
 					i->SetCont( nullptr );
 					i->SetLocation( p );
 
-					SOCKLIST nearbyChars = FindNearbyPlayers( p );
-					for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-					{
-						p->SendWornItems( (*cIter) );
+					
+					for (auto &item : FindNearbyPlayers( p )) {
+						p->SendWornItems( item );
 					}
 					pSock->sysmessage( 1604, itemname.c_str() ); // You are not strong enough to keep %s equipped!
 					Effects->itemSound( pSock, i );

@@ -358,25 +358,23 @@ bool isOnline( CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 void updateStats( CBaseObject *mObj, UI08 x )
 {
-	SOCKLIST nearbyChars = FindNearbyPlayers( mObj );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		if( !(*cIter)->LoginComplete() )
-			continue;
-
-		// Normalize stats if we're updating our stats for other players
-		bool normalizeStats = true;
-		if( ( *cIter )->CurrcharObj()->GetSerial() == mObj->GetSerial() )
-		{
-			( *cIter )->statwindow( mObj );
-			normalizeStats = false;
+	for (auto &tSock :FindNearbyPlayers( mObj ) ) {
+		if( tSock->LoginComplete() ){
+			
+			// Normalize stats if we're updating our stats for other players
+			bool normalizeStats = true;
+			if( tSock->CurrcharObj()->GetSerial() == mObj->GetSerial() )
+			{
+				tSock->statwindow( mObj );
+				normalizeStats = false;
+			}
+			
+			// Prepare the stat update packet
+			CPUpdateStat toSend( (*mObj), x, normalizeStats );
+			
+			// Send the stat update packet
+			tSock->Send( &toSend );
 		}
-
-		// Prepare the stat update packet
-		CPUpdateStat toSend( (*mObj), x, normalizeStats );
-
-		// Send the stat update packet
-		(*cIter)->Send( &toSend );
 	}
 }
 
@@ -454,10 +452,8 @@ void MountCreature( CSocket *sockPtr, CChar *s, CChar *x )
 			return;
 		}
 
-		SOCKLIST nearbyChars = FindNearbyPlayers( s );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			s->SendWornItems( (*cIter) );
+		for (auto &tSock : FindNearbyPlayers( s )){
+			s->SendWornItems( tSock );
 		}
 
 		if( x->GetTarg() != nullptr )	// zero out target, under all circumstances
@@ -1246,10 +1242,8 @@ void checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					{
 						if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) )
 						{
-							SOCKLIST nearbyChars = FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) );
-							for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-							{
-								Effects->PlaySound( (*cIter), static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+							for (auto &tSock : FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) )) {
+								Effects->PlaySound( tSock, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
 							}
 						}
 					}

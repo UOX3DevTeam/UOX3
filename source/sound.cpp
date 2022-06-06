@@ -28,11 +28,11 @@ void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
 
 	if( allHear )
 	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			(*cIter)->Send( &toSend );
-		}
+		
+		auto  nearbyChars = FindNearbyPlayers( mChar );
+		std::for_each(nearbyChars.begin(),nearbyChars.end(),[&toSend](CSocket *entry) {
+			entry->Send(&toSend);
+		});
 	}
 	mSock->Send( &toSend );
 }
@@ -51,11 +51,10 @@ void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
 
 	if( allHear )
 	{
-		SOCKLIST nearbyChars = FindPlayersInVisrange( baseObj );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-		{
-			(*cIter)->Send( &toSend );
-		}
+		auto  nearbyChars = FindPlayersInVisrange( baseObj );
+		std::for_each(nearbyChars.begin(),nearbyChars.end(),[&toSend](CSocket *entry) {
+			entry->Send(&toSend);
+		});
 	}
 	else
 	{
@@ -467,11 +466,10 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 		if( mSock == nullptr && ValidateObject( mChar ) )
 		{
 			// It's an NPC!
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				PlaySound( (*cIter), soundID, false );
-			}
+			auto  nearbyChars = FindNearbyPlayers( mChar );
+			std::for_each(nearbyChars.begin(),nearbyChars.end(),[soundID,this](CSocket *entry) {
+				PlaySound( entry, soundID, false );
+			});
 			return;
 		}
 		else

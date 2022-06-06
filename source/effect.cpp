@@ -25,11 +25,9 @@ void cEffects::deathAction( CChar *s, CItem *x, UI08 fallDirection )
 {
 	CPDeathAction toSend( (*s), (*x) );
 	toSend.FallDirection( fallDirection );
-	SOCKLIST nearbyChars = FindNearbyPlayers( s );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		if( (*cIter)->CurrcharObj() != s )	// Death action screws up corpse display for the person who died.
-			(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers(s)){
+		if( mSock->CurrcharObj() != s )	// Death action screws up corpse display for the person who died.
+			mSock->Send( &toSend );
 	}
 }
 
@@ -141,10 +139,8 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z,
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( source, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( source, DIST_SAMESCREEN )) {
+		mSock->Send( &toSend );
 	}
 }
 
@@ -168,10 +164,8 @@ void cEffects::PlayMovingAnimation( SI16 srcX, SI16 srcY, SI08 srcZ, SI16 x, SI1
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( srcX, srcY, srcZ, DIST_SAMESCREEN )) {
+		mSock->Send( &toSend );
 	}
 }
 
@@ -187,10 +181,8 @@ void cEffects::PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDe
 	toSend.FrameDelay( frameDelay );
 	toSend.FrameCount( frameCount );
 	toSend.DoBackwards( playBackwards );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( mChar )) {
+		mSock->Send( &toSend );
 	}
 }
 
@@ -206,11 +198,10 @@ void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subA
 	toSend.Action( actionID );
 	toSend.SubAction( subActionID );
 	toSend.SubSubAction( subSubActionID );
-	SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( mChar )) {
+		mSock->Send( &toSend );
 	}
+	
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -279,11 +270,10 @@ void cEffects::PlayStaticAnimation( CBaseObject *target, UI16 effect, UI08 speed
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( target, DIST_SAMESCREEN );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( target, DIST_SAMESCREEN )) {
+		mSock->Send( &toSend );
 	}
+	
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -324,10 +314,8 @@ void cEffects::bolteffect( CChar *player )
 	toSend.SourceLocation( (*player) );
 	toSend.ExplodeOnImpact( false );
 	toSend.AdjustDir( false );
-	SOCKLIST nearbyChars = FindNearbyPlayers( player );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		(*cIter)->Send( &toSend );
+	for (auto &mSock : FindNearbyPlayers( player )) {
+		mSock->Send( &toSend );
 	}
 }
 

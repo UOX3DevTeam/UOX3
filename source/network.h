@@ -242,14 +242,14 @@ private:
 	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
 	SI32					a_socket;
-	SOCKLIST				connClients, loggedInClients;
+	std::vector< CSocket * >	connClients, loggedInClients;
 
 	struct sockaddr_in		client_addr;
 
 	size_t					peakConnectionCount;
 
-	std::vector< SOCKLIST_ITERATOR >	connIteratorBackup, loggIteratorBackup;
-	SOCKLIST_ITERATOR					currConnIter, currLoggIter;
+	std::vector< std::vector< CSocket * >::iterator >	connIteratorBackup, loggIteratorBackup;
+	std::vector< CSocket * >::iterator					currConnIter, currLoggIter;
 
 	void		LoadFirewallEntries( void );
 	void		GetMsg( UOXSOCKET s );

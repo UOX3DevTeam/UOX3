@@ -1460,14 +1460,12 @@ void cMovement::CombatWalk( CChar *i )
 	if( !i->IsAtWar() )
 		i->SetTarg( nullptr );
 
-	SOCKLIST nearbyChars = FindNearbyPlayers( i );
-	for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-	{
-		CChar *mChar = (*cIter)->CurrcharObj();
+	for (auto &sock : FindNearbyPlayers( i )){
+		CChar *mChar = sock->CurrcharObj();
 		if( mChar != i )
 		{
 			toSend.FlagColour( static_cast<UI08>(i->FlagColour( mChar )) );
-			(*cIter)->Send( &toSend );
+			sock->Send( &toSend );
 		}
 	}
 }

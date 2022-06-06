@@ -1469,12 +1469,9 @@ void cSkills::doStealing( CSocket *s, CChar *mChar, CChar *npc, CItem *item )
 			if( npcSock != nullptr )
 				npcSock->sysmessage( temp );
 
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
-			{
-				CSocket *iSock = (*cIter);
+			for (auto &iSock : FindNearbyPlayers( mChar )){
 				CChar *iChar = iSock->CurrcharObj();
-				if( iSock != s && ( RandomNum( 10, 20 ) == 17 || ( RandomNum( 0, 1 ) == 1 && iChar->GetIntelligence() >= mChar->GetIntelligence() ) ) )
+				if( (iSock != s) && ( (RandomNum( 10, 20 ) == 17) || (( RandomNum( 0, 1 ) == 1) && (iChar->GetIntelligence() >= mChar->GetIntelligence()) ) ) )
 				{
 					temp2 = oldstrutil::format(512, temp2, mChar->GetNameRequest( iChar ).c_str(), item->GetNameRequest( iChar ).c_str(), npcTargetName.c_str() ); // You notice %s trying to steal %s from %s!
 					iSock->sysmessage( temp2 );
