@@ -99,7 +99,7 @@ private:
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
 		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
-		CHARLIST			petFriends;			// Temporary list of friends a pet has
+		std::vector< CChar* >	petFriends;			// Temporary list of friends a pet has
 		GenericList< CChar * >	petOwnerList;	// Persistent list of owners a pet has previously had
 		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
 		UI16				loyalty;			// Pet's current loyalty to its master
@@ -135,7 +135,7 @@ private:
 		SERIAL		robe;
 
 		SERIAL		trackingTarget; // Tracking target ID
-		CHARLIST	trackingTargets;
+		std::vector< CChar* >	trackingTargets;
 
 		UI16		accountNum;
 
@@ -632,7 +632,7 @@ protected:
 	virtual void	AddSelfToOwner( void ) override;
 public:
 	void		ClearFriendList( void );
-	CHARLIST *	GetFriendList( void );
+	auto 		GetFriendList() ->std::vector< CChar* >*;
 
 	void		ClearPetOwnerList( void );
 	bool		AddPetOwnerToList( CChar *toAdd );

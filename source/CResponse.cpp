@@ -49,13 +49,12 @@ inline bool findString( std::string toCheck, std::string toFind )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
+//|	Function	-	auto  findNearbyNPCs( CChar *mChar, distLocs distance ) ->std::vector< CChar* >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of NPCs that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST findNearbyNPCs( CChar *mChar, distLocs distance )
-{
-	CHARLIST ourNpcs;
+auto findNearbyNPCs( CChar *mChar, distLocs distance ) ->std::vector< CChar* >{
+	std::vector< CChar* > ourNpcs;
 	
 	for (auto &CellResponse : MapRegion->PopulateList( mChar )){
 		if( CellResponse){
@@ -83,71 +82,26 @@ ITEMLIST findNearbyItems( CBaseObject *mObj, distLocs distance );
 //o-----------------------------------------------------------------------------------------------o
 UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
-	CChar *Npc			= nullptr;
-	CHARLIST nearbyNPCs = findNearbyNPCs( mChar, DIST_CMDRANGE );
-	for( CHARLIST_ITERATOR nIter = nearbyNPCs.begin(); nIter != nearbyNPCs.end(); ++nIter )
-	{
-		Npc = (*nIter);
-		if( !ValidateObject( Npc ) )
-			continue;
-
-		if( abs( mChar->GetZ() - Npc->GetZ() ) <= 9 )
-		{
-			std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
-			for( auto i : scriptTriggers )
+	for (auto &Npc:findNearbyNPCs( mChar, DIST_CMDRANGE )){
+		if( ValidateObject(Npc ) ){
+			
+			if( std::abs( mChar->GetZ() - Npc->GetZ() ) <= 9 )
 			{
-				cScript *toExecute	= JSMapping->GetScript( i );
-				if( toExecute != nullptr )
-				{
-					//|				-1	=> No such function or bad call
-					//|				0	=> Let other NPCs and PCs see it
-					//|				1	=> Let other PCs see it
-					//|				2	=> Let no one else see it
-					SI08 rVal = -1;
-					if( Npc->isDisabled() )
-						Npc->TextMessage( nullptr, 1291, TALK, false );
-					else
-						rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
-					switch( rVal )
-					{
-						case 1:		// No other NPCs to see it, but PCs should
-							return 1;
-						case 2:		// no one else to see it
-							return 2;
-						case 0:		// Other NPCs and PCs to see it
-						case -1:	// no function, so do nothing... NOT handled!
-						default:
-							break;
-					}
-				}
-			}
-		}
-	}
-
-	// How about items?
-	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
-	{
-		CItem *Item			= nullptr;
-		ITEMLIST nearbyItems = findNearbyItems( mChar, DIST_CMDRANGE );
-		for( ITEMLIST_ITERATOR nIter = nearbyItems.begin(); nIter != nearbyItems.end(); ++nIter )
-		{
-			Item = (*nIter);
-			if( !ValidateObject( Item ) )
-				continue;
-
-			if( abs( mChar->GetZ() - Item->GetZ() ) <= 9 )
-			{
-				std::vector<UI16> scriptTriggers = Item->GetScriptTriggers();
+				std::vector<UI16> scriptTriggers = Npc->GetScriptTriggers();
 				for( auto i : scriptTriggers )
 				{
 					cScript *toExecute	= JSMapping->GetScript( i );
 					if( toExecute != nullptr )
 					{
+						//|				-1	=> No such function or bad call
+						//|				0	=> Let other NPCs and PCs see it
+						//|				1	=> Let other PCs see it
+						//|				2	=> Let no one else see it
 						SI08 rVal = -1;
-						if( Item->isDisabled() )
-							Item->TextMessage( nullptr, 1291, TALK, false );
+						if( Npc->isDisabled() )
+							Npc->TextMessage( nullptr, 1291, TALK, false );
 						else
-							rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
+							rVal = toExecute->OnSpeech( text.c_str(), mChar, Npc );
 						switch( rVal )
 						{
 							case 1:		// No other NPCs to see it, but PCs should
@@ -158,6 +112,43 @@ UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 							case -1:	// no function, so do nothing... NOT handled!
 							default:
 								break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// How about items?
+	if( cwmWorldState->ServerData()->ItemsDetectSpeech() )
+	{
+		for (auto &Item : findNearbyItems(mChar, DIST_CMDRANGE)) {
+			if( ValidateObject( Item ) ){
+				
+				if( std::abs( mChar->GetZ() - Item->GetZ() ) <= 9 )
+				{
+					std::vector<UI16> scriptTriggers = Item->GetScriptTriggers();
+					for( auto i : scriptTriggers )
+					{
+						cScript *toExecute	= JSMapping->GetScript( i );
+						if( toExecute != nullptr )
+						{
+							SI08 rVal = -1;
+							if( Item->isDisabled() )
+								Item->TextMessage( nullptr, 1291, TALK, false );
+							else
+								rVal = toExecute->OnSpeech( text.c_str(), mChar, Item );
+							switch( rVal )
+							{
+								case 1:		// No other NPCs to see it, but PCs should
+									return 1;
+								case 2:		// no one else to see it
+									return 2;
+								case 0:		// Other NPCs and PCs to see it
+								case -1:	// no function, so do nothing... NOT handled!
+								default:
+									break;
+							}
 						}
 					}
 				}
@@ -340,10 +331,7 @@ void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() )
 		return;
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_NEARBY );
-	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-	{
-		CChar *Npc = (*npcCtr);
+	for (auto &Npc : findNearbyNPCs(mChar, DIST_NEARBY)) {
 		if( Npc->GetQuestType() == QT_ESCORTQUEST )
 		{
 			// I WILL TAKE THEE
@@ -425,18 +413,16 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		constexpr auto maxsize = 512;
 		std::string temp;
 		std::string temp2;
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 
 		// Shuffle the npcList so it doesn't always trigger for the first NPC in the list
 		std::random_device rd;
 		std::mt19937 g( rd() );
+		auto npcList = findNearbyNPCs( mChar, DIST_INRANGE );
 		std::shuffle( npcList.begin(), npcList.end(), g );
 
 		auto skillName = std::string("");
 		bool foundString = false;
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = (*npcCtr);
+		for (auto Npc : npcList){
 
 			if( ValidateObject( trigChar ) )
 			{
@@ -671,10 +657,7 @@ void CBasePetResponse::Handle( CSocket *mSock, CChar *mChar )
 	}
 	else
 	{
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = (*npcCtr);
+		for (auto &Npc :findNearbyNPCs( mChar, DIST_CMDRANGE ) ){
 			if( !Handle( mSock, mChar, Npc ) )
 				break;
 		}
@@ -693,10 +676,7 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *Npc )
 {
 	if( allSaid )
 	{
-		CHARLIST npcList = findNearbyNPCs( mChar, DIST_CMDRANGE );
-		for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-		{
-			CChar *Npc = ( *npcCtr );
+		for (auto &Npc: findNearbyNPCs( mChar, DIST_CMDRANGE )){
 			if( ValidateObject( Npc ) && Npc->GetOwnerObj() == mChar )
 			{
 				if( Npcs->canControlPet( mChar, Npc, isRestricted, checkDifficulty ))
@@ -898,10 +878,7 @@ CBaseVendorResponse::CBaseVendorResponse( bool vendVal, const std::string &text 
 //o-----------------------------------------------------------------------------------------------o
 void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 {
-	CHARLIST npcList = findNearbyNPCs( mChar, DIST_INRANGE );
-	for( CHARLIST_CITERATOR npcCtr = npcList.begin(); npcCtr != npcList.end(); ++npcCtr )
-	{
-		CChar *Npc = (*npcCtr);
+	for (auto &Npc: findNearbyNPCs( mChar, DIST_INRANGE )){
 		if( Npc->IsShop() || Npc->GetNPCAiType() == AI_PLAYERVENDOR )
 		{
 			if( !LineOfSight( mSock, mChar, Npc->GetX(), Npc->GetY(), ( Npc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )

@@ -18,7 +18,7 @@ protected:
 	ITEMLIST			trashContainerList;
 	UI16				maxTrashContainers;
 
-	CHARLIST			vendorList;
+	std::vector< CChar* >	vendorList;
 	UI16				maxVendors;
 
 	UI16				maxFriends;

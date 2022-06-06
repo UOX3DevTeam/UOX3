@@ -9263,19 +9263,15 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	// Fetch actual friend list
-	CHARLIST *friendList = mChar->GetFriendList();
+	auto friendList = mChar->GetFriendList();
 
 	// Prepare some temporary helper variables
 	JSObject *jsFriendList = JS_NewArrayObject( cx, 0, nullptr );
-	CChar *tempFriend = nullptr;
 	jsval jsTempFriend;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
-	for( CHARLIST_ITERATOR rIter = friendList->begin(); rIter != friendList->end(); ++rIter )
-	{
-		// Grab character reference
-		tempFriend = ( *rIter );
+	for (auto &tempFriend : *friendList){
 
 		// Create a new JS Object based on character
 		JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, tempFriend, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );

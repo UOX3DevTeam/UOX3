@@ -123,13 +123,13 @@ SOCKLIST FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CHARLIST findNearbyChars( CChar *mChar, distLocs distance )
+//|	Function	-	auto findNearbyChars( CChar *mChar, distLocs distance ) -> std::vector< CChar* >
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a list of characters (PC or NPC) that are within a certain distance
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance )
-{
-	CHARLIST ourChars;
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CChar* >{
+
+	std::vector< CChar* > ourChars;
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if( CellResponse){
 			

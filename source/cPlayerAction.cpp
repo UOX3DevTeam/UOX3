@@ -180,7 +180,7 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
 	return iToStack;
 }
 
-CHARLIST findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance );
+auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CChar* >;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool CPIGetItem::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
@@ -357,10 +357,7 @@ bool CPIGetItem::Handle( void )
 		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
 		{
 			// Let's loop through a list of nearby characters to see if anyone is guarding the object
-			CHARLIST charList = findNearbyChars( i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID(), DIST_INRANGE );
-			for( CHARLIST_CITERATOR charCtr = charList.begin(); charCtr != charList.end(); ++charCtr )
-			{
-				CChar *nearbyChar = ( *charCtr );
+			for (auto &nearbyChar : findNearbyChars(i->GetX(), i->GetY(), i->WorldNumber(), i->GetInstanceID(), DIST_INRANGE)) {
 
 				// Only proceed if the character is guarding the object
 				if( nearbyChar->GetGuarding() == i )

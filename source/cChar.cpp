@@ -6912,11 +6912,11 @@ GenericList< CChar * > *CChar::GetPetOwnerList( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearPetOwnerList( void )
+//| Function	-	auto ClearPetOwnerList() ->void
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the pet's list of previous owners
 //o-----------------------------------------------------------------------------------------------o
-void CChar::ClearPetOwnerList( void )
+auto CChar::ClearPetOwnerList() ->void
 {
 	GetPetOwnerList()->Clear();
 	UpdateRegion();
@@ -6985,25 +6985,24 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *ClearFriendList( void )
+//| Function	-	auto  ClearFriendList() ->void
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
-void CChar::ClearFriendList( void )
-{
+auto CChar::ClearFriendList()->void {
+
 	mNPC->petFriends.clear();
 	mNPC->petFriends.shrink_to_fit();
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//| Function	-	CHARLIST *GetFriendList( void )
+//| Function	-	auto GetFriendList() ->std::vector< CChar* >*
 //| Date		-	20 July 2001
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns the characters list of friends
 //o-----------------------------------------------------------------------------------------------o
-CHARLIST *CChar::GetFriendList( void )
-{
-	CHARLIST *rVal = nullptr;
+auto CChar::GetFriendList() -> std::vector< CChar* >* {
+	std::vector< CChar* > *rVal = nullptr;
 	if( IsValidNPC() )
 		rVal = &mNPC->petFriends;
 	return rVal;
@@ -7025,17 +7024,11 @@ bool CChar::AddFriend( CChar *toAdd )
 	}
 	if( IsValidNPC() )
 	{
-		CHARLIST_CITERATOR i = mNPC->petFriends.begin();
-		while( i != mNPC->petFriends.end() )
-		{
-			if( (*i) == toAdd )
-				break;
-			++i;
-		}
-		if( i == mNPC->petFriends.end() )
-		{
-			mNPC->petFriends.push_back( toAdd );
-			return true;
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toAdd](CChar *entry){
+			return entry == toAdd;
+		});
+		if (iter == mNPC->petFriends.end()){ // wasnt found, ad dit
+			mNPC->petFriends.push_back(toAdd);
 		}
 	}
 	return false;
@@ -7051,13 +7044,12 @@ bool CChar::RemoveFriend( CChar *toRemove )
 {
 	if( IsValidNPC() )
 	{
-		for( CHARLIST_ITERATOR rIter = mNPC->petFriends.begin(); rIter != mNPC->petFriends.end(); ++rIter )
-		{
-			if( (*rIter) == toRemove )
-			{
-				mNPC->petFriends.erase( rIter );
-				return true;
-			}
+
+		auto iter = std::find_if(mNPC->petFriends.begin(),mNPC->petFriends.end(),[toRemove](CChar *entry){
+			return toRemove == entry ;
+		});
+		if (iter != mNPC->petFriends.end()){
+			mNPC->petFriends.erase(iter);
 		}
 	}
 	return false;
