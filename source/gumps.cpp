@@ -963,23 +963,20 @@ void CPage( CSocket *s, const std::string& reason )
 			bool x = false;
 
 			{
-				//std::scoped_lock lock(Network->internallock);
-				Network->pushConn();
-				for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-				{
+				for (auto &iSock : Network->connClients) {
 					CChar *iChar = iSock->CurrcharObj();
-					if( iChar->IsGMPageable() || iChar->IsCounselor() )
-					{
+					if( iChar->IsGMPageable() || iChar->IsCounselor() ){
 						x = true;
 						iSock->sysmessage( oldstrutil::format(1024, "Counselor Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
 					}
 				}
-				Network->popConn();
 			}
-			if( x )
+			if( x ){
 				s->sysmessage( 360 );
-			else
+			}
+			else {
 				s->sysmessage( 361 );
+			}
 		}
 	}
 }
@@ -1015,25 +1012,23 @@ void GMPage( CSocket *s, const std::string& reason )
 		{
 			bool x = false;
 			{
-				//std::scoped_lock lock(Network->internallock);
-				Network->pushConn();
-				for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-				{
+				for (auto &iSock : Network->connClients){
 					CChar *iChar = iSock->CurrcharObj();
-					if( !ValidateObject( iChar ) )
-						continue;
-					if( iChar->IsGMPageable() )
-					{
-						x = true;
-						iSock->sysmessage( oldstrutil::format(1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
+					if( ValidateObject( iChar ) ){
+						if( iChar->IsGMPageable() )
+						{
+							x = true;
+							iSock->sysmessage( oldstrutil::format(1024, "Page from %s [%x %x %x %x]: %s", mChar->GetName().c_str(), a1, a2, a3, a4, reason.c_str() ) );
+						}
 					}
 				}
-				Network->popConn();
 			}
-			if( x )
+			if( x ) {
 				s->sysmessage( 363 );
-			else
+			}
+			else{
 				s->sysmessage( 364 );
+			}
 		}
 	}
 }
