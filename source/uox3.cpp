@@ -360,6 +360,7 @@ auto isOnline( CChar& mChar ) -> bool {
 				}
 			}
 		}
+
 	}
 	return rvalue ;
 }
