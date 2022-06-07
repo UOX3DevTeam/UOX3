@@ -5289,51 +5289,39 @@ void CServerData::PostLoadDefaults( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server start locations
 //o-----------------------------------------------------------------------------------------------o
-LPSTARTLOCATION CServerData::ServerLocation( size_t locNum )
-{
-	LPSTARTLOCATION rvalue = nullptr;
+auto CServerData::ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__* {
+	__STARTLOCATIONDATA__ *rvalue = nullptr;
 	if( locNum < startlocations.size() )
 		rvalue = &startlocations[locNum];
 	return rvalue;
 }
+
 void CServerData::ServerLocation( std::string toSet )
 {
 	auto temp = toSet;
 	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
 	auto csecs = oldstrutil::sections( temp, "," );
 	
-	if( csecs.size() ==  7 )	// Wellformed server location
-	{
-		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
-		toAdd.instanceID	= 0;
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
-		strcopy( toAdd.oldTown,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcopy( toAdd.oldDescription,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
-		strcopy( toAdd.newTown,31, toAdd.oldTown);
-		strcopy( toAdd.newDescription,31, toAdd.oldDescription );
-		startlocations.push_back( toAdd );
+	__STARTLOCATIONDATA__ toAdd;
+	if (csecs.size() >=7){
+		toAdd.oldTown = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+		toAdd.oldDescription = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+		toAdd.newTown = toAdd.oldTown ;
+		toAdd.newDescription = toAdd.oldDescription;
+
+		toAdd.x = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
+		toAdd.y = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
+		toAdd.z = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+		toAdd.worldNum = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
+		if (csecs.size() ==7){
+			toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+		}
+		else {
+			toAdd.instanceID	= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
+			toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
+		}
 	}
-	else if( csecs.size() ==  8 )	// instanceID included
-	{
-		STARTLOCATION toAdd;
-		toAdd.x				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-		toAdd.y				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-		toAdd.z				= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
-		toAdd.worldNum		= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0));
-		toAdd.instanceID	= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
-		toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
-		strcopy( toAdd.oldTown,31, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )).c_str() );
-		strcopy( toAdd.oldDescription,31 ,oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )).c_str() );
-		strcopy( toAdd.newTown,31, toAdd.oldTown);
-		strcopy( toAdd.newDescription,31, toAdd.oldDescription );
-		startlocations.push_back( toAdd );
-	}
-	else
-	{
+	else {
 		Console.error( "Malformed location entry in ini file" );
 	}
 }
