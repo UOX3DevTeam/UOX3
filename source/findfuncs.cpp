@@ -12,31 +12,22 @@
 auto FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >{
 
 	std::vector< CSocket * > nearbyChars;
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( ValidateObject( mChar ) )
-		{
-			if( myObj->GetObjType() == OT_MULTI )
-			{
-				if( objInOldRangeSquare( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ) )
-				{
+	for (auto &mSock : Network->connClients){
+		auto mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar ) ){
+			if( myObj->GetObjType() == OT_MULTI ){
+				if( objInOldRangeSquare( myObj, mChar, static_cast<UI16>(DIST_BUILDRANGE) ) ){
 					nearbyChars.push_back( mSock );
 				}
 			}
-			else
-			{
-				UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
-				if( objInOldRangeSquare( myObj, mChar, visRange ) )
-				{
+			else {
+				auto visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+				if( objInOldRangeSquare( myObj, mChar, visRange ) ){
 					nearbyChars.push_back( mSock );
 				}
 			}
 		}
 	}
-	Network->popConn();
 	return nearbyChars;
 }
 
@@ -48,21 +39,15 @@ auto FindPlayersInOldVisrange( CBaseObject *myObj ) ->std::vector< CSocket * >{
 auto FindPlayersInVisrange( CBaseObject *myObj )->std::vector< CSocket * >{
 
 	std::vector< CSocket * > nearbyChars;
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( ValidateObject( mChar ))
-		{
-			UI16 visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
-			if( objInRangeSquare( myObj, mChar, visRange ) )
-			{
+	for (auto &mSock : Network->connClients){
+		auto mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar )) {
+			auto visRange = static_cast<UI16>(mSock->Range() + Races->VisRange( mChar->GetRace() ));
+			if( objInRangeSquare( myObj, mChar, visRange ) ){
 				nearbyChars.push_back( mSock );
 			}
 		}
 	}
-	Network->popConn();
 	return nearbyChars;
 }
 
@@ -74,18 +59,14 @@ auto FindPlayersInVisrange( CBaseObject *myObj )->std::vector< CSocket * >{
 auto FindNearbyPlayers( CBaseObject *myObj, UI16 distance ) ->std::vector< CSocket * >{
 
 	std::vector< CSocket * > nearbyChars;
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( ValidateObject( mChar ))
-		{
-			if( objInRange( mChar, myObj, distance ) )
+	for (auto &mSock : Network->connClients){
+		auto mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar )){
+			if( objInRange( mChar, myObj, distance ) ){
 				nearbyChars.push_back( mSock );
+			}
 		}
 	}
-	Network->popConn();
 	return nearbyChars;
 }
 auto FindNearbyPlayers( CChar *mChar ) ->std::vector< CSocket * >{
@@ -106,18 +87,14 @@ auto FindNearbyPlayers( CBaseObject *mObj ) ->std::vector< CSocket * >{
 
 auto FindNearbyPlayers( SI16 x, SI16 y, SI08 z, UI16 distance )->std::vector< CSocket * > {
 	std::vector< CSocket * > nearbyChars;
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-	{
-		CChar *mChar = mSock->CurrcharObj();
-		if( ValidateObject( mChar ))
-		{
-			if( getDist( point3( mChar->GetX(), mChar->GetY(), mChar->GetZ() ), point3( x, y, z ) ) <= distance )
+	for (auto &mSock : Network->connClients){
+		auto mChar = mSock->CurrcharObj();
+		if( ValidateObject( mChar )){
+			if( getDist( point3( mChar->GetX(), mChar->GetY(), mChar->GetZ() ), point3( x, y, z ) ) <= distance ){
 				nearbyChars.push_back( mSock );
+			}
 		}
 	}
-	Network->popConn();
 	return nearbyChars;
 }
 

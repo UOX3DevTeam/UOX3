@@ -353,15 +353,14 @@ auto isOnline( CChar& mChar ) -> bool {
 			}
 		}
 		if (!rvalue){
-			Network->pushConn();
-			for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = 	Network->NextSocket() ) {
+			for (auto &tSock : Network->connClients) {
 				if( tSock->CurrcharObj() == &mChar ){
 					rvalue = true ;
 					break;
 				}
 			}
-			Network->popConn();
 		}
+
 	}
 	return rvalue ;
 }
@@ -1378,17 +1377,14 @@ void CWorldMain::CheckAutoTimers( void )
 			{
 				reallyOn = false;	// to start with, there's no one really on
 				{
-					//std::scoped_lock lock(Network->internallock);
-					Network->pushConn();
-					for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-					{
+					for (auto &tSock :Network->connClients){
+						
 						CChar *tChar = tSock->CurrcharObj();
 						if( !ValidateObject( tChar ) )
 							continue;
 						if( tChar->GetAccount().wAccountIndex == actbTemp.wAccountIndex )
 							reallyOn = true;
 					}
-					Network->popConn();
 				}
 				if( !reallyOn )	// no one's really on, let's set that
 				{
@@ -1405,10 +1401,7 @@ void CWorldMain::CheckAutoTimers( void )
 	if( GetWorldSaveProgress() == SS_NOTSAVING )
 	{
 		{
-			//std::scoped_lock lock(Network->internallock);
-			Network->pushConn();
-			for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-			{
+			for (auto &tSock: Network->connClients) {
 				if( tSock->IdleTimeout() != -1 && (UI32)tSock->IdleTimeout() <= GetUICurrentTime() )
 				{
 					CChar *tChar = tSock->CurrcharObj();
@@ -1491,37 +1484,28 @@ void CWorldMain::CheckAutoTimers( void )
 					tSock->SetTimer( tPC_TRAFFICWARDEN, BuildTimeValue( static_cast<R32>( 10 )) );
 				}
 			}
-			Network->popConn();
 		}
 	}
 	else if( GetWorldSaveProgress() == SS_JUSTSAVED )	// if we've JUST saved, do NOT kick anyone off (due to a possibly really long save), but reset any offending players to 60 seconds to go before being kicked off
 	{
 		{
-			//std::scoped_lock lock(Network->internallock);
-			Network->pushConn();
-			for( CSocket *wsSocket = Network->FirstSocket(); !Network->FinishedSockets(); wsSocket = Network->NextSocket() )
-			{
-				if( wsSocket != nullptr )
-				{
-					if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() )
-					{
+			for (auto &wsSocket : Network->connClients) {
+				if( wsSocket ){
+					if( (UI32)wsSocket->IdleTimeout() < GetUICurrentTime() ){
 						wsSocket->IdleTimeout( BuildTimeValue( 60.0F ) );
 						wsSocket->WasIdleWarned( true );//don't give them the message if they only have 60s
 					}
-					if( cwmWorldState->ServerData()->KickOnAssistantSilence() )
-					{
-						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>(wsSocket->NegotiateTimeout()) < GetUICurrentTime() )
-						{
+					if( cwmWorldState->ServerData()->KickOnAssistantSilence() ){
+						if( !wsSocket->NegotiatedWithAssistant() && static_cast<UI32>(wsSocket->NegotiateTimeout()) < GetUICurrentTime() ){
 							wsSocket->NegotiateTimeout( BuildTimeValue( 60.0F ) );
 						}
 					}
 				}
 			}
-			Network->popConn();
+			
 		}
 		SetWorldSaveProgress( SS_NOTSAVING );
 	}
-	//Network->Off();
 	if( nextCheckTownRegions <= GetUICurrentTime() || GetOverflow() )
 	{
 		std::for_each(cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[]( std::pair<const std::uint16_t,CTownRegion*> &town) {
@@ -1669,55 +1653,45 @@ void CWorldMain::CheckAutoTimers( void )
 	}
 	std::set< CMapRegion * > regionList;
 	{
-		//std::scoped_lock lock(Network->internallock);
-		
-		Network->pushConn();
-		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-		{
-			if( iSock == nullptr )
-				continue;
-			CChar *mChar		= iSock->CurrcharObj();
-			if( !ValidateObject( mChar ) )
-				continue;
-			UI08 worldNumber	= mChar->WorldNumber();
-			if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() )
-			{
-				genericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
-				checkPC( iSock, (*mChar) );
-				
-				SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
-				SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
-				
-				// Restrict the amount of active regions based on how far player is from the border
-				// to the next one. This reduces active regions around a player from always 9 to
-				// varying between 3 to 6. Only regions on yOffset are considered, because the xOffset
-				// ones are too narrow
-				auto yOffsetUnrounded = static_cast<R32>(mChar->GetY()) / static_cast<R32>(MapRowSize);
-				SI08 counter2Start = 0, counter2End = 0;
-				if( yOffsetUnrounded < yOffset + 0.25 )
-				{
-					counter2Start = -1;
-					counter2End = 0;
-				}
-				else if( yOffsetUnrounded > yOffset + 0.75 )
-				{
-					counter2Start = 0;
-					counter2End = 1;
-				}
-				
-				for( SI08 counter = -1; counter <= 1; ++counter ) // Check 3 x colums
-				{
-					for( SI08 ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2 ) // Check variable y colums
-					{
-						CMapRegion *tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
-						if( tC == nullptr )
-							continue;
-						regionList.insert( tC );
+		for (auto &iSock : Network->connClients){
+			if( iSock){
+				CChar *mChar		= iSock->CurrcharObj();
+				if( !ValidateObject( mChar ) )
+					continue;
+				UI08 worldNumber	= mChar->WorldNumber();
+				if( mChar->GetAccount().wAccountIndex == iSock->AcctNo() && mChar->GetAccount().dwInGame == mChar->GetSerial() ){
+					genericCheck( iSock, (*mChar), checkFieldEffects, doWeather );
+					checkPC( iSock, (*mChar) );
+					
+					SI16 xOffset = MapRegion->GetGridX( mChar->GetX() );
+					SI16 yOffset = MapRegion->GetGridY( mChar->GetY() );
+					
+					// Restrict the amount of active regions based on how far player is from the border
+					// to the next one. This reduces active regions around a player from always 9 to
+					// varying between 3 to 6. Only regions on yOffset are considered, because the xOffset
+					// ones are too narrow
+					auto yOffsetUnrounded = static_cast<R32>(mChar->GetY()) / static_cast<R32>(MapRowSize);
+					SI08 counter2Start = 0, counter2End = 0;
+					if( yOffsetUnrounded < yOffset + 0.25 ){
+						counter2Start = -1;
+						counter2End = 0;
+					}
+					else if( yOffsetUnrounded > yOffset + 0.75 ){
+						counter2Start = 0;
+						counter2End = 1;
+					}
+					
+					for( SI08 counter = -1; counter <= 1; ++counter ) {// Check 3 x colums
+						for( SI08 ctr2 = counter2Start; ctr2 <= counter2End; ++ctr2 ){ // Check variable y colums
+							auto tC = MapRegion->GetMapRegion( xOffset + counter, yOffset + ctr2, worldNumber );
+							if( tC) {
+								regionList.insert( tC );
+							}
+						}
 					}
 				}
 			}
 		}
-		Network->popConn();
 	}
 	
 	// Reduce some lag checking these timers constantly in the loop

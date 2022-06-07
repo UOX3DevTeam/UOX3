@@ -2086,26 +2086,22 @@ bool CPITalkRequest::HandleCommon( void )
 				auto temp = oldstrutil::format("GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
 				bool x = false;
 				{
-					//std::scoped_lock lock(Network->internallock);
-					Network->pushConn();
-					for( tmpSock = Network->FirstSocket(); !Network->FinishedSockets(); tmpSock = Network->NextSocket() )
-					{
+					for (auto &tmpSock : Network->connClients){
 						CChar *tChar = tmpSock->CurrcharObj();
-						if( !ValidateObject( tChar ) )
-							continue;
-
-						if( tChar->IsGMPageable() )
-						{
-							x = true;
-							tmpSock->sysmessage( temp );
+						if( ValidateObject( tChar ) ){
+							if( tChar->IsGMPageable() ){
+								x = true;
+								tmpSock->sysmessage( temp );
+							}
 						}
 					}
-					Network->popConn();
 				}
-				if( x )
+				if( x ){
 					tSock->sysmessage( 363 );
-				else
+				}
+				else {
 					tSock->sysmessage( 364 );
+				}
 			}
 			ourChar->SetSpeechMode( 0 );
 			break;
@@ -2124,26 +2120,22 @@ bool CPITalkRequest::HandleCommon( void )
 				auto temp = oldstrutil::format( "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPageCns->Reason().c_str() );
 				bool x = false;
 				{
-					//std::scoped_lock lock(Network->internallock);
-					Network->pushConn();
-					for( tmpSock = Network->FirstSocket(); !Network->FinishedSockets(); tmpSock = Network->NextSocket() )
-					{
+					for (auto &tmpSock : Network->connClients){
 						CChar *tChar = tmpSock->CurrcharObj();
-						if( !ValidateObject( tChar ) )
-							continue;
-
-						if( tChar->IsGMPageable() )
-						{
-							x = true;
-							tmpSock->sysmessage( temp );
+						if( ValidateObject( tChar ) ){
+							if( tChar->IsGMPageable() ){
+								x = true;
+								tmpSock->sysmessage( temp );
+							}
 						}
 					}
-					Network->popConn();
 				}
-				if( x )
+				if( x ){
 					tSock->sysmessage( 360 );
-				else
+				}
+				else {
 					tSock->sysmessage( 361 );
+				}
 			}
 			ourChar->SetSpeechMode( 0 );
 			break;

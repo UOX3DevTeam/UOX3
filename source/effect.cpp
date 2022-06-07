@@ -106,15 +106,11 @@ void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );//0x00000004
 
-	//std::scoped_lock lock(Network->internallock);
-
-	Network->pushConn();
-	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{
+	for(auto &tSock : Network->connClients){
 		if( objInRange( tSock, source, DIST_SAMESCREEN ) && objInRange( tSock, dest, DIST_SAMESCREEN ) )
 			tSock->Send( &toSend );
 	}
-	Network->popConn();
+
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -291,13 +287,11 @@ void cEffects::PlayStaticAnimation( SI16 x, SI16 y, SI08 z, UI16 effect, UI08 sp
 	toSend.Duration( loop );
 	toSend.AdjustDir( false );
 	toSend.ExplodeOnImpact( explode );
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-	{  // if inrange of effect and online send effect
+
+	std::for_each(Network->connClients.begin(),Network->connClients.end(),[&toSend](CSocket *tSock){
 		tSock->Send( &toSend );
-	}
-	Network->popConn();
+	});
+
 }
 
 //o-----------------------------------------------------------------------------------------------o
