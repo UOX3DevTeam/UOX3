@@ -762,6 +762,24 @@ DFNTAGS ScriptSection::FirstTag( void )
 	return (*currentPos2)->tag;
 }
 
+//==============================================================================================
+auto ScriptSection::collection() const -> const std::vector<sectData *>& {
+	return data;
+}
+//==============================================================================================
+auto ScriptSection::collection()  -> std::vector<sectData *>&{
+	return data;
+
+}
+//==============================================================================================
+auto ScriptSection::collection2() const -> const std::vector<sectDataV2 *>& {
+	return dataV2;
+}
+//==============================================================================================
+auto ScriptSection::collection2()  -> std::vector<sectDataV2 *>&{
+	return dataV2;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool ItemListExist( void ) const
 //|	Date		-	12 January, 2003

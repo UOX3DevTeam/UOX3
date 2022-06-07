@@ -299,6 +299,11 @@ private:
 	std::string				itemListData;
 
 public:
+	auto collection() const -> const std::vector<sectData *>& ;
+	auto collection()  -> std::vector<sectData *>&;
+	auto collection2() const -> const std::vector<sectDataV2 *>& ;
+	auto collection2()  -> std::vector<sectDataV2 *>&;
+
 	ScriptSection( void );
 	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
 	~ScriptSection();
