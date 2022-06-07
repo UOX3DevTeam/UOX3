@@ -981,14 +981,21 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 			   && ( !IsGMBody( ourChar )
 				 && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
 			{
+				didShove = true ;
 				// Run onCollide event on character doing the shoving
-				for( auto scriptTrig : scriptTriggers )
+				for( auto &scriptTrig : scriptTriggers )
 				{
 					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
-					{
-						if( toExecute->OnCollide( mSock, c, ourChar ) == 1 )
+					if (toExecute){
+						auto retVal = toExecute->OnCollide( mSock, c, ourChar );
+						if( retVal == 0 )
 						{
+							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+							didShove = false;
+						}
+						else if( retVal == 1 )
+						{
+							// Event found, script returned true. Allow hardcoded functionality
 							didShove = true;
 							break;
 						}
@@ -999,13 +1006,20 @@ void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
 				ourScriptTriggers.clear();
 				ourScriptTriggers.shrink_to_fit();
 				ourScriptTriggers = ourChar->GetScriptTriggers();
-				for( auto scriptTrig : ourScriptTriggers )
+				for( auto &scriptTrig : ourScriptTriggers )
 				{
 					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
+					if( toExecute  )
 					{
-						if( toExecute->OnCollide( ourChar->GetSocket(), c, ourChar ) == 1 )
+						auto retVal = toExecute->OnCollide( ourChar->GetSocket(), c, ourChar );
+						if( retVal == 0 )
 						{
+							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+							didShove = false;
+						}
+						else if( retVal == 1 )
+						{
+							// Event found, script returned true. Allow hardcoded functionality
 							didShove = true;
 							break;
 						}
