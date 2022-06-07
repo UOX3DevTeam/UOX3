@@ -5226,34 +5226,31 @@ bool CChar::ToggleFlying( void )
 					Effects->PlayNewCharacterAnimation( this, N_ACT_TAKEOFF ); // Action 0x09, subAction 0x00
 
 				// Send update to nearby characters
-				Network->pushConn();
-				for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
-				{
-					if( tSend == nullptr )
-						continue;
-					CChar *mChar = tSend->CurrcharObj();
-					if( !ValidateObject( mChar ))
-						continue;
-					if( WorldNumber() != mChar->WorldNumber() || GetInstanceID() != mChar->GetInstanceID() )
-						continue;
+				for (auto &tSend : Network->connClients) {
+					if( tSend ) {
+						CChar *mChar = tSend->CurrcharObj();
+						if( ValidateObject( mChar )){
 
-					UI16 effRange = static_cast<UI16>(tSend->Range());
-					const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
-					if( visibleRange >= effRange )
-						effRange = visibleRange;
-
-					if( this != mChar)
-					{
-						if( !objInRange( this, mChar, effRange ))
-						{
-							continue;
+							if( (WorldNumber() == mChar->WorldNumber()) && (GetInstanceID() == mChar->GetInstanceID()) ){
+								
+								UI16 effRange = static_cast<UI16>(tSend->Range());
+								const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
+								if( visibleRange >= effRange ){
+									effRange = visibleRange;
+								}
+								
+								if( this != mChar){
+									if( !objInRange( this, mChar, effRange )){
+										continue;
+									}
+								}
+								
+								toSend.FlagColour(static_cast<UI08>(FlagColour(mChar)));
+								tSend->Send(&toSend);
+							}
 						}
 					}
-
-					toSend.FlagColour(static_cast<UI08>(FlagColour(mChar)));
-					tSend->Send(&toSend);
 				}
-				Network->popConn();
 			}
 		}
 	}

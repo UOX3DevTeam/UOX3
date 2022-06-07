@@ -2641,15 +2641,11 @@ void CItem::RemoveFromSight( CSocket *mSock )
 			mSock->Send( &toRemove );
 		else
 		{
-			//std::scoped_lock lock(Network->internallock);
-			Network->pushConn();
-			for( CSocket *nSock = Network->FirstSocket(); !Network->FinishedSockets(); nSock = Network->NextSocket() )
-			{
-				if( !nSock->LoginComplete() )
-					continue;
-				nSock->Send( &toRemove );
+			for (auto &nSock : Network->connClients) {
+				if( nSock->LoginComplete() ){
+					nSock->Send( &toRemove );
+				}
 			}
-			Network->popConn();
 		}
 	}
 }
