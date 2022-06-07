@@ -178,30 +178,6 @@ void sysBroadcast( const std::string& txt )
 {
 	if( !txt.empty() )
 	{
-		/*if( cwmWorldState->ServerData()->UseUnicodeMessages() )
-		{
-			Network->pushConn();
-			for( CSocket *mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-			{
-				CChar *mChar = mSock->CurrcharObj();
-				if( ValidateObject( mChar ))
-				{
-						CPUnicodeMessage unicodeMessage;
-						unicodeMessage.Message( txt );
-						unicodeMessage.Font( 0xFFFF );
-						unicodeMessage.Colour( 0xFFFF );
-						unicodeMessage.Type( 1 );
-						unicodeMessage.Language( "ENG" );
-						unicodeMessage.Name( "System" );
-						unicodeMessage.ID( 0 );
-						unicodeMessage.Serial( 0 );
-						mSock->Send( &unicodeMessage );
-				}
-			}
-			Network->popConn();
-		}
-		else
-		{*/
 			CSpeechEntry& toAdd = SpeechSys->Add();
 			toAdd.Speech( txt );
 			toAdd.Font( FNT_NORMAL );
@@ -524,21 +500,16 @@ void CSpeechQueue::SayIt( CSpeechEntry& toSay )
 		case SPTRG_BROADCASTPC:			// ALL PCs everywhere + NPCs in range
 		case SPTRG_BROADCASTALL:
 		{
-			//std::scoped_lock lock(Network->internallock);
-			Network->pushConn();
-			for( mSock = Network->FirstSocket(); !Network->FinishedSockets(); mSock = Network->NextSocket() )
-			{
-				if( mSock != nullptr )
-				{
-					CChar *mChar = mSock->CurrcharObj();
-					if( ValidateObject( mChar ) )
-					{
-						if( mChar->GetCommandLevel() >= toSay.CmdLevel() )
+			for (auto &mSock : Network->connClients){
+				if( mSock ){
+					auto mChar = mSock->CurrcharObj();
+					if( ValidateObject( mChar ) ){
+						if( mChar->GetCommandLevel() >= toSay.CmdLevel() ){
 							mSock->Send( &toSend );
+						}
 					}
 				}
 			}
-			Network->popConn();
 			break;
 		}
 		case SPTRG_ONLYRECEIVER:		// only the receiver gets the message

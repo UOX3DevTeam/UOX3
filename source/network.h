@@ -228,6 +228,7 @@ public:
 	// We don't want to do this, but given we have outside classes
 	// we can either friend a lot of things, or just put it out here
 	std::mutex				internallock;
+	std::vector< CSocket * >	connClients, loggedInClients;
 
 private:
 	struct FirewallEntry
@@ -242,7 +243,6 @@ private:
 	std::map< UI16, UI16 >			packetOverloads;
 	std::vector< FirewallEntry >	slEntries;
 	SI32					a_socket;
-	std::vector< CSocket * >	connClients, loggedInClients;
 
 	struct sockaddr_in		client_addr;
 

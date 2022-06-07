@@ -969,19 +969,15 @@ void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 	GumpDisplay Who( s, 400, 300 );
 	Who.SetTitle( title );
 	{
-		//std::scoped_lock lock(Network->internallock);
-		Network->pushConn();
-		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-		{
+		for (auto &iSock : Network->connClients){
 			CChar *iChar = iSock->CurrcharObj();
-			if( iChar->GetCommandLevel() >= commandLevel )
-			{
+			if( iChar->GetCommandLevel() >= commandLevel ){
+			
 				auto temp = oldstrutil::format("%i) %s", j, iChar->GetName().c_str() );
 				Who.AddData( temp, iChar->GetSerial(), 3 );
 			}
 			++j;
 		}
-		Network->popConn();
 	}
 	Who.Send( 4, false, INVALIDSERIAL );
 }
@@ -1039,20 +1035,15 @@ void command_reportbug( CSocket *s )
 	s->sysmessage( 87 );
 	bool x = false;
 	{
-		//std::scoped_lock lock(Network->internallock);
-		Network->pushConn();
-		for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-		{
+		for (auto &iSock : Network->connClients){
 			CChar *iChar = iSock->CurrcharObj();
-			if( !ValidateObject( iChar ) )
-				continue;
-			if( iChar->IsGMPageable() )
-			{
-				x = true;
-				iSock->sysmessage( 277, mChar->GetName().c_str(), Commands->CommandString( 2 ).c_str() );
+			if( ValidateObject( iChar ) ){
+				if( iChar->IsGMPageable() ){
+					x = true;
+					iSock->sysmessage( 277, mChar->GetName().c_str(), Commands->CommandString( 2 ).c_str() );
+				}
 			}
 		}
-		Network->popConn();
 	}
 	if( x )
 		s->sysmessage( 88 );

@@ -884,60 +884,53 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 
 	CPExtMove toSend	= (*c);
 
-	//std::scoped_lock lock(Network->internallock);
-	Network->pushConn();
-	for( CSocket *tSend = Network->FirstSocket(); !Network->FinishedSockets(); tSend = Network->NextSocket() )
-	{	// lets see, its much cheaper to call perm[i] first so i'm reordering this
-		if( tSend == nullptr )
-			continue;
-		CChar *mChar = tSend->CurrcharObj();
-		if( !ValidateObject( mChar ) )
-			continue;
-		if( worldnumber != mChar->WorldNumber() || instanceID != mChar->GetInstanceID() )
-			continue;
-
-		effRange = static_cast<UI16>( tSend->Range() );
-		const UI16 visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
-		if( visibleRange >= effRange )
-			effRange = visibleRange;
-
-		if( c != mChar )
-		{	// We need to ensure they are within range of our X AND Y location regardless of how they moved.
-			const UI16 dxNew = static_cast<UI16>(abs( newx - mChar->GetX() ));
-			const UI16 dyNew = static_cast<UI16>(abs( newy - mChar->GetY() ));
-			if( checkX && dyNew <= (effRange+2) )	// Only check X Plane if their x changed
-			{
-				UI16 dxOld = static_cast<UI16>(abs( oldx - mChar->GetX() ));
-				if( ( dxNew == effRange ) && ( dxOld > effRange ) )
-				{
-					c->SendToSocket( tSend );
-					continue;	// Incase they moved diagonally, lets not update the same character multiple times
-				}
-				else if( ( dxNew > (effRange+1) ) && ( dxOld == (effRange+1) ) )
-				{
-					c->RemoveFromSight( tSend );
-					continue;	// Incase they moved diagonally, lets not update the same character multiple times
-				}
-			}
-			if( checkY && dxNew <= (effRange+2) )	// Only check Y plane if their y changed
-			{
-				UI16 dyOld = static_cast<UI16>(abs( oldy - mChar->GetY() ));
-				if( ( dyNew == effRange ) && ( dyOld > effRange ) )
-				{
-					c->SendToSocket( tSend );
-					continue;
-				}
-				else if( ( dyNew > (effRange+1) ) && ( dyOld == (effRange+1) ) )
-				{
-					c->RemoveFromSight( tSend );
-					continue;
+	for (auto &tSend : Network->connClients) {
+		if( tSend ){
+			auto mChar = tSend->CurrcharObj();
+			if( ValidateObject( mChar ) ){
+				if( (worldnumber == mChar->WorldNumber()) && (instanceID == mChar->GetInstanceID()) ){
+					
+					effRange = static_cast<UI16>( tSend->Range() );
+					const auto visibleRange = static_cast<UI16>( tSend->Range() + Races->VisRange( mChar->GetRace() ));
+					if( visibleRange >= effRange ){
+						effRange = visibleRange;
+					}
+					
+					if( c != mChar ){
+						// We need to ensure they are within range of our X AND Y location regardless of how they moved.
+						const auto dxNew = static_cast<UI16>(abs( newx - mChar->GetX() ));
+						const auto dyNew = static_cast<UI16>(abs( newy - mChar->GetY() ));
+						if( checkX && dyNew <= (effRange+2) ){
+							// Only check X Plane if their x changed
+							UI16 dxOld = static_cast<UI16>(abs( oldx - mChar->GetX() ));
+							if( ( dxNew == effRange ) && ( dxOld > effRange ) ){
+								c->SendToSocket( tSend );
+								continue;	// Incase they moved diagonally, lets not update the same character multiple times
+							}
+							else if( ( dxNew > (effRange+1) ) && ( dxOld == (effRange+1) ) ){
+								c->RemoveFromSight( tSend );
+								continue;	// Incase they moved diagonally, lets not update the same character multiple times
+							}
+						}
+						if( checkY && dxNew <= (effRange+2) ){
+							// Only check Y plane if their y changed
+							UI16 dyOld = static_cast<UI16>(abs( oldy - mChar->GetY() ));
+							if( ( dyNew == effRange ) && ( dyOld > effRange ) ){
+								c->SendToSocket( tSend );
+								continue;
+							}
+							else if( ( dyNew > (effRange+1) ) && ( dyOld == (effRange+1) ) ){
+								c->RemoveFromSight( tSend );
+								continue;
+							}
+						}
+						toSend.FlagColour( static_cast<UI08>(c->FlagColour( mChar )) );
+						tSend->Send( &toSend );
+					}
 				}
 			}
-			toSend.FlagColour( static_cast<UI08>(c->FlagColour( mChar )) );
-			tSend->Send( &toSend );
 		}
 	}
-	Network->popConn();
 }
 
 //o-----------------------------------------------------------------------------------------------o

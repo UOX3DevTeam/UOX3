@@ -2157,17 +2157,17 @@ void CBaseObject::Cleanup( void )
 	if( toFind != cwmWorldState->refreshQueue.end() )
 		cwmWorldState->refreshQueue.erase( toFind );
 
-	if( ValidateObject( multis ) )
+	if( ValidateObject( multis ) ){
 		SetMulti( INVALIDSERIAL, false );
-
-	for( CSocket *iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-	{
-		if( iSock != nullptr )
-		{
-			if( iSock->TempObj() != nullptr && iSock->TempObj() == this )
+	}
+	for (auto &iSock : Network->connClients) {
+		if( iSock ){
+			if( iSock->TempObj() != nullptr && iSock->TempObj() == this ){
 				iSock->TempObj( nullptr );
-			if( iSock->TempObj2() != nullptr && iSock->TempObj2() == this )
+			}
+			if( iSock->TempObj2() != nullptr && iSock->TempObj2() == this ){
 				iSock->TempObj2( nullptr );
+			}
 		}
 	}
 }

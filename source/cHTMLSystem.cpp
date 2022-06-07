@@ -141,22 +141,21 @@ void cHTMLTemplate::Process( void )
 
 	// Get all Network Connections
 	{
-		//std::scoped_lock lock(Network->internallock);
-		Network->pushConn();
-		for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-		{
+		for (auto &tSock : Network->connClients) {
 			tChar = tSock->CurrcharObj();
-			if( !ValidateObject( tChar ) )
-				continue;
-
-			if( tChar->IsGM() )
-				++gm;
-			else if( tChar->IsCounselor() )
-				++cns;
-			else
-				++ccount;
+			if( ValidateObject( tChar ) ){
+				
+				if( tChar->IsGM() ){
+					++gm;
+				}
+				else if( tChar->IsCounselor() ){
+					++cns;
+				}
+				else{
+					++ccount;
+				}
+			}
 		}
-		Network->popConn();
 	}
 
 	// GMs
@@ -296,18 +295,12 @@ void cHTMLTemplate::Process( void )
 		std::string myInline	= ParsedContent.substr( Pos, SecondPos - Pos + 12 );
 		std::string PlayerList;
 		{
-			//std::scoped_lock lock(Network->internallock);
-
-			Network->pushConn();
-			for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-			{
+			for (auto &tSock : Network->connClients){
 				try
 				{
-					if( tSock != nullptr )
-					{
-						CChar *tChar = tSock->CurrcharObj();
-						if( ValidateObject( tChar ) )
-						{
+					if( tSock ) {
+						auto tChar = tSock->CurrcharObj();
+						if( ValidateObject( tChar ) ){
 							std::string parsedInline = myInline;
 							parsedInline.replace( 0, 12, "" );
 							parsedInline.replace( parsedInline.length()-12, 12, "" );
@@ -325,24 +318,21 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerName
 							size_t sPos = parsedInline.find( "%playername" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
 								sPos = parsedInline.find( "%playername" );
 							}
 
 							// PlayerTitle
 							sPos = parsedInline.find( "%playertitle" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
 								sPos = parsedInline.find( "%playertitle" );
 							}
 
 							// PlayerIP
 							sPos = parsedInline.find( "%playerip" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								CSocket *mySock = tChar->GetSocket();
 
 								auto ClientIP = oldstrutil::format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
@@ -352,8 +342,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerAccount
 							sPos = parsedInline.find( "%playeraccount" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								CAccountBlock& toScan = tChar->GetAccount();
 								if( toScan.wAccountIndex != AB_INVALID_ID )
 									(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
@@ -362,8 +351,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerX
 							sPos = parsedInline.find( "%playerx" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								std::string myX = oldstrutil::number( tChar->GetX() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerx" );
@@ -371,8 +359,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerY
 							sPos = parsedInline.find( "%playery" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ) {
 								std::string myY = oldstrutil::number( tChar->GetY() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playery" );
@@ -380,8 +367,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerZ
 							sPos = parsedInline.find( "%playerz" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								std::string myZ = oldstrutil::number( tChar->GetZ() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerz" );
@@ -389,8 +375,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerRace -- needs testing
 							sPos = parsedInline.find( "%playerrace" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								RACEID myRace			= tChar->GetRace();
 								const std::string rName	= Races->Name( myRace );
 								size_t raceLenName		= rName.length();
@@ -402,8 +387,7 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerRegion
 							sPos = parsedInline.find( "%playerregion" );
-							while( sPos != std::string::npos )
-							{
+							while( sPos != std::string::npos ){
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 13, tChar->GetRegion()->GetName() ):parsedInline.replace( sPos, 13, "");
 								sPos = parsedInline.find( "%playerregion" );
 							}
@@ -417,7 +401,6 @@ void cHTMLTemplate::Process( void )
 					Console << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
 				}
 			}
-			Network->popConn();
 		}
 
 		(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, myInline.length(), PlayerList ):ParsedContent.replace( Pos, myInline.length(), "");

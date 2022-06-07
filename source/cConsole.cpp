@@ -1110,8 +1110,7 @@ void CConsole::Process( SI32 c )
 				break;
 			case 'K':
 			{
-				for( tSock = Network->FirstSocket(); !Network->FinishedSockets(); tSock = Network->NextSocket() )
-				{
+				for (auto &tSock : Network->connClients){
 					Network->Disconnect( tSock );
 				}
 				messageLoop << "CMD: All Connections Closed.";
@@ -1144,19 +1143,14 @@ void CConsole::Process( SI32 c )
 			{
 				// Display logged in chars
 				messageLoop << "CMD: Current Users in the World:";
-				CSocket *iSock;
-				{	//std::scoped_lock lock(Network->internallock);
-					Network->pushConn();
-
-					for( iSock = Network->FirstSocket(); !Network->FinishedSockets(); iSock = Network->NextSocket() )
-					{
+				{
+					for (auto &iSock : Network->connClients){
 						++j;
 						CChar *mChar = iSock->CurrcharObj();
 
 						temp = oldstrutil::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
 						messageLoop << temp;
 					}
-					Network->popConn();
 				}
 
 				temp = oldstrutil::format( "     Total users online: %i", j );
@@ -1229,21 +1223,17 @@ void CConsole::Process( SI32 c )
 			case 'z':
 			case 'Z':
 			{
-				bool loggingEnabled = false;
+				auto loggingEnabled = false ;
 				{
-					//std::scoped_lock lock(Network->internallock);
-					// Log socket activity
-					Network->pushConn();
-
-					CSocket *snSock		= Network->FirstSocket();
-					if( snSock != nullptr )
-						loggingEnabled = !snSock->Logging();
-					for( ; !Network->FinishedSockets(); snSock = Network->NextSocket() )
-					{
-						if( snSock != nullptr )
-							snSock->Logging( !snSock->Logging() );
+					for (auto &snSock : Network->connClients){
+						if (snSock) {
+							snSock->Logging(!snSock->Logging());
+						}
 					}
-					Network->popConn();
+					auto iter = Network->connClients.begin() ;
+					if (iter != Network->connClients.end()){
+						loggingEnabled = (*iter)->Logging();
+					}
 				}
 				if( loggingEnabled )
 					messageLoop << "CMD: Network Logging Enabled.";
