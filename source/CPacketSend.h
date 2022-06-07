@@ -4,6 +4,9 @@
 #include "CPacketReceive.h"
 
 
+// Forward declare
+struct __STARTLOCATIONDATA__ ;
+
 class CPCharLocBody : public CPUOXBuffer
 {
 protected:
@@ -977,8 +980,8 @@ public:
 	CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
 	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
-	virtual void	AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset  );
-	virtual void	NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset );
+	virtual auto 	AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset  ) ->void;
+	virtual auto	NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) ->void;
 	CPCharAndStartLoc& operator=( CAccountBlock& actbBlock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };

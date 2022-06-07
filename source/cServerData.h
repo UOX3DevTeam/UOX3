@@ -151,7 +151,29 @@ enum CSDDirectoryPaths
 	CSDDP_SCRIPTDATA,
 	CSDDP_COUNT
 };
-
+struct __STARTLOCATIONDATA__
+{
+	__STARTLOCATIONDATA__()
+	{
+		x=0;
+		y=0;
+		z=0;
+		worldNum = 0 ;
+		instanceID = 0;
+		clilocDesc = 0 ;
+	}
+	std::string oldTown ;
+	std::string oldDescription;
+	std::string newTown ;
+	std::string newDescription ;
+	SI16	x;
+	SI16	y;
+	SI16	z;
+	SI16	worldNum;
+	UI16	instanceID;
+	UI32	clilocDesc;
+	
+} ;
 class physicalServer
 {
 public:
@@ -332,7 +354,7 @@ private:
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
 
 	// Start & Location Settings
-	std::vector< STARTLOCATION >	startlocations;
+	std::vector< __STARTLOCATIONDATA__ >	startlocations;
 	SI16		startgold;						//	Amount of gold created when a PC is made
 	UI16		startprivs;						//	Starting privileges of characters
 
@@ -955,7 +977,7 @@ public:
 	void		dumpPaths( void );
 
 	void			ServerLocation( std::string toSet );
-	LPSTARTLOCATION ServerLocation( size_t locNum );
+	auto 			ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__ *;
 
 	size_t			NumServerLocations( void ) const;
 

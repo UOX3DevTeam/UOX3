@@ -4891,38 +4891,36 @@ void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
 	pStream.WriteByte( byteOffset, numLocations );
 }
 
-void CPCharAndStartLoc::AddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
-{
-	if( sLoc == nullptr )
-		return;
-
-	UI16 baseOffset = 0;
-	baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
-	baseOffset += ( locOffset * 63 );
-
-	pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
-	pStream.WriteString( static_cast<size_t>(baseOffset)+1, sLoc->oldTown, 31 );
-	pStream.WriteString( static_cast<size_t>(baseOffset)+33, sLoc->oldDescription, 31 );
+auto CPCharAndStartLoc::AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset )->void{
+	if( sLoc){
+		
+		UI16 baseOffset = 0;
+		baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
+		baseOffset += ( locOffset * 63 );
+		
+		pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
+		pStream.WriteString( static_cast<size_t>(baseOffset)+1, sLoc->oldTown, 31 );
+		pStream.WriteString( static_cast<size_t>(baseOffset)+33, sLoc->oldDescription, 31 );
+	}
 }
 
-void CPCharAndStartLoc::NewAddStartLocation( LPSTARTLOCATION sLoc, UI08 locOffset )
-{
-	if( sLoc == nullptr )
-		return;
+auto CPCharAndStartLoc::NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) ->void{
 
-	UI16 baseOffset = 0;
-	baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
-	baseOffset += ( locOffset * 89 );
-
-	pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
-	pStream.WriteString( static_cast<size_t>(baseOffset)+1, sLoc->newTown, 32 );
-	pStream.WriteString( static_cast<size_t>(baseOffset)+33, sLoc->newDescription, 32 );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+65, sLoc->x );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+69, sLoc->y );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+73, sLoc->z );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+77, sLoc->worldNum );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+81, sLoc->clilocDesc );
-	pStream.WriteLong( static_cast<size_t>(baseOffset)+85, 0x00 );
+	if (sLoc) {
+		UI16 baseOffset = 0;
+		baseOffset = (UI16)( 5 + ( pStream.GetByte( 3 ) * 60 ));
+		baseOffset += ( locOffset * 89 );
+		
+		pStream.WriteByte( baseOffset, locOffset ); // StartLocation #
+		pStream.WriteString( static_cast<size_t>(baseOffset)+1, sLoc->newTown, 32 );
+		pStream.WriteString( static_cast<size_t>(baseOffset)+33, sLoc->newDescription, 32 );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+65, sLoc->x );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+69, sLoc->y );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+73, sLoc->z );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+77, sLoc->worldNum );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+81, sLoc->clilocDesc );
+		pStream.WriteLong( static_cast<size_t>(baseOffset)+85, 0x00 );
+	}
 }
 
 CPCharAndStartLoc& CPCharAndStartLoc::operator=( CAccountBlock& actbBlock )
