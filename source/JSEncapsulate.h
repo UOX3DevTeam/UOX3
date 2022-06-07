@@ -1,5 +1,89 @@
 #include "Prerequisites.h"
+/* Include all the standard header *after* all the configuration
+ settings have been made.
+ */
+#include "UOXStdHeaders.h"
+
+
+// Pre-declare classes
+// Allows use of pointers in header files without including individual .h
+// so decreases dependencies between files
+class CBaseTile;
+class cAccountClass;
+class CBaseObject;
+class cBooks;
+class CBoatObj;
+class CChar;
+class cCharStuff;
+class cCommands;
+class CConsole;
+class cDice;
+class CDictionary;
+class CDictionaryContainer;
+class cDirectoryListing;
+class CEndL;
+class cEffects;
+class CEnvoke;
+class CGuild;
+class CGuildCollection;
+class CGump;
+class cHTMLTemplate;
+class cHTMLTemplates;
+class cItem;
+class CItem;
+class CJSMapping;
+class CJSMappingSection;
+class CLand;
+class cMagic;
+class CMagicMove;
+class CMagicStat;
+class CMapHandler;
+class CMapRegion;
+class CMulHandler;
+class cMovement;
+class CMultiObj;
+class cNetworkStuff;
+class CPUOXBuffer;
+class CPInputBuffer;
+class cRaces;
+class CRace;
+class cScript;
+class CServerData;
+class CServerDefinitions;
+class CServerProfile;
+class cSkillClass;
+class cSkills;
+class CSocket;
+class CSpawnItem;
+class CSpawnRegion;
+class CSpeechEntry;
+class CSpeechQueue;
+class CTEffect;
+class CThreadQueue;
+class CTile;
+class CTileUni;
+class CTownRegion;
+class CVersionClass;
+class CWeather;
+class cWeatherAb;
+class CWeight;
+class cWhoList;
+class CWorldMain;
+class GumpDisplay;
+class HelpRequest;
+class JailCell;
+class JailSystem;
+class ObjectFactory;
+class Script;
+class ScriptSection;
+class SpellInfo;
+class UOXFile;
+
+/** In order to avoid finger-aches :)
+ */
+#include "enums.h"
 #include "typedefs.h"
+
 enum JSEncapsObjectType
 {
 	JSOT_INT = 0,
