@@ -109,9 +109,10 @@ void CMulHandler::LoadMapsDFN( void )
 	MapList.reserve( NumberOfWorlds );
 	for( UI08 i = 0; i < NumberOfWorlds; ++i )
 	{
-		ScriptSection *toFind = FileLookup->FindEntry( "MAP " + oldstrutil::number( i ), maps_def );
-		if( toFind == nullptr )
+		auto toFind = FileLookup->FindEntry( "MAP " + oldstrutil::number( i ), maps_def );
+		if( toFind == nullptr ) {
 			break;
+		}
 
 		MapData_st toAdd;
 		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )

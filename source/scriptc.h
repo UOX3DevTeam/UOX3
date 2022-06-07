@@ -16,6 +16,8 @@ public:
 	ScriptSection *	FindEntrySubStr( const std::string& section );
 	ScriptSection *	FirstEntry( void );
 	ScriptSection *	NextEntry( void );
+	auto collection() const -> const SSMAP & ;
+	auto collection() -> SSMAP& ;
 
 	bool isin( const std::string& section );
 	std::string EntryName( void );

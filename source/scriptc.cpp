@@ -171,6 +171,15 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 	return rvalue;
 }
 
+//================================================================================================
+auto Script::collection() const ->const SSMAP& {
+	return defEntries;
+}
+//================================================================================================
+auto Script::collection()  -> SSMAP& {
+	return defEntries;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *FirstEntry( void )
 //o-----------------------------------------------------------------------------------------------o
