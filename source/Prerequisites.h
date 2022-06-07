@@ -45,6 +45,10 @@
 #endif
 
 
+#if defined(DEBUG) || defined(_DEBUG)
+#define UOX_DEBUG_MODE 1
+#endif   //DEBUG
+
 
 /* Include all the standard header *after* all the configuration
  settings have been made.
@@ -71,6 +75,36 @@
 /// Useful macros
 #define UOX_DELETE(p)       { if(p) { delete (p);     (p)=nullptr; } }
 #define UOX_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=nullptr; } }
+// For generating compiler warnings - should work on any compiler
+// As a side note, if you start your message with 'Warning: ', the MSVC
+// IDE actually does catch a warning :)
+#define _QUOTE(x) # x
+#define QUOTE(x) _QUOTE(x)
+#define __FILE__LINE__ __FILE__ "(" QUOTE(__LINE__) ") : "
+#define NOTE( x )  message( x )
+#define FILE_LINE  message( __FILE__LINE__ )
+#define TODO( x )  message( __FILE__LINE__"\n"           \
+"+------------------------------------------------\n" \
+"|  TODO :   " #x "\n" \
+"+-------------------------------------------------\n" )
+#define FIXME( x )  message(  __FILE__LINE__"\n"           \
+"+------------------------------------------------\n" \
+"|  FIXME :  " #x "\n" \
+"+-------------------------------------------------\n" )
+#define todo( x )  message( __FILE__LINE__" TODO :   " #x "\n" )
+#define fixme( x )  message( __FILE__LINE__" FIXME:   " #x "\n" )
+#define note( x )  message( __FILE__LINE__" NOTE :   " #x "\n" )
+
+// Define this if you don't want the accounts block to have a copy constructor
+//	or assignment operator
+
+#define _NOACTCOPY_ 0
+
+// Define this if we want to have time stamps associated with our packet logs
+
+#define P_TIMESTAMP 1
+
+
 
 
 // Pre-declare classes
