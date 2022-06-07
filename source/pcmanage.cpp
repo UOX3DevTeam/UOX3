@@ -15,7 +15,7 @@
 #include "cEffects.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
-
+#include "cServerData.h"
 #include "ObjectFactory.h"
 #include <algorithm>
 
@@ -741,7 +741,7 @@ bool CPICreateCharacter::Handle( void )
 				locationNumber = clientFlags;
 
 			// Fetch player's chosen start location
-			LPSTARTLOCATION toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+			auto toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
 
 			CServerData *sd = cwmWorldState->ServerData();
 			size_t serverCount = sd->NumServerLocations();

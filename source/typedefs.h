@@ -125,7 +125,7 @@ constexpr auto LAVA_WATER		= std::uint8_t(32);	// Don't know what all to use thi
 
 typedef void (TargetFunc)( CSocket *s );
 
-// December 27, 2000
+/*
 typedef struct __STARTLOCATIONDATA__
 {
 	__STARTLOCATIONDATA__()
@@ -145,7 +145,7 @@ typedef struct __STARTLOCATIONDATA__
 
 } STARTLOCATION, *LPSTARTLOCATION;
 //	 	-	End
-
+*/
 
 #endif
 
