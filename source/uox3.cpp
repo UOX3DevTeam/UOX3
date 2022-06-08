@@ -917,21 +917,19 @@ auto callGuards( CChar *mChar ) -> void {
 		
 		auto toCheck = MapRegion->GetMapRegion( mChar );
 		if( toCheck ){
-			GenericList< CChar * > *regChars = toCheck->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() ) {
-				if( !ValidateObject( tempChar ) ){
-					break;
-				}
-				
-				if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) ){
-					if( charInRange( tempChar, mChar ) ){
-						Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
-						break;
+			auto regChars = toCheck->GetCharList();
+			for (auto &tempChar : regChars->collection()){
+				if( ValidateObject( tempChar ) ){
+					
+					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) ){
+						if( charInRange( tempChar, mChar ) ){
+							
+							Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
+							break;
+						}
 					}
 				}
 			}
-			regChars->Pop();
 		}
 	}
 }
@@ -3048,8 +3046,8 @@ auto checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)->void{
 					mSock->sysmessage( 1364 ); // You feel loved and cherished under the protection of your home town.
 					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) ) {
-						GenericList< CItem * > *piCont = packItem->GetContainsList();
-						for( CItem *toScan = piCont->First(); !piCont->Finished(); toScan = piCont->Next() ) {
+						auto piCont = packItem->GetContainsList();
+						for (auto &toScan : piCont->collection()){
 							if( ValidateObject( toScan ) ) {
 								if( toScan->GetType() == IT_TOWNSTONE ) {
 									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI16>(toScan->GetTempVar( CITV_MOREX ))];

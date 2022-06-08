@@ -843,9 +843,8 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 		if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) ) {
 			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 				// Teleport player's pets too
-				GenericList< CChar * > *myPets = caster->GetPetList();
-				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-				{
+				auto myPets = caster->GetPetList();
+				for (auto &myPet : myPets->collection()){
 					if( ValidateObject( myPet ) ){
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
@@ -879,8 +878,8 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) ) {
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 						// Teleport player's pets too
-						GenericList< CChar * > *myPets = caster->GetPetList();
-						for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+						auto myPets = caster->GetPetList();
+						for (auto &myPet : myPets->collection()){
 							if( ValidateObject( myPet ) ){
 								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 									if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -916,8 +915,8 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 			if( worldNum != caster->WorldNumber() ) {
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) {
 					// Teleport player's pets too
-					GenericList< CChar * > *myPets = caster->GetPetList();
-					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+					auto myPets = caster->GetPetList();
+					for (auto &myPet : myPets->collection()){
 						if( ValidateObject( myPet ) ){
 							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 								if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -938,8 +937,8 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 			}
 			else {
 				// Teleport player's pets too
-				GenericList< CChar * > *myPets = caster->GetPetList();
-				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+				auto myPets = caster->GetPetList();
+				for (auto &myPet : myPets->collection()){
 					if( ValidateObject( myPet ) ){
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -1425,10 +1424,8 @@ bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Reveal spell
 //o-----------------------------------------------------------------------------------------------o
-bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
-{
-	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
-	{
+auto splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell ) ->bool {
+	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() ) {
 		UI16 j = caster->GetSkill( MAGERY );
 		SI32 range=(((j-261)*(15))/739)+5;
 		//If the caster has a Magery of 26.1 (min to cast reveal w/ scroll), range  radius is
@@ -1436,32 +1433,31 @@ bool splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 
 		for (auto &MapArea : MapRegion->PopulateList( caster )){
 			if( MapArea){
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
-						continue;
-					if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
-					{
-						point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
-						if( difference.MagSquared() <= ( range * range ) ) // char to reveal is within radius or range
+				auto regChars = MapArea->GetCharList();
+				for (auto &tempChar : regChars->collection()){
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == caster->GetInstanceID() ){
+						if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
 						{
-							tempChar->ExposeToView();
-							CMagicStat temp = Magic->spells[48].StaticEffect();
-							if( temp.Effect() != INVALIDID )
-								Effects->PlayStaticAnimation( tempChar, temp.Effect(), temp.Speed(), temp.Loop() );
+							point3 difference = ( tempChar->GetLocation() - point3( x, y, z ) );
+							if( difference.MagSquared() <= ( range * range ) ){ // char to reveal is within radius or range
+								tempChar->ExposeToView();
+								CMagicStat temp = Magic->spells[48].StaticEffect();
+								if( temp.Effect() != INVALIDID ){
+									Effects->PlayStaticAnimation( tempChar, temp.Effect(), temp.Speed(), temp.Loop() );
+								}
+							}
 						}
 					}
 				}
-				regChars->Pop();
 			}
 		}
-		if( Magic->spells[48].Effect() != INVALIDID )
+		if( Magic->spells[48].Effect() != INVALIDID ){
 			Effects->PlaySound( sock, Magic->spells[48].Effect(), true );
+		}
 	}
-	else
+	else{
 		sock->sysmessage( 687 );
+	}
 	return true;
 }
 
@@ -1729,8 +1725,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Provides shared functionality for all area affect spells
 //o-----------------------------------------------------------------------------------------------o
-bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell )
-{
+auto AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell )->bool {
 	SI16 x1, x2, y1, y2;
 	SI08 z1, z2;
 	x1 = x2 = y1 = y2 = z1 = z2 = 0;
@@ -1742,34 +1737,29 @@ bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	
 	for (auto &MapArea : MapRegion->PopulateList( caster )){
 		if( MapArea){
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != caster->GetInstanceID() )
-					continue;
-				
-				if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
-				   tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) )
-				{
-					if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() )
-					{
-						//Store target candidates in targetList
-						targetList.push_back( tempChar );
-						//trgFunc( caster, tempChar, curSpell, targCount );
+			auto regChars = MapArea->GetCharList();
+			for (auto &tempChar : regChars->collection()){
+				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == caster->GetInstanceID() ){
+					
+					if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
+					   tempChar->GetZ() >= z1 && tempChar->GetZ() <= z2 && ( isOnline( (*tempChar) ) || tempChar->IsNpc() ) ) {
+						if( tempChar == caster || LineOfSight( sock, caster, tempChar->GetX(), tempChar->GetY(), ( tempChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false  ) || caster->IsGM() ) {
+							//Store target candidates in targetList
+							targetList.push_back( tempChar );
+							//trgFunc( caster, tempChar, curSpell, targCount );
+						}
+						else if( sock){
+							sock->sysmessage( 688 );
+						}
 					}
-					else if( sock != nullptr )
-						sock->sysmessage( 688 );
 				}
 			}
-			regChars->Pop();
 		}
 	}
 
 	// Iterate through list of valid targets, do damage
 	targCount = static_cast<SI08>(targetList.size());
-	for( i = 0; i < targetList.size(); ++i )
-	{
+	for( i = 0; i < targetList.size(); ++i ) {
 		trgFunc( caster, targetList[i], curSpell, targCount );
 	}
 
@@ -2411,43 +2401,40 @@ void cMagic::SpellBook( CSocket *mSock )
 //|	Purpose		-	Used when a PLAYER passes through a gate.  Takes the player
 //|						to the other side of the gate-link.
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type )
-{
-	if( type == IT_GATE )
-	{
-		if( !mChar->IsNpc() )
-		{
-			CItem *otherGate = calcItemObjFromSer( itemCheck->GetTempVar( CITV_MOREX ) );
-			if( !ValidateObject( otherGate ) )
-				return;
-			SI08 dirOffset = 0;
-			if( mChar->GetDir() < SOUTH )
-				dirOffset = 1;
-			else
-				dirOffset = -1;
-			if( otherGate->WorldNumber() != mChar->WorldNumber() )
-			{
-				mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
-				SendMapChange( mChar->WorldNumber(), mSock, false );
-			}
-			else
-			{
-				mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
-			}
+auto cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, ItemTypes type ) ->void {
 
-			GenericList< CChar * > *myPets = mChar->GetPetList();
-			for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-			{
-				if( !ValidateObject( myPet ) )
-					continue;
-				if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
-				{
-					if( objInOldRange( mChar, myPet, DIST_CMDRANGE ) )
-						myPet->SetLocation( mChar );
+	if( type == IT_GATE ) {
+		if( !mChar->IsNpc() ) {
+			auto otherGate = calcItemObjFromSer( itemCheck->GetTempVar( CITV_MOREX ) );
+			if(  ValidateObject( otherGate ) ){
+				SI08 dirOffset = 0;
+				if( mChar->GetDir() < SOUTH ){
+					dirOffset = 1;
 				}
+				else {
+					dirOffset = -1;
+				}
+				if( otherGate->WorldNumber() != mChar->WorldNumber() ) {
+					mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
+					SendMapChange( mChar->WorldNumber(), mSock, false );
+				}
+				else {
+					mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceID() );
+				}
+				
+				auto myPets = mChar->GetPetList();
+				for (auto &myPet : myPets->collection()){
+					if( ValidateObject( myPet ) ){
+						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar ) {
+							if( objInOldRange( mChar, myPet, DIST_CMDRANGE ) ){
+								myPet->SetLocation( mChar );
+							}
+						}
+					}
+				}
+				Effects->PlaySound( mSock, 0x01FE, true );
+				Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 			}
-			Effects->PlaySound( mSock, 0x01FE, true );
-			Effects->PlayStaticAnimation( mChar, 0x372A, 0x09, 0x06 );
 		}
 	}
 }
@@ -2961,23 +2948,18 @@ void cMagic::PoisonDamage( CChar *p, SI32 poison )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character stands on a magic-field and apply effects.
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::CheckFieldEffects( CChar& mChar )
-{
-	CMapRegion *toCheck = MapRegion->GetMapRegion( &mChar );
-	if( toCheck == nullptr )	// no valid region
-		return;
-	GenericList< CItem * > *regItems = toCheck->GetItemList();
-	regItems->Push();
-	for( CItem *inItemList = regItems->First(); !regItems->Finished(); inItemList = regItems->Next() )
-	{
-		if( !ValidateObject( inItemList ) || inItemList->GetInstanceID() != mChar.GetInstanceID() )
-			continue;
-		if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() )
-		{
-			HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() );
+auto cMagic::CheckFieldEffects( CChar& mChar )->void {
+	auto toCheck = MapRegion->GetMapRegion( &mChar );
+	if( toCheck){
+		auto regItems = toCheck->GetItemList();
+		for (auto &inItemList :regItems->collection()){
+			if( ValidateObject( inItemList ) && inItemList->GetInstanceID() == mChar.GetInstanceID() ){
+				if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() ) {
+					HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() );
+				}
+			}
 		}
 	}
-	regItems->Pop();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3118,58 +3100,54 @@ void cMagic::BoxSpell( CSocket *s, CChar *caster, SI16& x1, SI16& x2, SI16& y1, 
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the visual effect and apply damage when a player opens a trapped container
 //o-----------------------------------------------------------------------------------------------o
-void cMagic::MagicTrap( CChar *s, CItem *i )
-{
-	if( !ValidateObject( s ) || !ValidateObject( i ) )
-		return;
-	if( FindItemOwner( i ) == s || objInRange( s, i, DIST_NEARBY ) )
-	{
-		Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
-		Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
-		Effects->PlaySound( s, 0x0207 );
-		if( CheckResist( nullptr, s, 4 ) )
-			MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, HEAT );
-		else
-			MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ), nullptr, HEAT );
-	}
-	else
-	{
-		// Player is out of range, possibly opened the trapped container using Telekinesis from a safe distance
-		Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
-		Effects->PlaySound( i, 0x0207 );
-
-		// Find nearby players and apply damage to them?
-		for (auto &MapArea : MapRegion->PopulateList( s )){
-			if( MapArea){
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != s->GetInstanceID() || tempChar->GetSerial() == s->GetSerial() )
-						continue;
-					
-					if( objInRange( tempChar, i, DIST_NEARBY ) )
-					{
-						if( CheckResist( nullptr, tempChar, 4 ) )
-							MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ) / 2, s, HEAT );
-						else
-							MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ), s, HEAT );
-						
-						// Reveal hidden players impacted by the explosion
-						if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
-						{
-							tempChar->ExposeToView();
-						}
-					}
-					
-				}
-				regChars->Pop();
+auto cMagic::MagicTrap( CChar *s, CItem *i )->void {
+	if(  ValidateObject( s ) &&  ValidateObject( i ) ){
+		if( FindItemOwner( i ) == s || objInRange( s, i, DIST_NEARBY ) ) {
+			Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
+			Effects->PlayStaticAnimation( s, 0x36B0, 0x09, 0x09 );
+			Effects->PlaySound( s, 0x0207 );
+			if( CheckResist( nullptr, s, 4 ) ){
+				MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ) / 2, nullptr, HEAT );
+			}
+			else{
+				MagicDamage( s, i->GetTempVar( CITV_MOREZ, 2 ), nullptr, HEAT );
 			}
 		}
+		else {
+			// Player is out of range, possibly opened the trapped container using Telekinesis from a safe distance
+			Effects->PlayStaticAnimation( i, 0x36B0, 0x09, 0x09 );
+			Effects->PlaySound( i, 0x0207 );
+			
+			// Find nearby players and apply damage to them?
+			for (auto &MapArea : MapRegion->PopulateList( s )){
+				if( MapArea){
+					auto regChars = MapArea->GetCharList();
+					for (auto &tempChar :regChars->collection()){
+						if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == s->GetInstanceID() && tempChar->GetSerial() != s->GetSerial() ){
+							
+							if( objInRange( tempChar, i, DIST_NEARBY ) ){
+								if( CheckResist( nullptr, tempChar, 4 ) ){
+									MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ) / 2, s, HEAT );
+								}
+								else{
+									MagicDamage( tempChar, i->GetTempVar( CITV_MOREZ, 2 ), s, HEAT );
+								}
+								
+								// Reveal hidden players impacted by the explosion
+								if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE ){
+									tempChar->ExposeToView();
+								}
+							}
+						}
+						
+					}
+				}
+			}
+		}
+		
+		// Set first part of MOREZ to 0 to disable trap, but leave other parts intact
+		i->SetTempVar( CITV_MOREZ, 1, 0 );
 	}
-
-	// Set first part of MOREZ to 0 to disable trap, but leave other parts intact
-	i->SetTempVar( CITV_MOREZ, 1, 0 );
 }
 
 //o-----------------------------------------------------------------------------------------------o

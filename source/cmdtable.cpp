@@ -301,23 +301,20 @@ void command_getpost( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display the serial number of every item on user's screen
 //o-----------------------------------------------------------------------------------------------o
-void command_showids( CSocket *s )
-{
+auto command_showids( CSocket *s )->void {
 	VALIDATESOCKET( s );
 	CChar *mChar	= s->CurrcharObj();
 	CMapRegion *Cell = MapRegion->GetMapRegion( mChar );
-	if( Cell == nullptr )	// nothing to show
-		return;
-	GenericList< CChar * > *regChars = Cell->GetCharList();
-	regChars->Push();
-	for( CChar *toShow = regChars->First(); !regChars->Finished(); toShow = regChars->Next() )
-	{
-		if( !ValidateObject( toShow ) )
-			continue;
-		if( charInRange( mChar, toShow ) )
-			s->ShowCharName( toShow, true );
+	if( Cell )	{
+		auto regChars = Cell->GetCharList();
+		for (auto &toShow : regChars->collection()){
+			if( ValidateObject( toShow ) ){
+				if( charInRange( mChar, toShow ) ){
+					s->ShowCharName( toShow, true );
+				}
+			}
+		}
 	}
-	regChars->Pop();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -925,35 +922,32 @@ void command_pdump( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	(d) Kills spawns from the specified spawn region in SPAWN.DFN
 //o-----------------------------------------------------------------------------------------------o
-void command_spawnkill( CSocket *s )
-{
+auto command_spawnkill( CSocket *s )->void {
 	VALIDATESOCKET( s );
-	if( Commands->NumArguments() == 2 )
-	{
+	if( Commands->NumArguments() == 2 ) {
 		UI16 regNum = static_cast<UI16>(Commands->Argument( 1 ));
-		if( cwmWorldState->spawnRegions.find( regNum ) == cwmWorldState->spawnRegions.end() )
-			return;
-		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[regNum];
-		if( spawnReg == nullptr )
-			return;
-		SI32 killed	= 0;
-
-		s->sysmessage( 349 );
-		GenericList< CChar * > *spCharList = spawnReg->GetSpawnedCharsList();
-		for( CChar *i = spCharList->First(); !spCharList->Finished(); i = spCharList->Next() )
-		{
-			if( !ValidateObject( i ) )
-				continue;
-			if( i->isSpawned() )
-			{
-				Effects->bolteffect( i );
-				Effects->PlaySound( i, 0x0029 );
-				i->Delete();
-				++killed;
+		if( cwmWorldState->spawnRegions.find( regNum ) != cwmWorldState->spawnRegions.end() ){
+			
+			auto spawnReg = cwmWorldState->spawnRegions[regNum];
+			if( spawnReg ){
+				SI32 killed	= 0;
+				
+				s->sysmessage( 349 );
+				auto spCharList = spawnReg->GetSpawnedCharsList();
+				for (auto &i : spCharList->collection()){
+					if( ValidateObject( i ) ){
+						if( i->isSpawned() ) {
+							Effects->bolteffect( i );
+							Effects->PlaySound( i, 0x0029 );
+							i->Delete();
+							++killed;
+						}
+					}
+				}
+				s->sysmessage( 84 ); // Done.
+				s->sysmessage( 350, killed, regNum );
 			}
 		}
-		s->sysmessage( 84 ); // Done.
-		s->sysmessage( 350, killed, regNum );
 	}
 }
 

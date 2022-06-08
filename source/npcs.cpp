@@ -1707,20 +1707,18 @@ void cCharStuff::releasePet( CChar *pet )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pet guarding an item / character
 //o-----------------------------------------------------------------------------------------------o
-CChar * cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded )
-{
-	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
-		return nullptr;
-
-	GenericList< CChar * > *myPets = mChar->GetPetList();
-	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
-	{
-		if( ValidateObject( pet ) )
-		{
-			//if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD &&
-			if( !pet->GetMounted() &&
-			   pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar )
-				return pet;
+auto cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded ) ->CChar * {
+	if( ValidateObject( mChar ) && ValidateObject( guarded ) ){
+		
+		auto myPets = mChar->GetPetList();
+		for (auto &pet : myPets->collection()){
+			if( ValidateObject( pet ) ) {
+				//if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD &&
+				if( !pet->GetMounted() &&
+				   pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar ){
+					return pet;
+				}
+			}
 		}
 	}
 	return nullptr;

@@ -4436,20 +4436,15 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	UI16 itemCount		= 0;
 	bool itemIsCorpse	= toCopy.isCorpse();
 
-	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
+	auto tcCont = toCopy.GetContainsList();
 
 	//tcCont->Reverse(); // This will reverse the order in which items are displayed in the container
-
-	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
-	{
-		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) )
-		{
-			if( !ctr->isFree() )
-			{
+	for (auto &ctr:tcCont->collection()){
+		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) ) {
+			if( !ctr->isFree() ) {
 				// don't show GM hidden objects to non-GM players.
 				// don't show hairs and beards to anyone
-				if( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() )
-				{
+				if( ctr->GetVisible() != 3 || mSock->CurrcharObj()->IsGM() ) {
 					AddItem( ctr, itemCount, mSock );
 					++itemCount;
 				}
@@ -4571,17 +4566,16 @@ void CPOpenBuyWindow::AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset
 	baseOffset += sLen;
 }
 
-void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock )
-{
+auto CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock ) ->void {
 	UI08 itemCount	= 0;
 	UI16 length		= 8;
 	CTownRegion *tReg = nullptr;
-	if( cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject( vendorID ) )
+	if( cwmWorldState->ServerData()->TradeSystemStatus() && ValidateObject( vendorID ) ){
 		tReg = calcRegionFromXY( vendorID->GetX(), vendorID->GetY(), vendorID->WorldNumber(), vendorID->GetInstanceID() );
+	}
 
 	SI16 baseY = 0, baseX = 0;
-	switch( toCopy.GetLayer() )
-	{
+	switch( toCopy.GetLayer() ) {
 		case IL_BUYCONTAINER:			// buy layer
 			break;
 		case IL_BOUGHTCONTAINER:		// bought layer
@@ -4591,16 +4585,12 @@ void CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContain
 			break;
 	}
 
-	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
-	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
-	{
-		if( ValidateObject( ctr ) )
-		{
-			if( !ctr->isFree() )
-			{
+	auto tcCont = toCopy.GetContainsList();
+	for (auto &ctr:tcCont->collection()){
+		if( ValidateObject( ctr ) ) {
+			if( !ctr->isFree() ) {
 				ctr->WalkXY( ++baseX, baseY );
-				if( baseX == 200 )
-				{
+				if( baseX == 200 ) {
 					baseX = 0;
 					++baseY;
 				}
@@ -5370,17 +5360,13 @@ CPCorpseClothing& CPCorpseClothing::operator=( CItem& corpse )
 	return (*this);
 }
 
-void CPCorpseClothing::CopyData( CItem& toCopy )
-{
+auto CPCorpseClothing::CopyData( CItem& toCopy ) ->void {
 	pStream.WriteLong( 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
-	GenericList< CItem * > *tcCont = toCopy.GetContainsList();
-	for( CItem *ctr = tcCont->First(); !tcCont->Finished(); ctr = tcCont->Next() )
-	{
-		if( ValidateObject( ctr ) )
-		{
-			if( !ctr->isFree() && ctr->GetLayer() )
-			{
+	auto tcCont = toCopy.GetContainsList();
+	for (auto &ctr:tcCont->collection()){
+		if( ValidateObject( ctr ) ) {
+			if( !ctr->isFree() && ctr->GetLayer() ) {
 				pStream.ReserveSize( pStream.GetSize() + 5 );
 				AddItem( ctr, itemCount );
 				++itemCount;
@@ -7232,24 +7218,24 @@ void CPSellList::InternalReset( void )
 	pStream.WriteByte( 0, 0x9E );
 	numItems = 0;
 }
-void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
-{
-	CItem *buyPack = vendorID.GetItemAtLayer( IL_BUYCONTAINER );
-	CItem *ourPack	= mChar.GetPackItem();
+auto CPSellList::CopyData( CChar& mChar, CChar& vendorID ) ->void {
+	auto buyPack = vendorID.GetItemAtLayer( IL_BUYCONTAINER );
+	auto ourPack	= mChar.GetPackItem();
 
-	numItems			= 0;
+	numItems = 0;
 	size_t packetLen	= 9;
 
-	if( ValidateObject( buyPack ) && ValidateObject( ourPack ) )
-	{
+	if( ValidateObject( buyPack ) && ValidateObject( ourPack ) ) {
 		CTownRegion *tReg = nullptr;
-		if( cwmWorldState->ServerData()->TradeSystemStatus() )
+		if( cwmWorldState->ServerData()->TradeSystemStatus() ){
 			tReg = calcRegionFromXY( vendorID.GetX(), vendorID.GetY(), vendorID.WorldNumber(), vendorID.GetInstanceID() );
-		GenericList< CItem * > *spCont = buyPack->GetContainsList();
-		for( CItem *spItem = spCont->First(); !spCont->Finished(); spItem = spCont->Next() )
-		{
-			if( ValidateObject( spItem ) )
+		}
+		
+		auto spCont = buyPack->GetContainsList();
+		for (auto &spItem:spCont->collection()){
+			if( ValidateObject( spItem ) ){
 				AddContainer( tReg, spItem, ourPack, packetLen );
+			}
 		}
 	}
 
@@ -7258,23 +7244,21 @@ void CPSellList::CopyData( CChar& mChar, CChar& vendorID )
 	pStream.WriteShort( 7, numItems );
 }
 
-void CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )
-{
-	GenericList< CItem * > *opCont = ourPack->GetContainsList();
-	for( CItem *opItem = opCont->First(); !opCont->Finished(); opItem = opCont->Next() )
-	{
-		if( ValidateObject( opItem ) )
-		{
-			if( opItem->GetType() == IT_CONTAINER )
+auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )->void{
+	auto opCont = ourPack->GetContainsList();
+	for (auto &opItem:opCont->collection()){
+		if( ValidateObject( opItem ) ) {
+			if( opItem->GetType() == IT_CONTAINER ){
 				AddContainer( tReg, spItem, opItem, packetLen );
+			}
 			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
-					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) )
-			{
+					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) ) {
 				AddItem( tReg, spItem, opItem, packetLen );
 				++numItems;
 			}
-			if( numItems >= 60 )
+			if( numItems >= 60 ){
 				return;
+			}
 		}
 	}
 }
