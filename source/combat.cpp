@@ -2741,84 +2741,74 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 //|	Purpose		-	Handle spawning a guard in guarded areas
 //|					NEED TO REWORK FOR REGIONAL GUARD STUFF
 //o-----------------------------------------------------------------------------------------------o
-void CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z )
-{
-	if( !ValidateObject( mChar ) || !ValidateObject( targChar ) )
-		return;
-
-	if( targChar->IsDead() || targChar->IsInvulnerable() )
-		return;
-
-	CTownRegion *targRegion = mChar->GetRegion();
-
-	if( !targRegion->IsGuarded() || !cwmWorldState->ServerData()->GuardsStatus() )
-		return;
-
-	bool reUseGuard		= false;
-	CChar *getGuard		= nullptr;
-	CMapRegion *toCheck	= MapRegion->GetMapRegion( mChar );
-
-	if( toCheck != nullptr )
-	{
-		GenericList< CChar * > *regChars = toCheck->GetCharList();
-		regChars->Push();
-		for( getGuard = regChars->First(); !regChars->Finished(); getGuard = regChars->Next() )
-		{
-			if( !ValidateObject( getGuard ) )
-				continue;
-
-			if( !getGuard->IsNpc() || getGuard->GetNPCAiType() != AI_GUARD )
-				continue;
-
-			if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  )
-			{
-				if( charInRange( getGuard, targChar ) )
-					reUseGuard = true;
+auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z ) ->void {
+	if( ValidateObject( mChar )  && ValidateObject( targChar ) ) {
+		if( !targChar->IsDead() && !targChar->IsInvulnerable() ){
+			auto targRegion = mChar->GetRegion();
+			if( targRegion->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() ){
+				
+				auto reUseGuard = false;
+				CChar *getGuard = nullptr;
+				auto toCheck = MapRegion->GetMapRegion( mChar );
+				
+				if(toCheck){
+					auto regChars = toCheck->GetCharList();
+					for (auto &getGuard : regChars->collection()){
+						if( ValidateObject( getGuard ) ){
+							if( getGuard->IsNpc() && (getGuard->GetNPCAiType() == AI_GUARD )){
+								if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  ) {
+									if( charInRange( getGuard, targChar ) ){
+										reUseGuard = true;
+									}
+								}
+								else if( getGuard->GetTarg() == targChar ) {
+									return;
+								}
+							}
+						}
+					}
+					
+				}
+				// 1/13/2003 - Fix for JSE NocSpawner
+				if( !reUseGuard ) {
+					getGuard = targRegion->GetRandomGuard();
+					if( ValidateObject( getGuard ) ) {
+						getGuard->SetLocation( x, y, z, mChar->WorldNumber(), mChar->GetInstanceID() );
+						Npcs->PostSpawnUpdate( getGuard );
+					}
+					else{
+						return;
+					}
+				}
+				//
+				if( ValidateObject( getGuard ) ) {
+					getGuard->SetAttackFirst( true );
+					getGuard->SetAttacker( targChar );
+					getGuard->SetTarg( targChar );
+					getGuard->SetNpcWander( WT_FREE );
+					if( !getGuard->IsAtWar() ){
+						getGuard->ToggleCombat();
+					}
+					
+					if( reUseGuard ){
+						getGuard->SetLocation( targChar );
+					}
+					else {
+						if( getGuard->GetMounted() ){
+							getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetMountedWalkingSpeed() ) );
+						}
+						else{
+							getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ) );
+						}
+						getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
+						
+						Effects->PlaySound( getGuard, 0x01FE );
+						Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
+						
+						getGuard->TextMessage( nullptr, 313, TALK, true );
+					}
+				}
 			}
-			else if( getGuard->GetTarg() == targChar )
-			{
-				regChars->Pop();
-				return;
-			}
-		}
-		regChars->Pop();
-	}
-	// 1/13/2003 - Fix for JSE NocSpawner
-	if( !reUseGuard )
-	{
-		getGuard = targRegion->GetRandomGuard();
-		if( ValidateObject( getGuard ) )
-		{
-			getGuard->SetLocation( x, y, z, mChar->WorldNumber(), mChar->GetInstanceID() );
-			Npcs->PostSpawnUpdate( getGuard );
-		}
-		else
-			return;
-	}
-	//
-	if( ValidateObject( getGuard ) )
-	{
-		getGuard->SetAttackFirst( true );
-		getGuard->SetAttacker( targChar );
-		getGuard->SetTarg( targChar );
-		getGuard->SetNpcWander( WT_FREE );
-		if( !getGuard->IsAtWar() )
-			getGuard->ToggleCombat();
-
-		if( reUseGuard )
-			getGuard->SetLocation( targChar );
-		else
-		{
-			if( getGuard->GetMounted() )
-				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetMountedWalkingSpeed() ) );
-			else
-				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ) );
-			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
-
-			Effects->PlaySound( getGuard, 0x01FE );
-			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
-
-			getGuard->TextMessage( nullptr, 313, TALK, true );
 		}
 	}
 }
