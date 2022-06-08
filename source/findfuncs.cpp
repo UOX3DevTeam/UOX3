@@ -108,17 +108,15 @@ auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 di
 	std::vector< CChar* > ourChars;
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if( CellResponse){
-			
-			GenericList< CChar * > *regChars = CellResponse->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
-					continue;
-				if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance )
-					ourChars.push_back( tempChar );
+			auto regChars = CellResponse->GetCharList();
+			for (auto &tempChar:regChars->collection()){
+				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == instanceID ){
+					if( tempChar->GetX() <= x + distance || tempChar->GetX() >= x - distance || tempChar->GetY() <= y + distance || tempChar->GetY() >= y - distance ){
+						ourChars.push_back( tempChar );
+					}
+				}
 			}
-			regChars->Pop();
+			
 		}
 	}
 	return ourChars;
@@ -192,20 +190,18 @@ CChar *FindItemOwner( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific ID
 //o-----------------------------------------------------------------------------------------------o
-CItem *SearchSubPackForItem( CItem *toSearch, UI16 itemID )
-{
-	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
-	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
-	{
-		if( ValidateObject( toCheck ) )
-		{
-			if( toCheck->GetID() == itemID )	// it's in our hand
-				return toCheck;					// we've found the first occurance on the person!
-			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	// search any subpacks, specifically pack and locked containers
-			{
-				CItem *packSearchResult = SearchSubPackForItem( toCheck, itemID );
-				if( ValidateObject( packSearchResult ) )
+auto SearchSubPackForItem( CItem *toSearch, UI16 itemID ) ->CItem *{
+	auto tsCont = toSearch->GetContainsList();
+	for (auto &toCheck:tsCont->collection()){
+		if( ValidateObject( toCheck ) ) {
+			if( toCheck->GetID() == itemID ){	// it's in our hand
+				return toCheck;
+			}				// we've found the first occurance on the person!
+			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	{// search any subpacks, specifically pack and locked containers
+				auto packSearchResult = SearchSubPackForItem( toCheck, itemID );
+				if( ValidateObject( packSearchResult ) ){
 					return packSearchResult;
+				}
 			}
 		}
 	}
@@ -241,18 +237,17 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Search character's subpacks for items of specific type
 //o-----------------------------------------------------------------------------------------------o
-CItem *SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )
-{
-	GenericList< CItem * > *tsCont = toSearch->GetContainsList();
-	for( CItem *toCheck = tsCont->First(); !tsCont->Finished(); toCheck = tsCont->Next() )
-	{
-		if( ValidateObject( toCheck ) )
-		{
-			if( toCheck->GetType() == type )	// it's in our hand
-				return toCheck;					// we've found the first occurance on the person!
-			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	// search any subpacks, specifically pack and locked containers
-			{
-				CItem *packSearchResult = SearchSubPackForItemOfType( toCheck, type );
+auto SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )->CItem *{
+	auto tsCont = toSearch->GetContainsList();
+	for (auto &toCheck : tsCont->collection()){
+		if( ValidateObject( toCheck ) ) {
+			if( toCheck->GetType() == type ){
+				// it's in our hand
+				return toCheck;
+			}				// we've found the first occurance on the person!
+			else if( toCheck->GetType() == IT_CONTAINER || toCheck->GetType() == IT_LOCKEDCONTAINER )	{
+				// search any subpacks, specifically pack and locked containers
+				auto packSearchResult = SearchSubPackForItemOfType( toCheck, type );
 				if( ValidateObject( packSearchResult ) )
 					return packSearchResult;
 			}
@@ -378,40 +373,33 @@ inline T hypotenuse( T sideA, T sideB )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find multis at specified location
 //o-----------------------------------------------------------------------------------------------o
-CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
-{
+auto findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )->CMultiObj *{
 	SI32 lastdist = 30;
 	CMultiObj *multi = nullptr;
 	SI32 ret, dx, dy;
 
 	for (auto &toCheck : MapRegion->PopulateList( x, y, worldNumber )){
 		if( toCheck){
-			GenericList< CItem * > *regItems = toCheck->GetItemList();
-			regItems->Push();
-			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-			{
-				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-					continue;
-				if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) )
-				{
-					dx = abs( x - itemCheck->GetX() );
-					dy = abs( y - itemCheck->GetY() );
-					ret = (SI32)( hypotenuse( dx, dy ) );
-					if( ret <= lastdist )
-					{
-						lastdist = ret;
-						multi = static_cast<CMultiObj *>( itemCheck );
-						if( inMulti( x, y, z, multi ) )
-						{
-							regItems->Pop();
-							return multi;
+			auto regItems = toCheck->GetItemList();
+			for (auto &itemCheck : regItems->collection()){
+				if( ValidateObject( itemCheck )&& itemCheck->GetInstanceID() == instanceID ){
+					if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) ) {
+						dx = abs( x - itemCheck->GetX() );
+						dy = abs( y - itemCheck->GetY() );
+						ret = (SI32)( hypotenuse( dx, dy ) );
+						if( ret <= lastdist ) {
+							lastdist = ret;
+							multi = static_cast<CMultiObj *>( itemCheck );
+							if( inMulti( x, y, z, multi ) ) {
+								return multi;
+							}
+							else{
+								multi = nullptr;
+							}
 						}
-						else
-							multi = nullptr;
 					}
 				}
 			}
-			regItems->Pop();
 		}
 	}
 	return multi;
@@ -422,24 +410,17 @@ CMultiObj *findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID 
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find items at specified location
 //o-----------------------------------------------------------------------------------------------o
-CItem *GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )
-{
-	CMapRegion *toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( toCheck != nullptr )	// no valid region
-	{
-		GenericList< CItem * > *regItems = toCheck->GetItemList();
-		regItems->Push();
-		for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-		{
-			if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-				continue;
-			if( itemCheck->GetX() == x && itemCheck->GetY() == y && itemCheck->GetZ() == z )
-			{
-				regItems->Pop();
-				return itemCheck;
+auto GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID ) -> CItem *{
+	auto toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
+	if( toCheck ){	// no valid region
+		auto regItems = toCheck->GetItemList();
+		for (auto &itemCheck:regItems->collection()){
+			if( ValidateObject( itemCheck ) && itemCheck->GetInstanceID() == instanceID ){
+				if( itemCheck->GetX() == x && itemCheck->GetY() == y && itemCheck->GetZ() == z ) {
+					return itemCheck;
+				}
 			}
 		}
-		regItems->Pop();
 	}
 	return nullptr;
 }
@@ -457,24 +438,21 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 	point3 targLocation = point3( x, y, z );
 	for (auto &toCheck : MapRegion->PopulateList( x, y, worldNumber )){
 		if( toCheck){
-			GenericList< CItem * > *regItems = toCheck->GetItemList();
-			regItems->Push();
-			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-			{
-				if( !ValidateObject( itemCheck ) || itemCheck->GetInstanceID() != instanceID )
-					continue;
-				if( itemCheck->GetID() == id && itemCheck->GetZ() == z )
-				{
-					point3 difference	= itemCheck->GetLocation() - targLocation;
-					currDist			= static_cast<UI16>(difference.Mag());
-					if( currDist < oldDist)
-					{
-						oldDist = currDist;
-						currItem = itemCheck;
+			auto regItems = toCheck->GetItemList();
+			for (auto &itemCheck: regItems->collection()){
+				if( ValidateObject( itemCheck ) && itemCheck->GetInstanceID() == instanceID ){
+					
+					if( itemCheck->GetID() == id && itemCheck->GetZ() == z ) {
+						point3 difference	= itemCheck->GetLocation() - targLocation;
+						currDist			= static_cast<UI16>(difference.Mag());
+						if( currDist < oldDist) {
+							oldDist = currDist;
+							currItem = itemCheck;
+						}
 					}
 				}
 			}
-			regItems->Pop();
+			
 		}
 	}
 	return currItem;
@@ -490,17 +468,14 @@ auto findNearbyItems( CBaseObject *mObj, distLocs distance )->std::vector< CItem
 	std::vector< CItem* > ourItems;
 	for (auto &CellResponse : MapRegion->PopulateList( mObj)){
 		if(CellResponse){
-			
-			GenericList< CItem * > *regItems = CellResponse->GetItemList();
-			regItems->Push();
-			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-			{
-				if( !ValidateObject( Item ) || Item->GetInstanceID() != mObj->GetInstanceID() )
-					continue;
-				if( objInRange( mObj, Item, distance ) )
-					ourItems.push_back( Item );
+			auto regItems = CellResponse->GetItemList();
+			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() ) {
+				if( ValidateObject( Item ) && Item->GetInstanceID() == mObj->GetInstanceID() ) {
+					if( objInRange( mObj, Item, distance ) ){
+						ourItems.push_back( Item );
+					}
+				}
 			}
-			regItems->Pop();
 		}
 	}
 	return ourItems;
@@ -517,16 +492,14 @@ auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 di
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if(CellResponse){
 			
-			GenericList< CItem * > *regItems = CellResponse->GetItemList();
-			regItems->Push();
-			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-			{
-				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-					continue;
-				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-					ourItems.push_back( Item );
+			auto regItems = CellResponse->GetItemList();
+			for (auto &Item : regItems->collection()){
+				if( ValidateObject( Item ) && Item->GetInstanceID() == instanceID ){
+					if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance ){
+						ourItems.push_back( Item );
+					}
+				}
 			}
-			regItems->Pop();
 		}
 	}
 	return ourItems;
@@ -542,27 +515,23 @@ auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 
 	for (auto &CellResponse : MapRegion->PopulateList( x, y, worldNumber )){
 		if(CellResponse){
 			
-			GenericList< CItem * > *regItems = CellResponse->GetItemList();
-			regItems->Push();
-			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-			{
-				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-					continue;
-				if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance )
-					ourObjects.push_back( Item );
+			auto regItems = CellResponse->GetItemList();
+			for (auto &Item:regItems->collection()){
+				if( ValidateObject( Item ) && Item->GetInstanceID() == instanceID ){
+					if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance ){
+						ourObjects.push_back( Item );
+					}
+				}
 			}
-			regItems->Pop();
 			
-			GenericList< CChar * > *regChars = CellResponse->GetCharList();
-			regItems->Push();
-			for( CChar *Character = regChars->First(); !regChars->Finished(); Character = regChars->Next() )
-			{
-				if( !ValidateObject( Character ) || Character->GetInstanceID() != instanceID )
-					continue;
-				if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance )
-					ourObjects.push_back( Character );
+			auto regChars = CellResponse->GetCharList();
+			for (auto &Character : regChars->collection()){
+				if( ValidateObject( Character ) && Character->GetInstanceID() == instanceID ){
+					if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance ){
+						ourObjects.push_back( Character );
+					}
+				}
 			}
-			regChars->Pop();
 		}
 	}
 	return ourObjects;

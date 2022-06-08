@@ -1080,41 +1080,35 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cause items to decay when left on the ground
 //o-----------------------------------------------------------------------------------------------o
-bool DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses )
-{
-	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() )
-	{
-		if( toDecay.GetMulti() == INVALIDSERIAL )
+auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsInHouses ) ->bool {
+	if( toDecay.GetDecayTime() == 0 || !cwmWorldState->ServerData()->GlobalItemDecay() ) {
+		if( toDecay.GetMulti() == INVALIDSERIAL ){
 			toDecay.SetDecayTime( nextDecayItems );
-		else
+		}
+		else{
 			toDecay.SetDecayTime( nextDecayItemsInHouses );
+		}
 		return false;
 	}
-	const bool isCorpse = toDecay.isCorpse();
+	const auto isCorpse = toDecay.isCorpse();
 
 	// Multis
-	if( !toDecay.IsFieldSpell() && !isCorpse ) // Gives fieldspells a chance to decay in multis
-	{
+	if( !toDecay.IsFieldSpell() && !isCorpse ) {
+		// Gives fieldspells a chance to decay in multis
 		if( toDecay.IsLockedDown() || toDecay.isDoorOpen() ||
 		   ( ValidateObject( toDecay.GetMultiObj() ) &&
-			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) )
-		{
+			( toDecay.GetMovable() >= 2 || !cwmWorldState->ServerData()->ItemDecayInHouses() ) ) ) {
 			toDecay.SetDecayTime( nextDecayItemsInHouses );
 			return false;
 		}
 	}
 
-	if( toDecay.IsContType() )
-	{
-		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() )
-		{
-			GenericList< CItem * > *iCont = toDecay.GetContainsList();
-			for( CItem *io = iCont->First(); !iCont->Finished(); io = iCont->Next() )
-			{
-				if( ValidateObject( io ) )
-				{
-					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR )
-					{
+	if( toDecay.IsContType() ) {
+		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() ) {
+			auto iCont = toDecay.GetContainsList();
+			for (auto &io:iCont->collection()) {
+				if( ValidateObject( io ) ) {
+					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR ) {
 						io->SetCont( nullptr );
 						io->SetLocation( (&toDecay) );
 						io->SetDecayTime( nextDecayItems );

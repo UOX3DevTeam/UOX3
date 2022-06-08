@@ -935,19 +935,15 @@ bool CChar::IsAwake( void ) const
 		rVal = mNPC->boolFlags.test( BIT_AWAKE );
 	return rVal;
 }
-void CChar::SetAwake( bool newVal )
-{
-	if( IsValidNPC() )
-	{
+auto CChar::SetAwake( bool newVal )->void {
+	if( IsValidNPC() ){
 		mNPC->boolFlags.set( BIT_AWAKE, newVal );
-		GenericList< CChar * > *alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
-		if( newVal )
-		{
+		auto alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
+		if( newVal ){
 			// NPC awake, add to awake list
 			alwaysAwakeChars->Add( this );
 		}
-		else
-		{
+		else{
 			// NPC not awake, remove from awake list
 			alwaysAwakeChars->Remove( this );
 		}
@@ -2438,8 +2434,7 @@ void CChar::RemoveFromSight( CSocket *mSock )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through nearby objects and removes them from the player's sight
 //o-----------------------------------------------------------------------------------------------o
-void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
-{
+auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) ->void {
 	if( mSock != nullptr )
 	{
 		//CChar *myChar = mSock->CurrcharObj();
@@ -2458,55 +2453,44 @@ void CChar::RemoveAllObjectsFromSight( CSocket *mSock )
 			if(MapArea){
 				
 				// First remove nearby characters from sight
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
-					{
+		
+				auto regChars = MapArea->GetCharList();
+				for (auto &tempChar : regChars->collection()){
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem charToSend = (*tempChar);
 						auto tempX = tempChar->GetX();
 						auto tempY = tempChar->GetY();
 						
 						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 						   ( isOnline( ( *tempChar ) ) || tempChar->IsNpc() ||
-						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
-						{
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) ) {
 							mSock->Send( &charToSend );
 						}
 					}
 				}
-				regChars->Pop();
+
 				
 				// Now remove nearby items and multis from sight
-				GenericList< CItem * > *regItems = MapArea->GetItemList();
-				regItems->Push();
-				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-				{
-					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-					{
+				auto regItems = MapArea->GetItemList();
+				for (auto &tempItem : regItems->collection()){
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem itemToSend = (*tempItem);
 						auto tempItemX = tempItem->GetX();
 						auto tempItemY = tempItem->GetY();
 						
-						if( tempItem->CanBeObjType( OT_MULTI ) )
-						{
+						if( tempItem->CanBeObjType( OT_MULTI ) ) {
 							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
-							{
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE ) {
 								mSock->Send( &itemToSend );
 							}
 						}
-						else
-						{
-							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
-							{
+						else {
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY ) {
 								mSock->Send( &itemToSend );
 							}
 						}
 					}
 				}
-				regItems->Pop();
 			}
 		}
 	}
@@ -2596,7 +2580,7 @@ void checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates teleporting player and sends nearby objects after teleporting
 //o-----------------------------------------------------------------------------------------------o
-void CChar::Teleport( void )
+auto CChar::Teleport() ->void
 {
 	CSocket *mSock = GetSocket();
 	RemoveFromSight();
@@ -2616,47 +2600,36 @@ void CChar::Teleport( void )
 
 		for (auto &MapArea : MapRegion->PopulateList( this )){
 			if(MapArea){
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() )
-					{
+				auto regChars = MapArea->GetCharList();
+				for (auto tempChar : regChars->collection()){
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempX = tempChar->GetX();
 						auto tempY = tempChar->GetY();
 						if( this != tempChar && ( tempX >= minX && tempX <= maxX && tempY >= minY && tempY <= maxY ) &&
 						   ( isOnline( (*tempChar) ) || tempChar->IsNpc() ||
-						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) )
+						    ( IsGM() && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) ) {
 							tempChar->SendToSocket( mSock );
+						}
 					}
 				}
-				regChars->Pop();
-				GenericList< CItem * > *regItems = MapArea->GetItemList();
-				regItems->Push();
-				for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-				{
-					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() )
-					{
+				auto regItems = MapArea->GetItemList();
+				for (auto tempItem : regItems->collection()){
+					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempItemX = tempItem->GetX();
 						auto tempItemY = tempItem->GetY();
-						if( tempItem->CanBeObjType( OT_MULTI ) )
-						{
+						if( tempItem->CanBeObjType( OT_MULTI ) ) {
 							if( tempItemX >= mCharX - DIST_BUILDRANGE && tempItemX <= mCharX + DIST_BUILDRANGE
-							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE )
-							{
+							   && tempItemY >= mCharY - DIST_BUILDRANGE && tempItemY <= mCharY + DIST_BUILDRANGE ) {
 								tempItem->SendToSocket( mSock );
 							}
 						}
-						else
-						{
-							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY )
-							{
+						else {
+							if( tempItemX >= minX && tempItemX <= maxX && tempItemY >= minY && tempItemY <= maxY ) {
 								tempItem->SendToSocket( mSock );
 							}
 						}
 					}
 				}
-				regItems->Pop();
 			}
 		}
 	}
@@ -2664,10 +2637,11 @@ void CChar::Teleport( void )
 
 	bool forceWeatherupdate = true;
 
-	if( ValidateObject( GetMultiObj() ) )
-	{
-		if( GetMultiObj()->CanBeObjType( OT_BOAT ) ) //Don't force a weather update while on boat to prevent spam.
+	if( ValidateObject( GetMultiObj() ) ) {
+		if( GetMultiObj()->CanBeObjType( OT_BOAT ) ){
+			//Don't force a weather update while on boat to prevent spam.
 			forceWeatherupdate = false;
+		}
 	}
 
 	checkRegion( mSock, (*this), forceWeatherupdate );

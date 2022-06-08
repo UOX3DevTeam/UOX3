@@ -91,8 +91,7 @@ CBoatObj * GetBoat( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Leave a boat
 //o-----------------------------------------------------------------------------------------------o
-bool LeaveBoat( CSocket *s, CItem *p )
-{
+auto LeaveBoat( CSocket *s, CItem *p ) ->bool {
 	CBoatObj *boat = GetBoat( s );
 	if( !ValidateObject( boat ) )
 		return false;
@@ -102,21 +101,18 @@ bool LeaveBoat( CSocket *s, CItem *p )
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
 	UI16 instanceID = mChar->GetInstanceID();
-	for( SI16 x = x2 - 2; x < x2 + 3; ++x )
-	{
-		for( SI16 y = y2 - 2; y < y2 + 3; ++y )
-		{
+	for( SI16 x = x2 - 2; x < x2 + 3; ++x ) {
+		for( SI16 y = y2 - 2; y < y2 + 3; ++y ) {
 			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceID );
-			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID ))
-			{
+			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID )) {
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
-				GenericList< CChar * > *myPets = mChar->GetPetList();
-				for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
-				{
-					if( ValidateObject( pet ) )
-					{
-						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+				
+				auto myPets = mChar->GetPetList();
+				for (auto &pet : myPets->collection()){
+					if( ValidateObject( pet ) ) {
+						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 							pet->SetLocation( x, y, z, worldNumber, instanceID );
+						}
 					}
 				}
 				s->sysmessage( 3 );
@@ -138,30 +134,30 @@ void PlankStuff( CSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
 	CBoatObj *boat	= GetBoat( s );
-	if( !ValidateObject( boat ) )
-	{
+	if( !ValidateObject( boat ) ) {
 		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 3 );
 		CMultiObj *boat2	= p->GetMultiObj();
-		if( ValidateObject( boat2 ) )
-		{
-			GenericList< CChar * > *myPets = mChar->GetPetList();
-			for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
-			{
-				if( ValidateObject( pet ) )
-				{
-					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
+		if( ValidateObject( boat2 ) ) {
+			auto myPets = mChar->GetPetList();
+			for (auto &pet:myPets->collection()){
+				if( ValidateObject( pet ) ) {
+					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 						pet->SetLocation( mChar );
+					}
 				}
 			}
 		}
 
-		if( ValidateObject( boat2 ) )
+		if( ValidateObject( boat2 ) ){
 			s->sysmessage( 1 );
-		else
+		}
+		else{
 			s->sysmessage( 2 );
+		}
 	}
-	else
+	else{
 		LeaveBoat( s, p );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -650,33 +646,29 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 	}
 
 	// Move all items aboard the boat along with the boat
-	GenericList< CItem * > *itemList = boat->GetItemsInMultiList();
-	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
-	{
-		if( !ValidateObject( bItem ) )
-			continue;
-		if( bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold )
-			continue;
-		bItem->IncLocation( tx, ty );
-
-		// Remember to remove any items on board from sight of nearby players if boat got teleported
-		if( teleportBoat )
-		{
-			bItem->RemoveFromSight();
-			bItem->Update();
+	auto itemList = boat->GetItemsInMultiList();
+	for (auto &bItem : itemList->collection()){
+		if( ValidateObject( bItem ) ){
+			if( !(bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold) ){
+				bItem->IncLocation( tx, ty );
+				
+				// Remember to remove any items on board from sight of nearby players if boat got teleported
+				if( teleportBoat ) {
+					bItem->RemoveFromSight();
+					bItem->Update();
+				}
+			}
 		}
 	}
 
 	// Move all characters aboard the boat along with the boat
-	GenericList< CChar * > *charList = boat->GetCharsInMultiList();
-	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
-	{
-		if( !ValidateObject( bChar ) )
-			continue;
-		bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
-		if( teleportBoat )
-		{
-			bChar->Update();
+	auto charList = boat->GetCharsInMultiList();
+	for (auto &bChar : charList->collection()){
+		if( ValidateObject( bChar ) ){
+			bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
+			if( teleportBoat ) {
+				bChar->Update();
+			}
 		}
 	}
 	for( auto &tSock: nearbyChars) {
@@ -772,19 +764,17 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 		b->SetDir( WEST );
 
 
-	GenericList< CItem * > *itemList = b->GetItemsInMultiList();
-	for( CItem *bItem = itemList->First(); !itemList->Finished(); bItem = itemList->Next() )
-	{
-		if( !ValidateObject( bItem ) )
-			continue;
-		TurnStuff( b, bItem, rightTurn );
+	auto itemList = b->GetItemsInMultiList();
+	for (auto &bItem : itemList->collection()){
+		if( ValidateObject( bItem ) ){
+			TurnStuff( b, bItem, rightTurn );
+		}
 	}
-	GenericList< CChar * > *charList = b->GetCharsInMultiList();
-	for( CChar *bChar = charList->First(); !charList->Finished(); bChar = charList->Next() )
-	{
-		if( !ValidateObject( bChar ) )
-			continue;
-		TurnStuff( b, bChar, rightTurn );
+	auto charList = b->GetCharsInMultiList();
+	for (auto &bChar : charList->collection()){
+		if( ValidateObject( bChar ) ){
+			TurnStuff( b, bChar, rightTurn );
+		}
 	}
 
 	UI08 dir = (b->GetDir()&0x0F)/2;

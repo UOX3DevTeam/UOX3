@@ -318,101 +318,82 @@ void cEffects::bolteffect( CChar *player )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting the item
 //o-----------------------------------------------------------------------------------------------o
-void explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType = 0, bool explodeNearby = true )
-{
-	CChar *c = mSock->CurrcharObj();
-
+auto explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType = 0, bool explodeNearby = true )->void{
+	auto c = mSock->CurrcharObj();
+	
 	UI32 dx, dy, dz;
 	// - send the effect (visual and sound)
-	if( nItem->GetCont() != nullptr )
-	{
+	if( nItem->GetCont() ) {
 		Effects->PlayStaticAnimation( c, 0x36B0, 0x00, 0x09 );
 		nItem->SetCont( nullptr );
 		nItem->SetLocation( c );
 		Effects->PlaySound( c, 0x0207 );
 	}
-	else
-	{
+	else {
 		Effects->PlayStaticAnimation( nItem, 0x36B0, 0x00, 0x09, 0x00 );
 		Effects->PlaySound( nItem, 0x0207 );
 	}
 	
-	UI32 len	= nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
-	if( damage == 0 )
-	{
+	UI32 len = nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
+	if( damage == 0 ) {
 		damage	= RandomNum( nItem->GetTempVar( CITV_MOREZ ) * 5, nItem->GetTempVar( CITV_MOREZ ) * 10 );
 	}
-
-	if( damage < 5 )
+	
+	if( damage < 5 ){
 		damage = RandomNum( 5, 10 );  // 5 points minimum damage
-	if( len < 2 )
+	}
+	if( len < 2 ){
 		len = 2;  // 2 square min damage range
-
-	if( explodeNearby )
-	{
+	}
+	
+	if( explodeNearby ) {
 		// Explode for characters nearby
 		for (auto &Cell : MapRegion->PopulateList( nItem )){
 			bool chain = false;
-
-			GenericList< CChar * > *regChars = Cell->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != nItem->GetInstanceID() )
-					continue;
-				if( tempChar->GetRegion()->IsSafeZone() )
-				{
-					// Character is in a safe zone, ignore damage
-					continue;
-				}
-				dx = abs( tempChar->GetX() - nItem->GetX() );
-				dy = abs( tempChar->GetY() - nItem->GetY() );
-				dz = abs( tempChar->GetZ() - nItem->GetZ() );
-				if( dx <= len && dy <= len && dz <= len )
-				{
-					if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) )
-					{
-						//UI08 hitLoc = Combat->CalculateHitLoc();
-						damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( static_cast<SI32>(damage) + ( 2 - std::min( dx, dy ))), true );
-						[[maybe_unused]] bool retVal = tempChar->Damage( static_cast<SI16>(damage), HEAT, c, true );
-					}
-				}
-			}
-			regChars->Pop();
-			GenericList< CItem * > *regItems = Cell->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( tempItem->GetInstanceID() != nItem->GetInstanceID() )
-				{
-					// Item is in a different instanceID - ignore
-					continue;
-				}
-				if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION )
-				{
-					dx = abs( nItem->GetX() - tempItem->GetX() );
-					dy = abs( nItem->GetY() - tempItem->GetY() );
-					dz = abs( nItem->GetZ() - tempItem->GetZ() );
-
-					if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ) // only trigger if in a 2*2*2 cube
-					{
-						if( !( dx == 0 && dy == 0 && dz == 0 ) )
-						{
-							if( RandomNum( 0, 1 ) == 1 )
-								chain = true;
-							Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+			
+			auto regChars = Cell->GetCharList();
+			for (auto &tempChar:regChars->collection()){
+				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == nItem->GetInstanceID() ){
+					if( !tempChar->GetRegion()->IsSafeZone() ) {
+						// Character is in not safe zone, count damage
+						dx = abs( tempChar->GetX() - nItem->GetX() );
+						dy = abs( tempChar->GetY() - nItem->GetY() );
+						dz = abs( tempChar->GetZ() - nItem->GetZ() );
+						if( dx <= len && dy <= len && dz <= len ) {
+							if( !tempChar->IsGM() && !tempChar->IsInvulnerable() && ( tempChar->IsNpc() || isOnline( (*tempChar) ) ) ) {
+								//UI08 hitLoc = Combat->CalculateHitLoc();
+								damage = Combat->ApplyDefenseModifiers( HEAT, c, tempChar, ALCHEMY, 0, ( static_cast<SI32>(damage) + ( 2 - std::min( dx, dy ))), true );
+								[[maybe_unused]] bool retVal = tempChar->Damage( static_cast<SI16>(damage), HEAT, c, true );
+							}
 						}
 					}
 				}
 			}
-			regItems->Pop();
+			auto regItems = Cell->GetItemList();
+			for (auto &tempItem:regItems->collection()){
+				if( tempItem->GetInstanceID() == nItem->GetInstanceID() ) {
+					if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION ) {
+						dx = abs( nItem->GetX() - tempItem->GetX() );
+						dy = abs( nItem->GetY() - tempItem->GetY() );
+						dz = abs( nItem->GetZ() - tempItem->GetZ() );
+						
+						if( dx <= 2 && dy <= 2 && dz <= 2 && !chain ){ // only trigger if in a 2*2*2 cube
+							if( !( dx == 0 && dy == 0 && dz == 0 ) ) {
+								if( RandomNum( 0, 1 ) == 1 ){
+									chain = true;
+								}
+								Effects->tempeffect( c, tempItem, 17, 0, 1, 0 );
+							}
+						}
+					}
+				}
+				
+			}
 		}
 	}
-	else
-	{
+	else {
 		// Only affect character associated with item
-		if( !c->IsGM() && !c->IsInvulnerable() && ( c->IsNpc() || isOnline( (*c) )))
-		{
+		if( !c->IsGM() && !c->IsInvulnerable() && ( c->IsNpc() || isOnline( (*c) ))) {
 			damage = Combat->ApplyDefenseModifiers( HEAT, c, c, ALCHEMY, 0, static_cast<SI32>(damage), true );
 			[[maybe_unused]] bool retVal = c->Damage( static_cast<SI16>(damage), HEAT, c, true );
 		}

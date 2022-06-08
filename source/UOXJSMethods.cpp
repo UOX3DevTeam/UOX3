@@ -9361,7 +9361,7 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	// Fetch actual friend list
-	GenericList<CChar *> *petList = mChar->GetPetList();
+	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
 	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
@@ -9369,12 +9369,9 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
-	for( CChar *pet = petList->First(); !petList->Finished(); pet = petList->Next() )
-	{
-		if( ValidateObject( pet ) )
-		{
-			if( pet->GetOwnerObj() == mChar )
-			{
+	for (auto &pet : petList->collection()){
+		if( ValidateObject( pet ) ) {
+			if( pet->GetOwnerObj() == mChar ) {
 				// Create a new JS Object based on character
 				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, pet, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 

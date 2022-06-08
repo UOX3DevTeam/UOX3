@@ -106,60 +106,57 @@ inline SI08 calcTileHeight( SI08 h )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	If character is on a teleport location, teleport him
 //o-----------------------------------------------------------------------------------------------o
-void HandleTeleporters( CChar *s )
-{
-	if( !ValidateObject( s ) )
-		return;
-	UI08 charWorld					= s->WorldNumber();
-	CTeleLocationEntry *getTeleLoc	= nullptr;
-	bool isOnTeleporter;
-	for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i )
-	{
-		isOnTeleporter	= false;
-		getTeleLoc		= &cwmWorldState->teleLocs[i];
-		if( getTeleLoc == nullptr )
-			continue;
-		if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld )
-		{
-			if( getTeleLoc->SourceLocation().z != ILLEGAL_Z )
-				isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
-			else
-				isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
-			if( isOnTeleporter )
-			{
-				UI08 targetWorld = 0;
-				if( getTeleLoc->SourceWorld() == 0xFF )
-				{
-					targetWorld = s->WorldNumber();
-				}
-				else
-				{
-					targetWorld = getTeleLoc->TargetWorld();
-				}
+auto  HandleTeleporters( CChar *s )->void {
 
-				s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, targetWorld, s->GetInstanceID() );
-				if( !s->IsNpc() )
-				{
-					if( targetWorld != charWorld )
-						SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
-
-					// Teleport player's pets
-					GenericList< CChar * > *myPets = s->GetPetList();
-					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-					{
-						if( !ValidateObject( myPet ) )
-							continue;
-						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s )
-						{
-							if( objInOldRange( s, myPet, DIST_CMDRANGE ) )
-								myPet->SetLocation( s );
+	if( ValidateObject( s ) ){
+		UI08 charWorld = s->WorldNumber();
+		CTeleLocationEntry *getTeleLoc	= nullptr;
+		bool isOnTeleporter;
+		for( size_t i = 0; i < cwmWorldState->teleLocs.size(); ++i ) {
+			isOnTeleporter	= false;
+			getTeleLoc		= &cwmWorldState->teleLocs[i];
+			if( getTeleLoc){
+				if(( getTeleLoc->SourceWorld() == 0xFF && charWorld <= 1 ) || getTeleLoc->SourceWorld() == charWorld ) {
+					if( getTeleLoc->SourceLocation().z != ILLEGAL_Z ){
+						isOnTeleporter = ( getTeleLoc->SourceLocation() == s->GetLocation() );
+					}
+					else{
+						isOnTeleporter = ( getTeleLoc->SourceLocation().x == s->GetX() && getTeleLoc->SourceLocation().y == s->GetY() );
+					}
+					if( isOnTeleporter ) {
+						UI08 targetWorld = 0;
+						if( getTeleLoc->SourceWorld() == 0xFF ) {
+							targetWorld = s->WorldNumber();
 						}
+						else {
+							targetWorld = getTeleLoc->TargetWorld();
+						}
+						
+						s->SetLocation( (SI16)getTeleLoc->TargetLocation().x, (SI16)getTeleLoc->TargetLocation().y, (UI08)getTeleLoc->TargetLocation().z, targetWorld, s->GetInstanceID() );
+						if( !s->IsNpc() ) {
+							if( targetWorld != charWorld ){
+								SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
+							}
+							
+							// Teleport player's pets
+							auto myPets = s->GetPetList();
+							for (auto &myPet : myPets->collection()){
+								if( ValidateObject( myPet ) ){
+									if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s ) {
+										if( objInOldRange( s, myPet, DIST_CMDRANGE ) ){
+											myPet->SetLocation( s );
+										}
+									}
+								}
+							}
+						}
+						break;
+					}
+					else if( s->GetX() < getTeleLoc->SourceLocation().x ){
+						break;
 					}
 				}
-				break;
 			}
-			else if( s->GetX() < getTeleLoc->SourceLocation().x )
-				break;
 		}
 	}
 }
@@ -541,27 +538,22 @@ bool cMovement::isOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 //|					I left a gap between Player and NPC because someone may want to implement race
 //|					restrictions...
 //o-----------------------------------------------------------------------------------------------o
-bool cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz )
-{
+auto cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz ) ->bool {
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( cx ), MapRegion->GetGridY( cy ), c->WorldNumber() );	// check 3 cols... do we really NEED to?
-	if( MapArea == nullptr )	// no valid region
-		return false;
-	GenericList< CChar * > *regChars = MapArea->GetCharList();
-	regChars->Push();
-	for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-	{
-		if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != c->GetInstanceID() )
-			continue;
-		if( tempChar != c && ( ( isOnline( (*tempChar) ) && !tempChar->IsDead() ) || tempChar->IsNpc() ) )
-		{	// x=x,y=y, and distance btw z's <= MAX STEP
-			if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) )	// 2 people will still bump into each other, if slightly offset
-			{
-				regChars->Pop();	// restore before returning
-				return true;
+	if( MapArea ){	// no valid region
+		
+		auto regChars = MapArea->GetCharList();
+		for (auto &tempChar : regChars->collection()){
+			if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == c->GetInstanceID() ) {
+				if( tempChar != c && ( ( isOnline( (*tempChar) ) && !tempChar->IsDead() ) || tempChar->IsNpc() ) ) {	// x=x,y=y, and distance btw z's <= MAX STEP
+					if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) ){
+						// 2 people will still bump into each other, if slightly offset
+						return true;
+					}
+				}
 			}
 		}
 	}
-	regChars->Pop();
 	return false;
 }
 
@@ -761,82 +753,67 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 //o-----------------------------------------------------------------------------------------------o
-void cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID )
-{
-	if( xycount >= XYMAX )	// don't overflow
-		return;
-	for (auto &MapArea : MapRegion->PopulateList( x, y, worldNumber )){
-		if( MapArea){
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
-			{
-				if( !ValidateObject( tItem ) || tItem->GetInstanceID() != instanceID )
-					continue;
-				if( !tItem->CanBeObjType( OT_MULTI ) )
-				{
+auto cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID ) ->void {
+	if( xycount < XYMAX ){	// don't overflow
+		for (auto &MapArea : MapRegion->PopulateList( x, y, worldNumber )){
+			if( MapArea){
+				auto regItems = MapArea->GetItemList();
+				for (auto &tItem : regItems->collection()){
+					if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
+						if( !tItem->CanBeObjType( OT_MULTI ) ) {
 #if DEBUG_WALKING
-					Console.print( oldstrutil::format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
+							Console.print( oldstrutil::format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
 #endif
-					if( tItem->GetX() == x && tItem->GetY() == y )
-					{
-						CTile& tile = Map->SeekTile( tItem->GetID() );
-						xyblock[xycount].Type( 1 );
-						xyblock[xycount].BaseZ( tItem->GetZ() );
-						xyblock[xycount].Height( tile.Height());
-						xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
-						xyblock[xycount].Flags( tile.Flags() );
-						xyblock[xycount].SetID(tItem->GetID());
-						++xycount;
-						if( xycount >= XYMAX )	// don't overflow
-						{
-							regItems->Pop();
-							return;
-						}
-					}
-				}
-				else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE )
-				{	// implication, is, this is now a CMultiObj
-					const UI16 multiID = (tItem->GetID() - 0x4000);
-					SI32 length = 0;
-					
-					if( !Map->multiExists( multiID ))
-					{
-						Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
-						const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
-						
-						CLand& land = Map->SeekLand( map1.id );
-						if( land.CheckFlag( TF_WET ) ) // is it water?
-							tItem->SetID( 0x4001 );
-						else
-							tItem->SetID( 0x4064 );
-						length = 0;
-					}
-					else
-					{
-						for( auto &multi : Map->SeekMulti( multiID ).allItems() )
-						{
-							if( multi.visible && (tItem->GetX() + multi.xoffset) == x && (tItem->GetY() + multi.yoffset) == y )
-							{
-								CTile& tile = Map->SeekTile( multi.tileid );
-								xyblock[xycount].Type( 2 );
-								xyblock[xycount].BaseZ( multi.zoffset + tItem->GetZ() );
+							if( tItem->GetX() == x && tItem->GetY() == y ) {
+								CTile& tile = Map->SeekTile( tItem->GetID() );
+								xyblock[xycount].Type( 1 );
+								xyblock[xycount].BaseZ( tItem->GetZ() );
 								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( multi.zoffset + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+								xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
 								xyblock[xycount].Flags( tile.Flags() );
 								xyblock[xycount].SetID(tItem->GetID());
 								++xycount;
-								if( xycount >= XYMAX )	// don't overflow
-								{
-									regItems->Pop();
+								if( xycount >= XYMAX ){	// don't overflow
 									return;
+								}
+							}
+						}
+						else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE ) {	// implication, is, this is now a CMultiObj
+							const UI16 multiID = (tItem->GetID() - 0x4000);
+							SI32 length = 0;
+							
+							if( !Map->multiExists( multiID )) {
+								Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
+								const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
+								
+								CLand& land = Map->SeekLand( map1.id );
+								if( land.CheckFlag( TF_WET ) ) // is it water?
+									tItem->SetID( 0x4001 );
+								else
+									tItem->SetID( 0x4064 );
+								length = 0;
+							}
+							else {
+								for( auto &multi : Map->SeekMulti( multiID ).allItems() ) {
+									if( multi.visible && (tItem->GetX() + multi.xoffset) == x && (tItem->GetY() + multi.yoffset) == y ) {
+										CTile& tile = Map->SeekTile( multi.tileid );
+										xyblock[xycount].Type( 2 );
+										xyblock[xycount].BaseZ( multi.zoffset + tItem->GetZ() );
+										xyblock[xycount].Height( tile.Height());
+										xyblock[xycount].Top( multi.zoffset + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+										xyblock[xycount].Flags( tile.Flags() );
+										xyblock[xycount].SetID(tItem->GetID());
+										++xycount;
+										if( xycount >= XYMAX ){	// don't overflow
+											return;
+										}
+									}
 								}
 							}
 						}
 					}
 				}
 			}
-			regItems->Pop();
 		}
 	}
 }
@@ -938,103 +915,89 @@ void cMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	See if we should mention that we shove something out of the way
 //o-----------------------------------------------------------------------------------------------o
-void cMovement::OutputShoveMessage( CChar *c, CSocket *mSock )
-{
-	if( mSock == nullptr )
-		return;
-
-	// GMs, counselors, and ghosts don't shove things
-	if( c->GetCommandLevel() >= CL_CNS || IsGMBody( c ) )
-		return;
-	// lets cache these vars in advance
-	CMapRegion *grid = MapRegion->GetMapRegion( c );
-	if( grid == nullptr )
-		return;
-
-	GenericList< CChar * > *regChars = grid->GetCharList();
-	regChars->Push();
-	bool didShove			= false;
-	const SI16 x			= c->GetX();
-	const SI16 y			= c->GetY();
-	const SI08 z			= c->GetZ();
-	const UI16 instanceID	= c->GetInstanceID();
-
-	std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
-	std::vector<UI16> ourScriptTriggers;
-	cScript *toExecute;
-	for( CChar *ourChar = regChars->First(); !regChars->Finished(); ourChar = regChars->Next() )
-	{
-		if( !ValidateObject( ourChar ) || ourChar == c || ourChar->GetInstanceID() != instanceID )
-			continue;
-		if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 4 )
-		{
-			if(( ourChar->GetVisible() != VT_PERMHIDDEN )
-			   && ( !IsGMBody( ourChar )
-				 && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS ))
-			{
-				// Assume character shoved other character
-				didShove = true;
-
-				// Run onCollide event on character doing the shoving
-				for( auto scriptTrig : scriptTriggers )
-				{
-					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
-					{
-						auto retVal = toExecute->OnCollide( mSock, c, ourChar );
-						if( retVal == 0 )
-						{
-							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
-							didShove = false;
-						}
-						else if( retVal == 1 )
-						{
-							// Event found, script returned true. Allow hardcoded functionality
-							didShove = true;
-							break;
-						}
-					}
-				}
-
-				// Run onCollide event on character being shoved
-				ourScriptTriggers.clear();
-				ourScriptTriggers.shrink_to_fit();
-				ourScriptTriggers = ourChar->GetScriptTriggers();
-				for( auto scriptTrig : ourScriptTriggers )
-				{
-					toExecute = JSMapping->GetScript( scriptTrig );
-					if( toExecute != nullptr )
-					{
-						auto retVal = toExecute->OnCollide( ourChar->GetSocket(), c, ourChar );
-						if( retVal == 0 )
-						{
-							// Event found, script returned false. Disallow hardcoded functionality, but keep checking
-							didShove = false;
-						}
-						else if( retVal == 1 )
-						{
-							// Event found, script returned true. Allow hardcoded functionality
-							didShove = true;
-							break;
+auto cMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) ->void {
+	if( mSock){
+		
+		// GMs, counselors, and ghosts don't shove things
+		if( c->GetCommandLevel() < CL_CNS && !IsGMBody( c ) ){
+			// lets cache these vars in advance
+			auto grid = MapRegion->GetMapRegion( c );
+			if( grid){
+				
+				auto regChars = grid->GetCharList();
+				bool didShove			= false;
+				const SI16 x			= c->GetX();
+				const SI16 y			= c->GetY();
+				const SI08 z			= c->GetZ();
+				const UI16 instanceID	= c->GetInstanceID();
+				
+				std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
+				std::vector<UI16> ourScriptTriggers;
+				cScript *toExecute;
+				for (auto &ourChar : regChars->collection()){
+					if( ValidateObject( ourChar ) && ourChar != c && ourChar->GetInstanceID() == instanceID ){
+						if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 4 ) {
+							if(( ourChar->GetVisible() != VT_PERMHIDDEN )
+							   && ( !IsGMBody( ourChar )
+								 && ( ourChar->IsNpc() || isOnline( (*ourChar) ) ) && ourChar->GetCommandLevel() < CL_CNS )) {
+								// Assume character shoved other character
+								didShove = true;
+								
+								// Run onCollide event on character doing the shoving
+								for( auto scriptTrig : scriptTriggers ) {
+									toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute ) {
+										auto retVal = toExecute->OnCollide( mSock, c, ourChar );
+										if( retVal == 0 ) {
+											// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+											didShove = false;
+										}
+										else if( retVal == 1 ) {
+											// Event found, script returned true. Allow hardcoded functionality
+											didShove = true;
+											break;
+										}
+									}
+								}
+								
+								// Run onCollide event on character being shoved
+								ourScriptTriggers.clear();
+								ourScriptTriggers.shrink_to_fit();
+								ourScriptTriggers = ourChar->GetScriptTriggers();
+								for( auto scriptTrig : ourScriptTriggers ) {
+									toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute) {
+										auto retVal = toExecute->OnCollide( ourChar->GetSocket(), c, ourChar );
+										if( retVal == 0 ) {
+											// Event found, script returned false. Disallow hardcoded functionality, but keep checking
+											didShove = false;
+										}
+										else if( retVal == 1 ) {
+											// Event found, script returned true. Allow hardcoded functionality
+											didShove = true;
+											break;
+										}
+									}
+								}
+								
+								if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE ) {
+									mSock->sysmessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
+								}
+								else {
+									std::string charName = getNpcDictName( ourChar );
+									mSock->sysmessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+								}
+							}
 						}
 					}
 				}
-
-				if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
-					mSock->sysmessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
-				else
-				{
-					std::string charName = getNpcDictName( ourChar );
-					mSock->sysmessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+				
+				if( didShove ){
+					c->SetStamina( std::max( c->GetStamina() - 4, 0 ) );
 				}
 			}
 		}
 	}
-
-	if( didShove )
-		c->SetStamina( std::max( c->GetStamina() - 4, 0 ) );
-
-	regChars->Pop();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1250,175 +1213,147 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 	std::vector<UI16> itemScriptTriggers;
 	for (auto &MapArea : MapRegion->PopulateList( newx, newy, mChar->WorldNumber())){
 		if( MapArea){
-			if( mSock != nullptr )		// Only send char stuff if we have a valid socket
-			{
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != instanceID )
-						continue;
-					// Character Send Stuff
-					if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) )
-					{
-						dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
-						dyNew = static_cast<UI16>(abs( tempChar->GetY() - newy ));
-						if( checkX && dyNew <= (visibleRange+2) )	// Only update on x plane if our x changed
-						{
-							dxOld = static_cast<UI16>(abs( tempChar->GetX() - oldx ));
-							if( UpdateCharsOnPlane( mSock, mChar, tempChar, dxNew, dxOld, visibleRange ) )
-								continue;	// If we moved diagonally, don't update the same char twice.
-						}
-						if( checkY && dxNew <= (visibleRange+2) )	// Only update on y plane if our y changed
-						{
-							dyOld = static_cast<UI16>(abs( tempChar->GetY() - oldy ));
-							
-							if( UpdateCharsOnPlane( mSock, mChar, tempChar, dyNew, dyOld, visibleRange ) )
-								continue;
+			if( mSock )	{	// Only send char stuff if we have a valid socket
+				auto regChars = MapArea->GetCharList();
+				for (auto &tempChar : regChars->collection()){
+					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == instanceID ){
+						// Character Send Stuff
+						if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) {
+							dxNew = static_cast<UI16>(abs( tempChar->GetX() - newx ));
+							dyNew = static_cast<UI16>(abs( tempChar->GetY() - newy ));
+							if( checkX && dyNew <= (visibleRange+2) )	{// Only update on x plane if our x changed
+								dxOld = static_cast<UI16>(abs( tempChar->GetX() - oldx ));
+								if( UpdateCharsOnPlane( mSock, mChar, tempChar, dxNew, dxOld, visibleRange ) ){
+									continue;	// If we moved diagonally, don't update the same char twice.
+								}
+							}
+							if( checkY && dxNew <= (visibleRange+2) ){	// Only update on y plane if our y changed
+								dyOld = static_cast<UI16>(abs( tempChar->GetY() - oldy ));
+								
+								if( UpdateCharsOnPlane( mSock, mChar, tempChar, dyNew, dyOld, visibleRange ) ){
+									continue; // ?? this will continue anyway
+								}
+							}
 						}
 					}
 				}
-				regChars->Pop();
 			}
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tItem = regItems->First(); !regItems->Finished(); tItem = regItems->Next() )
-			{
-				if( !ValidateObject( tItem ) || tItem->GetInstanceID() != instanceID )
-					continue;
-				id		= tItem->GetID();
-				type	= tItem->GetType();
-				EffRange = (	tItem->GetX() == newx && tItem->GetY() == newy &&
-						std::abs(mChar->GetZ() - tItem->GetZ()) <= 4 );
-				
-				// Get max movement detection range from item's MORE property (part 1)
-				moveDetectRange = tItem->GetTempVar( CITV_MORE, 1 );
-				
-				// Determine if character is moving within the moveDetectRange limit
-				inMoveDetectRange = ( std::abs(tItem->GetX() - newx) <= moveDetectRange && std::abs(tItem->GetY() - newy) <= moveDetectRange &&
-							   std::abs(mChar->GetZ() - tItem->GetZ()) <= 5 );
-				
-				if( EffRange || inMoveDetectRange )
-				{
-					if( !Magic->HandleFieldEffects( mChar, tItem, id ))
-					{
-						if( !tItem->CanBeObjType( OT_MULTI ))
-						{
-							bool scriptExecuted = false;
-							std::vector<UI16> scriptTriggers = tItem->GetScriptTriggers();
-							for( auto i : scriptTriggers )
-							{
-								// Loop through all scriptIDs registered for item, check for scripts
-								cScript *toExecute = JSMapping->GetScript( i );
-								if( toExecute != nullptr )
-								{
-									if( EffRange )
-									{
-										// Script was found, let's check for onCollide event
-										SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
-										if( retVal != -1 )
-										{
-											scriptExecuted = true;
-											if( retVal == 1 )
-											{
-												// Script returned 1 - don't continue with other scripts on item
-												break;
+			auto regItems = MapArea->GetItemList();
+			for (auto &tItem: regItems->collection()){
+				if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
+					id		= tItem->GetID();
+					type	= tItem->GetType();
+					EffRange = (	tItem->GetX() == newx && tItem->GetY() == newy &&
+							std::abs(mChar->GetZ() - tItem->GetZ()) <= 4 );
+					
+					// Get max movement detection range from item's MORE property (part 1)
+					moveDetectRange = tItem->GetTempVar( CITV_MORE, 1 );
+					
+					// Determine if character is moving within the moveDetectRange limit
+					inMoveDetectRange = ( std::abs(tItem->GetX() - newx) <= moveDetectRange && std::abs(tItem->GetY() - newy) <= moveDetectRange &&
+								   std::abs(mChar->GetZ() - tItem->GetZ()) <= 5 );
+					
+					if( EffRange || inMoveDetectRange ) {
+						if( !Magic->HandleFieldEffects( mChar, tItem, id )) {
+							if( !tItem->CanBeObjType( OT_MULTI )) {
+								bool scriptExecuted = false;
+								auto scriptTriggers = tItem->GetScriptTriggers();
+								for( auto i : scriptTriggers ) {
+									// Loop through all scriptIDs registered for item, check for scripts
+									cScript *toExecute = JSMapping->GetScript( i );
+									if( toExecute) {
+										if( EffRange ) {
+											// Script was found, let's check for onCollide event
+											SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+											if( retVal != -1 ) {
+												scriptExecuted = true;
+												if( retVal == 1 ) {
+													// Script returned 1 - don't continue with other scripts on item
+													break;
+												}
+											}
+										}
+										if( inMoveDetectRange ) {
+											UI08 rangeToChar = getDist( point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()), point3(newx, newy, mChar->GetZ()) );
+											
+											// Script was found, let's check for onMoveDetect event
+											SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
+											if( retVal != -1 ) {
+												scriptExecuted = true;
+												if( retVal == 1 ) {
+													// Script returned 1 - don't continue with other scripts on item
+													break;
+												}
 											}
 										}
 									}
-									if( inMoveDetectRange )
-									{
+								}
+								
+								// Handle envoke stuff outside for loop, as we only want this to execute once
+								cScript *toExecute = nullptr;
+								if( scriptTriggers.size() == 0 || !scriptExecuted ) {
+									UI16 envTrig = 0;
+									if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) ) {
+										envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
+										toExecute = JSMapping->GetScript( envTrig );
+									}
+									else if( JSMapping->GetEnvokeByID()->Check( id ) ) {
+										envTrig = JSMapping->GetEnvokeByID()->GetScript( id );
+										toExecute = JSMapping->GetScript( envTrig );
+									}
+								}
+								
+								if( toExecute ) {
+									if( EffRange ) {
+										// We don't care about the return value from onCollide here, so suppress the warning
+										[[maybe_unused]] SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
+									}
+									if( inMoveDetectRange ) {
 										UI08 rangeToChar = getDist( point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()), point3(newx, newy, mChar->GetZ()) );
 										
-										// Script was found, let's check for onMoveDetect event
-										SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
-										if( retVal != -1 )
-										{
-											scriptExecuted = true;
-											if( retVal == 1 )
-											{
-												// Script returned 1 - don't continue with other scripts on item
+										// We don't care about the return value from onCollide here, so suppress the warning
+										[[maybe_unused]] SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
+									}
+								}
+								
+								// Ok let's trigger onCollide for the character as well
+								if( EffRange ) {
+									std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
+									for( auto scriptTrig : charScriptTriggers ) {
+										toExecute = JSMapping->GetScript( scriptTrig );
+										if( toExecute) {
+											if( toExecute->OnCollide( mSock, mChar, tItem ) == 1 ) {
 												break;
 											}
 										}
 									}
 								}
 							}
-							
-							// Handle envoke stuff outside for loop, as we only want this to execute once
-							cScript *toExecute = nullptr;
-							if( scriptTriggers.size() == 0 || !scriptExecuted )
-							{
-								UI16 envTrig = 0;
-								if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(type) ) )
-								{
-									envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(type) );
-									toExecute = JSMapping->GetScript( envTrig );
-								}
-								else if( JSMapping->GetEnvokeByID()->Check( id ) )
-								{
-									envTrig = JSMapping->GetEnvokeByID()->GetScript( id );
-									toExecute = JSMapping->GetScript( envTrig );
-								}
-							}
-							
-							if( toExecute != nullptr )
-							{
-								if( EffRange )
-								{
-									// We don't care about the return value from onCollide here, so suppress the warning
-									[[maybe_unused]] SI08 retVal = toExecute->OnCollide( mSock, mChar, tItem );
-								}
-								if( inMoveDetectRange )
-								{
-									UI08 rangeToChar = getDist( point3(tItem->GetX(), tItem->GetY(), tItem->GetZ()), point3(newx, newy, mChar->GetZ()) );
-									
-									// We don't care about the return value from onCollide here, so suppress the warning
-									[[maybe_unused]] SI08 retVal = toExecute->OnMoveDetect( tItem, mChar, rangeToChar, oldx, oldy );
-								}
-							}
-							
-							// Ok let's trigger onCollide for the character as well
-							if( EffRange )
-							{
-								std::vector<UI16> charScriptTriggers = mChar->GetScriptTriggers();
-								for( auto scriptTrig : charScriptTriggers )
-								{
-									toExecute = JSMapping->GetScript( scriptTrig );
-									if( toExecute != nullptr )
-									{
-										if( toExecute->OnCollide( mSock, mChar, tItem ) == 1 )
-										{
-											break;
-										}
-									}
-								}
-							}
+						}
+						if( EffRange ) {
+							HandleObjectCollisions( mSock, mChar, tItem, type );
+							Magic->GateCollision( mSock, mChar, tItem, type );
 						}
 					}
-					if( EffRange )
+					
+					dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
+					dyNew = static_cast<UI16>(abs( tItem->GetY() - newy ));
+					if( checkX && dyNew <= (visibleRange+2) )	// Only update items on furthest x plane if our x changed
 					{
-						HandleObjectCollisions( mSock, mChar, tItem, type );
-						Magic->GateCollision( mSock, mChar, tItem, type );
+						dxOld = static_cast<UI16>(abs( tItem->GetX() - oldx ));
+						if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dxNew, dxOld, visibleRange, isGM ) )
+							continue;	// If we moved diagonally, lets not update an item twice (since it could match the furthest x and y)
+					}
+					if( checkY && dxNew <= (visibleRange+2) )	{
+						// Only update items on furthest y plane if our y changed
+						
+						dyOld = static_cast<UI16>(abs( tItem->GetY() - oldy ));
+						if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM ) ){
+							continue;  // ?????
+						}
 					}
 				}
-				
-				dxNew = static_cast<UI16>(abs( tItem->GetX() - newx ));
-				dyNew = static_cast<UI16>(abs( tItem->GetY() - newy ));
-				if( checkX && dyNew <= (visibleRange+2) )	// Only update items on furthest x plane if our x changed
-				{
-					dxOld = static_cast<UI16>(abs( tItem->GetX() - oldx ));
-					if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dxNew, dxOld, visibleRange, isGM ) )
-						continue;	// If we moved diagonally, lets not update an item twice (since it could match the furthest x and y)
-				}
-				if( checkY && dxNew <= (visibleRange+2) )	// Only update items on furthest y plane if our y changed
-				{
-					dyOld = static_cast<UI16>(abs( tItem->GetY() - oldy ));
-					if( UpdateItemsOnPlane( mSock, mChar, tItem, id, dyNew, dyOld, visibleRange, isGM ) )
-						continue;
-				}
 			}
-			regItems->Pop();
 		}
 	}
 }

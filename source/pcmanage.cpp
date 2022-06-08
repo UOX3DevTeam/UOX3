@@ -1431,71 +1431,67 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves Items from Character to Corpse
 //o-----------------------------------------------------------------------------------------------o
-void MoveItemsToCorpse( CChar &mChar, CItem *iCorpse )
-{
-	CItem *k			= nullptr;
+auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) ->void {
+	
 	CItem *packItem		= mChar.GetPackItem();
 	CItem *dupeItem		= nullptr;
 	bool packIsValid	= ValidateObject( packItem );
-	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() )
-	{
-		if( !ValidateObject( j ) )
-			continue;
-
-		ItemLayers iLayer = j->GetLayer();
-
-		switch( iLayer )
-		{
-			case IL_NONE:
-			case IL_SELLCONTAINER:
-			case IL_BOUGHTCONTAINER:
-			case IL_BUYCONTAINER:
-			case IL_BANKBOX:
-				continue;
-			case IL_HAIR:
-			case IL_FACIALHAIR:
-				if( mChar.GetBodyType() != BT_GARGOYLE ) // Ignore if gargoyle - doesn't seem to display properly on corpses
-				{
-					dupeItem = j->Dupe();
-					dupeItem->SetCont( iCorpse );
-					dupeItem->SetName( "Hair/Beard" );
-					dupeItem->SetX( 0x47 );
-					dupeItem->SetY( 0x93 );
-					dupeItem->SetZ( 0 );
-					dupeItem->SetMovable( 2 );
-				}
-				break;
-			case IL_PACKITEM:
-				GenericList< CItem * > *jCont;
-				jCont = j->GetContainsList();
-				for( k = jCont->First(); !jCont->Finished(); k = jCont->Next() )
-				{
-					if( !ValidateObject( k ) )
-						continue;
-
-					// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
-					if(( mChar.GetID() == 0x0123 || mChar.GetID() == 0x0124 || mChar.GetID() == 0x0317 ) || ( !k->isNewbie() && k->GetType() != IT_SPELLBOOK ))
+	for( CItem *j = mChar.FirstItem(); !mChar.FinishedItems(); j = mChar.NextItem() ) {
+		if( ValidateObject( j ) ){
+			
+			ItemLayers iLayer = j->GetLayer();
+			
+			switch( iLayer ) {
+				case IL_NONE:
+				case IL_SELLCONTAINER:
+				case IL_BOUGHTCONTAINER:
+				case IL_BUYCONTAINER:
+				case IL_BANKBOX:
+					continue;
+				case IL_HAIR:
+				case IL_FACIALHAIR:
+					if( mChar.GetBodyType() != BT_GARGOYLE ) // Ignore if gargoyle - doesn't seem to display properly on corpses
 					{
-						k->SetCont( iCorpse );
-						k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
-						k->SetY( static_cast<SI16>(85 + ( RandomNum( 0, 75 ) )) );
-						k->SetZ( 9 );
+						dupeItem = j->Dupe();
+						dupeItem->SetCont( iCorpse );
+						dupeItem->SetName( "Hair/Beard" );
+						dupeItem->SetX( 0x47 );
+						dupeItem->SetY( 0x93 );
+						dupeItem->SetZ( 0 );
+						dupeItem->SetMovable( 2 );
 					}
-				}
-				if( !mChar.IsShop() )
-					j->SetLayer( IL_BUYCONTAINER );
-				break;
-			default:
-				if( packIsValid && j->isNewbie() )
-					j->SetCont( packItem );
-				else
+					break;
+				case IL_PACKITEM:
 				{
-					j->SetCont( iCorpse );
-					j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ) ) ) );
-					j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ) ) ) );
-					j->SetZ( 9 );
+					auto jCont = j->GetContainsList();
+					for (auto &k : jCont->collection()){
+						if( ValidateObject( k ) ){
+							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
+							if(( mChar.GetID() == 0x0123 || mChar.GetID() == 0x0124 || mChar.GetID() == 0x0317 ) || ( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )) {
+								k->SetCont( iCorpse );
+								k->SetX( static_cast<SI16>(20 + ( RandomNum( 0, 49 ) )) );
+								k->SetY( static_cast<SI16>(85 + ( RandomNum( 0, 75 ) )) );
+								k->SetZ( 9 );
+							}
+						}
+					}
+					if( !mChar.IsShop() ){
+						j->SetLayer( IL_BUYCONTAINER );
+					}
+					break;
 				}
-				break;
+				default:
+					if( packIsValid && j->isNewbie() ){
+						j->SetCont( packItem );
+					}
+					else {
+						j->SetCont( iCorpse );
+						j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ) ) ) );
+						j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ) ) ) );
+						j->SetZ( 9 );
+					}
+					break;
+			}
 		}
 	}
 }
@@ -1536,22 +1532,18 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			Effects->deathAction( mChar, iCorpse, fallDirection );
 
 		// Prevent pets from following ghost of dead player
-		GenericList< CChar * > *mPetList = mChar->GetPetList();
-		mPetList->Push();
-		for( CChar *tempChar = mPetList->First(); !mPetList->Finished(); tempChar = mPetList->Next() )
-		{
-			if( !ValidateObject( tempChar ) )
-				continue;
-			if( !tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar )
-			{
-				tempChar->SetFTarg( nullptr );
-				tempChar->SetOldNpcWander( WT_NONE );
-				tempChar->SetNpcWander( WT_NONE );
-				tempChar->SetGuarding( iCorpse );
-				iCorpse->SetGuarded( true );
+		auto mPetList = mChar->GetPetList();
+		for (auto &tempChar:mPetList->collection()){
+			if( ValidateObject( tempChar ) ){
+				if( !tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar ) {
+					tempChar->SetFTarg( nullptr );
+					tempChar->SetOldNpcWander( WT_NONE );
+					tempChar->SetNpcWander( WT_NONE );
+					tempChar->SetGuarding( iCorpse );
+					iCorpse->SetGuarded( true );
+				}
 			}
 		}
-		mPetList->Pop();
 
 		// Spawn blood effect below corpse
 		UI16 bloodColour = Races->BloodColour( mChar->GetRace()); // Fetch blood color from race property
