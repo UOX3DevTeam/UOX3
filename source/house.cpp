@@ -254,85 +254,69 @@ void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check whether the chosen location is valid for house placement
 //o-----------------------------------------------------------------------------------------------o
-bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z, 
-	SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti )
-{
+auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z,
+					  SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti ) ->bool {
 	const UI08 worldNum = mChar->WorldNumber();
 	const UI16 instanceID = mChar->GetInstanceID();
 
 	MapData_st& mMap = Map->GetMapData( worldNum );
-	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() )
-	{
+	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() ) {
 		mSock->sysmessage( 577 );
 		return false;
 	}
 
 	SI16 curX, curY;
-	if( !isMulti )
-	{
+	if( !isMulti ) {
 		// House addon
-		for( SI16 k = 0; k <= spaceX - 1; ++k )
-		{
+		for( SI16 k = 0; k <= spaceX - 1; ++k ) {
 			curX = x + k;
-			for( SI16 l = 0; l <= spaceY - 1; ++l )
-			{
+			for( SI16 l = 0; l <= spaceY - 1; ++l ) {
 				curY = y + l;
-				if( mChar->GetCommandLevel() < CL_GM )
-				{
+				if( mChar->GetCommandLevel() < CL_GM ) {
 					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum, instanceID );
-					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) )
-					{
+					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) ) {
 						mSock->sysmessage( 9027 ); // This object must be placed in your house
 						return false;
 					}
 
 					// Check that house addon won't block a door/staircase when placed
-					GenericList< CItem * > *itemList = mMulti->GetItemsInMultiList();
-					for( CItem *mItem = itemList->First(); !itemList->Finished(); mItem = itemList->Next() )
-					{
-						if( !ValidateObject( mItem ) )
-							continue;
+					auto itemList = mMulti->GetItemsInMultiList();
+					for (auto &mItem : itemList->collection()) {
+						if( ValidateObject( mItem ) ){
+							
+							if( mItem->GetType() == 12 || mItem->GetType() == 13 ) {
+								SI08 mItemZ = mItem->GetZ();
+								if ((mItemZ <= z) || ((mItemZ -z)<20)){
+									// Ignore doors on floors above
+									if ((mItemZ>z) || ((z-mItemZ)<20)){
+										// Ignore doors on floors below, too!
+										if( mItem->isDoorOpen() ) {
+											// Make sure to check against the distance from the door in it's closed state, rather than it's open state!
+											auto doorX = mItem->GetTag( "DOOR_X" );
+											auto doorY = mItem->GetTag( "DOOR_Y" );
+											UI16 origX = mItem->GetX() - doorX.m_IntValue;
+											UI16 origY = mItem->GetY() - doorY.m_IntValue;
+											if( x - origX < 2 || origX - x < 2 || y - origY < 2 || origY - y < 2 ) {
+												mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+												return false;
+											}
+										}
+										
+										if( getDist( point3( x, y, z ), mItem->GetLocation() ) < 2 ) {
+											mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+											return false;
+										}
+										
+										// Don't allow placing addon if it collides with a blocking tile at same height
+										bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceID, TF_BLOCKING ));
+										if( locationBlocked ) {
+											mSock->sysmessage( 9097 ); // You cannot place this house-addon there, location is blocked!
+											return false;
+										}
 
-						if( mItem->GetType() == 12 || mItem->GetType() == 13 )
-						{
-							SI08 mItemZ = mItem->GetZ();
-							if( mItemZ > z && mItemZ - z >= 20 )
-							{
-								// Ignore doors on floors above
-								continue;
-							}
-							else if( mItemZ < z && z - mItemZ >= 20 )
-							{
-								// Ignore doors on floors below, too!
-								continue;
-							}
-
-							if( mItem->isDoorOpen() )
-							{
-								// Make sure to check against the distance from the door in it's closed state, rather than it's open state!
-								TAGMAPOBJECT doorX = mItem->GetTag( "DOOR_X" );
-								TAGMAPOBJECT doorY = mItem->GetTag( "DOOR_Y" );
-								UI16 origX = mItem->GetX() - doorX.m_IntValue;
-								UI16 origY = mItem->GetY() - doorY.m_IntValue;
-								if( x - origX < 2 || origX - x < 2 || y - origY < 2 || origY - y < 2 )
-								{
-									mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
-									return false;
+									}
 								}
-							}
-
-							if( getDist( point3( x, y, z ), mItem->GetLocation() ) < 2 )
-							{
-								mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
-								return false;
-							}
-
-							// Don't allow placing addon if it collides with a blocking tile at same height
-							bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceID, TF_BLOCKING ));
-							if( locationBlocked )
-							{
-								mSock->sysmessage( 9097 ); // You cannot place this house-addon there, location is blocked!
-								return false;
+								
 							}
 						}
 					}
@@ -378,7 +362,7 @@ bool CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 				}
 
 				UI08 retVal1 = Map->ValidMultiLocation( curX, curY, z, worldNum, instanceID, !isBoat, checkOnlyMultis, checkOnlyNonMultis, checkForRoads );
-				CMultiObj *retVal2 = findMulti( curX, curY, z, worldNum, instanceID );
+				auto retVal2 = findMulti( curX, curY, z, worldNum, instanceID );
 
 				if( retVal1 != 1 || retVal2 != nullptr )
 				{
