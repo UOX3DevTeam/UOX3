@@ -2389,7 +2389,6 @@ void CSocket::statwindow( CBaseObject *targObj, bool updateParty )
 						if( s == nullptr )
 							break;
 
-						CBaseObject *thisBaseObj = mChar;
 
 						// Send stat window update for new member to existing party members
 						s->statwindow( mChar, false );

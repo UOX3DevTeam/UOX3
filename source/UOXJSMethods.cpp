@@ -4813,8 +4813,8 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	bool stackSuccess = false;
-	bool autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+//	auto stackSuccess = false;
+	auto autoStack = ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
 	if( autoStack && ValidateObject( myItem->GetCont() ))
 	{
 		// Attempt to stack the item with existing items. If item has any left-over amount after, it
@@ -9365,7 +9365,6 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	// Prepare some temporary helper variables
 	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
-	CChar *tempPet = nullptr;
 	jsval jsTempPet;
 
 	// Loop through list of friends, and add each one to the JS ArrayObject

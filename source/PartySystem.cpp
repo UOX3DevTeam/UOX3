@@ -55,7 +55,6 @@ bool Party::AddMember( CChar *i )
 						if( isOnline( *partyMember ) )
 						{
 							CSocket *s = partyMember->GetSocket();
-							CBaseObject *baseObj = partyMember;
 
 							// Send stat window update for new member to existing party members
 							s->statwindow( i );

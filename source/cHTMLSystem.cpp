@@ -136,7 +136,6 @@ void cHTMLTemplate::Process( void )
 
 	// Connection Count (GMs, Counselors, Player)
 	UI32 gm = 0, cns = 0, ccount = 0;
-	CSocket *tSock	= nullptr;
 	CChar *tChar	= nullptr;
 
 	// Get all Network Connections
