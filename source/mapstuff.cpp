@@ -115,68 +115,55 @@ void CMulHandler::LoadMapsDFN( void )
 		}
 
 		MapData_st toAdd;
-		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
-		{
+		for (auto &sec :toFind->collection()){
+			auto tag = sec->tag ;
 			UTag = oldstrutil::upper( tag );
 			data = toFind->GrabData();
 			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-			switch( (UTag.data()[0]) )
-			{
+			switch( (UTag.data()[0]) ) {
 				case 'M':
-					if( UTag == "MAP" )
-					{
+					if( UTag == "MAP" ){
 						toAdd.mapFile = data;
 					}
-					else if( UTag == "MAPUOPWRAP" )
-					{
+					else if( UTag == "MAPUOPWRAP" ){
 						toAdd.mapFileUOPWrap = data;
 					}
-					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
-					{
-						if( UTag == "MAPDIFF" )
-						{
+					else if( cwmWorldState->ServerData()->MapDiffsEnabled() ){
+						if( UTag == "MAPDIFF" ){
 							toAdd.mapDiffFile = data;
 						}
-						else if( UTag == "MAPDIFFLIST" )
-						{
+						else if( UTag == "MAPDIFFLIST" ){
 							toAdd.mapDiffListFile = data;
 						}
 					}
 					break;
 				case 'S':
-					if( UTag == "STATICS" )
-					{
+					if( UTag == "STATICS" ){
 						toAdd.staticsFile = data;
 					}
-					else if( UTag == "STAIDX" )
-					{
+					else if( UTag == "STAIDX" ){
 						toAdd.staidxFile = data;
 					}
-					else if( cwmWorldState->ServerData()->MapDiffsEnabled() )
-					{
-						if( UTag == "STATICSDIFF" )
-						{
+					else if( cwmWorldState->ServerData()->MapDiffsEnabled() ){
+						if( UTag == "STATICSDIFF" ){
 							toAdd.staticsDiffFile = data;
 						}
-						else if( UTag == "STATICSDIFFLIST" )
-						{
+						else if( UTag == "STATICSDIFFLIST" ){
 							toAdd.staticsDiffListFile = data;
 						}
-						else if( UTag == "STATICSDIFFINDEX" )
-						{
+						else if( UTag == "STATICSDIFFINDEX" ){
 							toAdd.staticsDiffIndexFile = data;
 						}
 					}
 					break;
 				case 'X':
-					if( UTag == "X" )
-					{
+					if( UTag == "X" ){
+
 						toAdd.xBlock = static_cast<UI16>(std::stoul(data, nullptr, 0));
 					}
 					break;
 				case 'Y':
-					if( UTag == "Y" )
-					{
+					if( UTag == "Y" ){
 						toAdd.yBlock = static_cast<UI16>(std::stoul(data, nullptr, 0));
 					}
 					break;
@@ -574,27 +561,25 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, b
 //o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 maxZ, UI16 instanceID )
 {
-	SI08 z = ILLEGAL_Z;
+	auto z = ILLEGAL_Z;
 
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea == nullptr )	// no valid region
-		return z;
-	GenericList< CItem * > *regItems = MapArea->GetItemList();
-	regItems->Push();
-	for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-	{
-		if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID )
-			continue;
-		if( tempItem->GetID( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
-			z = MultiHeight( tempItem, x, y, oldz, maxZ );
-		else if( tempItem->GetX() == x && tempItem->GetY() == y )
-		{
-			SI08 ztemp = (SI08)(tempItem->GetZ() + TileHeight( tempItem->GetID() ));
-			if( ( ztemp <= oldz + maxZ ) && ztemp > z )
-				z = ztemp;
+	if( MapArea )	{
+		auto regItems = MapArea->GetItemList();
+		for (auto tempItem : regItems->container()){
+			if( ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID ){
+				if( tempItem->GetID( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI )){
+					z = MultiHeight( tempItem, x, y, oldz, maxZ );
+				}
+				else if( tempItem->GetX() == x && tempItem->GetY() == y ){
+					SI08 ztemp = (SI08)(tempItem->GetZ() + TileHeight( tempItem->GetID() ));
+					if( ( ztemp <= oldz + maxZ ) && ztemp > z ){
+						z = ztemp;
+					}
+				}
+			}
 		}
 	}
-	regItems->Pop();
 	return z;
 }
 
@@ -653,51 +638,44 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns which dynamic tile is present at (x,y) or -1 if no tile exists
 //o-----------------------------------------------------------------------------------------------o
-CItem *CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis )
-{
+auto CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis ) ->CItem *{
+	auto rvalue = static_cast<CItem*>(nullptr) ;
 	for( auto &CellResponse:MapRegion->PopulateList( x, y, worldNumber ) )
 	{
 		if( CellResponse ) {
 			
-			GenericList< CItem * > *regItems = CellResponse->GetItemList();
-			regItems->Push();
-			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-			{
-				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-					continue;
-				if( !checkOnlyNonMultis )
-				{
-					if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
-					{
-						auto deetee = MultiTile( Item, x, y, oldz, false );
-						if( deetee > 0 )
-						{
-							regItems->Pop();
-							return Item;
+			auto regItems = CellResponse->GetItemList();
+			for (auto &Item : regItems->container()){
+				if( ValidateObject( Item ) && ( Item->GetInstanceID() == instanceID) ){
+					if( !checkOnlyNonMultis ){
+						if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) ){
+							auto deetee = MultiTile( Item, x, y, oldz, false );
+							if( deetee > 0 ){
+								rvalue = Item;
+								break;
+							}
 						}
-						else
-							continue;
+						else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) ){
+							if( (Item->GetX() == x) && (Item->GetY() == y )){
+								rvalue = Item ;
+								break;
+							}
+							
+						}
 					}
-					else if( Item->GetMulti() != INVALIDSERIAL || ValidateObject( calcMultiFromSer( Item->GetOwner() ) ) )
-					{
-						if( Item->GetX() != x && Item->GetY() != y )
-							continue;
-						
-						regItems->Pop();
-						return Item;
+					else if( !checkOnlyMultis && (Item->GetX() == x) && (Item->GetY() == y) ){
+						rvalue = Item ;
+						break;
 					}
-				}
-				else if( !checkOnlyMultis && Item->GetX() == x && Item->GetY() == y )
-				{
-					regItems->Pop();
-					return Item;
 				}
 			}
-			
-			regItems->Pop();
+			if (rvalue) {
+				break;
+			}
+
 		}
 	}
-	return nullptr;
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1016,55 +994,45 @@ bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, Til
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck )
-{
+auto CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, TileFlags toCheck ) ->bool {
+	
 	for( auto  &CellResponse: MapRegion->PopulateList( x, y, worldNumber )) {
 		if( CellResponse ) {
 			
-			GenericList< CItem * > *regItems = CellResponse->GetItemList();
-			regItems->Push();
-			for( CItem *Item = regItems->First(); !regItems->Finished(); Item = regItems->Next() )
-			{
-				if( !ValidateObject( Item ) || Item->GetInstanceID() != instanceID )
-					continue;
-				
-				if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) )
-				{
-					// Found a multi
-					// Look for a multi item at specific location
-					UI16 multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
-					for( auto &multiItem : SeekMulti( multiID ).allItems() )
+			auto regItems = CellResponse->GetItemList();
+			for (auto &Item : regItems->container()){
+				if( ValidateObject( Item ) && (Item->GetInstanceID() == instanceID )){
+					
+					if( (Item->GetID( 1 ) >= 0x40) && ( (Item->GetObjType() == OT_MULTI) || (Item->CanBeObjType( OT_MULTI )) ) ){
+						// Found a multi
+						// Look for a multi item at specific location
+						auto multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
+						for( auto &multiItem : SeekMulti( multiID ).allItems() ){
+							if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) ){
+								if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) ){
+									if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) ){
+										return true;
+									}
+								}
+							}
+						}
+					}
+					else
 					{
-						if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) )
-						{
-							if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) )
-							{
-								if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) )
-								{
+						// Item is not a multi
+						if( (Item->GetX() == x) && (Item->GetY() == y) && (Item->GetZ() == z) ){
+							
+							auto itemZ = Item->GetZ();
+							const SI08 tileHeight = static_cast<SI08>( TileHeight( Item->GetID() ) );
+							if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z )){
+								if( SeekTile( Item->GetID() ).CheckFlag( toCheck ) ){
 									return true;
 								}
 							}
 						}
 					}
 				}
-				else
-				{
-					// Item is not a multi
-					if( Item->GetX() == x && Item->GetY() == y && Item->GetZ() == z )
-					{
-						UI16 itemZ = Item->GetZ();
-						const SI08 tileHeight = static_cast<SI08>( TileHeight( Item->GetID() ) );
-						if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
-						{
-							if( SeekTile( Item->GetID() ).CheckFlag( toCheck ) )
-							{
-								return true;
-							}
-						}
-					}
-				}
 			}
-			regItems->Pop();
 		}
 	}
 	return false;
@@ -1337,211 +1305,169 @@ UI08 CMulHandler::MapCount( void ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Override flags/properties for tiles based on DFNDATA/MAPS/tiles.dfn
 //o-----------------------------------------------------------------------------------------------o
-void CMulHandler::LoadDFNOverrides( void )
-{
+auto CMulHandler::LoadDFNOverrides()->void{
+
 	std::string data, UTag, entryName, titlePart;
 	size_t entryNum;
 
 	for( Script *mapScp = FileLookup->FirstScript( maps_def ); !FileLookup->FinishedScripts( maps_def ); mapScp = FileLookup->NextScript( maps_def ) )
 	{
-		if( mapScp == nullptr )
-			continue;
-		for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != nullptr; toScan = mapScp->NextEntry() )
-		{
-			if( toScan == nullptr )
+		if( mapScp ){
+			for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != nullptr; toScan = mapScp->NextEntry() )
 			{
-				continue;
-			}
-			entryName	= mapScp->EntryName();
-			entryNum	= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(entryName," ", 1, 1 ));
-			titlePart	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
-			// have we got an entry starting with TILE ?
-			if( titlePart == "TILE" && entryNum )
-			{
-				if( entryNum == INVALIDID || entryNum >= tileDataSize )
-				{
-					continue;
-				}
-				
-				CTile *tile = &staticTile[entryNum];
-				if( tile != nullptr )
-				{
-					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
+				if( toScan ){
+					entryName	= mapScp->EntryName();
+					entryNum	= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(entryName," ", 1, 1 ));
+					titlePart	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
+					// have we got an entry starting with TILE ?
+					if( titlePart == "TILE" && entryNum )
 					{
-						data	= toScan->GrabData();
-						data 	= oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-						UTag	= oldstrutil::upper( tag );
-						
-						// CTile properties
-						if( UTag == "WEIGHT" )
-						{
-							tile->Weight( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
-						}
-						else if( UTag == "HEIGHT" )
-						{
-							tile->Height( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
-						}
-						else if( UTag == "LAYER" )
-						{
-							tile->Layer( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
-						}
-						else if( UTag == "HUE" )
-						{
-							tile->Hue( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
-						}
-						else if( UTag == "QUANTITY" )
-						{
-							tile->Quantity( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
-						}
-						else if( UTag == "ANIMATION" )
-						{
-							tile->Animation( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
-						}
-						else if( UTag == "NAME" )
-						{
-							tile->Name( data.c_str() );
-						}
-						
-						// BaseTile Flag 1
-						else if( UTag == "ATFLOORLEVEL" )
-						{
-							tile->SetFlag( TF_FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "HOLDABLE" )
-						{
-							tile->SetFlag( TF_HOLDABLE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "SIGNGUILDBANNER" )
-						{
-							tile->SetFlag( TF_TRANSPARENT, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "WEBDIRTBLOOD" )
-						{
-							tile->SetFlag( TF_TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "WALLVERTTILE" )
-						{
-							tile->SetFlag( TF_WALL, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "DAMAGING" )
-						{
-							tile->SetFlag( TF_DAMAGING, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "BLOCKING" )
-						{
-							tile->SetFlag( TF_BLOCKING, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "LIQUIDWET" )
-						{
-							tile->SetFlag( TF_WET, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						
-						// BaseTile Flag 2
-						else if( UTag == "UNKNOWNFLAG1" )
-						{
-							tile->SetFlag( TF_UNKNOWN1, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "STANDABLE" )
-						{
-							tile->SetFlag( TF_SURFACE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "CLIMBABLE" )
-						{
-							tile->SetFlag( TF_CLIMBABLE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "STACKABLE" )
-						{
-							tile->SetFlag( TF_STACKABLE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "WINDOWARCHDOOR" )
-						{
-							tile->SetFlag( TF_WINDOW, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "CANNOTSHOOTTHRU" )
-						{
-							tile->SetFlag( TF_NOSHOOT, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "DISPLAYASA" )
-						{
-							tile->SetFlag( TF_DISPLAYA, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "DISPLAYASAN" )
-						{
-							tile->SetFlag( TF_DISPLAYAN, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						
-						// BaseTile Flag 3
-						else if( UTag == "DESCRIPTIONTILE" )
-						{
-							tile->SetFlag( TF_DESCRIPTION, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "FADEWITHTRANS" )
-						{
-							tile->SetFlag( TF_FOLIAGE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "PARTIALHUE" )
-						{
-							tile->SetFlag( TF_PARTIALHUE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "UNKNOWNFLAG2" )
-						{
-							tile->SetFlag( TF_UNKNOWN2, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "MAP" )
-						{
-							tile->SetFlag( TF_MAP, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "CONTAINER" )
-						{
-							tile->SetFlag( TF_CONTAINER, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "EQUIPABLE" )
-						{
-							tile->SetFlag( TF_WEARABLE, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "LIGHTSOURCE" )
-						{
-							tile->SetFlag( TF_LIGHT, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						
-						// BaseTile Flag 4
-						else if( UTag == "ANIMATED" )
-						{
-							tile->SetFlag( TF_ANIMATED, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "NODIAGONAL" )
-						{
-							tile->SetFlag( TF_NODIAGONAL, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "UNKNOWNFLAG3" )
-						{
-							tile->SetFlag( TF_UNKNOWN3, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "WHOLEBODYITEM" )
-						{
-							tile->SetFlag( TF_ARMOR, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "WALLROOFWEAP" )
-						{
-							tile->SetFlag( TF_ROOF, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "DOOR" )
-						{
-							tile->SetFlag( TF_DOOR, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "CLIMBABLEBIT1" )
-						{
-							tile->SetFlag( TF_STAIRBACK, (std::stoi(data, nullptr, 0) != 0) );
-						}
-						else if( UTag == "CLIMBABLEBIT2" )
-						{
-							tile->SetFlag( TF_STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0) );
+						if( (entryNum != INVALIDID) && (entryNum < tileDataSize) ){
+							
+							auto tile = &staticTile[entryNum];
+							if(tile)
+							{
+								for (auto &sec : toScan->collection()){
+									auto tag = sec->tag ;
+									data	= toScan->GrabData();
+									data 	= oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+									UTag	= oldstrutil::upper( tag );
+									
+									// CTile properties
+									if( UTag == "WEIGHT" ){
+										tile->Weight( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+									}
+									else if( UTag == "HEIGHT" ){
+										tile->Height( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+									}
+									else if( UTag == "LAYER" ){
+										tile->Layer( static_cast<SI08>(std::stoi(data, nullptr, 0))) ;
+									}
+									else if( UTag == "HUE" ){
+										tile->Hue( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+									}
+									else if( UTag == "QUANTITY" ){
+										tile->Quantity( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+									}
+									else if( UTag == "ANIMATION" ){
+										tile->Animation( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+									}
+									else if( UTag == "NAME" )
+									{
+										tile->Name( data.c_str() );
+									}
+									
+									// BaseTile Flag 1
+									else if( UTag == "ATFLOORLEVEL" ){
+										tile->SetFlag( TF_FLOORLEVEL, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "HOLDABLE" ){
+										tile->SetFlag( TF_HOLDABLE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "SIGNGUILDBANNER" ){
+										tile->SetFlag( TF_TRANSPARENT, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "WEBDIRTBLOOD" ){
+										tile->SetFlag( TF_TRANSLUCENT, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "WALLVERTTILE" ){
+										tile->SetFlag( TF_WALL, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "DAMAGING" ){
+										tile->SetFlag( TF_DAMAGING, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "BLOCKING" ){
+										tile->SetFlag( TF_BLOCKING, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "LIQUIDWET" ){
+										tile->SetFlag( TF_WET, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									
+									// BaseTile Flag 2
+									else if( UTag == "UNKNOWNFLAG1" ){
+										tile->SetFlag( TF_UNKNOWN1, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "STANDABLE" ){
+										tile->SetFlag( TF_SURFACE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "CLIMBABLE" ){
+										tile->SetFlag( TF_CLIMBABLE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "STACKABLE" ){
+										tile->SetFlag( TF_STACKABLE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "WINDOWARCHDOOR" ){
+										tile->SetFlag( TF_WINDOW, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "CANNOTSHOOTTHRU" ){
+										tile->SetFlag( TF_NOSHOOT, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "DISPLAYASA" ){
+										tile->SetFlag( TF_DISPLAYA, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "DISPLAYASAN" ){
+										tile->SetFlag( TF_DISPLAYAN, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									
+									// BaseTile Flag 3
+									else if( UTag == "DESCRIPTIONTILE" ){
+										tile->SetFlag( TF_DESCRIPTION, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "FADEWITHTRANS" ){
+										tile->SetFlag( TF_FOLIAGE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "PARTIALHUE" ){
+										tile->SetFlag( TF_PARTIALHUE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "UNKNOWNFLAG2" ){
+										tile->SetFlag( TF_UNKNOWN2, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "MAP" ){
+										tile->SetFlag( TF_MAP, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "CONTAINER" ){
+										tile->SetFlag( TF_CONTAINER, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "EQUIPABLE" ){
+										tile->SetFlag( TF_WEARABLE, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "LIGHTSOURCE" ){
+										tile->SetFlag( TF_LIGHT, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									
+									// BaseTile Flag 4
+									else if( UTag == "ANIMATED" ){
+										tile->SetFlag( TF_ANIMATED, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "NODIAGONAL" ){
+										tile->SetFlag( TF_NODIAGONAL, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "UNKNOWNFLAG3" ){
+										tile->SetFlag( TF_UNKNOWN3, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "WHOLEBODYITEM" ){
+										tile->SetFlag( TF_ARMOR, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "WALLROOFWEAP" ){
+										tile->SetFlag( TF_ROOF, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "DOOR" ){
+										tile->SetFlag( TF_DOOR, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "CLIMBABLEBIT1" ){
+										tile->SetFlag( TF_STAIRBACK, (std::stoi(data, nullptr, 0) != 0) );
+									}
+									else if( UTag == "CLIMBABLEBIT2" ){
+										tile->SetFlag( TF_STAIRRIGHT, (std::stoi(data, nullptr, 0) != 0) );
+									}
+								}
+							}
 						}
 					}
+					else if( titlePart == "LAND" && entryNum )
+					{	// let's not deal with this just yet
+					}
 				}
-			}
-			else if( titlePart == "LAND" && entryNum )
-			{	// let's not deal with this just yet
 			}
 		}
 	}
