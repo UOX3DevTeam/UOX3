@@ -363,7 +363,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( ValidateObject( tempItem ))
 			{
 				auto multiSerial = tempItem->GetMulti();
-				auto boatSerial = b->GetSerial();
+				//auto boatSerial = b->GetSerial();
 				if( multiSerial != INVALIDSERIAL && multiSerial != b->GetSerial() )
 				{
 					CTile& tile = Map->SeekTile( tempItem->GetID() );

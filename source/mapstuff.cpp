@@ -566,7 +566,7 @@ SI08 CMulHandler::DynamicElevation( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber,
 	CMapRegion *MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea )	{
 		auto regItems = MapArea->GetItemList();
-		for (auto tempItem : regItems->container()){
+		for (auto tempItem : regItems->collection()){
 			if( ValidateObject( tempItem ) || tempItem->GetInstanceID() != instanceID ){
 				if( tempItem->GetID( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI )){
 					z = MultiHeight( tempItem, x, y, oldz, maxZ );
@@ -645,7 +645,7 @@ auto CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 ins
 		if( CellResponse ) {
 			
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item : regItems->container()){
+			for (auto &Item : regItems->collection()){
 				if( ValidateObject( Item ) && ( Item->GetInstanceID() == instanceID) ){
 					if( !checkOnlyNonMultis ){
 						if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) ){
@@ -1000,7 +1000,7 @@ auto CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI
 		if( CellResponse ) {
 			
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item : regItems->container()){
+			for (auto &Item : regItems->collection()){
 				if( ValidateObject( Item ) && (Item->GetInstanceID() == instanceID )){
 					
 					if( (Item->GetID( 1 ) >= 0x40) && ( (Item->GetObjType() == OT_MULTI) || (Item->CanBeObjType( OT_MULTI )) ) ){

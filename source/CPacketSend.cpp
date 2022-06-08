@@ -7752,7 +7752,6 @@ void CPHealthBarStatus::SetHBStatusData( CChar &mChar, CSocket &tSock, UI08 heal
 		pStream.WriteShort( 1, 12 );
 		pStream.WriteLong( 3, mChar.GetSerial() );
 		pStream.WriteShort( 7, 0x01 );
-		CChar *sockChar = tSock.CurrcharObj();
 
 		if( healthBarColor == 1 ) // poisoned?
 		{
