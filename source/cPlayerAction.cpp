@@ -1114,7 +1114,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 
 		// New location either is not blocking, or has a surface we can put the item on, so let's find the exact Z of where to put it
-		auto nCharZ = nChar->GetZ();
+//		auto nCharZ = nChar->GetZ();
 		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 16 );
 		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 16 )
 		{

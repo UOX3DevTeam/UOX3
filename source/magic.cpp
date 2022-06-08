@@ -830,36 +830,30 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Recall spell
 //o-----------------------------------------------------------------------------------------------o
-bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
-{
+auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 	// No recall if too heavy, GMs excempt
-	if( Weight->isOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ) )
-	{
+	if( Weight->isOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ) ) {
 		sock->sysmessage( 680 ); // You are too heavy to do that!
 		sock->sysmessage( 681 ); // You feel drained from the attempt.
 		return false;
 	}
-	else if( i->GetType() == 7 )
-	{
+	else if( i->GetType() == 7 ) {
 		// Player recalled off a key
 		CMultiObj *shipMulti = calcMultiFromSer( i->GetTempVar( CITV_MORE ) );
-		if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) )
-		{
-			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
-			{
+		if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) ) {
+			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 				// Teleport player's pets too
 				GenericList< CChar * > *myPets = caster->GetPetList();
 				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
 				{
-					if( !ValidateObject( myPet ) )
-						continue;
-					if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
-					{
-						if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
-							myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+					if( ValidateObject( myPet ) ){
+						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
+							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
+								myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+						}
 					}
 				}
-
+				
 				// Teleport player
 				caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
 				return true;
@@ -870,106 +864,91 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 				return false;
 			}
 		}
-		else
-		{
+		else {
 			sock->sysmessage( 2065 ); // You can only recall off of recall runes or valid ship keys!
 			return false;
 		}
 	}
-	else
-	{
+	else {
 		// Check if rune was marked in a multi - if so, try to take user directly there
 		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
-		if( runeMore.m_StringValue != "" )
-		{
+		if( runeMore.m_StringValue != "" ) {
 			SERIAL mSerial = oldstrutil::value<SERIAL>( runeMore.m_StringValue );
-			if( mSerial != 0 && mSerial != INVALIDSERIAL )
-			{
+			if( mSerial != 0 && mSerial != INVALIDSERIAL ) {
 				CMultiObj *shipMulti = calcMultiFromSer( mSerial );
-				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) )
-				{
-					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() )
-					{
+				if( ValidateObject( shipMulti ) && shipMulti->CanBeObjType( OT_BOAT ) ) {
+					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 						// Teleport player's pets too
 						GenericList< CChar * > *myPets = caster->GetPetList();
-						for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-						{
-							if( !ValidateObject( myPet ) )
-								continue;
-							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
-							{
-								if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
-									myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+						for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+							if( ValidateObject( myPet ) ){
+								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
+									if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
+										myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
+									}
+								}
 							}
 						}
-
+						
 						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceID() );
 						return true;
 					}
-					else
-					{
+					else {
 						sock->sysmessage( 2063 ); // You are unable to recall to your ship - it might be in another world!
 						return false;
 					}
 				}
 			}
-
+			
 			sock->sysmessage( 2062 ); // Unable to locate ship - it might have been dry-docked... or sunk!
 			return false;
 		}
-		else if( i->GetTempVar( CITV_MOREX ) == 0 && i->GetTempVar( CITV_MOREY ) == 0 )
-		{
+		else if( i->GetTempVar( CITV_MOREX ) == 0 && i->GetTempVar( CITV_MOREY ) == 0 ) {
 			sock->sysmessage( 679 ); // That rune has not been marked yet!
 			return false;
 		}
-		else
-		{
+		else {
 			UI08 worldNum = static_cast<UI08>(i->GetTempVar( CITV_MORE ));
-			if( !Map->MapExists( worldNum ) )
+			if( !Map->MapExists( worldNum ) ){
 				worldNum = caster->WorldNumber();
-
-			if( worldNum != caster->WorldNumber() )
-			{
-				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
-				{
+			}
+			
+			if( worldNum != caster->WorldNumber() ) {
+				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) {
 					// Teleport player's pets too
 					GenericList< CChar * > *myPets = caster->GetPetList();
-					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-					{
-						if( !ValidateObject( myPet ) )
-							continue;
-						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
-						{
-							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
-								myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+					for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+						if( ValidateObject( myPet ) ){
+							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
+								if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
+									myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+								}
+							}
 						}
 					}
-
+					
 					// Teleport the player
 					caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
 					SendMapChange( caster->WorldNumber(), sock, false );
 				}
-				else
-				{
+				else {
 					sock->sysmessage( 2061 ); // Travelling between worlds using Recall or Gate spells is not possible.
 					return false;
 				}
 			}
-			else
-			{
+			else {
 				// Teleport player's pets too
 				GenericList< CChar * > *myPets = caster->GetPetList();
-				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
-				{
-					if( !ValidateObject( myPet ) )
-						continue;
-					if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
-					{
-						if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
-							myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+				for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() ) {
+					if( ValidateObject( myPet ) ){
+						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
+							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
+								myPet->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
+							}
+						}
 					}
 				}
-
+				
 				// Teleport the player
 				caster->SetLocation( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceID() );
 			}
@@ -984,8 +963,7 @@ bool splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Blade Spirits spell (summons a Blade Spirit)
 //o-----------------------------------------------------------------------------------------------o
-bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
-{
+auto splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell ) ->bool {
 	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
 }

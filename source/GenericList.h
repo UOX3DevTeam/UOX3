@@ -62,11 +62,11 @@ public:
 	~GenericList() = default ;
 
 	//===================================================================
-	auto container() const -> const std::list<T>& {
+	auto collection() const -> const std::list<T>& {
 		return objData ;
 	}
 	//===================================================================
-	auto container()  ->  std::list<T>& {
+	auto collection()  ->  std::list<T>& {
 		return objData ;
 	}
 	//===================================================================

@@ -40,7 +40,7 @@ SI32 cSkills::CalcRankAvg( CChar *player, createEntry& skillMake )
 		return 10;
 
 	R32 rankSum = 0;
-	R32 successSum = 0;
+//	R32 successSum = 0;
 	SI32 rk_range, rank;
 	R32 sk_range, randnum, randnum1;
 

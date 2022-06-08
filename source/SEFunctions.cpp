@@ -301,7 +301,7 @@ JSBool SE_DoMovingEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	CBaseObject *trg	= nullptr;
 	bool srcLocation	= false;
 	bool targLocation	= false;
-	UI08 offset			= 0;
+//	UI08 offset			= 0;
 	UI16 srcX			= 0;
 	UI16 srcY			= 0;
 	SI08 srcZ			= 0;
