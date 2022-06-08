@@ -963,8 +963,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Blade Spirits spell (summons a Blade Spirit)
 //o-----------------------------------------------------------------------------------------------o
-bool splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
-{
+auto splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell ) ->bool {
 	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
 }
