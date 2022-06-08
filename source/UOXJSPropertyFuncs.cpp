@@ -202,8 +202,7 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	if( JSVAL_IS_INT( id ) )
 	{
 		JSString *tString = nullptr;
-		bool bDone = false;
-		size_t i = 0;
+//		size_t i = 0;
 		switch( JSVAL_TO_INT( id ) )
 		{
 			case CGSKILL_NAME:	
@@ -306,8 +305,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	if( JSVAL_IS_INT( id ) )
 	{
 		JSString *tString = nullptr;
-		bool bDone = false;
-		size_t i = 0;
+
 		switch( JSVAL_TO_INT( id ) )
 		{
 		case CMAKE_ID:
@@ -1270,7 +1268,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_NAME:
 				{
 					CSocket *tSock = nullptr;
-					JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
+					//JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx ) ) );
 
 					std::string mCharName = getNpcDictName( gPriv, tSock );
 					std::string convertedString = oldstrutil::stringToWstringToString( mCharName );

@@ -838,7 +838,7 @@ CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, cons
 			// Also fetch amount to spawn, if specified
 			if( csecs.size() > 1 )
 			{
-				UI16 iAmount = 0;
+//				UI16 iAmount = 0;
 				std::string amountData = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
 				auto tsects = oldstrutil::sections( amountData, " " );
 				if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space

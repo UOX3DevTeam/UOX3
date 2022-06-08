@@ -2022,7 +2022,6 @@ bool CPITalkRequest::HandleCommon( void )
 	CItem *speechItem = ourChar->GetSpeechItem();
 
 	UI32 j = 0;
-	CSocket *tmpSock = nullptr;
 	
 	switch( ourChar->GetSpeechMode() )
 	{

@@ -1846,7 +1846,6 @@ bool cWeatherAb::DoItemStuff( CItem *mItem )
 	}
 
 	bool isStorm = StormActive( currval );
-	bool brewStorm = StormBrewing( currval );
 	bool isSnowing = SnowActive( currval );
 	bool isRaining = RainActive( currval );
 	SI08 temp	   = (SI08)Temp( currval );

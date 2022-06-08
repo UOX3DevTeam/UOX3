@@ -421,7 +421,6 @@ void CTrainingResponse::Handle( CSocket *mSock, CChar *mChar )
 		std::shuffle( npcList.begin(), npcList.end(), g );
 
 		auto skillName = std::string("");
-		bool foundString = false;
 		for (auto Npc : npcList){
 
 			if( ValidateObject( trigChar ) )
