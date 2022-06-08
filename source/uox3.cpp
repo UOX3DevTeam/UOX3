@@ -3292,7 +3292,7 @@ void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if conditions are right to send a map change packet to the client
 //o-----------------------------------------------------------------------------------------------o
-auto SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate ) {
+auto SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate ) ->void {
 	if( sock){
 		if( ValidateObject( gate ) && ValidateObject( charMoving ) ){
 			UI08 tWorldNum = (UI08)gate->GetTempVar( CITV_MORE );
