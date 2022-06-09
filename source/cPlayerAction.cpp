@@ -21,6 +21,7 @@
 #include "cSkillClass.h"
 #include "Dictionary.h"
 
+using namespace std::string_literals;
 
 void		sendTradeStatus( CItem *cont1, CItem *cont2 );
 CItem *		startTrade( CSocket *mSock, CChar *i );
@@ -728,24 +729,19 @@ bool DropOnPC( CSocket *mSock, CChar *mChar, CChar *targPlayer, CItem *i )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a particular item is on an NPC's list of accepted foods
 //o-----------------------------------------------------------------------------------------------o
-bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemID )
-{
-	bool doesEat = false;
+auto IsOnFoodList( const std::string& sFoodList, const UI16 sItemID ) ->bool{
+	auto doesEat = false;
 
-	const std::string sect	= "FOODLIST " + sFoodList;
-	ScriptSection *FoodList = FileLookup->FindEntry( sect, items_def );
-	if( FoodList != nullptr )
-	{
-		for( std::string tag = FoodList->First(); !FoodList->AtEnd() && !doesEat; tag = FoodList->Next() )
-		{
-			if( !tag.empty() )
-			{
-				if( oldstrutil::upper( tag ) == "FOODLIST" )
-				{
-					doesEat = IsOnFoodList( FoodList->GrabData(), sItemID );
+	const std::string sect	= "FOODLIST "s + sFoodList;
+	auto FoodList = FileLookup->FindEntry( sect, items_def );
+	if(FoodList) {
+		for (auto &sec : FoodList->collection()){
+			auto tag = sec->tag ;
+			if( !tag.empty() ) {
+				if( oldstrutil::upper( tag ) == "FOODLIST" ) {
+					doesEat = IsOnFoodList( sec->data, sItemID );
 				}
-				else if( sItemID == static_cast<UI16>(std::stoul(tag, nullptr, 0)) )
-				{
+				else if( sItemID == static_cast<UI16>(std::stoul(tag, nullptr, 0)) ) {
 					doesEat = true;
 				}
 			}

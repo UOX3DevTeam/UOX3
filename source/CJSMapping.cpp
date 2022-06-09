@@ -4,6 +4,9 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include <memory>
+
+using namespace std::string_literals;
 
 CJSMapping *JSMapping = nullptr;
 //o-----------------------------------------------------------------------------------------------o
@@ -308,25 +311,24 @@ CJSMappingSection::~CJSMappingSection()
 //|	Purpose		-	Parses through specified section of jse_fileassociations.scp
 //|						populating the map with each entry.
 //o-----------------------------------------------------------------------------------------------o
-void CJSMappingSection::Parse( Script *fileAssocData )
-{
-	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
-	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
+auto CJSMappingSection::Parse( Script *fileAssocData )->void{
+	auto basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+	auto mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
 	UI08 runTime			= 0;
 
-	if( scriptType == SCPT_CONSOLE )
+	if( scriptType == SCPT_CONSOLE ){
 		runTime = 1;
+	}
 
-	if( mSection != nullptr )
-	{
+	if(mSection) {
 		UI16 scriptID = 0xFFFF;
 		size_t i = 0;
-		std::string data, fullPath;
-		for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
-		{
+		for (auto &sec :mSection->collection()){
+			auto tag = sec->tag ;
+			auto data = sec->data;
+
 			scriptID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-			data		= mSection->GrabData();
-			fullPath	= basePath + data;
+			auto fullPath = basePath + data;
 
 			if( !FileExists( fullPath ) )
 				Console.error( oldstrutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
@@ -334,9 +336,8 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 			{
 				try
 				{
-					cScript *toAdd = new cScript( fullPath, runTime );
-					if( toAdd != nullptr )
-					{
+					auto toAdd = new cScript( fullPath, runTime );
+					if(toAdd) {
 						scriptIDMap[scriptID]			= toAdd;
 						scriptJSMap[toAdd->Object()]	= scriptID;
 						++i;
@@ -357,8 +358,9 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 		Console.print( oldstrutil::format("%s\n", ScriptNames[scriptType].c_str()) );
 		Console.TurnNormal();
 	}
-	else
+	else{
 		Console.warning( oldstrutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -367,77 +369,67 @@ void CJSMappingSection::Parse( Script *fileAssocData )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads the specified JS file (by its scriptID)
 //o-----------------------------------------------------------------------------------------------o
-void CJSMappingSection::Reload( UI16 toLoad )
-{
-	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
-	if( !FileExists( scpFileName ) )
-	{
-		Console.error( oldstrutil::format("Failed to open %s", scpFileName.c_str()) );
-		return;
-	}
-
-	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
-	if( fileAssocData != nullptr )
-	{
-		ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
-		if( mSection != nullptr )
-		{
-			UI16 scriptID = 0xFFFF;
-			std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
-			std::string data, fullPath;
-			UI08 runTime = 0;
-			if( scriptType == SCPT_CONSOLE )
-				runTime = 1;
-			for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
-			{
-				scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-				if( scriptID == toLoad )
-				{
-					data		= mSection->GrabData();
-					fullPath	= basePath + data;
-
-					if( !FileExists( fullPath ) )
-						Console.error( oldstrutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
-					else
-					{
-						try
-						{
-							std::map< UI16, cScript * >::const_iterator iFind = scriptIDMap.find( toLoad );
-							if( iFind != scriptIDMap.end() )
-							{
-								if( scriptIDMap[toLoad] != nullptr )
-								{
-									JSObject *jsObj = scriptIDMap[toLoad]->Object();
-									std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
-									if( jFind != scriptJSMap.end() )
-										scriptJSMap.erase( jFind );
-
-									delete scriptIDMap[toLoad];
-									scriptIDMap[toLoad] = nullptr;
+auto CJSMappingSection::Reload( UI16 toLoad ) ->void {
+	auto scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp"s;
+	if( FileExists( scpFileName ) ) {
+		auto fileAssocData = std::make_unique<Script>( scpFileName, NUM_DEFS, false );
+		if(fileAssocData ) {
+			auto mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
+			if(mSection) {
+				UI16 scriptID = 0xFFFF;
+				auto basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+				std::string data, fullPath;
+				UI08 runTime = 0;
+				if( scriptType == SCPT_CONSOLE ){
+					runTime = 1;
+				}
+				for (auto &sec : mSection->collection()){
+					auto tag = sec->tag ;
+					scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
+					if( scriptID == toLoad ) {
+						data		= sec->data;
+						fullPath	= basePath + data;
+						
+						if( !FileExists( fullPath ) ){
+							Console.error( oldstrutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
+						}
+						else {
+							try {
+								std::map< UI16, cScript * >::const_iterator iFind = scriptIDMap.find( toLoad );
+								if( iFind != scriptIDMap.end() ) {
+									if( scriptIDMap[toLoad]  ) {
+										JSObject *jsObj = scriptIDMap[toLoad]->Object();
+										std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
+										if( jFind != scriptJSMap.end() )
+											scriptJSMap.erase( jFind );
+										
+										delete scriptIDMap[toLoad];
+										scriptIDMap[toLoad] = nullptr;
+									}
+								}
+								auto toAdd = new cScript( fullPath, runTime );
+								if(toAdd) {
+									scriptIDMap[scriptID]			= toAdd;
+									scriptJSMap[toAdd->Object()]	= scriptID;
+									Console.print( oldstrutil::format("Reload of JavaScript (ScriptID %u) Successful\n", toLoad) );
 								}
 							}
-							cScript *toAdd = new cScript( fullPath, runTime );
-							if( toAdd != nullptr )
-							{
-								scriptIDMap[scriptID]			= toAdd;
-								scriptJSMap[toAdd->Object()]	= scriptID;
-								Console.print( oldstrutil::format("Reload of JavaScript (ScriptID %u) Successful\n", toLoad) );
+							catch( std::runtime_error &e ) {
+								Console.error( oldstrutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
 							}
 						}
-						catch( std::runtime_error &e )
-						{
-							Console.error( oldstrutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
-						}
+						return;
 					}
-					delete fileAssocData;
-					return;
 				}
+				Console.warning(oldstrutil::format( "Unable to locate the specified JavaScript in the file (ScriptID %u)", toLoad) );
 			}
-			Console.warning(oldstrutil::format( "Unable to locate the specified JavaScript in the file (ScriptID %u)", toLoad) );
+			else {
+				Console.warning( oldstrutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
+			}
 		}
-		else
-			Console.warning( oldstrutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
-		delete fileAssocData;
+	}
+	else {
+		Console.error( oldstrutil::format("Failed to open %s", scpFileName.c_str()) );
 	}
 }
 
@@ -595,41 +587,37 @@ UI16 CEnvoke::GetScript( UI16 envokeID ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parses through specific envoke file mapping the scriptID to the envoke type
 //o-----------------------------------------------------------------------------------------------o
-void CEnvoke::Parse( void )
-{
+auto CEnvoke::Parse()->void {
 	envokeList.clear();
 
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
-	if( !FileExists( filename ) )
-	{
-		Console << "Unable to open " << filename << " for parsing" << myendl;
-		return;
-	}
-
-	Script *fileAssocData	= new Script( filename, NUM_DEFS, false );
-	if( fileAssocData != nullptr )
-	{
-		ScriptSection *mSection = fileAssocData->FindEntry( "ENVOKE" );
-		if( mSection != nullptr )
-		{
-			std::string tag, data;
-			for( tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
-			{
-				if( !tag.empty() && tag != "\n" && tag != "\r" )
-				{
-					data			= mSection->GrabData();
-					UI16 envokeID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-					UI16 scriptID	= static_cast<UI16>(std::stoul(data, nullptr, 0));
-					cScript *verify	= JSMapping->GetScript( scriptID );
-					if( verify != nullptr )
-						envokeList[envokeID] = scriptID;
-					else
-						Console.error(oldstrutil::format( "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID) );
+	auto filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
+	if( FileExists( filename ) ) {
+		auto fileAssocData	= new Script( filename, NUM_DEFS, false );
+		if( fileAssocData ) {
+			auto mSection = fileAssocData->FindEntry( "ENVOKE" );
+			if( mSection){
+				for (auto &sec:mSection->collection()){
+					auto tag = sec->tag ;
+					if( !tag.empty() && tag != "\n" && tag != "\r" ) {
+						auto data = sec->data ;
+						auto envokeID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
+						auto scriptID	= static_cast<UI16>(std::stoul(data, nullptr, 0));
+						auto verify	= JSMapping->GetScript( scriptID );
+						if(verify){
+							envokeList[envokeID] = scriptID;
+						}
+						else{
+							Console.error(oldstrutil::format( "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID) );
+						}
+					}
 				}
 			}
+			else
+				Console.warning( "Envoke section not found, no hard id->script matching being done" );
+			delete fileAssocData;
 		}
-		else
-			Console.warning( "Envoke section not found, no hard id->script matching being done" );
-		delete fileAssocData;
+	}
+	else {
+		Console << "Unable to open " << filename << " for parsing" << myendl;
 	}
 }

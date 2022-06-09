@@ -1105,35 +1105,37 @@ void CPITips::Receive( void )
 {
 	tSock->Receive( 4, false );
 }
-bool CPITips::Handle( void )
-{
-	ScriptSection *Tips = FileLookup->FindEntry( "TIPS", misc_def );
-	if( Tips != nullptr )
-	{
-		UI16 i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
-		if( i == 0 )
+//==========================================================================
+auto CPITips::Handle()->bool {
+	auto Tips = FileLookup->FindEntry( "TIPS", misc_def );
+	if( Tips) {
+		auto i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
+		if( i == 0 ){
 			i = 1;
+		}
 
 		SI32 x = i;
 		std::string tag, data, sect;
+		
 		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
 		{
-			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" )
+			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" ){
 				--x;
-			if( x <= 0 )
+			}
+			if( x <= 0 ){
 				break;
+			}
 		}
-		if( x > 0 )
+		if( x > 0 ){
 			tag = Tips->Prev();
+		}
 		data = Tips->GrabData();
 
 		sect = "TIP " + oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 		Tips = FileLookup->FindEntry( sect, misc_def );
-		if( Tips != nullptr )
-		{
+		if( Tips ) {
 			std::string tipData = "";
-			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
-			{
+			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() ) {
 				tipData += Tips->GrabData() + " ";
 			}
 

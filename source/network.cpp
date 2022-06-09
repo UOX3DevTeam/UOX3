@@ -23,6 +23,7 @@
 #include <sys/ioctl.h>
 #endif
 
+#include <memory>
 
 cNetworkStuff *Network = nullptr;
 
@@ -1274,67 +1275,52 @@ CSocket *cNetworkStuff::LastSocket( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads list of banned IPs from firewall list
 //o-----------------------------------------------------------------------------------------------o
-void cNetworkStuff::LoadFirewallEntries( void )
-{
+auto cNetworkStuff::LoadFirewallEntries()->void {
 	std::string token;
 	std::string fileToUse;
-	if( !FileExists( "banlist.ini" ) )
-	{
-		if( FileExists( "firewall.ini" ) )
-		{
+	if( !FileExists( "banlist.ini" ) ) {
+		if( FileExists( "firewall.ini" ) ) {
 			fileToUse = "firewall.ini";
 		}
 	}
-	else
-	{
+	else {
 		fileToUse = "banlist.ini";
 	}
-	if( !fileToUse.empty() )
-	{
-		Script *firewallData = new Script( fileToUse, NUM_DEFS, false );
-		if( firewallData != nullptr )
-		{
+	if( !fileToUse.empty() ) {
+	
+		auto firewallData = std::make_unique<Script>( fileToUse, NUM_DEFS, false);
+		if( firewallData) {
 			SI16 p[4];
-			ScriptSection *firewallSect = nullptr;
-			std::string tag, data;
-			for( firewallSect = firewallData->FirstEntry(); firewallSect != nullptr; firewallSect = firewallData->NextEntry() )
-			{
-				if( firewallSect != nullptr )
-				{
-					for( tag = firewallSect->First(); !firewallSect->AtEnd(); tag = firewallSect->Next() )
-					{
-						if( oldstrutil::upper( tag ) == "IP" )
-						{
-							data = firewallSect->GrabData();
+			for (auto &[secname,firewallSect] : firewallData->collection()){
+				if( firewallSect ) {
+					for (auto &sec : firewallSect->collection()){
+						auto tag = sec->tag;
+						auto data = sec->data ;
+						if( oldstrutil::upper( tag ) == "IP" ) {
 							data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-							if( !data.empty() )
-							{
+							if( !data.empty() ) {
 								auto psecs = oldstrutil::sections( data, "." );
-								if( psecs.size() == 4 )	// Wellformed IP address
-								{
-									for( UI08 i = 0; i < 4; ++i )
-									{
+								if( psecs.size() == 4 ){// Wellformed IP address
+									for( UI08 i = 0; i < 4; ++i ) {
 										token = psecs[i];
-										if( token == "*" )
-										{
+										if( token == "*" ) {
 											p[i] = -1;
 										}
-										else
-										{
+										else {
 											p[i] = static_cast<SI16>(std::stoi(token, nullptr, 0));
 										}
 									}
 									slEntries.push_back( FirewallEntry( p[0], p[1], p[2], p[3] ) );
 								}
-								else if( data != "\n" && data != "\r" )
+								else if( data != "\n" && data != "\r" ){
 									Console.error( oldstrutil::format("Malformed IP address in banlist.ini (line: %s)", data.c_str() ));
+								}
 							}
 						}
 					}
 				}
 			}
 		}
-		delete firewallData;
 	}
 }
 
