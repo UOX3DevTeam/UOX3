@@ -5315,6 +5315,7 @@ void CServerData::ServerLocation( std::string toSet )
 			toAdd.instanceID	= static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0));
 			toAdd.clilocDesc	= static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0));
 		}
+		startlocations.push_back( toAdd );
 	}
 	else {
 		Console.error( "Malformed location entry in ini file" );
