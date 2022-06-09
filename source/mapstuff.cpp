@@ -118,7 +118,7 @@ void CMulHandler::LoadMapsDFN( void )
 		for (auto &sec :toFind->collection()){
 			auto tag = sec->tag ;
 			UTag = oldstrutil::upper( tag );
-			data = toFind->GrabData();
+			data = sec->data;
 			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 			switch( (UTag.data()[0]) ) {
 				case 'M':
@@ -1329,7 +1329,7 @@ auto CMulHandler::LoadDFNOverrides()->void{
 							{
 								for (auto &sec : toScan->collection()){
 									auto tag = sec->tag ;
-									data	= toScan->GrabData();
+									data	= sec->data;
 									data 	= oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 									UTag	= oldstrutil::upper( tag );
 									
