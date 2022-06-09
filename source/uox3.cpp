@@ -2427,7 +2427,7 @@ auto advanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) ->void {
 		applyTo->SetAdvObj( advObj );
 		auto sect = "ADVANCEMENT "s + oldstrutil::number( advObj );
 		sect						= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
-		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
+		auto Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr ) {
 			Console << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
 			applyTo->SetAdvObj( 0 );
@@ -2440,8 +2440,12 @@ auto advanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) ->void {
 		std::string cdata;
 		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
-		for( tag = Advancement->FirstTag(); !Advancement->AtEndTags(); tag = Advancement->NextTag() ) {
-			cdata = Advancement->GrabData( ndata, odata );
+		for (auto &sec:Advancement->collection2()){
+			tag = sec->tag;
+			cdata = sec->cdata ;
+			ndata = sec->ndata ;
+			odata = sec->odata ;
+			
 			switch( tag ) {
 				case DFNTAG_ALCHEMY:			skillToSet = ALCHEMY;							break;
 				case DFNTAG_ANATOMY:			skillToSet = ANATOMY;							break;
