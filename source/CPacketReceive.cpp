@@ -1117,8 +1117,7 @@ auto CPITips::Handle()->bool {
 		SI32 x = i;
 		std::string tag, data, sect;
 		
-		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() )
-		{
+		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() ) {
 			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" ){
 				--x;
 			}

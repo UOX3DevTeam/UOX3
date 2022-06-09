@@ -29,6 +29,8 @@
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 
+using namespace std::string_literals ;
+
 cBooks *Books = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
@@ -94,15 +96,11 @@ bool CPINewBookHeader::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens "Read Only" Books defined in /misc/books.dfn
 //o-----------------------------------------------------------------------------------------------o
-void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
-{
-	if( mSock != nullptr )
-	{
-		std::string temp	= std::string("BOOK ") + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
-		ScriptSection *book = FileLookup->FindEntry( temp, misc_def );
-		if( book != nullptr )
-		{
-			std::string data, UTag;
+auto cBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) ->void {
+	if( mSock) {
+		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
+		auto book = FileLookup->FindEntry( temp, misc_def );
+		if(book) {
 
 			CPNewBookHeader toSend;
 			toSend.Serial( i->GetSerial() );
@@ -110,27 +108,25 @@ void cBooks::OpenPreDefBook( CSocket *mSock, CItem *i )
 			toSend.Flag2( 0 );
 
 			bool part1 = false, part2 = false, part3 = false;
-			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
-			{
-				UTag = oldstrutil::upper( tag );
-				data = book->GrabData();
-				if( UTag == "PAGES" )
-				{
+			for (auto &sec : book->collection()){
+				auto tag = sec->tag ;
+				auto UTag = oldstrutil::upper( tag );
+				auto data = sec->data ;
+				if( UTag == "PAGES" ) {
 					part1 = true;
 					toSend.Pages( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
 				}
-				else if( UTag == "TITLE" )
-				{
+				else if( UTag == "TITLE" ) {
 					part2 = true;
 					toSend.Title( data );
 				}
-				else if( UTag == "AUTHOR" )
-				{
+				else if( UTag == "AUTHOR" ) {
 					part3 = true;
 					toSend.Author( data );
 				}
-				if( part1 && part2 && part3 )
+				if( part1 && part2 && part3 ){
 					break;
+				}
 			}
 			toSend.Finalize();
 			mSock->Send( &toSend );
@@ -251,39 +247,31 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends pager number "p" of a Pre-defined Book to the socket
 //o-----------------------------------------------------------------------------------------------o
-void cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
-{
-	if( mSock != nullptr )
-	{
-		std::string temp	= std::string("BOOK ") + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
+auto cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )->void {
+	if( mSock){
+		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
-		if( book != nullptr )
-		{
+		if( book ) {
 			UI16 curPage = p;
-			for( std::string tag = book->First(); !book->AtEnd(); tag = book->Next() )
-			{
-				if( tag != "PAGE" )
-					continue;
-
-				--curPage;
-				if( curPage == 0 ) // we found our page
-				{
-					temp = "PAGE " + book->GrabData();
-					ScriptSection *page = FileLookup->FindEntry( temp, misc_def );
-					if( page != nullptr )
-					{
-						CPBookPage cpbpSend( (*i) );
-						cpbpSend.NewPage( p );
-
-						for( tag = page->First(); !page->AtEnd(); tag = page->Next() )
-						{
-							temp = page->GrabData();
-							cpbpSend.AddLine( temp );
+			for (auto &sec : book->collection()){
+				auto tag = sec->tag ;
+				if( tag == "PAGE" ){
+					--curPage;
+					if( curPage == 0 ){ // we found our page
+						temp = "PAGE "s + sec->data;
+						auto page = FileLookup->FindEntry( temp, misc_def );
+						if( page) {
+							CPBookPage cpbpSend( (*i) );
+							cpbpSend.NewPage( p );
+							for (auto &sec2:page->collection()) {
+								temp = sec2->data ;
+								cpbpSend.AddLine( temp );
+							}
+							cpbpSend.Finalize();
+							mSock->Send( &cpbpSend );
 						}
-						cpbpSend.Finalize();
-						mSock->Send( &cpbpSend );
+						break;
 					}
-					break;
 				}
 			}
 		}

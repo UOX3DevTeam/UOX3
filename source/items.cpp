@@ -13,6 +13,7 @@
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
 
+using namespace std::string_literals ;
 
 cItem *Items = nullptr;
 
@@ -50,503 +51,456 @@ UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load items from the script sections to the array
 //o-----------------------------------------------------------------------------------------------o
-bool ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID )
-{
-	if( toApply == nullptr || !ValidateObject( applyTo ) )
-		return false;
-
-	std::string cdata;
-	SI32 ndata = -1, odata = -1;
-	bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
-
-	TAGMAPOBJECT customTag;
-	std::string customTagName;
-	std::string customTagStringValue;
-
-	for( DFNTAGS tag = toApply->FirstTag(); !toApply->AtEndTags(); tag = toApply->NextTag() )
-	{
-		cdata = toApply->GrabData( ndata, odata );
+auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string sectionID ) ->bool {
+	auto rvalue = false ;
+	if( toApply && ValidateObject( applyTo ) ){
+		rvalue = true ;
 		
-		if( isSpawner && ApplySpawnItemSection( static_cast<CSpawnItem *>(applyTo), tag, ndata, odata, cdata ) )
-		{
-			continue;
-		}
+		std::string cdata;
+		SI32 ndata = -1, odata = -1;
+		bool isSpawner = (applyTo->GetObjType() == OT_SPAWNER);
+		
+		TAGMAPOBJECT customTag;
+		std::string customTagName;
+		std::string customTagStringValue;
+		for (auto &sec : toApply->collection2()){
+			auto tag = sec->tag ;
+			cdata = sec->cdata ;
+			odata = sec->odata ;
+			ndata = sec->ndata ;
 			
-		auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
-		switch( tag )
-		{
-			case DFNTAG_AMMO:
-				applyTo->SetAmmoID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
-				if( ssecs.size() > 1 )
-				{
-					applyTo->SetAmmoHue( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)) );
-				}
-				break;
-			case DFNTAG_AMMOFX:
-				applyTo->SetAmmoFX( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
-				if( ssecs.size() > 1 )
-				{
-					applyTo->SetAmmoFXHue( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)) );
-					if( ssecs.size() > 2 )
-					{
-						applyTo->SetAmmoFXRender( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0)) );
-					}
-				}
-				break;
-			case DFNTAG_AMOUNT:
-				if( ndata > 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
-						applyTo->SetAmount( rndAmount );
-					}
-					else
-					{
-						applyTo->SetAmount( ndata );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_DAMAGE:
-			case DFNTAG_ATT:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
-						applyTo->SetHiDamage( static_cast<SI16>( odata ) );
-					}
-					else
-					{
-						applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
-						applyTo->SetHiDamage( static_cast<SI16>( ndata ) );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
-			case DFNTAG_BASERANGE:		applyTo->SetBaseRange( static_cast<UI08>(ndata) );		break;
-			case DFNTAG_CREATOR:		applyTo->SetCreator( ndata );							break;
-			case DFNTAG_COLOUR:			applyTo->SetColour( static_cast<UI16>(ndata) );			break;
-			case DFNTAG_COLOURLIST:		applyTo->SetColour( addRandomColor( cdata ) );			break;
-			case DFNTAG_CORPSE:			applyTo->SetCorpse( ndata != 0 )		;				break;
-			case DFNTAG_COLD:			applyTo->SetWeatherDamage( COLD, ndata != 0 );			break;
-			case DFNTAG_ELEMENTRESIST:
-				if( ssecs.size() >= 4 )
-				{
-					applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)), HEAT );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)), COLD );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0)), LIGHTNING );
-					applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0)), POISON );
-				}
-				break;
-			case DFNTAG_EVENT:			applyTo->SetEvent( cdata );					break;
-			case DFNTAG_DAMAGEABLE:		applyTo->SetDamageable(ndata != 0);			break;
-			case DFNTAG_DEF:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );
-					}
-					else
-					{
-						applyTo->SetResist( ndata, PHYSICAL );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in DEF tag inside item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_DEX:
-				if( ndata > 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );
-					}
-					else
-					{
-						applyTo->SetDexterity( ndata );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in DEX tag inside item script [%s]", sectionID.c_str() ));
-				break;				
-			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>(ndata) );					break;
-			case DFNTAG_DIR:			applyTo->SetDir( static_cast<UI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), nullptr, 0)) );			break;
-			case DFNTAG_DYE:			applyTo->SetDye( ndata != 0 );				break;
-			case DFNTAG_DECAY:
-				if( ndata == 1 )
-					applyTo->SetDecayable( true );
-				else
-					applyTo->SetDecayable( false );
-				break;
-			case DFNTAG_DISPELLABLE:	applyTo->SetDispellable( true );			break;
-			case DFNTAG_DISABLED:		applyTo->SetDisabled( ndata != 0 );			break;
-			case DFNTAG_DOORFLAG:		break;
-			case DFNTAG_GOOD:			applyTo->SetGood( static_cast< SI16 >(ndata) );					break;
-			case DFNTAG_GLOW:			applyTo->SetGlow( ndata );					break;
-			case DFNTAG_GLOWBC:			applyTo->SetGlowColour( static_cast<UI16>(ndata) );		break;
-			case DFNTAG_GLOWTYPE:		applyTo->SetGlowEffect( static_cast<UI08>(ndata) );		break;
-			case DFNTAG_GET:
+			if( !(isSpawner && ApplySpawnItemSection( static_cast<CSpawnItem *>(applyTo), tag, ndata, odata, cdata )) )
 			{
-				std::string scriptEntry = "";
-				if( ssecs.size() == 1 )
-				{
-					scriptEntry = cdata;
-				}
-				else
-				{
-					UI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size() - 1));
-					scriptEntry = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" ));
-				}
-
-				ScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
-				if( toFind == nullptr )
-					Console.warning( oldstrutil::format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
-				else if( toFind == toApply )
-					Console.warning( oldstrutil::format( "Infinite loop avoided with GET tag inside item script [%s]", scriptEntry.c_str() ));
-				else
-					ApplyItemSection( applyTo, toFind, scriptEntry );
-				break;
-			}
-
-			case DFNTAG_HP:
-				if( ndata > 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );
-					}
-					else
-					{
-						applyTo->SetHP( ndata );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in HP tag inside item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>(ndata) );		break;
-			case DFNTAG_HEAT:			applyTo->SetWeatherDamage( HEAT, ndata != 0 );			break;
-			case DFNTAG_ID:				// applyTo->SetID( static_cast<UI16>(ndata) );				break;
-				if( ssecs.size() == 1 )
-				{
-					applyTo->SetID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
-				}
-				else
-				{
-					SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size()-1));
-					applyTo->SetID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" )), nullptr, 0)) );
-				}
-				break;
-			case DFNTAG_INTELLIGENCE:	applyTo->SetIntelligence( static_cast<SI16>(ndata) );	break;
-			case DFNTAG_INTADD:			applyTo->SetIntelligence2( static_cast<SI16>(ndata) );	break;
-			case DFNTAG_LODAMAGE:		applyTo->SetLoDamage( static_cast<SI16>(ndata) );		break;
-			case DFNTAG_LAYER:			applyTo->SetLayer( static_cast<ItemLayers>(ndata) );	break;
-			case DFNTAG_LIGHT:			applyTo->SetWeatherDamage( LIGHT, ndata != 0 );			break;
-			case DFNTAG_LIGHTNING:		applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 );		break;
-			case DFNTAG_MAXHP:			applyTo->SetMaxHP( static_cast<UI16>(ndata) );			break;
-			case DFNTAG_MAXITEMS:		applyTo->SetMaxItems( static_cast<UI16>(ndata) );		break;
-			case DFNTAG_MAXRANGE:		applyTo->SetMaxRange( static_cast<UI08>(ndata) );		break;
-			case DFNTAG_MAXUSES:		applyTo->SetMaxUses( static_cast<UI16>(ndata) );		break;
-			case DFNTAG_MOVABLE:		applyTo->SetMovable( static_cast<SI08>(ndata) );		break;
-			case DFNTAG_MORE:
-				if( ssecs.size() >= 4 )
-				{
-					applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
-				}
-				else
-				{
-					applyTo->SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-				}
-				break;
-			case DFNTAG_MORE2:																	break;
-			case DFNTAG_MOREX:
-				if( ssecs.size() >= 4 )
-				{
-					applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
-				}
-				else
-				{
-					applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-				}
-				break;
-			case DFNTAG_MOREY:
-				if( ssecs.size() >= 4 )
-				{
-					applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
-				}
-				else
-				{
-					applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-				}
-				break;
-			case DFNTAG_MOREZ:
-				if( ssecs.size() >= 4 )
-				{
-					applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
-					applyTo->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
-				}
-				else
-				{
-					applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
-				}
-				break;
-			case DFNTAG_NAME:			applyTo->SetName( cdata );								break;
-			case DFNTAG_NAME2:			applyTo->SetName2( cdata.c_str() );						break;
-			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
-			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>(ndata) );		break;
-			case DFNTAG_POISONDAMAGE:	applyTo->SetWeatherDamage( POISON, ndata != 0 );		break;
-			case DFNTAG_POISONED:		applyTo->SetPoisoned( static_cast<UI08>(ndata) );		break;
-			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
-			case DFNTAG_PRIV:			applyTo->SetPriv( static_cast<UI08>(ndata) );			break;
-			case DFNTAG_RANK:
-				applyTo->SetRank( static_cast<SI08>(ndata) );
-				if( applyTo->GetRank() <= 0 )
-					applyTo->SetRank( 10 );
-				break;
-			case DFNTAG_RACE:			applyTo->SetRace( static_cast<UI16>(ndata) );			break;
-			case DFNTAG_RESISTFIRE:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), HEAT );
-					}
-					else
-					{
-						applyTo->SetResist( ndata, HEAT );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in RESISTFIRE tag inside Item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_RESISTCOLD:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), COLD );
-					}
-					else
-					{
-						applyTo->SetResist( ndata, COLD );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in RESISTCOLD tag inside Item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_RESISTLIGHTNING:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), LIGHTNING );
-					}
-					else
-					{
-						applyTo->SetResist( ndata, LIGHTNING );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in RESISTLIGHTNING tag inside Item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_RESISTPOISON:
-				if( ndata >= 0 )
-				{
-					if( odata && odata > ndata )
-					{
-						applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), POISON );
-					}
-					else
-					{
-						applyTo->SetResist( ndata, POISON );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_RESTOCK:		applyTo->SetRestock( static_cast<UI16>(ndata) );		break;
-			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
-			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>(ndata) );		break;
-			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>(ndata) );			break;
-			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>(ndata) );		break;
-			case DFNTAG_STRADD:			applyTo->SetStrength2( static_cast<SI16>(ndata) );			break;
-			case DFNTAG_SNOW:			applyTo->SetWeatherDamage( SNOW, ndata != 0 );			break;
-			case DFNTAG_SCRIPT:			applyTo->AddScriptTrigger( static_cast<UI16>(ndata) );	break;
-			case DFNTAG_TYPE:
-				ItemTypes iType;
-				iType = FindItemTypeFromTag( cdata );
-				if( iType == IT_COUNT )
-					iType = static_cast<ItemTypes>(ndata);
-				if( iType < IT_COUNT )
-					applyTo->SetType( iType );
-				break;
-			case DFNTAG_USESLEFT:		applyTo->SetUsesLeft( static_cast<UI16>(ndata) );	break;
-			case DFNTAG_VISIBLE:		applyTo->SetVisible( (VisibleTypes)ndata );		break;
-			case DFNTAG_VALUE:
-				if( ndata >= 0 )
-				{
-					if( odata && odata >= 0 )
-					{
-						applyTo->SetBuyValue( ndata );
-						applyTo->SetSellValue( odata );
-					}
-					else
-					{
-						// Only one value was specified in DFN tag - use it for both buy and sell value
-						applyTo->SetBuyValue( ndata );
-						applyTo->SetSellValue( ndata );
-					}
-				}
-				else
-					Console.warning( oldstrutil::format("Invalid data found in VALUE tag inside item script [%s]", sectionID.c_str() ));
-				break;
-			case DFNTAG_WEIGHT:			applyTo->SetWeight( ndata );
-				applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
-				break;
-			case DFNTAG_WEIGHTMAX:		applyTo->SetWeightMax( ndata );				break;
-			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
-			case DFNTAG_ADDMENUITEM:
-				Console.print(cdata);
-				break;
-			case DFNTAG_CUSTOMSTRINGTAG:
-			{
-				auto count = 0;
-				std::string result;
-				for( auto &sec : ssecs )
-				{
-					if( count > 0 )
-					{
-						if( count == 1 )
-						{
-							result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+				auto ssecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), " " );
+				switch( tag ) {
+					case DFNTAG_AMMO:
+						applyTo->SetAmmoID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+						if( ssecs.size() > 1 ) {
+							applyTo->SetAmmoHue( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)) );
 						}
-						else
-						{
-							result = result + " " + oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+						break;
+					case DFNTAG_AMMOFX:
+						applyTo->SetAmmoFX( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+						if( ssecs.size() > 1 ) {
+							applyTo->SetAmmoFXHue( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)) );
+							if( ssecs.size() > 2 ) {
+								applyTo->SetAmmoFXRender( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0)) );
+							}
 						}
-					}
-					count++;
-				}
-				customTagName			= oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
-				customTagStringValue	= result;
-
-				if( !customTagName.empty() && !customTagStringValue.empty() )
-				{
-					customTag.m_Destroy		= false;
-					customTag.m_StringValue	= customTagStringValue;
-					customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
-					customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
-					applyTo->SetTag( customTagName, customTag );
-				}
-				else
-				{
-					Console.warning( oldstrutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside Item script [%s] - Supported data format: <tagName> <text>", sectionID.c_str() ) );
-				}
-				break;
-			}
-			case DFNTAG_CUSTOMINTTAG:
-			{
-				auto count = 0;
-				std::string result;
-				for( auto &sec : ssecs )
-				{
-					if( count > 0 )
-					{
-						if( count == 1 )
-						{
-							result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+						break;
+					case DFNTAG_AMOUNT:
+						if( ndata > 0 ) {
+							if( odata && odata > ndata ) {
+								UI16 rndAmount = static_cast<UI16>(RandomNum( ndata, odata ));
+								applyTo->SetAmount( rndAmount );
+							}
+							else {
+								applyTo->SetAmount( ndata );
+							}
 						}
-					}
-					count++;
-				}
-				customTagName = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
-				customTagStringValue = result;
-				if( !customTagName.empty() && !customTagStringValue.empty() )
-				{
-					customTag.m_Destroy		= false;
-					customTag.m_IntValue 	= static_cast<SI32>(std::stoi(customTagStringValue, nullptr, 0));
-					customTag.m_ObjectType	= TAGMAP_TYPE_INT;
-					customTag.m_StringValue	= "";
-					applyTo->SetTag( customTagName, customTag );
-					if( count > 2 )
-					{
-						Console.warning( oldstrutil::format( "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionID.c_str() ) );
-					}
-				}
-				else
-				{
-					Console.warning( oldstrutil::format( "Invalid data found in CUSTOMINTTAG tag in Item script [%s] - Supported data format: <tagName> <value>", sectionID.c_str() ) );
-				}
-				break;
-			}
-			case DFNTAG_SPAWNOBJ:
-			case DFNTAG_SPAWNOBJLIST:
-				break;
-			case DFNTAG_LOOT:
-				[[fallthrough]];
-			case DFNTAG_PACKITEM:
-			{
-				if( !cdata.empty() )
-				{
-					auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
-					if( csecs.size() > 1 )
-					{
-						UI16 iAmount = 0;
-						std::string amountData = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
-						auto tsects = oldstrutil::sections( amountData, " " );
-						if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
-						{
-							auto first = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
-							auto second = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
-
-							// Tag contained a minimum and maximum value for amount! Let's randomize!
-							iAmount = static_cast<UI16>(RandomNum( first, second ));
+						else{
+							Console.warning( oldstrutil::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionID.c_str() ));
 						}
-						else
-						{
-							iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+						break;
+					case DFNTAG_DAMAGE:
+					case DFNTAG_ATT:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+								applyTo->SetHiDamage( static_cast<SI16>( odata ) );
+							}
+							else {
+								applyTo->SetLoDamage( static_cast<SI16>( ndata ) );
+								applyTo->SetHiDamage( static_cast<SI16>( ndata ) );
+							}
 						}
-						auto tdata = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
-
-						if( tag == DFNTAG_LOOT )
-							Items->AddRespawnItem( applyTo, tdata, true, true, iAmount, true );
-						else
-							Items->AddRespawnItem( applyTo, tdata, true, false, iAmount, false );
+						else {
+							Console.warning( oldstrutil::format("Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_AC:	 applyTo->SetArmourClass( static_cast<UI08>(ndata) );	break;
+					case DFNTAG_BASERANGE:	 applyTo->SetBaseRange( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_CREATOR:	 applyTo->SetCreator( ndata ); break;
+					case DFNTAG_COLOUR:	 applyTo->SetColour( static_cast<UI16>(ndata) );	 break;
+					case DFNTAG_COLOURLIST:	 applyTo->SetColour( addRandomColor( cdata ) ); break;
+					case DFNTAG_CORPSE:	 applyTo->SetCorpse( ndata != 0 ) ; break;
+					case DFNTAG_COLD:		 applyTo->SetWeatherDamage( COLD, ndata != 0 );	 break;
+					case DFNTAG_ELEMENTRESIST:
+						if( ssecs.size() >= 4 ) {
+							applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)), HEAT );
+							applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0)), COLD );
+							applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0)), LIGHTNING );
+							applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0)), POISON );
+						}
+						break;
+					case DFNTAG_EVENT: applyTo->SetEvent( cdata );	 break;
+					case DFNTAG_DAMAGEABLE:	 applyTo->SetDamageable(ndata != 0); break;
+					case DFNTAG_DEF:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), PHYSICAL );
+							}
+							else {
+								applyTo->SetResist( ndata, PHYSICAL );
+							}
+						}
+						else{
+							Console.warning( oldstrutil::format("Invalid data found in DEF tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_DEX:
+						if( ndata > 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetDexterity( static_cast<SI16>(RandomNum( ndata, odata )) );
+							}
+							else {
+								applyTo->SetDexterity( ndata );
+							}
+						}
+						else{
+							Console.warning( oldstrutil::format("Invalid data found in DEX tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_DEXADD: applyTo->SetDexterity2( static_cast<SI16>(ndata) );	 break;
+					case DFNTAG_DIR:	 applyTo->SetDir( static_cast<UI08>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), nullptr, 0)) ); break;
+					case DFNTAG_DYE:	 applyTo->SetDye( ndata != 0 ); break;
+					case DFNTAG_DECAY:
+						if( ndata == 1 ){
+							applyTo->SetDecayable( true );
+						}
+						else{
+							applyTo->SetDecayable( false );
+						}
+						break;
+					case DFNTAG_DISPELLABLE: applyTo->SetDispellable( true ); break;
+					case DFNTAG_DISABLED:	 applyTo->SetDisabled( ndata != 0 );	 break;
+					case DFNTAG_DOORFLAG:	 break;
+					case DFNTAG_GOOD:		 applyTo->SetGood( static_cast< SI16 >(ndata) ); break;
+					case DFNTAG_GLOW:		 applyTo->SetGlow( ndata ); break;
+					case DFNTAG_GLOWBC:	 applyTo->SetGlowColour( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_GLOWTYPE:	 applyTo->SetGlowEffect( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_GET: {
+						std::string scriptEntry = "";
+						if( ssecs.size() == 1 ) {
+							scriptEntry = cdata;
+						}
+						else {
+							UI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size() - 1));
+							scriptEntry = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" ));
+						}
+						
+						auto toFind = FileLookup->FindEntry( scriptEntry, items_def );
+						if( toFind == nullptr ){
+							Console.warning( oldstrutil::format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
+						}
+						else if( toFind == toApply ){
+							Console.warning( oldstrutil::format( "Infinite loop avoided with GET tag inside item script [%s]", scriptEntry.c_str() ));
+						}
+						else{
+							ApplyItemSection( applyTo, toFind, scriptEntry );
+						}
+						break;
 					}
-					else
+						
+					case DFNTAG_HP:
+						if( ndata > 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetHP( static_cast<SI16>(RandomNum( ndata, odata )) );
+							}
+							else {
+								applyTo->SetHP( ndata );
+							}
+						}
+						else {
+							Console.warning( oldstrutil::format("Invalid data found in HP tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_HIDAMAGE: applyTo->SetHiDamage( static_cast<SI16>(ndata) );	 break;
+					case DFNTAG_HEAT:	 applyTo->SetWeatherDamage( HEAT, ndata != 0 );	 break;
+					case DFNTAG_ID:				// applyTo->SetID( static_cast<UI16>(ndata) );				break;
+						if( ssecs.size() == 1 ) {
+							applyTo->SetID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0)) );
+						}
+						else {
+							SI32 rndEntry = RandomNum( 0, static_cast<SI32>(ssecs.size()-1));
+							applyTo->SetID( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" )), nullptr, 0)) );
+						}
+						break;
+					case DFNTAG_INTELLIGENCE: applyTo->SetIntelligence( static_cast<SI16>(ndata) );	break;
+					case DFNTAG_INTADD: applyTo->SetIntelligence2( static_cast<SI16>(ndata) );	break;
+					case DFNTAG_LODAMAGE: applyTo->SetLoDamage( static_cast<SI16>(ndata) );		break;
+					case DFNTAG_LAYER: applyTo->SetLayer( static_cast<ItemLayers>(ndata) );	break;
+					case DFNTAG_LIGHT: applyTo->SetWeatherDamage( LIGHT, ndata != 0 ); break;
+					case DFNTAG_LIGHTNING: applyTo->SetWeatherDamage( LIGHTNING, ndata != 0 ); break;
+					case DFNTAG_MAXHP: applyTo->SetMaxHP( static_cast<UI16>(ndata) );	 break;
+					case DFNTAG_MAXITEMS: applyTo->SetMaxItems( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_MAXRANGE: applyTo->SetMaxRange( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_MAXUSES: applyTo->SetMaxUses( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_MOVABLE: applyTo->SetMovable( static_cast<SI08>(ndata) ); break;
+					case DFNTAG_MORE:
+						if( ssecs.size() >= 4 ) {
+							applyTo->SetTempVar( CITV_MORE, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MORE, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MORE, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MORE, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
+						}
+						else {
+							applyTo->SetTempVar( CITV_MORE, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+						}
+						break;
+					case DFNTAG_MORE2:																	break;
+					case DFNTAG_MOREX:
+						if( ssecs.size() >= 4 ) {
+							applyTo->SetTempVar( CITV_MOREX, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREX, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREX, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREX, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
+						}
+						else {
+							applyTo->SetTempVar( CITV_MOREX, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+						}
+						break;
+					case DFNTAG_MOREY:
+						if( ssecs.size() >= 4 ) {
+							applyTo->SetTempVar( CITV_MOREY, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREY, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREY, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
+						}
+						else {
+							applyTo->SetTempVar( CITV_MOREY, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+						}
+						break;
+					case DFNTAG_MOREZ:
+						if( ssecs.size() >= 4 ) {
+							applyTo->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ) ) );
+							applyTo->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ) ) );
+						}
+						else {
+							applyTo->SetTempVar( CITV_MOREZ, static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ) ) );
+						}
+						break;
+					case DFNTAG_NAME:	 applyTo->SetName( cdata ); break;
+					case DFNTAG_NAME2: applyTo->SetName2( cdata.c_str() );	 break;
+					case DFNTAG_NEWBIE: applyTo->SetNewbie( true ); break;
+					case DFNTAG_OFFSPELL: applyTo->SetOffSpell( static_cast<SI08>(ndata) ); break;
+					case DFNTAG_POISONDAMAGE: applyTo->SetWeatherDamage( POISON, ndata != 0 ); break;
+					case DFNTAG_POISONED: applyTo->SetPoisoned( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_PILEABLE: applyTo->SetPileable( ndata != 0 );	 break;
+					case DFNTAG_PRIV:	 applyTo->SetPriv( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_RANK:
+						applyTo->SetRank( static_cast<SI08>(ndata) );
+						if( applyTo->GetRank() <= 0 ){
+							applyTo->SetRank( 10 );
+						}
+						break;
+					case DFNTAG_RACE:	 applyTo->SetRace( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_RESISTFIRE:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), HEAT );
+							}
+							else {
+								applyTo->SetResist( ndata, HEAT );
+							}
+						}
+						else{
+							Console.warning( oldstrutil::format("Invalid data found in RESISTFIRE tag inside Item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_RESISTCOLD:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), COLD );
+							}
+							else {
+								applyTo->SetResist( ndata, COLD );
+							}
+						}
+						else{
+							Console.warning( oldstrutil::format("Invalid data found in RESISTCOLD tag inside Item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_RESISTLIGHTNING:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), LIGHTNING );
+							}
+							else {
+								applyTo->SetResist( ndata, LIGHTNING );
+							}
+						}
+						else{
+							Console.warning( oldstrutil::format("Invalid data found in RESISTLIGHTNING tag inside Item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_RESISTPOISON:
+						if( ndata >= 0 ) {
+							if( odata && odata > ndata ) {
+								applyTo->SetResist( static_cast<UI16>(RandomNum( ndata, odata )), POISON );
+							}
+							else {
+								applyTo->SetResist( ndata, POISON );
+							}
+						}
+						else {
+							Console.warning( oldstrutil::format("Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_RESTOCK: applyTo->SetRestock( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_RAIN:	 applyTo->SetWeatherDamage( RAIN, ndata != 0 );	 break;
+					case DFNTAG_SK_MADE: applyTo->SetMadeWith( static_cast<SI08>(ndata) );	 break;
+					case DFNTAG_SPD: applyTo->SetSpeed( static_cast<UI08>(ndata) ); break;
+					case DFNTAG_STRENGTH: applyTo->SetStrength( static_cast<SI16>(ndata) );	 break;
+					case DFNTAG_STRADD: applyTo->SetStrength2( static_cast<SI16>(ndata) );	 break;
+					case DFNTAG_SNOW:	 applyTo->SetWeatherDamage( SNOW, ndata != 0 );	 break;
+					case DFNTAG_SCRIPT: applyTo->AddScriptTrigger( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_TYPE:
+						ItemTypes iType;
+						iType = FindItemTypeFromTag( cdata );
+						if( iType == IT_COUNT ){
+							iType = static_cast<ItemTypes>(ndata);
+						}
+						if( iType < IT_COUNT ){
+							applyTo->SetType( iType );
+						}
+						break;
+					case DFNTAG_USESLEFT: applyTo->SetUsesLeft( static_cast<UI16>(ndata) );	break;
+					case DFNTAG_VISIBLE: applyTo->SetVisible( (VisibleTypes)ndata );	 break;
+					case DFNTAG_VALUE:
+						if( ndata >= 0 ) {
+							if( odata && odata >= 0 ) {
+								applyTo->SetBuyValue( ndata );
+								applyTo->SetSellValue( odata );
+							}
+							else {
+								// Only one value was specified in DFN tag - use it for both buy and sell value
+								applyTo->SetBuyValue( ndata );
+								applyTo->SetSellValue( ndata );
+							}
+						}
+						else {
+							Console.warning( oldstrutil::format("Invalid data found in VALUE tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_WEIGHT:
+						applyTo->SetWeight( ndata );
+						applyTo->SetBaseWeight( ndata ); // Let's set the base-weight as well. Primarily used for containers.
+						break;
+					case DFNTAG_WEIGHTMAX: applyTo->SetWeightMax( ndata ); break;
+					case DFNTAG_WIPE:	 applyTo->SetWipeable( ndata != 0 ); break;
+					case DFNTAG_ADDMENUITEM:
+						Console.print(cdata);
+						break;
+					case DFNTAG_CUSTOMSTRINGTAG: {
+						auto count = 0;
+						std::string result;
+						for( auto &sec : ssecs ) {
+							if( count > 0 ) {
+								if( count == 1 ) {
+									result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+								}
+								else {
+									result = result + " " + oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+								}
+							}
+							count++;
+						}
+						customTagName = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+						customTagStringValue	= result;
+						
+						if( !customTagName.empty() && !customTagStringValue.empty() ) {
+							customTag.m_Destroy		= false;
+							customTag.m_StringValue	= customTagStringValue;
+							customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
+							customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
+							applyTo->SetTag( customTagName, customTag );
+						}
+						else {
+							Console.warning( oldstrutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside Item script [%s] - Supported data format: <tagName> <text>", sectionID.c_str() ) );
+						}
+						break;
+					}
+					case DFNTAG_CUSTOMINTTAG: {
+						auto count = 0;
+						std::string result;
+						for( auto &sec : ssecs ) {
+							if( count > 0 ) {
+								if( count == 1 ) {
+									result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
+								}
+							}
+							count++;
+						}
+						customTagName = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+						customTagStringValue = result;
+						if( !customTagName.empty() && !customTagStringValue.empty() ) {
+							customTag.m_Destroy		= false;
+							customTag.m_IntValue 	= static_cast<SI32>(std::stoi(customTagStringValue, nullptr, 0));
+							customTag.m_ObjectType	= TAGMAP_TYPE_INT;
+							customTag.m_StringValue	= "";
+							applyTo->SetTag( customTagName, customTag );
+							if( count > 2 ) {
+								Console.warning( oldstrutil::format( "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionID.c_str() ) );
+							}
+						}
+						else {
+							Console.warning( oldstrutil::format( "Invalid data found in CUSTOMINTTAG tag in Item script [%s] - Supported data format: <tagName> <value>", sectionID.c_str() ) );
+						}
+						break;
+					}
+					case DFNTAG_SPAWNOBJ:
+					case DFNTAG_SPAWNOBJLIST:
+						break;
+					case DFNTAG_LOOT:
+						[[fallthrough]];
+					case DFNTAG_PACKITEM:
 					{
-						if( tag == DFNTAG_LOOT )
-							Items->AddRespawnItem( applyTo, cdata, true, true, 1, true );
-						else
-							Items->AddRespawnItem( applyTo, cdata, true, false, 1, false );
+						if( !cdata.empty() ) {
+							auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( cdata, "//" )), "," );
+							if( csecs.size() > 1 ) {
+								UI16 iAmount = 0;
+								std::string amountData = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+								auto tsects = oldstrutil::sections( amountData, " " );
+								if( tsects.size() > 1 ) {// check if the second part of the tag-data contains two sections separated by a space
+									auto first = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+									auto second = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+									
+									// Tag contained a minimum and maximum value for amount! Let's randomize!
+									iAmount = static_cast<UI16>(RandomNum( first, second ));
+								}
+								else {
+									iAmount = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+								}
+								auto tdata = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+								
+								if( tag == DFNTAG_LOOT ){
+									Items->AddRespawnItem( applyTo, tdata, true, true, iAmount, true );
+								}
+								else{
+									Items->AddRespawnItem( applyTo, tdata, true, false, iAmount, false );
+								}
+							}
+							else {
+								if( tag == DFNTAG_LOOT )
+									Items->AddRespawnItem( applyTo, cdata, true, true, 1, true );
+								else
+									Items->AddRespawnItem( applyTo, cdata, true, false, 1, false );
+							}
+						}
+						break;
+					}
+					default: {
+						Console.warning( oldstrutil::format("Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));
+						break;
 					}
 				}
-				break;
-			}
-			default:
-			{
-				Console.warning( oldstrutil::format("Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));
-				break;
 			}
 		}
 	}
-	return true;
+	return rvalue ;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -719,165 +673,148 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random item from an itemlist in specified dfn file
 //o-----------------------------------------------------------------------------------------------o
-CItem *cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceID, bool shouldSave, bool useLootlist )
-{
+auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceID, bool shouldSave, bool useLootlist ) ->CItem *{
+
 	CItem * iCreated	= nullptr;
-	std::string sect	= "";
+	std::string sect;
 
 	// Are we looking for a LOOTLIST, or an ITEMLIST?
 	if( useLootlist )
-		sect = "LOOTLIST " + sItemList;
+		sect = "LOOTLIST "s + sItemList;
 	else
-		sect = "ITEMLIST " + sItemList;
-	sect				= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
+		sect = "ITEMLIST "s + sItemList;
+	sect	 = oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
 
 	// This is never "blank", since we assign "LOOTLIST" or "ITEMLIST" in the previous step!!
-	if( sect == "blank" ) // The itemlist-entry is just a blank filler item
-		return nullptr;
-
-	// Look up the relevant LOOTLIST or ITEMLIST from DFNs
-	ScriptSection *ItemList = FileLookup->FindEntry( sect, items_def );
-	if( ItemList != nullptr )
-	{
-		// Count the number of entries in the list
-		const size_t itemListSize = ItemList->NumEntries();
-		if( itemListSize > 0 )
-		{
-			int itemEntryToSpawn = -1;
-			int sum_of_weight = 0;
-
-			// Let's see if the entries in the list are setup with randomization weights,
-			// and sum them all up if that's the case. Format of string:
-			//	weight|sectionName,amount
-			//	weight|sectionName,amountMin amountMax
-			//	weight|LOOTLIST=sectionName,amount
-			//	weight|LOOTLIST=sectionName,amountMin amountMax
-			//	weight|ITEMLIST=sectionName,amount
-			//	weight|ITEMLIST=sectionName,amountMin amountMax
-			for( int j = 0; j < itemListSize; j++ )
-			{
-				// Split string for entry into a stringlist, based on | as a separator
-				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
-				if( csecs.size() == 2 )
-				{
-					// The entry has a weight assigned to it - let's add the weight to the total
-					sum_of_weight += static_cast<int>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
-				}
-				else
-				{
-					// The entry has no weight assigned to it - add a default weight of 1
-					sum_of_weight += 1;
-				}
-			}
-
-			// Choose a random number between 0 and the total sum of all weights
-			int rndChoice = RandomNum( 0, sum_of_weight );
-			int itemWeight = 0;
-
-			// Prepare a vector to hold multiple entries, if more than one qualifies based on weighting
-			std::vector<int> matchingEntries;
-
-			// Loop through the items in the itemlist/lootlist
-			int weightOfChosenItem = 0;
-			for( int j = 0; j < itemListSize; j++ )
-			{
-				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
-				if( csecs.size() == 2 )
-				{
-					// Ok, item entry has a weight, let's compare that weight to our chosen random number
-					itemWeight = static_cast<int>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ) ), nullptr, 0 ) );
-					if( rndChoice < itemWeight )
-					{
-						// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
-						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
-						{
-							itemEntryToSpawn = j;
-							weightOfChosenItem = itemWeight;
-
-							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
-							matchingEntries.push_back( j );
-							continue;
-						}
+	if( sect != "blank" ) {
+		
+		// Look up the relevant LOOTLIST or ITEMLIST from DFNs
+		auto ItemList = FileLookup->FindEntry( sect, items_def );
+		if( ItemList) {
+			// Count the number of entries in the list
+			const size_t itemListSize = ItemList->NumEntries();
+			if( itemListSize > 0 ) {
+				int itemEntryToSpawn = -1;
+				int sum_of_weight = 0;
+				
+				// Let's see if the entries in the list are setup with randomization weights,
+				// and sum them all up if that's the case. Format of string:
+				//	weight|sectionName,amount
+				//	weight|sectionName,amountMin amountMax
+				//	weight|LOOTLIST=sectionName,amount
+				//	weight|LOOTLIST=sectionName,amountMin amountMax
+				//	weight|ITEMLIST=sectionName,amount
+				//	weight|ITEMLIST=sectionName,amountMin amountMax
+				for( int j = 0; j < itemListSize; j++ ) {
+					// Split string for entry into a stringlist, based on | as a separator
+					auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
+					if( csecs.size() == 2 ) {
+						// The entry has a weight assigned to it - let's add the weight to the total
+						sum_of_weight += static_cast<int>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
 					}
-					rndChoice -= itemWeight;
+					else {
+						// The entry has no weight assigned to it - add a default weight of 1
+						sum_of_weight += 1;
+					}
 				}
-			}
-
-			// Did we find more than one entry that matched our random weight criteria?
-			if( matchingEntries.size() > 1 )
-			{
-				// Choose a random one of these!
-				itemEntryToSpawn = static_cast<int>(RandomNum( static_cast<size_t>(0), matchingEntries.size() ));
-			}
-			matchingEntries.clear();
-
-			int amountToSpawn = 1;
-			std::string k = "";
-			std::vector< std::string > csecs;
-			if( itemEntryToSpawn != -1 )
-			{
-				// If an entry has been selected based on weights, use that
-				csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( itemEntryToSpawn ), "//" )), "," );
-				auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
-				if( csecs2.size() > 1 )
-					k = csecs2[1];
-				else
-					k = csecs2[0];
-			}
-			else
-			{
-				// Otherwise choose a random entry
-				csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( RandomNum( static_cast<size_t>(0), itemListSize - 1 )), "//" )), "," );
-				auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
-				if( csecs2.size() > 1 )
-					k = csecs2[1];
-				else
-					k = csecs2[0];
-			}
-
-			// Also fetch amount to spawn, if specified
-			if( csecs.size() > 1 )
-			{
-//				UI16 iAmount = 0;
-				std::string amountData = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
-				auto tsects = oldstrutil::sections( amountData, " " );
-				if( tsects.size() > 1 ) // check if the second part of the tag-data contains two sections separated by a space
-				{
-					auto first = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
-					auto second = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
-
-					// Tag contained a minimum and maximum value for amount! Let's randomize!
-					amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+				
+				// Choose a random number between 0 and the total sum of all weights
+				int rndChoice = RandomNum( 0, sum_of_weight );
+				int itemWeight = 0;
+				
+				// Prepare a vector to hold multiple entries, if more than one qualifies based on weighting
+				std::vector<int> matchingEntries;
+				
+				// Loop through the items in the itemlist/lootlist
+				int weightOfChosenItem = 0;
+				for( int j = 0; j < itemListSize; j++ ) {
+					auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
+					if( csecs.size() == 2 ) {
+						// Ok, item entry has a weight, let's compare that weight to our chosen random number
+						itemWeight = static_cast<int>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ) ), nullptr, 0 ) );
+						if( rndChoice < itemWeight ) {
+							// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
+							if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight ) {
+								itemEntryToSpawn = j;
+								weightOfChosenItem = itemWeight;
+								
+								// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
+								matchingEntries.push_back( j );
+								continue;
+							}
+						}
+						rndChoice -= itemWeight;
+					}
 				}
-				else
-				{
-					amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+				
+				// Did we find more than one entry that matched our random weight criteria?
+				if( matchingEntries.size() > 1 ) {
+					// Choose a random one of these!
+					itemEntryToSpawn = static_cast<int>(RandomNum( static_cast<size_t>(0), matchingEntries.size() ));
 				}
-			}
-
-			if( !k.empty() )
-			{
-				if( oldstrutil::upper( k ) == "ITEMLIST" || oldstrutil::upper( k ) == "LOOTLIST" )
-				{
-					// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
-					iCreated = CreateRandomItem( mCont, ItemList->GrabData(), worldNum, instanceID, shouldSave );
+				matchingEntries.clear();
+				
+				int amountToSpawn = 1;
+				std::string k = "";
+				std::vector< std::string > csecs;
+				if( itemEntryToSpawn != -1 ) {
+					// If an entry has been selected based on weights, use that
+					csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( itemEntryToSpawn ), "//" )), "," );
+					auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
+					if( csecs2.size() > 1 ){
+						k = csecs2[1];
+					}
+					else{
+						k = csecs2[0];
+					}
 				}
-				else
-				{
-					// Finally, we have an item! Spawn it!
-					iCreated = CreateBaseScriptItem( nullptr, k, worldNum, amountToSpawn, instanceID, OT_ITEM, 0xFFFF, shouldSave );
-
-					// However, we have a valid container, and the amount is larger than 1, and the item is not stackable, let's spawn some more items!
-					if( ValidateObject( mCont ) && amountToSpawn > 1 && !iCreated->isPileable() )
-					{
-						for( int i = 1; i < amountToSpawn; i++ )
-						{
-							CItem *iCreated2 = CreateBaseScriptItem( mCont, k, worldNum, 1, instanceID, OT_ITEM, 0xFFFF, shouldSave );
-							if( ValidateObject( iCreated2 ))
-							{
-								// Place item in container and randomize location
-								iCreated2->SetCont( mCont );
-								iCreated2->PlaceInPack();
+				else {
+					// Otherwise choose a random entry
+					csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( RandomNum( static_cast<size_t>(0), itemListSize - 1 )), "//" )), "," );
+					auto csecs2 = oldstrutil::sections( oldstrutil::trim( csecs[0] ), "|" );
+					if( csecs2.size() > 1 ){
+						k = csecs2[1];
+					}
+					else{
+						k = csecs2[0];
+					}
+				}
+				
+				// Also fetch amount to spawn, if specified
+				if( csecs.size() > 1 ) {
+					//				UI16 iAmount = 0;
+					std::string amountData = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+					auto tsects = oldstrutil::sections( amountData, " " );
+					if( tsects.size() > 1 ) {// check if the second part of the tag-data contains two sections separated by a space
+						auto first = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[0], "//" )), nullptr, 0));
+						auto second = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( tsects[1], "//" )), nullptr, 0));
+						
+						// Tag contained a minimum and maximum value for amount! Let's randomize!
+						amountToSpawn = static_cast<UI16>(RandomNum( first, second ));
+					}
+					else {
+						amountToSpawn = static_cast<UI16>(std::stoul(amountData, nullptr, 0));
+					}
+				}
+				
+				if( !k.empty() ) {
+					if( oldstrutil::upper( k ) == "ITEMLIST" || oldstrutil::upper( k ) == "LOOTLIST" ) {
+						// The chosen entry contained another ITEMLIST or LOOTLIST reference! Let's dive back into it...
+						iCreated = CreateRandomItem( mCont, ItemList->GrabData(), worldNum, instanceID, shouldSave );
+					}
+					else {
+						// Finally, we have an item! Spawn it!
+						iCreated = CreateBaseScriptItem( nullptr, k, worldNum, amountToSpawn, instanceID, OT_ITEM, 0xFFFF, shouldSave );
+						
+						// However, we have a valid container, and the amount is larger than 1, and the item is not stackable, let's spawn some more items!
+						if( ValidateObject( mCont ) && amountToSpawn > 1 && !iCreated->isPileable() ) {
+							for( int i = 1; i < amountToSpawn; i++ ) {
+								CItem *iCreated2 = CreateBaseScriptItem( mCont, k, worldNum, 1, instanceID, OT_ITEM, 0xFFFF, shouldSave );
+								if( ValidateObject( iCreated2 )) {
+									// Place item in container and randomize location
+									iCreated2->SetCont( mCont );
+									iCreated2->PlaceInPack();
+								}
 							}
 						}
 					}

@@ -274,8 +274,7 @@ void cCommands::Load( void )
 {
 	SI16 commandCount = 0;
 	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
-	if( commands == nullptr )
-	{
+	if( commands == nullptr ) {
 		InitClearance();
 		return;
 	}
@@ -287,7 +286,7 @@ void cCommands::Load( void )
 	std::vector< std::string >	badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
-		data						= commands->GrabData();
+		data	= commands->GrabData();
 		COMMANDMAP_ITERATOR toFind	= CommandMap.find( tag );
 		TARGETMAP_ITERATOR findTarg	= TargetMap.find( tag );
 		if( toFind == CommandMap.end() && findTarg == TargetMap.end() )
@@ -324,53 +323,52 @@ void cCommands::Load( void )
 	else
 	{
 		size_t currentWorking;
-		for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
-		{
-			data			= cmdClearance->GrabData();
+		for (auto &sec : cmdClearance->collection()){
+			tag = sec->tag ;
+			data = sec->data ;
 			currentWorking	= clearance.size();
 			clearance.push_back( new commandLevel_st );
 			clearance[currentWorking]->name			= tag;
 			clearance[currentWorking]->commandLevel = static_cast<UI08>(std::stoul(data, nullptr, 0));
 		}
 		std::vector< commandLevel_st * >::const_iterator cIter;
-		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
-		{
+		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter ) {
 			commandLevel_st *ourClear = (*cIter);
-			if( ourClear == nullptr )
-				continue;
-			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
-			if( cmdClearance == nullptr )
-				continue;
-			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
-			{
-				UTag = oldstrutil::upper( tag );
-				data = cmdClearance->GrabData();
-				if( UTag == "NICKCOLOUR" ) {
-					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "TITLE" ) {
-					ourClear->title = data;
-				}
-				else if( UTag == "DEFAULTPRIV" ) {
-					ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "BODYID" ) {
-					ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "ALLSKILL" ) {
-					ourClear->allSkillVals = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "BODYCOLOUR" ) {
-					ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "STRIPHAIR" ) {
-					ourClear->stripOff.set( BIT_STRIPHAIR, true );
-				}
-				else if( UTag == "STRIPITEMS" ) {
-					ourClear->stripOff.set( BIT_STRIPITEMS, true );
-				}
-				else {
-					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+			if(ourClear){
+				cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
+				if( cmdClearance){
+					for (auto &sec : cmdClearance->collection()){
+						tag = sec->tag;
+						data = sec->data ;
+						UTag = oldstrutil::upper( tag );
+						if( UTag == "NICKCOLOUR" ) {
+							ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
+						else if( UTag == "TITLE" ) {
+							ourClear->title = data;
+						}
+						else if( UTag == "DEFAULTPRIV" ) {
+							ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
+						else if( UTag == "BODYID" ) {
+							ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
+						else if( UTag == "ALLSKILL" ) {
+							ourClear->allSkillVals = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
+						else if( UTag == "BODYCOLOUR" ) {
+							ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
+						}
+						else if( UTag == "STRIPHAIR" ) {
+							ourClear->stripOff.set( BIT_STRIPHAIR, true );
+						}
+						else if( UTag == "STRIPITEMS" ) {
+							ourClear->stripOff.set( BIT_STRIPITEMS, true );
+						}
+						else {
+							Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+						}
+					}
 				}
 			}
 		}

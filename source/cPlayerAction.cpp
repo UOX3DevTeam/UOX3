@@ -2783,33 +2783,28 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 
 std::map< UI16, ItemTypes > idToItemType;
 
-void InitIDToItemType( void )
-{
-	ScriptSection *Itemtypes = FileLookup->FindEntry( "ITEMTYPES", items_def );
-	if( Itemtypes == nullptr )
-		return;
-
-	SI32 sectionCount;
-	std::string data;
-	ItemTypes iType = IT_COUNT;
-	for( std::string tag = Itemtypes->First(); !Itemtypes->AtEnd(); tag = Itemtypes->Next() )
-	{
-		data	= Itemtypes->GrabData();
-		auto comma_secs = oldstrutil::sections( data, "," );
-		iType	= FindItemTypeFromTag( tag );
-		if( iType != IT_COUNT )
-		{
-			sectionCount = static_cast<SI32>(comma_secs.size() - 1);
-			if( sectionCount != 0 )
-			{
-				for( SI32 i = 0; i <= sectionCount; i++ )
-				{
-					idToItemType[ oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(data, ",", i, i ), 16 )] = iType;
+//======================================================================================
+auto InitIDToItemType() ->void {
+	auto Itemtypes = FileLookup->FindEntry( "ITEMTYPES", items_def );
+	if( Itemtypes){
+		
+		SI32 sectionCount;
+		ItemTypes iType = IT_COUNT;
+		for (auto &sec : Itemtypes->collection()){
+			auto tag = sec->tag ;
+			auto data = sec->data ;
+			auto comma_secs = oldstrutil::sections( data, "," );
+			iType	= FindItemTypeFromTag( tag );
+			if( iType != IT_COUNT ) {
+				sectionCount = static_cast<SI32>(comma_secs.size() - 1);
+				if( sectionCount != 0 ) {
+					for( SI32 i = 0; i <= sectionCount; i++ ) {
+						idToItemType[ oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(data, ",", i, i ), 16 )] = iType;
+					}
 				}
-			}
-			else
-			{	
-				idToItemType[static_cast<UI16>(std::stoul(data, nullptr, 16))] = iType;
+				else {
+					idToItemType[static_cast<UI16>(std::stoul(data, nullptr, 16))] = iType;
+				}
 			}
 		}
 	}
