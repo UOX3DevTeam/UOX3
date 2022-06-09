@@ -204,8 +204,10 @@ std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes t
 	}
 	const DistinctLanguage mLanguage = LanguageCodesLang[typetouse];
 
-	if( mLanguage < DL_COUNT )
-		RetVal = dictList[mLanguage]->GetEntry( Num );
+	if( mLanguage < DL_COUNT ){
+		if (dictList[mLanguage])
+			RetVal = dictList[mLanguage]->GetEntry( Num );
+	}
 	if( RetVal.empty() && typetouse != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
 		RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
 
