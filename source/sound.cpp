@@ -254,77 +254,60 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play specific midi/mp3
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::doSocketMusic( CSocket *s )
-{
+auto cEffects::doSocketMusic( CSocket *s ) ->void {
 	// Return if the socket is not valid
-	if( s == nullptr )
-		return;
-
-	SI32 i = 0;
-	char musicArray[50];
-	std::string sect;
-
-	CChar *mChar = s->CurrcharObj();
-
-	CTownRegion *mReg = nullptr;
-
-	// Fetch subregion player is in, if any
-	auto subRegionNum = mChar->GetSubRegion();
-	if( subRegionNum != 0 )
-	{
-		if( cwmWorldState->townRegions.find( subRegionNum ) != cwmWorldState->townRegions.end() )
-		{
-			mReg = cwmWorldState->townRegions[subRegionNum];
+	if(s){
+		
+		SI32 i = 0;
+		char musicArray[50];
+		std::string sect;
+		
+		CChar *mChar = s->CurrcharObj();
+		
+		CTownRegion *mReg = nullptr;
+		
+		// Fetch subregion player is in, if any
+		auto subRegionNum = mChar->GetSubRegion();
+		if( subRegionNum != 0 ) {
+			if( cwmWorldState->townRegions.find( subRegionNum ) != cwmWorldState->townRegions.end() ) {
+				mReg = cwmWorldState->townRegions[subRegionNum];
+			}
 		}
-	}
-
-	if( mReg == nullptr )
-	{
-		// Otherwise, fetch the actual region player is in
-		mReg = mChar->GetRegion();
-		if( mReg == nullptr )
-		{
-			return;
+		
+		if( mReg == nullptr ) {
+			// Otherwise, fetch the actual region player is in
+			mReg = mChar->GetRegion();
+			if( mReg == nullptr ) {
+				return;
+			}
 		}
-	}
-
-	UI16 musicList = mReg->GetMusicList();
-	if( musicList == 0 )
-	{
-		return;
-	}
-
-	if( mChar->IsDead() )
-	{
-		sect = "MUSICLIST DEATH";
-	}
-	else if( mChar->IsAtWar() )
-	{
-		sect = "MUSICLIST COMBAT";
-	}
-	else
-	{
-		sect = std::string("MUSICLIST ") + oldstrutil::number( musicList );
-	}
-
-	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
-	if( MusicList == nullptr )
-	{
-		return;
-	}
-	std::string data;
-	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
-	{
-		data = MusicList->GrabData();
-		if( oldstrutil::upper( tag ) == "MUSIC" )
-		{
-			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
+		
+		UI16 musicList = mReg->GetMusicList();
+		if( musicList != 0 ) {
+			
+			if( mChar->IsDead() ) {
+				sect = "MUSICLIST DEATH";
+			}
+			else if( mChar->IsAtWar() ) {
+				sect = "MUSICLIST COMBAT";
+			}
+			else {
+				sect = std::string("MUSICLIST ") + oldstrutil::number( musicList );
+			}
+			
+			auto MusicList = FileLookup->FindEntry( sect, regions_def );
+			if(MusicList) {
+				for (auto &sec : MusicList->collection()){
+					if (oldstrutil::upper(sec->tag) == "MUSIC"){
+						musicArray[i++] = static_cast<SI08>(std::stoi(sec->data, nullptr, 0));
+					}
+				}
+				if( i != 0 ) {
+					i = RandomNum( 0, i - 1 );
+					playMusic( s, musicArray[i] );
+				}
+			}
 		}
-	}
-	if( i != 0 )
-	{
-		i = RandomNum( 0, i - 1 );
-		playMusic( s, musicArray[i] );
 	}
 }
 

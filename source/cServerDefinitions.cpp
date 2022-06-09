@@ -6,6 +6,7 @@
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
 
+#include <memory>
 using namespace std::string_literals ;
 
 CServerDefinitions *FileLookup;
@@ -340,46 +341,40 @@ void CServerDefinitions::CleanPriorityMap( void )
 {
 	priorityMap.clear();
 }
-void CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )
-{
+//===============================================================================================
+auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )->void {
+	
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
 	std::vector< std::string > *longList = priorityFile.List();
-	if( !longList->empty() )
-	{
+	if( !longList->empty() ) {
 		std::string filename = (*longList)[0];
 		//	Do we have any priority informat?
-		if( FileExists( filename ) )	// the file exists, so perhaps we do
-		{
-			Script *prio = new Script( filename, category, false );	// generate a script for it
-			if( prio != nullptr )	// successfully made a script
-			{
-				std::string tag;
-				std::string data;
-				ScriptSection *prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
-				if( prioInfo != nullptr )
-				{
-					for( tag = prioInfo->First(); !prioInfo->AtEnd(); tag = prioInfo->Next() )	// keep grabbing priority info
-					{
-						data = prioInfo->GrabData();
-						if( oldstrutil::upper( tag ) == "DEFAULTPRIORITY" )
-						{
+		if( FileExists( filename ) ){	// the file exists, so perhaps we do
+			auto prio = std::make_unique<Script>( filename, category, false );	// generate a script for it
+			if(prio){	// successfully made a script
+				auto prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
+				if( prioInfo){
+					for (auto &sec : prioInfo->collection()){
+						auto tag = sec->tag ;
+						auto data = sec->data ;
+						if( oldstrutil::upper( tag ) == "DEFAULTPRIORITY" ) {
 							defaultPriority = static_cast<UI16>(std::stoul(data, nullptr, 0));
 						}
-						else
-						{
+						else {
 							std::string filenametemp = oldstrutil::lower( tag );
 							priorityMap[filenametemp] =static_cast<SI16>(std::stoi(data, nullptr, 0));
 						}
 					}
 					wasPrioritized = 0;
 				}
-				else
+				else{
 					wasPrioritized = 1;
-				delete prio;	// remove script
+				}
 				prio = nullptr;
 			}
-			else
+			else{
 				wasPrioritized = 2;
+			}
 			return;
 		}
 	}
