@@ -32,8 +32,11 @@
 #include "classes.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
-#include <filesystem>
 #include "osunique.hpp"
+#include <filesystem>
+
+
+using namespace std::string_literals ;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 //|	Date		-	8/6/2005
@@ -845,77 +848,67 @@ bool CPIMsgBoardEvent::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an escort quest post on regional messageboards
 //o-----------------------------------------------------------------------------------------------o
-bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
-{
+auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )->bool {
 	msgBoardPost_st msgBoardPost;
 	std::string sect, tag, data;
-	std::string fileName		= std::string("region") + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
+	auto fileName = "region"s + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + ".bbf"s;
 	ScriptSection *EscortData	= nullptr, *Escort = nullptr;
-	size_t totalEntries			= 0;
-	std::string tmpSubject		= "";
+	size_t totalEntries = 0;
+	std::string tmpSubject = "";
 
-	switch( questType )
-	{
+	switch( questType ) {
 		case QT_ESCORTQUEST:
 			msgBoardPost.Toggle		= QT_ESCORTQUEST;
 			tmpSubject				= Dictionary->GetEntry( 735 );
 			Escort					= FileLookup->FindEntry( "ESCORTS", msgboard_def );
-			if( Escort == nullptr )
-			{
+			if( Escort == nullptr ) {
 				return false;
 			}
 
 			totalEntries = Escort->NumEntries();
-			if( totalEntries == 0 )
-			{
+			if( totalEntries == 0 ) {
 				Console.error( "MsgBoardPostQuest() No msgboard dfn entries found" );
 				return false;
 			}
 
 			Escort->MoveTo( RandomNum( static_cast<size_t>(0), totalEntries-1 ) );
-			sect		= "ESCORT " + Escort->GrabData();
+			sect = "ESCORT "s + Escort->GrabData();
 			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
-			if( EscortData == nullptr )
-			{
+			if( EscortData == nullptr ) {
 				Console.error( oldstrutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
 				return false;
 			}
-			for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
-			{
+			for (auto &sec : EscortData->collection()){
+				tag = sec->tag ;
 				std::string fullLine = tag;
 
 				size_t position = fullLine.find( "%n" );
-				while( position != std::string::npos )
-				{
+				while( position != std::string::npos ) {
 					fullLine.replace( position, 2, mNPC->GetName() );
 					position = fullLine.find( "%n" );
 				}
 
 				position = fullLine.find( "%l" );
-				while( position != std::string::npos )
-				{
+				while( position != std::string::npos ) {
 					fullLine.replace( position, 2, oldstrutil::format( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
 					position = fullLine.find( "%l" );
 				}
 
 				position = fullLine.find( "%t" );
-				while( position != std::string::npos )
-				{
+				while( position != std::string::npos ) {
 					std::string mNPCTitle = getNpcDictTitle( mNPC );
 					fullLine.replace( position, 2, mNPCTitle );
 					position = fullLine.find( "%t" );
 				}
 
 				position = fullLine.find( "%r" );
-				while( position != std::string::npos )
-				{
+				while( position != std::string::npos ) {
 					fullLine.replace( position, 2, cwmWorldState->townRegions[mNPC->GetQuestDestRegion()]->GetName() );
 					position = fullLine.find( "%r" );
 				}
 
 				position = fullLine.find( "%R" );
-				while( position != std::string::npos )
-				{
+				while( position != std::string::npos ) {
 					fullLine.replace( position, 2, mNPC->GetRegion()->GetName() );
 					position = fullLine.find( "%R" );
 				}
@@ -947,8 +940,7 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 
 	msgBoardPost.ParentSerial = mNPC->GetSerial();
 
-	if( MsgBoardWritePost( msgBoardPost, fileName, PT_REGIONAL ) != INVALIDSERIAL )
-	{
+	if( MsgBoardWritePost( msgBoardPost, fileName, PT_REGIONAL ) != INVALIDSERIAL ) {
 		return true;
 	}
 

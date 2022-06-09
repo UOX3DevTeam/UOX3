@@ -632,55 +632,45 @@ void cHTMLTemplate::UnloadTemplate( void )
 //o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
-	std::string tag, data, UTag, UData, fullPath;
+	for (auto &sec : found->collection()){
+		auto tag = sec->tag;
+		auto data = sec->data ;
+		auto UTag = oldstrutil::upper( tag );
 
-	for( tag = found->First(); !found->AtEnd(); tag = found->Next() )
-	{
-		data = found->GrabData();
-		UTag = oldstrutil::upper( tag );
-
-		if( UTag == "UPDATE" )
-		{
+		if( UTag == "UPDATE" ) {
 			UpdateTimer = static_cast<UI32>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "TYPE" )
-		{
-			UData = oldstrutil::upper( data );
-			if( UData == "STATUS" )
-			{
+		else if( UTag == "TYPE" ) {
+			auto UData = oldstrutil::upper( data );
+			if( UData == "STATUS" ) {
 				Type = ETT_ONLINE;
 			}
-			else if( UData == "OFFLINE" )
-			{
+			else if( UData == "OFFLINE" ) {
 				Type = ETT_OFFLINE;
 			}
-			else if( UData == "PLAYER" )
-			{
+			else if( UData == "PLAYER" ) {
 				Type = ETT_PLAYER;
 			}
-			else if( UData == "GUILD" )
-			{
+			else if( UData == "GUILD" ) {
 				Type = ETT_GUILD;
 			}
-			else if( UData == "GMSTATUS" )
-			{
+			else if( UData == "GMSTATUS" ) {
 				Type = ETT_GMSTATUS;
 			}
 		}
-		else if( UTag == "INPUT" )
-		{
-			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) + "html/" + data;
+		else if( UTag == "INPUT" ) {
+			auto fullPath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS ) + "html/" + data;
 			//LOOKATME
 			InputFile = oldstrutil::trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
-		else if( UTag == "OUTPUT" )
-		{
-			fullPath = cwmWorldState->ServerData()->Directory( CSDDP_HTML ) + data;
+		else if( UTag == "OUTPUT" ) {
+			auto fullPath = cwmWorldState->ServerData()->Directory( CSDDP_HTML ) + data;
 			//LOOKATME
 			OutputFile = oldstrutil::trim(fullPath).substr( 0, MAX_PATH - 1 );
 		}
-		else if( UTag == "NAME" )
+		else if( UTag == "NAME" ){
 			Name = data;
+		}
 	}
 
 	ScheduledUpdate = 0;

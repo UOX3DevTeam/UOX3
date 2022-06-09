@@ -22,6 +22,7 @@
 #include "PartySystem.h"
 #include "StringUtility.hpp"
 
+using namespace std::string_literals;
 
 void OpenPlank( CItem *p );
 bool checkItemRange( CChar *mChar, CItem *i );
@@ -686,83 +687,68 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictE
 //|									& made all body parts that are carved from human corpse
 //|									lie in same direction.
 //o-----------------------------------------------------------------------------------------------o
-void newCarveTarget( CSocket *s, CItem *i )
-{
+auto newCarveTarget( CSocket *s, CItem *i ) ->void {
 	VALIDATESOCKET( s );
 
-	CChar *mChar = s->CurrcharObj();
-	CItem *c = Items->CreateItem( nullptr, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
-	if( c == nullptr )
-		return;
-	c->SetLocation( i );
-	c->SetMovable( 2 );
-	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-
-	// if it's a human corpse
-	// Sept 22, 2002 - Corrected the alignment of body parts that are carved.
-	if( i->GetTempVar( CITV_MOREY, 2 ) )
-	{
-		ScriptSection *toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
-		if( toFind == nullptr )
-			return;
-		std::string tag;
-		std::string data;
-		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
-		{
-			if( oldstrutil::upper( tag ) == "ADDITEM" )
-			{
-				data = toFind->GrabData();
-				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
-				{	
-					if( !CreateBodyPart( mChar, i, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0))))
-					{
-						return;
+	auto mChar = s->CurrcharObj();
+	auto c = Items->CreateItem( nullptr, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
+	if(c){
+		c->SetLocation( i );
+		c->SetMovable( 2 );
+		c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+		
+		// if it's a human corpse
+		// Sept 22, 2002 - Corrected the alignment of body parts that are carved.
+		if( i->GetTempVar( CITV_MOREY, 2 ) ) {
+			auto toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
+			if(toFind){
+				for (auto &sec : toFind->collection()){
+					auto tag = sec->tag ;
+					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
+						auto data = sec->data ;
+						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+						auto csecs = oldstrutil::sections( data, "," );
+						if( csecs.size() > 1 ) {
+							if( !CreateBodyPart( mChar, i, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)))) {
+								return;
+							}
+						}
 					}
 				}
+				
+				criminal( mChar );
+				
+				auto iCont = i->GetContainsList();
+				for (auto &c : iCont->collection()){
+					if( ValidateObject( c ) ) {
+						if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR ) {
+							c->SetCont( nullptr );
+							c->SetLocation( i );
+							c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+						}
+					}
+				}
+				i->Delete();
 			}
 		}
-
-		criminal( mChar );
-
-		GenericList< CItem * > *iCont = i->GetContainsList();
-		for( c = iCont->First(); !iCont->Finished(); c = iCont->Next() )
+		else
 		{
-			if( ValidateObject( c ) )
-			{
-				if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR )
-				{
-					c->SetCont( nullptr );
-					c->SetLocation( i );
-					c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-				}
-			}
-		}
-		i->Delete();
-	}
-	else
-	{
-		std::string sect		= std::string("CARVE ") + oldstrutil::number( i->GetCarve() );
-		ScriptSection *toFind	= FileLookup->FindEntry( sect, carve_def );
-		if( toFind == nullptr )
-			return;
-		std::string tag;
-		std::string data;
-		for( tag = toFind->First(); !toFind->AtEnd(); tag = toFind->Next() )
-		{
-			if( oldstrutil::upper( tag ) == "ADDITEM" )
-			{
-				data = toFind->GrabData();
-				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-				auto csecs = oldstrutil::sections( data, "," );
-				if( csecs.size() > 1 )
-				{
-					Items->CreateScriptItem( s, mChar, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
-				}
-				else
-				{
-					Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
+			auto sect = "CARVE "s + oldstrutil::number( i->GetCarve() );
+			auto toFind	= FileLookup->FindEntry( sect, carve_def );
+			if(toFind){
+				for (auto &sec : toFind->collection()){
+					auto tag = sec->tag ;
+					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
+						auto data = sec->data ;
+						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+						auto csecs = oldstrutil::sections( data, "," );
+						if( csecs.size() > 1 ) {
+							Items->CreateScriptItem( s, mChar, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
+						}
+						else {
+							Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
+						}
+					}
 				}
 			}
 		}

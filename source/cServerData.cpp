@@ -4195,28 +4195,23 @@ void CServerData::TrackingRedisplayTime( UI16 value )
 bool CServerData::ParseINI( const std::string& filename )
 {
 	bool rvalue = false;
-	if( !filename.empty() )
-	{
+	if( !filename.empty() ) {
 
 		Console << "Processing INI Settings  ";
 
 		Script toParse( filename, NUM_DEFS, false );
 		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-		if( !toParse.IsErrored() )
-		{
+		if( !toParse.IsErrored() ) {
 			//serverList.clear();
 			startlocations.clear();
-			for( ScriptSection *sect = toParse.FirstEntry(); sect != nullptr; sect = toParse.NextEntry() )
-			{
-				if( sect == nullptr )
-					continue;
-				std::string tag, data;
-				for( tag = sect->First(); !sect->AtEnd(); tag = sect->Next() )
-				{
-					data = oldstrutil::simplify( sect->GrabData() );
-					if( !HandleLine( tag, data ) )
-					{
-						Console.warning( oldstrutil::format("Unhandled tag '%s'", tag.c_str()) );
+			for (auto &[id,section] : toParse.collection()){
+				if( section){
+					for (auto &sec : section->collection()){
+						auto tag = sec->tag ;
+						auto data = oldstrutil::simplify( sec->data );
+						if( !HandleLine( tag, data ) ) {
+							Console.warning( oldstrutil::format("Unhandled tag '%s'", tag.c_str()) );
+						}
 					}
 				}
 			}
