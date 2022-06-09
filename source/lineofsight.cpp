@@ -460,8 +460,7 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 //|
 //|					it WAS based on the P.T., now its based on linear algebra ;)
 //o-----------------------------------------------------------------------------------------------o
-bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ, SI08 destZTop, bool checkDistance )
-{
+auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 destZ, UI08 checkfor, bool useSurfaceZ, SI08 destZTop, bool checkDistance ) ->bool {
 	const bool blocked		= false;
 	const bool not_blocked	= true;
 
@@ -609,31 +608,30 @@ bool LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 
 	for( auto &MapArea : MapRegion->PopulateList( startX, startY, worldNumber ) ){
 		if( MapArea){
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *toCheck = regItems->First(); !regItems->Finished(); toCheck = regItems->Next() )
-			{
-				if( !ValidateObject( toCheck ) || toCheck->GetInstanceID() != instanceID )
-					continue;
-				
-				// If item toCheck is at the exact same spot as the target location, it should not block LoS.
-				if( toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ )
-					continue;
-				
-				const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
-				if( idToPush != INVALIDID )
-				{
-					CTile& itemToCheck = Map->SeekTile( idToPush );
-					losItemList[itemCount].Height(itemToCheck.Height());
-					losItemList[itemCount].SetID( idToPush );
-					losItemList[itemCount].Flags( itemToCheck.Flags() );
+			auto regItems = MapArea->GetItemList();
+			for (auto &toCheck : regItems->collection()){
+				if (ValidateObject(toCheck) && (toCheck->GetInstanceID()!= instanceID)){
 					
-					++itemCount;
-					if( itemCount >= LOSXYMAX )	// don't overflow
-						break;
+					// If item toCheck is at the exact same spot as the target location, it should not block LoS.
+					if( !(toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ) ){
+						
+						const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
+						if( idToPush != INVALIDID ){
+							CTile& itemToCheck = Map->SeekTile( idToPush );
+							losItemList[itemCount].Height(itemToCheck.Height());
+							losItemList[itemCount].SetID( idToPush );
+							losItemList[itemCount].Flags( itemToCheck.Flags() );
+							
+							++itemCount;
+							if( itemCount >= LOSXYMAX ){	// don't overflow
+								break;
+							}
+						}
+					}
+					
 				}
 			}
-			regItems->Pop();
+			
 		}
 	}
 

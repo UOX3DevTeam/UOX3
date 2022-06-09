@@ -6,25 +6,19 @@
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of items in a container
 //o-----------------------------------------------------------------------------------------------o
-UI32 GetSubTotalItemCount( CItem *objCont )
-{
+auto GetSubTotalItemCount( CItem *objCont ) ->std::uint32_t {
 	UI32 total = 0;
-	GenericList< CItem * > *pCont = objCont->GetContainsList();
-	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )
-			{
+	auto pCont = objCont->GetContainsList();
+	for (auto &i:pCont->collection()){
+		if( ValidateObject( i ) ) {
+			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) {
 				total += 1; // Also count the container
 				total += GetSubTotalItemCount( i );
 			}
-			else
-			{
-				if( i->GetLayer() == IL_FACIALHAIR || i->GetLayer() == IL_HAIR )
-					continue;
-
-				total += 1;
+			else {
+				if( !(i->GetLayer() == IL_FACIALHAIR || i->GetLayer() == IL_HAIR) ){
+					total += 1;
+				}
 			}
 		}
 	}
@@ -48,24 +42,19 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o-----------------------------------------------------------------------------------------------o
-UI32 GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 realMoreVal, bool colorCheck = false )
-{
+auto GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 realMoreVal, bool colorCheck = false ) ->std::uint32_t {
 	UI32 total = 0;
-	GenericList< CItem * > *pCont = p->GetContainsList();
-	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
+	auto pCont = p->GetContainsList();
+	for (auto &i : pCont->collection()){
+		if( ValidateObject( i ) ) {
+			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )){
 				total += GetSubItemAmount( i, realID, realColour, realMoreVal );
-			else if( i->GetID() == realID && ( !colorCheck || ( colorCheck && i->GetColour() == realColour )))
-			{
-				if( i->GetUsesLeft() > 0 )
-				{
+			}
+			else if( i->GetID() == realID && ( !colorCheck || ( colorCheck && i->GetColour() == realColour ))) {
+				if( i->GetUsesLeft() > 0 ) {
 					total += i->GetUsesLeft();
 				}
-				else
-				{
+				else {
 					total += i->GetAmount();
 				}
 			}
@@ -92,59 +81,56 @@ UI32 GetItemAmount( CChar *s, UI16 realID, UI16 realColour, UI32 realMoreVal, bo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a certain amount of an item of specified color in a pack
 //o-----------------------------------------------------------------------------------------------o
-UI32 DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour, UI32 realMoreVal )
-{
-	if( !ValidateObject( p ) )
-		return 0;
+auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour, UI32 realMoreVal ) ->std::uint32_t {
+
 	UI32 amtDeleted = 0;
-	UI32 total		= amount;
-	GenericList< CItem * > *pCont = p->GetContainsList();
-	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
-	{
-		if( ValidateObject( i ) )
-		{
-			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )) // Is item an pack or container?
-				amtDeleted += DeleteSubItemAmount( i, total, realID, realColour );
-			else if( i->GetID() == realID && i->GetColour() == realColour && i->GetTempVar( CITV_MORE ) == realMoreVal )
-			{
-				UI16 usesLeft = i->GetUsesLeft();
-				if( usesLeft > 0 )
-				{
-					// If item has uses left, but not enough to cover the total resource cost...
-					if( usesLeft <= total )
-					{
-						// ...deplete remaining uses from total and delete item
-						amtDeleted += usesLeft;
-						i->Delete();
+	if( ValidateObject( p ) ){
+		UI32 total		= amount;
+		auto pCont = p->GetContainsList();
+		for (auto &i:pCont->collection()){
+			if( ValidateObject( i ) ) {
+				if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )){
+					// Is item an pack or container?
+					amtDeleted += DeleteSubItemAmount( i, total, realID, realColour );
+				}
+				else if( i->GetID() == realID && i->GetColour() == realColour && i->GetTempVar( CITV_MORE ) == realMoreVal ) {
+					UI16 usesLeft = i->GetUsesLeft();
+					if( usesLeft > 0 ) {
+						// If item has uses left, but not enough to cover the total resource cost...
+						if( usesLeft <= total ) {
+							// ...deplete remaining uses from total and delete item
+							amtDeleted += usesLeft;
+							i->Delete();
+						}
+						else {
+							// Otherwise, reduce amount of uses left on item
+							i->SetUsesLeft( usesLeft - total );
+						}
 					}
-					else
-					{
-						// Otherwise, reduce amount of uses left on item
-						i->SetUsesLeft( usesLeft - total );
+					else {
+						// There are no uses on item, but there might be a stack of the item, or multiple items
+						if( i->GetAmount() <= total ) {
+							amtDeleted += i->GetAmount();
+							i->Delete();
+						}
+						else {
+							i->IncAmount( -(static_cast<SI32>(total) ));
+							amtDeleted += total;
+						}
 					}
 				}
-				else
-				{
-					// There are no uses on item, but there might be a stack of the item, or multiple items
-					if( i->GetAmount() <= total )
-					{
-						amtDeleted += i->GetAmount();
-						i->Delete();
-					}
-					else
-					{
-						i->IncAmount( -(static_cast<SI32>(total) ));
-						amtDeleted += total;
-					}
+				if( amtDeleted >= amount ){
+					break;
+				}
+				else{
+					total = static_cast<UI32>( amount - amtDeleted );
 				}
 			}
-			if( amtDeleted >= amount )
-				break;
-			else
-				total = static_cast<UI32>( amount - amtDeleted );
 		}
+		
 	}
 	return amtDeleted;
+
 }
 
 //o-----------------------------------------------------------------------------------------------o

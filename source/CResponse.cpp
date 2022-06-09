@@ -58,17 +58,15 @@ auto findNearbyNPCs( CChar *mChar, distLocs distance ) ->std::vector< CChar* >{
 	
 	for (auto &CellResponse : MapRegion->PopulateList( mChar )){
 		if( CellResponse){
-			
-			GenericList< CChar * > *regChars = CellResponse->GetCharList();
-			regChars->Push();
-			for( CChar *Npc = regChars->First(); !regChars->Finished(); Npc = regChars->Next() )
-			{
-				if( !ValidateObject( Npc ) || Npc == mChar || !Npc->IsNpc() || Npc->GetInstanceID() != mChar->GetInstanceID() )
-					continue;
-				if( objInRange( mChar, Npc, distance ) )
-					ourNpcs.push_back( Npc );
+			auto regChars = CellResponse->GetCharList();
+			for (auto &Npc:regChars->collection()){
+				if (ValidateObject(Npc) && (Npc != mChar) && Npc->IsNpc() && (Npc->GetInstanceID() == mChar->GetInstanceID())){
+					if( objInRange( mChar, Npc, distance ) ){
+						ourNpcs.push_back( Npc );
+					}
+					
+				}
 			}
-			regChars->Pop();
 		}
 	}
 	return ourNpcs;
