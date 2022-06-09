@@ -847,13 +847,10 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 
 	//Teleport pets as well
-	GenericList< CChar * > *myPets = mChar->GetPetList();
-	for( CChar *pet = myPets->First(); !myPets->Finished(); pet = myPets->Next() )
-	{
-		if( ValidateObject( pet ) )
-		{
-			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) )
-			{
+	auto myPets = mChar->GetPetList();
+	for (auto &pet : myPets->collection()) {
+		if( ValidateObject( pet ) ){
+			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 				pet->SetLocation( mChar );
 			}
 		}

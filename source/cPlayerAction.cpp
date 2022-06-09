@@ -134,50 +134,53 @@ CItem *doStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
 //|	Purpose		-	Searches through the pack to see if an item can be stacked
 //|					stacking them automatically
 //o-----------------------------------------------------------------------------------------------o
-CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack )
-{
+auto autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack ) ->CItem *{
 	CChar *mChar = nullptr;
-	if( mSock != nullptr )
+	if( mSock){
 		mChar = mSock->CurrcharObj();
-	if( !ValidateObject( iToStack ) || !ValidateObject( iPack ) )
-		return nullptr;
-
-	iToStack->SetCont( iPack );
-	if( iToStack->isPileable() )
-	{
-		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
-			Weight->subtractItemWeight( mChar, iToStack );
-		const UI16 itID		= iToStack->GetID();
-		const SERIAL itSer	= iToStack->GetSerial();
-		const UI16 itCol	= iToStack->GetColour();
-		const UI32 itMore	= iToStack->GetTempVar( CITV_MORE );
-		const UI32 itMoreX	= iToStack->GetTempVar( CITV_MOREX );
-		const UI32 itMoreY	= iToStack->GetTempVar( CITV_MOREY );
-		const UI32 itMoreZ	= iToStack->GetTempVar( CITV_MOREZ );
-		const UI32 itBuyValue = iToStack->GetBuyValue();
-		const UI32 itSellValue = iToStack->GetSellValue();
-
-		GenericList< CItem * > *ipCont = iPack->GetContainsList();
-		for( CItem *stack = ipCont->First(); !ipCont->Finished(); stack = ipCont->Next() )
-		{
-			if( !ValidateObject( stack ) )
-				continue;
-
-			if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
-			   stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol && stack->GetTempVar( CITV_MORE ) == itMore && stack->GetTempVar( CITV_MOREX ) == itMoreX 
-				&& stack->GetTempVar( CITV_MOREY ) == itMoreY && stack->GetTempVar( CITV_MOREZ ) == itMoreZ && stack->GetBuyValue() == itBuyValue && stack->GetSellValue() == itSellValue )
-			{ // Autostack
-				if( doStacking( mSock, mChar, iToStack, stack ) == stack )	// compare to stack, if doStacking returned the stack, then the raw object was deleted
-					return stack;	// return the stack
+	}
+	if( ValidateObject( iToStack )&& ValidateObject( iPack ) ){
+		
+		iToStack->SetCont( iPack );
+		if( iToStack->isPileable() ) {
+			if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) ){
+				Weight->subtractItemWeight( mChar, iToStack );
+			}
+			const UI16 itID		= iToStack->GetID();
+			const SERIAL itSer	= iToStack->GetSerial();
+			const UI16 itCol	= iToStack->GetColour();
+			const UI32 itMore	= iToStack->GetTempVar( CITV_MORE );
+			const UI32 itMoreX	= iToStack->GetTempVar( CITV_MOREX );
+			const UI32 itMoreY	= iToStack->GetTempVar( CITV_MOREY );
+			const UI32 itMoreZ	= iToStack->GetTempVar( CITV_MOREZ );
+			const UI32 itBuyValue = iToStack->GetBuyValue();
+			const UI32 itSellValue = iToStack->GetSellValue();
+			
+			auto ipCont = iPack->GetContainsList();
+			for (auto &stack :ipCont->collection()){
+				if( ValidateObject( stack ) ){
+					
+					if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
+					   stack->GetSerial() != itSer && stack->GetID() == itID && stack->GetColour() == itCol && stack->GetTempVar( CITV_MORE ) == itMore && stack->GetTempVar( CITV_MOREX ) == itMoreX
+					   && stack->GetTempVar( CITV_MOREY ) == itMoreY && stack->GetTempVar( CITV_MOREZ ) == itMoreZ && stack->GetBuyValue() == itBuyValue && stack->GetSellValue() == itSellValue ) {
+						// Autostack
+						if( doStacking( mSock, mChar, iToStack, stack ) == stack ){	// compare to stack, if doStacking returned the stack, then the raw object was deleted
+							return stack;	// return the stack
+						}
+					}
+				}
+			}
+			if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) ){
+				Weight->addItemWeight( mChar, iToStack );
 			}
 		}
-		if( mSock != nullptr && ( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND ) )
-			Weight->addItemWeight( mChar, iToStack );
+		iToStack->PlaceInPack();
+		if( mSock){
+			Effects->itemSound( mSock, iToStack, false );
+		}
+		return iToStack;
 	}
-	iToStack->PlaceInPack();
-	if( mSock != nullptr )
-		Effects->itemSound( mSock, iToStack, false );
-	return iToStack;
+	return nullptr ;
 }
 
 auto findNearbyChars( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 distance ) ->std::vector< CChar* >;

@@ -215,27 +215,22 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 						targetRegion->DoDamage( targetRegion->GetHealth() / 2 );	// we reduce the region's health by half
 						for (auto &toCheck : MapRegion->PopulateList( mChar )){
 							if(toCheck){
-								GenericList< CItem * > *regItems = toCheck->GetItemList();
-								regItems->Push();
-								for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() )
-								{
-									if( !ValidateObject( itemCheck ) )
-										continue;
-									if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 )
-									{	// found our townstone
-										CItem *charPack = mChar->GetPackItem();
-										if( ValidateObject( charPack ) )
-										{
-											itemCheck->SetCont( charPack );
-											itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
-											s->sysmessage( 550 );
-											targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
-											regItems->Pop();
-											return;	// dump out
+								auto regItems = toCheck->GetItemList();
+								for (auto &itemCheck : regItems->collection()){
+									if( ValidateObject( itemCheck ) ){
+										if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 ) {
+											// found our townstone
+											auto charPack = mChar->GetPackItem();
+											if( ValidateObject( charPack ) ) {
+												itemCheck->SetCont( charPack );
+												itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
+												s->sysmessage( 550 );
+												targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
+												return;	// dump out
+											}
 										}
 									}
 								}
-								regItems->Pop();
 							}
 						}
 					}
