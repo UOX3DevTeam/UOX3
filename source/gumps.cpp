@@ -22,6 +22,8 @@
 #include <algorithm>
 #include "osunique.hpp"
 
+using namespace std::string_literals;
+
 void CollectGarbage( void );
 std::string GetUptime( void );
 
@@ -1986,20 +1988,19 @@ bool CPIGumpChoice::Handle( void )
 	return true;
 }
 
-void HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex )
-{
-	CChar *mChar = mSock->CurrcharObj();
+//============================================================================================
+auto HandleCommonGump( CSocket *mSock, ScriptSection *gumpScript, UI16 gumpIndex ) ->void {
+	auto mChar = mSock->CurrcharObj();
 	std::string line;
 	UI16 modelID = 0;
 	UI16 modelColour = 0;
 	std::string tag = gumpScript->First();
 	std::string data = gumpScript->GrabData();
-	line = tag + " " + data;
+	line = tag + " "s + data;
 	CPOpenGump toSend( *mChar );
 	toSend.GumpIndex( gumpIndex );
 	toSend.Question( line );
-	for( tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next() )
-	{
+	for( tag = gumpScript->Next(); !gumpScript->AtEnd(); tag = gumpScript->Next() ) {
 		data = gumpScript->GrabData();
 		modelID = static_cast<UI16>(stoul(tag, nullptr, 0));
 		toSend.AddResponse( modelID, modelColour, data );

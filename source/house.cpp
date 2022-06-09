@@ -26,39 +26,31 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype );
 //|					all doors!) and locked "LOCK" Space around the house with SPACEX/Y and CHAR
 //|					offset CHARX/Y/Z
 //o-----------------------------------------------------------------------------------------------o
-void DoHouseTarget( CSocket *mSock, UI08 houseEntry )
-{
+auto DoHouseTarget( CSocket *mSock, UI08 houseEntry ) ->void {
 	UI16 houseID = 0;
 	std::string tag, data;
-	std::string sect		= std::string("HOUSE ") + oldstrutil::number( houseEntry );
-	ScriptSection *House	= FileLookup->FindEntry( sect, house_def );
-	if( House == nullptr )
-	{
-		return;
-	}
-	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
-	{
-		data = House->GrabData();
-		if( oldstrutil::upper( tag ) == "ID" )
-		{
-			houseID = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
-			break;
+	auto sect = "HOUSE "s + oldstrutil::number( houseEntry );
+	auto House	= FileLookup->FindEntry( sect, house_def );
+	if(House) {
+		for (auto &sec : House->collection()){
+			auto tag = sec->tag ;
+			auto data = sec->data ;
+			if( oldstrutil::upper( tag ) == "ID" ) {
+				houseID = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0));
+				break;
+			}
 		}
-	}
-	if( !houseID )
-	{
-		Console.error(oldstrutil::format( "Bad house script: #%u\n", houseEntry) );
-	}
-	else
-	{
-		mSock->AddID1( houseEntry );
-		if( houseID >= 0x4000 )
-		{
-			mSock->mtarget( static_cast<UI16>(houseID - 0x4000), 576 );
+		if( !houseID ) {
+			Console.error(oldstrutil::format( "Bad house script: #%u\n", houseEntry) );
 		}
-		else
-		{
-			mSock->target( 0, TARGET_BUILDHOUSE, 0, 576 );
+		else {
+			mSock->AddID1( houseEntry );
+			if( houseID >= 0x4000 ) {
+				mSock->mtarget( static_cast<UI16>(houseID - 0x4000), 576 );
+			}
+			else {
+				mSock->target( 0, TARGET_BUILDHOUSE, 0, 576 );
+			}
 		}
 	}
 }
@@ -95,45 +87,39 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
 // when you exposethe actual collection, it highlights that you are passing this by value, not reference. WHich is costly
-void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z )
-{
+auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z ) ->void {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
 	for (auto &entry : houseItems){
 		auto sect = "HOUSE ITEM "s + entry;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
-		if( HouseItem != nullptr )
-		{
+		if( HouseItem ) {
 			SI16 hiX = x, hiY = y;
 			SI08 hiZ = z;
 			UI08 hWorld = house->WorldNumber();
 			UI16 hInstanceID = house->GetInstanceID();
 			hItem = nullptr;	// clear it out
-			for( tag = HouseItem->First(); !HouseItem->AtEnd(); tag = HouseItem->Next() )
-			{
+			for (auto &sec : HouseItem->collection()){
+				tag = sec->tag ;
+				data = sec->data ;
 				UTag = oldstrutil::upper( tag );
-				data = HouseItem->GrabData();
 				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-				if( UTag == "ITEM" )
-				{
+				if( UTag == "ITEM" ) {
 					hItem = Items->CreateBaseScriptItem( nullptr, data, mChar->WorldNumber(), 1, hInstanceID );
-					if( hItem == nullptr )
-					{
+					if( hItem == nullptr ) {
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;
 						break;
 					}
-					else
-					{
+					else {
 						hItem->SetMovable( 2 );//Non-Moveable by default
 						hItem->SetLocation( house );
 						hItem->SetOwner( mChar );
-
-						if( house->GetObjType() == OT_ITEM )
-						{
+						
+						if( house->GetObjType() == OT_ITEM ) {
 							// House is not actually a house, but a house addon! Store reference to addon on item
 							hItem->SetTempVar( CITV_MORE, house->GetSerial() );
-
+							
 							// Store a custom tag on addon to mark it as a house addon
 							TAGMAPOBJECT addonTagObject;
 							addonTagObject.m_Destroy		= false;
@@ -141,7 +127,7 @@ void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 							addonTagObject.m_ObjectType	= TAGMAP_TYPE_INT;
 							addonTagObject.m_StringValue	= "";
 							hItem->SetTag( "addon", addonTagObject );
-
+							
 							// Also add the addon's sub-items to the multi
 							CMultiObj *mMulti = house->GetMultiObj();
 							if( ValidateObject( mMulti ) )
@@ -149,101 +135,88 @@ void CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 						}
 					}
 				}
-				else if( UTag == "DECAY" )
-				{
-					if( ValidateObject( hItem ))
+				else if( UTag == "DECAY" ) {
+					if( ValidateObject( hItem )){
 						hItem->SetDecayable( true );
+					}
 				}
-				else if( UTag == "NODECAY" )
-				{
-					if( ValidateObject( hItem ) )
+				else if( UTag == "NODECAY" ) {
+					if( ValidateObject( hItem ) ){
 						hItem->SetDecayable( false );
+					}
 				}
-				else if( UTag == "PACK" )//put the item in the Builder's Backpack
-				{
-					if( ValidateObject( hItem ) )
-					{
+				else if( UTag == "PACK" ){//put the item in the Builder's Backpack
+					if( ValidateObject( hItem ) ) {
 						CItem *pack = mChar->GetPackItem();
 						hItem->SetCont( pack );
 						hItem->PlaceInPack();
 					}
 				}
-				else if( UTag == "MOVEABLE" )
-				{
-					if( ValidateObject( hItem ) )
+				else if( UTag == "MOVEABLE" ) {
+					if( ValidateObject( hItem ) ){
 						hItem->SetMovable( 1 );
+					}
 				}
-				else if( UTag == "INVISIBLE" )
-				{
-					if( ValidateObject( hItem ) )
+				else if( UTag == "INVISIBLE" ) {
+					if( ValidateObject( hItem ) ){
 						hItem->SetVisible( VT_PERMHIDDEN );
+					}
 				}
-				else if( UTag == "LOCK" && houseID >= 0x4000 )//lock it with the house key
-				{
-					if( ValidateObject( hItem ) )
-					{
+				else if( UTag == "LOCK" && houseID >= 0x4000 ){//lock it with the house key
+					if( ValidateObject( hItem ) ) {
 						hItem->SetTempVar( CITV_MORE, house->GetSerial() );
-						if( hItem->GetType() == IT_HOUSESIGN )
-						{
+						if( hItem->GetType() == IT_HOUSESIGN ) {
 							// Also store a reference to the sign on the house itself
 							house->SetTempVar( CITV_MORE, hItem->GetSerial() );
 						}
 					}
 				}
-				else if( UTag == "FRONTDOOR" )
-				{
-					if( ValidateObject( hItem ) )
-					{
+				else if( UTag == "FRONTDOOR" ) {
+					if( ValidateObject( hItem ) ) {
 						TAGMAPOBJECT frontDoorTag;
 						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "front";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 						hItem->SetTag( "DoorType", frontDoorTag );
-
+						
 						// Lock it automatically since house is private when placed initially
 						hItem->SetType( IT_LOCKEDDOOR );
 					}
 				}
-				else if( UTag == "INTERIORDOOR" )
-				{
-					if( ValidateObject( hItem ) )
-					{
+				else if( UTag == "INTERIORDOOR" ) {
+					if( ValidateObject( hItem ) ) {
 						TAGMAPOBJECT frontDoorTag;
 						frontDoorTag.m_Destroy		= false;
 						frontDoorTag.m_StringValue	= "interior";
 						frontDoorTag.m_IntValue		= static_cast<SI32>(frontDoorTag.m_StringValue.size());
 						frontDoorTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 						hItem->SetTag( "DoorType", frontDoorTag );
-						}
+					}
 				}
-				else if( UTag == "X" ) //offset + or - from the center of the house:
-				{
+				else if( UTag == "X" ){ //offset + or - from the center of the house:
 					hiX += static_cast<SI16>(std::stoi(data, nullptr, 0));
 				}
-				else if( UTag == "Y" )
-				{
+				else if( UTag == "Y" ) {
 					hiY += static_cast<SI16>(std::stoi(data, nullptr, 0));
 				}
-				else if( UTag == "Z" )
-				{
+				else if( UTag == "Z" ) {
 					hiZ += static_cast<SI16>(std::stoi(data, nullptr, 0));
 				}
 			}
-			if( ValidateObject( hItem ) && hItem->GetCont() == nullptr )
+			if( ValidateObject( hItem ) && hItem->GetCont() == nullptr ){
 				hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceID );
-
-			if( hItem->GetMulti() == INVALIDSERIAL && hItem->GetType() != IT_HOUSESIGN && hItem->GetType() != IT_DOOR )
-			{
+			}
+			
+			if( hItem->GetMulti() == INVALIDSERIAL && hItem->GetType() != IT_HOUSESIGN && hItem->GetType() != IT_DOOR ) {
 				// Add item to multi. It's not a door, nor a sign - could be stairs in a custom foundation!
 				CMultiObj *mMulti = findMulti( house );
-				if( ValidateObject( mMulti ))
-				{
+				if( ValidateObject( mMulti )) {
 					hItem->SetMulti( mMulti );
 					mMulti->AddToMulti( hItem );
 				}
 			}
-
+			
 		}
 	}
 }
@@ -465,242 +438,193 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		return;
 
 	std::vector<UI16> scriptIDs;
-	for( tag = House->First(); !House->AtEnd(); tag = House->Next() )
-	{
+	for (auto &sec : House->collection()){
+		tag = sec->tag ;
+		data = sec->data ;
 		UTag = oldstrutil::upper( tag );
-		data = House->GrabData();
 		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 		
-		if( UTag == "ID" )
-		{
+		if( UTag == "ID" ) {
 			houseID = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "SPACEX" )
-		{
+		else if( UTag == "SPACEX" ) {
 			sx = static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "SPACEY" )
-		{
+		else if( UTag == "SPACEY" ) {
 			sy = static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "CHARX" )
-		{
+		else if( UTag == "CHARX" ) {
 			cx = static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "CHARY" )
-		{
+		else if( UTag == "CHARY" ) {
 			cy =static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "CHARZ" )
-		{
+		else if( UTag == "CHARZ" ) {
 			cz = static_cast<SI08>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "BANX" )
-		{
+		else if( UTag == "BANX" ) {
 			bx = static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "BANY" )
-		{
+		else if( UTag == "BANY" ) {
 			by = static_cast<SI16>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "Z" ) //to allow offsetting houses in Z to fix multis like Farmer's Cabin
-		{
+		else if( UTag == "Z" ) {//to allow offsetting houses in Z to fix multis like Farmer's Cabin
+			
 			z = z + static_cast<SI08>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "ITEMSDECAY" )
-		{
+		else if( UTag == "ITEMSDECAY" ) {
 			itemsWillDecay = ( static_cast<SI16>(std::stoi(data, nullptr, 0)) == 1 );
 		}
-		else if( UTag == "HOUSE_ITEM" )
-		{
+		else if( UTag == "HOUSE_ITEM" ) {
 			houseItems.push_back( data );
 		}
-		else if( UTag == "HOUSE_DEED" )
-		{
+		else if( UTag == "HOUSE_DEED" ) {
 			houseDeed = data;
 		}
-		else if( UTag == "BOAT" )
-		{
+		else if( UTag == "BOAT" ) {
 			isBoat = true;	//Boats
 		}
-		else if( UTag == "DAMAGEABLE" )
-		{
+		else if( UTag == "DAMAGEABLE" ) {
 			isDamageable = ( static_cast<SI16>( std::stoi(data, nullptr, 0) ) == 1 );
 		}
-		else if( UTag == "MAXITEMS" )
-		{
+		else if( UTag == "MAXITEMS" ) {
 			maxItems = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "WEIGHTMAX" )
-		{
+		else if( UTag == "WEIGHTMAX" ) {
 			weightMax = static_cast<SI32>(std::stoi(data, nullptr, 0));
 		}
-		else if( UTag == "MAXBANS" )
-		{
+		else if( UTag == "MAXBANS" ) {
 			maxBans = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXFRIENDS" )
-		{
+		else if( UTag == "MAXFRIENDS" ) {
 			maxFriends = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXGUESTS" )
-		{
+		else if( UTag == "MAXGUESTS" ) {
 			maxGuests = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXLOCKDOWNS" )
-		{
+		else if( UTag == "MAXLOCKDOWNS" ) {
 			maxLockdowns = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXTRASHCONTAINERS" )
-		{
+		else if( UTag == "MAXTRASHCONTAINERS" ) {
 			maxTrashContainers = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXOWNERS" )
-		{
+		else if( UTag == "MAXOWNERS" ) {
 			maxOwners = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXSECURECONTAINERS" )
-		{
+		else if( UTag == "MAXSECURECONTAINERS" ) {
 			maxSecureContainers = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "MAXVENDORS" )
-		{
+		else if( UTag == "MAXVENDORS" ) {
 			maxVendors = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "SCRIPT" )
-		{
+		else if( UTag == "SCRIPT" ) {
 			scriptTrigger = static_cast<UI16>(std::stoul(data, nullptr, 0));
-			if( scriptTrigger > 0 )
-			{
+			if( scriptTrigger > 0 ) {
 				scriptIDs.push_back( scriptTrigger );
 			}
 		}
-		else if( UTag == "COLOUR" || UTag == "COLOR" )
-		{
+		else if( UTag == "COLOUR" || UTag == "COLOR" ) {
 			multiColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
 		}
-		else if( UTag == "COLOURLIST" || UTag == "COLORLIST" )
-		{
+		else if( UTag == "COLOURLIST" || UTag == "COLORLIST" ) {
 			multiColour = addRandomColor( data );
 		}
-		else if( UTag == "CUSTOMSTRINGTAG" )
-		{
+		else if( UTag == "CUSTOMSTRINGTAG" ) {
 			auto ssecs = oldstrutil::sections( data, " " );
 			auto count = 0;
 			std::string result;
-			for( auto &sec : ssecs )
-			{
-				if( count > 0 )
-				{
-					if( count == 1 )
-					{
+			for( auto &sec : ssecs ) {
+				if( count > 0 ) {
+					if( count == 1 ) {
 						result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
-					else
-					{
+					else {
 						result = result + " " + oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
 				}
 				count++;
 			}
-			customTagName			= oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
-			customTagStringValue	= result;
-
-			if( !customTagName.empty() && !customTagStringValue.empty() )
-			{
+			customTagName = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+			customTagStringValue = result;
+			
+			if( !customTagName.empty() && !customTagStringValue.empty() ) {
 				customTag.m_Destroy		= false;
 				customTag.m_StringValue	= customTagStringValue;
 				customTag.m_IntValue	= static_cast<SI32>(customTag.m_StringValue.size());
 				customTag.m_ObjectType	= TAGMAP_TYPE_STRING;
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
 			}
-			else
-			{
+			else {
 				Console.warning( oldstrutil::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ) );
 			}
 			break;
 		}
-		else if( UTag == "CUSTOMINTTAG" )
-		{
+		else if( UTag == "CUSTOMINTTAG" ) {
 			auto ssecs = oldstrutil::sections( data, " " );
 			auto count = 0;
 			std::string result;
-			for( auto &sec : ssecs )
-			{
-				if( count > 0 )
-				{
-					if( count == 1 )
-					{
+			for( auto &sec : ssecs ) {
+				if( count > 0 ) {
+					if( count == 1 ) {
 						result = oldstrutil::trim( oldstrutil::removeTrailing( sec, "//" ));
 					}
 				}
 				count++;
 			}
-			customTagName			= oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
-			customTagStringValue	= result;
-			if( !customTagName.empty() && !customTagStringValue.empty() )
-			{
+			customTagName = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+			customTagStringValue = result;
+			if( !customTagName.empty() && !customTagStringValue.empty() ) {
 				customTag.m_Destroy		= false;
 				customTag.m_IntValue 	= std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( customTagStringValue, "//" )), nullptr, 0);
 				customTag.m_ObjectType	= TAGMAP_TYPE_INT;
 				customTag.m_StringValue	= "";
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
-				if( count > 1 )
-				{
+				if( count > 1 ) {
 					Console.warning( oldstrutil::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ) );
 				}
 			}
-			else
-			{
+			else {
 				Console.warning( oldstrutil::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ) );
 			}
 		}
 	}
-
-	if( !houseID )
-	{
+	
+	if( !houseID ) {
 		Console.error( oldstrutil::format("Bad house script # %u!", houseEntry) );
 		return;
 	}
-
+	
 	const bool isMulti = (houseID >= 0x4000);
-	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) )
-	{
+	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) ) {
 		return;
 	}
-
+	
 	constexpr std::uint16_t maxsize = 1024 ;
 	std::string temp ;
 	CMultiObj *house = nullptr;
 	CItem *fakeHouse = nullptr;
-	if( isMulti )
-	{
-		if( (houseID%256) > 20 )
-		{
+	if( isMulti ) {
+		if( (houseID%256) > 20 ) {
 			temp = oldstrutil::format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
 		}
-		else
-		{
+		else {
 			// Assign name of boat deed/model ship to newly created boat
 			temp = mChar->GetSpeechItem()->GetTitle();
-			if( temp == "" )
-			{
+			if( temp == "" ) {
 				temp = "a ship";
 			}
 		}
 		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
-		if( house == nullptr )
-		{
+		if( house == nullptr ) {
 			return;
 		}
-
+		
 		house->SetLocation( x, y, z );
 		house->SetDecayable( itemsWillDecay );
 		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
 		house->SetOwner( mChar );
 		// Add all script IDs to multi's list of script IDs
-		for( auto scriptID : scriptIDs )
-		{
+		for( auto scriptID : scriptIDs ) {
 			house->AddScriptTrigger( scriptID );
 		}
 		house->SetMaxBans( maxBans );
@@ -713,98 +637,87 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetMaxVendors( maxVendors );
 		house->SetColour( multiColour );
 		house->SetDamageable( isDamageable );
-
+		
 		time_t buildTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 		house->SetBuildTimestamp( buildTimestamp );
-
+		
 		// Add custom tags to multi
 		for (const auto& [key, value] : customTagMap) {
 			house->SetTag( key, value );
 		}
-
+		
 		// Find corners of new house
 		SI16 multiX1 = 0;
 		SI16 multiY1 = 0;
 		SI16 multiX2 = 0;
 		SI16 multiY2 = 0;
 		Map->MultiArea( house, multiX1, multiY1, multiX2, multiY2 );
-
+		
 		// Set ban location X and Y offsets.
-		if( bx == 0 && by == 0 )
-		{
+		if( bx == 0 && by == 0 ) {
 			// If BANX/BANY were not specified in house DFN, use calculated SE corner of house instead
 			bx = multiX2;
 			by = multiY2;
 		}
-		else
-		{
+		else {
 			// Use offset values specified in BANX/BANY
 			bx = x + bx;
 			by = y + by;
 		}
-		house->SetBanX( bx ); 
+		house->SetBanX( bx );
 		house->SetBanY( by );
-
+		
 		// Move characters out of the way
 		for (auto &ourChar : findNearbyChars(x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max(sx,sy))){
-			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) && 
-				( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) && 
-				( ourChar->GetZ() >= house->GetZ() - 16 ))
-			{
+			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) &&
+			   ( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) &&
+			   ( ourChar->GetZ() >= house->GetZ() - 16 )) {
 				// Move character (NPC or PC, online or offline) to corner of multi so they don't get stuck in house!
 				ourChar->SetLocation( bx, by, house->GetZ() );
 			}
 		}
-
+		
 		// Move items out of the way
 		for (auto &ourItem :findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ))){
-			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT )
-			{
+			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT ) {
 				if( ( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&
-					( ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2 ) &&
-					( ourItem->GetZ() >= house->GetZ() - 16 ) )
-				{
+				   ( ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2 ) &&
+				   ( ourItem->GetZ() >= house->GetZ() - 16 ) ) {
 					// Move item to corner of multi so they don't get stuck underneath the house!
 					ourItem->SetLocation( bx, by, house->GetZ() );
 				}
 			}
 		}
 	}
-	else
-	{
+	else {
 		// House addon
 		fakeHouse = Items->CreateItem( mSock, mChar, houseID, 1, 0, OT_ITEM );
-		if( fakeHouse == nullptr )
-		{
+		if( fakeHouse == nullptr ) {
 			return;
 		}
 		fakeHouse->SetLocation( x, y, z );
-
+		
 		CMultiObj *mMulti = findMulti( fakeHouse );
-		if( ValidateObject( mMulti ) )
-		{
-			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() )
-			{
+		if( ValidateObject( mMulti ) ) {
+			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() ) {
 				mMulti->LockDownItem( fakeHouse );
 			}
-			else
-			{
+			else {
 				mSock->sysmessage( 9032 ); // This house has reached the limit on locked down items already!
 				fakeHouse->Delete();
 				return;
 			}
 		}
-		else
-		{
+		else {
 			mSock->sysmessage( 9033 ); // House addons can only be placed in houses!
 			fakeHouse->Delete();
 			return;
 		}
-
+		
 		fakeHouse->SetOwner( mChar );
 		fakeHouse->SetDecayable( false );
 		fakeHouse->SetVisible( VT_PERMHIDDEN );
-
+		
 		// Store name of deed in a custom tag on the addon
 		TAGMAPOBJECT deedObject;
 		deedObject.m_Destroy		= false;
@@ -814,11 +727,9 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		fakeHouse->SetTag( "deed", deedObject );
 	}
 
-	if( isBoat ) //Boats
-	{
+	if( isBoat ){ //Boats
 		CBoatObj *bObj = static_cast<CBoatObj *>(house);
-		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) )
-		{
+		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) ) {
 			house->Delete();
 			return;
 		}
@@ -832,17 +743,14 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	mChar->SetSpeechItem( nullptr );
 
 	CreateHouseKey( mSock, mChar, house, houseID );
-	if( !houseItems.empty() )
-	{
-		if( isMulti )
-		{
+	if( !houseItems.empty() ) {
+		if( isMulti ) {
 			fakeHouse = house;
 		}
 		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
 	}
 
-	if( isMulti || isBoat )
-	{
+	if( isMulti || isBoat ) {
 		mChar->SetLocation( x + cx, y + cy, z + cz );
 	}
 
