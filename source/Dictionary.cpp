@@ -9,6 +9,10 @@
 #include "ssection.h"
 #include "StringUtility.hpp"
 
+#include <memory>
+
+using namespace std::string_literals ;
+
 CDictionaryContainer *Dictionary;
 
 const SI32 dictCANTOPEN			= -1;
@@ -47,43 +51,33 @@ CDictionary::CDictionary( const std::string& filepath, const std::string& langua
 }
 
 //const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
-
-SI32 CDictionary::LoadDictionary( void )
-{
+//====================================================================================================
+auto CDictionary::LoadDictionary()->std::int32_t {
 	SI32 count	= 0;
 	IsValid		= false;
-	if( FileExists( PathToDictionary ) )
-	{
-		Script *dictData = new Script( PathToDictionary, NUM_DEFS, false );
-		if( dictData != nullptr )
-		{
+	if( FileExists( PathToDictionary ) ) {
+		auto dictData = std::make_unique<Script>( PathToDictionary, NUM_DEFS, false );
+		if( dictData != nullptr ) {
 			ScriptSection *dictSect = nullptr;
 			std::string tag, data;
-			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() )
-			{
-				if( dictSect != nullptr )
-				{
+			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() ) {
+				if(dictSect) {
 					// verify it is a dictionary entry
-					if( dictData->EntryName().substr( 0, 10 ) != "DICTIONARY" )
-					{
-						continue;
-					}
-					for( tag = dictSect->First(); !dictSect->AtEnd(); tag = dictSect->Next() )
-					{
-						data					= dictSect->GrabData();
-						if( data != "" )
-						{
-							Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-							++count;
-						}
-						else
-						{
-							Console.warning( oldstrutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
+					if( dictData->EntryName().substr( 0, 10 ) == "DICTIONARY" ) {
+						for (auto &sec : dictSect->collection()){
+							tag = sec->tag ;
+							data = sec->data ;
+							if( !data.empty()) {
+								Text2[static_cast<UI32>(std::stoul(tag, nullptr, 0))] = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+								++count;
+							}
+							else {
+								Console.warning( oldstrutil::format( "Entry with tag %s in %s dictionary has no value!", tag.c_str(), Language.c_str() ));
+							}
 						}
 					}
 				}
 			}
-			delete dictData;
 			dictData = nullptr;
 		}
 		IsValid = true;
@@ -92,8 +86,7 @@ SI32 CDictionary::LoadDictionary( void )
 		Console << "Dictionary." << Language;
 		Console.PrintSpecial( CGREEN, "done" );
 	}
-	else
-	{
+	else {
 		count = dictCANTOPEN;
 	}
 

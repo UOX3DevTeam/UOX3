@@ -19,6 +19,7 @@
 #include "ObjectFactory.h"
 #include <algorithm>
 
+using namespace std::string_literals;
 
 template< class T >
 T Capped( const T value, const T minimum, const T maximum )
@@ -482,94 +483,80 @@ bool CPIDeleteCharacter::Handle( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Changes		-	PACKITEM now supports item,amount
 //o-----------------------------------------------------------------------------------------------o
-void addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour )
-{
-	ScriptSection *newbieData = FileLookup->FindEntry( str, newbie_def );
-	if( newbieData != nullptr )
-	{
+auto addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColour, COLOUR shirtColour ) ->void {
+	auto newbieData = FileLookup->FindEntry( str, newbie_def );
+	if( newbieData ) {
 		CItem *n = nullptr;
-		for( std::string tag = newbieData->First(); !newbieData->AtEnd(); tag = newbieData->Next() )
-		{
-			std::string data = newbieData->GrabData();
+		for (auto &sec : newbieData->collection()){
+			auto tag = sec->tag;
+			auto data = sec->data;
 			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-			if( !data.empty() )
-			{
+			if( !data.empty() ) {
 				auto UTag = oldstrutil::upper( tag );
-				if( UTag == "PACKITEM" )
-				{
+				if( UTag == "PACKITEM" ) {
 					auto csecs = oldstrutil::sections( data, "," );
-					if( csecs.size() > 1 )
-					{						
+					if( csecs.size() > 1 ) {
 						UI16 nAmount = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
 						n = Items->CreateScriptItem( socket, c, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
 					}
-					else
-					{
+					else {
 						n = Items->CreateScriptItem( socket, c, data.c_str(), 1, OT_ITEM, true );
 					}
 				}
-				else if( UTag == "EQUIPITEM" )
-				{
+				else if( UTag == "EQUIPITEM" ) {
 					UI16 itemHue = 0;
 					std::string itemSection;
 					auto csecs = oldstrutil::sections( data, "," );
-					if( csecs.size() > 1 )
-					{
+					if( csecs.size() > 1 ) {
 						itemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
 						itemHue = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
 					}
-					else
-					{
+					else {
 						itemSection = data;
 					}
 
 					n = Items->CreateScriptItem( socket, c, itemSection.c_str(), 1, OT_ITEM, true, itemHue );
-					if( n != nullptr && n->GetLayer() != IL_NONE )
-					{
+					if( n != nullptr && n->GetLayer() != IL_NONE ) {
 						bool conflictItem = true;
 						CItem *j = c->GetItemAtLayer( n->GetLayer() );
-						if( !ValidateObject( j ))
-						{
-							if( n->GetLayer() == IL_RIGHTHAND )
+						if( !ValidateObject( j )) {
+							if( n->GetLayer() == IL_RIGHTHAND ){
 								j = c->GetItemAtLayer( IL_LEFTHAND );
-							else if( n->GetLayer() == IL_LEFTHAND )
+							}
+							else if( n->GetLayer() == IL_LEFTHAND ){
 								j = c->GetItemAtLayer( IL_RIGHTHAND );
+							}
 
 							// GetDir-check is to allow for torches and lanterns,
 							// which use left-hand layer but are not 2-handers or shields
-							if( ValidateObject( j ) && !n->IsShieldType() && n->GetDir() == 0 )
-							{
+							if( ValidateObject( j ) && !n->IsShieldType() && (n->GetDir() == 0) ) {
 								if( j->IsShieldType() || j->GetDir() != 0 )
 									conflictItem = false;
 							}
-							else
-							{
+							else {
 								conflictItem = false;
 							}
 						}
-						if( conflictItem == true )
+						if( conflictItem ){
 							n->SetCont( c->GetPackItem() );
-						else
-						{
+						}
+						else {
 							n->SetCont( c );
 						}
 
 						//Apply the choosen colour
-						if( ( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0)
-						{
+						if( ( n->GetLayer() == IL_PANTS || n->GetLayer() == IL_OUTERLEGGINGS ) && pantsColour != 0) {
 							n->SetColour( pantsColour );
 							n->SetDye( true );
 						}
 
-						if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0)
-						{
+						if(( n->GetLayer() == IL_INNERSHIRT || n->GetLayer() == IL_ROBE ) && shirtColour != 0) {
 							n->SetColour( shirtColour );
 							n->SetDye( true );
 						}
 					}
 				}
-				if( n != nullptr && !n->isPileable() )
-				{
+				if( n != nullptr && !n->isPileable() ) {
 					// Set item as newbiefied/blessed by default - as long as it's not pileable!
 					n->SetNewbie( true );
 				}
@@ -1154,23 +1141,20 @@ void CPICreateCharacter::SetNewCharGenderAndRace( CChar *mChar )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the Updates window
 //o-----------------------------------------------------------------------------------------------o
-void updates( CSocket *s )
-{
-	if( s == nullptr )
-		return;
-	ScriptSection *Updates = FileLookup->FindEntry( "MOTD", misc_def );
-	if( Updates == nullptr )
-		return;
-
-	std::string updateData = "";
-	for( std::string tag = Updates->First(); !Updates->AtEnd(); tag = Updates->Next() )
-	{
-		updateData += Updates->GrabData() + " ";
+auto updates( CSocket *s )->void {
+	if(s){
+		auto Updates = FileLookup->FindEntry( "MOTD", misc_def );
+		if( Updates){
+			std::string updateData = "";
+			for (auto &sec : Updates->collection()){
+				updateData += sec->data + " "s;
+			}
+			CPUpdScroll toSend( 2 );
+			toSend.AddString( updateData.c_str() );
+			toSend.Finalize();
+			s->Send( &toSend );
+		}
 	}
-	CPUpdScroll toSend( 2 );
-	toSend.AddString( updateData.c_str() );
-	toSend.Finalize();
-	s->Send( &toSend );
 }
 
 void sysBroadcast( const std::string& txt );
