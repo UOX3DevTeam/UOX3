@@ -17,7 +17,7 @@ const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", 
 class CJSMappingSection
 {
 private:
-	std::map< UI16, cScript * >				scriptIDMap;
+	std::map< UI16, cScript * >			scriptIDMap;
 	std::map< JSObject *, UI16 >			scriptJSMap;
 
 	std::map< UI16, cScript * >::iterator	scriptIDIter;
@@ -27,6 +27,11 @@ public:
 	CJSMappingSection( SCRIPTTYPE sT );
 	~CJSMappingSection();
 
+	auto jsCollection() const ->const std::map<JSObject*,std::uint16_t>& {return scriptJSMap;}
+	auto jsCollection()  -> std::map<JSObject*,std::uint16_t>& {return scriptJSMap;}
+	auto collection() const ->const std::map<std::uint16_t,cScript*>& {return scriptIDMap;}
+	auto collection()  -> std::map<std::uint16_t,cScript*>& {return scriptIDMap;}
+	
 
 	void		Reload( UI16 toLoad );
 	void		Parse( Script *fileAssocData );

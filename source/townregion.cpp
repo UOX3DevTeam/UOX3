@@ -112,14 +112,14 @@ bool CTownRegion::Load( Script *ss )
 		return false;
 	}
 
-	ScriptSection *target = ss->FindEntry( sect );
+	auto target = ss->FindEntry( sect );
 	if( target == nullptr )
 		return false;
 
-	for( tag = target->First(); !target->AtEnd(); tag = target->Next() )
-	{
+	for (auto &sec : target->collection()){
+		tag = sec->tag;
+		data = sec->data ;
 		UTag = oldstrutil::upper( tag );
-		data = target->GrabData();
 		UI32 duint ;
 		try {
 			duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
@@ -458,10 +458,10 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	CanPlaceHouse( false );
 
 	regLocs ourLoc;
-	for( tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
-	{
+	for (auto &sec : toScan->collection()){
+		tag = sec->tag ;
+		data = sec->data ;
 		UTag = oldstrutil::upper( tag );
-		data = toScan->GrabData();
 		UI32 duint ;
 		try {
 			duint = static_cast<UI32>(std::stoul(data, nullptr, 0));
