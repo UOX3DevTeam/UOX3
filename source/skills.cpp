@@ -2059,8 +2059,8 @@ auto  cSkills::LoadCreateMenus() ->void {
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
 		if( ourScript) {
-			for (auto &[secnum,toSearch]:ourScript->collection()) {
-				std::string eName = ourScript->EntryName();
+			for (auto &[eName1,toSearch]:ourScript->collection()) {
+				auto eName = eName1;
 				if( "SUBMENU" == eName.substr( 0, 7 ) ){	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 					eName = oldstrutil::trim( oldstrutil::removeTrailing( eName, "//" ));
 					auto ssecs = oldstrutil::sections( eName, " " );
