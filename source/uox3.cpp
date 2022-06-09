@@ -34,6 +34,7 @@
 #include <chrono>
 #include <random>
 #include <thread>
+#include <cstdlib>
 
 #include "uox3.h"
 #include "weight.h"
@@ -85,6 +86,8 @@ std::thread cons;
 std::thread netw;
 std::chrono::time_point<std::chrono::system_clock> current;
 std::mt19937 generator;
+std::random_device rd;  //Will be used to obtain a seed for the random number engine
+
 using namespace std::string_literals ;
 //==========================================================================
 // These should be atomic, for another day
@@ -126,6 +129,8 @@ auto InitMultis() ->void ;
 auto DisplayBanner()->void ;
 auto CheckConsoleKeyThread() ->void;
 auto DoMessageLoop() -> void;
+auto startInitialize() ->void;
+
 //=================================================================================================
 
 //o-----------------------------------------------------------------------------------------------o
@@ -136,49 +141,160 @@ auto DoMessageLoop() -> void;
 auto main( SI32 argc, char *argv[] ) ->int {
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
+	TIMERVAL uiNextCheckConn = 0;
+
 	
-#if PLATFORM != WINDOWS
-	// Protection from server-shutdown during mid-worldsave
-	signal(SIGINT, app_stopped);
-#endif
-	
-	// Let's measure startup time
-	auto startupStartTime = std::chrono::high_resolution_clock::now();
-	
-	// 042102: I moved this here where it basically should be for any windows application or dll that uses WindowsSockets.
+	//=================================================================================================
+	// Startup Winsock2(windows) or signal handers (unix)
+	//=================================================================================================
+
 #if PLATFORM == WINDOWS
 	WSADATA wsaData;
 	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
-	if( err )
-	{
+	if( err ) {
 		Console.error( "Winsock 2.2 not found on your system..." );
-		return 1;
+		return EXIT_FAILURE;
 	}
+#else
+	// Protection from server-shutdown during mid-worldsave
+	signal(SIGINT, app_stopped);
+	signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
+
+#endif
+	//=================================================================================================
+	// Start/Initalize classes,data,network
+	//=================================================================================================
+	startInitialize() ;
+	
+	//=================================================================================================
+	// Main Loop
+	//=================================================================================================
+
+	Console.PrintSectionBegin();
+	EVENT_TIMER(stopwatch,EVENT_TIMER_OFF);
+	while( cwmWorldState->GetKeepRun() ){
+		std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
+		if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 ){
+			cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
+			cwmWorldState->ServerProfile()->LoopTime( 0 );
+		}
+		cwmWorldState->ServerProfile()->IncLoopTimeCount();
+		
+		StartMilliTimer( loopSecs, loopMilli );
+		
+		if( cwmWorldState->ServerProfile()->NetworkTimeCount() >= 1000 ){
+			cwmWorldState->ServerProfile()->NetworkTimeCount( 0 );
+			cwmWorldState->ServerProfile()->NetworkTime( 0 );
+		}
+		
+		StartMilliTimer( tempSecs, tempMilli );
+		EVENT_TIMER_RESET(stopwatch);
+		
+		if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ){
+			// Cut lag on CheckConn by not doing it EVERY loop.
+			Network->CheckConnections();
+			uiNextCheckConn = BuildTimeValue( 1.0f );
+		}
+		Network->CheckMessages();
+		EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,EVENT_TIMER_KEEP);
+		tempTime = CheckMilliTimer( tempSecs, tempMilli );
+		cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
+		cwmWorldState->ServerProfile()->IncNetworkTimeCount();
+		
+		if( cwmWorldState->ServerProfile()->TimerTimeCount() >= 1000 ) {
+			cwmWorldState->ServerProfile()->TimerTimeCount( 0 );
+			cwmWorldState->ServerProfile()->TimerTime( 0 );
+		}
+		
+		StartMilliTimer( tempSecs, tempMilli );
+		
+		cwmWorldState->CheckTimers();
+		//stopwatch.output("Delta for CheckTimers");
+		cwmWorldState->SetUICurrentTime( getclock() );
+		tempTime = CheckMilliTimer( tempSecs, tempMilli );
+		cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
+		cwmWorldState->ServerProfile()->IncTimerTimeCount();
+		
+		if( cwmWorldState->ServerProfile()->AutoTimeCount() >= 1000 ) {
+			cwmWorldState->ServerProfile()->AutoTimeCount( 0 );
+			cwmWorldState->ServerProfile()->AutoTime( 0 );
+		}
+		StartMilliTimer( tempSecs, tempMilli );
+		
+		if( !cwmWorldState->GetReloadingScripts() ){
+			//auto stopauto = EventTimer() ;
+			EVENT_TIMER(stopauto,EVENT_TIMER_OFF);
+			cwmWorldState->CheckAutoTimers();
+			EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,EVENT_TIMER_CLEAR);
+		}
+		
+		tempTime = CheckMilliTimer( tempSecs, tempMilli );
+		cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
+		cwmWorldState->ServerProfile()->IncAutoTimeCount();
+		StartMilliTimer( tempSecs, tempMilli );
+		EVENT_TIMER_RESET(stopwatch);
+		Network->ClearBuffers();
+		EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,EVENT_TIMER_CLEAR);
+		tempTime = CheckMilliTimer( tempSecs, tempMilli );
+		cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
+		tempTime = CheckMilliTimer( loopSecs, loopMilli );
+		cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
+		EVENT_TIMER_RESET(stopwatch);
+		DoMessageLoop();
+		EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,EVENT_TIMER_CLEAR);
+		
+	}
+	//=================================================================================================
+	// Shutdown/Cleanup
+	//=================================================================================================
+
+	sysBroadcast( "The server is shutting down." );
+	Console << "Closing sockets...";
+	netpollthreadclose = true;
+	///HERE
+	Network->SockClose();
+	Console.PrintDone();
+	
+#if PLATFORM == WINDOWS
+	SetConsoleCtrlHandler( exit_handler, true );
+#endif
+	if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING ) {
+		isWorldSaving = true;
+		do {
+			cwmWorldState->SaveNewWorld( true );
+		} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
+		isWorldSaving = false;
+	}
+	cwmWorldState->ServerData()->save();
+#if PLATFORM == WINDOWS
+	SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	
-#ifdef _CRASH_PROTECT_
-	try
-	{// Error trapping....
-#endif
-		current = std::chrono::system_clock::now();
-		
-		Console.Start( oldstrutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
-		
-#if PLATFORM != WINDOWS
-		signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
-		//		signal( SIGTERM, &endmessage );
-		//		signal( SIGQUIT, &endmessage );
-		//		signal( SIGINT, &endmessage );
-		//		signal( SIGILL, &illinst );
-		//		signal( SIGFPE, &aus );
-#endif
-		Console.PrintSectionBegin();
-		Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
-		Console.PrintSectionBegin();
-		
-		if(( cwmWorldState = new CWorldMain ) == nullptr )
-			Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
+	Console.log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
+	
+	conthreadcloseok = true;	//	This will signal the console thread to close
+	Shutdown( 0 );
+
+	
+	// Will never reach this, as Shutdown "exits"
+	return EXIT_SUCCESS;
+}
+
+
+//=====================================================================================
+// Startup and Initialization
+//=====================================================================================
+auto startInitialize() ->void {
+	// Let's measure startup time
+	auto startupStartTime = std::chrono::high_resolution_clock::now();
+	Console.Start( oldstrutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
+	
+	Console.PrintSectionBegin();
+	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
+	Console.PrintSectionBegin();
+	
+	if(( cwmWorldState = new CWorldMain )){
 		cwmWorldState->ServerData()->Load();
 		
 		Console << "Initializing and creating class pointers... " << myendl;
@@ -204,13 +320,10 @@ auto main( SI32 argc, char *argv[] ) ->int {
 		Console << "Loading GoPlaces               ";
 		LoadPlaces();
 		Console.PrintDone();
-		std::random_device rd;  //Will be used to obtain a seed for the random number engine
 		generator = std::mt19937(rd()); //Standard mersenne_twister_engine seeded with rd()
 		
-		//srand( current.tv_sec ); // initial randomization call
-		
-		CJSMappingSection *packetSection = JSMapping->GetSection( SCPT_PACKET );
-		for( cScript *ourScript = packetSection->First(); !packetSection->Finished(); ourScript = packetSection->Next() ) {
+		auto packetSection = JSMapping->GetSection( SCPT_PACKET );
+		for( auto &[id,ourScript] : packetSection->collection() ) {
 			if( ourScript){
 				ourScript->ScriptRegistration( "Packet" );
 			}
@@ -306,17 +419,8 @@ auto main( SI32 argc, char *argv[] ) ->int {
 		Console << "Creating and Initializing Console Thread      ";
 		
 		cons = std::thread(&CheckConsoleKeyThread);
-#ifdef __LOGIN_THREAD__
-		Console << myendl << "Creating and Initializing xLOGINd Thread      ";
-		netw = std::thread(&NetworkPollConnectionThread);
-		
-#else
-		TIMERVAL uiNextCheckConn = 0;
-#endif
 		
 		Console.PrintDone();
-		
-		Console.PrintSectionBegin();
 		
 		// Shows information about IPs and ports being listened on
 		Console.TurnYellow();
@@ -357,128 +461,18 @@ auto main( SI32 argc, char *argv[] ) ->int {
 		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
-		Console.PrintSectionBegin();
-		EVENT_TIMER(stopwatch,EVENT_TIMER_OFF);
-		// MAIN SYSTEM LOOP
-		while( cwmWorldState->GetKeepRun() ){
-			std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
-			if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 ){
-				cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
-				cwmWorldState->ServerProfile()->LoopTime( 0 );
-			}
-			cwmWorldState->ServerProfile()->IncLoopTimeCount();
-			
-			StartMilliTimer( loopSecs, loopMilli );
-			
-			if( cwmWorldState->ServerProfile()->NetworkTimeCount() >= 1000 ){
-				cwmWorldState->ServerProfile()->NetworkTimeCount( 0 );
-				cwmWorldState->ServerProfile()->NetworkTime( 0 );
-			}
-			
-			StartMilliTimer( tempSecs, tempMilli );
-			EVENT_TIMER_RESET(stopwatch);
-			
-#ifndef __LOGIN_THREAD__
-			if( uiNextCheckConn <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ){
-				// Cut lag on CheckConn by not doing it EVERY loop.
-				Network->CheckConnections();
-				uiNextCheckConn = BuildTimeValue( 1.0f );
-			}
-			Network->CheckMessages();
-#else
-			Network->CheckMessage();
-#endif
-			EVENT_TIMER_NOW(stopwatch, Complete net checkmessages,EVENT_TIMER_KEEP);
-			tempTime = CheckMilliTimer( tempSecs, tempMilli );
-			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
-			cwmWorldState->ServerProfile()->IncNetworkTimeCount();
-			
-			if( cwmWorldState->ServerProfile()->TimerTimeCount() >= 1000 ) {
-				cwmWorldState->ServerProfile()->TimerTimeCount( 0 );
-				cwmWorldState->ServerProfile()->TimerTime( 0 );
-			}
-			
-			StartMilliTimer( tempSecs, tempMilli );
-			
-			cwmWorldState->CheckTimers();
-			//stopwatch.output("Delta for CheckTimers");
-			cwmWorldState->SetUICurrentTime( getclock() );
-			tempTime = CheckMilliTimer( tempSecs, tempMilli );
-			cwmWorldState->ServerProfile()->IncTimerTime( tempTime );
-			cwmWorldState->ServerProfile()->IncTimerTimeCount();
-			
-			if( cwmWorldState->ServerProfile()->AutoTimeCount() >= 1000 ) {
-				cwmWorldState->ServerProfile()->AutoTimeCount( 0 );
-				cwmWorldState->ServerProfile()->AutoTime( 0 );
-			}
-			StartMilliTimer( tempSecs, tempMilli );
-			
-			if( !cwmWorldState->GetReloadingScripts() ){
-				//auto stopauto = EventTimer() ;
-				EVENT_TIMER(stopauto,EVENT_TIMER_OFF);
-				cwmWorldState->CheckAutoTimers();
-				EVENT_TIMER_NOW(stopauto,CheckAutoTimers only,EVENT_TIMER_CLEAR);
-			}
-			
-			tempTime = CheckMilliTimer( tempSecs, tempMilli );
-			cwmWorldState->ServerProfile()->IncAutoTime( tempTime );
-			cwmWorldState->ServerProfile()->IncAutoTimeCount();
-			StartMilliTimer( tempSecs, tempMilli );
-			EVENT_TIMER_RESET(stopwatch);
-			Network->ClearBuffers();
-			EVENT_TIMER_NOW(stopwatch,Delta for ClearBuffers,EVENT_TIMER_CLEAR);
-			tempTime = CheckMilliTimer( tempSecs, tempMilli );
-			cwmWorldState->ServerProfile()->IncNetworkTime( tempTime );
-			tempTime = CheckMilliTimer( loopSecs, loopMilli );
-			cwmWorldState->ServerProfile()->IncLoopTime( tempTime );
-			EVENT_TIMER_RESET(stopwatch);
-			DoMessageLoop();
-			EVENT_TIMER_NOW(stopwatch,Delta for DoMessageLoop,EVENT_TIMER_CLEAR);
-			
-		}
-		
-		sysBroadcast( "The server is shutting down." );
-		Console << "Closing sockets...";
-		netpollthreadclose = true;
-		///HERE
-#ifdef __LOGIN_THREAD__
-		std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		netw.join();
-#endif
-		Network->SockClose();
-		Console.PrintDone();
-		
-#if PLATFORM == WINDOWS
-		SetConsoleCtrlHandler( exit_handler, true );
-#endif
-		if( cwmWorldState->GetWorldSaveProgress() != SS_SAVING ) {
-			isWorldSaving = true;
-			do {
-				cwmWorldState->SaveNewWorld( true );
-			} while( cwmWorldState->GetWorldSaveProgress() == SS_SAVING );
-			isWorldSaving = false;
-		}
-		cwmWorldState->ServerData()->save();
-#if PLATFORM == WINDOWS
-		SetConsoleCtrlHandler( exit_handler, false );
-#endif
-		
-		Console.log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
-		
-		conthreadcloseok = true;	//	This will signal the console thread to close
-		Shutdown( 0 );
-		
-#ifdef _CRASH_PROTECT_
+
 	}
-	catch ( ... ) {
-		//Crappy error handling...
-		Console << "Unknown exception caught, hard crash avioded!" << myendl;
-		Shutdown( UNKNOWN_ERROR );
+	else {
+		Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
 	}
-#endif
 	
-	return 0;
+
 }
+
+
+
+
 
 //=================================================================================================
 // Most things after this point, should be in different files, not in uox3.cpp.
@@ -2433,7 +2427,7 @@ auto advanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) ->void {
 		applyTo->SetAdvObj( advObj );
 		auto sect = "ADVANCEMENT "s + oldstrutil::number( advObj );
 		sect						= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
-		ScriptSection *Advancement	= FileLookup->FindEntry( sect, advance_def );
+		auto Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr ) {
 			Console << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
 			applyTo->SetAdvObj( 0 );
@@ -2446,8 +2440,12 @@ auto advanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) ->void {
 		std::string cdata;
 		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
-		for( tag = Advancement->FirstTag(); !Advancement->AtEndTags(); tag = Advancement->NextTag() ) {
-			cdata = Advancement->GrabData( ndata, odata );
+		for (auto &sec:Advancement->collection2()){
+			tag = sec->tag;
+			cdata = sec->cdata ;
+			ndata = sec->ndata ;
+			odata = sec->odata ;
+			
 			switch( tag ) {
 				case DFNTAG_ALCHEMY:			skillToSet = ALCHEMY;							break;
 				case DFNTAG_ANATOMY:			skillToSet = ANATOMY;							break;
