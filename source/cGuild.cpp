@@ -625,9 +625,9 @@ void CGuild::Load( ScriptSection *toRead )
 	std::string tag;
 	std::string data;
 	std::string UTag;
-	for( tag = toRead->First(); !toRead->AtEnd(); tag = toRead->Next() )
-	{
-		data = toRead->GrabData();
+	for (auto &sec : toRead->collection()){
+		tag = sec->tag;
+		data = sec->data;
 		if( tag.empty() )
 			continue;
 		UTag = oldstrutil::upper( tag );
