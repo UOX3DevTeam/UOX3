@@ -30,7 +30,7 @@
 #include "ObjectFactory.h"
 #include "osunique.hpp"
 
-CWorldMain						*cwmWorldState = nullptr;
+CWorldMain *cwmWorldState = nullptr;
 
 //o-----------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -76,26 +76,16 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLAS
 	spawnRegions.clear();
 	uoxtimeout.tv_sec	= 0;
 	uoxtimeout.tv_usec	= 0;
-	sData				= new CServerData();
-	sProfile			= new CServerProfile();
+	
 }
+//==========================================================================================================
+auto CWorldMain::startup() ->void {
+	
 
-CWorldMain::~CWorldMain()
-{
-	prowessTitles.clear();
-	murdererTags.clear();
-	teleLocs.clear();
-	logoutLocs.clear();
-	sosLocs.clear();
-	escortRegions.clear();
-	creatures.clear();
-	goPlaces.clear();
-	refreshQueue.clear();
-	deletionQueue.clear();
-	spawnRegions.clear();
-	delete sData;
-	delete sProfile;
 }
+//==========================================================================================================
+
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	TIMERVAL GetTimer( CWM_TID timerID ) const
@@ -588,15 +578,14 @@ void CWorldMain::RegionSave( void )
 	});
 	regionsDestination.close();
 }
-
-CServerData *CWorldMain::ServerData( void )
-{
-	return sData;
+//=================================================================================================
+auto CWorldMain::ServerData()->CServerData *{
+	return &sData;
 }
 
-CServerProfile *CWorldMain::ServerProfile( void )
-{
-	return sProfile;
+//=================================================================================================
+auto CWorldMain::ServerProfile() -> CServerProfile *{
+	return &sProfile;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -638,9 +627,6 @@ void CWorldMain::SaveStatistics( void )
 CServerProfile::CServerProfile() : networkTime( 0 ), timerTime( 0 ), autoTime( 0 ), loopTime( 0 ),
 networkTimeCount( 1000 ), timerTimeCount( 1000 ), autoTimeCount( 1000 ), loopTimeCount( 1000 ),
 globalRecv( 0 ), globalSent( 0 )
-{
-}
-CServerProfile::~CServerProfile()
 {
 }
 
