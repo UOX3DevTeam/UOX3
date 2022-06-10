@@ -4654,16 +4654,19 @@ void CChar::Cleanup( void )
 		}
 
 		// If we delete a NPC we should delete his tempeffects as well
-		cwmWorldState->tempEffects.Push();
-		for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
-		{
-			if( Effect->Destination() == GetSerial() )
-				cwmWorldState->tempEffects.Remove( Effect, true );
+		std::vector<CTEffect *> removedEffect ;
+		for (auto &Effect : cwmWorldState->tempEffects.collection()){
+			if( Effect->Destination() == GetSerial() ){
+				removedEffect.push_back(Effect);
+			}
 
-			if( Effect->Source() == GetSerial() )
+			else if( Effect->Source() == GetSerial() ) {
 				Effect->Source( INVALIDSERIAL );
+			}
 		}
-		cwmWorldState->tempEffects.Pop();
+		std::for_each(removedEffect.begin(), removedEffect.end(), [this](CTEffect *effect){
+			cwmWorldState->tempEffects.Remove(effect,true);
+		});
 
 		// if we delete a NPC we should delete him from spawnregions
 		// this will fix several crashes
