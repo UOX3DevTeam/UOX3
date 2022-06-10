@@ -546,34 +546,27 @@ void app_stopped(int sig)
 //o-----------------------------------------------------------------------------------------------o
 auto UnloadSpawnRegions() ->void {
 	for (auto &[regionnum,spawnregion]:cwmWorldState->spawnRegions) {
-		if( spawnregion != nullptr )
-		{
+		if( spawnregion ) {
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
+		
 			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
-			for( auto cCheck = spawnedCharsList->First(); !spawnedCharsList->Finished(); cCheck = spawnedCharsList->Next() )
-			{
-				if( !ValidateObject( cCheck ) )
-					continue;
-				
-				if( !ValidateObject( cCheck->GetOwnerObj() ))
-				{
-					cCheck->Delete();
+			for (auto &cCheck : spawnedCharsList->collection()){
+				if( ValidateObject( cCheck ) ){
+					if( !ValidateObject( cCheck->GetOwnerObj() )) {
+						cCheck->Delete();
+					}
 				}
 			}
 			
 			// Iterate over list of spawned items and delete them if no player has picked them up
 			auto spawnedItemsList = spawnregion->GetSpawnedItemsList();
-			for( auto iCheck = spawnedItemsList->First(); !spawnedItemsList->Finished(); iCheck = spawnedItemsList->Next() )
-			{
-				if( !ValidateObject( iCheck ) )
-					continue;
-				
-				if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() ))
-				{
-					iCheck->Delete();
+			for (auto &iCheck : spawnedItemsList->collection()){
+				if( ValidateObject( iCheck ) ){
+					if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() )) {
+						iCheck->Delete();
+					}
 				}
 			}
-			
 			delete spawnregion;
 		}
 	}
@@ -599,58 +592,57 @@ auto UnloadRegions() ->void {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Watch for messages thrown by UOX
 //o-----------------------------------------------------------------------------------------------o
-void DoMessageLoop( void ) {
-	while( !messageLoop.Empty() )
-	{
-		MessagePassed tVal = messageLoop.GrabMessage();
-		switch( tVal.actualMessage )
-		{
-			case MSG_SHUTDOWN:		cwmWorldState->SetKeepRun( false );				break;
-			case MSG_COUNT:															break;
-			case MSG_WORLDSAVE:		cwmWorldState->SetOldTime( 0 );					break;
-			case MSG_PRINT:			Console << tVal.data << myendl;					break;
-			case MSG_RELOADJS:		JSEngine->Reload();
+auto DoMessageLoop()->void {
+	// Grab all the data in the queue
+	auto messages = messageLoop.bulkData();
+	while( !messages.empty() ) {
+		auto tVal = messages.front();
+		messages.pop() ;
+		switch( tVal.actualMessage ) {
+			case MSG_SHUTDOWN: cwmWorldState->SetKeepRun(false); break;
+			case MSG_COUNT: break;
+			case MSG_WORLDSAVE: cwmWorldState->SetOldTime(0); break;
+			case MSG_PRINT: Console << tVal.data << myendl; break;
+			case MSG_RELOADJS: JSEngine->Reload();
 				JSMapping->Reload();
 				Console.PrintDone();
-				Commands->Load();								break;
-			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data );						break;
-			case MSG_PRINTDONE:		Console.PrintDone();							break;
-			case MSG_PRINTFAILED:	Console.PrintFailed();							break;
-			case MSG_SECTIONBEGIN:	Console.PrintSectionBegin();					break;
+				Commands->Load();	break;
+			case MSG_CONSOLEBCAST:	sysBroadcast( tVal.data ); break;
+			case MSG_PRINTDONE: Console.PrintDone(); break;
+			case MSG_PRINTFAILED:	Console.PrintFailed(); break;
+			case MSG_SECTIONBEGIN:	Console.PrintSectionBegin(); break;
 			case MSG_RELOAD:
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
+				if( !cwmWorldState->GetReloadingScripts() ) {
 					cwmWorldState->SetReloadingScripts( true );
-					switch( tVal.data[0] )
-					{
-						case '0':	cwmWorldState->ServerData()->Load();		break;	// Reload INI file
-						case '1':	Accounts->Load();							break;	// Reload accounts
+					switch( tVal.data[0] ) {
+						case '0':	cwmWorldState->ServerData()->Load(); break;	// Reload INI file
+						case '1':	Accounts->Load();	 break;	// Reload accounts
 						case '2':	UnloadRegions();
 							LoadRegions();
-							LoadTeleportLocations();					break;	// Reload regions/TeleportLocations
-						case '3':	UnloadSpawnRegions();	LoadSpawnRegions();	break;	// Reload spawn regions
-						case '4':	Magic->LoadScript();						break;	// Reload spells
+							LoadTeleportLocations(); break;	// Reload regions/TeleportLocations
+						case '3':	UnloadSpawnRegions();	LoadSpawnRegions(); break;	// Reload spawn regions
+						case '4':	Magic->LoadScript(); break;	// Reload spells
 						case '5':	JSMapping->Reload( SCPT_COMMAND );
-							Commands->Load();							break;	// Reload commands
+							Commands->Load();	 break;	// Reload commands
 						case '6':	FileLookup->Reload();
 							LoadCreatures();
 							LoadCustomTitle();
 							LoadSkills();
 							LoadPlaces();
-							Skills->Load();								break;	// Reload definition files
+							Skills->Load(); break;	// Reload definition files
 						case '7':	JSEngine->Reload();
 							JSMapping->Reload();
 							Console.PrintDone();
 							Commands->Load();
-							Skills->Load();								break;	// Reload JS
+							Skills->Load(); break;	// Reload JS
 						case '8':	HTMLTemplates->Unload();
-							HTMLTemplates->Load();						break;	// Reload HTML
+							HTMLTemplates->Load();	 break;	// Reload HTML
 					}
 					cwmWorldState->SetReloadingScripts( false );
 				}
 				break;
 			case MSG_UNKNOWN:
-			default:				Console.error( "Unknown message type" );		break;
+			default: Console.error( "Unknown message type" ); break;
 		}
 	}
 }
@@ -668,8 +660,7 @@ void DoMessageLoop( void ) {
 auto NetworkPollConnectionThread() ->void {
 	messageLoop << "Thread: NetworkPollConnection has started";
 	netpollthreadclose = false;
-	while( !netpollthreadclose )
-	{
+	while( !netpollthreadclose ) {
 		Network->CheckConnections();
 		Network->CheckLoginMessage();
 		std::this_thread::sleep_for(std::chrono::milliseconds( 20 ));
@@ -686,8 +677,7 @@ auto CheckConsoleKeyThread() ->void {
 	messageLoop << "Thread: CheckConsoleThread has started";
 	Console.Registration();
 	conthreadcloseok = false;
-	while( !conthreadcloseok )
-	{
+	while( !conthreadcloseok ) {
 		Console.Poll();
 		std::this_thread::sleep_for(std::chrono::milliseconds( 500 ));
 	}
@@ -940,13 +930,11 @@ auto callGuards( CChar *mChar ) -> void {
 auto callGuards( CChar *mChar, CChar *targChar )->void {
 	
 	if( ValidateObject( mChar ) && ValidateObject( targChar ) ) {
-		
 		if( mChar->GetRegion()->IsGuarded()  && cwmWorldState->ServerData()->GuardsStatus() ){
-			
-			if( !targChar->IsDead() && ( targChar->IsCriminal() || targChar->IsMurderer() ) )
-			{
-				if( charInRange( mChar, targChar ) )
+			if( !targChar->IsDead() && ( targChar->IsCriminal() || targChar->IsMurderer() ) ) {
+				if( charInRange( mChar, targChar ) ){
 					Combat->SpawnGuard( mChar, targChar, targChar->GetX(), targChar->GetY(), targChar->GetZ() );
+				}
 			}
 		}
 	}
@@ -1480,197 +1468,187 @@ auto checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o-----------------------------------------------------------------------------------------------o
 auto checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses, bool doWeather ){
 	auto regItems = toCheck->GetItemList();
-	regItems->Push();
-	for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() ){
-		if( !ValidateObject( itemCheck ) || itemCheck->isFree() ){
-			continue;
-		}
-		if( checkItems ) {
-			if( itemCheck->isDecayable() && (itemCheck->GetCont() == nullptr) ) {
-				if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 ) {
-					// Don't decay signs that belong to houses
-					itemCheck->SetDecayable( false );
-				}
-				if( (itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) {
-					auto scriptTriggers = itemCheck->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers ) {
-						cScript *toExecute = JSMapping->GetScript( scriptTrig );
-						if( toExecute) {
+	for (auto &itemCheck : regItems->collection()){
+		if( ValidateObject( itemCheck ) && itemCheck->isFree() ){
+			if( checkItems ) {
+				if( itemCheck->isDecayable() && (itemCheck->GetCont() == nullptr) ) {
+					if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 ) {
+						// Don't decay signs that belong to houses
+						itemCheck->SetDecayable( false );
+					}
+					if( (itemCheck->GetDecayTime() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) {
+						auto scriptTriggers = itemCheck->GetScriptTriggers();
+						for( auto scriptTrig : scriptTriggers ) {
+							cScript *toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute) {
+								if( toExecute->OnDecay( itemCheck ) == 0 ){
+									
+									// if it exists and we don't want hard code, return
+									return;
+								}
+							}
+						}
+						
+						// Check global script! Maybe there's another event there
+						auto toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
+						if( toExecute ) {
 							if( toExecute->OnDecay( itemCheck ) == 0 ){
-								
 								// if it exists and we don't want hard code, return
 								return;
 							}
 						}
-					}
-					
-					// Check global script! Maybe there's another event there
-					auto toExecute = JSMapping->GetScript( static_cast<UI16>(0) );
-					if( toExecute ) {
-						if( toExecute->OnDecay( itemCheck ) == 0 ){
-							// if it exists and we don't want hard code, return
-							return;
+						
+						if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) ){
+							continue;
 						}
 					}
-					
-					if( DecayItem( (*itemCheck), nextDecayItems, nextDecayItemsInHouses ) ){
-						continue;
-					}
+				}
+				switch( itemCheck->GetType() ){
+					case IT_ITEMSPAWNER:
+					case IT_NPCSPAWNER:
+					case IT_SPAWNCONT:
+					case IT_LOCKEDSPAWNCONT:
+					case IT_UNLOCKABLESPAWNCONT:
+					case IT_AREASPAWNER:
+					case IT_ESCORTNPCSPAWNER:
+						if( (itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) {
+							if( itemCheck->GetObjType() == OT_SPAWNER ) {
+								CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
+								if( spawnItem->DoRespawn() ){
+									continue;
+								}
+								spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
+							}
+							else {
+								itemCheck->SetType( IT_NOTYPE );
+								Console.warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
+							}
+						}
+						break;
+					case IT_SOUNDOBJECT:
+						if( itemCheck->GetTempVar( CITV_MOREY ) < 25 ) {
+							if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) ) {
+								for (auto &tSock : FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) )) {
+									Effects->PlaySound( tSock, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
+								}
+							}
+						}
+						break;
+					default:
+						break;
 				}
 			}
-			switch( itemCheck->GetType() ){
-				case IT_ITEMSPAWNER:
-				case IT_NPCSPAWNER:
-				case IT_SPAWNCONT:
-				case IT_LOCKEDSPAWNCONT:
-				case IT_UNLOCKABLESPAWNCONT:
-				case IT_AREASPAWNER:
-				case IT_ESCORTNPCSPAWNER:
-					if( (itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) {
-						if( itemCheck->GetObjType() == OT_SPAWNER ) {
-							CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
-							if( spawnItem->DoRespawn() ){
-								continue;
+			if( itemCheck->CanBeObjType( OT_BOAT ) ) {
+				CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
+				SI08 boatMoveType = mBoat->GetMoveType();
+				if( ValidateObject( mBoat ) && boatMoveType && ( (mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) ) {
+					if( boatMoveType != BOAT_ANCHORED ) {
+						switch( boatMoveType ) {
+								//case BOAT_ANCHORED:
+								//case BOAT_STOP:
+							case BOAT_FORWARD:
+							case BOAT_SLOWFORWARD:
+							case BOAT_ONEFORWARD:
+								MoveBoat( itemCheck->GetDir(), mBoat );
+								break;
+							case BOAT_BACKWARD:
+							case BOAT_SLOWBACKWARD:
+							case BOAT_ONEBACKWARD: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 4 );
+								if( dir > 7 )
+									dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
 							}
-							spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
+							case BOAT_LEFT:
+							case BOAT_SLOWLEFT:
+							case BOAT_ONELEFT: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 2 );
+								
+								dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							case BOAT_RIGHT:
+							case BOAT_SLOWRIGHT:
+							case BOAT_ONERIGHT: {
+								// Right / One Right
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 2 );
+								
+								dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							case BOAT_FORWARDLEFT:
+							case BOAT_SLOWFORWARDLEFT:
+							case BOAT_ONEFORWARDLEFT: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 1 );
+								
+								dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							case BOAT_FORWARDRIGHT:
+							case BOAT_SLOWFORWARDRIGHT:
+							case BOAT_ONEFORWARDRIGHT: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 1 );
+								
+								dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							case BOAT_BACKWARDLEFT:
+							case BOAT_SLOWBACKWARDLEFT:
+							case BOAT_ONEBACKWARDLEFT: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 5 );
+								if( dir > 7 )
+									dir %= 8;
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							case BOAT_BACKWARDRIGHT:
+							case BOAT_SLOWBACKWARDRIGHT:
+							case BOAT_ONEBACKWARDRIGHT: {
+								UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 3 );
+								if( dir > 7 ){
+									dir %= 8;
+								}
+								MoveBoat( dir, mBoat );
+								break;
+							}
+							default:
+								break;
+						}
+						
+						// One-step boat commands, so reset move type to 0 after the initial move
+						if( boatMoveType == BOAT_LEFT || boatMoveType == BOAT_RIGHT ) {
+							// Move 50% slower left/right than forward/back
+							mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+						}
+						else if( boatMoveType >= BOAT_ONELEFT && boatMoveType <= BOAT_ONEBACKWARDRIGHT ) {
+							mBoat->SetMoveType( 0 );
+							
+							// Set timer to restrict movement to normal boat speed if player spams command
+							mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
+						}
+						else if( boatMoveType >= BOAT_SLOWLEFT && boatMoveType <= BOAT_SLOWBACKWARDLEFT ) {
+							// Set timer to slowly move the boat forward
+							mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 2.0 ) );
 						}
 						else {
-							itemCheck->SetType( IT_NOTYPE );
-							Console.warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
+							// Set timer to move the boat forward at normal speed
+							mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
 						}
-					}
-					break;
-				case IT_SOUNDOBJECT:
-					if( itemCheck->GetTempVar( CITV_MOREY ) < 25 ) {
-						if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) ) {
-							for (auto &tSock : FindNearbyPlayers( itemCheck, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREY )) )) {
-								Effects->PlaySound( tSock, static_cast<UI16>(itemCheck->GetTempVar( CITV_MOREX )), false );
-							}
-						}
-					}
-					break;
-				default:
-					break;
-			}
-		}
-		if( itemCheck->CanBeObjType( OT_BOAT ) ) {
-			CBoatObj *mBoat = static_cast<CBoatObj *>(itemCheck);
-			SI08 boatMoveType = mBoat->GetMoveType();
-			if( ValidateObject( mBoat ) && boatMoveType && ( (mBoat->GetMoveTime() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) ) {
-				if( boatMoveType != BOAT_ANCHORED ) {
-					switch( boatMoveType ) {
-							//case BOAT_ANCHORED:
-							//case BOAT_STOP:
-						case BOAT_FORWARD:
-						case BOAT_SLOWFORWARD:
-						case BOAT_ONEFORWARD:
-							MoveBoat( itemCheck->GetDir(), mBoat );
-							break;
-						case BOAT_BACKWARD:
-						case BOAT_SLOWBACKWARD:
-						case BOAT_ONEBACKWARD:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 4 );
-							if( dir > 7 )
-								dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_LEFT:
-						case BOAT_SLOWLEFT:
-						case BOAT_ONELEFT:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 2 );
-							
-							dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_RIGHT:
-						case BOAT_SLOWRIGHT:
-						case BOAT_ONERIGHT:
-						{
-							// Right / One Right
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 2 );
-							
-							dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_FORWARDLEFT:
-						case BOAT_SLOWFORWARDLEFT:
-						case BOAT_ONEFORWARDLEFT:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() - 1 );
-							
-							dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_FORWARDRIGHT:
-						case BOAT_SLOWFORWARDRIGHT:
-						case BOAT_ONEFORWARDRIGHT:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 1 );
-							
-							dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_BACKWARDLEFT:
-						case BOAT_SLOWBACKWARDLEFT:
-						case BOAT_ONEBACKWARDLEFT:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 5 );
-							if( dir > 7 )
-								dir %= 8;
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						case BOAT_BACKWARDRIGHT:
-						case BOAT_SLOWBACKWARDRIGHT:
-						case BOAT_ONEBACKWARDRIGHT:
-						{
-							UI08 dir = static_cast<UI08>( itemCheck->GetDir() + 3 );
-							if( dir > 7 ){
-								dir %= 8;
-							}
-							MoveBoat( dir, mBoat );
-							break;
-						}
-						default:
-							break;
-					}
-					
-					// One-step boat commands, so reset move type to 0 after the initial move
-					if( boatMoveType == BOAT_LEFT || boatMoveType == BOAT_RIGHT ) {
-						// Move 50% slower left/right than forward/back
-						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
-					}
-					else if( boatMoveType >= BOAT_ONELEFT && boatMoveType <= BOAT_ONEBACKWARDRIGHT ) {
-						mBoat->SetMoveType( 0 );
-						
-						// Set timer to restrict movement to normal boat speed if player spams command
-						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 1.5 ) );
-					}
-					else if( boatMoveType >= BOAT_SLOWLEFT && boatMoveType <= BOAT_SLOWBACKWARDLEFT ) {
-						// Set timer to slowly move the boat forward
-						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() * 2.0 ) );
-					}
-					else {
-						// Set timer to move the boat forward at normal speed
-						mBoat->SetMoveTime( BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckBoatSpeed() ) );
 					}
 				}
 			}
-		}
-		
-		// Do JS Weather for item
-		if( doWeather ) {
-			doLight( itemCheck, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+			
+			// Do JS Weather for item
+			if( doWeather ) {
+				doLight( itemCheck, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
+			}
 		}
 	}
-	regItems->Pop();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2041,42 +2019,38 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	bool allowAwakeNPCs = cwmWorldState->ServerData()->AllowAwakeNPCs();
 	for (auto &toCheck : regionList){
 		auto regChars = toCheck->GetCharList();
-		regChars->Push();
-		for( CChar *charCheck = regChars->First(); !regChars->Finished(); charCheck = regChars->Next() ) {
-			if( !ValidateObject( charCheck ) || charCheck->isFree() ){
-				continue;
-			}
-			if( charCheck->IsNpc() ) {
-				if( charCheck->IsAwake() && allowAwakeNPCs ){
-					continue;
-				}
-				
-				// Only perform these checks on NPCs that are not permanently awake
-				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) ) {
-					if( setNPCFlags ){
-						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
+		for (auto charCheck:regChars->collection()){
+			if( ValidateObject( charCheck ) && charCheck->isFree() ){
+				if( charCheck->IsNpc() ) {
+					if( !charCheck->IsAwake() || !allowAwakeNPCs ){
+						
+						// Only perform these checks on NPCs that are not permanently awake
+						if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) ) {
+							if( setNPCFlags ){
+								UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
+							}
+							checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
+						}
 					}
-					checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
 				}
-			}
-			else if( charCheck->GetTimer( tPC_LOGOUT ) ) {
-				CAccountBlock& actbTemp = charCheck->GetAccount();
-				if( actbTemp.wAccountIndex != AB_INVALID_ID ) {
-					SERIAL oaiw = actbTemp.dwInGame;
-					if( oaiw == INVALIDSERIAL ) {
-						charCheck->SetTimer( tPC_LOGOUT, 0 );
-						charCheck->Update();
-					}
-					else if( (oaiw == charCheck->GetSerial()) && ( (charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime()) || GetOverflow() ) ) {
-						actbTemp.dwInGame = INVALIDSERIAL;
-						charCheck->SetTimer( tPC_LOGOUT, 0 );
-						charCheck->Update();
-						charCheck->Teleport();
+				else if( charCheck->GetTimer( tPC_LOGOUT ) ) {
+					CAccountBlock& actbTemp = charCheck->GetAccount();
+					if( actbTemp.wAccountIndex != AB_INVALID_ID ) {
+						SERIAL oaiw = actbTemp.dwInGame;
+						if( oaiw == INVALIDSERIAL ) {
+							charCheck->SetTimer( tPC_LOGOUT, 0 );
+							charCheck->Update();
+						}
+						else if( (oaiw == charCheck->GetSerial()) && ( (charCheck->GetTimer( tPC_LOGOUT ) <= GetUICurrentTime()) || GetOverflow() ) ) {
+							actbTemp.dwInGame = INVALIDSERIAL;
+							charCheck->SetTimer( tPC_LOGOUT, 0 );
+							charCheck->Update();
+							charCheck->Teleport();
+						}
 					}
 				}
 			}
 		}
-		regChars->Pop();
 		
 		checkItem( toCheck, checkItems, nextDecayItems, nextDecayItemsInHouses, doWeather );
 	}
@@ -2084,23 +2058,24 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	// Check NPCs marked as always active, regardless of whether their region is "awake"
 	if( allowAwakeNPCs ) {
 		auto alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
-		alwaysAwakeChars->Push();
-		for( CChar *charCheck = alwaysAwakeChars->First(); !alwaysAwakeChars->Finished(); charCheck = alwaysAwakeChars->Next() )
-		{
-			if( !ValidateObject( charCheck ) || charCheck->isFree() || !charCheck->IsNpc() )
-			{
-				alwaysAwakeChars->Remove( charCheck );
-				continue;
+		std::vector<CChar*> toRemove ;
+		for (auto &charCheck : alwaysAwakeChars->collection()){
+			if( ValidateObject( charCheck ) && !charCheck->isFree() && charCheck->IsNpc() ) {
+				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) ) {
+					if( setNPCFlags ){
+						UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
+					}
+					checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
+				}
 			}
-			
-			if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) )
-			{
-				if( setNPCFlags )
-					UpdateFlag( charCheck );	 // only set flag on npcs every 60 seconds (save a little extra lag)
-				checkNPC( (*charCheck), checkAI, doRestock, doPetOfflineCheck );
+			else {
+				toRemove.push_back(charCheck);
 			}
 		}
-		alwaysAwakeChars->Pop();
+		std::for_each(toRemove.begin(), toRemove.end(), [&alwaysAwakeChars](CChar *character){
+			alwaysAwakeChars->Remove(character);
+		});
+		toRemove.clear() ;
 	}
 	
 	Effects->checktempeffects();
@@ -3359,8 +3334,7 @@ void DoorMacro( CSocket *s )
 	for (auto &toCheck : MapRegion->PopulateList( mChar )){
 		if(toCheck){
 			auto regItems = toCheck->GetItemList();
-			regItems->Push();
-			for( CItem *itemCheck = regItems->First(); !regItems->Finished(); itemCheck = regItems->Next() ) {
+			for (auto &itemCheck : regItems->collection()){
 				if( ValidateObject( itemCheck ) && (itemCheck->GetInstanceID() == mChar->GetInstanceID()) ){
 					SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
 					if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 ) {
@@ -3368,18 +3342,16 @@ void DoorMacro( CSocket *s )
 							// only open doors
 							if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>(itemCheck->GetType()) ) ) {
 								UI16 envTrig = JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>(itemCheck->GetType()) );
-								cScript *envExecute = JSMapping->GetScript( envTrig );
-								if( envExecute != nullptr )
+								auto envExecute = JSMapping->GetScript( envTrig );
+								if(envExecute)
 									[[maybe_unused]] SI08 retVal = envExecute->OnUseChecked( mChar, itemCheck );
 								
-								regItems->Pop();
 								return;
 							}
 						}
 					}
 				}
 			}
-			regItems->Pop();
 		}
 	}
 }

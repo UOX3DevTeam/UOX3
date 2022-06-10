@@ -6930,17 +6930,12 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 	bool retVal = false;
 	if( ValidateObject( toCheck ) )
 	{
-		GenericList< CChar * > *petOwnerListTemp = GetPetOwnerList();
-		petOwnerListTemp->Push();
-		for( CChar *tempChar = petOwnerListTemp->First(); !petOwnerListTemp->Finished(); tempChar = petOwnerListTemp->Next() )
-		{
-			if( ValidateObject( tempChar ) && tempChar == toCheck )
-			{
-				retVal = true;
-				break;
-			}
+		auto iter = std::find_if(GetPetOwnerList()->collection().begin(),GetPetOwnerList()->collection().end(),[&toCheck,this](CChar *petChar){
+			return (petChar == toCheck) && ValidateObject(petChar);
+		});
+		if (iter != GetPetOwnerList()->collection().end()){
+			retVal = true ;
 		}
-		petOwnerListTemp->Pop();
 	}
 
 	return retVal;

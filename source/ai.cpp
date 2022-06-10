@@ -87,22 +87,16 @@ void HandleGuardAI( CChar& mChar )
 	{
 		for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 			if( MapArea){
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( isValidAttackTarget( mChar, tempChar ) )
-					{
-						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) )
-						{
+				auto regChars = MapArea->GetCharList();
+				for (auto &tempChar : regChars->collection()){
+					if( isValidAttackTarget( mChar, tempChar ) ) {
+						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) ) {
 							Combat->AttackTarget( &mChar, tempChar );
 							mChar.TextMessage( nullptr, 313, TALK, true );
-							regChars->Pop();
 							return;
 						}
 					}
 				}
-				regChars->Pop();
 			}
 		}
 	}
@@ -123,52 +117,43 @@ void HandleFighterAI( CChar& mChar )
 
 		for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 			if( MapArea){
-				GenericList< CChar * > *regChars = MapArea->GetCharList();
-				regChars->Push();
-				for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-				{
-					if( isValidAttackTarget( mChar, tempChar ) )
-					{
+				auto regChars = MapArea->GetCharList();
+				for (auto &tempChar : regChars->collection()){
+					if( isValidAttackTarget( mChar, tempChar ) ) {
 						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 						// This event will override target selection entirely
 						bool invalidTarget = false;
-						for( auto scriptTrig : scriptTriggers )
-						{
-							cScript *toExecute = JSMapping->GetScript( scriptTrig );
-							if( toExecute != nullptr )
-							{
+						for( auto scriptTrig : scriptTriggers ) {
+							auto toExecute = JSMapping->GetScript( scriptTrig );
+							if( toExecute) {
 								SI08 retVal = toExecute->OnAICombatTarget( &mChar, tempChar );
-								if( retVal == -1 ) // No such event found, or returned -1
+								if( retVal == -1 ){ // No such event found, or returned -1
 									continue;
-								else if( retVal == 0 )
-								{
+								}
+								else if( retVal == 0 ) {
 									// Invalid target! But look through other scripts with event first
 									invalidTarget = true;
 									continue;
 								}
-								else if( retVal == 1 )
-								{
+								else if( retVal == 1 ) {
 									// Valid target!
 									Combat->AttackTarget( &mChar, tempChar );
-									regChars->Pop(); // restore before returning
 									return;
 								}
 							}
 						}
-						if( invalidTarget )
-							continue;
-						RaceRelate raceComp = Races->Compare( tempChar, &mChar );
-						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY ))
-						{
-							if( RandomNum( 1, 100 ) >= 85 ) // 85% chance to attack current target, 15% chance to pick another
-								continue;
-							Combat->AttackTarget( &mChar, tempChar );
-							regChars->Pop();
-							return;
+						if( !invalidTarget ){
+							RaceRelate raceComp = Races->Compare( tempChar, &mChar );
+							if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() || raceComp <= RACE_ENEMY )) {
+								if( RandomNum( 1, 100 ) < 85 ){ // 85% chance to attack current target, 15% chance to pick another
+									
+									Combat->AttackTarget( &mChar, tempChar );
+									return;
+								}
+							}
 						}
 					}
 				}
-				regChars->Pop();
 			}
 		}
 	}
