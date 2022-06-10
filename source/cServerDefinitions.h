@@ -51,11 +51,10 @@ public:
 class CServerDefinitions
 {
 private:
-	std::vector< VECSCRIPTLIST >			ScriptListings;
-	VECSCRIPTLIST_ITERATOR					slIter;
+	VECSCRIPTLIST_ITERATOR	 slIter;
 
-	std::map< std::string, SI16 >			priorityMap;
-	SI16									defaultPriority;
+	std::map< std::string, SI16 >	 priorityMap;
+	SI16	 defaultPriority;
 
 	void				LoadDFNCategory( DEFINITIONCATEGORIES toLoad );
 	void				ReloadScriptObjects( void );
@@ -66,6 +65,8 @@ private:
 
 	void				Cleanup( void );
 public:
+	std::vector< VECSCRIPTLIST >			ScriptListings;
+
 	CServerDefinitions();
 	CServerDefinitions( const char *indexfilename );
 	~CServerDefinitions();

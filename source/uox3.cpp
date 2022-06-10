@@ -548,29 +548,32 @@ auto UnloadSpawnRegions() ->void {
 	for (auto &[regionnum,spawnregion]:cwmWorldState->spawnRegions) {
 		if( spawnregion ) {
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
-		
+			std::vector<CChar *> toDelete ;
 			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
 			for (auto &cCheck : spawnedCharsList->collection()){
-				if (cCheck){
 					if( ValidateObject( cCheck ) ){
 						if( !ValidateObject( cCheck->GetOwnerObj() )) {
-							cCheck->Delete();
+							toDelete.push_back(cCheck);
 						}
 					}
-				}
 			}
-			
+			std::for_each(toDelete.begin(), toDelete.end(), [](CChar *entry){
+				entry->Delete();
+			});
 			// Iterate over list of spawned items and delete them if no player has picked them up
+			std::vector<CItem *> toIDelete ;
 			auto spawnedItemsList = spawnregion->GetSpawnedItemsList();
 			for (auto &iCheck : spawnedItemsList->collection()){
-				if (iCheck){
 					if( ValidateObject( iCheck ) ){
 						if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() )) {
-							iCheck->Delete();
+							toIDelete.push_back(iCheck);
 						}
 					}
-				}
 			}
+			std::for_each(toIDelete.begin(), toIDelete.end(), [](CItem *entry){
+				entry->Delete();
+			});
+
 			delete spawnregion;
 		}
 	}

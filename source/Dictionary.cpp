@@ -65,9 +65,8 @@ auto CDictionary::LoadDictionary()->std::int32_t {
 	if( FileExists( PathToDictionary ) ) {
 		auto dictData = std::make_unique<Script>( PathToDictionary, NUM_DEFS, false );
 		if( dictData != nullptr ) {
-			ScriptSection *dictSect = nullptr;
 			std::string tag, data;
-			for( dictSect = dictData->FirstEntry(); dictSect != nullptr; dictSect = dictData->NextEntry() ) {
+			for (auto &[entryName, dictSect]:dictData->collection()){
 				if(dictSect) {
 					// verify it is a dictionary entry
 					if( dictData->EntryName().substr( 0, 10 ) == "DICTIONARY" ) {
