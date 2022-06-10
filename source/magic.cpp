@@ -4148,212 +4148,169 @@ void cMagic::LoadScript( void )
 	std::string spEntry;
 	std::string tag, data, UTag;
 	UI08 i = 0;
-	for( Script *spellScp = FileLookup->FirstScript( spells_def ); !FileLookup->FinishedScripts( spells_def ); spellScp = FileLookup->NextScript( spells_def ) )
-	{
-		if( spellScp == nullptr )
-			continue;
-
-		for( ScriptSection *SpellLoad = spellScp->FirstEntry(); SpellLoad != nullptr; SpellLoad = spellScp->NextEntry() )
-		{
-			if( SpellLoad == nullptr )
-				continue;
-
-			spEntry = spellScp->EntryName();
-			auto ssecs = oldstrutil::sections( spEntry, " " );
-			if( ssecs[0] == "SPELL" )
-			{
-				i = static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0) );
-				if( i <= SPELL_MAX )
-				{
-					++spellCount;
-					spells[i].Enabled( false );
-					reag_st *mRegs = spells[i].ReagantsPtr();
-
-					//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
-
-					for( tag = SpellLoad->First(); !SpellLoad->AtEnd(); tag = SpellLoad->Next() )
-					{
-						UTag = oldstrutil::upper( tag );
-						data = SpellLoad->GrabData();
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
-						switch( (UTag.data()[0]) )
-						{
-							case 'A':
-								if( UTag == "ACTION" )
-								{
-									spells[i].Action( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+	for (auto &spellScp : FileLookup->ScriptListings[spells_def]){
+		if(spellScp) {
+			for (auto &[spEntry, SpellLoad]:spellScp->collection()){
+				if(SpellLoad) {
+					auto ssecs = oldstrutil::sections( spEntry, " " );
+					if( ssecs[0] == "SPELL" ) {
+						i = static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0) );
+						if( i <= SPELL_MAX ) {
+							++spellCount;
+							spells[i].Enabled( false );
+							reag_st *mRegs = spells[i].ReagantsPtr();
+							
+							//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
+							for (auto &sec : SpellLoad->collection()){
+								tag = sec->tag ;
+								data = sec->data ;
+								UTag = oldstrutil::upper( tag );
+								data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+								//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
+								switch( (UTag.data()[0]) ) {
+									case 'A':
+										if( UTag == "ACTION" ) {
+											spells[i].Action( static_cast<UI16>(std::stoul(data, nullptr, 0))  );
+										}
+										else if( UTag == "ASH" ) {
+											mRegs->ash =static_cast<UI08>(std::stoul(data, nullptr, 0));
+										}
+										break;
+									case 'B':
+										if( UTag == "BASEDMG" ) {
+											spells[i].BaseDmg( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										break;
+									case 'C':
+										if( UTag == "CIRCLE" ) {
+											spells[i].Circle( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
+										}
+										break;
+									case 'D':
+										if( UTag == "DAMAGEDELAY" ) {
+											spells[i].DamageDelay( static_cast<R32>(std::stof(data)) );
+										}
+										else if( UTag == "DELAY" ) {
+											spells[i].Delay( static_cast<R32>(std::stof(data)) );
+										}
+										else if( UTag == "DRAKE" ) {
+											mRegs->drake = static_cast<UI08>(std::stoul(data, nullptr, 0));
+										}
+										break;
+									case 'E':
+										if( UTag == "ENABLE" ) {// presence of enable is enough to enable it
+											spells[i].Enabled(std::stoul(data, nullptr, 0) != 0 );
+										}
+										break;
+									case 'F':
+										if( UTag == "FLAGS" ) {
+											auto ssecs = oldstrutil::sections( data, " " );
+											if( ssecs.size() > 1 ) {
+												spells[i].Flags(((static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)))<<8) ||
+														    static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)));
+												
+											}
+											else {
+												spells[i].Flags( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+											}
+										}
+										break;
+									case 'G':
+										if( UTag == "GARLIC" ) {
+											mRegs->garlic  = static_cast<UI08>(std::stoul(data, nullptr, 0));
+										}
+										else if( UTag == "GINSENG" ) {
+											mRegs->ginseng = static_cast<UI08>(std::stoul(data, nullptr, 0));
+										}
+										break;
+									case 'H':
+										if( UTag == "HISKILL" ) {
+											spells[i].HighSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)));
+										}
+										else if( UTag == "HEALTH" ) {
+											spells[i].Health( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										break;
+									case 'L':
+										if( UTag == "LOSKILL" ) {
+											spells[i].LowSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										break;
+									case 'M':
+										if( UTag == "MANA" ) {
+											spells[i].Mana( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										else if( UTag == "MANTRA" ) {
+											spells[i].Mantra( data );
+										}
+										else if( UTag == "MOSS" ) {
+											mRegs->moss = static_cast<UI08>(std::stoul(data, nullptr, 0));
+										}
+										else if( UTag == "MOVEFX" ) {
+											auto ssecs = oldstrutil::sections( data, " " );
+											if( ssecs.size() > 1 ) {
+												CMagicMove *mv = spells[i].MoveEffectPtr();
+												mv->Effect( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
+												mv->Speed( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
+												mv->Loop( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
+												mv->Explode( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[4], "//" )), nullptr, 16)));
+											}
+										}
+										break;
+									case 'P':
+										if( UTag == "PEARL" ) {
+											mRegs->pearl = static_cast<UI08>(std::stoul(data,nullptr,0));
+										}
+										break;
+									case 'R':
+										if( UTag == "RECOVERYDELAY" ) {
+											spells[i].RecoveryDelay( static_cast<R32>(std::stof(data)) );
+										}
+										break;
+									case 'S':
+										if( UTag == "SHADE" ) {
+											mRegs->shade = static_cast<UI08>(std::stoul(data,nullptr,0));
+										}
+										else if( UTag == "SILK" ) {
+											mRegs->silk = static_cast<UI08>(std::stoul(data,nullptr,0));
+										}
+										else if( UTag == "SOUNDFX" ) {
+											auto ssecs = oldstrutil::sections( data, " " );
+											if( ssecs.size() > 1 ) {
+												spells[i].Effect( ( (static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16))<<8) ||
+															 static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16))));
+											}
+											else {
+												spells[i].Effect( static_cast<UI16>(std::stoul(data,nullptr,0)) );
+											}
+										}
+										else if( UTag == "STATFX" ) {
+											auto ssecs = oldstrutil::sections( data, " " );
+											if( ssecs.size() > 1 ) {
+												CMagicStat *stat = spells[i].StaticEffectPtr();
+												
+												stat->Effect( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
+												stat->Speed( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
+												stat->Loop( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
+											}
+										}
+										else if( UTag == "SCLO" ) {
+											spells[i].ScrollLow( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										else if( UTag == "SCHI" ) {
+											spells[i].ScrollHigh(  static_cast<SI16>(std::stoi(data, nullptr, 0)) );
+										}
+										else if( UTag == "STAMINA" ) {
+											spells[i].Stamina(  static_cast<SI16>(std::stoi(data, nullptr, 0)));
+										}
+										break;
+									case 'T':
+										if( UTag == "TARG" ) {
+											spells[i].StringToSay( data );
+										}
+										break;
 								}
-								else if( UTag == "ASH" )
-								{
-									mRegs->ash =static_cast<UI08>(std::stoul(data, nullptr, 0));
-								}
-								break;
-							case 'B':
-								if( UTag == "BASEDMG" )
-								{
-									spells[i].BaseDmg( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								break;
-							case 'C':
-								if( UTag == "CIRCLE" )
-								{
-									spells[i].Circle( static_cast<UI08>(std::stoul(data, nullptr, 0)) );
-								}
-								break;
-							case 'D':
-								if( UTag == "DAMAGEDELAY" )
-								{
-									spells[i].DamageDelay( static_cast<R32>(std::stof(data)) );
-								}
-								else if( UTag == "DELAY" )
-								{
-									spells[i].Delay( static_cast<R32>(std::stof(data)) );
-								}
-								else if( UTag == "DRAKE" )
-								{
-									mRegs->drake = static_cast<UI08>(std::stoul(data, nullptr, 0));
-								}
-								break;
-							case 'E':
-								if( UTag == "ENABLE" ) // presence of enable is enough to enable it
-								{
-									spells[i].Enabled(std::stoul(data, nullptr, 0) != 0 );
-								}
-								break;
-							case 'F':
-								if( UTag == "FLAGS" )
-								{
-									auto ssecs = oldstrutil::sections( data, " " );
-									if( ssecs.size() > 1 )
-									{
-										spells[i].Flags(((static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)))<<8) ||
-												    static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)));
-												    
-									}
-									else
-									{
-										spells[i].Flags( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
-									}
-								}
-								break;
-							case 'G':
-								if( UTag == "GARLIC" )
-								{
-									mRegs->garlic  = static_cast<UI08>(std::stoul(data, nullptr, 0));
-								}
-								else if( UTag == "GINSENG" )
-								{
-									mRegs->ginseng = static_cast<UI08>(std::stoul(data, nullptr, 0));
-								}
-								break;
-							case 'H':
-								if( UTag == "HISKILL" )
-								{
-									spells[i].HighSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)));
-								}
-								else if( UTag == "HEALTH" )
-								{
-									spells[i].Health( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								break;
-							case 'L':
-								if( UTag == "LOSKILL" )
-								{
-									spells[i].LowSkill( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								break;
-							case 'M':
-								if( UTag == "MANA" )
-								{
-									spells[i].Mana( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								else if( UTag == "MANTRA" )
-								{
-									spells[i].Mantra( data );
-								}
-								else if( UTag == "MOSS" )
-								{
-									mRegs->moss = static_cast<UI08>(std::stoul(data, nullptr, 0));
-								}
-								else if( UTag == "MOVEFX" )
-								{
-									auto ssecs = oldstrutil::sections( data, " " );
-									if( ssecs.size() > 1 )
-									{										
-										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
-										mv->Speed( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
-										mv->Loop( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
-										mv->Explode( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[4], "//" )), nullptr, 16)));
-									}
-								}
-								break;
-							case 'P':
-								if( UTag == "PEARL" )
-								{
-									mRegs->pearl = static_cast<UI08>(std::stoul(data,nullptr,0));
-								}
-								break;
-							case 'R':
-								if( UTag == "RECOVERYDELAY" )
-								{
-									spells[i].RecoveryDelay( static_cast<R32>(std::stof(data)) );
-								}
-								break;
-							case 'S':
-								if( UTag == "SHADE" )
-								{
-									mRegs->shade = static_cast<UI08>(std::stoul(data,nullptr,0));
-								}
-								else if( UTag == "SILK" )
-								{
-									mRegs->silk = static_cast<UI08>(std::stoul(data,nullptr,0));
-								}
-								else if( UTag == "SOUNDFX" )
-								{
-									auto ssecs = oldstrutil::sections( data, " " );
-									if( ssecs.size() > 1 )
-									{
-										spells[i].Effect( ( (static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16))<<8) ||
-												    static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16))));
-									}
-									else
-									{
-										spells[i].Effect( static_cast<UI16>(std::stoul(data,nullptr,0)) );
-									}
-								}
-								else if( UTag == "STATFX" )
-								{
-									auto ssecs = oldstrutil::sections( data, " " );
-									if( ssecs.size() > 1 )
-									{
-										CMagicStat *stat = spells[i].StaticEffectPtr();
-										
-										stat->Effect( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16)), static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16)) );
-										stat->Speed( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16)) );
-										stat->Loop( static_cast<UI08>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16)) );
-									}
-								}
-								else if( UTag == "SCLO" )
-								{
-									spells[i].ScrollLow( static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								else if( UTag == "SCHI" )
-								{
-									spells[i].ScrollHigh(  static_cast<SI16>(std::stoi(data, nullptr, 0)) );
-								}
-								else if( UTag == "STAMINA" )
-								{
-									spells[i].Stamina(  static_cast<SI16>(std::stoi(data, nullptr, 0)));
-								}
-								break;
-							case 'T':
-								if( UTag == "TARG" )
-								{
-									spells[i].StringToSay( data );
-								}
-								break;
+							}
 						}
 					}
 				}
@@ -4366,10 +4323,11 @@ void cMagic::LoadScript( void )
 #endif
 
 	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_MAGIC );
-	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
-	{
-		if( ourScript != nullptr )
+	
+	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() ) {
+		if( ourScript ){
 			ourScript->ScriptRegistration( "Spell" );
+		}
 	}
 }
 

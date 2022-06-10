@@ -299,3 +299,36 @@ auto ObjectFactory::SizeOfObjects(ObjectType type) const ->size_t {
 	return collection->size() * size ;
 	
 }
+//=========================================================
+auto ObjectFactory::validObject(CBaseObject *object,ObjectType type ) ->bool {
+	auto findObject = [](CBaseObject* object , factory_collection &collect) {
+		auto iter = std::find_if(collect.begin(),collect.end(),[object] (std::pair<std::uint32_t,CBaseObject *> entry){
+			return entry.second = object ;
+		});
+		if (iter != collect.end()){
+			return true ;
+		}
+		return false ;
+		
+	};
+	auto rvalue = false ;
+	if (type == ObjectType::OT_CHAR) {
+		rvalue = findObject(object,chars) ;
+	}
+	else if ((type == ObjectType::OT_BOAT) || (type == ObjectType::OT_MULTI)){
+		rvalue = findObject(object,multis) ;
+	}
+	else if ((type == ObjectType::OT_ITEM) || (type == ObjectType::OT_SPAWNER)){
+		rvalue = findObject(object,items);
+	}
+	else {
+		rvalue = findObject(object,chars) ;
+		if (!rvalue) {
+			rvalue = findObject(object, items);
+			if (!rvalue) {
+				rvalue = findObject(object, multis);
+			}
+		}
+	}
+	return rvalue ;
+}

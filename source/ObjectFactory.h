@@ -88,7 +88,7 @@ public:
 	auto CreateBlankObject(ObjectType type) ->CBaseObject * ;
 	
 	auto FindObject( std::uint32_t toFind ) -> CBaseObject * ;
-	
+	auto validObject(CBaseObject *object,ObjectType type =ObjectType::OT_CBO) ->bool ;
 	// ******************************************************
 	// Probably should be a size_t return, but uo can only handle a uint32
 	auto CountOfObjects(ObjectType type) const -> std::uint32_t ;

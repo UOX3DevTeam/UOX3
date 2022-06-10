@@ -1309,24 +1309,19 @@ auto CMulHandler::LoadDFNOverrides()->void{
 
 	std::string data, UTag, entryName, titlePart;
 	size_t entryNum;
-
-	for( Script *mapScp = FileLookup->FirstScript( maps_def ); !FileLookup->FinishedScripts( maps_def ); mapScp = FileLookup->NextScript( maps_def ) )
-	{
+	for (auto &mapScp : FileLookup->ScriptListings[maps_def]){
 		if( mapScp ){
-			for( ScriptSection *toScan = mapScp->FirstEntry(); toScan != nullptr; toScan = mapScp->NextEntry() )
-			{
+			for (auto &[entryName, toScan]: mapScp->collection()){
 				if( toScan ){
-					entryName	= mapScp->EntryName();
+					
 					entryNum	= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(entryName," ", 1, 1 ));
 					titlePart	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
 					// have we got an entry starting with TILE ?
-					if( titlePart == "TILE" && entryNum )
-					{
+					if( titlePart == "TILE" && entryNum ) {
 						if( (entryNum != INVALIDID) && (entryNum < tileDataSize) ){
 							
 							auto tile = &staticTile[entryNum];
-							if(tile)
-							{
+							if(tile) {
 								for (auto &sec : toScan->collection()){
 									auto tag = sec->tag ;
 									data	= sec->data;
@@ -1464,8 +1459,7 @@ auto CMulHandler::LoadDFNOverrides()->void{
 							}
 						}
 					}
-					else if( titlePart == "LAND" && entryNum )
-					{	// let's not deal with this just yet
+					else if( titlePart == "LAND" && entryNum ) {	// let's not deal with this just yet
 					}
 				}
 			}
