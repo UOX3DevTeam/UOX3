@@ -17,10 +17,10 @@ const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", 
 class CJSMappingSection
 {
 private:
-	std::map< UI16, cScript * >			scriptIDMap;
-	std::map< JSObject *, UI16 >			scriptJSMap;
+	std::map< UI16, cScript * > scriptIDMap;
+	std::map< JSObject *, UI16 >	 scriptJSMap;
 
-	std::map< UI16, cScript * >::iterator	scriptIDIter;
+	std::map< UI16, cScript * >::iterator scriptIDIter;
 
 	SCRIPTTYPE								scriptType;
 public:
@@ -50,18 +50,18 @@ public:
 class CJSMapping
 {
 private:
-	CJSMappingSection *				mapSection[SCPT_COUNT];
 
-	CEnvoke *						envokeByID;
-	CEnvoke *						envokeByType;
+	CJSMappingSection * mapSection[SCPT_COUNT];
+	CEnvoke *	 envokeByID;
+	CEnvoke *	 envokeByType;
 
-	void				Cleanup( void );
-	void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
+	void		 Cleanup( void );
+	void		 Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 public:
-	CJSMapping( void );
+	CJSMapping( );
 	~CJSMapping();
-	void				ResetDefaults( void );
+	void	 ResetDefaults( void );
 
 	void				Reload( UI16 scriptID = 0xFFFF );
 	void				Reload( SCRIPTTYPE sectionID );

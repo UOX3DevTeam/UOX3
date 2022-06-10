@@ -551,13 +551,13 @@ auto UnloadSpawnRegions() ->void {
 		
 			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
 			for (auto &cCheck : spawnedCharsList->collection()){
-				if (cCheck){
+				//if (cCheck){
 					if( ValidateObject( cCheck ) ){
 						if( !ValidateObject( cCheck->GetOwnerObj() )) {
 							cCheck->Delete();
 						}
 					}
-				}
+				//}
 			}
 			
 			// Iterate over list of spawned items and delete them if no player has picked them up

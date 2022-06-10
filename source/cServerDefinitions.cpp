@@ -7,6 +7,8 @@
 #include "IP4Address.hpp"
 
 #include <memory>
+#include <array>
+
 using namespace std::string_literals ;
 
 CServerDefinitions *FileLookup;
@@ -44,30 +46,30 @@ std::string ShortDirectory( std::string sPath )
 
 const std::string dirnames[NUM_DEFS] =
 {
-	"items",
-	"npc",
-	"create",
-	"regions",
-	"misc",
-	"skills",
-	"location",
-	"menus",
-	"spells",
-	"newbie",
-	"titles",
-	"advance",
-	"house",
-	"colors",
-	"spawn",
-	"html",
-	"race",
-	"weather",
-	"harditems",
-	"command",
-	"msgboard",
-	"carve",
-	"creatures",
-	"maps"
+	"items"s,
+	"npc"s,
+	"create"s,
+	"regions"s,
+	"misc"s,
+	"skills"s,
+	"location"s,
+	"menus"s,
+	"spells"s,
+	"newbie"s,
+	"titles"s,
+	"advance"s,
+	"house"s,
+	"colors"s,
+	"spawn"s,
+	"html"s,
+	"race"s,
+	"weather"s,
+	"harditems"s,
+	"command"s,
+	"msgboard"s,
+	"carve"s,
+	"creatures"s,
+	"maps"s
 };
 
 std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;

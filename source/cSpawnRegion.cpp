@@ -1047,14 +1047,12 @@ void CSpawnRegion::checkSpawned( void )
 	{
 		if( ValidateObject( cCheck ) )
 		{
-			if( ValidateObject( cCheck->GetOwnerObj() ) )
-			{
+			if( ValidateObject( cCheck->GetOwnerObj() ) ) {
 				cCheck->ShouldSave( true );
 				spawnedChars.Remove( cCheck );
 			}
 		}
-		else
-		{
+		else {
 			Console.warning( "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
 			spawnedChars.Remove( cCheck );
 		}

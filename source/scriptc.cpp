@@ -109,6 +109,14 @@ Script::Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp 
 	}
 	reload( disp );
 }
+//===============================================================================================
+auto Script::collection() const -> const SSMAP& {
+	return defEntries;
+}
+//===============================================================================================
+auto Script::collection() -> SSMAP& {
+	return defEntries;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	~Script()
@@ -171,14 +179,7 @@ ScriptSection *Script::FindEntrySubStr( const std::string& section )
 	return rvalue;
 }
 
-//================================================================================================
-auto Script::collection() const ->const SSMAP& {
-	return defEntries;
-}
-//================================================================================================
-auto Script::collection()  -> SSMAP& {
-	return defEntries;
-}
+
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function		-	ScriptSection *FirstEntry( void )
@@ -188,7 +189,7 @@ auto Script::collection()  -> SSMAP& {
 ScriptSection *Script::FirstEntry( void )
 {
 	ScriptSection *rvalue	= nullptr;
-	iSearch					= defEntries.begin();
+	iSearch = defEntries.begin();
 	if( iSearch != defEntries.end() )
 		rvalue = iSearch->second;
 	return rvalue;
