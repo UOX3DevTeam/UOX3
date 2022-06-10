@@ -312,7 +312,7 @@ auto startInitialize() ->void {
 		
 		// Moved BulkStartup here, dunno why that function was there...
 		Console << "Loading dictionaries...        " << myendl;
-		Console.PrintBasedOnVal( Dictionary->LoadDictionary() >= 0 );
+		Console.PrintBasedOnVal( Dictionary->LoadDictionary(cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES )) >= 0 );
 		
 		Console << "Loading teleport               ";
 		LoadTeleportLocations();
