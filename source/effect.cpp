@@ -500,409 +500,370 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks timer-controlled temporary effects
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::checktempeffects( void )
-{
+auto cEffects::checktempeffects()->void {
 	CItem *i = nullptr;
 	CChar *s = nullptr, *src = nullptr;
 	CSocket *tSock = nullptr;
 	CBaseObject *myObj = nullptr;
-
+	
 	const UI32 j = cwmWorldState->GetUICurrentTime();
-	cwmWorldState->tempEffects.Push();
-	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
-	{
-		if( Effect == nullptr )
-		{
-			cwmWorldState->tempEffects.Remove( Effect );
+	std::vector<CTEffect*> removeEffects ;
+	for (auto &Effect : cwmWorldState->tempEffects.collection()){
+		if( Effect == nullptr ){
+			removeEffects.push_back(Effect);
 			continue;
 		}
-		else if( Effect->Destination() == INVALIDSERIAL )
-		{
-			cwmWorldState->tempEffects.Remove( Effect, true );
+		else if( Effect->Destination() == INVALIDSERIAL ){
+			removeEffects.push_back(Effect);
 			continue;
 		}
-		if( Effect->ExpireTime() > j )
-			continue;
-
-		if( Effect->Destination() < BASEITEMSERIAL )
-		{
-			s = calcCharObjFromSer( Effect->Destination() );
-			if( !ValidateObject( s ) )
-			{
-				cwmWorldState->tempEffects.Remove( Effect, true );
-				continue;
+		if( Effect->ExpireTime()<= j ){
+			
+			if( Effect->Destination() < BASEITEMSERIAL ) {
+				s = calcCharObjFromSer( Effect->Destination() );
+				if( !ValidateObject( s ) ) {
+					cwmWorldState->tempEffects.Remove( Effect, true );
+					continue;
+				}
+				tSock = s->GetSocket();
 			}
-			tSock = s->GetSocket();
-		}
-		bool equipCheckNeeded = false;
-
-		bool validChar = ValidateObject( s );
-		switch( Effect->Number() )
-		{
-			case 1: // Paralysis / Paralysis Field Spells
-				if( validChar && s->IsFrozen() )
-				{
-					s->SetFrozen( false );
-					if( tSock != nullptr )
-						tSock->sysmessage( 700 );
-				}
-				break;
-			case 2: // Nightsight Potion (JS) and Spell (code)
-				if( validChar )
-				{
-					s->SetFixedLight( 255 );
-					doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
-				}
-				break;
-			case 3: // Clumsy spell (JS)
-				if( validChar )
-				{
-					s->IncDexterity2( Effect->More1() );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 4: // Feeblemind spell (JS)
-				if( validChar )
-				{
-					s->IncIntelligence2( Effect->More1() );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 5: // Weaken Spell
-				if( validChar )
-				{
-					s->IncStrength2( Effect->More1() );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 6: // Agility Potion (JS) and Spell (code)
-				if( validChar )
-				{
-					s->IncDexterity2( -Effect->More1() );
-					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 7: // Cunning Spell
-				if( validChar )
-				{
-					s->IncIntelligence2( -Effect->More1() );
-					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 8: // Strength Potion (JS) and Spell (code)
-				if( validChar )
-				{
-					s->IncStrength2( -Effect->More1() );
-					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
-					equipCheckNeeded = true;
+			bool equipCheckNeeded = false;
+			
+			bool validChar = ValidateObject( s );
+			switch( Effect->Number() ) {
+				case 1: // Paralysis / Paralysis Field Spells
+					if( validChar && s->IsFrozen() ) {
+						s->SetFrozen( false );
+						if( tSock != nullptr )
+							tSock->sysmessage( 700 );
 					}
-				break;
-			case 9:	// Grind potion (also used for necro stuff)
-				if( validChar )
-				{
-					switch( Effect->More1() )
-					{
-						case 0:
-							if( Effect->More2() != 0 )
-								s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
-							PlaySound( s, 0x0242 );
-							break;
+					break;
+				case 2: // Nightsight Potion (JS) and Spell (code)
+					if( validChar ) {
+						s->SetFixedLight( 255 );
+						doLight( tSock, cwmWorldState->ServerData()->WorldLightCurrentLevel() );
 					}
-				}
-				break;
-			case 11: // Bless Spell
-				if( validChar )
-				{
-					s->IncStrength2( -Effect->More1() );
-					s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
-					s->IncDexterity2( -Effect->More2() );
-					s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
-					s->IncIntelligence2( -Effect->More3() );
-					s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
-					equipCheckNeeded = true;
+					break;
+				case 3: // Clumsy spell (JS)
+					if( validChar ) {
+						s->IncDexterity2( Effect->More1() );
+						equipCheckNeeded = true;
 					}
-				break;
-			case 12: // Curse Spell
-				if( validChar )
-				{
-					s->IncStrength2( Effect->More1() );
-					s->IncDexterity2( Effect->More2() );
-					s->IncIntelligence2( Effect->More3() );
-					equipCheckNeeded = true;
-				}
-				else
+					break;
+				case 4: // Feeblemind spell (JS)
+					if( validChar ) {
+						s->IncIntelligence2( Effect->More1() );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 5: // Weaken Spell
+					if( validChar ) {
+						s->IncStrength2( Effect->More1() );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 6: // Agility Potion (JS) and Spell (code)
+					if( validChar ) {
+						s->IncDexterity2( -Effect->More1() );
+						s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 7: // Cunning Spell
+					if( validChar ) {
+						s->IncIntelligence2( -Effect->More1() );
+						s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 8: // Strength Potion (JS) and Spell (code)
+					if( validChar ) {
+						s->IncStrength2( -Effect->More1() );
+						s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 9:	// Grind potion (also used for necro stuff)
+					if( validChar ) {
+						switch( Effect->More1() ) {
+							case 0:
+								if( Effect->More2() != 0 )
+									s->TextMessage( nullptr, 1270, EMOTE, 1, s->GetName().c_str() );
+								PlaySound( s, 0x0242 );
+								break;
+						}
+					}
+					break;
+				case 11: // Bless Spell
+					if( validChar ) {
+						s->IncStrength2( -Effect->More1() );
+						s->SetHP( std::min(s->GetHP(), static_cast<SI16>(s->GetMaxHP())) );
+						s->IncDexterity2( -Effect->More2() );
+						s->SetStamina( std::min(s->GetStamina(), s->GetMaxStam()) );
+						s->IncIntelligence2( -Effect->More3() );
+						s->SetMana( std::min(s->GetMana(), s->GetMaxMana()) );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 12: // Curse Spell
 					equipCheckNeeded = false;
-				break;
-			case 15: // Reactive Armor Spell
-				if( validChar )
-				{
-					s->SetReactiveArmour( false );
-				}
-				break;
-			case 16: // Explosion potion messages (JS)
-				src = calcCharObjFromSer( Effect->Source() );
-				if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() )
-				{
-					src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
-					std::string mTemp = oldstrutil::number( Effect->More3() );
-					if( tSock != nullptr )
-					{
-						tSock->sysmessage( mTemp.c_str() );
+					if( validChar ) {
+						s->IncStrength2( Effect->More1() );
+						s->IncDexterity2( Effect->More2() );
+						s->IncIntelligence2( Effect->More3() );
+						equipCheckNeeded = true;
 					}
-				}
-				break;
-			case 17: // Explosion effect (JS and code)
-				src = calcCharObjFromSer( Effect->Source() );
-				explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
-				break;
-			case 18: // Polymorph Spell
-				if( validChar )
-				{
-					s->SetID( s->GetOrgID() );
-					s->IsPolymorphed( false );
-				}
-				break;
-			case 19: // Incognito Spell
-				if( validChar )
-				{
-					s->SetID( s->GetOrgID() );
-
-					// ------ NAME -----
-					s->SetName( s->GetOrgName() );
-
-					i = s->GetItemAtLayer( IL_HAIR );
-					if( ValidateObject( i ) )
-					{
-						i->SetColour( s->GetHairColour() );
-						i->SetID( s->GetHairStyle() );
+					break;
+				case 15: // Reactive Armor Spell
+					if( validChar ) {
+						s->SetReactiveArmour( false );
 					}
-					i = s->GetItemAtLayer( IL_FACIALHAIR );
-					if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
-					{
-						i->SetColour( s->GetBeardColour() );
-						i->SetID( s->GetBeardStyle() );
+					break;
+				case 16: // Explosion potion messages (JS)
+					src = calcCharObjFromSer( Effect->Source() );
+					if( src->GetTimer( tCHAR_ANTISPAM ) < cwmWorldState->GetUICurrentTime() ) {
+						src->SetTimer( tCHAR_ANTISPAM, BuildTimeValue( 1 ) );
+						std::string mTemp = oldstrutil::number( Effect->More3() );
+						if(tSock) {
+							tSock->sysmessage( mTemp.c_str() );
+						}
 					}
-					if( tSock != nullptr )
-						s->SendWornItems( tSock );
-					s->IsIncognito( false );
-				}
-				break;
-			case 21: // Protection Spell
-				if( validChar )
-				{
-					UI16 toDrop;
-					toDrop = Effect->More1();
-					if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 )
-						s->SetBaseSkill( 0, PARRYING );
-					else
-						s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
-					equipCheckNeeded = true;
-				}
-				break;
-			case 25: // Temporarily set item as disabled
-				Effect->ObjPtr()->SetDisabled( false );
-				break;
-			case 26: // Disallow immediately using another potion (JS)
-				if( validChar )
-				{
-					s->SetUsingPotion( false );
-				}
-				break;
-			case 27: // Explosion Spell
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
 					break;
-				Magic->playSound( src, 43 );
-				Magic->doMoveEffect( 43, s, src );
-				Magic->doStaticEffect( s, 43 );
-				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
-				equipCheckNeeded = true;
-				break;
-			case 28: // Magic Arrow Spell
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
+				case 17: // Explosion effect (JS and code)
+					src = calcCharObjFromSer( Effect->Source() );
+					explodeItem( src->GetSocket(), static_cast<CItem *>(Effect->ObjPtr()) ); //explode this item
 					break;
-				Magic->playSound( src, 5 );
-				Magic->doMoveEffect( 5, s, src );
-				Magic->doStaticEffect( s, 5 );
-				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
-				equipCheckNeeded = true;
-				break;
-			case 29: // Harm Spell
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( src, 12 );
-				Magic->doMoveEffect( 12, s, src );
-				Magic->doStaticEffect( s, 12 );
-				Magic->MagicDamage( s, Effect->More1(), src, COLD );
-				equipCheckNeeded = true;
-				break;
-			case 30: // Fireball Spell
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( src, 18 );
-				Magic->doMoveEffect( 18, s, src );
-				Magic->doStaticEffect( s, 18 );
-				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
-				equipCheckNeeded = true;
-				break;
-			case 31: // Lightning Spell
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Effects->bolteffect( s );
-				Magic->playSound( src, 30 );
-				Magic->doMoveEffect( 30, s, src );
-				Magic->doStaticEffect( s, 30 );
-				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
-				equipCheckNeeded = true;
-				break;
-			case 32: // Mind Blast
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( src, 37 );
-				Magic->doMoveEffect( 37, s, src );
-				Magic->doStaticEffect( s, 37 );
-				Magic->MagicDamage( s, Effect->More1(), src, COLD );
-				equipCheckNeeded = true;
-				break;
-			case 33: // Energy Bolt
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( s, 42 );
-				Magic->doMoveEffect( 42, s, src );
-				Magic->doStaticEffect( s, 42 );
-				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
-				equipCheckNeeded = true;
-				break;
-			case 34: // Chain Lightning
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Effects->bolteffect( s );
-				Magic->playSound( s, 49 );
-				Magic->doMoveEffect( 49, s, src );
-				Magic->doStaticEffect( s, 49 );
-				Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
-				equipCheckNeeded = true;
-				break;
-			case 35: // Flame Strike
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( s, 51 );
-				Magic->doMoveEffect( 51, s, src );
-				Magic->doStaticEffect( s, 51 );
-				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
-				equipCheckNeeded = true;
-				break;
-			case 36: // Meteor Swarm
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) || !ValidateObject( s ) )
-					break;
-				Magic->playSound( src, 55 );
-				if( s != src )
-					Magic->doMoveEffect( 55, s, src );
-				Magic->doStaticEffect( s, 55 );
-				//Effects->PlaySound( target, 0x160 );
-				//Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
-				Magic->MagicDamage( s, Effect->More1(), src, HEAT );
-				equipCheckNeeded = true;
-				break;
-			case 40: // Used by JS timers
-			{
-				// Default/Global script ID
-				UI16 scpNum			= 0xFFFF;
-
-				// Get script associated with effect, if any
-				cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
-
-				// items have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
-				if( Effect->Source() >= BASEITEMSERIAL )	
-				{
-					myObj = calcItemObjFromSer( Effect->Source() );
-					equipCheckNeeded = false;
-				}
-				else
-				{
-					myObj = calcCharObjFromSer( Effect->Source() );
-					equipCheckNeeded = true;
-				}
-
-				// Check that object effect was running on still exists
-				if( !ValidateObject( myObj ) )
-					break;
-
-				// No associated script, so it must be another callback variety
-				if( tScript == nullptr )
-				{
-					if( Effect->More2() != 0xFFFF ) // A scriptID other than default one was found
-					{
-						scpNum = Effect->More2();
-						tScript = JSMapping->GetScript( scpNum );
+				case 18: // Polymorph Spell
+					if(validChar) {
+						s->SetID( s->GetOrgID() );
+						s->IsPolymorphed( false );
 					}
-					/*else
-					{
-						// No specific script was associated with effect, so let's see if there's a script associated with object instead
-
-						scpNum = myObj->GetScriptTrigger();
+					break;
+				case 19: // Incognito Spell
+					if(validChar){
+						s->SetID( s->GetOrgID() );
+						
+						// ------ NAME -----
+						s->SetName( s->GetOrgName() );
+						
+						i = s->GetItemAtLayer( IL_HAIR );
+						if( ValidateObject(i) ){
+							i->SetColour( s->GetHairColour() );
+							i->SetID( s->GetHairStyle() );
+						}
+						i = s->GetItemAtLayer( IL_FACIALHAIR );
+						if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 ){
+							i->SetColour( s->GetBeardColour() );
+							i->SetID( s->GetBeardStyle() );
+						}
+						if(tSock){
+							s->SendWornItems( tSock );
+						}
+						s->IsIncognito( false );
 					}
-					tScript = JSMapping->GetScript( scpNum );*/
-				}
-
-				// Make sure to check for a specific script via envoke system when the previous checks ended in the global script.
-				if( ( tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL )
+					break;
+				case 21: // Protection Spell
+					if(  validChar) {
+						UI16 toDrop;
+						toDrop = Effect->More1();
+						if( ( s->GetBaseSkill( PARRYING ) - toDrop ) < 0 ){
+							s->SetBaseSkill( 0, PARRYING );
+						}
+						else{
+							s->SetBaseSkill( s->GetBaseSkill( PARRYING ) - toDrop, PARRYING );
+						}
+						equipCheckNeeded = true;
+					}
+					break;
+				case 25: // Temporarily set item as disabled
+					Effect->ObjPtr()->SetDisabled( false );
+					break;
+				case 26: // Disallow immediately using another potion (JS)
+					if( validChar ) {
+						s->SetUsingPotion( false );
+					}
+					break;
+				case 27: // Explosion Spell
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject( src ) && ValidateObject( s ) ){
+						Magic->playSound( src, 43 );
+						Magic->doMoveEffect( 43, s, src );
+						Magic->doStaticEffect( s, 43 );
+						Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 28: // Magic Arrow Spell
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject( s ) ){
+						Magic->playSound( src, 5 );
+						Magic->doMoveEffect( 5, s, src );
+						Magic->doStaticEffect( s, 5 );
+						Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 29: // Harm Spell
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Magic->playSound( src, 12 );
+						Magic->doMoveEffect( 12, s, src );
+						Magic->doStaticEffect( s, 12 );
+						Magic->MagicDamage( s, Effect->More1(), src, COLD );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 30: // Fireball Spell
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Magic->playSound( src, 18 );
+						Magic->doMoveEffect( 18, s, src );
+						Magic->doStaticEffect( s, 18 );
+						Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 31: // Lightning Spell
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Effects->bolteffect( s );
+						Magic->playSound( src, 30 );
+						Magic->doMoveEffect( 30, s, src );
+						Magic->doStaticEffect( s, 30 );
+						Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 32: // Mind Blast
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Magic->playSound( src, 37 );
+						Magic->doMoveEffect( 37, s, src );
+						Magic->doStaticEffect( s, 37 );
+						Magic->MagicDamage( s, Effect->More1(), src, COLD );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 33: // Energy Bolt
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject( src ) && ValidateObject(s) ){
+						Magic->playSound( s, 42 );
+						Magic->doMoveEffect( 42, s, src );
+						Magic->doStaticEffect( s, 42 );
+						Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 34: // Chain Lightning
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Effects->bolteffect( s );
+						Magic->playSound( s, 49 );
+						Magic->doMoveEffect( 49, s, src );
+						Magic->doStaticEffect( s, 49 );
+						Magic->MagicDamage( s, Effect->More1(), src, LIGHTNING );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 35: // Flame Strike
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Magic->playSound( s, 51 );
+						Magic->doMoveEffect( 51, s, src );
+						Magic->doStaticEffect( s, 51 );
+						Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 36: // Meteor Swarm
+					src = calcCharObjFromSer( Effect->Source() );
+					if( ValidateObject(src) && ValidateObject(s) ){
+						Magic->playSound( src, 55 );
+						if( s != src )
+							Magic->doMoveEffect( 55, s, src );
+						Magic->doStaticEffect( s, 55 );
+						//Effects->PlaySound( target, 0x160 );
+						//Effects->PlayMovingAnimation( caster, target, 0x36D5, 0x07, 0x00, 0x01 );
+						Magic->MagicDamage( s, Effect->More1(), src, HEAT );
+						equipCheckNeeded = true;
+					}
+					break;
+				case 40: // Used by JS timers
 				{
-					if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) )
-					{
-						scpNum	= JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) );
-						tScript = JSMapping->GetScript( scpNum );
+					// Default/Global script ID
+					UI16 scpNum			= 0xFFFF;
+					
+					// Get script associated with effect, if any
+					cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
+					
+					// items have serials of 0x40000000 and above, and we already know it's not INVALIDSERIAL
+					if( Effect->Source() >= BASEITEMSERIAL ) {
+						myObj = calcItemObjFromSer( Effect->Source() );
+						equipCheckNeeded = false;
 					}
-					else if( JSMapping->GetEnvokeByID()->Check( myObj->GetID() ) )
-					{
-						scpNum	= JSMapping->GetEnvokeByID()->GetScript( myObj->GetID() );
-						tScript	= JSMapping->GetScript( scpNum );
+					else {
+						myObj = calcCharObjFromSer( Effect->Source() );
+						equipCheckNeeded = true;
 					}
+					
+					// Check that object effect was running on still exists
+					if( ValidateObject( myObj ) ){
+						
+						// No associated script, so it must be another callback variety
+						if( tScript == nullptr ) {
+							if( Effect->More2() != 0xFFFF ){ // A scriptID other than default one was found
+								scpNum = Effect->More2();
+								tScript = JSMapping->GetScript( scpNum );
+							}
+						}
+						
+						// Make sure to check for a specific script via envoke system when the previous checks ended in the global script.
+						if( ( tScript == nullptr || scpNum == 0) && Effect->Source() >= BASEITEMSERIAL ) {
+							if( JSMapping->GetEnvokeByType()->Check( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) ) ) {
+								scpNum	= JSMapping->GetEnvokeByType()->GetScript( static_cast<UI16>((static_cast<CItem *>(myObj))->GetType()) );
+								tScript = JSMapping->GetScript( scpNum );
+							}
+							else if( JSMapping->GetEnvokeByID()->Check( myObj->GetID() ) ) {
+								scpNum	= JSMapping->GetEnvokeByID()->GetScript( myObj->GetID() );
+								tScript	= JSMapping->GetScript( scpNum );
+							}
+						}
+						
+						// Callback to onTimer event in script
+						if(tScript) {
+							tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
+						}
+					}
+					break;
 				}
-
-				// Callback to onTimer event in script
-				if( tScript != nullptr )
-				{
-					tScript->OnTimer( myObj, static_cast<UI08>(Effect->More1()) );
-				}
-				break;
+				case 41: // Start of item crafting
+					HandleMakeItemEffect( Effect );
+					break;
+				case 42: // End of item crafting
+					src = calcCharObjFromSer( Effect->Source() );
+					PlaySound( src, Effect->More2() );
+					break;
+				case 43: // Turn a wooly sheep into a sheared sheep
+					src = calcCharObjFromSer( Effect->Source() );
+					if( !ValidateObject( src ) )	// char doesn't exist!
+						break;
+					else if( src->GetID() == 0xCF )
+						break;
+					
+					src->SetID( 0xCF ); // Thats all we need to do
+					break;
+				default:
+					Console.error( oldstrutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
+					break;
 			}
-			case 41: // Start of item crafting
-				HandleMakeItemEffect( Effect );
-				break;
-			case 42: // End of item crafting
-				src = calcCharObjFromSer( Effect->Source() );
-				PlaySound( src, Effect->More2() );
-				break;
-			case 43: // Turn a wooly sheep into a sheared sheep
-				src = calcCharObjFromSer( Effect->Source() );
-				if( !ValidateObject( src ) )	// char doesn't exist!
-					break;
-				else if( src->GetID() == 0xCF )
-					break;
-
-				src->SetID( 0xCF ); // Thats all we need to do
-				break;
-			default:
-				Console.error( oldstrutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
-				break;
+			if( validChar && equipCheckNeeded )
+				Items->CheckEquipment( s ); // checks equipments for stat requirements
+			removeEffects.push_back(Effect);
 		}
-		if( validChar && equipCheckNeeded )
-			Items->CheckEquipment( s ); // checks equipments for stat requirements
-		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
-	cwmWorldState->tempEffects.Pop();
+	std::for_each(removeEffects.begin(),removeEffects.end(),[this](CTEffect *effect) {
+		cwmWorldState->tempEffects.Remove(effect,(effect!=nullptr)?true:false);
+	});
 }
 
 //o-----------------------------------------------------------------------------------------------o
