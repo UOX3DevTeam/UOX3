@@ -1599,41 +1599,41 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 
 	for (auto &MapArea : MapRegion->PopulateList( mChar )){
 		if( MapArea){
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished() && MaxTrackingTargets < cwmWorldState->ServerData()->TrackingMaxTargets(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->GetInstanceID() != mChar->GetInstanceID() )
-					continue;
-				id = tempChar->GetID();
-				if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) )
-				{
-					const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
-					if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) )
-					{
-						mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
-						++MaxTrackingTargets;
-						
-						SI32 dirMessage = 898;
-						switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) )
-						{
-							case NORTH:		dirMessage = 890;	break;
-							case NORTHWEST:	dirMessage = 891;	break;
-							case NORTHEAST:	dirMessage = 892;	break;
-							case SOUTH:		dirMessage = 893;	break;
-							case SOUTHWEST:	dirMessage = 894;	break;
-							case SOUTHEAST:	dirMessage = 895;	break;
-							case WEST:		dirMessage = 896;	break;
-							case EAST:		dirMessage = 897;	break;
-							default:		dirMessage = 898;	break;
+			auto regChars = MapArea->GetCharList();
+			for (auto &tempChar : regChars->collection()){
+				if (MaxTrackingTargets <  cwmWorldState->ServerData()->TrackingMaxTargets()){
+					if( ValidateObject( tempChar ) && (tempChar->GetInstanceID() == mChar->GetInstanceID()) ){
+						id = tempChar->GetID();
+						if( ( !cwmWorldState->creatures[id].IsHuman() || creatureType == CT_PERSON ) && ( !cwmWorldState->creatures[id].IsAnimal() || creatureType == CT_ANIMAL ) ) {
+							const bool cmdLevelCheck = ( isOnline( (*tempChar) ) && ( mChar->GetCommandLevel() >= tempChar->GetCommandLevel() ) );
+							if( tempChar != mChar && objInRange( tempChar, mChar, distance ) && !tempChar->IsDead() && ( cmdLevelCheck || tempChar->IsNpc() ) ) {
+								mChar->SetTrackingTargets( tempChar, MaxTrackingTargets );
+								++MaxTrackingTargets;
+								
+								SI32 dirMessage = 898;
+								switch( Movement->Direction( mChar, tempChar->GetX(), tempChar->GetY() ) ) {
+									case NORTH:		dirMessage = 890;	break;
+									case NORTHWEST:	dirMessage = 891;	break;
+									case NORTHEAST:	dirMessage = 892;	break;
+									case SOUTH:		dirMessage = 893;	break;
+									case SOUTHWEST:	dirMessage = 894;	break;
+									case SOUTHEAST:	dirMessage = 895;	break;
+									case WEST:		dirMessage = 896;	break;
+									case EAST:		dirMessage = 897;	break;
+									default:		dirMessage = 898;	break;
+								}
+								auto tempName = getNpcDictName( tempChar );
+								line = tempName + " "s + Dictionary->GetEntry( dirMessage, mLang );
+								toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
+							}
 						}
-						std::string tempName = getNpcDictName( tempChar );
-						line = tempName + " " + Dictionary->GetEntry( dirMessage, mLang );
-						toSend.AddResponse( cwmWorldState->creatures[id].Icon(), 0, line );
 					}
+
+				}
+				else {
+					break;
 				}
 			}
-			regChars->Pop();
 		}
 	}
 
@@ -1834,30 +1834,23 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 
 	for (auto &MapArea : MapRegion->PopulateList( mChar )){
 		if( MapArea){
-			GenericList< CItem * > *regItems = MapArea->GetItemList();
-			regItems->Push();
-			for( CItem *tempItem = regItems->First(); !regItems->Finished(); tempItem = regItems->Next() )
-			{
-				if( !ValidateObject( tempItem ) || tempItem->GetInstanceID() != mChar->GetInstanceID() )
-					continue;
-				if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 )
-				{
-					if( objInRange( mChar, tempItem, DIST_NEARBY ) )
-					{
-						UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
-						if( getAmt == 0 )
-						{
-							s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
-							regItems->Pop();
+			auto regItems = MapArea->GetItemList();
+			for (auto &tempItem : regItems->collection()){
+				if( ValidateObject( tempItem )&& (tempItem->GetInstanceID() == mChar->GetInstanceID()) ){
+					if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 ) {
+						if( objInRange( mChar, tempItem, DIST_NEARBY ) ) {
+							UI32 getAmt = GetItemAmount( mChar, item.GetID(), item.GetColour(), item.GetTempVar( CITV_MORE ));
+							if( getAmt == 0 ) {
+								s->sysmessage( 980, oreType->name.c_str() ); // You don't have enough %s ingots to make anything.
+								return;
+							}
+							NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
 							return;
 						}
-						NewMakeMenu( s, oreType->makemenu, BLACKSMITHING );
-						regItems->Pop();
-						return;
 					}
 				}
 			}
-			regItems->Pop();
+			
 		}
 	}
 	s->sysmessage( 981 ); // The anvil is too far away.

@@ -188,19 +188,18 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 
 	for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 		if( MapArea){
-			GenericList< CChar * > *regChars = MapArea->GetCharList();
-			regChars->Push();
-			for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
-			{
-				if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
-					continue;
-				if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
-					inrange.push_back( tempChar );
-				
-				if( inrange.size() == 11 )
-					break;
+			auto regChars = MapArea->GetCharList();
+			for (auto &tempChar : regChars->collection()){
+				if( ValidateObject( tempChar ) && !tempChar->isFree() && (tempChar->GetInstanceID() == mChar.GetInstanceID() )){
+					if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) ){
+						inrange.push_back( tempChar );
+					}
+					
+					if( inrange.size() == 11 ){
+						break;
+					}
+				}
 			}
-			regChars->Pop();
 		}
 	}
 

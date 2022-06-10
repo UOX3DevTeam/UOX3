@@ -1827,38 +1827,36 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
-	if( argc > 1 )
-	{
+	if( argc > 1 ) {
 		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return JS_FALSE;
 	}
-	CBaseObject *myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
-	if( myObj==nullptr )
-	{
+	auto myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
+	if( myObj==nullptr ) {
 		MethodError("KillTimers: Invalid object assigned.");
 		return JS_FALSE;
 	}
 	SI16 triggerNum = -1;
-	if( argc == 1 )
+	if( argc == 1 ){
 		triggerNum = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	}
 
 	SERIAL mySer = myObj->GetSerial();
+	std::vector<CTEffect *> removeEffect;
 	cwmWorldState->tempEffects.Push();
-	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
-	{
-		if( triggerNum != -1 )
-		{
-			if( mySer == Effect->Destination() && Effect->More1() == triggerNum )
-			{
-				cwmWorldState->tempEffects.Remove( Effect, true );
+	for (auto &Effect : cwmWorldState->tempEffects.collection()){
+		if( triggerNum != -1 ) {
+			if( mySer == Effect->Destination() && Effect->More1() == triggerNum ) {
+				removeEffect.push_back(Effect) ;
 			}
 		}
-		else if( mySer == Effect->Destination() )
-		{
-			cwmWorldState->tempEffects.Remove( Effect, true );
+		else if( mySer == Effect->Destination() ) {
+			removeEffect.push_back(Effect) ;
 		}
 	}
-	cwmWorldState->tempEffects.Pop();
+	for (auto &Effect :removeEffect){
+		cwmWorldState->tempEffects.Remove( Effect, true );
+	}
 	return JS_TRUE;
 }
 
