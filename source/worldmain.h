@@ -7,13 +7,13 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
+#include "cServerData.h"
 #include "GenericList.h"
 #if PLATFORM == WINDOWS
 #include <winsock2.h>
 #undef min
 #undef max
 #endif
-
 enum CWM_TID
 {
 	tWORLD_NEXTFIELDEFFECT = 0,
@@ -42,7 +42,6 @@ private:
 	SI32 globalSent;
 public:
 	CServerProfile();
-	~CServerProfile();
 
 	UI32	NetworkTime( void ) const;
 	UI32	TimerTime( void ) const;
@@ -119,7 +118,7 @@ private:
 	bool		ipupdated;
 
 	// Misc
-	size_t		playersOnline;					// Players online
+	size_t	playersOnline; // Players online
 	bool		reloadingScripts;
 	bool		classesInitialized;
 
@@ -202,40 +201,39 @@ public:
 	void		CheckAutoTimers( void );
 
 	// Structs
-	std::map< UI16, CCreatures >		creatures;
-	timeval								uoxtimeout;
-	skill_st							skill[INTELLECT+1];				// Skill data
-	title_st							title[ALLSKILLS+1];			// For custom titles reads titles.dfn
-	std::vector< TitlePair_st >			prowessTitles;
-	std::vector< TitlePair_st >			murdererTags;
-	std::vector< CTeleLocationEntry >	teleLocs;
-	std::vector< LogoutLocationEntry >	logoutLocs;
-	std::vector< SOSLocationEntry >		sosLocs;
-	std::vector< UI08 >					escortRegions;
-	std::map< UI16, GoPlaces_st >		goPlaces;
-	std::unordered_map< UI16, CSpawnRegion * >	spawnRegions;
-	std::map< UI16, CTownRegion * >	townRegions;
-	GenericList< CTEffect * >			tempEffects;
+	std::map< UI16, CCreatures > creatures;
+	timeval uoxtimeout;
+	skill_st skill[INTELLECT+1]; // Skill data
+	title_st title[ALLSKILLS+1]; // For custom titles reads titles.dfn
+	std::vector< TitlePair_st > prowessTitles;
+	std::vector< TitlePair_st > murdererTags;
+	std::vector< CTeleLocationEntry > teleLocs;
+	std::vector< LogoutLocationEntry > logoutLocs;
+	std::vector< SOSLocationEntry > sosLocs;
+	std::vector< UI08 > escortRegions;
+	std::map< UI16, GoPlaces_st > goPlaces;
+	std::unordered_map< UI16, CSpawnRegion * > spawnRegions;
+	std::map< UI16, CTownRegion * > townRegions;
+	GenericList< CTEffect * > tempEffects;
 
-	std::map< CBaseObject *, UI32 >	refreshQueue;
-	std::map< CBaseObject *, UI32 >	deletionQueue;
+	std::map< CBaseObject *, UI32 > refreshQueue;
+	std::map< CBaseObject *, UI32 > deletionQueue;
 
 	void		CheckTimers( void );
 	void		doWorldLight( void );
 	void		SaveNewWorld( bool x );
-
+	auto startup() ->void ;
 	CWorldMain();
-	~CWorldMain();
-	CServerData *	ServerData( void );
-	CServerProfile * ServerProfile( void );
+	auto ServerData() ->CServerData *;
+	auto ServerProfile()->CServerProfile * ;
 private:
 	void			RegionSave( void );
 	void			SaveStatistics( void );
 
-	CServerData *	sData;
-	CServerProfile * sProfile;
+	CServerData  sData;
+	CServerProfile sProfile;
 };
 
-extern CWorldMain								*cwmWorldState;
+extern CWorldMain	 *cwmWorldState;
 
 #endif
