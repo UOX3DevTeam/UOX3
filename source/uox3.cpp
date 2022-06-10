@@ -94,7 +94,7 @@ using namespace std::string_literals ;
 bool isWorldSaving = false;
 bool conthreadcloseok	= false;
 bool netpollthreadclose	= false;
-
+auto saveOnShutdown = false ;
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o-----------------------------------------------------------------------------------------------o
@@ -286,6 +286,7 @@ auto main( SI32 argc, char *argv[] ) ->int {
 // Startup and Initialization
 //=====================================================================================
 auto startInitialize() ->void {
+	saveOnShutdown = false ;
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
 	Console.Start( oldstrutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
@@ -2289,6 +2290,7 @@ auto DisplayBanner() ->void{
 	Console << CVersionClass::GetEmail() << myendl;
 	
 	Console.PrintSectionBegin();
+	saveOnShutdown = true ;
 }
 
 
@@ -2303,7 +2305,7 @@ auto DisplayBanner() ->void{
 auto Shutdown( SI32 retCode )->void {
 	Console.PrintSectionBegin();
 	Console << "Beginning UOX final shut down sequence..." << myendl;
-	{
+	if (saveOnShutdown) {
 		//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 #if PLATFORM == WINDOWS
 		SetConsoleCtrlHandler( exit_handler, true );
