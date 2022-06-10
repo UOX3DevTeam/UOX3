@@ -3726,6 +3726,7 @@ bool CServerData::save( void )
 //o-----------------------------------------------------------------------------------------------o
 bool CServerData::save( std::string filename )
 {
+	return true ;
 	bool rvalue = false;
 	std::ofstream ofsOutput;
 	ofsOutput.open( filename.c_str(), std::ios::out );
