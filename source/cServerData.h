@@ -439,12 +439,11 @@ public:
 	bool		save( void );
 	bool		save( std::string filename );
 
-	void		ResetDefaults( void );
-
+	auto ResetDefaults() ->void ;
+	auto startup() ->void ;
 	//void		RefreshIPs( void );
 
-	CServerData( void );
-	~CServerData();
+	CServerData();
 	void		ServerName( std::string setname );
 	void		ServerDomain( std::string setdomain );
 	void		ServerIP( std::string setip );

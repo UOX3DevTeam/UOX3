@@ -477,8 +477,7 @@ std::int32_t CServerData::lookupINIValue(const std::string& tag) {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reset server settings to default
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::ResetDefaults( void )
-{
+auto CServerData::ResetDefaults()->void {
 	resettingDefaults = true;
 	serverList.resize( 1 );		// Set the initial count to hold one server.
 
@@ -803,12 +802,13 @@ void CServerData::ResetDefaults( void )
 	resettingDefaults = false;
 	PostLoadDefaults();
 }
-CServerData::CServerData( void )
-{
-	ResetDefaults();
+//===============================================================================================
+CServerData::CServerData() {
+	startup() ;
 }
-CServerData::~CServerData()
-{
+//===============================================================================================
+auto CServerData::startup() ->void{
+	ResetDefaults();
 }
 
 //o-----------------------------------------------------------------------------------------------o

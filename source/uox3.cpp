@@ -95,6 +95,38 @@ bool isWorldSaving = false;
 bool conthreadcloseok	= false;
 bool netpollthreadclose	= false;
 auto saveOnShutdown = false ;
+
+//================================================================================================
+// Classes we will use
+auto aWorld = CWorldMain();
+//aJSEngine = JSEngine();
+//auto aFileLookup	= CServerDefinitions() ;
+//auto aDictionary	= CDictionaryContainer();
+//auto aCombat		= CHandleCombat();
+//auto aCommands		= cCommands()
+//auto aItems		= cItem();
+//auto aMap			= CMulHandler();
+//auto aNpcs		= cCharStuff();
+//auto aSkills		= cSkills();
+//auto aWeight		= CWeight();
+//auto aNetwork		= cNetworkStuff();
+//auto aMagic		= cMagic();
+//auto aRaces		= cRaces();
+//auto aWeather		= cWeatherAb();
+//auto aMovement		= cMovement();
+//auto aWhoList		= cWhoList();
+//auto aOffList		= cWhoList(false);
+//auto aBooks		= cBooks();
+//auto aGMQueue		= PageVector("GM Queue");
+//auto aCounselorQueue	= PageVector("Counselor Queue");
+//auto aJSMapping		= CJSMapping();
+//auto aMapRegion		= CMapHandler();
+//auto aEffects		= cEffects();
+//auto aHTMLTemplates	= cHTMLTemplates();
+//auto aAccounts		= cAccountClass(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
+//auto aSpeechSys		= CSpeechQueue()
+//auto aGuildSys		= CGuildCollection();
+//auto aJailSys		= JailSystem();
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o-----------------------------------------------------------------------------------------------o
@@ -294,8 +326,8 @@ auto startInitialize() ->void {
 	Console.PrintSectionBegin();
 	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 	Console.PrintSectionBegin();
-	
-	if(( cwmWorldState = new CWorldMain )){
+	cwmWorldState = &aWorld ;
+
 		cwmWorldState->ServerData()->Load();
 		
 		Console << "Initializing and creating class pointers... " << myendl;
@@ -462,11 +494,6 @@ auto startInitialize() ->void {
 		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
-
-	}
-	else {
-		Shutdown( FATAL_UOX3_ALLOC_WORLDSTATE );
-	}
 	
 
 }
@@ -2369,7 +2396,6 @@ auto Shutdown( SI32 retCode )->void {
 	// don't leave file pointers open, could lead to file corruption
 	
 	Console.PrintSectionBegin();
-	delete cwmWorldState;
 	
 	Console.TurnGreen();
 	Console << "Server shutdown complete!" << myendl;
