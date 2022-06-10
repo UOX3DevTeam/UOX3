@@ -692,21 +692,16 @@ cHTMLTemplates::~cHTMLTemplates()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads the HTML Templates from the scripts
 //o-----------------------------------------------------------------------------------------------o
-void cHTMLTemplates::Load( void )
-{
-	for( Script *toCheck = FileLookup->FirstScript( html_def ); !FileLookup->FinishedScripts( html_def ); toCheck = FileLookup->NextScript( html_def ) )
-	{
-		if( toCheck != nullptr )
-		{
+auto cHTMLTemplates::Load()->void {
+	for (auto &toCheck : FileLookup->ScriptListings[html_def]){
+		if(toCheck) {
 			size_t NumEntries = toCheck->NumEntries();
-			if( NumEntries == 0 )
-				continue;
-
-			for( ScriptSection *found = toCheck->FirstEntry(); found != nullptr; found = toCheck->NextEntry() )
-			{
-				cHTMLTemplate *Template = new cHTMLTemplate();
-				Template->Load( found );
-				Templates.push_back( Template );
+			if( NumEntries != 0 ){
+				for (auto &[entryName, found]: toCheck->collection()){
+					cHTMLTemplate *Template = new cHTMLTemplate();
+					Template->Load( found );
+					Templates.push_back( Template );
+				}
 			}
 		}
 	}

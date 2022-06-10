@@ -890,9 +890,7 @@ auto cWeatherAb::Load() ->bool {
 	weather.resize( FileLookup->CountOfEntries( weathab_def ) );
 	std::string tag, data, UTag;
 	size_t i = 0;
-	
-	for( auto weathScp = FileLookup->FirstScript( weathab_def ); !FileLookup->FinishedScripts( weathab_def ); weathScp = FileLookup->NextScript( weathab_def ) )
-	{
+	for (auto &weathScp :FileLookup->ScriptListings[weathab_def]){
 		if(weathScp){
 			for (auto &[entryName,WeatherStuff] : weathScp->collection()) {
 				if(WeatherStuff) {

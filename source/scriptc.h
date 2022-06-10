@@ -14,8 +14,8 @@ public:
 
 	ScriptSection * FindEntry( const std::string& section );
 	ScriptSection *	FindEntrySubStr( const std::string& section );
-	ScriptSection *	FirstEntry( void );
-	ScriptSection *	NextEntry( void );
+	ScriptSection *	FirstEntry( );
+	ScriptSection *	NextEntry( );
 	auto collection() const -> const SSMAP & ;
 	auto collection() -> SSMAP& ;
 
@@ -29,19 +29,18 @@ public:
 	{
 		return errorState;
 	}
-
 private:
 	void deleteMap( void );
 	void reload( bool disp = true );
 	bool createSection( std::string& name );
 
-	SSMAP					defEntries;			// string is the name of section
-	SSMAP::iterator			iSearch;
-	time_t					last_modification;
-	std::string				filename;
-	bool					errorState;
-	DEFINITIONCATEGORIES	dfnCat;
-	std::fstream			input;
+	SSMAP	defEntries;			// string is the name of section
+	SSMAP::iterator iSearch;
+	time_t last_modification;
+	std::string	filename;
+	bool errorState;
+	DEFINITIONCATEGORIES dfnCat;
+	std::fstream input;
 };
 
 #endif
