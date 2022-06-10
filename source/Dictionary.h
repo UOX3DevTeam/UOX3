@@ -4,6 +4,7 @@
 
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
+#include <array>
 
 class CDictionary
 {
@@ -20,7 +21,7 @@ public:
 	size_t			NumberOfEntries( void ) const;
 	void			SetValid( const bool newVal );
 	bool			GetValid( void ) const;
-
+	auto	setLocationLanguage(const std::string &filepath, const std::string &language) ->void;
 private:
 	bool IsValid;
 	std::string PathToDictionary;
@@ -31,7 +32,7 @@ private:
 class CDictionaryContainer
 {
 private:
-	CDictionary			*dictList[DL_COUNT];
+	std::array<CDictionary*, static_cast<int>(DL_COUNT)> dictList;
 	UnicodeTypes		defaultLang;
 public:
 	CDictionaryContainer();
