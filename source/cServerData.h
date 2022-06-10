@@ -383,9 +383,7 @@ private:
 
 	void	PostLoadDefaults( void );
 
-	std::map<std::string,std::int32_t>   	uox3inicasevalue;
-	void		regAllINIValues() ;
-	void		regINIValue(const std::string& tag, std::int32_t value);
+	static const std::map<std::string,std::int32_t> uox3inicasevalue;
 public:
 	std::int32_t lookupINIValue(const std::string& tag);
 	UI64		DisabledAssistantFeatures;
