@@ -10,6 +10,7 @@
 #include "StringUtility.hpp"
 
 #include <memory>
+#include <filesystem>
 
 using namespace std::string_literals ;
 
@@ -37,24 +38,30 @@ CDictionary::~CDictionary()
 
 CDictionary::CDictionary( const std::string& filepath, const std::string& language ) : CDictionary()
 {
-
-	if( language.empty() )
-		Language = "ZRO";
-	else
-		Language = language;
-
-	//	Load the path
-	if( filepath.empty() )
-		PathToDictionary = "dictionary.ZRO";
-	else
-		PathToDictionary = filepath;
+	setLocationLanguage(filepath, language);
 }
 
-//const UI16 DICT_MAX_TEXTBUFFERSIZE = 1024;
+auto	CDictionary::setLocationLanguage(const std::string &filepath, const std::string &language) ->void{
+	if( language.empty() ){
+		Language = "ZRO";
+	}
+	else{
+		Language = language;
+	}
+	
+	auto path = std::filesystem::path(filepath) ;
+	if( filepath.empty() || !std::filesystem::exists(path)){
+		PathToDictionary = "dictionary.ZRO";
+	}
+	else{
+		PathToDictionary = filepath;
+	}
+
+}
 //====================================================================================================
 auto CDictionary::LoadDictionary()->std::int32_t {
 	SI32 count	= 0;
-	IsValid		= false;
+	IsValid = false;
 	if( FileExists( PathToDictionary ) ) {
 		auto dictData = std::make_unique<Script>( PathToDictionary, NUM_DEFS, false );
 		if( dictData != nullptr ) {
@@ -138,11 +145,12 @@ std::string CDictionary::GetEntry( const SI32 Num )
 	return rvalue;
 }
 
+//=====================================================================================================================================
 CDictionaryContainer::CDictionaryContainer() : defaultLang( ZERO )
 {
+	dictList.fill(nullptr);
 	std::string buildName;
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
-	{
+	for( auto i = static_cast<int>(DL_DEFAULT); i < static_cast<int>(DL_COUNT); ++i ){
 		buildName = cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES ) + "dictionary." + DistinctLanguageNames[i];
 		dictList[i] = new CDictionary( buildName, DistinctLanguageNames[i] );
 	}
@@ -164,11 +172,9 @@ CDictionaryContainer::~CDictionaryContainer()
 		delete dictList[i];
 }
 
-SI32 CDictionaryContainer::LoadDictionary( void )
-{
+auto CDictionaryContainer::LoadDictionary()->std::int32_t{
 	SI32 rvalue = 0;
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i )
-	{
+	for(auto i = static_cast<int>(DL_DEFAULT); i < static_cast<int>(DL_COUNT); i++ ) {
 		dictList[i]->LoadDictionary();
 	}
 	if( !dictList[LanguageCodesLang[ZERO]]->GetValid() )
@@ -203,14 +209,18 @@ std::string CDictionaryContainer::GetEntry( const SI32 Num, const UnicodeTypes t
 		typetouse = ZERO ;
 	}
 	const DistinctLanguage mLanguage = LanguageCodesLang[typetouse];
-
-	if( mLanguage < DL_COUNT ){
-		if (dictList[mLanguage])
-			RetVal = dictList[mLanguage]->GetEntry( Num );
+	try {
+		if( mLanguage < DL_COUNT ){
+			if (dictList[mLanguage]){
+				RetVal = dictList[mLanguage]->GetEntry( Num );
+			}
+		}
+		if( RetVal.empty() && typetouse != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
+			RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
 	}
-	if( RetVal.empty() && typetouse != defaultLang )//if we are using a diff language, and the entry wasn't found, try the ZERO before we flat out return null
-		RetVal = dictList[LanguageCodesLang[defaultLang]]->GetEntry( Num );
-
+	catch(...) {
+		RetVal = "" ;
+	}
 	return RetVal;
 }
 
