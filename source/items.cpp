@@ -1054,7 +1054,7 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 			}
 		}
 	}
-	toDecay.Delete();
+	toDecay.Delete();  // This is a problem, if done in a ierator loop
 	return true;
 }
 
