@@ -115,47 +115,48 @@ void LoadSpawnItem( std::ifstream& readDestination )
 void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination )
 {
 	charData.Push();
-	for( CChar* charToWrite = charData.First(); !charData.Finished(); charToWrite = charData.Next() )
-	{
-		if( !ValidateObject( charToWrite ) )
-		{
-			charData.Remove( charToWrite );
-			continue;
+	std::vector<CChar *> removeChar ;
+	for (auto &charToWrite: charData.collection()) {
+		if( !ValidateObject( charToWrite ) ){
+			removeChar.push_back(charToWrite);
 		}
-
+		else {
 #if defined( _MSC_VER )
 #pragma todo( "PlayerHTML Dumping needs to be reimplemented" )
 #endif
-		if( charToWrite->ShouldSave() )
-			charToWrite->Save( writeDestination );
-	}
-	charData.Pop();
-	itemData.Push();
-	for( CItem *itemToWrite = itemData.First(); !itemData.Finished(); itemToWrite = itemData.Next() )
-	{
-		if( !ValidateObject( itemToWrite ) )
-		{
-			itemData.Remove( itemToWrite );
-			continue;
+			if( charToWrite->ShouldSave() ){
+				charToWrite->Save( writeDestination );
+			}
 		}
+	}
+	std::for_each(removeChar.begin(), removeChar.end(), [this](CChar *character) {
+		charData.Remove(character);
+	});
 
-		if( itemToWrite->ShouldSave() )
-		{
-			if( itemToWrite->GetObjType() == OT_MULTI )
-			{
-				CMultiObj *iMulti = static_cast<CMultiObj *>(itemToWrite);
-				iMulti->Save( houseDestination );
+	std::vector<CItem *> removeItem ;
+	for (auto &itemToWrite: itemData.collection()) {
+		if( !ValidateObject( itemToWrite ) ) {
+			removeItem.push_back(itemToWrite);
+		}
+		else {
+			if( itemToWrite->ShouldSave() ) {
+				if( itemToWrite->GetObjType() == OT_MULTI ) {
+					CMultiObj *iMulti = static_cast<CMultiObj *>(itemToWrite);
+					iMulti->Save( houseDestination );
+				}
+				else if( itemToWrite->GetObjType() == OT_BOAT ) {
+					CBoatObj *iBoat = static_cast< CBoatObj * >(itemToWrite);
+					iBoat->Save( houseDestination );
+				}
+				else{
+					itemToWrite->Save( writeDestination );
+				}
 			}
-			else if( itemToWrite->GetObjType() == OT_BOAT )
-			{
-				CBoatObj *iBoat = static_cast< CBoatObj * >(itemToWrite);
-				iBoat->Save( houseDestination );
-			}
-			else
-				itemToWrite->Save( writeDestination );
 		}
 	}
-	itemData.Pop();
+	std::for_each(removeItem.begin(), removeItem.end(), [this](CItem *item) {
+		itemData.Remove(item);
+	});
 }
 
 //o-----------------------------------------------------------------------------------------------o

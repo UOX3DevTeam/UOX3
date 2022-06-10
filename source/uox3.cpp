@@ -551,9 +551,11 @@ auto UnloadSpawnRegions() ->void {
 		
 			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
 			for (auto &cCheck : spawnedCharsList->collection()){
-				if( ValidateObject( cCheck ) ){
-					if( !ValidateObject( cCheck->GetOwnerObj() )) {
-						cCheck->Delete();
+				if (cCheck){
+					if( ValidateObject( cCheck ) ){
+						if( !ValidateObject( cCheck->GetOwnerObj() )) {
+							cCheck->Delete();
+						}
 					}
 				}
 			}
@@ -561,9 +563,11 @@ auto UnloadSpawnRegions() ->void {
 			// Iterate over list of spawned items and delete them if no player has picked them up
 			auto spawnedItemsList = spawnregion->GetSpawnedItemsList();
 			for (auto &iCheck : spawnedItemsList->collection()){
-				if( ValidateObject( iCheck ) ){
-					if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() )) {
-						iCheck->Delete();
+				if (iCheck){
+					if( ValidateObject( iCheck ) ){
+						if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() )) {
+							iCheck->Delete();
+						}
 					}
 				}
 			}

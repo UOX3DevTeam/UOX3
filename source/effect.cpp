@@ -966,10 +966,8 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	SERIAL targSer	= dest->GetSerial();
 	toAdd->Source( sourceSerial );
 	toAdd->Destination( targSer );
-
-	cwmWorldState->tempEffects.Push();
-	for( CTEffect *Effect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); Effect = cwmWorldState->tempEffects.Next() )
-	{
+	std::vector<CTEffect *> removeEffect ;
+	for (auto &Effect : cwmWorldState->tempEffects.collection()){
 		if( Effect->Destination() == targSer )
 		{
 			if( Effect->Number() == num )
@@ -988,7 +986,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 					case 19: // Incognito Spell
 					case 21: // Protection Spell
 						reverseEffect( Effect );
-						cwmWorldState->tempEffects.Remove( Effect, true );
+						removeEffect.push_back(Effect);
 						break;
 					default:
 						break;
@@ -996,7 +994,9 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			}
 		}
 	}
-	cwmWorldState->tempEffects.Pop();
+	std::for_each(removeEffect.begin(), removeEffect.end(), [this](CTEffect *effect) {
+		cwmWorldState->tempEffects.Remove(effect,true);
+	});
 	CSocket *tSock = dest->GetSocket();
 	toAdd->Number( num );
 	switch( num )
@@ -1476,16 +1476,13 @@ void cEffects::SaveEffects( void )
 		return;
 	}
 
-	cwmWorldState->tempEffects.Push();
-	for( CTEffect *currEffect = cwmWorldState->tempEffects.First(); !cwmWorldState->tempEffects.Finished(); currEffect = cwmWorldState->tempEffects.Next() )
-	{
-		if( currEffect == nullptr )
-			continue;
-		currEffect->Save( effectDestination );
-		effectDestination << blockDiscriminator;
+	for (auto &currEffect : cwmWorldState->tempEffects.collection()){
+		if( currEffect){
+			currEffect->Save( effectDestination );
+			effectDestination << blockDiscriminator;
+		}
 	}
 	effectDestination.close();
-	cwmWorldState->tempEffects.Pop();
 
 	Console << "\b\b\b\b";
 	Console.PrintDone();
