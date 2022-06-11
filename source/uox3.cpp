@@ -35,6 +35,8 @@
 #include <random>
 #include <thread>
 #include <cstdlib>
+#include <filesystem>
+#include <optional>
 
 #include "uox3.h"
 #include "weight.h"
@@ -80,6 +82,7 @@
 #include <conio.h>
 #endif
 
+
 //==========================================================================
 // Global variables
 std::thread cons;
@@ -98,6 +101,7 @@ auto saveOnShutdown = false ;
 
 //================================================================================================
 // Classes we will use
+CConsole Console;
 auto aWorld = CWorldMain();
 //aJSEngine = JSEngine();
 //auto aFileLookup	= CServerDefinitions() ;
@@ -162,6 +166,7 @@ auto DisplayBanner()->void ;
 auto CheckConsoleKeyThread() ->void;
 auto DoMessageLoop() -> void;
 auto startInitialize() ->void;
+auto initOperatingSystem() ->std::optional<std::string>;
 
 //=================================================================================================
 
@@ -174,26 +179,28 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	UI32 tempSecs, tempMilli, tempTime;
 	UI32 loopSecs, loopMilli;
 	TIMERVAL uiNextCheckConn = 0;
-
-	
-	//=================================================================================================
-	// Startup Winsock2(windows) or signal handers (unix)
-	//=================================================================================================
-
-#if PLATFORM == WINDOWS
-	WSADATA wsaData;
-	WORD wVersionRequested = MAKEWORD( 2, 2 );
-	SI32 err = WSAStartup( wVersionRequested, &wsaData );
-	if( err ) {
-		Console.error( "Winsock 2.2 not found on your system..." );
+	//===============================================================================================
+	// We are going to do some fundmental checks, that if fail, we will bail out before
+	// setting up
+	//==============================================================================================
+	auto config_file = "uox.ini"s ;
+	if (argc>1){
+		config_file = argv[1] ;
+	}
+	if (!std::filesystem::exists(std::filesystem::path(config_file))) {
+		// If the UOX.ini file doesnt exist, lets bail out right now
+		std::cerr <<"Unable to open UOX3 settings: "s + config_file << std::endl;;
+		
 		return EXIT_FAILURE;
 	}
-#else
-	// Protection from server-shutdown during mid-worldsave
-	signal(SIGINT, app_stopped);
-	signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
-
-#endif
+	auto status = initOperatingSystem() ;
+	if (status.has_value()){
+		std::cerr <<status.value() << std::endl;
+		return EXIT_FAILURE;
+	}
+	
+	// Ok, we probably want the Console now
+	Console.initialize();
 	//=================================================================================================
 	// Start/Initalize classes,data,network
 	//=================================================================================================
@@ -313,6 +320,29 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	return EXIT_SUCCESS;
 }
 
+//=====================================================================================
+// Initialize the network
+//=====================================================================================
+auto initOperatingSystem() ->std::optional<std::string> {
+	//=================================================================================================
+	// Startup Winsock2(windows) or signal handers (unix)
+	//=================================================================================================
+	
+#if PLATFORM == WINDOWS
+	WSADATA wsaData;
+	WORD wVersionRequested = MAKEWORD( 2, 2 );
+	SI32 err = WSAStartup( wVersionRequested, &wsaData );
+	if( err ) {
+		return "Winsock 2.2 not found on your system!"s;
+	}
+#else
+	// Protection from server-shutdown during mid-worldsave
+	signal(SIGINT, app_stopped);
+	signal( SIGPIPE, SIG_IGN ); // This appears when we try to write to a broken network connection
+	
+#endif
+	return {};
+}
 
 //=====================================================================================
 // Startup and Initialization
