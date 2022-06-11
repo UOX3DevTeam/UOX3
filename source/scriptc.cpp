@@ -60,7 +60,7 @@ void Script::reload( bool disp )
 					{
 						// Ok a section is starting here, get the name
 						std::string sectionname = sLine.substr( 1, sLine.size() - 2 );
-						sectionname				= oldstrutil::upper( oldstrutil::simplify( sectionname ));
+						sectionname	 = oldstrutil::upper( oldstrutil::simplify( sectionname ));
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
