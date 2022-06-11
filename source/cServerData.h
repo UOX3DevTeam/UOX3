@@ -204,25 +204,26 @@ private:
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
-	UI16		port;						//	Port number that the server listens on, for connections
+	std::string	commandprefix;				//	Character that acts as the command prefix
 	std::string externalIP;
 	std::vector< physicalServer > serverList;		//	Series of server entries for shard list
-	UI16		serverLanguage;				//	Default language used on server
 	UI08		consolelogenabled;			//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
-	char		commandprefix;				//	Character that acts as the command prefix
+	UI16		serverLanguage;				//	Default language used on server
+	UI16		port;						//	Port number that the server listens on, for connections
+	UI16		jsEngineSize;				// gcMaxBytes limit in MB per JS runtime
+	UI16		sysMsgColour;				// Default text colour for system messages displayed in bottom left corner of screen
 	SI16		backupRatio;				//	Number of saves before a backup occurs
 	UI32		serversavestimer;				//	Number of seconds between world saves
 	UI32		netRcvTimeout;				// 04/03/2004 - Used to be hardcoded as 2 seconds (2 * 1000ms) for some raly laggy nets this would drop alot of packets, and disconnect people.
 	UI32		netSndTimeout;				// 04/03/2004 - Not used at this time.
 	UI32		netRetryCount;				// 04/03/2004 - Used to set the number of times a network recieve will be attempted before it throws an error
-	bool		uogEnabled;					// 04/03/2004 - Added to support the UOG Info Request Service
-	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
-	UI16		jsEngineSize;				// gcMaxBytes limit in MB per JS runtime
 	UI32		maxBytesIn;					// Max bytes that can be received from a client in a 10-second window before client is warned/kicked for excessive data use
 	UI32		maxBytesOut;				// Max bytes that can be sent to a client in a 10-second window before client is warned/kicked for excessive data use
 	UI32		trafficTimeban;				// Duration in minutes that player will be banned for if they exceed their network traffic budget
+
+	bool		uogEnabled;					// 04/03/2004 - Added to support the UOG Info Request Service
+	bool		randomStartingLocation;			// Enable or disable randomizing starting location for new players based on starting location entries
 	bool		useUnicodeMessages;			// Enable or disable sending messages originating on server in Unicode format
-	UI16		sysMsgColour;				// Default text colour for system messages displayed in bottom left corner of screen
 
 	// Client Support
 	bool		Clients4000Enabled;			// Allow client connections from 4.0.0 to 4.0.11f
@@ -244,9 +245,9 @@ private:
 	std::vector< UI32 > facetAccessFlags;
 
 	// Skills & Stats
+	UI08		skilldelay;					//	Number of seconds after a skill is used before another skill can be used
 	UI16		skilltotalcap;				//	A cap on the total of all a PC's skills
 	UI16		skillcap;					//	A cap on each individual PC skill
-	UI08		skilldelay;					//	Number of seconds after a skill is used before another skill can be used
 	UI16		statcap;					//	A cap on the total of a PC's stats
 	SI16		maxstealthmovement;			//	Max number of steps allowed with stealth skill at 100.0
 	SI16		maxstaminamovement;			//	Max number of steps allowed while running before stamina is reduced
@@ -259,35 +260,37 @@ private:
 	// Settings
 	SI16		ambientsounds;				//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
 	SI16		htmlstatusenabled;			//	If > 0 then it's enabled - only used at PC char creation - use elsewhere? (was # of seconds between updates)
-	SI16		sellmaxitems;				//	Maximum number of items that can be sold to a vendor
-	R32		weightPerSTR;				//	How much weight per point of STR a character can hold.
-	UI16		petOfflineTimeout;			//	Offline time after a player looses all pets
-	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
-	SI16		fishingstaminaloss;			//	The amount of stamina lost with each use of fishing skill
-	UI16		maxPlayerPackItems;			//	The max amount of items a player's backpack can contain
-	UI16		maxPlayerBankItems;			//	The max amount of items a player's bankbox can contain
 	UI08		maxControlSlots;				//	The default max amount of pet/follower control slots for each player
 	UI08		maxFollowers;				//	The default max amount of followers a player can have active
+	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
 	UI08		maxPetOwners;				//	The default max amount of different owners a pet may have in its lifetime
+	UI16		maxPlayerPackItems;			//	The max amount of items a player's backpack can contain
+	UI16		maxPlayerBankItems;			//	The max amount of items a player's bankbox can contain
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
-	UI08		maxSafeTeleports;				//	The default max amount of free teleports to safety players get via the help menu per day
+	UI16		petOfflineTimeout;			//	Offline time after a player looses all pets
+	SI16		sellmaxitems;				//	Maximum number of items that can be sold to a vendor
+	SI16		fishingstaminaloss;			//	The amount of stamina lost with each use of fishing skill
+	R32		weightPerSTR;				//	How much weight per point of STR a character can hold.
+	bool		paperdollGuildButton;			//	Enable Guild-button on paperdoll to access guild-menus without going through guildstone
+
+
 
 	// SpeedUp
-	R64			checkitems;				//	How often (in seconds) items are checked for decay and other things
-	R64			checkboats;				//	How often (in seconds) boats are checked for motion and so forth
-	R64			checknpcai;				//	How often (in seconds) NPCs can execute an AI routine
-	R64			checkspawnregions;		//	How often (in seconds) spawn regions are checked for new spawns
 	R32			npcWalkingSpeed;			//	Speed at which walking NPCs move
 	R32			npcRunningSpeed;			//	Speed at which running NPCs move
 	R32			npcFleeingSpeed;			//	Speed at which fleeing NPCs move
 	R32			npcMountedWalkingSpeed;		//	Speed at which (mounted) walking NPCs move
 	R32			npcMountedRunningSpeed;		//	Speed at which (mounted) running NPCs move
 	R32			npcMountedFleeingSpeed;		//	Speed at which (mounted) fleeing NPCs move
-	R64			flushTime;				//	How often (in minutes) online accounts are checked to see if they really ARE online
 	R32			archeryShootDelay;		//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
 	R32			globalattackspeed;		//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcspellcastspeed;		//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
+	R64			checkitems;				//	How often (in seconds) items are checked for decay and other things
+	R64			checkboats;				//	How often (in seconds) boats are checked for motion and so forth
+	R64			checknpcai;				//	How often (in seconds) NPCs can execute an AI routine
+	R64			checkspawnregions;		//	How often (in seconds) spawn regions are checked for new spawns
+	R64			flushTime;				//	How often (in minutes) online accounts are checked to see if they really ARE online
 
 	// MessageBoards
 	UI08		msgpostinglevel;				//	If not 0, then players can post
@@ -300,32 +303,32 @@ private:
 	LIGHTLEVEL	darknesslightlevel;			//	Default darkest light level if not subject to a weather system
 
 	// WorldTimer						//	days/hours/minutes/seconds to it's own file?
-	UI16		secondsperuominute;			//	Number of seconds for a UOX minute.
-	SI16		moon[2];					//	Moon current state
-	SI16		days;						//	Number of days the world has been running (persistent)
 	UI08		hours;					//	Number of hours the world has been running (persistent)
 	UI08		minutes;					//	Number of minutes the world has been running (persistent)
 	UI08		seconds;					//	Number of seconds the world has been running (persistent)
+	UI16		secondsperuominute;			//	Number of seconds for a UOX minute.
+	SI16		moon[2];					//	Moon current state
+	SI16		days;						//	Number of days the world has been running (persistent)
 	bool		ampm;						//	Whether our current time is in the morning or afternoon
 
 	// Tracking
+	UI08		trackingmaxtargets;			//	Maximum number of targets that can be tracked
 	UI16		trackingbaserange;			//	Minimum range even a novice can track from
 	UI16		trackingbasetimer;			//	Tracking timer - maximum time for a GM to track at
-	UI08		trackingmaxtargets;			//	Maximum number of targets that can be tracked
 	UI16		trackingmsgredisplaytimer;		//	How often (in seconds) the tracking message is redisplayed
 
 	// Reputation
 	UI16		maxmurdersallowed;			//	Maximum number of kills before turning red
 
 	// Resources
-	UI16		resourceAreaSize;				//	Size of each resource area to split each world into
 	UI08		minecheck;					//	Type of mining check performed - 0 anywhere 1 only mountains/floors 2 region based (not working)
-	SI16		oreperarea;					//	TIMERVAL? Maximum number of ores in a resource area
+	UI16		resourceAreaSize;				//	Size of each resource area to split each world into
 	UI16		orerespawntimer;				//	Time at which ore is respawned (only 1 ore, not all)
-	SI16		logsperarea;				//	Maximum number of logs in a resource area
-	UI16		logsrespawntimer;				//	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
-	SI16		fishperarea;				//	Maximum number of fish in a resource area
 	UI16		fishrespawntimer;				//	TIMERVAL? Time at which fish are respawned (only 1 fish, not all)
+	UI16		logsrespawntimer;				//	TIMERVAL? Time at which logs are respawned (only 1 log, not all)
+	SI16		logsperarea;				//	Maximum number of logs in a resource area
+	SI16		fishperarea;				//	Maximum number of fish in a resource area
+	SI16		oreperarea;					//	TIMERVAL? Maximum number of ores in a resource area
 
 	// Hunger & Food
 	SI16		hungerdamage;				//	Amount of damage applied if hungry and below threshold
@@ -333,14 +336,7 @@ private:
 	SI16		thirstdrain;				//	Amount of stamina drained if thirsty and below threshold
 
 	// Combat
-	SI16		combatmaxrange;				//	RANGE?  Range at which combat can actually occur
-	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
 	UI08		combatanimalattackchance;		//	Chance of animals being attacked (0-100)
-	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
-	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
-	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
-	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
-	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
 	UI08		combatweapondamagechance;		//  Chance of weapons being damaged when attacking in combat (0-100)
 	UI08		combatweapondamagemin;			//  Minimum amount of hitpoints a weapon can lose when being damaged in combat
 	UI08		combatweapondamagemax;			//  Maximum amount of hitpoints a weapon can lose when being damaged in combat
@@ -352,11 +348,18 @@ private:
 	UI08		combatparrydamagemax;			//  Maximum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
 	UI08		combatbloodeffectchance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
+	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
+	SI16		combatmaxrange;				//	RANGE?  Range at which combat can actually occur
+	SI16		combatmaxspellrange;			//	RANGE?  Range at which spells can be cast
+	SI16		combatnpcdamagerate;			//	NPC Damage divisor - PCs sustain less than NPCs.  If a PC, damage is 1/value
+	SI16		combatnpcbasefleeat;			//	% of HP where an NPC will flee, if it's not defined for them
+	SI16		combatnpcbasereattackat;		//	% of HP where an NPC will resume attacking
+	SI16		combatattackstamina;			//	Amount of stamina lost when hitting an opponent
 
 	// Start & Location Settings
 	std::vector< __STARTLOCATIONDATA__ >	startlocations;
-	SI16		startgold;					//	Amount of gold created when a PC is made
 	UI16		startprivs;					//	Starting privileges of characters
+	SI16		startgold;					//	Amount of gold created when a PC is made
 
 	// Anything under this comment is left here for symantics
 	UI08		skilllevel;					//	Some skill value associated with the rank system
@@ -382,7 +385,6 @@ private:
 	UI32		guardPayment;				//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults();
-
 	static const std::map<std::string,std::int32_t> uox3inicasevalue;
 public:
 	UI64		DisabledAssistantFeatures;
