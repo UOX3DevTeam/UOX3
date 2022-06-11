@@ -36,6 +36,7 @@
 #include <thread>
 #include <cstdlib>
 #include <filesystem>
+#include <optional>
 
 #include "uox3.h"
 #include "weight.h"
