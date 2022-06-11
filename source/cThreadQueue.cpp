@@ -1,6 +1,8 @@
 #include "cThreadQueue.h"
 #include <algorithm>
 
+//==============================================================================
+// We instantiate this right at the start 
 CThreadQueue messageLoop;
 
 //=============================================================

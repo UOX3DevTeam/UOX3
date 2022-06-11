@@ -5,6 +5,7 @@
 #include <queue>
 #include <mutex>
 
+//==============================================================================
 enum MessageType {
 	MSG_WORLDSAVE = 0,
 	MSG_SHUTDOWN,
@@ -24,6 +25,7 @@ struct MessagePassed {
 	std::string	 data;
 };
 
+//==============================================================================
 class CThreadQueue {
 private:
 	std::queue< MessagePassed >	internalQueue;

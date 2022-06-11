@@ -199,7 +199,7 @@ private:
 
 	std::bitset< CF_BIT_COUNT > clientFeatures;
 	std::bitset< SF_BIT_COUNT > serverFeatures;
-	std::bitset< 77 >	boolVals;						// Many values stored this way, rather than using bools.
+	std::bitset< 77 >	boolVals;					// Many values stored this way, rather than using bools.
 	std::bitset< 64 >	spawnRegionsFacets;			// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
