@@ -125,21 +125,26 @@ private:
 public:
 	struct skill_st
 	{
-		UI16 strength			= 0;
-		UI16 dexterity			= 0;
-		UI16 intelligence		= 0;
-		SI32 skillDelay			= -1;
-		std::string madeword	= "made";
+		UI16 strength;
+		UI16 dexterity;
+		UI16 intelligence ;
+		SI32 skillDelay;
+		std::string madeword;
 		std::vector< advance_st > advancement;
-		UI16 jsScript			= 0xFFFF;
-		std::string name		= "";
-		skill_st()
-		{
+		UI16 jsScript;
+		std::string name;
+		skill_st() {
 			ResetDefaults();
 		}
-		void ResetDefaults( void )
-		{
+		auto ResetDefaults()->void {
 			advancement.resize( 0 );
+			strength = 0;
+			dexterity = 0;
+			intelligence = 0 ;
+			skillDelay = -1;
+			madeword = "made";
+			jsScript = 0xFFFF;
+			name = "";
 		}
 	};
 
@@ -219,9 +224,9 @@ public:
 	std::map< CBaseObject *, UI32 > refreshQueue;
 	std::map< CBaseObject *, UI32 > deletionQueue;
 
-	void		CheckTimers( void );
-	void		doWorldLight( void );
-	void		SaveNewWorld( bool x );
+	void CheckTimers( void );
+	void doWorldLight( void );
+	void SaveNewWorld( bool x );
 	auto startup() ->void ;
 	CWorldMain();
 	auto ServerData() ->CServerData *;

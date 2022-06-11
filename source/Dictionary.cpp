@@ -18,7 +18,7 @@ using namespace std::string_literals ;
 CDictionaryContainer *Dictionary;
 static auto invalid_dictionary_string = std::string() ;
 
-const SI32 dictCANTOPEN			= -1;
+//const SI32 dictCANTOPEN			= -1;
 //const SI32 dictDUPESECTION		= -2;
 //const SI32 dictDUPEOPENBRACE	= -3;
 //const SI32 dictNOOPENBRACE		= -4;

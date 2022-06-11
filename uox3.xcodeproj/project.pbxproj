@@ -294,16 +294,12 @@
 				648AF76327CFF2CD009327DE /* cBaseObject.h */,
 				648AF74427CFF2CD009327DE /* cChar.cpp */,
 				648AF73027CFF2CC009327DE /* cChar.h */,
-				648AF6F627CFF2CC009327DE /* cConsole.cpp */,
-				648AF75027CFF2CD009327DE /* cConsole.h */,
 				648AF74227CFF2CD009327DE /* cGuild.cpp */,
 				648AF70327CFF2CC009327DE /* cGuild.h */,
 				648AF70527CFF2CC009327DE /* cItem.cpp */,
 				648AF73527CFF2CC009327DE /* cItem.h */,
 				648AF70E27CFF2CC009327DE /* cMultiObj.cpp */,
 				648AF76227CFF2CD009327DE /* cMultiObj.h */,
-				648AF74727CFF2CD009327DE /* cThreadQueue.cpp */,
-				648AF76F27CFF2CD009327DE /* cThreadQueue.h */,
 				648AF74127CFF2CD009327DE /* funcdecl.h */,
 				648AF78027CFF2CD009327DE /* ObjectFactory.cpp */,
 				648AF72227CFF2CC009327DE /* ObjectFactory.h */,
@@ -400,10 +396,6 @@
 		6400D38C284CE68600AADA54 /* Script */ = {
 			isa = PBXGroup;
 			children = (
-				648AF70A27CFF2CC009327DE /* cServerData.cpp */,
-				648AF74627CFF2CD009327DE /* cServerData.h */,
-				648AF75827CFF2CD009327DE /* cServerDefinitions.cpp */,
-				648AF71127CFF2CC009327DE /* cServerDefinitions.h */,
 				648AF73B27CFF2CD009327DE /* Dictionary.cpp */,
 				648AF71E27CFF2CC009327DE /* Dictionary.h */,
 				648AF75E27CFF2CD009327DE /* scriptc.cpp */,
@@ -417,6 +409,7 @@
 		6400D38D284CE6C300AADA54 /* Subsystem */ = {
 			isa = PBXGroup;
 			children = (
+				642E11B028549716003AA848 /* BaseWorld */,
 				648AF77527CFF2CD009327DE /* books.cpp */,
 				648AF6FB27CFF2CC009327DE /* books.h */,
 				648AF77F27CFF2CD009327DE /* cAccountClass.cpp */,
@@ -457,8 +450,6 @@
 				648AF75D27CFF2CD009327DE /* weight.h */,
 				648AF78427CFF2CD009327DE /* wholist.cpp */,
 				648AF77E27CFF2CD009327DE /* wholist.h */,
-				648AF70727CFF2CC009327DE /* worldmain.cpp */,
-				648AF70627CFF2CC009327DE /* worldmain.h */,
 			);
 			name = Subsystem;
 			sourceTree = "<group>";
@@ -514,6 +505,23 @@
 			children = (
 			);
 			name = "Not Used";
+			sourceTree = "<group>";
+		};
+		642E11B028549716003AA848 /* BaseWorld */ = {
+			isa = PBXGroup;
+			children = (
+				648AF6F627CFF2CC009327DE /* cConsole.cpp */,
+				648AF75027CFF2CD009327DE /* cConsole.h */,
+				648AF74727CFF2CD009327DE /* cThreadQueue.cpp */,
+				648AF76F27CFF2CD009327DE /* cThreadQueue.h */,
+				648AF70727CFF2CC009327DE /* worldmain.cpp */,
+				648AF70627CFF2CC009327DE /* worldmain.h */,
+				648AF70A27CFF2CC009327DE /* cServerData.cpp */,
+				648AF74627CFF2CD009327DE /* cServerData.h */,
+				648AF75827CFF2CD009327DE /* cServerDefinitions.cpp */,
+				648AF71127CFF2CC009327DE /* cServerDefinitions.h */,
+			);
+			name = BaseWorld;
 			sourceTree = "<group>";
 		};
 		648AF6D927CFEEC5009327DE = {
