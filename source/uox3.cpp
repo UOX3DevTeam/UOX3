@@ -333,7 +333,7 @@ auto initOperatingSystem() ->std::optional<std::string> {
 	WORD wVersionRequested = MAKEWORD( 2, 2 );
 	SI32 err = WSAStartup( wVersionRequested, &wsaData );
 	if( err ) {
-		return "Winsock 2.2 not found on your system!"s
+		return "Winsock 2.2 not found on your system!"s;
 	}
 #else
 	// Protection from server-shutdown during mid-worldsave
