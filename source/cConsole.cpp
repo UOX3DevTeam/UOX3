@@ -47,27 +47,43 @@ struct termios initial_terminal_state;
 #undef max
 DWORD initial_terminal_state;
 #endif
+using namespace std::string_literals;
+CEndL		myendl;
 
-CConsole						Console;	// no *, else we can't overload <<
-CEndL							myendl;
-
-const UI08 NORMALMODE			= 0;
-const UI08 WARNINGMODE			= 1;
-const UI08 ERRORMODE			= 2;
+constexpr auto NORMALMODE = std::uint8_t(0);
+constexpr auto WARNINGMODE = std::uint8_t(1);
+constexpr auto ERRORMODE = std::uint8_t(2);
 //const UI08 COLOURMODE			= 3;
+const std::string CConsole::ESC = "\x1b"s;
+const std::string CConsole::CSI = CConsole::ESC + "["s;
+const std::string CConsole::BEL = "\x07"s;
+//  Command sequences
+const std::string CConsole::ATTRIBUTE = CConsole::CSI +"#m"s;  // find/replace on # with attribute number
+const std::string	CConsole::MOVE = CConsole::CSI + "ROW;COLH"s; // we are going to find/replace on ROW/COL
+const std::string	CConsole::HORIZMOVE = CConsole::CSI + "COLG"s;
+const std::string	CConsole::VERTMOVE = CConsole::CSI + "ROWd"s;
+const std::string	CConsole::OFFCURSOR = CConsole::CSI + "?25l"s;
+const std::string	CConsole::ONCURSOR = CConsole::CSI + "?25h"s;
+
+const std::string	CConsole::ONGRAPHIC = CConsole::ESC + "(0"s;
+const std::string	CConsole::OFFGRAPHIC = CConsole::ESC + "(B"s;
+
+const std::string	CConsole::SETTITLE = CConsole::ESC + "]2;TITLEs"s + CConsole::BEL;
+
+const std::string	CConsole::CLEAR = CConsole::CSI +"2J"s;
 
 // Forward function declarations
-void		endmessage( SI32 x );
-void		LoadCustomTitle( void );
-void		LoadSkills( void );
-void		LoadSpawnRegions( void );
-void		LoadRegions( void );
-void		LoadTeleportLocations( void );
-void		LoadCreatures( void );
-void		LoadPlaces( void );
-void		UnloadRegions( void );
-void		UnloadSpawnRegions( void );
-void		LoadTeleportLocations( void );
+auto endmessage( SI32 x ) ->void;
+auto LoadCustomTitle() ->void;
+auto LoadSkills() ->void;
+auto LoadSpawnRegions() ->void;
+auto LoadRegions() ->void;
+auto LoadTeleportLocations() ->void;
+auto LoadCreatures() ->void;
+auto LoadPlaces() ->void;
+auto UnloadRegions() ->void;
+auto UnloadSpawnRegions() ->void;
+auto LoadTeleportLocations() ->void;
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	CConsole()
@@ -75,15 +91,15 @@ void		LoadTeleportLocations( void );
 //| Purpose		-	Class Constructor and deconstructor
 //o-----------------------------------------------------------------------------------------------o
 CConsole::CConsole() : width( 80 ), height( 25 ),
-currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
-{
-	initialize();
+currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false ) {
+	is_initialized = false ;
 }
 
-CConsole::~CConsole()
-{
-	MoveTo(1,height);
-	reset();
+CConsole::~CConsole() {
+	if (is_initialized){
+		MoveTo(1,height);
+		reset();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -91,8 +107,8 @@ CConsole::~CConsole()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prepare console/terminal for UOX3 output
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::initialize()
-{
+auto CConsole::initialize() ->void {
+	is_initialized = true ;
 #if !defined(_WIN32)
 	tcgetattr(1, &initial_terminal_state); // get the current state of the terminal
 	auto temp = initial_terminal_state;
@@ -115,10 +131,8 @@ void CConsole::initialize()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Reset console/terminal to its original state
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::reset()
-{
+auto CConsole::reset() ->void {
 	std::cout.flush();
-
 #if !defined(_WIN32)
 	tcsetattr(1, TCSAFLUSH, &initial_terminal_state);
 	std::cout << std::endl;
@@ -133,8 +147,7 @@ void CConsole::reset()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Set console/terminal window title
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::setTitle( const std::string &value )
-{
+auto CConsole::setTitle(const std::string &value) ->void{
 #if !defined(_WIN32)
 	auto cmd = SETTITLE;
 	auto loc = cmd.find("TITLE");
@@ -150,8 +163,7 @@ void CConsole::setTitle( const std::string &value )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Send cmd to terminal
 //o-----------------------------------------------------------------------------------------------o
-CConsole& CConsole::sendCMD( const std::string& cmd )
-{
+auto CConsole::sendCMD(const std::string& cmd) ->CConsole& {
 	std::cout << cmd;
 	std::cout.flush();
 	return *this;
@@ -162,8 +174,7 @@ CConsole& CConsole::sendCMD( const std::string& cmd )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Set window size in columns and rows
 //o-----------------------------------------------------------------------------------------------o
-std::tuple<int,int> CConsole::windowSize()
-{
+auto CConsole::windowSize() -> std::pair<int,int> {
 	int row =0;
 	int col =0;
 
@@ -180,8 +191,7 @@ std::tuple<int,int> CConsole::windowSize()
 	col	= csbi.dwSize.X;
 	row	= csbi.dwSize.Y;
 #endif
-
-	return std::make_tuple(row,col);
+	return std::make_pair(row,col);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -189,8 +199,7 @@ std::tuple<int,int> CConsole::windowSize()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the screen
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::clearScreen()
-{
+auto CConsole::clearScreen() ->void {
 #if defined(_WIN32)
 	unsigned long y;
 	COORD xy;
@@ -212,34 +221,25 @@ void CConsole::clearScreen()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Let you use << and >>
 //o-----------------------------------------------------------------------------------------------o
-CConsole& CConsole::operator<<( const SI08 *outPut )
-{
-	StartOfLineCheck();
-	(*this) << (const char *)outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const char *outPut )
-{
+//================================================================================================
+//================================================================================================
+auto CConsole::operator<<(const char *output) ->CConsole& {
 	StartOfLineCheck();
 #if PLATFORM == WINDOWS
 	CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
-	std::string toDisplay = outPut;
-	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X )
-	{
+	std::string toDisplay = output;
+	if( ScrBuffInfo.dwCursorPosition.X + toDisplay.length() > ScrBuffInfo.dwSize.X ) {
 		bool wrapDone = false;
-		while( !wrapDone )
-		{
+		while( !wrapDone ) {
 			GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
 			SI32 diff = ScrBuffInfo.dwSize.X - ScrBuffInfo.dwCursorPosition.X - 1;
-			if( diff > toDisplay.length() )
-			{
+			if( diff > toDisplay.length() ) {
 				std::cout << toDisplay;
 				wrapDone = true;
 			}
-			else
-			{
+			else {
 				std::cout << toDisplay.substr( 0, diff );
 				(*this) << myendl;
 				StartOfLineCheck();
@@ -247,126 +247,145 @@ CConsole& CConsole::operator<<( const char *outPut )
 			}
 		}
 	}
-	else
-#endif
-	{
-		std::cout << outPut;
+	else {
+		std::cout << output ;
 	}
+#else
+	std::cout << output;
+#endif
+	return (*this);
+
+}
+//================================================================================================
+auto CConsole::operator<<(const std::uint8_t *output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << reinterpret_cast<const char*>(output);
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI08 *outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::int8_t *output) ->CConsole& {
 	StartOfLineCheck();
-	(*this) << (const char *)outPut;
+	std::cout << reinterpret_cast<const char*>(output);
 	return (*this);
 }
-CConsole& CConsole::operator<<( const SI08 &outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::uint8_t &output) ->CConsole& {
 	StartOfLineCheck();
-	std::cout << outPut;
+	std::cout << static_cast<std::uint16_t>(output);
+	return (*this);
+
+}
+//================================================================================================
+auto CConsole::operator<<(const std::int8_t &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << static_cast<std::int16_t>(output);
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI08 &outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::uint16_t &output) ->CConsole& {
 	StartOfLineCheck();
-	std::cout << outPut;
+	std::cout << output;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const SI16 &outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::int16_t &output) ->CConsole& {
 	StartOfLineCheck();
-	std::cout << outPut;
+	std::cout << output;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const UI16 &outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::uint32_t &output) ->CConsole& {
 	StartOfLineCheck();
-	std::cout << outPut;
+	std::cout << output;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const SI32 &outPut )
-{
+//================================================================================================
+auto CConsole::operator<<(const std::int32_t &output) ->CConsole& {
 	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const UI32 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const SI64 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return ( *this );
-}
-CConsole& CConsole::operator<<( const UI64 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const CBaseObject *outPut )
-{
-	StartOfLineCheck();
-	(*this) << outPut->GetSerial();
-	return (*this);
-}
-CConsole& CConsole::operator<<( const std::string &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut.c_str();
-	return (*this);
-}
-/*CConsole& CConsole::operator<<( const std::ostream& outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}*/
-CConsole& CConsole::operator<<( CBaseObject *outPut )
-{
-	StartOfLineCheck();
-	(*this) << outPut->GetSerial();
+	std::cout << output;
 	return (*this);
 }
 
+//================================================================================================
+auto CConsole::operator<<(const std::uint64_t &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+}
+//================================================================================================
+auto CConsole::operator<<(const std::int64_t &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+}
 
-CConsole& CConsole::operator<<( CEndL& myObj )
-{
-	if( curLeft == 0 )
+//================================================================================================
+auto CConsole::operator<<(const float &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+
+}
+//================================================================================================
+auto CConsole::operator<<(const double &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+}
+//================================================================================================
+auto CConsole::operator<<(const long double &output) ->CConsole& {
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+}
+
+//================================================================================================
+auto CConsole::operator<<(CBaseObject *output) ->CConsole&{
+	StartOfLineCheck();
+	(*this) << output->GetSerial();
+	return (*this);
+}
+//================================================================================================
+auto CConsole::operator<<(const CBaseObject *output) ->CConsole&{
+	StartOfLineCheck();
+	(*this) << output->GetSerial();
+	return (*this);
+}
+//================================================================================================
+auto CConsole::operator<<(const CBaseObject &output) ->CConsole&{
+	StartOfLineCheck();
+	(*this) << output.GetSerial();
+	return (*this);
+}
+
+//================================================================================================
+auto CConsole::operator<<( const std::string &output ) ->CConsole&{
+	StartOfLineCheck();
+	std::cout << output;
+	return (*this);
+}
+
+//================================================================================================
+auto CConsole::operator<<(CEndL& myObj) -> CConsole&{
+	if( curLeft == 0 ){
 		PrintStartOfLine();
+	}
 	std::cout << std::endl;
 	curLeft = 0;
 	++curTop;
 	return (*this);
 }
-CConsole& CConsole::operator<<( const R32 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
-CConsole& CConsole::operator<<( const R64 &outPut )
-{
-	StartOfLineCheck();
-	std::cout << outPut;
-	return (*this);
-}
+
 
 //o-----------------------------------------------------------------------------------------------o
 //| Function	-	void print( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints the console with the "|"
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::print( const std::string& msg )
-{
+auto CConsole::print(const std::string& msg)->void{
 	StartOfLineCheck();
 	std::cout << msg;
-	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n'))
-	{
+	if ((msg.size() > 0) && (msg[msg.size()-1]=='\n')) {
 		curLeft = 0;
 	}
 }
@@ -376,28 +395,28 @@ void CConsole::print( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Writes to the logfile
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::log( const std::string& msg, const std::string& filename )
-{
-	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
-		return;
-
-	std::ofstream toWrite;
-	std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
-	if( cwmWorldState != nullptr )
-		realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
-	else
-		realFileName = filename;
-
-	char timeStr[256];
-	RealTime( timeStr );
-
-	toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );
-	if( toWrite.is_open() )
-		toWrite << "[" << timeStr << "] " << msg << std::endl;
-	toWrite.close();
-	if( LogEcho() )
-	{
-		print( oldstrutil::format( "%s%s\n", timeStr, msg.c_str()));
+auto CConsole::log( const std::string& msg, const std::string& filename ) ->void {
+	if( cwmWorldState->ServerData()->ServerConsoleLog() ){
+		std::ofstream toWrite;
+		std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
+		if( cwmWorldState != nullptr ){
+			realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
+		}
+		else {
+			realFileName = filename;
+		}
+		
+		char timeStr[256];
+		RealTime( timeStr );
+		
+		toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );
+		if( toWrite.is_open() ){
+			toWrite << "[" << timeStr << "] " << msg << std::endl;
+		}
+		toWrite.close();
+		if( LogEcho() ) {
+			print( oldstrutil::format( "%s%s\n", timeStr, msg.c_str()));
+		}
 	}
 }
 
@@ -406,12 +425,10 @@ void CConsole::log( const std::string& msg, const std::string& filename )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Log to the console.log file
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::log( const std::string& msg )
-{
-	if( !cwmWorldState->ServerData()->ServerConsoleLog() )
-		return;
-
-	log( msg, "console.log" );
+auto CConsole::log(const std::string& msg) ->void {
+	if( cwmWorldState->ServerData()->ServerConsoleLog() ){
+		log( msg, "console.log" );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -419,13 +436,13 @@ void CConsole::log( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Writes to the error log and the console.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::error( const std::string& msg )
-{
+auto CConsole::error(const std::string& msg) ->void {
 	UI08 oldMode = CurrentMode();
 	CurrentMode( ERRORMODE );
 	log( msg, "error.log" );
-	if( curLeft != 0 )
+	if( curLeft != 0 ){
 		(*this) << myendl;
+	}
 	TurnRed();
 	(*this) << "ERROR: " << (const char*)&msg[0] << myendl;
 	TurnNormal();
@@ -437,12 +454,12 @@ void CConsole::error( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints a section seperator
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintSectionBegin( void )
-{
+auto CConsole::PrintSectionBegin() ->void {
 	TurnBrightWhite();
 	std::cout << "o";
-	for( SI32 j = 1; j < width - 1; ++j )
+	for( auto j = 1; j < width - 1; ++j ){
 		std::cout << "-";
+	}
 	std::cout << "o";
 	curLeft = 0;
 	curTop = 0;
@@ -455,8 +472,7 @@ void CConsole::PrintSectionBegin( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Migration of constart function to here
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::Start( const std::string& temp )
-{
+auto CConsole::Start(const std::string& temp) ->void {
 	auto size = windowSize();
 	width = std::get<1>(size);
 	height = std::get<0>(size);
@@ -469,8 +485,7 @@ void CConsole::Start( const std::string& temp )
 ///o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text yellow
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnYellow( void )
-{
+auto CConsole::TurnYellow() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
@@ -486,8 +501,7 @@ void CConsole::TurnYellow( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text red
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnRed( void )
-{
+auto CConsole::TurnRed() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_RED | FOREGROUND_INTENSITY );
@@ -503,8 +517,7 @@ void CConsole::TurnRed( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text green
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnGreen( void )
-{
+auto CConsole::TurnGreen() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_GREEN | FOREGROUND_INTENSITY );
@@ -520,8 +533,7 @@ void CConsole::TurnGreen( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text blue
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnBlue( void )
-{
+auto CConsole::TurnBlue() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE | FOREGROUND_INTENSITY );
@@ -537,8 +549,7 @@ void CConsole::TurnBlue( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns text to normal white
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnNormal( void )
-{
+auto CConsole::TurnNormal() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN );
@@ -554,8 +565,7 @@ void CConsole::TurnNormal( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns text to bright white
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::TurnBrightWhite( void )
-{
+auto CConsole::TurnBrightWhite() ->void {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute( hco, FOREGROUND_BLUE  | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY );
@@ -571,8 +581,7 @@ void CConsole::TurnBrightWhite( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[done]" message
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintDone( void )
-{
+auto CConsole::PrintDone() ->void {
 	PrintSpecial( CGREEN, "done" );
 }
 
@@ -583,8 +592,7 @@ void CConsole::PrintDone( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[failed]" message
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintFailed( void )
-{
+auto CConsole::PrintFailed() ->void {
 	PrintSpecial( CRED, "Failed" );
 }
 
@@ -595,8 +603,7 @@ void CConsole::PrintFailed( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[skipped]" message
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintPassed( void )
-{
+auto CConsole::PrintPassed() ->void {
 	PrintSpecial( CYELLOW, "Skipped" );
 }
 
@@ -606,17 +613,17 @@ void CConsole::PrintPassed( void )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the screen
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::ClearScreen( void )
-{
+auto CConsole::ClearScreen() ->void {
 	clearScreen();
 }
 
-void CConsole::PrintBasedOnVal( bool value )
-{
-	if( value )
+auto CConsole::PrintBasedOnVal(bool value) ->void {
+	if(value) {
 		PrintDone();
-	else
+	}
+	else {
 		PrintFailed();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -625,17 +632,17 @@ void CConsole::PrintBasedOnVal( bool value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes to the warning log and the console.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::warning( const std::string& msg )
-{
+auto CConsole::warning(const std::string& msg) ->void {
 	UI08 oldMode = CurrentMode();
 	CurrentMode( WARNINGMODE );
-	log( msg, "warning.log" );
-	if( curLeft != 0 )
+	log(msg, "warning.log");
+	if(curLeft != 0){
 		(*this) << myendl;
+	}
 	TurnBlue();
 	(*this) << "WARNING: " << (const char*)&msg[0] << myendl;
 	TurnNormal();
-	CurrentMode( oldMode );
+	CurrentMode(oldMode);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -643,12 +650,10 @@ void CConsole::warning( const std::string& msg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets console's output mode
 //o-----------------------------------------------------------------------------------------------o
-UI08 CConsole::CurrentMode( void ) const
-{
+auto CConsole::CurrentMode() const ->std::uint8_t {
 	return currentMode;
 }
-void CConsole::CurrentMode( UI08 value )
-{
+auto CConsole::CurrentMode( std::uint8_t value ) ->void {
 	currentMode = value;
 }
 
@@ -657,17 +662,15 @@ void CConsole::CurrentMode( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set colour of console text at start of a new line
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintStartOfLine( void )
-{
+auto CConsole::PrintStartOfLine() ->void {
 	TurnBrightWhite();
 	std::cout << "| ";
-	switch( previousColour )
-	{
+	switch(previousColour) {
 		case CBLUE:		TurnBlue();		break;
 		case CRED:		TurnRed();		break;
 		case CGREEN:	TurnGreen();	break;
 		case CYELLOW:	TurnYellow();	break;
-		case CBWHITE:					break;	// current colour
+		case CBWHITE:	break;	// current colour
 		case CNORMAL:
 		default:		TurnNormal();	break;
 	}
@@ -679,12 +682,10 @@ void CConsole::PrintStartOfLine( void )
 //|	Purpose		-	Set console cursor position
 //o-----------------------------------------------------------------------------------------------o
 #if PLATFORM == WINDOWS
-void CConsole::MoveTo( SI32 x, SI32 y )
-{
+auto CConsole::MoveTo(SI32 x,SI32 y) ->void {
 	auto hco = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD Pos;
-	if( y == -1 )
-	{
+	if( y == -1 ) {
 		CONSOLE_SCREEN_BUFFER_INFO ScrBuffInfo;
 
 		GetConsoleScreenBufferInfo( hco, &ScrBuffInfo );
@@ -692,16 +693,14 @@ void CConsole::MoveTo( SI32 x, SI32 y )
 		Pos.X = (UI16)x;
 		SetConsoleCursorPosition( hco, Pos );
 	}
-	else
-	{
+	else {
 		Pos.X = (UI16)x;
 		Pos.Y = (UI16)y;
 		SetConsoleCursorPosition( hco, Pos );
 	}
 }
 #else
-void CConsole::MoveTo( SI32 x, SI32 y )
-{
+void CConsole::MoveTo( SI32 x, SI32 y ) {
 	std::cout << "\033[255D";
 	std::cout << "\033[" << x << "C";
 }
@@ -713,8 +712,7 @@ void CConsole::MoveTo( SI32 x, SI32 y )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether console should echo log messages
 //o-----------------------------------------------------------------------------------------------o
-bool CConsole::LogEcho( void )
-{
+auto CConsole::LogEcho() const ->bool {
 	return logEcho;
 }
 
@@ -724,8 +722,7 @@ bool CConsole::LogEcho( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables/Disables whether console should echo log messages
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::LogEcho( bool value )
-{
+auto CConsole::LogEcho(bool value) ->void {
 	logEcho = value;
 }
 
@@ -736,10 +733,8 @@ void CConsole::LogEcho( bool value )
 //|	Purpose		-	Reduces excess work in overloaded functions by checking
 //|					to see if the start of line has to be done here
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::StartOfLineCheck( void )
-{
-	if( curLeft == 0 )
-	{
+auto CConsole::StartOfLineCheck() ->void {
+	if( curLeft == 0 ) {
 		PrintStartOfLine();
 		curLeft = 1;
 	}
@@ -752,15 +747,13 @@ void CConsole::StartOfLineCheck( void )
 //|	Purpose		-	This is much like PrintFailed, PrintDone and so on except
 //|					we specify the text and the colour
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
-{
+auto CConsole::PrintSpecial( UI08 colour, const std::string& msg ) ->void {
 	StartOfLineCheck();
 	size_t stringLength = msg.size() + 3;
 	MoveTo( static_cast< SI32 >(width - stringLength) );
 	TurnNormal();
 	(*this) << "[";
-	switch( colour )
-	{
+	switch( colour ) {
 		default:
 		case CNORMAL:						break;
 		case CBLUE:		TurnBlue();			break;
@@ -792,43 +785,33 @@ void CConsole::PrintSpecial( UI08 colour, const std::string& msg )
 //|					a charecter, if it is again the same ZERO just putted in nothing was entered. However
 //|					it is not a zero the user has entered a char.
 //o-----------------------------------------------------------------------------------------------o
-SI32 CConsole::cl_getch( void )
-{
+auto CConsole::cl_getch() ->std::int32_t {
 #if PLATFORM != WINDOWS
 	char data = 0 ;
 	auto a = ::read(0,&data, 1); // This doesn't block on getting a line due to initalization
-	if( a > 0 )
-	{
+	if( a > 0 ) {
 		// Look for escape!
-		if( data == 27 )
-		{
+		if( data == 27 ) {
 			// This was an escape, see if we have another item
 			a = ::read(0, &data, 1);
-			if( a > 0 )
-			{
+			if( a > 0 ) {
 				// See if this is a CSI
-				if( data == '[' )
-				{
+				if( data == '[' ) {
 					// It is an control sequence!
 					// Some sequences end with a ~, some dont.  So, we now get to see
 					a = ::read(0, &data, 1);
-					while( a > 0 )
-					{
-						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || (( data == 'H' ) && ( data == 'F' )) || ( data == '~' ))
-						{
+					while( a > 0 ) {
+						if(( data == 'A' ) || ( data == 'B' ) || ( data == 'C' ) || ( data == 'D' ) || (( data == 'H' ) && ( data == 'F' )) || ( data == '~' )) {
 							break;
 						}
 						a = ::read(0, &data, 1);
 					}
 					return -1;
 				}
-				else if( data == 'O' ) // this could be F1-F4
-				{
+				else if( data == 'O' ) {// this could be F1-F4
 					a = ::read(0, &data, 1);
-					if( a > 0 )
-					{
-						if(( data == 'P' ) || ( data == 'Q' ) || ( data == 'R' ) || ( data == 'S' ))
-						{
+					if( a > 0 ) {
+						if(( data == 'P' ) || ( data == 'Q' ) || ( data == 'R' ) || ( data == 'S' )) {
 							// It was F1,F2,F3,F4
 							return -1;
 						}
@@ -838,15 +821,13 @@ SI32 CConsole::cl_getch( void )
 					// It wasnt, so we have a choice, return -1 (since we got ESC O, or return ESC and lose O
 					return 27;
 				}
-				else
-				{
+				else {
 					// Ok, it isn't an CSI (Control Sequence).  But we have all ready lost/read the next
 					// character.  That will be lost, return escape
 					return 27;
 				}
 			}
-			else
-			{
+			else {
 				// There was nothing after the escape, so just send the escape
 				return 27; // return escape
 			}
@@ -854,17 +835,18 @@ SI32 CConsole::cl_getch( void )
 		// Not escape if here, so just return it
 		return static_cast<SI32>(data);
 	}
-	else
-	{
+	else {
 		return -1;
 	}
-
+	
 #else
-		// uox is not wrapped simply use the kbhit routine
-		if( _kbhit() )
-			return _getch();
-		else
-			return -1;
+	// uox is not wrapped simply use the kbhit routine
+	if( _kbhit() ){
+		return _getch();
+	}
+	else {
+		return -1;
+	}
 #endif
 }
 
@@ -877,11 +859,9 @@ SI32 CConsole::cl_getch( void )
 //| Purpose		-	Facilitate console control. SysOp keys, and localhost
 //|					controls.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::Poll( void )
-{
+auto CConsole::Poll() ->void {
 	SI32 c = cl_getch();
-	if( c > 0 )
-	{
+	if( c > 0 ) {
 		c = std::toupper(c);
 		Process( c );
 	}
@@ -897,363 +877,353 @@ void CConsole::Poll( void )
 //|					respectivly. This functionality hasn't been implemented
 //|					at the current time of writing, but will be when possible.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::Process( SI32 c )
-{
-	if( c == '*' )
-	{
-		if( cwmWorldState->GetSecure() )
+auto CConsole::Process(std::int32_t c) ->void {
+	if( c == '*' ) {
+		if( cwmWorldState->GetSecure() ){
 			messageLoop << "Secure mode disabled. Press ? for a commands list";
-		else
+		}
+		else {
 			messageLoop << "Secure mode re-enabled";
+		}
 		cwmWorldState->SetSecure( !cwmWorldState->GetSecure() );
-		return;
+		
 	}
 	else
 	{
 		if( cwmWorldState->GetSecure() )
 		{
 			messageLoop << "Secure mode prevents keyboard commands! Press '*' to disable";
-			return;
+			
 		}
-
-		JSCONSOLEKEYMAP_ITERATOR toFind = JSKeyHandler.find( c );
-		if( toFind != JSKeyHandler.end() )
-		{
-			if( toFind->second.isEnabled )
-			{
-				cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
-				if( toExecute != nullptr )
-				{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
+		else {
+			JSCONSOLEKEYMAP_ITERATOR toFind = JSKeyHandler.find( c );
+			if( toFind != JSKeyHandler.end() ) {
+				if( toFind->second.isEnabled ) {
+					cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
+					if( toExecute) {
+						// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-					print(oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
+						print(oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str()) );
 #endif
-					jsval eventRetVal;
-					toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
+						jsval eventRetVal;
+						toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
+					}
+					return;
 				}
-				return;
 			}
-		}
-		CSocket *tSock	= nullptr;
-		//char outputline[128], temp[1024];
-		std::string outputline, temp;
-		SI32 indexcount	= 0;
-		bool kill		= false;
-		SI32 j = 0;
-		switch( c )
-		{
-			case '!':
-				// Force server to save accounts file
-				messageLoop << "CMD: Saving Accounts... ";
-				Accounts->Save();
-				messageLoop << MSG_PRINTDONE;
-				break;
-			case '@':
-				// Force server to save all files.(Manual save)
-				messageLoop << MSG_WORLDSAVE;
-				break;
-			case 'Y':
-				SI32 keyresp;
-				std::cout << "System: ";
-				std::cout.flush();
-				while( !kill )
-				{
-					keyresp = cl_getch();
-					switch( keyresp )
-					{
-						case -1:	// no key pressed
-						case 0:
-							break;
-						case 0x1B:
-							outputline = "";
-							indexcount = 0;
-							kill = true;
-							std::cout << std::endl;
-							messageLoop << "CMD: System broadcast canceled.";
-							break;
-						case 0x08:
-							--indexcount;
-							if( indexcount < 0 )
+			CSocket *tSock	= nullptr;
+			//char outputline[128], temp[1024];
+			std::string outputline, temp;
+			SI32 indexcount	= 0;
+			bool kill		= false;
+			SI32 j = 0;
+			switch( c ) {
+				case '!':
+					// Force server to save accounts file
+					messageLoop << "CMD: Saving Accounts... ";
+					Accounts->Save();
+					messageLoop << MSG_PRINTDONE;
+					break;
+				case '@':
+					// Force server to save all files.(Manual save)
+					messageLoop << MSG_WORLDSAVE;
+					break;
+				case 'Y':
+					SI32 keyresp;
+					std::cout << "System: ";
+					std::cout.flush();
+					while( !kill ) {
+						keyresp = cl_getch();
+						switch( keyresp ) {
+							case -1:	// no key pressed
+							case 0:
+								break;
+							case 0x1B:
+								outputline = "";
 								indexcount = 0;
-							else
-								std::cout << "\b \b";
-							break;
-						case 0x0A:
-						case 0x0D:
-							outputline[indexcount] = 0;
-							messageLoop.NewMessage( MSG_CONSOLEBCAST, outputline.c_str() );
-							indexcount = 0;
-							kill = true;
-							std::cout << std::endl;
-							temp=oldstrutil::format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
-							outputline = "";
-							messageLoop << temp;
-							break;
-						default:
-							outputline = outputline + std::string(1, static_cast<SI08>(keyresp));
-							indexcount = indexcount + 1;
-							std::cout << static_cast<SI08>(keyresp);
-							std::cout.flush();
-							break;
-					}
-					keyresp = 0x00;
-				}
-				break;
-			case '[':
-			{
-				// We want to group all the contents of the multimap container numerically by group. We rely on the self ordering in the multimap implementation to do this.
-				messageLoop << "  ";
-				messageLoop << "Auto-AddMenu Statistics";
-				messageLoop << "  ";
-				std::string szBuffer;
-				// We need to get an iteration into the map first of all the top level ULONGs then we can get an equal range.
-				std::map< UI32, UI08 > localMap;
-				localMap.clear();
-				for( ADDMENUMAP_CITERATOR CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end(); CJ++ )
-				{
-					// check to see if the group id has been checked already
-					if( localMap.find( CJ->first ) == localMap.end() )
-					{
-						localMap.insert( std::make_pair( CJ->first, 0 ) );
-						szBuffer = "";
-						szBuffer=oldstrutil::format( "AddMenuGroup %u:", CJ->first );
-						messageLoop << szBuffer;
-						std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
-						SI32 count = 0;
-						for( ADDMENUMAP_CITERATOR CI=pairRange.first;CI != pairRange.second; CI++ )
-						{
-							count++;
+								kill = true;
+								std::cout << std::endl;
+								messageLoop << "CMD: System broadcast canceled.";
+								break;
+							case 0x08:
+								--indexcount;
+								if( indexcount < 0 )
+									indexcount = 0;
+								else
+									std::cout << "\b \b";
+								break;
+							case 0x0A:
+							case 0x0D:
+								outputline[indexcount] = 0;
+								messageLoop.NewMessage( MSG_CONSOLEBCAST, outputline.c_str() );
+								indexcount = 0;
+								kill = true;
+								std::cout << std::endl;
+								temp=oldstrutil::format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
+								outputline = "";
+								messageLoop << temp;
+								break;
+							default:
+								outputline = outputline + std::string(1, static_cast<SI08>(keyresp));
+								indexcount = indexcount + 1;
+								std::cout << static_cast<SI08>(keyresp);
+								std::cout.flush();
+								break;
 						}
-						szBuffer = "";
-						szBuffer=oldstrutil::format( "   Found %i Auto-AddMenu Item(s).", count );
-						messageLoop << szBuffer;
+						keyresp = 0x00;
 					}
+					break;
+				case '[': {
+					// We want to group all the contents of the multimap container numerically by group. We rely on the self ordering in the multimap implementation to do this.
+					messageLoop << "  ";
+					messageLoop << "Auto-AddMenu Statistics";
+					messageLoop << "  ";
+					std::string szBuffer;
+					// We need to get an iteration into the map first of all the top level ULONGs then we can get an equal range.
+					std::map< UI32, UI08 > localMap;
+					localMap.clear();
+					for( ADDMENUMAP_CITERATOR CJ = g_mmapAddMenuMap.begin(); CJ != g_mmapAddMenuMap.end(); CJ++ ) {
+						// check to see if the group id has been checked already
+						if( localMap.find( CJ->first ) == localMap.end() ) {
+							localMap.insert( std::make_pair( CJ->first, 0 ) );
+							szBuffer = "";
+							szBuffer=oldstrutil::format( "AddMenuGroup %u:", CJ->first );
+							messageLoop << szBuffer;
+							std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
+							SI32 count = 0;
+							for( ADDMENUMAP_CITERATOR CI=pairRange.first;CI != pairRange.second; CI++ ) {
+								count++;
+							}
+							szBuffer = "";
+							szBuffer=oldstrutil::format( "   Found %i Auto-AddMenu Item(s).", count );
+							messageLoop << szBuffer;
+						}
+					}
+					messageLoop << MSG_SECTIONBEGIN;
+					break;
 				}
-				messageLoop << MSG_SECTIONBEGIN;
-				break;
-			}
-			case '<':
-				messageLoop << "Function not implemented.";
-				break;
-			case '>':
-				messageLoop << "Function not implemented.";
-				break;
-			case 0x1B:
-			case 'Q':
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << "CMD: Immediate Shutdown initialized!";
-				messageLoop << MSG_SHUTDOWN;
-				break;
-			case '0':
-				if( !cwmWorldState->GetReloadingScripts() )
-				{
-					cwmWorldState->SetReloadingScripts( true );
-					// Reload all the files. If there are issues with these files change the order reloaded from here first.
-					cwmWorldState->ServerData()->Load();
-					messageLoop << "CMD: Loading All";
-					messageLoop << "     Server INI... ";
-					// Reload accounts, and update Access.adm if new accounts available.
-					messageLoop << "     Loading Accounts... ";
-					Accounts->Load();
-					messageLoop << MSG_PRINTDONE;
-					// Reload Region Files
-					messageLoop << "     Loading Regions... ";
-					UnloadRegions();
-					LoadRegions();
-					messageLoop << MSG_PRINTDONE;
-					messageLoop << "     Loading Teleport Locations... ";
-					LoadTeleportLocations();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the serve spawn regions
-					messageLoop << "     Loading Spawn Regions... ";
-					UnloadSpawnRegions();
-					LoadSpawnRegions();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the server command list
-					messageLoop << "     Loading commands... ";
-					Commands->Load();
-					messageLoop << MSG_PRINTDONE;
-					// Reload DFN's
-					messageLoop << "     Loading Server DFN... ";
-					FileLookup->Reload();
-					messageLoop << MSG_PRINTDONE;
-					// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
-					messageLoop << "     Loading JSE Scripts... ";
-
-					// Reload the current Spells
-					messageLoop << "     Loading spells... ";
-					Magic->LoadScript();
-					messageLoop << MSG_PRINTDONE;
-					// Reload the HTML output templates
-					messageLoop << "     Loading HTML Templates... ";
-					HTMLTemplates->Unload();
-					HTMLTemplates->Load();
-					cwmWorldState->SetReloadingScripts( false );
-					messageLoop << MSG_PRINTDONE;
-				}
-				else
-					messageLoop << "Server can only load one script at a time";
-				break;
-			case 'T':
-				// Timed shut down(10 minutes)
-				messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
-				cwmWorldState->SetEndTime( BuildTimeValue( 600 ) );
-				endmessage(0);
-				break;
-			case  'D':
-				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
-				{
-					if( tSock->AcctNo() == 0 )
+				case '<':
+					messageLoop << "Function not implemented.";
+					break;
+				case '>':
+					messageLoop << "Function not implemented.";
+					break;
+				case 0x1B:
+				case 'Q':
+					messageLoop << MSG_SECTIONBEGIN;
+					messageLoop << "CMD: Immediate Shutdown initialized!";
+					messageLoop << MSG_SHUTDOWN;
+					break;
+				case '0':
+					if( !cwmWorldState->GetReloadingScripts() ) {
+						cwmWorldState->SetReloadingScripts( true );
+						// Reload all the files. If there are issues with these files change the order reloaded from here first.
+						cwmWorldState->ServerData()->Load();
+						messageLoop << "CMD: Loading All";
+						messageLoop << "     Server INI... ";
+						// Reload accounts, and update Access.adm if new accounts available.
+						messageLoop << "     Loading Accounts... ";
+						Accounts->Load();
+						messageLoop << MSG_PRINTDONE;
+						// Reload Region Files
+						messageLoop << "     Loading Regions... ";
+						UnloadRegions();
+						LoadRegions();
+						messageLoop << MSG_PRINTDONE;
+						messageLoop << "     Loading Teleport Locations... ";
+						LoadTeleportLocations();
+						messageLoop << MSG_PRINTDONE;
+						// Reload the serve spawn regions
+						messageLoop << "     Loading Spawn Regions... ";
+						UnloadSpawnRegions();
+						LoadSpawnRegions();
+						messageLoop << MSG_PRINTDONE;
+						// Reload the server command list
+						messageLoop << "     Loading commands... ";
+						Commands->Load();
+						messageLoop << MSG_PRINTDONE;
+						// Reload DFN's
+						messageLoop << "     Loading Server DFN... ";
+						FileLookup->Reload();
+						messageLoop << MSG_PRINTDONE;
+						// messageLoop access is REQUIRED, as this function is executing in a different thread, so we need thread safety
+						messageLoop << "     Loading JSE Scripts... ";
+						
+						// Reload the current Spells
+						messageLoop << "     Loading spells... ";
+						Magic->LoadScript();
+						messageLoop << MSG_PRINTDONE;
+						// Reload the HTML output templates
+						messageLoop << "     Loading HTML Templates... ";
+						HTMLTemplates->Unload();
+						HTMLTemplates->Load();
+						cwmWorldState->SetReloadingScripts( false );
+						messageLoop << MSG_PRINTDONE;
+					}
+					else {
+						messageLoop << "Server can only load one script at a time";
+					}
+					break;
+				case 'T':
+					// Timed shut down(10 minutes)
+					messageLoop << "CMD: 10 Minute Server Shutdown Announced(Timed)";
+					cwmWorldState->SetEndTime( BuildTimeValue( 600 ) );
+					endmessage(0);
+					break;
+				case  'D':
+					// Disconnect account 0 (useful when client crashes)
+					for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() ) {
+						if( tSock->AcctNo() == 0 ){
+							Network->Disconnect( tSock );
+						}
+					}
+					messageLoop << "CMD: Socket Disconnected(Account 0).";
+					break;
+				case 'K': {
+					for (auto &tSock : Network->connClients){
 						Network->Disconnect( tSock );
-				}
-				messageLoop << "CMD: Socket Disconnected(Account 0).";
-				break;
-			case 'K':
-			{
-				for (auto &tSock : Network->connClients){
-					Network->Disconnect( tSock );
-				}
-				messageLoop << "CMD: All Connections Closed.";
-			}
-				break;
-			case 'P':
-			{
-				UI32 networkTimeCount	= cwmWorldState->ServerProfile()->NetworkTimeCount();
-				UI32 timerTimeCount		= cwmWorldState->ServerProfile()->TimerTimeCount();
-				UI32 autoTimeCount		= cwmWorldState->ServerProfile()->AutoTimeCount();
-				UI32 loopTimeCount		= cwmWorldState->ServerProfile()->LoopTimeCount();
-				// 1/13/2003 - Dreoth - Log Performance Information enhancements
-				LogEcho( true );
-				log( "--- Starting Performance Dump ---", "performance.log");
-				log( "\tPerformance Dump:", "performance.log");
-				log( oldstrutil::format("\tNetwork code: %.2fmsec [%i samples]",(R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount), "performance.log" );
-				log( oldstrutil::format("\tTimer code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount), "performance.log");
-				log( oldstrutil::format("\tAuto code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount), "performance.log");
-				log( oldstrutil::format("\tLoop Time: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount), "performance.log");
-
-				log( oldstrutil::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
-				log( oldstrutil::format("\tSimulation Cycles: %f per sec", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount)))), "performance.log");
-				log( oldstrutil::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
-				log( oldstrutil::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
-				log( "--- Performance Dump Complete ---", "performance.log");
-				LogEcho( false );
-				break;
-			}
-			case 'W':
-			{
-				// Display logged in chars
-				messageLoop << "CMD: Current Users in the World:";
-				{
-					for (auto &iSock : Network->connClients){
-						++j;
-						CChar *mChar = iSock->CurrcharObj();
-
-						temp = oldstrutil::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
-						messageLoop << temp;
 					}
+					messageLoop << "CMD: All Connections Closed.";
 				}
-
-				temp = oldstrutil::format( "     Total users online: %i", j );
-				messageLoop << temp;
-				break;
-			}
-			case 'M':
-				UI32 tmp, total;
-				total = 0;
-				tmp = 0;
-				messageLoop << "CMD: UOX Memory Information:";
-				messageLoop << "     Cache:";
-				temp = oldstrutil::format( "        Tiles: %zu bytes", Map->GetTileMem() );
-				messageLoop << temp;
-				temp = oldstrutil::format( "        Multis: %zu bytes", Map->GetMultisMem() );
-				messageLoop << temp;
-				UI32 m, n;
-				m = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ));
-				total += tmp = m + m*sizeof(CTEffect) + m*sizeof(SI08) + m*sizeof(intptr_t)*5;
-				temp = oldstrutil::format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
-				messageLoop << temp;
-				n = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM ));
-				total += tmp = n + n * sizeof( intptr_t ) * 4;
-				temp = oldstrutil::format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
-				messageLoop << temp;
-				temp = oldstrutil::format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
-				total += tmp = 69 * sizeof( SpellInfo );
-				temp = oldstrutil::format( temp, "     Spells: %i bytes", tmp );
-				messageLoop << "     Sizes:";
-				temp = oldstrutil::format("        CItem  : %lu bytes", sizeof( CItem ) );
-				messageLoop << temp;
-				temp = oldstrutil::format( "        CChar  : %lu bytes", sizeof( CChar ) );
-				messageLoop << temp;
-				temp = oldstrutil::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
-				messageLoop << temp;
-				tmp = static_cast<std::uint32_t>(Map->GetTileMem() + Map->GetMultisMem());
-				total += tmp;
-				temp = oldstrutil::format( "        Approximate Total: %i bytes", total );
-				messageLoop << temp;
-				break;
-			case '?':
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << "Console commands:";
-				messageLoop << MSG_SECTIONBEGIN;
-				messageLoop << " ShardOP:";
-				messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
-				messageLoop << "    C - Configuration       H - Unused";
-				messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
-				messageLoop << " Load Commands:";
-				messageLoop << "    1 - Ini                 2 - Accounts";
-				messageLoop << "    3 - Regions             4 - Spawn Regions";
-				messageLoop << "    5 - Spells              6 - Commands";
-				messageLoop << "    7 - Dfn's               8 - JavaScript";
-				messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
-				messageLoop << " Save Commands:";
-				messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
-				messageLoop << "    # - Unused              $ - Unused";
-				messageLoop << "    % - Unused              ^ - Unused";
-				messageLoop << "    & - Unused              ( - Unused";
-				messageLoop << "    ) - Unused";
-				messageLoop << " Server Maintenence:";
-				messageLoop << "    P - Performance         W - Characters Online";
-				messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
-				messageLoop << "    F - Display Priority Maps";
-				messageLoop << " Network Maintenence:";
-				messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
-				messageLoop << "    Z - Socket Logging      ";
-				messageLoop << MSG_SECTIONBEGIN;
-				break;
-			case 'z':
-			case 'Z':
-			{
-				auto loggingEnabled = false ;
-				{
-					for (auto &snSock : Network->connClients){
-						if (snSock) {
-							snSock->Logging(!snSock->Logging());
+					break;
+				case 'P': {
+					UI32 networkTimeCount	= cwmWorldState->ServerProfile()->NetworkTimeCount();
+					UI32 timerTimeCount = cwmWorldState->ServerProfile()->TimerTimeCount();
+					UI32 autoTimeCount = cwmWorldState->ServerProfile()->AutoTimeCount();
+					UI32 loopTimeCount = cwmWorldState->ServerProfile()->LoopTimeCount();
+					// 1/13/2003 - Dreoth - Log Performance Information enhancements
+					LogEcho( true );
+					log( "--- Starting Performance Dump ---", "performance.log");
+					log( "\tPerformance Dump:", "performance.log");
+					log( oldstrutil::format("\tNetwork code: %.2fmsec [%i samples]",(R32)((R32)cwmWorldState->ServerProfile()->NetworkTime()/(R32)networkTimeCount), networkTimeCount), "performance.log" );
+					log( oldstrutil::format("\tTimer code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->TimerTime()/(R32)timerTimeCount), timerTimeCount), "performance.log");
+					log( oldstrutil::format("\tAuto code: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->AutoTime()/(R32)autoTimeCount), autoTimeCount), "performance.log");
+					log( oldstrutil::format("\tLoop Time: %.2fmsec [%i samples]", (R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount), loopTimeCount), "performance.log");
+					
+					log( oldstrutil::format("\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
+					log( oldstrutil::format("\tSimulation Cycles: %f per sec", (1000.0*(1.0/(R32)((R32)cwmWorldState->ServerProfile()->LoopTime()/(R32)loopTimeCount)))), "performance.log");
+					log( oldstrutil::format("\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent()), "performance.log");
+					log( oldstrutil::format("\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived()), "performance.log");
+					log( "--- Performance Dump Complete ---", "performance.log");
+					LogEcho( false );
+					break;
+				}
+				case 'W': {
+					// Display logged in chars
+					messageLoop << "CMD: Current Users in the World:";
+					{
+						for (auto &iSock : Network->connClients){
+							++j;
+							CChar *mChar = iSock->CurrcharObj();
+							
+							temp = oldstrutil::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ) );
+							messageLoop << temp;
 						}
 					}
-					auto iter = Network->connClients.begin() ;
-					if (iter != Network->connClients.end()){
-						loggingEnabled = (*iter)->Logging();
-					}
+					
+					temp = oldstrutil::format( "     Total users online: %i", j );
+					messageLoop << temp;
+					break;
 				}
-				if( loggingEnabled )
-					messageLoop << "CMD: Network Logging Enabled.";
-				else
-					messageLoop << "CMD: Network Logging Disabled.";
-				break;
+				case 'M':
+					UI32 tmp, total;
+					total = 0;
+					tmp = 0;
+					messageLoop << "CMD: UOX Memory Information:";
+					messageLoop << "     Cache:";
+					temp = oldstrutil::format( "        Tiles: %zu bytes", Map->GetTileMem() );
+					messageLoop << temp;
+					temp = oldstrutil::format( "        Multis: %zu bytes", Map->GetMultisMem() );
+					messageLoop << temp;
+					UI32 m, n;
+					m = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ));
+					total += tmp = m + m*sizeof(CTEffect) + m*sizeof(SI08) + m*sizeof(intptr_t)*5;
+					temp = oldstrutil::format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ), m );
+					messageLoop << temp;
+					n = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM ));
+					total += tmp = n + n * sizeof( intptr_t ) * 4;
+					temp = oldstrutil::format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), n );
+					messageLoop << temp;
+					temp = oldstrutil::format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
+					total += tmp = 69 * sizeof( SpellInfo );
+					temp = oldstrutil::format( temp, "     Spells: %i bytes", tmp );
+					messageLoop << "     Sizes:";
+					temp = oldstrutil::format("        CItem  : %lu bytes", sizeof( CItem ) );
+					messageLoop << temp;
+					temp = oldstrutil::format( "        CChar  : %lu bytes", sizeof( CChar ) );
+					messageLoop << temp;
+					temp = oldstrutil::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
+					messageLoop << temp;
+					tmp = static_cast<std::uint32_t>(Map->GetTileMem() + Map->GetMultisMem());
+					total += tmp;
+					temp = oldstrutil::format( "        Approximate Total: %i bytes", total );
+					messageLoop << temp;
+					break;
+				case '?':
+					messageLoop << MSG_SECTIONBEGIN;
+					messageLoop << "Console commands:";
+					messageLoop << MSG_SECTIONBEGIN;
+					messageLoop << " ShardOP:";
+					messageLoop << "    * - Lock/Unlock Console ? - Commands list(this)";
+					messageLoop << "    C - Configuration       H - Unused";
+					messageLoop << "    Y - Console Broadcast   Q - Quit/Exit           ";
+					messageLoop << " Load Commands:";
+					messageLoop << "    1 - Ini                 2 - Accounts";
+					messageLoop << "    3 - Regions             4 - Spawn Regions";
+					messageLoop << "    5 - Spells              6 - Commands";
+					messageLoop << "    7 - Dfn's               8 - JavaScript";
+					messageLoop << "    9 - HTML Templates      0 - ALL(1-9)";
+					messageLoop << " Save Commands:";
+					messageLoop << "    ! - Accounts            @ - World(w/AccountImport)";
+					messageLoop << "    # - Unused              $ - Unused";
+					messageLoop << "    % - Unused              ^ - Unused";
+					messageLoop << "    & - Unused              ( - Unused";
+					messageLoop << "    ) - Unused";
+					messageLoop << " Server Maintenence:";
+					messageLoop << "    P - Performance         W - Characters Online";
+					messageLoop << "    M - Memory Information  T - 10 Minute Shutdown";
+					messageLoop << "    F - Display Priority Maps";
+					messageLoop << " Network Maintenence:";
+					messageLoop << "    D - Disconnect Acct0    K - Disconnect All";
+					messageLoop << "    Z - Socket Logging      ";
+					messageLoop << MSG_SECTIONBEGIN;
+					break;
+				case 'z':
+				case 'Z': {
+					auto loggingEnabled = false ;
+					{
+						for (auto &snSock : Network->connClients){
+							if (snSock) {
+								snSock->Logging(!snSock->Logging());
+							}
+						}
+						auto iter = Network->connClients.begin() ;
+						if (iter != Network->connClients.end()){
+							loggingEnabled = (*iter)->Logging();
+						}
+					}
+					if( loggingEnabled ) {
+						messageLoop << "CMD: Network Logging Enabled.";
+					}
+					else {
+						messageLoop << "CMD: Network Logging Disabled.";
+					}
+					break;
+				}
+				case 'c':
+				case 'C':
+					// Shows a configuration header
+					DisplaySettings();
+					break;
+				case 'f':
+				case 'F':
+					FileLookup->DisplayPriorityMap();
+					break;
+				default:
+					temp = oldstrutil::format( "Key \'%c\' [%i] does not perform a function", (SI08)c, c );
+					messageLoop << temp;
+					break;
 			}
-			case 'c':
-			case 'C':
-				// Shows a configuration header
-				DisplaySettings();
-				break;
-			case 'f':
-			case 'F':
-				FileLookup->DisplayPriorityMap();
-				break;
-			default:
-				temp = oldstrutil::format( "Key \'%c\' [%i] does not perform a function", (SI08)c, c );
-				messageLoop << temp;
-				break;
 		}
 	}
 }
@@ -1267,8 +1237,7 @@ void CConsole::Process( SI32 c )
 //|	Changes		-	10/21/2002 - found the bug in one spot, just
 //|									happened upon this quick fix. for BackUp operation.
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::DisplaySettings( void )
-{
+auto CConsole::DisplaySettings() ->void {
 	std::map< bool, std::string > activeMap;
 	activeMap[true] = "Activated!";
 	activeMap[false] = "Disabled!";
@@ -1314,8 +1283,7 @@ void CConsole::DisplaySettings( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers key input for detection in console
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptID )
-{
+auto CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptID ) ->void {
 #if defined( UOX_DEBUG_MODE )
 
 	messageLoop << oldstrutil::format("         Registering key \"%c\"", key );
@@ -1328,11 +1296,9 @@ void CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enabling/Disabling specific key input in console
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::SetKeyStatus( SI32 key, bool isEnabled )
-{
-	JSCONSOLEKEYMAP_ITERATOR	toFind	= JSKeyHandler.find( key );
-	if( toFind != JSKeyHandler.end() )
-	{
+auto CConsole::SetKeyStatus( SI32 key, bool isEnabled ) ->void {
+	auto toFind	= JSKeyHandler.find( key );
+	if( toFind != JSKeyHandler.end() ) {
 		toFind->second.isEnabled = isEnabled;
 	}
 }
@@ -1342,8 +1308,7 @@ void CConsole::SetKeyStatus( SI32 key, bool isEnabled )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console function
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptID )
-{
+auto CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptID ) ->void {
 #if defined( UOX_DEBUG_MODE )
 	print(oldstrutil::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
 #endif
@@ -1355,13 +1320,10 @@ void CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables/disables console function
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
-{
-	std::string upper					= cmdFunc;
-	upper								= oldstrutil::upper( upper );
-	JSCONSOLEFUNCMAP_ITERATOR	toFind	= JSConsoleFunctions.find( upper );
-	if( toFind != JSConsoleFunctions.end() )
-	{
+auto CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) ->void{
+	auto upper	 = oldstrutil::upper( cmdFunc );
+	auto toFind	= JSConsoleFunctions.find( upper );
+	if( toFind != JSConsoleFunctions.end() ) {
 		toFind->second.isEnabled = isEnabled;
 	}
 }
@@ -1371,12 +1333,11 @@ void CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console script
 //o-----------------------------------------------------------------------------------------------o
-void CConsole::Registration( void )
-{
-	CJSMappingSection *spellSection = JSMapping->GetSection( SCPT_CONSOLE );
-	for( cScript *ourScript = spellSection->First(); !spellSection->Finished(); ourScript = spellSection->Next() )
-	{
-		if( ourScript != nullptr )
+auto CConsole::Registration() ->void {
+	auto spellSection = JSMapping->GetSection( SCPT_CONSOLE );
+	for (auto &[spellname,ourScript] : spellSection->collection()){
+		if(ourScript){
 			ourScript->ScriptRegistration( "Console" );
+		}
 	}
 }

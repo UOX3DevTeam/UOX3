@@ -35,8 +35,7 @@ private:
 //===================================================================================================
 // CDictionaryContainer
 //===================================================================================================
-class CDictionaryContainer
-{
+class CDictionaryContainer {
 private:
 	std::array<CDictionary, static_cast<int>(DL_COUNT)> dictList;
 	UnicodeTypes defaultLang;
