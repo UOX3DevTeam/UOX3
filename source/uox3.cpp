@@ -165,7 +165,7 @@ auto InitMultis() ->void ;
 auto DisplayBanner()->void ;
 auto CheckConsoleKeyThread() ->void;
 auto DoMessageLoop() -> void;
-auto startInitialize() ->void;
+auto startInitialize(CServerData &server_data) ->void;
 auto initOperatingSystem() ->std::optional<std::string>;
 
 //=================================================================================================
@@ -183,28 +183,29 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	// We are going to do some fundmental checks, that if fail, we will bail out before
 	// setting up
 	//==============================================================================================
-	auto config_file = "uox.ini"s ;
+	auto config_file = std::string() ;
 	if (argc>1){
 		config_file = argv[1] ;
-	}
-	if (!std::filesystem::exists(std::filesystem::path(config_file))) {
-		// If the UOX.ini file doesnt exist, lets bail out right now
-		std::cerr <<"Unable to open UOX3 settings: "s + config_file << std::endl;;
-		
-		return EXIT_FAILURE;
 	}
 	auto status = initOperatingSystem() ;
 	if (status.has_value()){
 		std::cerr <<status.value() << std::endl;
 		return EXIT_FAILURE;
 	}
-	
+
+	// We are going to load some of our basic data, if that goes ok, we then startup the Console subystem,
+	// and the classes
+	auto serverdata = CServerData() ;
+	if (!serverdata.Load(config_file)) {
+		std::cout << "Error loading UOX3 ini file"<<(config_file.empty()?"."s:": "s+config_file) << std::endl;
+		return EXIT_FAILURE;
+	}
 	// Ok, we probably want the Console now
 	Console.initialize();
 	//=================================================================================================
 	// Start/Initalize classes,data,network
 	//=================================================================================================
-	startInitialize() ;
+	startInitialize(serverdata) ;
 	
 	//=================================================================================================
 	// Main Loop
@@ -347,7 +348,7 @@ auto initOperatingSystem() ->std::optional<std::string> {
 //=====================================================================================
 // Startup and Initialization
 //=====================================================================================
-auto startInitialize() ->void {
+auto startInitialize(CServerData &serverdata) ->void {
 	saveOnShutdown = false ;
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
@@ -357,8 +358,7 @@ auto startInitialize() ->void {
 	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 	Console.PrintSectionBegin();
 	cwmWorldState = &aWorld ;
-
-		cwmWorldState->ServerData()->Load();
+	cwmWorldState->setServerData(serverdata);
 		
 		Console << "Initializing and creating class pointers... " << myendl;
 		InitClasses();

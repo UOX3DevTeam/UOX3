@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <cstdint>
 #include <limits>
+#include <optional>
 #include "IP4Address.hpp"
 #if PLATFORM != WINDOWS
 #include <netdb.h>
@@ -4077,11 +4078,15 @@ auto CServerData::save( const std::string &filename ) ->bool {
 //|	Returns		-	pointer to the valid inmemory serverdata storage(this)
 //|						nullptr is there is an error, or invalid file type
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::Load()
-{
-	const std::string fileName = Directory( CSDDP_ROOT ) + "uox.ini";
-	ParseINI( fileName );
+auto  CServerData::Load(const std::string &filename ) ->bool {
+	auto inifile = filename ;
+	if (inifile.empty()){
+	
+		inifile= Directory( CSDDP_ROOT ) + "uox.ini"s;
+	}
+	auto rvalue = ParseINI( inifile );
 	PostLoadDefaults();
+	return rvalue;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4161,8 +4166,66 @@ void CServerData::TrackingRedisplayTime( UI16 value )
 //|	Changes		-	02/26/2002	-	Make sure that we parse out the logs, access
 //|									and other directories that we were not parsing/
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ParseINI( const std::string& filename )
-{
+auto CServerData::ParseINI( const std::string& filename ) ->bool {
+	auto rvalue = false ;
+	auto input = std::ifstream(filename) ;
+	enum search_t {header,startsection,endsection};
+	auto retrieveContents = [](const std::string& input) ->std::optional<std::string> {
+		auto pos1 = input.find("[") ;
+		if (pos1 != std::string::npos) {
+			auto pos2 = input.find("]",pos1) ;
+			if (pos2 != std::string::npos){
+				// We have the bounds
+				auto contents = oldstrutil::trim(input.substr(pos1+1,(pos2 - pos1)-1)) ;
+				return contents ;
+			}
+
+		}
+		return {};
+	};
+	auto state = search_t(header) ;
+	if (input.is_open()){
+		char input_buffer[4096] ;
+		while (input.good() && !input.eof()) {
+			input.getline(input_buffer, 4095) ;
+			if (input.gcount()>0) {
+				input_buffer[input.gcount()] = 0 ;
+				auto line = oldstrutil::trim(oldstrutil::removeTrailing(std::string(input_buffer),"//"))   ;
+				if (!line.empty()) {
+					switch (static_cast<int>(state)){
+						case static_cast<int>(search_t::header): {
+							if (line[0] == '[') {
+								auto contents = retrieveContents(line) ;
+								if (contents.has_value()){
+									state = search_t::startsection;
+								}
+							}
+						}
+						case static_cast<int>(search_t::startsection): {
+							if (line[0] == '{'){
+								state = search_t::endsection ;
+							}
+						}
+						case static_cast<int>(search_t::endsection): {
+							if (line[0] != '}') {
+								auto [key,value] = oldstrutil::split(line,"=");
+								if (HandleLine(key, value)) {
+									rvalue = true ;
+								}
+							}
+							else {
+								state = search_t::header ;
+							}
+							
+						}
+
+					}
+				}
+			}
+		}
+	}
+	return rvalue ;
+	/*
 	bool rvalue = false;
 	if( !filename.empty() ) {
 
@@ -4194,6 +4257,8 @@ bool CServerData::ParseINI( const std::string& filename )
 		}
 	}
 	return rvalue;
+	 */
+	
 }
 
 //==============================================================================================
