@@ -61,6 +61,8 @@ overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime(
 autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ),
 reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLASSESINITIALIZED )
 {
+	sData = nullptr ;
+	
 	for( SI32 mTID = (SI32)tWORLD_NEXTFIELDEFFECT; mTID < (SI32)tWORLD_COUNT; ++mTID )
 		worldTimers[mTID] = 0;
 	creatures.clear();
@@ -83,6 +85,12 @@ auto CWorldMain::startup() ->void {
 	
 
 }
+//==========================================================================================================
+auto CWorldMain::setServerData(CServerData &server_data) ->void{
+	
+	sData = &server_data ;
+}
+
 //==========================================================================================================
 
 
@@ -580,7 +588,7 @@ void CWorldMain::RegionSave( void )
 }
 //=================================================================================================
 auto CWorldMain::ServerData()->CServerData *{
-	return &sData;
+	return sData;
 }
 
 //=================================================================================================

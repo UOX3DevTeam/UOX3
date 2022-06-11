@@ -267,36 +267,32 @@ class ScriptSection
 {
 	friend class Script;
 private:
-	struct sectData
-	{
+	struct sectData {
 		std::string tag;
 		std::string data;
-		sectData() : tag( "" ), data( "" )
-		{
+		sectData() : tag( "" ), data( "" ) {
 		}
 	};
-	struct sectDataV2
-	{
+	struct sectDataV2 {
 		DFNTAGS tag;
 		std::string	cdata;
 		SI32	ndata;
 		SI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
-		{
+		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 ) {
 		}
 	};
 
-	std::vector< sectData * >				data;
-	std::vector< sectDataV2 * >				dataV2;
-	std::vector< sectData * >::iterator		currentPos;
-	std::vector< sectDataV2 * >::iterator	currentPos2;
+	std::vector< sectData * > data;
+	std::vector< sectDataV2 * > dataV2;
+	std::vector< sectData * >::iterator	 currentPos;
+	std::vector< sectDataV2 * >::iterator currentPos2;
 	DEFINITIONCATEGORIES	dfnCat;
 
-	bool					npcList;
-	bool					itemList;
+	bool npcList;
+	bool itemList;
 
-	std::string				npcListData;
-	std::string				itemListData;
+	std::string npcListData;
+	std::string itemListData;
 
 public:
 	auto collection() const -> const std::vector<sectData *>& ;
@@ -304,30 +300,30 @@ public:
 	auto collection2() const -> const std::vector<sectDataV2 *>& ;
 	auto collection2()  -> std::vector<sectDataV2 *>&;
 
-	ScriptSection( void );
-	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d );
+	ScriptSection();
+	ScriptSection(std::ifstream& input, DEFINITIONCATEGORIES d);
 	~ScriptSection();
-	const std::string		First( void );
-	DFNTAGS					FirstTag( void );
-	const std::string		Next( void );
-	DFNTAGS					NextTag( void );
-	const std::string		Prev( void );
-	DFNTAGS					PrevTag( void );
-	bool					AtEnd( void );
-	bool					AtEndTags( void );
-	const std::string		GrabData( void );
-	const std::string		GrabData( SI32& ndata, SI32& odata );
-	bool					FlushData( void );
-	size_t					NumEntries( void ) const;
-	const std::string		MoveTo( size_t position );
-	bool					CloseFile( void );
-	void					Remove( size_t position );
-	void					Append( std::string tag, std::string data );
-	bool					ItemListExist( void ) const;
-	bool					NpcListExist( void ) const;
-	const std::string		ItemListData( void ) const;
-	const std::string		NpcListData( void ) const;
-	void					createSection( std::fstream& inputbuf );
+	auto First() ->std::string;
+	auto Next() ->std::string;
+	auto Prev() ->std::string;
+	auto AtEnd() ->bool ;
+	auto FirstTag() ->DFNTAGS ;
+	auto NextTag() ->DFNTAGS ;
+	auto PrevTag() ->DFNTAGS;
+	auto AtEndTags() ->bool;
+	auto GrabData() ->std::string;
+	auto GrabData( SI32& ndata, SI32& odata ) ->std::string;
+	auto FlushData() ->bool;
+	auto NumEntries() const ->size_t;
+	auto MoveTo( size_t position ) ->std::string ;
+	auto CloseFile() ->bool;
+	auto Remove( size_t position )->void;
+	auto Append( std::string tag, std::string data ) ->void;
+	auto ItemListExist() const ->bool;
+	auto NpcListExist() const ->bool;
+	auto ItemListData() const ->std::string;
+	auto NpcListData() const ->std::string ;
+	auto createSection( std::ifstream& inputbuf ) ->void ;
 };
 
 #endif

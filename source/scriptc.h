@@ -40,7 +40,7 @@ private:
 	std::string	filename;
 	bool errorState;
 	DEFINITIONCATEGORIES dfnCat;
-	std::fstream input;
+	std::ifstream input;
 };
 
 #endif

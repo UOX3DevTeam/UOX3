@@ -123,7 +123,7 @@ auto CDictionary::parseFile(const std::string &dictionaryfile) ->bool {
 			if (input.gcount()>0){
 				input_buffer[input.gcount()] = 0 ;
 				auto line = std::string(input_buffer) ;
-				line = oldstrutil::removeTrailing(line);
+				line = oldstrutil::removeTrailing(line,"//");
 				line = oldstrutil::trim(line) ;
 				if (!line.empty()){
 					switch (static_cast<int>(state)){
