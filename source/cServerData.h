@@ -438,7 +438,7 @@ public:
 	auto		ParseINI( const std::string& filename ) ->bool;
 	auto		HandleLine( const std::string& tag, const std::string& value ) ->bool;
 
-	auto		Load() ->void;
+	auto		Load(const std::string &filename = "") ->bool;
 	auto		save() ->bool;
 	auto		save( const std::string &filename ) ->bool;
 

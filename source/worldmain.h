@@ -230,12 +230,13 @@ public:
 	auto startup() ->void ;
 	CWorldMain();
 	auto ServerData() ->CServerData *;
+	auto setServerData(CServerData &server_data) ->void ;
 	auto ServerProfile()->CServerProfile * ;
 private:
 	void			RegionSave( void );
 	void			SaveStatistics( void );
 
-	CServerData  sData;
+	CServerData  *sData;
 	CServerProfile sProfile;
 };
 
