@@ -16,6 +16,11 @@
 #include "osunique.hpp"
 
 using namespace std::string_literals;
+//===========================================================================================
+// constant data
+//===========================================================================================
+
+//===========================================================================================
 const std::map<std::string,std::int32_t> CServerData::uox3inicasevalue{
 	// these numbers dont have to be in order, and can skip aound
 	// they just CANT be repeated (now we could add some protection
@@ -308,87 +313,87 @@ const std::map<std::string,std::int32_t> CServerData::uox3inicasevalue{
 	{"TELEPORTTONEARESTSAFELOCATION"s, 300},
 	{"ALLOWAWAKENPCS"s, 301}
 };
-#define	MAX_TRACKINGTARGETS	128
-#define SKILLTOTALCAP		7000
-#define SKILLCAP			1000
-#define STATCAP				225
+constexpr auto MAX_TRACKINGTARGETS = 128 ;
+constexpr auto SKILLTOTALCAP = 7000 ;
+constexpr auto SKILLCAP = 1000 ;
+constexpr auto STATCAP = 225 ;
 
-const UI32 BIT_ANNOUNCESAVES		= 0;
-const UI32 BIT_ANNOUNCEJOINPART		= 1;
-const UI32 BIT_SERVERBACKUP			= 2;
-const UI32 BIT_SHOOTONANIMALBACK	= 3;
-const UI32 BIT_NPCTRAINING			= 4;
-const UI32 BIT_LOOTDECAYSONCORPSE	= 5;
-const UI32 BIT_GUARDSENABLED		= 6;
-const UI32 BIT_PLAYDEATHANIMATION	= 7;
-const UI32 BIT_AMBIENTFOOTSTEPS		= 8;
-const UI32 BIT_INTERNALACCOUNTS		= 9;
-const UI32 BIT_SHOWOFFLINEPCS		= 10;
-const UI32 BIT_ROGUESTATUS			= 11;
-const UI32 BIT_SNOOPISCRIME			= 12;
-const UI32 BIT_PERSECUTIONSTATUS	= 13;
-const UI32 BIT_SELLBYNAME			= 14;
-const UI32 BIT_TRADESYSSTATUS		= 15;
-const UI32 BIT_RANKSYSSTATUS		= 16;
-const UI32 BIT_CUTSCROLLREQ			= 17;
-const UI32 BIT_SHOWHITMESSAGE		= 18;
-const UI32 BIT_ESCORTSTATUS			= 19;
-const UI32 BIT_MONSTERSVSANIMALS	= 20;
-const UI32 BIT_PETHUNGEROFFLINE		= 21;
-const UI32 BIT_HIDEWHILEMOUNTED		= 22;
-const UI32 BIT_OVERLOADPACKETS		= 23;
-const UI32 BIT_ARMORAFFECTMANAREGEN = 24;
-const UI32 BIT_ANIMALSGUARDED		= 25;
-const UI32 BIT_ADVANCEDPATHFIND		= 26;
-const UI32 BIT_LOOTINGISCRIME		= 27;
-const UI32 BIT_BASICTOOLTIPSONLY	= 28;
-const UI32 BIT_GLOBALITEMDECAY		= 29;
-const UI32 BIT_SCRIPTITEMSDECAYABLE	= 30;
-const UI32 BIT_BASEITEMSDECAYABLE	= 31;
-const UI32 BIT_ITEMDECAYINHOUSES	= 32;
-const UI32 BIT_PAPERDOLLGUILDBUTTON = 33;
-const UI32 BIT_ATTSPEEDFROMSTAMINA	= 34;
-const UI32 BIT_SHOWDAMAGENUMBERS	= 35;
+constexpr auto BIT_ANNOUNCESAVES		= std::uint32_t(0);
+constexpr auto BIT_ANNOUNCEJOINPART		= std::uint32_t(1);
+constexpr auto BIT_SERVERBACKUP		= std::uint32_t(2);
+constexpr auto BIT_SHOOTONANIMALBACK	= std::uint32_t(3);
+constexpr auto BIT_NPCTRAINING		= std::uint32_t(4);
+constexpr auto BIT_LOOTDECAYSONCORPSE	= std::uint32_t(5);
+constexpr auto BIT_GUARDSENABLED		= std::uint32_t(6);
+constexpr auto BIT_PLAYDEATHANIMATION	= std::uint32_t(7);
+constexpr auto BIT_AMBIENTFOOTSTEPS		= std::uint32_t(8);
+constexpr auto BIT_INTERNALACCOUNTS		= std::uint32_t(9);
+constexpr auto BIT_SHOWOFFLINEPCS		= std::uint32_t(10);
+constexpr auto BIT_ROGUESTATUS		= std::uint32_t(11);
+constexpr auto BIT_SNOOPISCRIME		= std::uint32_t(12);
+constexpr auto BIT_PERSECUTIONSTATUS	= std::uint32_t(13);
+constexpr auto BIT_SELLBYNAME			= std::uint32_t(14);
+constexpr auto BIT_TRADESYSSTATUS		= std::uint32_t(15);
+constexpr auto BIT_RANKSYSSTATUS		= std::uint32_t(16);
+constexpr auto BIT_CUTSCROLLREQ		= std::uint32_t(17);
+constexpr auto BIT_SHOWHITMESSAGE		= std::uint32_t(18);
+constexpr auto BIT_ESCORTSTATUS		= std::uint32_t(19);
+constexpr auto BIT_MONSTERSVSANIMALS	= std::uint32_t(20);
+constexpr auto BIT_PETHUNGEROFFLINE		= std::uint32_t(21);
+constexpr auto BIT_HIDEWHILEMOUNTED		= std::uint32_t(22);
+constexpr auto BIT_OVERLOADPACKETS		= std::uint32_t(23);
+constexpr auto BIT_ARMORAFFECTMANAREGEN 	= std::uint32_t(24);
+constexpr auto BIT_ANIMALSGUARDED		= std::uint32_t(25);
+constexpr auto BIT_ADVANCEDPATHFIND		= std::uint32_t(26);
+constexpr auto BIT_LOOTINGISCRIME		= std::uint32_t(27);
+constexpr auto BIT_BASICTOOLTIPSONLY	= std::uint32_t(28);
+constexpr auto BIT_GLOBALITEMDECAY		= std::uint32_t(29);
+constexpr auto BIT_SCRIPTITEMSDECAYABLE	= std::uint32_t(30);
+constexpr auto BIT_BASEITEMSDECAYABLE	= std::uint32_t(31);
+constexpr auto BIT_ITEMDECAYINHOUSES	= std::uint32_t(32);
+constexpr auto BIT_PAPERDOLLGUILDBUTTON 	= std::uint32_t(33);
+constexpr auto BIT_ATTSPEEDFROMSTAMINA	= std::uint32_t(34);
+constexpr auto BIT_SHOWDAMAGENUMBERS	= std::uint32_t(35);
 // 37 free!
-const UI32 BIT_EXTENDEDSTARTINGSTATS	= 38;
-const UI32 BIT_EXTENDEDSTARTINGSKILLS	= 39;
-const UI32 BIT_ASSISTANTNEGOTIATION		= 40;
-const UI32 BIT_KICKONASSISTANTSILENCE	= 41;
-const UI32 BIT_CLASSICUOMAPTRACKER		= 42;
-const UI32 BIT_PROTECTPRIVATEHOUSES		= 43;
-const UI32 BIT_TRACKHOUSESPERACCOUNT	= 44;
-const UI32 BIT_CANOWNANDCOOWNHOUSES		= 45;
-const UI32 BIT_COOWNHOUSESONSAMEACCOUNT = 46;
-const UI32 BIT_ITEMSDETECTSPEECH		= 47;
-const UI32 BIT_FORCENEWANIMATIONPACKET	= 48;
-const UI32 BIT_MAPDIFFSENABLED			= 49;
-const UI32 BIT_ARMORCLASSDAMAGEBONUS	= 50;
-const UI32 BIT_CONNECTUOSERVERPOLL		= 51;
-const UI32 BIT_ALCHEMYDAMAGEBONUSENABLED = 52;
-const UI32 BIT_PETTHIRSTOFFLINE          = 53;
-const UI32 BIT_USEUNICODEMESSAGES 		= 54;
-const UI32 BIT_HUNGERSYSTEMENABLED		= 55;
-const UI32 BIT_THIRSTSYSTEMENABLED		= 56;
-const UI32 BIT_TRAVELSPELLSFROMBOATKEYS	= 57;
-const UI32 BIT_TRAVELSPELLSWHILEOVERWEIGHT	= 58;
-const UI32 BIT_MARKRUNESINMULTIS			= 59;
-const UI32 BIT_TRAVELSPELLSBETWEENWORLDS	= 60;
-const UI32 BIT_TRAVELSPELLSWHILEAGGRESSOR	= 61;
-const UI32 BIT_CONSOLELOG					= 62;
-const UI32 BIT_NETWORKLOG					= 63;
-const UI32 BIT_SPEECHLOG					= 64;
-const UI32 BIT_CONTEXTMENUS					= 65;
-const UI32 BIT_CHECKPETCONTROLDIFFICULTY	= 66;
-const UI32 BIT_SHOWNPCTITLESINTOOLTIPS		= 67;
-const UI32 BIT_ITEMSINTERRUPTCASTING		= 68;
-const UI32 BIT_STATSAFFECTSKILLCHECKS		= 69;
-const UI32 BIT_TOOLUSELIMIT					= 70;
-const UI32 BIT_TOOLUSEBREAK					= 71;
-const UI32 BIT_ITEMREPAIRDURABILITYLOSS		= 72;
-const UI32 BIT_HIDESTATSFORUNKNOWNMAGICITEMS = 73;
-const UI32 BIT_CRAFTCOLOUREDWEAPONS			= 74;
-const UI32 BIT_TELEPORTTONEARESTSAFELOC		= 75;
-const UI32 BIT_ALLOWAWAKENPCS				= 76;
+constexpr auto BIT_EXTENDEDSTARTINGSTATS	= std::uint32_t(38);
+constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= std::uint32_t(39);
+constexpr auto BIT_ASSISTANTNEGOTIATION	= std::uint32_t(40);
+constexpr auto BIT_KICKONASSISTANTSILENCE	= std::uint32_t(41);
+constexpr auto BIT_CLASSICUOMAPTRACKER	= std::uint32_t(42);
+constexpr auto BIT_PROTECTPRIVATEHOUSES	= std::uint32_t(43);
+constexpr auto BIT_TRACKHOUSESPERACCOUNT	= std::uint32_t(44);
+constexpr auto BIT_CANOWNANDCOOWNHOUSES	= std::uint32_t(45);
+constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT	= std::uint32_t(46);
+constexpr auto BIT_ITEMSDETECTSPEECH		= std::uint32_t(47);
+constexpr auto BIT_FORCENEWANIMATIONPACKET	= std::uint32_t(48);
+constexpr auto BIT_MAPDIFFSENABLED			= std::uint32_t(49);
+constexpr auto BIT_ARMORCLASSDAMAGEBONUS		= std::uint32_t(50);
+constexpr auto BIT_CONNECTUOSERVERPOLL		= std::uint32_t(51);
+constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED 	= std::uint32_t(52);
+constexpr auto BIT_PETTHIRSTOFFLINE         	= std::uint32_t(53);
+constexpr auto BIT_USEUNICODEMESSAGES 		= std::uint32_t(54);
+constexpr auto BIT_HUNGERSYSTEMENABLED		= std::uint32_t(55);
+constexpr auto BIT_THIRSTSYSTEMENABLED		= std::uint32_t(56);
+constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS	= std::uint32_t(57);
+constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= std::uint32_t(58);
+constexpr auto BIT_MARKRUNESINMULTIS		= std::uint32_t(59);
+constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= std::uint32_t(60);
+constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= std::uint32_t(61);
+constexpr auto BIT_CONSOLELOG				= std::uint32_t(62);
+constexpr auto BIT_NETWORKLOG				= std::uint32_t(63);
+constexpr auto BIT_SPEECHLOG				= std::uint32_t(64);
+constexpr auto BIT_CONTEXTMENUS			= std::uint32_t(65);
+constexpr auto BIT_CHECKPETCONTROLDIFFICULTY		= std::uint32_t(66);
+constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS		= std::uint32_t(67);
+constexpr auto BIT_ITEMSINTERRUPTCASTING			= std::uint32_t(68);
+constexpr auto BIT_STATSAFFECTSKILLCHECKS			= std::uint32_t(69);
+constexpr auto BIT_TOOLUSELIMIT				= std::uint32_t(70);
+constexpr auto BIT_TOOLUSEBREAK				= std::uint32_t(71);
+constexpr auto BIT_ITEMREPAIRDURABILITYLOSS		= std::uint32_t(72);
+constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS	= std::uint32_t(73);
+constexpr auto BIT_CRAFTCOLOUREDWEAPONS			= std::uint32_t(74);
+constexpr auto BIT_TELEPORTTONEARESTSAFELOC		= std::uint32_t(75);
+constexpr auto BIT_ALLOWAWAKENPCS				= std::uint32_t(76);
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -811,30 +816,7 @@ auto CServerData::startup() ->void{
 	ResetDefaults();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void RefreshIPs( void )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Refresh IPs for servers in serverlist
-//o-----------------------------------------------------------------------------------------------o
-/*void CServerData::RefreshIPs( void )
-{
-	struct hostent *lpHostEntry = nullptr;
 
-	std::vector< physicalServer >::iterator slIter;
-	for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
-	{
-		if( !slIter->getDomain().empty() )
-		{
-			lpHostEntry = gethostbyname( slIter->getDomain().c_str() );
-			if( lpHostEntry != nullptr )
-			{
-				struct in_addr *pinaddr;
-				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-				slIter->setIP( inet_ntoa(*pinaddr) );
-			}
-		}
-	}
-}*/
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string ServerName( void ) const
@@ -842,17 +824,15 @@ auto CServerData::startup() ->void{
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server name. Sets to specified value, or to default name if no value specified
 //o-----------------------------------------------------------------------------------------------o
-std::string CServerData::ServerName( void ) const
-{
+auto CServerData::ServerName() const ->const std::string& {
 	return serverList[0].getName();
 }
-void CServerData::ServerName( std::string setname )
-{
-	if( serverList.empty() )
+auto CServerData::ServerName( const std::string &setname )->void {
+	if( serverList.empty() ){
 		serverList.resize( 1 );
+	}
 	serverList[0].setName( setname );
-	if( setname.empty() )
-	{
+	if( setname.empty() ) {
 		serverList[0].setName( "My UOX3 Shard" );
 	}
 }
@@ -863,18 +843,19 @@ void CServerData::ServerName( std::string setname )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server domain. Sets to specified value, or to no domain if no value specified
 //o-----------------------------------------------------------------------------------------------o
-std::string CServerData::ServerDomain( void ) const
-{
+auto CServerData::ServerDomain() const ->const std::string& {
 	return serverList[0].getDomain();
 }
-void CServerData::ServerDomain( std::string setdomain )
-{
-	if( serverList.empty() )
+void CServerData::ServerDomain( const std::string &setdomain ){
+	if( serverList.empty() ){
 		serverList.resize( 1 );
-	if( setdomain.empty() )
+	}
+	if( setdomain.empty() ){
 		serverList[0].setDomain( "" );
-	else
+	}
+	else {
 		serverList[0].setDomain( setdomain );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -883,18 +864,19 @@ void CServerData::ServerDomain( std::string setdomain )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server IP. Sets to specified value, or to loopback IP if no value specified
 //o-----------------------------------------------------------------------------------------------o
-std::string CServerData::ServerIP( void ) const
-{
+auto CServerData::ServerIP() const ->const std::string & {
 	return serverList[0].getIP();
 }
-void CServerData::ServerIP( std::string setip )
-{
-	if( serverList.empty() )
+auto CServerData::ServerIP( const std::string &setip ) ->void {
+	if( serverList.empty() ){
 		serverList.resize( 1 );
-	if( setip.empty() )
+	}
+	if( setip.empty() ){
 		serverList[0].setIP("127.0.0.1");
-	else
+	}
+	else{
 		serverList[0].setIP(setip);
+	}
 }
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	std::string CServerData::ExternalIP() const
@@ -902,12 +884,10 @@ void CServerData::ServerIP( std::string setip )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets external (WAN) IP for server
 //o-----------------------------------------------------------------------------------------------o
-std::string CServerData::ExternalIP() const
-{
+auto CServerData::ExternalIP() const ->const std::string& {
 	return externalIP;
 }
-void CServerData::ExternalIP( const std::string &ip )
-{
+auto CServerData::ExternalIP( const std::string &ip ) ->void{
 	externalIP = ip;
 	IP4Address::setExternal( externalIP );
 }
@@ -3547,6 +3527,7 @@ size_t CServerData::GetServerFeatures( void ) const
 {
 	return serverFeatures.to_ulong();
 }
+//==============================================================================================
 void CServerData::SetServerFeatures( size_t nVal )
 {
 	serverFeatures = nVal;
@@ -3564,14 +3545,17 @@ bool CServerData::GetSpawnRegionsFacetStatus( UI32 value ) const
 {
 	return spawnRegionsFacets.test( value );
 }
+//==============================================================================================
 void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
 {
 	spawnRegionsFacets.set( nVal, status );
 }
+//==============================================================================================
 UI32 CServerData::GetSpawnRegionsFacetStatus() const
 {
 	return static_cast<UI32>(spawnRegionsFacets.to_ulong());
 }
+//==============================================================================================
 void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal )
 {
 	spawnRegionsFacets = nVal;
@@ -3587,6 +3571,7 @@ bool CServerData::GetAssistantNegotiation( void ) const
 {
 	return boolVals.test( BIT_ASSISTANTNEGOTIATION );
 }
+//==============================================================================================
 void CServerData::SetAssistantNegotiation( bool nVal )
 {
 	boolVals.set( BIT_ASSISTANTNEGOTIATION, nVal );
@@ -3602,6 +3587,7 @@ bool CServerData::GetClassicUOMapTracker( void ) const
 {
 	return boolVals.test( BIT_CLASSICUOMAPTRACKER );
 }
+//==============================================================================================
 void CServerData::SetClassicUOMapTracker( bool nVal )
 {
 	boolVals.set( BIT_CLASSICUOMAPTRACKER, nVal );
@@ -3617,6 +3603,7 @@ bool CServerData::UseUnicodeMessages( void ) const
 {
 	return boolVals.test( BIT_USEUNICODEMESSAGES );
 }
+//==============================================================================================
 void CServerData::UseUnicodeMessages( bool nVal )
 {
 	boolVals.set( BIT_USEUNICODEMESSAGES, nVal );
@@ -3634,6 +3621,7 @@ bool CServerData::GetDisabledAssistantFeature( AssistantFeatures bitNum ) const
 {
 	return 0 != (CServerData::DisabledAssistantFeatures & bitNum);
 }
+//==============================================================================================
 void CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nVal )
 {
 	if( nVal )
@@ -3656,6 +3644,7 @@ UI64 CServerData::GetDisabledAssistantFeatures( void ) const
 {
 	return CServerData::DisabledAssistantFeatures;
 }
+//==============================================================================================
 void CServerData::SetDisabledAssistantFeatures( UI64 nVal )
 {
 	CServerData::DisabledAssistantFeatures = nVal;
@@ -3672,6 +3661,7 @@ bool CServerData::KickOnAssistantSilence( void ) const
 {
 	return boolVals.test( BIT_KICKONASSISTANTSILENCE );
 }
+//==============================================================================================
 void CServerData::KickOnAssistantSilence( bool nVal )
 {
 	boolVals.set( BIT_KICKONASSISTANTSILENCE, nVal );
@@ -3724,14 +3714,12 @@ bool CServerData::save( void )
 //|																		MapAccess the set of bit flags that allow/deny features and map access
 //|
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::save( std::string filename )
-{
+auto CServerData::save( const std::string &filename ) ->bool {
 	return true ;
-	bool rvalue = false;
-	std::ofstream ofsOutput;
-	ofsOutput.open( filename.c_str(), std::ios::out );
-	if( ofsOutput.is_open() )
-	{
+#if 0
+	auto rvalue = false;
+	auto ofsOutput = std::ofstream(filename) ;
+	if( ofsOutput.is_open() ) {
 
 		ofsOutput << "// UOX Initialization File. V";
 		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
@@ -4100,6 +4088,9 @@ bool CServerData::save( std::string filename )
 	else
 		Console.error( oldstrutil::format("Unable to open file %s for writing", filename.c_str()) );
 	return rvalue;
+	
+#endif
+
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4127,6 +4118,7 @@ UI16 CServerData::TrackingBaseRange( void ) const
 {
 	return trackingbaserange;
 }
+//==============================================================================================
 void CServerData::TrackingBaseRange( UI16 value )
 {
 	trackingbaserange = value;
@@ -4142,6 +4134,7 @@ UI08 CServerData::TrackingMaxTargets( void ) const
 {
 	return trackingmaxtargets;
 }
+//==============================================================================================
 void CServerData::TrackingMaxTargets( UI08 value )
 {
 	if( value >= MAX_TRACKINGTARGETS )
@@ -4160,6 +4153,7 @@ UI16 CServerData::TrackingBaseTimer( void ) const
 {
 	return trackingbasetimer;
 }
+//==============================================================================================
 void CServerData::TrackingBaseTimer( UI16 value )
 {
 	trackingbasetimer = value;
@@ -4175,6 +4169,7 @@ UI16 CServerData::TrackingRedisplayTime( void ) const
 {
 	return trackingmsgredisplaytimer;
 }
+//==============================================================================================
 void CServerData::TrackingRedisplayTime( UI16 value )
 {
 	trackingmsgredisplaytimer = value;
@@ -4225,6 +4220,7 @@ bool CServerData::ParseINI( const std::string& filename )
 	return rvalue;
 }
 
+//==============================================================================================
 bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 {
 	bool rvalue = true;
@@ -4610,53 +4606,6 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 127:	 // SERVERLIST[0120]
 		{
-			/*std::string sname, sip, sport;
-			physicalServer toAdd;
-			auto csecs = oldstrutil::sections( value, "," );
-			if( csecs.size() == 3 )
-			{
-				struct hostent *lpHostEntry = nullptr;
-				sname	= oldstrutil::trim(oldstrutil::removeTrailing( csecs[0],"//") );
-				sip		= oldstrutil::trim(oldstrutil::removeTrailing( csecs[1],"//") );
-				sport	= oldstrutil::trim(oldstrutil::removeTrailing( csecs[2],"//") );
-
-				toAdd.setName( sname );
-				// Ok look up the data here see if its a number
-				bool bDomain = true;
-				if( ( lpHostEntry = gethostbyname( sip.c_str() ) ) == nullptr )
-				{
-					// this was not a domain name so check for IP address
-					if( ( lpHostEntry = gethostbyaddr( sip.c_str(), static_cast<UI32>(sip.size()), AF_INET ) ) == nullptr )
-					{
-						// We get here it wasn't a valid IP either.
-						Console.warning( oldstrutil::format("Failed to translate %s", sip.c_str() ));
-						Console.warning( "This shard will not show up on the shard listing" );
-						break;
-					}
-					bDomain = false;
-				}
-				// Going to store a copy of the domain name as well to save to the ini if there is a domain name insteead of an ip.
-				if( bDomain ) // Store the domain name for later then seeing as its a valid one
-				{
-					toAdd.setDomain( sip );
-				}
-				else // this was a valid ip address so we will use an ip instead so clear the domain string.
-				{
-					toAdd.setDomain( "" );
-				}
-
-				// Ok now the server itself uses the ip so we need to store that :) Means we only need to look thisip once
-				struct in_addr *pinaddr;
-				pinaddr = ((struct in_addr*)lpHostEntry->h_addr);
-				toAdd.setIP( inet_ntoa(*pinaddr) );
-				toAdd.setPort( static_cast<UI16>(std::stoul(sport, nullptr, 0)));
-				serverList.push_back( toAdd );
-			}
-			else
-			{
-				Console.warning(oldstrutil::format("Malformend Serverlist entry: %s", value.c_str() ));
-				Console.warning( "This shard will not show up on the shard listing" );
-			}*/
 			break;
 		}
 		case 128:	 // PORT[0121]
@@ -5155,6 +5104,7 @@ SI16 CServerData::ServerStartGold( void ) const
 {
 	return startgold;
 }
+//==============================================================================================
 void CServerData::ServerStartGold( SI16 value )
 {
 	if( value >= 0 )
@@ -5171,6 +5121,7 @@ UI16 CServerData::ServerStartPrivs( void ) const
 {
 	return startprivs;
 }
+//==============================================================================================
 void CServerData::ServerStartPrivs( UI16 value )
 {
 	startprivs = value;
@@ -5189,6 +5140,7 @@ SI16 CServerData::ServerMoon( SI16 slot ) const
 		rvalue = moon[slot];
 	return rvalue;
 }
+//==============================================================================================
 void CServerData::ServerMoon( SI16 slot, SI16 value )
 {
 	if( slot >= 0 && slot <= 1 && value >= 0 )
@@ -5205,6 +5157,7 @@ LIGHTLEVEL CServerData::DungeonLightLevel( void ) const
 {
 	return dungeonlightlevel;
 }
+//==============================================================================================
 void CServerData::DungeonLightLevel( LIGHTLEVEL value )
 {
 	dungeonlightlevel = value;
@@ -5220,6 +5173,7 @@ LIGHTLEVEL CServerData::WorldLightCurrentLevel( void ) const
 {
 	return currentlightlevel;
 }
+//==============================================================================================
 void CServerData::WorldLightCurrentLevel( LIGHTLEVEL value )
 {
 	currentlightlevel = value;
@@ -5235,6 +5189,7 @@ LIGHTLEVEL CServerData::WorldLightBrightLevel( void ) const
 {
 	return brightnesslightlevel;
 }
+//==============================================================================================
 void CServerData::WorldLightBrightLevel( LIGHTLEVEL value )
 {
 	brightnesslightlevel = value;
@@ -5250,6 +5205,7 @@ LIGHTLEVEL CServerData::WorldLightDarkLevel( void ) const
 {
 	return darknesslightlevel;
 }
+//==============================================================================================
 void CServerData::WorldLightDarkLevel( LIGHTLEVEL value )
 {
 	darknesslightlevel=value;
@@ -5289,6 +5245,7 @@ auto CServerData::ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__* {
 	return rvalue;
 }
 
+//==============================================================================================
 void CServerData::ServerLocation( std::string toSet )
 {
 	auto temp = toSet;
@@ -5335,6 +5292,7 @@ UI16 CServerData::ServerSecondsPerUOMinute( void ) const
 {
 	return secondsperuominute;
 }
+//==============================================================================================
 void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 {
 	secondsperuominute = newVal;
@@ -5350,6 +5308,7 @@ UI16 CServerData::ServerLanguage( void ) const
 {
 	return serverLanguage;
 }
+//==============================================================================================
 void CServerData::ServerLanguage( UI16 newVal )
 {
 	if( newVal < DL_COUNT )
@@ -5369,6 +5328,7 @@ UI32 CServerData::MaxClientBytesIn( void ) const
 {
 	return maxBytesIn;
 }
+//==============================================================================================
 void CServerData::MaxClientBytesIn( UI32 newVal )
 {
 	maxBytesIn = newVal;
@@ -5385,6 +5345,7 @@ UI32 CServerData::MaxClientBytesOut( void ) const
 {
 	return maxBytesOut;
 }
+//==============================================================================================
 void CServerData::MaxClientBytesOut( UI32 newVal )
 {
 	maxBytesOut = newVal;
@@ -5397,10 +5358,12 @@ void CServerData::MaxClientBytesOut( UI32 newVal )
 //|	Purpose		-	Gets/Sets max amount of time a player will be temporarily banned for if they
 //|					exceed their alotted network traffic budget
 //o-----------------------------------------------------------------------------------------------o
+//==============================================================================================
 UI32 CServerData::NetTrafficTimeban( void ) const
 {
 	return trafficTimeban;
 }
+//==============================================================================================
 void CServerData::NetTrafficTimeban( UI32 newVal )
 {
 	trafficTimeban = newVal;
@@ -5417,6 +5380,7 @@ UI16 CServerData::GetJSEngineSize( void ) const
 {
 	return jsEngineSize;
 }
+//==============================================================================================
 void CServerData::SetJSEngineSize( UI16 newVal )
 {
 	jsEngineSize = newVal;
@@ -5484,6 +5448,7 @@ void CServerData::LoadTime( void )
 	}
 }
 
+//==============================================================================================
 void CServerData::LoadTimeTags( std::ifstream &input )
 {
 	std::string UTag, tag, data;
@@ -5528,48 +5493,59 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 	tag = "";
 }
 
+//==============================================================================================
 SI16 CServerData::ServerTimeDay( void ) const
 {
 	return days;
 }
+//==============================================================================================
 void CServerData::ServerTimeDay( SI16 nValue )
 {
 	days = nValue;
 }
+//==============================================================================================
 UI08 CServerData::ServerTimeHours( void ) const
 {
 	return hours;
 }
+//==============================================================================================
 void CServerData::ServerTimeHours( UI08 nValue )
 {
 	hours = nValue;
 }
+//==============================================================================================
 UI08 CServerData::ServerTimeMinutes( void ) const
 {
 	return minutes;
 }
 
+//==============================================================================================
 void CServerData::ServerTimeMinutes( UI08 nValue )
 {
 	minutes = nValue;
 }
+//==============================================================================================
 UI08 CServerData::ServerTimeSeconds( void ) const
 {
 	return seconds;
 }
+//==============================================================================================
 void CServerData::ServerTimeSeconds( UI08 nValue )
 {
 	seconds = nValue;
 }
+//==============================================================================================
 bool CServerData::ServerTimeAMPM( void ) const
 {
 	return ampm;
 }
+//==============================================================================================
 void CServerData::ServerTimeAMPM( bool nValue )
 {
 	ampm = nValue;
 }
 
+//==============================================================================================
 bool CServerData::incSecond( void )
 {
 	bool rvalue = false;
@@ -5582,11 +5558,13 @@ bool CServerData::incSecond( void )
 	return rvalue;
 }
 
+//==============================================================================================
 void CServerData::incMoon( SI32 mNumber )
 {
 	moon[mNumber] = (SI16)((moon[mNumber] + 1)%8);
 }
 
+//==============================================================================================
 bool CServerData::incMinute( void )
 {
 	bool rvalue = false;
@@ -5604,6 +5582,7 @@ bool CServerData::incMinute( void )
 	return rvalue;
 }
 
+//==============================================================================================
 bool CServerData::incHour( void )
 {
 	++hours;
@@ -5618,53 +5597,60 @@ bool CServerData::incHour( void )
 	return retVal;
 }
 
-bool CServerData::incDay( void )
+//==============================================================================================
+bool CServerData::incDay()
 {
 	++days;
 	return true;
 }
 
-physicalServer *CServerData::ServerEntry( UI16 entryNum )
-{
+
+//==============================================================================================
+auto CServerData::ServerEntry(std::uint16_t  entryNum ) ->physicalServer *{
 	physicalServer *rvalue = nullptr;
-	if( entryNum < serverList.size() )
+	if( entryNum < serverList.size() ){
 		rvalue = &serverList[entryNum];
+	}
 	return rvalue;
 }
-UI16 CServerData::ServerCount( void ) const
-{
+//==============================================================================================
+auto CServerData::ServerCount() const ->std::uint16_t {
+
 	return static_cast<UI16>(serverList.size());
 }
+//==============================================================================================
+// physicalServer
+//==============================================================================================
 
-void physicalServer::setName(const std::string& newName)
-{
+//==============================================================================================
+auto physicalServer::setName(const std::string& newName) ->void {
 	name = newName;
 }
-void physicalServer::setDomain(const std::string& newDomain)
-{
+//==============================================================================================
+auto physicalServer::setDomain(const std::string& newDomain) ->void {
 	domain = newDomain;
 }
-void physicalServer::setIP(const std::string& newIP)
-{
+//==============================================================================================
+auto physicalServer::setIP(const std::string& newIP) ->void {
 	ip = newIP;
 }
-void physicalServer::setPort(UI16 newPort)
-{
+//==============================================================================================
+auto physicalServer::setPort(UI16 newPort) ->void {
 	port = newPort;
 }
-std::string physicalServer::getName( void ) const
-{
+//==============================================================================================
+auto physicalServer::getName() const ->const std::string& {
 	return name;
 }
-std::string physicalServer::getDomain( void ) const
-{
+//==============================================================================================
+auto physicalServer::getDomain() const ->const std::string &{
 	return domain;
 }
-std::string physicalServer::getIP( void ) const
-{
+//==============================================================================================
+auto physicalServer::getIP() const ->const std::string &{
 	return ip;
 }
-UI16 physicalServer::getPort( void ) const
-{
+//==============================================================================================
+auto physicalServer::getPort() const -> std::uint16_t {
 	return port;
 }
