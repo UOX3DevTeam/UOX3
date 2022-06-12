@@ -141,6 +141,7 @@ struct collection_item {
 	collection_item();
 	static const std::unordered_map<int,std::string> collection_names ;
 	static auto name(int multi_id) ->std::string ;
+	auto itemsAt(int offsetx,int offsety) ->std::vector<multi_item> ;
 };
 //=========================================================================================================
 // multicollection
@@ -166,7 +167,9 @@ public:
 	auto size() const ->size_t ;
 	auto multis() const -> const std::unordered_map<int, collection_item>& ;
 	auto multis()  ->  std::unordered_map<int, collection_item>& ;
-	
+	auto multi(std::uint16_t multid) ->collection_item& ;
+	auto multi(std::uint16_t multid) const ->const collection_item&;
+	auto exists(std::uint16_t multid) const ->bool ;
 };
 
 #endif /* MultiMul_hpp */

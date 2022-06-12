@@ -234,6 +234,17 @@ multi_item::multi_item() :tileid(0xFFFF),altitude(0),offsetx(0),offsety(0),flag(
 //=========================================================
 // collection_item
 //=========================================================
+//=========================================================
+auto collection_item::itemsAt(int offsetx,int offsety) ->std::vector<multi_item> {
+	std::vector<multi_item> rvalue ;
+	for (auto &item:items){
+		if ( (item.offsetx == static_cast<std::int16_t>(offsetx)) && (item.offsety == static_cast<std::int16_t>(offsety))){
+			rvalue.push_back(item);
+		}
+	}
+	return rvalue ;
+}
+//=========================================================
 collection_item::collection_item() :min_y(0),min_x(0),max_x(0),max_y(0),min_alt(0),max_alt(0){
 	
 }
@@ -633,4 +644,22 @@ auto multicollection::multis() const -> const std::unordered_map<int, collection
 //=========================================================
 auto multicollection::multis()  ->  std::unordered_map<int, collection_item>& {
 	return _multis;
+}
+//=========================================================
+auto multicollection::multi(std::uint16_t multid) ->collection_item& {
+	return _multis.at(static_cast<int>(multid)) ;
+}
+//=========================================================
+auto multicollection::multi(std::uint16_t multid) const ->const collection_item&{
+	return _multis.at(static_cast<int>(multid)) ;
+
+}
+//=========================================================
+auto multicollection::exists(std::uint16_t multid) const ->bool {
+	auto rvalue = false ;
+	auto iter = _multis.find(multid) ;
+	if (iter != _multis.end()){
+		rvalue = true ;;
+	}
+	return rvalue ;
 }
