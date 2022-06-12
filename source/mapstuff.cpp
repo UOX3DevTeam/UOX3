@@ -7,14 +7,18 @@
 #include "scriptc.h"
 #include <filesystem>
 
+#include <algorithm>
+#include <array>
+#include <fstream>
+
+using namespace std::string_literals ;
+
 CMulHandler *Map				= nullptr;
 
 const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
-const UI32 TileRecordSize			= 26L;
-const UI32 TileRecordSizeHS			= 41L;
 const UI32 MapRecordSize			= 3L;
 const UI32 StaticRecordSize			= 7L;
 const UI32 StaticIndexRecordSize	= 12L;
@@ -84,17 +88,9 @@ MapData_st::~MapData_st()
  **  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching
  **  and less susceptible to bugs.
  */
-CMulHandler::CMulHandler() : landTile( 0 ),  staticTile( 0 ),  tileDataSize( 0 )
+CMulHandler::CMulHandler()
 {
 	LoadMapsDFN();
-}
-
-CMulHandler::~CMulHandler()
-{
-	if ( landTile )
-		delete[] landTile;
-	if ( staticTile )
-		delete[] staticTile;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -308,51 +304,16 @@ void CMulHandler::LoadMapAndStatics( MapData_st& mMap, const std::string& basePa
 //o-----------------------------------------------------------------------------------------------o
 void CMulHandler::LoadTileData( const std::string& basePath )
 {
-	UI08 j = 0;
-
 	// tiledata.mul is to be cached.
 	std::string lName = basePath + "tiledata.mul";
 	Console << "\t" << lName << "\t";
-
+	
 	UOXFile tileFile( lName.c_str(), "rb" );
-	if( !tileFile.ready() )
+	if( !tile_info.load(lName) )
 	{
 		Console.PrintFailed();
 		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
 	}
-
-	//Grab length of tileFile to determine version of datafiles used
-	size_t tileFileLength = tileFile.getLength();
-	bool useHS = false ;
-	auto recordSize = TileRecordSize ;
-	if( tileFileLength >= 3188736 )
-	{
-		useHS = true ;
-		recordSize = TileRecordSizeHS ;
-	}
-	
-	landTile		= new CLand[LANDDATA_SIZE];
-	CLand *landPtr	= landTile;
-	for( UI16 i = 0; i < 512; ++i )
-	{
-		tileFile.seek(4, SEEK_CUR);			// skip the dummy header
-		for( j = 0; j < 32; ++j )
-			landPtr[j].Read( &tileFile,useHS );
-		landPtr += 32;
-	}
-	
-	tileDataSize		= (((tileFile.getLength() - (((32 * recordSize) + 4) * 512)) / 1188) * 32);
-	staticTile		= new CTile[tileDataSize];
-	CTile *tilePtr	= staticTile;
-	
-	while( !tileFile.eof() )
-	{
-		tileFile.seek(4, SEEK_CUR);			// skip the dummy header
-		for( j = 0; j < 32; ++j )
-			tilePtr[j].Read( &tileFile, useHS );
-		tilePtr += 32;
-	}	
-	
 	Console.PrintDone();
 }
 
@@ -421,7 +382,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 //o-----------------------------------------------------------------------------------------------o
 size_t CMulHandler::GetTileMem( void ) const
 {
-	return (LANDDATA_SIZE * sizeof( CLand ) + tileDataSize * sizeof( CTile ));
+	return tile_info.totalMemory();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -704,7 +665,7 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 bool CMulHandler::IsValidTile( UI16 tileNum )
 {
 	bool retVal = true;
-	if( tileNum == INVALIDID || tileNum >= tileDataSize )
+	if( tileNum == INVALIDID  )
 		retVal = false;
 
 	return retVal;
@@ -715,8 +676,7 @@ bool CMulHandler::IsValidTile( UI16 tileNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches data about a specific tile from memory. Non-High Seas version
 //o-----------------------------------------------------------------------------------------------o
-CTile& CMulHandler::SeekTile( UI16 tileNum )
-{
+CTile& CMulHandler::SeekTile( UI16 tileNum ) {
 	//7.0.8.2 tiledata and earlier
 	if( !IsValidTile( tileNum ) )
 	{
@@ -725,7 +685,7 @@ CTile& CMulHandler::SeekTile( UI16 tileNum )
 		return emptyTile;
 	}
 	else
-		return staticTile[tileNum];
+		return tile_info.art(tileNum);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -742,7 +702,7 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 		return emptyTile;
 	}
 	else
-		return landTile[landNum];
+		return tile_info.terrain(landNum);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1318,9 +1278,9 @@ auto CMulHandler::LoadDFNOverrides()->void{
 					titlePart	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
 					// have we got an entry starting with TILE ?
 					if( titlePart == "TILE" && entryNum ) {
-						if( (entryNum != INVALIDID) && (entryNum < tileDataSize) ){
+						if( (entryNum != INVALIDID) && (entryNum < tile_info.sizeArt())) {
 							
-							auto tile = &staticTile[entryNum];
+							auto tile = &tile_info.art(entryNum);
 							if(tile) {
 								for (auto &sec : toScan->collection()){
 									auto tag = sec->tag ;
@@ -1349,7 +1309,8 @@ auto CMulHandler::LoadDFNOverrides()->void{
 									}
 									else if( UTag == "NAME" )
 									{
-										tile->Name( data.c_str() );
+										
+										tile->Name( data );
 									}
 									
 									// BaseTile Flag 1
@@ -1467,72 +1428,201 @@ auto CMulHandler::LoadDFNOverrides()->void{
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CTile::Read( UOXFile *toRead )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Reads and stores tiledata flags as part of loading tiledata into memory
-//|					Non-High Seas version
-//|
-//|	Notes		-	BYTE[4]		Flags		(See BaseTile)
-//|					BYTE		Weight		Weight of the item, 255 means not movable)
-//|					BYTE		Quality		If Wearable, this is a Layer. If Light Source, this is Light ID.
-//|					BYTE[2]		Unknown1
-//|					BYTE		Unknown2
-//|					BYTE		Quantity	If Weapon, Quantity is Weapon Class. If Armor, Quantity is Armor Class.
-//|					BYTE[2]		Animation
-//|					BYTE		Unknown3
-//|					BYTE		Hue
-//|					BYTE		Unknown4
-//|					BYTE		Unknown5
-//|					BYTE		Height		If Container, Height is "Contains" (Something determining how much the container can hold?)
-//|					BYTE[20]	Name
-//o-----------------------------------------------------------------------------------------------o
-void CTile::Read( UOXFile *toRead,bool useHS )
-{
-	UI32 flagsRead;
-	toRead->getULong( &flagsRead );
-	flags = flagsRead;
-	if( useHS )
-	{
-		toRead->getULong( &unknown0 );		
+
+
+
+//===============================================================================================
+// Replacement classes
+//===============================================================================================
+//===============================================================================================
+// tileinfo
+//===============================================================================================
+//===============================================================================================
+
+//===============================================================================================
+tileinfo::tileinfo(const std::string &filename):isHS_format(false){
+	if (!filename.empty()){
+		this->load(filename) ;
 	}
-	toRead->getUChar( &weight );
-	toRead->getChar( &layer );
-	toRead->getUShort( &unknown1 );
-	toRead->getUChar( &unknown2 );
-	toRead->getUChar( &quantity );
-	toRead->getUShort( &animation );
-	toRead->getUChar( &unknown3 );
-	toRead->getUChar( &hue );
-	toRead->getUChar( &unknown4 );
-	toRead->getUChar( &unknown5 );
-	toRead->getChar( &height );
-	toRead->getChar( name, 20 );
-	name[20] = '\0';
+}
+//===============================================================================================
+auto tileinfo::load(const std::string &filename) ->bool {
+	auto rvalue = false ;
+	art_data.clear() ;
+	terrain_data.clear() ;
+	isHS_format =false ;
+	auto path = std::filesystem::path(filename) ;
+	if (std::filesystem::exists(path)) {
+		if (std::filesystem::file_size(path)>= hssize) {
+			isHS_format = true ;;
+		}
+		auto input = std::ifstream(filename,std::ios::binary) ;
+		if (input.is_open()){
+			rvalue = true ;
+			processTerrain(input) ;
+			processArt(input) ;
+		}
+	}
+	return rvalue ;
+}
+//===============================================================================================
+auto tileinfo::terrain(std::uint16_t tileid) const -> const CLand& {
+	return terrain_data[tileid] ;
+}
+//===============================================================================================
+auto tileinfo::terrain(std::uint16_t tileid)  ->  CLand& {
+	return terrain_data[tileid] ;
+}
+//===============================================================================================
+auto tileinfo::art(std::uint16_t tileid) const -> const CTile& {
+	return art_data[tileid] ;
+}
+//===============================================================================================
+auto tileinfo::art(std::uint16_t tileid)  ->  CTile& {
+	return art_data[tileid] ;
+}
+//===============================================================================================
+auto tileinfo::sizeTerrain() const -> size_t {
+	return terrain_data.size();
+}
+//===============================================================================================
+auto tileinfo::sizeArt() const -> size_t {
+	return art_data.size() ;
+}
+//===============================================================================================
+auto tileinfo::collectionTerrain() const -> const std::vector<CLand>&{
+	return terrain_data;
+}
+//===============================================================================================
+auto tileinfo::collectionTerrain() ->std::vector<CLand> &{
+	return terrain_data;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CLand::Read( UOXFile *toRead )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Reads and stores land tile data as part of loading tiledata into memory
-//|					Non-High Seas version
-//|
-//|	Notes		-	BYTE[4]		Flags
-//|					BYTE[2]		TextureID
-//|					BYTE[20]	Name
-//o-----------------------------------------------------------------------------------------------o
-void CLand::Read( UOXFile *toRead,bool useHS )
-{
-	UI32 flagsRead;
-	toRead->getULong( &flagsRead );
-	flags = flagsRead;
-	if( useHS )
-	{
-		toRead->getULong( &unknown1 );
-	}
-	toRead->getUShort( &textureID );
-	toRead->getChar( name, 20 );
-	name[20] = '\0';
+//===============================================================================================
+auto tileinfo::collectionArt() const -> const std::vector<CTile>& {
+	return  art_data;
+}
+//===============================================================================================
+auto tileinfo::collectionArt() ->std::vector<CTile>& {
+	return  art_data;
 }
 
+//===============================================================================================
+auto tileinfo::processTerrain(std::ifstream &input) ->void {
+	terrain_data.reserve(0x4000);
+	std::uint32_t value32 = 0 ;
+	std::uint64_t value64 =  0;
+	std::array<char,20> string_buffer ;
+	string_buffer.fill(0);
+	for (auto i=0 ; i< 0x4000;i++){
+		// We have to get rid of the header on blocks of information
+		// HS has the firt entry messed up
+		if (isHS_format) {
+			if ( (((i & 0x1F)==0) && (i>0)) || (i == 1)){
+				input.read(reinterpret_cast<char*>(&value32),4); // read off the group header
+			}
+			
+		}
+		else {
+			if ( (i & 0x1f) == 0) {
+				input.read(reinterpret_cast<char*>(&value32),4); // read off the group header
+			}
+		}
+		// now create the info_t we will use
+		auto info = CLand();
+		// read off the flags, 32 bit on pre-HS, 64 bit after
+		if (isHS_format) {
+			input.read(reinterpret_cast<char*>(&value64),8);
+			info.flags = std::bitset<64>(value64);
 
+		}
+		
+		else{
+			input.read(reinterpret_cast<char*>(&value32),4);
+			info.flags = std::bitset<64>(value32);
+		}
+		// only other thing for terrain is the texture
+		// and name
+		input.read(reinterpret_cast<char*>(&info.textureID),2);
+		input.read(string_buffer.data(),20);
+		if (input.gcount()==20){
+			// We need to find the "0", if any
+			auto iter = std::find(string_buffer.begin(),string_buffer.end(),0);
+			info.name = std::string(string_buffer.begin(),iter);
+			terrain_data.push_back(std::move(info));
+			
+		}
+		else {
+			break;
+		}
+	}
+
+}
+//===============================================================================================
+auto tileinfo::processArt(std::ifstream &input) ->void {
+	art_data.reserve(0xFFFF);
+	std::uint32_t value32 = 0 ;
+	std::uint64_t value64 =  0;
+	std::array<char,20> string_buffer ;
+	string_buffer.fill(0);
+	if ( !(input.eof() || input.bad())){
+		auto loopcount = 0 ;
+		do {
+			if ( (loopcount & 0x1f) == 0) {
+				input.read(reinterpret_cast<char*>(&value32),4); // read off the group header
+			}
+			auto info = CTile();
+			if (isHS_format) {
+				input.read(reinterpret_cast<char*>(&value64),8);
+				info.flags = std::bitset<64>(value64);
+
+				
+			}
+			else {
+				input.read(reinterpret_cast<char*>(&value32),4);
+				info.flags = std::bitset<64>(value32);
+
+			}
+			input.read(reinterpret_cast<char*>(&info.weight),1);
+			input.read(reinterpret_cast<char*>(&info.layer),1);
+			//misc data
+			input.read(reinterpret_cast<char*>(&info.unknown1),2);
+			//Second unkown
+			input.read(reinterpret_cast<char*>(&info.unknown2),1);
+			// Quantity
+			input.read(reinterpret_cast<char*>(&info.quantity),1);
+			// Animation
+			input.read(reinterpret_cast<char*>(&info.animation),2);
+			
+			//Third a byte
+			input.read(reinterpret_cast<char*>(&info.unknown3),1);
+			
+			// Hue/Value
+			input.read(reinterpret_cast<char*>(&info.hue),1);
+			//stacking offset/value  = 16 bits, but UOX3 doesn't know that, so two eight bit unkowns
+			input.read(reinterpret_cast<char*>(&info.unknown4),1);
+			input.read(reinterpret_cast<char*>(&info.unknown5),1);
+			// Height
+			input.read(reinterpret_cast<char*>(&info.height),1);
+			// and name
+			input.read(string_buffer.data(),20);
+			if ((input.gcount()==20) && input.good()){
+				// We need to find the "0", if any
+				auto iter = std::find(string_buffer.begin(),string_buffer.end(),0);
+				info.name = std::string(string_buffer.begin(),iter);
+				art_data.push_back(std::move(info));
+			}
+			loopcount++;
+			
+		}while( (!input.eof()) && input.good());
+		
+	}
+
+}
+//===============================================================================================
+auto tileinfo::totalMemory() const ->size_t {
+	auto flag = isHS_format?8:4 ;
+	auto terrain = flag + 20 + 2 ;
+	auto art = flag + 20 + 23 ;
+	return static_cast<size_t>((terrain*terrain_data.size()) + (art * art_data.size()) );
+}

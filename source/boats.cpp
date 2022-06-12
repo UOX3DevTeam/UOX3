@@ -374,7 +374,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			{
 				map = Map->SeekMap( x, y, worldNumber );
 				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= cz && !land.CheckFlag( TF_WET ) && strcmp( land.Name(), "water" ) )//only tiles on/above the water
+				if( map.z >= cz && !land.CheckFlag( TF_WET ) && land.Name()=="water" )//only tiles on/above the water
 					return true;
 			}
 			else
@@ -385,7 +385,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 				{
 					CTile& tile = Map->SeekTile( stat->itemid );
 					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && strcmp( (char*)tile.Name(), "water" ) )
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.Name() == "water") )
 					{
 						delete msi;
 						return true;

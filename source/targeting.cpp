@@ -547,7 +547,7 @@ void InfoTarget( CSocket *s )
 		statTile.AddData( "Unknown4", tile.Unknown4(), 1 );
 		statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
 		statTile.AddData( "Height", tile.Height(), 0 );
-		statTile.AddData( "Name", tile.Name() );
+		statTile.AddData( "Name", tile.Name().c_str());
 		statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
 		statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ) );
 		statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ) );
