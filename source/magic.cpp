@@ -576,7 +576,7 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 	if( !caster->IsNpc() )
 	{
 		CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
-		if( (!strcmp( tile.Name(), "water")) || tile.CheckFlag( TF_WET ) )
+		if( (tile.Name()!="water") || tile.CheckFlag( TF_WET ) )
 		{
 			sock->sysmessage( 671 );
 			return false;

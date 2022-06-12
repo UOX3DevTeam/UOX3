@@ -1610,7 +1610,7 @@ void CTownRegion::ViewTaxes( CSocket *sock )
 	toSend.addText(oldstrutil::format( "%s (%s)", name.c_str(), Races->Name( race ).c_str()) );
 	toSend.addText( oldstrutil::format("Population %i", GetPopulation() ));
 	CTile& tile = Map->SeekTile( GetResourceID() );
-	toSend.addText( oldstrutil::format("%i %ss", taxedAmount, tile.Name()) );
+	toSend.addText( oldstrutil::format("%i %ss", taxedAmount, tile.Name().c_str()) );
 	toSend.Finalize();
 	sock->Send( &toSend );
 }

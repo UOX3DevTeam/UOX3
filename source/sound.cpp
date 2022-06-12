@@ -7,6 +7,7 @@
 #include "CPacketSend.h"
 #include "regions.h"
 
+using namespace std::string_literals;
 
 cEffects *Effects;
 
@@ -350,16 +351,24 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 			tileType = TT_WATER;
 		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
 		{
-			char search1[10];
-			strcopy( search1,10, "wood" );
-			if( strstr( tile.Name(), search1 ) )
+			auto pos = tile.Name().find("wood") ;
+			if (pos != std::string::npos){
 				tileType = TT_WOODEN;
-			strcopy( search1,10, "ston" );
-			if( strstr( tile.Name(), search1 ) )
-				tileType = TT_STONE;
-			strcopy( search1,10, "gras" );
-			if( strstr( tile.Name(), search1 ) )
-				tileType = TT_GRASS;
+			}
+			else {
+				pos = tile.Name().find("ston") ;
+				if (pos != std::string::npos){
+					tileType = TT_STONE;
+				}
+				else {
+					pos = tile.Name().find("gras") ;
+					if (pos != std::string::npos){
+						tileType = TT_GRASS;
+					}
+
+				}
+
+			}
 		}
 	}
 
