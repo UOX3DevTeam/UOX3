@@ -361,6 +361,9 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 {
 	// now main memory multiItems
 	Console << "Caching Multis....  ";
+	// Odd we do no check?
+	multi_data.load(std::filesystem::path(basePath));
+	/*
 	std::string uopname = basePath + "MultiCollection.uop" ;
 	if (std::filesystem::exists(std::filesystem::path(uopname))) {
 		_multidata.load(uopname);
@@ -372,6 +375,7 @@ void CMulHandler::LoadMultis( const std::string& basePath )
 		std::string mulname	= basePath + "multi.mul";
 		_multidata.load(mulname, idxname) ;
 	}
+	*/
 	Console.PrintDone();
 }
 
@@ -392,7 +396,7 @@ size_t CMulHandler::GetTileMem( void ) const
 //o-----------------------------------------------------------------------------------------------o
 size_t CMulHandler::GetMultisMem( void ) const
 {
-	return _multidata.memoryMulti();
+	return multi_data.size();
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -432,7 +436,7 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 
 //=============================================================================
 bool CMulHandler::multiExists(UI16 multinum){
-	return _multidata.exists(multinum);
+	return multi_data.exists(multinum);
 }
 
 
@@ -441,9 +445,8 @@ bool CMulHandler::multiExists(UI16 multinum){
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if multinum/id can be found in multi data. Non-High Seas version
 //o-----------------------------------------------------------------------------------------------o
-const multi_structure &CMulHandler::SeekMulti( UI16 multinum )  const
-{
-	return _multidata.entry(multinum);
+auto CMulHandler::SeekMulti( UI16 multinum )  const  -> const collection_item &{
+	return multi_data.multi(multinum);
 }
 
 //o--------------------------------------------------------------------------
@@ -466,10 +469,10 @@ void CMulHandler::MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y
 		return ;
 	}
 	auto structure = SeekMulti(multiNum);
-	x1 = static_cast<SI16>(structure.minx() + xAdd);
-	x2 = static_cast<SI16>(structure.maxx() + xAdd);
-	y1 = static_cast<SI16>(structure.miny() + yAdd);
-	y2 = static_cast<SI16>(structure.maxy() + yAdd);
+	x1 = static_cast<SI16>(structure.min_x + xAdd);
+	x2 = static_cast<SI16>(structure.max_x + xAdd);
+	y1 = static_cast<SI16>(structure.min_y + yAdd);
+	y2 = static_cast<SI16>(structure.max_y + yAdd);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -492,20 +495,20 @@ SI08 CMulHandler::MultiHeight( CItem *i, SI16 x, SI16 y, SI08 oldZ, SI08 maxZ, b
 	const SI16 baseX = i->GetX();
 	const SI16 baseY = i->GetY();
 	const SI08 baseZ = i->GetZ();
-	for( auto &multi : SeekMulti( multiID ).allItems() )
+	for( auto &multi : SeekMulti( multiID ).items )
 	{
-		if(( checkHeight || multi.visible ) && ( baseX + multi.xoffset ) == x && ( baseY + multi.yoffset ) == y )
+		if(( checkHeight || multi.flag ) && ( baseX + multi.offsetx ) == x && ( baseY + multi.offsety ) == y )
 		{
 			if( checkHeight )
 			{
 				// Returns height of highest point of multi
-				tmpTop = static_cast<SI08>(baseZ + multi.zoffset);
+				tmpTop = static_cast<SI08>(baseZ + multi.altitude);
 				if( ( tmpTop <= oldZ + maxZ ) && tmpTop > oldZ && tmpTop > mHeight )
 					mHeight = tmpTop;
 			}
 			else
 			{
-				tmpTop = static_cast<SI08>( baseZ + multi.zoffset );
+				tmpTop = static_cast<SI08>( baseZ + multi.altitude );
 				if( abs( tmpTop - oldZ ) <= maxZ )
 					return tmpTop + TileHeight( multi.tileid );
 			}
@@ -572,18 +575,18 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 	{		
 		// Loop through each item that makes up the multi
 		// If any of those items intersect with area were are checking, return the ID of that tile
-		for( auto &multi : SeekMulti( multiID ).allItems() )
+		for( auto &multi : SeekMulti( multiID ).items )
 		{
 			if( !checkVisible )
 			{
-				if( ( i->GetX() + multi.xoffset == x ) && ( i->GetY() + multi.yoffset == y ) )
+				if( ( i->GetX() + multi.offsetx == x ) && ( i->GetY() + multi.offsety == y ) )
 				{
 					return multi.tileid;
 				}
 			}
-			else if( multi.visible > 0 && ( abs( i->GetZ() + multi.zoffset - oldz ) <= 1 ) )
+			else if( multi.flag > 0 && ( abs( i->GetZ() + multi.altitude - oldz ) <= 1 ) )
 			{
-				if( ( i->GetX() + multi.xoffset == x ) && ( i->GetY() + multi.yoffset == y ) )
+				if( ( i->GetX() + multi.offsetx == x ) && ( i->GetY() + multi.offsety == y ) )
 				{
 					return multi.tileid;
 				}
@@ -967,9 +970,9 @@ auto CMulHandler::CheckDynamicFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI
 						// Found a multi
 						// Look for a multi item at specific location
 						auto multiID = static_cast<UI16>( Item->GetID() - 0x4000 );
-						for( auto &multiItem : SeekMulti( multiID ).allItems() ){
-							if( multiItem.visible > 0 && ( abs( Item->GetZ() + multiItem.zoffset - z ) <= 1 ) ){
-								if( ( Item->GetX() + multiItem.xoffset == x ) && ( Item->GetY() + multiItem.yoffset == y ) ){
+						for( auto &multiItem : SeekMulti( multiID ).items ){
+							if( multiItem.flag > 0 && ( abs( Item->GetZ() + multiItem.altitude - z ) <= 1 ) ){
+								if( ( Item->GetX() + multiItem.offsetx == x ) && ( Item->GetY() + multiItem.offsety == y ) ){
 									if( SeekTile( multiItem.tileid ).CheckFlag( toCheck ) ){
 										return true;
 									}
