@@ -424,51 +424,49 @@ constexpr auto BIT_ALLOWAWAKENPCS				= std::uint32_t(76);
 // June 10, 2007 		- 	Added two new settings to the uox.ini, NPCRUNNINGSPEED and NPCFLEEINGSPEED, they work the same way as NPCMOVEMENTSPEED.
 // July 28, 2007 		- 	Added a new setting to the uox.ini: BASICTOOLTIPSONLY. If this is set to 1 the tooltips will only contain basic information, like the name and the weight of an item.
 // February 7, 2010 	- 	Added new UOX.INI settings:
-//									GLOBALITEMDECAY - Toggles on / off item decay on a global scale.Note that it does not remove the decay - status from items, it just resets the decay - timer when it reaches 0
-//									SCRIPTITEMSDECAYABLE - Toggles whether DFN - items will decay by default or not.Can be overriden by DECAY tag in item - DFNs
-//									BASEITEMSDECAYABLE - Toggles whether base - items will decay by default or not.Can be overriden by DECAY tag in harditems.dfn
-//									ITEMDECAYINHOUSES - Toggles default decay of non - locked down items inside multis( houses and boats )
+//		GLOBALITEMDECAY - Toggles on / off item decay on a global scale.Note that it does not remove the decay - status from items, it just resets the decay - timer when it reaches 0
+//		SCRIPTITEMSDECAYABLE - Toggles whether DFN - items will decay by default or not.Can be overriden by DECAY tag in item - DFNs
+//		BASEITEMSDECAYABLE - Toggles whether base - items will decay by default or not.Can be overriden by DECAY tag in harditems.dfn
+//		ITEMDECAYINHOUSES - Toggles default decay of non - locked down items inside multis( houses and boats )
 // December 14, 20011 	- 	Exposed CombatExplodeDelay to UOX.INI, and changed the default delay between targeting and damage for the Explosion spell from 0 to 2 seconds
-// March 19, 2012 		- 	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
-//									Can be enabled / disabled through UOX.INI setting PAPERDOLLGUILDBUTTON = 0 / 1. Defaults to 0.
-//							Added new UOX.INI option to determine whether attack - speed bonuses are gained from Stamina( default ) or Dexterity: ATTACKSPEEDFROMSTAMINA = 1 / 0
-//							Added new UOX.INI option to control the displaying of damage - numbers in combat( previously used DISPLAYHITMSG for numbers too ) : DISPLAYDAMAGENUMBERS = 1 / 0
-//							Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client - versions for the server :
-//									CLIENTSUPPORT4000 = 0 / 1
-//									CLIENTSUPPORT5000 = 0 / 1
-//									CLIENTSUPPORT6000 = 0 / 1
-//									CLIENTSUPPORT6050 = 0 / 1
-//									CLIENTSUPPORT7000 = 0 / 1
-//									CLIENTSUPPORT7090 = 0 / 1
-//									CLIENTSUPPORT70160 = 0 / 1
-//									CLIENTSUPPORT70240 = 0 / 1
-//									NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned.This means that CLIENTSUPPORT4000, for instance,
-//									will allow or disallow connections from clients 4.0.0 to 4.0.11f.Also note that while it is possible to enable support for all clients at the same time,
-//									it highly recommended to restrict support for client versions that match up to what the server is running.
-//							Added new UOX.INI option : EXTENDEDSTARTINGSTATS = 0 / 1
-//									If enabled, makes new characters start with 90 statpoints( selectable in clients 7.0.16.0 + only, lower versions only get 90 if using templates ) instead of 80.
-//							Added new UOX.INI option : EXTENDEDSTARTINGSKILLS = 0 / 1
-//									If enabled, allows for four starting skills( selectable in clients 7.0.16.0 + only, lower versions only get 4th skill if using templates ) instead of three
+// March 19, 2012 	- 	Added support for packet 0xD7, SubCommand 0x28 - Guild button on paperdoll, which gives access to guild-functions if character belongs to a guild.
+//		Can be enabled / disabled through UOX.INI setting PAPERDOLLGUILDBUTTON = 0 / 1. Defaults to 0.
+// Added new UOX.INI option to determine whether attack - speed bonuses are gained from Stamina( default ) or Dexterity: ATTACKSPEEDFROMSTAMINA = 1 / 0
+// Added new UOX.INI option to control the displaying of damage - numbers in combat( previously used DISPLAYHITMSG for numbers too ) : DISPLAYDAMAGENUMBERS = 1 / 0
+// Added a new section to UOX.INI - [clientsupport] - along with the following settings to determine approved client - versions for the server :
+//		CLIENTSUPPORT4000 = 0 / 1
+//		CLIENTSUPPORT5000 = 0 / 1
+//		CLIENTSUPPORT6000 = 0 / 1
+//		CLIENTSUPPORT6050 = 0 / 1
+//		CLIENTSUPPORT7000 = 0 / 1
+//		CLIENTSUPPORT7090 = 0 / 1
+//		CLIENTSUPPORT70160 = 0 / 1
+//		CLIENTSUPPORT70240 = 0 / 1
+//		NOTE: Each of these settings represent a range of clients, not just the individual versions mentioned.This means that CLIENTSUPPORT4000, for instance, will allow or disallow connections from clients 4.0.0 to 4.0.11f.Also note that while it is possible to enable support for all clients at the same time, it highly recommended to restrict support for client versions that match up to what the server is running.
+// Added new UOX.INI option : EXTENDEDSTARTINGSTATS = 0 / 1
+//		If enabled, makes new characters start with 90 statpoints( selectable in clients 7.0.16.0 + only, lower versions only get 90 if using templates ) instead of 80.
+// Added new UOX.INI option : EXTENDEDSTARTINGSKILLS = 0 / 1
+//		If enabled, allows for four starting skills( selectable in clients 7.0.16.0 + only, lower versions only get 4th skill if using templates ) instead of three
 // November 14, 2012	-	Fixed issue where DISPLAYDAMAGENUMBERS and ATTACKSPEEDFROMSTAMINA settings in UOX.INI were overwriting the DISPLAYHITMSG setting instead of their own respective settings
 // November 10, 2013	-	Added new UOX.INI settings for adjusting combat-speed on a global scale:
-//									GLOBALATTACKSPEED = 1 	// for adjusting speed of melee and ranged attacks globally for all chars
-//									NPCSPELLCASTSPEED = 1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
-//							Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable :
-//									WEAPONDAMAGECHANCE = 17 	// Chance of weapons taking damage when attacking
-//									WEAPONDAMAGEMIN = 0		// Minimum amount of damage a weapon takes if damaged in combat
-//									WEAPONDAMAGEMAX = 1		// Maximum amount of damage a weapon takes if damaged in combat
-//									ARMORDAMAGECHANCE = 25	// Chance of armor taking damage when defending
-//									ARMORDAMAGEMIN = 0		// Minimum amount of damage armor can take if damaged in combat
-//									ARMORDAMAGEMAX = 1		// Maximum amount of damage armor can take if damaged in combat
+//		GLOBALATTACKSPEED = 1 	// for adjusting speed of melee and ranged attacks globally for all chars
+//		NPCSPELLCASTSPEED = 1 	// for adjusting the overall speed of spellcasts for NPCs (base spellcast speed determined by SPADELAY tag in NPC dfns)
+// Added new UOX.INI settings to make hardcoded damage to armor and weapons in combat more customizable :
+//		WEAPONDAMAGECHANCE = 17 	// Chance of weapons taking damage when attacking
+//		WEAPONDAMAGEMIN = 0		// Minimum amount of damage a weapon takes if damaged in combat
+//		WEAPONDAMAGEMAX = 1		// Maximum amount of damage a weapon takes if damaged in combat
+//		ARMORDAMAGECHANCE = 25	// Chance of armor taking damage when defending
+//		ARMORDAMAGEMIN = 0		// Minimum amount of damage armor can take if damaged in combat
+//		ARMORDAMAGEMAX = 1		// Maximum amount of damage armor can take if damaged in combat
 // September 12, 2015 	- 	Added new UOX.INI setting for defining the amount of stamina lost when using the fishing skill
-//									FISHINGSTAMINALOSS = 2	// The amount of stamina lost when using the fishing skill
+//		FISHINGSTAMINALOSS = 2	// The amount of stamina lost when using the fishing skill
 // November 24, 2019 	- 	Added new uox.ini flag for choosing a random starting location for new players (from list in uox.ini)
-//									RANDOMSTARTINGLOCATION = 0	// 0 to disable (default), 1 to enable
+//		RANDOMSTARTINGLOCATION = 0	// 0 to disable (default), 1 to enable
 
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 
 //+++++++++++++++++++++++++++++++++++++++++++++++
-std::int32_t CServerData::lookupINIValue(const std::string& tag) {
+auto CServerData::lookupINIValue(const std::string& tag) ->std::int32_t  {
 	auto iter = uox3inicasevalue.find(tag) ;
 	if (iter != uox3inicasevalue.end()){
 		return iter->second ;
@@ -485,21 +483,21 @@ std::int32_t CServerData::lookupINIValue(const std::string& tag) {
 auto CServerData::ResetDefaults()->void {
 	resettingDefaults = true;
 	serverList.resize( 1 );		// Set the initial count to hold one server.
-
+	
 	ServerIP( "127.0.0.1" );
 	ServerPort( 2593 );
 	ExternalIP("127.0.0.1");
 	serverList[0].setPort( 2593 );
 	ServerName( "My UOX3 Shard" );
-
+	
 	// Set default gcMaxBytes limit in MB per JS runtime
 	// If set too low, UOX3 might crash when reloading (full) JS engine
 	// JS API references describe it as "Maximum nominal heap before last ditch GC"
 	SetJSEngineSize( 256 );
-
+	
 	// Send server-originating messages i`n Unicode format, if possible
 	UseUnicodeMessages( true );
-
+	
 	ServerLanguage( DL_DEFAULT );
 	SystemTimer( tSERVER_POTION, 10 );
 	ServerMoon( 0, 0 );
@@ -508,25 +506,25 @@ auto CServerData::ResetDefaults()->void {
 	WorldLightCurrentLevel( 0 );
 	WorldLightBrightLevel( 0 );
 	WorldLightDarkLevel( 5 );
-
+	
 	ServerNetRcvTimeout( 3 );
 	ServerNetSndTimeout( 3 );
 	ServerNetRetryCount( 3 );
 	MaxClientBytesIn( 25000 );
 	MaxClientBytesOut( 100000 );
 	NetTrafficTimeban( 30 );
-
+	
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
 	ServerTimeHours( 0 );
 	ServerTimeMinutes( 0 );
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
-
+	
 	InternalAccountStatus( false );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
-
+	
 	// load defaults values
 	SystemTimer( tSERVER_SHOPSPAWN, 300 );
 	SystemTimer( tSERVER_POISON, 180 );
@@ -538,16 +536,16 @@ auto CServerData::ResetDefaults()->void {
 	StatsAffectSkillChecks( false );
 	CorpseLootDecay( true );
 	ServerSavesTimer( 600 );
-
+	
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
 	HungerSystemEnabled( true );
-
+	
 	SystemTimer( tSERVER_THIRSTRATE, 6000 );
 	ThirstDrain( 2 );
 	ThirstSystemEnabled( false );
-
+	
 	ServerSkillDelay( 5 );
 	SystemTimer( tSERVER_OBJECTUSAGE, 1 );
 	SystemTimer( tSERVER_HITPOINTREGEN, 8 );
@@ -573,7 +571,7 @@ auto CServerData::ResetDefaults()->void {
 	ConnectUOServerPoll( true );
 	ServerContextMenus( true );
 	SysMsgColour( 0x0048 );
-
+	
 	CombatMonstersVsAnimals( true );
 	CombatAnimalsAttackChance( 2 );
 	CombatAnimalsGuarded( false );
@@ -608,9 +606,9 @@ auto CServerData::ResetDefaults()->void {
 	SetPetLoyaltyLossOnFailure( 3 );
 	SystemTimer( tSERVER_LOYALTYRATE, 900 );
 	ItemsInterruptCasting( true );
-
+	
 	auto curWorkingDir = std::filesystem::current_path().string();
-
+	
 	auto wDir = oldstrutil::fixDirectory(curWorkingDir);
 	std::string tDir;
 	Directory( CSDDP_ROOT, wDir );
@@ -639,7 +637,7 @@ auto CServerData::ResetDefaults()->void {
 	Directory( CSDDP_DICTIONARIES, tDir );
 	tDir = wDir + std::string("logs/");
 	Directory( CSDDP_LOGS, tDir );
-
+	
 	BuyThreshold( 2000 );
 	GuardStatus( true );
 	ServerAnnounceSaves( true );
@@ -680,13 +678,13 @@ auto CServerData::ResetDefaults()->void {
 	MaxSafeTeleportsPerDay( 1 );
 	TeleportToNearestSafeLocation( false );
 	AllowAwakeNPCs( false );
-
+	
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
 	PlayerPersecutionStatus( false );
 	HtmlStatsStatus( -1 );
-
+	
 	MsgBoardPostingLevel( 0 );
 	MsgBoardPostRemovalLevel( 0 );
 	// No replacement I can see
@@ -701,7 +699,7 @@ auto CServerData::ResetDefaults()->void {
 	SystemTimer( tSERVER_ESCORTDONE, 600 );
 	AmbientFootsteps( false );
 	ServerCommandPrefix( '\'' );
-
+	
 	CheckSpawnRegionSpeed( 30 );
 	CheckItemsSpeed( 1.5 );
 	NPCWalkingSpeed( 0.6 );
@@ -711,7 +709,7 @@ auto CServerData::ResetDefaults()->void {
 	NPCMountedRunningSpeed( 0.12 );
 	NPCMountedFleeingSpeed( 0.2 );
 	AccountFlushTimer( 5.0 );
-
+	
 	// RESOURCES
 	ResourceAreaSize( 8 );
 	ResLogs( 3 );
@@ -720,7 +718,7 @@ auto CServerData::ResetDefaults()->void {
 	ResOreTime( 600 );
 	ResFish( 10 );
 	ResFishTime( 600 );
-
+	
 	//REPSYS
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
@@ -730,11 +728,11 @@ auto CServerData::ResetDefaults()->void {
 	TrackingMaxTargets( 20 );
 	TrackingBaseTimer( 30 );
 	TrackingRedisplayTime( 30 );
-
+	
 	SystemTimer( tSERVER_FISHINGBASE, 10 );
 	SystemTimer( tSERVER_FISHINGRANDOM, 5 );
 	SystemTimer( tSERVER_SPIRITSPEAK, 30 );
-
+	
 	TitleColour( 0 );
 	LeftTextColour( 0 );
 	RightTextColour( 0 );
@@ -742,7 +740,7 @@ auto CServerData::ResetDefaults()->void {
 	ButtonLeft( 4014 );
 	ButtonRight( 4005 );
 	BackgroundPic( 5054 );
-
+	
 	// Houses
 	ItemDecayInHouses( true );
 	ProtectPrivateHouses( true );
@@ -751,13 +749,13 @@ auto CServerData::ResetDefaults()->void {
 	CoOwnHousesOnSameAccount( true );
 	MaxHousesOwnable( 1 );
 	MaxHousesCoOwnable( 10 );
-
+	
 	// Towns
 	TownNumSecsPollOpen( 3600 );	// one hour
 	TownNumSecsAsMayor( 36000 );	// 10 hours as mayor
 	TownTaxPeriod( 1800 );			// taxed every 30 minutes
 	TownGuardPayment( 3600 );		// guards paid every hour
-
+	
 	SetClientFeature( CF_BIT_CHAT, true );
 	SetClientFeature( CF_BIT_UOR, true );
 	SetClientFeature( CF_BIT_TD, true );
@@ -767,19 +765,19 @@ auto CServerData::ResetDefaults()->void {
 	SetClientFeature( CF_BIT_SE, true );
 	SetClientFeature( CF_BIT_ML, true );
 	SetClientFeature( CF_BIT_EXPANSION, true );
-
+	
 	SetServerFeature( SF_BIT_CONTEXTMENUS, true );
 	SetServerFeature( SF_BIT_AOS, true );
 	SetServerFeature( SF_BIT_SIXCHARS, true );
 	SetServerFeature( SF_BIT_SE, true );
 	SetServerFeature( SF_BIT_ML, true );
-
+	
 	// Disable spawn regions for all facets by default
 	SetSpawnRegionsFacetStatus( 0 );
-
+	
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
-
+	
 	// Enable login-support for any supported client version by default.
 	ClientSupport4000( false );
 	ClientSupport5000( false );
@@ -793,10 +791,10 @@ auto CServerData::ResetDefaults()->void {
 	ClientSupport70331( true );
 	ClientSupport704565( true );
 	ClientSupport70610( true );
-
+	
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
-
+	
 	ServerRandomStartingLocation( false );
 	ServerStartGold( 1000 );
 	ServerStartPrivs( 0 );
@@ -959,7 +957,7 @@ auto CServerData::ServerCommandPrefix() const ->char{
 	return commandprefix.empty()?0:commandprefix[0];
 }
 auto CServerData::ServerCommandPrefix( char cmdvalue )->void {
-		commandprefix = std::string(1,cmdvalue);
+	commandprefix = std::string(1,cmdvalue);
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -968,12 +966,11 @@ auto CServerData::ServerCommandPrefix( char cmdvalue )->void {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set status of server accouncements for worldsaves
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerAnnounceSavesStatus() const
-{
+auto CServerData::ServerAnnounceSavesStatus() const ->bool{
+
 	return boolVals.test( BIT_ANNOUNCESAVES );
 }
-void CServerData::ServerAnnounceSaves( bool newVal )
-{
+auto CServerData::ServerAnnounceSaves(bool newVal) ->void {
 	boolVals.set( BIT_ANNOUNCESAVES, newVal );
 }
 
@@ -983,12 +980,11 @@ void CServerData::ServerAnnounceSaves( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of server accouncements for players connecting/disconnecting
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerJoinPartAnnouncementsStatus() const
-{
+auto CServerData::ServerJoinPartAnnouncementsStatus() const ->bool {
+
 	return boolVals.test( BIT_ANNOUNCEJOINPART );
 }
-void CServerData::ServerJoinPartAnnouncements( bool newVal )
-{
+auto CServerData::ServerJoinPartAnnouncements(bool newVal) ->void {
 	boolVals.set( BIT_ANNOUNCEJOINPART, newVal );
 }
 
@@ -998,12 +994,11 @@ void CServerData::ServerJoinPartAnnouncements( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets enabled status of server worldsave backups
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerBackupStatus() const
-{
+auto CServerData::ServerBackupStatus() const ->bool {
+
 	return boolVals.test( BIT_SERVERBACKUP );
 }
-void CServerData::ServerBackups( bool newVal )
-{
+auto CServerData::ServerBackups(bool newVal) ->void {
 	boolVals.set( BIT_SERVERBACKUP, newVal );
 }
 
@@ -1013,12 +1008,11 @@ void CServerData::ServerBackups( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets enabled status of context menus
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerContextMenus() const
-{
+auto CServerData::ServerContextMenus() const->bool {
+
 	return boolVals.test( BIT_CONTEXTMENUS );
 }
-void CServerData::ServerContextMenus( bool newVal )
-{
+auto CServerData::ServerContextMenus(bool newVal) ->void {
 	boolVals.set( BIT_CONTEXTMENUS, newVal );
 }
 
@@ -1028,12 +1022,10 @@ void CServerData::ServerContextMenus( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for system messages displayed in bottom left
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::SysMsgColour() const
-{
+auto CServerData::SysMsgColour() const ->std::uint16_t {
 	return sysMsgColour;
 }
-void CServerData::SysMsgColour( UI16 value )
-{
+auto CServerData::SysMsgColour(UI16 value) ->void {
 	sysMsgColour = value;
 }
 
@@ -1043,12 +1035,10 @@ void CServerData::SysMsgColour( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server world save timer
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::ServerSavesTimerStatus() const
-{
+auto CServerData::ServerSavesTimerStatus() const ->std::uint32_t {
 	return serversavestimer;
 }
-void CServerData::ServerSavesTimer( UI32 timer )
-{
+auto CServerData::ServerSavesTimer(UI32 timer) ->void {
 	serversavestimer = timer;
 	if( timer < 180 )			// 3 minutes is the lowest value you can set saves for
 		serversavestimer = 300;	// 10 minutes default
@@ -1060,12 +1050,10 @@ void CServerData::ServerSavesTimer( UI32 timer )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets cap for individual skills
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerSkillCapStatus() const
-{
+auto CServerData::ServerSkillCapStatus() const ->std::uint16_t {
 	return skillcap;
 }
-void CServerData::ServerSkillCap( UI16 cap )
-{
+auto CServerData::ServerSkillCap(UI16 cap) ->void {
 	skillcap = cap;
 	if( cap < 1 )		// Default is on second loop sleeping
 		skillcap = SKILLCAP;
@@ -1077,12 +1065,10 @@ void CServerData::ServerSkillCap( UI16 cap )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total cap for all skills
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerSkillTotalCapStatus() const
-{
+auto CServerData::ServerSkillTotalCapStatus() const ->std::uint16_t {
 	return skilltotalcap;
 }
-void CServerData::ServerSkillTotalCap( UI16 cap )
-{
+auto CServerData::ServerSkillTotalCap(UI16 cap) ->void {
 	skilltotalcap = cap;
 	if( cap < 1 )		// Default is on second loop sleeping
 		skilltotalcap = SKILLTOTALCAP;
@@ -1094,12 +1080,10 @@ void CServerData::ServerSkillTotalCap( UI16 cap )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global delay for skill usage
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::ServerSkillDelayStatus() const
-{
+auto CServerData::ServerSkillDelayStatus() const ->std::uint8_t {
 	return skilldelay;
 }
-void CServerData::ServerSkillDelay( UI08 skdelay )
-{
+auto CServerData::ServerSkillDelay(UI08 skdelay) ->void {
 	skilldelay = skdelay;
 }
 
@@ -1109,12 +1093,10 @@ void CServerData::ServerSkillDelay( UI08 skdelay )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the total stat cap
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerStatCapStatus() const
-{
+auto CServerData::ServerStatCapStatus() const ->std::uint16_t {
 	return statcap;
 }
-void CServerData::ServerStatCap( UI16 cap )
-{
+auto CServerData::ServerStatCap(UI16 cap) ->void {
 	statcap = cap;
 	if( cap < 1 )		// Default is on second loop sleeping
 		statcap = STATCAP;
@@ -1126,12 +1108,10 @@ void CServerData::ServerStatCap( UI16 cap )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max number of steps allowed to take while stealthed
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::MaxStealthMovement() const
-{
+auto CServerData::MaxStealthMovement() const ->std::int16_t {
 	return maxstealthmovement;
 }
-void CServerData::MaxStealthMovement( SI16 value )
-{
+auto CServerData::MaxStealthMovement(SI16 value) ->void {
 	maxstealthmovement = value;
 }
 
@@ -1141,17 +1121,14 @@ void CServerData::MaxStealthMovement( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max number of steps allowed while running before stamina is reduced
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::MaxStaminaMovement() const
-{
+auto CServerData::MaxStaminaMovement() const ->std::int16_t {
 	return maxstaminamovement;
 }
-void CServerData::MaxStaminaMovement( SI16 value )
-{
+auto CServerData::MaxStaminaMovement(SI16 value) ->void {
 	maxstaminamovement = value;
 }
 
-TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
-{
+auto CServerData::BuildSystemTimeValue( cSD_TID timerID ) const ->TIMERVAL {
 	return BuildTimeValue( static_cast<R32>(SystemTimer( timerID )) );
 }
 
@@ -1161,12 +1138,10 @@ TIMERVAL CServerData::BuildSystemTimeValue( cSD_TID timerID ) const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific server timer
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::SystemTimer( cSD_TID timerid ) const
-{
+auto CServerData::SystemTimer( cSD_TID timerid ) const ->std::uint16_t {
 	return serverTimers[timerid];
 }
-void CServerData::SystemTimer( cSD_TID timerid, UI16 value )
-{
+auto CServerData::SystemTimer(cSD_TID timerid, UI16 value) ->void {
 	serverTimers[timerid] = value;
 }
 
@@ -1185,7 +1160,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp ) ->std::string {
 }
 auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) ->void {
 	bool create_dir = false;
-
+	
 	if( dp != CSDDP_COUNT ) {
 		std::string verboseDirectory;
 		switch( dp ) {
@@ -1213,7 +1188,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) ->void {
 		// First, let's normalize the path name and fix common errors
 		// remove all trailing and leading spaces...
 		auto sText = oldstrutil::trim(value) ;
-
+		
 		if(sText.empty()) {
 			Console.error( oldstrutil::format(" %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
@@ -1340,12 +1315,10 @@ auto CServerData::GuardStatus(bool newVal) ->void {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether death animation plays when a player dies
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::DeathAnimationStatus() const
-{
+auto CServerData::DeathAnimationStatus() const ->bool {
 	return boolVals.test( BIT_PLAYDEATHANIMATION );
 }
-void CServerData::DeathAnimationStatus(bool newVal)
-{
+auto CServerData::DeathAnimationStatus(bool newVal) ->void {
 	boolVals.set( BIT_PLAYDEATHANIMATION, newVal );
 }
 
@@ -1355,16 +1328,16 @@ void CServerData::DeathAnimationStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets intensity of ambient world sounds, bird chirps, animal sounds, etc
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::WorldAmbientSounds() const
-{
+auto CServerData::WorldAmbientSounds() const ->std::int16_t {
 	return ambientsounds;
 }
-void CServerData::WorldAmbientSounds(SI16 value)
-{
-	if( value < 0 )
+auto CServerData::WorldAmbientSounds(SI16 value) ->void {
+	if( value < 0 ){
 		ambientsounds = 0;
-	else
+	}
+	else{
 		ambientsounds = value;
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1373,12 +1346,10 @@ void CServerData::WorldAmbientSounds(SI16 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether context-specific footstep sounds are enabled or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::AmbientFootsteps() const
-{
+auto CServerData::AmbientFootsteps() const ->bool {
 	return boolVals.test( BIT_AMBIENTFOOTSTEPS );
 }
-void CServerData::AmbientFootsteps(bool newVal)
-{
+auto CServerData::AmbientFootsteps(bool newVal) ->void {
 	boolVals.set( BIT_AMBIENTFOOTSTEPS, newVal );
 }
 
@@ -1388,12 +1359,10 @@ void CServerData::AmbientFootsteps(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether automatic account creation is enabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::InternalAccountStatus() const
-{
+auto CServerData::InternalAccountStatus() const ->bool {
 	return boolVals.test( BIT_INTERNALACCOUNTS );
 }
-void CServerData::InternalAccountStatus(bool newVal)
-{
+auto CServerData::InternalAccountStatus(bool newVal) ->void {
 	boolVals.set( BIT_INTERNALACCOUNTS, newVal );
 }
 
@@ -1403,12 +1372,10 @@ void CServerData::InternalAccountStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether GMs can see offline players
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ShowOfflinePCs() const
-{
+auto CServerData::ShowOfflinePCs() const ->bool{
 	return boolVals.test( BIT_SHOWOFFLINEPCS );
 }
-void CServerData::ShowOfflinePCs(bool newVal)
-{
+auto CServerData::ShowOfflinePCs(bool newVal) ->void {
 	boolVals.set( BIT_SHOWOFFLINEPCS, newVal );
 }
 
@@ -1418,12 +1385,11 @@ void CServerData::ShowOfflinePCs(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether stealing skill is enabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::RogueStatus() const
-{
+auto CServerData::RogueStatus() const ->bool{
+	
 	return boolVals.test( BIT_ROGUESTATUS );
 }
-void CServerData::RogueStatus(bool newVal)
-{
+auto CServerData::RogueStatus(bool newVal) ->void {
 	boolVals.set( BIT_ROGUESTATUS, newVal );
 }
 
@@ -1433,12 +1399,10 @@ void CServerData::RogueStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether snooping is considered a crime
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::SnoopIsCrime() const
-{
+auto CServerData::SnoopIsCrime() const ->bool{
 	return boolVals.test( BIT_SNOOPISCRIME );
 }
-void CServerData::SnoopIsCrime(bool newVal)
-{
+auto CServerData::SnoopIsCrime(bool newVal) ->void {
 	boolVals.set( BIT_SNOOPISCRIME, newVal );
 }
 
@@ -1449,12 +1413,11 @@ void CServerData::SnoopIsCrime(bool newVal)
 //|	Purpose		-	Gets/Sets whether stats like strength, dexterity and intelligence provide
 //|					bonuses to skillchecks
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::StatsAffectSkillChecks() const
-{
+auto CServerData::StatsAffectSkillChecks() const ->bool{
+	
 	return boolVals.test( BIT_STATSAFFECTSKILLCHECKS );
 }
-void CServerData::StatsAffectSkillChecks(bool newVal)
-{
+auto CServerData::StatsAffectSkillChecks(bool newVal) ->void {
 	boolVals.set( BIT_STATSAFFECTSKILLCHECKS, newVal );
 }
 
@@ -1465,12 +1428,10 @@ void CServerData::StatsAffectSkillChecks(bool newVal)
 //|	Purpose		-	Gets/Sets whether extended starting stats are enabled
 //|					If enabled players start with 90 total statpoints instead of 80
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ExtendedStartingStats() const
-{
+auto CServerData::ExtendedStartingStats() const ->bool{
 	return boolVals.test( BIT_EXTENDEDSTARTINGSTATS );
 }
-void CServerData::ExtendedStartingStats(bool newVal)
-{
+auto CServerData::ExtendedStartingStats(bool newVal) ->void {
 	boolVals.set( BIT_EXTENDEDSTARTINGSTATS, newVal );
 }
 
@@ -1482,12 +1443,10 @@ void CServerData::ExtendedStartingStats(bool newVal)
 //|					If enabled, players start with 4 skills instead of 3, and have a total of
 //|					120 skillpoints at the start instead of 100
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ExtendedStartingSkills() const
-{
+auto CServerData::ExtendedStartingSkills() const ->bool{
 	return boolVals.test( BIT_EXTENDEDSTARTINGSKILLS );
 }
-void CServerData::ExtendedStartingSkills(bool newVal)
-{
+auto CServerData::ExtendedStartingSkills(bool newVal) ->void {
 	boolVals.set( BIT_EXTENDEDSTARTINGSKILLS, newVal );
 }
 
@@ -1497,12 +1456,10 @@ void CServerData::ExtendedStartingSkills(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether player ghosts can drain mana from other players by attacking them
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::PlayerPersecutionStatus() const
-{
+auto CServerData::PlayerPersecutionStatus() const ->bool{
 	return boolVals.test( BIT_PERSECUTIONSTATUS );
 }
-void CServerData::PlayerPersecutionStatus(bool newVal)
-{
+auto CServerData::PlayerPersecutionStatus(bool newVal) ->void {
 	boolVals.set( BIT_PERSECUTIONSTATUS, newVal );
 }
 
@@ -1512,12 +1469,10 @@ void CServerData::PlayerPersecutionStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether html stats are enabled or disabled
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::HtmlStatsStatus() const
-{
+auto CServerData::HtmlStatsStatus() const ->std::int16_t {
 	return htmlstatusenabled;
 }
-void CServerData::HtmlStatsStatus(SI16 value)
-{
+auto CServerData::HtmlStatsStatus(SI16 value) ->void {
 	htmlstatusenabled = value;
 }
 
@@ -1527,12 +1482,11 @@ void CServerData::HtmlStatsStatus(SI16 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items are sold by their name, not just ID/Colour
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::SellByNameStatus() const
-{
+auto CServerData::SellByNameStatus() const ->bool{
+	
 	return boolVals.test( BIT_SELLBYNAME );
 }
-void CServerData::SellByNameStatus(bool newVal)
-{
+auto CServerData::SellByNameStatus(bool newVal) ->void {
 	boolVals.set( BIT_SELLBYNAME, newVal );
 }
 
@@ -1542,12 +1496,10 @@ void CServerData::SellByNameStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum amount of items that can be sold in one go to a vendor
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::SellMaxItemsStatus() const
-{
+auto CServerData::SellMaxItemsStatus() const ->std::int16_t {
 	return sellmaxitems;
 }
-void CServerData::SellMaxItemsStatus(SI16 value)
-{
+auto CServerData::SellMaxItemsStatus(SI16 value) ->void {
 	sellmaxitems = value;
 }
 
@@ -1558,12 +1510,10 @@ void CServerData::SellMaxItemsStatus(SI16 value)
 //|	Purpose		-	Gets/Sets whether the advanced trade system is enabled or not.
 //|					If enabled, prices of goods with NPC vendors will fluctuate with demand
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TradeSystemStatus() const
-{
+auto CServerData::TradeSystemStatus() const ->bool{
 	return boolVals.test( BIT_TRADESYSSTATUS );
 }
-void CServerData::TradeSystemStatus(bool newVal)
-{
+auto CServerData::TradeSystemStatus(bool newVal) ->void {
 	boolVals.set( BIT_TRADESYSSTATUS, newVal );
 }
 
@@ -1574,12 +1524,10 @@ void CServerData::TradeSystemStatus(bool newVal)
 //|	Purpose		-	Gets/Sets whether rank system is enabled or not. If enabled, it allows for
 //|					variable quality of crafted items
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::RankSystemStatus() const
-{
+auto CServerData::RankSystemStatus() const ->bool{
 	return boolVals.test( BIT_RANKSYSSTATUS );
 }
-void CServerData::RankSystemStatus(bool newVal)
-{
+auto CServerData::RankSystemStatus(bool newVal) ->void {
 	boolVals.set( BIT_RANKSYSSTATUS, newVal );
 }
 
@@ -1589,12 +1537,10 @@ void CServerData::RankSystemStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether skill requirements are cut when casting spells from scrolls
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CutScrollRequirementStatus() const
-{
+auto CServerData::CutScrollRequirementStatus() const ->bool{
 	return boolVals.test( BIT_CUTSCROLLREQ );
 }
-void CServerData::CutScrollRequirementStatus(bool newVal)
-{
+auto CServerData::CutScrollRequirementStatus(bool newVal) ->void {
 	boolVals.set( BIT_CUTSCROLLREQ, newVal );
 }
 
@@ -1604,12 +1550,11 @@ void CServerData::CutScrollRequirementStatus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether pet control difficulty is enabled or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CheckPetControlDifficulty() const
-{
+auto CServerData::CheckPetControlDifficulty() const ->bool{
+	
 	return boolVals.test( BIT_CHECKPETCONTROLDIFFICULTY );
 }
-void CServerData::CheckPetControlDifficulty(bool newVal)
-{
+auto CServerData::CheckPetControlDifficulty(bool newVal) ->void {
 	boolVals.set( BIT_CHECKPETCONTROLDIFFICULTY, newVal );
 }
 
@@ -1619,12 +1564,10 @@ void CServerData::CheckPetControlDifficulty(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds items are checked for decay and other things
 //o-----------------------------------------------------------------------------------------------o
-R64 CServerData::CheckItemsSpeed() const
-{
+auto CServerData::CheckItemsSpeed() const ->double {
 	return checkitems;
 }
-void CServerData::CheckItemsSpeed(R64 value)
-{
+auto CServerData::CheckItemsSpeed(R64 value) ->void {
 	if( value < 0.0 )
 		checkitems = 0.0;
 	else
@@ -1637,12 +1580,10 @@ void CServerData::CheckItemsSpeed(R64 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds boats are checked for decay and other things
 //o-----------------------------------------------------------------------------------------------o
-R64 CServerData::CheckBoatSpeed() const
-{
+auto CServerData::CheckBoatSpeed() const ->double {
 	return checkboats;
 }
-void CServerData::CheckBoatSpeed(R64 value)
-{
+auto CServerData::CheckBoatSpeed(R64 value) ->void {
 	if( value < 0.0 )
 		checkboats = 0.0;
 	else
@@ -1655,12 +1596,10 @@ void CServerData::CheckBoatSpeed(R64 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds NPCs will execute their AI routines
 //o-----------------------------------------------------------------------------------------------o
-R64 CServerData::CheckNpcAISpeed() const
-{
+auto CServerData::CheckNpcAISpeed() const ->double {
 	return checknpcai;
 }
-void CServerData::CheckNpcAISpeed(R64 value)
-{
+auto CServerData::CheckNpcAISpeed(R64 value) ->void {
 	if( value < 0.0 )
 		checknpcai = 0.0;
 	else
@@ -1673,12 +1612,10 @@ void CServerData::CheckNpcAISpeed(R64 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often (in seconds) spawn regions are checked for new spawns
 //o-----------------------------------------------------------------------------------------------o
-R64 CServerData::CheckSpawnRegionSpeed() const
-{
+auto CServerData::CheckSpawnRegionSpeed() const ->double {
 	return checkspawnregions;
 }
-void CServerData::CheckSpawnRegionSpeed(R64 value)
-{
+auto CServerData::CheckSpawnRegionSpeed(R64 value) ->void {
 	if( value < 0.0 )
 		checkspawnregions = 0.0;
 	else
@@ -1692,12 +1629,10 @@ void CServerData::CheckSpawnRegionSpeed(R64 value)
 //|	Purpose		-	Gets/Sets the posting level for bulletin boards
 //|					UNUSED?
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MsgBoardPostingLevel() const
-{
+auto CServerData::MsgBoardPostingLevel() const ->std::uint8_t {
 	return msgpostinglevel;
 }
-void CServerData::MsgBoardPostingLevel(UI08 value)
-{
+auto CServerData::MsgBoardPostingLevel(UI08 value) ->void {
 	msgpostinglevel = value;
 }
 
@@ -1708,12 +1643,10 @@ void CServerData::MsgBoardPostingLevel(UI08 value)
 //|	Purpose		-	Gets/Sets the post removal level for bulleting boards
 //|					UNUSED?
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MsgBoardPostRemovalLevel() const
-{
+auto CServerData::MsgBoardPostRemovalLevel() const ->std::uint8_t {
 	return msgremovallevel;
 }
-void CServerData::MsgBoardPostRemovalLevel(UI08 value)
-{
+auto CServerData::MsgBoardPostRemovalLevel(UI08 value) ->void {
 	msgremovallevel = value;
 }
 
@@ -1726,12 +1659,10 @@ void CServerData::MsgBoardPostRemovalLevel(UI08 value)
 //|						1 = mine mountainsides/cavefloors only
 //|						2 = mine in mining regions only (not working?)
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MineCheck() const
-{
+auto CServerData::MineCheck() const ->std::uint8_t {
 	return minecheck;
 }
-void CServerData::MineCheck(UI08 value)
-{
+auto CServerData::MineCheck(UI08 value) ->void {
 	minecheck = value;
 }
 
@@ -1741,12 +1672,10 @@ void CServerData::MineCheck(UI08 value)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether UOX3 will respond to server poll requests from ConnectUO
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ConnectUOServerPoll() const
-{
+auto CServerData::ConnectUOServerPoll() const ->bool{
 	return boolVals.test(BIT_CONNECTUOSERVERPOLL);
 }
-void CServerData::ConnectUOServerPoll(bool newVal)
-{
+auto CServerData::ConnectUOServerPoll(bool newVal) ->void {
 	boolVals.set( BIT_CONNECTUOSERVERPOLL, newVal );
 }
 
@@ -1756,12 +1685,10 @@ void CServerData::ConnectUOServerPoll(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether weapons get a double damage bonus versus armors of matching AC
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatArmorClassDamageBonus() const
-{
+auto CServerData::CombatArmorClassDamageBonus() const ->bool{
 	return boolVals.test( BIT_ARMORCLASSDAMAGEBONUS );
 }
-void CServerData::CombatArmorClassDamageBonus(bool newVal)
-{
+auto CServerData::CombatArmorClassDamageBonus(bool newVal) ->void {
 	boolVals.set( BIT_ARMORCLASSDAMAGEBONUS, newVal );
 }
 
@@ -1771,12 +1698,10 @@ void CServerData::CombatArmorClassDamageBonus(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether combat hit messages are displayed in combat
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatDisplayHitMessage() const
-{
+auto CServerData::CombatDisplayHitMessage() const ->bool{
 	return boolVals.test( BIT_SHOWHITMESSAGE );
 }
-void CServerData::CombatDisplayHitMessage(bool newVal)
-{
+auto CServerData::CombatDisplayHitMessage(bool newVal) ->void {
 	boolVals.set( BIT_SHOWHITMESSAGE, newVal );
 }
 
@@ -1786,12 +1711,10 @@ void CServerData::CombatDisplayHitMessage(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether combat damage numbers are displayed in combat
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatDisplayDamageNumbers() const
-{
+auto CServerData::CombatDisplayDamageNumbers() const ->bool{
 	return boolVals.test( BIT_SHOWDAMAGENUMBERS );
 }
-void CServerData::CombatDisplayDamageNumbers(bool newVal)
-{
+auto CServerData::CombatDisplayDamageNumbers(bool newVal) ->void {
 	boolVals.set( BIT_SHOWDAMAGENUMBERS, newVal );
 }
 
@@ -1801,12 +1724,10 @@ void CServerData::CombatDisplayDamageNumbers(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether combat attack speed is derived from stamina instead of dexterity
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatAttackSpeedFromStamina() const
-{
+auto CServerData::CombatAttackSpeedFromStamina() const ->bool{
 	return boolVals.test( BIT_ATTSPEEDFROMSTAMINA );
 }
-void CServerData::CombatAttackSpeedFromStamina(bool newVal)
-{
+auto CServerData::CombatAttackSpeedFromStamina(bool newVal) ->void {
 	boolVals.set( BIT_ATTSPEEDFROMSTAMINA, newVal );
 }
 
@@ -1816,12 +1737,10 @@ void CServerData::CombatAttackSpeedFromStamina(bool newVal)
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global attack speed in combat
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::GlobalAttackSpeed() const
-{
+auto CServerData::GlobalAttackSpeed() const ->float {
 	return globalattackspeed;
 }
-void CServerData::GlobalAttackSpeed( R32 value )
-{
+auto CServerData::GlobalAttackSpeed( R32 value ) ->void {
 	if( value < 0.0 )
 		globalattackspeed = 0.0;
 	else
@@ -1834,12 +1753,10 @@ void CServerData::GlobalAttackSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global NPC spell casting speed
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCSpellCastSpeed() const
-{
+auto CServerData::NPCSpellCastSpeed() const ->float {
 	return npcspellcastspeed;
 }
-void CServerData::NPCSpellCastSpeed( R32 value )
-{
+auto CServerData::NPCSpellCastSpeed( R32 value ) ->void {
 	if( value < 0.0 )
 		npcspellcastspeed = 0.0;
 	else
@@ -1852,12 +1769,10 @@ void CServerData::NPCSpellCastSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the stamina loss for using the fishing skill
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::FishingStaminaLoss() const
-{
+auto CServerData::FishingStaminaLoss() const ->std::int16_t {
 	return fishingstaminaloss;
 }
-void CServerData::FishingStaminaLoss( SI16 value )
-{
+auto CServerData::FishingStaminaLoss( SI16 value ) ->void {
 	fishingstaminaloss = value;
 }
 
@@ -1868,12 +1783,10 @@ void CServerData::FishingStaminaLoss( SI16 value )
 //|	Purpose		-	Gets/Sets the NPC damage divisor. If character is a player, damage from NPCs is
 //|					divided by this value.
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatNPCDamageRate() const
-{
+auto CServerData::CombatNPCDamageRate() const ->std::int16_t {
 	return combatnpcdamagerate;
 }
-void CServerData::CombatNPCDamageRate( SI16 value )
-{
+auto CServerData::CombatNPCDamageRate( SI16 value ) ->void {
 	combatnpcdamagerate = value;
 }
 
@@ -1883,12 +1796,10 @@ void CServerData::CombatNPCDamageRate( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether Alchemy Damage Bonus Modifier is enabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::AlchemyDamageBonusEnabled() const
-{
+auto CServerData::AlchemyDamageBonusEnabled() const ->bool{
 	return boolVals.test( BIT_ALCHEMYDAMAGEBONUSENABLED );
 }
-void CServerData::AlchemyDamageBonusEnabled( bool newVal )
-{
+auto CServerData::AlchemyDamageBonusEnabled( bool newVal ) ->void {
 	boolVals.set( BIT_ALCHEMYDAMAGEBONUSENABLED, newVal );
 }
 
@@ -1900,12 +1811,10 @@ void CServerData::AlchemyDamageBonusEnabled( bool newVal )
 //|					explosion potions based on this formula: 
 //|						bonusDamage = attackerAlchemySkill / alchemyDamageBonusModifier
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::AlchemyDamageBonusModifier() const
-{
+auto CServerData::AlchemyDamageBonusModifier() const ->std::uint8_t {
 	return alchemyDamageBonusModifier;
 }
-void CServerData::AlchemyDamageBonusModifier( UI08 value )
-{
+auto CServerData::AlchemyDamageBonusModifier( UI08 value ) ->void {
 	alchemyDamageBonusModifier = value;
 }
 
@@ -1915,12 +1824,10 @@ void CServerData::AlchemyDamageBonusModifier( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether manipulation of items interrupts casting
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ItemsInterruptCasting() const
-{
+auto CServerData::ItemsInterruptCasting() const ->bool{
 	return boolVals.test( BIT_ITEMSINTERRUPTCASTING );
 }
-void CServerData::ItemsInterruptCasting( bool newVal )
-{
+auto CServerData::ItemsInterruptCasting( bool newVal ) ->void {
 	boolVals.set( BIT_ITEMSINTERRUPTCASTING, newVal );
 }
 
@@ -1930,12 +1837,10 @@ void CServerData::ItemsInterruptCasting( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount of stamina lost by swinging weapon in combat
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatAttackStamina() const
-{
+auto CServerData::CombatAttackStamina() const ->std::int16_t {
 	return combatattackstamina;
 }
-void CServerData::CombatAttackStamina( SI16 value )
-{
+auto CServerData::CombatAttackStamina( SI16 value ) ->void {
 	combatattackstamina = value;
 }
 
@@ -1946,12 +1851,10 @@ void CServerData::CombatAttackStamina( SI16 value )
 //|	Purpose		-	Gets/Sets the global difficulty level for crafting items
 //|					1 = easy, 5 = default, 10 = difficult
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::SkillLevel() const
-{
+auto CServerData::SkillLevel() const ->std::uint8_t {
 	return skilllevel;
 }
-void CServerData::SkillLevel( UI08 value )
-{
+auto CServerData::SkillLevel( UI08 value ) ->void {
 	skilllevel = value;
 }
 
@@ -1961,12 +1864,10 @@ void CServerData::SkillLevel( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether escorts are enabled or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::EscortsEnabled() const
-{
+auto CServerData::EscortsEnabled() const ->bool{
 	return boolVals.test( BIT_ESCORTSTATUS );
 }
-void CServerData::EscortsEnabled( bool newVal )
-{
+auto CServerData::EscortsEnabled( bool newVal ) ->void {
 	boolVals.set( BIT_ESCORTSTATUS, newVal );
 }
 
@@ -1976,12 +1877,10 @@ void CServerData::EscortsEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items can trigger onSpeech JS event
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ItemsDetectSpeech() const
-{
+auto CServerData::ItemsDetectSpeech() const ->bool{
 	return boolVals.test( BIT_ITEMSDETECTSPEECH );
 }
-void CServerData::ItemsDetectSpeech( bool newVal )
-{
+auto CServerData::ItemsDetectSpeech( bool newVal ) ->void {
 	boolVals.set( BIT_ITEMSDETECTSPEECH, newVal );
 }
 
@@ -1991,12 +1890,11 @@ void CServerData::ItemsDetectSpeech( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should force the use of new animation packet for NPCs
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ForceNewAnimationPacket() const
-{
+auto CServerData::ForceNewAnimationPacket() const ->bool{
+	
 	return boolVals.test( BIT_FORCENEWANIMATIONPACKET );
 }
-void CServerData::ForceNewAnimationPacket( bool newVal )
-{
+auto CServerData::ForceNewAnimationPacket( bool newVal ) ->void {
 	boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
 }
 
@@ -2007,12 +1905,10 @@ void CServerData::ForceNewAnimationPacket( bool newVal )
 //|	Purpose		-	Gets/Sets whether server should load diff files for maps and statics
 //|	Notes		-	Diff files are not used by client versions newer than 7.0.8.2
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::MapDiffsEnabled() const
-{
+auto CServerData::MapDiffsEnabled() const ->bool{
 	return boolVals.test( BIT_MAPDIFFSENABLED );
 }
-void CServerData::MapDiffsEnabled( bool newVal )
-{
+auto CServerData::MapDiffsEnabled( bool newVal ) ->void {
 	boolVals.set( BIT_MAPDIFFSENABLED, newVal );
 }
 
@@ -2022,12 +1918,10 @@ void CServerData::MapDiffsEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player (and NPC) backpacks
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::MaxPlayerPackItems() const
-{
+auto CServerData::MaxPlayerPackItems() const ->std::uint16_t {
 	return maxPlayerPackItems;
 }
-void CServerData::MaxPlayerPackItems( UI16 newVal )
-{
+auto CServerData::MaxPlayerPackItems( UI16 newVal ) ->void {
 	maxPlayerPackItems = newVal;
 }
 
@@ -2037,12 +1931,10 @@ void CServerData::MaxPlayerPackItems( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player bankboxes
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::MaxPlayerBankItems() const
-{
+auto CServerData::MaxPlayerBankItems() const ->std::uint16_t {
 	return maxPlayerBankItems;
 }
-void CServerData::MaxPlayerBankItems( UI16 newVal )
-{
+auto CServerData::MaxPlayerBankItems( UI16 newVal ) ->void {
 	maxPlayerBankItems = newVal;
 }
 
@@ -2052,12 +1944,10 @@ void CServerData::MaxPlayerBankItems( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether basic tooltips are enabled or not (instead of advanced tooltips)
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::BasicTooltipsOnly() const
-{
+auto CServerData::BasicTooltipsOnly() const ->bool{
 	return boolVals.test( BIT_BASICTOOLTIPSONLY );
 }
-void CServerData::BasicTooltipsOnly( bool newVal )
-{
+auto CServerData::BasicTooltipsOnly( bool newVal ) ->void {
 	boolVals.set( BIT_BASICTOOLTIPSONLY, newVal );
 }
 
@@ -2067,12 +1957,10 @@ void CServerData::BasicTooltipsOnly( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether NPC titles show up in tooltips
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ShowNpcTitlesInTooltips() const
-{
+auto CServerData::ShowNpcTitlesInTooltips() const ->bool{
 	return boolVals.test( BIT_SHOWNPCTITLESINTOOLTIPS );
 }
-void CServerData::ShowNpcTitlesInTooltips( bool newVal )
-{
+auto CServerData::ShowNpcTitlesInTooltips( bool newVal ) ->void {
 	boolVals.set( BIT_SHOWNPCTITLESINTOOLTIPS, newVal );
 }
 
@@ -2083,12 +1971,10 @@ void CServerData::ShowNpcTitlesInTooltips( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether decay is enabled or disabled, on a global scale
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GlobalItemDecay() const
-{
+auto CServerData::GlobalItemDecay() const ->bool{
 	return boolVals.test( BIT_GLOBALITEMDECAY );
 }
-void CServerData::GlobalItemDecay( bool newVal )
-{
+auto CServerData::GlobalItemDecay( bool newVal ) ->void {
 	boolVals.set( BIT_GLOBALITEMDECAY, newVal );
 }
 
@@ -2099,12 +1985,10 @@ void CServerData::GlobalItemDecay( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items added through scripts decay or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ScriptItemsDecayable() const
-{
+auto CServerData::ScriptItemsDecayable() const ->bool{
 	return boolVals.test( BIT_SCRIPTITEMSDECAYABLE );
 }
-void CServerData::ScriptItemsDecayable( bool newVal )
-{
+auto CServerData::ScriptItemsDecayable( bool newVal ) ->void {
 	boolVals.set( BIT_SCRIPTITEMSDECAYABLE, newVal );
 }
 
@@ -2115,12 +1999,10 @@ void CServerData::ScriptItemsDecayable( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether base items added will decay or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::BaseItemsDecayable() const
-{
+auto CServerData::BaseItemsDecayable() const ->bool{
 	return boolVals.test( BIT_BASEITEMSDECAYABLE );
 }
-void CServerData::BaseItemsDecayable( bool newVal )
-{
+auto CServerData::BaseItemsDecayable( bool newVal ) ->void {
 	boolVals.set( BIT_BASEITEMSDECAYABLE, newVal );
 }
 
@@ -2131,12 +2013,10 @@ void CServerData::BaseItemsDecayable( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items inside houses will decay or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ItemDecayInHouses() const
-{
+auto CServerData::ItemDecayInHouses() const ->bool{
 	return boolVals.test( BIT_ITEMDECAYINHOUSES );
 }
-void CServerData::ItemDecayInHouses( bool newVal )
-{
+auto CServerData::ItemDecayInHouses( bool newVal ) ->void {
 	boolVals.set( BIT_ITEMDECAYINHOUSES, newVal );
 }
 
@@ -2146,12 +2026,10 @@ void CServerData::ItemDecayInHouses( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players without explicit access are prevented from entering private houses
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ProtectPrivateHouses() const
-{
+auto CServerData::ProtectPrivateHouses() const ->bool{
 	return boolVals.test( BIT_PROTECTPRIVATEHOUSES);
 }
-void CServerData::ProtectPrivateHouses( bool newVal )
-{
+auto CServerData::ProtectPrivateHouses( bool newVal ) ->void {
 	boolVals.set( BIT_PROTECTPRIVATEHOUSES, newVal );
 }
 
@@ -2161,12 +2039,10 @@ void CServerData::ProtectPrivateHouses( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether house ownership is tracked per account (true) or character (false)
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TrackHousesPerAccount() const
-{
+auto CServerData::TrackHousesPerAccount() const ->bool{
 	return boolVals.test( BIT_TRACKHOUSESPERACCOUNT);
 }
-void CServerData::TrackHousesPerAccount( bool newVal )
-{
+auto CServerData::TrackHousesPerAccount( bool newVal ) ->void {
 	boolVals.set( BIT_TRACKHOUSESPERACCOUNT, newVal );
 }
 
@@ -2176,12 +2052,10 @@ void CServerData::TrackHousesPerAccount( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can both own and co-own houses at the same time
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CanOwnAndCoOwnHouses() const
-{
+auto CServerData::CanOwnAndCoOwnHouses() const ->bool{
 	return boolVals.test( BIT_CANOWNANDCOOWNHOUSES);
 }
-void CServerData::CanOwnAndCoOwnHouses( bool newVal )
-{
+auto CServerData::CanOwnAndCoOwnHouses( bool newVal ) ->void {
 	boolVals.set( BIT_CANOWNANDCOOWNHOUSES, newVal );
 }
 
@@ -2192,12 +2066,10 @@ void CServerData::CanOwnAndCoOwnHouses( bool newVal )
 //|	Purpose		-	Gets/Sets whether characters on same account as house owner will be treated as
 //|					if they are co-owners of the house
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CoOwnHousesOnSameAccount() const
-{
+auto CServerData::CoOwnHousesOnSameAccount() const ->bool{
 	return boolVals.test( BIT_COOWNHOUSESONSAMEACCOUNT);
 }
-void CServerData::CoOwnHousesOnSameAccount( bool newVal )
-{
+auto CServerData::CoOwnHousesOnSameAccount( bool newVal ) ->void {
 	boolVals.set( BIT_COOWNHOUSESONSAMEACCOUNT, newVal );
 }
 
@@ -2207,12 +2079,10 @@ void CServerData::CoOwnHousesOnSameAccount( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether guild menu can be accessed from paperdoll button or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::PaperdollGuildButton() const
-{
+auto CServerData::PaperdollGuildButton() const ->bool{
 	return boolVals.test( BIT_PAPERDOLLGUILDBUTTON );
 }
-void CServerData::PaperdollGuildButton( bool newVal )
-{
+auto CServerData::PaperdollGuildButton( bool newVal ) ->void {
 	boolVals.set( BIT_PAPERDOLLGUILDBUTTON, newVal );
 }
 
@@ -2222,12 +2092,10 @@ void CServerData::PaperdollGuildButton( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether monsters will attack animals or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatMonstersVsAnimals() const
-{
+auto CServerData::CombatMonstersVsAnimals() const ->bool{
 	return boolVals.test( BIT_MONSTERSVSANIMALS );
 }
-void CServerData::CombatMonstersVsAnimals( bool newVal )
-{
+auto CServerData::CombatMonstersVsAnimals( bool newVal ) ->void {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
 }
 
@@ -2237,12 +2105,10 @@ void CServerData::CombatMonstersVsAnimals( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can own
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::MaxHousesOwnable() const
-{
+auto CServerData::MaxHousesOwnable() const ->std::uint16_t {
 	return maxHousesOwnable;
 }
-void CServerData::MaxHousesOwnable( UI16 value )
-{
+auto CServerData::MaxHousesOwnable( UI16 value ) ->void {
 	maxHousesOwnable = value;
 }
 
@@ -2252,12 +2118,10 @@ void CServerData::MaxHousesOwnable( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can co-own
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::MaxHousesCoOwnable() const
-{
+auto CServerData::MaxHousesCoOwnable() const ->std::uint16_t {
 	return maxHousesCoOwnable;
 }
-void CServerData::MaxHousesCoOwnable( UI16 value )
-{
+auto CServerData::MaxHousesCoOwnable( UI16 value ) ->void {
 	maxHousesCoOwnable = value;
 }
 
@@ -2267,12 +2131,10 @@ void CServerData::MaxHousesCoOwnable( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of monsters attacking animals
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::CombatAnimalsAttackChance() const
-{
+auto CServerData::CombatAnimalsAttackChance() const ->std::uint16_t {
 	return combatanimalattackchance;
 }
-void CServerData::CombatAnimalsAttackChance( UI16 value )
-{
+auto CServerData::CombatAnimalsAttackChance( UI16 value ) ->void {
 	if( value > 1000 )
 		value = 1000;
 	combatanimalattackchance = value;
@@ -2285,12 +2147,10 @@ void CServerData::CombatAnimalsAttackChance( UI16 value )
 //|	Purpose		-	Gets/Sets the delay hit bonus (in percentage) in combat for Archery. Can be negative!
 //|					This bonus was mentioned in official patch notes for Publish 5 (UOR patch).
 //o-----------------------------------------------------------------------------------------------o
-SI08 CServerData::CombatArcheryHitBonus() const
-{
+auto CServerData::CombatArcheryHitBonus() const ->std::int8_t {
 	return combatArcheryHitBonus;
 }
-void CServerData::CombatArcheryHitBonus( SI08 value )
-{
+auto CServerData::CombatArcheryHitBonus( SI08 value ) ->void {
 	if( value > 100 )
 		value = 100;
 	combatArcheryHitBonus = value;
@@ -2303,12 +2163,10 @@ void CServerData::CombatArcheryHitBonus( SI08 value )
 //|	Purpose		-	Gets/Sets the delay (in seconds, with decimals) after archers stop moving until
 //|					they can fire a shot in combat
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::CombatArcheryShootDelay() const
-{
+auto CServerData::CombatArcheryShootDelay() const ->float {
 	return archeryShootDelay;
 }
-void CServerData::CombatArcheryShootDelay( R32 value )
-{
+auto CServerData::CombatArcheryShootDelay( R32 value ) ->void {
 	if( value < 0.0 )
 		archeryShootDelay = 0.0;
 	else
@@ -2321,12 +2179,10 @@ void CServerData::CombatArcheryShootDelay( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets chance for weapons to take damage in combat (on hit)
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatWeaponDamageChance() const
-{
+auto CServerData::CombatWeaponDamageChance() const ->std::uint8_t {
 	return combatweapondamagechance;
 }
-void CServerData::CombatWeaponDamageChance( UI08 value )
-{
+auto CServerData::CombatWeaponDamageChance( UI08 value ) ->void {
 	if( value > 100 )
 		value = 100;
 	combatweapondamagechance = value;
@@ -2338,12 +2194,10 @@ void CServerData::CombatWeaponDamageChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min amount of damage (in hitpoints) weapons will take from combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatWeaponDamageMin() const
-{
+auto CServerData::CombatWeaponDamageMin() const ->std::uint8_t {
 	return combatweapondamagemin;
 }
-void CServerData::CombatWeaponDamageMin( UI08 value )
-{
+auto CServerData::CombatWeaponDamageMin( UI08 value ) ->void {
 	combatweapondamagemin = value;
 }
 
@@ -2353,12 +2207,10 @@ void CServerData::CombatWeaponDamageMin( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of damage (in hitpoints) weapons will take from combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatWeaponDamageMax() const
-{
+auto CServerData::CombatWeaponDamageMax() const ->std::uint8_t {
 	return combatweapondamagemax;
 }
-void CServerData::CombatWeaponDamageMax( UI08 value )
-{
+auto CServerData::CombatWeaponDamageMax( UI08 value ) ->void {
 	combatweapondamagemax = value;
 }
 
@@ -2368,12 +2220,10 @@ void CServerData::CombatWeaponDamageMax( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage armor in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatArmorDamageChance() const
-{
+auto CServerData::CombatArmorDamageChance() const ->std::uint8_t {
 	return combatarmordamagechance;
 }
-void CServerData::CombatArmorDamageChance( UI08 value )
-{
+auto CServerData::CombatArmorDamageChance( UI08 value ) ->void {
 	if( value > 100 )
 		value = 100;
 	combatarmordamagechance = value;
@@ -2385,12 +2235,10 @@ void CServerData::CombatArmorDamageChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to armor in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatArmorDamageMin() const
-{
+auto CServerData::CombatArmorDamageMin() const ->std::uint8_t {
 	return combatarmordamagemin;
 }
-void CServerData::CombatArmorDamageMin( UI08 value )
-{
+auto CServerData::CombatArmorDamageMin( UI08 value ) ->void {
 	combatarmordamagemin = value;
 }
 
@@ -2400,12 +2248,10 @@ void CServerData::CombatArmorDamageMin( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to armor in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatArmorDamageMax() const
-{
+auto CServerData::CombatArmorDamageMax() const ->std::uint8_t {
 	return combatarmordamagemax;
 }
-void CServerData::CombatArmorDamageMax( UI08 value )
-{
+auto CServerData::CombatArmorDamageMax( UI08 value ) ->void {
 	combatarmordamagemax = value;
 }
 
@@ -2415,12 +2261,10 @@ void CServerData::CombatArmorDamageMax( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage items used to parry in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatParryDamageChance() const
-{
+auto CServerData::CombatParryDamageChance() const ->std::uint8_t {
 	return combatparrydamagechance;
 }
-void CServerData::CombatParryDamageChance( UI08 value )
-{
+auto CServerData::CombatParryDamageChance( UI08 value ) ->void {
 	if( value > 100 )
 		value = 100;
 	combatparrydamagechance = value;
@@ -2432,12 +2276,10 @@ void CServerData::CombatParryDamageChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to items used to parry in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatParryDamageMin() const
-{
+auto CServerData::CombatParryDamageMin() const ->std::uint8_t {
 	return combatparrydamagemin;
 }
-void CServerData::CombatParryDamageMin( UI08 value )
-{
+auto CServerData::CombatParryDamageMin( UI08 value ) ->void {
 	combatparrydamagemin = value;
 }
 
@@ -2447,12 +2289,10 @@ void CServerData::CombatParryDamageMin( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to items used to parry in combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatParryDamageMax() const
-{
+auto CServerData::CombatParryDamageMax() const ->std::uint8_t {
 	return combatparrydamagemax;
 }
-void CServerData::CombatParryDamageMax( UI08 value )
-{
+auto CServerData::CombatParryDamageMax( UI08 value ) ->void {
 	combatparrydamagemax = value;
 }
 
@@ -2462,12 +2302,10 @@ void CServerData::CombatParryDamageMax( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to spawn blood splatter effects during combat
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::CombatBloodEffectChance() const
-{
+auto CServerData::CombatBloodEffectChance() const ->std::uint8_t {
 	return combatbloodeffectchance;
 }
-void CServerData::CombatBloodEffectChance( UI08 value )
-{
+auto CServerData::CombatBloodEffectChance( UI08 value ) ->void {
 	if( value > 100 )
 		value = 100;
 	combatbloodeffectchance = value;
@@ -2479,12 +2317,10 @@ void CServerData::CombatBloodEffectChance( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::HungerSystemEnabled() const
-{
+auto CServerData::HungerSystemEnabled() const ->bool{
 	return boolVals.test( BIT_HUNGERSYSTEMENABLED );
 }
-void CServerData::HungerSystemEnabled( bool newVal )
-{
+auto CServerData::HungerSystemEnabled( bool newVal ) ->void {
 	boolVals.set( BIT_HUNGERSYSTEMENABLED, newVal );
 }
 
@@ -2494,12 +2330,10 @@ void CServerData::HungerSystemEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether hunger system is enabled or disabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ThirstSystemEnabled() const
-{
+auto CServerData::ThirstSystemEnabled() const ->bool{
 	return boolVals.test( BIT_THIRSTSYSTEMENABLED );
 }
-void CServerData::ThirstSystemEnabled( bool newVal )
-{
+auto CServerData::ThirstSystemEnabled( bool newVal ) ->void {
 	boolVals.set( BIT_THIRSTSYSTEMENABLED, newVal );
 }
 
@@ -2509,12 +2343,10 @@ void CServerData::ThirstSystemEnabled( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the damage taken from players being hungry
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::HungerDamage() const
-{
+auto CServerData::HungerDamage() const ->std::int16_t {
 	return hungerdamage;
 }
-void CServerData::HungerDamage( SI16 value )
-{
+auto CServerData::HungerDamage( SI16 value ) ->void {
 	hungerdamage = value;
 }
 
@@ -2524,12 +2356,10 @@ void CServerData::HungerDamage( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the stamina drain from players being thirsty
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ThirstDrain() const
-{
+auto CServerData::ThirstDrain() const ->std::int16_t {
 	return thirstdrain;
 }
-void CServerData::ThirstDrain( SI16 value )
-{
+auto CServerData::ThirstDrain( SI16 value ) ->void {
 	thirstdrain = value;
 }
 
@@ -2539,12 +2369,10 @@ void CServerData::ThirstDrain( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the interval in seconds between checks for the player offline time
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::PetOfflineTimeout() const
-{
+auto CServerData::PetOfflineTimeout() const ->std::uint16_t {
 	return petOfflineTimeout;
 }
-void CServerData::PetOfflineTimeout( UI16 value )
-{
+auto CServerData::PetOfflineTimeout( UI16 value ) ->void {
 	petOfflineTimeout = value;
 }
 
@@ -2554,12 +2382,10 @@ void CServerData::PetOfflineTimeout( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether pets should hunger while the player (owner) is offline or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::PetHungerOffline() const
-{
+auto CServerData::PetHungerOffline() const ->bool{
 	return boolVals.test( BIT_PETHUNGEROFFLINE );
 }
-void CServerData::PetHungerOffline( bool newVal )
-{
+auto CServerData::PetHungerOffline( bool newVal ) ->void {
 	boolVals.set( BIT_PETHUNGEROFFLINE, newVal );
 }
 
@@ -2569,12 +2395,10 @@ void CServerData::PetHungerOffline( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether pets should thirst while the player (owner) is offline or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::PetThirstOffline() const
-{
+auto CServerData::PetThirstOffline() const ->bool{
 	return boolVals.test( BIT_PETTHIRSTOFFLINE );
 }
-void CServerData::PetThirstOffline( bool newVal )
-{
+auto CServerData::PetThirstOffline( bool newVal ) ->void {
 	boolVals.set( BIT_PETTHIRSTOFFLINE, newVal );
 }
 
@@ -2585,12 +2409,10 @@ void CServerData::PetThirstOffline( bool newVal )
 //|	Purpose		-	Gets/Sets the threshold for when money is taken from a player's bank account
 //|					when buying something from a vendor instead of from their backpack
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::BuyThreshold() const
-{
+auto CServerData::BuyThreshold() const ->std::int16_t {
 	return buyThreshold;
 }
-void CServerData::BuyThreshold( SI16 value )
-{
+auto CServerData::BuyThreshold( SI16 value ) ->void {
 	buyThreshold = value;
 }
 
@@ -2601,12 +2423,10 @@ void CServerData::BuyThreshold( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can hide while mounted or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CharHideWhileMounted() const
-{
+auto CServerData::CharHideWhileMounted() const ->bool{
 	return boolVals.test( BIT_HIDEWHILEMOUNTED );
 }
-void CServerData::CharHideWhileMounted( bool newVal )
-{
+auto CServerData::CharHideWhileMounted( bool newVal ) ->void {
 	boolVals.set( BIT_HIDEWHILEMOUNTED, newVal );
 }
 
@@ -2617,12 +2437,10 @@ void CServerData::CharHideWhileMounted( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets amount of weight one can hold per point of STR
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::WeightPerStr() const
-{
+auto CServerData::WeightPerStr() const ->float {
 	return weightPerSTR;
 }
-void CServerData::WeightPerStr( R32 newVal )
-{
+auto CServerData::WeightPerStr( R32 newVal ) ->void {
 	weightPerSTR = newVal;
 }
 
@@ -2633,12 +2451,11 @@ void CServerData::WeightPerStr( R32 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether packet handling in JS is enabled or disabled
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ServerOverloadPackets() const
-{
+auto CServerData::ServerOverloadPackets() const ->bool{
+	
 	return boolVals.test( BIT_OVERLOADPACKETS );
 }
-void CServerData::ServerOverloadPackets( bool newVal )
-{
+auto CServerData::ServerOverloadPackets( bool newVal ) ->void {
 	boolVals.set( BIT_OVERLOADPACKETS, newVal );
 }
 
@@ -2649,12 +2466,10 @@ void CServerData::ServerOverloadPackets( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether armor affects mana regeneration or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ArmorAffectManaRegen() const
-{
+auto CServerData::ArmorAffectManaRegen() const ->bool{
 	return boolVals.test( BIT_ARMORAFFECTMANAREGEN );
 }
-void CServerData::ArmorAffectManaRegen( bool newVal )
-{
+auto CServerData::ArmorAffectManaRegen( bool newVal ) ->void {
 	boolVals.set( BIT_ARMORAFFECTMANAREGEN, newVal );
 }
 
@@ -2665,12 +2480,10 @@ void CServerData::ArmorAffectManaRegen( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether NPCs use the A* Pathfinding routine or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::AdvancedPathfinding() const
-{
+auto CServerData::AdvancedPathfinding() const ->bool{
 	return boolVals.test( BIT_ADVANCEDPATHFIND );
 }
-void CServerData::AdvancedPathfinding( bool newVal )
-{
+auto CServerData::AdvancedPathfinding( bool newVal ) ->void {
 	boolVals.set( BIT_ADVANCEDPATHFIND, newVal );
 }
 
@@ -2681,12 +2494,10 @@ void CServerData::AdvancedPathfinding( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether looting of corpses can be a crime or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::LootingIsCrime() const
-{
+auto CServerData::LootingIsCrime() const ->bool{
 	return boolVals.test( BIT_LOOTINGISCRIME );
 }
-void CServerData::LootingIsCrime( bool newVal )
-{
+auto CServerData::LootingIsCrime( bool newVal ) ->void {
 	boolVals.set( BIT_LOOTINGISCRIME, newVal );
 }
 
@@ -2697,12 +2508,11 @@ void CServerData::LootingIsCrime( bool newVal )
 //| Purpose     -   Gets/Sets whether travel spells (recall, gate) are usable with boat keys to teleport
 //|					directly to boat's location
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TravelSpellsFromBoatKeys() const
-{
+auto CServerData::TravelSpellsFromBoatKeys() const ->bool{
+	
 	return boolVals.test( BIT_TRAVELSPELLSFROMBOATKEYS );
 }
-void CServerData::TravelSpellsFromBoatKeys( bool newVal )
-{
+auto CServerData::TravelSpellsFromBoatKeys( bool newVal ) ->void {
 	boolVals.set( BIT_TRAVELSPELLSFROMBOATKEYS, newVal );
 }
 
@@ -2712,12 +2522,10 @@ void CServerData::TravelSpellsFromBoatKeys( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while overweight
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TravelSpellsWhileOverweight() const
-{
+auto CServerData::TravelSpellsWhileOverweight() const ->bool{
 	return boolVals.test( BIT_TRAVELSPELLSWHILEOVERWEIGHT );
 }
-void CServerData::TravelSpellsWhileOverweight( bool newVal )
-{
+auto CServerData::TravelSpellsWhileOverweight( bool newVal ) ->void {
 	boolVals.set( BIT_TRAVELSPELLSWHILEOVERWEIGHT, newVal );
 }
 
@@ -2727,12 +2535,10 @@ void CServerData::TravelSpellsWhileOverweight( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether server allows marking recall runes in multis (houses, boats)
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::MarkRunesInMultis() const
-{
+auto CServerData::MarkRunesInMultis() const ->bool{
 	return boolVals.test( BIT_MARKRUNESINMULTIS );
 }
-void CServerData::MarkRunesInMultis( bool newVal )
-{
+auto CServerData::MarkRunesInMultis( bool newVal ) ->void {
 	boolVals.set( BIT_MARKRUNESINMULTIS, newVal );
 }
 
@@ -2742,12 +2548,10 @@ void CServerData::MarkRunesInMultis( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed between worlds
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TravelSpellsBetweenWorlds() const
-{
+auto CServerData::TravelSpellsBetweenWorlds() const ->bool{
 	return boolVals.test( BIT_TRAVELSPELLSBETWEENWORLDS );
 }
-void CServerData::TravelSpellsBetweenWorlds( bool newVal )
-{
+auto CServerData::TravelSpellsBetweenWorlds( bool newVal ) ->void {
 	boolVals.set( BIT_TRAVELSPELLSBETWEENWORLDS, newVal );
 }
 
@@ -2757,12 +2561,10 @@ void CServerData::TravelSpellsBetweenWorlds( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets whether travel spells (recall, gate) are allowed while marked as an aggressor
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TravelSpellsWhileAggressor() const
-{
+auto CServerData::TravelSpellsWhileAggressor() const ->bool{
 	return boolVals.test( BIT_TRAVELSPELLSWHILEAGGRESSOR );
 }
-void CServerData::TravelSpellsWhileAggressor( bool newVal )
-{
+auto CServerData::TravelSpellsWhileAggressor( bool newVal ) ->void {
 	boolVals.set( BIT_TRAVELSPELLSWHILEAGGRESSOR, newVal );
 }
 
@@ -2772,12 +2574,10 @@ void CServerData::TravelSpellsWhileAggressor( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MaxControlSlots() const
-{
+auto CServerData::MaxControlSlots() const ->std::uint8_t {
 	return maxControlSlots;
 }
-void CServerData::MaxControlSlots( UI08 newVal )
-{
+auto CServerData::MaxControlSlots( UI08 newVal ) ->void {
 	maxControlSlots = newVal;
 }
 
@@ -2787,12 +2587,10 @@ void CServerData::MaxControlSlots( UI08 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of active followers/pets a player can have (0 for disable)
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MaxFollowers() const
-{
+auto CServerData::MaxFollowers() const ->std::uint8_t {
 	return maxFollowers;
 }
-void CServerData::MaxFollowers( UI08 newVal )
-{
+auto CServerData::MaxFollowers( UI08 newVal ) ->void {
 	maxFollowers = newVal;
 }
 
@@ -2802,12 +2600,10 @@ void CServerData::MaxFollowers( UI08 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of different owners a pet can have in its lifetime
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MaxPetOwners() const
-{
+auto CServerData::MaxPetOwners() const ->std::uint8_t {
 	return maxPetOwners;
 }
-void CServerData::MaxPetOwners( UI08 newVal )
-{
+auto CServerData::MaxPetOwners( UI08 newVal ) ->void {
 	maxPetOwners = newVal;
 }
 
@@ -2817,12 +2613,10 @@ void CServerData::MaxPetOwners( UI08 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty gained on successful use of pet command
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::GetPetLoyaltyGainOnSuccess() const
-{
+auto CServerData::GetPetLoyaltyGainOnSuccess() const ->std::uint16_t {
 	return petLoyaltyGainOnSuccess;
 }
-void CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal )
-{
+auto CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal ) ->void {
 	petLoyaltyGainOnSuccess = newVal;
 }
 
@@ -2832,12 +2626,10 @@ void CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty loss for failed use of pet command
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::GetPetLoyaltyLossOnFailure() const
-{
+auto CServerData::GetPetLoyaltyLossOnFailure() const ->std::uint16_t {
 	return petLoyaltyLossOnFailure;
 }
-void CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal )
-{
+auto CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal ) ->void {
 	petLoyaltyLossOnFailure = newVal;
 }
 
@@ -2847,12 +2639,10 @@ void CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of teleports to safety players get per day via help menu when stuck
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::MaxSafeTeleportsPerDay() const
-{
+auto CServerData::MaxSafeTeleportsPerDay() const ->std::uint8_t {
 	return maxSafeTeleports;
 }
-void CServerData::MaxSafeTeleportsPerDay( UI08 newVal )
-{
+auto CServerData::MaxSafeTeleportsPerDay( UI08 newVal ) ->void {
 	maxSafeTeleports = newVal;
 }
 
@@ -2863,12 +2653,10 @@ void CServerData::MaxSafeTeleportsPerDay( UI08 newVal )
 //|	Purpose		-	Gets/Sets whether players who use the safe teleport via help menu will teleport
 //|					to the nearest safe location, or to a random safe location anywhere on the map
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::TeleportToNearestSafeLocation() const
-{
+auto CServerData::TeleportToNearestSafeLocation() const ->bool{
 	return boolVals.test( BIT_TELEPORTTONEARESTSAFELOC );
 }
-void CServerData::TeleportToNearestSafeLocation( bool newVal )
-{
+auto CServerData::TeleportToNearestSafeLocation( bool newVal ) ->void {
 	boolVals.set( BIT_TELEPORTTONEARESTSAFELOC, newVal );
 }
 
@@ -2879,12 +2667,10 @@ void CServerData::TeleportToNearestSafeLocation( bool newVal )
 //|	Purpose		-	Gets/Sets whether the feature that allows permanently awake NPCs (ones marked
 //|					as such) is enabled or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::AllowAwakeNPCs() const
-{
+auto CServerData::AllowAwakeNPCs() const ->bool{
 	return boolVals.test( BIT_ALLOWAWAKENPCS );
 }
-void CServerData::AllowAwakeNPCs( bool newVal )
-{
+auto CServerData::AllowAwakeNPCs( bool newVal ) ->void {
 	boolVals.set( BIT_ALLOWAWAKENPCS, newVal );
 }
 
@@ -2894,12 +2680,10 @@ void CServerData::AllowAwakeNPCs( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether tools have usage limits (based on item health)
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ToolUseLimit() const
-{
+auto CServerData::ToolUseLimit() const ->bool{
 	return boolVals.test( BIT_TOOLUSELIMIT );
 }
-void CServerData::ToolUseLimit( bool newVal )
-{
+auto CServerData::ToolUseLimit( bool newVal ) ->void {
 	boolVals.set( BIT_TOOLUSELIMIT, newVal );
 }
 
@@ -2909,12 +2693,10 @@ void CServerData::ToolUseLimit( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether tools will break if they reach 0 health
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ToolUseBreak() const
-{
+auto CServerData::ToolUseBreak() const ->bool{
 	return boolVals.test( BIT_TOOLUSEBREAK );
 }
-void CServerData::ToolUseBreak( bool newVal )
-{
+auto CServerData::ToolUseBreak( bool newVal ) ->void {
 	boolVals.set( BIT_TOOLUSEBREAK, newVal );
 }
 
@@ -2924,12 +2706,10 @@ void CServerData::ToolUseBreak( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items will have their durability reduced when repaired
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::ItemRepairDurabilityLoss() const
-{
+auto CServerData::ItemRepairDurabilityLoss() const ->bool{
 	return boolVals.test( BIT_ITEMREPAIRDURABILITYLOSS );
 }
-void CServerData::ItemRepairDurabilityLoss( bool newVal )
-{
+auto CServerData::ItemRepairDurabilityLoss( bool newVal ) ->void {
 	boolVals.set( BIT_ITEMREPAIRDURABILITYLOSS, newVal );
 }
 
@@ -2939,12 +2719,10 @@ void CServerData::ItemRepairDurabilityLoss( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether stats are displayed for unknown/unidentified magic items
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::HideStatsForUnknownMagicItems() const
-{
+auto CServerData::HideStatsForUnknownMagicItems() const ->bool{
 	return boolVals.test( BIT_HIDESTATSFORUNKNOWNMAGICITEMS );
 }
-void CServerData::HideStatsForUnknownMagicItems( bool newVal )
-{
+auto CServerData::HideStatsForUnknownMagicItems( bool newVal ) ->void {
 	boolVals.set( BIT_HIDESTATSFORUNKNOWNMAGICITEMS, newVal );
 }
 
@@ -2954,12 +2732,10 @@ void CServerData::HideStatsForUnknownMagicItems( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether players can craft weapons from coloured ore
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CraftColouredWeapons() const
-{
+auto CServerData::CraftColouredWeapons() const ->bool{
 	return boolVals.test( BIT_CRAFTCOLOUREDWEAPONS );
 }
-void CServerData::CraftColouredWeapons( bool newVal )
-{
+auto CServerData::CraftColouredWeapons( bool newVal ) ->void {
 	boolVals.set( BIT_CRAFTCOLOUREDWEAPONS, newVal );
 }
 
@@ -2969,12 +2745,10 @@ void CServerData::CraftColouredWeapons( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the ratio of worldsaves that get backed up
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::BackupRatio() const
-{
+auto CServerData::BackupRatio() const ->std::int16_t {
 	return backupRatio;
 }
-void CServerData::BackupRatio( SI16 value )
-{
+auto CServerData::BackupRatio( SI16 value ) ->void {
 	backupRatio = value;
 }
 
@@ -2984,12 +2758,10 @@ void CServerData::BackupRatio( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which combat can be engaged
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatMaxRange() const
-{
+auto CServerData::CombatMaxRange() const ->std::int16_t {
 	return combatmaxrange;
 }
-void CServerData::CombatMaxRange( SI16 value )
-{
+auto CServerData::CombatMaxRange( SI16 value ) ->void {
 	combatmaxrange = value;
 }
 
@@ -2999,12 +2771,10 @@ void CServerData::CombatMaxRange( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which spells can be cast in combat
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatMaxSpellRange() const
-{
+auto CServerData::CombatMaxSpellRange() const ->std::int16_t {
 	return combatmaxspellrange;
 }
-void CServerData::CombatMaxSpellRange( SI16 value )
-{
+auto CServerData::CombatMaxSpellRange( SI16 value ) ->void {
 	combatmaxspellrange = value;
 }
 
@@ -3014,12 +2784,10 @@ void CServerData::CombatMaxSpellRange( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether animals are under the protection of town guards or not
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::CombatAnimalsGuarded() const
-{
+auto CServerData::CombatAnimalsGuarded() const ->bool{
 	return boolVals.test( BIT_ANIMALSGUARDED );
 }
-void CServerData::CombatAnimalsGuarded( bool newVal )
-{
+auto CServerData::CombatAnimalsGuarded( bool newVal ) ->void {
 	boolVals.set( BIT_ANIMALSGUARDED, newVal );
 }
 
@@ -3029,12 +2797,10 @@ void CServerData::CombatAnimalsGuarded( bool newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs start fleeing in combat
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatNPCBaseFleeAt() const
-{
+auto CServerData::CombatNPCBaseFleeAt() const ->std::int16_t {
 	return combatnpcbasefleeat;
 }
-void CServerData::CombatNPCBaseFleeAt( SI16 value )
-{
+auto CServerData::CombatNPCBaseFleeAt( SI16 value ) ->void {
 	combatnpcbasefleeat = value;
 }
 
@@ -3044,12 +2810,10 @@ void CServerData::CombatNPCBaseFleeAt( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs reattack after fleeing in combat
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::CombatNPCBaseReattackAt() const
-{
+auto CServerData::CombatNPCBaseReattackAt() const ->std::int16_t {
 	return combatnpcbasereattackat;
 }
-void CServerData::CombatNPCBaseReattackAt( SI16 value )
-{
+auto CServerData::CombatNPCBaseReattackAt( SI16 value ) ->void {
 	combatnpcbasereattackat = value;
 }
 
@@ -3059,12 +2823,10 @@ void CServerData::CombatNPCBaseReattackAt( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for NPCs
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCWalkingSpeed() const
-{
+auto CServerData::NPCWalkingSpeed() const ->float {
 	return npcWalkingSpeed;
 }
-void CServerData::NPCWalkingSpeed( R32 value )
-{
+auto CServerData::NPCWalkingSpeed( R32 value ) ->void {
 	npcWalkingSpeed = value;
 }
 
@@ -3074,12 +2836,10 @@ void CServerData::NPCWalkingSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for NPCs
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCRunningSpeed() const
-{
+auto CServerData::NPCRunningSpeed() const ->float {
 	return npcRunningSpeed;
 }
-void CServerData::NPCRunningSpeed( R32 value )
-{
+auto CServerData::NPCRunningSpeed( R32 value ) ->void {
 	npcRunningSpeed = value;
 }
 
@@ -3089,12 +2849,10 @@ void CServerData::NPCRunningSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which NPCs flee in combat
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCFleeingSpeed() const
-{
+auto CServerData::NPCFleeingSpeed() const ->float {
 	return npcFleeingSpeed;
 }
-void CServerData::NPCFleeingSpeed( R32 value )
-{
+auto CServerData::NPCFleeingSpeed( R32 value ) ->void {
 	npcFleeingSpeed = value;
 }
 
@@ -3104,12 +2862,10 @@ void CServerData::NPCFleeingSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default walking speed for mounted NPCs
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCMountedWalkingSpeed() const
-{
+auto CServerData::NPCMountedWalkingSpeed() const ->float {
 	return npcMountedWalkingSpeed;
 }
-void CServerData::NPCMountedWalkingSpeed( R32 value )
-{
+auto CServerData::NPCMountedWalkingSpeed( R32 value ) ->void {
 	npcMountedWalkingSpeed = value;
 }
 
@@ -3119,12 +2875,10 @@ void CServerData::NPCMountedWalkingSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default running speed for mounted NPCs
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCMountedRunningSpeed() const
-{
+auto CServerData::NPCMountedRunningSpeed() const ->float {
 	return npcMountedRunningSpeed;
 }
-void CServerData::NPCMountedRunningSpeed( R32 value )
-{
+auto CServerData::NPCMountedRunningSpeed( R32 value ) ->void {
 	npcMountedRunningSpeed = value;
 }
 
@@ -3134,12 +2888,11 @@ void CServerData::NPCMountedRunningSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global, default speed at which mounted NPCs flee in combat
 //o-----------------------------------------------------------------------------------------------o
-R32 CServerData::NPCMountedFleeingSpeed() const
-{
+auto CServerData::NPCMountedFleeingSpeed() const ->float {
+
 	return npcMountedFleeingSpeed;
 }
-void CServerData::NPCMountedFleeingSpeed( R32 value )
-{
+auto CServerData::NPCMountedFleeingSpeed( R32 value ) ->void {
 	npcMountedFleeingSpeed = value;
 }
 
@@ -3149,12 +2902,10 @@ void CServerData::NPCMountedFleeingSpeed( R32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for titles in gumps
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::TitleColour() const
-{
+auto CServerData::TitleColour() const ->std::uint16_t {
 	return titleColour;
 }
-void CServerData::TitleColour( UI16 value )
-{
+auto CServerData::TitleColour( UI16 value ) ->void {
 	titleColour = value;
 }
 
@@ -3164,12 +2915,10 @@ void CServerData::TitleColour( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for left text in gumps (2 column ones)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::LeftTextColour() const
-{
+auto CServerData::LeftTextColour() const ->std::uint16_t {
 	return leftTextColour;
 }
-void CServerData::LeftTextColour( UI16 value )
-{
+auto CServerData::LeftTextColour( UI16 value ) ->void {
 	leftTextColour = value;
 }
 
@@ -3179,12 +2928,10 @@ void CServerData::LeftTextColour( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for right text in gumps (2 column ones)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::RightTextColour() const
-{
+auto CServerData::RightTextColour() const ->std::uint16_t {
 	return rightTextColour;
 }
-void CServerData::RightTextColour( UI16 value )
-{
+auto CServerData::RightTextColour( UI16 value ) ->void {
 	rightTextColour = value;
 }
 
@@ -3194,12 +2941,10 @@ void CServerData::RightTextColour( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for cancel button in gumps
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ButtonCancel() const
-{
+auto CServerData::ButtonCancel() const ->std::uint16_t {
 	return buttonCancel;
 }
-void CServerData::ButtonCancel( UI16 value )
-{
+auto CServerData::ButtonCancel( UI16 value ) ->void {
 	buttonCancel = value;
 }
 
@@ -3209,12 +2954,10 @@ void CServerData::ButtonCancel( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for left button (navigation) in gumps
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ButtonLeft() const
-{
+auto CServerData::ButtonLeft() const ->std::uint16_t {
 	return buttonLeft;
 }
-void CServerData::ButtonLeft( UI16 value )
-{
+auto CServerData::ButtonLeft( UI16 value ) ->void {
 	buttonLeft = value;
 }
 
@@ -3224,12 +2967,10 @@ void CServerData::ButtonLeft( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for right button (navigation) in gumps
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ButtonRight() const
-{
+auto CServerData::ButtonRight() const ->std::uint16_t {
 	return buttonRight;
 }
-void CServerData::ButtonRight( UI16 value )
-{
+auto CServerData::ButtonRight( UI16 value ) ->void {
 	buttonRight = value;
 }
 
@@ -3239,12 +2980,11 @@ void CServerData::ButtonRight( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Gump ID for background gump
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::BackgroundPic() const
-{
+auto CServerData::BackgroundPic() const ->std::uint16_t {
 	return backgroundPic;
 }
-void CServerData::BackgroundPic( UI16 value )
-{
+auto CServerData::BackgroundPic( UI16 value ) ->void {
+
 	backgroundPic = value;
 }
 
@@ -3254,12 +2994,10 @@ void CServerData::BackgroundPic( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) for which a town voting poll is open
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::TownNumSecsPollOpen() const
-{
+auto CServerData::TownNumSecsPollOpen() const ->std::uint32_t {
 	return numSecsPollOpen;
 }
-void CServerData::TownNumSecsPollOpen( UI32 value )
-{
+auto CServerData::TownNumSecsPollOpen( UI32 value ) ->void {
 	numSecsPollOpen = value;
 }
 
@@ -3269,12 +3007,10 @@ void CServerData::TownNumSecsPollOpen( UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) that a PC would be a mayor
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::TownNumSecsAsMayor() const
-{
+auto CServerData::TownNumSecsAsMayor() const ->std::uint32_t {
 	return numSecsAsMayor;
 }
-void CServerData::TownNumSecsAsMayor( UI32 value )
-{
+auto CServerData::TownNumSecsAsMayor( UI32 value ) ->void {
 	numSecsAsMayor = value;
 }
 
@@ -3284,12 +3020,10 @@ void CServerData::TownNumSecsAsMayor( UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between periods of taxes for PCs
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::TownTaxPeriod() const
-{
+auto CServerData::TownTaxPeriod() const ->std::uint32_t {
 	return taxPeriod;
 }
-void CServerData::TownTaxPeriod( UI32 value )
-{
+auto CServerData::TownTaxPeriod( UI32 value ) ->void {
 	taxPeriod = value;
 }
 
@@ -3299,12 +3033,10 @@ void CServerData::TownTaxPeriod( UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between payments for guards
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::TownGuardPayment() const
-{
+auto CServerData::TownGuardPayment() const ->std::uint32_t {
 	return guardPayment;
 }
-void CServerData::TownGuardPayment( UI32 value )
-{
+auto CServerData::TownGuardPayment( UI32 value ) ->void {
 	guardPayment = value;
 }
 
@@ -3314,12 +3046,10 @@ void CServerData::TownGuardPayment( UI32 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the threshold in player kills before a player turns red (murderer)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::RepMaxKills() const
-{
+auto CServerData::RepMaxKills() const ->std::uint16_t {
 	return maxmurdersallowed;
 }
-void CServerData::RepMaxKills( UI16 value )
-{
+auto CServerData::RepMaxKills( UI16 value ) ->void {
 	maxmurdersallowed = value;
 }
 
@@ -3329,12 +3059,10 @@ void CServerData::RepMaxKills( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of logs in a given resource area
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ResLogs() const
-{
+auto CServerData::ResLogs() const ->std::int16_t {
 	return logsperarea;
 }
-void CServerData::ResLogs( SI16 value )
-{
+auto CServerData::ResLogs( SI16 value ) ->void {
 	logsperarea = value;
 }
 
@@ -3344,12 +3072,10 @@ void CServerData::ResLogs( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single log to respawn in a resource area
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResLogTime() const
-{
+auto CServerData::ResLogTime() const ->std::uint16_t {
 	return logsrespawntimer;
 }
-void CServerData::ResLogTime( UI16 value )
-{
+auto CServerData::ResLogTime( UI16 value ) ->void {
 	logsrespawntimer = value;
 }
 
@@ -3359,12 +3085,10 @@ void CServerData::ResLogTime( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of ore in a given resource area
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ResOre() const
-{
+auto CServerData::ResOre() const ->std::int16_t {
 	return oreperarea;
 }
-void CServerData::ResOre( SI16 value )
-{
+auto CServerData::ResOre( SI16 value ) ->void {
 	oreperarea = value;
 }
 
@@ -3374,12 +3098,10 @@ void CServerData::ResOre( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single ore to respawn in a resource area
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResOreTime() const
-{
+auto CServerData::ResOreTime() const ->std::uint16_t {
 	return orerespawntimer;
 }
-void CServerData::ResOreTime( UI16 value )
-{
+auto CServerData::ResOreTime( UI16 value ) ->void {
 	orerespawntimer = value;
 }
 
@@ -3389,12 +3111,10 @@ void CServerData::ResOreTime( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the size of each resource area to split the world into (min 8x8)
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResourceAreaSize() const
-{
+auto CServerData::ResourceAreaSize() const ->std::uint16_t {
 	return resourceAreaSize;
 }
-void CServerData::ResourceAreaSize( UI16 value )
-{
+auto CServerData::ResourceAreaSize( UI16 value ) ->void {
 	if( value < 8 )
 		value = 8;
 	resourceAreaSize = value;
@@ -3406,12 +3126,10 @@ void CServerData::ResourceAreaSize( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of fish in a given resource area
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ResFish() const
-{
+auto CServerData::ResFish() const ->std::int16_t {
 	return fishperarea;
 }
-void CServerData::ResFish( SI16 value )
-{
+auto CServerData::ResFish( SI16 value ) ->void {
 	fishperarea = value;
 }
 
@@ -3421,12 +3139,10 @@ void CServerData::ResFish( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single fish to respawn in a resource area
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ResFishTime() const
-{
+auto CServerData::ResFishTime() const ->std::uint16_t {
 	return fishrespawntimer;
 }
-void CServerData::ResFishTime( UI16 value )
-{
+auto CServerData::ResFishTime( UI16 value ) ->void {
 	fishrespawntimer = value;
 }
 
@@ -3436,12 +3152,11 @@ void CServerData::ResFishTime( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often (in mins) online accounts are checked to see if they really ARE online
 //o-----------------------------------------------------------------------------------------------o
-R64 CServerData::AccountFlushTimer() const
-{
+auto CServerData::AccountFlushTimer() const ->double {
+
 	return flushTime;
 }
-void CServerData::AccountFlushTimer( R64 value )
-{
+auto CServerData::AccountFlushTimer( R64 value ) ->void {
 	flushTime = value;
 }
 
@@ -3452,12 +3167,10 @@ void CServerData::AccountFlushTimer( R64 value )
 //|	Purpose		-	Gets/Sets a specific client-side feature
 //|	Notes		-	See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetClientFeature( ClientFeatures bitNum ) const
-{
+auto CServerData::GetClientFeature( ClientFeatures bitNum ) const ->bool{
 	return clientFeatures.test( bitNum );
 }
-void CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal )
-{
+auto CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal ) ->void {
 	clientFeatures.set( bitNum, nVal );
 }
 
@@ -3468,12 +3181,10 @@ void CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal )
 //|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
 //|	Notes		-	See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::GetClientFeatures() const
-{
+auto CServerData::GetClientFeatures() const ->std::uint32_t {
 	return static_cast<UI32>(clientFeatures.to_ulong());
 }
-void CServerData::SetClientFeatures( UI32 nVal )
-{
+auto CServerData::SetClientFeatures( UI32 nVal ) ->void {
 	clientFeatures = nVal;
 }
 
@@ -3484,12 +3195,11 @@ void CServerData::SetClientFeatures( UI32 nVal )
 //|	Purpose		-	Gets/Sets a specific server-side feature
 //|	Notes		-	See ServerFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetServerFeature( ServerFeatures bitNum ) const
-{
+auto CServerData::GetServerFeature( ServerFeatures bitNum ) const ->bool{
 	return serverFeatures.test( bitNum );
 }
-void CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal )
-{
+auto CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal ) ->void {
+
 	serverFeatures.set( bitNum, nVal );
 }
 
@@ -3500,13 +3210,11 @@ void CServerData::SetServerFeature( ServerFeatures bitNum, bool nVal )
 //|	Purpose		-	Gets/Sets which server side features to enable
 //|	Notes		-	See ServerFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-size_t CServerData::GetServerFeatures() const
-{
+auto CServerData::GetServerFeatures() const ->size_t {
 	return serverFeatures.to_ulong();
 }
 //==============================================================================================
-void CServerData::SetServerFeatures( size_t nVal )
-{
+auto CServerData::SetServerFeatures( size_t nVal ) ->void {
 	serverFeatures = nVal;
 }
 
@@ -3518,23 +3226,19 @@ void CServerData::SetServerFeatures( size_t nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets active status of spawn regions per facet
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetSpawnRegionsFacetStatus( UI32 value ) const
-{
+auto CServerData::GetSpawnRegionsFacetStatus( UI32 value ) const ->bool{
 	return spawnRegionsFacets.test( value );
 }
 //==============================================================================================
-void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status )
-{
+auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status ) ->void {
 	spawnRegionsFacets.set( nVal, status );
 }
 //==============================================================================================
-UI32 CServerData::GetSpawnRegionsFacetStatus() const
-{
+auto CServerData::GetSpawnRegionsFacetStatus() const ->std::uint32_t {
 	return static_cast<UI32>(spawnRegionsFacets.to_ulong());
 }
 //==============================================================================================
-void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal )
-{
+auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal ) ->void {
 	spawnRegionsFacets = nVal;
 }
 
@@ -3544,13 +3248,11 @@ void CServerData::SetSpawnRegionsFacetStatus( UI32 nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of feature negotiation with assist tools like Razor and AssistUO
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetAssistantNegotiation() const
-{
+auto CServerData::GetAssistantNegotiation() const ->bool{
 	return boolVals.test( BIT_ASSISTANTNEGOTIATION );
 }
 //==============================================================================================
-void CServerData::SetAssistantNegotiation( bool nVal )
-{
+auto CServerData::SetAssistantNegotiation( bool nVal ) ->void {
 	boolVals.set( BIT_ASSISTANTNEGOTIATION, nVal );
 }
 
@@ -3560,13 +3262,11 @@ void CServerData::SetAssistantNegotiation( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should respond to ClassicUO's WorldMap Tracker packets
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetClassicUOMapTracker() const
-{
+auto CServerData::GetClassicUOMapTracker() const ->bool{
 	return boolVals.test( BIT_CLASSICUOMAPTRACKER );
 }
 //==============================================================================================
-void CServerData::SetClassicUOMapTracker( bool nVal )
-{
+auto CServerData::SetClassicUOMapTracker( bool nVal ) ->void {
 	boolVals.set( BIT_CLASSICUOMAPTRACKER, nVal );
 }
 
@@ -3576,13 +3276,11 @@ void CServerData::SetClassicUOMapTracker( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server should send messages originating on server as unicode
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::UseUnicodeMessages() const
-{
+auto CServerData::UseUnicodeMessages() const ->bool{
 	return boolVals.test( BIT_USEUNICODEMESSAGES );
 }
 //==============================================================================================
-void CServerData::UseUnicodeMessages( bool nVal )
-{
+auto CServerData::UseUnicodeMessages( bool nVal ) ->void {
 	boolVals.set( BIT_USEUNICODEMESSAGES, nVal );
 }
 
@@ -3594,13 +3292,12 @@ void CServerData::UseUnicodeMessages( bool nVal )
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::GetDisabledAssistantFeature( AssistantFeatures bitNum ) const
-{
+auto CServerData::GetDisabledAssistantFeature( AssistantFeatures bitNum ) const ->bool{
+	
 	return 0 != (CServerData::DisabledAssistantFeatures & bitNum);
 }
 //==============================================================================================
-void CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nVal )
-{
+auto CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nVal ) ->void {
 	if( nVal )
 	{
 		CServerData::DisabledAssistantFeatures |= bitNum;
@@ -3617,13 +3314,11 @@ void CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nV
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cServerData.h for full list
 //o-----------------------------------------------------------------------------------------------o
-UI64 CServerData::GetDisabledAssistantFeatures() const
-{
+auto CServerData::GetDisabledAssistantFeatures() const ->std::uint64_t{
 	return CServerData::DisabledAssistantFeatures;
 }
 //==============================================================================================
-void CServerData::SetDisabledAssistantFeatures( UI64 nVal )
-{
+auto CServerData::SetDisabledAssistantFeatures( UI64 nVal ) ->void {
 	CServerData::DisabledAssistantFeatures = nVal;
 }
 
@@ -3634,13 +3329,11 @@ void CServerData::SetDisabledAssistantFeatures( UI64 nVal )
 //|	Purpose		-	Gets/Sets whether player is kicked if there's no response from assistant tool
 //|					to verify it complies with the allowed assistant features
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::KickOnAssistantSilence() const
-{
+auto CServerData::KickOnAssistantSilence() const ->bool{
 	return boolVals.test( BIT_KICKONASSISTANTSILENCE );
 }
 //==============================================================================================
-void CServerData::KickOnAssistantSilence( bool nVal )
-{
+auto CServerData::KickOnAssistantSilence( bool nVal ) ->void {
 	boolVals.set( BIT_KICKONASSISTANTSILENCE, nVal );
 }
 
@@ -3652,10 +3345,12 @@ void CServerData::KickOnAssistantSilence( bool nVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Returns		- [true] If successfull
 //o-----------------------------------------------------------------------------------------------o
-bool CServerData::save()
-{
-	std::string s = Directory( CSDDP_ROOT );
-	s += "uox.ini";
+auto CServerData::save() ->bool{
+	auto s = actualINI ;
+	if (s.empty()){
+		s = Directory( CSDDP_ROOT );
+		s += "uox.ini"s;
+	}
 	return save( s );
 }
 
@@ -3692,12 +3387,10 @@ bool CServerData::save()
 //|
 //o-----------------------------------------------------------------------------------------------o
 auto CServerData::save( const std::string &filename ) ->bool {
-	return true ;
-#if 0
 	auto rvalue = false;
 	auto ofsOutput = std::ofstream(filename) ;
 	if( ofsOutput.is_open() ) {
-
+		
 		ofsOutput << "// UOX Initialization File. V";
 		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
@@ -3732,7 +3425,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>(MaxClientBytesOut()) << '\n';
 		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>(NetTrafficTimeban()) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
-
+		
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
 		ofsOutput << "CLIENTSUPPORT4000=" << (ClientSupport4000()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT5000=" << (ClientSupport5000()?1:0) << '\n';
@@ -3747,21 +3440,21 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "CLIENTSUPPORT704565=" << (ClientSupport704565()?1:0) << '\n';
 		ofsOutput << "CLIENTSUPPORT70610=" << (ClientSupport70610()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		/*ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
-
-		std::vector< physicalServer >::iterator slIter;
-		for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
-		{
-			ofsOutput << "SERVERLIST=" << slIter->getName() << ",";
-			if( !slIter->getDomain().empty() )
-				ofsOutput << slIter->getDomain() << ",";
-			else
-				ofsOutput << slIter->getIP() << ",";
-			ofsOutput << slIter->getPort() << '\n';
-		}
-		ofsOutput << "}" << '\n';*/
-
+		 
+		 std::vector< physicalServer >::iterator slIter;
+		 for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
+		 {
+		 ofsOutput << "SERVERLIST=" << slIter->getName() << ",";
+		 if( !slIter->getDomain().empty() )
+		 ofsOutput << slIter->getDomain() << ",";
+		 else
+		 ofsOutput << slIter->getIP() << ",";
+		 ofsOutput << slIter->getPort() << '\n';
+		 }
+		 ofsOutput << "}" << '\n';*/
+		
 		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
 		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
 		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
@@ -3778,7 +3471,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
 		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
 		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
 		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
@@ -3792,7 +3485,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "SNOOPISCRIME=" << (SnoopIsCrime()?1:0) << '\n';
 		ofsOutput << "ARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
 		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
 		ofsOutput << "NPCCORPSEDECAYTIMER=" << SystemTimer( tSERVER_NPCCORPSEDECAY ) << '\n';
@@ -3816,7 +3509,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "BLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
 		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
 		ofsOutput << "LOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
 		ofsOutput << "GUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
@@ -3866,7 +3559,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation()?1:0) << '\n';
 		ofsOutput << "ALLOWAWAKENPCS=" << (AllowAwakeNPCs()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXCONTROLSLOTS=" << static_cast<UI16>(MaxControlSlots()) << '\n';
 		ofsOutput << "MAXFOLLOWERS=" << static_cast<UI16>(MaxFollowers()) << '\n';
@@ -3876,7 +3569,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
 		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
 		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
 		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
@@ -3891,39 +3584,39 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
 		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
 		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
 		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
 		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << '\n';
 		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
 		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
 		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
 		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
 		ofsOutput << "DARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
 		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
 		ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
 		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
 		ofsOutput << "MAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
 		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
 		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
 		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
 		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
 		ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
 		ofsOutput << "MINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
@@ -3934,7 +3627,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
 		ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
 		ofsOutput << "HUNGERENABLED=" << (HungerSystemEnabled()?1:0) << '\n';
 		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
@@ -3942,14 +3635,14 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "PETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
 		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
 		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
 		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
 		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
 		ofsOutput << "PETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
 		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
 		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
@@ -3981,7 +3674,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
 		ofsOutput << "ITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting()?1:0) << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
 		ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << ( TravelSpellsFromBoatKeys() ? 1 : 0 ) << '\n';
 		ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << ( TravelSpellsWhileOverweight() ? 1 : 0 ) << '\n';
@@ -3990,17 +3683,17 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
 		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceID << "," << startlocations[lCtr].clilocDesc << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
 		ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
 		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
 		ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
 		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
@@ -4010,7 +3703,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
 		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[houses]" << '\n' << "{" << '\n';
 		ofsOutput << "TRACKHOUSESPERACCOUNT=" << (TrackHousesPerAccount()?1:0) << '\n';
 		ofsOutput << "CANOWNANDCOOWNHOUSES=" << (CanOwnAndCoOwnHouses()?1:0) << '\n';
@@ -4020,14 +3713,14 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
 		ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
 		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
 		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
 		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
 		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
 		ofsOutput << "}" << '\n';
-
+		
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
 		ofsOutput << "AF_FILTERWEATHER=" << (GetDisabledAssistantFeature( AF_FILTERWEATHER )?1:0) << '\n';
 		ofsOutput << "AF_FILTERLIGHT=" << (GetDisabledAssistantFeature( AF_FILTERLIGHT )?1:0) << '\n';
@@ -4057,8 +3750,8 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "AF_HUMANOIDHEALTHCHECKS=" << (GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS )?1:0) << '\n';
 		ofsOutput << "AF_SPEECHJOURNALCHECKS=" << (GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS )?1:0) << '\n';
 		ofsOutput << "}" << '\n';
-
-
+		
+		
 		ofsOutput.close();
 		rvalue = true;
 	}
@@ -4066,8 +3759,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		Console.error( oldstrutil::format("Unable to open file %s for writing", filename.c_str()) );
 	return rvalue;
 	
-#endif
-
+	
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -4078,12 +3770,13 @@ auto CServerData::save( const std::string &filename ) ->bool {
 //|	Returns		-	pointer to the valid inmemory serverdata storage(this)
 //|						nullptr is there is an error, or invalid file type
 //o-----------------------------------------------------------------------------------------------o
-auto  CServerData::Load(const std::string &filename ) ->bool {
+auto CServerData::Load(const std::string &filename ) ->bool {
 	auto inifile = filename ;
 	if (inifile.empty()){
-	
+		
 		inifile= Directory( CSDDP_ROOT ) + "uox.ini"s;
 	}
+	actualINI = inifile ;
 	auto rvalue = ParseINI( inifile );
 	PostLoadDefaults();
 	return rvalue;
@@ -4095,13 +3788,11 @@ auto  CServerData::Load(const std::string &filename ) ->bool {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track at
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::TrackingBaseRange() const
-{
+auto CServerData::TrackingBaseRange() const ->std::uint16_t {
 	return trackingbaserange;
 }
 //==============================================================================================
-void CServerData::TrackingBaseRange( UI16 value )
-{
+auto CServerData::TrackingBaseRange( UI16 value ) ->void {
 	trackingbaserange = value;
 }
 
@@ -4111,13 +3802,11 @@ void CServerData::TrackingBaseRange( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of targets someone can see in the tracking window
 //o-----------------------------------------------------------------------------------------------o
-UI08 CServerData::TrackingMaxTargets() const
-{
+auto CServerData::TrackingMaxTargets() const ->std::uint8_t {
 	return trackingmaxtargets;
 }
 //==============================================================================================
-void CServerData::TrackingMaxTargets( UI08 value )
-{
+auto CServerData::TrackingMaxTargets( UI08 value ) ->void {
 	if( value >= MAX_TRACKINGTARGETS )
 		trackingmaxtargets = MAX_TRACKINGTARGETS;
 	else
@@ -4130,13 +3819,11 @@ void CServerData::TrackingMaxTargets( UI08 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of time a grandmaster tracker can track someone
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::TrackingBaseTimer() const
-{
+auto CServerData::TrackingBaseTimer() const ->std::uint16_t {
 	return trackingbasetimer;
 }
 //==============================================================================================
-void CServerData::TrackingBaseTimer( UI16 value )
-{
+auto CServerData::TrackingBaseTimer( UI16 value ) ->void {
 	trackingbasetimer = value;
 }
 
@@ -4146,13 +3833,11 @@ void CServerData::TrackingBaseTimer( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds the tracking message is updated and displayed
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::TrackingRedisplayTime() const
-{
+auto CServerData::TrackingRedisplayTime() const ->std::uint16_t {
 	return trackingmsgredisplaytimer;
 }
 //==============================================================================================
-void CServerData::TrackingRedisplayTime( UI16 value )
-{
+auto CServerData::TrackingRedisplayTime( UI16 value ) ->void {
 	trackingmsgredisplaytimer = value;
 }
 
@@ -4179,7 +3864,7 @@ auto CServerData::ParseINI( const std::string& filename ) ->bool {
 				auto contents = oldstrutil::trim(input.substr(pos1+1,(pos2 - pos1)-1)) ;
 				return contents ;
 			}
-
+			
 		}
 		return {};
 	};
@@ -4218,7 +3903,7 @@ auto CServerData::ParseINI( const std::string& filename ) ->bool {
 							}
 							
 						}
-
+							
 					}
 				}
 			}
@@ -4226,50 +3911,49 @@ auto CServerData::ParseINI( const std::string& filename ) ->bool {
 	}
 	return rvalue ;
 	/*
-	bool rvalue = false;
-	if( !filename.empty() ) {
-
-		Console << "Processing INI Settings  ";
-
-		Script toParse( filename, NUM_DEFS, false );
-		// Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
-		if( !toParse.IsErrored() ) {
-			//serverList.clear();
-			startlocations.clear();
-			for (auto &[id,section] : toParse.collection()){
-				if( section){
-					for (auto &sec : section->collection()){
-						auto tag = sec->tag ;
-						auto data = oldstrutil::simplify( sec->data );
-						if( !HandleLine( tag, data ) ) {
-							Console.warning( oldstrutil::format("Unhandled tag '%s'", tag.c_str()) );
-						}
-					}
-				}
-			}
-			Console.PrintDone();
-			rvalue = true;
-		}
-		else
-		{
-			Console.warning( oldstrutil::format("%s File not found, Using default settings.", filename.c_str() ));
-			cwmWorldState->ServerData()->save();
-		}
-	}
-	return rvalue;
+	 bool rvalue = false;
+	 if( !filename.empty() ) {
+	 
+	 Console << "Processing INI Settings  ";
+	 
+	 Script toParse( filename, NUM_DEFS, false );
+	 // Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
+	 if( !toParse.IsErrored() ) {
+	 //serverList.clear();
+	 startlocations.clear();
+	 for (auto &[id,section] : toParse.collection()){
+	 if( section){
+	 for (auto &sec : section->collection()){
+	 auto tag = sec->tag ;
+	 auto data = oldstrutil::simplify( sec->data );
+	 if( !HandleLine( tag, data ) ) {
+	 Console.warning( oldstrutil::format("Unhandled tag '%s'", tag.c_str()) );
+	 }
+	 }
+	 }
+	 }
+	 Console.PrintDone();
+	 rvalue = true;
+	 }
+	 else
+	 {
+	 Console.warning( oldstrutil::format("%s File not found, Using default settings.", filename.c_str() ));
+	 cwmWorldState->ServerData()->save();
+	 }
+	 }
+	 return rvalue;
 	 */
 	
 }
 
 //==============================================================================================
-bool CServerData::HandleLine( const std::string& tag, const std::string& value )
-{
+auto CServerData::HandleLine( const std::string& tag, const std::string& value ) ->bool{
 	bool rvalue = true;
 	auto titer = uox3inicasevalue.find(tag) ;
 	if (titer == uox3inicasevalue.end()){
 		return false ;
 	}
-
+	
 	switch( titer->second )
 	{
 		case 1:	 // SERVERNAME[0002]
@@ -5128,7 +4812,7 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 301:    // ALLOWAWAKENPCS
 			AllowAwakeNPCs( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
-		break;		default:
+			break;		default:
 			rvalue = false;
 			break;
 	}
@@ -5141,13 +4825,11 @@ bool CServerData::HandleLine( const std::string& tag, const std::string& value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default amount of starting gold for new characters
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ServerStartGold() const
-{
+auto CServerData::ServerStartGold() const ->std::int16_t {
 	return startgold;
 }
 //==============================================================================================
-void CServerData::ServerStartGold( SI16 value )
-{
+auto CServerData::ServerStartGold( SI16 value ) ->void {
 	if( value >= 0 )
 		startgold = value;
 }
@@ -5158,13 +4840,11 @@ void CServerData::ServerStartGold( SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default starting privs for new characters
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerStartPrivs() const
-{
+auto CServerData::ServerStartPrivs() const ->std::uint16_t {
 	return startprivs;
 }
 //==============================================================================================
-void CServerData::ServerStartPrivs( UI16 value )
-{
+auto CServerData::ServerStartPrivs( UI16 value ) ->void {
 	startprivs = value;
 }
 
@@ -5174,16 +4854,14 @@ void CServerData::ServerStartPrivs( UI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the phase of one of the game's two moons
 //o-----------------------------------------------------------------------------------------------o
-SI16 CServerData::ServerMoon( SI16 slot ) const
-{
+auto CServerData::ServerMoon( SI16 slot ) const ->std::int16_t {
 	SI16 rvalue = -1;
 	if( slot >= 0 && slot <= 1 )
 		rvalue = moon[slot];
 	return rvalue;
 }
 //==============================================================================================
-void CServerData::ServerMoon( SI16 slot, SI16 value )
-{
+auto CServerData::ServerMoon( SI16 slot, SI16 value ) ->void {
 	if( slot >= 0 && slot <= 1 && value >= 0 )
 		moon[slot] = value;
 }
@@ -5194,13 +4872,11 @@ void CServerData::ServerMoon( SI16 slot, SI16 value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for dungeons
 //o-----------------------------------------------------------------------------------------------o
-LIGHTLEVEL CServerData::DungeonLightLevel() const
-{
+auto CServerData::DungeonLightLevel() const->LIGHTLEVEL {
 	return dungeonlightlevel;
 }
 //==============================================================================================
-void CServerData::DungeonLightLevel( LIGHTLEVEL value )
-{
+auto CServerData::DungeonLightLevel( LIGHTLEVEL value ) ->void {
 	dungeonlightlevel = value;
 }
 
@@ -5210,13 +4886,11 @@ void CServerData::DungeonLightLevel( LIGHTLEVEL value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global current light level outside of dungeons
 //o-----------------------------------------------------------------------------------------------o
-LIGHTLEVEL CServerData::WorldLightCurrentLevel() const
-{
+auto CServerData::WorldLightCurrentLevel() const->LIGHTLEVEL {
 	return currentlightlevel;
 }
 //==============================================================================================
-void CServerData::WorldLightCurrentLevel( LIGHTLEVEL value )
-{
+auto CServerData::WorldLightCurrentLevel( LIGHTLEVEL value ) ->void {
 	currentlightlevel = value;
 }
 
@@ -5226,13 +4900,11 @@ void CServerData::WorldLightCurrentLevel( LIGHTLEVEL value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for the brightest time of day
 //o-----------------------------------------------------------------------------------------------o
-LIGHTLEVEL CServerData::WorldLightBrightLevel() const
-{
+auto CServerData::WorldLightBrightLevel() const->LIGHTLEVEL {
 	return brightnesslightlevel;
 }
 //==============================================================================================
-void CServerData::WorldLightBrightLevel( LIGHTLEVEL value )
-{
+auto CServerData::WorldLightBrightLevel( LIGHTLEVEL value ) ->void {
 	brightnesslightlevel = value;
 }
 
@@ -5242,13 +4914,11 @@ void CServerData::WorldLightBrightLevel( LIGHTLEVEL value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default, global light level for the darkest time of day
 //o-----------------------------------------------------------------------------------------------o
-LIGHTLEVEL CServerData::WorldLightDarkLevel() const
-{
+auto CServerData::WorldLightDarkLevel() const ->LIGHTLEVEL {
 	return darknesslightlevel;
 }
 //==============================================================================================
-void CServerData::WorldLightDarkLevel( LIGHTLEVEL value )
-{
+auto CServerData::WorldLightDarkLevel( LIGHTLEVEL value ) ->void {
 	darknesslightlevel=value;
 }
 
@@ -5257,8 +4927,7 @@ void CServerData::WorldLightDarkLevel( LIGHTLEVEL value )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	If no start locations have been provided in ini, use hardcoded defaults
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::PostLoadDefaults()
-{
+auto CServerData::PostLoadDefaults() ->void {
 	if( startlocations.empty() )
 	{
 		ServerLocation( "Yew,Center,545,982,0,0,0,1075072" );
@@ -5287,8 +4956,7 @@ auto CServerData::ServerLocation( size_t locNum ) ->__STARTLOCATIONDATA__* {
 }
 
 //==============================================================================================
-void CServerData::ServerLocation( std::string toSet )
-{
+auto CServerData::ServerLocation( std::string toSet ) ->void {
 	auto temp = toSet;
 	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
 	auto csecs = oldstrutil::sections( temp, "," );
@@ -5299,7 +4967,7 @@ void CServerData::ServerLocation( std::string toSet )
 		toAdd.oldDescription = oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
 		toAdd.newTown = toAdd.oldTown ;
 		toAdd.newDescription = toAdd.oldDescription;
-
+		
 		toAdd.x = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
 		toAdd.y = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
 		toAdd.z = static_cast<SI16>(std::stoi(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
@@ -5318,8 +4986,7 @@ void CServerData::ServerLocation( std::string toSet )
 	}
 }
 
-size_t CServerData::NumServerLocations() const
-{
+auto CServerData::NumServerLocations() const ->size_t {
 	return startlocations.size();
 }
 
@@ -5329,13 +4996,11 @@ size_t CServerData::NumServerLocations() const
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the number of real life seconds per UO minute
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerSecondsPerUOMinute() const
-{
+auto CServerData::ServerSecondsPerUOMinute() const ->std::uint16_t {
 	return secondsperuominute;
 }
 //==============================================================================================
-void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
-{
+auto CServerData::ServerSecondsPerUOMinute( UI16 newVal ) ->void {
 	secondsperuominute = newVal;
 }
 
@@ -5345,13 +5010,11 @@ void CServerData::ServerSecondsPerUOMinute( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default (if any) language used for the server
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::ServerLanguage() const
-{
+auto CServerData::ServerLanguage() const ->std::uint16_t {
 	return serverLanguage;
 }
 //==============================================================================================
-void CServerData::ServerLanguage( UI16 newVal )
-{
+auto CServerData::ServerLanguage( UI16 newVal ) ->void {
 	if( newVal < DL_COUNT )
 		serverLanguage = newVal;
 	else
@@ -5365,13 +5028,11 @@ void CServerData::ServerLanguage( UI16 newVal )
 //|	Purpose		-	Gets/Sets max incoming bytes received from a socket in each 10 second period
 //|					If amount exceeds this cap, client might receive a warning/get kicked
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::MaxClientBytesIn() const
-{
+auto CServerData::MaxClientBytesIn() const ->std::uint32_t {
 	return maxBytesIn;
 }
 //==============================================================================================
-void CServerData::MaxClientBytesIn( UI32 newVal )
-{
+auto CServerData::MaxClientBytesIn( UI32 newVal ) ->void {
 	maxBytesIn = newVal;
 }
 
@@ -5382,13 +5043,11 @@ void CServerData::MaxClientBytesIn( UI32 newVal )
 //|	Purpose		-	Gets/Sets max outgoing bytes sent to a socket in each 10 second period
 //|					If amount exceeds this cap, client might receive a warning/get kicked
 //o-----------------------------------------------------------------------------------------------o
-UI32 CServerData::MaxClientBytesOut() const
-{
+auto CServerData::MaxClientBytesOut() const ->std::uint32_t {
 	return maxBytesOut;
 }
 //==============================================================================================
-void CServerData::MaxClientBytesOut( UI32 newVal )
-{
+auto CServerData::MaxClientBytesOut( UI32 newVal ) ->void {
 	maxBytesOut = newVal;
 }
 
@@ -5400,13 +5059,11 @@ void CServerData::MaxClientBytesOut( UI32 newVal )
 //|					exceed their alotted network traffic budget
 //o-----------------------------------------------------------------------------------------------o
 //==============================================================================================
-UI32 CServerData::NetTrafficTimeban() const
-{
+auto CServerData::NetTrafficTimeban() const ->std::uint32_t {
 	return trafficTimeban;
 }
 //==============================================================================================
-void CServerData::NetTrafficTimeban( UI32 newVal )
-{
+auto CServerData::NetTrafficTimeban( UI32 newVal ) ->void {
 	trafficTimeban = newVal;
 }
 
@@ -5417,13 +5074,11 @@ void CServerData::NetTrafficTimeban( UI32 newVal )
 //|	Purpose		-	Gets/Sets jsEngineSize (in MB), used to define max bytes per JSRuntime
 //|					before a last ditch GC effort is made
 //o-----------------------------------------------------------------------------------------------o
-UI16 CServerData::GetJSEngineSize() const
-{
+auto CServerData::GetJSEngineSize() const ->std::uint16_t {
 	return jsEngineSize;
 }
 //==============================================================================================
-void CServerData::SetJSEngineSize( UI16 newVal )
-{
+auto CServerData::SetJSEngineSize( UI16 newVal ) ->void {
 	jsEngineSize = newVal;
 }
 
@@ -5433,8 +5088,7 @@ void CServerData::SetJSEngineSize( UI16 newVal )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Outputs server time information to time.wsc in the /shared/ directory
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::SaveTime()
-{
+auto CServerData::SaveTime() ->void {
 	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
@@ -5442,7 +5096,7 @@ void CServerData::SaveTime()
 		Console.error( oldstrutil::format("Failed to open %s for writing", timeFile.c_str()) );
 		return;
 	}
-
+	
 	timeDestination << "[TIME]" << '\n' << "{" << '\n';
 	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>(WorldLightCurrentLevel()) << '\n';
 	timeDestination << "DAY=" << ServerTimeDay() << '\n';
@@ -5451,25 +5105,24 @@ void CServerData::SaveTime()
 	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
 	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
 	timeDestination << "}" << '\n' << '\n';
-
+	
 	timeDestination.close();
 }
 
-void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );
+auto ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data ) ->void ;
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void CServerData::LoadTime()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loads server time information from time.wsc in the /shared/ directory
 //o-----------------------------------------------------------------------------------------------o
-void CServerData::LoadTime()
-{
+auto CServerData::LoadTime() ->void {
 	std::ifstream input;
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
-
+	
 	input.open( filename.c_str(), std::ios_base::in );
 	input.seekg( 0, std::ios::beg );
-
-
+	
+	
 	if( input.is_open() )
 	{
 		char line[1024];
@@ -5490,8 +5143,7 @@ void CServerData::LoadTime()
 }
 
 //==============================================================================================
-void CServerData::LoadTimeTags( std::ifstream &input )
-{
+auto CServerData::LoadTimeTags( std::ifstream &input ) ->void {
 	std::string UTag, tag, data;
 	while( tag != "o---o" )
 	{
@@ -5535,60 +5187,49 @@ void CServerData::LoadTimeTags( std::ifstream &input )
 }
 
 //==============================================================================================
-SI16 CServerData::ServerTimeDay() const
-{
+auto CServerData::ServerTimeDay() const ->std::int16_t {
 	return days;
 }
 //==============================================================================================
-void CServerData::ServerTimeDay( SI16 nValue )
-{
+auto CServerData::ServerTimeDay( SI16 nValue ) ->void {
 	days = nValue;
 }
 //==============================================================================================
-UI08 CServerData::ServerTimeHours() const
-{
+auto CServerData::ServerTimeHours() const ->std::uint8_t {
 	return hours;
 }
 //==============================================================================================
-void CServerData::ServerTimeHours( UI08 nValue )
-{
+auto CServerData::ServerTimeHours( UI08 nValue ) ->void {
 	hours = nValue;
 }
 //==============================================================================================
-UI08 CServerData::ServerTimeMinutes() const
-{
+auto CServerData::ServerTimeMinutes() const ->std::uint8_t {
 	return minutes;
 }
 
 //==============================================================================================
-void CServerData::ServerTimeMinutes( UI08 nValue )
-{
+auto CServerData::ServerTimeMinutes( UI08 nValue ) ->void {
 	minutes = nValue;
 }
 //==============================================================================================
-UI08 CServerData::ServerTimeSeconds() const
-{
+auto CServerData::ServerTimeSeconds() const ->std::uint8_t {
 	return seconds;
 }
 //==============================================================================================
-void CServerData::ServerTimeSeconds( UI08 nValue )
-{
+auto CServerData::ServerTimeSeconds(UI08 nValue) ->void {
 	seconds = nValue;
 }
 //==============================================================================================
-bool CServerData::ServerTimeAMPM() const
-{
+auto CServerData::ServerTimeAMPM() const ->bool{
 	return ampm;
 }
 //==============================================================================================
-void CServerData::ServerTimeAMPM( bool nValue )
-{
+auto CServerData::ServerTimeAMPM(bool nValue) ->void {
 	ampm = nValue;
 }
 
 //==============================================================================================
-bool CServerData::incSecond()
-{
+auto CServerData::incSecond() ->bool{
 	bool rvalue = false;
 	++seconds;
 	if( seconds == 60 )
@@ -5600,21 +5241,19 @@ bool CServerData::incSecond()
 }
 
 //==============================================================================================
-void CServerData::incMoon( SI32 mNumber )
-{
+auto CServerData::incMoon(SI32 mNumber) ->void {
 	moon[mNumber] = (SI16)((moon[mNumber] + 1)%8);
 }
 
 //==============================================================================================
-bool CServerData::incMinute()
-{
+auto CServerData::incMinute() ->bool{
 	bool rvalue = false;
 	++minutes;
 	if( minutes%8 == 0 )
 		incMoon( 0 );
 	if( minutes%3 == 0 )
 		incMoon( 1 );
-
+	
 	if( minutes == 60 )
 	{
 		minutes = 0;
@@ -5624,8 +5263,7 @@ bool CServerData::incMinute()
 }
 
 //==============================================================================================
-bool CServerData::incHour()
-{
+auto CServerData::incHour() ->bool{
 	++hours;
 	bool retVal = false;
 	if( hours == 12 )
@@ -5639,8 +5277,7 @@ bool CServerData::incHour()
 }
 
 //==============================================================================================
-bool CServerData::incDay()
-{
+auto CServerData::incDay() ->bool{
 	++days;
 	return true;
 }
@@ -5656,7 +5293,7 @@ auto CServerData::ServerEntry(std::uint16_t  entryNum ) ->physicalServer *{
 }
 //==============================================================================================
 auto CServerData::ServerCount() const ->std::uint16_t {
-
+	
 	return static_cast<UI16>(serverList.size());
 }
 //==============================================================================================
