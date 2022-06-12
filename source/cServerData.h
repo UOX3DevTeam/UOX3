@@ -4,6 +4,8 @@
 #include <map>
 #include <string>
 #include <cstdint>
+#include <array>
+
 #include "StringUtility.hpp"
 
 //=======================================================================================
@@ -253,9 +255,13 @@ private:
 	SI16		maxstaminamovement;			//	Max number of steps allowed while running before stamina is reduced
 
 	// ServerTimers
+	// array
 	UI16		serverTimers[tSERVER_COUNT];
 	// Directories
+	// array
 	std::string serverDirectories[CSDDP_COUNT];
+	
+	std::string actualINI;					// 	The actual uox.ini file loaded, used for saveing
 
 	// Settings
 	SI16		ambientsounds;				//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
@@ -307,6 +313,7 @@ private:
 	UI08		minutes;					//	Number of minutes the world has been running (persistent)
 	UI08		seconds;					//	Number of seconds the world has been running (persistent)
 	UI16		secondsperuominute;			//	Number of seconds for a UOX minute.
+	// array
 	SI16		moon[2];					//	Moon current state
 	SI16		days;						//	Number of days the world has been running (persistent)
 	bool		ampm;						//	Whether our current time is in the morning or afternoon
