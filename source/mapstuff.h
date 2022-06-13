@@ -129,8 +129,8 @@ class CMulHandler
 {
 private:
 	tileinfo tile_info ;
-	MultiMul _multidata ;
-	
+
+	multicollection multi_data ;
 	typedef std::vector< MapData_st >					MAPLIST;
 	typedef std::vector< MapData_st >::iterator			MAPLIST_ITERATOR;
 	
@@ -184,11 +184,11 @@ public:
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
 	bool			multiExists(UI16 multinum);
 	
-	const multi_structure&	SeekMulti( UI16 multinum ) const;
+	auto SeekMulti( UI16 multinum ) const ->const collection_item&;
 	bool			IsValidTile( UI16 tileNum );
 	CTile &		SeekTile( UI16 tileNum );
 	CLand &		SeekLand( UI16 landNum );
-	map_st			SeekMap( SI16 x, SI16 y, UI08 worldNumber );
+	map_st		SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 	
 	// misc functions
 	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater = true );
@@ -198,10 +198,10 @@ public:
 	bool			InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber = 0xFF );
 	
 	MapData_st&		GetMapData( UI08 mapNum );
-	UI08			MapCount( void ) const;
+	UI08			MapCount() const;
 	
-	size_t			GetTileMem( void ) const;
-	size_t			GetMultisMem( void ) const;
+	size_t		GetTileMem() const;
+	size_t		GetMultisMem() const;
 };
 
 extern CMulHandler *Map;

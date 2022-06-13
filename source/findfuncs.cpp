@@ -320,16 +320,16 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		const SI16 baseY = m->GetY();
 		const SI08 baseZ = m->GetZ();
 		
-		for( auto &multi : Map->SeekMulti( multiID ).allItems() )
+		for( auto &multi : Map->SeekMulti( multiID ).items )
 		{
 			// Ignore signs and signposts sticking out of buildings
 			if((( multi.tileid >= 0x0b95 ) && ( multi.tileid <= 0x0c0e )) || (( multi.tileid == 0x1f28 ) || ( multi.tileid == 0x1f29 )))
 				continue;
 			
-			if( (baseX + multi.xoffset) == x && (baseY + multi.yoffset) == y )
+			if( (baseX + multi.offsetx) == x && (baseY + multi.offsety) == y )
 			{
 				// Find the top Z level of the multi section being examined
-				const SI08 multiZ = (baseZ + multi.zoffset + Map->TileHeight( multi.tileid ) );
+				const SI08 multiZ = (baseZ + multi.altitude + Map->TileHeight( multi.tileid ) );
 				if( m->GetObjType() == OT_BOAT )
 				{
 					// We're on a boat!

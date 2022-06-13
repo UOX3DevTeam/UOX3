@@ -794,13 +794,13 @@ auto cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 								length = 0;
 							}
 							else {
-								for( auto &multi : Map->SeekMulti( multiID ).allItems() ) {
-									if( multi.visible && (tItem->GetX() + multi.xoffset) == x && (tItem->GetY() + multi.yoffset) == y ) {
+								for( auto &multi : Map->SeekMulti( multiID ).items ) {
+									if( multi.flag && (tItem->GetX() + multi.offsetx) == x && (tItem->GetY() + multi.offsety) == y ) {
 										CTile& tile = Map->SeekTile( multi.tileid );
 										xyblock[xycount].Type( 2 );
-										xyblock[xycount].BaseZ( multi.zoffset + tItem->GetZ() );
+										xyblock[xycount].BaseZ( multi.altitude + tItem->GetZ() );
 										xyblock[xycount].Height( tile.Height());
-										xyblock[xycount].Top( multi.zoffset + tItem->GetZ() + calcTileHeight( tile.Height() ) );
+										xyblock[xycount].Top( multi.altitude + tItem->GetZ() + calcTileHeight( tile.Height() ) );
 										xyblock[xycount].Flags( tile.Flags() );
 										xyblock[xycount].SetID(tItem->GetID());
 										++xycount;
