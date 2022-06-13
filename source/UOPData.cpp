@@ -9,7 +9,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
-
+#include <iomanip>
 
 #include <zlib.h>		// We want the global first, and local as a backup.  On macOS we use the system zlib
 
