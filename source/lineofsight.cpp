@@ -406,16 +406,16 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 		}
 		else
 		{
-			for( auto &multi : Map->SeekMulti( multiID ).allItems() )
+			for( auto &multi : Map->SeekMulti( multiID ).items )
 			{
 				
-				if( multi.visible )
+				if( multi.flag )
 				{
-					const SI16 checkX = (curX + multi.xoffset);
-					const SI16 checkY = (curY + multi.yoffset);
+					const SI16 checkX = (curX + multi.offsetx);
+					const SI16 checkY = (curY + multi.offsety);
 					if( checkX >= x1 && checkX <= x2 && checkY >= y1 && checkY <= y2 )
 					{
-						const SI08 checkZ = (curZ + multi.zoffset);
+						const SI08 checkZ = (curZ + multi.altitude);
 						CTile& multiTile = Map->SeekTile( multi.tileid );
 						for( i = 0; i < collisioncount; ++i )
 						{
