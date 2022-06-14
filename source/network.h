@@ -185,6 +185,7 @@ class cNetworkStuff
 public:
 	cNetworkStuff();
 	~cNetworkStuff();
+	auto startup() ->void ;
 	void		Disconnect( UOXSOCKET s );
 	void		Disconnect( CSocket *s );
 	void		ClearBuffers( void );

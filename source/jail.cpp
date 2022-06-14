@@ -216,14 +216,6 @@ void JailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
 	}
 }
 
-JailSystem::JailSystem()
-{
-	jails.resize( 0 );
-}
-JailSystem::~JailSystem()
-{
-	jails.clear();
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ReadSetup( void )

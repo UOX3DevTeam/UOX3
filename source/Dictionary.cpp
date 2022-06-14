@@ -190,19 +190,6 @@ CDictionaryContainer::CDictionaryContainer() {
 	defaultLang = ZERO ;
 }
 
-//====================================================================================================
-CDictionaryContainer::CDictionaryContainer( const std::string& filepath,UnicodeTypes lang )  {
-	defaultLang = lang ;
-	auto basepath = filepath ;
-	if (filepath.empty()){
-		basepath = cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES );
-	}
-	for( UI16 i = (UI16)DL_DEFAULT; i < (UI16)DL_COUNT; ++i ) {
-		auto buildName = basepath + "dictionary."s + DistinctLanguageNames[i];
-		dictList[i].setLocationLanguage( buildName, DistinctLanguageNames[i] );
-	}
-}
-
 
 
 //=====================================================================================================================================

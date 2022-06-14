@@ -1286,8 +1286,7 @@ COMMANDMAP		CommandMap;
 TARGETMAP		TargetMap;
 JSCOMMANDMAP	JSCommandMap;
 
-void cCommands::CommandReset( void )
-{
+void cCommands::CommandReset() {
 	// TargetMap[Command Name] = TargetMapEntry(Required Command Level, Command Type, Target ID, Dictionary Entry);
 	// A
 	// B
@@ -1298,52 +1297,52 @@ void cCommands::CommandReset( void )
 	// G
 	// H
 	// I
-	TargetMap["INFO"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_INFO,			261);
+	TargetMap["INFO"]	= TargetMapEntry( CL_GM,CMD_TARGET,TARGET_INFO,261);
 	// J
 	// K
 	// L
 	// M
-	TargetMap["MAKE"]			= TargetMapEntry( CL_ADMIN,			CMD_TARGETTXT,	TARGET_MAKESTATUS,		279);
+	TargetMap["MAKE"]	= TargetMapEntry( CL_ADMIN,CMD_TARGETTXT,	TARGET_MAKESTATUS,279);
 	// N
 	// O
 	// P
 	// Q
 	// R
 	// S
-	TargetMap["SHOWSKILLS"]		= TargetMapEntry( CL_GM,			CMD_TARGETINT,	TARGET_SHOWSKILLS,		260);
+	TargetMap["SHOWSKILLS"]	= TargetMapEntry( CL_GM,CMD_TARGETINT,TARGET_SHOWSKILLS,260);
 	// T
 	//TargetMap["TWEAK"]			= TargetMapEntry( CL_GM,			CMD_TARGET,		TARGET_TWEAK,			229);
 	// U
 	// V
 	// W
-	TargetMap["WSTATS"]			= TargetMapEntry( CL_CNS,			CMD_TARGET,		TARGET_WSTATS,			183);
+	TargetMap["WSTATS"]= TargetMapEntry( CL_CNS,CMD_TARGET,TARGET_WSTATS,183);
 	// X
 	// Y
 	// Z
 
 	// CommandMap[Command Name] = CommandMapEntry(Required Command Level, Command Type, Command Function);
 	//A
-	CommandMap["ADDACCOUNT"]		= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_addaccount);
-	CommandMap["ANNOUNCE"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_announce);
+	CommandMap["ADDACCOUNT"]= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_addaccount);
+	CommandMap["ANNOUNCE"]	= CommandMapEntry( CL_GM,CMD_FUNC,(CMD_DEFINE)&command_announce);
 	//B
 	//C
-	CommandMap["CQ"]				= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_cq);
-	CommandMap["COMMAND"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_command);
+	CommandMap["CQ"]= CommandMapEntry( CL_CNS,CMD_SOCKFUNC,(CMD_DEFINE)&command_cq);
+	CommandMap["COMMAND"]= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_command);
 	//D
-	CommandMap["DYE"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_dye);
+	CommandMap["DYE"]	= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_dye);
 	//E
 	//F
-	CommandMap["FORCEWHO"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_forcewho);
-	CommandMap["FIXSPAWN"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_fixspawn);
+	CommandMap["FORCEWHO"]= CommandMapEntry( CL_GM,	CMD_SOCKFUNC,(CMD_DEFINE)&command_forcewho);
+	CommandMap["FIXSPAWN"]	= CommandMapEntry( CL_GM,CMD_FUNC,(CMD_DEFINE)&command_fixspawn);
 	//G,
-	CommandMap["GETLIGHT"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_getlight);
-	CommandMap["GUARDS"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&command_guards);
-	CommandMap["GMS"]				= CommandMapEntry( CL_CNS,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gms);
-	CommandMap["GMMENU"]			= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gmmenu);
-	CommandMap["GCOLLECT"]			= CommandMapEntry( CL_GM,		CMD_FUNC,		(CMD_DEFINE)&CollectGarbage);
-	CommandMap["GQ"]				= CommandMapEntry( CL_GM,		CMD_SOCKFUNC,	(CMD_DEFINE)&command_gq);
+	CommandMap["GETLIGHT"]	= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_getlight);
+	CommandMap["GUARDS"]= CommandMapEntry( CL_GM,CMD_FUNC,(CMD_DEFINE)&command_guards);
+	CommandMap["GMS"]	= CommandMapEntry( CL_CNS,CMD_SOCKFUNC,(CMD_DEFINE)&command_gms);
+	CommandMap["GMMENU"]= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_gmmenu);
+	CommandMap["GCOLLECT"]= CommandMapEntry( CL_GM,	CMD_FUNC,(CMD_DEFINE)&CollectGarbage);
+	CommandMap["GQ"]	= CommandMapEntry( CL_GM,CMD_SOCKFUNC,(CMD_DEFINE)&command_gq);
 	//H
-	CommandMap["HOWTO"]				= CommandMapEntry( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
+	CommandMap["HOWTO"]= CommandMapEntry( CL_PLAYER,	CMD_SOCKFUNC,	(CMD_DEFINE)&command_howto );
 	//I
 	//J
 	//K

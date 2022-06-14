@@ -386,18 +386,17 @@ void CMapWorld::LoadResources( UI08 worldNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fills and clears the mapWorlds vector.
 //o-----------------------------------------------------------------------------------------------o
-CMapHandler::CMapHandler()
-{
-	mapWorlds.resize( 0 );
-	UI08 numWorlds = Map->MapCount();
 
+auto CMapHandler::startup() ->void {
+	UI08 numWorlds = Map->MapCount();
+	
 	mapWorlds.reserve( numWorlds );
 	for( UI08 i = 0; i < numWorlds; ++i )
 	{
 		mapWorlds.push_back( new CMapWorld( i ) );
 	}
-}
 
+}
 CMapHandler::~CMapHandler()
 {
 	for( WORLDLIST_ITERATOR mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter )

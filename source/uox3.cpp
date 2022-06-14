@@ -101,36 +101,38 @@ auto saveOnShutdown = false ;
 
 //================================================================================================
 // Classes we will use
-CConsole Console;
-auto aWorld = CWorldMain();
-//aJSEngine = JSEngine();
-//auto aFileLookup	= CServerDefinitions() ;
-//auto aDictionary	= CDictionaryContainer();
-//auto aCombat		= CHandleCombat();
-//auto aCommands		= cCommands()
-//auto aItems		= cItem();
-//auto aMap			= CMulHandler();
-//auto aNpcs		= cCharStuff();
-//auto aSkills		= cSkills();
-//auto aWeight		= CWeight();
-//auto aNetwork		= cNetworkStuff();
-//auto aMagic		= cMagic();
-//auto aRaces		= cRaces();
-//auto aWeather		= cWeatherAb();
-//auto aMovement		= cMovement();
-//auto aWhoList		= cWhoList();
-//auto aOffList		= cWhoList(false);
-//auto aBooks		= cBooks();
-//auto aGMQueue		= PageVector("GM Queue");
-//auto aCounselorQueue	= PageVector("Counselor Queue");
-//auto aJSMapping		= CJSMapping();
-//auto aMapRegion		= CMapHandler();
-//auto aEffects		= cEffects();
-//auto aHTMLTemplates	= cHTMLTemplates();
-//auto aAccounts		= cAccountClass(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
-//auto aSpeechSys		= CSpeechQueue()
-//auto aGuildSys		= CGuildCollection();
-//auto aJailSys		= JailSystem();
+CConsole Console;      // non pointer  class, has initialize
+// Non depdendent class
+auto aWorld			= CWorldMain();
+auto aDictionary		= CDictionaryContainer(); // no startup
+auto aCombat		= CHandleCombat();  // No dependency,startup
+auto aItems			= cItem();  // No startup, no dependency
+auto aNpcs			= cCharStuff();  // nodependency, no startup
+auto aSkills		= cSkills(); // no ddependency, no startup
+auto aWeight		= CWeight(); // no dependency, no startup
+auto aMagic			= cMagic();  // No dependent, no startup
+auto aRaces			= cRaces();  // no dependent, no startup
+auto aWeather		= cWeatherAb(); // no dependent, no startup
+auto aMovement		= cMovement();  // No dependent, no startup
+auto aWhoList		= cWhoList(); // no dependent, no startup
+auto aOffList		= cWhoList(false); // no dependent, no startup
+auto aBooks			= cBooks(); // no dependent, no startup
+auto aGMQueue		= PageVector("GM Queue"); // no dependent, no startup
+auto aCounselorQueue	= PageVector("Counselor Queue"); // no dependent, no startup
+auto aJSMapping		= CJSMapping(); // nodepend, no startup
+auto aEffects		= cEffects(); // No dependnt, no startup
+auto aHTMLTemplates	= cHTMLTemplates();  // no depend, no startup
+auto aSpeechSys		= CSpeechQueue() ; // no depend, no startup
+auto aGuildSys		= CGuildCollection(); // no depend,no startup
+auto aJailSys		= JailSystem(); // no depend, no startup
+// Dependent or have startup()
+auto aJSEngine 		= CJSEngine(); // has startup
+auto aFileLookup		= CServerDefinitions() ;  // has startup
+auto aCommands		= cCommands() ; // Restart resets commands, maybe no dependency
+auto aMap			= CMulHandler(); // replaced
+auto aNetwork		= cNetworkStuff();  // Maybe dependent, has startup
+auto aMapRegion		= CMapHandler(); // Dependent (Map->) , has startup
+auto aAccounts		= cAccountClass();  // no dpend, use SetPath
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o-----------------------------------------------------------------------------------------------o
@@ -2199,55 +2201,46 @@ auto CWorldMain::CheckAutoTimers() ->void {
 //o-----------------------------------------------------------------------------------------------o
 auto InitClasses()->void {
 	cwmWorldState->ClassesInitialized( true );
+	JSEngine = &aJSEngine ;
+	JSMapping = &aJSMapping ;
+	Effects = &aEffects;
+	Commands = &aCommands ;
+	Combat = &aCombat ;
+	Items = &aItems ;
+	Map = &aMap ;
+	Npcs = &aNpcs ;
+	Skills = &aSkills ;
+	Weight = &aWeight ;
+	JailSys = &aJailSys ;
+	Network = &aNetwork;
+	Magic = &aMagic ;
+	Races = &aRaces ;
+	Weather = &aWeather ;
+	Movement = &aMovement ;
+	GuildSys = &aGuildSys ;
+	WhoList = &aWhoList ;
+	OffList = &aOffList ;
+	Books = &aBooks ;
+	GMQueue = &aGMQueue ;
+	Dictionary = &aDictionary ;
+	Accounts = &aAccounts ;
+	MapRegion = &aMapRegion ;
+	SpeechSys = &aSpeechSys ;
+	CounselorQueue = &aCounselorQueue ;
+	HTMLTemplates = &aHTMLTemplates ;
+	FileLookup = &aFileLookup ;
 	
-	JSMapping		= nullptr;	Effects		= nullptr;
-	Commands		= nullptr;	Combat		= nullptr;
-	Items			= nullptr;	Map			= nullptr;
-	Npcs			= nullptr;	Skills		= nullptr;
-	Weight			= nullptr;	JailSys		= nullptr;
-	Network			= nullptr;	Magic		= nullptr;
-	Races			= nullptr;	Weather		= nullptr;
-	Movement		= nullptr;	GuildSys	= nullptr;
-	WhoList			= nullptr;	OffList		= nullptr;
-	Books			= nullptr;	GMQueue		= nullptr;
-	Dictionary		= nullptr;	Accounts	= nullptr;
-	MapRegion		= nullptr;	SpeechSys	= nullptr;
-	CounselorQueue	= nullptr;
-	HTMLTemplates	= nullptr;
-	FileLookup		= nullptr;
-	
-	JSEngine		= new CJSEngine;
-	// MAKE SURE IF YOU ADD A NEW ALLOCATION HERE THAT YOU FREE IT UP IN Shutdown(...)
-	if(( FileLookup		= new CServerDefinitions() )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SCRIPTS );
-	if(( Dictionary		= new CDictionaryContainer )			== nullptr ) Shutdown( FATAL_UOX3_ALLOC_DICTIONARY );
-	if(( Combat			= new CHandleCombat )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMBAT );
-	if(( Commands		= new cCommands )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_COMMANDS );
-	if(( Items			= new cItem )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_ITEMS );
-	if(( Map			= new CMulHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAP );
-	if(( Npcs			= new cCharStuff )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NPCS );
-	if(( Skills			= new cSkills )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SKILLS );
-	if(( Weight			= new CWeight )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEIGHT );
-	if(( Network		= new cNetworkStuff )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_NETWORK );
-	if(( Magic			= new cMagic )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAGIC );
-	if(( Races			= new cRaces )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_RACES );
-	if(( Weather		= new cWeatherAb )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WEATHER );
-	if(( Movement		= new cMovement )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MOVE );
-	if(( WhoList		= new cWhoList )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// wholist
-	if(( OffList		= new cWhoList( false ) )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_WHOLIST );	// offlist
-	if(( Books			= new cBooks )							== nullptr ) Shutdown( FATAL_UOX3_ALLOC_BOOKS );
-	if(( GMQueue		= new PageVector( "GM Queue" ) )		== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( CounselorQueue	= new PageVector( "Counselor Queue" ) )	== nullptr ) Shutdown( FATAL_UOX3_ALLOC_PAGEVECTOR );
-	if(( JSMapping		= new CJSMapping )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_TRIGGERS );
+	aJSEngine.startup() ;
+	aFileLookup.startup() ;
+	aCommands.startup() ;
+	// Need to do map
+	aNetwork.startup() ;
+	aMap.LoadMapsDFN() ;
 	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
-	if(( MapRegion		= new CMapHandler )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_MAPREGION );
-	if(( Effects		= new cEffects )						== nullptr ) Shutdown( FATAL_UOX3_ALLOC_EFFECTS );
-	if(( HTMLTemplates	= new cHTMLTemplates )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_HTMLTEMPLATES );
-	if(( Accounts		= new cAccountClass( cwmWorldState->ServerData()->Directory( CSDDP_ACCOUNTS ) ) ) == nullptr ) Shutdown( FATAL_UOX3_ALLOC_ACCOUNTS );
-	if(( SpeechSys		= new CSpeechQueue()	)				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_SPEECHSYS );
-	if(( GuildSys		= new CGuildCollection() )				== nullptr ) Shutdown( FATAL_UOX3_ALLOC_GUILDS );
-	if(( JailSys		= new JailSystem() )					== nullptr ) Shutdown( FATAL_UOX3_ALLOC_JAILSYS );
+	aMapRegion.startup() ;
+	aAccounts.SetPath(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
 }
 
 
@@ -2377,45 +2370,8 @@ auto Shutdown( SI32 retCode )->void {
 		// delete any objects that were created (delete takes care of nullptr check =)
 		UnloadSpawnRegions();
 		
-		delete Combat;
-		delete Commands;
-		delete Items;
-		try
-		{
-			delete Map;
-		}
-		catch( ... )
-		{
-			Console << "ERROR: Either Map was already deleted, or UOX3 was unable to delete object." << myendl;
-		}
-		delete Npcs;
-		delete Skills;
-		delete Weight;
-		delete Magic;
-		delete Races;
-		delete Weather;
-		delete Movement;
-		delete Network;
-		delete WhoList;
-		delete OffList;
-		delete Books;
-		delete GMQueue;
-		delete HTMLTemplates;
-		delete CounselorQueue;
-		delete Dictionary;
-		delete Accounts;
-		delete JSMapping;
-		delete MapRegion;
-		delete SpeechSys;
-		delete GuildSys;
-		delete FileLookup;
-		delete JailSys;
-		delete Effects;
-		
 		UnloadRegions();
 		Console.PrintDone();
-		
-		delete JSEngine;
 	}
 	
 	//Lets wait for console thread to quit here

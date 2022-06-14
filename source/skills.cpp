@@ -1857,11 +1857,11 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor
 //o-----------------------------------------------------------------------------------------------o
-cSkills::cSkills( void )
+cSkills::cSkills()
 {
 	ores.resize( 0 );
 }
-cSkills::~cSkills( void )
+cSkills::~cSkills()
 {
 	ores.resize( 0 );
 	skillMenus.clear();

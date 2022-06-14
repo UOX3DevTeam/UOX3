@@ -10,11 +10,9 @@
 
 cCommands *Commands			= nullptr;
 
-cCommands::cCommands()
-{
-	CommandReset();
+auto cCommands::startup() ->void {
+	CommandReset() ;
 }
-
 cCommands::~cCommands()
 {
 	CommandMap.clear();

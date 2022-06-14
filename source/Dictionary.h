@@ -41,7 +41,6 @@ private:
 	UnicodeTypes defaultLang;
 public:
 	CDictionaryContainer() ;
-	CDictionaryContainer( const std::string& filepath ,UnicodeTypes lang =ZERO);
 	~CDictionaryContainer()=default;
 	auto LoadDictionary(const std::string& filepath="") -> int;
 	auto SetDefaultLang(UnicodeTypes newType ) ->void ;

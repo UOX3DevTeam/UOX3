@@ -59,7 +59,7 @@ public:
 	GUILDID		NextAlly( void );
 	bool		FinishedAlly( void );
 
-	CGuild();
+	CGuild() ;
 	~CGuild();
 	const std::string	Name( void ) const;
 	const char *		Abbreviation( void ) const;
@@ -136,7 +136,7 @@ private:
 	GUILDID			MaximumGuild( void );
 public:
 	void			Resign( CSocket *s );
-	CGuildCollection();
+	CGuildCollection() = default;
 	size_t			NumGuilds( void ) const;
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
