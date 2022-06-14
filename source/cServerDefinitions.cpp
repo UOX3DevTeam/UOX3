@@ -2,50 +2,36 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-#include <filesystem>
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
 
+#include <filesystem>
 #include <memory>
 #include <array>
 
 using namespace std::string_literals ;
 
 CServerDefinitions *FileLookup;
-
-std::string CurrentWorkingDir( void )
-{
+//=======================================================
+auto CurrentWorkingDir() ->std::string {
 	return std::filesystem::current_path().string();
 }
 
-std::string BuildPath( const std::string &extra )
-{
-	std::string temp = CurrentWorkingDir();
-	temp += "/" + extra;
-	return temp;
+//=======================================================
+auto BuildPath(const std::string &extra) ->std::string {
+	auto temp = std::filesystem::current_path();
+	temp /= std::filesystem::path(extra);
+	return temp.string();
 }
 
-std::string ShortDirectory( std::string sPath )
-{
-	std::string building = "";
-	size_t iFound = 0xFFFFFFFF;
-	for( iFound = sPath.length() - 1; iFound >= 0 && iFound < sPath.length(); --iFound )
-	{
-		if( sPath[iFound] == '/' )
-			break;
-	}
-	if( iFound >= sPath.length() )
-		return sPath;
-	else
-	{
-		for( size_t i = iFound + 1; i < sPath.length(); ++i )
-			building += sPath[i];
-	}
-	return building;
+//=======================================================
+auto ShortDirectory(std::string sPath) ->std::string {
+	return std::filesystem::path(sPath).filename().string();
 }
 
-const std::string dirnames[NUM_DEFS] =
-{
+//=======================================================
+const std::array<std::string,NUM_DEFS> dirnames{
+
 	"items"s,
 	"npc"s,
 	"create"s,
@@ -74,10 +60,13 @@ const std::string dirnames[NUM_DEFS] =
 
 std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
 
-CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
-{
+//=======================================================
+CServerDefinitions::CServerDefinitions() : defaultPriority( 0 ) {
 	// Load our device ips
 	IP4Address::loadIPs();
+}
+//=======================================================
+auto CServerDefinitions::startup() ->void {
 	Console.PrintSectionBegin();
 	Console << "Loading server scripts..." << myendl;
 	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>(g_mmapAddMenuMap.size()) << ")" << myendl;
@@ -85,20 +74,7 @@ CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
 	Console.PrintSectionBegin();
-}
 
-CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPriority( 0 )
-{
-	// Load our device ips
-	IP4Address::loadIPs();
-	
-	Console.PrintSectionBegin();
-	Console << "Loading server scripts...." << myendl;
-
-	ScriptListings.resize( NUM_DEFS );
-	ReloadScriptObjects();
-
-	Console.PrintSectionBegin();
 }
 
 
@@ -111,8 +87,8 @@ CServerDefinitions::CServerDefinitions( const char *indexfilename ) : defaultPri
 //|									Auto-AddMenu items so there isn't any duplication in the
 //|									multimap
 //o-----------------------------------------------------------------------------------------------o
-bool CServerDefinitions::Reload( void )
-{
+auto CServerDefinitions::Reload() ->bool {
+
 	// We need to clear out the AddMenuItem Map
 	g_mmapAddMenuMap.clear();
 	//
@@ -123,39 +99,33 @@ bool CServerDefinitions::Reload( void )
 	return true;
 }
 
-void CServerDefinitions::Cleanup( void )
-{
+//=======================================================
+auto CServerDefinitions::Cleanup() ->void {
 	std::vector< VECSCRIPTLIST >::iterator slIter;
-	for( slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter )
-	{
+	for( slIter = ScriptListings.begin(); slIter != ScriptListings.end(); ++slIter ) {
 		VECSCRIPTLIST& toDel = (*slIter);
-		for( size_t j = 0; j < toDel.size(); ++j )
-		{
-			if( toDel[j] == nullptr )
-				continue;
-
-			delete toDel[j];
-			toDel[j] = nullptr;
+		for( size_t j = 0; j < toDel.size(); ++j ) {
+			if( toDel[j]){
+				delete toDel[j];
+				toDel[j] = nullptr;
+			}
 		}
 	}
 }
 
-CServerDefinitions::~CServerDefinitions()
-{
+//=======================================================
+CServerDefinitions::~CServerDefinitions() {
 	Cleanup();
 }
 
-bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
-{
+//=======================================================
+auto CServerDefinitions::Dispose(DEFINITIONCATEGORIES toDispose) ->bool {
 	bool retVal = false;
-	if( toDispose != NUM_DEFS )
-	{
+	if( toDispose != NUM_DEFS ) {
 		VECSCRIPTLIST& toDel = ScriptListings[toDispose];
-		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
-		{
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter ) {
 			Script *toDelete = (*dIter);
-			if( toDelete != nullptr )
-			{
+			if(toDelete) {
 				retVal = true;
 				delete toDelete;
 			}
@@ -165,43 +135,39 @@ bool CServerDefinitions::Dispose( DEFINITIONCATEGORIES toDispose )
 	return retVal;
 }
 
-ScriptSection *CServerDefinitions::FindEntry( std::string toFind, DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::FindEntry( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) ->ScriptSection *{
 	ScriptSection *rvalue = nullptr;
 
-	if( !toFind.empty() && typeToFind != NUM_DEFS )
-	{
+	if( !toFind.empty() && typeToFind != NUM_DEFS ){
 		auto tUFind = oldstrutil::upper( toFind );
 
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
-		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
-		{
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter ){
 			Script *toCheck = (*dIter);
-			if( toCheck != nullptr )
-			{
+			if(toCheck ) {
 				rvalue = toCheck->FindEntry( tUFind );
-				if( rvalue != nullptr )
+				if(rvalue){
 					break;
+				}
 			}
 		}
 	}
 	return rvalue;
 }
 
-ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::FindEntrySubStr( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) ->ScriptSection *{
 	ScriptSection *rvalue = nullptr;
-	if( !toFind.empty() && typeToFind != NUM_DEFS )
-	{
+	if( !toFind.empty() && typeToFind != NUM_DEFS ) {
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
-		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
-		{
+		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter ) {
 			Script *toCheck = (*dIter);
-			if( toCheck != nullptr )
-			{
+			if(toCheck) {
 				rvalue = toCheck->FindEntrySubStr( toFind );
-				if( rvalue != nullptr )
+				if( rvalue ){
 					break;
+				}
 			}
 		}
 	}
@@ -210,35 +176,33 @@ ScriptSection *CServerDefinitions::FindEntrySubStr( std::string toFind, DEFINITI
 
 const std::string defExt = ".dfn";
 
-struct PrioScan
-{
+//=======================================================
+struct PrioScan {
 	std::string	filename;
 	SI16	priority;
-	PrioScan() : filename( "" ), priority( 0 )
-	{
+	PrioScan() : filename( "" ), priority( 0 ) {
 	}
-	PrioScan( const char *toUse, SI16 mPrio ) : filename( toUse ), priority( mPrio )
-	{
+	PrioScan( const char *toUse, SI16 mPrio ) : filename( toUse ), priority( mPrio ) {
 	}
 };
 
-inline bool operator==( const PrioScan& x, const PrioScan& y )
-{
+//=======================================================
+inline auto operator==(const PrioScan& x, const PrioScan& y) -> bool {
 	return ( x.priority == y.priority );
 }
 
-inline bool operator<( const PrioScan& x, const PrioScan& y )
-{
+//=======================================================
+inline auto operator<(const PrioScan& x, const PrioScan& y) ->bool {
 	return ( x.priority < y.priority );
 }
 
-inline bool operator>( const PrioScan& x, const PrioScan& y )
-{
+//=======================================================
+inline auto operator>(const PrioScan& x, const PrioScan& y) ->bool {
 	return ( x.priority > y.priority );
 }
 
-void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
-{
+//=======================================================
+auto CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad) ->void {
 	CleanPriorityMap();
 	defaultPriority = 0;
 	UI08 wasPriod = 2;
@@ -250,20 +214,17 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 	std::vector< std::string > *longListing		= fileList.FlattenedList();
 
 	std::vector< PrioScan >	mSort;
-	for( size_t i = 0; i < shortListing->size(); ++i )
-	{
-		mSort.push_back( PrioScan( (*longListing)[i].c_str(), GetPriority( (*shortListing)[i].c_str() ) ) );
+	for( size_t i = 0; i < shortListing->size(); ++i ) {
+		mSort.push_back( PrioScan( (*longListing)[i].c_str(), GetPriority((*shortListing)[i].c_str()) ) );
 	}
-	if( !mSort.empty() )
-	{
+	if( !mSort.empty() ) {
 		std::sort( mSort.begin(), mSort.end() );
 		Console.print( oldstrutil::format("Section %20s : %6i", dirnames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
 		Console.TurnYellow();
 
 		std::vector< PrioScan >::const_iterator mIter;
-		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter )
-		{
+		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter ) {
 			Console.print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script( (*mIter).filename, toLoad, false ) );
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
@@ -273,9 +234,10 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 		Console.print( oldstrutil::format("\b\b\b\b\b\b%6i", CountOfEntries( toLoad )) );
 		Console.TurnNormal();
 		Console.print( " entries" );
-		switch( wasPriod )
-		{
-			case 0:	Console.PrintSpecial( CGREEN,	"prioritized" );					break;	// prioritized
+		switch( wasPriod ) {
+			case 0:
+				Console.PrintSpecial( CGREEN,	"prioritized" );
+				break;	// prioritized
 			case 1:
 				Console.PrintSpecial( CGREEN,		"done" );
 				break;	// file exist, no section
@@ -287,65 +249,64 @@ void CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad )
 	}
 }
 
-void CServerDefinitions::ReloadScriptObjects( void )
-{
+//=======================================================
+auto CServerDefinitions::ReloadScriptObjects() ->void {
 	Console << myendl;
 
-	for( SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
-	{
+	for( SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr ) {
 		LoadDFNCategory( (DEFINITIONCATEGORIES)sCtr );
 	}
 	CleanPriorityMap();
 }
 
-size_t CServerDefinitions::CountOfEntries( DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::CountOfEntries(DEFINITIONCATEGORIES typeToFind) ->size_t {
 	size_t sumEntries = 0;
 	VECSCRIPTLIST *toScan = &(ScriptListings[typeToFind]);
-	if( toScan == nullptr )
-		return 0;
-
-	for( VECSCRIPTLIST_CITERATOR cIter = toScan->begin(); cIter != toScan->end(); ++cIter )
-		sumEntries += (*cIter)->NumEntries();
+	if( toScan){
+		for( auto cIter = toScan->begin(); cIter != toScan->end(); ++cIter ){
+			sumEntries += (*cIter)->NumEntries();
+		}
+	}
 	return sumEntries;
 }
 
-size_t CServerDefinitions::CountOfFiles( DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::CountOfFiles(DEFINITIONCATEGORIES typeToFind) ->size_t {
 	return ScriptListings[typeToFind].size();
 }
 
-Script * CServerDefinitions::FirstScript( DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::FirstScript(DEFINITIONCATEGORIES typeToFind) ->Script *{
 	Script *retScript = nullptr;
 	slIter = ScriptListings[typeToFind].begin();
-	if( !FinishedScripts( typeToFind ) )
+	if( !FinishedScripts(typeToFind) ){
 		retScript = (*slIter);
-	return retScript;
-}
-Script * CServerDefinitions::NextScript( DEFINITIONCATEGORIES typeToFind )
-{
-	Script *retScript = nullptr;
-	if( !FinishedScripts( typeToFind ) )
-	{
-		++slIter;
-		if( !FinishedScripts( typeToFind ) )
-			retScript = (*slIter);
 	}
 	return retScript;
 }
-bool CServerDefinitions::FinishedScripts( DEFINITIONCATEGORIES typeToFind )
-{
+//=======================================================
+auto CServerDefinitions::NextScript(DEFINITIONCATEGORIES typeToFind) ->Script * {
+	Script *retScript = nullptr;
+	if( !FinishedScripts(typeToFind) ) {
+		++slIter;
+		if(!FinishedScripts( typeToFind)){
+			retScript = (*slIter);
+		}
+	}
+	return retScript;
+}
+//=======================================================
+auto CServerDefinitions::FinishedScripts(DEFINITIONCATEGORIES typeToFind) ->bool {
 	return ( slIter == ScriptListings[typeToFind].end() );
 }
 
-void CServerDefinitions::CleanPriorityMap( void )
-{
+//=======================================================
+auto CServerDefinitions::CleanPriorityMap() ->void {
 	priorityMap.clear();
 }
 //===============================================================================================
 auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& wasPrioritized )->void {
-	
 	cDirectoryListing priorityFile( category, "priority.nfo", false );
 	std::vector< std::string > *longList = priorityFile.List();
 	if( !longList->empty() ) {
@@ -386,172 +347,157 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 	wasPrioritized = 2;
 }
 
-void CServerDefinitions::DisplayPriorityMap( void )
-{
+//=======================================================
+void CServerDefinitions::DisplayPriorityMap() {
 	Console << "Dumping map... " << myendl;
-	std::map< std::string, SI16 >::const_iterator p = priorityMap.begin();
-	while( p != priorityMap.end() )
-	{
-		Console << p->first << " : " << p->second << myendl;
-		++p;
+	for (auto &[name,priority] : priorityMap){
+		Console << name << " : " << priority << myendl;
 	}
 	Console << "Dumped" << myendl;
 }
 
-SI16 CServerDefinitions::GetPriority( const char *file )
-{
-	SI16 retVal = defaultPriority;
-	auto lowername = oldstrutil::lower( file );
-	std::map< std::string, SI16 >::const_iterator p = priorityMap.find( lowername );
-	if( p != priorityMap.end() )
+//=======================================================
+auto CServerDefinitions::GetPriority(const char *file) ->std::int16_t {
+	auto retVal = defaultPriority;
+	auto lowername = oldstrutil::lower(file);
+	auto p = priorityMap.find( lowername );
+	if( p != priorityMap.end() ){
 		retVal = p->second;
+	}
 	return retVal;
 }
 
-bool cDirectoryListing::PushDir( DEFINITIONCATEGORIES toMove )
-{
-	std::string filePath	= cwmWorldState->ServerData()->Directory( CSDDP_DEFS );
-	filePath				+= dirnames[toMove];
-	return PushDir( filePath );
+//=======================================================
+auto cDirectoryListing::PushDir(DEFINITIONCATEGORIES toMove) ->bool {
+	auto filePath = cwmWorldState->ServerData()->Directory( CSDDP_DEFS );
+	filePath += dirnames[toMove];
+	return PushDir(filePath);
 }
-bool cDirectoryListing::PushDir( std::string toMove )
-{
+//=======================================================
+auto cDirectoryListing::PushDir(std::string toMove) ->bool{
 	std::string cwd = CurrentWorkingDir();
 	dirs.push( cwd );
 	auto path = std::filesystem::path( toMove );
-
-	if( std::filesystem::exists( path ) )
-	{
-		std::filesystem::current_path( path );
-		currentDir = toMove;
-		toMove = oldstrutil::replaceSlash( toMove );
-		shortCurrentDir = ShortDirectory( toMove );
-		return true;
-	}
-	else
-	{
+	auto rvalue = true ;
+	if( !std::filesystem::exists(path)) {
 		Console.error(oldstrutil::format( "DFN directory %s does not exist", toMove.c_str()) );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
-	return false;
+	std::filesystem::current_path( path );
+	currentDir = toMove;
+	toMove = oldstrutil::replaceSlash(toMove);
+	shortCurrentDir = ShortDirectory(toMove);
+	return rvalue;
 }
-void cDirectoryListing::PopDir( void )
-{
-	if( dirs.empty() )
-	{
+//=======================================================
+auto cDirectoryListing::PopDir() ->void {
+	if(dirs.empty()) {
 		Console.error( "cServerDefinition::PopDir called, but dirs is empty" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
-	else
-	{
+	else {
+		auto path = std::filesystem::path(dirs.top());
+
+		if( std::filesystem::exists(path )) {
+			std::filesystem::current_path(path);
+		}
+		dirs.pop();
+	}
+}
+//=======================================================
+cDirectoryListing::cDirectoryListing( bool recurse ) : extension( ".dfn" ), doRecursion( recurse ) {
+}
+//=======================================================
+cDirectoryListing::cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse ) : doRecursion( recurse ) {
+	Extension( extent );
+	Retrieve( dir );
+}
+//=======================================================
+cDirectoryListing::cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse ) : doRecursion( recurse ) {
+	Extension(extent);
+	Retrieve(dir);
+}
+//=======================================================
+cDirectoryListing::~cDirectoryListing(){
+	while( !dirs.empty() ){
 		auto path = std::filesystem::path( dirs.top() );
 
-		if( std::filesystem::exists( path ) )
-		{
+		if( std::filesystem::exists(path)) {
 			std::filesystem::current_path( path );
 		}
 		dirs.pop();
 	}
 }
-cDirectoryListing::cDirectoryListing( bool recurse ) : extension( ".dfn" ), doRecursion( recurse )
-{
-}
-cDirectoryListing::cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse ) : doRecursion( recurse )
-{
-	Extension( extent );
-	Retrieve( dir );
-}
-cDirectoryListing::cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse ) : doRecursion( recurse )
-{
-	Extension( extent );
-	Retrieve( dir );
-}
-cDirectoryListing::~cDirectoryListing()
-{
-	while( !dirs.empty() )
-	{
-		auto path = std::filesystem::path( dirs.top() );
 
-		if( std::filesystem::exists( path ))
-		{
-			std::filesystem::current_path( path );
-		}
-		dirs.pop();
+//=======================================================
+auto cDirectoryListing::Retrieve(const std::string &dir) ->void {
+	bool dirSet = PushDir( dir );
+	InternalRetrieve();
+	if(dirSet) {
+		PopDir();
+	}
+}
+//=======================================================
+auto cDirectoryListing::Retrieve(DEFINITIONCATEGORIES dir) ->void {
+	bool dirSet = PushDir(dir);
+	InternalRetrieve();
+	if(dirSet) {
+		PopDir();
 	}
 }
 
-void cDirectoryListing::Retrieve( const std::string &dir )
-{
-	bool dirSet = PushDir( dir );
-	InternalRetrieve();
-	if( dirSet )
-		PopDir();
-}
-void cDirectoryListing::Retrieve( DEFINITIONCATEGORIES dir )
-{
-	bool dirSet = PushDir( dir );
-	InternalRetrieve();
-	if( dirSet )
-		PopDir();
-}
-
+//=======================================================
 auto cDirectoryListing::List() -> std::vector< std::string >*  {
 	return &filenameList;
 }
 
+//=======================================================
 auto cDirectoryListing::ShortList() ->std::vector< std::string >*{
-
 	return &shortList;
 }
 
+//=======================================================
 auto cDirectoryListing::FlattenedList() ->std::vector< std::string >*{
-
 	return &flattenedFull;
 }
 
+//=======================================================
 auto cDirectoryListing::FlattenedShortList() ->std::vector< std::string >* {
-
 	return &flattenedShort;
 }
 
-void cDirectoryListing::InternalRetrieve( void )
-{
+//=======================================================
+auto cDirectoryListing::InternalRetrieve() ->void {
 	std::string filePath;
 	auto path = std::filesystem::current_path();
-	for( const auto& entry : std::filesystem::directory_iterator( path ))
-	{
+	for( const auto& entry : std::filesystem::directory_iterator(path)) {
 		auto name =  entry.path().filename().string();
 		filePath = entry.path().string();
 		auto ext = entry.path().extension();
-		if( std::filesystem::is_regular_file( entry ))
-		{
-			if( !extension.empty() )
-			{
-				if( entry.path().extension().string() != extension )
-				{
+		if( std::filesystem::is_regular_file( entry )) {
+			if( !extension.empty() ) {
+				if( entry.path().extension().string() != extension ) {
 					name = "";
 				}
 			}
-			if( !name.empty() )
-			{
+			if( !name.empty() ) {
 				shortList.push_back( name );
 				filenameList.push_back( filePath );
 			}
 		}
-		else if( std::filesystem::is_directory(entry) && doRecursion )
-		{
+		else if( std::filesystem::is_directory(entry) && doRecursion ) {
 			subdirectories.push_back( cDirectoryListing( name, extension, doRecursion ));
 		}
 	}
 }
 
-void cDirectoryListing::Extension( const std::string &extent )
-{
+//=======================================================
+auto cDirectoryListing::Extension(const std::string &extent) ->void {
 	extension = extent;
 }
 
-void cDirectoryListing::Flatten( bool isParent )
-{
+//=======================================================
+auto cDirectoryListing::Flatten(bool isParent) ->void {
 	ClearFlatten();
 	std::for_each(filenameList.begin(), filenameList.end(), [isParent,this](const std::string & entry){
 		flattenedFull.push_back(entry);
@@ -585,8 +531,8 @@ void cDirectoryListing::Flatten( bool isParent )
 		(*dIter).ClearFlatten();
 	}
 }
-void cDirectoryListing::ClearFlatten( void )
-{
+//=======================================================
+auto cDirectoryListing::ClearFlatten() ->void {
 	flattenedFull.clear();
 	flattenedShort.clear();
 }

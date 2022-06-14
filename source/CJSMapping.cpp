@@ -32,10 +32,13 @@ CJSMapping *JSMapping = nullptr;
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Base global class that holds within it an array of JS Mapping Sections
 //o-----------------------------------------------------------------------------------------------o
+/*
 CJSMapping::CJSMapping()
 {
-	Console.print( "Loading JS Scripts\n" );
+	// But it doesnt ?
+	//Console.print( "Loading JS Scripts\n" );
 }
+ */
 CJSMapping::~CJSMapping()
 {
 	Cleanup();

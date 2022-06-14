@@ -88,10 +88,6 @@ MapData_st::~MapData_st()
  **  'staidx.mul' is being managed by memory-mapped files, it faster than manual caching
  **  and less susceptible to bugs.
  */
-CMulHandler::CMulHandler()
-{
-	LoadMapsDFN();
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadMapsDFN( void )

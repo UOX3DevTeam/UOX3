@@ -677,10 +677,6 @@ void cHTMLTemplate::Load( ScriptSection *found )
 	Loaded = false;
 }
 
-cHTMLTemplates::cHTMLTemplates()
-{
-	Templates.resize( 0 );
-}
 
 cHTMLTemplates::~cHTMLTemplates()
 {

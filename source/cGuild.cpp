@@ -853,9 +853,6 @@ const std::string CGuild::TypeName( void )
 	return GTypeNames[Type()];
 }
 
-CGuildCollection::CGuildCollection()
-{
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	size_t NumGuilds( void ) const

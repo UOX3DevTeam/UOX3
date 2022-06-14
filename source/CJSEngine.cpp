@@ -20,28 +20,28 @@
 
 CJSEngine *JSEngine = nullptr;
 
-CJSEngine::CJSEngine()
-{
-	runtimeList.resize( 0 );
-
+//===================================================================
+auto CJSEngine::startup() -> void {
+	runtimeList.resize(0);
 	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
-
+	
 	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
 	auto maxBytesSize = std::max( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
-
+	
 	// Use minimum of INI-provided value and hard-defined maximum
 	// maxBytes definition: "Maximum nominal heap before last ditch GC"
 	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
-
+	
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
-
+	
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Default Runtime
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Console Runtime
-
+	
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
 }
+//===================================================================
 CJSEngine::~CJSEngine() {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
