@@ -1,10 +1,11 @@
 #include "uox3.h"
-#include "cmath"
 #include "regions.h"
 
+#include <cmath>
+#include <algorithm>
 
-#define MAX_COLLISIONS 1024
-#define LOSXYMAX		256		// Maximum items UOX can handle on one X/Y square
+constexpr auto MAX_COLLISIONS = 1024 ;
+constexpr auto LOSXYMAX = 256 ; // Maximum items UOX3 can handle on one X/Y square
 
 // Contains all current line of sight functionality
 
@@ -144,57 +145,51 @@ QUAD POLYGON CONSTRUCTION ALGORITHM
 	Need to use x/y offset
 	Also need to use height of tile from tiledata.mul
 */
-
-struct vector2D
-{
+//=======================================================================
+// Structures used
+struct vector2D {
 	R32 x;
 	R32 y;
-	vector2D(): x( 0 ), y( 0 )
-	{
+	vector2D(): x(0.0), y(0.0) {
 	}
-	vector2D( R32 X, R32 Y ) : x(X), y(Y)
-	{
+	vector2D( R32 X, R32 Y ) : x(X), y(Y) {
 	}
 };
 
-struct vector3D
-{
+//=======================================================================
+struct vector3D {
 	SI32 x;
 	SI32 y;
 	SI08 z;
-	vector3D(): x( 0 ), y( 0 ), z( 0 )
-	{
+	vector3D(): x(0), y(0), z(0) {
 	}
-	vector3D( SI32 X, SI32 Y, SI08 Z ) : x(X), y(Y), z(Z)
-	{
+	vector3D( SI32 X, SI32 Y, SI08 Z ) : x(X), y(Y), z(Z) {
 	}
 };
 
-inline bool operator== (vector3D const &a, vector3D const &b )
-{
+//=======================================================================
+inline bool operator== (vector3D const &a, vector3D const &b ){
 	return ( ( a.x == b.x ) && ( a.y == b.y ) && ( a.z == b.z ) );
 }
 
-inline bool operator< (vector3D const &a, vector3D const &b )
-{
+//=======================================================================
+inline bool operator< (vector3D const &a, vector3D const &b ){
 	return ( ( a.x < b.x ) && ( a.y < b.y ) && ( a.z < b.z ) );
 }
 
-struct line2D
-{
+//=======================================================================
+struct line2D{
 	vector2D loc;
 	vector2D dir;
-	line2D()
-	{
+	line2D(){
 	}
-	line2D( vector2D LOC, vector2D DIR ) : loc(LOC), dir(DIR)
-	{
+	line2D( vector2D LOC, vector2D DIR ) : loc(LOC), dir(DIR){
 	}
-	vector2D CollideLines2D( line2D toCollide ) const;
+	auto CollideLines2D( line2D toCollide ) const ->vector2D ;
 };
 
-inline vector2D line2D::CollideLines2D( line2D toCollide ) const
-{
+//=======================================================================
+inline auto line2D::CollideLines2D( line2D toCollide ) const ->vector2D {
 	if( ( ( dir.x == 0 ) && ( toCollide.dir.x == 0 ) ) ||
 	   ( ( dir.y == 0 ) && ( toCollide.dir.y == 0 ) ) )
 		return vector2D( -1.0f, -1.0f ); // error, parallel or invalid lines
@@ -209,43 +204,40 @@ inline vector2D line2D::CollideLines2D( line2D toCollide ) const
 	return vector2D( ( toCollide.loc.x + t * toCollide.dir.x ), ( toCollide.loc.y + t * toCollide.dir.y ) );
 }
 
-struct line3D
-{
+//=======================================================================
+struct line3D {
 	vector3D loc;
 	vector3D dir;
-	line3D()
-	{
+	line3D() =default;
+	line3D( vector3D LOC, vector3D DIR ) : loc(LOC), dir(DIR){
 	}
-	line3D( vector3D LOC, vector3D DIR ) : loc(LOC), dir(DIR)
-	{
-	}
-	R32 dzInDirectionX( void ) const;
-	R32 dzInDirectionY( void ) const;
-	line2D Projection2D( void ) const;
+	auto dzInDirectionX() const ->R32 ;
+	auto dzInDirectionY() const ->R32 ;
+	auto Projection2D() const ->line2D ;
 };
 
-inline R32 line3D::dzInDirectionX( void ) const
-{
-	if( dir.x == 0 )
-		return (R32)( dir.z );
-	else
-		return (R32)( (R32)( dir.z ) / (R32)( dir.x ) );
+//=======================================================================
+inline auto line3D::dzInDirectionX() const ->R32 {
+	if( dir.x == 0 ){
+		return static_cast<R32>( dir.z );
+	}
+	return static_cast<R32>(dir.z) / static_cast<R32>(dir.x );
 }
 
-inline R32 line3D::dzInDirectionY( void ) const
-{
-	if( dir.y == 0 )
-		return (R32)( dir.z );
-	else
-		return (R32)( (R32)( dir.z ) / (R32)( dir.y ) );
+//=======================================================================
+inline auto line3D::dzInDirectionY() const ->R32 {
+	if( dir.y == 0 ){
+		return static_cast<R32>(dir.z);
+	}
+	return static_cast<R32>(dir.z) / static_cast<R32>(dir.y);
 }
 
-inline line2D line3D::Projection2D( void ) const
-{
-	if( ( dir.x == 0 ) && ( dir.y == 0 ) )
+//=======================================================================
+inline auto line3D::Projection2D( void ) const ->line2D  {
+	if( ( dir.x == 0 ) && ( dir.y == 0 ) ) {
 		return line2D( vector2D( -1.0f, -1.0f ), vector2D( -1.0f, -1.0f ) );
-	else
-		return line2D( vector2D( (R32)loc.x, (R32)loc.y ), vector2D( (R32)dir.x, (R32)dir.y ) );
+	}
+	return line2D( vector2D( static_cast<R32>(loc.x), static_cast<R32>(loc.y) ), vector2D( static_cast<R32>(dir.x), static_cast<R32>(dir.y)) );
 }
 
 //o-----------------------------------------------------------------------------------------------o

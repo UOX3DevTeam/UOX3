@@ -699,27 +699,6 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 	c->WalkZ( newZ );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	No longer used?
-//o-----------------------------------------------------------------------------------------------o
-void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
-{
-	if( xycount >= XYMAX )	// don't overflow
-		return;
-	const SI08 mapz = Map->MapElevation( x, y, worldNumber );
-	if( mapz != ILLEGAL_Z )
-	{
-		const map_st map	= Map->SeekMap( x, y, worldNumber );
-		CLand& land			= Map->SeekLand( map.id );
-		xyblock[xycount].Flags( land.Flags() );
-		xyblock[xycount].Type( 0 );
-		xyblock[xycount].BaseZ( mapz );
-		xyblock[xycount].Top( mapz );
-		++xycount;
-	}
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
