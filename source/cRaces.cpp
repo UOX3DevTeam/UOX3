@@ -41,11 +41,9 @@ CRace * cRaces::Race( RACEID x )
 	return races[x];
 }
 
-cRaces::cRaces( void )
-{
-}
 
-cRaces::~cRaces( void )
+
+cRaces::~cRaces()
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {

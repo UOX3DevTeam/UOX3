@@ -142,14 +142,15 @@ private:
 	CItem* DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 instanceID, bool checkOnlyMultis, bool checkOnlyNonMultis );
 	
 	// caching functions
-	void			LoadMapsDFN( void );
 	void			LoadMultis( const std::string& basePath );
 	void			LoadDFNOverrides( void );
 	void			LoadMapAndStatics( MapData_st& mMap, const std::string& basePath, UI08 &totalMaps );
 	void			LoadTileData( const std::string& basePath );
 	
 public:
-	CMulHandler();
+	CMulHandler() = default ;
+	void			LoadMapsDFN();
+
 	~CMulHandler() = default;
 	
 	void			Load( void );

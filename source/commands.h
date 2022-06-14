@@ -25,16 +25,15 @@ struct commandLevel_st
 	}
 };
 
-class cCommands
-{
+class cCommands {
 private:
 	std::vector< commandLevel_st *> clearance;
 	COMMANDMAP_ITERATOR				cmdPointer;
 	TARGETMAP_ITERATOR				targPointer;
 	std::string						commandString;
 
-	void			InitClearance( void );
-	void			CommandReset( void );
+	void			InitClearance();
+	void			CommandReset();
 public:
 	UI08			NumArguments( void );
 	SI32			Argument( UI08 argNum );
@@ -55,7 +54,8 @@ public:
 
 	CommandMapEntry *CommandDetails( const std::string& cmdName );
 
-	cCommands();
+	cCommands() = default;
+	auto startup() ->void ;
 	~cCommands();
 
 	void			Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled );

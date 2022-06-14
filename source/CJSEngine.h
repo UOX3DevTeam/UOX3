@@ -85,8 +85,7 @@ public:
 	void		ReleaseObject( IUEEntries IType, void *index );
 };
 
-class CJSEngine
-{
+class CJSEngine {
 private:
 	typedef std::vector< CJSRuntime * >					RUNTIMELIST;
 	typedef std::vector< CJSRuntime * >::iterator		RUNTIMELIST_ITERATOR;
@@ -96,9 +95,11 @@ private:
 
 public:
 
-	CJSEngine();
+	CJSEngine() = default;
 	~CJSEngine();
 
+	auto startup() ->void ;
+	
 	JSRuntime *	GetRuntime( UI08 runTime ) const;
 	JSContext * GetContext( UI08 runTime ) const;
 	JSObject *	GetObject( UI08 runTime ) const;
