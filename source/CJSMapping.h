@@ -59,7 +59,7 @@ private:
 	void		 Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 public:
-	CJSMapping( );
+	CJSMapping() = default;
 	~CJSMapping();
 	void	 ResetDefaults( void );
 

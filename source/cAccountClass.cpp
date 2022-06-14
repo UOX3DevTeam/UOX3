@@ -41,10 +41,7 @@ cAccountClass::cAccountClass():m_sAccountsDirectory(".\\")
 	actbInvalid.wAccountIndex = AB_INVALID_ID;
 }
 //
-cAccountClass::cAccountClass( const std::string &sAccountsPath )
-{
-	// Call into the initialize
-	cAccountClass();
+cAccountClass::cAccountClass( const std::string &sAccountsPath ):cAccountClass(){
 	// Set accounts path.
 	try
 	{
@@ -55,6 +52,7 @@ cAccountClass::cAccountClass( const std::string &sAccountsPath )
 		throw;
 	}
 }
+
 //
 cAccountClass::~cAccountClass()
 {

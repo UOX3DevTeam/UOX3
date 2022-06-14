@@ -37,7 +37,7 @@ private:
 	UI32			ScheduledUpdate;
 
 public:
-	cHTMLTemplate();
+	cHTMLTemplate() ;
 	~cHTMLTemplate();
 	void			Process( void );
 	void			Poll( void );
@@ -60,7 +60,7 @@ private:
 	std::vector < cHTMLTemplate* > Templates;
 
 public:
-	cHTMLTemplates();
+	cHTMLTemplates() = default;
 	~cHTMLTemplates();
 
 	void Load( void );

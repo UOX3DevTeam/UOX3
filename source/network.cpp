@@ -519,11 +519,13 @@ void cNetworkStuff::CheckMessage( void )
 
 cNetworkStuff::cNetworkStuff() : peakConnectionCount( 0 ) // Initialize sockets
 {
+}
+auto cNetworkStuff::startup() ->void {
 	FD_ZERO( &conn );
 	sockInit();
 	LoadFirewallEntries();
-}
 
+}
 CSocket *cNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
 	if( s >= connClients.size() )

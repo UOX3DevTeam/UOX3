@@ -92,8 +92,9 @@ private:
 
 	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
-	CMapHandler();
+	CMapHandler() = default;
 	~CMapHandler();
+	auto startup() ->void ;
 
 	void		Save( void );
 	void		Load( void );

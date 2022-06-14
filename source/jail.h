@@ -55,8 +55,8 @@ class JailSystem
 private:
 	std::vector< JailCell > jails;
 public:
-	JailSystem();
-	~JailSystem();
+	JailSystem() = default;
+	~JailSystem() = default;
 	void	ReadSetup( void );
 	void	ReadData( void );
 	void	WriteData( void );

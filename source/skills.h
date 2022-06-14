@@ -140,8 +140,8 @@ private:
 	bool AdvanceSkill( CChar *s, UI08 sk, bool skillused );
 
 public:
-	cSkills( void );
-	~cSkills( void );
+	cSkills();
+	~cSkills();
 
 	SI32 CalcRankAvg( CChar *player, createEntry& skillMake );
 
