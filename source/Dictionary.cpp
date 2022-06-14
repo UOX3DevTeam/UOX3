@@ -151,8 +151,8 @@ auto CDictionary::parseFile(const std::string &dictionaryfile) ->bool {
 							if (line!= "}"){
 								auto [key,value] = oldstrutil::split(line, "=") ;
 								try {
-									auto number = std::stoi(line,nullptr,0) ;
-									msgdata.insert_or_assign(number, line);
+									auto number = std::stoi(key,nullptr,0) ;
+									msgdata.insert_or_assign(number, value);
 								}
 								catch(...){
 									// just skip this, no idea what it is
