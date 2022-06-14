@@ -1,11 +1,15 @@
 #ifndef __UOXMAP_CLASSES_H__
 #define __UOXMAP_CLASSES_H__
 
-#include "power.h"
 #include <cstdint>
 #include <sstream>
+#include <array>
+
+#include "power.h"
 #include "MultiMul.hpp"
 #include "osunique.hpp"
+//===========================================================
+// the following two are slated for removal
 struct Static_st {
 	UI16 itemid;
 	UI08 xoff;
@@ -17,6 +21,7 @@ struct map_st {
 	UI16 id;
 	SI08 z;
 };
+//==========================================================
 
 enum TileFlags {
 	// Flag:				Also known as:
@@ -52,7 +57,7 @@ enum TileFlags {
 	TF_DOOR,
 	TF_STAIRBACK,			// "ClimbableBit1"
 	TF_STAIRRIGHT,			// "ClimbableBit2"
-
+	
 	// Following flags were added in HS expansion? Purpose unknown
 	TF_ALPHABLEND,
 	TF_USENEWART,
@@ -64,15 +69,72 @@ enum TileFlags {
 	TF_COUNT
 };
 
+//===============================================
+// Just so people know, I am not against using "typedefs" (using = ) for types.  But if there is a "standard"
+// then it makes sense to use it.  UOX3 has a mix of using "using =" "properly" and "improperly"
+// "Using =" can be valuable to convey to the maintainer, what this type is suppose to be (not just the memory
+// allocation). Like "using tileid_t = std::uint16_t", and then use tileid_t for any time
+// you are conveying tileid information.  It makes the code more readable, etc.  But, just using U16 versus
+// std::uint16_t doesn't help make the code more maintable.  I would "love" to define the "types" that are being
+// being used throughout UOX3, create a "using = " set, and then use them constintently through the code.
+// Would be far easier to debug, understand, etc.  As I said, UOX3 has this a few places, but not constinently.
+// Now, if you are borrowning classes from other projects/libraries, it is reasonable for the borrowed classes
+// interface to only expose the standard (std::uint16_t, or unsigned short, etc).
+// Oh well, rant done.
 //=======================================================================================
 // Pre declare tileinfo so we can make it a friend of CBaseTile, CTile, and CLand
 class tileinfo ;
+enum tiletype_t {terrain,art};
+
+// A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a static tile)
+// We keept this for when we load the world, this should/could probably replace the CTileUni thing
+struct tile_t {
+	std::uint16_t tileid ;	// for instance, this should be a tileid_t , that would make sense!
+	tiletype_t type ;
+	int altitude ;
+	std::uint16_t static_hue ;
+	union {
+		const CTile *artInfo ;
+		const CLand *terrainInfo ;
+	};
+	constexpr static std::array<std::uint16_t,11> terrainVoids{
+		430,431,432,
+		433,434,475,
+		580,610,611,
+		612,613
+	};
+	tile_t(tiletype_t type= tiletype_t::terrain) :type(type),tileid(0),altitude(0),static_hue(0),artInfo(nullptr){}
+	auto isVoid() const ->bool {
+		auto rvalue = false ;
+		if (type == tiletype_t::terrain){
+			auto iter = std::find_if(terrainVoids.begin(),terrainVoids.end(),[this](const std::uint16_t &value){
+				return tileid == value ;
+			});
+			rvalue = iter != terrainVoids.end() ;
+		}
+		return rvalue ;
+	}
+	auto isMountain() const ->bool {
+		auto rvalue = false ;
+		if (type == tiletype_t::art){
+			rvalue = ((tileid >= 431) && (tileid<=432)) || ((tileid >= 467) && (tileid<=474)) ||
+			((tileid >= 543) && (tileid<=560)) || ((tileid >= 1754) && (tileid<=1757)) ||
+			((tileid >= 1787) && (tileid<=1789)) || ((tileid >= 1821) && (tileid<=1824)) ||
+			((tileid >= 1851) && (tileid<=1854)) || ((tileid >= 1881) && (tileid<=1884)) ;
+		}
+		return rvalue ;
+	}
+};
 
 //=======================================================================================
+// Frankly, these chould/should have been structures, There really isn't a rason to make the
+// data private, and then expose everything with accessors.  Just adds a lot of verbage,
+// that can clutter when maintaining.  Oh well, we stay compatable for now.
 class CBaseTile {
 	friend tileinfo ;
 protected:
-	std::bitset<64 >	flags;	// We are goint to use a 64 bit value here, so speicify 64 bit.  This one day may be changed
+	std::bitset<64> flags; // We are going to use a 64 bit value here, so speicify 64 bit.
+					// This one day may be changed to a vector of bools, but for now
 	std::string name;
 	
 public:
@@ -80,6 +142,8 @@ public:
 		flags.reset();
 	}
 	virtual ~CBaseTile() =default ;
+	// This doesnt seem to be used, but I wonder about DFN overloads?
+	//
 	/*
 	 auto Flag(UI08 part) const  ->std::uint8_t {
 	 auto mFlags = static_cast<std::uint32_t>(flags.to_ulong());
@@ -134,39 +198,34 @@ public:
 	CTile() :CBaseTile(), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 ) {
 	}
 	~CTile() = default ;
-	UI16 Unknown1() const{return unknown1;}
-	UI08 Unknown2() const{return unknown2;}
-	UI08 Unknown3() const{return unknown3;}
-	UI08 Unknown4() const{return unknown4;}
-	UI08 Unknown5() const{return unknown5;}
-	UI08 Hue() const{return hue;}
-	UI08 Quantity() const{return quantity;}
-	UI16 Animation() const	{return animation;}
-	UI08 Weight() const{return weight;}
-	SI08 Layer() const{return layer;}
-	SI08 Height() const{return height;}
+	auto Unknown1() const ->std::uint16_t {return unknown1;}
+	auto Unknown2() const ->std::uint8_t {return unknown2;}
+	auto Unknown3() const ->std::uint8_t {return unknown3;}
+	auto Unknown4() const ->std::uint8_t {return unknown4;}
+	auto Unknown5() const ->std::uint8_t {return unknown5;}
+	auto Hue() const ->std::uint8_t {return hue;}
+	auto Quantity() const ->std::uint8_t {return quantity;}
+	auto Animation() const ->std::uint16_t {return animation;}
+	auto Weight() const ->std::uint8_t {return weight;}
+	auto Layer() const ->std::int8_t {return layer;}
+	auto Height() const ->std::int8_t {return height;}
 	auto ClimbHeight() const ->std::int8_t {
 		if (CheckFlag(TF_CLIMBABLE)) {
 			return height/2 ;
 		}
 		return height ;
 	}
-	void Unknown1( UI16 newVal )	{unknown1 = newVal;}
-	void Unknown2( UI08 newVal )	{unknown2 = newVal;}
-	void Unknown3( UI08 newVal )	{unknown3 = newVal;}
-	void Unknown4( UI08 newVal )	{unknown4 = newVal;}
-	void Unknown5( UI08 newVal )	{unknown5 = newVal;}
-	void Animation( UI16 newVal )	{animation = newVal;}
-	void Weight( UI08 newVal ){	weight = newVal;}
-	void Layer( SI08 newVal ){layer = newVal;}
-	void Height( SI08 newVal ){height = newVal;}
-	void Hue( UI08 newVal )	{hue = newVal;}
-	void Quantity( UI08 newVal )	{quantity = newVal;}
-	/*
-	 void Name( const char *newVal ) {
-	 strncopy( (char *)name,21, newVal, 20 );
-	 }
-	 */
+	void Unknown1(std::uint16_t newVal) {unknown1 = newVal;}
+	void Unknown2(std::uint8_t newVal) {unknown2 = newVal;}
+	void Unknown3(std::uint8_t newVal) {unknown3 = newVal;}
+	void Unknown4(std::uint8_t newVal) {unknown4 = newVal;}
+	void Unknown5(std::uint8_t newVal) {unknown5 = newVal;}
+	void Animation(std::uint16_t newVal) {animation = newVal;}
+	void Weight(std::uint8_t newVal) {weight = newVal;}
+	void Layer(std::int8_t newVal) {layer = newVal;}
+	void Height(std::int8_t newVal) {height = newVal;}
+	void Hue(std::uint8_t newVal) {hue = newVal;}
+	void Quantity(std::uint8_t newVal) {quantity = newVal;}
 };
 //=======================================================================================
 class CLand : public CBaseTile {
@@ -203,32 +262,31 @@ public:
 
 
 //=================================================================================================================
-// Is this used for anything?
-//
-class CTileUni : public CBaseTile
-{
+//    We should consdier replacing this wtih tile_t
+// 	Hmm,
+class CTileUni : public CBaseTile {
 private:
-	SI08 baseZ;
-	UI08 mType;		// 0 = Terrain, 1 = Item
-	UI16 mID;
-	SI08 top;
-	SI08 height;
+	std::int8_t baseZ;
+	std::uint8_t mType; // 0 = Terrain, 1 = Item (as much as uox3 used, enum, why isn't this?
+	std::uint16_t mID;
+	std::int8_t top;
+	std::int8_t height;
 	
 public:
 	CTileUni() :CBaseTile(), baseZ( 0 ), mType( 0 ), mID( 0 ), top( 0 ), height( 0 ) {
 	}
 	~CTileUni() =default;
-	SI08 BaseZ( void ) const {return baseZ;}
-	SI08 Top( void ) const {return top;}
-	UI08 Type( void ) const	{return mType;}
-	SI08 Height( void )  const {return height;}
-	UI16 GetID( void )  const {return mID;}
+	auto BaseZ() const ->std::int8_t {return baseZ;}
+	auto Top() const ->std::int8_t {return top;}
+	auto Type() const	->std::uint8_t {return mType;}
+	auto Height() const ->std::int8_t {return height;}
+	auto GetID() const ->std::uint16_t {return mID;}
 	
-	void BaseZ(SI08 nVal) {baseZ = nVal;}
-	void Type(UI08 nVal) {mType = nVal;}
-	void Top(SI08 nVal) {top = nVal;}
-	void Height(SI08 nval) {height = nval;}
-	void SetID(UI16 nval) { mID = nval;}
+	void BaseZ(std::int8_t nVal) {baseZ = nVal;}
+	void Type(std::uint8_t nVal) {mType = nVal;}
+	void Top(std::int8_t nVal) {top = nVal;}
+	void Height(std::int8_t nval) {height = nval;}
+	void SetID(std::uint16_t nval) { mID = nval;}
 };
 #endif
 

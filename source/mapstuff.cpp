@@ -15,7 +15,7 @@ using namespace std::string_literals ;
 
 CMulHandler *Map				= nullptr;
 
-const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
+//const UI16 LANDDATA_SIZE		= 0x4000; //(512 * 32)
 
 //! these are the fixed record lengths as determined by the .mul files from OSI
 //! i made them longs because they are used to calculate offsets into the files
@@ -664,8 +664,9 @@ SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 bool CMulHandler::IsValidTile( UI16 tileNum )
 {
 	bool retVal = true;
-	if( tileNum == INVALIDID  )
+	if( (tileNum == INVALIDID) || (tileNum >= tile_info.sizeArt())) {
 		retVal = false;
+	}
 
 	return retVal;
 }
@@ -675,16 +676,16 @@ bool CMulHandler::IsValidTile( UI16 tileNum )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches data about a specific tile from memory. Non-High Seas version
 //o-----------------------------------------------------------------------------------------------o
-CTile& CMulHandler::SeekTile( UI16 tileNum ) {
+CTile& CMulHandler::SeekTile(UI16 tileNum) {
 	//7.0.8.2 tiledata and earlier
-	if( !IsValidTile( tileNum ) )
-	{
+	if( !IsValidTile( tileNum ) ) {
 		Console.warning( oldstrutil::format("Invalid tile access, the offending tile number is %u", tileNum) );
 		static CTile emptyTile;
 		return emptyTile;
 	}
-	else
+	else{
 		return tile_info.art(tileNum);
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -692,16 +693,15 @@ CTile& CMulHandler::SeekTile( UI16 tileNum ) {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches data about a specific land tile from memory. Non-High Seas version
 //o-----------------------------------------------------------------------------------------------o
-CLand& CMulHandler::SeekLand( UI16 landNum )
-{
-	if( landNum == INVALIDID || landNum >= LANDDATA_SIZE )
-	{
+CLand& CMulHandler::SeekLand(UI16 landNum){
+	if( landNum == INVALIDID || landNum >=tile_info.sizeTerrain()){
 		Console.warning( oldstrutil::format("Invalid land access, the offending land number is %u", landNum) );
 		static CLand emptyTile;
 		return emptyTile;
 	}
-	else
+	else {
 		return tile_info.terrain(landNum);
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -711,10 +711,11 @@ CLand& CMulHandler::SeekLand( UI16 landNum )
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::InsideValidWorld( SI16 x, SI16 y, UI08 worldNumber )
 {
-	if( worldNumber >= MapList.size() )
-		return false;
-
-	return ( ( x >= 0 && x < MapList[worldNumber].xBlock ) && ( y >= 0 && y < MapList[worldNumber].yBlock ) );
+	auto rvalue = false ;
+	if( worldNumber < MapList.size() ){
+		rvalue = (( x >= 0 && x < MapList[worldNumber].xBlock) && ( y >= 0 && y < MapList[worldNumber].yBlock ) );
+	}
+	return rvalue ;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1257,6 +1258,20 @@ MapData_st& CMulHandler::GetMapData( UI08 worldNumber )
 UI08 CMulHandler::MapCount( void ) const
 {
 	return static_cast<UI08>(MapList.size());
+}
+//================================================================================================
+auto CMulHandler::artAt(std::int16_t x, std::int16_t y, std::uint8_t world) ->std::vector<tile_t> {
+	auto oldart = CStaticIterator( x,  y, world) ;
+	auto rvalue = std::vector<tile_t>() ;
+	auto entry = oldart.First() ;
+	while (entry) {
+		auto tile = tile_t(tiletype_t::art) ;
+		tile.tileid = entry->itemid ;
+		tile.artInfo = &tile_info.art(tile.tileid) ;
+		tile.altitude = entry->zoff ;
+		rvalue.push_back(tile) ;
+	}
+	return rvalue ;
 }
 
 //o-----------------------------------------------------------------------------------------------o

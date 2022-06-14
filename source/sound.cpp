@@ -316,157 +316,155 @@ auto cEffects::doSocketMusic( CSocket *s ) ->void {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
-{
-	if( !ValidateObject( mChar ) )
-		return;
-
-	if( mChar->GetVisible() != VT_VISIBLE || ( mChar->IsGM() || mChar->IsCounselor() ))
-		return;
-
-	if( mChar->IsFlying() ) // No footstep sounds for flying gargoyles
-		return;
-
-	enum TileType
-	{
-		TT_NORMAL = 0,
-		TT_WATER,
-		TT_STONE,
-		TT_OTHER,
-		TT_WOODEN,
-		TT_GRASS
-	};
-	TileType tileType = TT_NORMAL;
-
-	bool onHorse = mChar->IsOnHorse();
-	bool isRunning = ( mChar->GetRunning() > 0 );
-
-	CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-	Static_st *stat = msi.Next();
-
-	if( stat )
-	{
-		CTile& tile = Map->SeekTile( stat->itemid );
-		if( tile.CheckFlag( TF_WET ) )
-			tileType = TT_WATER;
-		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
-		{
-			auto pos = tile.Name().find("wood") ;
-			if (pos != std::string::npos){
-				tileType = TT_WOODEN;
-			}
-			else {
-				pos = tile.Name().find("ston") ;
-				if (pos != std::string::npos){
-					tileType = TT_STONE;
-				}
-				else {
-					pos = tile.Name().find("gras") ;
-					if (pos != std::string::npos){
-						tileType = TT_GRASS;
+auto cEffects::playTileSound( CChar *mChar, CSocket *mSock ) ->void {
+	if( ValidateObject( mChar ) ){
+		if( mChar->GetVisible() == VT_VISIBLE && ( !mChar->IsGM() && !mChar->IsCounselor() )){
+			if( !mChar->IsFlying() ){ // No footstep sounds for flying gargoyles
+				enum TileType{
+					TT_NORMAL = 0,
+					TT_WATER,
+					TT_STONE,
+					TT_OTHER,
+					TT_WOODEN,
+					TT_GRASS
+				};
+				TileType tileType = TT_NORMAL;
+				
+				bool onHorse = mChar->IsOnHorse();
+				bool isRunning = ( mChar->GetRunning() > 0 );
+				auto artwork = Map->artAt(mChar->GetX(), mChar->GetY(), mChar->WorldNumber() ) ;
+				std::sort(artwork.begin(),artwork.end(),[](const tile_t &lhs,const tile_t &rhs){
+					return (lhs.altitude + lhs.artInfo->Height()) < (rhs.altitude + rhs.artInfo->Height()) ;
+				});
+				// now find the static that works for us
+				// start from the bottom of the vector, as we want the first one that is below us
+				auto alt = mChar->GetZ()  ; // so we dont keep calling it
+				auto iter = std::find_if(artwork.rbegin(),artwork.rend(),[alt](const tile_t &value){
+					return alt >= (value.altitude + value.artInfo->Height()) ;
+				});
+				if( iter != artwork.rend() )
+				{
+					if (iter->artInfo->CheckFlag( TF_WET )) {
+						tileType = TT_WATER;
 					}
-
+					if (iter->artInfo->CheckFlag( TF_SURFACE) || iter->artInfo->CheckFlag( TF_CLIMBABLE) ) {
+						auto pos = iter->artInfo->Name().find("wood");
+						if (pos != std::string::npos){
+							tileType = TT_WOODEN;
+						}
+						else {
+							pos = iter->artInfo->Name().find("ston");
+							if (pos != std::string::npos){
+								tileType = TT_STONE;
+							}
+							else {
+								pos = iter->artInfo->Name().find("gras");
+								if (pos != std::string::npos){
+									tileType = TT_GRASS;
+								}
+							}
+						}
+					}
 				}
-
-			}
-		}
-	}
-
-	UI16 soundID = 0;
-	switch( mChar->GetStep() )	// change step info
-	{
-		case 0:
-			if( !isRunning || ( isRunning && onHorse ) )
-				mChar->SetStep( 1 );	// step 2
-			else if( isRunning || ( !isRunning && onHorse ) )
-				mChar->SetStep( 2 );	// Running step 2
-			switch( tileType )
-			{
-				case TT_NORMAL:
-					if( onHorse )
+				
+				UI16 soundID = 0;
+				switch( mChar->GetStep() )	// change step info
+				{
+					case 0:
+						if( !isRunning || ( isRunning && onHorse ) )
+							mChar->SetStep( 1 );	// step 2
+						else if( isRunning || ( !isRunning && onHorse ) )
+							mChar->SetStep( 2 );	// Running step 2
+						switch( tileType )
+						{
+							case TT_NORMAL:
+								if( onHorse )
+								{
+									if( isRunning )
+										soundID = 0x012A;
+									else
+										soundID = 0x024C;
+								}
+								else
+									soundID = 0x012B;
+								break;
+							case TT_WATER:	// water
+								break;
+							case TT_STONE: // stone
+								soundID = 0x0130;
+								break;
+							case TT_WOODEN: // wooden
+								soundID = 0x0123;
+								break;
+							case TT_OTHER: // other
+								[[fallthrough]];
+							case TT_GRASS: // grass
+								soundID = 0x012D;
+								break;
+						}
+						break;
+					case 1:
+						if( !isRunning || ( isRunning && onHorse ) )
+							mChar->SetStep( 0 );	// step 1
+						else if( isRunning || ( !isRunning && onHorse ) )
+							mChar->SetStep( 3 );	// Running step 4
+						switch( tileType )
+						{
+							case TT_NORMAL:
+								if( onHorse )
+								{
+									if( isRunning )
+										soundID = 0x0129;
+									else
+										soundID = 0x024B;
+								}
+								else
+									soundID = 0x012C;
+								break;
+							case TT_WATER:	// water
+								break;
+							case TT_STONE: // stone
+								soundID = 0x012F;
+								break;
+							case TT_WOODEN: // wooden
+								soundID = 0x0122;
+								break;
+							case TT_OTHER: // other
+								[[fallthrough]];
+							case TT_GRASS: // grass
+								soundID = 0x012E;
+								break;
+						}
+						break;
+					case 2:
+						mChar->SetStep( 1 ); // Running step 3
+						break;
+					case 3:
+						mChar->SetStep( 0 ); // Running step 0
+						break;
+					default:
+						mChar->SetStep( 1 );	// pause
+						break;
+				}
+				
+				if( soundID )			// if we have a valid sound
+				{
+					if( mSock == nullptr && ValidateObject( mChar ) )
 					{
-						if( isRunning )
-							soundID = 0x012A;
-						else		
-							soundID = 0x024C;
+						// It's an NPC!
+						auto  nearbyChars = FindNearbyPlayers( mChar );
+						std::for_each(nearbyChars.begin(),nearbyChars.end(),[soundID,this](CSocket *entry) {
+							PlaySound( entry, soundID, false );
+						});
+						return;
 					}
 					else
-						soundID = 0x012B;
-					break;
-				case TT_WATER:	// water
-					break;
-				case TT_STONE: // stone
-					soundID = 0x0130;
-					break;
-				case TT_WOODEN: // wooden
-					soundID = 0x0123;
-					break;
-				case TT_OTHER: // other
-					[[fallthrough]];
-				case TT_GRASS: // grass
-					soundID = 0x012D;
-					break;
-			}
-			break;
-		case 1:
-			if( !isRunning || ( isRunning && onHorse ) )
-				mChar->SetStep( 0 );	// step 1
-			else if( isRunning || ( !isRunning && onHorse ) )
-				mChar->SetStep( 3 );	// Running step 4
-			switch( tileType )
-			{
-				case TT_NORMAL:
-					if( onHorse )
 					{
-						if( isRunning )
-							soundID = 0x0129;
-						else
-							soundID = 0x024B;
+						// It's a player!
+						PlaySound( mSock, soundID, true );
 					}
-					else
-						soundID = 0x012C;
-					break;
-				case TT_WATER:	// water
-					break;
-				case TT_STONE: // stone
-					soundID = 0x012F;
-					break;
-				case TT_WOODEN: // wooden
-					soundID = 0x0122;
-					break;
-				case TT_OTHER: // other
-					[[fallthrough]];
-				case TT_GRASS: // grass
-					soundID = 0x012E;
-					break;
+				}
 			}
-			break;
-		case 2:
-			mChar->SetStep( 1 ); // Running step 3
-			break;
-		case 3:
-			mChar->SetStep( 0 ); // Running step 0
-			break;
-		default:
-			mChar->SetStep( 1 );	// pause
-			break;
-	}
-
-	if( soundID )			// if we have a valid sound
-	{
-		if( mSock == nullptr && ValidateObject( mChar ) )
-		{
-			// It's an NPC!
-			auto  nearbyChars = FindNearbyPlayers( mChar );
-			std::for_each(nearbyChars.begin(),nearbyChars.end(),[soundID,this](CSocket *entry) {
-				PlaySound( entry, soundID, false );
-			});
-			return;
-		}
-		else
-		{
-			// It's a player!
-			PlaySound( mSock, soundID, true );
 		}
 	}
 }

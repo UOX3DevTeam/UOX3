@@ -34,8 +34,7 @@ struct nodeFCost
 	}
 };
 
-class cMovement
-{
+class cMovement {
 	// Function declarations
 public:
 	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, UI16 maxSteps = 0 );
@@ -54,12 +53,11 @@ private:
 	bool	isValidDirection( UI08 dir );
 	bool	isFrozen( CChar *c, CSocket *mSock, SI16 sequence );
 	bool	isOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
-
+	
 	bool	IsOk( CTileUni *xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk );
 	void	GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top );
 	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceID, bool waterWalk );
 
-	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
 	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
 	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID );
 
