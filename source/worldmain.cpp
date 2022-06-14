@@ -570,7 +570,7 @@ void CWorldMain::SaveNewWorld( bool x )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all town regions and saves them to disk
 //o-----------------------------------------------------------------------------------------------o
-void CWorldMain::RegionSave( void )
+void CWorldMain::RegionSave()
 {
 	std::string regionsFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
 	std::ofstream regionsDestination( regionsFile.c_str() );
