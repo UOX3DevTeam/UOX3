@@ -395,7 +395,7 @@ auto startInitialize(CServerData &serverdata) ->void {
 		}
 		
 		// moved all the map loading into CMulHandler
-		Map->Load();
+		//Map->load();
 		
 		Skills->Load();
 		
@@ -2235,7 +2235,7 @@ auto InitClasses()->void {
 	aCommands.startup() ;
 	// Need to do map
 	aNetwork.startup() ;
-	aMap.LoadMapsDFN() ;
+	aMap.load() ;
 	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();

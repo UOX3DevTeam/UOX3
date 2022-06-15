@@ -8,14 +8,7 @@
 #include "power.h"
 #include "MultiMul.hpp"
 #include "osunique.hpp"
-//===========================================================
-// the following two are slated for removal
-struct Static_st {
-	UI16 itemid;
-	UI08 xoff;
-	UI08 yoff;
-	SI08 zoff;
-};
+
 
 //==========================================================
 
