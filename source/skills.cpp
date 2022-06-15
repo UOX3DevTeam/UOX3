@@ -259,9 +259,9 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 				}
 				else	{	// or it could be a map only
 					// manually calculating the ID's if a maptype
-					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					CLand& land = Map->SeekLand( map1.id );
-					if( (land.Name() != "rock" ) || (land.Name() != "mountain" )  || (land.Name() != "cave" ) )
+					auto map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
+					
+					if( (map1.name() != "rock" ) || (map1.name() != "mountain" )  || (map1.name() != "cave" ) )
 						return true;
 				}
 			}

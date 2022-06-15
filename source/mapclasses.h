@@ -17,10 +17,6 @@ struct Static_st {
 	SI08 zoff;
 };
 
-struct map_st {
-	UI16 id;
-	SI08 z;
-};
 //==========================================================
 
 enum TileFlags {
@@ -213,50 +209,28 @@ public:
 	auto TextureID() const ->std::uint16_t {return textureID;}
 	auto TextureID( std::uint16_t newVal )->void {textureID = newVal;}
 	auto isRoadID() const ->bool {
-		auto iter = std::find_if(roadIDs.begin(),roadIDs.end(),[this](const std::uint16_t &value){
-			return textureID == value ;
-		});
-		return iter != roadIDs.end() ;
+		auto rvalue = false ;
+		for (auto j=0 ; j < roadIDs.size();j+=2) {
+			if ( textureID >= roadIDs[j] && textureID <= roadIDs[j+1]) {
+				rvalue = true ;
+				break;
+			}
+		}
+		return rvalue ;
 	}
 };
 
 
-//=================================================================================================================
-//    We should consdier replacing this wtih tile_t
-// 	Hmm,
-class CTileUni : public CBaseTile {
-private:
-	std::int8_t baseZ;
-	std::uint8_t mType; // 0 = Terrain, 1 = Item (as much as uox3 used, enum, why isn't this?
-	std::uint16_t mID;
-	std::int8_t top;
-	std::int8_t height;
-	
-public:
-	CTileUni() :CBaseTile(), baseZ( 0 ), mType( 0 ), mID( 0 ), top( 0 ), height( 0 ) {
-	}
-	~CTileUni() =default;
-	auto BaseZ() const ->std::int8_t {return baseZ;}
-	auto Top() const ->std::int8_t {return top;}
-	auto Type() const	->std::uint8_t {return mType;}
-	auto Height() const ->std::int8_t {return height;}
-	auto GetID() const ->std::uint16_t {return mID;}
-	
-	void BaseZ(std::int8_t nVal) {baseZ = nVal;}
-	void Type(std::uint8_t nVal) {mType = nVal;}
-	void Top(std::int8_t nVal) {top = nVal;}
-	void Height(std::int8_t nval) {height = nval;}
-	void SetID(std::uint16_t nval) { mID = nval;}
-};
+
 
 enum tiletype_t {terrain,art,dyn};
 
 // A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a static tile)
-// We keept this for when we load the world, this should/could probably replace the CTileUni thing
+
 struct tile_t {
 	std::uint16_t tileid ;	// for instance, this should be a tileid_t , that would make sense!
 	tiletype_t type ;
-	int altitude ;
+	std::int8_t altitude ;
 	std::uint16_t static_hue ;
 	union {
 		const CTile *artInfo ;

@@ -722,7 +722,7 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, std::vector<tile_t> &xyblock
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID )
+//|	Function	-	void GetBlockingDynamics( SI16 x, SI16 y, std::vector<tile_t> xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 //o-----------------------------------------------------------------------------------------------o
@@ -755,10 +755,10 @@ auto cMovement::GetBlockingDynamics( SI16 x, SI16 y,std::vector<tile_t> &xyblock
 							
 							if( !Map->multiExists( multiID )) {
 								Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
-								const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
+								auto map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
 								
-								CLand& land = Map->SeekLand( map1.id );
-								if( land.CheckFlag( TF_WET ) ) // is it water?
+								
+								if( map1.CheckFlag( TF_WET ) ) // is it water?
 									tItem->SetID( 0x4001 );
 								else
 									tItem->SetID( 0x4064 );
@@ -2237,10 +2237,10 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	SI08 landtop = 0;
 	bool landBlock = true;
 
-	const map_st map	= Map->SeekMap( x, y, world );
-	CLand& land	= Map->SeekLand( map.id );
-	landBlock = land.CheckFlag( TF_BLOCKING );
-	if( landBlock && waterwalk && land.CheckFlag( TF_WET ))
+	auto map	= Map->SeekMap( x, y, world );
+	
+	landBlock = map.CheckFlag( TF_BLOCKING );
+	if( landBlock && waterwalk && map.CheckFlag( TF_WET ))
 		landBlock = false;
 	
 	
@@ -2249,7 +2249,7 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	GetBlockingStatics( x, y, xyblock, xycount, world );
 	GetBlockingDynamics( x, y, xyblock, xycount, world, instanceID );
 
-	bool considerLand = !Map->IsIgnored( map.id );
+	bool considerLand = !Map->IsIgnored( map.tileid );
 	GetAverageZ( world, x, y, landz, landcent, landtop );
 
 	bool isset = false;
@@ -2375,21 +2375,21 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceID );
 
-	const map_st map	= Map->SeekMap( x, y, c->WorldNumber() );
-	CLand& land	= Map->SeekLand( map.id );
+	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
+	
 	
 	// Does landtile in target location block movement?
-	landBlock = land.CheckFlag( TF_BLOCKING );
+	landBlock = map.CheckFlag( TF_BLOCKING );
 	
 	// If it does, but it's WET and character can swim, it doesn't block!
 	if( landBlock && waterWalk )
 	{
 		// Don't count the underwater coastal landtiles as blocking
-		if( land.CheckFlag( TF_WET ) || ( land.TextureID() >= 76 && land.TextureID() <= 111 ))
+		if( map.CheckFlag( TF_WET ) || ( map.terrainInfo->TextureID() >= 76 && map.terrainInfo->TextureID() <= 111 ))
 			landBlock = false;
 	}
 	
-	bool considerLand = Map->IsIgnored( map.id ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
+	bool considerLand = Map->IsIgnored( map.tileid ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 
 	SI08 startTop = 0;
 	SI08 startz = 0;

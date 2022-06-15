@@ -511,21 +511,19 @@ void InfoTarget( CSocket *s )
 	const SI16 y		= s->GetWord( 13 );
 	const UI16 tileID	= s->GetWord( 17 );
 
-	if( tileID == 0 )
-	{
+	if(tileID == 0) {
 		UI08 worldNumber = 0;
 		CChar *mChar = s->CurrcharObj();
 		if( ValidateObject( mChar ) )
 			worldNumber = mChar->WorldNumber();
 
 		// manually calculating the ID's if it's a maptype
-		const map_st map1 = Map->SeekMap( x, y, worldNumber );
+		auto map1 = Map->SeekMap( x, y, worldNumber );
 		GumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
-		mapStat.AddData( "Tilenum", map1.id, 5 );
-		CLand& land = Map->SeekLand( map1.id );
-		mapStat.AddData( "Flags", land.FlagsNum(), 1 );
-		mapStat.AddData( "Name", land.Name() );
+		mapStat.AddData( "Tilenum", map1.tileid, 5 );
+		mapStat.AddData( "Flags", map1.terrainInfo->FlagsNum(), 1 );
+		mapStat.AddData( "Name", map1.name() );
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	}
 	else

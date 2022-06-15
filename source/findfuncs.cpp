@@ -301,10 +301,8 @@ bool inMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
 		
-		const map_st map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
-		CLand& land = Map->SeekLand( map1.id );
-		if( land.CheckFlag( TF_WET ) ) // is it water?
-		{
+		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
+		if( map1.CheckFlag( TF_WET ) ) {// is it water?
 			// NOTE: We have an intrinsic issue here: It is of type CMultiObj, not CBoat
 			// So either: 1) Let the user fix it in the worldfile once its saved
 			// 2) Destroy the CMultiObj, create a new CBoatObj, and set to the same serial

@@ -196,7 +196,7 @@ public:
 	bool			IsValidTile( UI16 tileNum );
 	CTile &		SeekTile( UI16 tileNum );
 	CLand &		SeekLand( UI16 landNum );
-	map_st		SeekMap( SI16 x, SI16 y, UI08 worldNumber );
+	tile_t		SeekMap( SI16 x, SI16 y, UI08 worldNumber );
 	
 	// misc functions
 	bool			ValidSpawnLocation( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID, bool checkWater = true );

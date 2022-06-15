@@ -557,10 +557,8 @@ UI16 CMulHandler::MultiTile( CItem *i, SI16 x, SI16 y, SI08 oldz, bool checkVisi
 	if( !multiExists( multiID ))
 	{
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
-		const map_st map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
-		
-		CLand& land = Map->SeekLand( map1.id );
-		if( land.CheckFlag( TF_WET ) ) // is it water?
+		auto map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
+		if( map1.CheckFlag( TF_WET ) ) // is it water?
 			i->SetID( 0x4001 );
 		else
 			i->SetID( 0x4064 );
@@ -645,14 +643,14 @@ auto CMulHandler::DynTile( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, UI16 ins
 //o-----------------------------------------------------------------------------------------------o
 SI08 CMulHandler::MapElevation( SI16 x, SI16 y, UI08 worldNumber )
 {
-	const map_st map = SeekMap( x, y, worldNumber );
+	auto map = SeekMap( x, y, worldNumber );
 	// make sure nothing can move into black areas
-	if( 430 == map.id || 431 == map.id || 432 == map.id ||
-	   433 == map.id || 434 == map.id || 475 == map.id ||
-	   580 == map.id || 610 == map.id || 611 == map.id ||
-	   612 == map.id || 613 == map.id )
+	if( 430 == map.tileid || 431 == map.tileid || 432 == map.tileid ||
+	   433 == map.tileid || 434 == map.tileid || 475 == map.tileid ||
+	   580 == map.tileid || 610 == map.tileid || 611 == map.tileid ||
+	   612 == map.tileid || 613 == map.tileid )
 		return ILLEGAL_Z;
-	return map.z;
+	return map.altitude;
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -846,13 +844,13 @@ Static_st *CStaticIterator::Next( void )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	map_st SeekMap( SI16 x, SI16 y, UI08 worldNumber )
+//|	Function	-	tile_t SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetches map data for a specific map/world
 //o-----------------------------------------------------------------------------------------------o
-map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
-{
-	map_st map = {0, 0};
+auto CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber ) ->tile_t {
+
+	auto map = tile_t() ;
 	if( worldNumber >= MapList.size() )
 		return map;
 
@@ -887,8 +885,9 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 	}
 	else
 	{
-		mFile->getUShort( &map.id );
-		mFile->getChar( &map.z );
+		mFile->getUShort( &map.tileid );
+		mFile->getChar( &map.altitude );
+		map.terrainInfo = &SeekLand(map.tileid);
 	}
 
 	return map;
@@ -1090,56 +1089,35 @@ bool CMulHandler::DoesDynamicBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if the map tile at the given coordinates block movement
 //o-----------------------------------------------------------------------------------------------o
-bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad )
-{
-	if( checkWater || waterWalk )
-	{
-		const map_st map = SeekMap( x, y, worldNumber );
-		if(( checkMultiPlacement && map.z == z ) || ( !checkMultiPlacement && map.z >= z && map.z - z < 16 ))
-		{
-			if( z == ILLEGAL_Z )
-				return true;
-
-			UI16 landID;
-			CLand& land = SeekLand( map.id );
-			if( waterWalk )
-			{
-				if( !land.CheckFlag( TF_WET ) )
-					return true;
+bool CMulHandler::DoesMapBlock( SI16 x, SI16 y, SI08 z, UI08 worldNumber, bool checkWater, bool waterWalk, bool checkMultiPlacement, bool checkForRoad ) {
+	auto rvalue = false ;
+	if( checkWater || waterWalk ) {
+		auto map = SeekMap( x, y, worldNumber );
+		if(( checkMultiPlacement && map.altitude == z ) || ( !checkMultiPlacement && map.altitude >= z && map.altitude - z < 16 )) {
+			if( z == ILLEGAL_Z ) {
+				rvalue = true ;
 			}
-			else
-			{
-				if( land.CheckFlag( TF_WET ) || land.CheckFlag( TF_BLOCKING ))
-					return true;
+			else if( waterWalk ) {
+				if( !map.CheckFlag(TF_WET)) {
+					rvalue = true ;
+				}
 			}
-			
-			landID = land.TextureID();			
-			
+			else {
+				if( map.CheckFlag( TF_WET ) || map.CheckFlag( TF_BLOCKING )){
+					rvalue = true ;
+				}
+			}
 			// Check that player is not attempting to place a multi on a road
-			if( checkWater && checkMultiPlacement && checkForRoad )
-			{
-				// List of road tiles, or road-related tiles, on which houses cannot be placed
-				std::vector<UI16> roadIDs = {
-					0x0009, 0x0015, // furrows
-					0x0071, 0x0078, // dirt
-					0x00E8, 0x00EB, // dirt
-					0x0150, 0x015C, // furrows
-					0x0442, 0x0479, // sand stone
-					0x0501, 0x0510, // sand stone
-					0x07AE, 0x07B1, // dirt
-					0x3FF4, 0x3FF4, // dirt
-					0x3FF8, 0x3FFB	// dirt
-				};
-
-				for( int i = 0; i < roadIDs.size(); i += 2 )
-				{
-					if( landID >= roadIDs[i] && landID <= roadIDs[static_cast<size_t>(i) + 1] )
-						return true;
+			if (!rvalue){
+				if( checkWater && checkMultiPlacement && checkForRoad ) {
+					if (map.terrainInfo->isRoadID()) {
+						rvalue = true  ;
+					}
 				}
 			}
 		}
 	}
-	return false;
+	return rvalue ;
 }
 
 //o-----------------------------------------------------------------------------------------------o

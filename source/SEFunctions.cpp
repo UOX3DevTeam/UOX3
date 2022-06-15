@@ -1869,8 +1869,8 @@ JSBool SE_GetTileIDAtMapCoord( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	UI16 xLoc			= (UI16)JSVAL_TO_INT( argv[0] );
 	UI16 yLoc			= (UI16)JSVAL_TO_INT( argv[1] );
 	UI08 wrldNumber		= (UI08)JSVAL_TO_INT( argv[2] );
-	const map_st mMap	= Map->SeekMap( xLoc, yLoc, wrldNumber );
-	*rval				= INT_TO_JSVAL( mMap.id );
+	auto mMap	= Map->SeekMap( xLoc, yLoc, wrldNumber );
+	*rval				= INT_TO_JSVAL( mMap.tileid );
 	return JS_TRUE;
 }
 
@@ -2387,12 +2387,11 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		else		// or it could be a map only
 		{
 			// manually calculating the ID's if a maptype
-			const map_st map1 = Map->SeekMap( targetX, targetY, worldNumber );
+			auto map1 = Map->SeekMap( targetX, targetY, worldNumber );
 			GumpDisplay mapStat( mySock, 300, 300 );
 			mapStat.SetTitle( "Item [Map]" );
 			mapStat.AddData( "ID", targetID, 5 );
-			CLand& land = Map->SeekLand( map1.id );
-			mapStat.AddData( "Name", land.Name() );
+			mapStat.AddData( "Name", map1.name() );
 			mapStat.Send( 4, false, INVALIDSERIAL );
 		}
 	}

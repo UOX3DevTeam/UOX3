@@ -66,7 +66,7 @@ class CSpeechQueue;
 class CTEffect;
 class CThreadQueue;
 class CTile;
-class CTileUni;
+struct tile_t ;
 class CTownRegion;
 class CVersionClass;
 class CWeather;
