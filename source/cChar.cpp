@@ -3072,10 +3072,10 @@ bool CChar::Save( std::ofstream &outStream )
 	{
 		SI16 mX = GetX();
 		SI16 mY = GetY();
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( mX >= 0 && ( mX < mMap.xBlock || mX >= 7000 ) )
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		if( mX >= 0 && ( mX < width || mX >= 7000 ) )
 		{
-			if( mY >= 0 && ( mY < mMap.yBlock || mY >= 7000 ) )
+			if( mY >= 0 && ( mY < height || mY >= 7000 ) )
 			{
 				DumpHeader( outStream );
 				DumpBody( outStream );
@@ -4296,9 +4296,9 @@ bool CChar::LoadRemnants( void )
 		const SI16 mx = GetX();
 		const SI16 my = GetY();
 
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		const bool overRight = ( mx > mMap.xBlock );
-		const bool overBottom = ( my > mMap.yBlock );
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		const bool overRight = ( mx > width );
+		const bool overBottom = ( my > height );
 
 		if( acct == AB_INVALID_ID && ( ( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ) )
 		{

@@ -1417,6 +1417,13 @@ auto CMulHandler::LoadDFNOverrides()->void{
 	}
 }
 
+//=============================================================================================
+auto CMulHandler::sizeOfMap(std::uint8_t worldNumber) const ->std::pair<int,int> {
+	return std::make_pair(MapList[worldNumber].xBlock,MapList[worldNumber].yBlock) ;
+}
+auto CMulHandler::diffCountForMap(std::uint8_t worldNumber) const ->std::pair<int,int> {
+	return std::make_pair(MapList[ worldNumber].staticsDiffIndex.size(),MapList[worldNumber].mapDiffList.size()) ;
+}
 
 
 

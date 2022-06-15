@@ -228,11 +228,11 @@ CMapWorld::CMapWorld() : upperArrayX( 0 ), upperArrayY( 0 ), resourceX( 0 ), res
 //o-----------------------------------------------------------------------------------------------o
 CMapWorld::CMapWorld( UI08 worldNum )
 {
-	MapData_st& mMap	= Map->GetMapData( worldNum );
-	upperArrayX			= static_cast<SI16>(mMap.xBlock / MapColSize);
-	upperArrayY			= static_cast<SI16>(mMap.yBlock / MapRowSize);
-	resourceX			= static_cast<UI16>(mMap.xBlock / cwmWorldState->ServerData()->ResourceAreaSize());
-	resourceY			= static_cast<UI16>(mMap.yBlock / cwmWorldState->ServerData()->ResourceAreaSize());
+	auto [width,height] = Map->sizeOfMap(worldNum);
+	upperArrayX			= static_cast<SI16>(width / MapColSize);
+	upperArrayY			= static_cast<SI16>(height/ MapRowSize);
+	resourceX			= static_cast<UI16>(width / cwmWorldState->ServerData()->ResourceAreaSize());
+	resourceY			= static_cast<UI16>(height / cwmWorldState->ServerData()->ResourceAreaSize());
 
 	size_t resourceSize = (static_cast<size_t>(resourceX) * static_cast<size_t>(resourceY));
 	if( resourceSize < 1 )	// ALWAYS initialize at least one resource region.
@@ -736,8 +736,8 @@ void CMapHandler::Save( void )
 	UI08 i = 0;
 	for( i = 0; i < Map->MapCount(); ++i )
 	{
-		MapData_st& mMap = Map->GetMapData( i );
-		onePercent += (SI32)(mMap.xBlock / MapColSize) * (mMap.yBlock / MapRowSize);
+		auto [width,height] = Map->sizeOfMap(i);
+		onePercent += static_cast<std::int32_t>((width/MapColSize) * (height/MapRowSize));
 	}
 	onePercent /= 100.0f;
 
