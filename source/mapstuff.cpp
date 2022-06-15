@@ -1,7 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
 #include "townregion.h"
-#include "fileio.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
@@ -99,23 +98,6 @@ auto CMulHandler::loadMapsDFN(const std::string &uodir) ->std::map<int,mapdfndat
 	return results ;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UOXFile * loadFile( const std::string& fullName )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Prints status of loading a file in UOX3 console
-//o-----------------------------------------------------------------------------------------------o
-UOXFile * loadFile( const std::string& fullName )
-{
-	UOXFile *toLoad = new UOXFile( fullName.c_str(), "rb" );
-	Console << "\t" << fullName << "\t\t";
-
-	if( toLoad != nullptr && toLoad->ready() )
-		Console.PrintDone();
-	else
-		Console.PrintSpecial( CBLUE, "not found" );
-
-	return toLoad;
-}
 
 //=======================================================================
 auto CMulHandler::loadDFNOverrides() ->void {

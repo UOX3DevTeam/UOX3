@@ -46,7 +46,6 @@
     <ClInclude Include="..\source\Dictionary.h" />
     <ClInclude Include="..\source\enums.h" />
     <ClInclude Include="..\source\EventTimer.hpp" />
-    <ClInclude Include="..\source\fileio.h" />
     <ClInclude Include="..\source\funcdecl.h" />
     <ClInclude Include="..\source\GenericList.h" />
     <ClInclude Include="..\source\gump.h" />

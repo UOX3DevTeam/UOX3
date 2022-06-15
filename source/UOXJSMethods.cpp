@@ -5844,7 +5844,7 @@ JSBool CAccount_SaveAccounts( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
-// UOXFile constructor !
+// UOXCFile constructor !
 JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	UOXFileWrapper *toAdd = new UOXFileWrapper;
