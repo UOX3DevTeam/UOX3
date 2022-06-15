@@ -1,6 +1,7 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
 #include "GenericList.h"
+#include <array>
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -21,7 +22,7 @@ protected:
 	std::bitset< 8 >	bools;
 	std::bitset< 8 >	priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
 
-	char				name2[MAX_NAME];
+	std::string 	name2;
 	SERIAL				creator;	// Store the serial of the player made this item
 	std::string			desc;
 	std::string			eventName;	// Name of custom event item belongs to
@@ -129,12 +130,12 @@ public:
 	void			SetDispellable( bool newValue );
 	void			SetDivineLock( bool newValue );
 
-	const char *	GetName2( void ) const;
-	SERIAL			GetCreator( void ) const;
+	auto			GetName2() const ->const std::string&;
+	SERIAL		GetCreator( void ) const;
 	std::string 	GetDesc( void ) const;
 	std::string 	GetEvent( void ) const;
 
-	void			SetName2( const char *newValue );
+	auto			SetName2(const std::string &value) ->void;
 	void			SetCreator( SERIAL newValue );
 	void			SetDesc( std::string newValue );
 	void			SetEvent( std::string newValue );

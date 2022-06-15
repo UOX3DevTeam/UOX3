@@ -664,7 +664,7 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictE
 	CItem *toCreate = Items->CreateScriptItem( nullptr, mChar, partID, 1, OT_ITEM, false, 0x0 );
 	if( !ValidateObject( toCreate ) )
 		return false;
-	toCreate->SetName( oldstrutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetName( oldstrutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2().c_str() ) );
 	toCreate->SetLocation( corpse );
 	toCreate->SetOwner( corpse->GetOwnerObj() );
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
