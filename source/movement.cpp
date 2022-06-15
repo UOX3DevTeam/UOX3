@@ -2369,7 +2369,6 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	UI16 instanceID		= c->GetInstanceID();
-	UI16 i				= 0;
 	bool landBlock = true;
 	
 	std::vector<tile_t> xyblock ;
