@@ -232,8 +232,8 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	const UI08 worldNum = mChar->WorldNumber();
 	const UI16 instanceID = mChar->GetInstanceID();
 
-	MapData_st& mMap = Map->GetMapData( worldNum );
-	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() ) {
+	auto [width,height] = Map->sizeOfMap(worldNum);
+	if( ( x+spaceX > width || x-spaceX < 0 || y+spaceY > height || y-spaceY < 0 ) && !mChar->IsGM() ) {
 		mSock->sysmessage( 577 );
 		return false;
 	}

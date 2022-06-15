@@ -128,9 +128,9 @@ void CPCharLocBody::CopyData( CChar &toCopy )
 	pStream.WriteShort( 19, 0xFFFF );
 	pStream.WriteShort( 21, 0xFFFF );
 	pStream.WriteLong( 23, 0x0000 );
-	MapData_st& mMap = Map->GetMapData( toCopy.WorldNumber() );
-	UI16 mapWidth = mMap.xBlock;
-	UI16 mapHeight = mMap.yBlock;
+	auto [width,height] = Map->sizeOfMap(toCopy.WorldNumber());
+	auto mapWidth = static_cast<std::uint16_t>(width);
+	auto mapHeight = static_cast<std::uint16_t>(height);
 	pStream.WriteShort( 27, mapWidth );
 	pStream.WriteShort( 29, mapHeight );
 }
@@ -7808,11 +7808,10 @@ void CPEnableMapDiffs::CopyData( void )
 	pStream.WriteShort( 1, static_cast<SI32>(pSize) );
 	pStream.WriteLong( 5, mapCount+1 );
 
-	for( UI08 i = 0; i < mapCount; ++i )
-	{
-		MapData_st &mMap = Map->GetMapData( i );
-		pStream.WriteLong( 9+(static_cast<size_t>(i)*8), static_cast<UI32>(mMap.staticsDiffIndex.size()) );
-		pStream.WriteLong( 13+(static_cast<size_t>(i)*8), static_cast<UI32>(mMap.mapDiffList.size()) );	
+	for( UI08 i = 0; i < mapCount; ++i ) {
+		auto [stadif,mapdif] = Map->diffCountForMap(i);
+		pStream.WriteLong( 9+(static_cast<size_t>(i)*8), static_cast<UI32>(stadif) );
+		pStream.WriteLong( 13+(static_cast<size_t>(i)*8), static_cast<UI32>(mapdif) );
 	}
 }
 

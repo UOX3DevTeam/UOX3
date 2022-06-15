@@ -188,6 +188,8 @@ public:
 	// ==================================================================================
 	// Transisition methods
 	auto artAt(std::int16_t x, std::int16_t y, std::uint8_t world) ->std::vector<tile_t> ;
+	auto sizeOfMap(std::uint8_t worldNumber) const ->std::pair<int,int> ;
+	auto diffCountForMap(std::uint8_t worldNumber) const ->std::pair<int,int> ;
 	// look at tile functions
 	void			MultiArea( CMultiObj *i, SI16 &x1, SI16 &y1, SI16 &x2, SI16 &y2 );
 	bool			multiExists(UI16 multinum);

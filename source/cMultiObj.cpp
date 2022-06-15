@@ -808,8 +808,8 @@ bool CMultiObj::Save( std::ofstream &outStream )
 	if( !isFree() )
 	{
 		rvalue = true;
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		if( GetCont() != nullptr || ( GetX() > 0 && GetX() < width && GetY() <height ) )
 		{
 			DumpHeader( outStream );
 			DumpBody( outStream );

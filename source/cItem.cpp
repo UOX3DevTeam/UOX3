@@ -1353,8 +1353,8 @@ bool CItem::Save( std::ofstream &outStream )
 {
 	if( isFree() )
 		return false;
-	MapData_st& mMap = Map->GetMapData( worldNumber );
-	if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+	auto [width,height] = Map->sizeOfMap(worldNumber);
+	if( GetCont() || ( GetX() > 0 && GetX() < width && GetY() < height ) )
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
@@ -2052,10 +2052,10 @@ bool CItem::LoadRemnants( void )
 	SetSerial( serial );
 
 	// Tauriel adding region pointers
-	if( contObj == nullptr || (UI64)contObj == INVALIDSERIAL )
+	if( !contObj|| (UI64)contObj == INVALIDSERIAL )
 	{
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		if( GetX() < 0 || GetY() < 0 || GetX() > width || GetY() > height )
 			return false;
 
 		// Calculate which townregion item exists in, based on its own location
