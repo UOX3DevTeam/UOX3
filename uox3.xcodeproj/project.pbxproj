@@ -26,7 +26,6 @@
 		648AF7A427CFF2CD009327DE /* cSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71427CFF2CC009327DE /* cSocket.cpp */; };
 		648AF7A527CFF2CD009327DE /* IDXMul.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71627CFF2CC009327DE /* IDXMul.cpp */; };
 		648AF7A627CFF2CD009327DE /* queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71727CFF2CC009327DE /* queue.cpp */; };
-		648AF7A727CFF2CD009327DE /* UOPInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71827CFF2CC009327DE /* UOPInterface.cpp */; };
 		648AF7A827CFF2CD009327DE /* SEFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71B27CFF2CC009327DE /* SEFunctions.cpp */; };
 		648AF7A927CFF2CD009327DE /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71D27CFF2CC009327DE /* archive.cpp */; };
 		648AF7AA27CFF2CD009327DE /* lineofsight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF72027CFF2CC009327DE /* lineofsight.cpp */; };
@@ -146,7 +145,6 @@
 		648AF71527CFF2CC009327DE /* mapstuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mapstuff.h; sourceTree = "<group>"; };
 		648AF71627CFF2CC009327DE /* IDXMul.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDXMul.cpp; sourceTree = "<group>"; };
 		648AF71727CFF2CC009327DE /* queue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = queue.cpp; sourceTree = "<group>"; };
-		648AF71827CFF2CC009327DE /* UOPInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UOPInterface.cpp; sourceTree = "<group>"; };
 		648AF71927CFF2CC009327DE /* CResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CResponse.h; sourceTree = "<group>"; };
 		648AF71A27CFF2CC009327DE /* UOXJSPropertySpecs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UOXJSPropertySpecs.h; sourceTree = "<group>"; };
 		648AF71B27CFF2CC009327DE /* SEFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SEFunctions.cpp; sourceTree = "<group>"; };
@@ -245,9 +243,7 @@
 		648AF77827CFF2CD009327DE /* PageVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageVector.h; sourceTree = "<group>"; };
 		648AF77927CFF2CD009327DE /* StringUtility.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringUtility.cpp; sourceTree = "<group>"; };
 		648AF77A27CFF2CD009327DE /* quantityfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = quantityfuncs.cpp; sourceTree = "<group>"; };
-		648AF77B27CFF2CD009327DE /* fileio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fileio.h; sourceTree = "<group>"; };
 		648AF77C27CFF2CD009327DE /* typedefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = typedefs.h; sourceTree = "<group>"; };
-		648AF77D27CFF2CD009327DE /* UOPInterface.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = UOPInterface.hpp; sourceTree = "<group>"; };
 		648AF77E27CFF2CD009327DE /* wholist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wholist.h; sourceTree = "<group>"; };
 		648AF77F27CFF2CD009327DE /* cAccountClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cAccountClass.cpp; sourceTree = "<group>"; };
 		648AF78027CFF2CD009327DE /* ObjectFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectFactory.cpp; sourceTree = "<group>"; };
@@ -381,7 +377,6 @@
 				648AF6F727CFF2CC009327DE /* dist.cpp */,
 				648AF79327CFF2CD009327DE /* effect.cpp */,
 				648AF77027CFF2CD009327DE /* fileio.cpp */,
-				648AF77B27CFF2CD009327DE /* fileio.h */,
 				648AF73A27CFF2CD009327DE /* findfuncs.cpp */,
 				648AF76727CFF2CD009327DE /* gump.h */,
 				648AF74C27CFF2CD009327DE /* gumps.cpp */,
@@ -468,8 +463,6 @@
 				648AF76D27CFF2CD009327DE /* MultiMul.hpp */,
 				648AF73227CFF2CC009327DE /* UOPData.cpp */,
 				648AF78827CFF2CD009327DE /* UOPData.hpp */,
-				648AF71827CFF2CC009327DE /* UOPInterface.cpp */,
-				648AF77D27CFF2CD009327DE /* UOPInterface.hpp */,
 			);
 			name = UOData;
 			sourceTree = "<group>";
@@ -657,7 +650,6 @@
 				648AF79927CFF2CD009327DE /* CPacketReceive.cpp in Sources */,
 				648AF7D627CFF2CD009327DE /* CPacketSend.cpp in Sources */,
 				648AF7CA27CFF2CD009327DE /* scriptc.cpp in Sources */,
-				648AF7A727CFF2CD009327DE /* UOPInterface.cpp in Sources */,
 				648AF7DA27CFF2CD009327DE /* ObjectFactory.cpp in Sources */,
 				648AF7B327CFF2CD009327DE /* MultiMul.cpp in Sources */,
 				648AF79D27CFF2CD009327DE /* IP4Address.cpp in Sources */,

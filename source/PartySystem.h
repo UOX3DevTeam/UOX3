@@ -80,7 +80,6 @@ class ObjectFactory;
 class Script;
 class ScriptSection;
 class SpellInfo;
-class UOXFile;
 
 /** In order to avoid finger-aches :)
  */

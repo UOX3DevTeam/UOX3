@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "fileio.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "cSpawnRegion.h"
@@ -14,194 +13,16 @@
 #include <cmath>
 #include <algorithm>
 #include <sstream>
-#include "UOPInterface.hpp"
 #include <algorithm>
+#include <cstdint>
+#include <fstream>
+#include <tuple>
 
 #if PLATFORM != WINDOWS
 #  include <fcntl.h>     // open
 #  include <sys/mman.h>  // mmap, mmunmap
 #endif
 
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UOXFile::UOXFile( const char* const fileName, const char * const )
-//|						: memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Support read-only binary mode.
-//o-----------------------------------------------------------------------------------------------o
-UOXFile::UOXFile( const char* const fileName, const char * const )
-: memPtr( 0 ), fileSize( 0 ), bIndex( 0 ), usingUOP( false )
-{
-	auto strfilename = std::string( fileName );
-	auto filepath = std::filesystem::path( strfilename );
-	if( filepath.extension() == ".uop" )
-	{
-		// UOP File, get the map #
-		auto nameonly = filepath.filename();
-		auto mapnum = std::stoi( nameonly.string().substr( 3, 1 ));
-		try {
-			auto rvalue = UOP::loadUOP( strfilename, mapnum );
-			this->memPtr = std::get<1>( rvalue );
-			if( this->memPtr != nullptr )
-			{
-				this->fileSize = std::get<0>( rvalue );
-				usingUOP = true;
-			}
-		}
-		catch (...) {
-			if( this->memPtr != nullptr )
-			{
-				delete[] memPtr;
-				memPtr=nullptr;
-			}
-			this->memPtr= nullptr;
-			this->fileSize = 0;
-		}
-		return;
-	}
-
-#if PLATFORM == WINDOWS
-	HANDLE hFile = ::CreateFileA(
-								 fileName,
-								 GENERIC_READ,
-								 FILE_SHARE_READ,
-								 nullptr,
-								 OPEN_EXISTING,
-								 FILE_FLAG_SEQUENTIAL_SCAN,
-								 nullptr
-								 );
-
-	if( hFile == INVALID_HANDLE_VALUE )
-		return;
-
-	// Store the size of the file, it's used to construct
-	//  the end iterator
-	fileSize = ::GetFileSize( hFile, nullptr );
-
-	HANDLE hMap = ::CreateFileMapping( hFile, nullptr, PAGE_READONLY, 0, 0, nullptr );
-
-	if( hMap == nullptr )
-	{
-		::CloseHandle( hFile );
-		return;
-	}
-
-	memPtr = (char*)::MapViewOfFile( hMap, FILE_MAP_READ, 0, 0, 0 );
-
-	// We hold both the file handle and the memory pointer.
-	// We can close the hMap handle now because Windows holds internally
-	//  a reference to it since there is a view mapped.
-	::CloseHandle( hMap );
-
-	// It seems like we can close the file handle as well (because
-	//  a reference is hold by the filemap object).
-	::CloseHandle( hFile );
-
-#else
-	// postfix version
-	// open the file
-	SI32 fd = open(fileName,
-#ifdef O_NOCTTY
-				   O_NOCTTY | // if stdin was closed then opening a file
-				   // would cause the file to become the controlling
-				   // terminal if the filename refers to a tty. Setting
-				   // O_NOCTTY inhibits this.
-#endif
-				   O_RDONLY);
-
-	if( fd == -1 )
-		return;
-
-	// call fstat to find get information about the file just
-	// opened (size and file type)
-	struct stat stat_buf;
-	if(( fstat( fd, &stat_buf ) != 0 ) || !S_ISREG( stat_buf.st_mode ))
-	{	// if fstat returns an error or if the file isn't a
-		// regular file we give up.
-		close( fd );
-		return;
-	}
-
-	fileSize = stat_buf.st_size;
-	// perform the actual mapping
-	memPtr = (char*)mmap( 0, stat_buf.st_size, PROT_READ, MAP_SHARED, fd, 0 );
-	// it is safe to close() here. POSIX requires that the OS keeps a
-	// second handle to the file while the file is mmapped.
-	close( fd );
-#endif
-}
-
-UOXFile::~UOXFile()
-{
-	if( usingUOP )
-	{
-		delete[] memPtr;
-		memPtr = nullptr;
-	}
-	if( memPtr )
-	{
-#if PLATFORM == WINDOWS
-		UnmapViewOfFile( memPtr );
-#else
-		munmap(memPtr, fileSize);
-#endif
-	}
-}
-
-void UOXFile::seek( size_t offset, UI08 whence )
-{
-	if( whence == SEEK_SET )	// seek from beginnng
-		bIndex = offset;
-	else if ( whence == SEEK_CUR )	// seek from current
-		bIndex += offset;
-	else if ( whence == SEEK_END )	// seek from end
-		bIndex = fileSize + offset;
-}
-
-SI32 UOXFile::getch( void )
-{
-	return *(memPtr + bIndex++);
-}
-
-void UOXFile::getUChar( UI08 *buff, UI32 number )
-{
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
-void UOXFile::getChar( SI08 *buff, UI32 number )
-{
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
-void UOXFile::getUShort( UI16 *buff, UI32 number )
-{
-	number *= sizeof(UI16);
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
-void UOXFile::getShort( SI16 *buff, UI32 number )
-{
-	number *= sizeof(SI16);
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
-void UOXFile::getULong( UI32 *buff, UI32 number )
-{
-	number *= sizeof(UI32);
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
-
-void UOXFile::getLong( SI32 *buff, UI32 number )
-{
-	number *= sizeof(SI32);
-	memcpy( buff, memPtr+bIndex, number);
-	bIndex += number;
-}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void LoadCustomTitle( void )

@@ -174,9 +174,6 @@
     <ClInclude Include="..\source\enums.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\fileio.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\mapclasses.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
