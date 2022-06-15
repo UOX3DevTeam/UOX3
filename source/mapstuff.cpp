@@ -420,10 +420,9 @@ SI08 CMulHandler::StaticTop( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, SI08 m
 {
 	SI08 top = ILLEGAL_Z;
 
-	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
-	{
-		SI08 tempTop = (SI08)(stat->zoff + TileHeight(stat->itemid));
+	auto artwork = Map->artAt(x, y, worldNumber );
+	for (auto &tile:artwork){
+		SI08 tempTop = (SI08)(tile.altitude + tile.artInfo->ClimbHeight());
 		if( ( tempTop <= oldz + maxZ ) && ( tempTop > top ) )
 			top = tempTop;
 	}
@@ -902,19 +901,16 @@ map_st CMulHandler::SeekMap( SI16 x, SI16 y, UI08 worldNumber )
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, bool checkWater )
 {
-	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
-	{
-		const SI08 elev = static_cast<SI08>(stat->zoff + TileHeight( stat->itemid ));
-		CTile& tile = SeekTile( stat->itemid );
-		if( checkWater )
-		{
-			if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) ))
+	auto artwork = Map->artAt( x, y, worldNumber );
+	for (auto &tile:artwork){
+		const SI08 elev = static_cast<SI08>(tile.altitude + tile.artInfo->ClimbHeight());
+		if( checkWater ) {
+			if( elev >= oldz && tile.altitude <= oldz && ( tile.CheckFlag( TF_BLOCKING ) || tile.CheckFlag( TF_WET ) ))
 				return true;
 		}
 		else
 		{
-			if( elev >= oldz && stat->zoff <= oldz && ( tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET ) ))
+			if( elev >= oldz && tile.altitude <= oldz && ( tile.CheckFlag( TF_BLOCKING ) && !tile.CheckFlag( TF_WET ) ))
 				return true;
 		}
 	}
@@ -928,21 +924,21 @@ bool CMulHandler::DoesStaticBlock( SI16 x, SI16 y, SI08 oldz, UI08 worldNumber, 
 //o-----------------------------------------------------------------------------------------------o
 bool CMulHandler::CheckStaticFlag( SI16 x, SI16 y, SI08 z, UI08 worldNumber, TileFlags toCheck, bool checkSpawnSurface )
 {
-	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
+	auto artwork = Map->artAt( x, y, worldNumber );
+	for( auto &tile:artwork )
 	{
-		const SI08 elev = static_cast<SI08>( stat->zoff );
-		const SI08 tileHeight = static_cast<SI08>( TileHeight( stat->itemid ) );
+		const SI08 elev = static_cast<SI08>( tile.altitude );
+		const SI08 tileHeight = static_cast<SI08>( tile.artInfo->ClimbHeight()  );
 		if( checkSpawnSurface )
 		{
 			// Special case used when checking for spawn surfaces
-			if(( z >= elev && z <= ( elev + tileHeight )) && !SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+			if(( z >= elev && z <= ( elev + tileHeight )) && !tile.CheckFlag( toCheck ) )
 				return false;
 		}
 		else
 		{
 			// Generic check exposed to JS
-			if(( z >= elev && z <= ( elev + tileHeight )) && SeekTile( stat->itemid ).CheckFlag( toCheck ) )
+			if(( z >= elev && z <= ( elev + tileHeight )) && tile.CheckFlag( toCheck ) )
 				return true; // Found static with specified flag
 		}		
 	}

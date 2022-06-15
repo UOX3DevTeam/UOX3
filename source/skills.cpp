@@ -250,10 +250,10 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 			}
 			if( targetZ >= 0 ){// mountain not likely to be below 0 (but you never know, do you? =)
 				if( targetID1 != 0 && targetID2 != 0 ){	// we might have a static rock or mountain
-					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					for( Static_st *stat = msi.Next(); stat != nullptr; stat = msi.Next() ){
-						CTile& tile = Map->SeekTile( stat->itemid );
-						if( targetZ == stat->zoff && ( ( tile.Name()!="rock") || ( tile.Name()!="mountain" ) || (tile.Name()!="cave" ) ) )
+					auto artwork = Map->artAt(targetX, targetY, mChar->WorldNumber());
+					for( auto &tile:artwork){
+						auto name = tile.name();
+						if( targetZ == tile.altitude && ( ( name!="rock") || ( name!="mountain" ) || (name!="cave" ) ) )
 							return true;
 					}
 				}
