@@ -341,7 +341,6 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		default: return true;
 	}
 
-	CStaticIterator *msi;
 	UI08 worldNumber = b->WorldNumber();
 	UI16 instanceID = b->GetInstanceID();
 	SI08 boatZ = b->GetZ();
@@ -378,20 +377,16 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 					return true;
 			}
 			else
-			{ 
-				// Static tile
-				msi = new CStaticIterator( x, y, worldNumber );
-				for( Static_st *stat = msi->First(); stat != nullptr; stat = msi->Next() )
-				{
-					CTile& tile = Map->SeekTile( stat->itemid );
-					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.Name() == "water") )
+			{
+				auto artwork = Map->artAt(x, y, worldNumber);
+				for (auto &tile:artwork){
+					SI08 zt = tile.altitude + tile.height();
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.name() == "water") )
 					{
-						delete msi;
+
 						return true;
 					}
 				}
-				delete msi;
 			}
 		}
 	}

@@ -245,7 +245,7 @@ inline auto line3D::Projection2D( void ) const ->line2D  {
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o-----------------------------------------------------------------------------------------------o
-bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
+bool MapTileBlocks( CSocket *mSock, bool nostatic, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
 {
 	// Map tile at previous coordinate along the LoS path
 	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
@@ -276,7 +276,7 @@ bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y
 		if( ( startLocZ > mz2 && z2Top < mz2 ) ||
 			( startLocZ < mz2 && z2Top > mz2 ) ||
 			( startLocZ > mz1 && ( mz1 < mz2 && ( mz2 > z2Top ) ) ) ||
-		   ( stat == nullptr &&															// Ensure there is no static item
+		   ( nostatic &&															// Ensure there is no static item
 			( ( mID1 >= 431  && mID1 <= 432  ) || ( mID1 >= 467  && mID1 <= 474  ) ||
 			 (   mID1 >= 543  && mID1 <= 560  ) || ( mID1 >= 1754 && mID1 <= 1757 ) ||
 			 (   mID1 >= 1787 && mID1 <= 1789 ) || ( mID1 >= 1821 && mID1 <= 1824 ) ||
@@ -630,15 +630,13 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	for( i = 0; i < collisioncount; ++i )
 	{
 		vector3D& checkLoc = collisions[i];
-
-		CStaticIterator msi( checkLoc.x, checkLoc.y, worldNumber );
-		Static_st *stat = msi.First();
+		auto artwork = Map->artAt(checkLoc.x, checkLoc.y, worldNumber );
 
 		// Texture mapping
 		if( checkLoc.x == destX && checkLoc.y == destY )
 		{
 			// Don't overshoot. We don't care about height of tile BEHIND our target
-			if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop ) )
+			if( MapTileBlocks( mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x, checkLoc.y, worldNumber, destZTop ) )
 			{
 				//delete[] collisions;
 				return blocked;
@@ -647,7 +645,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		else
 		{
 			// Check next tile along the LoS path
-			if( MapTileBlocks( mSock, stat, lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber, destZTop ) )
+			if( MapTileBlocks( mSock, artwork.empty(), lineofsight, checkLoc.x, checkLoc.y, checkLoc.z, checkLoc.x + sgn_x, checkLoc.y + sgn_y, worldNumber, destZTop ) )
 			{
 				//delete[] collisions;
 				return blocked;
@@ -655,21 +653,19 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		}
 
 		// Statics
-		while( stat != nullptr )
-		{
-			CTile& tile = Map->SeekTile( stat->itemid );
-			if(	( checkLoc.z >= stat->zoff && checkLoc.z <= ( stat->zoff + tile.Height() ) ) ||
-			   ( tile.Height() <= 2 && abs( checkLoc.z - stat->zoff ) <= dz ) )
+		for (auto &tile :artwork){
+			if(	( checkLoc.z >= tile.altitude && checkLoc.z <= ( tile.altitude + tile.height() ) ) ||
+			   ( tile.height() <= 2 && std::abs( checkLoc.z - tile.altitude ) <= dz ) )
 			{
-				losItemList[itemCount].Height(tile.Height());
-				losItemList[itemCount].SetID( stat->itemid );
-				losItemList[itemCount].Flags( tile.Flags() );
+				losItemList[itemCount].Height(tile.height());
+				losItemList[itemCount].SetID( tile.tileid );
+				losItemList[itemCount].Flags( tile.artInfo->Flags() );
 			}
 
 			++itemCount;
 			if( itemCount >= LOSXYMAX )	// don't overflow
 				break;
-			stat = msi.Next();
+			
 		}
 	}
 

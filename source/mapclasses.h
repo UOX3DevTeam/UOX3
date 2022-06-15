@@ -84,47 +84,7 @@ enum TileFlags {
 //=======================================================================================
 // Pre declare tileinfo so we can make it a friend of CBaseTile, CTile, and CLand
 class tileinfo ;
-enum tiletype_t {terrain,art};
 
-// A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a static tile)
-// We keept this for when we load the world, this should/could probably replace the CTileUni thing
-struct tile_t {
-	std::uint16_t tileid ;	// for instance, this should be a tileid_t , that would make sense!
-	tiletype_t type ;
-	int altitude ;
-	std::uint16_t static_hue ;
-	union {
-		const CTile *artInfo ;
-		const CLand *terrainInfo ;
-	};
-	constexpr static std::array<std::uint16_t,11> terrainVoids{
-		430,431,432,
-		433,434,475,
-		580,610,611,
-		612,613
-	};
-	tile_t(tiletype_t type= tiletype_t::terrain) :type(type),tileid(0),altitude(0),static_hue(0),artInfo(nullptr){}
-	auto isVoid() const ->bool {
-		auto rvalue = false ;
-		if (type == tiletype_t::terrain){
-			auto iter = std::find_if(terrainVoids.begin(),terrainVoids.end(),[this](const std::uint16_t &value){
-				return tileid == value ;
-			});
-			rvalue = iter != terrainVoids.end() ;
-		}
-		return rvalue ;
-	}
-	auto isMountain() const ->bool {
-		auto rvalue = false ;
-		if (type == tiletype_t::art){
-			rvalue = ((tileid >= 431) && (tileid<=432)) || ((tileid >= 467) && (tileid<=474)) ||
-			((tileid >= 543) && (tileid<=560)) || ((tileid >= 1754) && (tileid<=1757)) ||
-			((tileid >= 1787) && (tileid<=1789)) || ((tileid >= 1821) && (tileid<=1824)) ||
-			((tileid >= 1851) && (tileid<=1854)) || ((tileid >= 1881) && (tileid<=1884)) ;
-		}
-		return rvalue ;
-	}
-};
 
 //=======================================================================================
 // Frankly, these chould/should have been structures, There really isn't a rason to make the
@@ -287,6 +247,77 @@ public:
 	void Top(std::int8_t nVal) {top = nVal;}
 	void Height(std::int8_t nval) {height = nval;}
 	void SetID(std::uint16_t nval) { mID = nval;}
+};
+
+enum tiletype_t {terrain,art,dyn};
+
+// A structure that holds tile information. Type, id, information, altitude (if in a map), hue (if a static tile)
+// We keept this for when we load the world, this should/could probably replace the CTileUni thing
+struct tile_t {
+	std::uint16_t tileid ;	// for instance, this should be a tileid_t , that would make sense!
+	tiletype_t type ;
+	int altitude ;
+	std::uint16_t static_hue ;
+	union {
+		const CTile *artInfo ;
+		const CLand *terrainInfo ;
+	};
+	constexpr static std::array<std::uint16_t,11> terrainVoids{
+		430,431,432,
+		433,434,475,
+		580,610,611,
+		612,613
+	};
+	auto CheckFlag(TileFlags toCheck) const ->bool {
+		if (type !=tiletype_t::terrain) {
+			return artInfo->CheckFlag(toCheck);
+		}
+		return terrainInfo->CheckFlag(toCheck);
+	}
+	tile_t(tiletype_t type= tiletype_t::terrain) :type(type),tileid(0),altitude(0),static_hue(0),artInfo(nullptr){}
+	auto isVoid() const ->bool {
+		auto rvalue = false ;
+		if (type == tiletype_t::terrain){
+			auto iter = std::find_if(terrainVoids.begin(),terrainVoids.end(),[this](const std::uint16_t &value){
+				return tileid == value ;
+			});
+			rvalue = iter != terrainVoids.end() ;
+		}
+		return rvalue ;
+	}
+	auto isMountain() const ->bool {
+		auto rvalue = false ;
+		if (type != tiletype_t::terrain){
+			rvalue = ((tileid >= 431) && (tileid<=432)) || ((tileid >= 467) && (tileid<=474)) ||
+			((tileid >= 543) && (tileid<=560)) || ((tileid >= 1754) && (tileid<=1757)) ||
+			((tileid >= 1787) && (tileid<=1789)) || ((tileid >= 1821) && (tileid<=1824)) ||
+			((tileid >= 1851) && (tileid<=1854)) || ((tileid >= 1881) && (tileid<=1884)) ;
+		}
+		return rvalue ;
+	}
+	auto top() ->std::int16_t {
+		auto value = static_cast<int16_t>(altitude);
+		if (type != tiletype_t::terrain){
+			auto temp = artInfo->Height();
+			temp = (temp&0x8 ? (temp&0xF)>>1 : temp&0xF) ;
+			
+			value += temp;
+		}
+		return value ;
+	}
+	auto height() ->std::uint8_t {
+		if (type != tiletype_t::terrain){
+			return artInfo->Height();
+		}
+		return 0 ;
+	}
+	auto name() const -> std::string {
+		if (type != tiletype_t::terrain){
+			return artInfo->Name();
+		}
+		return terrainInfo->Name();
+
+	}
 };
 #endif
 

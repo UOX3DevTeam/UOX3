@@ -1899,15 +1899,17 @@ JSBool SE_StaticInRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		for( SI32 j = yLoc - radius; j <= (yLoc + radius); ++j )
 		{
-			CStaticIterator msi( xLoc, yLoc, wrldNumber );
-			for( Static_st *mRec = msi.First(); mRec != nullptr; mRec = msi.Next() )
-			{
-				if( mRec != nullptr && mRec->itemid == tileID )
-				{
-					tileFound = true;
-					break;
-				}
+			auto artwork = Map->artAt(xLoc, yLoc, wrldNumber);
+			auto iter = std::find_if(artwork.begin() , artwork.end(), [tileID](const tile_t &tile){
+				return tile.tileid == tileID ;
+			});
+			if (iter != artwork.end()){
+				tileFound = true ;
+				break;
 			}
+		}
+		if (tileFound == true ){
+			break;
 		}
 	}
 
@@ -1942,15 +1944,11 @@ JSBool SE_StaticAt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 	}
 	bool tileFound	= false;
 
-	CStaticIterator msi( xLoc, yLoc, wrldNumber );
-	for( Static_st *mRec = msi.First(); mRec != nullptr; mRec = msi.Next() )
-	{
-		if( mRec != nullptr && (!tileMatch || mRec->itemid==tileID ) )
-		{
-			tileFound = true;
-			break;
-		}
-	}
+	auto artwork = Map->artAt( xLoc, yLoc, wrldNumber);
+	auto iter = std::find_if(artwork.begin(), artwork.end(),[tileID](const tile_t &tile){
+		return tile.tileid == tileID;
+	});
+	tileFound = iter != artwork.end() ;
 	*rval			= BOOLEAN_TO_JSVAL( tileFound );
 	return JS_TRUE;
 }
@@ -2373,19 +2371,16 @@ JSBool SE_SendStaticStats( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		SI08 targetZ		= mySock->GetByte( 0x10 );
 		if( targetID != 0 )	// we might have a static rock or mountain
 		{
-			CStaticIterator msi( targetX, targetY, worldNumber );
-			CMulHandler tileXTemp;
-			for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
-			{
-				CTile& tile = Map->SeekTile( stat->itemid );
-				if( targetZ == stat->zoff )
-				{
+			auto artwork = Map->artAt(targetX, targetY, worldNumber );
+			for (auto &tile : artwork){
+				if (targetZ == tile.altitude){
 					GumpDisplay staticStat( mySock, 300, 300 );
 					staticStat.SetTitle( "Item [Static]" );
 					staticStat.AddData( "ID", targetID, 5 );
-					staticStat.AddData( "Height", tile.Height() );
-					staticStat.AddData( "Name", tile.Name() );
+					staticStat.AddData( "Height", tile.height() );
+					staticStat.AddData( "Name", tile.artInfo->Name() );
 					staticStat.Send( 4, false, INVALIDSERIAL );
+
 				}
 			}
 		}
