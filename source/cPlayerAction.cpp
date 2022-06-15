@@ -3138,8 +3138,8 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		s->objMessage( Dictionary->GetEntry( 9055, s->Language() ), i ); // [Blessed]
 	}
 
-	std::string name2( i->GetName2() );
-	if( name2 != "#" && name2 != "" )
+	
+	if( i->GetName2() != "#" && i->GetName2() != "" )
 	{
 		s->objMessage( Dictionary->GetEntry( 9402, s->Language() ), i ); // [Unidentified]
 	}
@@ -3274,13 +3274,11 @@ bool CPISingleClick::Handle( void )
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
-		std::string name2( i->GetName2() );
-		if( name2 == "#" || name2 == "" )
-		{
+		
+		if( i->GetName2() == "#" || i->GetName2() == "" ) {
 			realname += oldstrutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
 		}
-		else
-		{
+		else {
 			realname += " (unidentified)";
 		}
 	}

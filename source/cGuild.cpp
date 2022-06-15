@@ -13,6 +13,7 @@
 #include <cstdarg>
 #endif
 
+using namespace std::string_literals ;
 
 CGuildCollection *GuildSys;
 
@@ -165,19 +166,14 @@ void CGuild::Name( std::string txt )
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the abbreviation of the guild
 //o-----------------------------------------------------------------------------------------------o
-const char *CGuild::Abbreviation( void ) const
-{
+auto CGuild::Abbreviation() const ->const std::string& {
 	return abbreviation;
 }
-void CGuild::Abbreviation( const char *txt )
-{
-	if( strlen( txt ) > 3 )
-	{
-		strncopy( abbreviation,4, txt, 3 );
-		abbreviation[3] = 0;
+auto CGuild::Abbreviation( const std::string &value) ->void {
+	abbreviation = value ;
+	if (value.size() >3){
+		abbreviation = value.substr(0,3) ;
 	}
-	else
-		strcopy( abbreviation,4, txt );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1013,35 +1009,38 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 	CChar *mChar	= s->CurrcharObj();
 	CChar *gMstr	= calcCharObjFromSer( gMaster );
 	UI16 numButtons = 0, numText = 0, numColumns = 1;
-
-	char guildfealty[30], guildt[10], toggle[4];
-	strcopy( guildfealty,30, "yourself" );
+	
+	auto guildfealty = "yourself"s ;
 	if( mChar->GetGuildFealty() != mChar->GetSerial() && mChar->GetGuildFealty() != INVALIDSERIAL )
 	{
 		CChar *fChar = calcCharObjFromSer( mChar->GetGuildFealty() );
-		if( ValidateObject( fChar ) )
-			strcopy( guildfealty,30, fChar->GetNameRequest( mChar ).c_str() );
+		if( ValidateObject( fChar ) ){
+			guildfealty = fChar->GetNameRequest(mChar);
+		}
+			
 	}
-	else
+	else{
 		mChar->SetGuildFealty( mChar->GetSerial() );
-	switch( gList[trgGuild]->Type() )
-	{
+	}
+	auto guildt ="INVALID"s ;
+	switch( gList[trgGuild]->Type() ) {
 		case 0:
-			strcopy( guildt,10, " Standard" );
+			guildt = " Standard"s;
 			break;
 		case 1:
-			strcopy( guildt,10, "n Order" );
+			guildt = "n Order"s;
 			break;
 		case 2:
-			strcopy( guildt,10, " Chaos" );
+			guildt = " Chaos"s;
 			break;
 		default:
-			strcopy( guildt,10, "INVALID" );
 			break;
 	}
-	strcopy( toggle,4, "Off" );
-	if( mChar->GetGuildToggle() )
-		strcopy( toggle,4 ,"On" );
+	auto toggle = "Off"s ;
+	
+	if( mChar->GetGuildToggle() ){
+		toggle = "On"s;
+	}
 
 	std::string gName	= gList[trgGuild]->Name();
 	UI16 tCtr			= 0;
@@ -1062,8 +1061,8 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			toSend.addText( Dictionary->GetEntry( 103, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 104, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 105, sLang ) );
-			toSend.addText( oldstrutil::format(Dictionary->GetEntry( 106, sLang ), guildfealty ));
-			toSend.addText( oldstrutil::format(Dictionary->GetEntry( 107, sLang ), toggle ));
+			toSend.addText( oldstrutil::format(Dictionary->GetEntry( 106, sLang ), guildfealty.c_str() ));
+			toSend.addText( oldstrutil::format(Dictionary->GetEntry( 107, sLang ), toggle.c_str() ));
 			toSend.addText( Dictionary->GetEntry( 108, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 109, sLang ) );
 			toSend.addText( oldstrutil::format(Dictionary->GetEntry( 110, sLang ), gName.c_str()) );
@@ -1080,7 +1079,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			toSend.addText( Dictionary->GetEntry( 114, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 115, sLang ) );
 			toSend.addText( Dictionary->GetEntry( 116, sLang ) );
-			toSend.addText(oldstrutil::format( Dictionary->GetEntry( 117, sLang ), guildt ));
+			toSend.addText(oldstrutil::format( Dictionary->GetEntry( 117, sLang ), guildt.c_str() ));
 			for( tCounter = 118; tCounter <= 130; ++tCounter )
 				toSend.addText( Dictionary->GetEntry( tCounter, sLang ) );
 			break;

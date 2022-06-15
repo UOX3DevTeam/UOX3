@@ -1388,7 +1388,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 		canCarve = static_cast<UI08>(RandomNum( 0, 1 ));
 
 	iCorpse->SetDecayable( true );
-	iCorpse->SetName2( corpseName.c_str() );
+	iCorpse->SetName2( corpseName );
 	iCorpse->SetType( IT_CONTAINER );
 	iCorpse->SetTempVar( CITV_MOREY, 1, canCarve );
 	iCorpse->SetTempVar( CITV_MOREY, 2, cwmWorldState->creatures[mChar.GetID()].IsHuman() );

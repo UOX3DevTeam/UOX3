@@ -458,7 +458,7 @@ auto cCharStuff::LoadShopList( const std::string& list, CChar *c )->void {
 						if(retItem){
 							retItem->SetCont( buyLayer );
 							retItem->PlaceInPack();
-							if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) ){
+							if( !retItem->GetName2().empty() && ( retItem->GetName2()!="#" )){
 								retItem->SetName( retItem->GetName2() ); // Item identified!
 							}
 						}
@@ -474,7 +474,7 @@ auto cCharStuff::LoadShopList( const std::string& list, CChar *c )->void {
 							retItem->SetCont( sellLayer );
 							//retitem->SetSellValue( retitem->GetBuyValue() / 2 );
 							retItem->PlaceInPack();
-							if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) ){
+							if( !retItem->GetName2().empty() && ( retItem->GetName2()!="#" )){
 								retItem->SetName( retItem->GetName2() );
 							}
 							
@@ -493,7 +493,7 @@ auto cCharStuff::LoadShopList( const std::string& list, CChar *c )->void {
 						if( retItem){
 							retItem->SetCont( boughtLayer );
 							retItem->PlaceInPack();
-							if( retItem->GetName2()[0] && ( strcmp( retItem->GetName2(), "#" ) ) ){
+							if( !retItem->GetName2().empty() && ( retItem->GetName2() != "#" )){
 								retItem->SetName( retItem->GetName2() );
 							}
 						}
@@ -1238,24 +1238,25 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 					{
 						if( !ValidateObject( buyPack ) )
 							buyPack = applyTo->GetItemAtLayer( IL_BUYCONTAINER );
-						if( ValidateObject( buyPack ) )
-						{
+						if( ValidateObject( buyPack) ) {
 							retitem = Items->CreateBaseScriptItem( nullptr, cdata, applyTo->WorldNumber(), 1 );
-							if( retitem != nullptr )
-							{
+							if(retitem) {
 								retitem->SetCont( buyPack );
 								retitem->PlaceInPack();
-								if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" )))
+								if( !retitem->GetName2().empty() && ( retitem->GetName2()!="#" )){
 									retitem->SetName( retitem->GetName2() ); // Item identified!
+								}
 							}
 						}
-						else
+						else {
 							Console.warning( oldstrutil::format("Bad NPC Script ([%s]) with no Vendor Buy Pack for item", sectionID.c_str() ) );
+						}
 					}
 					break;
 				case DFNTAG_REATTACKAT:
-					if( !isGate )
+					if( !isGate ){
 						applyTo->SetReattackAt( static_cast<SI16>(ndata) );
+					}
 					break;
 				case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;				break;
 				case DFNTAG_RACE:				applyTo->SetRace( static_cast<UI16>(ndata));		break;
@@ -1291,8 +1292,9 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							{
 								retitem->SetCont( sellPack );
 								retitem->PlaceInPack();
-								if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+								if( !retitem->GetName2().empty() && ( retitem->GetName2()!="#" )){
 									retitem->SetName( retitem->GetName2() );
+								}
 							}
 						}
 						else
@@ -1312,7 +1314,7 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 							{
 								retitem->SetCont( boughtPack );
 								retitem->PlaceInPack();
-								if( retitem->GetName2()[0] && ( strcmp( retitem->GetName2(), "#" ) ) )
+								if( !retitem->GetName2().empty() && ( retitem->GetName2()!= "#" ) )
 									retitem->SetName( retitem->GetName2() );
 							}
 						}

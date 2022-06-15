@@ -283,7 +283,7 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 						}
 						break;
 					case DFNTAG_NAME:	 applyTo->SetName( cdata ); break;
-					case DFNTAG_NAME2: applyTo->SetName2( cdata.c_str() );	 break;
+					case DFNTAG_NAME2: applyTo->SetName2( cdata);	 break;
 					case DFNTAG_NEWBIE: applyTo->SetNewbie( true ); break;
 					case DFNTAG_OFFSPELL: applyTo->SetOffSpell( static_cast<SI08>(ndata) ); break;
 					case DFNTAG_POISONDAMAGE: applyTo->SetWeatherDamage( POISON, ndata != 0 ); break;

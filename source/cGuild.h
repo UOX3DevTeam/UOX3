@@ -34,7 +34,7 @@ class CGuild
 {
 private:
 	std::string		name;
-	char			abbreviation[4];
+	std::string abbreviation;
 	GuildType		gType;
 	std::string		charter;
 	std::string		webpage;
@@ -61,24 +61,24 @@ public:
 
 	CGuild() ;
 	~CGuild();
-	const std::string	Name( void ) const;
-	const char *		Abbreviation( void ) const;
-	GuildType			Type( void ) const;
-	const std::string	Charter( void ) const;
-	const std::string	Webpage( void ) const;
-	SERIAL		Stone( void ) const;
-	SERIAL		Master( void ) const;
-	SERIAL		FirstRecruit( void );
-	SERIAL		NextRecruit( void );
-	bool		FinishedRecruits( void );
+	const std::string	Name() const;
+	auto Abbreviation() const ->const std::string&;
+	GuildType Type() const;
+	const std::string	Charter() const;
+	const std::string	Webpage() const;
+	SERIAL		Stone() const;
+	SERIAL		Master() const;
+	SERIAL		FirstRecruit();
+	SERIAL		NextRecruit();
+	bool		FinishedRecruits();
 	SERIAL		RecruitNumber( size_t rNum ) const;
-	SERIAL		FirstMember( void );
-	SERIAL		NextMember( void );
-	bool		FinishedMember( void );
+	SERIAL		FirstMember();
+	SERIAL		NextMember();
+	bool		FinishedMember();
 	SERIAL		MemberNumber( size_t rNum ) const;
 
 	void		Name( std::string txt );
-	void		Abbreviation( const char *txt );
+	auto Abbreviation( const std::string &value) ->void;
 	void		Type( GuildType nType );
 	void		Charter( const std::string &txt );
 	void		Webpage( const std::string &txt );
@@ -97,8 +97,8 @@ public:
 	void		RecruitToMember( CChar &newMember );
 	void		RecruitToMember( SERIAL newMember );
 
-	size_t		NumMembers( void ) const;
-	size_t		NumRecruits( void ) const;
+	size_t		NumMembers() const;
+	size_t		NumRecruits() const;
 
 	GUILDRELATION	RelatedToGuild( GUILDID otherGuild ) const;
 	bool		IsAtWar( GUILDID otherGuild ) const;
@@ -110,13 +110,13 @@ public:
 	void		Save( std::ofstream &toSave, GUILDID gNum );
 	void		Load( ScriptSection *toRead );
 
-	GUILDREL *	GuildRelationList( void );	// NOTE: This is aimed ONLY at menu stuff
+	GUILDREL *	GuildRelationList();	// NOTE: This is aimed ONLY at menu stuff
 
-	void		CalcMaster( void );
+	void		CalcMaster();
 
 	void		TellMembers( SI32 dictEntry, ... );
 
-	const std::string TypeName( void );
+	const std::string TypeName();
 
 	bool		IsRecruit( SERIAL toCheck ) const;
 	bool		IsMember( SERIAL toCheck ) const;
@@ -141,8 +141,8 @@ public:
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
-	void			Save( void );
-	void			Load( void );
+	void			Save();
+	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;
 	void			Menu( CSocket *s, SI16 menu, GUILDID trgGuild = -1, SERIAL plID = INVALIDSERIAL );
