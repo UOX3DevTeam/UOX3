@@ -119,7 +119,7 @@ UOXFile * loadFile( const std::string& fullName )
 
 //=======================================================================
 auto CMulHandler::loadDFNOverrides() ->void {
-	size_t entryNum;
+	std::uint16_t entryNum;
 	for (auto &mapScp : FileLookup->ScriptListings[maps_def]){
 		if( mapScp ){
 			for (auto &[entryName, toScan]: mapScp->collection()){
@@ -319,14 +319,14 @@ auto CMulHandler::loadMapAndStatics(const std::map<int,mapdfndata_st> &info) ->v
 		auto rvalue = false ;
 		
 		if (std::filesystem::exists(dfndata.mapuop)) {
-			Console << "\t" << dfndata.mapuop.string() << "(/" << dfndata.mapuop.filename() << ")\t\t";
+			Console << "\t" << dfndata.mapuop.string() << "(/" << dfndata.mapuop.filename().string() << ")\t\t";
 			rvalue = uoworlds[mapnum].loadUOPTerrainFile(dfndata.mapuop.string());
 		}
 		else {
-			Console << "\t" << dfndata.mapfile.string() << "(/" << dfndata.mapfile.filename() << ")\t\t";
+			Console << "\t" << dfndata.mapfile.string() << "(/" << dfndata.mapfile.filename().string() << ")\t\t";
 			rvalue = uoworlds[mapnum].loadMulTerrainFile(dfndata.mapfile.string());
 			if (rvalue) {
-				uoworlds[mapnum].applyTerrainDiff(dfndata.mapdiffl, dfndata.mapdiff) ;
+				uoworlds[mapnum].applyTerrainDiff(dfndata.mapdiffl.string(), dfndata.mapdiff.string());
 			}
 		}
 		if (rvalue){
