@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <sstream>
 #include <array>
+#include <bitset>
 
 #include "power.h"
 #include "MultiMul.hpp"
