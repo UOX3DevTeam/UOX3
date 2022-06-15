@@ -192,7 +192,6 @@ void OpenPlank( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
 {
-	map_st map;
 	SI16 cx = b->GetX(), cy = b->GetY();
 	const SI08 cz = b->GetZ();
 	SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -371,9 +370,8 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 
 			if( sz == ILLEGAL_Z ) //map tile
 			{
-				map = Map->SeekMap( x, y, worldNumber );
-				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= cz && !land.CheckFlag( TF_WET ) && land.Name()=="water" )//only tiles on/above the water
+				auto map = Map->SeekMap( x, y, worldNumber );
+				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name()=="water" )//only tiles on/above the water
 					return true;
 			}
 			else

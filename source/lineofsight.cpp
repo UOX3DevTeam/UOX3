@@ -241,29 +241,29 @@ inline auto line3D::Projection2D( void ) const ->line2D  {
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MapTileBlocks( CSocket *mSock, Static_st *stat, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, bool showBlockedMsg )
+//|	Function	-	bool MapTileBlocks( CSocket *mSock, bool nostatic, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, bool showBlockedMsg )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o-----------------------------------------------------------------------------------------------o
 bool MapTileBlocks( CSocket *mSock, bool nostatic, line3D LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
 {
 	// Map tile at previous coordinate along the LoS path
-	const map_st srcMap = Map->SeekMap( x1, y1, worldNum );
+	auto srcMap = Map->SeekMap( x1, y1, worldNum );
 
 	// Map tile at next coordinate along the LoS path
-	const map_st trgMap = Map->SeekMap( x2, y2, worldNum );
+	auto trgMap = Map->SeekMap( x2, y2, worldNum );
 
 	// Get tileIDs for previous tile in LoS path, and next one
-	const UI16 mID1		= srcMap.id;
-	const UI16 mID2		= trgMap.id;
+	const UI16 mID1		= srcMap.tileid;
+	const UI16 mID2		= trgMap.tileid;
 
 	// Continue if neither of the two tiles is a NoDraw tile, or a cave entrance tile
 	if(( mID1 != 2 && mID2 != 2 ) && ( mID1 != 475 && mID2 != 475 ))
 	{
 		// Get z for previous tile in LoS path, and for next one
-		const SI16 mz1	= srcMap.z;
-		const SI16 mz2	= trgMap.z;
-		const SI08 startLocZ = LoS.loc.z;
+		auto mz1	= srcMap.altitude;
+		auto mz2	= trgMap.altitude;
+		auto startLocZ = LoS.loc.z;
 
 		// Check if LoS intersects with map/mountain walls
 		//if( ( mz1 < mz2 && z2Top <= mz2 && z >= mz1 ) ||									// 1) Collides with a map "wall"
@@ -289,37 +289,37 @@ bool MapTileBlocks( CSocket *mSock, bool nostatic, line3D LoS, SI16 x1, SI16 y1,
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
+//|	Function	-	bool CheckFlags( UI08 typeToCheck,tile_t &toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check tiledata flags for tile
 //o-----------------------------------------------------------------------------------------------o
-bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
+bool CheckFlags( UI08 typeToCheck, tile_t &toCheck, SI08 startZ, SI08 destZ, bool useSurfaceZ )
 {
 	switch( typeToCheck )
 	{
 		case TREES_BUSHES: // Trees, Shrubs, bushes - if it's blocking but has neither of the flags listed below, assume it's a tree! :P
 
 
-			if( toCheck->CheckFlag( TF_FOLIAGE ) || ( (toCheck->CheckFlag( TF_BLOCKING ) &&
-													   !toCheck->CheckFlag( TF_WALL ) && !toCheck->CheckFlag( TF_SURFACE ) && !toCheck->CheckFlag( TF_WINDOW )) ||
-													 (!toCheck->CheckFlag( TF_CLIMBABLE ) && !toCheck->CheckFlag( TF_WET ) && !toCheck->CheckFlag( TF_ROOF )) ||
-													 !toCheck->CheckFlag( TF_CONTAINER )))
+			if( toCheck.CheckFlag( TF_FOLIAGE ) || ( (toCheck.CheckFlag( TF_BLOCKING ) &&
+													   !toCheck.CheckFlag( TF_WALL ) && !toCheck.CheckFlag( TF_SURFACE ) && !toCheck.CheckFlag( TF_WINDOW )) ||
+													 (!toCheck.CheckFlag( TF_CLIMBABLE ) && !toCheck.CheckFlag( TF_WET ) && !toCheck.CheckFlag( TF_ROOF )) ||
+													 !toCheck.CheckFlag( TF_CONTAINER )))
 				return false;
 			break;
 		case WALLS_CHIMNEYS: // Walls, Chimneys, ovens, not fences
-			if( toCheck->CheckFlag( TF_WALL ) || ( toCheck->CheckFlag( TF_NOSHOOT ) && !toCheck->CheckFlag( TF_SURFACE) ) || toCheck->CheckFlag( TF_WINDOW ))
+			if( toCheck.CheckFlag( TF_WALL ) || ( toCheck.CheckFlag( TF_NOSHOOT ) && !toCheck.CheckFlag( TF_SURFACE) ) || toCheck.CheckFlag( TF_WINDOW ))
 				return true;
 			break;
 		case DOORS: // Doors, not gates
-			if( toCheck->CheckFlag( TF_DOOR ))
+			if( toCheck.CheckFlag( TF_DOOR ))
 				return true;
 			break;
 		case ROOFING_SLANTED: // Roofing Slanted
-			if( toCheck->CheckFlag( TF_ROOF ))
+			if( toCheck.CheckFlag( TF_ROOF ))
 				return true;
 			break;
 		case FLOORS_FLAT_ROOFING: // Floors & Flat Roofing (Attacking through floors Roofs)
-			if( toCheck->CheckFlag( TF_SURFACE ))
+			if( toCheck.CheckFlag( TF_SURFACE ))
 			{
 				if( useSurfaceZ ? ( startZ != destZ ) : (( startZ - 15) != destZ ))
 				{
@@ -328,7 +328,7 @@ bool CheckFlags( UI08 typeToCheck, CTileUni *toCheck, SI08 startZ, SI08 destZ, b
 			}
 			break;
 		case LAVA_WATER:  // Lava, water
-			if( toCheck->CheckFlag( TF_WET ))
+			if( toCheck.CheckFlag( TF_WET ))
 				return true;
 			break;
 		default:
@@ -388,9 +388,9 @@ UI16 DynamicCanBlock( CItem *toCheck, vector3D *collisions, SI32 collisioncount,
 		if( !Map->multiExists( multiID ))
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
-			const map_st map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
-			CLand& land = Map->SeekLand( map1.id );
-			if( land.CheckFlag( TF_WET ) ) // is it water?
+			auto map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
+			
+			if( map1.CheckFlag( TF_WET ) ) // is it water?
 				toCheck->SetID( 0x4001 );
 			else
 				toCheck->SetID( 0x4064 );
@@ -593,7 +593,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			itemtype *= 2;
 	}
 
-	CTileUni losItemList[LOSXYMAX];
+	std::vector<tile_t> losItemList ;
 	UI16 itemCount		= 0;
 
 	// We already have to run through all the collisions in this function, so lets just check and push the ID rather than coming back to it later.
@@ -609,10 +609,10 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 						
 						const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 						if( idToPush != INVALIDID ){
-							CTile& itemToCheck = Map->SeekTile( idToPush );
-							losItemList[itemCount].Height(itemToCheck.Height());
-							losItemList[itemCount].SetID( idToPush );
-							losItemList[itemCount].Flags( itemToCheck.Flags() );
+							
+							auto tile = tile_t(tiletype_t::art) ;
+							tile.artInfo= &Map->SeekTile( idToPush );
+							tile.tileid = idToPush;
 							
 							++itemCount;
 							if( itemCount >= LOSXYMAX ){	// don't overflow
@@ -655,11 +655,8 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		// Statics
 		for (auto &tile :artwork){
 			if(	( checkLoc.z >= tile.altitude && checkLoc.z <= ( tile.altitude + tile.height() ) ) ||
-			   ( tile.height() <= 2 && std::abs( checkLoc.z - tile.altitude ) <= dz ) )
-			{
-				losItemList[itemCount].Height(tile.height());
-				losItemList[itemCount].SetID( tile.tileid );
-				losItemList[itemCount].Flags( tile.artInfo->Flags() );
+			   ( tile.height() <= 2 && std::abs( checkLoc.z - tile.altitude ) <= dz ) ) {
+				losItemList.push_back(tile) ;
 			}
 
 			++itemCount;
@@ -669,16 +666,15 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 		}
 	}
 
-	CTileUni *tb;
 	size_t j;
 
-	for( i = 0; i < itemCount; ++i )
+	for( auto &tile:losItemList)
 	{
 		for( j = 0; j < checkthistotal; ++j )
 		{
-			tb = &losItemList[i];
+			
 			//if( !mChar->IsGM() && CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ))
-			if( CheckFlags( checkthis[j], tb, startZ, destZ, useSurfaceZ ) )
+			if( CheckFlags( checkthis[j], tile, startZ, destZ, useSurfaceZ ) )
 			{
 				//delete[] collisions;
 				return blocked;
