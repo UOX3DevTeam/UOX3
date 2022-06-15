@@ -1262,7 +1262,7 @@ UI08 CMulHandler::MapCount( void ) const
 //================================================================================================
 auto CMulHandler::artAt(std::int16_t x, std::int16_t y, std::uint8_t world) ->std::vector<tile_t> {
 	auto oldart = CStaticIterator( x,  y, world) ;
-	auto rvalue = std::vector<tile_t>() ;
+	std::vector<tile_t> rvalue  ;
 	auto entry = oldart.First() ;
 	while (entry) {
 		auto tile = tile_t(tiletype_t::art) ;
@@ -1270,6 +1270,7 @@ auto CMulHandler::artAt(std::int16_t x, std::int16_t y, std::uint8_t world) ->st
 		tile.artInfo = &tile_info.art(tile.tileid) ;
 		tile.altitude = entry->zoff ;
 		rvalue.push_back(tile) ;
+		entry = oldart.Next();
 	}
 	return rvalue ;
 }
