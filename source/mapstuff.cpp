@@ -92,6 +92,7 @@ auto CMulHandler::loadMapsDFN(const std::string &uodir) ->std::map<int,mapdfndat
 						
 				}
 			}
+			
 			results.insert_or_assign(i, entry);
 		}
 	}

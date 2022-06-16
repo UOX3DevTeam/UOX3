@@ -184,7 +184,7 @@ GenericList< CChar * > * CMapRegion::GetCharList( void )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the list of baseobject serials for iteration
 //o-----------------------------------------------------------------------------------------------o
-RegionSerialList< SERIAL > * CMapRegion::GetRegionSerialList( void )
+RegionSerialList* CMapRegion::GetRegionSerialList()
 {
 	return &regionSerialData;
 }
