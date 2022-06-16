@@ -446,7 +446,7 @@ auto cCharStuff::LoadShopList( const std::string& list, CChar *c )->void {
 		std::string cdata;
 		SI32 ndata		= -1, odata = -1;
 		CItem *retItem	= nullptr;
-		for (auto &sec : ShoppingList->collection2()){
+		for (const auto &sec : ShoppingList->collection2()){
 			auto tag = sec->tag ;
 			cdata = sec->cdata ;
 			ndata = sec->ndata ;
@@ -630,7 +630,7 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 		TAGMAPOBJECT customTag;
 		std::string customTagName;
 		std::string customTagStringValue;
-		for (auto &sec : NpcCreation->collection2()){
+		for (const auto &sec : NpcCreation->collection2()){
 			DFNTAGS tag = sec->tag ;
 			cdata = sec->cdata ;
 			ndata = sec->ndata ;
@@ -1697,7 +1697,7 @@ auto cCharStuff::getGuardingPet( CChar *mChar, CBaseObject *guarded ) ->CChar * 
 	if( ValidateObject( mChar ) && ValidateObject( guarded ) ){
 		
 		auto myPets = mChar->GetPetList();
-		for (auto &pet : myPets->collection()){
+		for (const auto &pet : myPets->collection()){
 			if( ValidateObject( pet ) ) {
 				//if( !pet->GetMounted() && pet->GetNPCAiType() == AI_PET_GUARD &&
 				if( !pet->GetMounted() &&

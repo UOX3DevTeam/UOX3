@@ -1292,9 +1292,9 @@ auto cNetworkStuff::LoadFirewallEntries()->void {
 		auto firewallData = std::make_unique<Script>( fileToUse, NUM_DEFS, false);
 		if( firewallData) {
 			SI16 p[4];
-			for (auto &[secname,firewallSect] : firewallData->collection()){
+			for (const auto &[secname,firewallSect] : firewallData->collection()){
 				if( firewallSect ) {
-					for (auto &sec : firewallSect->collection()){
+					for (const auto &sec : firewallSect->collection()){
 						auto tag = sec->tag;
 						auto data = sec->data ;
 						if( oldstrutil::upper( tag ) == "IP" ) {

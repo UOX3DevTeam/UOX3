@@ -116,7 +116,7 @@ bool CTownRegion::Load( Script *ss )
 	if( target == nullptr )
 		return false;
 
-	for (auto &sec : target->collection()){
+	for (const auto &sec : target->collection()){
 		tag = sec->tag;
 		data = sec->data ;
 		UTag = oldstrutil::upper( tag );
@@ -458,7 +458,7 @@ bool CTownRegion::InitFromScript( ScriptSection *toScan )
 	CanPlaceHouse( false );
 
 	regLocs ourLoc;
-	for (auto &sec : toScan->collection()){
+	for (const auto &sec : toScan->collection()){
 		tag = sec->tag ;
 		data = sec->data ;
 		UTag = oldstrutil::upper( tag );

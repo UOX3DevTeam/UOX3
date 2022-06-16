@@ -878,7 +878,7 @@ auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )->bool {
 				Console.error( oldstrutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
 				return false;
 			}
-			for (auto &sec : EscortData->collection()){
+			for (const auto &sec : EscortData->collection()){
 				tag = sec->tag ;
 				std::string fullLine = tag;
 

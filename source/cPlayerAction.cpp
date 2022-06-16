@@ -158,7 +158,7 @@ auto autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack ) ->CItem *{
 			const UI32 itSellValue = iToStack->GetSellValue();
 			
 			auto ipCont = iPack->GetContainsList();
-			for (auto &stack :ipCont->collection()){
+			for (const auto &stack :ipCont->collection()){
 				if( ValidateObject( stack ) ){
 					
 					if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
@@ -735,7 +735,7 @@ auto IsOnFoodList( const std::string& sFoodList, const UI16 sItemID ) ->bool{
 	const std::string sect	= "FOODLIST "s + sFoodList;
 	auto FoodList = FileLookup->FindEntry( sect, items_def );
 	if(FoodList) {
-		for (auto &sec : FoodList->collection()){
+		for (const auto &sec : FoodList->collection()){
 			auto tag = sec->tag ;
 			if( !tag.empty() ) {
 				if( oldstrutil::upper( tag ) == "FOODLIST" ) {
@@ -2790,7 +2790,7 @@ auto InitIDToItemType() ->void {
 		
 		SI32 sectionCount;
 		ItemTypes iType = IT_COUNT;
-		for (auto &sec : Itemtypes->collection()){
+		for (const auto &sec : Itemtypes->collection()){
 			auto tag = sec->tag ;
 			auto data = sec->data ;
 			auto comma_secs = oldstrutil::sections( data, "," );

@@ -43,7 +43,7 @@ auto CMulHandler::loadMapsDFN(const std::string &uodir) ->std::map<int,mapdfndat
 		auto toFind = FileLookup->FindEntry( "MAP "s + std::to_string(i), maps_def );
 		if (toFind) {
 			auto entry = mapdfndata_st() ;
-			for (auto &sec :toFind->collection()){
+			for (const auto &sec :toFind->collection()){
 				auto UTAG = oldstrutil::upper(sec->tag);
 				auto data = oldstrutil::trim(oldstrutil::removeTrailing(sec->data));
 				switch (UTAG.data()[0]){
@@ -104,7 +104,7 @@ auto CMulHandler::loadDFNOverrides() ->void {
 	std::uint16_t entryNum;
 	for (auto &mapScp : FileLookup->ScriptListings[maps_def]){
 		if( mapScp ){
-			for (auto &[entryName, toScan]: mapScp->collection()){
+			for (const auto &[entryName, toScan]: mapScp->collection()){
 				if( toScan ){
 					
 					entryNum	= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(entryName," ", 1, 1 ));
@@ -114,7 +114,7 @@ auto CMulHandler::loadDFNOverrides() ->void {
 						if( (entryNum != INVALIDID) && (entryNum < tile_info.sizeArt())) {
 							auto tile = &tile_info.art(entryNum);
 							if(tile) {
-								for (auto &sec : toScan->collection()){
+								for (const auto &sec : toScan->collection()){
 									auto UTag = oldstrutil::upper( sec->tag );
 									auto data = oldstrutil::trim( oldstrutil::removeTrailing( sec->data, "//" ));
 									// CTile properties
@@ -503,7 +503,7 @@ auto CMulHandler::DynTile( std::int16_t x, std::int16_t y, std::int8_t z, std::u
 	for( auto &CellResponse:MapRegion->PopulateList( x, y, worldNumber ) ) {
 		if( CellResponse ){
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item : regItems->collection()){
+			for (const auto &Item : regItems->collection()){
 				if( ValidateObject( Item ) && ( Item->GetInstanceID() == realm) ){
 					if( !checkOnlyNonMultis ){
 						if( Item->GetID( 1 ) >= 0x40 && ( Item->GetObjType() == OT_MULTI || Item->CanBeObjType( OT_MULTI ) ) ){
@@ -607,7 +607,7 @@ auto CMulHandler::CheckDynamicFlag(std::int16_t x, std::int16_t y, std::int8_t z
 		if( CellResponse ) {
 			
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item : regItems->collection()){
+			for (const auto &Item : regItems->collection()){
 				if( ValidateObject( Item ) && (Item->GetInstanceID() == realm )){
 					
 					if( (Item->GetID( 1 ) >= 0x40) && ( (Item->GetObjType() == OT_MULTI) || (Item->CanBeObjType( OT_MULTI )) ) ){
@@ -677,7 +677,7 @@ auto CMulHandler::DynamicElevation(std::int16_t x, std::int16_t y, std::int8_t z
 	auto MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( MapArea )	{
 		auto regItems = MapArea->GetItemList();
-		for (auto tempItem : regItems->collection()){
+		for (const auto tempItem : regItems->collection()){
 			if( ValidateObject( tempItem ) || tempItem->GetInstanceID() != realm ){
 				if( tempItem->GetID( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI )){
 					illz = MultiHeight( tempItem, x, y, z, maxZ );

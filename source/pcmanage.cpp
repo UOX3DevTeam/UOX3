@@ -487,7 +487,7 @@ auto addNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 	auto newbieData = FileLookup->FindEntry( str, newbie_def );
 	if( newbieData ) {
 		CItem *n = nullptr;
-		for (auto &sec : newbieData->collection()){
+		for (const auto &sec : newbieData->collection()){
 			auto tag = sec->tag;
 			auto data = sec->data;
 			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
@@ -1146,7 +1146,7 @@ auto updates( CSocket *s )->void {
 		auto Updates = FileLookup->FindEntry( "MOTD", misc_def );
 		if( Updates){
 			std::string updateData = "";
-			for (auto &sec : Updates->collection()){
+			for (const auto &sec : Updates->collection()){
 				updateData += sec->data + " "s;
 			}
 			CPUpdScroll toSend( 2 );
@@ -1448,7 +1448,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) ->void {
 				case IL_PACKITEM:
 				{
 					auto jCont = j->GetContainsList();
-					for (auto &k : jCont->collection()){
+					for (const auto &k : jCont->collection()){
 						if( ValidateObject( k ) ){
 							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
 							if(( mChar.GetID() == 0x0123 || mChar.GetID() == 0x0124 || mChar.GetID() == 0x0317 ) || ( !k->isNewbie() && k->GetType() != IT_SPELLBOOK )) {
@@ -1517,7 +1517,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 
 		// Prevent pets from following ghost of dead player
 		auto mPetList = mChar->GetPetList();
-		for (auto &tempChar:mPetList->collection()){
+		for (const auto &tempChar:mPetList->collection()){
 			if( ValidateObject( tempChar ) ){
 				if( !tempChar->GetStabled() && tempChar->GetNpcWander() == WT_FOLLOW && tempChar->GetFTarg() == mChar ) {
 					tempChar->SetFTarg( nullptr );
