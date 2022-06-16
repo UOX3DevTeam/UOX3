@@ -508,9 +508,10 @@ auto cEffects::checktempeffects()->void {
 	
 	const UI32 j = cwmWorldState->GetUICurrentTime();
 	std::vector<CTEffect*> removeEffects ;
-	for (const auto &Effect : cwmWorldState->tempEffects.collection()){
+	auto collection = cwmWorldState->tempEffects.collection();
+	for (auto &Effect : collection){
 		if( Effect == nullptr ){
-			removeEffects.push_back(Effect);
+			//removeEffects.push_back(Effect);
 			continue;
 		}
 		else if( Effect->Destination() == INVALIDSERIAL ){
@@ -522,7 +523,8 @@ auto cEffects::checktempeffects()->void {
 			if( Effect->Destination() < BASEITEMSERIAL ) {
 				s = calcCharObjFromSer( Effect->Destination() );
 				if( !ValidateObject( s ) ) {
-					cwmWorldState->tempEffects.Remove( Effect, true );
+					removeEffects.push_back(Effect);
+					//cwmWorldState->tempEffects.Remove( Effect, true );
 					continue;
 				}
 				tSock = s->GetSocket();
@@ -862,7 +864,7 @@ auto cEffects::checktempeffects()->void {
 		}
 	}
 	std::for_each(removeEffects.begin(),removeEffects.end(),[this](CTEffect *effect) {
-		cwmWorldState->tempEffects.Remove(effect,(effect!=nullptr)?true:false);
+		cwmWorldState->tempEffects.Remove(effect,true);
 	});
 }
 

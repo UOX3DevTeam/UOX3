@@ -216,7 +216,6 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	Console.PrintSectionBegin();
 	EVENT_TIMER(stopwatch,EVENT_TIMER_OFF);
 	while( cwmWorldState->GetKeepRun() ){
-//		Map->ValidSpawnLocation(5492,575,'<',0,0,true) ;
 		std::this_thread::sleep_for(std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
 		if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 ){
 			cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
