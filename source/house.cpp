@@ -292,6 +292,7 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 							}
 						}
 					}
+					
 				}
 			}
 		}
