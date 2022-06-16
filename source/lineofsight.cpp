@@ -601,7 +601,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 	for( auto &MapArea : MapRegion->PopulateList( startX, startY, worldNumber ) ){
 		if( MapArea){
 			auto regItems = MapArea->GetItemList();
-			for (auto &toCheck : regItems->collection()){
+			for (const auto &toCheck : regItems->collection()){
 				if (ValidateObject(toCheck) && (toCheck->GetInstanceID()!= instanceID)){
 					
 					// If item toCheck is at the exact same spot as the target location, it should not block LoS.

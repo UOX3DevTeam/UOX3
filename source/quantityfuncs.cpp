@@ -9,7 +9,7 @@
 auto GetSubTotalItemCount( CItem *objCont ) ->std::uint32_t {
 	UI32 total = 0;
 	auto pCont = objCont->GetContainsList();
-	for (auto &i:pCont->collection()){
+	for (const auto &i:pCont->collection()){
 		if( ValidateObject( i ) ) {
 			if( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ) {
 				total += 1; // Also count the container
@@ -45,7 +45,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 auto GetSubItemAmount( CItem *p, UI16 realID, UI16 realColour, UI32 realMoreVal, bool colorCheck = false ) ->std::uint32_t {
 	UI32 total = 0;
 	auto pCont = p->GetContainsList();
-	for (auto &i : pCont->collection()){
+	for (const auto &i : pCont->collection()){
 		if( ValidateObject( i ) ) {
 			if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )){
 				total += GetSubItemAmount( i, realID, realColour, realMoreVal );
@@ -87,7 +87,8 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realID, UI16 realColour, U
 	if( ValidateObject( p ) ){
 		UI32 total		= amount;
 		auto pCont = p->GetContainsList();
-		for (auto &i:pCont->collection()){
+		auto collection = pCont->collection() ; // force a copy, we will be deleting
+		for (auto &i:collection){
 			if( ValidateObject( i ) ) {
 				if( i->GetID() != realID && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER )){
 					// Is item an pack or container?

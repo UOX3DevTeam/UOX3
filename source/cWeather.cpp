@@ -900,7 +900,7 @@ auto cWeatherAb::Load() ->bool {
 					if( i >= weather.size() ) {
 						weather.resize( i+1 );
 					}
-					for (auto &sec : WeatherStuff->collection()){
+					for (const auto &sec : WeatherStuff->collection()){
 						tag = sec->tag ;
 						data = sec->data ;
 						UTag = oldstrutil::upper( tag );

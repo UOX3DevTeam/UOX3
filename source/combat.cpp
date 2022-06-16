@@ -2753,7 +2753,7 @@ auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, 
 				
 				if(toCheck){
 					auto regChars = toCheck->GetCharList();
-					for (auto &getGuard : regChars->collection()){
+					for (const auto &getGuard : regChars->collection()){
 						if( ValidateObject( getGuard ) ){
 							if( getGuard->IsNpc() && (getGuard->GetNPCAiType() == AI_GUARD )){
 								if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  ) {

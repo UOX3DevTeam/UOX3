@@ -116,7 +116,7 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 {
 	charData.Push();
 	std::vector<CChar *> removeChar ;
-	for (auto &charToWrite: charData.collection()) {
+	for (const auto &charToWrite: charData.collection()) {
 		if( !ValidateObject( charToWrite ) ){
 			removeChar.push_back(charToWrite);
 		}
@@ -134,7 +134,7 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 	});
 
 	std::vector<CItem *> removeItem ;
-	for (auto &itemToWrite: itemData.collection()) {
+	for (const auto &itemToWrite: itemData.collection()) {
 		if( !ValidateObject( itemToWrite ) ) {
 			removeItem.push_back(itemToWrite);
 		}

@@ -621,7 +621,7 @@ void CGuild::Load( ScriptSection *toRead )
 	std::string tag;
 	std::string data;
 	std::string UTag;
-	for (auto &sec : toRead->collection()){
+	for (const auto &sec : toRead->collection()){
 		tag = sec->tag;
 		data = sec->data;
 		if( tag.empty() )

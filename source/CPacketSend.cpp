@@ -4439,7 +4439,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	auto tcCont = toCopy.GetContainsList();
 
 	//tcCont->Reverse(); // This will reverse the order in which items are displayed in the container
-	for (auto &ctr:tcCont->collection()){
+	for (const auto &ctr:tcCont->collection()){
 		if( ValidateObject( ctr ) && ( !isCorpse || !itemIsCorpse || ( itemIsCorpse && ctr->GetLayer() ) ) ) {
 			if( !ctr->isFree() ) {
 				// don't show GM hidden objects to non-GM players.
@@ -4586,7 +4586,7 @@ auto CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContain
 	}
 
 	auto tcCont = toCopy.GetContainsList();
-	for (auto &ctr:tcCont->collection()){
+	for (const auto &ctr:tcCont->collection()){
 		if( ValidateObject( ctr ) ) {
 			if( !ctr->isFree() ) {
 				ctr->WalkXY( ++baseX, baseY );
@@ -5364,7 +5364,7 @@ auto CPCorpseClothing::CopyData( CItem& toCopy ) ->void {
 	pStream.WriteLong( 3, toCopy.GetSerial() );
 	UI16 itemCount = 0;
 	auto tcCont = toCopy.GetContainsList();
-	for (auto &ctr:tcCont->collection()){
+	for (const auto &ctr:tcCont->collection()){
 		if( ValidateObject( ctr ) ) {
 			if( !ctr->isFree() && ctr->GetLayer() ) {
 				pStream.ReserveSize( pStream.GetSize() + 5 );
@@ -7231,7 +7231,7 @@ auto CPSellList::CopyData( CChar& mChar, CChar& vendorID ) ->void {
 		}
 		
 		auto spCont = buyPack->GetContainsList();
-		for (auto &spItem:spCont->collection()){
+		for (const auto &spItem:spCont->collection()){
 			if( ValidateObject( spItem ) ){
 				AddContainer( tReg, spItem, ourPack, packetLen );
 			}
@@ -7245,7 +7245,7 @@ auto CPSellList::CopyData( CChar& mChar, CChar& vendorID ) ->void {
 
 auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack, size_t &packetLen )->void{
 	auto opCont = ourPack->GetContainsList();
-	for (auto &opItem:opCont->collection()){
+	for (const auto &opItem:opCont->collection()){
 		if( ValidateObject( opItem ) ) {
 			if( opItem->GetType() == IT_CONTAINER ){
 				AddContainer( tReg, spItem, opItem, packetLen );

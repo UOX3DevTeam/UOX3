@@ -321,7 +321,7 @@ void cCommands::Load( void )
 	else
 	{
 		size_t currentWorking;
-		for (auto &sec : cmdClearance->collection()){
+		for (const auto &sec : cmdClearance->collection()){
 			tag = sec->tag ;
 			data = sec->data ;
 			currentWorking	= clearance.size();
@@ -335,7 +335,7 @@ void cCommands::Load( void )
 			if(ourClear){
 				cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
 				if( cmdClearance){
-					for (auto &sec : cmdClearance->collection()){
+					for (const auto &sec : cmdClearance->collection()){
 						tag = sec->tag;
 						data = sec->data ;
 						UTag = oldstrutil::upper( tag );

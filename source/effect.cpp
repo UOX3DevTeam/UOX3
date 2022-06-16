@@ -352,7 +352,7 @@ auto explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType
 			bool chain = false;
 			
 			auto regChars = Cell->GetCharList();
-			for (auto &tempChar:regChars->collection()){
+			for (const auto &tempChar:regChars->collection()){
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == nItem->GetInstanceID() ){
 					if( !tempChar->GetRegion()->IsSafeZone() ) {
 						// Character is in not safe zone, count damage
@@ -370,7 +370,7 @@ auto explodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType
 				}
 			}
 			auto regItems = Cell->GetItemList();
-			for (auto &tempItem:regItems->collection()){
+			for (const auto &tempItem:regItems->collection()){
 				if( tempItem->GetInstanceID() == nItem->GetInstanceID() ) {
 					if( tempItem->GetID() == 0x0F0D && tempItem->GetType() == IT_POTION ) {
 						dx = abs( nItem->GetX() - tempItem->GetX() );
@@ -508,7 +508,7 @@ auto cEffects::checktempeffects()->void {
 	
 	const UI32 j = cwmWorldState->GetUICurrentTime();
 	std::vector<CTEffect*> removeEffects ;
-	for (auto &Effect : cwmWorldState->tempEffects.collection()){
+	for (const auto &Effect : cwmWorldState->tempEffects.collection()){
 		if( Effect == nullptr ){
 			removeEffects.push_back(Effect);
 			continue;
@@ -967,7 +967,7 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	toAdd->Source( sourceSerial );
 	toAdd->Destination( targSer );
 	std::vector<CTEffect *> removeEffect ;
-	for (auto &Effect : cwmWorldState->tempEffects.collection()){
+	for (const auto &Effect : cwmWorldState->tempEffects.collection()){
 		if( Effect->Destination() == targSer )
 		{
 			if( Effect->Number() == num )
@@ -1476,7 +1476,7 @@ void cEffects::SaveEffects( void )
 		return;
 	}
 
-	for (auto &currEffect : cwmWorldState->tempEffects.collection()){
+	for (const auto &currEffect : cwmWorldState->tempEffects.collection()){
 		if( currEffect){
 			currEffect->Save( effectDestination );
 			effectDestination << blockDiscriminator;

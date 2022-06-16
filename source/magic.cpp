@@ -844,7 +844,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 				// Teleport player's pets too
 				auto myPets = caster->GetPetList();
-				for (auto &myPet : myPets->collection()){
+				for (const auto &myPet : myPets->collection()){
 					if( ValidateObject( myPet ) ){
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) )
@@ -879,7 +879,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceID() == caster->GetInstanceID() ) {
 						// Teleport player's pets too
 						auto myPets = caster->GetPetList();
-						for (auto &myPet : myPets->collection()){
+						for (const auto &myPet : myPets->collection()){
 							if( ValidateObject( myPet ) ){
 								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 									if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -916,7 +916,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) {
 					// Teleport player's pets too
 					auto myPets = caster->GetPetList();
-					for (auto &myPet : myPets->collection()){
+					for (const auto &myPet : myPets->collection()){
 						if( ValidateObject( myPet ) ){
 							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 								if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -938,7 +938,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) ->bool {
 			else {
 				// Teleport player's pets too
 				auto myPets = caster->GetPetList();
-				for (auto &myPet : myPets->collection()){
+				for (const auto &myPet : myPets->collection()){
 					if( ValidateObject( myPet ) ){
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster ) {
 							if( objInOldRange( caster, myPet, DIST_CMDRANGE ) ){
@@ -1434,7 +1434,7 @@ auto splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSp
 		for (auto &MapArea : MapRegion->PopulateList( caster )){
 			if( MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == caster->GetInstanceID() ){
 						if( tempChar->GetVisible() == VT_TEMPHIDDEN || tempChar->GetVisible() == VT_INVISIBLE )
 						{
@@ -1738,7 +1738,7 @@ auto AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 	for (auto &MapArea : MapRegion->PopulateList( caster )){
 		if( MapArea){
 			auto regChars = MapArea->GetCharList();
-			for (auto &tempChar : regChars->collection()){
+			for (const auto &tempChar : regChars->collection()){
 				if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == caster->GetInstanceID() ){
 					
 					if( tempChar->GetX() >= x1 && tempChar->GetX() <= x2 && tempChar->GetY() >= y1 && tempChar->GetY() <= y2 &&
@@ -2423,7 +2423,7 @@ auto cMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 				}
 				
 				auto myPets = mChar->GetPetList();
-				for (auto &myPet : myPets->collection()){
+				for (const auto &myPet : myPets->collection()){
 					if( ValidateObject( myPet ) ){
 						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar ) {
 							if( objInOldRange( mChar, myPet, DIST_CMDRANGE ) ){
@@ -2952,7 +2952,7 @@ auto cMagic::CheckFieldEffects( CChar& mChar )->void {
 	auto toCheck = MapRegion->GetMapRegion( &mChar );
 	if( toCheck){
 		auto regItems = toCheck->GetItemList();
-		for (auto &inItemList :regItems->collection()){
+		for (const auto &inItemList :regItems->collection()){
 			if( ValidateObject( inItemList ) && inItemList->GetInstanceID() == mChar.GetInstanceID() ){
 				if( inItemList->GetX() == mChar.GetX() && inItemList->GetY() == mChar.GetY() ) {
 					HandleFieldEffects( (&mChar), inItemList, inItemList->GetID() );
@@ -3122,7 +3122,7 @@ auto cMagic::MagicTrap( CChar *s, CItem *i )->void {
 			for (auto &MapArea : MapRegion->PopulateList( s )){
 				if( MapArea){
 					auto regChars = MapArea->GetCharList();
-					for (auto &tempChar :regChars->collection()){
+					for (const auto &tempChar :regChars->collection()){
 						if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == s->GetInstanceID() && tempChar->GetSerial() != s->GetSerial() ){
 							
 							if( objInRange( tempChar, i, DIST_NEARBY ) ){
@@ -4150,7 +4150,7 @@ void cMagic::LoadScript( void )
 	UI08 i = 0;
 	for (auto &spellScp : FileLookup->ScriptListings[spells_def]){
 		if(spellScp) {
-			for (auto &[spEntry, SpellLoad]:spellScp->collection()){
+			for (const auto &[spEntry, SpellLoad]:spellScp->collection()){
 				if(SpellLoad) {
 					auto ssecs = oldstrutil::sections( spEntry, " " );
 					if( ssecs[0] == "SPELL" ) {
@@ -4161,7 +4161,7 @@ void cMagic::LoadScript( void )
 							reag_st *mRegs = spells[i].ReagantsPtr();
 							
 							//Console.Log( "Spell number: %i", "spell.log", i ); // Disabled for performance reasons
-							for (auto &sec : SpellLoad->collection()){
+							for (const auto &sec : SpellLoad->collection()){
 								tag = sec->tag ;
 								data = sec->data ;
 								UTag = oldstrutil::upper( tag );
