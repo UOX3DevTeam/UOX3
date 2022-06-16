@@ -574,9 +574,8 @@ auto CMulHandler::DoesMapBlock(std::int16_t x, std::int16_t y, std::int8_t z, st
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o-----------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, bool checkSpawnSurface) ->bool{
-	const auto &artwork = Map->artAt( x, y, worldNumber );
 	auto rvalue = checkSpawnSurface ;
-	for( const auto &tile:artwork ) {
+	for( const auto &tile:Map->artAt( x, y, worldNumber ) ) {
 		const SI08 elev = static_cast<SI08>( tile.altitude );
 		const SI08 tileHeight = static_cast<SI08>( tile.artInfo->ClimbHeight()  );
 		if( checkSpawnSurface ) {
@@ -594,7 +593,7 @@ auto CMulHandler::CheckStaticFlag(std::int16_t x, std::int16_t y, std::int8_t z,
 			}
 		}
 	}
-	return checkSpawnSurface;
+	return rvalue;
 }
 
 //=============================================================================================
@@ -662,7 +661,7 @@ auto CMulHandler::StaticTop(std::int16_t x, std::int16_t y, std::int8_t z, std::
 	const auto &artwork = Map->artAt(x, y, worldNumber );
 	for (const auto &tile:artwork){
 		auto tempTop = static_cast<std::int8_t>(tile.altitude + tile.artInfo->ClimbHeight());
-		if( ( tempTop <= x + maxZ ) && ( tempTop > top ) )
+		if( ( tempTop <= z + maxZ ) && ( tempTop > top ) )
 			top = tempTop;
 	}
 	return top;
@@ -1178,7 +1177,7 @@ auto terrainblock::load(std::uint8_t *data,const tileinfo *info) ->void {
 				if (info){
 					_tiles[x][y].terrainInfo = &info->terrain(tileid);
 				}
-				_tiles[x][y].altitude = static_cast<int>(*(reinterpret_cast<std::int8_t*>(data+2)));
+				_tiles[x][y].altitude = *(reinterpret_cast<std::int8_t*>(data+2));
 				data += 3 ; // advance data three bytes ;
 			}
 		}
@@ -1238,7 +1237,7 @@ auto artblock::load(int length, std::istream &input,const tileinfo *info) ->void
 		input.read(reinterpret_cast<char*>(&x),1);
 		input.read(reinterpret_cast<char*>(&y),1);
 		input.read(reinterpret_cast<char*>(&alt),1);
-		arttile.altitude = static_cast<int>(alt) ;
+		arttile.altitude = alt ;
 		input.read(reinterpret_cast<char*>(&arttile.static_hue),2);
 		if (info){
 			arttile.artInfo = &info->art(arttile.tileid);
