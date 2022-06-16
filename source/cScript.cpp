@@ -2737,7 +2737,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 
 	jsval params[4], rval;
 	JSString *strSpeech = nullptr;
-
+	
 	char *lwrSpeech = new char[strlen(mySpeech)+1];
 	strcopy( lwrSpeech, strlen(mySpeech) + 1, mySpeech );
 	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );

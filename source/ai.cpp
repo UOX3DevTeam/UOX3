@@ -88,7 +88,7 @@ void HandleGuardAI( CChar& mChar )
 		for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 			if( MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( isValidAttackTarget( mChar, tempChar ) ) {
 						if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) ) {
 							Combat->AttackTarget( &mChar, tempChar );
@@ -118,7 +118,7 @@ void HandleFighterAI( CChar& mChar )
 		for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 			if( MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( isValidAttackTarget( mChar, tempChar ) ) {
 						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 						// This event will override target selection entirely
@@ -254,7 +254,7 @@ auto HandleEvilAI( CChar& mChar )->void {
 				if( RandomNum( 0, 1 )){
 					regChars->Reverse();
 				}
-				for (auto &tempChar:regChars->collection()){
+				for (const auto &tempChar:regChars->collection()){
 					if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) ) {
 						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 						// This event will override target selection entirely
@@ -318,7 +318,7 @@ auto HandleChaoticAI( CChar& mChar )->void {
 		for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 			if( MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( isValidAttackTarget( mChar, tempChar ) && !checkForValidOwner( mChar, tempChar ) ) {
 						// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 						// This event will override target selection entirely
@@ -370,7 +370,7 @@ auto HandleAnimalAI( CChar& mChar )->void{
 			if( hunger <= 3 ) {
 				if( MapArea){
 					auto regChars = MapArea->GetCharList();
-					for (auto &tempChar:regChars->collection()){
+					for (const auto &tempChar:regChars->collection()){
 						if( isValidAttackTarget( mChar, tempChar ) ) {
 							// Loop through scriptTriggers attached to mChar and see if any have onCombatTarget event
 							// This event will override target selection entirely

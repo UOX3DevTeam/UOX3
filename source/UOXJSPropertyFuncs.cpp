@@ -622,7 +622,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGESNOW:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetWeatherDamage( SNOW ) );	break;
 			case CIP_SPEED:			*vp = INT_TO_JSVAL( gPriv->GetSpeed() );			break;
 			case CIP_NAME2:
-				tString = JS_NewStringCopyZ( cx, gPriv->GetName2() );
+				tString = JS_NewStringCopyZ( cx, gPriv->GetName2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CIP_ISCHAR:	*vp = JSVAL_FALSE;								break;
@@ -1095,7 +1095,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_DAMAGERAIN:	gPriv->SetWeatherDamage( RAIN, encaps.toBool() );			break;
 			case CIP_DAMAGESNOW:	gPriv->SetWeatherDamage( SNOW, encaps.toBool() );			break;
 			case CIP_SPEED:			gPriv->SetSpeed( (UI08)encaps.toInt() );					break;
-			case CIP_NAME2:			gPriv->SetName2( encaps.toString().c_str() );				break;
+			case CIP_NAME2:			gPriv->SetName2( encaps.toString() );				break;
 			case CIP_RACE:			gPriv->SetRace( (RACEID)encaps.toInt() );					break;
 			case CIP_MAXHP:			gPriv->SetMaxHP( (SI16)encaps.toInt() );					break;
 			case CIP_MAXUSES:		gPriv->SetMaxUses( (UI16)encaps.toInt() );					break;
@@ -2494,7 +2494,7 @@ JSBool CGuildProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CGP_ABBREVIATION:
-				tString = JS_NewStringCopyZ( cx, gPriv->Abbreviation() );
+				tString = JS_NewStringCopyZ( cx, gPriv->Abbreviation().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CGP_WEBPAGE:

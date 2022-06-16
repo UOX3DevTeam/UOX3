@@ -664,7 +664,7 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictE
 	CItem *toCreate = Items->CreateScriptItem( nullptr, mChar, partID, 1, OT_ITEM, false, 0x0 );
 	if( !ValidateObject( toCreate ) )
 		return false;
-	toCreate->SetName( oldstrutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2() ) );
+	toCreate->SetName( oldstrutil::format( Dictionary->GetEntry( dictEntry ).c_str(), corpse->GetName2().c_str() ) );
 	toCreate->SetLocation( corpse );
 	toCreate->SetOwner( corpse->GetOwnerObj() );
 	toCreate->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
@@ -700,7 +700,7 @@ auto newCarveTarget( CSocket *s, CItem *i ) ->void {
 		if( i->GetTempVar( CITV_MOREY, 2 ) ) {
 			auto toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
 			if(toFind){
-				for (auto &sec : toFind->collection()){
+				for (const auto &sec : toFind->collection()){
 					auto tag = sec->tag ;
 					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
 						auto data = sec->data ;
@@ -717,7 +717,7 @@ auto newCarveTarget( CSocket *s, CItem *i ) ->void {
 				criminal( mChar );
 				
 				auto iCont = i->GetContainsList();
-				for (auto &c : iCont->collection()){
+				for (const auto &c : iCont->collection()){
 					if( ValidateObject( c ) ) {
 						if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR ) {
 							c->SetCont( nullptr );
@@ -734,7 +734,7 @@ auto newCarveTarget( CSocket *s, CItem *i ) ->void {
 			auto sect = "CARVE "s + oldstrutil::number( i->GetCarve() );
 			auto toFind	= FileLookup->FindEntry( sect, carve_def );
 			if(toFind){
-				for (auto &sec : toFind->collection()){
+				for (const auto &sec : toFind->collection()){
 					auto tag = sec->tag ;
 					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
 						auto data = sec->data ;

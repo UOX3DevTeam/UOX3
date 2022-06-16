@@ -62,16 +62,13 @@ public:
 	~GenericList() = default ;
 
 	//===================================================================
-	// Because contents get deleted during iterator, we will return a copy
-	auto collection() const -> std::list<T> {
+	auto collection() const -> const std::list<T> &{
 		return objData ;
 	}
-	/*
 	//===================================================================
 	auto collection()  ->  std::list<T>& {
 		return objData ;
 	}
-	 */
 	//===================================================================
 	auto GetCurrent() -> T {
 		T rvalue = nullptr;

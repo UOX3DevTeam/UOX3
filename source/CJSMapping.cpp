@@ -326,7 +326,7 @@ auto CJSMappingSection::Parse( Script *fileAssocData )->void{
 	if(mSection) {
 		UI16 scriptID = 0xFFFF;
 		size_t i = 0;
-		for (auto &sec :mSection->collection()){
+		for (const auto &sec :mSection->collection()){
 			auto tag = sec->tag ;
 			auto data = sec->data;
 
@@ -386,7 +386,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) ->void {
 				if( scriptType == SCPT_CONSOLE ){
 					runTime = 1;
 				}
-				for (auto &sec : mSection->collection()){
+				for (const auto &sec : mSection->collection()){
 					auto tag = sec->tag ;
 					scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
 					if( scriptID == toLoad ) {
@@ -599,7 +599,7 @@ auto CEnvoke::Parse()->void {
 		if( fileAssocData ) {
 			auto mSection = fileAssocData->FindEntry( "ENVOKE" );
 			if( mSection){
-				for (auto &sec:mSection->collection()){
+				for (const auto &sec:mSection->collection()){
 					auto tag = sec->tag ;
 					if( !tag.empty() && tag != "\n" && tag != "\r" ) {
 						auto data = sec->data ;

@@ -63,7 +63,7 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 		TAGMAPOBJECT customTag;
 		std::string customTagName;
 		std::string customTagStringValue;
-		for (auto &sec : toApply->collection2()){
+		for (const auto &sec : toApply->collection2()){
 			auto tag = sec->tag ;
 			cdata = sec->cdata ;
 			odata = sec->odata ;
@@ -283,7 +283,7 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 						}
 						break;
 					case DFNTAG_NAME:	 applyTo->SetName( cdata ); break;
-					case DFNTAG_NAME2: applyTo->SetName2( cdata.c_str() );	 break;
+					case DFNTAG_NAME2: applyTo->SetName2( cdata);	 break;
 					case DFNTAG_NEWBIE: applyTo->SetNewbie( true ); break;
 					case DFNTAG_OFFSPELL: applyTo->SetOffSpell( static_cast<SI08>(ndata) ); break;
 					case DFNTAG_POISONDAMAGE: applyTo->SetWeatherDamage( POISON, ndata != 0 ); break;
@@ -1043,7 +1043,7 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 	if( toDecay.IsContType() ) {
 		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() ) {
 			auto iCont = toDecay.GetContainsList();
-			for (auto &io:iCont->collection()) {
+			for (const auto &io:iCont->collection()) {
 				if( ValidateObject( io ) ) {
 					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR ) {
 						io->SetCont( nullptr );
