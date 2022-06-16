@@ -190,7 +190,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	for (auto &MapArea : MapRegion->PopulateList( &mChar )){
 		if( MapArea){
 			auto regChars = MapArea->GetCharList();
-			for (auto &tempChar : regChars->collection()){
+			for (const auto &tempChar : regChars->collection()){
 				if( ValidateObject( tempChar ) && !tempChar->isFree() && (tempChar->GetInstanceID() == mChar.GetInstanceID() )){
 					if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) ){
 						inrange.push_back( tempChar );
@@ -297,7 +297,7 @@ auto cEffects::doSocketMusic( CSocket *s ) ->void {
 			
 			auto MusicList = FileLookup->FindEntry( sect, regions_def );
 			if(MusicList) {
-				for (auto &sec : MusicList->collection()){
+				for (const auto &sec : MusicList->collection()){
 					if (oldstrutil::upper(sec->tag) == "MUSIC"){
 						musicArray[i++] = static_cast<SI08>(std::stoi(sec->data, nullptr, 0));
 					}

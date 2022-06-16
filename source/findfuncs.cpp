@@ -192,7 +192,7 @@ CChar *FindItemOwner( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 auto SearchSubPackForItem( CItem *toSearch, UI16 itemID ) ->CItem *{
 	auto tsCont = toSearch->GetContainsList();
-	for (auto &toCheck:tsCont->collection()){
+	for (const auto &toCheck:tsCont->collection()){
 		if( ValidateObject( toCheck ) ) {
 			if( toCheck->GetID() == itemID ){	// it's in our hand
 				return toCheck;
@@ -239,7 +239,7 @@ CItem *FindItem( CChar *toFind, UI16 itemID )
 //o-----------------------------------------------------------------------------------------------o
 auto SearchSubPackForItemOfType( CItem *toSearch, ItemTypes type )->CItem *{
 	auto tsCont = toSearch->GetContainsList();
-	for (auto &toCheck : tsCont->collection()){
+	for (const auto &toCheck : tsCont->collection()){
 		if( ValidateObject( toCheck ) ) {
 			if( toCheck->GetType() == type ){
 				// it's in our hand
@@ -379,7 +379,7 @@ auto findMulti( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID )->CMu
 	for (auto &toCheck : MapRegion->PopulateList( x, y, worldNumber )){
 		if( toCheck){
 			auto regItems = toCheck->GetItemList();
-			for (auto &itemCheck : regItems->collection()){
+			for (const auto &itemCheck : regItems->collection()){
 				if( ValidateObject( itemCheck )&& itemCheck->GetInstanceID() == instanceID ){
 					if( itemCheck->GetID( 1 ) >= 0x40 && itemCheck->CanBeObjType( OT_MULTI ) ) {
 						dx = abs( x - itemCheck->GetX() );
@@ -412,7 +412,7 @@ auto GetItemAtXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceID ) -
 	auto toCheck = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
 	if( toCheck ){	// no valid region
 		auto regItems = toCheck->GetItemList();
-		for (auto &itemCheck:regItems->collection()){
+		for (const auto &itemCheck:regItems->collection()){
 			if( ValidateObject( itemCheck ) && itemCheck->GetInstanceID() == instanceID ){
 				if( itemCheck->GetX() == x && itemCheck->GetY() == y && itemCheck->GetZ() == z ) {
 					return itemCheck;
@@ -437,12 +437,12 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 	for (auto &toCheck : MapRegion->PopulateList( x, y, worldNumber )){
 		if( toCheck){
 			auto regItems = toCheck->GetItemList();
-			for (auto &itemCheck: regItems->collection()){
+			for (const auto &itemCheck: regItems->collection()){
 				if( ValidateObject( itemCheck ) && itemCheck->GetInstanceID() == instanceID ){
 					
 					if( itemCheck->GetID() == id && itemCheck->GetZ() == z ) {
 						point3 difference	= itemCheck->GetLocation() - targLocation;
-						currDist			= static_cast<UI16>(difference.Mag());
+						currDist = static_cast<UI16>(difference.Mag());
 						if( currDist < oldDist) {
 							oldDist = currDist;
 							currItem = itemCheck;
@@ -491,7 +491,7 @@ auto findNearbyItems( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 di
 		if(CellResponse){
 			
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item : regItems->collection()){
+			for (const auto &Item : regItems->collection()){
 				if( ValidateObject( Item ) && Item->GetInstanceID() == instanceID ){
 					if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance ){
 						ourItems.push_back( Item );
@@ -514,7 +514,7 @@ auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 
 		if(CellResponse){
 			
 			auto regItems = CellResponse->GetItemList();
-			for (auto &Item:regItems->collection()){
+			for (const auto &Item:regItems->collection()){
 				if( ValidateObject( Item ) && Item->GetInstanceID() == instanceID ){
 					if( getDist( Item->GetLocation(), point3( x, y, Item->GetZ() )) <= distance ){
 						ourObjects.push_back( Item );
@@ -523,7 +523,7 @@ auto findNearbyObjects( SI16 x, SI16 y, UI08 worldNumber, UI16 instanceID, UI16 
 			}
 			
 			auto regChars = CellResponse->GetCharList();
-			for (auto &Character : regChars->collection()){
+			for (const auto &Character : regChars->collection()){
 				if( ValidateObject( Character ) && Character->GetInstanceID() == instanceID ){
 					if( getDist( Character->GetLocation(), point3( x, y, Character->GetZ() )) <= distance ){
 						ourObjects.push_back( Character );

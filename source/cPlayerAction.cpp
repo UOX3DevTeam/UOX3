@@ -158,7 +158,7 @@ auto autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack ) ->CItem *{
 			const UI32 itSellValue = iToStack->GetSellValue();
 			
 			auto ipCont = iPack->GetContainsList();
-			for (auto &stack :ipCont->collection()){
+			for (const auto &stack :ipCont->collection()){
 				if( ValidateObject( stack ) ){
 					
 					if( stack->isPileable() && stack->GetAmount() < MAX_STACK &&
@@ -735,7 +735,7 @@ auto IsOnFoodList( const std::string& sFoodList, const UI16 sItemID ) ->bool{
 	const std::string sect	= "FOODLIST "s + sFoodList;
 	auto FoodList = FileLookup->FindEntry( sect, items_def );
 	if(FoodList) {
-		for (auto &sec : FoodList->collection()){
+		for (const auto &sec : FoodList->collection()){
 			auto tag = sec->tag ;
 			if( !tag.empty() ) {
 				if( oldstrutil::upper( tag ) == "FOODLIST" ) {
@@ -2790,7 +2790,7 @@ auto InitIDToItemType() ->void {
 		
 		SI32 sectionCount;
 		ItemTypes iType = IT_COUNT;
-		for (auto &sec : Itemtypes->collection()){
+		for (const auto &sec : Itemtypes->collection()){
 			auto tag = sec->tag ;
 			auto data = sec->data ;
 			auto comma_secs = oldstrutil::sections( data, "," );
@@ -3138,8 +3138,8 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		s->objMessage( Dictionary->GetEntry( 9055, s->Language() ), i ); // [Blessed]
 	}
 
-	std::string name2( i->GetName2() );
-	if( name2 != "#" && name2 != "" )
+	
+	if( i->GetName2() != "#" && i->GetName2() != "" )
 	{
 		s->objMessage( Dictionary->GetEntry( 9402, s->Language() ), i ); // [Unidentified]
 	}
@@ -3274,13 +3274,11 @@ bool CPISingleClick::Handle( void )
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
-		std::string name2( i->GetName2() );
-		if( name2 == "#" || name2 == "" )
-		{
+		
+		if( i->GetName2() == "#" || i->GetName2() == "" ) {
 			realname += oldstrutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
 		}
-		else
-		{
+		else {
 			realname += " (unidentified)";
 		}
 	}

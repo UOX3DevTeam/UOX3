@@ -317,7 +317,7 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 			if(prio){	// successfully made a script
 				auto prioInfo = prio->FindEntry( "PRIORITY" );	// find the priority entry
 				if( prioInfo){
-					for (auto &sec : prioInfo->collection()){
+					for (const auto &sec : prioInfo->collection()){
 						auto tag = sec->tag ;
 						auto data = sec->data ;
 						if( oldstrutil::upper( tag ) == "DEFAULTPRIORITY" ) {

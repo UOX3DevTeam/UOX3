@@ -142,7 +142,7 @@ auto  HandleTeleporters( CChar *s )->void {
 							
 							// Teleport player's pets
 							auto myPets = s->GetPetList();
-							for (auto &myPet : myPets->collection()){
+							for (const auto &myPet : myPets->collection()){
 								if( ValidateObject( myPet ) ){
 									if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s ) {
 										if( objInOldRange( s, myPet, DIST_CMDRANGE ) ){
@@ -545,7 +545,7 @@ auto cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz ) ->
 	if( MapArea ){	// no valid region
 		
 		auto regChars = MapArea->GetCharList();
-		for (auto &tempChar : regChars->collection()){
+		for (const auto &tempChar : regChars->collection()){
 			if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == c->GetInstanceID() ) {
 				if( tempChar != c && ( ( isOnline( (*tempChar) ) && !tempChar->IsDead() ) || tempChar->IsNpc() ) ) {	// x=x,y=y, and distance btw z's <= MAX STEP
 					if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) ){
@@ -731,7 +731,7 @@ auto cMovement::GetBlockingDynamics( SI16 x, SI16 y,std::vector<tile_t> &xyblock
 		for (auto &MapArea : MapRegion->PopulateList( x, y, worldNumber )){
 			if( MapArea){
 				auto regItems = MapArea->GetItemList();
-				for (auto &tItem : regItems->collection()){
+				for (const auto &tItem : regItems->collection()){
 					if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
 						if( !tItem->CanBeObjType( OT_MULTI ) ) {
 #if DEBUG_WALKING
@@ -902,7 +902,7 @@ auto cMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) ->void {
 				std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 				std::vector<UI16> ourScriptTriggers;
 				cScript *toExecute;
-				for (auto &ourChar : regChars->collection()){
+				for (const auto &ourChar : regChars->collection()){
 					if( ValidateObject( ourChar ) && ourChar != c && ourChar->GetInstanceID() == instanceID ){
 						if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 4 ) {
 							if(( ourChar->GetVisible() != VT_PERMHIDDEN )
@@ -1183,7 +1183,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 		if( MapArea){
 			if( mSock )	{	// Only send char stuff if we have a valid socket
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == instanceID ){
 						// Character Send Stuff
 						if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) {
@@ -1207,7 +1207,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				}
 			}
 			auto regItems = MapArea->GetItemList();
-			for (auto &tItem: regItems->collection()){
+			for (const auto &tItem: regItems->collection()){
 				if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
 					id		= tItem->GetID();
 					type	= tItem->GetType();

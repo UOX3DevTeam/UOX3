@@ -108,7 +108,7 @@ auto LeaveBoat( CSocket *s, CItem *p ) ->bool {
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
 				
 				auto myPets = mChar->GetPetList();
-				for (auto &pet : myPets->collection()){
+				for (const auto &pet : myPets->collection()){
 					if( ValidateObject( pet ) ) {
 						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 							pet->SetLocation( x, y, z, worldNumber, instanceID );
@@ -139,7 +139,7 @@ void PlankStuff( CSocket *s, CItem *p )
 		CMultiObj *boat2	= p->GetMultiObj();
 		if( ValidateObject( boat2 ) ) {
 			auto myPets = mChar->GetPetList();
-			for (auto &pet:myPets->collection()){
+			for (const auto &pet:myPets->collection()){
 				if( ValidateObject( pet ) ) {
 					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 						pet->SetLocation( mChar );
@@ -640,7 +640,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	// Move all items aboard the boat along with the boat
 	auto itemList = boat->GetItemsInMultiList();
-	for (auto &bItem : itemList->collection()){
+	for (const auto &bItem : itemList->collection()){
 		if( ValidateObject( bItem ) ){
 			if( !(bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold) ){
 				bItem->IncLocation( tx, ty );
@@ -656,7 +656,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	// Move all characters aboard the boat along with the boat
 	auto charList = boat->GetCharsInMultiList();
-	for (auto &bChar : charList->collection()){
+	for (const auto &bChar : charList->collection()){
 		if( ValidateObject( bChar ) ){
 			bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
 			if( teleportBoat ) {
@@ -758,13 +758,13 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 
 
 	auto itemList = b->GetItemsInMultiList();
-	for (auto &bItem : itemList->collection()){
+	for (const auto &bItem : itemList->collection()){
 		if( ValidateObject( bItem ) ){
 			TurnStuff( b, bItem, rightTurn );
 		}
 	}
 	auto charList = b->GetCharsInMultiList();
-	for (auto &bChar : charList->collection()){
+	for (const auto &bChar : charList->collection()){
 		if( ValidateObject( bChar ) ){
 			TurnStuff( b, bChar, rightTurn );
 		}

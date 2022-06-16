@@ -2455,7 +2455,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) ->void {
 				// First remove nearby characters from sight
 		
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem charToSend = (*tempChar);
 						auto tempX = tempChar->GetX();
@@ -2472,7 +2472,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) ->void {
 				
 				// Now remove nearby items and multis from sight
 				auto regItems = MapArea->GetItemList();
-				for (auto &tempItem : regItems->collection()){
+				for (const auto &tempItem : regItems->collection()){
 					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem itemToSend = (*tempItem);
 						auto tempItemX = tempItem->GetX();
@@ -2601,7 +2601,7 @@ auto CChar::Teleport() ->void
 		for (auto &MapArea : MapRegion->PopulateList( this )){
 			if(MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto tempChar : regChars->collection()){
+				for (const auto tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempX = tempChar->GetX();
 						auto tempY = tempChar->GetY();
@@ -2613,7 +2613,7 @@ auto CChar::Teleport() ->void
 					}
 				}
 				auto regItems = MapArea->GetItemList();
-				for (auto tempItem : regItems->collection()){
+				for (const auto tempItem : regItems->collection()){
 					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempItemX = tempItem->GetX();
 						auto tempItemY = tempItem->GetY();
@@ -4655,7 +4655,7 @@ void CChar::Cleanup( void )
 
 		// If we delete a NPC we should delete his tempeffects as well
 		std::vector<CTEffect *> removedEffect ;
-		for (auto &Effect : cwmWorldState->tempEffects.collection()){
+		for (const auto &Effect : cwmWorldState->tempEffects.collection()){
 			if( Effect->Destination() == GetSerial() ){
 				removedEffect.push_back(Effect);
 			}

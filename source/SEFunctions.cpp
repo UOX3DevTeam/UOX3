@@ -2076,7 +2076,7 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	for (auto &MapArea : MapRegion->PopulateList( srcObject )){
 		if(MapArea){
 			auto regChars = MapArea->GetCharList();
-			for (auto &tempChar : regChars->collection()){
+			for (const auto &tempChar : regChars->collection()){
 				if( ValidateObject( tempChar ) ){
 					if( objInRange( srcObject, tempChar, (UI16)distance ) ) {
 						if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
@@ -2138,7 +2138,7 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	for (auto &MapArea : MapRegion->PopulateList( srcObject )){
 		if(MapArea){
 			auto regItems = MapArea->GetItemList();
-			for (auto &tempItem : regItems->collection()){
+			for (const auto &tempItem : regItems->collection()){
 				if( ValidateObject( tempItem ) ){
 					if( objInRange( srcObject, tempItem, (UI16)distance ) ) {
 						if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )

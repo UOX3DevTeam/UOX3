@@ -48,8 +48,8 @@ enum UpdateTypes
 class CBaseObject
 {
 protected:
-	TAGMAP2			tags;
-	TAGMAP2			tempTags;
+	TAGMAP2		tags;
+	TAGMAP2		tempTags;
 	std::string 	title;
 	SI16			mana;
 	SI16			stamina;
@@ -62,12 +62,12 @@ protected:
 	UI16			id;
 	UI16			colour;
 	UI08			dir;
-	SERIAL			serial;
-	SERIAL			tempmulti;
-	CMultiObj *	multis;
-	SERIAL			spawnserial;
-	SERIAL			owner;
-	RACEID			race;
+	SERIAL		serial;
+	SERIAL		tempmulti;
+	CMultiObj *		multis;
+	SERIAL		spawnserial;
+	SERIAL		owner;
+	RACEID		race;
 	std::string 	name;
 	SI16			strength;
 	SI16			dexterity;
