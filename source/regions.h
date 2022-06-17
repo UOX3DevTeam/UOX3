@@ -38,13 +38,13 @@ class CMapRegion
 private:
 	GenericList< CItem * >	itemData;
 	GenericList< CChar * >	charData;
-	RegionSerialList< SERIAL > regionSerialData;
+	RegionSerialList regionSerialData;
 	bool hasRegionChanged = false;
 
 public:
 	GenericList< CItem * > *	GetItemList( void );
 	GenericList< CChar * > *	GetCharList( void );
-	RegionSerialList< SERIAL > *	GetRegionSerialList( void );
+	RegionSerialList*	GetRegionSerialList();
 	bool						HasRegionChanged( void );
 	void						HasRegionChanged( bool newVal );
 

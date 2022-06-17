@@ -250,18 +250,18 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 			}
 			if( targetZ >= 0 ){// mountain not likely to be below 0 (but you never know, do you? =)
 				if( targetID1 != 0 && targetID2 != 0 ){	// we might have a static rock or mountain
-					CStaticIterator msi( targetX, targetY, mChar->WorldNumber() );
-					for( Static_st *stat = msi.Next(); stat != nullptr; stat = msi.Next() ){
-						CTile& tile = Map->SeekTile( stat->itemid );
-						if( targetZ == stat->zoff && ( ( tile.Name()!="rock") || ( tile.Name()!="mountain" ) || (tile.Name()!="cave" ) ) )
+					auto artwork = Map->artAt(targetX, targetY, mChar->WorldNumber());
+					for( auto &tile:artwork){
+						auto name = tile.name();
+						if( targetZ == tile.altitude && ( ( name!="rock") || ( name!="mountain" ) || (name!="cave" ) ) )
 							return true;
 					}
 				}
 				else	{	// or it could be a map only
 					// manually calculating the ID's if a maptype
-					const map_st map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
-					CLand& land = Map->SeekLand( map1.id );
-					if( (land.Name() != "rock" ) || (land.Name() != "mountain" )  || (land.Name() != "cave" ) )
+					auto map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
+					
+					if( (map1.name() != "rock" ) || (map1.name() != "mountain" )  || (map1.name() != "cave" ) )
 						return true;
 				}
 			}
@@ -1596,7 +1596,7 @@ void cSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 	for (auto &MapArea : MapRegion->PopulateList( mChar )){
 		if( MapArea){
 			auto regChars = MapArea->GetCharList();
-			for (auto &tempChar : regChars->collection()){
+			for (const auto &tempChar : regChars->collection()){
 				if (MaxTrackingTargets <  cwmWorldState->ServerData()->TrackingMaxTargets()){
 					if( ValidateObject( tempChar ) && (tempChar->GetInstanceID() == mChar->GetInstanceID()) ){
 						id = tempChar->GetID();
@@ -1831,7 +1831,7 @@ void cSkills::AnvilTarget( CSocket *s, CItem& item, miningData *oreType )
 	for (auto &MapArea : MapRegion->PopulateList( mChar )){
 		if( MapArea){
 			auto regItems = MapArea->GetItemList();
-			for (auto &tempItem : regItems->collection()){
+			for (const auto &tempItem : regItems->collection()){
 				if( ValidateObject( tempItem )&& (tempItem->GetInstanceID() == mChar->GetInstanceID()) ){
 					if( tempItem->GetID() == 0x0FAF || tempItem->GetID() == 0x0FB0 ) {
 						if( objInRange( mChar, tempItem, DIST_NEARBY ) ) {
@@ -1905,7 +1905,7 @@ bool cSkills::LoadMiningData( void )
 					toAdd.name		= oreName;
 					toAdd.oreName	= oreName;
 					toAdd.oreChance = 0;
-					for (auto &sec : individualOre->collection()){
+					for (const auto &sec : individualOre->collection()){
 						tag = sec->tag ;
 						data = sec->data ;
 						UTag = oldstrutil::upper( tag );
@@ -2048,13 +2048,13 @@ auto  cSkills::LoadCreateMenus() ->void {
 	for( Script *ourScript = FileLookup->FirstScript( create_def ); !FileLookup->FinishedScripts( create_def ); ourScript = FileLookup->NextScript( create_def ) )
 	{
 		if( ourScript) {
-			for (auto &[eName1,toSearch]:ourScript->collection()) {
+			for (const auto &[eName1,toSearch]:ourScript->collection()) {
 				auto eName = eName1;
 				if( "SUBMENU" == eName.substr( 0, 7 ) ){	// is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 					eName = oldstrutil::trim( oldstrutil::removeTrailing( eName, "//" ));
 					auto ssecs = oldstrutil::sections( eName, " " );
 					ourEntry = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
-					for (auto &sec : toSearch->collection()){
+					for (const auto &sec : toSearch->collection()){
 						auto tag = sec->tag;
 						auto data = sec->data ;
 						auto UTag = oldstrutil::upper( tag );
@@ -2078,7 +2078,7 @@ auto  cSkills::LoadCreateMenus() ->void {
 					tmpEntry.targID			= 1;
 					tmpEntry.soundPlayed	= 0;
 					
-					for (auto &sec : toSearch->collection()){
+					for (const auto &sec : toSearch->collection()){
 						auto tag = sec->tag;
 						auto data = sec->data ;
 						auto UTag = oldstrutil::upper( tag );
@@ -2124,7 +2124,7 @@ auto  cSkills::LoadCreateMenus() ->void {
 							auto resType = "RESOURCE "s + oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
 							auto resList = FileLookup->FindEntry( resType, create_def );
 							if(resList) {
-								for (auto &sec : resList->collection()){
+								for (const auto &sec : resList->collection()){
 									tmpResource.idList.push_back( static_cast<UI16>(std::stoul(sec->data, nullptr, 0 )));
 								}
 							}
@@ -2164,7 +2164,7 @@ auto  cSkills::LoadCreateMenus() ->void {
 				else if( "MENUENTRY" == eName.substr( 0, 9 ) ) {
 					auto ssecs = oldstrutil::sections( eName, " " );
 					ourEntry = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0));
-					for (auto &sec : toSearch->collection()){
+					for (const auto &sec : toSearch->collection()){
 						auto tag = sec->tag ;
 						auto data = sec->data ;
 						auto UTag = oldstrutil::upper( tag );

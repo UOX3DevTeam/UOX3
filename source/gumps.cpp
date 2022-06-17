@@ -218,7 +218,7 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 						for (auto &toCheck : MapRegion->PopulateList( mChar )){
 							if(toCheck){
 								auto regItems = toCheck->GetItemList();
-								for (auto &itemCheck : regItems->collection()){
+								for (const auto &itemCheck : regItems->collection()){
 									if( ValidateObject( itemCheck ) ){
 										if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 ) {
 											// found our townstone

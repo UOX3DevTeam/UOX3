@@ -51,6 +51,8 @@
 #include "StringUtility.hpp"
 #include "EventTimer.hpp"
 
+#include <algorithm>
+
 cMovement *Movement;
 
 // These are defines that I'll use. I have a history of working with properties, so that's why
@@ -140,7 +142,7 @@ auto  HandleTeleporters( CChar *s )->void {
 							
 							// Teleport player's pets
 							auto myPets = s->GetPetList();
-							for (auto &myPet : myPets->collection()){
+							for (const auto &myPet : myPets->collection()){
 								if( ValidateObject( myPet ) ){
 									if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s ) {
 										if( objInOldRange( s, myPet, DIST_CMDRANGE ) ){
@@ -543,7 +545,7 @@ auto cMovement::CheckForCharacterAtXYZ( CChar *c, SI16 cx, SI16 cy, SI08 cz ) ->
 	if( MapArea ){	// no valid region
 		
 		auto regChars = MapArea->GetCharList();
-		for (auto &tempChar : regChars->collection()){
+		for (const auto &tempChar : regChars->collection()){
 			if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == c->GetInstanceID() ) {
 				if( tempChar != c && ( ( isOnline( (*tempChar) ) && !tempChar->IsDead() ) || tempChar->IsNpc() ) ) {	// x=x,y=y, and distance btw z's <= MAX STEP
 					if( tempChar->GetX() == cx && tempChar->GetY() == cy && tempChar->GetZ() >= cz && tempChar->GetZ() <= (cz + 5) ){
@@ -699,49 +701,20 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 	c->WalkZ( newZ );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	No longer used?
-//o-----------------------------------------------------------------------------------------------o
-void cMovement::GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber )
-{
-	if( xycount >= XYMAX )	// don't overflow
-		return;
-	const SI08 mapz = Map->MapElevation( x, y, worldNumber );
-	if( mapz != ILLEGAL_Z )
-	{
-		const map_st map	= Map->SeekMap( x, y, worldNumber );
-		CLand& land			= Map->SeekLand( map.id );
-		xyblock[xycount].Flags( land.Flags() );
-		xyblock[xycount].Type( 0 );
-		xyblock[xycount].BaseZ( mapz );
-		xyblock[xycount].Top( mapz );
-		++xycount;
-	}
-}
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
+//|	Function	-	void GetBlockingStatics( SI16 x, SI16 y, std::vector<tile_t> &xyblock, UI16 &xycount, UI08 worldNumber )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of static items that block character movement
 //o-----------------------------------------------------------------------------------------------o
-void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber )
+void cMovement::GetBlockingStatics( SI16 x, SI16 y, std::vector<tile_t> &xyblock, UI16 &xycount, UI08 worldNumber )
 {
 	if( xycount >= XYMAX )	// don't overflow
 		return;
 
-	CStaticIterator msi( x, y, worldNumber );
-	for( Static_st *stat = msi.First(); stat != nullptr; stat = msi.Next() )
-	{
-		CTile& tile = Map->SeekTile( stat->itemid );
-
-		xyblock[xycount].Type( 2 );
-		xyblock[xycount].BaseZ( stat->zoff );
-		xyblock[xycount].Top( stat->zoff + calcTileHeight( tile.Height() ) );
-		xyblock[xycount].Height(tile.Height());
-		xyblock[xycount].SetID( stat->itemid );
-		xyblock[xycount].Flags( tile.Flags() );
+	auto artwork = Map->artAt(x, y, worldNumber);
+	for (auto &art : artwork){
+		xyblock.push_back(art);
 		++xycount;
 		if( xycount >= XYMAX )	// don't overflow
 			break;
@@ -749,45 +722,43 @@ void cMovement::GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xyc
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID )
+//|	Function	-	void GetBlockingDynamics( SI16 x, SI16 y, std::vector<tile_t> xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a list of dynamic items that block character movement
 //o-----------------------------------------------------------------------------------------------o
-auto cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID ) ->void {
+auto cMovement::GetBlockingDynamics( SI16 x, SI16 y,std::vector<tile_t> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID ) ->void {
 	if( xycount < XYMAX ){	// don't overflow
 		for (auto &MapArea : MapRegion->PopulateList( x, y, worldNumber )){
 			if( MapArea){
 				auto regItems = MapArea->GetItemList();
-				for (auto &tItem : regItems->collection()){
+				for (const auto &tItem : regItems->collection()){
 					if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
 						if( !tItem->CanBeObjType( OT_MULTI ) ) {
 #if DEBUG_WALKING
 							Console.print( oldstrutil::format( "DEBUG: Item X: %i\nItem Y: %i\n", tItem->GetX(), tItem->GetY() ));
 #endif
 							if( tItem->GetX() == x && tItem->GetY() == y ) {
-								CTile& tile = Map->SeekTile( tItem->GetID() );
-								xyblock[xycount].Type( 1 );
-								xyblock[xycount].BaseZ( tItem->GetZ() );
-								xyblock[xycount].Height( tile.Height());
-								xyblock[xycount].Top( tItem->GetZ() + calcTileHeight( tile.Height() ) );
-								xyblock[xycount].Flags( tile.Flags() );
-								xyblock[xycount].SetID(tItem->GetID());
+								auto tile = tile_t(tiletype_t::dyn);
+								tile.tileid =tItem->GetID();
+								tile.altitude = tItem->GetZ();
+								tile.artInfo = &Map->SeekTile( tItem->GetID() );
+								xyblock.push_back(tile);
 								++xycount;
 								if( xycount >= XYMAX ){	// don't overflow
 									return;
 								}
 							}
 						}
-						else if( abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && abs( tItem->GetY() - y) <= DIST_BUILDRANGE ) {	// implication, is, this is now a CMultiObj
+						else if( std::abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && std::abs( tItem->GetY() - y) <= DIST_BUILDRANGE ) {	// implication, is, this is now a CMultiObj
 							const UI16 multiID = (tItem->GetID() - 0x4000);
 							SI32 length = 0;
 							
 							if( !Map->multiExists( multiID )) {
 								Console.error( "Walking() - Bad length in multi file. Avoiding stall" );
-								const map_st map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
+								auto map1 = Map->SeekMap( tItem->GetX(), tItem->GetY(), tItem->WorldNumber() );
 								
-								CLand& land = Map->SeekLand( map1.id );
-								if( land.CheckFlag( TF_WET ) ) // is it water?
+								
+								if( map1.CheckFlag( TF_WET ) ) // is it water?
 									tItem->SetID( 0x4001 );
 								else
 									tItem->SetID( 0x4064 );
@@ -796,13 +767,10 @@ auto cMovement::GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xy
 							else {
 								for( auto &multi : Map->SeekMulti( multiID ).items ) {
 									if( multi.flag && (tItem->GetX() + multi.offsetx) == x && (tItem->GetY() + multi.offsety) == y ) {
-										CTile& tile = Map->SeekTile( multi.tileid );
-										xyblock[xycount].Type( 2 );
-										xyblock[xycount].BaseZ( multi.altitude + tItem->GetZ() );
-										xyblock[xycount].Height( tile.Height());
-										xyblock[xycount].Top( multi.altitude + tItem->GetZ() + calcTileHeight( tile.Height() ) );
-										xyblock[xycount].Flags( tile.Flags() );
-										xyblock[xycount].SetID(tItem->GetID());
+										auto tile = tile_t(tiletype_t::dyn);
+										tile.artInfo = &Map->SeekTile( multi.tileid );
+										tile.altitude = multi.altitude + tItem->GetZ();
+										xyblock.push_back(tile) ;
 										++xycount;
 										if( xycount >= XYMAX ){	// don't overflow
 											return;
@@ -934,7 +902,7 @@ auto cMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) ->void {
 				std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 				std::vector<UI16> ourScriptTriggers;
 				cScript *toExecute;
-				for (auto &ourChar : regChars->collection()){
+				for (const auto &ourChar : regChars->collection()){
 					if( ValidateObject( ourChar ) && ourChar != c && ourChar->GetInstanceID() == instanceID ){
 						if( ourChar->GetX() == x && ourChar->GetY() == y && std::abs(ourChar->GetZ() - z ) <= 4 ) {
 							if(( ourChar->GetVisible() != VT_PERMHIDDEN )
@@ -1215,7 +1183,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 		if( MapArea){
 			if( mSock )	{	// Only send char stuff if we have a valid socket
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == instanceID ){
 						// Character Send Stuff
 						if( tempChar->IsNpc() || isOnline( (*tempChar) ) || ( isGM && cwmWorldState->ServerData()->ShowOfflinePCs() ) ) {
@@ -1239,7 +1207,7 @@ void cMovement::HandleItemCollision( CChar *mChar, CSocket *mSock, SI16 oldx, SI
 				}
 			}
 			auto regItems = MapArea->GetItemList();
-			for (auto &tItem: regItems->collection()){
+			for (const auto &tItem: regItems->collection()){
 				if( ValidateObject( tItem ) && tItem->GetInstanceID() == instanceID ){
 					id		= tItem->GetID();
 					type	= tItem->GetType();
@@ -2230,28 +2198,25 @@ void cMovement::GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& 
 //|	Purpose		-	Checks that target location has no blocking tiles within range of
 //|						character's potential new Z and the top of their head
 //o-----------------------------------------------------------------------------------------------o
-bool cMovement::IsOk( CTileUni *xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk )
+bool cMovement::IsOk( std::vector<tile_t> &xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk )
 {
-	CTileUni *tb;
+	for (auto &tile:xyblock){
+		
 
-	for( SI32 i = 0; i < xycount; ++i )
-	{
-		tb = &xyblock[i];
-
-		if( tb->CheckFlag( TF_WET ) )
+		if( tile.CheckFlag( TF_WET ) )
 		{
 			// If blocking object is WET and character can swim, ignore object
 			if( waterWalk )
 				continue;
 		}
 
-		if( tb->CheckFlag(TF_BLOCKING) || tb->CheckFlag(TF_SURFACE) )
+		if( tile.CheckFlag(TF_BLOCKING) || tile.CheckFlag(TF_SURFACE) )
 		{
 			// If character ignores doors (GMs/Counselors/Ghosts), and this is a door, ignore.
-			if( ignoreDoor && tb->Type() == 1 && (tb->CheckFlag(TF_DOOR) || tb->GetID() == 0x692 || tb->GetID() == 0x846 || tb->GetID() == 0x873 || (tb->GetID() >= 0x6F5 && tb->GetID() <= 0x6F6)) )
+			if( ignoreDoor && tile.type == tiletype_t::dyn && (tile.CheckFlag(TF_DOOR) || tile.tileid == 0x692 || tile.tileid == 0x846 || tile.tileid == 0x873 || (tile.tileid >= 0x6F5 && tile.tileid <= 0x6F6)) )
 				continue;
-			SI08 checkz = tb->BaseZ();
-			SI08 checkTop = tb->Top();
+			SI08 checkz = tile.altitude;
+			SI08 checkTop = tile.top();
 
 			if( checkTop > ourZ && ourTop > checkz )
 				return false;
@@ -2272,19 +2237,19 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	SI08 landtop = 0;
 	bool landBlock = true;
 
-	const map_st map	= Map->SeekMap( x, y, world );
-	CLand& land	= Map->SeekLand( map.id );
-	landBlock = land.CheckFlag( TF_BLOCKING );
-	if( landBlock && waterwalk && land.CheckFlag( TF_WET ))
+	auto map	= Map->SeekMap( x, y, world );
+	
+	landBlock = map.CheckFlag( TF_BLOCKING );
+	if( landBlock && waterwalk && map.CheckFlag( TF_WET ))
 		landBlock = false;
 	
-	CTileUni *tb;
-	CTileUni xyblock[XYMAX];
+	
+	std::vector<tile_t> xyblock;
 	UI16 xycount		= 0;
 	GetBlockingStatics( x, y, xyblock, xycount, world );
 	GetBlockingDynamics( x, y, xyblock, xycount, world, instanceID );
 
-	bool considerLand = !Map->IsIgnored( map.id );
+	bool considerLand = !Map->IsIgnored( map.tileid );
 	GetAverageZ( world, x, y, landz, landcent, landtop );
 
 	bool isset = false;
@@ -2301,20 +2266,18 @@ void cMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 		isset = true;
 	}
 
-	for( SI32 i = 0; i < xycount; ++i )
-	{
-		tb = &xyblock[i];
+	for( auto &tile:xyblock ){
 
 		// If the tile is a surface that can be walked on, or swam on...
-		if(( !isset || tb->Top() >= zcenter ) && ( tb->CheckFlag( TF_SURFACE ) || ( waterwalk && tb->CheckFlag( TF_WET ))) && z >= tb->Top() )
+		if(( !isset || tile.top() >= zcenter ) && ( tile.CheckFlag( TF_SURFACE ) || ( waterwalk && tile.CheckFlag( TF_WET ))) && z >= tile.top() )
 		{
 			// Fetch the base Z position of surface tile
-			zlow = tb->BaseZ();
+			zlow = tile.altitude;
 
 			// Fetch the top Z position of surface tile as zcenter
-			zcenter = tb->Top();
+			zcenter = tile.top();
 
-			SI08 top = tb->BaseZ() + tb->Height();
+			SI08 top = tile.altitude + tile.height();
 
 			if( !isset || top > ztop )
 				ztop = top;
@@ -2406,28 +2369,27 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	UI16 xycount		= 0;
 	UI08 worldNumber	= c->WorldNumber();
 	UI16 instanceID		= c->GetInstanceID();
-	UI16 i				= 0;
 	bool landBlock = true;
-	CTileUni *tb;
-	CTileUni xyblock[XYMAX];
+	
+	std::vector<tile_t> xyblock ;
 	GetBlockingStatics( x, y, xyblock, xycount, worldNumber );
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceID );
 
-	const map_st map	= Map->SeekMap( x, y, c->WorldNumber() );
-	CLand& land	= Map->SeekLand( map.id );
+	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
+	
 	
 	// Does landtile in target location block movement?
-	landBlock = land.CheckFlag( TF_BLOCKING );
+	landBlock = map.CheckFlag( TF_BLOCKING );
 	
 	// If it does, but it's WET and character can swim, it doesn't block!
 	if( landBlock && waterWalk )
 	{
 		// Don't count the underwater coastal landtiles as blocking
-		if( land.CheckFlag( TF_WET ) || ( land.TextureID() >= 76 && land.TextureID() <= 111 ))
+		if( map.CheckFlag( TF_WET ) || ( map.terrainInfo->TextureID() >= 76 && map.terrainInfo->TextureID() <= 111 ))
 			landBlock = false;
 	}
 	
-	bool considerLand = Map->IsIgnored( map.id ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
+	bool considerLand = Map->IsIgnored( map.tileid ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 
 	SI08 startTop = 0;
 	SI08 startz = 0;
@@ -2451,20 +2413,19 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 	// first calculate newZ value
 
 	// Loop through all objects in the target location
-	for( i = 0; i < xycount; ++i )
-	{
-		tb = &xyblock[i];
+	for (auto &tile : xyblock){
+		
 
-		if(( !tb->CheckFlag( TF_BLOCKING ) && tb->CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tb->CheckFlag( TF_WET )))
+		if(( !tile.CheckFlag( TF_BLOCKING ) && tile.CheckFlag( TF_SURFACE ) && !waterWalk ) || ( waterWalk && tile.CheckFlag( TF_WET )))
 		{
-			SI08 itemz = tb->BaseZ(); // Object's current Z position
+			SI08 itemz = tile.altitude; // Object's current Z position
 			SI08 itemTop = itemz;
-			SI08 potentialNewZ = tb->Top(); // Character's potential new Z position on top of object
+			SI08 potentialNewZ = tile.top(); // Character's potential new Z position on top of object
 			SI08 testTop = checkTop;
 
 			if( moveIsOk )
 			{
-				SI08 cmp = abs( potentialNewZ - c->GetZ() ) - abs( newz - c->GetZ() );
+				SI08 cmp = std::abs( potentialNewZ - c->GetZ() ) - std::abs( newz - c->GetZ() );
 				if( cmp > 0 || ( cmp == 0 && potentialNewZ > newz ))
 					continue;
 			}
@@ -2472,18 +2433,18 @@ SI08 cMovement::calc_walk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 
 			if( potentialNewZ + charHeight > testTop )
 				testTop = potentialNewZ + charHeight;
 
-			if( !tb->CheckFlag( TF_CLIMBABLE ))
-				itemTop += tb->Height();
+			if( !tile.CheckFlag( TF_CLIMBABLE ))
+				itemTop += tile.height();
 
 			// Check if the character can step up onto the item at target location
 			if( stepTop >= itemTop )
 			{
 				SI08 landCheck = itemz;
 
-				if( tb->Height() >= 2 )
+				if( tile.height() >= 2 )
 					landCheck += 2;
 				else
-					landCheck += tb->Height();
+					landCheck += tile.height();
 
 				if( !considerLand && landCheck < landCenter && landCenter > potentialNewZ && testTop > landz )
 					continue;

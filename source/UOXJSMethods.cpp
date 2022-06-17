@@ -1844,7 +1844,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	SERIAL mySer = myObj->GetSerial();
 	std::vector<CTEffect *> removeEffect;
 	cwmWorldState->tempEffects.Push();
-	for (auto &Effect : cwmWorldState->tempEffects.collection()){
+	for (const auto &Effect : cwmWorldState->tempEffects.collection()){
 		if( triggerNum != -1 ) {
 			if( mySer == Effect->Destination() && Effect->More1() == triggerNum ) {
 				removeEffect.push_back(Effect) ;
@@ -1854,7 +1854,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			removeEffect.push_back(Effect) ;
 		}
 	}
-	for (auto &Effect :removeEffect){
+	for (const auto &Effect :removeEffect){
 		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
 	return JS_TRUE;
@@ -5844,7 +5844,7 @@ JSBool CAccount_SaveAccounts( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
-// UOXFile constructor !
+// UOXCFile constructor !
 JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	UOXFileWrapper *toAdd = new UOXFileWrapper;
@@ -9367,7 +9367,7 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	// Loop through list of friends, and add each one to the JS ArrayObject
 	int i = 0;
-	for (auto &pet : petList->collection()){
+	for (const auto &pet : petList->collection()){
 		if( ValidateObject( pet ) ) {
 			if( pet->GetOwnerObj() == mChar ) {
 				// Create a new JS Object based on character

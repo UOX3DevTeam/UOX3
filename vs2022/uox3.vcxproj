@@ -46,7 +46,6 @@
     <ClInclude Include="..\source\Dictionary.h" />
     <ClInclude Include="..\source\enums.h" />
     <ClInclude Include="..\source\EventTimer.hpp" />
-    <ClInclude Include="..\source\fileio.h" />
     <ClInclude Include="..\source\funcdecl.h" />
     <ClInclude Include="..\source\GenericList.h" />
     <ClInclude Include="..\source\gump.h" />
@@ -80,7 +79,6 @@
     <ClInclude Include="..\source\townregion.h" />
     <ClInclude Include="..\source\typedefs.h" />
     <ClInclude Include="..\source\UOPData.hpp" />
-    <ClInclude Include="..\source\UOPInterface.hpp" />
     <ClInclude Include="..\source\uox3.h" />
     <ClInclude Include="..\source\UOXJSClasses.h" />
     <ClInclude Include="..\source\UOXJSMethods.h" />
@@ -167,7 +165,6 @@
     <ClCompile Include="..\source\townregion.cpp" />
     <ClCompile Include="..\source\trade.cpp" />
     <ClCompile Include="..\source\UOPData.cpp" />
-    <ClCompile Include="..\source\UOPInterface.cpp" />
     <ClCompile Include="..\source\uox3.cpp" />
     <ClCompile Include="..\source\UOXJSMethods.cpp" />
     <ClCompile Include="..\source\UOXJSPropertyFuncs.cpp" />

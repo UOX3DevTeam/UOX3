@@ -632,7 +632,7 @@ void cHTMLTemplate::UnloadTemplate( void )
 //o-----------------------------------------------------------------------------------------------o
 void cHTMLTemplate::Load( ScriptSection *found )
 {
-	for (auto &sec : found->collection()){
+	for (const auto &sec : found->collection()){
 		auto tag = sec->tag;
 		auto data = sec->data ;
 		auto UTag = oldstrutil::upper( tag );
@@ -693,7 +693,7 @@ auto cHTMLTemplates::Load()->void {
 		if(toCheck) {
 			size_t NumEntries = toCheck->NumEntries();
 			if( NumEntries != 0 ){
-				for (auto &[entryName, found]: toCheck->collection()){
+				for (const auto &[entryName, found]: toCheck->collection()){
 					cHTMLTemplate *Template = new cHTMLTemplate();
 					Template->Load( found );
 					Templates.push_back( Template );

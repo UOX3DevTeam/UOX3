@@ -240,7 +240,7 @@ auto JailSystem::ReadSetup() ->void {
 	else {
 		
 		JailCell toAdd;
-		for (auto &sec :Regions->collection()){
+		for (const auto &sec :Regions->collection()){
 			auto tag = sec->tag ;
 			auto data = sec->data ;
 			if( !tag.empty() ){
@@ -270,11 +270,11 @@ auto JailSystem::ReadData() ->void {
 		if( FileExists( temp ) ) {
 			auto jailData = std::make_unique<Script>( temp, NUM_DEFS, false );
 			if( jailData) {
-				for (auto &[id,prisonerData]:jailData->collection()){
+				for (const auto &[id,prisonerData]:jailData->collection()){
 					if( prisonerData) {
 						JailOccupant toPush;
 						UI08 cellNumber = 0;
-						for (auto &sec : prisonerData->collection()){
+						for (const auto &sec : prisonerData->collection()){
 							auto tag = sec->tag ;
 							if( !tag.empty() ) {
 								auto UTag = oldstrutil::upper( tag );

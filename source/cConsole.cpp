@@ -1130,11 +1130,6 @@ auto CConsole::Process(std::int32_t c) ->void {
 					total = 0;
 					tmp = 0;
 					messageLoop << "CMD: UOX Memory Information:";
-					messageLoop << "     Cache:";
-					temp = oldstrutil::format( "        Tiles: %zu bytes", Map->GetTileMem() );
-					messageLoop << temp;
-					temp = oldstrutil::format( "        Multis: %zu bytes", Map->GetMultisMem() );
-					messageLoop << temp;
 					UI32 m, n;
 					m = static_cast<std::uint32_t>(ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR ));
 					total += tmp = m + m*sizeof(CTEffect) + m*sizeof(SI08) + m*sizeof(intptr_t)*5;
@@ -1154,8 +1149,6 @@ auto CConsole::Process(std::int32_t c) ->void {
 					messageLoop << temp;
 					temp = oldstrutil::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 					messageLoop << temp;
-					tmp = static_cast<std::uint32_t>(Map->GetTileMem() + Map->GetMultisMem());
-					total += tmp;
 					temp = oldstrutil::format( "        Approximate Total: %i bytes", total );
 					messageLoop << temp;
 					break;
@@ -1335,7 +1328,7 @@ auto CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) ->voi
 //o-----------------------------------------------------------------------------------------------o
 auto CConsole::Registration() ->void {
 	auto spellSection = JSMapping->GetSection( SCPT_CONSOLE );
-	for (auto &[spellname,ourScript] : spellSection->collection()){
+	for (const auto &[spellname,ourScript] : spellSection->collection()){
 		if(ourScript){
 			ourScript->ScriptRegistration( "Console" );
 		}

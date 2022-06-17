@@ -32,7 +32,7 @@ auto DoHouseTarget( CSocket *mSock, UI08 houseEntry ) ->void {
 	auto sect = "HOUSE "s + oldstrutil::number( houseEntry );
 	auto House	= FileLookup->FindEntry( sect, house_def );
 	if(House) {
-		for (auto &sec : House->collection()){
+		for (const auto &sec : House->collection()){
 			auto tag = sec->tag ;
 			auto data = sec->data ;
 			if( oldstrutil::upper( tag ) == "ID" ) {
@@ -86,12 +86,11 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
-// when you exposethe actual collection, it highlights that you are passing this by value, not reference. WHich is costly
 auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z ) ->void {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
-	for (auto &entry : houseItems){
+	for (const auto &entry : houseItems){
 		auto sect = "HOUSE ITEM "s + entry;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
 		if( HouseItem ) {
@@ -100,7 +99,7 @@ auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 			UI08 hWorld = house->WorldNumber();
 			UI16 hInstanceID = house->GetInstanceID();
 			hItem = nullptr;	// clear it out
-			for (auto &sec : HouseItem->collection()){
+			for (const auto &sec : HouseItem->collection()){
 				tag = sec->tag ;
 				data = sec->data ;
 				UTag = oldstrutil::upper( tag );
@@ -232,8 +231,8 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 	const UI08 worldNum = mChar->WorldNumber();
 	const UI16 instanceID = mChar->GetInstanceID();
 
-	MapData_st& mMap = Map->GetMapData( worldNum );
-	if( ( x+spaceX > mMap.xBlock || x-spaceX < 0 || y+spaceY > mMap.yBlock || y-spaceY < 0 ) && !mChar->IsGM() ) {
+	auto [width,height] = Map->sizeOfMap(worldNum);
+	if( ( x+spaceX > width || x-spaceX < 0 || y+spaceY > height || y-spaceY < 0 ) && !mChar->IsGM() ) {
 		mSock->sysmessage( 577 );
 		return false;
 	}
@@ -254,7 +253,7 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 
 					// Check that house addon won't block a door/staircase when placed
 					auto itemList = mMulti->GetItemsInMultiList();
-					for (auto &mItem : itemList->collection()) {
+					for (const auto &mItem : itemList->collection()) {
 						if( ValidateObject( mItem ) ){
 							
 							if( mItem->GetType() == 12 || mItem->GetType() == 13 ) {
@@ -293,6 +292,7 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 							}
 						}
 					}
+					
 				}
 			}
 		}
@@ -438,7 +438,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		return;
 
 	std::vector<UI16> scriptIDs;
-	for (auto &sec : House->collection()){
+	for (const auto &sec : House->collection()){
 		tag = sec->tag ;
 		data = sec->data ;
 		UTag = oldstrutil::upper( tag );
@@ -756,7 +756,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 
 	//Teleport pets as well
 	auto myPets = mChar->GetPetList();
-	for (auto &pet : myPets->collection()) {
+	for (const auto &pet : myPets->collection()) {
 		if( ValidateObject( pet ) ){
 			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 				pet->SetLocation( mChar );

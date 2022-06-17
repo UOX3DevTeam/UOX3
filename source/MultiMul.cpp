@@ -10,7 +10,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <unordered_map>
-
+#include "mapstuff.h"
 #include "IDXMul.hpp"
 
 using namespace std::string_literals ;
@@ -19,7 +19,7 @@ using namespace std::string_literals ;
 // multi_item
 //=========================================================
 multi_item::multi_item() :tileid(0xFFFF),altitude(0),offsetx(0),offsety(0),flag(0){
-	
+	info = nullptr ;
 }
 //=========================================================
 // collection_item
@@ -211,23 +211,25 @@ const std::unordered_map<int,std::string> collection_item::collection_names = {
 //=========================================================
 
 //=========================================================
-multicollection::multicollection(const std::filesystem::path &uodir ){
+multicollection::multicollection(const std::filesystem::path &uodir,tileinfo *info ){
+	this->info = info ;
 	if (!uodir.empty()){
-		load(uodir);
+		load(uodir,info);
 	}
 }
 //=========================================================
-auto multicollection::load(const std::filesystem::path &uodir,const std::string &housingbin) ->bool {
+auto multicollection::load(const std::filesystem::path &uodir,const std::string &housingbin,tileinfo *info) ->bool {
 	_multis.clear();
 	auto multifile = uodir / std::filesystem::path("MultiCollection.uop");
 	auto hash = "build/multicollection/%.6u.bin"s;
 	_housingbin = housingbin ;
+	this->info = info ;
 	return loadUOP(multifile.string(), 0x10000, hash);
 }
 //=========================================================
-auto multicollection::loadMul(const std::filesystem::path &uodir)->bool {
+auto multicollection::loadMul(const std::filesystem::path &uodir,tileinfo *info)->bool {
 	_multis.clear();
-	
+	this->info = info ;
 	auto rvalue = false ;
 	auto idxfile = uodir / std::filesystem::path("multi.idx") ;
 	auto mulfile = uodir / std::filesystem::path("multi.mul") ;
@@ -261,16 +263,16 @@ auto multicollection::loadMul(const std::filesystem::path &uodir)->bool {
 	return rvalue ;
 }
 //=========================================================
-auto multicollection::load(const std::filesystem::path &uodir) ->bool {
+auto multicollection::load(const std::filesystem::path &uodir,tileinfo *info) ->bool {
 	auto rvalue = false ;
 	// First, see if the uop exists?
 	auto multifile = uodir / std::filesystem::path("MultiCollection.uop");
 	if (std::filesystem::exists(multifile)) {
 		// It does, so lets load the uop
-		rvalue =  load(uodir,"") ;
+		rvalue =  load(uodir,"",info) ;
 	}
 	else {
-		rvalue = loadMul(uodir);
+		rvalue = loadMul(uodir,info);
 	}
 	return rvalue ;
 }
@@ -312,6 +314,9 @@ auto multicollection::processEntry(std::size_t entry, std::size_t index, std::ve
 			// Get the tileid
 			std::copy(data.begin()+offset, data.begin()+offset+2,reinterpret_cast<unsigned char*>(&item.tileid));
 			offset += 2 ;
+			if (info){
+				item.info = &info->art(item.tileid);
+			}
 			// Now get the xoffset  --
 			std::copy(data.begin()+offset, data.begin()+offset+2,reinterpret_cast<unsigned char*>(&flag));
 			item.offsetx = static_cast<int>(flag) ;
@@ -381,6 +386,9 @@ auto multicollection::processData(bool isHS,int index, std::vector<std::uint8_t>
 		auto item = multi_item() ;
 		
 		std::copy(data.data()+(entry*size),data.data()+(entry*size)+2,reinterpret_cast<std::uint8_t*>(&item.tileid));
+		if (info) {
+			item.info = &(info->art(item.tileid));
+		}
 		auto value = std::int16_t(0) ;
 		std::copy(data.data()+(entry*size)+2,data.data()+(entry*size)+2+2,reinterpret_cast<std::uint8_t*>(&value));
 		item.offsetx = value ;

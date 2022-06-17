@@ -2455,7 +2455,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) ->void {
 				// First remove nearby characters from sight
 		
 				auto regChars = MapArea->GetCharList();
-				for (auto &tempChar : regChars->collection()){
+				for (const auto &tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem charToSend = (*tempChar);
 						auto tempX = tempChar->GetX();
@@ -2472,7 +2472,7 @@ auto CChar::RemoveAllObjectsFromSight( CSocket *mSock ) ->void {
 				
 				// Now remove nearby items and multis from sight
 				auto regItems = MapArea->GetItemList();
-				for (auto &tempItem : regItems->collection()){
+				for (const auto &tempItem : regItems->collection()){
 					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						CPRemoveItem itemToSend = (*tempItem);
 						auto tempItemX = tempItem->GetX();
@@ -2601,7 +2601,7 @@ auto CChar::Teleport() ->void
 		for (auto &MapArea : MapRegion->PopulateList( this )){
 			if(MapArea){
 				auto regChars = MapArea->GetCharList();
-				for (auto tempChar : regChars->collection()){
+				for (const auto tempChar : regChars->collection()){
 					if( ValidateObject( tempChar ) && tempChar->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempX = tempChar->GetX();
 						auto tempY = tempChar->GetY();
@@ -2613,7 +2613,7 @@ auto CChar::Teleport() ->void
 					}
 				}
 				auto regItems = MapArea->GetItemList();
-				for (auto tempItem : regItems->collection()){
+				for (const auto tempItem : regItems->collection()){
 					if( ValidateObject( tempItem ) && tempItem->GetInstanceID() == this->GetInstanceID() ) {
 						auto tempItemX = tempItem->GetX();
 						auto tempItemY = tempItem->GetY();
@@ -3072,10 +3072,10 @@ bool CChar::Save( std::ofstream &outStream )
 	{
 		SI16 mX = GetX();
 		SI16 mY = GetY();
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( mX >= 0 && ( mX < mMap.xBlock || mX >= 7000 ) )
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		if( mX >= 0 && ( mX < width || mX >= 7000 ) )
 		{
-			if( mY >= 0 && ( mY < mMap.yBlock || mY >= 7000 ) )
+			if( mY >= 0 && ( mY < height || mY >= 7000 ) )
 			{
 				DumpHeader( outStream );
 				DumpBody( outStream );
@@ -4296,9 +4296,9 @@ bool CChar::LoadRemnants( void )
 		const SI16 mx = GetX();
 		const SI16 my = GetY();
 
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		const bool overRight = ( mx > mMap.xBlock );
-		const bool overBottom = ( my > mMap.yBlock );
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		const bool overRight = ( mx > width );
+		const bool overBottom = ( my > height );
 
 		if( acct == AB_INVALID_ID && ( ( overRight && mx < 7000 ) || ( overBottom && my < 7000 ) || mx < 0 || my < 0 ) )
 		{
@@ -4655,7 +4655,7 @@ void CChar::Cleanup( void )
 
 		// If we delete a NPC we should delete his tempeffects as well
 		std::vector<CTEffect *> removedEffect ;
-		for (auto &Effect : cwmWorldState->tempEffects.collection()){
+		for (const auto &Effect : cwmWorldState->tempEffects.collection()){
 			if( Effect->Destination() == GetSerial() ){
 				removedEffect.push_back(Effect);
 			}

@@ -64,7 +64,7 @@ class CSpeechQueue;
 class CTEffect;
 class CThreadQueue;
 class CTile;
-class CTileUni;
+struct tile_t ;
 class CTownRegion;
 class CVersionClass;
 class CWeather;
@@ -80,7 +80,6 @@ class ObjectFactory;
 class Script;
 class ScriptSection;
 class SpellInfo;
-class UOXFile;
 
 /** In order to avoid finger-aches :)
  */
