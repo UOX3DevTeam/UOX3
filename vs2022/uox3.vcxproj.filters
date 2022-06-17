@@ -174,9 +174,6 @@
     <ClInclude Include="..\source\enums.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\fileio.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\mapclasses.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -273,9 +270,6 @@
     <ClInclude Include="..\source\UOPData.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\UOPInterface.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\EventTimer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
@@ -318,9 +312,6 @@
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
     <ClCompile Include="..\source\UOPData.cpp">
-      <Filter>Source Files\UOData</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\UOPInterface.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
     <ClCompile Include="..\source\TimeUtility.cpp">

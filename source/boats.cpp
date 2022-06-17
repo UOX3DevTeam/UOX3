@@ -108,7 +108,7 @@ auto LeaveBoat( CSocket *s, CItem *p ) ->bool {
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
 				
 				auto myPets = mChar->GetPetList();
-				for (auto &pet : myPets->collection()){
+				for (const auto &pet : myPets->collection()){
 					if( ValidateObject( pet ) ) {
 						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 							pet->SetLocation( x, y, z, worldNumber, instanceID );
@@ -139,7 +139,7 @@ void PlankStuff( CSocket *s, CItem *p )
 		CMultiObj *boat2	= p->GetMultiObj();
 		if( ValidateObject( boat2 ) ) {
 			auto myPets = mChar->GetPetList();
-			for (auto &pet:myPets->collection()){
+			for (const auto &pet:myPets->collection()){
 				if( ValidateObject( pet ) ) {
 					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
 						pet->SetLocation( mChar );
@@ -192,7 +192,6 @@ void OpenPlank( CItem *p )
 //o-----------------------------------------------------------------------------------------------o
 bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir, bool turnBoat )
 {
-	map_st map;
 	SI16 cx = b->GetX(), cy = b->GetY();
 	const SI08 cz = b->GetZ();
 	SI16 x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -341,7 +340,6 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 		default: return true;
 	}
 
-	CStaticIterator *msi;
 	UI08 worldNumber = b->WorldNumber();
 	UI16 instanceID = b->GetInstanceID();
 	SI08 boatZ = b->GetZ();
@@ -372,26 +370,21 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 
 			if( sz == ILLEGAL_Z ) //map tile
 			{
-				map = Map->SeekMap( x, y, worldNumber );
-				CLand& land = Map->SeekLand( map.id );
-				if( map.z >= cz && !land.CheckFlag( TF_WET ) && land.Name()=="water" )//only tiles on/above the water
+				auto map = Map->SeekMap( x, y, worldNumber );
+				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name()=="water" )//only tiles on/above the water
 					return true;
 			}
 			else
-			{ 
-				// Static tile
-				msi = new CStaticIterator( x, y, worldNumber );
-				for( Static_st *stat = msi->First(); stat != nullptr; stat = msi->Next() )
-				{
-					CTile& tile = Map->SeekTile( stat->itemid );
-					SI08 zt = stat->zoff + tile.Height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.Name() == "water") )
+			{
+				auto artwork = Map->artAt(x, y, worldNumber);
+				for (auto &tile:artwork){
+					SI08 zt = tile.altitude + tile.height();
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.name() == "water") )
 					{
-						delete msi;
+
 						return true;
 					}
 				}
-				delete msi;
 			}
 		}
 	}
@@ -647,7 +640,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	// Move all items aboard the boat along with the boat
 	auto itemList = boat->GetItemsInMultiList();
-	for (auto &bItem : itemList->collection()){
+	for (const auto &bItem : itemList->collection()){
 		if( ValidateObject( bItem ) ){
 			if( !(bItem == tiller || bItem == p1 || bItem == p2 || bItem == hold) ){
 				bItem->IncLocation( tx, ty );
@@ -663,7 +656,7 @@ void MoveBoat( UI08 dir, CBoatObj *boat )
 
 	// Move all characters aboard the boat along with the boat
 	auto charList = boat->GetCharsInMultiList();
-	for (auto &bChar : charList->collection()){
+	for (const auto &bChar : charList->collection()){
 		if( ValidateObject( bChar ) ){
 			bChar->SetLocation( bChar->GetX() + tx, bChar->GetY() + ty, bChar->GetZ() );
 			if( teleportBoat ) {
@@ -765,13 +758,13 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 
 
 	auto itemList = b->GetItemsInMultiList();
-	for (auto &bItem : itemList->collection()){
+	for (const auto &bItem : itemList->collection()){
 		if( ValidateObject( bItem ) ){
 			TurnStuff( b, bItem, rightTurn );
 		}
 	}
 	auto charList = b->GetCharsInMultiList();
-	for (auto &bChar : charList->collection()){
+	for (const auto &bChar : charList->collection()){
 		if( ValidateObject( bChar ) ){
 			TurnStuff( b, bChar, rightTurn );
 		}

@@ -110,7 +110,7 @@ maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_M
 	ammo[0] = ammo[1] = 0;
 	ammoFX[0] = ammoFX[1] = ammoFX[2] = 0;
 	objType		= OT_ITEM;
-	strcopy( name2,128, "#" );
+	name2 = "#";
 	name		= "#";
 	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
@@ -496,19 +496,18 @@ void CItem::SetSpawnerList( bool newValue )
 	UpdateRegion();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const char *GetName2( void ) const
-//|					void SetName2( const char *newValue )
+//=================================================================================================
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's name2 property - used for magical items
 //o-----------------------------------------------------------------------------------------------o
-const char *CItem::GetName2( void ) const
-{
+auto CItem::GetName2() const ->const std::string& {
 	return name2;
 }
-void CItem::SetName2( const char *newValue )
-{
-	strncopy( name2,128, newValue, MAX_NAME - 1 );
+auto CItem::SetName2(const std::string &value) ->void {
+	name2 = value ;
+	if (name2.size() >=MAX_NAME){
+		name2 = name2.substr(0,MAX_NAME-1) ;
+	}
 	UpdateRegion();
 }
 
@@ -1353,8 +1352,8 @@ bool CItem::Save( std::ofstream &outStream )
 {
 	if( isFree() )
 		return false;
-	MapData_st& mMap = Map->GetMapData( worldNumber );
-	if( GetCont() != nullptr || ( GetX() > 0 && GetX() < mMap.xBlock && GetY() < mMap.yBlock ) )
+	auto [width,height] = Map->sizeOfMap(worldNumber);
+	if( GetCont() || ( GetX() > 0 && GetX() < width && GetY() < height ) )
 	{
 		DumpHeader( outStream );
 		DumpBody( outStream );
@@ -1898,7 +1897,7 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'N':
 				if( UTag == "NAME2" )
 				{
-					SetName2( data.c_str() );
+					SetName2(data);
 					rvalue = true;
 				}
 				break;
@@ -2052,10 +2051,10 @@ bool CItem::LoadRemnants( void )
 	SetSerial( serial );
 
 	// Tauriel adding region pointers
-	if( contObj == nullptr || (UI64)contObj == INVALIDSERIAL )
+	if( !contObj|| (UI64)contObj == INVALIDSERIAL )
 	{
-		MapData_st& mMap = Map->GetMapData( worldNumber );
-		if( GetX() < 0 || GetY() < 0 || GetX() > mMap.xBlock || GetY() > mMap.yBlock )
+		auto [width,height] = Map->sizeOfMap(worldNumber);
+		if( GetX() < 0 || GetY() < 0 || GetX() > width || GetY() > height )
 			return false;
 
 		// Calculate which townregion item exists in, based on its own location

@@ -388,14 +388,14 @@ auto startInitialize(CServerData &serverdata) ->void {
 		generator = std::mt19937(rd()); //Standard mersenne_twister_engine seeded with rd()
 		
 		auto packetSection = JSMapping->GetSection( SCPT_PACKET );
-		for( auto &[id,ourScript] : packetSection->collection() ) {
+		for( const auto &[id,ourScript] : packetSection->collection() ) {
 			if( ourScript){
 				ourScript->ScriptRegistration( "Packet" );
 			}
 		}
 		
 		// moved all the map loading into CMulHandler
-		Map->Load();
+		//Map->load();
 		
 		Skills->Load();
 		
@@ -609,7 +609,7 @@ auto UnloadSpawnRegions() ->void {
 			// Iterate over list of spawned characters and delete them if no player has tamed them/hired them
 			std::vector<CChar *> toDelete ;
 			auto spawnedCharsList = spawnregion->GetSpawnedCharsList();
-			for (auto &cCheck : spawnedCharsList->collection()){
+			for (const auto &cCheck : spawnedCharsList->collection()){
 					if( ValidateObject( cCheck ) ){
 						if( !ValidateObject( cCheck->GetOwnerObj() )) {
 							toDelete.push_back(cCheck);
@@ -622,7 +622,7 @@ auto UnloadSpawnRegions() ->void {
 			// Iterate over list of spawned items and delete them if no player has picked them up
 			std::vector<CItem *> toIDelete ;
 			auto spawnedItemsList = spawnregion->GetSpawnedItemsList();
-			for (auto &iCheck : spawnedItemsList->collection()){
+			for (const auto &iCheck : spawnedItemsList->collection()){
 					if( ValidateObject( iCheck ) ){
 						if( iCheck->GetContSerial() != INVALIDSERIAL || !ValidateObject( iCheck->GetOwnerObj() )) {
 							toIDelete.push_back(iCheck);
@@ -969,7 +969,7 @@ auto callGuards( CChar *mChar ) -> void {
 		auto toCheck = MapRegion->GetMapRegion( mChar );
 		if( toCheck ){
 			auto regChars = toCheck->GetCharList();
-			for (auto &tempChar : regChars->collection()){
+			for (const auto &tempChar : regChars->collection()){
 				if( ValidateObject( tempChar ) ){
 					
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ) ){
@@ -1534,7 +1534,8 @@ auto checkNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 //o-----------------------------------------------------------------------------------------------o
 auto checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 nextDecayItemsInHouses, bool doWeather ){
 	auto regItems = toCheck->GetItemList();
-	for (auto &itemCheck : regItems->collection()){
+	auto collection = regItems->collection() ;
+	for (const auto &itemCheck : collection){
 		if( ValidateObject( itemCheck ) && itemCheck->isFree() ){
 			if( checkItems ) {
 				if( itemCheck->isDecayable() && (itemCheck->GetCont() == nullptr) ) {
@@ -2085,7 +2086,7 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	bool allowAwakeNPCs = cwmWorldState->ServerData()->AllowAwakeNPCs();
 	for (auto &toCheck : regionList){
 		auto regChars = toCheck->GetCharList();
-		for (auto charCheck:regChars->collection()){
+		for (const auto charCheck:regChars->collection()){
 			if( ValidateObject( charCheck ) && charCheck->isFree() ){
 				if( charCheck->IsNpc() ) {
 					if( !charCheck->IsAwake() || !allowAwakeNPCs ){
@@ -2125,7 +2126,7 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	if( allowAwakeNPCs ) {
 		auto alwaysAwakeChars = Npcs->GetAlwaysAwakeNPCs();
 		std::vector<CChar*> toRemove ;
-		for (auto &charCheck : alwaysAwakeChars->collection()){
+		for (const auto &charCheck : alwaysAwakeChars->collection()){
 			if( ValidateObject( charCheck ) && !charCheck->isFree() && charCheck->IsNpc() ) {
 				if( !genericCheck( nullptr, (*charCheck), checkFieldEffects, doWeather ) ) {
 					if( setNPCFlags ){
@@ -2235,7 +2236,7 @@ auto InitClasses()->void {
 	aCommands.startup() ;
 	// Need to do map
 	aNetwork.startup() ;
-	aMap.LoadMapsDFN() ;
+	aMap.load() ;
 	JSMapping->ResetDefaults();
 	JSMapping->GetEnvokeByID()->Parse();
 	JSMapping->GetEnvokeByType()->Parse();
@@ -2436,7 +2437,7 @@ auto advanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) ->void {
 		std::string cdata;
 		SI32 ndata			= -1, odata = -1;
 		UI08 skillToSet = 0;
-		for (auto &sec:Advancement->collection2()){
+		for (const auto &sec:Advancement->collection2()){
 			tag = sec->tag;
 			cdata = sec->cdata ;
 			ndata = sec->ndata ;
@@ -3041,7 +3042,7 @@ auto checkRegion( CSocket *mSock, CChar& mChar, bool forceUpdateLight)->void{
 					CItem *packItem = mChar.GetPackItem();
 					if( ValidateObject( packItem ) ) {
 						auto piCont = packItem->GetContainsList();
-						for (auto &toScan : piCont->collection()){
+						for (const auto &toScan : piCont->collection()){
 							if( ValidateObject( toScan ) ) {
 								if( toScan->GetType() == IT_TOWNSTONE ) {
 									CTownRegion *targRegion = cwmWorldState->townRegions[static_cast<UI16>(toScan->GetTempVar( CITV_MOREX ))];
@@ -3353,7 +3354,7 @@ void DoorMacro( CSocket *s )
 	for (auto &toCheck : MapRegion->PopulateList( mChar )){
 		if(toCheck){
 			auto regItems = toCheck->GetItemList();
-			for (auto &itemCheck : regItems->collection()){
+			for (const auto &itemCheck : regItems->collection()){
 				if( ValidateObject( itemCheck ) && (itemCheck->GetInstanceID() == mChar->GetInstanceID()) ){
 					SI16 distZ = abs( itemCheck->GetZ() - mChar->GetZ() );
 					if( itemCheck->GetX() == xc && itemCheck->GetY() == yc && distZ < 7 ) {

@@ -32,6 +32,7 @@
 template <typename T>
 class GenericList
 {
+
 private:
 	using GENERICLIST = std::list<T> ;
 	using GENERICLIST_ITERATOR = typename std::list<T>::iterator;
@@ -62,16 +63,13 @@ public:
 	~GenericList() = default ;
 
 	//===================================================================
-	// Because contents get deleted during iterator, we will return a copy
-	auto collection() const -> std::list<T> {
+	auto collection() const -> const std::list<T> &{
 		return objData ;
 	}
-	/*
 	//===================================================================
 	auto collection()  ->  std::list<T>& {
 		return objData ;
 	}
-	 */
 	//===================================================================
 	auto GetCurrent() -> T {
 		T rvalue = nullptr;
@@ -154,7 +152,7 @@ public:
 			{
 				++objIterator;
 			}
-
+			
 			for( size_t q = 0; q < objIteratorBackup.size(); ++q )
 			{
 				if( objIteratorBackup[q] != objData.end() && rIter == objIteratorBackup[q] )
@@ -163,7 +161,7 @@ public:
 				}
 			}
 			objData.erase(rIter);
-
+			
 			if (handleAlloc)
 			{
 				delete toRemove;
@@ -206,11 +204,9 @@ public:
 // RegionSerialList
 //===================================================================
 // Why is this a template given its use in uox3?
-template <typename T>
-class RegionSerialList
-{
+class RegionSerialList {
 private:
-	std::unordered_set<T> objSerials;
+	std::unordered_set<SERIAL> objSerials;
 
 
 public:
@@ -220,12 +216,12 @@ public:
 	~RegionSerialList() = default ;
 
 	//===================================================================
-	auto Add( T toAdd )->bool {
+	auto Add( SERIAL toAdd )->bool {
 		auto insertResult = objSerials.insert( toAdd );
 		return insertResult.second;
 	}
 	//===================================================================
-	auto Remove( T toRemove )->size_t{
+	auto Remove( SERIAL toRemove )->size_t{
 		return objSerials.erase( toRemove );
 	}
 };

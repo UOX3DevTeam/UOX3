@@ -1267,8 +1267,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="UOPData.cpp" />
-    <ClCompile Include="UOPInterface.cpp" />
-    <ClCompile Include="uox3.cpp">
+     <ClCompile Include="uox3.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1418,7 +1417,6 @@
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="EventTimer.hpp" />
-    <ClInclude Include="fileio.h" />
     <ClInclude Include="funcdecl.h" />
     <ClInclude Include="GenericList.h" />
     <ClInclude Include="gump.h" />
@@ -1450,7 +1448,6 @@
     <ClInclude Include="townregion.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="UOPData.hpp" />
-    <ClInclude Include="UOPInterface.hpp" />
     <ClInclude Include="uox3.h" />
     <ClInclude Include="UOXJSClasses.h" />
     <ClInclude Include="UOXJSMethods.h" />

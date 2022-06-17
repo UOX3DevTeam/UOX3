@@ -108,7 +108,7 @@ auto cBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) ->void {
 			toSend.Flag2( 0 );
 
 			bool part1 = false, part2 = false, part3 = false;
-			for (auto &sec : book->collection()){
+			for (const auto &sec : book->collection()){
 				auto tag = sec->tag ;
 				auto UTag = oldstrutil::upper( tag );
 				auto data = sec->data ;
@@ -253,7 +253,7 @@ auto cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )->void {
 		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
 		if( book ) {
 			UI16 curPage = p;
-			for (auto &sec : book->collection()){
+			for (const auto &sec : book->collection()){
 				auto tag = sec->tag ;
 				if( tag == "PAGE" ){
 					--curPage;
@@ -263,7 +263,7 @@ auto cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )->void {
 						if( page) {
 							CPBookPage cpbpSend( (*i) );
 							cpbpSend.NewPage( p );
-							for (auto &sec2:page->collection()) {
+							for (const auto &sec2:page->collection()) {
 								temp = sec2->data ;
 								cpbpSend.AddLine( temp );
 							}

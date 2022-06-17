@@ -12,7 +12,8 @@
 #include <filesystem>
 
 #include "UOPData.hpp"
-
+#include "mapclasses.h"
+class tileinfo ;
 //=========================================================================================================
 // multi_item
 //=========================================================================================================
@@ -23,6 +24,7 @@ struct multi_item {
 	int offsetx ;
 	int offsety ;
 	std::uint16_t flag ;
+	CTile *info ;
 	multi_item() ;
 };
 
@@ -50,7 +52,7 @@ struct collection_item {
 //=========================================================
 class multicollection : public uopfile {
 	constexpr static auto hssize = 908592;
-	
+	tileinfo *info ;
 	std::unordered_map<int, collection_item> _multis ;
 	
 	std::string _housingbin ;
@@ -59,11 +61,11 @@ class multicollection : public uopfile {
 	auto processData(bool isHS, int index, std::vector<std::uint8_t> &data) ->void ;
 	
 public:
-	multicollection(const std::filesystem::path &uodir = std::filesystem::path());
+	multicollection(const std::filesystem::path &uodir = std::filesystem::path(),tileinfo *info = nullptr);
 	
-	auto load(const std::filesystem::path &uodir) ->bool ;
-	auto load(const std::filesystem::path &uodir,const std::string &housingbin) ->bool ;
-	auto loadMul(const std::filesystem::path &uodir) ->bool;
+	auto load(const std::filesystem::path &uodir,tileinfo *info=nullptr) ->bool ;
+	auto load(const std::filesystem::path &uodir,const std::string &housingbin,tileinfo *info = nullptr) ->bool ;
+	auto loadMul(const std::filesystem::path &uodir,tileinfo *info = nullptr) ->bool;
 	auto size() const ->size_t ;
 	auto multis() const -> const std::unordered_map<int, collection_item>& ;
 	auto multis()  ->  std::unordered_map<int, collection_item>& ;

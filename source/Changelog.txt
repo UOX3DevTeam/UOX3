@@ -1,3 +1,8 @@
+12/06/2022 (on or about) - punt
+	Modernized and replaced all mul handling
+	Changed dynamic allocation of basic classes to static
+	Perhaps speed improvement
+
 03/06/2022 - punt
 	Modernized ObjectFactory and replaced external hash with use of unordered_map
 

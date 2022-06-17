@@ -1,12 +1,13 @@
 #ifndef __MOVEMENT_H__
 #define __MOVEMENT_H__
 
+#include "mapclasses.h"
 
 // Maximum Return Value: Number of steps to return (Replaces PATHNUM)
 // NOTE: P_PF_MRV CANNOT EXCEED THE VALUE OF PATHNUM FOR THE TIME BEING
-#define P_PF_MRV		2
+constexpr auto P_PF_MRV=22;
 // Minimum Flee Distance: MFD
-#define P_PF_MFD		15
+constexpr auto P_PF_MFD	=15;
 
 struct pfNode
 {
@@ -34,8 +35,7 @@ struct nodeFCost
 	}
 };
 
-class cMovement
-{
+class cMovement {
 	// Function declarations
 public:
 	bool	AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool willRun = false, UI16 maxSteps = 0 );
@@ -54,14 +54,13 @@ private:
 	bool	isValidDirection( UI08 dir );
 	bool	isFrozen( CChar *c, CSocket *mSock, SI16 sequence );
 	bool	isOverloaded( CChar *c, CSocket *mSock, SI16 sequence );
-
-	bool	IsOk( CTileUni *xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk );
+	
+	bool	IsOk( std::vector<tile_t> &xyblock, UI16 &xycount, UI08 world, SI08 ourZ, SI08 ourTop, SI16 x, SI16 y, UI16 instanceID, bool ignoreDoor, bool waterWalk );
 	void	GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& top );
 	void	GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceID, bool waterWalk );
 
-	void	GetBlockingMap( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, SI16 oldx, SI16 oldy, UI08 worldNumber );
-	void	GetBlockingStatics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber );
-	void	GetBlockingDynamics( SI16 x, SI16 y, CTileUni *xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID );
+	void	GetBlockingStatics( SI16 x, SI16 y, std::vector<tile_t> &xyblock, UI16 &xycount, UI08 worldNumber );
+	void	GetBlockingDynamics( SI16 x, SI16 y, std::vector<tile_t> &xyblock, UI16 &xycount, UI08 worldNumber, UI16 instanceID );
 
 	UI08	Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy );
 

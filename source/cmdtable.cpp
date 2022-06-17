@@ -591,20 +591,16 @@ void command_command( CSocket *s )
 void command_memstats( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	size_t cacheSize		= Map->GetTileMem() + Map->GetMultisMem();
 	size_t charsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_CHAR );
 	size_t itemsSize		= ObjectFactory::getSingleton().SizeOfObjects( OT_ITEM );
 	size_t spellsSize		= 69 * sizeof( SpellInfo );
 	size_t teffectsSize		= sizeof( CTEffect ) * cwmWorldState->tempEffects.Num();
 	size_t regionsSize		= sizeof( CTownRegion ) * cwmWorldState->townRegions.size();
 	size_t spawnregionsSize = sizeof( CSpawnRegion ) * cwmWorldState->spawnRegions.size();
-	size_t total			= charsSize + itemsSize + spellsSize + cacheSize + regionsSize + spawnregionsSize + teffectsSize;
+	size_t total			= charsSize + itemsSize + spellsSize + regionsSize + spawnregionsSize + teffectsSize;
 	GumpDisplay cacheStats( s, 350, 345 );
 	cacheStats.SetTitle( "UOX Memory Information (sizes in bytes)" );
 	cacheStats.AddData( "Total Memory Usage: ", static_cast<UI32>(total) );
-	cacheStats.AddData( " Cache Size: ", static_cast<UI32>(cacheSize ));
-	cacheStats.AddData( "  Tiles: ", static_cast<UI32>(Map->GetTileMem()) );
-	cacheStats.AddData( "  Multis: ", static_cast<UI32>(Map->GetMultisMem() ));
 	cacheStats.AddData( " Characters: ", ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) );
 	cacheStats.AddData( "  Allocated Memory: ", static_cast<UI32>(charsSize ));
 	cacheStats.AddData( "  CChar: ", sizeof( CChar ) );

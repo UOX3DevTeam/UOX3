@@ -73,7 +73,6 @@ add_library(uox
 		cServerDefinitions.cpp
 		house.cpp
 		sound.cpp
-		UOPInterface.cpp
 		StringUtility.cpp
 		UOPData.cpp
 		MultiMul.cpp
