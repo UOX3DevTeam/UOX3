@@ -23,7 +23,180 @@
 #include <sys/ioctl.h>
 #endif
 
+#include <iomanip>
 #include <memory>
+
+using namespace std::string_literals ;
+//=========================================================
+//=========================================================
+// bytebuffer exceptions
+//=========================================================
+//=========================================================
+bytebuffer_bounds::bytebuffer_bounds(int offset, int amount, int size): offset(offset), amount(amount), buffersize(size), std::out_of_range(""){
+	_msg = "Offset : "s + std::to_string(offset) + " Amount: "s+std::to_string(amount)+" exceeds buffer size of: "s+std::to_string(size);
+}
+//=========================================================
+auto bytebuffer_bounds::what() const noexcept  ->const char*{
+	return _msg.c_str() ;
+}
+
+//=========================================================
+// bytebuffer_t
+//=========================================================
+// strutil functions
+//==========================================================
+// Convert a bool to a string
+// the true_value/false_value are returned based on the bool
+auto bytebuffer_t::ntos(bool value,const std::string &true_value ,const std::string &false_value )->std::string{
+	return (value?true_value:false_value) ;
+}
+
+//===========================================================
+// Formatted dump of a byte buffer
+//===========================================================
+
+//===========================================================
+auto bytebuffer_t::dump(std::ostream &output,const std::uint8_t *buffer, std::size_t length,radix_t radix,int entries_line)->void{
+	// number of characters for entry
+	auto entry_size = 3 ;  // decimal and octal
+	switch (static_cast<int>(radix)) {
+		case static_cast<int>(radix_t::hex):
+			entry_size=2 ;
+			break;
+		case static_cast<int>(radix_t::bin):
+			entry_size=8 ;
+			break;
+		default:
+			break;
+	}
+	auto num_rows = (length/entries_line) + (((length%entries_line)==0)?0:1) ;
+	// what is the largest number for the address ?
+	auto max_address_chars = static_cast<int>((ntos(num_rows * entries_line)).size()) ;
+	
+	// first write out the header
+	output << std::setw(max_address_chars+2)<<""<<std::setw(1);
+	for (auto i=0; i < entries_line;++i){
+		output<<ntos(i,radix_t::dec,false,entry_size,' ')<<" ";
+	}
+	output <<"\n";
+	
+	// now we write out the values for each line
+	std::string text(entries_line,' ');
+	
+	for (std::size_t i=0; i< length ; ++i) {
+		auto row = i/entries_line ;
+		if (((i%static_cast<size_t>(entries_line) == 0) && (i>= static_cast<size_t>(entries_line))) || (i==0)){
+			// This is a new line!
+			output <<ntos(row*entries_line,radix_t::dec,false,max_address_chars,' ')<<": ";
+			text = std::string(entries_line,' ');
+		}
+		output <<ntos(buffer[i],radix,false,entry_size)<<" " ;
+		// If it is an alpha, we want to write it
+		if (std::isalpha(static_cast<int>(buffer[i]))!=0){
+			// we want to write this to the string
+			text[(i%entries_line)]=buffer[i];
+		}
+		else {
+			text[(i%entries_line)]='.';
+			
+		}
+		if (i%entries_line == entries_line-1){
+			output <<" "<<text<<"\n" ;
+		}
+	}
+	// what if we had a partial last line, we need to figure that out
+	auto last_line_entry = length%entries_line ;
+	if (last_line_entry != 0){
+		// we need to put the number of leading spaces
+		output <<std::setw(static_cast<int>((entries_line -last_line_entry)*(entry_size+1)))<<""<<std::setw(1)<<" "<<text<<"\n";
+	}
+}
+
+//=========================================================
+// end strutil functions
+//==========================================================
+
+
+//=========================================================
+auto bytebuffer_t::exceeds(int offset,int bytelength) const ->bool {
+	auto index = offset + bytelength ;
+	return static_cast<int>(_bytedata.size()) < index ;
+}
+//=========================================================
+auto bytebuffer_t::exceeds(int offset,int bytelength,bool expand) ->bool {
+	auto rvalue = exceeds(offset,bytelength) ;
+	if (expand && rvalue){
+		this->size(offset+bytelength) ;
+		rvalue = false ;
+	}
+	return rvalue ;
+}
+//=========================================================
+bytebuffer_t::bytebuffer_t(int size,int reserve):_index(0){
+	
+	if ((reserve>0) && (size <=0)){
+		_bytedata.reserve(reserve);
+	}
+	if (size>0){
+		_bytedata.resize(size);
+	}
+}
+
+//=========================================================
+auto bytebuffer_t::size() const ->size_t {
+	return _bytedata.size() ;
+}
+//=========================================================
+auto bytebuffer_t::size(int value,std::uint8_t fill) ->void {
+	_bytedata.resize(value, fill);
+}
+//=========================================================
+auto bytebuffer_t::index() const ->int {
+	return _index ;
+}
+//=========================================================
+auto bytebuffer_t::index(int value) ->void {
+	_index = value ;
+}
+//=========================================================
+auto bytebuffer_t::raw() const ->const std::uint8_t* {
+	return _bytedata.data();
+}
+//=========================================================
+auto bytebuffer_t::raw()  -> std::uint8_t* {
+	return _bytedata.data();
+}
+//=========================================================
+auto bytebuffer_t::operator[](int index) const -> const std::uint8_t & {
+	return _bytedata[index];
+}
+//=========================================================
+auto bytebuffer_t::operator[](int index)  ->  std::uint8_t & {
+	return _bytedata[index];
+}
+//=========================================================
+auto bytebuffer_t::fill(std::uint8_t value, int offset,int length)->void {
+	if (offset <0) {
+		offset = _index ;
+	}
+	if (length <0) {
+		length = static_cast<int>(_bytedata.size()) - offset ;
+	}
+	if (length >0){
+		std::fill(_bytedata.begin()+offset, _bytedata.begin()+offset+length, value);
+	}
+}
+//===========================================================
+// Formatted dump of a byte buffer
+//===========================================================
+
+//=========================================================
+auto bytebuffer_t::log(std::ostream &output,radix_t radix,int entries_line)const ->void{
+	dump(output,_bytedata.data(),_bytedata.size(),radix,entries_line);
+	
+}
+
+
 
 cNetworkStuff *Network = nullptr;
 
