@@ -47,16 +47,87 @@ struct bytebuffer_bounds : public std::out_of_range {
 // Normally part of strutil
 enum class radix_t {dec=10,oct=8,hex=16,bin=2};
 
-
-
-
 //=========================================================
 // bytebuffer_t
 //=========================================================
 //=========================================================
 class bytebuffer_t {
+	// These are compatability to "look" like a the original CPacketStream
+	//=============================================================
+public:
+	auto ReserveSize(size_t len) ->void {
+		this->size(static_cast<int>(len),0);
+	}
+	auto	WriteByte( size_t pos, std::uint8_t toWrite )->void {
+		this->write(static_cast<int>(pos), toWrite);
+	}
+	// Why isn't thist std::int16_t?
+	auto	WriteShort(size_t pos, std::int32_t toWrite) ->void {
+		this->write(static_cast<int>(pos),static_cast<int16_t>(toWrite));
+	}
+	auto	WriteLong( size_t pos, std::uint32_t toWrite ) ->void{
+		this->write(static_cast<int>(pos),toWrite);
+	}
+	auto	WriteString( size_t pos, const std::string& toWrite, size_t len ) ->void {
+		this->write(static_cast<int>(pos),toWrite,static_cast<int>(len),false) ;
+	}
+	auto	WriteArray( size_t pos, const std::uint8_t *toWrite, size_t len ) ->void{
+		this->write(static_cast<int>(pos),toWrite,static_cast<int>(len),false) ;
+	}
+	auto	GetByte(size_t pos) const ->std::uint8_t {
+		try{
+			return this->read<std::uint8_t>(static_cast<int>(pos));
+		}
+		catch(...){
+			return 0 ;
+		}
+	}
+	auto	GetShort(size_t pos) const ->std::int16_t {
+		try{
+			return this->read<std::int16_t>(static_cast<int>(pos));
+		}
+		catch(...) {
+			return 0 ;
+		}
+	}
+	auto	GetUShort(size_t pos) const ->std::uint16_t {
+		try{
+			return this->read<std::uint16_t>(static_cast<int>(pos));
+		}
+		catch(...){
+			return 0 ;
+		}
+	}
+	auto	GetLong(size_t pos) const ->std::int32_t {
+		try {
+			return this->read<std::int32_t>(static_cast<int>(pos));
+		}
+		catch(...){
+			return 0 ;
+		}
+	}
+	auto	GetULong(size_t pos) const ->std::uint32_t {
+		try{
+			return this->read<std::uint32_t>(static_cast<int>(pos));
+		}
+		catch(...) {
+			return 0 ;
+		}
+	}
+	
+	auto GetBuffer() const ->const std::uint8_t* {
+		return this->raw() ;
+	}
+	
+	auto GetSize() const ->size_t {
+		return this->size() ;
+	}
+	
+	// End compatability of original CPacketStream
+	//===============================================================
+	
 	//============================================================
-	// Normally part of strutil, but included here for stand along
+	// Normally part of strutil, but included here for stand alone
 public:
 	//==========================================================
 	// The maximum characters in a string number for conversion sake
@@ -393,88 +464,6 @@ public:
 	}
 };
 
-//===========================================================================
-// CPacketStream
-//==========================================================================
-//=========================================================
-class CPacketStream : public bytebuffer_t {
-	
-public:
-	CPacketStream():bytebuffer_t() {
-	}
-	~CPacketStream() = default ;
-	// there really isnt a reason to make this a size_t
-	auto ReserveSize(size_t len) ->void {
-		this->size(static_cast<int>(len),0);
-	}
-	auto	WriteByte( size_t pos, std::uint8_t toWrite )->void {
-		this->write(static_cast<int>(pos), toWrite);
-	}
-	// Why isn't thist std::int16_t?
-	auto	WriteShort(size_t pos, std::int32_t toWrite) ->void {
-		this->write(static_cast<int>(pos),static_cast<int16_t>(toWrite));
-	}
-	auto	WriteLong( size_t pos, std::uint32_t toWrite ) ->void{
-		this->write(static_cast<int>(pos),toWrite);
-	}
-	auto	WriteString( size_t pos, const std::string& toWrite, size_t len ) ->void {
-		this->write(static_cast<int>(pos),toWrite,static_cast<int>(len),false) ;
-	}
-	auto	WriteArray( size_t pos, const std::uint8_t *toWrite, size_t len ) ->void{
-		this->write(static_cast<int>(pos),toWrite,static_cast<int>(len),false) ;
-	}
-	auto	GetByte(size_t pos) const ->std::uint8_t {
-		try{
-			return this->read<std::uint8_t>(static_cast<int>(pos));
-		}
-		catch(...){
-			return 0 ;
-		}
-	}
-	auto	GetShort(size_t pos) const ->std::int16_t {
-		try{
-			return this->read<std::int16_t>(static_cast<int>(pos));
-		}
-		catch(...) {
-			return 0 ;
-		}
-	}
-	auto	GetUShort(size_t pos) const ->std::uint16_t {
-		try{
-			return this->read<std::uint16_t>(static_cast<int>(pos));
-		}
-		catch(...){
-			return 0 ;
-		}
-	}
-	auto	GetLong(size_t pos) const ->std::int32_t {
-		try {
-			return this->read<std::int32_t>(static_cast<int>(pos));
-		}
-		catch(...){
-			return 0 ;
-		}
-	}
-	auto	GetULong(size_t pos) const ->std::uint32_t {
-		try{
-			return this->read<std::uint32_t>(static_cast<int>(pos));
-		}
-		catch(...) {
-			return 0 ;
-		}
-	}
-	
-	auto GetBuffer() const ->const std::uint8_t* {
-		return this->raw() ;
-	}
-	
-	auto GetSize() const ->size_t {
-		return this->size() ;
-	}
-};
-
-
-
 
 class socket_error : public std::runtime_error
 {
@@ -496,7 +485,7 @@ private:
 	UI32					packedLength;
 
 protected:
-	CPacketStream			pStream;
+	bytebuffer_t			pStream;
 
 	virtual void			InternalReset( void );
 
@@ -508,7 +497,7 @@ public:
 
 	UI32					Pack( void );
 	virtual bool			ClientCanReceive( CSocket *mSock );
-	CPacketStream&			GetPacketStream( void );
+	bytebuffer_t&			GetPacketStream( void );
 
 	UI32					PackedLength( void ) const;
 	const UI08 *			PackedPointer( void ) const;
