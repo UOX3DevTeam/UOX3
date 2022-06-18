@@ -808,6 +808,7 @@ auto CServerData::ResetDefaults()->void {
 //===============================================================================================
 CServerData::CServerData() {
 	startup() ;
+	availableIPs = ip4list_t::available() ;
 }
 //===============================================================================================
 auto CServerData::startup() ->void{
@@ -887,8 +888,29 @@ auto CServerData::ExternalIP() const ->const std::string& {
 }
 auto CServerData::ExternalIP( const std::string &ip ) ->void{
 	externalIP = ip;
-	IP4Address::setExternal( externalIP );
+	//IP4Address::setExternal( externalIP );
 }
+auto CServerData::matchIP(const ip4addr_t &ip) const -> ip4addr_t {
+	auto [candidate,match] = availableIPs.bestmatch(ip) ;
+	if (match == 0){
+		if (!externalIP.empty()){
+			candidate = ip4addr_t(externalIP);
+		}
+	}
+	else {
+		// We got some kind of match, see if on same network type?
+		if (candidate.type() != ip.type()){
+			if (ip.type() == ip4addr_t::ip4type_t::wan) {
+				if (!externalIP.empty()) {
+					candidate = ip4addr_t(externalIP) ;
+				}
+			}
+		}
+	}
+	return candidate ;
+	
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 ServerPort() const
 //|					void ServerPort( UI16 setport )

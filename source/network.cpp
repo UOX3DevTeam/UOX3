@@ -531,7 +531,7 @@ void cNetworkStuff::CheckConn( void )
 #endif
 		CSocket *toMake = new CSocket( newClient );
 		// set the ip address of the client ;
-		toMake->ipaddress = IP4Address( ntohl(client_addr.sin_addr.s_addr) );
+		toMake->ipaddress = ip4addr_t( client_addr.sin_addr.s_addr );
 		
 		if( newClient < 0 )
 		{
