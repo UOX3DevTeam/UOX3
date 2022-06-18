@@ -468,7 +468,7 @@ auto ip4list_t::available() ->ip4list_t{
 								// The device has a name, might be intersted
 								if (device.find("(WSL)")== std::string::npos){
 									// we dont want a psuedo WSL device on windows
-									rvalue.push_back(device_address) ;
+									rvalue.add(device_address) ;
 								}
 							}
 							
