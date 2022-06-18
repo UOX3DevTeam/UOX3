@@ -924,7 +924,6 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="IDXMul.cpp" />
     <ClCompile Include="IP4Address.cpp" />
     <ClCompile Include="items.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1420,7 +1419,6 @@
     <ClInclude Include="funcdecl.h" />
     <ClInclude Include="GenericList.h" />
     <ClInclude Include="gump.h" />
-    <ClInclude Include="IDXMul.hpp" />
     <ClInclude Include="IP4Address.hpp" />
     <ClInclude Include="jail.h" />
     <ClInclude Include="JSEncapsulate.h" />
