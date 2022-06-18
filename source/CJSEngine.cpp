@@ -43,12 +43,14 @@ auto CJSEngine::startup() -> void {
 }
 //===================================================================
 CJSEngine::~CJSEngine() {
+	/*
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
 		if((*rIter)) {
 			delete (*rIter);
 		}
 	}
+	*/
 }
 
 void CJSEngine::Reload( void )
