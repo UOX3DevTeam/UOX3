@@ -24,7 +24,6 @@
 		648AF7A227CFF2CD009327DE /* cMultiObj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF70E27CFF2CC009327DE /* cMultiObj.cpp */; };
 		648AF7A327CFF2CD009327DE /* jail.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71227CFF2CC009327DE /* jail.cpp */; };
 		648AF7A427CFF2CD009327DE /* cSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71427CFF2CC009327DE /* cSocket.cpp */; };
-		648AF7A527CFF2CD009327DE /* IDXMul.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71627CFF2CC009327DE /* IDXMul.cpp */; };
 		648AF7A627CFF2CD009327DE /* queue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71727CFF2CC009327DE /* queue.cpp */; };
 		648AF7A827CFF2CD009327DE /* SEFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71B27CFF2CC009327DE /* SEFunctions.cpp */; };
 		648AF7A927CFF2CD009327DE /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF71D27CFF2CC009327DE /* archive.cpp */; };
@@ -130,7 +129,6 @@
 		648AF70627CFF2CC009327DE /* worldmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = worldmain.h; sourceTree = "<group>"; };
 		648AF70727CFF2CC009327DE /* worldmain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = worldmain.cpp; sourceTree = "<group>"; };
 		648AF70827CFF2CC009327DE /* cBaseobject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cBaseobject.cpp; sourceTree = "<group>"; };
-		648AF70927CFF2CC009327DE /* IDXMul.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = IDXMul.hpp; sourceTree = "<group>"; };
 		648AF70A27CFF2CC009327DE /* cServerData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cServerData.cpp; sourceTree = "<group>"; };
 		648AF70B27CFF2CC009327DE /* TimeUtility.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TimeUtility.hpp; sourceTree = "<group>"; };
 		648AF70C27CFF2CC009327DE /* townregion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = townregion.h; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 		648AF71327CFF2CC009327DE /* movement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = movement.h; sourceTree = "<group>"; };
 		648AF71427CFF2CC009327DE /* cSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cSocket.cpp; sourceTree = "<group>"; };
 		648AF71527CFF2CC009327DE /* mapstuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mapstuff.h; sourceTree = "<group>"; };
-		648AF71627CFF2CC009327DE /* IDXMul.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDXMul.cpp; sourceTree = "<group>"; };
 		648AF71727CFF2CC009327DE /* queue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = queue.cpp; sourceTree = "<group>"; };
 		648AF71927CFF2CC009327DE /* CResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CResponse.h; sourceTree = "<group>"; };
 		648AF71A27CFF2CC009327DE /* UOXJSPropertySpecs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UOXJSPropertySpecs.h; sourceTree = "<group>"; };
@@ -454,8 +451,6 @@
 		6400D38E284CE74C00AADA54 /* UOData */ = {
 			isa = PBXGroup;
 			children = (
-				648AF71627CFF2CC009327DE /* IDXMul.cpp */,
-				648AF70927CFF2CC009327DE /* IDXMul.hpp */,
 				648AF71F27CFF2CC009327DE /* mapclasses.h */,
 				648AF76127CFF2CD009327DE /* mapstuff.cpp */,
 				648AF71527CFF2CC009327DE /* mapstuff.h */,
@@ -696,7 +691,6 @@
 				648AF7C827CFF2CD009327DE /* cServerDefinitions.cpp in Sources */,
 				648AF7C127CFF2CD009327DE /* gumps.cpp in Sources */,
 				648AF79E27CFF2CD009327DE /* cItem.cpp in Sources */,
-				648AF7A527CFF2CD009327DE /* IDXMul.cpp in Sources */,
 				648AF7DB27CFF2CD009327DE /* npcs.cpp in Sources */,
 				648AF7DC27CFF2CD009327DE /* wholist.cpp in Sources */,
 				648AF7C527CFF2CD009327DE /* items.cpp in Sources */,

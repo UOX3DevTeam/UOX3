@@ -261,9 +261,6 @@
     <ClInclude Include="..\source\worldmain.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\IDXMul.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\MultiMul.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
@@ -304,9 +301,6 @@
   <ItemGroup>
     <ClCompile Include="..\source\uox3.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\source\IDXMul.cpp">
-      <Filter>Source Files\UOData</Filter>
     </ClCompile>
     <ClCompile Include="..\source\MultiMul.cpp">
       <Filter>Source Files\UOData</Filter>
