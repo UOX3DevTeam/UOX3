@@ -43,12 +43,15 @@ auto CJSEngine::startup() -> void {
 }
 //===================================================================
 CJSEngine::~CJSEngine() {
+	// Why?  we are shutting down, the process memory will take care of this for us in theory
+	/*
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
 		if((*rIter)) {
 			delete (*rIter);
 		}
 	}
+	*/
 }
 
 void CJSEngine::Reload( void )
