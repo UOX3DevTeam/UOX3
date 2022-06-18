@@ -3,7 +3,6 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
-#include "IP4Address.hpp"
 
 #include <filesystem>
 #include <memory>
@@ -63,7 +62,7 @@ std::multimap<UI32,ADDMENUITEM> g_mmapAddMenuMap;
 //=======================================================
 CServerDefinitions::CServerDefinitions() : defaultPriority( 0 ) {
 	// Load our device ips
-	IP4Address::loadIPs();
+	
 }
 //=======================================================
 auto CServerDefinitions::startup() ->void {
