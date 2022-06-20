@@ -3529,7 +3529,7 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "\tPETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
 		ofsOutput << "\tNPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
 		ofsOutput << "\tBLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
-		ofsOutput << "vBLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
+		ofsOutput << "\tBLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 		
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
