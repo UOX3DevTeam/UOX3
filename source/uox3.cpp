@@ -185,7 +185,7 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	// We are going to do some fundmental checks, that if fail, we will bail out before
 	// setting up
 	//==============================================================================================
-	auto config_file = std::string() ;
+	auto config_file = std::string("uox.ini");
 	if (argc>1){
 		config_file = argv[1] ;
 	}
