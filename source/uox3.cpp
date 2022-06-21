@@ -495,21 +495,21 @@ auto startInitialize(CServerData &serverdata) ->void {
 			Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
 		}
 		
-		auto deviceIPs = IP4Address::deviceIPs();
-		for( auto &entry : deviceIPs ){
+		auto deviceIPs = ip4list_t::available();
+		for( auto &entry : deviceIPs.ips() ){
 			switch (entry.type()){
-				case IP4Address::lan:
-					Console << "UOX: listening for incoming connections on LAN IP: " << entry.string() << myendl;
+				case ip4addr_t::ip4type_t::lan:
+					Console << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
 					break;
-				case IP4Address::mine:
-				case IP4Address::local:
-					Console << "UOX: listening for incoming connections on Local IP: " << entry.string() << myendl;
+				
+				case ip4addr_t::ip4type_t::local:
+					Console << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
 					break;
-				case IP4Address::wan:
-					Console << "UOX: listening for incoming connections on WAN IP: " << entry.string() << myendl;
+				case ip4addr_t::ip4type_t::wan:
+					Console << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
 					break;
 				default:
-					Console << "UOX: listening for incoming connections on IP: " << entry.string() << myendl;
+					Console << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
 					break;
 			}
 		}

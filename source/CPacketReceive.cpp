@@ -343,10 +343,10 @@ bool CPIFirstLogin::Handle( void )
 		}
 
 		// change for IP4Address
-		auto address = IP4Address::respond( tSock->ipaddress );
+		auto address = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
 		
 		CPGameServerList toSend(1);
-		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.littleEndian() );
+		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.ipaddr(false) );
 		tSock->Send( &toSend );
 	}
 	// If socket's ClientType is still CV_DEFAULT, it's an old client,
@@ -456,10 +456,11 @@ SI16 CPIServerSelect::ServerNum( void )
 
 bool CPIServerSelect::Handle( void )
 {
-	auto ip = IP4Address::respond( tSock->ipaddress );
+	auto ip = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
+	
 	auto name = cwmWorldState->ServerData()->ServerName();
 	auto port = cwmWorldState->ServerData()->ServerPort();
-	CPRelay toSend( ip.littleEndian(), port );
+	CPRelay toSend( ip.ipaddr(false), port );
 	tSock->Send(&toSend);
 	// Mark packet as sent. No we need to change how we network.
 	return true;

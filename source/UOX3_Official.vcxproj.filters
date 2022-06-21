@@ -272,9 +272,6 @@
     <ClCompile Include="UOPData.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
-    <ClCompile Include="IDXMul.cpp">
-      <Filter>Source Files\UOData</Filter>
-    </ClCompile>
     <ClCompile Include="MultiMul.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
@@ -509,9 +506,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UOPData.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
-    <ClInclude Include="IDXMul.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
     <ClInclude Include="MultiMul.hpp">

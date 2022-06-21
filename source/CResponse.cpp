@@ -299,7 +299,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar
 					break;
 				}
 #if defined( UOX_DEBUG_MODE )
-				Console.print( oldstrutil::format("Unhandled TriggerWord sent by the client 0x%X\n", trigWord) );
+				Console.print( oldstrutil::format("Unhandled trigger [%s] sent by the client 0x%X\n", text.c_str(),trigWord) );
 #endif
 				break;
 		}

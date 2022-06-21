@@ -53,6 +53,7 @@ private:
 
 	std::map< std::string, SI16 >	 priorityMap;
 	SI16	 defaultPriority;
+	
 
 	auto LoadDFNCategory(DEFINITIONCATEGORIES toLoad) ->void;
 	auto ReloadScriptObjects() ->void;

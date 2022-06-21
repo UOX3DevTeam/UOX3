@@ -7,7 +7,7 @@
 #include <array>
 
 #include "StringUtility.hpp"
-
+#include "IP4Address.hpp"
 //=======================================================================================
 enum ClientFeatures {
 	CF_BIT_CHAT = 0,		// 0x01
@@ -208,6 +208,8 @@ private:
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
 	std::string	commandprefix;				//	Character that acts as the command prefix
 	std::string externalIP;
+	ip4list_t   availableIPs ;
+	
 	std::vector< physicalServer > serverList;		//	Series of server entries for shard list
 	UI08		consolelogenabled;			//	Various levels of legging 0 == none, 1 == normal, 2 == normal + all speech
 	UI16		serverLanguage;				//	Default language used on server
@@ -1029,6 +1031,8 @@ public:
 	auto		incDay() ->bool;
 
 	auto		incMoon( SI32 mNumber ) ->void;
+	
+	auto		matchIP(const ip4addr_t &ip) const -> ip4addr_t ;
 
 	physicalServer *ServerEntry( UI16 entryNum );
 	auto		ServerCount() const ->std::uint16_t ;

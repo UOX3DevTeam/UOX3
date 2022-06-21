@@ -70,7 +70,7 @@ public:
 	//
 
 	void			InternalReset( void );
-	IP4Address		ipaddress;
+	ip4addr_t		ipaddress;
 
 private:
 	std::vector< UI16 >				trigWords;
