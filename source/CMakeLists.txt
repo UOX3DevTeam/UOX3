@@ -76,7 +76,6 @@ add_library(uox
 		StringUtility.cpp
 		UOPData.cpp
 		MultiMul.cpp
-		IDXMul.cpp
 		IP4Address.cpp
 		TimeUtility.cpp
 		EventTimer.cpp

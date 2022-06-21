@@ -49,7 +49,6 @@
     <ClInclude Include="..\source\funcdecl.h" />
     <ClInclude Include="..\source\GenericList.h" />
     <ClInclude Include="..\source\gump.h" />
-    <ClInclude Include="..\source\IDXMul.hpp" />
     <ClInclude Include="..\source\IP4Address.hpp" />
     <ClInclude Include="..\source\jail.h" />
     <ClInclude Include="..\source\JSEncapsulate.h" />
@@ -133,7 +132,6 @@
     <ClCompile Include="..\source\findfuncs.cpp" />
     <ClCompile Include="..\source\gumps.cpp" />
     <ClCompile Include="..\source\house.cpp" />
-    <ClCompile Include="..\source\IDXMul.cpp" />
     <ClCompile Include="..\source\IP4Address.cpp" />
     <ClCompile Include="..\source\items.cpp" />
     <ClCompile Include="..\source\jail.cpp" />
