@@ -112,6 +112,7 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion(
 	multis = nullptr;
 	tempmulti = INVALIDSERIAL;
 	objSettings.reset();
+	
 	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
