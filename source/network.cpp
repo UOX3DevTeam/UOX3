@@ -14,6 +14,7 @@
 #include "cServerDefinitions.h"
 #include "Dictionary.h"
 #include "mapstuff.h"
+#include <cctype>
 
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
