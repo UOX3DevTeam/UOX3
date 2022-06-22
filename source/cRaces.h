@@ -182,11 +182,11 @@ private:
 	void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
 
 	bool			InvalidRace( RACEID x ) const;
-
+	bool initialized ;
 public:
 	// Functions
 	~cRaces();
-	cRaces() = default ;
+	cRaces() ;
 	void			load( void );					// loads races
 	RaceRelate		Compare( CChar *player1, CChar *player2 ) const;
 	RaceRelate		CompareByRace( RACEID race1, RACEID race2 ) const;	// compares chars
