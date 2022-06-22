@@ -2095,7 +2095,8 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	bool allowAwakeNPCs = cwmWorldState->ServerData()->AllowAwakeNPCs();
 	for (auto &toCheck : regionList){
 		auto regChars = toCheck->GetCharList();
-		for (const auto charCheck:regChars->collection()){
+		auto collection = regChars->collection();
+		for (const auto &charCheck:collection){
 			if( ValidateObject( charCheck ) ){
 				if( charCheck->IsNpc() ) {
 					if( !charCheck->IsAwake() || !allowAwakeNPCs ){
