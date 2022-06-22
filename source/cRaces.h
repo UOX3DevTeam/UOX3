@@ -182,7 +182,7 @@ private:
 	void			RacialInfo( RACEID race, RACEID toSet, RaceRelate value );
 
 	bool			InvalidRace( RACEID x ) const;
-
+	bool initialized ;
 public:
 	// Functions
 	~cRaces();

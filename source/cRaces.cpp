@@ -41,22 +41,23 @@ CRace * cRaces::Race( RACEID x )
 	return races[x];
 }
 
-cRaces::cRaces(){
+cRaces::cRaces():initialized(false){
 	
 }
-
 cRaces::~cRaces()
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
-	JSEngine->ReleaseObject( IUE_RACE, this );
-
-	for( size_t i = 0; i < races.size(); ++i )
-	{
-		delete races[i];
-		races[i] = nullptr;
+	if (initialized){
+		JSEngine->ReleaseObject( IUE_RACE, this );
+		
+		for( size_t i = 0; i < races.size(); ++i )
+		{
+			delete races[i];
+			races[i] = nullptr;
+		}
+		races.clear();
 	}
-	races.clear();
 }
 
 void cRaces::DefaultInitCombat( void )
@@ -68,10 +69,11 @@ void cRaces::DefaultInitCombat( void )
 	combat[3].value = 200;
 }
 
-void cRaces::load( void )
+void cRaces::load()
 // PRE:		races.dfn exists
 // POST:	class loaded and populated, dynamically
 {
+	initialized = true ;
 	UI32 i = 0;
 	UI32 raceCount = 0;
 	bool done = false;
