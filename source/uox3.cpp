@@ -197,6 +197,10 @@ auto main( SI32 argc, char *argv[] ) ->int {
 
 	// We are going to load some of our basic data, if that goes ok, we then startup the Console subystem,
 	// and the classes
+	if (!std::filesystem::exists(std::filesystem::path(config_file))){
+		std::cout << "Cannot find UOX3 ini file"<<(config_file.empty()?"."s:": "s+config_file) << std::endl;
+		return EXIT_FAILURE;
+	}
 	auto serverdata = CServerData() ;
 	if (!serverdata.Load(config_file)) {
 		std::cout << "Error loading UOX3 ini file"<<(config_file.empty()?"."s:": "s+config_file) << std::endl;
