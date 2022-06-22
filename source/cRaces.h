@@ -1,7 +1,7 @@
 #ifndef __Races__
 #define __Races__
 #include <unordered_set>
-
+#include <array>
 class CRace
 {
 private:
@@ -26,8 +26,8 @@ private:
 	SI16				ManaMod;
 	SI16				StamMod;
 private:
-
-	SKILLVAL			iSkills[SKILLS];
+	std::array<SKILLVAL,SKILLS> iSkills ;
+	//SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
 
 	COLOURLIST			beardColours;
@@ -50,8 +50,10 @@ private:
 	BANEQUIPLIST		bannedEquipment;
 
 	std::bitset< WEATHNUM >	weatherAffected;
-	SECONDS					weathSecs[WEATHNUM];
-	SI08					weathDamage[WEATHNUM];
+	std::array<SECONDS,WEATHNUM> weathSecs ;
+	//SECONDS					weathSecs[WEATHNUM];
+	std::array<SI08,WEATHNUM> weathDamage ;
+	//SI08					weathDamage[WEATHNUM];
 
 	SKILLVAL		languageMin;
 	RANGE			visDistance;
