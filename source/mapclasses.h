@@ -5,6 +5,7 @@
 #include <sstream>
 #include <array>
 #include <bitset>
+#include <algorithm>
 
 #include "power.h"
 #include "MultiMul.hpp"
