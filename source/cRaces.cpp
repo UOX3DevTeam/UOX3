@@ -1053,9 +1053,12 @@ bool CRace::CanEquipItem( UI16 itemID ) const
 CRace::CRace() : bools( 4 ), visDistance( 0 ), nightVision( 0 ), armourRestrict( 0 ), lightLevel( 1 ),
 restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance( 0.0f ), bloodColour( 0 )
 {
-	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
-	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
-	memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
+	iSkills.fill(0);
+	weathDamage.fill(0);
+	weathSecs.fill(60);
+	//memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
+	//memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
+	//memset( &weathSecs[0], 60, sizeof( SECONDS ) * WEATHNUM );
 
 	Skill( 100, STRENGTH );
 	Skill( 100, DEXTERITY );
@@ -1720,7 +1723,8 @@ void CRace::PoisonResistance( R32 value )
 
 CRace& CRace::operator =( CRace& trgRace )
 {
-	memcpy( iSkills, trgRace.iSkills, sizeof( SKILLVAL ) * SKILLS );
+	iSkills = trgRace.iSkills ;
+	//memcpy( iSkills, trgRace.iSkills, sizeof( SKILLVAL ) * SKILLS );
 	raceName = trgRace.raceName;
 
 	beardColours.resize( trgRace.beardColours.size() );
@@ -1754,9 +1758,10 @@ CRace& CRace::operator =( CRace& trgRace )
 	lightLevel = trgRace.lightLevel;
 	nightVision = trgRace.nightVision;
 	armourRestrict = trgRace.armourRestrict;
-
-	memcpy( weathSecs, trgRace.weathDamage, sizeof( SECONDS ) * WEATHNUM );
-	memcpy( weathSecs, trgRace.weathDamage, sizeof( SI08 ) * WEATHNUM );
+	weathSecs = trgRace.weathSecs ;
+	weathDamage = trgRace.weathDamage ;
+	//memcpy( weathSecs, trgRace.weatSec, sizeof( SECONDS ) * WEATHNUM );
+	//memcpy( weathSecs, trgRace.weathDamage, sizeof( SI08 ) * WEATHNUM );
 
 	languageMin = trgRace.languageMin;
 	visDistance = trgRace.visDistance;
