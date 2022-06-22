@@ -404,7 +404,7 @@ private:
 public:
 	CSpeechQueue( void );
 	~CSpeechQueue();
-
+	auto startup() ->void ;
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
 	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
 	SI32			PollTime( void ) const;

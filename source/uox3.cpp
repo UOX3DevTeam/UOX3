@@ -111,8 +111,8 @@ auto aNpcs			= cCharStuff();  // nodependency, no startup
 auto aSkills		= cSkills(); // no ddependency, no startup
 auto aWeight		= CWeight(); // no dependency, no startup
 auto aMagic			= cMagic();  // No dependent, no startup
-auto aRaces			= cRaces();  // no dependent, no startup
-/*
+//auto aRaces			= cRaces();  // no dependent, no startup
+
 auto aWeather		= cWeatherAb(); // no dependent, no startup
 auto aMovement		= cMovement();  // No dependent, no startup
 auto aWhoList		= cWhoList(); // no dependent, no startup
@@ -135,7 +135,7 @@ auto aNetwork		= cNetworkStuff();  // Maybe dependent, has startup
 auto aMapRegion		= CMapHandler(); // Dependent (Map->) , has startup
 auto aAccounts		= cAccountClass();  // no dpend, use SetPath
  
-*/
+
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o-----------------------------------------------------------------------------------------------o
@@ -2243,6 +2243,7 @@ auto InitClasses()->void {
 	aJSEngine.startup() ;
 	aFileLookup.startup() ;
 	aCommands.startup() ;
+ 	aSpeechSys.startup() ;
 	// Need to do map
 	aNetwork.startup() ;
 	aMap.load() ;
