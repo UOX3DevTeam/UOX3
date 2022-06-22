@@ -112,6 +112,7 @@ auto aSkills		= cSkills(); // no ddependency, no startup
 auto aWeight		= CWeight(); // no dependency, no startup
 auto aMagic			= cMagic();  // No dependent, no startup
 auto aRaces			= cRaces();  // no dependent, no startup
+/*
 auto aWeather		= cWeatherAb(); // no dependent, no startup
 auto aMovement		= cMovement();  // No dependent, no startup
 auto aWhoList		= cWhoList(); // no dependent, no startup
@@ -133,6 +134,8 @@ auto aMap			= CMulHandler(); // replaced
 auto aNetwork		= cNetworkStuff();  // Maybe dependent, has startup
 auto aMapRegion		= CMapHandler(); // Dependent (Map->) , has startup
 auto aAccounts		= cAccountClass();  // no dpend, use SetPath
+ 
+*/
 //o-----------------------------------------------------------------------------------------------o
 // FileIO Pre-Declarations
 //o-----------------------------------------------------------------------------------------------o
@@ -355,6 +358,7 @@ auto initOperatingSystem() ->std::optional<std::string> {
 // Startup and Initialization
 //=====================================================================================
 auto startInitialize(CServerData &serverdata) ->void {
+/*
 	saveOnShutdown = false ;
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
@@ -530,8 +534,8 @@ auto startInitialize(CServerData &serverdata) ->void {
 		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
+*/
 	
-
 }
 
 
@@ -2205,6 +2209,7 @@ auto CWorldMain::CheckAutoTimers() ->void {
 //|	Purpose		-	Initialize UOX classes
 //o-----------------------------------------------------------------------------------------------o
 auto InitClasses()->void {
+/*
 	cwmWorldState->ClassesInitialized( true );
 	JSEngine = &aJSEngine ;
 	JSMapping = &aJSMapping ;
@@ -2246,6 +2251,7 @@ auto InitClasses()->void {
 	JSMapping->GetEnvokeByType()->Parse();
 	aMapRegion.startup() ;
 	aAccounts.SetPath(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
+*/
 }
 
 
