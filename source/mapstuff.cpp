@@ -326,7 +326,7 @@ auto CMulHandler::loadMapAndStatics(const std::map<int,mapdfndata_st> &info) ->v
 			}
 		}
 		if (!rvalue) {
-			Console.PrintSpecial( CBLUE, "not found" );
+			Console.PrintFailed();
 		}
 		else {
 			Console.PrintDone();
