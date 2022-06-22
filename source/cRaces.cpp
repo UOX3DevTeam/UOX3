@@ -1080,9 +1080,9 @@ restrictGender( 0 ), languageMin( 0 ), poisonResistance( 0.0f ), magicResistance
 {
 	NumEnemyRaces( numRaces );
 
-	memset( &iSkills[0], 0, sizeof( SKILLVAL ) * SKILLS );
-	memset( &weathDamage[0], 0, sizeof( SI08 ) * WEATHNUM );
-	memset( &weathSecs[0], 0, sizeof( SECONDS ) * WEATHNUM );
+	iSkills.fill(0);
+	weathDamage.fill(0);
+	weathSecs.fill(60);
 
 	Skill( 100, STRENGTH );
 	Skill( 100, DEXTERITY );

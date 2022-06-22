@@ -128,7 +128,7 @@ CSpeechQueue *SpeechSys;
 
 std::map< std::string, UnicodeTypes > codeLookup;
 
-void InitializeLookup( void )
+void InitializeLookup()
 {
 	for( SI32 i = (SI32)ZERO; i < (SI32)TOTAL_LANGUAGES; ++i )
 		codeLookup[LanguageCodes[(UnicodeTypes)i]] = (UnicodeTypes)i;
@@ -426,6 +426,9 @@ bool CPITalkRequest::Handle( void )
 CSpeechQueue::CSpeechQueue() : pollTime( 100 ), runAsThread( false )
 {
 	speechList.resize( 0 );
+	//InitializeLookup();
+}
+auto CSpeechQueue::startup() ->void {
 	InitializeLookup();
 }
 CSpeechQueue::~CSpeechQueue()
