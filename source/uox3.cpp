@@ -2096,7 +2096,7 @@ auto CWorldMain::CheckAutoTimers() ->void {
 	for (auto &toCheck : regionList){
 		auto regChars = toCheck->GetCharList();
 		for (const auto charCheck:regChars->collection()){
-			if( ValidateObject( charCheck ) && charCheck->isFree() ){
+			if( ValidateObject( charCheck ) ){
 				if( charCheck->IsNpc() ) {
 					if( !charCheck->IsAwake() || !allowAwakeNPCs ){
 						
