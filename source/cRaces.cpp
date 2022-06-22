@@ -48,7 +48,8 @@ cRaces::~cRaces()
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
-	if (initialized){
+	if (false) {
+	//if (initialized){
 		JSEngine->ReleaseObject( IUE_RACE, this );
 		
 		for( size_t i = 0; i < races.size(); ++i )
