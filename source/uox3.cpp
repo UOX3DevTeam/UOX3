@@ -123,10 +123,10 @@ auto aCounselorQueue	= PageVector("Counselor Queue"); // no dependent, no startu
 auto aJSMapping		= CJSMapping(); // nodepend, no startup
 auto aEffects		= cEffects(); // No dependnt, no startup
 auto aHTMLTemplates	= cHTMLTemplates();  // no depend, no startup
-auto aSpeechSys		= CSpeechQueue() ; // no depend, no startup
 auto aGuildSys		= CGuildCollection(); // no depend,no startup
 auto aJailSys		= JailSystem(); // no depend, no startup
 // Dependent or have startup()
+auto aSpeechSys		= CSpeechQueue() ; // has startup
 auto aJSEngine 		= CJSEngine(); // has startup
 auto aFileLookup		= CServerDefinitions() ;  // has startup
 auto aCommands		= cCommands() ; // Restart resets commands, maybe no dependency
@@ -192,7 +192,7 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	if (argc>1){
 		config_file = argv[1] ;
 	}
-	return 0 ;
+	
 	auto status = initOperatingSystem() ;
 	if (status.has_value()){
 		std::cerr <<status.value() << std::endl;
@@ -359,7 +359,7 @@ auto initOperatingSystem() ->std::optional<std::string> {
 // Startup and Initialization
 //=====================================================================================
 auto startInitialize(CServerData &serverdata) ->void {
-/*
+
 	saveOnShutdown = false ;
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
@@ -535,7 +535,7 @@ auto startInitialize(CServerData &serverdata) ->void {
 		Console.TurnGreen();
 		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
 		Console.TurnNormal();
-*/
+
 	
 }
 
@@ -2210,7 +2210,7 @@ auto CWorldMain::CheckAutoTimers() ->void {
 //|	Purpose		-	Initialize UOX classes
 //o-----------------------------------------------------------------------------------------------o
 auto InitClasses()->void {
-/*
+
 	cwmWorldState->ClassesInitialized( true );
 	JSEngine = &aJSEngine ;
 	JSMapping = &aJSMapping ;
@@ -2253,7 +2253,7 @@ auto InitClasses()->void {
 	JSMapping->GetEnvokeByType()->Parse();
 	aMapRegion.startup() ;
 	aAccounts.SetPath(cwmWorldState->ServerData()->Directory(CSDDP_ACCOUNTS));
-*/
+
 }
 
 
