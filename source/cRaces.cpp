@@ -41,7 +41,9 @@ CRace * cRaces::Race( RACEID x )
 	return races[x];
 }
 
-
+cRaces::cRaces(){
+	
+}
 
 cRaces::~cRaces()
 // PRE:	cRaces has been initialized

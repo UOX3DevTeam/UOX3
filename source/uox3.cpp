@@ -111,7 +111,7 @@ auto aNpcs			= cCharStuff();  // nodependency, no startup
 auto aSkills		= cSkills(); // no ddependency, no startup
 auto aWeight		= CWeight(); // no dependency, no startup
 auto aMagic			= cMagic();  // No dependent, no startup
-//auto aRaces			= cRaces();  // no dependent, no startup
+auto aRaces			= cRaces();  // no dependent, no startup
 
 auto aWeather		= cWeatherAb(); // no dependent, no startup
 auto aMovement		= cMovement();  // No dependent, no startup
@@ -192,6 +192,7 @@ auto main( SI32 argc, char *argv[] ) ->int {
 	if (argc>1){
 		config_file = argv[1] ;
 	}
+	return 0 ;
 	auto status = initOperatingSystem() ;
 	if (status.has_value()){
 		std::cerr <<status.value() << std::endl;
