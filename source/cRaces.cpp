@@ -48,7 +48,7 @@ cRaces::~cRaces()
 // PRE:	cRaces has been initialized
 // POST:	Dynamic memory deleted
 {
-	if (false) {
+	if (/* DISABLES CODE */ (false)) {
 	//if (initialized){
 		JSEngine->ReleaseObject( IUE_RACE, this );
 		
