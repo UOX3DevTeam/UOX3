@@ -32,6 +32,7 @@
 #include "StringUtility.hpp"
 #include <iostream>
 #include <cctype>
+#include <stdexcept>
 
 #if PLATFORM != WINDOWS
 #include <termios.h>
@@ -437,16 +438,22 @@ auto CConsole::log(const std::string& msg) ->void {
 //| Purpose		-	Writes to the error log and the console.
 //o-----------------------------------------------------------------------------------------------o
 auto CConsole::error(const std::string& msg) ->void {
-	UI08 oldMode = CurrentMode();
-	CurrentMode( ERRORMODE );
-	log( msg, "error.log" );
-	if( curLeft != 0 ){
-		(*this) << myendl;
+	try {
+		UI08 oldMode = CurrentMode();
+		CurrentMode( ERRORMODE );
+		log( msg, "error.log" );
+		if( curLeft != 0 ){
+			(*this) << myendl;
+		}
+		TurnRed();
+		(*this) << "ERROR: " << (const char*)&msg[0] << myendl;
+		TurnNormal();
+		CurrentMode( oldMode );
 	}
-	TurnRed();
-	(*this) << "ERROR: " << (const char*)&msg[0] << myendl;
-	TurnNormal();
-	CurrentMode( oldMode );
+	catch (const std::exception &e){
+		std::cerr << "Error print reporting 'error'.  Error was: " << msg<<std::endl;
+		exit(1) ;
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
