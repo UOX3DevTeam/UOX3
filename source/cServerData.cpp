@@ -3916,8 +3916,16 @@ auto CServerData::ParseINI( const std::string& filename ) ->bool {
 						case static_cast<int>(search_t::endsection): {
 							if (line[0] != '}') {
 								auto [key,value] = oldstrutil::split(line,"=");
-								if (HandleLine(key, value)) {
-									rvalue = true ;
+								try {
+									if (HandleLine(key, value)) {
+										rvalue = true ;
+									}
+								}
+								catch(const std::exception &e){
+									std::cerr<<"Error parsing ini file" << std::endl;
+									std::cerr<<"Entry was: " << key << " = " <<value << std::endl;
+									std::cerr << "execption was: "<<e.what()<<std::endl;
+									exit(1) ;
 								}
 							}
 							else {
