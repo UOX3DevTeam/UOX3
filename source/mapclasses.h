@@ -78,7 +78,7 @@ class tileinfo ;
 
 
 //=======================================================================================
-// Frankly, these chould/should have been structures, There really isn't a rason to make the
+// Frankly, these chould/should have been structures, There really isn't a reason to make the
 // data private, and then expose everything with accessors.  Just adds a lot of verbage,
 // that can clutter when maintaining.  Oh well, we stay compatable for now.
 class CBaseTile {
@@ -108,7 +108,7 @@ public:
 	 return retVal;
 	 }
 	 */
-	auto Name() const -> const std::string& {return name;}
+	auto Name() const ->const std::string& {return name;}
 	auto Name(const std::string &value) ->void {name = value;}
 	
 	auto FlagsNum() const ->std::uint32_t {	return static_cast<std::uint32_t>(flags.to_ulong());}
@@ -143,7 +143,7 @@ private:
 	std::uint8_t unknown4;
 	std::uint8_t unknown5;
 	std::int8_t height;
-	std::string name ;
+	
 	
 public:
 	CTile() :CBaseTile(), weight( 0 ), layer( 0 ), unknown1( 0 ), unknown2( 0 ), quantity( 0 ), animation( 0 ), unknown3( 0 ), hue( 0 ), unknown4( 0 ), unknown5( 0 ), height( 0 ) {
