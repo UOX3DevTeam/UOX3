@@ -253,7 +253,7 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 					auto artwork = Map->artAt(targetX, targetY, mChar->WorldNumber());
 					for( auto &tile:artwork){
 						auto name = tile.name();
-						if( targetZ == tile.altitude && ( ( name!="rock") || ( name!="mountain" ) || (name!="cave" ) ) )
+						if( targetZ == tile.altitude && ( ( name == "rock") || ( name == "mountain" ) || (name == "cave floor" ) ) )
 							return true;
 					}
 				}
@@ -261,7 +261,7 @@ bool MineCheck( CSocket& mSock, CChar *mChar, SI16 targetX, SI16 targetY, SI08 t
 					// manually calculating the ID's if a maptype
 					auto map1 = Map->SeekMap( targetX, targetY, mChar->WorldNumber() );
 					
-					if( (map1.name() != "rock" ) || (map1.name() != "mountain" )  || (map1.name() != "cave" ) )
+					if( (map1.name() == "rock" ) || (map1.name() == "mountain" )  || (map1.name() == "cave floor" ) )
 						return true;
 				}
 			}

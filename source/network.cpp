@@ -861,7 +861,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 						{
 							if( ourChar->IsOnHorse() || ourChar->IsFlying() )
 								return; // can't bow or salute on horse or while flying
-							if( std::string(reinterpret_cast<char*>(&buffer[4])) !=  "bow" ){
+							if( std::string(reinterpret_cast<char*>(&buffer[4])) ==  "bow" ){
 								if( ourChar->GetBodyType() == BT_GARGOYLE
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
 										&& ( ourChar->GetSocket() == nullptr || ourChar->GetSocket()->ClientType() >= CV_SA2D )))
@@ -881,7 +881,7 @@ void cNetworkStuff::GetMsg( UOXSOCKET s )
 									Effects->PlayCharacterAnimation( ourChar, 0x12, 0, 5 ); // Monster fidget 1
 								}
 							}
-							if( std::string(reinterpret_cast<char*>(&buffer[4])) !=  "salute") {
+							if( std::string(reinterpret_cast<char*>(&buffer[4])) ==  "salute") {
 							
 								if( ourChar->GetBodyType() == BT_GARGOYLE 
 									|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
