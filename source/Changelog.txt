@@ -1,3 +1,8 @@
+05/07/2022 - Xuri
+	Wrapped some debug messages related to sockets in debug defines
+	Adjusted fix for mining to be more flexible with name of tiles
+	Fixed an issue that caused double saves on shutdown, with second shutdown wiping out some objects because they'd already been unloaded from system after first save
+
 04/07/2022 - Xuri
 	Fixed an issue with mining that allowed mining on non-valid static tiles
 	Fixed an issue that prevented boats from moving

@@ -2351,7 +2351,7 @@ auto DisplayBanner() ->void{
 auto Shutdown( SI32 retCode )->void {
 	Console.PrintSectionBegin();
 	Console << "Beginning UOX final shut down sequence..." << myendl;
-	if (saveOnShutdown) {
+	if (retCode && saveOnShutdown) {
 		//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
 #if PLATFORM == WINDOWS
 		SetConsoleCtrlHandler( exit_handler, true );
