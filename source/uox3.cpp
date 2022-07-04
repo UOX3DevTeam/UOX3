@@ -1545,7 +1545,7 @@ auto checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 	auto regItems = toCheck->GetItemList();
 	auto collection = regItems->collection() ;
 	for (const auto &itemCheck : collection){
-		if( ValidateObject( itemCheck ) && itemCheck->isFree() ){
+		if( ValidateObject( itemCheck ) ){
 			if( checkItems ) {
 				if( itemCheck->isDecayable() && (itemCheck->GetCont() == nullptr) ) {
 					if( itemCheck->GetType() == IT_HOUSESIGN && itemCheck->GetTempVar( CITV_MORE ) > 0 ) {

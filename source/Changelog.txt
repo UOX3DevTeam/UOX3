@@ -1,3 +1,9 @@
+04/07/2022 - Xuri
+	Fixed an issue with mining that allowed mining on non-valid static tiles
+	Fixed an issue that prevented boats from moving
+	Fixed an issue that prevented boats from being blocked by blocking tiles
+	Fixed an issue where salute and bow emotes got reversed
+
 12/06/2022 (on or about) - punt
 	Modernized and replaced all mul handling
 	Changed dynamic allocation of basic classes to static

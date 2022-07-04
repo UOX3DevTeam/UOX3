@@ -371,7 +371,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 			if( sz == ILLEGAL_Z ) //map tile
 			{
 				auto map = Map->SeekMap( x, y, worldNumber );
-				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name()=="water" )//only tiles on/above the water
+				if( map.altitude >= cz && !map.CheckFlag( TF_WET ) && map.name() != "water" )//only tiles on/above the water
 					return true;
 			}
 			else
@@ -379,7 +379,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 				auto artwork = Map->artAt(x, y, worldNumber);
 				for (auto &tile:artwork){
 					SI08 zt = tile.altitude + tile.height();
-					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.name() == "water") )
+					if( !tile.CheckFlag( TF_WET ) && zt >= cz && zt <= (cz + 20) && (tile.name() != "water") )
 					{
 
 						return true;
