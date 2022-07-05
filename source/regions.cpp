@@ -114,7 +114,7 @@ void LoadSpawnItem( std::ifstream& readDestination )
 //o-----------------------------------------------------------------------------------------------o
 void CMapRegion::SaveToDisk( std::ofstream& writeDestination )
 {
-	charData.Push();
+	//charData.Push();
 	std::vector<CChar *> removeChar ;
 	for (const auto &charToWrite: charData.collection()) {
 		if( !ValidateObject( charToWrite ) ){

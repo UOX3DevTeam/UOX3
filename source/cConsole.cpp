@@ -397,26 +397,28 @@ auto CConsole::print(const std::string& msg)->void{
 //| Purpose		-	Writes to the logfile
 //o-----------------------------------------------------------------------------------------------o
 auto CConsole::log( const std::string& msg, const std::string& filename ) ->void {
-	if( cwmWorldState->ServerData()->ServerConsoleLog() ){
-		std::ofstream toWrite;
-		std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
-		if( cwmWorldState != nullptr ){
-			realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
-		}
-		else {
-			realFileName = filename;
-		}
-		
-		char timeStr[256];
-		RealTime( timeStr );
-		
-		toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );
-		if( toWrite.is_open() ){
-			toWrite << "[" << timeStr << "] " << msg << std::endl;
-		}
-		toWrite.close();
-		if( LogEcho() ) {
-			print( oldstrutil::format( "%s%s\n", timeStr, msg.c_str()));
+	if (cwmWorldState){
+		if( cwmWorldState->ServerData()->ServerConsoleLog() ){
+			std::ofstream toWrite;
+			std::string realFileName;	// 022602: in windows a path can be max 512 chars, this at 128 coud potentially cause crashes if the path is longer than 128 chars
+			if( cwmWorldState != nullptr ){
+				realFileName = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + filename;
+			}
+			else {
+				realFileName = filename;
+			}
+			
+			char timeStr[256];
+			RealTime( timeStr );
+			
+			toWrite.open( realFileName.c_str(), std::ios::out | std::ios::app );
+			if( toWrite.is_open() ){
+				toWrite << "[" << timeStr << "] " << msg << std::endl;
+			}
+			toWrite.close();
+			if( LogEcho() ) {
+				print( oldstrutil::format( "%s%s\n", timeStr, msg.c_str()));
+			}
 		}
 	}
 }
