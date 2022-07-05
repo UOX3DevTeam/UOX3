@@ -1,3 +1,6 @@
+05/07/2022 - Xuri (0.99.5b-3)
+	Fixed an issue where multis could vanish because multi data was not always correctly saved out to house.wsc; now multi data is saved to the same wsc files as other items instead. UOX3 still reads house.wsc content on world load, but will delete the file on the first world save, as it's no longer needed.
+
 05/07/2022 - Xuri
 	Wrapped some debug messages related to sockets in debug defines
 	Adjusted fix for mining to be more flexible with name of tiles
