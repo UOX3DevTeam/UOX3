@@ -2177,6 +2177,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			}
 			else
 			{
+				pStream.ReserveSize( 66 );
+				pStream.WriteByte( 2, 66 );
 				Flag( 1 );
 			}
 		}
