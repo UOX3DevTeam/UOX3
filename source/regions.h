@@ -55,7 +55,7 @@ public:
 	{
 	};
 
-	void					SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination );
+	void					SaveToDisk( std::ofstream& writeDestination );
 };
 
 class CMapWorld

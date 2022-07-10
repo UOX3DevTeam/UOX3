@@ -106,13 +106,13 @@ void LoadSpawnItem( std::ifstream& readDestination )
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Functio		-	void SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination )
+//|	Functio		-	void SaveToDisk( std::ofstream& writeDestination )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save all items and characters inside a subregion reworked SaveChar from WorldMain
 //|					to deal with pointer based stuff in region rather than index based stuff in array
 //|					Also saves out all data regardless (in preparation for a simple binary save)
 //o-----------------------------------------------------------------------------------------------o
-void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &houseDestination )
+void CMapRegion::SaveToDisk( std::ofstream& writeDestination )
 {
 	charData.Push();
 	for( CChar* charToWrite = charData.First(); !charData.Finished(); charToWrite = charData.Next() )
@@ -144,12 +144,12 @@ void CMapRegion::SaveToDisk( std::ofstream& writeDestination, std::ofstream &hou
 			if( itemToWrite->GetObjType() == OT_MULTI )
 			{
 				CMultiObj *iMulti = static_cast<CMultiObj *>(itemToWrite);
-				iMulti->Save( houseDestination );
+				iMulti->Save( writeDestination );
 			}
 			else if( itemToWrite->GetObjType() == OT_BOAT )
 			{
 				CBoatObj *iBoat = static_cast< CBoatObj * >(itemToWrite);
-				iBoat->Save( houseDestination );
+				iBoat->Save( writeDestination );
 			}
 			else
 				itemToWrite->Save( writeDestination );
@@ -751,10 +751,13 @@ void CMapHandler::Save( void )
 	Console << "0%";
 
 	std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
-	std::string filename = basePath + "house.wsc";
 
-	houseDestination.open( filename.c_str() );
+	// Legacy - deletes house.wsc on next world save, since house data is now saved in the regional
+	// wsc files along with other objects, so we don't want this file loaded again on next startup
+	std::filesystem::path houseFilePath = basePath + "house.wsc";
+	std::filesystem::remove( houseFilePath );
 
+	std::string filename = "";
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
 		const SI32 baseX = counter1 * 8;
@@ -813,7 +816,7 @@ void CMapHandler::Save( void )
 						CMapRegion * mRegion = (*mIter)->GetMapRegion( (baseX+xCnt), (baseY+yCnt) );
 						if( mRegion != nullptr )
 						{
-							mRegion->SaveToDisk( writeDestination, houseDestination );
+							mRegion->SaveToDisk( writeDestination );
 
 							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
 							mRegion->HasRegionChanged( false );
@@ -826,14 +829,13 @@ void CMapHandler::Save( void )
 		}
 	}
 	Console << "\b\b\b\b" << (UI32)(100) << "%";
-	houseDestination.close();
 
 	filename = basePath + "overflow.wsc";
 	writeDestination.open( filename.c_str() );
 
 	if( writeDestination.is_open() )
 	{
-		overFlow.SaveToDisk( writeDestination, writeDestination );
+		overFlow.SaveToDisk( writeDestination );
 		writeDestination.close();
 	}
 	else
