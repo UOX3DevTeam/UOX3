@@ -2467,6 +2467,15 @@
 2759=Haben dir deine Eltern nie gesagt, dass du nicht mit einer Schere in der Hand rennen sollst?!
 2760=Die Magie eines gesegneten Gegenstandes kann man nicht enträtseln.
 2761=Die Kreatur widerstand dem Versuch, sie zu vertreiben!
+2762=Ungültige Anzahl von Parametern - erfordert 2 (timerID,scriptID)!
+2763=Verbleibende Zeit des JS-Timers für welches Objekt abrufen?
+2764=Timer wird ablaufen bei: %s
+2765=Restliche Zeit: %d Sekunden
+2766=Kein JS-Timer mit timerID %d und scriptID %u auf Objekt aktiv!
+2767=Ungültige Anzahl von Parametern - erfordert 3 (timerID,expiryTime,scriptID)!
+2768=Verbleibende Zeit des JS-Timers für welches Objekt setzen?
+2769=Angegebenen JS-Timer für welches Objekt beenden?
+2770=Der angegebene JS-Timer wurde für das ausgewählte Objekt beendet.
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER

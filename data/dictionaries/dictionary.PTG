@@ -2467,6 +2467,15 @@
 2759=Os teus pais nunca te disseram para não correres com uma tesoura na mão?!
 2760=Não se pode desvendar a magia de um objecto abençoado.
 2761=A criatura resistiu à tentativa de a dispersar!
+2762=Número inválido de parâmetros - requer 2 (timerID,scriptID)!
+2763=Vai buscar o tempo restante do temporizador JS para que objecto?
+2764=Temporizador expirará em: %s
+2765=Tempo restante: %d segundos
+2766=Não há temporizador JS com timerID %d e scriptID %u activo no objecto!
+2767=Número inválido de parâmetros - requer 3 (timerID,expiryTime,scriptID)!
+2768=Conjunto do tempo restante do JS timer para que objecto?
+2769=Tempo restante do JS especificado para que objecto?
+2770=Tempo JS especificado foi morto para o objecto seleccionado.
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS

@@ -49,6 +49,9 @@ function CommandRegistration()
 	RegisterCommand( "finditem", 2, true ); //Find item at layer
 	RegisterCommand( "movespeed", 2, true ); //Set movement speed of target player
 	RegisterCommand( "welcome", 2, true ); // Display UOX3 welcome gump for admin
+	RegisterCommand( "getjstimer", 2, true ); // Get time remaining for specified timer ID on targeted object
+	RegisterCommand( "setjstimer", 2, true ); // Set time remaining for specified timer ID on targeted object
+	RegisterCommand( "killjstimer", 2, true ); // Kill timer with specified timer ID on targeted object
 }
 
 function command_RENAME( pSock, execString )
@@ -901,4 +904,139 @@ function onCallback28( pSock, myTarget )
 function command_WELCOME( pSock, execString )
 {
 	TriggerEvent( 1, "DisplayAdminWelcomeGump", pSock, pSock.currentChar );
+}
+
+function command_GETJSTIMER( pSock, execString )
+{
+	var params = execString.replace(/\s/g, '').split( "," );
+	if( params.length != 2 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 2762, pSock.language )); // Invalid number of parameters - requires 2 (timerID,scriptID)!
+		return;
+	}
+
+	pSock.tempTimerID = parseInt(params[0]);
+	pSock.tempScriptID = parseInt(params[1]);
+
+	pSock.CustomTarget( 29, GetDictionaryEntry( 2763, pSock.language )); // Fetch remaining time of JS timer for which object?
+}
+
+function onCallback29( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var timerID = pSock.tempTimerID;
+	var scriptID = pSock.tempScriptID;
+
+	if( !pSock.GetWord( 1 ))
+	{
+		var tempMsg;
+		var currentTime = GetCurrentClock();
+		var expiryTime = myTarget.GetJSTimer( timerID, scriptID );
+		if( expiryTime != 0 )
+		{
+			var timeNow = new Date().getTime();
+			var newExpiryTime = new Date( timeNow + parseInt(expiryTime - currentTime) );
+
+			tempMsg = GetDictionaryEntry( 2764, pSock.language ); // Timer will expire at: %s
+			pSock.SysMessage( tempMsg.replace(/%s/gi, newExpiryTime ));
+
+			tempMsg = GetDictionaryEntry( 2765, pSock.language ); // // Remaining time: %d seconds
+			pSock.SysMessage( tempMsg.replace(/%d/gi, ((expiryTime - currentTime)/1000).toString() ));
+		}
+		else
+		{
+			tempMsg = GetDictionaryEntry( 2766, pSock.language ); // No JS timer with timerID %d and scriptID %u active on object!
+			tempMsg = tempMsg.replace(/%d/gi, timerID.toString() );
+			pSock.SysMessage( tempMsg.replace(/%u/gi, scriptID.toString() ));
+		}
+	}
+	else
+		pSock.SysMessage( GetDictionaryEntry( 8891, pSock.language )); // You need to target a dynamic object (item or character).
+}
+
+function command_SETJSTIMER( pSock, execString )
+{
+	var params = execString.replace(/\s/g, '').split( "," );
+	if( params.length != 3 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 2767, pSock.language )); // Invalid number of parameters - requires 3 (timerID,expiryTime,scriptID)!
+		return;
+	}
+
+	pSock.tempTimerID = parseInt(params[0]);
+	pSock.tempExpiryTime = parseInt(params[1]);
+	pSock.tempScriptID = parseInt(params[2]);
+
+	pSock.CustomTarget( 30, GetDictionaryEntry( 2768, pSock.language )); // Set remaining time of JS timer for which object?
+}
+
+function onCallback30( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var timerID = pSock.tempTimerID;
+	var expiryTime = pSock.tempExpiryTime;
+	var scriptID = pSock.tempScriptID;
+
+	if( !pSock.GetWord( 1 ))
+	{
+		var tempMsg;
+		var currentTime = GetCurrentClock();
+		if( myTarget.SetJSTimer( timerID, expiryTime, scriptID ))
+		{
+			var timeNow = new Date().getTime();
+			var newExpiryTime = new Date( timeNow + parseInt(expiryTime) );
+
+			tempMsg = GetDictionaryEntry( 2764, pSock.language ); // Timer will expire at: %s
+			pSock.SysMessage( tempMsg.replace(/%s/gi, newExpiryTime ));
+
+			tempMsg = GetDictionaryEntry( 2765, pSock.language ); // // Remaining time: %d seconds
+			pSock.SysMessage( tempMsg.replace(/%d/gi, (expiryTime/1000).toString() ));
+		}
+		else
+		{
+			tempMsg = GetDictionaryEntry( 2766, pSock.language ); // No JS timer with timerID %d and scriptID %u active on object!
+			tempMsg = tempMsg.replace(/%d/gi, timerID.toString() );
+			pSock.SysMessage( tempMsg.replace(/%u/gi, scriptID.toString() ));
+		}
+	}
+	else
+		pSock.SysMessage( GetDictionaryEntry( 8891, pSock.language )); // You need to target a dynamic object (item or character).
+}
+
+function command_KILLJSTIMER( pSock, execString )
+{
+	var params = execString.replace(/\s/g, '').split( "," );
+	if( params.length != 2 )
+	{
+		pSock.SysMessage( GetDictionaryEntry( 2762, pSock.language )); // Invalid number of parameters - requires 2 (timerID,scriptID)!
+		return;
+	}
+
+	pSock.tempTimerID = parseInt(params[0]);
+	pSock.tempScriptID = parseInt(params[1]);
+
+	pSock.CustomTarget( 31, GetDictionaryEntry( 2769, pSock.language )); // Kill specified JS timer for which object?
+}
+
+function onCallback31( pSock, myTarget )
+{
+	var pUser = pSock.currentChar;
+	var scriptID = pSock.tempScriptID;
+	var timerID = pSock.tempTimerID;
+
+	if( !pSock.GetWord( 1 ))
+	{
+		if( myTarget.KillJSTimer( timerID, scriptID ))
+		{
+			pSock.SysMessage( GetDictionaryEntry( 2770, pSock.language )); // Specified JS timer has been killed for selected object.
+		}
+		else
+		{
+			var tempMsg = GetDictionaryEntry( 2766, pSock.language ); // No JS timer with timerID %d and scriptID %u active on object!
+			tempMsg = tempMsg.replace(/%d/gi, timerID.toString() );
+			pSock.SysMessage( tempMsg.replace(/%u/gi, scriptID.toString() ));
+		}
+	}
+	else
+		pSock.SysMessage( GetDictionaryEntry( 8891, pSock.language )); // You need to target a dynamic object (item or character).
 }

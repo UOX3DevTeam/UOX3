@@ -2631,6 +2631,15 @@
 2759=Tes parents ne t'ont jamais dit de ne pas courir avec des ciseaux dans la main ? !
 2760=Vous ne pouvez pas démêler la magie d'un objet béni.
 2761=La créature a résisté à la tentative de la dissiper !
+2762=Nombre de paramètres invalide - nécessite 2 (timerID,scriptID) !
+2763=Recherche du temps restant du timer JS pour quel objet ?
+2764=Le timer expirera à : %s
+2765=Temps restant : %d secondes
+2766=Aucun timer JS avec timerID %d et scriptID %u actif sur l'objet !
+2767=Invalide nombre de paramètres - nécessite 3 (timerID,expiryTime,scriptID) !
+2768=Set remaining time of JS timer for which object ?
+2769=Faire mourir le timer JS spécifié pour quel objet ?
+2770=Le timer JS spécifié a été tué pour l'objet sélectionné.
 // [2800-2999] House script
 2800=Propriétaire de la maison :
 2801=CO-PARENTS

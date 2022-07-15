@@ -2467,6 +2467,15 @@
 2759=¿Tus padres nunca te dijeron que no corrieras con las tijeras en la mano?
 2760=No puedes deshacer la magia de un objeto bendecido.
 2761=¡La criatura ha resistido el intento de disipación!
+2762=Número de parámetros no válido - ¡se necesitan 2 (timerID,scriptID)!
+2763=¿Conseguir el tiempo restante del temporizador JS para qué objeto?
+2764=El temporizador expirará en: %s
+2765=Tiempo restante: %d segundos
+2766=¡No hay ningún temporizador JS con timerID %d y scriptID %u activo en el objeto!
+2767=¡Número de parámetros no válido - requiere 3 (timerID,expiryTime,scriptID)!
+2768=¿Qué tiempo restante del temporizador JS para qué objeto?
+2769=¿Matar el temporizador JS especificado para qué objeto?
+2770=El temporizador JS especificado ha sido eliminado para el objeto seleccionado.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
