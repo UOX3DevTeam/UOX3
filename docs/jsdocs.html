@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 22. May, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
+	<p style="margin:0"><small>Last Updated: 15. July, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b-4</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>July 15th, 2022</h4>
+						<ul>
+							<li>Added details about new JS Methods: GetJSTimer, SetJSTimer, KillJSTimer</li>
+						</ul>
 						<h4>February 12th, 2022</h4>
 						<ul>
 							<li>Added details about new JS Events: onNameRequest, onScrollingGumpPress</li>
@@ -7290,6 +7294,46 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_GetJSTimer"/>
+							<label for="spoiler_method_baseObj_GetJSTimer">GetJSTimer/SetJSTimer/KillJSTimer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetJSTimer( timerID, scriptID );</em></p>
+									<p><em>int SetJSTimer( timerID, timeInMilliseconds, scriptID );</em></p>
+									<p><em>int KillJSTimer( timerID, scriptID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Gets or sets expiry timestamp for JS timer with specified timerID associated with specified scriptID, or kills timer completely</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										<ul>
+											<li>If GetJSTimer method returns 0, no JS timer with specified ID/script association was found on the object. Otherwise, it returns a timestamp for when timer will expire.</li>
+											<li>If SetJSTimer/KillJSTimer methods return 0, no JS timer with specified ID/script association was found on the object. Otherwise, it returns 1 to indicate that timer was successfully updated/killed.</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// (GetJSTimer) Fetches expiry timestamp for timer (ID 0) associated with a script (ID 4500, doors.js) on an object (an open door, in this example)
+var expiryTimestamp = myDoor.GetJSTimer( 0, 4500 );
+var currentTimestamp = GetCurrentClock();
+pSock.SysMessage( "Timer expires in " + ((expiryTime - currentTime)/1000).toString() + " seconds." );
+
+// (SetJSTimer) Sets expiry time (15 seconds from now) for an active timer (ID 0) associated with a script (ID 4500, doors.js) on object (an open door, in this example)
+myDoor.SetJSTimer( 0, 15000, 4500 );
+
+// (KillJSTimer) Kills a specific timer (ID 0) associated with a script (ID 4500, doors.js) on an object (an open door, in this example)
+myDoor.KillJSTimer( 0, 4500 );
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_getNumTags"/>
 							<label for="spoiler_method_baseObj_getNumTags">GetNumTags <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7444,7 +7488,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>If no timerID is specified, kills all JS timers on the object. If timerID is specified, kills only specified JS timer on object.</p>
+									<p>If no timerID is specified, kills all JS timers on the object. If timerID is specified, kills only specified JS timer on object <strong>regardless of script</strong>(!)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -15796,7 +15840,9 @@ function onUseChecked( pUser, iUsed )
 							<p>For full lists of JS Events, check the <a href="#events" title="JS Events">JS Events</a> section.</p>
 							<h3>JS Functions</h3>
 							<p>JS Functions are uniquely named script functions that can be called upon to <span class="hl">make UOX3 run hard-coded pieces of code</span> and potentially return some data to the script. This could be calculating the height of the map at a given set of coordinates, playing some visual effects at an object's location, broadcasting a message to all connected players, etc.</p>
-							<pre><code class="language-javascript">myNPC.Follow( myTarget );</code></pre>
+							<p>Here's an example of a function that simulates the rolling of a dice, and stores the result of that die roll in a variable named mDie for use later in the script:
+							<pre><code class="language-javascript">// Roll a DnD style dice of type 2d3+1 (2 dice with 3 faces, add 1 to result)
+var mDie = RollDice( 2, 3, 1 );</code></pre>
 							<p>It's also possible to make custom JS functions and call upon those from other functions or scripts. This can be helpful for instance to avoid having to repeat some specific code in a script over and over in multiple locations; just call the custom function which contains the shared code to run!</p>
 							<p>For full lists of JS Functions, check the <a href="#functions" title="JS Functions">JS Functions</a> section.</p>
 							<h3>JS Object Methods</h3>

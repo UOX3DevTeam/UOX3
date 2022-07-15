@@ -156,6 +156,9 @@ JSMethodFunc CBase_GetNumTags;
 JSMethodFunc CBase_InRange;
 JSMethodFunc CBase_StartTimer;
 JSMethodFunc CBase_KillTimers;
+JSMethodFunc CBase_GetJSTimer;
+JSMethodFunc CBase_SetJSTimer;
+JSMethodFunc CBase_KillJSTimer;
 JSMethodFunc CBase_ApplySection;
 JSMethodFunc CBase_FirstItem;
 JSMethodFunc CBase_NextItem;
@@ -340,6 +343,9 @@ static JSFunctionSpec CGump_Methods[] =
 static JSFunctionSpec CChar_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,		1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,		3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,		2, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,		1, 0, 0 },
 	{ "YellMessage",		CChar_YellMessage,		1, 0, 0 },
 	{ "WhisperMessage",		CChar_WhisperMessage,	1, 0, 0 },
@@ -436,6 +442,9 @@ static JSFunctionSpec CChar_Methods[] =
 static JSFunctionSpec CItem_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,			2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,			3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,			2, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
 	{ "Teleport",			CBase_Teleport,				5, 0, 0 },

@@ -1821,45 +1821,216 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 //|	Prototype	-	void KillTimers()
+//|					void KillTimers( scriptID )
 //|	Date		-	04/20/2002
 //o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Kill all related timers that have been association with an item or character
+//|	Purpose		-	Kill all related timers that have been associated with an item or character
 //o-----------------------------------------------------------------------------------------------o
 JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
-	if( argc > 1 ) {
+	if( argc > 1 )
+	{
 		MethodError( "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
 		return JS_FALSE;
 	}
 	auto myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
-	if( myObj==nullptr ) {
-		MethodError("KillTimers: Invalid object assigned.");
+	if( myObj == nullptr )
+	{
+		MethodError( "KillTimers: Invalid object assigned." );
 		return JS_FALSE;
 	}
 	SI16 triggerNum = -1;
-	if( argc == 1 ){
+	if( argc == 1 )
+	{
 		triggerNum = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
 	}
 
 	SERIAL mySer = myObj->GetSerial();
 	std::vector<CTEffect *> removeEffect;
-	cwmWorldState->tempEffects.Push();
-	for (const auto &Effect : cwmWorldState->tempEffects.collection()){
-		if( triggerNum != -1 ) {
-			if( mySer == Effect->Destination() && Effect->More1() == triggerNum ) {
-				removeEffect.push_back(Effect) ;
+
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( triggerNum != -1 )
+		{
+			if( mySer == Effect->Destination() && Effect->More1() == triggerNum )
+			{
+				removeEffect.push_back(Effect);
 			}
 		}
-		else if( mySer == Effect->Destination() ) {
-			removeEffect.push_back(Effect) ;
+		else if( mySer == Effect->Destination() )
+		{
+			removeEffect.push_back(Effect);
 		}
 	}
-	for (const auto &Effect :removeEffect){
+	for( const auto &Effect :removeEffect )
+	{
 		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
 	return JS_TRUE;
 }
 
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	void GetJSTimer( timerID, scriptID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get JS timer with specific timerID association with an item or character, and return time left
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 2 )
+	{
+		MethodError( "GetJSTimer: Invalid count of arguments :%d, needs 2 (timerID, scriptID)", argc );
+		return JS_FALSE;
+	}
+
+	auto myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
+	if( myObj == nullptr )
+	{
+		MethodError( "GetJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	SI16 timerID = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		// We only want results that have same object serial and timerID as specified
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerID )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptID matches the provided scriptID...
+			if( tScript != nullptr && ( scriptID == Effect->AssocScript() || scriptID == Effect->More2() ))
+			{
+				// Return the timestamp for when the Effect timer expires
+				//*rval = INT_TO_JSVAL(Effect->ExpireTime());
+				JS_NewNumberValue( cx, Effect->ExpireTime(), rval );
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	void SetJSTimer( timerID, timeInMilliseconds, scriptID )
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Set expiration time for JS timer with specific timerID association with an item or character
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 3 )
+	{
+		MethodError( "SetJSTimer: Invalid count of arguments :%d, needs 3 (timerID, timeInMilliseconds, scriptID)", argc );
+		return JS_FALSE;
+	}
+
+	auto myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
+	if( myObj == nullptr )
+	{
+		MethodError( "SetJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
+	SI16 timerID = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	UI32 expireTime = BuildTimeValue( JSVAL_TO_INT( argv[1] ) / 1000.0f );
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[2] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	for( const auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		// We only want to modify the Effect that have same object serial and timerID as specified
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerID )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript	= JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptID matches the provided scriptID...
+			if( tScript != nullptr && ( scriptID == Effect->AssocScript() || scriptID == Effect->More2() ))
+			{
+				// Set the timestamp for when the Effect timer expires to that specified in parameters
+				Effect->ExpireTime( expireTime );
+				*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and updated
+			}
+		}
+	}
+
+	return JS_TRUE;
+}
+
+//o-----------------------------------------------------------------------------------------------o
+//|	Function	-	JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+//|	Prototype	-	void KillJSTimer()
+//o-----------------------------------------------------------------------------------------------o
+//|	Purpose		-	Kill JS timer on item or character based on specified scriptID and timerID
+//o-----------------------------------------------------------------------------------------------o
+JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+{
+	if( argc != 2 )
+	{
+		MethodError( "KillJSTimer: Invalid count of arguments :%d, needs 2 (timerID, scriptID)", argc );
+		return JS_FALSE;
+	}
+	auto myObj = static_cast<CBaseObject*>(JS_GetPrivate(cx, obj));
+	if( myObj == nullptr )
+	{
+		MethodError( "KillJSTimer: Invalid object assigned." );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
+	SI16 timerID = static_cast<UI08>(JSVAL_TO_INT( argv[0] ));
+	UI16 scriptID = static_cast<UI16>(JSVAL_TO_INT( argv[1] ));
+
+	SERIAL myObjSerial = myObj->GetSerial();
+	CTEffect *removeEffect = nullptr;
+
+	for( auto &Effect : cwmWorldState->tempEffects.collection() )
+	{
+		if( myObjSerial == Effect->Destination() && Effect->More1() == timerID )
+		{
+			// Check for a valid script associated with Effect
+			cScript *tScript = JSMapping->GetScript( Effect->AssocScript() );
+			if( tScript == nullptr && Effect->More2() != 0xFFFF )
+			{
+				// If no default script was associated with effect, check if another script was stored in More2
+				tScript = JSMapping->GetScript( Effect->More2() );
+			}
+
+			// If a valid script is associated with Effect, and the Effect's scriptID matches the provided scriptID...
+			if( tScript != nullptr && ( scriptID == Effect->AssocScript() || scriptID == Effect->More2() ))
+			{
+				// Found our timer! Keep track of it for removal outside loop
+				removeEffect = Effect;
+				break;
+			}
+		}
+	}
+
+	if( removeEffect != nullptr )
+	{
+		cwmWorldState->tempEffects.Remove( removeEffect, true );
+		*rval = INT_TO_JSVAL(1); // Return 1 indicating timer was found and removed
+	}
+
+	return JS_TRUE;
+}
 
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
