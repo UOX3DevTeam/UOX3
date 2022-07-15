@@ -1,3 +1,15 @@
+15/07/2022 - Xuri
+	Added new JS Methods for Characters and Items, for getting/setting expiry time for a specific timer belonging to a specific script attached to an object, or to kill said timer completely:
+		.GetJSTimer( timerID, scriptID )
+		.SetJSTimer( timerID, timeInMilliseconds, scriptID )
+		.KillJSTimer( timerID, scriptID )
+	Added new JS commands:
+		'getjstimer timerID,scriptID 	// Spits out remaining time before timer expires
+		'setjstimer timerID,timeInMilliseconds,scriptID // Updates expiry time for specified timer
+		'killjstimer timerID,scriptID 	// Kills specific timer completely
+	Updated JS Docs with info on the new JS timer-related methods
+	Updated dictionaries with new lines used by new JS timer-related commands
+
 11/07/2022 - Xuri (0.99.5b-4)
 	Fixed an issue with incorrect sized Stat Window Info packet (0x11) being sent for clients when only T2A client/server features are enabled, which could cause client to freeze on login
 
