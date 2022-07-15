@@ -2467,6 +2467,15 @@
 2759=Neříkali ti rodiče, že nemáš běhat s nůžkami v ruce?!
 2760=Kouzlo požehnaného předmětu nemůžeš rozluštit.
 2761=Tvor odolal pokusu o rozptýlení!
+2762=Nesprávný počet parametrů - vyžaduje 2 (timerID,scriptID)!
+2763=Zjistit zbývající čas JS časovače pro který objekt?
+2764=Timer vyprší v: %s
+2765=Zbývající čas: %d sekund
+2766=Na objektu není aktivní žádný JS časovač s timerID %d a scriptID %u!
+2767=Nesprávný počet parametrů - vyžaduje 3 (timerID,expiryTime,scriptID)!
+2768=Nastavit zbývající čas JS časovače pro který objekt?
+2769=Zabít zadaný JS časovač pro který objekt?
+2770=Zadaný JS časovač byl pro vybraný objekt zničen.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU

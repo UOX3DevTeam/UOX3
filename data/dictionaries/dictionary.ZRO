@@ -2467,6 +2467,15 @@
 2759=Didn't your parents ever tell you not to run with scissors in your hand?!
 2760=You cannot unravel the magic of a blessed item.
 2761=The creature resisted the attempt to dispel it!
+2762=Invalid number of parameters - requires 2 (timerID,scriptID)!
+2763=Fetch remaining time of JS timer for which object?
+2764=Timer will expire at: %s
+2765=Remaining time: %d seconds
+2766=No JS timer with timerID %d and scriptID %u active on object!
+2767=Invalid number of parameters - requires 3 (timerID,expiryTime,scriptID)!
+2768=Set remaining time of JS timer for which object?
+2769=Kill specified JS timer for which object?
+2770=Specified JS timer has been killed for selected object.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS

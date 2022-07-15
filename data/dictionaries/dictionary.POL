@@ -2467,6 +2467,15 @@
 2759=Czy twoi rodzice nigdy nie mówili ci, żeby nie biegać z nożyczkami w ręku?!
 2760=Nie możesz rozwikłać magii pobłogosławionego przedmiotu.
 2761=Ta istota oparła się próbie jej rozwiązania!
+2762=Nieprawidłowa ilość parametrów - wymaga 2 (timerID,scriptID)!
+2763=Pobierz pozostały czas timera JS dla jakiego obiektu?
+2764=Timer wygaśnie o: %s
+2765=Pozostały czas: %d sekund
+2766=Żaden timer JS z timerID %d i scriptID %u nie jest aktywny na obiekcie!
+2767=Nieprawidłowa liczba parametrów - wymaga 3 (timerID,expiryTime,scriptID)!
+2768=Ustawić pozostały czas timera JS dla jakiego obiektu?
+2769=Zabij określony timer JS dla jakiego obiektu?
+2770=Zdefiniowany timer JS został zabity dla wybranego obiektu.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE

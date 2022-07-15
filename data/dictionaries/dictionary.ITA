@@ -2467,6 +2467,15 @@
 2759=I tuoi genitori non ti hanno mai detto di non correre con le forbici in mano?
 2760=Non puoi svelare la magia di un oggetto benedetto.
 2761=La creatura ha resistito al tentativo di dissipazione!
+2762=Numero di parametri non valido, ne servono 2 (timerID,scriptID)!
+2763=Ricerca il tempo rimanente del timer JS per quale oggetto?
+2764=Il timer scadrà a: %s
+2765=Tempo rimanente: %d secondi
+2766=Nessun timer JS con timerID %d e scriptID %u attivo sull'oggetto!
+2767=Numero di parametri non valido - richiede 3 (timerID,expiryTime,scriptID)!
+2768=Impostare il tempo rimanente del timer JS per quale oggetto?
+2769=Uccidere il timer JS specificato per quale oggetto?
+2770=Il timer JS specificato è stato ucciso per l'oggetto selezionato.
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
