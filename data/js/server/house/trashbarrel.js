@@ -79,7 +79,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
    			pDropper.SysMessage( GetDictionaryEntry( 1935, pSocket.language)); // That container cannot hold any more items!
    			return 0;
    		}
-   		if( !iDroppedOn.multi.IsSecureContainer( iDroppedOn ))
+   		if( iDropped.multi && !iDroppedOn.multi.IsSecureContainer( iDroppedOn ))
    		{
 	   		if( iDroppedOn.weight >= maxContainerWeight || iDroppedOn.weight + iDropped.weight > maxContainerWeight )
 	   		{
