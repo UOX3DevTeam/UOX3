@@ -3892,6 +3892,7 @@ auto CServerData::ParseINI( const std::string& filename ) ->bool {
 	};
 	auto state = search_t(header) ;
 	if (input.is_open()){
+		startlocations.clear();
 		char input_buffer[4096] ;
 		while (input.good() && !input.eof()) {
 			input.getline(input_buffer, 4095) ;
