@@ -11,7 +11,6 @@
 #include <cmath>
 #include <iomanip>
 #include <algorithm>
-#include <zlib.h>		// We want the global first, and local as a backup.  On macOS we use the system zlib
 
 using namespace std::string_literals ;
 
