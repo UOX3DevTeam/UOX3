@@ -660,7 +660,7 @@
 668=Dieser Gegenstand kann nicht gefangen werden!
 669=Dieser Gegenstand lässt sich nicht einschließen!
 670=Sie können sich hier nicht teleportieren!
-671=Möchtegern-Jesus aufgeben!
+671=Dorthin kann man sich nicht teleportieren!
 672=Dahin können Sie nicht teleportieren!
 673=Dieser Gegenstand wurde mit göttlicher Magie geschützt.  Sie können diesen Gegenstand nicht freischalten.
 674=Du entsperrst den Gegenstand.
@@ -2159,6 +2159,18 @@
 2204=Freundesliste
 2205=Die Geister der Verstorbenen gehören nicht in den Bereich der Tierkunde.
 2206=Ihnen fällt auf Anhieb nichts ein, was Sie wissen.
+2250=Verwirrt
+2251=Extrem unglücklich
+2252=Eher unglücklich
+2253=Unglücklich
+2254=Bisschen zufrieden
+2255=Zufrieden
+2256=Glücklich
+2257=Eher glücklich
+2258=Sehr zufrieden
+2259=Extrem glücklich
+2260=Wunderbar glücklich
+2261=Euphorisch
 // [2300-2449] Hirelings
 2300=%s wurde aus der Freundesliste von %s entfernt.
 2301=Du wurdest aus der Freundesliste von %s entfernt.
@@ -3283,6 +3295,7 @@
 6213=Dieser Trank kann aus schwefelhaltiger Asche hergestellt worden sein.
 6214=Die Zutaten dieses Trankes sind dir unbekannt.
 6215=Du weißt bereits, was das für ein Trank ist: %s
+6250=Du trittst aus dem Schatten heraus.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4007,6 +4020,12 @@
 9128=Du hast keine Chance, diese Kreatur zu provozieren.
 9129=Das Ziel ist immun gegen körperlichen Schaden!
 9130=Deine Waffe kann die magische Barriere der Kreatur nicht durchdringen.
+9140=von außergewöhnlicher Qualität
+9141=Hergestellt von
+9142=Sie entriegeln die Planke.
+9143=Du verriegelst das Brett.
+9144=Du öffnest die Planke, obwohl sie noch verschlossen ist.
+9150=Kein Rucksack gefunden, kann keinen Gegenstand hinzufügen! Versuchen Sie den Befehl 'addpack?
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -4356,6 +4375,8 @@
 11218=Bogen
 11219=Armbrust
 11220=Schwere Armbrust
+11221=Kompositbogen
+11222=Wiederholende Armbrust
 // 11401 - 11600 Schneiderei Handwerkliche Fertigkeit
 11401=SCHNEIDEREI-MENÜ
 11402=LEDER/FELLE

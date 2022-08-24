@@ -351,7 +351,7 @@ function onTimer( timerObj, timerID )
 		  	DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, 0x36B0, 0x09, 0x0d, false );
 			timerObj.SoundEffect( 0x0207, true );
 
-		  	AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
+		  	var explosionCounter = AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
 		}
 		else
 		{
@@ -364,7 +364,7 @@ function onTimer( timerObj, timerID )
 				// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
 				var alchemyBonus = 0;
 				if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
-					alchemyBonus = Math.round(packOwner.skills.alchemy / alchemyBonusModifier);
+					alchemyBonus = Math.round(( packOwner.skills.alchemy / 10 ) / alchemyBonusModifier );
 
 				// Deal damage to player holding the potion
 				packOwner.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5 );
@@ -415,7 +415,7 @@ function ApplyExplosionDamage( timerObj, targetChar )
 		// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
 		var alchemyBonus = 0;
 		if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
-			alchemyBonus = Math.round(sourceChar.skills.alchemy / alchemyBonusModifier);
+			alchemyBonus = Math.round((sourceChar.skills.alchemy / 10 ) / alchemyBonusModifier);
 
 		// Deal damage, and do criminal check for source character!
 		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5, sourceChar, true );

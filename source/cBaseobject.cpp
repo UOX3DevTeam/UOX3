@@ -646,40 +646,37 @@ void CBaseObject::SetOwner( CChar *newOwner )
 //o-----------------------------------------------------------------------------------------------o
 bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 {
-	//static std::string destination; //static, construct only once
-	//static std::ostringstream objectDump( destination ); //static, construct only once
-	//objectDump.str(std::string()); // clear the stream
-	//destination = ""; // clear the string
-
 	SI16 temp_st2, temp_dx2, temp_in2;
+	const char newLine = '\n';
 
 	// Hexadecimal Values
 	outStream << std::hex;
-	outStream << "Serial=" << "0x" << serial << '\n';
-	outStream << "ID=" << "0x" << id << '\n';
-	outStream << "Colour=" << "0x" << colour << '\n';
-	outStream << "Direction=" << "0x" << (SI16)dir << '\n';
-	if( ValidateObject( multis ) )
+	outStream << "Serial=0x" << serial << newLine;
+	outStream << "ID=0x" << id << newLine;
+	outStream << "Colour=0x" << colour << newLine;
+	outStream << "Direction=0x" << (SI16)dir << newLine;
+
+	if( ValidateObject( multis ))
 	{
-		outStream << "MultiID=" << "0x";
+		outStream << "MultiID=0x";
 		try
 		{
-			outStream << multis->GetSerial() << '\n';
+			outStream << multis->GetSerial() << newLine;
 		}
 		catch( ... )
 		{
-			outStream << "FFFFFFFF" << '\n';
+			outStream << "FFFFFFFF" << newLine;
 			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
 		}
 	}
-	outStream << "SpawnerID=" << "0x" << spawnserial << '\n';
-	outStream << "OwnerID=" << "0x" << owner << '\n';
+	outStream << "SpawnerID=0x" << spawnserial << newLine;
+	outStream << "OwnerID=0x" << owner << newLine;
 
 	// Decimal / String Values
 	outStream << std::dec;
 
 	std::string objName = name;
-	if( CanBeObjType( OT_CHAR ) )
+	if( CanBeObjType( OT_CHAR ))
 	{
 		if( objName == "#" )
 		{
@@ -688,22 +685,24 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 		}
 	}
 
-	outStream << "Name=" << objName << '\n';
-	outStream << "Location=" << x << "," << y << "," << (SI16)z << "," << (SI16)worldNumber << "," << (UI16)instanceID << '\n';
-	outStream << "Title=" << title << '\n';
+	outStream << "Name=" << objName << newLine;
+	std::string myLocation = "Location=" + std::to_string( x ) + "," + std::to_string( y ) + "," +std::to_string( z ) + "," + std::to_string( worldNumber ) + "," + std::to_string( instanceID ) + newLine;
+	outStream << myLocation;
+	outStream << "Title=" << title << newLine;
+
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
 	temp_dx2 = dx2;
 	temp_in2 = in2;
 	if( objType == OT_CHAR )
 	{
-		CChar *myChar = (CChar*)(this);
+		CChar *myChar = (CChar *)( this );
 
 		// For every equipped item
 		// We need to reduce Str2+Dex2+Int2
 		for( CItem *myItem = myChar->FirstItem(); !myChar->FinishedItems(); myItem = myChar->NextItem() )
 		{
-			if( ValidateObject( myItem ) )
+			if( ValidateObject( myItem ))
 			{
 				temp_st2 -= myItem->GetStrength2();
 				temp_dx2 -= myItem->GetDexterity2();
@@ -712,50 +711,53 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 		}
 	}
 	//=========== BUGFIX END
-	outStream << "Weight="  << weight << '\n';
-	outStream << "Mana=" << mana << '\n';
-	outStream << "Stamina=" << stamina << '\n';
-	outStream << "Dexterity=" << dexterity << "," << temp_dx2 << '\n';
-	outStream << "Intelligence=" << intelligence << "," << temp_in2 << '\n';
-	outStream << "Strength=" << strength << "," << temp_st2 << '\n';
-	outStream << "HitPoints=" << hitpoints << '\n';
-	outStream << "Race=" << race << '\n';
-	outStream << "Visible=" << (SI16)visible << '\n';
-	outStream << "Disabled=" << (isDisabled()?"1":"0") << '\n';
-	outStream << "Damage=" << lodamage << "," << hidamage << '\n';
-	outStream << "Poisoned=" << (SI16)poisoned << '\n';
-	outStream << "Carve=" << GetCarve() << '\n';
-	outStream << "Damageable=" << (isDamageable()?"1":"0") << '\n';
+	outStream << "Weight=" + std::to_string( weight ) + newLine;
+	outStream << "Mana=" + std::to_string( mana ) + newLine;
+	outStream << "Stamina=" + std::to_string( stamina ) + newLine;
+	outStream << "Dexterity=" + std::to_string( dexterity ) + "," + std::to_string( temp_dx2 ) + newLine;
+	outStream << "Intelligence=" + std::to_string( intelligence ) + "," + std::to_string( temp_in2 ) + newLine;
+	outStream << "Strength=" + std::to_string( strength ) + "," + std::to_string( temp_st2 ) + newLine;
+	outStream << "HitPoints=" + std::to_string( hitpoints ) + newLine;
+	outStream << "Race=" + std::to_string( race ) + newLine;
+	outStream << "Visible=" + std::to_string( visible ) + newLine;
+	outStream << "Disabled=" << ( isDisabled() ? "1" : "0" ) << newLine;
+	outStream << "Damage=" + std::to_string( lodamage ) + "," + std::to_string( hidamage ) + newLine;
+	outStream << "Poisoned=" + std::to_string( poisoned ) + newLine;
+	outStream << "Carve=" + std::to_string( GetCarve() ) + newLine;
+	outStream << "Damageable=" << ( isDamageable() ? "1" : "0" ) << newLine;
+
 	outStream << "Defense=";
 	for( UI08 resist = 1; resist < WEATHNUM; ++resist )
 	{
-		outStream << GetResist( (WeatherType)resist ) << ",";
+		outStream << GetResist( static_cast<WeatherType>( resist )) << ",";
 	}
-	outStream << "[END]" << '\n';
+	outStream << "[END]" << newLine;
+
 	if( scriptTriggers.size() > 0 )
 	{
 		for( auto scriptTrig : scriptTriggers )
 		{
-			outStream << "ScpTrig=" + std::to_string(scriptTrig) + '\n';
+			outStream << "ScpTrig=" + std::to_string( scriptTrig ) + newLine;
 		}
 	}
 	else
 	{
-		outStream << "ScpTrig=" << scriptTrig << '\n';
+		outStream << "ScpTrig=" + std::to_string( 0 ) + newLine;
 	}
-	outStream << "Reputation=" << GetFame() << "," << GetKarma() << "," << GetKills() << '\n';
+	outStream << "Reputation=" + std::to_string( GetFame() ) + "," + std::to_string( GetKarma() ) + "," + std::to_string( GetKills() ) + newLine;
+
 	// Spin the character tags to save make sure to dump them too
 	TAGMAP2_CITERATOR CI;
 	for( CI = tags.begin(); CI != tags.end(); ++CI )
 	{
-		outStream << "TAGNAME=" << CI->first << '\n';
+		outStream << "TAGNAME=" << CI->first << newLine;
 		if( CI->second.m_ObjectType == TAGMAP_TYPE_STRING )
 		{
-			outStream << "TAGVALS=" << CI->second.m_StringValue << '\n';
+			outStream << "TAGVALS=" << CI->second.m_StringValue << newLine;
 		}
 		else
 		{
-			outStream << "TAGVAL=" << ((SI32)CI->second.m_IntValue) << '\n';
+			outStream << "TAGVAL=" + std::to_string(CI->second.m_IntValue) + newLine;
 		}
 	}
 	//====================================================================================
@@ -1461,7 +1463,7 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 //o-----------------------------------------------------------------------------------------------o
 bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
 {
-	outStream << '\n' << "o---o" << '\n' << '\n';
+	outStream << "\no---o\n\n";
 	return true;
 }
 

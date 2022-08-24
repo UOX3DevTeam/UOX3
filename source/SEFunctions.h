@@ -78,6 +78,7 @@ SEngineFunc SE_GetDay;					//										***
 SEngineFunc SE_SecondsPerUOMinute;		//										***
 
 SEngineFunc SE_GetCurrentClock;			//										***
+SEngineFunc SE_GetStartTime;			//										***
 SEngineFunc SE_GetMurderThreshold;		//										***
 SEngineFunc SE_RollDice;				//										***
 SEngineFunc SE_RaceCompareByRace;		//										***

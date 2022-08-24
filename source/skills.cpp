@@ -886,7 +886,7 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 	{
 		R32 chanceSkillSuccess = 0;
 
-		if( ( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) <= lowSkill )
+		if( ( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) < lowSkill )
 			return false;
 
 		if( s->IsDead() )
@@ -954,6 +954,19 @@ bool cSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 						updateSkillLevel( s, sk );
 						mSock->updateskill( sk );
 					}
+				}
+			}
+		}
+		else if(( s->IsTamed() && cwmWorldState->ServerData()->PetCombatTraining() ) ||
+				( !s->IsTamed() && s->CanBeHired() && cwmWorldState->ServerData()->HirelingCombatTraining() ) ||
+				( !s->IsTamed() && !s->CanBeHired() && s->IsNpc() && cwmWorldState->ServerData()->NpcCombatTraining() ))
+		{
+			if( s->GetBaseSkill( sk ) < highSkill )
+			{
+				// Advance pet/NPC's skill based on result of skillCheck
+				if( AdvanceSkill( s, sk, skillCheck ) )
+				{
+					updateSkillLevel( s, sk );
 				}
 			}
 		}

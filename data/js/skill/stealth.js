@@ -14,7 +14,7 @@ function onSkill( pUser, objType, skillUsed )
 			pSock.SysMessage( GetDictionaryEntry( 836, pSock.language ) );
 		else if( pUser.skills.hiding < 700 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 838, pSock.language ) );
+			pSock.SysMessage( GetDictionaryEntry( 838, pSock.language ) ); // You are not hidden well enough. Become better at hiding.
 			pUser.visible = 0;
 			pUser.stealth = -1;
 		}

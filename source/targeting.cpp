@@ -685,67 +685,89 @@ bool CreateBodyPart( CChar *mChar, CItem *corpse, std::string partID, SI32 dictE
 //|									& made all body parts that are carved from human corpse
 //|									lie in same direction.
 //o-----------------------------------------------------------------------------------------------o
-auto newCarveTarget( CSocket *s, CItem *i ) ->void {
+auto newCarveTarget( CSocket *s, CItem *i ) ->void
+{
 	VALIDATESOCKET( s );
 
 	auto mChar = s->CurrcharObj();
 	auto c = Items->CreateItem( nullptr, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
-	if(c){
-		c->SetLocation( i );
-		c->SetMovable( 2 );
-		c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-		
-		// if it's a human corpse
-		// Sept 22, 2002 - Corrected the alignment of body parts that are carved.
-		if( i->GetTempVar( CITV_MOREY, 2 ) ) {
-			auto toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
-			if(toFind){
-				for (const auto &sec : toFind->collection()){
-					auto tag = sec->tag ;
-					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
-						auto data = sec->data ;
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-						auto csecs = oldstrutil::sections( data, "," );
-						if( csecs.size() > 1 ) {
-							if( !CreateBodyPart( mChar, i, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)))) {
-								return;
-							}
-						}
-					}
-				}
-				
-				criminal( mChar );
-				
-				auto iCont = i->GetContainsList();
-				for (const auto &c : iCont->collection()){
-					if( ValidateObject( c ) ) {
-						if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR ) {
-							c->SetCont( nullptr );
-							c->SetLocation( i );
-							c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
-						}
-					}
-				}
-				i->Delete();
-			}
-		}
-		else
+	if( c == nullptr )
+		return;
+
+	c->SetLocation( i );
+	c->SetMovable( 2 );
+	c->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+
+	// if it's a human corpse
+	// Sept 22, 2002 - Corrected the alignment of body parts that are carved.
+	if( i->GetTempVar( CITV_MOREY, 2 ) )
+	{
+		auto toFind	= FileLookup->FindEntry( "CARVE HUMAN", carve_def );
+		if( toFind )
 		{
-			auto sect = "CARVE "s + oldstrutil::number( i->GetCarve() );
-			auto toFind	= FileLookup->FindEntry( sect, carve_def );
-			if(toFind){
-				for (const auto &sec : toFind->collection()){
-					auto tag = sec->tag ;
-					if( oldstrutil::upper( tag ) == "ADDITEM" ) {
-						auto data = sec->data ;
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-						auto csecs = oldstrutil::sections( data, "," );
-						if( csecs.size() > 1 ) {
-							Items->CreateScriptItem( s, mChar, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
+			for( const auto &sec : toFind->collection() )
+			{
+				auto tag = sec->tag;
+				if( oldstrutil::upper( tag ) == "ADDITEM" )
+				{
+					auto data = sec->data;
+					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					auto csecs = oldstrutil::sections( data, "," );
+					if( csecs.size() > 1 )
+					{
+						if( !CreateBodyPart( mChar, i, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)))) {
+							return;
 						}
-						else {
-							Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
-						}
+					}
+				}
+			}
+			
+			criminal( mChar );
+			
+			std::vector<CItem *> corpseItems;
+			auto iCont = i->GetContainsList();
+			for( const auto &c : iCont->collection() )
+			{
+				if( ValidateObject( c ))
+				{
+					if( c->GetLayer() != IL_HAIR && c->GetLayer() != IL_FACIALHAIR )
+					{
+						// Store a reference to the item we want to move out of corpse...
+						corpseItems.push_back( c );
+					}
+				}
+			}
+
+			// Loop through the items we want to move out of corpse
+			std::for_each( corpseItems.begin(), corpseItems.end(), [i]( CItem *corpseItem )
+			{
+				corpseItem->SetCont( nullptr );
+				corpseItem->SetLocation( i );
+				corpseItem->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAY ) );
+			});
+
+			i->Delete();
+		}
+	}
+	else
+	{
+		auto sect = "CARVE "s + oldstrutil::number( i->GetCarve() );
+		auto toFind	= FileLookup->FindEntry( sect, carve_def );
+		if( toFind )
+		{
+			for( const auto &sec : toFind->collection() )
+			{
+				auto tag = sec->tag ;
+				if( oldstrutil::upper( tag ) == "ADDITEM" )
+				{
+					auto data = sec->data ;
+					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					auto csecs = oldstrutil::sections( data, "," );
+					if( csecs.size() > 1 ) {
+						Items->CreateScriptItem( s, mChar, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0)), OT_ITEM, true );
+					}
+					else {
+						Items->CreateScriptItem( s, mChar, data, 0, OT_ITEM, true );
 					}
 				}
 			}

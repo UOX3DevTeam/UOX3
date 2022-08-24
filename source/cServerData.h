@@ -201,8 +201,8 @@ private:
 	std::bitset< SF_BIT_COUNT > serverFeatures;
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset< 77 >	boolVals;				// Many values stored this way, rather than using bools.
-	std::bitset< 64 >	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<86>	boolVals;				// Many values stored this way, rather than using bools.
+	std::bitset<64>	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -294,6 +294,7 @@ private:
 	R32			archeryShootDelay;		//  Attack delay for archers; after coming to a full stop, they need to wait this amount of time before they can fire an arrow. Defaults to 1.0 seconds
 	R32			globalattackspeed;		//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcspellcastspeed;		//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
+	R32			globalRestockMultiplier;//	Global multiplier applied to restock properties of items when loaded from DFNs
 	R64			checkitems;				//	How often (in seconds) items are checked for decay and other things
 	R64			checkboats;				//	How often (in seconds) boats are checked for motion and so forth
 	R64			checknpcai;				//	How often (in seconds) NPCs can execute an AI routine
@@ -604,6 +605,9 @@ public:
 	auto		RankSystemStatus( bool value ) ->void;
 	auto		RankSystemStatus() const ->bool;
 
+	void		DisplayMakersMark( bool value );
+	bool		DisplayMakersMark( void ) const;
+
 	auto		CutScrollRequirementStatus( bool value ) ->void;
 	auto		CutScrollRequirementStatus() const ->bool;
 
@@ -614,22 +618,25 @@ public:
 	auto		NPCTrainingStatus() const ->bool;
 
 	auto		CheckItemsSpeed( R64 value ) ->void;
-	R64		CheckItemsSpeed() const;
+	R64			CheckItemsSpeed() const;
 
 	auto		CheckBoatSpeed( R64 value ) ->void;
-	R64		CheckBoatSpeed() const;
+	R64			CheckBoatSpeed() const;
 
 	auto		CheckNpcAISpeed( R64 value ) ->void;
-	R64		CheckNpcAISpeed() const;
+	R64			CheckNpcAISpeed() const;
 
 	auto		CheckSpawnRegionSpeed( R64 value ) ->void;
-	R64		CheckSpawnRegionSpeed() const;
+	R64			CheckSpawnRegionSpeed() const;
 
 	auto		GlobalAttackSpeed( R32 value ) ->void;
-	R32		GlobalAttackSpeed() const;
+	R32			GlobalAttackSpeed() const;
 
 	auto		NPCSpellCastSpeed( R32 value ) ->void;
-	R32		NPCSpellCastSpeed() const;
+	R32			NPCSpellCastSpeed() const;
+
+	auto		GlobalRestockMultiplier( R32 value ) ->void;
+	R32			GlobalRestockMultiplier() const;
 
 	auto		MsgBoardPostingLevel( UI08 value ) ->void;
 	UI08		MsgBoardPostingLevel() const;
@@ -697,6 +704,27 @@ public:
 	auto		ShowNpcTitlesInTooltips( bool value ) ->void;
 	auto		ShowNpcTitlesInTooltips() const ->bool;
 
+	auto		ShowNpcTitlesOverhead( bool value ) ->void;
+	auto		ShowNpcTitlesOverhead() const ->bool;
+
+	auto		ShowInvulnerableTagOverhead( bool value ) ->void;
+	auto		ShowInvulnerableTagOverhead() const ->bool;
+
+	auto		PetCombatTraining( bool value ) ->void;
+	auto		PetCombatTraining() const ->bool;
+
+	auto		HirelingCombatTraining( bool value ) ->void;
+	auto		HirelingCombatTraining() const ->bool;
+
+	auto		NpcCombatTraining( bool value ) ->void;
+	auto		NpcCombatTraining() const ->bool;
+
+	auto		ShowItemResistStats( bool value ) ->void;
+	auto		ShowItemResistStats() const ->bool;
+
+	auto		ShowWeaponDamageTypes( bool value ) ->void;
+	auto		ShowWeaponDamageTypes() const ->bool;
+
 	auto		GlobalItemDecay( bool value ) ->void;
 	auto		GlobalItemDecay() const ->bool;
 
@@ -737,7 +765,7 @@ public:
 	auto		CombatAnimalsAttackChance() const ->std::uint16_t;
 
 	auto		CombatArcheryShootDelay( R32 value ) ->void;
-	R32		CombatArcheryShootDelay() const;
+	R32			CombatArcheryShootDelay() const;
 
 	auto		CombatArcheryHitBonus( SI08 value ) ->void;
 	SI08		CombatArcheryHitBonus() const;

@@ -88,7 +88,14 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
+	// Don't continue if player no longer has access to the crafting tool
 	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
+
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
 	var itemDetailsID = 0;

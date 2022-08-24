@@ -317,7 +317,7 @@ function CheckDistance( socket, mChar, maxDistance )
 	var distY = Math.abs( mChar.y - targY );
 	var distZ = Math.abs( mChar.z - targZ );
 
-	if( mChar.z < targZ )
+	if( mChar.z < targZ && ( targZ - mChar.z >= 5 )) // Allows player to stand on shorelines that are "below" the ocean!
 	{
 		socket.SysMessage( GetDictionaryEntry( 844, socket.language )); // You cannot fish above you!
 		return false;
@@ -993,14 +993,14 @@ function RegenerateFish( mResource, socket )
 	{
 		for( var i = 0; i < fishCeiling; ++i )
 		{
-			if(( mResource.fishTime + ( i * fishTimer * 1000 )) <= currentTime && mResource.fishAmount < fishCeiling )
+			if((( mResource.fishTime + ( i * fishTimer * 1000 )) / 1000 ) <= ( currentTime / 1000 ) && mResource.fishAmount < fishCeiling )
 			{
 				mResource.fishAmount = mResource.fishAmount + 1;
 			}
 			else
 				break;
 		}
-		mResource.fishTime = ( currentTime + ( 1000 * fishTimer ));
+		mResource.fishTime = ( currentTime + ( 1000 * parseInt( fishTimer ))) / 1000;
 	}
 }
 

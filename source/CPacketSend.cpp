@@ -6733,12 +6733,34 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetAmount() > 1 && !cItem.isCorpse() && addAmount && cItem.GetType() != IT_SPAWNCONT && cItem.GetType() != IT_LOCKEDSPAWNCONT && cItem.GetType() != IT_UNLOCKABLESPAWNCONT ){
 			tempEntry.ourText = oldstrutil::format( " \t%s : %i\t ", cItemName.c_str(), cItem.GetAmount() );
 		}
-		else{
-			tempEntry.ourText = oldstrutil::format(" \t%s\t ", cItemName.c_str() );
+		else
+		{
+			if( cwmWorldState->ServerData()->RankSystemStatus() && cItem.GetRank() == 10 )
+			{
+				tempEntry.ourText = oldstrutil::format(" \t%s %s\t ", cItemName.c_str(), Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // %s of exceptional quality
+			}
+			else
+			{
+				tempEntry.ourText = oldstrutil::format( " \t%s\t ", cItemName.c_str() );
+			}
 		}
 	}
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	FinalizeData( tempEntry, totalStringLen );
+
+	// Maker's mark
+	if( cwmWorldState->ServerData()->RankSystemStatus() && cwmWorldState->ServerData()->DisplayMakersMark() && cItem.GetRank() == 10 
+		&& cItem.GetCreator() != INVALIDSERIAL && cItem.isMarkedByMaker() )
+	{
+		CChar *cItemCreator = calcCharObjFromSer( cItem.GetCreator() );
+		if( ValidateObject( cItemCreator ))
+		{
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			tempEntry.ourText = oldstrutil::format( "%s by %s", cwmWorldState->skill[cItem.GetMadeWith()-1].madeword.c_str(), cItemCreator->GetName().c_str() ); // tailored/tinkered/forged by %s
+																																								 //tempEntry.ourText = oldstrutil::format( "%s %s", Dictionary->GetEntry( 9141, tSock->Language() ).c_str(), cItemCreator->GetName().c_str() ); // Crafted by %s
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
 
 	if( cItem.IsLockedDown() )
 	{
@@ -6769,6 +6791,12 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	{
 		tempEntry.stringNum = 1042971; // ~1_NOTHING~
 		tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 9055, tSock->Language() ).c_str() ); // [Blessed]
+		FinalizeData( tempEntry, totalStringLen );
+	}
+	if( cItem.GetType() == IT_LOCKEDDOOR )
+	{
+		tempEntry.stringNum = 1042971; // ~1_NOTHING~
+		tempEntry.ourText = oldstrutil::format( "%s", Dictionary->GetEntry( 9050, tSock->Language() ).c_str() ); // [Locked]
 		FinalizeData( tempEntry, totalStringLen );
 	}
 
@@ -6870,21 +6898,11 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
-	else if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ) )
+	else if( !cItem.isCorpse() && cItem.GetName2() != "#" && cItem.GetName2() != "" )
 	{
-		
-		if( cItem.GetName2() == "#" || cItem.GetName2() == "" )
-		{
-			tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
-			tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ) );
-			FinalizeData( tempEntry, totalStringLen );
-		}
-		else
-		{
-			tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-			tempEntry.ourText = oldstrutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
-			FinalizeData( tempEntry, totalStringLen );
-		}
+		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+		tempEntry.ourText = oldstrutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
+		FinalizeData( tempEntry, totalStringLen );
 	}
 	else if( cItem.GetType() == IT_RECALLRUNE && cItem.GetTempVar( CITV_MOREX ) != 0 && cItem.GetTempVar( CITV_MOREY ) != 0 )
 	{
@@ -6941,6 +6959,12 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		}
 		FinalizeData( tempEntry, totalStringLen );
 	}
+	if( cItem.GetType() == IT_MAGICWAND && cItem.GetTempVar( CITV_MOREZ ))
+	{
+		tempEntry.stringNum = 1060584; // uses remaining: ~1_val~
+		tempEntry.ourText = oldstrutil::number( cItem.GetTempVar( CITV_MOREZ ));
+		FinalizeData( tempEntry, totalStringLen );
+	}
 
 	bool hideMagicItemStats = cwmWorldState->ServerData()->HideStatsForUnknownMagicItems();
 	if( !cwmWorldState->ServerData()->BasicTooltipsOnly() && ( !hideMagicItemStats || ( hideMagicItemStats && ( !cItem.GetName2().empty() && cItem.GetName2() == "#"))))
@@ -6949,13 +6973,64 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		{
 			if( cItem.GetHiDamage() > 0 )
 			{
-				tempEntry.stringNum = 1060403; // physical damage ~1_val~%
-				tempEntry.ourText = oldstrutil::number( 100 );
-				FinalizeData( tempEntry, totalStringLen );
-			}
+				if( cwmWorldState->ServerData()->ShowWeaponDamageTypes() )
+				{
+					if( cItem.GetWeatherDamage( PHYSICAL ))
+					{
+						tempEntry.stringNum = 1060403; // physical damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( 100 );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( LIGHT ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "light damage: 100%" );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( RAIN ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "rain damage: 100%" );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( COLD ))
+					{
+						tempEntry.stringNum = 1060403; // cold damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( 100 );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( HEAT ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "fire damage: 100%" );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( LIGHTNING ))
+					{
+						tempEntry.stringNum = 1060407; // energy damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( 100 );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( POISON ))
+					{
+						tempEntry.stringNum = 1060406; // energy damage ~1_val~%
+						tempEntry.ourText = oldstrutil::number( 100 );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( SNOW ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "snow damage: 100%" );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+					else if( cItem.GetWeatherDamage( STORM ))
+					{
+						tempEntry.stringNum = 1042971; // ~1_NOTHING~
+						tempEntry.ourText = oldstrutil::format( "storm damage: 100%" );
+						FinalizeData( tempEntry, totalStringLen );
+					}
+				}
 
-			if( cItem.GetHiDamage() > 0 )
-			{
 				tempEntry.stringNum = 1061168; // weapon damage ~1_val~ - ~2_val~
 				tempEntry.ourText = oldstrutil::format( "%i\t%i", cItem.GetLoDamage(), cItem.GetHiDamage() );
 				FinalizeData( tempEntry, totalStringLen );
@@ -7000,11 +7075,51 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 				FinalizeData( tempEntry, totalStringLen );
 			}
 
-			if( cItem.GetResist( PHYSICAL ) > 0 )
+			if( cwmWorldState->ServerData()->ShowItemResistStats() )
 			{
-				tempEntry.stringNum = 1042971; // ~1_NOTHING~
-				tempEntry.ourText = oldstrutil::format( "Armor Rating: %s", oldstrutil::number( cItem.GetResist( PHYSICAL )).c_str() );
-				FinalizeData( tempEntry, totalStringLen );
+				if( cItem.GetResist( PHYSICAL ) > 0 )
+				{
+					tempEntry.stringNum = 1060448; // physical resist ~1_val~%
+					tempEntry.ourText = oldstrutil::number( cItem.GetResist( PHYSICAL ));
+					FinalizeData( tempEntry, totalStringLen );
+				}
+
+				if( cItem.GetResist( HEAT ) > 0 )
+				{
+					tempEntry.stringNum = 1060447; // fire resist ~1_val~%
+					tempEntry.ourText = oldstrutil::number( cItem.GetResist( HEAT ));
+					FinalizeData( tempEntry, totalStringLen );
+				}
+
+				if( cItem.GetResist( COLD ) > 0 )
+				{
+					tempEntry.stringNum = 1060445; // cold resist ~1_val~%
+					tempEntry.ourText = oldstrutil::number( cItem.GetResist( COLD ));
+					FinalizeData( tempEntry, totalStringLen );
+				}
+
+				if( cItem.GetResist( POISON ) > 0 )
+				{
+					tempEntry.stringNum = 1060449; // poison resist ~1_val~%
+					tempEntry.ourText = oldstrutil::number( cItem.GetResist( POISON ));
+					FinalizeData( tempEntry, totalStringLen );
+				}
+
+				if( cItem.GetResist( LIGHTNING ) > 0 )
+				{
+					tempEntry.stringNum = 1060446; // energy/electrical resist ~1_val~%
+					tempEntry.ourText = oldstrutil::number( cItem.GetResist( LIGHTNING ));
+					FinalizeData( tempEntry, totalStringLen );
+				}
+			}
+			else
+			{
+				if( cItem.GetResist( PHYSICAL ) > 0 )
+				{
+					tempEntry.stringNum = 1042971; // ~1_NOTHING~
+					tempEntry.ourText = oldstrutil::format( "Armor Rating: %s", oldstrutil::number( cItem.GetResist( PHYSICAL )).c_str() );
+					FinalizeData( tempEntry, totalStringLen );
+				}
 			}
 
 			if( cItem.GetMaxHP() > 1 )
@@ -7254,9 +7369,14 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
 			else if( opItem->GetID() == spItem->GetID() && opItem->GetType() == spItem->GetType() &&
-					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ) ) {
-				AddItem( tReg, spItem, opItem, packetLen );
-				++numItems;
+					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
+			{
+				// Special case for deeds, which all use same ID
+				if( opItem->GetID() != 0x14f0 || ( opItem->GetTempVar( CITV_MOREX ) == spItem->GetTempVar( CITV_MOREX )))
+				{
+					AddItem( tReg, spItem, opItem, packetLen );
+					++numItems;
+				}
 			}
 			if( numItems >= 60 ){
 				return;

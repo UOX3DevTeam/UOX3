@@ -438,28 +438,29 @@ function changeLockStatus( pUser, myTarget )
 			break;
 		case 117: //The plank on a boat
 			var plankStatus;
-			switch( myTarget.id )
+			var plankLocked = parseInt( myTarget.GetTag( "plankLocked" ));
+			switch( plankLocked )
 			{
-				//Open plank->
-				case 0x3EE9: myTarget.id = 0x3E84; plankStatus = 1; break;
-				case 0x3EB1: myTarget.id = 0x3ED5; plankStatus = 1; break;
-				case 0x3EB2: myTarget.id = 0x3ED4; plankStatus = 1; break;
-				case 0x3E8A: myTarget.id = 0x3E89; plankStatus = 1; break;
-				case 0x3E85: myTarget.id = 0x3E84; plankStatus = 1; break;
-				//Close Plank->
-				case 0x3E84: myTarget.id = 0x3EE9; plankStatus = 0; break;
-				case 0x3ED5: myTarget.id = 0x3EB1; plankStatus = 0; break;
-				case 0x3ED4: myTarget.id = 0x3EB2; plankStatus = 0; break;
-				case 0x3E89: myTarget.id = 0x3E8A; plankStatus = 0; break;
+				// Unlock plank
+				case 0: plankStatus = 0; myTarget.SetTag( "plankLocked", 1 ); break;
+				// Lock plank
+				case 1: plankStatus = 1; myTarget.SetTag( "plankLocked", 0 ); break;
 				default:break;
 			}
 			if( !plankStatus )
 			{
-				pSock.SysMessage( GetDictionaryEntry( 2032, pSock.language )); //You close the plank.
+				switch( myTarget.id )
+				{
+					case 0x3E84: myTarget.id = 0x3EE9; break;
+					case 0x3ED5: myTarget.id = 0x3EB1; break;
+					case 0x3ED4: myTarget.id = 0x3EB2; break;
+					case 0x3E89: myTarget.id = 0x3E8A; break;
+				}
+				pSock.SysMessage( GetDictionaryEntry( 9143, pSock.language )); //You lock the plank.
 			}
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 2031, pSock.language )); //You open the plank.
+				pSock.SysMessage( GetDictionaryEntry( 9142, pSock.language )); //You unlock the plank.
 			}
 			break;
 		case 203: //A house sign

@@ -346,12 +346,14 @@ function RegenerateLog( mResource, socket)
 	{
 		for( var i = 0; i < logCeiling; ++i )
 		{
-			if( (mResource.logTime + (i * logTimer * 1000)) <= currentTime && mResource.logAmount < logCeiling )
+			if((( mResource.logTime + ( i * logTimer * 1000 )) / 1000 ) <= ( currentTime / 1000 ) && mResource.logAmount < logCeiling )
+			{
 				mResource.logAmount = mResource.logAmount + 1;
+			}
 			else
 				break;
 		}
-		mResource.logTime = (currentTime + (1000 * logTimer));
+		mResource.logTime = ( currentTime + ( 1000 * parseInt( logTimer ))) / 1000;
 	}
 }
 

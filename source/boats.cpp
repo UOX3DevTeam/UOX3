@@ -4,6 +4,7 @@
 #include "classes.h"
 #include "regions.h"
 #include "CResponse.h"
+#include "cEffects.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
 
@@ -86,14 +87,15 @@ CBoatObj * GetBoat( CSocket *s )
 	return static_cast<CBoatObj *>(findMulti( mChar ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool LeaveBoat( CSocket *s, CItem *p )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Leave a boat
-//o-----------------------------------------------------------------------------------------------o
-auto LeaveBoat( CSocket *s, CItem *p ) ->bool {
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	LeaveBoat()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Teleport player and their pets off the boat and to a nearby valid location
+//o------------------------------------------------------------------------------------------------o
+auto LeaveBoat( CSocket *s, CItem *p ) ->bool
+{
 	CBoatObj *boat = GetBoat( s );
-	if( !ValidateObject( boat ) )
+	if( !ValidateObject( boat ))
 		return false;
 
 	const SI16 x2 = p->GetX();
@@ -101,16 +103,25 @@ auto LeaveBoat( CSocket *s, CItem *p ) ->bool {
 	CChar *mChar = s->CurrcharObj();
 	UI08 worldNumber = mChar->WorldNumber();
 	UI16 instanceID = mChar->GetInstanceID();
-	for( SI16 x = x2 - 2; x < x2 + 3; ++x ) {
-		for( SI16 y = y2 - 2; y < y2 + 3; ++y ) {
+	for( SI16 x = x2 - 3; x <= x2 + 4; ++x )
+	{
+		for( SI16 y = y2 - 3; y <= y2 + 4; ++y )
+		{
 			SI08 z = Map->Height( x, y, mChar->GetZ(), worldNumber, instanceID );
-			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID )) {
+			if( Map->ValidSpawnLocation( x, y, z, worldNumber, instanceID, true ) && !findMulti( x, y, z, worldNumber, instanceID ))
+			{
 				mChar->SetLocation( x, y, z, worldNumber, instanceID );
 				
+				// Freeze player temporarily after teleporting
+				Effects->tempeffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
+
 				auto myPets = mChar->GetPetList();
-				for (const auto &pet : myPets->collection()){
-					if( ValidateObject( pet ) ) {
-						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
+				for( const auto &pet : myPets->collection() )
+				{
+					if( ValidateObject( pet ))
+					{
+						if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ))
+						{
 							pet->SetLocation( x, y, z, worldNumber, instanceID );
 						}
 					}
@@ -134,28 +145,40 @@ void PlankStuff( CSocket *s, CItem *p )
 {
 	CChar *mChar	= s->CurrcharObj();
 	CBoatObj *boat	= GetBoat( s );
-	if( !ValidateObject( boat ) ) {
+	if( !ValidateObject( boat ))
+	{
 		mChar->SetLocation( p->GetX(), p->GetY(), p->GetZ() + 3 );
-		CMultiObj *boat2	= p->GetMultiObj();
-		if( ValidateObject( boat2 ) ) {
+
+		// Freeze player temporarily after teleporting
+		Effects->tempeffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
+
+		CMultiObj *boat2 = p->GetMultiObj();
+		if( ValidateObject( boat2 ))
+		{
 			auto myPets = mChar->GetPetList();
-			for (const auto &pet:myPets->collection()){
-				if( ValidateObject( pet ) ) {
-					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
+			for( const auto &pet:myPets->collection() )
+			{
+				if( ValidateObject( pet ))
+				{
+					if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ))
+					{
 						pet->SetLocation( mChar );
 					}
 				}
 			}
 		}
 
-		if( ValidateObject( boat2 ) ){
+		if( ValidateObject( boat2 ))
+		{
 			s->sysmessage( 1 );
 		}
-		else{
+		else
+		{
 			s->sysmessage( 2 );
 		}
 	}
-	else{
+	else
+	{
 		LeaveBoat( s, p );
 	}
 }
@@ -479,15 +502,32 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	p2->SetType( IT_PLANK );
 	p2->SetDecayable( false );
 
+	// Lock the plank
+	TAGMAPOBJECT tagvalObject;
+	tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
+	tagvalObject.m_IntValue		= 1;
+	tagvalObject.m_Destroy		= false;
+	tagvalObject.m_StringValue	= "";
+	p2->SetTag( "plankLocked", tagvalObject );
+
 	CItem *p1 = Items->CreateItem( nullptr, mChar, 0x3EB1, 1, 0, OT_ITEM );//Plank1 is on the LEFT side of the boat
 	if( p1 == nullptr )
 		return false;
-	p1->SetType( IT_PLANK );//Boat type
+
+	p1->SetType( IT_PLANK ); // Boat type
 	p1->SetDecayable( false );
+
+	// Lock the plank
+	tagvalObject.m_ObjectType	= TAGMAP_TYPE_INT;
+	tagvalObject.m_IntValue		= 1;
+	tagvalObject.m_Destroy		= false;
+	tagvalObject.m_StringValue	= "";
+	p1->SetTag( "plankLocked", tagvalObject );
 
 	CItem *hold = Items->CreateItem( nullptr, mChar, 0x3EAE, 1, 0, OT_ITEM );
 	if( hold == nullptr )
 		return false;
+
 	hold->SetType( IT_CONTAINER );//Conatiner
 	hold->SetDecayable( false );
 	hold->SetWeightMax( maxWeight );

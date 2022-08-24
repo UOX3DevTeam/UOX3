@@ -640,8 +640,15 @@ bool cMovement::CheckForStealth( CChar *c )
 		if( c->GetStealth() != -1 )
 		{
 			c->SetStealth( c->GetStealth() + 1 );
-			if( c->GetStealth() > ( cwmWorldState->ServerData()->MaxStealthMovement() * c->GetSkill( STEALTH ) / 1000 ) )
+			if( c->GetStealth() > ( cwmWorldState->ServerData()->MaxStealthMovement() * c->GetSkill( STEALTH ) / 1000 ))
+			{
 				c->ExposeToView();
+				auto cSock = c->GetSocket();
+				if( cSock != nullptr )
+				{
+					cSock->sysmessage( 6250 ); // You step out of the shadows
+				}
+			}
 		}
 		else
 			c->ExposeToView();

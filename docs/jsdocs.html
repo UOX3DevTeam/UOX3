@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 15. July, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b-4</small></p>
+	<p style="margin:0"><small>Last Updated: 25. August, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b-6</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 25th, 2022</h4>
+						<ul>
+							<li>Added details for new JS Function: GetStartTime</li>
+						</ul>
 						<h4>July 15th, 2022</h4>
 						<ul>
 							<li>Added details about new JS Methods: GetJSTimer, SetJSTimer, KillJSTimer</li>
@@ -154,6 +158,14 @@
 									<li>All other scripts - <strong>[SCRIPT_LIST]</strong></li>
 								</ul>
 							</p>
+							<p>Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
+								<ul>
+									<li>Admin - <strong>5</strong></li>
+									<li>GM - <strong>2</strong></li>
+									<li>CNS - <strong>1</strong></li>
+									<li>Player - <strong>0</strong></li>
+								</ul>
+							</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
@@ -240,6 +252,7 @@ function onSpellCast( socket, character, directCast, spellNum )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>objInRange comes into visible range of pChar. pChar's script is activated</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -674,6 +687,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pColliding collides with objCollidedWith (stepped on basically)</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -714,6 +728,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pAttacker loops through nearby characters as part of their AI behaviour, this event triggers once for every character found (pTarget) - or until event returns true</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -754,6 +769,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pAttacker attacks someone, pAttacker's script is triggered.</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -790,6 +806,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When either currChar or targChar dies or goes out of range, the script is fired for currChar</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -828,6 +845,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>Every time combat damage calculation occurs this event is fired for attacker</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -888,6 +906,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When player executes a command that's not otherwise handled by code or dedicated command scripts</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -931,6 +950,7 @@ function onCommand( mySock, cmdString )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When an item has already been removed from a container, script activates on container</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -967,8 +987,8 @@ function onCommand( mySock, cmdString )
 							<ul>
 								<li>When an object is created, event will trigger in script for the created object</li>
 								<li>For player characters, this is triggered when they first enter the world</li>
-								<li>Event can also be included in global script (scriptID 0) to trigger for all objects created</li>
 							</ul>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>. For Players, <span style="color:green">Yes</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -1006,6 +1026,7 @@ function onCreateDFN( objMade, objType )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When a non-DFN based item is created.</p>
+							<p>Usable in Global script (scriptID 0)? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -1041,6 +1062,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When the char "damaged" gets damaged</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -1108,6 +1130,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>After the player or NPC pDead dies</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -1151,6 +1174,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When a killing blow has been made, this event triggers for pKilled</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -4511,6 +4535,14 @@ function myAreaFunc( srcChar, trgChar, pSock )
 							<div class="settingsDiv">
 								<p><span class="hl">Notes</span></p>
 								<p>Each command registered using <strong>RegisterCommand( commandName, accessLevel, isEnabled )</strong> within the CommandRegistration function will look for a function within the same script, the name of which is based on the command in question, using the syntax <strong>function command_[COMMANDNAME]( socket, cmdString )</strong></p>
+								<p>Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
+									<ul>
+										<li>Admin - <strong>5</strong></li>
+										<li>GM - <strong>2</strong></li>
+										<li>CNS - <strong>1</strong></li>
+										<li>Player - <strong>0</strong></li>
+									</ul>
+								</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -5044,7 +5076,7 @@ function myAreaFunc( srcChar, trgItem, pSock )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>ITEM CreateDFNItem( socket, character, sectionToMake[, [int Amount], [objectType], [bool inPack] );</em></p>
-									<p><em>ITEM CreateDFNItem( null, null, sectionToMake, [int Amount], [objectType], false, [int Color], [worldNumber], [instanceID] );</em></p>
+									<p><em>ITEM CreateDFNItem( null, null, sectionToMake, [int Amount], [objectType], [bool inPack], [int Color], [worldNumber], [instanceID] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5052,15 +5084,15 @@ function myAreaFunc( srcChar, trgItem, pSock )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Parameters:
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
 										<ul>
 											<li>socket - socket to refresh to (and ensure weight is added)</li>
 											<li>character - required to know the pack/character to spawn it to</li>
 											<li>sectionToMake - section # to spawn from</li>
 											<li>int Amount - Amount of items to spawn (Optional)</li>
-											<li>int Color - Color of item to spawn (Optional)</li>
 											<li>objectType - specify the type of object being added: "ITEM", "SPAWNER"</li>
 											<li>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).</li>
+											<li>int Color - Color of item to spawn (Optional)</li>
 											<li>Function can also be used to add items without relying on a character. In this case, the socket and character parameters are null, the inPack parameter is false, and two additional parameters are provided - worldNumber and instanceID. This relies on optional parameter Color also being specified.</li>
 										</ul>
 									</p>
@@ -6980,7 +7012,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns server's uiCurrentTime, or number of clock ticks elapsed since startup</p>
+									<p>Returns a timestamp for current time</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7042,6 +7074,25 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var iMin = GetMinute();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_time_GetStartTime"/>
+							<label for="spoiler_function_time_GetStartTime">GetStartTime <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetStartTime();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns a timestamp from when server was initially started up</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var startupTime = GetStartTime();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7300,8 +7351,8 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>int GetJSTimer( timerID, scriptID );</em></p>
-									<p><em>int SetJSTimer( timerID, timeInMilliseconds, scriptID );</em></p>
-									<p><em>int KillJSTimer( timerID, scriptID );</em></p>
+									<p><em>bool SetJSTimer( timerID, timeInMilliseconds, scriptID );</em></p>
+									<p><em>bool KillJSTimer( timerID, scriptID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>

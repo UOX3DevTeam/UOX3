@@ -443,6 +443,13 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 	ItemTypes type = target->GetType();
 	if( ( type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT ) && ( target->GetID( 1 ) != 0x0E || target->GetID( 2 ) != 0x75 ) )
 	{
+		// Don't allow casting this on locks inside multis
+		if( ValidateObject( target->GetMultiObj() ))
+		{
+			sock->sysmessage( 669 ); // You cannot lock this!
+			return true;
+		}
+
 		switch( type )
 		{
 			case IT_CONTAINER:  target->SetType( IT_LOCKEDCONTAINER );	break;
@@ -452,15 +459,46 @@ bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 				Console.error( "Fallout of switch statement without default. magic.cpp, magiclocktarget()" );
 				break;
 		}
+
+		// Mark lock as magically locked
+		target->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( 0x01 ));
+
+		// Store min/max skill to unlock with magery based on player's magery skill
+		target->SetTempVar( CITV_MOREY, 3, static_cast<UI08>(( caster->GetSkill( MAGERY ) / 10 ) / 2 ));
+		target->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( caster->GetSkill( MAGERY ) / 10 ));
+
+		target->RemoveFromSight();
+		target->Update();
+
 		if( Magic->spells[19].Effect() != INVALIDID )
+		{
 			Effects->PlaySound( caster, Magic->spells[19].Effect() );
+		}
 
 		CMagicStat temp = Magic->spells[19].StaticEffect();
 		if( temp.Effect() != INVALIDID )
+		{
+			auto iCont = target->GetCont();
+			if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_CHAR ))
+			{
+				// If container is a character, play lock FX on character
+				Effects->PlayStaticAnimation( iCont, temp.Effect(), temp.Speed(), temp.Loop() );
+			}
+			else
+			{
+				// Otherwise play FX directly on object
 			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
+		}
+
+		// Make it an effect that expires in between 7 to 50 seconds, depending on caster's Magery skill
+		auto magicLockDuration = static_cast<UI16>( floor( caster->GetSkill( MAGERY ) / 100 ) + floor( caster->GetSkill( MAGERY ) / 25 ));
+		Effects->tempeffect( caster, target, 50, magicLockDuration, 0, 0 );
+	}
 	else
-		sock->sysmessage( 669 );
+	{
+		sock->sysmessage( 669 ); // You cannot lock this!
+	}
 	return true;
 }
 
@@ -576,7 +614,7 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 	if( !caster->IsNpc() )
 	{
 		CTile& tile = Map->SeekTile( sock->GetWord( 0x11 ) );
-		if( (tile.Name()!="water") || tile.CheckFlag( TF_WET ) )
+		if( (tile.Name()=="water") || tile.CheckFlag( TF_WET ) )
 		{
 			sock->sysmessage( 671 );
 			return false;
@@ -632,8 +670,8 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 			}
 		}
 
-		UI08 minSkill = ( target->GetTempVar( CITV_MOREY, 3 ) * 10 );
-		UI08 maxSkill = ( target->GetTempVar( CITV_MOREY, 4 ) * 10 );
+		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
+		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
 		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
 		{
 			sock->sysmessage( 6092 ); // You are not skilled enough to do that.
@@ -646,11 +684,24 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		target->Update();
 
 		if( Magic->spells[23].Effect() != INVALIDID )
+		{
 			Effects->PlaySound( caster, Magic->spells[23].Effect() );
+		}
 
 		CMagicStat temp = Magic->spells[23].StaticEffect();
 		if( temp.Effect() != INVALIDID )
-			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
+		{
+			auto iCont = target->GetCont();
+			if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_CHAR ))
+			{
+				// If container is a character, play lock FX on character
+				Effects->PlayStaticAnimation( iCont, temp.Effect(), temp.Speed(), temp.Loop() );
+			}
+			else
+			{
+				Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
+			}
+		}
 	}
 	else if( target->GetType() == IT_LOCKEDSPAWNCONT )
 	{
@@ -665,8 +716,8 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 			}
 		}
 
-		UI08 minSkill = ( target->GetTempVar( CITV_MOREY, 3 ) * 10 );
-		UI08 maxSkill = ( target->GetTempVar( CITV_MOREY, 4 ) * 10 );
+		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
+		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
 		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
 		{
 			sock->sysmessage( 6092 ); // You are not skilled enough to do that.
@@ -679,18 +730,65 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 		target->Update();
 
 		if( Magic->spells[23].Effect() != INVALIDID )
+		{
 			Effects->PlaySound( caster, Magic->spells[23].Effect() );
+		}
 
 		CMagicStat temp = Magic->spells[23].StaticEffect();
 		if( temp.Effect() != INVALIDID )
+		{
 			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
+		}
 	}
 	else if( target->GetType() == IT_CONTAINER || target->GetType() == IT_SPAWNCONT || target->GetType() == IT_LOCKEDSPAWNCONT || target->GetType() == IT_TRASHCONT )
+	{
 		sock->sysmessage( 676 ); // That is not locked.
+	}
 	else if( target->GetType() == IT_DOOR )
+	{
 		sock->sysmessage( 937 ); // That cannot be unlocked without a key!
+	}
+	else if( target->GetType() == IT_LOCKEDDOOR )
+	{
+		bool canMagicUnlock = true;
+		if( target->GetTempVar( CITV_MOREY ) > 0 )
+		{
+			canMagicUnlock = static_cast<bool>(target->GetTempVar( CITV_MOREY, 2 ));
+			if( !canMagicUnlock )
+			{
+				sock->sysmessage( 9102 ); // That lock cannot be unlocked with magic!
+				return false;
+			}
+		}
+
+		auto minSkill = target->GetTempVar( CITV_MOREY, 3 ) * 10;
+		auto maxSkill = target->GetTempVar( CITV_MOREY, 4 ) * 10;
+		if( !Skills->CheckSkill( caster, MAGERY, minSkill, ( maxSkill > 0 ? maxSkill : 1000 )))
+		{
+			sock->sysmessage( 6092 ); // You are not skilled enough to do that.
+			return false;
+		}
+
+		target->SetType( IT_DOOR );
+		sock->sysmessage( 675 ); // You unlock the item.
+		target->RemoveFromSight();
+		target->Update();
+
+		if( Magic->spells[23].Effect() != INVALIDID )
+		{
+			Effects->PlaySound( caster, Magic->spells[23].Effect() );
+		}
+
+		CMagicStat temp = Magic->spells[23].StaticEffect();
+		if( temp.Effect() != INVALIDID )
+		{
+			Effects->PlayStaticAnimation( target, temp.Effect(), temp.Speed(), temp.Loop() );
+		}
+	}
 	else
+	{
 		sock->sysmessage( 678 ); // That does not have a lock.
+	}
 	return true;
 }
 

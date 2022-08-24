@@ -170,7 +170,7 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddHTMLGump( 250, 130, 200, 145, false, false, "<BASEFONT color=#abcdef>" + serverVersionString + "</BASEFONT>" );
 
 	// Uptime
-	var uptimeInSeconds = Math.floor(GetCurrentClock() / 1000);
+	var uptimeInSeconds = Math.floor(GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
 	var d = Math.floor(uptimeInSeconds / (3600*24));
 	var h = Math.floor(uptimeInSeconds % (3600*24) / 3600);
 	var m = Math.floor(uptimeInSeconds % 3600 / 60);

@@ -30,7 +30,7 @@ function onTimer( timerObj, timerID )
 		for( var i = 0; i < petList.length; i++ )
 		{
 			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 12 ))
+			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 24 ))
 			{
 				tempPet.Teleport(( timerObj.x == 5363 ? 5272 : 5273 ), 2041, 3 );
 				tempPet.Follow( timerObj );
@@ -48,7 +48,7 @@ function onTimer( timerObj, timerID )
 		for( var i = 0; i < petList.length; i++ )
 		{
 			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 12 ))
+			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 24 ))
 			{
 				tempPet.Teleport(( timerObj.x == 5272 ? 5363 : 5364 ), 1290, 3 );
 				tempPet.Follow( timerObj );

@@ -2122,10 +2122,23 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	else
 	{
 		if( i->IsTamed() && ValidateObject( i->GetOwnerObj() ) && !cwmWorldState->creatures[i->GetID()].IsHuman() )
+		{
 			charName += " (tame) ";
+		}
+
+		// Show NPC title over their head?
+		auto npcTitle = getNpcDictTitle( i, this );
+		if( cwmWorldState->ServerData()->ShowNpcTitlesOverhead() && npcTitle != "" )
+		{
+			charName += " " + npcTitle;
+		}
 	}
-	if( i->IsInvulnerable() )
+
+	// Show (invulnerable) tags over the heads of invulnerable characters?
+	if( i->IsInvulnerable() && cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() )
+	{
 		charName += " (invulnerable)";
+	}
 	if( i->IsFrozen() )
 		charName += " (frozen) ";
 	if( i->IsGuarded() )

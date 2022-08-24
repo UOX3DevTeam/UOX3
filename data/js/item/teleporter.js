@@ -13,7 +13,7 @@ function onUseChecked( pUser, iUsed )
 				for( var i = 0; i < petList.length; i++ )
 				{
 					var tempPet = petList[i];
-					if( ValidateObject( tempPet ) && tempPet.InRange( pUser, 12 ))
+					if( ValidateObject( tempPet ) && tempPet.InRange( pUser, 24 ))
 					{
 						tempPet.Teleport( otherGate );
 						tempPet.Follow( pUser );

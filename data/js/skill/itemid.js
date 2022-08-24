@@ -57,6 +57,10 @@ function onCallback0( pSock, ourObj )
 
 		var tempMsg = GetDictionaryEntry( 1547, pLanguage ); // You found that this item appears to be called: %s
 		tempMsg = ( tempMsg.replace(/%s/gi, ourObj.name ));
+		if( GetServerSetting( "RankSystem" ) && ourObj.rank == 10 )
+		{
+			tempMsg += " " + GetDictionaryEntry( 9140, pLanguage ); // of exceptional quality
+		}
 		ourObj.TextMessage( tempMsg, false, 0x3b2, 0, pUser.serial );
 
 		var creatorSerial = ourObj.creator;
@@ -68,13 +72,6 @@ function onCallback0( pSock, ourObj )
 				if( ourObj.madeWith > 0 )
 				{
 					let madeWord = Skills[ourObj.madeWith].madeWord;
-					let tempMsg = GetDictionaryEntry( 1548, pLanguage ); // It is %s by %s.
-					tempMsg = ( tempMsg.replace(/%s/gi, madeWord ));
-					tempMsg = ( tempMsg.replace(/%w/gi, creator.name ));
-				}
-				else if( ourObj.madeWith < 0 )
-				{
-					let madeWord = Skills[0-ourObj.madeWith].madeWord;
 					let tempMsg = GetDictionaryEntry( 1548, pLanguage ); // It is %s by %s.
 					tempMsg = ( tempMsg.replace(/%s/gi, madeWord ));
 					tempMsg = ( tempMsg.replace(/%w/gi, creator.name ));

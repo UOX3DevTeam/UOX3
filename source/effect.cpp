@@ -417,14 +417,14 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	if( toMake == nullptr )
 		return;
 
-	CSocket *sock	= src->GetSocket();
+	CSocket *sock = src->GetSocket();
 	std::string addItem = toMake->addItem;
-	UI16 amount		= 1;
+	UI16 amount = 1;
 	auto csecs = oldstrutil::sections( addItem, "," );
 	if( csecs.size() > 1 )
 	{
-		amount		= oldstrutil::value<std::uint16_t>(oldstrutil::extractSection(addItem, ",", 1, 1 ));
-		addItem		= oldstrutil::extractSection(addItem, ",", 0, 0 );
+		amount	= oldstrutil::value<std::uint16_t>( oldstrutil::extractSection( addItem, ",", 1, 1 ));
+		addItem	= oldstrutil::extractSection( addItem, ",", 0, 0 );
 	}
 
 	UI16 iColour = 0;
@@ -438,9 +438,12 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 		}
 	}
 
+	// Create the actual item
 	CItem *targItem = Items->CreateScriptItem( sock, src, addItem, amount, OT_ITEM, true, iColour );
 	for( size_t skCounter = 0; skCounter < toMake->skillReqs.size(); ++skCounter )
+	{
 		src->SkillUsed( false, toMake->skillReqs[skCounter].skillNumber );
+	}
 	if( targItem == nullptr )
 	{
 		Console.error( oldstrutil::format("cSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial()) );
@@ -449,36 +452,43 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	else
 	{
 		// targItem->SetName2( targItem->GetName().c_str() ); // Why was this here?
-		SI32 rank = Skills->CalcRankAvg( src, (*toMake) );
+		SI32 rank = Skills->CalcRankAvg( src, ( *toMake ));
 		SI32 maxrank = toMake->maxRank;
-		Skills->ApplyRank( sock, targItem, static_cast<UI08>(rank), static_cast<UI08>(maxrank) );
+		Skills->ApplyRank( sock, targItem, static_cast<UI08>( rank ), static_cast<UI08>( maxrank ));
 
 		// if we're not a GM, see if we should store our creator
 		if( !src->IsGM() && !toMake->skillReqs.empty() )
 		{
+			// Store serial of crafter
 			targItem->SetCreator( src->GetSerial() );
-			SI32 avgSkill, sumSkill = 0;
-			// Find the average of our player's skills
-			for( size_t resCounter = 0; resCounter < toMake->skillReqs.size(); ++resCounter )
-				sumSkill += src->GetSkill( toMake->skillReqs[resCounter].skillNumber );
-			avgSkill = static_cast<SI32>(sumSkill / toMake->skillReqs.size());
-			if( avgSkill > 950 )
-				targItem->SetMadeWith( toMake->skillReqs[0].skillNumber + 1 );
-			else
-				targItem->SetMadeWith( -(toMake->skillReqs[0].skillNumber + 1) );
+
+			// Store skill number that item was crafted with
+			targItem->SetMadeWith( toMake->skillReqs[0].skillNumber + 1 );
+
+			// Set Makers Mark on item if primary skill used to craft item is at 100.0 or higher
+			SI32 primarySkill = src->GetSkill( toMake->skillReqs[0].skillNumber );
+			if( primarySkill >= 1000 )
+			{
+				targItem->SetMakersMark( true );
+			}
 		}
 		else
 		{
+			// Crafted by a GM, don't apply maker's marks or give any additional information
 			targItem->SetCreator( INVALIDSERIAL );
 			targItem->SetMadeWith( 0 );
 		}
+
+		// Store the entry number from create DFNs that item was made from 
 		targItem->EntryMadeFrom( iMaking );
 	}
 
 	// Make sure it's movable
 	targItem->SetMovable( 1 );
 	if( toMake->soundPlayed )
+	{
 		PlaySound( sock, toMake->soundPlayed, true );
+	}
 
 	if( FindItemOwner( targItem ) == src )
 		sock->sysmessage( 985 ); // You create the item and place it in your backpack.
@@ -534,12 +544,20 @@ auto cEffects::checktempeffects()->void {
 			bool validChar = ValidateObject( s );
 			switch( Effect->Number() ) {
 				case 1: // Paralysis / Paralysis Field Spells
-					if( validChar && s->IsFrozen() ) {
-						s->SetFrozen( false );
-						if( tSock != nullptr )
-							tSock->sysmessage( 700 );
+				if( validChar && s->IsFrozen() )
+				{
+					s->SetFrozen( false );
+					if( tSock != nullptr )
+					{
+						// Don't show system message if we don't want it to
+						if( Effect->More1() == 0 )
+						{
+							tSock->sysmessage( 700 ); // You are no longer frozen.
+						}
+						s->Update();
 					}
-					break;
+				}
+				break;
 				case 2: // Nightsight Potion (JS) and Spell (code)
 					if( validChar ) {
 						s->SetFixedLight( 255 );
@@ -642,23 +660,28 @@ auto cEffects::checktempeffects()->void {
 					}
 					break;
 				case 19: // Incognito Spell
-					if(validChar){
+					if( validChar )
+					{
 						s->SetID( s->GetOrgID() );
-						
+	
 						// ------ NAME -----
 						s->SetName( s->GetOrgName() );
-						
+	
 						i = s->GetItemAtLayer( IL_HAIR );
-						if( ValidateObject(i) ){
+						if( ValidateObject( i ))
+						{
 							i->SetColour( s->GetHairColour() );
 							i->SetID( s->GetHairStyle() );
 						}
 						i = s->GetItemAtLayer( IL_FACIALHAIR );
-						if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 ){
+						if( ValidateObject( i ) && s->GetID( 2 ) == 0x90 )
+						{
+							i->SetVisible( VT_VISIBLE );
 							i->SetColour( s->GetBeardColour() );
 							i->SetID( s->GetBeardStyle() );
 						}
-						if(tSock){
+						if( tSock )
+						{
 							s->SendWornItems( tSock );
 						}
 						s->IsIncognito( false );
@@ -854,6 +877,52 @@ auto cEffects::checktempeffects()->void {
 					
 					src->SetID( 0xCF ); // Thats all we need to do
 					break;
+				case 50: // Unlock a magically locked object
+				{
+					myObj = calcItemObjFromSer( Effect->Destination() );
+					if( ValidateObject( myObj ))
+					{
+						auto lockedItem = static_cast<CItem *>( myObj );
+
+						// Only continue if door is actually still locked
+						auto lockType = lockedItem->GetType();
+						if( lockType == IT_LOCKEDDOOR || lockType == IT_LOCKEDCONTAINER || lockType == IT_LOCKEDSPAWNCONT )
+						{
+							switch( lockType )
+							{
+								case IT_LOCKEDDOOR:			lockedItem->SetType( IT_DOOR );			break;
+								case IT_LOCKEDCONTAINER:	lockedItem->SetType( IT_CONTAINER );	break;
+								case IT_LOCKEDSPAWNCONT:	lockedItem->SetType( IT_SPAWNCONT );	break;
+								default: break;
+							}
+
+							lockedItem->RemoveFromSight();
+							lockedItem->Update();
+
+							if( Magic->spells[23].Effect() != INVALIDID )
+							{
+								Effects->PlaySound( lockedItem, Magic->spells[23].Effect(), true );
+							}
+
+							CMagicStat temp = Magic->spells[23].StaticEffect();
+							if( temp.Effect() != INVALIDID )
+							{
+								auto iCont = lockedItem->GetCont();
+								if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_CHAR ))
+								{
+									// Play unlock FX on character holding object
+									Effects->PlayStaticAnimation( iCont, temp.Effect(), temp.Speed(), temp.Loop() );
+								}
+								else
+								{
+									// Play unlock FX directly on object
+									Effects->PlayStaticAnimation( lockedItem, temp.Effect(), temp.Speed(), temp.Loop() );
+								}
+							}
+						}
+					}
+					break;
+				}
 				default:
 					Console.error( oldstrutil::format(" Fallout of switch statement without default (%i). checktempeffects()", Effect->Number()) );
 					break;
@@ -1010,6 +1079,17 @@ void cEffects::tempeffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			if( source == nullptr )
 			{
 				effectDuration = static_cast<R32>(more2);
+				if( more3 != 0 )
+				{
+					// Divide duration by more3 value
+					effectDuration /= static_cast<R32>( more3 );
+				}
+
+				// Keep a reference to more1, if different than 0
+				if( more1 != 0 )
+				{
+					toAdd->More1( more1 );
+				}
 			}
 			else
 			{
@@ -1447,6 +1527,11 @@ void cEffects::tempeffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			dest->SetDisabled( true );
 			toAdd->More2( 0 );
 			break;
+		case 50: // Magically locked, expires in X seconds (more1, based on caster's Magery skill)
+			toAdd->ExpireTime( BuildTimeValue( more1 ));
+			toAdd->ObjPtr( dest );
+			toAdd->Dispellable( false );
+			break;
 		default:
 			Console.error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()");
 			delete toAdd;
@@ -1623,30 +1708,35 @@ void cEffects::LoadEffects( void )
 bool CTEffect::Save( std::ofstream &effectDestination ) const
 {
 	CBaseObject *getPtr = nullptr;
+	const char newLine = '\n';
 
-	effectDestination << "[EFFECT]" << '\n';
+	effectDestination << "[EFFECT]" << newLine;
 
 	// Hexadecimal Values
 	effectDestination << std::hex;
-	effectDestination << "Source=" << "0x" << Source() << '\n';
-	effectDestination << "Dest=" << "0x" << Destination() << '\n';
+	effectDestination << "Source=0x" << Source() << newLine;
+	effectDestination << "Dest=0x" << Destination() << newLine;
 
 	getPtr = ObjPtr();
-	effectDestination << "ObjPtr=" << "0x";
-	if( ValidateObject( getPtr ) )
-		effectDestination << getPtr->GetSerial() << '\n';
+	effectDestination << "ObjPtr=0x";
+	if( ValidateObject( getPtr ))
+	{
+		effectDestination << getPtr->GetSerial() << newLine;
+	}
 	else
-		effectDestination << INVALIDSERIAL << '\n';
+	{
+		effectDestination << INVALIDSERIAL << newLine;
+	}
 
 	// Decimal / String Values
 	effectDestination << std::dec;
-	effectDestination << "Expire=" << ( ExpireTime() - cwmWorldState->GetUICurrentTime() ) << '\n';
-	effectDestination << "Number=" << static_cast<UI16>(Number()) << '\n';
-	effectDestination << "More1=" << More1() << '\n';
-	effectDestination << "More2=" << More2() << '\n';
-	effectDestination << "More3=" << More3() << '\n';
-	effectDestination << "Dispel=" << Dispellable() << '\n';
-	effectDestination << "AssocScript=" << AssocScript() << '\n';
-	effectDestination << '\n' << "o---o" << '\n' << '\n';
+	effectDestination << "Expire=" + std::to_string( ExpireTime() - cwmWorldState->GetUICurrentTime() ) + newLine;
+	effectDestination << "Number=" + std::to_string( Number() ) + newLine;
+	effectDestination << "More1=" + std::to_string( More1() ) + newLine;
+	effectDestination << "More2=" + std::to_string( More2() ) + newLine;
+	effectDestination << "More3=" + std::to_string( More3() ) + newLine;
+	effectDestination << "Dispel=" + std::to_string( Dispellable() ? 1 : 0 ) + newLine;
+	effectDestination << "AssocScript=" + std::to_string( AssocScript() ) + newLine;
+	effectDestination << "\no---o\n\n";
 	return true;
 }

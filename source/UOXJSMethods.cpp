@@ -6654,29 +6654,29 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "GetTimer: Invalid number of arguments (takes 1)" );
 		return JS_FALSE;
 	}
-	JSEncapsulate encaps( cx, &(argv[0]) );
+	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate myClass( cx, obj );
 	if( myClass.ClassName() == "UOXChar" )
 	{
-		CChar *cMove = static_cast<CChar*>(myClass.toObject());
-		if( !ValidateObject( cMove ) )
+		CChar *cMove = static_cast<CChar*>( myClass.toObject() );
+		if( !ValidateObject( cMove ))
 		{
 			MethodError( "GetTimer: Invalid source character" );
 			return JS_FALSE;
 		}
 
-		*rval = INT_TO_JSVAL( cMove->GetTimer( (cC_TID)encaps.toInt() ) );
+		JS_NewNumberValue( cx, cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )), rval );
 	}
 	else if( myClass.ClassName() == "UOXSocket" )
 	{
-		CSocket *mSock = static_cast<CSocket *>(myClass.toObject());
+		CSocket *mSock = static_cast<CSocket *>( myClass.toObject() );
 		if( mSock == nullptr )
 		{
 			MethodError( "GetTimer: Invalid source socket" );
 			return JS_FALSE;
 		}
 
-		*rval = INT_TO_JSVAL( mSock->GetTimer( (cS_TID)encaps.toInt() ) );
+		JS_NewNumberValue( cx, mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )), rval );
 	}
 
 	return JS_TRUE;

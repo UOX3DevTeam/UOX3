@@ -196,10 +196,11 @@ function CheckTameSuccess( pUser, toTame )
 			toTame.target 	= null;
 			toTame.atWar	= false;
 		}
-		if( pUser.atWar && ValidateObject( pUser.target ) && pUser.target.serial == toTame.serial )
+
+		if( ValidateObject( pUser.target ) && pUser.target.serial == toTame.serial )
 		{
-			pUser.target	= null;
-			pUser.atWar	= false;
+			pUser.target 	= null;
+			pUser.atWar	 	= false;
 		}
 		return true;
 	}

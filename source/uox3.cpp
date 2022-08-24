@@ -1587,20 +1587,42 @@ auto checkItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 					case IT_UNLOCKABLESPAWNCONT:
 					case IT_AREASPAWNER:
 					case IT_ESCORTNPCSPAWNER:
-						if( (itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime()) || cwmWorldState->GetOverflow() ) {
-							if( itemCheck->GetObjType() == OT_SPAWNER ) {
+					case IT_PLANK:
+					{
+						if(( itemCheck->GetTempTimer() <= cwmWorldState->GetUICurrentTime() ) || cwmWorldState->GetOverflow() )
+						{
+							if( itemCheck->GetObjType() == OT_SPAWNER )
+							{
 								CSpawnItem *spawnItem = static_cast<CSpawnItem *>(itemCheck);
-								if( spawnItem->DoRespawn() ){
+								if( spawnItem->DoRespawn() )
+								{
 									continue;
 								}
-								spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ) ) ) );
+								spawnItem->SetTempTimer( BuildTimeValue( static_cast<R32>(RandomNum( spawnItem->GetInterval( 0 ) * 60, spawnItem->GetInterval( 1 ) * 60 ))));
 							}
-							else {
+							else if( itemCheck->GetObjType() == OT_ITEM && itemCheck->GetType() == IT_PLANK)
+							{
+								// Automatically close the plank if it's still open, and still locked
+								auto plankStatus = itemCheck->GetTag( "plankLocked" );
+								if( plankStatus.m_IntValue == 1 )
+								{
+									switch( itemCheck->GetID() )
+									{
+										case 0x3E84: itemCheck->SetID( 0x3EE9 ); itemCheck->SetTempTimer( 0 ); break;
+										case 0x3ED5: itemCheck->SetID( 0x3EB1 ); itemCheck->SetTempTimer( 0 ); break;
+										case 0x3ED4: itemCheck->SetID( 0x3EB2 ); itemCheck->SetTempTimer( 0 ); break;
+										case 0x3E89: itemCheck->SetID( 0x3E8A ); itemCheck->SetTempTimer( 0 ); break;
+									}
+								}
+							}
+							else
+							{
 								itemCheck->SetType( IT_NOTYPE );
 								Console.warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
 							}
 						}
 						break;
+					}
 					case IT_SOUNDOBJECT:
 						if( itemCheck->GetTempVar( CITV_MOREY ) < 25 ) {
 							if( RandomNum( 1, 100 ) <= (SI32)itemCheck->GetTempVar( CITV_MOREZ ) ) {
@@ -2979,13 +3001,16 @@ auto getNpcDictTitle( CChar *mChar, CSocket *tSock ) ->std::string{
 	std::string dictTitle = mChar->GetTitle();
 	SI32 dictEntryID = 0;
 	
-	if( isNumber( dictTitle ) ){
+	if( !dictTitle.empty() && isNumber( dictTitle ))
+	{
 		// If title is a number, assume it's a direct dictionary entry reference, and use that
 		dictEntryID = static_cast<SI32>( oldstrutil::value<SI32>( dictTitle ) );
-		if(tSock){
+		if( tSock )
+		{
 			dictTitle = Dictionary->GetEntry( dictEntryID, tSock->Language() );
 		}
-		else{
+		else
+		{
 			dictTitle = Dictionary->GetEntry( dictEntryID );
 		}
 	}

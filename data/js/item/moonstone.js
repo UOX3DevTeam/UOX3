@@ -202,7 +202,7 @@ function onCollide( trgSock, srcChar, trgItem )
 		for( var i = 0; i < petList.length; i++ )
 		{
 			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 12 ))
+			if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 24 ))
 			{
 				tempPet.Teleport( trgItem.x , trgItem.y, trgItem.z, worldVal );
 				tempPet.Follow( srcChar );

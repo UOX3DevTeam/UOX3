@@ -311,7 +311,16 @@ const std::map<std::string,std::int32_t> CServerData::uox3inicasevalue{
 	{"CRAFTCOLOUREDWEAPONS"s, 298},
 	{"MAXSAFETELEPORTSPERDAY"s, 299},
 	{"TELEPORTTONEARESTSAFELOCATION"s, 300},
-	{"ALLOWAWAKENPCS"s, 301}
+	{"ALLOWAWAKENPCS"s, 301},
+	{"DISPLAYMAKERSMARK"s, 302},
+	{"SHOWNPCTITLESOVERHEAD"s, 303},
+	{"SHOWINVULNERABLETAGOVERHEAD"s, 304},
+	{"PETCOMBATTRAINING"s, 305},
+	{"HIRELINGCOMBATTRAINING"s, 306},
+	{"NPCCOMBATTRAINING"s, 307},
+	{"GLOBALRESTOCKMULTIPLIER"s, 308},
+	{"SHOWITEMRESISTSTATS"s, 309},
+	{"SHOWWEAPONDAMAGETYPES"s, 310}
 };
 constexpr auto MAX_TRACKINGTARGETS = 128 ;
 constexpr auto SKILLTOTALCAP = 7000 ;
@@ -394,6 +403,14 @@ constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS	= std::uint32_t(73);
 constexpr auto BIT_CRAFTCOLOUREDWEAPONS			= std::uint32_t(74);
 constexpr auto BIT_TELEPORTTONEARESTSAFELOC		= std::uint32_t(75);
 constexpr auto BIT_ALLOWAWAKENPCS				= std::uint32_t(76);
+constexpr auto BIT_DISPLAYMAKERSMARK				= std::uint32_t( 77 );
+constexpr auto BIT_SHOWNPCTITLESOVERHEAD			= std::uint32_t( 78 );
+constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD		= std::uint32_t( 79 );
+constexpr auto BIT_PETCOMBATTRAINING				= std::uint32_t( 80 );
+constexpr auto BIT_HIRELINGCOMBATTRAINING			= std::uint32_t( 81 );
+constexpr auto BIT_NPCCOMBATTRAINING				= std::uint32_t( 82 );
+constexpr auto BIT_SHOWITEMRESISTSTATS				= std::uint32_t( 83 );
+constexpr auto BIT_SHOWWEAPONDAMAGETYPES			= std::uint32_t( 84 );
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -583,6 +600,7 @@ auto CServerData::ResetDefaults()->void {
 	SellMaxItemsStatus( 250 );
 	CombatNPCDamageRate( 1 );
 	RankSystemStatus( true );
+	DisplayMakersMark( true );
 	CombatArcheryHitBonus( 10 );
 	CombatArcheryShootDelay( 1.0 );
 	CombatWeaponDamageChance( 17 );
@@ -601,6 +619,10 @@ auto CServerData::ResetDefaults()->void {
 	CombatArmorClassDamageBonus( false );
 	AlchemyDamageBonusEnabled( false );
 	AlchemyDamageBonusModifier( 5 );
+	PetCombatTraining( true );
+	HirelingCombatTraining( true );
+	NpcCombatTraining( false );
+
 	CheckPetControlDifficulty( true );
 	SetPetLoyaltyGainOnSuccess( 1 );
 	SetPetLoyaltyLossOnFailure( 3 );
@@ -678,7 +700,10 @@ auto CServerData::ResetDefaults()->void {
 	MaxSafeTeleportsPerDay( 1 );
 	TeleportToNearestSafeLocation( false );
 	AllowAwakeNPCs( false );
-	
+	GlobalRestockMultiplier( 1.0 );
+	ShowItemResistStats( false );
+	ShowWeaponDamageTypes( true );
+
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
 	CutScrollRequirementStatus( true );
@@ -691,6 +716,8 @@ auto CServerData::ResetDefaults()->void {
 	EscortsEnabled( true );
 	BasicTooltipsOnly( false );
 	ShowNpcTitlesInTooltips( true );
+	ShowNpcTitlesOverhead( true );
+	ShowInvulnerableTagOverhead( false );
 	GlobalItemDecay( true );
 	ScriptItemsDecayable( true );
 	BaseItemsDecayable( false );
@@ -1498,6 +1525,21 @@ auto CServerData::HtmlStatsStatus(SI16 value) ->void {
 	htmlstatusenabled = value;
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::GlobalRestockMultiplier()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the global restock multiplier, which is applied to restock property
+//|					of items as they are loaded in from the DFNs
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::GlobalRestockMultiplier() const ->float
+{
+	return globalRestockMultiplier;
+}
+auto CServerData::GlobalRestockMultiplier( R32 value ) ->void
+{
+	globalRestockMultiplier = value;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	bool SellByNameStatus() const
 //|					void SellByNameStatus( bool newVal )
@@ -1551,6 +1593,20 @@ auto CServerData::RankSystemStatus() const ->bool{
 }
 auto CServerData::RankSystemStatus(bool newVal) ->void {
 	boolVals.set( BIT_RANKSYSSTATUS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::DisplayMakersMark() 
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether maker's mark is displayed for crafted items that have this
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::DisplayMakersMark( void ) const ->bool
+{
+	return boolVals.test( BIT_DISPLAYMAKERSMARK );
+}
+auto CServerData::DisplayMakersMark( bool newVal ) ->void
+{
+	boolVals.set( BIT_DISPLAYMAKERSMARK, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1984,6 +2040,104 @@ auto CServerData::ShowNpcTitlesInTooltips() const ->bool{
 }
 auto CServerData::ShowNpcTitlesInTooltips( bool newVal ) ->void {
 	boolVals.set( BIT_SHOWNPCTITLESINTOOLTIPS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ShowNpcTitlesOverhead()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether NPC titles show up along with name over their heads
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ShowNpcTitlesOverhead() const ->bool
+{
+	return boolVals.test( BIT_SHOWNPCTITLESOVERHEAD );
+}
+auto CServerData::ShowNpcTitlesOverhead( bool newVal ) ->void
+{
+	boolVals.set( BIT_SHOWNPCTITLESOVERHEAD, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ShowInvulnerableTagOverhead()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether (invulnerable) tags show over character heads when invulnerable
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ShowInvulnerableTagOverhead() const ->bool
+{
+	return boolVals.test( BIT_SHOWINVULNERABLETAGOVERHEAD );
+}
+auto CServerData::ShowInvulnerableTagOverhead( bool newVal ) ->void
+{
+	boolVals.set( BIT_SHOWINVULNERABLETAGOVERHEAD, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::PetCombatTraining()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether pets can gain skills/stats from fighting
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::PetCombatTraining() const ->bool
+{
+	return boolVals.test( BIT_PETCOMBATTRAINING );
+}
+auto CServerData::PetCombatTraining( bool newVal ) ->void
+{
+	boolVals.set( BIT_PETCOMBATTRAINING, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::NpcCombatTraining()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether (non-tamed, non-hireling) NPCs can gain skills/stats from fighting
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::NpcCombatTraining() const ->bool
+{
+	return boolVals.test( BIT_NPCCOMBATTRAINING );
+}
+auto CServerData::NpcCombatTraining( bool newVal ) ->void
+{
+	boolVals.set( BIT_NPCCOMBATTRAINING, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::HirelingCombatTraining()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether hireling NPCs can gain skills/stats from fighting
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::HirelingCombatTraining() const ->bool
+{
+	return boolVals.test( BIT_HIRELINGCOMBATTRAINING );
+}
+auto CServerData::HirelingCombatTraining( bool newVal ) ->void
+{
+	boolVals.set( BIT_HIRELINGCOMBATTRAINING );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ShowItemResistStats()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether elemental resist shows up in item tooltips
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ShowItemResistStats() const ->bool
+{
+	return boolVals.test( BIT_SHOWITEMRESISTSTATS );
+}
+auto CServerData::ShowItemResistStats( bool newVal ) ->void
+{
+	boolVals.set( BIT_SHOWITEMRESISTSTATS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::ShowWeaponDamageTypes()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether damage types show up in weapon tooltips
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::ShowWeaponDamageTypes() const ->bool
+{
+	return boolVals.test( BIT_SHOWWEAPONDAMAGETYPES );
+}
+auto CServerData::ShowWeaponDamageTypes( bool newVal ) ->void
+{
+	boolVals.set( BIT_SHOWWEAPONDAMAGETYPES, newVal );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -3410,370 +3564,366 @@ auto CServerData::save() ->bool{
 //o-----------------------------------------------------------------------------------------------o
 auto CServerData::save( const std::string &filename ) ->bool {
 	auto rvalue = false;
-	auto ofsOutput = std::ofstream(filename) ;
-	if( ofsOutput.is_open() ) {
-		
+	auto ofsOutput = std::ofstream( filename );
+	if( ofsOutput.is_open() )
+	{
 		ofsOutput << "// UOX Initialization File. V";
-		ofsOutput << (static_cast<std::uint16_t>(1)<<8 | static_cast<std::uint16_t>(2)) << '\n' << "//================================" << '\n' << '\n';
+		ofsOutput << ( static_cast<std::uint16_t>( 1 ) << 8 | static_cast<std::uint16_t>( 2 )) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
-		ofsOutput << "\tSERVERNAME=" << ServerName() << '\n';
-		ofsOutput << "\tEXTERNALIP=" << ExternalIP() << '\n';
-		ofsOutput << "\tPORT=" << ServerPort() << '\n';
-		ofsOutput << "\tSERVERLANGUAGE=" << ServerLanguage() << '\n';
-		ofsOutput << "\tNETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
-		ofsOutput << "\tNETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
-		ofsOutput << "\tNETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
-		ofsOutput << "\tCONSOLELOG=" << ( ServerConsoleLog() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tNETWORKLOG=" << ( ServerNetworkLog() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tSPEECHLOG=" << ( ServerSpeechLog() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tCOMMANDPREFIX=" << ServerCommandPrefix() << '\n';
-		ofsOutput << "\tANNOUNCEWORLDSAVES=" << (ServerAnnounceSavesStatus()?1:0) << '\n';
-		ofsOutput << "\tJOINPARTMSGS=" << (ServerJoinPartAnnouncementsStatus()?1:0) << '\n';
-		ofsOutput << "\tBACKUPSENABLED=" << (ServerBackupStatus()?1:0) << '\n';
-		ofsOutput << "\tBACKUPSAVERATIO=" << BackupRatio() << '\n';
-		ofsOutput << "\tSAVESTIMER=" << ServerSavesTimerStatus() << '\n';
-		ofsOutput << "\tACCOUNTISOLATION=" << "1" << '\n';
-		ofsOutput << "\tUOGENABLED=" << (ServerUOGEnabled()?1:0) << '\n';
-		ofsOutput << "\tCUOENABLED=" << (ConnectUOServerPoll()?1:0) << '\n';
-		ofsOutput << "\tRANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tASSISTANTNEGOTIATION=" << (GetAssistantNegotiation()?1:0) << '\n';
-		ofsOutput << "\tKICKONASSISTANTSILENCE=" << (KickOnAssistantSilence()?1:0) << '\n';
-		ofsOutput << "\tCLASSICUOMAPTRACKER=" << (GetClassicUOMapTracker()?1:0) << '\n';
-		ofsOutput << "\tJSENGINESIZE=" << static_cast<UI16>(GetJSEngineSize()) << '\n';
-		ofsOutput << "\tUSEUNICODEMESSAGES=" << (UseUnicodeMessages()?1:0) << '\n';
-		ofsOutput << "\tCONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tSYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
-		ofsOutput << "\tMAXCLIENTBYTESIN=" << static_cast<UI32>(MaxClientBytesIn()) << '\n';
-		ofsOutput << "\tMAXCLIENTBYTESOUT=" << static_cast<UI32>(MaxClientBytesOut()) << '\n';
-		ofsOutput << "\tNETTRAFFICTIMEBAN=" << static_cast<UI32>(NetTrafficTimeban()) << '\n';
+		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
+		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
+		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
+		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
+		ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
+		ofsOutput << "NETRETRYCOUNT=" << ServerNetRetryCount() << '\n';
+		ofsOutput << "CONSOLELOG=" << ( ServerConsoleLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "NETWORKLOG=" << ( ServerNetworkLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "SPEECHLOG=" << ( ServerSpeechLog() ? 1 : 0 ) << '\n';
+		ofsOutput << "COMMANDPREFIX=" << ServerCommandPrefix() << '\n';
+		ofsOutput << "ANNOUNCEWORLDSAVES=" << ( ServerAnnounceSavesStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "JOINPARTMSGS=" << ( ServerJoinPartAnnouncementsStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "BACKUPSENABLED=" << ( ServerBackupStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "BACKUPSAVERATIO=" << BackupRatio() << '\n';
+		ofsOutput << "SAVESTIMER=" << ServerSavesTimerStatus() << '\n';
+		ofsOutput << "ACCOUNTISOLATION=" << "1" << '\n';
+		ofsOutput << "UOGENABLED=" << ( ServerUOGEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "CUOENABLED=" << ( ConnectUOServerPoll() ? 1 : 0 ) << '\n';
+		ofsOutput << "RANDOMSTARTINGLOCATION=" << ( ServerRandomStartingLocation() ? 1 : 0 ) << '\n';
+		ofsOutput << "ASSISTANTNEGOTIATION=" << ( GetAssistantNegotiation() ? 1 : 0 ) << '\n';
+		ofsOutput << "KICKONASSISTANTSILENCE=" << ( KickOnAssistantSilence() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLASSICUOMAPTRACKER=" << ( GetClassicUOMapTracker() ? 1 : 0 ) << '\n';
+		ofsOutput << "JSENGINESIZE=" << static_cast<UI16>( GetJSEngineSize() ) << '\n';
+		ofsOutput << "USEUNICODEMESSAGES=" << ( UseUnicodeMessages() ? 1 : 0 ) << '\n';
+		ofsOutput << "CONTEXTMENUS=" << ( ServerContextMenus() ? 1 : 0 ) << '\n';
+		ofsOutput << "SYSMESSAGECOLOUR=" << SysMsgColour() << '\n';
+		ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>( MaxClientBytesIn() ) << '\n';
+		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>( MaxClientBytesOut() ) << '\n';
+		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>( NetTrafficTimeban() ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
-		
+
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
-		ofsOutput << "\tCLIENTSUPPORT4000=" << (ClientSupport4000()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT5000=" << (ClientSupport5000()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT6000=" << (ClientSupport6000()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT6050=" << (ClientSupport6050()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT7000=" << (ClientSupport7000()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT7090=" << (ClientSupport7090()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT70160=" << (ClientSupport70160()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT70240=" << (ClientSupport70240()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT70300=" << (ClientSupport70300()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT70331=" << (ClientSupport70331()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT704565=" << (ClientSupport704565()?1:0) << '\n';
-		ofsOutput << "\tCLIENTSUPPORT70610=" << (ClientSupport70610()?1:0) << '\n';
+		ofsOutput << "CLIENTSUPPORT4000=" << ( ClientSupport4000() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT5000=" << ( ClientSupport5000() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT6000=" << ( ClientSupport6000() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT6050=" << ( ClientSupport6050() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT7000=" << ( ClientSupport7000() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT7090=" << ( ClientSupport7090() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70160=" << ( ClientSupport70160() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70240=" << ( ClientSupport70240() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70300=" << ( ClientSupport70300() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70331=" << ( ClientSupport70331() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT704565=" << ( ClientSupport704565() ? 1 : 0 ) << '\n';
+		ofsOutput << "CLIENTSUPPORT70610=" << ( ClientSupport70610() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
-		
-		/*ofsOutput << '\n' << "[play server list]" << '\n' << "{" << '\n';
-		 
-		 std::vector< physicalServer >::iterator slIter;
-		 for( slIter = serverList.begin(); slIter != serverList.end(); ++slIter )
-		 {
-		 ofsOutput << "SERVERLIST=" << slIter->getName() << ",";
-		 if( !slIter->getDomain().empty() )
-		 ofsOutput << slIter->getDomain() << ",";
-		 else
-		 ofsOutput << slIter->getIP() << ",";
-		 ofsOutput << slIter->getPort() << '\n';
-		 }
-		 ofsOutput << "}" << '\n';*/
-		
+
 		ofsOutput << '\n' << "[directories]" << '\n' << "{" << '\n';
-		ofsOutput << "\tDIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
-		ofsOutput << "\tDATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
-		ofsOutput << "\tDEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
-		ofsOutput << "\tBOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
-		ofsOutput << "\tACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
-		ofsOutput << "\tSCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
-		ofsOutput << "\tSCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
-		ofsOutput << "\tBACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
-		ofsOutput << "\tMSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
-		ofsOutput << "\tSHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
-		ofsOutput << "\tACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
-		ofsOutput << "\tHTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
-		ofsOutput << "\tLOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
-		ofsOutput << "\tDICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
+		ofsOutput << "DIRECTORY=" << Directory( CSDDP_ROOT ) << '\n';
+		ofsOutput << "DATADIRECTORY=" << Directory( CSDDP_DATA ) << '\n';
+		ofsOutput << "DEFSDIRECTORY=" << Directory( CSDDP_DEFS ) << '\n';
+		ofsOutput << "BOOKSDIRECTORY=" << Directory( CSDDP_BOOKS ) << '\n';
+		ofsOutput << "ACTSDIRECTORY=" << Directory( CSDDP_ACCOUNTS ) << '\n';
+		ofsOutput << "SCRIPTSDIRECTORY=" << Directory( CSDDP_SCRIPTS ) << '\n';
+		ofsOutput << "SCRIPTDATADIRECTORY=" << Directory( CSDDP_SCRIPTDATA ) << '\n';
+		ofsOutput << "BACKUPDIRECTORY=" << Directory( CSDDP_BACKUP ) << '\n';
+		ofsOutput << "MSGBOARDDIRECTORY=" << Directory( CSDDP_MSGBOARD ) << '\n';
+		ofsOutput << "SHAREDDIRECTORY=" << Directory( CSDDP_SHARED ) << '\n';
+		ofsOutput << "ACCESSDIRECTORY=" << Directory( CSDDP_ACCESS ) << '\n';
+		ofsOutput << "HTMLDIRECTORY=" << Directory( CSDDP_HTML ) << '\n';
+		ofsOutput << "LOGSDIRECTORY=" << Directory( CSDDP_LOGS ) << '\n';
+		ofsOutput << "DICTIONARYDIRECTORY=" << Directory( CSDDP_DICTIONARIES ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[skill & stats]" << '\n' << "{" << '\n';
-		ofsOutput << "\tSKILLLEVEL=" << static_cast<UI16>(SkillLevel()) << '\n';
-		ofsOutput << "\tSKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
-		ofsOutput << "\tSKILLDELAY=" << static_cast<UI16>(ServerSkillDelayStatus()) << '\n';
-		ofsOutput << "\tSTATCAP=" << ServerStatCapStatus() << '\n';
-		ofsOutput << "\tSTATSAFFECTSKILLCHECKS=" << (StatsAffectSkillChecks()?1:0) << '\n';
-		ofsOutput << "\tEXTENDEDSTARTINGSTATS=" << (ExtendedStartingStats()?1:0) << '\n';
-		ofsOutput << "\tEXTENDEDSTARTINGSKILLS=" << (ExtendedStartingSkills()?1:0) << '\n';
-		ofsOutput << "\tMAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
-		ofsOutput << "\tMAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
-		ofsOutput << "\tSNOOPISCRIME=" << (SnoopIsCrime()?1:0) << '\n';
-		ofsOutput << "\tARMORAFFECTMANAREGEN=" << (ArmorAffectManaRegen() ? 1 : 0) << '\n';
+		ofsOutput << "SKILLLEVEL=" << static_cast<UI16>( SkillLevel() ) << '\n';
+		ofsOutput << "SKILLCAP=" << ServerSkillTotalCapStatus() << '\n';
+		ofsOutput << "SKILLDELAY=" << static_cast<UI16>( ServerSkillDelayStatus() ) << '\n';
+		ofsOutput << "STATCAP=" << ServerStatCapStatus() << '\n';
+		ofsOutput << "STATSAFFECTSKILLCHECKS=" << ( StatsAffectSkillChecks() ? 1 : 0 ) << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSTATS=" << ( ExtendedStartingStats() ? 1 : 0 ) << '\n';
+		ofsOutput << "EXTENDEDSTARTINGSKILLS=" << ( ExtendedStartingSkills() ? 1 : 0 ) << '\n';
+		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
+		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
+		ofsOutput << "SNOOPISCRIME=" << ( SnoopIsCrime() ? 1 : 0 ) << '\n';
+		ofsOutput << "ARMORAFFECTMANAREGEN=" << ( ArmorAffectManaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[timers]" << '\n' << "{" << '\n';
-		ofsOutput << "\tCORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
-		ofsOutput << "\tNPCCORPSEDECAYTIMER=" << SystemTimer( tSERVER_NPCCORPSEDECAY ) << '\n';
-		ofsOutput << "\tWEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
-		ofsOutput << "\tSHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
-		ofsOutput << "\tDECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
-		ofsOutput << "\tDECAYTIMERINHOUSE=" << SystemTimer( tSERVER_DECAYINHOUSE ) << '\n';
-		ofsOutput << "\tINVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << '\n';
-		ofsOutput << "\tOBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << '\n';
-		ofsOutput << "\tGATETIMER=" << SystemTimer( tSERVER_GATE ) << '\n';
-		ofsOutput << "\tPOISONTIMER=" << SystemTimer( tSERVER_POISON ) << '\n';
-		ofsOutput << "\tLOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << '\n';
-		ofsOutput << "\tHITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << '\n';
-		ofsOutput << "\tSTAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << '\n';
-		ofsOutput << "\tMANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << '\n';
-		ofsOutput << "\tBASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << '\n';
-		ofsOutput << "\tRANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
-		ofsOutput << "\tSPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
-		ofsOutput << "\tPETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
-		ofsOutput << "\tNPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
-		ofsOutput << "\tBLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
-		ofsOutput << "\tBLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
+		ofsOutput << "CORPSEDECAYTIMER=" << SystemTimer( tSERVER_CORPSEDECAY ) << '\n';
+		ofsOutput << "NPCCORPSEDECAYTIMER=" << SystemTimer( tSERVER_NPCCORPSEDECAY ) << '\n';
+		ofsOutput << "WEATHERTIMER=" << SystemTimer( tSERVER_WEATHER ) << '\n';
+		ofsOutput << "SHOPSPAWNTIMER=" << SystemTimer( tSERVER_SHOPSPAWN ) << '\n';
+		ofsOutput << "DECAYTIMER=" << SystemTimer( tSERVER_DECAY ) << '\n';
+		ofsOutput << "DECAYTIMERINHOUSE=" << SystemTimer( tSERVER_DECAYINHOUSE ) << '\n';
+		ofsOutput << "INVISIBILITYTIMER=" << SystemTimer( tSERVER_INVISIBILITY ) << '\n';
+		ofsOutput << "OBJECTUSETIMER=" << SystemTimer( tSERVER_OBJECTUSAGE ) << '\n';
+		ofsOutput << "GATETIMER=" << SystemTimer( tSERVER_GATE ) << '\n';
+		ofsOutput << "POISONTIMER=" << SystemTimer( tSERVER_POISON ) << '\n';
+		ofsOutput << "LOGINTIMEOUT=" << SystemTimer( tSERVER_LOGINTIMEOUT ) << '\n';
+		ofsOutput << "HITPOINTREGENTIMER=" << SystemTimer( tSERVER_HITPOINTREGEN ) << '\n';
+		ofsOutput << "STAMINAREGENTIMER=" << SystemTimer( tSERVER_STAMINAREGEN ) << '\n';
+		ofsOutput << "MANAREGENTIMER=" << SystemTimer( tSERVER_MANAREGEN ) << '\n';
+		ofsOutput << "BASEFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGBASE ) << '\n';
+		ofsOutput << "RANDOMFISHINGTIMER=" << SystemTimer( tSERVER_FISHINGRANDOM ) << '\n';
+		ofsOutput << "SPIRITSPEAKTIMER=" << SystemTimer( tSERVER_SPIRITSPEAK ) << '\n';
+		ofsOutput << "PETOFFLINECHECKTIMER=" << SystemTimer( tSERVER_PETOFFLINECHECK ) << '\n';
+		ofsOutput << "NPCFLAGUPDATETIMER=" << SystemTimer( tSERVER_NPCFLAGUPDATETIMER ) << '\n';
+		ofsOutput << "BLOODDECAYTIMER=" << SystemTimer( tSERVER_BLOODDECAY ) << '\n';
+		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[settings]" << '\n' << "{" << '\n';
-		ofsOutput << "\tLOOTDECAYSWITHCORPSE=" << (CorpseLootDecay()?1:0) << '\n';
-		ofsOutput << "\tGUARDSACTIVE=" << (GuardsStatus()?1:0) << '\n';
-		ofsOutput << "\tDEATHANIMATION=" << (DeathAnimationStatus()?1:0) << '\n';
-		ofsOutput << "\tAMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
-		ofsOutput << "\tAMBIENTFOOTSTEPS=" << (AmbientFootsteps()?1:0) << '\n';
-		ofsOutput << "\tINTERNALACCOUNTCREATION=" << (InternalAccountStatus()?1:0) << '\n';
-		ofsOutput << "\tSHOWOFFLINEPCS=" << (ShowOfflinePCs()?1:0) << '\n';
-		ofsOutput << "\tROGUESENABLED=" << (RogueStatus()?1:0) << '\n';
-		ofsOutput << "\tPLAYERPERSECUTION=" << (PlayerPersecutionStatus()?1:0) << '\n';
-		ofsOutput << "\tACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
-		ofsOutput << "\tHTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
-		ofsOutput << "\tSELLBYNAME=" << (SellByNameStatus()?1:0) << '\n';
-		ofsOutput << "\tSELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
-		ofsOutput << "\tBANKBUYTHRESHOLD=" << BuyThreshold() << '\n';
-		ofsOutput << "\tTRADESYSTEM=" << (TradeSystemStatus()?1:0) << '\n';
-		ofsOutput << "\tRANKSYSTEM=" << (RankSystemStatus()?1:0) << '\n';
-		ofsOutput << "\tCUTSCROLLREQUIREMENTS=" << (CutScrollRequirementStatus()?1:0) << '\n';
-		ofsOutput << "\tNPCTRAININGENABLED=" << (NPCTrainingStatus()?1:0) << '\n';
-		ofsOutput << "\tHIDEWHILEMOUNTED=" << (CharHideWhileMounted()?1:0) << '\n';
-		//ofsOutput << "WEIGHTPERSTR=" << static_cast<UI16>(WeightPerStr()) << '\n';
-		ofsOutput << "\tWEIGHTPERSTR=" << static_cast<R32>(WeightPerStr()) << '\n';
-		ofsOutput << "\tPOLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
-		ofsOutput << "\tCLIENTFEATURES=" << GetClientFeatures() << '\n';
-		ofsOutput << "\tSERVERFEATURES=" << GetServerFeatures() << '\n';
-		ofsOutput << "\tSPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
-		ofsOutput << "\tOVERLOADPACKETS=" << (ServerOverloadPackets()?1:0) << '\n';
-		ofsOutput << "\tADVANCEDPATHFINDING=" << (AdvancedPathfinding()?1:0) << '\n';
-		ofsOutput << "\tLOOTINGISCRIME=" << (LootingIsCrime()?1:0) << '\n';
-		ofsOutput << "\tBASICTOOLTIPSONLY=" << (BasicTooltipsOnly()?1:0) << '\n';
-		ofsOutput << "\tSHOWNPCTITLESINTOOLTIPS=" << (ShowNpcTitlesInTooltips()?1:0) << '\n';
-		ofsOutput << "\tGLOBALITEMDECAY=" << (GlobalItemDecay()?1:0) << '\n';
-		ofsOutput << "\tSCRIPTITEMSDECAYABLE=" << (ScriptItemsDecayable()?1:0) << '\n';
-		ofsOutput << "\tBASEITEMSDECAYABLE=" << (BaseItemsDecayable()?1:0) << '\n';
-		ofsOutput << "\tPAPERDOLLGUILDBUTTON=" << (PaperdollGuildButton()?1:0) << '\n';
-		ofsOutput << "\tFISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
-		ofsOutput << "\tITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
-		ofsOutput << "\tMAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
-		ofsOutput << "\tMAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
-		ofsOutput << "\tFORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
-		ofsOutput << "\tMAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
-		ofsOutput << "\tTOOLUSELIMIT=" << ToolUseLimit() << '\n';
-		ofsOutput << "\tTOOLUSEBREAK=" << ToolUseBreak() << '\n';
-		ofsOutput << "\tITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
-		ofsOutput << "\tCRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
-		ofsOutput << "\tMAXSAFETELEPORTSPERDAY=" << static_cast<UI16>(MaxSafeTeleportsPerDay()) << '\n';
-		ofsOutput << "\tTELEPORTTONEARESTSAFELOCATION=" << (TeleportToNearestSafeLocation()?1:0) << '\n';
-		ofsOutput << "\tALLOWAWAKENPCS=" << (AllowAwakeNPCs()?1:0) << '\n';
+		ofsOutput << "LOOTDECAYSWITHCORPSE=" << ( CorpseLootDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "GUARDSACTIVE=" << ( GuardsStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "DEATHANIMATION=" << ( DeathAnimationStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "AMBIENTSOUNDS=" << WorldAmbientSounds() << '\n';
+		ofsOutput << "AMBIENTFOOTSTEPS=" << ( AmbientFootsteps() ? 1 : 0 ) << '\n';
+		ofsOutput << "INTERNALACCOUNTCREATION=" << ( InternalAccountStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWOFFLINEPCS=" << ( ShowOfflinePCs() ? 1 : 0 ) << '\n';
+		ofsOutput << "ROGUESENABLED=" << ( RogueStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "PLAYERPERSECUTION=" << ( PlayerPersecutionStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "ACCOUNTFLUSH=" << AccountFlushTimer() << '\n';
+		ofsOutput << "HTMLSTATUSENABLED=" << HtmlStatsStatus() << '\n';
+		ofsOutput << "SELLBYNAME=" << ( SellByNameStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "SELLMAXITEMS=" << SellMaxItemsStatus() << '\n';
+		ofsOutput << "GLOBALRESTOCKMULTIPLIER=" << GlobalRestockMultiplier() << '\n';
+		ofsOutput << "BANKBUYTHRESHOLD=" << BuyThreshold() << '\n';
+		ofsOutput << "TRADESYSTEM=" << ( TradeSystemStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "RANKSYSTEM=" << ( RankSystemStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "DISPLAYMAKERSMARK=" << ( DisplayMakersMark() ? 1 : 0 ) << '\n';
+		ofsOutput << "CUTSCROLLREQUIREMENTS=" << ( CutScrollRequirementStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "NPCTRAININGENABLED=" << ( NPCTrainingStatus() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIDEWHILEMOUNTED=" << ( CharHideWhileMounted() ? 1 : 0 ) << '\n';
+		ofsOutput << "WEIGHTPERSTR=" << static_cast<R32>( WeightPerStr() ) << '\n';
+		ofsOutput << "POLYDURATION=" << SystemTimer( tSERVER_POLYMORPH ) << '\n';
+		ofsOutput << "CLIENTFEATURES=" << GetClientFeatures() << '\n';
+		ofsOutput << "SERVERFEATURES=" << GetServerFeatures() << '\n';
+		ofsOutput << "SPAWNREGIONSFACETS=" << GetSpawnRegionsFacetStatus() << '\n';
+		ofsOutput << "OVERLOADPACKETS=" << ( ServerOverloadPackets() ? 1 : 0 ) << '\n';
+		ofsOutput << "ADVANCEDPATHFINDING=" << ( AdvancedPathfinding() ? 1 : 0 ) << '\n';
+		ofsOutput << "LOOTINGISCRIME=" << ( LootingIsCrime() ? 1 : 0 ) << '\n';
+		ofsOutput << "BASICTOOLTIPSONLY=" << ( BasicTooltipsOnly() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWNPCTITLESINTOOLTIPS=" << ( ShowNpcTitlesInTooltips() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWNPCTITLESOVERHEAD=" << ( ShowNpcTitlesOverhead() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWINVULNERABLETAGOVERHEAD=" << ( ShowInvulnerableTagOverhead() ? 1 : 0 ) << '\n';
+		ofsOutput << "GLOBALITEMDECAY=" << ( GlobalItemDecay() ? 1 : 0 ) << '\n';
+		ofsOutput << "SCRIPTITEMSDECAYABLE=" << ( ScriptItemsDecayable() ? 1 : 0 ) << '\n';
+		ofsOutput << "BASEITEMSDECAYABLE=" << ( BaseItemsDecayable() ? 1 : 0 ) << '\n';
+		ofsOutput << "PAPERDOLLGUILDBUTTON=" << ( PaperdollGuildButton() ? 1 : 0 ) << '\n';
+		ofsOutput << "FISHINGSTAMINALOSS=" << FishingStaminaLoss() << '\n';
+		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
+		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
+		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
+		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
+		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
+		ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
+		ofsOutput << "TOOLUSEBREAK=" << ToolUseBreak() << '\n';
+		ofsOutput << "ITEMREPAIRDURABILITYLOSS=" << ItemRepairDurabilityLoss() << '\n';
+		ofsOutput << "CRAFTCOLOUREDWEAPONS=" << CraftColouredWeapons() << '\n';
+		ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<UI16>( MaxSafeTeleportsPerDay() ) << '\n';
+		ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << ( TeleportToNearestSafeLocation() ? 1 : 0 ) << '\n';
+		ofsOutput << "ALLOWAWAKENPCS=" << ( AllowAwakeNPCs() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
-		ofsOutput << "\tMAXCONTROLSLOTS=" << static_cast<UI16>(MaxControlSlots()) << '\n';
-		ofsOutput << "\tMAXFOLLOWERS=" << static_cast<UI16>(MaxFollowers()) << '\n';
-		ofsOutput << "\tMAXPETOWNERS=" << static_cast<UI16>(MaxPetOwners()) << '\n';
-		ofsOutput << "\tCHECKPETCONTROLDIFFICULTY=" << ( CheckPetControlDifficulty() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tPETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
-		ofsOutput << "\tPETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
-		ofsOutput << "\tPETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
+		ofsOutput << "MAXCONTROLSLOTS=" << static_cast<UI16>( MaxControlSlots() ) << '\n';
+		ofsOutput << "MAXFOLLOWERS=" << static_cast<UI16>( MaxFollowers() ) << '\n';
+		ofsOutput << "MAXPETOWNERS=" << static_cast<UI16>( MaxPetOwners() ) << '\n';
+		ofsOutput << "CHECKPETCONTROLDIFFICULTY=" << ( CheckPetControlDifficulty() ? 1 : 0 ) << '\n';
+		ofsOutput << "PETLOYALTYGAINONSUCCESS=" << static_cast<UI16>( GetPetLoyaltyGainOnSuccess() ) << '\n';
+		ofsOutput << "PETLOYALTYLOSSONFAILURE=" << static_cast<UI16>( GetPetLoyaltyLossOnFailure() ) << '\n';
+		ofsOutput << "PETLOYALTYRATE=" << SystemTimer( tSERVER_LOYALTYRATE ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[speedup]" << '\n' << "{" << '\n';
-		ofsOutput << "\tCHECKITEMS=" << CheckItemsSpeed() << '\n';
-		ofsOutput << "\tCHECKBOATS=" << CheckBoatSpeed() << '\n';
-		ofsOutput << "\tCHECKNPCAI=" << CheckNpcAISpeed() << '\n';
-		ofsOutput << "\tCHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
-		ofsOutput << "\tNPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
-		ofsOutput << "\tNPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
-		ofsOutput << "\tNPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
-		ofsOutput << "\tNPCMOUNTEDWALKINGSPEED=" << NPCMountedWalkingSpeed() << '\n';
-		ofsOutput << "\tNPCMOUNTEDRUNNINGSPEED=" << NPCMountedRunningSpeed() << '\n';
-		ofsOutput << "\tNPCMOUNTEDFLEEINGSPEED=" << NPCMountedFleeingSpeed() << '\n';
-		ofsOutput << "\tNPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
-		ofsOutput << "\tGLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
+		ofsOutput << "CHECKITEMS=" << CheckItemsSpeed() << '\n';
+		ofsOutput << "CHECKBOATS=" << CheckBoatSpeed() << '\n';
+		ofsOutput << "CHECKNPCAI=" << CheckNpcAISpeed() << '\n';
+		ofsOutput << "CHECKSPAWNREGIONS=" << CheckSpawnRegionSpeed() << '\n';
+		ofsOutput << "NPCMOVEMENTSPEED=" << NPCWalkingSpeed() << '\n';
+		ofsOutput << "NPCRUNNINGSPEED=" << NPCRunningSpeed() << '\n';
+		ofsOutput << "NPCFLEEINGSPEED=" << NPCFleeingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDWALKINGSPEED=" << NPCMountedWalkingSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDRUNNINGSPEED=" << NPCMountedRunningSpeed() << '\n';
+		ofsOutput << "NPCMOUNTEDFLEEINGSPEED=" << NPCMountedFleeingSpeed() << '\n';
+		ofsOutput << "NPCSPELLCASTSPEED=" << NPCSpellCastSpeed() << '\n';
+		ofsOutput << "GLOBALATTACKSPEED=" << GlobalAttackSpeed() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[message boards]" << '\n' << "{" << '\n';
-		ofsOutput << "\tPOSTINGLEVEL=" << static_cast<UI16>(MsgBoardPostingLevel()) << '\n';
-		ofsOutput << "\tREMOVALLEVEL=" << static_cast<UI16>(MsgBoardPostRemovalLevel()) << '\n';
+		ofsOutput << "POSTINGLEVEL=" << static_cast<UI16>( MsgBoardPostingLevel() ) << '\n';
+		ofsOutput << "REMOVALLEVEL=" << static_cast<UI16>( MsgBoardPostRemovalLevel() ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[escorts]" << '\n' << "{" << '\n';
-		ofsOutput << "\tESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << '\n';
-		ofsOutput << "\tESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
-		ofsOutput << "\tESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
+		ofsOutput << "ESCORTENABLED=" << ( EscortsEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "ESCORTINITEXPIRE=" << SystemTimer( tSERVER_ESCORTWAIT ) << '\n';
+		ofsOutput << "ESCORTACTIVEEXPIRE=" << SystemTimer( tSERVER_ESCORTACTIVE ) << '\n';
+		ofsOutput << "ESCORTDONEEXPIRE=" << SystemTimer( tSERVER_ESCORTDONE ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[worldlight]" << '\n' << "{" << '\n';
-		ofsOutput << "\tDUNGEONLEVEL=" << static_cast<UI16>(DungeonLightLevel()) << '\n';
-		ofsOutput << "\tBRIGHTLEVEL=" << static_cast<UI16>(WorldLightBrightLevel()) << '\n';
-		ofsOutput << "\tDARKLEVEL=" << static_cast<UI16>(WorldLightDarkLevel()) << '\n';
-		ofsOutput << "\tSECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
+		ofsOutput << "DUNGEONLEVEL=" << static_cast<UI16>( DungeonLightLevel() ) << '\n';
+		ofsOutput << "BRIGHTLEVEL=" << static_cast<UI16>( WorldLightBrightLevel() ) << '\n';
+		ofsOutput << "DARKLEVEL=" << static_cast<UI16>( WorldLightDarkLevel() ) << '\n';
+		ofsOutput << "SECONDSPERUOMINUTE=" << ServerSecondsPerUOMinute() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[tracking]" << '\n' << "{" << '\n';
-		ofsOutput << "\tBASERANGE=" << TrackingBaseRange() << '\n';
-		ofsOutput << "\tBASETIMER=" << TrackingBaseTimer() << '\n';
-		ofsOutput << "\tMAXTARGETS=" << static_cast<UI16>(TrackingMaxTargets()) << '\n';
-		ofsOutput << "\tMSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
+		ofsOutput << "BASERANGE=" << TrackingBaseRange() << '\n';
+		ofsOutput << "BASETIMER=" << TrackingBaseTimer() << '\n';
+		ofsOutput << "MAXTARGETS=" << static_cast<UI16>( TrackingMaxTargets() ) << '\n';
+		ofsOutput << "MSGREDISPLAYTIME=" << TrackingRedisplayTime() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[reputation]" << '\n' << "{" << '\n';
-		ofsOutput << "\tMURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
-		ofsOutput << "\tMAXKILLS=" << RepMaxKills() << '\n';
-		ofsOutput << "\tCRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
+		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
+		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
+		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
-		ofsOutput << "\tRESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
-		ofsOutput << "\tMINECHECK=" << static_cast<UI16>(MineCheck()) << '\n';
-		ofsOutput << "\tOREPERAREA=" << ResOre() << '\n';
-		ofsOutput << "\tORERESPAWNTIMER=" << ResOreTime() << '\n';
-		ofsOutput << "\tLOGSPERAREA=" << ResLogs() << '\n';
-		ofsOutput << "\tLOGSRESPAWNTIMER=" << ResLogTime() << '\n';
-		ofsOutput << "\tFISHPERAREA=" << ResFish() << '\n';
-		ofsOutput << "\tFISHRESPAWNTIMER=" << ResFishTime() << '\n';
+		ofsOutput << "RESOURCEAREASIZE=" << ResourceAreaSize() << '\n';
+		ofsOutput << "MINECHECK=" << static_cast<UI16>( MineCheck() ) << '\n';
+		ofsOutput << "OREPERAREA=" << ResOre() << '\n';
+		ofsOutput << "ORERESPAWNTIMER=" << ResOreTime() << '\n';
+		ofsOutput << "LOGSPERAREA=" << ResLogs() << '\n';
+		ofsOutput << "LOGSRESPAWNTIMER=" << ResLogTime() << '\n';
+		ofsOutput << "FISHPERAREA=" << ResFish() << '\n';
+		ofsOutput << "FISHRESPAWNTIMER=" << ResFishTime() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[hunger]" << '\n' << "{" << '\n';
-		ofsOutput << "\tHUNGERENABLED=" << (HungerSystemEnabled()?1:0) << '\n';
-		ofsOutput << "\tHUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
-		ofsOutput << "\tHUNGERDMGVAL=" << HungerDamage() << '\n';
-		ofsOutput << "\tPETHUNGEROFFLINE=" << (PetHungerOffline()?1:0) << '\n';
-		ofsOutput << "\tPETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
+		ofsOutput << "HUNGERENABLED=" << ( HungerSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "HUNGERRATE=" << SystemTimer( tSERVER_HUNGERRATE ) << '\n';
+		ofsOutput << "HUNGERDMGVAL=" << HungerDamage() << '\n';
+		ofsOutput << "PETHUNGEROFFLINE=" << ( PetHungerOffline() ? 1 : 0 ) << '\n';
+		ofsOutput << "PETOFFLINETIMEOUT=" << PetOfflineTimeout() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[thirst]" << '\n' << "{" << '\n';
-		ofsOutput << "\tTHIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tTHIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
-		ofsOutput << "\tTHIRSTDRAINVAL=" << ThirstDrain() << '\n';
-		ofsOutput << "\tPETTHIRSTOFFLINE=" << (PetThirstOffline()?1:0) << '\n';
+		ofsOutput << "THIRSTENABLED=" << ( ThirstSystemEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "THIRSTRATE=" << SystemTimer( tSERVER_THIRSTRATE ) << '\n';
+		ofsOutput << "THIRSTDRAINVAL=" << ThirstDrain() << '\n';
+		ofsOutput << "PETTHIRSTOFFLINE=" << ( PetThirstOffline() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[combat]" << '\n' << "{" << '\n';
-		ofsOutput << "\tMAXRANGE=" << CombatMaxRange() << '\n';
-		ofsOutput << "\tSPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
-		ofsOutput << "\tDISPLAYHITMSG=" << (CombatDisplayHitMessage()?1:0) << '\n';
-		ofsOutput << "\tDISPLAYDAMAGENUMBERS=" << (CombatDisplayDamageNumbers()?1:0) << '\n';
-		ofsOutput << "\tMONSTERSVSANIMALS=" << (CombatMonstersVsAnimals()?1:0) << '\n';
-		ofsOutput << "\tANIMALATTACKCHANCE=" << static_cast<UI16>(CombatAnimalsAttackChance()) << '\n';
-		ofsOutput << "\tANIMALSGUARDED=" << (CombatAnimalsGuarded()?1:0) << '\n';
-		ofsOutput << "\tNPCDAMAGERATE=" << CombatNPCDamageRate() << '\n';
-		ofsOutput << "\tNPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
-		ofsOutput << "\tNPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
-		ofsOutput << "\tATTACKSTAMINA=" << CombatAttackStamina() << '\n';
-		ofsOutput << "\tATTACKSPEEDFROMSTAMINA=" << (CombatAttackSpeedFromStamina()?1:0) << '\n';
-		ofsOutput << "\tARCHERYHITBONUS=" << static_cast<SI16>(CombatArcheryHitBonus()) << '\n';
-		ofsOutput << "\tARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
-		ofsOutput << "\tSHOOTONANIMALBACK=" << (ShootOnAnimalBack()?1:0) << '\n';
-		ofsOutput << "\tWEAPONDAMAGECHANCE=" << static_cast<UI16>(CombatWeaponDamageChance()) << '\n';
-		ofsOutput << "\tWEAPONDAMAGEMIN=" << static_cast<UI16>(CombatWeaponDamageMin()) << '\n';
-		ofsOutput << "\tWEAPONDAMAGEMAX=" << static_cast<UI16>(CombatWeaponDamageMax()) << '\n';
-		ofsOutput << "\tARMORDAMAGECHANCE=" << static_cast<UI16>(CombatArmorDamageChance()) << '\n';
-		ofsOutput << "\tARMORDAMAGEMIN=" << static_cast<UI16>(CombatArmorDamageMin()) << '\n';
-		ofsOutput << "\tARMORDAMAGEMAX=" << static_cast<UI16>(CombatArmorDamageMax()) << '\n';
-		ofsOutput << "\tPARRYDAMAGECHANCE=" << static_cast<UI16>(CombatParryDamageChance()) << '\n';
-		ofsOutput << "\tPARRYDAMAGEMIN=" << static_cast<UI16>(CombatParryDamageMin()) << '\n';
-		ofsOutput << "\tPARRYDAMAGEMAX=" << static_cast<UI16>(CombatParryDamageMax()) << '\n';
-		ofsOutput << "\tARMORCLASSDAMAGEBONUS=" << (CombatArmorClassDamageBonus()?1:0) << '\n';
-		ofsOutput << "\tALCHEMYBONUSENABLED=" << (AlchemyDamageBonusEnabled()?1:0) << '\n';
-		ofsOutput << "\tALCHEMYBONUSMODIFIER=" << static_cast<UI16>(AlchemyDamageBonusModifier()) << '\n';
-		ofsOutput << "\tBLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
-		ofsOutput << "\tITEMSINTERRUPTCASTING=" << (ItemsInterruptCasting()?1:0) << '\n';
+		ofsOutput << "MAXRANGE=" << CombatMaxRange() << '\n';
+		ofsOutput << "SPELLMAXRANGE=" << CombatMaxSpellRange() << '\n';
+		ofsOutput << "DISPLAYHITMSG=" << ( CombatDisplayHitMessage() ? 1 : 0 ) << '\n';
+		ofsOutput << "DISPLAYDAMAGENUMBERS=" << ( CombatDisplayDamageNumbers() ? 1 : 0 ) << '\n';
+		ofsOutput << "MONSTERSVSANIMALS=" << ( CombatMonstersVsAnimals() ? 1 : 0 ) << '\n';
+		ofsOutput << "ANIMALATTACKCHANCE=" << static_cast<UI16>( CombatAnimalsAttackChance() ) << '\n';
+		ofsOutput << "ANIMALSGUARDED=" << ( CombatAnimalsGuarded() ? 1 : 0 ) << '\n';
+		ofsOutput << "NPCDAMAGERATE=" << CombatNPCDamageRate() << '\n';
+		ofsOutput << "NPCBASEFLEEAT=" << CombatNPCBaseFleeAt() << '\n';
+		ofsOutput << "NPCBASEREATTACKAT=" << CombatNPCBaseReattackAt() << '\n';
+		ofsOutput << "ATTACKSTAMINA=" << CombatAttackStamina() << '\n';
+		ofsOutput << "ATTACKSPEEDFROMSTAMINA=" << ( CombatAttackSpeedFromStamina() ? 1 : 0 ) << '\n';
+		ofsOutput << "ARCHERYHITBONUS=" << static_cast<SI16>( CombatArcheryHitBonus() ) << '\n';
+		ofsOutput << "ARCHERYSHOOTDELAY=" << CombatArcheryShootDelay() << '\n';
+		ofsOutput << "SHOOTONANIMALBACK=" << ( ShootOnAnimalBack() ? 1 : 0 ) << '\n';
+		ofsOutput << "WEAPONDAMAGECHANCE=" << static_cast<UI16>( CombatWeaponDamageChance() ) << '\n';
+		ofsOutput << "WEAPONDAMAGEMIN=" << static_cast<UI16>( CombatWeaponDamageMin() ) << '\n';
+		ofsOutput << "WEAPONDAMAGEMAX=" << static_cast<UI16>( CombatWeaponDamageMax() ) << '\n';
+		ofsOutput << "ARMORDAMAGECHANCE=" << static_cast<UI16>( CombatArmorDamageChance() ) << '\n';
+		ofsOutput << "ARMORDAMAGEMIN=" << static_cast<UI16>( CombatArmorDamageMin() ) << '\n';
+		ofsOutput << "ARMORDAMAGEMAX=" << static_cast<UI16>( CombatArmorDamageMax() ) << '\n';
+		ofsOutput << "PARRYDAMAGECHANCE=" << static_cast<UI16>( CombatParryDamageChance() ) << '\n';
+		ofsOutput << "PARRYDAMAGEMIN=" << static_cast<UI16>( CombatParryDamageMin() ) << '\n';
+		ofsOutput << "PARRYDAMAGEMAX=" << static_cast<UI16>( CombatParryDamageMax() ) << '\n';
+		ofsOutput << "ARMORCLASSDAMAGEBONUS=" << ( CombatArmorClassDamageBonus() ? 1 : 0 ) << '\n';
+		ofsOutput << "ALCHEMYBONUSENABLED=" << ( AlchemyDamageBonusEnabled() ? 1 : 0 ) << '\n';
+		ofsOutput << "ALCHEMYBONUSMODIFIER=" << static_cast<UI16>( AlchemyDamageBonusModifier() ) << '\n';
+		ofsOutput << "BLOODEFFECTCHANCE=" << static_cast<UI16>( CombatBloodEffectChance() ) << '\n';
+		ofsOutput << "ITEMSINTERRUPTCASTING=" << ( ItemsInterruptCasting() ? 1 : 0 ) << '\n';
+		ofsOutput << "PETCOMBATTRAINING=" << ( PetCombatTraining() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIRELINGCOMBATTRAINING=" << ( HirelingCombatTraining() ? 1 : 0 ) << '\n';
+		ofsOutput << "NPCCOMBATTRAINING=" << ( NpcCombatTraining() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
+		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
+
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[magic]" << '\n' << "{" << '\n';
-		ofsOutput << "\tTRAVELSPELLSFROMBOATKEYS=" << ( TravelSpellsFromBoatKeys() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tTRAVELSPELLSWHILEOVERWEIGHT=" << ( TravelSpellsWhileOverweight() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tMARKRUNESINMULTIS=" << ( MarkRunesInMultis() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tTRAVELSPELLSBETWEENWORLDS=" << ( TravelSpellsBetweenWorlds() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tTRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
-		ofsOutput << "\tHIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
+		ofsOutput << "TRAVELSPELLSFROMBOATKEYS=" << ( TravelSpellsFromBoatKeys() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEOVERWEIGHT=" << ( TravelSpellsWhileOverweight() ? 1 : 0 ) << '\n';
+		ofsOutput << "MARKRUNESINMULTIS=" << ( MarkRunesInMultis() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSBETWEENWORLDS=" << ( TravelSpellsBetweenWorlds() ? 1 : 0 ) << '\n';
+		ofsOutput << "TRAVELSPELLSWHILEAGGRESSOR=" << ( TravelSpellsWhileAggressor() ? 1 : 0 ) << '\n';
+		ofsOutput << "HIDESTATSFORUNKNOWNMAGICITEMS=" << HideStatsForUnknownMagicItems() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[start locations]" << '\n' << "{" << '\n';
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
-			ofsOutput << "\tLOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceID << "," << startlocations[lCtr].clilocDesc << '\n';
+		{
+			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceID << "," << startlocations[lCtr].clilocDesc << '\n';
+		}
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[startup]" << '\n' << "{" << '\n';
-		ofsOutput << "\tSTARTGOLD=" << ServerStartGold() << '\n';
-		ofsOutput << "\tSTARTPRIVS=" << ServerStartPrivs() << '\n';
+		ofsOutput << "STARTGOLD=" << ServerStartGold() << '\n';
+		ofsOutput << "STARTPRIVS=" << ServerStartPrivs() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[gumps]" << '\n' << "{" << '\n';
-		ofsOutput << "\tTITLECOLOUR=" << TitleColour() << '\n';
-		ofsOutput << "\tLEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
-		ofsOutput << "\tRIGHTTEXTCOLOUR=" << RightTextColour() << '\n';
-		ofsOutput << "\tBUTTONCANCEL=" << ButtonCancel() << '\n';
-		ofsOutput << "\tBUTTONLEFT=" << ButtonLeft() << '\n';
-		ofsOutput << "\tBUTTONRIGHT=" << ButtonRight() << '\n';
-		ofsOutput << "\tBACKGROUNDPIC=" << BackgroundPic() << '\n';
+		ofsOutput << "TITLECOLOUR=" << TitleColour() << '\n';
+		ofsOutput << "LEFTTEXTCOLOUR=" << LeftTextColour() << '\n';
+		ofsOutput << "RIGHTTEXTCOLOUR=" << RightTextColour() << '\n';
+		ofsOutput << "BUTTONCANCEL=" << ButtonCancel() << '\n';
+		ofsOutput << "BUTTONLEFT=" << ButtonLeft() << '\n';
+		ofsOutput << "BUTTONRIGHT=" << ButtonRight() << '\n';
+		ofsOutput << "BACKGROUNDPIC=" << BackgroundPic() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[houses]" << '\n' << "{" << '\n';
-		ofsOutput << "\tTRACKHOUSESPERACCOUNT=" << (TrackHousesPerAccount()?1:0) << '\n';
-		ofsOutput << "\tCANOWNANDCOOWNHOUSES=" << (CanOwnAndCoOwnHouses()?1:0) << '\n';
-		ofsOutput << "\tCOOWNHOUSESONSAMEACCOUNT=" << (CoOwnHousesOnSameAccount()?1:0) << '\n';
-		ofsOutput << "\tITEMDECAYINHOUSES=" << (ItemDecayInHouses()?1:0) << '\n';
-		ofsOutput << "\tPROTECTPRIVATEHOUSES=" << (ProtectPrivateHouses()?1:0) << '\n';
-		ofsOutput << "\tMAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
-		ofsOutput << "\tMAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
+		ofsOutput << "TRACKHOUSESPERACCOUNT=" << ( TrackHousesPerAccount() ? 1 : 0 ) << '\n';
+		ofsOutput << "CANOWNANDCOOWNHOUSES=" << ( CanOwnAndCoOwnHouses() ? 1 : 0 ) << '\n';
+		ofsOutput << "COOWNHOUSESONSAMEACCOUNT=" << ( CoOwnHousesOnSameAccount() ? 1 : 0 ) << '\n';
+		ofsOutput << "ITEMDECAYINHOUSES=" << ( ItemDecayInHouses() ? 1 : 0 ) << '\n';
+		ofsOutput << "PROTECTPRIVATEHOUSES=" << ( ProtectPrivateHouses() ? 1 : 0 ) << '\n';
+		ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
+		ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
-		ofsOutput << "\tPOLLTIME=" << TownNumSecsPollOpen() << '\n';
-		ofsOutput << "\tMAYORTIME=" << TownNumSecsAsMayor() << '\n';
-		ofsOutput << "\tTAXPERIOD=" << TownTaxPeriod() << '\n';
-		ofsOutput << "\tGUARDSPAID=" << TownGuardPayment() << '\n';
+		ofsOutput << "POLLTIME=" << TownNumSecsPollOpen() << '\n';
+		ofsOutput << "MAYORTIME=" << TownNumSecsAsMayor() << '\n';
+		ofsOutput << "TAXPERIOD=" << TownTaxPeriod() << '\n';
+		ofsOutput << "GUARDSPAID=" << TownGuardPayment() << '\n';
 		ofsOutput << "}" << '\n';
-		
+
 		ofsOutput << '\n' << "[disabled assistant features]" << '\n' << "{" << '\n';
-		ofsOutput << "\tAF_FILTERWEATHER=" << (GetDisabledAssistantFeature( AF_FILTERWEATHER )?1:0) << '\n';
-		ofsOutput << "\tAF_FILTERLIGHT=" << (GetDisabledAssistantFeature( AF_FILTERLIGHT )?1:0) << '\n';
-		ofsOutput << "\tAF_SMARTTARGET=" << (GetDisabledAssistantFeature( AF_SMARTTARGET )?1:0) << '\n';
-		ofsOutput << "\tAF_RANGEDTARGET=" << (GetDisabledAssistantFeature( AF_RANGEDTARGET )?1:0) << '\n';
-		ofsOutput << "\tAF_AUTOOPENDOORS=" << (GetDisabledAssistantFeature( AF_AUTOOPENDOORS )?1:0) << '\n';
-		ofsOutput << "\tAF_DEQUIPONCAST=" << (GetDisabledAssistantFeature( AF_DEQUIPONCAST )?1:0) << '\n';
-		ofsOutput << "\tAF_AUTOPOTIONEQUIP=" << (GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP )?1:0) << '\n';
-		ofsOutput << "\tAF_POISONEDCHECKS=" << (GetDisabledAssistantFeature( AF_POISONEDCHECKS )?1:0) << '\n';
-		ofsOutput << "\tAF_LOOPEDMACROS=" << (GetDisabledAssistantFeature( AF_LOOPEDMACROS )?1:0) << '\n';
-		ofsOutput << "\tAF_USEONCEAGENT=" << (GetDisabledAssistantFeature( AF_USEONCEAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_RESTOCKAGENT=" << (GetDisabledAssistantFeature( AF_RESTOCKAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_SELLAGENT=" << (GetDisabledAssistantFeature( AF_SELLAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_BUYAGENT=" << (GetDisabledAssistantFeature( AF_BUYAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_POTIONHOTKEYS=" << (GetDisabledAssistantFeature( AF_POTIONHOTKEYS )?1:0) << '\n';
-		ofsOutput << "\tAF_RANDOMTARGETS=" << (GetDisabledAssistantFeature( AF_RANDOMTARGETS )?1:0) << '\n';
-		ofsOutput << "\tAF_CLOSESTTARGETS=" << (GetDisabledAssistantFeature( AF_CLOSESTTARGETS )?1:0) << '\n';
-		ofsOutput << "\tAF_OVERHEADHEALTH=" << (GetDisabledAssistantFeature( AF_OVERHEADHEALTH )?1:0) << '\n';
-		ofsOutput << "\tAF_AUTOLOOTAGENT=" << (GetDisabledAssistantFeature( AF_AUTOLOOTAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_BONECUTTERAGENT=" << (GetDisabledAssistantFeature( AF_BONECUTTERAGENT )?1:0) << '\n';
-		ofsOutput << "\tAF_JSCRIPTMACROS=" << (GetDisabledAssistantFeature( AF_JSCRIPTMACROS )?1:0) << '\n';
-		ofsOutput << "\tAF_AUTOREMOUNT=" << (GetDisabledAssistantFeature( AF_AUTOREMOUNT )?1:0) << '\n';
-		ofsOutput << "\tAF_AUTOBANDAGE=" << (GetDisabledAssistantFeature( AF_AUTOBANDAGE )?1:0) << '\n';
-		ofsOutput << "\tAF_ENEMYTARGETSHARE=" << (GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE )?1:0) << '\n';
-		ofsOutput << "\tAF_FILTERSEASON=" << (GetDisabledAssistantFeature( AF_FILTERSEASON )?1:0) << '\n';
-		ofsOutput << "\tAF_SPELLTARGETSHARE=" << (GetDisabledAssistantFeature( AF_SPELLTARGETSHARE )?1:0) << '\n';
-		ofsOutput << "\tAF_HUMANOIDHEALTHCHECKS=" << (GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS )?1:0) << '\n';
-		ofsOutput << "\tAF_SPEECHJOURNALCHECKS=" << (GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS )?1:0) << '\n';
+		ofsOutput << "AF_FILTERWEATHER=" << ( GetDisabledAssistantFeature( AF_FILTERWEATHER ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_FILTERLIGHT=" << ( GetDisabledAssistantFeature( AF_FILTERLIGHT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_SMARTTARGET=" << ( GetDisabledAssistantFeature( AF_SMARTTARGET ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_RANGEDTARGET=" << ( GetDisabledAssistantFeature( AF_RANGEDTARGET ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_AUTOOPENDOORS=" << ( GetDisabledAssistantFeature( AF_AUTOOPENDOORS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_DEQUIPONCAST=" << ( GetDisabledAssistantFeature( AF_DEQUIPONCAST ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_AUTOPOTIONEQUIP=" << ( GetDisabledAssistantFeature( AF_AUTOPOTIONEQUIP ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_POISONEDCHECKS=" << ( GetDisabledAssistantFeature( AF_POISONEDCHECKS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_LOOPEDMACROS=" << ( GetDisabledAssistantFeature( AF_LOOPEDMACROS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_USEONCEAGENT=" << ( GetDisabledAssistantFeature( AF_USEONCEAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_RESTOCKAGENT=" << ( GetDisabledAssistantFeature( AF_RESTOCKAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_SELLAGENT=" << ( GetDisabledAssistantFeature( AF_SELLAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_BUYAGENT=" << ( GetDisabledAssistantFeature( AF_BUYAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_POTIONHOTKEYS=" << ( GetDisabledAssistantFeature( AF_POTIONHOTKEYS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_RANDOMTARGETS=" << ( GetDisabledAssistantFeature( AF_RANDOMTARGETS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_CLOSESTTARGETS=" << ( GetDisabledAssistantFeature( AF_CLOSESTTARGETS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_OVERHEADHEALTH=" << ( GetDisabledAssistantFeature( AF_OVERHEADHEALTH ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_AUTOLOOTAGENT=" << ( GetDisabledAssistantFeature( AF_AUTOLOOTAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_BONECUTTERAGENT=" << ( GetDisabledAssistantFeature( AF_BONECUTTERAGENT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_JSCRIPTMACROS=" << ( GetDisabledAssistantFeature( AF_JSCRIPTMACROS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_AUTOREMOUNT=" << ( GetDisabledAssistantFeature( AF_AUTOREMOUNT ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_AUTOBANDAGE=" << ( GetDisabledAssistantFeature( AF_AUTOBANDAGE ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_ENEMYTARGETSHARE=" << ( GetDisabledAssistantFeature( AF_ENEMYTARGETSHARE ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_FILTERSEASON=" << ( GetDisabledAssistantFeature( AF_FILTERSEASON ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_SPELLTARGETSHARE=" << ( GetDisabledAssistantFeature( AF_SPELLTARGETSHARE ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_HUMANOIDHEALTHCHECKS=" << ( GetDisabledAssistantFeature( AF_HUMANOIDHEALTHCHECKS ) ? 1 : 0 ) << '\n';
+		ofsOutput << "AF_SPEECHJOURNALCHECKS=" << ( GetDisabledAssistantFeature( AF_SPEECHJOURNALCHECKS ) ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
-		
-		
+
 		ofsOutput.close();
 		rvalue = true;
 	}
@@ -4841,9 +4991,36 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			TeleportToNearestSafeLocation( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
 			break;
 		case 301:    // ALLOWAWAKENPCS
-			AllowAwakeNPCs( ( static_cast<SI16>( std::stoi( value, nullptr, 0 ) ) == 1 ) );
+			AllowAwakeNPCs(( static_cast<SI16>( std::stoi( value, nullptr, 0 )) == 1 ));
 			break;
-			break;		default:
+		case 302:	 // DISPLAYMAKERSMARK
+			DisplayMakersMark( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 303:	// SHOWNPCTITLESOVERHEAD
+			ShowNpcTitlesOverhead(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 304:	// SHOWINVULNERABLETAGOVERHEAD
+			ShowInvulnerableTagOverhead(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 305:	// PETCOMBATTRAINING
+			PetCombatTraining(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 306:	// HIRELINGCOMBATTRAINING
+			HirelingCombatTraining(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 307:	// NPCCOMBATTRAINING
+			NpcCombatTraining(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 308:	 // GLOBALRESTOCKMULTIPLIER
+			GlobalRestockMultiplier( std::stof( value ));
+			break;
+		case 309:	// SHOWITEMRESISTSTATS
+			ShowItemResistStats(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 310:	// SHOWWEAPONDAMAGETYPES
+			ShowWeaponDamageTypes(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		default:
 			rvalue = false;
 			break;
 	}

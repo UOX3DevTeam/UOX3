@@ -929,19 +929,31 @@ auto command_spawnkill( CSocket *s )->void {
 				SI32 killed	= 0;
 				
 				s->sysmessage( 349 );
+				std::vector<CChar *> spCharsToDelete;
 				auto spCharList = spawnReg->GetSpawnedCharsList();
-				for (auto &i : spCharList->collection()){
-					if( ValidateObject( i ) ){
-						if( i->isSpawned() ) {
-							Effects->bolteffect( i );
-							Effects->PlaySound( i, 0x0029 );
-							i->Delete();
-							++killed;
+				for( auto &spChar : spCharList->collection() )
+				{
+					if( ValidateObject( spChar ))
+					{
+						if( spChar->isSpawned() )
+						{
+							// Store reference to character we want to delete
+							spCharsToDelete.push_back( spChar );
 						}
 					}
 				}
+
+				// Loop through the characters we want to delete from spawn region
+				std::for_each( spCharsToDelete.begin(), spCharsToDelete.end(), [&killed]( CChar *charToDelete )
+				{
+					Effects->bolteffect( charToDelete );
+					Effects->PlaySound( charToDelete, 0x0029 );
+					charToDelete->Delete();
+					++killed;
+				});
+
 				s->sysmessage( 84 ); // Done.
-				s->sysmessage( 350, killed, regNum );
+				s->sysmessage( 350, killed, regNum ); // %i of Spawn %i have been killed.
 			}
 		}
 	}

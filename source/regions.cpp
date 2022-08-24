@@ -739,6 +739,8 @@ void CMapHandler::Save( void )
 		onePercent += static_cast<std::int32_t>((width/MapColSize) * (height/MapRowSize));
 	}
 	onePercent /= 100.0f;
+	const size_t bufferSize = 1024 * 1024;
+	char* buffer = (char*)malloc(bufferSize);
 
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
@@ -788,13 +790,15 @@ void CMapHandler::Save( void )
 			if( !changesDetected )
 				continue;
 
-			writeDestination.open( filename.c_str() );
+			writeDestination.open( filename.c_str(), std::ios::binary );
 
 			if( !writeDestination )
 			{
 				Console.error( oldstrutil::format("Failed to open %s for writing", filename.c_str()) );
 				continue;
 			}
+
+			writeDestination.rdbuf()->pubsetbuf(buffer, bufferSize);
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
@@ -806,9 +810,9 @@ void CMapHandler::Save( void )
 						if( count%onePercent == 0 )
 						{
 							if( count/onePercent <= 10 )
-								Console << "\b\b" << (UI32)(count/onePercent) << "%";
+								Console << "\b\b" << std::to_string(count/onePercent) << "%";
 							else if( count/onePercent <= 100 )
-								Console << "\b\b\b" << (UI32)(count/onePercent) << "%";
+								Console << "\b\b\b" << std::to_string(count/onePercent) << "%";
 						}
 
 						CMapRegion * mRegion = (*mIter)->GetMapRegion( (baseX+xCnt), (baseY+yCnt) );
@@ -827,7 +831,6 @@ void CMapHandler::Save( void )
 		}
 	}
 	Console << "\b\b\b\b" << (UI32)(100) << "%";
-	//houseDestination.close();
 
 	filename = basePath + "overflow.wsc";
 	writeDestination.open( filename.c_str() );
@@ -985,12 +988,12 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 		readDestination.getline(line, 1023);
 		line[readDestination.gcount()] = 0;
 		std::string sLine(line);
-		sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+		sLine = oldstrutil::trim( sLine );
 
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );
-			sLine = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" )));
+			sLine = oldstrutil::upper( oldstrutil::trim( sLine ));
 			if( sLine == "CHARACTER" )
 				LoadChar( readDestination );
 			else if( sLine == "ITEM" )
@@ -1002,7 +1005,7 @@ void CMapHandler::LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, 
 			else if( sLine == "SPAWNITEM" )
 				LoadSpawnItem( readDestination );
 
-			if( fileSize != -1 && (++updateCount)%20 == 0 )
+			if( fileSize != -1 && (++updateCount)%200 == 0 )
 			{
 				R32 curPos	= readDestination.tellg();
 				R32 tempVal	= basePercent + ( curPos / fileSize * diffValue );

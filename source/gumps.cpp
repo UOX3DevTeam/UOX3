@@ -1106,14 +1106,29 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						else
 						{
 							CItem * newItem = Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
-							if( forceDecayOff.m_IntValue == 1 )
-								newItem->SetDecayable( false );
-							else if( forceDecayOn.m_IntValue == 1 )
-								newItem->SetDecayable( true );
-							if( forceMovableOff.m_IntValue == 1 )
-								newItem->SetMovable( 2 );
-							else if( forceMovableOn.m_IntValue == 1 )
-								newItem->SetMovable( 1 );
+							if( ValidateObject( newItem ))
+							{
+								if( forceDecayOff.m_IntValue == 1 )
+								{
+									newItem->SetDecayable( false );
+								}
+								else if( forceDecayOn.m_IntValue == 1 )
+								{
+									newItem->SetDecayable( true );
+								}
+								if( forceMovableOff.m_IntValue == 1 )
+								{
+									newItem->SetMovable( 2 );
+								}
+								else if( forceMovableOn.m_IntValue == 1 )
+								{
+									newItem->SetMovable( 1 );
+								}
+							}
+							else if( !ValidateObject( mChar->GetItemAtLayer( IL_PACKITEM )))
+							{
+								s->sysmessage( 9150 ); // No backpack detected, unable to add item! Try the 'addpack command?
+							}
 						}
 					}
 					else
@@ -1149,14 +1164,29 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						else
 						{
 							CItem * newItem = Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
-							if( forceDecayOff.m_IntValue == 1 )
-								newItem->SetDecayable( false );
-							else if( forceDecayOn.m_IntValue == 1 )
-								newItem->SetDecayable( true );
-							if( forceMovableOff.m_IntValue == 1 )
-								newItem->SetMovable( 2 );
-							else if( forceMovableOn.m_IntValue == 1 )
-								newItem->SetMovable( 1 );
+							if( ValidateObject( newItem ))
+							{
+								if( forceDecayOff.m_IntValue == 1 )
+								{
+									newItem->SetDecayable( false );
+								}
+								else if( forceDecayOn.m_IntValue == 1 )
+								{
+									newItem->SetDecayable( true );
+								}
+								if( forceMovableOff.m_IntValue == 1 )
+								{
+									newItem->SetMovable( 2 );
+								}
+								else if( forceMovableOn.m_IntValue == 1 )
+								{
+									newItem->SetMovable( 1 );
+								}
+							}
+							else if( !ValidateObject( mChar->GetItemAtLayer( IL_PACKITEM )))
+							{
+								s->sysmessage( 9150 ); // No backpack detected, unable to add item! Try the 'addpack command?
+							}
 						}
 					}
 				}

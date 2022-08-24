@@ -110,14 +110,45 @@ function onCallback0( pSock, ourObj )
 				AnimalLoreGump.AddGump( 28, 220, 0x826 );
 
 				var aloyalty = GetDictionaryEntry( 2188, pSock.language ); // Wild;
+				var petLoyalty = ourObj.loyalty;
 
-				if(( ourObj.loyalty == 25 ))
-					aloyalty = GetDictionaryEntry( 2188, pSock.language ); // Wild
-				else if(( ourObj.loyalty == 50 ))
-					aloyalty = GetDictionaryEntry( 2199, pSock.language ); // Confused
+				/* Pet Loyalty Levels
+				2250=Confused 				1-9
+				2251=Extremely Unhappy		10-19
+				2252=Rather Unhappy			20-29
+				2253=Unhappy				30-39
+				2254=Somewhat Content		40-49
+				2255=Content				50-59
+				2256=Happy 					60-69
+				2257=Rather Happy 			70-79
+				2258=Very Happy 			80-89
+				2259=Extremely Happy 		90-95
+				2260=Wonderfully Happy 		96-99
+				2261=Euphoric 				100*/
+
+				if(( petLoyalty > 0 ))
+				{
+					if( petLoyalty < 90 )
+					{
+						aloyalty = GetDictionaryEntry( 2250 + Math.floor( petLoyalty / 10), pSock.language ); // Confused > Very Happy
+					}
+					else if( petLoyalty >= 90 && petLoyalty <= 95 )
+					{
+						aloyalty = GetDictionaryEntry( 2259, pSock.language );  // Extremely Happy
+
+					}
+					else if( petLoyalty >= 96 && petLoyalty <= 99 )
+					{
+						aloyalty = GetDictionaryEntry( 2260, pSock.language );  // Wonderfully happy
+					}
+					else // Euphoric
+					{
+						aloyalty = GetDictionaryEntry( 2261, pSock.language );  // Euphoric
+					}
+				}
 
 				AnimalLoreGump.AddHTMLGump( 47, 220, 160, 18, false, false, "<basefont color=#33310b>" + GetDictionaryEntry(2143, pSock.language ) + "</basefont>" );			// Loyalty Rating
-				AnimalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, aloyalty );///Wild or Confused
+				AnimalLoreGump.AddHTMLGump( 53, 236, 160, 18, false, false, aloyalty );
 
 				if( AOSenabled )
 				{
@@ -254,15 +285,16 @@ function onCallback0( pSock, ourObj )
 
 				var afoodlist = "<basefont color=#0000B8>" + GetDictionaryEntry( 2200, pSock.language ) + "</basefont>";//None
 
-				if ( ( ourObj.foodlist = "fruit" ) || ( ourObj.foodlist = "vegetable" ))
+				var ourFoodList = ourObj.foodList.toLowerCase();
+				if(( ourFoodList == "fruit" ) || ( ourFoodList == "vegetable" ))
 					afoodlist = "<basefont color=#279053>" + GetDictionaryEntry( 2179, pSock.language ) + "</basefont>"; // Fruits and Vegetables
-				else if ( ( ourObj.foodlist = "crops" ) || ( ourObj.foodlist = "hay" ))
+				else if (( ourFoodList == "crops" ) || ( ourFoodList == "hay" ))
 					afoodlist = "<basefont color=#CFF507>" + GetDictionaryEntry( 2180, pSock.language ) + "</basefont>"; // Grains and Hay
-				else if ( ( ourObj.foodlist = "fish" ))
+				else if (( ourFoodList == "fish" ))
 					afoodlist = "<basefont color=#F57607>" + GetDictionaryEntry( 2181, pSock.language ) + "</basefont>"; // Fish
-				else if ( ( ourObj.foodlist = "meat" ))
+				else if (( ourFoodList == "meat" ))
 					afoodlist = "<basefont color=#F50707>" + GetDictionaryEntry( 2182, pSock.language ) + "</basefont>"; // Meat
-				else if ( ( ourObj.foodlist = "eggs" ))
+				else if (( ourFoodList == "eggs" ))
 					afoodlist = "<basefont color=#5070700>" + GetDictionaryEntry( 2183, pSock.language ) + "</basefont>"; // Eggs
 
 				AnimalLoreGump.AddHTMLGump( 53, 164, 160, 18, false, false, afoodlist );

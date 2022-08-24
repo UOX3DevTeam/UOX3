@@ -982,7 +982,20 @@ JSBool SE_SecondsPerUOMinute( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o-----------------------------------------------------------------------------------------------o
 JSBool SE_GetCurrentClock( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	*rval = INT_TO_JSVAL( cwmWorldState->GetUICurrentTime() );
+	JS_NewNumberValue( cx, cwmWorldState->GetUICurrentTime(), rval );
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_GetStartTime()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets timestamp for server startup time
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_GetStartTime( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	JS_NewNumberValue( cx, cwmWorldState->GetStartTime(), rval );
+
 	return JS_TRUE;
 }
 
@@ -2047,45 +2060,61 @@ JSBool SE_AreaCharacterFunction( JSContext *cx, JSObject *obj, uintN argc, jsval
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj		= nullptr;
-	CSocket *srcSocket			= nullptr;
-	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	JSObject *srcSocketObj	= nullptr;
+	CSocket *srcSocket		= nullptr;
+	char *trgFunc			= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	if( trgFunc == nullptr )
 	{
 		DoSEErrorMessage( "AreaCharacterFunction: Argument 0 not a valid string" );
 		return JS_FALSE;
 	}
 
-	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject		= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcBaseObj ));
+	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
+	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
 
-	if( !ValidateObject( srcObject ) )
+	if( !ValidateObject( srcObject ))
 	{
 		DoSEErrorMessage( "AreaCharacterFunction: Argument 1 not a valid object" );
 		return JS_FALSE;
 	}
-	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
+	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
 	if( argc == 4 )
 	{
-		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
-		srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
+		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
+		srcSocket = static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
 	}
 
-	UI16 retCounter				= 0;
-	cScript *myScript			= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	for (auto &MapArea : MapRegion->PopulateList( srcObject )){
-		if(MapArea){
+	std::vector<CChar *> charsFound;
+	UI16 retCounter	= 0;
+	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
+	{
+		if( MapArea )
+		{
 			auto regChars = MapArea->GetCharList();
-			for (const auto &tempChar : regChars->collection()){
-				if( ValidateObject( tempChar ) ){
-					if( objInRange( srcObject, tempChar, (UI16)distance ) ) {
-						if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ) )
-							++retCounter;
+			for( const auto &tempChar : regChars->collection() )
+			{
+				if( ValidateObject( tempChar ))
+				{
+					if( objInRange( srcObject, tempChar, static_cast<UI16>( distance )))
+					{
+						// Store character reference for later
+						charsFound.push_back( tempChar );
 					}
 				}
 			}
 		}
 	}
+
+	// Now iterate over all the characters that we found previously, and run the area function for each
+	std::for_each( charsFound.begin(), charsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CChar *tempChar )
+	{
+		if( myScript->AreaObjFunc( trgFunc, srcObject, tempChar, srcSocket ))
+		{
+			++retCounter;
+		}
+	});
+
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
 }
@@ -2106,48 +2135,64 @@ JSBool SE_AreaItemFunction( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 
 	// Do parameter validation here
-	JSObject *srcSocketObj		= nullptr;
-	CSocket *srcSocket			= nullptr;
-	char *trgFunc				= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ) );
+	JSObject *srcSocketObj	= nullptr;
+	CSocket *srcSocket		= nullptr;
+	char *trgFunc			= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	if( trgFunc == nullptr )
 	{
 		DoSEErrorMessage( "AreaItemFunction: Argument 0 not a valid string" );
 		return JS_FALSE;
 	}
 
-	JSObject *srcBaseObj	= JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject		= static_cast<CBaseObject *>(JS_GetPrivate( cx, srcBaseObj ));
+	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
+	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
 
-	if( !ValidateObject( srcObject ) )
+	if( !ValidateObject( srcObject ))
 	{
 		DoSEErrorMessage( "AreaItemFunction: Argument 1 not a valid object" );
 		return JS_FALSE;
 	}
-	R32 distance = static_cast<R32>(JSVAL_TO_INT( argv[2] ));
+	R32 distance = static_cast<R32>( JSVAL_TO_INT( argv[2] ));
 	if( argc == 4 )
 	{
-		srcSocketObj	= JSVAL_TO_OBJECT( argv[3] );
+		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
 		if( srcSocketObj != nullptr )
 		{
-			srcSocket		= static_cast<CSocket *>(JS_GetPrivate( cx, srcSocketObj ));
+			srcSocket	= static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
 		}
 	}
 
-	UI16 retCounter					= 0;
-	cScript *myScript				= JSMapping->GetScript( JS_GetGlobalObject( cx ) );
-	for (auto &MapArea : MapRegion->PopulateList( srcObject )){
-		if(MapArea){
+	std::vector<CItem *> itemsFound;
+	UI16 retCounter	= 0;
+	cScript *myScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	for( auto &MapArea : MapRegion->PopulateList( srcObject ))
+	{
+		if( MapArea )
+		{
 			auto regItems = MapArea->GetItemList();
-			for (const auto &tempItem : regItems->collection()){
-				if( ValidateObject( tempItem ) ){
-					if( objInRange( srcObject, tempItem, (UI16)distance ) ) {
-						if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ) )
-							++retCounter;
+			for( const auto &tempItem : regItems->collection() )
+			{
+				if( ValidateObject( tempItem ))
+				{
+					if( objInRange( srcObject, tempItem, static_cast<UI16>( distance )))
+					{
+						// Store item reference for later
+						itemsFound.push_back( tempItem );
 					}
 				}
 			}
 		}
 	}
+
+	// Now iterate over all the characters that we found previously, and run the area function for each
+	std::for_each( itemsFound.begin(), itemsFound.end(), [myScript, trgFunc, srcObject, srcSocket, &retCounter]( CItem *tempItem )
+	{
+		if( myScript->AreaObjFunc( trgFunc, srcObject, tempItem, srcSocket ))
+		{
+			++retCounter;
+		}
+	});
+
 	*rval = INT_TO_JSVAL( retCounter );
 	return JS_TRUE;
 }
@@ -4338,6 +4383,33 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 301:	 // ALLOWAWAKENPCS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AllowAwakeNPCs() );
+				break;
+			case 302:	 // DISPLAYMAKERSMARK
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->DisplayMakersMark() );
+				break;
+			case 303:	// SHOWNPCTITLESOVERHEAD
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowNpcTitlesOverhead() );
+				break;
+			case 304:	// SHOWINVULNERABLETAGOVERHEAD
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowInvulnerableTagOverhead() );
+				break;
+			case 305:	// PETCOMBATTRAINING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->PetCombatTraining() );
+				break;
+			case 306:	// HIRELINGCOMBATTRAINING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->HirelingCombatTraining() );
+				break;
+			case 307:	// NPCCOMBATTRAINING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->NpcCombatTraining() );
+				break;
+			case 308:	// GLOBALRESTOCKMULTIPLIER
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->GlobalRestockMultiplier() ));
+				break;
+			case 309:	// SHOWITEMRESISTSTATS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowItemResistStats() );
+				break;
+			case 310:	// SHOWWEAPONDAMAGETYPES
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowWeaponDamageTypes() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

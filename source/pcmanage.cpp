@@ -678,7 +678,14 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		addNewbieItem( tSock, mChar, "DEFAULT GARG FEMALE", pantsColour, shirtColour );
 
 	// Give the character some gold
-	CreatedItems[GOLD] = Items->CreateScriptItem( tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true );
+	if( cwmWorldState->ServerData()->ServerStartGold() > 0 )
+	{
+		CreatedItems[GOLD] = Items->CreateScriptItem( tSock, mChar, "0x0EED", cwmWorldState->ServerData()->ServerStartGold(), OT_ITEM, true );
+	}
+	else
+	{
+		CreatedItems[GOLD] = 0;
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
