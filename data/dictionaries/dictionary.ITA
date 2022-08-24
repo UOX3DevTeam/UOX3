@@ -660,7 +660,7 @@
 668=Questo oggetto non può essere intrappolato!
 669=Non puoi bloccare questo!
 670=Non puoi teletrasportarti qui!
-671=Rinuncia all'aspirante Gesù!
+671=Non puoi teletrasportarti lì!
 672=Non puoi teletrasportarti lì!
 673=Questo oggetto è stato protetto con la magia divina.  Non puoi sbloccare questo oggetto.
 674=Sblocca l'oggetto.
@@ -2159,6 +2159,18 @@
 2204=Lista amici
 2205=Gli spiriti dei morti non sono la provincia della tradizione animale.
 2206=Non ti viene in mente nulla che tu conosca su due piedi.
+2250=Confuso
+2251=Estremamente infelice
+2252=Piuttosto infelice
+2253=Infelice
+2254=Alquanto soddisfatto
+2255=Contento
+2256=Felice
+2257=Piuttosto felice
+2258=Molto felice
+2259=Estremamente felice
+2260=Molto felice
+2261=Euforizzante
 // [2300-2449] Hirelings
 2300=%s è stato rimosso dalla lista degli amici di %s.
 2301=Sei stato rimosso dalla lista degli amici di %s.
@@ -3283,6 +3295,7 @@
 6213=Questa pozione può essere stata fatta con cenere sulfurea.
 6214=Gli ingredienti di questa pozione ti sono sconosciuti.
 6215=Sai già che tipo di pozione è questa: %s
+6250=Esci dall'ombra.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -4007,6 +4020,12 @@
 9128=Non hai alcuna possibilità di provocare quella creatura.
 9129=Quel bersaglio è immune al danno fisico!
 9130=La tua arma non può penetrare la barriera magica della creatura.
+9140=di qualità eccezionale
+9141=Realizzato da
+9142=Si sblocca l'asse.
+9143=Si blocca l'asse.
+9144=Apri l'asse, ma è ancora bloccato.
+9150=Nessuno zaino rilevato, impossibile aggiungere un oggetto! Provare con il comando 'addpack?
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -4356,6 +4375,8 @@
 11218=Arco
 11219=Balestra
 11220=Balestra pesante
+11221=Arco composito
+11222=Balestra a ripetizione
 // 11401 - 11600 Abilità di sartoria
 11401=MENÙ SARTORIA
 11402=PELLE/PELLI

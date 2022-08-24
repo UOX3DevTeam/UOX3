@@ -745,6 +745,9 @@ auto IsOnFoodList( const std::string& sFoodList, const UI16 sItemID ) ->bool{
 					doesEat = true;
 				}
 			}
+
+			if( doesEat ) // We found a valid food, let's stop looking
+				break;
 		}
 	}
 	return doesEat;
@@ -2400,15 +2403,61 @@ bool handleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			iUsed->SetType( IT_MORPHOBJECT );
 			return true;
 		case IT_PLANK:	// Planks
-			if( objInRange( mChar, iUsed, DIST_INRANGE ) )
+			if( objInRange( mChar, iUsed, DIST_INRANGE ))
 			{
-				if( iUsed->GetID( 2 ) == 0x84 || iUsed->GetID( 2 ) == 0xD5 || iUsed->GetID( 2 ) == 0xD4 || iUsed->GetID( 2 ) == 0x89 )
-					PlankStuff( mSock, iUsed );
+				auto plankStatus = iUsed->GetTag( "plankLocked" );
+				if( plankStatus.m_IntValue == 1 ) // Is plank locked?
+				{
+					auto iMulti = iUsed->GetMultiObj();
+					auto mMulti = mChar->GetMultiObj();
+					if( ValidateObject( iMulti ) && ValidateObject( mMulti ) && iMulti == mMulti )
+					{
+						// Allow opening plank for disembarking purposes if player is onboard boat
+						switch( iUsed->GetID() )
+						{
+							// Open the plank visually
+							case 0x3EE9: iUsed->SetID( 0x3E84 ); break;
+							case 0x3EB1: iUsed->SetID( 0x3ED5 ); break;
+							case 0x3EB2: iUsed->SetID( 0x3ED4 ); break;
+							case 0x3E8A: iUsed->SetID( 0x3E89 ); break;
+							case 0x3E85: iUsed->SetID( 0x3E84 ); break;
+							// Exit from the open (but locked) plank
+							case 0x3E84: [[fallthrough]];
+							case 0x3ED5: [[fallthrough]];
+							case 0x3ED4: [[fallthrough]];
+							case 0x3E89: PlankStuff( mSock, iUsed ); break;
+							default: return true;
+						}
+
+						// Start a timer to auto-close the plank
+						mSock->sysmessage( 9144 ); // You open the plank, though it's still locked.
+						iUsed->SetTempTimer( BuildTimeValue( static_cast<R32>( 5 )));
+					}
+					else
+					{
+						// Plank is locked! Tough luck
+						mSock->sysmessage( 398 ); // Locked
+					}
+				}
 				else
-					mSock->sysmessage( 398 );//Locked
+				{
+					// Plank is unlocked! Open the plank, or use it to disembark
+					switch( iUsed->GetID() )
+					{
+						case 0x3EE9: iUsed->SetID( 0x3E84 ); break;
+						case 0x3EB1: iUsed->SetID( 0x3ED5 ); break;
+						case 0x3EB2: iUsed->SetID( 0x3ED4 ); break;
+						case 0x3E8A: iUsed->SetID( 0x3E89 ); break;
+						case 0x3E85: iUsed->SetID( 0x3E84 ); break;
+						default: PlankStuff( mSock, iUsed ); return true;;
+					}
+					mSock->sysmessage( 2031 ); // You open the plank
+				}
 			}
 			else
-				mSock->sysmessage( 399 );
+			{
+				mSock->sysmessage( 399 ); // You can't reach that!
+			}
 			return true;
 		case IT_FIREWORKSWAND: //Fireworks wands
 			// If item is locked down, check if player has access to use it
@@ -3102,13 +3151,13 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = std::string(" (") + oldstrutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += oldstrutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones)");
+			dataToAdd = std::string( " (" ) + oldstrutil::number( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
+			dataToAdd += oldstrutil::number(( i->GetWeight() / 100 )) + std::string( " stones)" );
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = std::string(" (") + oldstrutil::number( (SI32)i->GetContainsList()->Num() ) + std::string(" items, ");
-			dataToAdd += oldstrutil::number( ( i->GetWeight() / 100 ) ) + std::string(" stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
+			dataToAdd = std::string( " (" ) + oldstrutil::number( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
+			dataToAdd += oldstrutil::number(( i->GetWeight() / 100 )) + std::string( " stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
 			break;
 		case IT_LOCKEDDOOR:
 			dataToAdd = " " + Dictionary->GetEntry( 9050 ); // [Locked]
@@ -3117,14 +3166,26 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		case IT_GATE:
 		case IT_OBJTELEPORTER:
 		{
-			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>(i->GetTempVar( CITV_MOREX )), static_cast<SI16>(i->GetTempVar( CITV_MOREY )), i->WorldNumber(), i->GetInstanceID() );
-			dataToAdd = std::string(" (") + newRegion->GetName() + std::string(")");
+			CTownRegion *newRegion = calcRegionFromXY( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), i->WorldNumber(), i->GetInstanceID() );
+			dataToAdd = std::string( " (" ) + newRegion->GetName() + std::string( ")" );
 			break;
 		}
 		default:
 			break;
 	}
 
+	if( i->IsLockedDown() )
+	{
+		auto iMultiObj = i->GetMultiObj();
+		if( ValidateObject( iMultiObj ) && iMultiObj->IsSecureContainer( i ))
+		{
+			dataToAdd += Dictionary->GetEntry( 9052, s->Language() ); // [locked down & secure]
+		}
+		else
+		{
+			dataToAdd += Dictionary->GetEntry( 9053, s->Language() ); // [locked down]
+		}
+	}
 	if( i->isGuarded() )
 	{
 		CTownRegion *itemTownRegion = i->GetRegion();
@@ -3135,11 +3196,12 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 	}
 	if( i->isNewbie() )
 	{
-		s->objMessage( Dictionary->GetEntry( 9055, s->Language() ), i ); // [Blessed]
+		dataToAdd += " " + Dictionary->GetEntry( 9055, s->Language() ); // [Blessed]
 	}
 
 	
-	if( i->GetName2() != "#" && i->GetName2() != "" )
+	// Is the item a magical item, and unidentified?
+	if( !i->isCorpse() && i->GetName2() != "#" && i->GetName2() != "" )
 	{
 		s->objMessage( Dictionary->GetEntry( 9402, s->Language() ), i ); // [Unidentified]
 	}
@@ -3158,11 +3220,12 @@ bool CPISingleClick::Handle( void )
 {
 	if( objectID == INVALIDSERIAL ) // invalid
 		return true;
-	else if( objectID < BASEITEMSERIAL )
+
+	if( objectID < BASEITEMSERIAL )
 	{
 		// Begin chars/npcs section
 		CChar *c = calcCharObjFromSer( objectID );
-		if( ValidateObject( c ) )
+		if( ValidateObject( c ))
 		{
 			std::vector<UI16> scriptTriggers = c->GetScriptTriggers();
 			for( auto scriptTrig : scriptTriggers )
@@ -3184,7 +3247,7 @@ bool CPISingleClick::Handle( void )
 		return true;
 	}
 
-	std::string temp2 ;
+	std::string temp2;
 	std::string realname;
 
 	CChar *mChar = tSock->CurrcharObj();
@@ -3195,7 +3258,7 @@ bool CPISingleClick::Handle( void )
 	UI08 a3		= tSock->GetByte( 3 );
 	UI08 a4		= tSock->GetByte( 4 );
 	CItem *i	= calcItemObjFromSer( objectID );
-	if( !ValidateObject( i ) )		// invalid item
+	if( !ValidateObject( i ))		// invalid item
 		return true;
 
 	// October 6, 2002 - Added support for the onClick event
@@ -3220,30 +3283,13 @@ bool CPISingleClick::Handle( void )
 	if( i->GetCont() != nullptr && i->GetContSerial() >= BASEITEMSERIAL )
 	{
 		CChar *w = FindItemOwner( static_cast<CItem *>( i->GetCont() ));
-		if( ValidateObject( w ) )
+		if( ValidateObject( w ))
 		{
 			if( w->GetNPCAiType() == AI_PLAYERVENDOR )
 			{
-				std::string temp ;
-				if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
-				{
-					CChar *mCreator = calcCharObjFromSer( i->GetCreator() );
-					if( ValidateObject( mCreator ) )
-					{
-						std::string creatorName = getNpcDictName( mCreator, tSock );
-						temp2 = oldstrutil::format( "%s %s by %s", i->GetDesc().c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
-					}
-					else
-					{
-						temp2 =  i->GetDesc();
-					}
-				}
-				else{
-					temp2= i->GetDesc();
-				}
-				temp = temp2 + std::string(" at ")+std::to_string(i->GetBuyValue())+std::string("gp");
-				tSock->objMessage( AppendData( tSock, i, temp ), i );
-				return true;
+				std::string temp;
+				temp = "Desc: " + i->GetDesc() + std::string( " at " ) + std::to_string( i->GetBuyValue() ) + std::string( "gp" );
+				tSock->objMessage( temp, i );
 			}
 		}
 	}
@@ -3253,17 +3299,25 @@ bool CPISingleClick::Handle( void )
 #endif
 	if( i->GetNameRequest( tSock->CurrcharObj() )[0] != '#' )
 	{
-		if( i->GetID() == 0x0ED5 )//guildstone
+		if( i->GetID() == 0x0ED5 ) //guildstone
+		{
 			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+		}
 		if( !i->isPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->isCorpse() && getAmount > 1 )
+			{
 				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
+			}
 			else
+			{
 				realname = i->GetNameRequest( tSock->CurrcharObj() );
+			}
 		}
 		else
+		{
 			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+		}
 	}
 	else
 	{
@@ -3274,11 +3328,12 @@ bool CPISingleClick::Handle( void )
 
 	if( i->GetType() == IT_MAGICWAND )
 	{
-		
-		if( i->GetName2() == "#" || i->GetName2() == "" ) {
+		if( i->GetName2() == "#" || i->GetName2() == "" )
+		{
 			realname += oldstrutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
 		}
-		else {
+		else
+		{
 			realname += " (unidentified)";
 		}
 	}
@@ -3287,50 +3342,40 @@ bool CPISingleClick::Handle( void )
 		SI32 iCount = 0;
 		if( i->isCorpse() )
 		{
-			iCount = static_cast<SI32>(GetTotalItemCount( i ));
+			iCount = static_cast<SI32>( GetTotalItemCount( i ));
 		}
 		else
 		{
-			iCount = static_cast<SI32>(i->GetContainsList()->Num());
+			iCount = static_cast<SI32>( i->GetContainsList()->Num() );
 		}
-		realname += oldstrutil::format( ", (%u items, %u stones)", iCount, (i->GetWeight()/100) );
+		realname += oldstrutil::format( ", (%u items, %u stones)", iCount, ( i->GetWeight() / 100 ));
 	}
-	if( i->GetCreator() != INVALIDSERIAL && i->GetMadeWith() > 0 )
+
+	// Use item's real name as starting point for final string
+	temp2 = realname;
+
+	if( i->GetCreator() != INVALIDSERIAL )
 	{
 		CChar *mCreator = calcCharObjFromSer( i->GetCreator() );
-		if( ValidateObject( mCreator ) )
+		if( ValidateObject( mCreator ))
 		{
-			std::string creatorName = getNpcDictName( mCreator, tSock );
-			temp2 = oldstrutil::format( "%s %s by %s", realname.c_str(), cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() );
-		}
-		else
-		{
-			temp2 = realname;
+			if( cwmWorldState->ServerData()->RankSystemStatus() && i->GetRank() == 10 )
+			{
+				std::string creatorName = getNpcDictName( mCreator, tSock );
+				temp2 += oldstrutil::format( " %s", Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // of exceptional quality
+
+				if( cwmWorldState->ServerData()->DisplayMakersMark() && i->isMarkedByMaker() )
+				{
+					temp2 += oldstrutil::format( " %s by %s", cwmWorldState->skill[i->GetMadeWith()-1].madeword.c_str(), creatorName.c_str() ); //  [crafted] by %s
+				}
+			}
 		}
 	}
-	else{
-		temp2 = realname;
-	}
+
 	tSock->objMessage( temp2, i );
-	if( i->IsLockedDown() )
-	{
-		auto iMultiObj = i->GetMultiObj();
-		if( ValidateObject( iMultiObj ) && iMultiObj->IsSecureContainer( i ) )
-			tSock->objMessage( Dictionary->GetEntry( 9052, tSock->Language() ), i ); // [locked down & secure]
-		else
-			tSock->objMessage( Dictionary->GetEntry( 9053, tSock->Language() ), i ); // [locked down]
-	}
-	if( i->isGuarded() )
-	{
-		CTownRegion *itemTownRegion = i->GetRegion();
-		if( !itemTownRegion->IsGuarded() && !itemTownRegion->IsSafeZone() )
-		{
-			tSock->objMessage( Dictionary->GetEntry( 9051, tSock->Language() ), i ); // [Guarded]
-		}
-	}
-	if( i->isNewbie() )
-	{
-		tSock->objMessage( Dictionary->GetEntry( 9055, tSock->Language() ), i ); // [Blessed]
-	}
+
+	std::string itemTags = "";
+	tSock->objMessage( AppendData( tSock, i, itemTags ), i );
+
 	return true;
 }

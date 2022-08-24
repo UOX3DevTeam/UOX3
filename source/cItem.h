@@ -111,6 +111,7 @@ public:
 	bool			isHeldOnCursor( void ) const;
 	bool			isGuarded( void ) const;
 	bool			isSpawnerList( void ) const;
+	bool			isMarkedByMaker( void ) const;
 
 	bool			isNewbie( void ) const;
 	bool			isDecayable( void ) const;
@@ -124,6 +125,7 @@ public:
 	void			SetHeldOnCursor( bool newValue );
 	virtual void	SetGuarded( bool newValue );
 	void			SetSpawnerList( bool newValue );
+	void			SetMakersMark( bool newValue );
 
 	void			SetNewbie( bool newValue );
 	void			SetDecayable( bool newValue );

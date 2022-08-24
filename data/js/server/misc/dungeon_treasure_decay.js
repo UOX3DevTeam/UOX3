@@ -17,7 +17,6 @@ function onContRemoveItem( iCont, iItem, pChar )
 	if( iCont.itemsinside > 1 ) // The last item is iItem; this property doesn't update instantly
 	{
 		// There are still items inside, prevent it from decaying...
-		pChar.TextMessage( iCont.itemsinside + " items left!" );
 		var timeLeft = Math.floor(( iCont.decaytime - GetCurrentClock() ) / 1000 );
 		if( timeLeft < 60 )
 		{

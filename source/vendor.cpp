@@ -406,7 +406,13 @@ bool CPISellItem::Handle( void )
 					if( ValidateObject( k ) )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							join = k;
+						{
+							if( j->GetID() != 0x14f0 || ( j->GetTempVar( CITV_MOREX ) == k->GetTempVar( CITV_MOREX ) ) )
+							{
+								join = k;
+								break; // we found the item we're looking for already
+							}
+						}
 					}
 				}
 				pCont = buyPack->GetContainsList();
@@ -415,7 +421,13 @@ bool CPISellItem::Handle( void )
 					if( ValidateObject( k ) )
 					{
 						if( k->GetID() == j->GetID() && j->GetType() == k->GetType() )
-							value = calcValue( j, k->GetSellValue() );
+						{
+							if( j->GetID() != 0x14f0 || ( j->GetTempVar( CITV_MOREX ) == k->GetTempVar( CITV_MOREX ) ) )
+							{
+								value = calcValue( j, k->GetSellValue() );
+								break; // we found the value we're looking for already
+							}
+						}
 					}
 				}
 

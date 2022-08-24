@@ -660,7 +660,7 @@
 668=Ten przedmiot nie może być uwięziony!
 669=Nie możesz tego zablokować!
 670=Nie możesz się tu teleportować!
-671=Poddaj się wannabe Jesus!
+671=Nie możesz się tam teleportować!
 672=Nie możesz się tam teleportować!
 673=Ten przedmiot został zabezpieczony boską magią.  Nie możesz odblokować tego przedmiotu.
 674=Odblokujesz ten przedmiot.
@@ -2159,6 +2159,18 @@
 2204=Lista Przyjaciół
 2205=Duchy zmarłych nie są domeną wiedzy o zwierzętach.
 2206=Nie możesz myśleć o niczym, co znasz od ręki.
+2250=Niezrozumiały
+2251=Bardzo nieszczęśliwy
+2252=Raczej nieszczęśliwy.
+2253=Nieszczęśliwy
+2254=Trochę zadowolony
+2255=Zadowolony
+2256=Cieszący się
+2257=Raczej szczęśliwy
+2258=Bardzo szczęśliwy
+2259=Bardzo szczęśliwy
+2260=Cudownie Szczęśliwy
+2261=Euforyczny
 // [2300-2449] Najemnicy
 2300=%s został usunięty z listy przyjaciół %s.
 2301=Ty zostałeś usunięty z listy przyjaciół %s.
@@ -3283,6 +3295,7 @@
 6213=Ta mikstura mogła być zrobiona z popiołu siarkowego.
 6214=Składniki tego eliksiru są dla ciebie nieznane.
 6215=Już wiesz jaki to rodzaj eliksiru: %s
+6250=Wychodzisz z cienia.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4007,6 +4020,12 @@
 9128=Nie masz szans na sprowokowanie tej istoty.
 9129=Ten cel jest odporny na obrażenia fizyczne!
 9130=Twoja broń nie może przebić się przez magiczną barierę tej istoty.
+9140=o wyjątkowej jakości
+9141=wykonane przez
+9142=Odblokowujesz deskę.
+9143=Zablokujesz deskę.
+9144=Otworzysz deskę, ale nadal jest ona zablokowana.
+9150=Nie wykryto plecaka, nie można dodać przedmiotu! Spróbuj komendy 'addpack?
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!
@@ -4356,6 +4375,8 @@
 11218=Łuk
 11219=Kusza
 11220=Ciężka kusza
+11221=Łuk kompozytowy
+11222=Kusza powtarzalna
 // 11401 - 11600 Umiejętność krawiecka
 11401=MENU KRAWIECTWA
 11402=SKÓRA/SKÓRY

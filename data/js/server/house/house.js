@@ -8,7 +8,7 @@
 const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" );
 // const protectPrivateHouses = ProtectPrivateHouses();
 const protectPrivateHouses = GetServerSetting( "PROTECTPRIVATEHOUSES" );
-const visitorPurgeTimer = 86400000; // visitor list for house purged every 24 hours
+const visitorPurgeTimer = 86400; // visitor list for house purged every 24 hours
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
@@ -97,12 +97,12 @@ function onEntrance( iMulti, charEntering, objType )
 		{
 			// Has more than 24 hours passed since the visitorTracker was last cleared? If so, clear it now
 			var lastPurgeTime = iMulti.GetTag( "lastPurge" );
-			if( lastPurgeTime != "" )
+			if( lastPurgeTime != 0 )
 			{
-				if( GetCurrentClock() - parseInt(lastPurgeTime) > visitorPurgeTimer )
+				if(( GetCurrentClock() - parseInt( lastPurgeTime )) / 1000 > visitorPurgeTimer )
 				{
 					PurgeVisitTracker( iMulti );
-					iMulti.SetTag( "lastPurge", GetCurrentClock() );
+					iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
 				}
 
 				// Count visitor if they haven't entered the building for the past 24 hours
@@ -116,7 +116,7 @@ function onEntrance( iMulti, charEntering, objType )
 			else
 			{
 				// Tag didn't exist! This is the first visit, ever
-				iMulti.SetTag( "lastPurge", GetCurrentClock() );
+				iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
 
 				// Assume no file exists already, and just add visitor directly!
 				if( AddVisitor( iMulti, charEntering ))

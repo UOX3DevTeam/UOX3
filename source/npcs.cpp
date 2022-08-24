@@ -12,6 +12,7 @@
 #include "cEffects.h"
 #include "classes.h"
 #include "regions.h"
+#include "cRaces.h"
 #include "townregion.h"
 #include "Dictionary.h"
 
@@ -242,7 +243,13 @@ void cCharStuff::PostSpawnUpdate( CChar *cCreated )
 	cCreated->SetRegion( tReg->GetRegionNum() );
 
 	for( UI08 z = 0; z < ALLSKILLS; ++z )
+	{
 		Skills->updateSkillLevel( cCreated, z );
+	}
+
+	// Set hunger timer so NPC's hunger level doesn't instantly drop after spawning
+	auto hungerRate	 = Races->GetHungerRate( cCreated->GetRace() );
+	cCreated->SetTimer( tCHAR_HUNGER, BuildTimeValue( static_cast<R32>( hungerRate )));
 
 	UpdateFlag( cCreated );
 	cCreated->Update();

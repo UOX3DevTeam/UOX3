@@ -113,17 +113,17 @@ function inRange( myNPC, objInRange )
 	// This also ensures that the script stays working even if the server saves in the middle of a
 	// search, but crashes before the next save.
 	var iTime = GetCurrentClock();
-	var initSearchTime = myNPC.GetTempTag( "initSearchTime" );
+	var initSearchTime = parseInt( myNPC.GetTempTag( "initSearchTime" ));
 
 	// If search has already been initiated, don't start a new search, unless an abnormal amount of time has passed
-	if(( initSearchTime != null && initSearchTime != 0 ) && ((( iTime - initSearchTime ) < searchTimer ) && !( initSearchTime > iTime )))
+	if(( initSearchTime != null && initSearchTime != 0 ) && (((( iTime - initSearchTime ) / 1000 ) < searchTimer ) && !( initSearchTime > iTime )))
 	{
 		return;
 	}
 
-	if((( iTime - initSearchTime ) > searchTimer ) || initSearchTime > iTime )
+	if(((( iTime - initSearchTime ) / 1000 ) > searchTimer ) || initSearchTime > iTime )
 	{
-		myNPC.SetTempTag( "initSearchTime", iTime );
+		myNPC.SetTempTag( "initSearchTime", iTime.toString() );
 		myNPC.StartTimer( searchInterval, 1, true );
 	}
 }

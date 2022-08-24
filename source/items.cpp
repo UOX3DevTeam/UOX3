@@ -349,7 +349,13 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 							Console.warning( oldstrutil::format("Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionID.c_str() ));
 						}
 						break;
-					case DFNTAG_RESTOCK: applyTo->SetRestock( static_cast<UI16>(ndata) ); break;
+					case DFNTAG_RESTOCK:	
+					{
+						// Apply global restock multiplier from INI to item's restock property
+						auto restockMultiplier = cwmWorldState->ServerData()->GlobalRestockMultiplier();
+						applyTo->SetRestock( static_cast<UI16>( floor( static_cast<UI16>( ndata ) * restockMultiplier )));
+						break;
+					}
 					case DFNTAG_RAIN:	 applyTo->SetWeatherDamage( RAIN, ndata != 0 );	 break;
 					case DFNTAG_SK_MADE: applyTo->SetMadeWith( static_cast<SI08>(ndata) );	 break;
 					case DFNTAG_SPD: applyTo->SetSpeed( static_cast<UI08>(ndata) ); break;
@@ -1040,18 +1046,31 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 		}
 	}
 
-	if( toDecay.IsContType() ) {
-		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() ) {
+	if( toDecay.IsContType() )
+	{
+		if( !isCorpse || ValidateObject(toDecay.GetOwnerObj()) || !cwmWorldState->ServerData()->CorpseLootDecay() )
+		{
+			std::vector<CItem *> corpseItems;
 			auto iCont = toDecay.GetContainsList();
-			for (const auto &io:iCont->collection()) {
-				if( ValidateObject( io ) ) {
-					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR ) {
-						io->SetCont( nullptr );
-						io->SetLocation( (&toDecay) );
-						io->SetDecayTime( nextDecayItems );
+			for( const auto &io : iCont->collection() )
+			{
+				if( ValidateObject( io ))
+				{
+					if( io->GetLayer() != IL_HAIR && io->GetLayer() != IL_FACIALHAIR )
+					{
+						// Store a reference to the item we want to move out of corpse...
+						corpseItems.push_back( io );
 					}
 				}
 			}
+
+			// Loop through the items we want to move out of corpse
+			std::for_each( corpseItems.begin(), corpseItems.end(), [toDecay, nextDecayItems]( CItem *corpseItem )
+			{
+				corpseItem->SetCont( nullptr );
+				corpseItem->SetLocation( (&toDecay) );
+				corpseItem->SetDecayTime( nextDecayItems );
+			});
 		}
 	}
 	toDecay.Delete();  // This is a problem, if done in a ierator loop

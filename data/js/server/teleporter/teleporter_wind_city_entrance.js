@@ -18,7 +18,7 @@ function onCollide( pSock, pChar, iObject )
 	for( var i = 0; i < petList.length; i++ )
 	{
 		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 24 ))
 		{
 			tempPet.Teleport( 5166, 244, 15 );
 			tempPet.Follow( pChar );

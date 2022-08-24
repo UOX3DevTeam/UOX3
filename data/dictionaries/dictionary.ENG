@@ -280,11 +280,11 @@
 290=%s hits you in your Left Arm!
 291=%s hits you in your Right Arm!
 292=%s hits you in your Right Arm!
-293=%s hits you you straight in the Face!
+293=%s hits you straight in the Face!
 294=%s lands a stunning blow to your Head!
 295=%s hits you to your Head!
 296=%s smashed a blow across your Face!
-297=%s hits you you square in the Jaw!
+297=%s hits you square in the Jaw!
 298=%s lands a terrible hit to your Temple!
 299=%s hits you in the Left Thigh!
 300=%s hits you in the Right Thigh!
@@ -656,11 +656,11 @@
 664=You successful untrap this item!
 665=You miss to untrap this item!
 666=All your base are belong to us!
-667=This items doesn't seem to be trapped!
-668=This items cannot be trapped!
+667=This item doesn't seem to be trapped!
+668=This item cannot be trapped!
 669=You cannot lock this!
 670=You can't teleport here!
-671=Give up wannabe Jesus!
+671=You can't teleport there!
 672=You cannot teleport there!
 673=This item has been protected with divine magic.  You cannot unlock this item.
 674=You unlock the item.
@@ -2159,6 +2159,18 @@
 2204=Friend's List
 2205=The spirits of the dead are not the province of animal lore.
 2206=You can't think of anything you know offhand.
+2250=Confused
+2251=Extremely Unhappy
+2252=Rather Unhappy
+2253=Unhappy
+2254=Somewhat Content
+2255=Content
+2256=Happy
+2257=Rather Happy
+2258=Very Happy
+2259=Extremely Happy
+2260=Wonderfully Happy
+2261=Euphoric
 // [2300-2449] Hirelings
 2300=%s has been removed from %s's friend list.
 2301=You have been removed from %s's friend list.
@@ -3283,6 +3295,7 @@
 6213=This potion may have been made from sulfurous ash.
 6214=This potion's ingredients are unknown to you.
 6215=You already know what kind of potion that is: %s
+6250=You step out of the shadows.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4007,6 +4020,12 @@
 9128=You have no chance of provoking that creature.
 9129=That target is immune to physical damage!
 9130=Your weapon cannot penetrate the creature's magical barrier.
+9140=of exceptional quality
+9141=Crafted by
+9142=You unlock the plank.
+9143=You lock the plank.
+9144=You open the plank, though it's still locked.
+9150=No backpack detected, unable to add item! Try the 'addpack command?
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -4356,6 +4375,8 @@
 11218=Bow
 11219=Crossbow
 11220=Heavy Crossbow
+11221=Composite Bow
+11222=Repeating Crossbow
 // 11401 - 11600 Tailoring Crafting Skill
 11401=TAILORING MENU
 11402=LEATHER/HIDES

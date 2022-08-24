@@ -782,7 +782,7 @@
 668=Cet objet ne peut etre piege!
 669=Vous ne pouvez verrouiller ceci!
 670=Vous ne pouvez vous teleporter ici!
-671=N'espere pas devenir Dieu!
+671=Tu ne peux pas te téléporter là-bas!
 672=Vous ne pouvez vous teleporter ici!
 673=Cet objet a ete protege par une magie divine. Vous ne pouvez deverrouiller cet objet.
 674=Vous deverrouillez l'objet.
@@ -2323,6 +2323,18 @@
 2204=Liste d'amis
 2205=Les esprits des morts ne sont pas du ressort de la connaissance des animaux.
 2206=Vous ne pouvez pas penser à quelque chose que vous connaissez par cœur.
+2250=Confusé
+2251=Extrêmement malheureux
+2252=plutôt malheureux
+2253=Malheureux
+2254=Un peu satisfait
+2255=Content
+2256=Happy
+2257=plutôt heureux
+2258=Très heureux
+2259=Extrêmement heureux
+2260=Merveilleusement heureux
+2261=Euphorique
 // [2300-2449] Hirelings
 2300=%s a été supprimé de la liste d'amis de %s.
 2301=Vous avez été retiré de la liste d'amis de %s.
@@ -3447,6 +3459,7 @@
 6213=Cette potion peut avoir été faite à partir de cendres sulfureuses.
 6214=Les ingrédients de cette potion vous sont inconnus.
 6215=Vous savez déjà de quel genre de potion il s'agit : %s
+6250=Vous sortez de l'ombre.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -4171,6 +4184,12 @@
 9128=Vous n'avez aucune chance de provoquer cette créature.
 9129=Cette cible est immunisée aux dommages physiques !
 9130=Votre arme ne peut pas pénétrer la barrière magique de la créature.
+9140=de qualité exceptionnelle
+9141=Fabriqué par
+9142=Vous déverrouillez la planche.
+9143=Vous verrouillez la planche.
+9144=Vous ouvrez la planche, mais elle est toujours verrouillée.
+9150=Aucun sac à dos détecté, impossible d'ajouter un élément ! Essayez la commande 'addpack'.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !
@@ -4520,6 +4539,8 @@
 11218=Arcs
 11219=Arbalète
 11220=Arbalète lourde
+11221=Arcs composites
+11222=Arbalète à répétition
 // 11401 - 11600 Compétence d'artisanat de couture
 11401=MENU DU TAILLEUR
 11402=CUIRS ET PEAUX

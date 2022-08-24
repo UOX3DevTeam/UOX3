@@ -38,7 +38,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 function SendUOGServerPollInfo( pSocket )
 {
 	var shardName = GetServerSetting( "SERVERNAME" );
-	var uptime = Math.floor(GetCurrentClock() / 1000);
+	var uptime = Math.floor(GetCurrentClock() / 1000) - Math.floor(GetStartTime() / 1000);
 	var totalOnline = GetPlayerCount();
 	var totalItems = 0;
 	var totalChars = 0;

@@ -2891,171 +2891,205 @@ bool CChar::DumpBody( std::ofstream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );	// Make the default save of BaseObject members now
 
+	const char newLine = '\n';
+
 	// Hexadecimal Values
 	outStream << std::hex;
-	outStream << "GuildFealty=" << "0x" << GetGuildFealty() << '\n';
-	outStream << "Speech=" << "0x" << GetSayColour() << ",0x" << GetEmoteColour() << '\n';
-	outStream << "Privileges=" << "0x" << GetPriv() << '\n';
-	if( ValidateObject( packitem ) )
-		outStream << "PackItem=" << "0x" << packitem->GetSerial() << '\n';	// store something meaningful
+	outStream << "GuildFealty=0x" << GetGuildFealty() << newLine;
+	outStream << "Speech=0x" << GetSayColour() << ",0x" << GetEmoteColour() << newLine;
+	outStream << "Privileges=0x" << GetPriv() << newLine;
+	if( ValidateObject( packitem ))
+	{
+		outStream << "PackItem=0x" << packitem->GetSerial() << newLine;	// store something meaningful
+	}
 	else
-		outStream << "PackItem=" << "0x" << INVALIDSERIAL << '\n';
+	{
+		outStream << "PackItem=0x" << INVALIDSERIAL << newLine;
+	}
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "GuildTitle=" << GetGuildTitle() << '\n';
-	outStream << "Hunger=" << (SI16)GetHunger() << '\n';
-	outStream << "Thirst=" << (SI16)GetThirst() << '\n';
-	outStream << "BrkPeaceChanceGain=" << (SI16)GetBrkPeaceChanceGain() << '\n';
-	outStream << "BrkPeaceChance=" << (SI16)GetBrkPeaceChance() << '\n';
+	outStream << "GuildTitle=" + GetGuildTitle() + newLine;
+	outStream << "Hunger=" + std::to_string( GetHunger() ) + newLine;
+	outStream << "Thirst=" + std::to_string( GetThirst() ) + newLine;
+	outStream << "BrkPeaceChanceGain=" + std::to_string( GetBrkPeaceChanceGain() ) + newLine;
+	outStream << "BrkPeaceChance=" + std::to_string( GetBrkPeaceChance() ) + newLine;
 	if ( GetMaxHPFixed() )
-		outStream << "MAXHP=" << (SI16)maxHP << '\n';
+	{
+		outStream << "MAXHP=" + std::to_string( maxHP ) + newLine;
+	}
 	if ( GetMaxManaFixed() )
-		outStream << "MAXMANA=" << (SI16)maxMana << '\n';
+	{
+		outStream << "MAXMANA=" + std::to_string( maxMana ) + newLine;
+	}
 	if ( GetMaxStamFixed() )
-		outStream << "MAXSTAM=" << (SI16)maxStam << '\n';
-	outStream << "Town=" << (SI16)GetTown() << '\n';
-	outStream << "SummonTimer=" << GetTimer( tNPC_SUMMONTIME ) << '\n';
-	outStream << "MayLevitate=" << (MayLevitate()?1:0) << '\n';
-	outStream << "Stealth=" << (SI16)GetStealth() << '\n';
-	outStream << "Reserved=" << (SI16)GetCell() << '\n';
-	outStream << "Region=" << (SI16)GetRegionNum() << '\n';
-	outStream << "AdvanceObject=" << GetAdvObj() << '\n';
-	outStream << "AdvRaceObject=" << GetRaceGate() << '\n';
+	{
+		outStream << "MAXSTAM=" + std::to_string( maxStam ) + newLine;
+	}
+	outStream << "Town=" + std::to_string( GetTown() ) + newLine;
+	outStream << "SummonTimer=" + std::to_string( GetTimer( tNPC_SUMMONTIME )) + newLine;
+	outStream << "MayLevitate=" + std::to_string(( MayLevitate() ? 1 : 0 )) + newLine;
+	outStream << "Stealth=" + std::to_string( GetStealth() ) + newLine;
+	outStream << "Reserved=" + std::to_string( GetCell() ) + newLine;
+	outStream << "Region=" + std::to_string( GetRegionNum() ) + newLine;
+	outStream << "AdvanceObject=" + std::to_string( GetAdvObj() ) + newLine;
+	outStream << "AdvRaceObject=" + std::to_string( GetRaceGate() ) + newLine;
 
 	// Write out the BaseSkills and the SkillLocks here
 	// Format: BaseSkills=[0,34]-[1,255]-[END]
 	outStream << "BaseSkills=";
 	for( UI08 bsc = 0; bsc < ALLSKILLS; ++bsc )
-		outStream << "[" << (SI32)bsc << "," << GetBaseSkill( bsc ) << "]-";
-	outStream << "[END]" << '\n';
+	{
+		outStream << "[" + std::to_string( bsc ) + "," + std::to_string( GetBaseSkill( bsc )) + "]-";
+	}
+	outStream << "[END]" << newLine;
 
-	outStream << "GuildNumber=" << GetGuildNumber() << '\n';
-	outStream << "FontType=" << (SI16)GetFontType() << '\n';
-	outStream << "TownTitle=" << (SI16)(GetTownTitle()?1:0) << '\n';
+	outStream << "GuildNumber=" + std::to_string( GetGuildNumber()) + newLine;
+	outStream << "FontType=" + std::to_string( GetFontType()) + newLine;
+	outStream << "TownTitle=" + std::to_string(( GetTownTitle() ? 1 : 0 )) + newLine;
 	//-------------------------------------------------------------------------------------------
-	outStream << "CanRun=" << (SI16)((CanRun() && IsNpc())?1:0) << '\n';
-	outStream << "CanAttack=" << (SI16)(GetCanAttack()?1:0) << '\n';
-	outStream << "AllMove=" << (SI16)(AllMove()?1:0) << '\n';
-	outStream << "IsNpc=" << (SI16)(IsNpc()?1:0) << '\n';
-	outStream << "IsShop=" << (SI16)(IsShop()?1:0) << '\n';
-	outStream << "Dead=" << (SI16)(IsDead()?1:0) << '\n';
-	outStream << "CanBeHired=" << static_cast<SI16>(CanBeHired()?1:0) << '\n';
-	outStream << "CanTrain=" << (SI16)(CanTrain()?1:0) << '\n';
-	outStream << "IsWarring=" << (SI16)(IsAtWar()?1:0) << '\n';
-	outStream << "GuildToggle=" << (SI16)(GetGuildToggle()?1:0) << '\n';
-	outStream << "PoisonStrength=" << (UI16)(GetPoisonStrength()) << '\n';
-	outStream << "WillHunger=" << (SI16)(WillHunger()?1:0) << '\n';
+	outStream << "CanRun=" + std::to_string((( CanRun() && IsNpc()) ? 1 : 0 )) + newLine;
+	outStream << "CanAttack=" + std::to_string(( GetCanAttack() ? 1 : 0 )) + newLine;
+	outStream << "AllMove=" + std::to_string(( AllMove() ? 1 : 0 )) + newLine;
+	outStream << "IsNpc=" + std::to_string(( IsNpc() ? 1 : 0 )) + newLine;
+	outStream << "IsShop=" + std::to_string(( IsShop() ? 1 : 0 )) + newLine;
+	outStream << "Dead=" + std::to_string(( IsDead() ? 1 : 0 )) + newLine;
+	outStream << "CanBeHired=" + std::to_string( CanBeHired() ? 1 : 0 ) + newLine;
+	outStream << "CanTrain=" + std::to_string(( CanTrain() ? 1 : 0 )) + newLine;
+	outStream << "IsWarring=" + std::to_string(( IsAtWar() ? 1 : 0 )) + newLine;
+	outStream << "GuildToggle=" + std::to_string(( GetGuildToggle() ? 1 : 0 )) + newLine;
+	outStream << "PoisonStrength=" + std::to_string( GetPoisonStrength() ) + newLine;
+	outStream << "WillHunger=" + std::to_string(( WillHunger() ? 1 : 0 )) + newLine;
 
 	TIMERVAL mTime = GetTimer( tCHAR_MURDERRATE );
 	outStream << "MurderTimer=";
 	if( mTime == 0 || mTime < cwmWorldState->GetUICurrentTime() )
-		outStream << (SI16)0 << '\n';
+	{
+		outStream << std::to_string( 0 ) + newLine;
+	}
 	else
-		outStream << (UI32)(mTime - cwmWorldState->GetUICurrentTime()) << '\n';
+	{
+		outStream << std::to_string( mTime - cwmWorldState->GetUICurrentTime() ) + newLine;
+	}
 
 	TIMERVAL pTime = GetTimer( tCHAR_PEACETIMER );
 	outStream << "PeaceTimer=";
 	if( pTime == 0 || pTime < cwmWorldState->GetUICurrentTime() )
-		outStream << (SI16)0 << '\n';
+	{
+		outStream << std::to_string( 0 ) + newLine;
+	}
 	else
-		outStream << (UI32)(pTime - cwmWorldState->GetUICurrentTime()) << '\n';
+	{
+		outStream << std::to_string( pTime - cwmWorldState->GetUICurrentTime() ) + newLine;
+	}
 
 	if( IsValidPlayer() )
+	{
 		mPlayer->DumpBody( outStream );
+	}
 	if( IsValidNPC() )
+	{
 		mNPC->DumpBody( outStream );
+	}
 	return true;
 }
 void CChar::NPCValues_st::DumpBody( std::ofstream& outStream )
 {
+	const char newLine = '\n';
+
 	// Hexadecimal Values
 	outStream << std::hex;
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "NpcAIType=" << aiType << '\n';
-	outStream << "Taming=" << taming << '\n';
-	outStream << "Peaceing=" << peaceing << '\n';
-	outStream << "Provoing=" << provoing << '\n';
-	outStream << "HoldG=" << goldOnHand << '\n';
-	outStream << "Split=" << (SI16)splitNum << "," << (SI16)splitChance << '\n';
-	outStream << "WanderArea=" << fx[0] << "," << fy[0] << "," << fx[1] << "," << fy[1] << "," << (SI16)fz << '\n';
-	outStream << "NpcWander=" << (SI16)wanderMode << "," << (SI16)oldWanderMode << '\n';
-	outStream << "SPAttack=" << spellAttack << "," << (SI16)spellDelay << '\n';
-	outStream << "QuestType=" << (SI16)questType << '\n';
-	outStream << "QuestRegions=" << (SI16)questOrigRegion << "," << (SI16)questDestRegion << '\n';
-	outStream << "FleeAt=" << fleeAt << '\n';
-	outStream << "ReAttackAt=" << reAttackAt << '\n';
-	outStream << "NPCFlag=" << (SI16)npcFlag << '\n';
-	outStream << "Mounted=" << (SI16)(boolFlags.test( BIT_MOUNTED )?1:0) << '\n';
-	outStream << "Stabled=" << (SI16)(boolFlags.test( BIT_STABLED )?1:0) << '\n';
-	outStream << "TamedHungerRate=" << tamedHungerRate << '\n';
-	outStream << "TamedThirstRate=" << tamedThirstRate << '\n';
-	outStream << "TamedHungerWildChance=" << (SI16)hungerWildChance << '\n';
-	outStream << "TamedThirstWildChance=" << (SI16)thirstWildChance << '\n';
-	outStream << "Foodlist=" << foodList << '\n';
-	outStream << "WalkingSpeed=" << walkingSpeed << '\n';
-	outStream << "RunningSpeed=" << runningSpeed << '\n';
-	outStream << "FleeingSpeed=" << fleeingSpeed << '\n';
-	outStream << "WalkingSpeedMounted=" << mountedWalkingSpeed << '\n';
-	outStream << "RunningSpeedMounted=" << mountedRunningSpeed << '\n';
-	outStream << "FleeingSpeedMounted=" << mountedFleeingSpeed << '\n';	
-	outStream << "ControlSlots=" << static_cast<UI16>(controlSlots) << '\n';
-	outStream << "MaxLoyalty=" << static_cast<UI16>(maxLoyalty) << '\n';
-	outStream << "Loyalty=" << static_cast<UI16>(loyalty) << '\n';
-	outStream << "Orneriness=" << static_cast<UI16>(orneriness) << '\n';
-	outStream << "Awake=" << static_cast<SI16>(boolFlags.test( BIT_AWAKE )?1:0) << '\n';
+	outStream << "NpcAIType=" + std::to_string( aiType ) + newLine;
+	outStream << "Taming=" + std::to_string( taming ) + newLine;
+	outStream << "Peaceing=" + std::to_string( peaceing ) + newLine;
+	outStream << "Provoing=" + std::to_string( provoing ) + newLine;
+	outStream << "HoldG=" + std::to_string( goldOnHand ) + newLine;
+	outStream << "Split=" + std::to_string( splitNum ) + "," + std::to_string( splitChance ) + newLine;
+	outStream << "WanderArea=" + std::to_string( fx[0] ) + "," + std::to_string( fy[0] ) + "," + std::to_string( fx[1] ) + "," + std::to_string( fy[1] ) + "," + std::to_string( fz ) + newLine;
+	outStream << "NpcWander=" + std::to_string( wanderMode ) + "," + std::to_string( oldWanderMode ) + newLine;
+	outStream << "SPAttack=" + std::to_string( spellAttack ) + "," + std::to_string( spellDelay ) + newLine;
+	outStream << "QuestType=" + std::to_string( questType ) + newLine;
+	outStream << "QuestRegions=" + std::to_string( questOrigRegion ) + "," + std::to_string( questDestRegion ) + newLine;
+	outStream << "FleeAt=" + std::to_string( fleeAt ) + newLine;
+	outStream << "ReAttackAt=" + std::to_string( reAttackAt ) + newLine;
+	outStream << "NPCFlag=" + std::to_string( npcFlag ) + newLine;
+	outStream << "Mounted=" + std::to_string(( boolFlags.test( BIT_MOUNTED ) ? 1 : 0 )) + newLine;
+	outStream << "Stabled=" + std::to_string(( boolFlags.test( BIT_STABLED ) ? 1 : 0 )) + newLine;
+	outStream << "TamedHungerRate=" + std::to_string( tamedHungerRate ) + newLine;
+	outStream << "TamedThirstRate=" + std::to_string( tamedThirstRate ) + newLine;
+	outStream << "TamedHungerWildChance=" + std::to_string( hungerWildChance ) + newLine;
+	outStream << "TamedThirstWildChance=" + std::to_string( thirstWildChance ) + newLine;
+	outStream << "Foodlist=" + foodList + newLine;
+	outStream << "WalkingSpeed=" + std::to_string( walkingSpeed ) + newLine;
+	outStream << "RunningSpeed=" + std::to_string( runningSpeed ) + newLine;
+	outStream << "FleeingSpeed=" + std::to_string( fleeingSpeed ) + newLine;
+	outStream << "WalkingSpeedMounted=" + std::to_string( mountedWalkingSpeed ) + newLine;
+	outStream << "RunningSpeedMounted=" + std::to_string( mountedRunningSpeed ) + newLine;
+	outStream << "FleeingSpeedMounted=" + std::to_string( mountedFleeingSpeed ) + newLine;	
+	outStream << "ControlSlots=" + std::to_string( controlSlots ) + newLine;
+	outStream << "MaxLoyalty=" + std::to_string( maxLoyalty ) + newLine;
+	outStream << "Loyalty=" + std::to_string( loyalty ) + newLine;
+	outStream << "Orneriness=" + std::to_string( orneriness ) + newLine;
+	outStream << "Awake=" + std::to_string( boolFlags.test( BIT_AWAKE ) ? 1 : 0 ) + newLine;
 
 	// Loop through list of previous owners for pet and store a reference to each of those
 	for( CChar *tempChar = petOwnerList.First(); !petOwnerList.Finished(); tempChar = petOwnerList.Next() )
 	{
-		if( ValidateObject( tempChar ) )
+		if( ValidateObject( tempChar ))
 		{
-			outStream << "PetOwner=" << std::to_string(tempChar->GetSerial()) << "\n";
+			outStream << "PetOwner=" + std::to_string( tempChar->GetSerial() ) + newLine;
 		}
 	}
 }
 void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 {
+	const char newLine = '\n';
+
 	// Hexadecimal Values
 	outStream << std::hex;
-	outStream << "RobeSerial=" << "0x" << robe << '\n';
-	outStream << "OriginalID=" << "0x" << origID << ",0x" << origSkin << '\n';
-	outStream << "Hair=" << "0x" << hairStyle << ",0x" << hairColour << '\n';
-	outStream << "Beard=" << "0x" << beardStyle << ",0x" << beardColour << '\n';
-	outStream << "TownVote=" << "0x" << townvote << '\n';
+	outStream << "RobeSerial=0x" << robe << newLine;
+	outStream << "OriginalID=0x" << origID << ",0x" << origSkin << newLine;
+	outStream << "Hair=0x" << hairStyle << ",0x" << hairColour << newLine;
+	outStream << "Beard=0x" << beardStyle << ",0x" << beardColour << newLine;
+	outStream << "TownVote=0x" << townvote << newLine;
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "Account=" << accountNum << '\n';
-	outStream << "LastOn=" << lastOn << '\n';
-	outStream << "LastOnSecs=" << lastOnSecs << '\n';
-	outStream << "CreatedOn=" << createdOn << '\n';
-	outStream << "OrgName=" << origName << '\n';
-	outStream << "CommandLevel=" << (SI16)commandLevel << '\n';	// command level
-	outStream << "Squelched=" << (SI16)squelched << '\n';
-	outStream << "Deaths=" << deaths << '\n';
-	outStream << "ControlSlotsUsed=" << static_cast<UI16>(controlSlotsUsed) << '\n';
-	outStream << "FixedLight=" << (SI16)fixedLight << '\n';
-	outStream << "TownPrivileges=" << (SI16)townpriv << '\n';
+	outStream << "Account=" + std::to_string( accountNum ) + newLine;
+	outStream << "LastOn=" + lastOn + newLine;
+	outStream << "LastOnSecs=" + std::to_string( lastOnSecs ) + newLine;
+	outStream << "CreatedOn=" + std::to_string( createdOn ) + newLine;
+	outStream << "OrgName=" + origName + newLine;
+	outStream << "CommandLevel=" + std::to_string( commandLevel ) + newLine;	// command level
+	outStream << "Squelched=" + std::to_string( squelched ) + newLine;
+	outStream << "Deaths=" + std::to_string( deaths ) + newLine;
+	outStream << "ControlSlotsUsed=" + std::to_string( controlSlotsUsed ) + newLine;
+	outStream << "FixedLight=" + std::to_string( fixedLight ) + newLine;
+	outStream << "TownPrivileges=" + std::to_string( townpriv ) + newLine;
 	outStream << "Atrophy=";
 	for( UI08 atc = 0; atc <= INTELLECT; ++atc )
 	{
-		outStream << (SI16)atrophy[atc] << "," ;
+		outStream << std::to_string( atrophy[atc] ) + ",";
 	}
-	outStream << "[END]" << '\n';
+	outStream << "[END]" << newLine;
 
 	// Format: SkillLocks=[0,34]-[1,255]-[END]
 	outStream << "SkillLocks=";
 	for( UI08 slc = 0; slc <= INTELLECT; ++slc )
 	{
 		if( lockState[slc] <= 2 )
-			outStream << "[" << (SI16)slc << "," << (SI16)lockState[slc] << "]-";
+		{
+			outStream << "[" + std::to_string( slc ) + "," + std::to_string( lockState[slc] ) + "]-";
+		}
 		else
-			outStream << "[" << (SI16)slc << ",0]-";
+		{
+			outStream << "[" + std::to_string( slc ) + ",0]-";
+		}
 	}
-	outStream << "[END]" << '\n';
+	outStream << "[END]" << newLine;
 }
 
 //o-----------------------------------------------------------------------------------------------o

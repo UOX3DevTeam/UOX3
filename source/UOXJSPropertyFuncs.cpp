@@ -601,7 +601,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_ITEMSINSIDE:	*vp = INT_TO_JSVAL( gPriv->GetContainsList()->Num() );	break;
 			case CIP_TOTALITEMCOUNT: *vp = INT_TO_JSVAL( GetTotalItemCount( gPriv ) );	break;
 			case CIP_DECAYABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDecayable() );		break;
-			case CIP_DECAYTIME:		*vp = INT_TO_JSVAL( gPriv->GetDecayTime() );		break;
+			case CIP_DECAYTIME:		JS_NewNumberValue( cx, gPriv->GetDecayTime(), vp );	break;
 			case CIP_LODAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetLoDamage() );			break;
 			case CIP_HIDAMAGE:		*vp = INT_TO_JSVAL( gPriv->GetHiDamage() );			break;
 			case CIP_AC:			*vp = INT_TO_JSVAL( gPriv->GetArmourClass() );		break;
@@ -673,13 +673,14 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->GetEvent().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() );			break;
+			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() / 1000 );		break;
 			case CIP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
 			case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isNewbie() );			break;
 			case CIP_ISDISPELLABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDispellable() );		break;
 			case CIP_MADEWITH:		*vp = INT_TO_JSVAL( gPriv->GetMadeWith() );				break;
 			case CIP_ENTRYMADEFROM:	*vp = INT_TO_JSVAL( gPriv->EntryMadeFrom() );			break;
 			case CIP_ISPILEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isPileable() );			break;
+			case CIP_ISMARKEDBYMAKER:	*vp = BOOLEAN_TO_JSVAL( gPriv->isMarkedByMaker() );	break;
 			case CIP_ISDYEABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->isDyeable() );			break;
 			case CIP_ISDAMAGEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isDamageable() );		break;
 			case CIP_ISWIPEABLE:	*vp = BOOLEAN_TO_JSVAL( gPriv->isWipeable() );			break;
@@ -1131,6 +1132,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MADEWITH:		gPriv->SetMadeWith( (SI08)encaps.toInt() );					break;
 			case CIP_ENTRYMADEFROM:	gPriv->EntryMadeFrom( (UI16)encaps.toInt() );				break;
 			case CIP_ISPILEABLE:	gPriv->SetPileable( encaps.toBool() );						break;
+			case CIP_ISMARKEDBYMAKER:	gPriv->SetMakersMark( encaps.toBool() );				break;
 			case CIP_ISDYEABLE:		gPriv->SetDye( encaps.toBool() );							break;
 			case CIP_ISDAMAGEABLE:	gPriv->SetDamageable( encaps.toBool() );					break;
 			case CIP_ISWIPEABLE:	gPriv->SetWipeable( encaps.toBool() );						break;
@@ -3348,13 +3350,25 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	{
 		switch( JSVAL_TO_INT( id ) )
 		{
-			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();						break;
-			case CRESP_LOGTIME:				gPriv->logTime	= encaps.toInt();						break;
-			case CRESP_OREAMT:				gPriv->oreAmt	= encaps.toInt();						break;
-			case CRESP_ORETIME:				gPriv->oreTime	= encaps.toInt();						break;
-			case CRESP_FISHAMT:				gPriv->fishAmt	= encaps.toInt();						break;
-			case CRESP_FISHTIME:			gPriv->fishTime	= encaps.toInt();						break;
-			default:																				break;
+			case CRESP_LOGAMT:				gPriv->logAmt	= encaps.toInt();			break;
+			case CRESP_LOGTIME:
+			{
+				gPriv->logTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+				break;
+			}
+			case CRESP_OREAMT:				gPriv->oreAmt	= encaps.toInt();			break;
+			case CRESP_ORETIME:				//gPriv->oreTime	= encaps.toInt();			break;
+			{
+				gPriv->oreTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+				break;
+			}
+			case CRESP_FISHAMT:				gPriv->fishAmt	= encaps.toInt();			break;
+			case CRESP_FISHTIME:			//gPriv->fishTime	= encaps.toInt();			break;
+			{
+				gPriv->fishTime = static_cast<UI32>( encaps.toInt() * 1000 ); break;
+				break;
+			}
+			default:																	break;
 		}
 	}
 	return JS_TRUE;
@@ -3370,13 +3384,13 @@ JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	{
 		switch( JSVAL_TO_INT( id ) )
 		{
-			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );					break;
-			case CRESP_LOGTIME:				*vp = INT_TO_JSVAL( gPriv->logTime );					break;
-			case CRESP_OREAMT:				*vp = INT_TO_JSVAL( gPriv->oreAmt );					break;
-			case CRESP_ORETIME:				*vp = INT_TO_JSVAL( gPriv->oreTime );					break;
-			case CRESP_FISHAMT:				*vp = INT_TO_JSVAL( gPriv->fishAmt );					break;
-			case CRESP_FISHTIME:			*vp = INT_TO_JSVAL( gPriv->fishTime );					break;
-			default:																				break;
+			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );			break;
+			case CRESP_LOGTIME:				JS_NewNumberValue( cx, gPriv->logTime, vp );	break;
+			case CRESP_OREAMT:				*vp = INT_TO_JSVAL( gPriv->oreAmt );			break;
+			case CRESP_ORETIME:				JS_NewNumberValue( cx, gPriv->oreTime, vp );	break;
+			case CRESP_FISHAMT:				*vp = INT_TO_JSVAL( gPriv->fishAmt );			break;
+			case CRESP_FISHTIME:			JS_NewNumberValue( cx, gPriv->fishTime, vp );	break;
+			default:																		break;
 		}
 	}
 	return JS_TRUE;

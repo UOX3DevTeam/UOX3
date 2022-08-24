@@ -280,10 +280,10 @@
 290=%s tě zasáhne do levé ruky!
 291=%s tě zasáhne do pravé ruky!
 292=%s tě zasáhne do pravé ruky!
-293=%s tě zasáhne přímo do obličeje!
+293=%s tě zasáhne přímo do tváře!
 294=%s ti zasadí ohromující úder do hlavy!
 295=%s tě zasáhne do hlavy!
-296=%s ti zasadil ránu do obličeje!
+296=%s ti uštědřil ránu přes obličej!
 297=%s tě udeřil přímo do čelisti!
 298=%s ti zasadil strašlivý úder do spánku!
 299=%s tě zasáhl do levého stehna!
@@ -660,7 +660,7 @@
 668=Tento předmět nelze chytit do pasti!
 669=Tuto věc nelze zamknout!
 670=Tady se nemůžete teleportovat!
-671=Vzdejte se rádoby Ježíše!
+671=Nemůžeš se tam teleportovat!
 672=Tam se nemůžeš teleportovat!
 673=Tento předmět byl chráněn božskou magií.  Tento předmět nelze odemknout.
 674=Tento předmět odemkneš.
@@ -2159,6 +2159,18 @@
 2204=Seznam přátel
 2205=Duchové mrtvých nejsou doménou zvířecí vědy.
 2206=Nemůžeš si vzpomenout na nic, co bys věděl z hlavy.
+2250=Zmatený
+2251=Extrémně nespokojen/a
+2252=Spíše nespokojený
+2253=Nešťastný
+2254=Málo spokojený
+2255=Spokojený
+2256=Šťastný
+2257=Spíše šťastný
+2258=Velmi spokojený
+2259=Extrémně šťastný
+2260=Nádherně šťastný
+2261=Euforický
 // [2300-2449] Hirelings
 2300=%s byl odstraněn ze seznamu přátel %s.
 2301=Byl jsi odstraněn ze seznamu přátel %s.
@@ -3290,6 +3302,7 @@
 6213=Tento lektvar mohl být vyroben ze sirného popela.
 6214=Složení tohoto lektvaru ti není známo.
 6215=Již víš, o jaký lektvar se jedná: %s
+6250=Vystupuješ ze stínu.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4014,6 +4027,12 @@
 9128=Nemáš šanci toho tvora vyprovokovat.
 9129=Tento cíl je imunní vůči fyzickému poškození!
 9130=Tvá zbraň nemůže proniknout magickou bariérou tohoto tvora.
+9140=výjimečné kvality
+9141=vyrobeno
+9142=Odemknete prkno.
+9143=Zamknete prkno.
+9144=Otevřeš prkno, i když je stále zamčené.
+9150=Nezjištěn žádný batoh, nelze přidat předmět! Zkus příkaz 'addpack?
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -4363,6 +4382,8 @@
 11218=Smyčka
 11219=Kuše
 11220=Těžká kuše
+11221=Kompozitní luk
+11222=Opakovaná kuše
 // 11401 - 11600 Krejčovská řemeslná dovednost
 11401=MENU KREJČOVSTVÍ
 11402=KŮŽE/KOŽE

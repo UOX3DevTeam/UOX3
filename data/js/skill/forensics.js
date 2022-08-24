@@ -27,7 +27,7 @@ function onCallback0( pSock, ourObj )
 		else
 		{
 			pSock.SysMessage( GetDictionaryEntry( 6007, pLanguage ) ); // You examine the body..."
-			var timeSinceDeath = parseInt( (GetCurrentClock() - ourObj.tempTimer) / 1000 );
+			var timeSinceDeath = parseInt(( GetCurrentClock() / 1000 ) - ourObj.tempTimer );
 			if( timeSinceDeath > 180 )
 				pSock.SysMessage( GetDictionaryEntry( 6008, pLanguage ) ); // It stinks quite a lot by now.
 			else if( timeSinceDeath > 60 )

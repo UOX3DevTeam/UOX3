@@ -1,3 +1,71 @@
+25/08/2022 - Xuri (0.99.5b-6)
+	Increased world load speed by almost 20% by reducing how often loading progress is written to the console
+	Increased world save speed by almost 50% through the use of binary mode and buffer tweaks for ofstream combined with a cached newline char and std::to_string instead of static_cast
+	Fixed a server crash involving killing NPCs of a specific spawn region using the 'spawnkill # command
+	Fixed a server crash involving moving items from decaying corpses to the ground
+	Fixed a server crash involving carving up human corpses
+	Fixed a server crash related to AreaCharacterFunction JS function, which could trigger for any script that potentially kills any NPC this function iterates over (like explosion potions)
+	Fixed a server crash related to GMs attempting to add items from add-menu while having no backpack
+	Fixed a client crash issue caused by attempting to sell house deeds back to architect NPCs
+	Fixed an issue where players would get incorrect amounts of gold for selling house deeds back to architect NPCs
+	Fixed an issue with characters dying onboard boats which prevented players from packing up the boats later
+	Added new item property in code (via bools bitset) that can be used to enable/disable maker's mark on crafted items. This property can be set to true for items crafted at exceptional quality by GM craftsmen
+	Exposed the new item property to JS engine:
+		.isMarkedByMaker	 	// If true, maker's mark will be displayed
+	Updated default item tooltip to display " of exceptional quality" for items crafted with exceptional quality
+	Updated default item tooltip to display "[Crafted] by [Crafter's Name]" for exceptional quality items crafted by GM craftsmen. The [Crafted] text comes from the MADEWORD defined in dfndata/skills/skills.dfn for the primary skill used to craft the item
+	Updated old-school single-click names for items (when AoS bit is disabled in client/server features) to display exceptional status and/or maker's mark for appropriate items
+	Fixed an issue with the display of titles for NPCs that used dictionary lookups for their title
+	Added new UOX.INI settings under the [settings] section:
+		DISPLAYMAKERSMARK=1/0			// Controls if maker's marks on crafted items are shown on a global level
+		SHOWNPCTITLESOVERHEAD=1/0 		// Controls whether NPC titles are shown over their heads
+		SHOWINVULNERABLETAGOVERHEAD=0/1 // Controls whether invulnerable tags are shown overhead
+		GLOBALRESTOCKMULTIPLIER=1.0 	// Global multiplier applied to RESTOCK property of items when loaded from DFNs
+	Added new UOX.INI settings under the [combat] section:
+		PETCOMBATTRAINING=1/0 			// Controls whether pets can gain skills/stats from combat
+		HIRELINGCOMBATTRAINING=1/0 		// Controls whether hirelings can gain skills/stats from combat
+		NPCCOMBATTRAINING=0/1 			// Controls whether NPCs in general can gain skills/stats from combat
+	Fixed an issue where a player meeting the exact minimum requirements for crafting an item would always fail
+	Fixed a bug with teleporting off boats to valid nearby locations when double-clicking boat planks while standing on it
+	Updated behaviour of planks on boats:
+		Boat key can unlock plank, but won't automatically open it
+		Boat key used on an open, unlocked plank will lock and automatically close the plank
+		Boat key used on an open, locked plank will unlock the plank and leave it open
+		Player using an unlocked plank now opens it
+		Player using an open plank will disembark (if onboard) or embark (if not) the boat
+		Player can always open a locked plank if they're on the boat, even with no key, to allow disembarking the boat.
+		Planks that are open, but locked cannot be accessed from outside the boat, and will close automatically after five of seconds
+	Updated behaviour of Magic Lock/Unlock spells:
+		Magic Lock cannot be used on objects inside a multi
+		Magic Lock applies difficulty to lock based on caster's Magery skill
+		Magic Lock effect will last between 7 to 50 seconds (depending on caster's Magery skill)
+		Any object that can be locked via Magic Lock spell can also be unlocked via Magic Unlock spell, if caster has high enough Magery skill
+	Fixed a bug where certain JS Functions, Methods and Properties would occasionally pass incorrect values to scripts that called upon them. Scripts that rely on the GetCurrentClock() Function, the .GetTimer() Method, .decayTime, .logTime, .oreTime and .fishTime Properties might need to be updated to account for the fix, which causes larger values to be passed in than before.
+	Fixed a bug related to GetCurrentClock() that caused decay and respawning of dungeon chests from working properly
+	Fixed a bug related to GetCurrentClock() and .logTime/.fishTime that prevented consumption and regeneration of log/fish resources from working properly
+	Added a new JS Function:
+		GetStartTime()	// Returns a timestamp for when server started up
+	Fixed a bug related to GetCurrentClock() where server uptime stats in help menu was showing up incorrectly
+	Fixed a bug related to GetCurrentClock() and purging of registrations of visitors in public houses so their visits can be counted again later
+	Fixed a bug related to GetCurrentClock() that caused monster speech to not work properly
+	Fixed a Z-related issue that sometimes prevented players from fishing when standing on the shoreline next to the sea
+	Fixed an issue with Animal Lore skill that would always return a pet's loyalty level as "Wild"
+	Increased max range pets can be from their owner in order to still be included in moongate/teleporter travel from 12 to 24 tiles
+	Fixed an issue where the alchemy bonus damage for explosion potions was off by an order of magnitude
+	Fixed an issue where food IDs from foodlists referenced by other foodlists was not detected as valid food for tamed pets or NPCs
+	Fixed an issue where Alchemy crafting skill did not properly check for the existence of the crafting tool before proceeding with the crafting process
+	Fixed an issue that prevented the Teleport spell from working as intended
+	Fixed an issue where players would still get 1 gold even if STARTGOLD in uox.ini was set to 0
+	Fixed an issue with mount restrictions script that prevented players from mounting Unicorns, Ki-rins and Cu Sidhes
+	Fixed an issue where aggressive creatures wouldn't stop attacking player after being tamed (js/skill/taming.js)
+	Added a system message to inform the player when they've dropped out of stealth due to taking too many steps
+	Fixed an issue where hunger level of NPCs instantly dropped upon spawning because hunger timer was not active yet
+	Fixed a bug where character corpses would appear with a [unidentified] tag attached
+	Fixed an issue where the [unidentified] tag did not show up for unidentified magic items
+	Added ANIMAL tag to a small bunch of creature definitions (dfndata/creatures/creatures.dfn)
+	Fixed an issue with Bowcraft skill where player could not gain enough skill from crafting bows to reach min requirement for crossbows, and similiarly could not reach min requirement for heavy crossbows from crossbows
+	Updated default value of MURDERDECAYTIMER INI setting from 60 seconds to 28800 seconds (8 hours), to match the amount of time it would take for one (short term) murder count to decay on LBR-era OSI shards.
+
 10/08/2022 - Xuri (0.99.5b-5)
 	Fixed an issue involving player deaths and moving items from backpacks to corpses
 	Fixed NPC Carpenters not selling carpentry tools

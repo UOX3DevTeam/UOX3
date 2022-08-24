@@ -53,6 +53,7 @@
 #include "osunique.hpp"
 #include <charconv>
 
+const UI32 BIT_MAKERSMARK	=	0;
 const UI32 BIT_DOOROPEN		=	1;
 const UI32 BIT_PILEABLE		=	2;
 const UI32 BIT_DYEABLE		=	3;
@@ -362,6 +363,15 @@ bool CItem::SetCont( CBaseObject *newCont, bool removeFromView )
 		// If item has been moved to the ground, make sure we save it
 		ShouldSave( true );
 	}
+	else
+	{
+		// Remove item from any multi it might be in
+		if( ValidateObject( GetMultiObj() ))
+		{
+			RemoveFromMulti( false );
+			multis = nullptr;
+		}
+	}
 
 	if( GetGlow() != INVALIDSERIAL )
 		Items->GlowItem( this );
@@ -416,10 +426,26 @@ void CItem::SetPileable( bool newValue )
 	UpdateRegion();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool isDyeable( void ) const
-//|					void SetDye( bool newValue )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::isMarkedByMaker()
+//|					CItem::SetMakersMark()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets maker's mark on item
+//o------------------------------------------------------------------------------------------------o
+bool CItem::isMarkedByMaker( void ) const
+{
+	return bools.test( BIT_MAKERSMARK );
+}
+void CItem::SetMakersMark( bool newValue )
+{
+	bools.set( BIT_MAKERSMARK, newValue );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::isDyeable()
+//|					CItem::SetDye()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's dyeable state
 //o-----------------------------------------------------------------------------------------------o
 bool CItem::isDyeable( void ) const
@@ -1515,6 +1541,7 @@ void CItem::CopyData( CItem *target )
 	target->SetOffSpell( GetOffSpell() );
 	target->SetOwner( GetOwnerObj() );
 	target->SetPileable( isPileable() );
+	target->SetMakersMark( isMarkedByMaker() );
 	target->SetPoisoned( GetPoisoned() );
 	target->SetRace( GetRace() );
 	target->SetRank( GetRank() );
@@ -1589,51 +1616,52 @@ bool CItem::DumpHeader( std::ofstream &outStream ) const
 bool CItem::DumpBody( std::ofstream &outStream ) const
 {
 	CBaseObject::DumpBody( outStream );
+	const char newLine = '\n';
 
 	// Hexadecimal Values
 	outStream << std::hex;
-	outStream << "GridLoc=" << "0x" << (SI16)GetGridLocation() << '\n';
-	outStream << "Layer=" << "0x" << (SI16)GetLayer() << '\n';
-	outStream << "Cont=" << "0x" << GetContSerial() << '\n';
-	outStream << "More=" << "0x" << GetTempVar( CITV_MORE ) << '\n';
-	outStream << "Creator=" << "0x" << GetCreator() << '\n';
-	outStream << "MoreXYZ=" << "0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << '\n';
-	outStream << "Glow=" << "0x" << GetGlow() << '\n';
-	outStream << "GlowBC=" << "0x" << GetGlowColour() << '\n';
-	outStream << "Ammo=" << "0x" << GetAmmoID() << ",0x" << GetAmmoHue() << '\n';
-	outStream << "AmmoFX=" << "0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << '\n';
-	outStream << "Spells=" << "0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << '\n';
+	outStream << "GridLoc=0x" << static_cast<SI16>( GetGridLocation() ) << newLine;
+	outStream << "Layer=0x" << static_cast<SI16>( GetLayer() ) << newLine;
+	outStream << "Cont=0x" << GetContSerial() << newLine;
+	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
+	outStream << "Creator=0x" << GetCreator() << newLine;
+	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
+	outStream << "Glow=0x" << GetGlow() << newLine;
+	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
+	outStream << "Ammo=0x" << GetAmmoID() << ",0x" << GetAmmoHue() << newLine;
+	outStream << "AmmoFX=0x" << GetAmmoFX() << ",0x" << GetAmmoFXHue() << ",0x" << GetAmmoFXRender() << newLine;
+	outStream << "Spells=0x" << GetSpell( 0 ) << ",0x" << GetSpell( 1 ) << ",0x" << GetSpell( 2 ) << newLine;
 
 	// Decimal / String Values
 	outStream << std::dec;
-	outStream << "Name2=" << GetName2() << '\n';
-	outStream << "Desc=" << GetDesc() << '\n';
-	outStream << "Event=" << GetEvent() << '\n';
-	outStream << "Type=" << static_cast<SI16>(GetType()) << '\n';
-	outStream << "Offspell=" << (SI16)GetOffSpell() << '\n';
-	outStream << "Amount=" << GetAmount() << '\n';
-	outStream << "WeightMax=" << GetWeightMax() << '\n';
-	outStream << "BaseWeight=" << GetBaseWeight() << '\n';
-	outStream << "MaxItems=" << GetMaxItems() << '\n';
-	outStream << "MaxHP=" << GetMaxHP() << '\n';
-	outStream << "Speed=" << (SI16)GetSpeed() << '\n';
-	outStream << "Movable=" << (SI16)GetMovable() << '\n';
-	outStream << "Priv=" << (SI16)GetPriv() << '\n';
-	outStream << "Value=" << GetBuyValue() << "," << GetSellValue() << '\n';
-	outStream << "Restock=" << GetRestock() << '\n';
-	outStream << "AC=" << (SI16)GetArmourClass() << '\n';
-	outStream << "Rank=" << (SI16)GetRank() << '\n';
-	outStream << "Sk_Made=" << (SI16)GetMadeWith() << '\n';
-	outStream << "Bools=" << (SI16)(bools.to_ulong()) << '\n';
-	outStream << "Good=" << GetGood() << '\n';
-	outStream << "GlowType=" << (SI16)GetGlowEffect() << '\n';
-	outStream << "Range=" << static_cast<SI16>(GetBaseRange()) << "," << static_cast<SI16>(GetMaxRange()) << '\n';
-	outStream << "MaxUses=" << GetMaxUses() << '\n';
-	outStream << "UsesLeft=" << GetUsesLeft() << '\n';
-	outStream << "RaceDamage=" << (SI16)(GetWeatherDamage( LIGHT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( RAIN ) ? 1 : 0) << ","
-	<< (SI16)(GetWeatherDamage( HEAT ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( COLD ) ? 1 : 0) << ","
-	<< (SI16)(GetWeatherDamage( SNOW ) ? 1 : 0) << "," << (SI16)(GetWeatherDamage( LIGHTNING ) ? 1 : 0) << '\n';
-	outStream << "EntryMadeFrom=" << EntryMadeFrom() << '\n';
+	outStream << "Name2=" << GetName2() << newLine;
+	outStream << "Desc=" << GetDesc() << newLine;
+	outStream << "Event=" << GetEvent() << newLine;
+	outStream << "Type=" + std::to_string( GetType() ) + newLine;
+	outStream << "Offspell=" + std::to_string( GetOffSpell() ) + newLine;
+	outStream << "Amount=" + std::to_string( GetAmount() ) + newLine;
+	outStream << "WeightMax=" + std::to_string( GetWeightMax() ) + newLine;
+	outStream << "BaseWeight=" + std::to_string( GetBaseWeight() ) + newLine;
+	outStream << "MaxItems=" + std::to_string( GetMaxItems() ) + newLine;
+	outStream << "MaxHP=" + std::to_string( GetMaxHP() ) + newLine;
+	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
+	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
+	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
+	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + newLine;
+	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
+	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
+	outStream << "Rank=" + std::to_string( GetRank() ) + newLine;
+	outStream << "Sk_Made=" + std::to_string( GetMadeWith() ) + newLine;
+	outStream << "Bools=" + std::to_string(( bools.to_ulong() )) + newLine;
+	outStream << "Good=" + std::to_string( GetGood() ) + newLine;
+	outStream << "GlowType=" + std::to_string( GetGlowEffect() ) + newLine;
+	outStream << "Range=" + std::to_string( GetBaseRange() ) + "," + std::to_string(GetMaxRange()) + newLine;
+	outStream << "MaxUses=" + std::to_string( GetMaxUses() ) + newLine;
+	outStream << "UsesLeft=" + std::to_string( GetUsesLeft() ) + newLine;
+	outStream << "RaceDamage=" + std::to_string(static_cast<SI16>( GetWeatherDamage( LIGHT ) ? 1 : 0 )) + "," + std::to_string(static_cast<SI16>( GetWeatherDamage( RAIN ) ? 1 : 0 )) + ","
+		+ std::to_string( static_cast<SI16>( GetWeatherDamage( HEAT ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( COLD ) ? 1 : 0 )) + ","
+		+ std::to_string( static_cast<SI16>( GetWeatherDamage( SNOW ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( LIGHTNING ) ? 1 : 0 )) + newLine;
+	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
 	return true;
 }
 
@@ -2436,22 +2464,10 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 		{
 			CPWornItem toWear = (*this);
 			auto nearbyChar = FindNearbyPlayers( charCont );
-			for (auto &tSock : nearbyChar){
-				if( tSock->LoginComplete() ) {
-					tSock->Send( &toWear );
-					
-					// Only send tooltip if server feature for tooltips is enabled
-					if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+			for( auto &tSock : nearbyChar )
+			{
+				if( tSock->LoginComplete() )
 					{
-						CPToolTip pSend( GetSerial(), tSock );
-						tSock->Send( &pSend );
-					}
-				}
-				
-			}
-			for (auto &tSock: nearbyChar){
-				if( tSock->LoginComplete() ){
-					
 					tSock->Send( &toWear );
 					
 					// Only send tooltip if server feature for tooltips is enabled
