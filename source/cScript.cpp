@@ -60,6 +60,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
 	{ "SecondsPerUOMinute",			SE_SecondsPerUOMinute,		0, 0, 0 },
 	{ "GetCurrentClock",			SE_GetCurrentClock,			0, 0, 0 },
+	{ "GetStartTime",				SE_GetStartTime,			0, 0, 0 },
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },

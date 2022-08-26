@@ -25,7 +25,7 @@ function onTimer( timerObj, timerID )
 {
 	if( timerID == 0 )
 	{
-		// Teleport player's pets to Wind
+		// Teleport player's pets to Orc Caves Level 3
 		var petList = timerObj.GetPetList();
 		for( var i = 0; i < petList.length; i++ )
 		{
@@ -43,7 +43,7 @@ function onTimer( timerObj, timerID )
 	}
 	else if( timerID == 1 )
 	{
-		// Teleport player's pets to Wind
+		// Teleport player's pets to Orc Caves Level 2
 		var petList = timerObj.GetPetList();
 		for( var i = 0; i < petList.length; i++ )
 		{

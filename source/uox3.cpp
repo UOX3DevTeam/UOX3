@@ -199,19 +199,30 @@ auto main( SI32 argc, char *argv[] ) ->int {
 		return EXIT_FAILURE;
 	}
 
-	// We are going to load some of our basic data, if that goes ok, we then startup the Console subystem,
+	// Ok, we probably want the Console now
+	Console.initialize();
+
+	Console.Start( oldstrutil::format( "%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ));
+	Console.PrintSectionBegin();
+	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
+	Console.PrintSectionBegin();
+
+	// We are going to load some of our basic data, if that goes ok, we then initialize classes, data, network
 	// and the classes
-	if (!std::filesystem::exists(std::filesystem::path(config_file))){
-		std::cout << "Cannot find UOX3 ini file"<<(config_file.empty()?"."s:": "s+config_file) << std::endl;
+	Console << "Processing INI Settings  ";
+	if( !std::filesystem::exists( std::filesystem::path( config_file )))
+	{
+		Console.error( config_file.empty() ? "Cannot find UOX3 ini file." : oldstrutil::format( "Cannot find UOX3 ini file: %s", config_file.c_str() ));
 		return EXIT_FAILURE;
 	}
 	auto serverdata = CServerData() ;
-	if (!serverdata.Load(config_file)) {
-		std::cout << "Error loading UOX3 ini file"<<(config_file.empty()?"."s:": "s+config_file) << std::endl;
+	if( !serverdata.Load( config_file ))
+	{
+		Console.error( config_file.empty() ? "Error loading UOX3 ini file." : oldstrutil::format( "Error loading UOX3 ini file: %s", config_file.c_str() ));
 		return EXIT_FAILURE;
 	}
-	// Ok, we probably want the Console now
-	Console.initialize();
+	Console.PrintDone();
+
 	//=================================================================================================
 	// Start/Initalize classes,data,network
 	//=================================================================================================
@@ -363,185 +374,179 @@ auto startInitialize(CServerData &serverdata) ->void {
 	saveOnShutdown = false ;
 	// Let's measure startup time
 	auto startupStartTime = std::chrono::high_resolution_clock::now();
-	Console.Start( oldstrutil::format("%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ) );
-	
-	Console.PrintSectionBegin();
-	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
-	Console.PrintSectionBegin();
-	cwmWorldState = &aWorld ;
-	cwmWorldState->setServerData(serverdata);
-		
-		Console << "Initializing and creating class pointers... " << myendl;
-		InitClasses();
-		cwmWorldState->SetUICurrentTime( getclock() );
-		
-		Console.PrintSectionBegin();
-		
-		cwmWorldState->ServerData()->LoadTime();
-		
-		Console << "Loading skill advancement      ";
-		LoadSkills();
-		Console.PrintDone();
-		
-		// Moved BulkStartup here, dunno why that function was there...
-		Console << "Loading dictionaries...        " << myendl;
-		Console.PrintBasedOnVal( Dictionary->LoadDictionary(cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES )) >= 0 );
-		
-		Console << "Loading teleport               ";
-		LoadTeleportLocations();
-		Console.PrintDone();
-		
-		Console << "Loading GoPlaces               ";
-		LoadPlaces();
-		Console.PrintDone();
-		generator = std::mt19937(rd()); //Standard mersenne_twister_engine seeded with rd()
-		
-		auto packetSection = JSMapping->GetSection( SCPT_PACKET );
-		for( const auto &[id,ourScript] : packetSection->collection() ) {
-			if( ourScript){
-				ourScript->ScriptRegistration( "Packet" );
-			}
-		}
-		
-		// moved all the map loading into CMulHandler
-		//Map->load();
-		
-		Skills->Load();
-		
-		Console << "Loading Spawn Regions          ";
-		LoadSpawnRegions();
-		Console.PrintDone();
-		
-		Console << "Loading Regions                ";
-		LoadRegions();
-		Console.PrintDone();
-		
-		Magic->LoadScript();
-		
-		Console << "Loading Races                  ";
-		Races->load();
-		Console.PrintDone();
-		
-		Console << "Loading Weather                ";
-		Weather->Load();
-		Weather->NewDay();
-		Weather->NewHour();
-		Console.PrintDone();
-		
-		Console << "Loading Commands               " << myendl;
-		Commands->Load();
-		Console.PrintDone();
-		
-		// Rework that...
-		Console << "Loading World now              ";
-		MapRegion->Load();
-		
-		Console << "Loading Guilds                 ";
-		GuildSys->Load();
-		Console.PrintDone();
-		
-		Console.PrintSectionBegin();
-		Console << "Clearing all trades            ";
-		clearTrades();
-		Console.PrintDone();
-		InitMultis();
-		
-		cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
-		
-		cwmWorldState->SetEndTime( 0 );
-		cwmWorldState->SetLClock( 0 );
-		
-		// no longer Que, because that's taken care of by PageVector
-		Console << "Initializing Jail system       ";
-		JailSys->ReadSetup();
-		JailSys->ReadData();
-		Console.PrintDone();
-		
-		Console << "Initializing Status system     ";
-		HTMLTemplates->Load();
-		Console.PrintDone();
-		
-		Console << "Loading custom titles          ";
-		LoadCustomTitle();
-		Console.PrintDone();
-		
-		Console << "Loading temporary Effects      ";
-		Effects->LoadEffects();
-		Console.PrintDone();
-		
-		Console << "Loading creatures              ";
-		LoadCreatures();
-		Console.PrintDone();
-		
-		Console << "Starting World Timers          ";
-		cwmWorldState->SetTimer( tWORLD_LIGHTTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ) );
-		cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckNpcAISpeed() ) );
-		cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ) );
-		cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ) );
-		cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ) );
-		
-		Console.PrintDone();
-		
-		DisplayBanner();
-		
-		Console << "Loading Accounts               ";
-		Accounts->Load();
-		Console.PrintDone();
-		
-		Console.log( "-=Server Startup=-\n=======================================================================", "server.log" );
-		
-		Console << "Creating and Initializing Console Thread      ";
-		
-		cons = std::thread(&CheckConsoleKeyThread);
-		
-		Console.PrintDone();
-		
-		// Shows information about IPs and ports being listened on
-		Console.TurnYellow();
-		
-		auto externalIP = cwmWorldState->ServerData()->ExternalIP();
-		if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" ){
-			Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
-		}
-		
-		auto deviceIPs = ip4list_t::available();
-		for( auto &entry : deviceIPs.ips() ){
-			switch (entry.type()){
-				case ip4addr_t::ip4type_t::lan:
-					Console << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
-					break;
-				
-				case ip4addr_t::ip4type_t::local:
-					Console << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
-					break;
-				case ip4addr_t::ip4type_t::wan:
-					Console << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
-					break;
-				default:
-					Console << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
-					break;
-			}
-		}
-		Console.TurnNormal();
-		
-		// we've really finished loading here
-		cwmWorldState->SetLoaded( true );
-		
-		// Get a second timestamp for startup time
-		auto startupEndTime = std::chrono::high_resolution_clock::now();
-		
-		// Calculate startup time in milliseconds
-		auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
-		Console.TurnGreen();
-		Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
-		Console.TurnNormal();
 
-	
+	cwmWorldState = &aWorld;
+	cwmWorldState->setServerData( serverdata );
+
+	Console << "Initializing and creating class pointers... " << myendl;
+	InitClasses();
+	cwmWorldState->SetUICurrentTime( getclock() );
+
+	Console.PrintSectionBegin();
+
+	cwmWorldState->ServerData()->LoadTime();
+
+	Console << "Loading skill advancement      ";
+	LoadSkills();
+	Console.PrintDone();
+
+	// Moved BulkStartup here, dunno why that function was there...
+	Console << "Loading dictionaries...        " << myendl;
+	Console.PrintBasedOnVal( Dictionary->LoadDictionary( cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES )) >= 0 );
+
+	Console << "Loading teleport               ";
+	LoadTeleportLocations();
+	Console.PrintDone();
+
+	Console << "Loading GoPlaces               ";
+	LoadPlaces();
+	Console.PrintDone();
+	generator = std::mt19937( rd() ); //Standard mersenne_twister_engine seeded with rd()
+
+	auto packetSection = JSMapping->GetSection( SCPT_PACKET );
+	for( const auto &[id, ourScript] : packetSection->collection() )
+	{
+		if( ourScript )
+		{
+			ourScript->ScriptRegistration( "Packet" );
+		}
+	}
+
+	// moved all the map loading into CMulHandler
+	//Map->load();
+
+	Skills->Load();
+
+	Console << "Loading Spawn Regions          ";
+	LoadSpawnRegions();
+	Console.PrintDone();
+
+	Console << "Loading Regions                ";
+	LoadRegions();
+	Console.PrintDone();
+
+	Magic->LoadScript();
+
+	Console << "Loading Races                  ";
+	Races->load();
+	Console.PrintDone();
+
+	Console << "Loading Weather                ";
+	Weather->Load();
+	Weather->NewDay();
+	Weather->NewHour();
+	Console.PrintDone();
+
+	Console << "Loading Commands               " << myendl;
+	Commands->Load();
+	Console.PrintDone();
+
+	// Rework that...
+	Console << "Loading World now              ";
+	MapRegion->Load();
+
+	Console << "Loading Guilds                 ";
+	GuildSys->Load();
+	Console.PrintDone();
+
+	Console.PrintSectionBegin();
+	Console << "Clearing all trades            ";
+	clearTrades();
+	Console.PrintDone();
+	InitMultis();
+
+	cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
+
+	cwmWorldState->SetEndTime( 0 );
+	cwmWorldState->SetLClock( 0 );
+
+	// no longer Que, because that's taken care of by PageVector
+	Console << "Initializing Jail system       ";
+	JailSys->ReadSetup();
+	JailSys->ReadData();
+	Console.PrintDone();
+
+	Console << "Initializing Status system     ";
+	HTMLTemplates->Load();
+	Console.PrintDone();
+
+	Console << "Loading custom titles          ";
+	LoadCustomTitle();
+	Console.PrintDone();
+
+	Console << "Loading temporary Effects      ";
+	Effects->LoadEffects();
+	Console.PrintDone();
+
+	Console << "Loading creatures              ";
+	LoadCreatures();
+	Console.PrintDone();
+
+	Console << "Starting World Timers          ";
+	cwmWorldState->SetTimer( tWORLD_LIGHTTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ));
+	cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( (R32)cwmWorldState->ServerData()->CheckNpcAISpeed() ));
+	cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
+	cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ));
+	cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ));
+
+	Console.PrintDone();
+
+	DisplayBanner();
+
+	Console << "Loading Accounts               ";
+	Accounts->Load();
+	Console.PrintDone();
+
+	Console.log( "-=Server Startup=-\n=======================================================================", "server.log" );
+
+	Console << "Creating and Initializing Console Thread      ";
+
+	cons = std::thread( &CheckConsoleKeyThread );
+
+	Console.PrintDone();
+
+	// Shows information about IPs and ports being listened on
+	Console.TurnYellow();
+
+	auto externalIP = cwmWorldState->ServerData()->ExternalIP();
+	if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )
+	{
+		Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
+	}
+
+	auto deviceIPs = ip4list_t::available();
+	for( auto &entry : deviceIPs.ips() )
+	{
+		switch( entry.type() )
+		{
+			case ip4addr_t::ip4type_t::lan:
+				Console << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
+				break;
+			case ip4addr_t::ip4type_t::local:
+				Console << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
+				break;
+			case ip4addr_t::ip4type_t::wan:
+				Console << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
+				break;
+			default:
+				Console << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
+				break;
+		}
+	}
+	Console.TurnNormal();
+
+	// we've really finished loading here
+	cwmWorldState->SetLoaded( true );
+
+	// Get a second timestamp for startup time
+	auto startupEndTime = std::chrono::high_resolution_clock::now();
+
+	// Calculate startup time in milliseconds
+	auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
+	Console.TurnGreen();
+	Console << "UOX: Startup Completed in " << (R32)startupDuration/1000 << " seconds." << myendl;
+	Console.TurnNormal();
 }
-
-
-
-
 
 //=================================================================================================
 // Most things after this point, should be in different files, not in uox3.cpp.

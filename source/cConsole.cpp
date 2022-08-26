@@ -469,7 +469,7 @@ auto CConsole::PrintSectionBegin() ->void {
 	for( auto j = 1; j < width - 1; ++j ){
 		std::cout << "-";
 	}
-	std::cout << "o";
+	std::cout << "o" << std::endl;
 	curLeft = 0;
 	curTop = 0;
 	TurnNormal();
