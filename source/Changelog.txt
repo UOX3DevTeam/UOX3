@@ -1,3 +1,7 @@
+26/08/2022 - Xuri (0.99.5b-7)
+	Fixed a missing definition for GetStartTime JS function which would cause an error in the help menu script
+	Tweaked some messages output to the UOX3 console during startup for improved clarity
+
 25/08/2022 - Xuri (0.99.5b-6)
 	Increased world load speed by almost 20% by reducing how often loading progress is written to the console
 	Increased world save speed by almost 50% through the use of binary mode and buffer tweaks for ofstream combined with a cached newline char and std::to_string instead of static_cast
