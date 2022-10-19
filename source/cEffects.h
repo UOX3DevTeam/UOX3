@@ -22,7 +22,7 @@ public:
 	void	PlayMovingAnimation( CBaseObject *source, SI16 x, SI16 y, SI08 z, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 dwHue = 0, UI32 dwRenderMode = 0 );
 	void	PlayCharacterAnimation( CChar *mChar, UI16 actionID, UI08 frameDelay = 0, UI08 frameCount = 7, bool playBackwards = false );
 	void	PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subActionID = 0, UI08 subSubActionID = 0 );
-	void	PlaySpellCastingAnimation( CChar *mChar, UI16 actionID );
+	void	PlaySpellCastingAnimation( CChar *mChar, UI16 actionId, bool monsterCast, bool areaCastAnim );
 	void	bolteffect( CChar *player );
 
 	// Sound Effects

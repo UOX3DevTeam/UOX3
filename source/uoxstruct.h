@@ -1,9 +1,9 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 
-const UI08 BIT_ANIMAL		=	2;
-const UI08 BIT_ANTIBLINK	=	1;
 const UI08 BIT_CANFLY		=	0;
+const UI08 BIT_ANTIBLINK	=	1;
+const UI08 BIT_ANIMAL		=	2;
 const UI08 BIT_WATER		=	3;
 const UI08 BIT_AMPHI		=	4;
 const UI08 BIT_HUMAN		=	5;
@@ -18,7 +18,7 @@ class CCreatures
 	//             4: only 1 sound !!
 	//
 	// who_am_i bit # 1 creature can fly (must have the animations, so better not change)
-	//              # 2 anti-blink: these creatures don't have animation #4, if not set creature will randomly disappear in battle
+	//              # (OUTDATED) 2 anti-blink: these creatures don't have animation #4, if not set creature will randomly disappear in battle
 	//                              if you find a creature that blinks while fighting, set that bit
 	//              # 3 animal-bit
 	//              # 4 water creatures
@@ -33,6 +33,22 @@ private:
 	std::bitset< 6 >	who_am_i;
 	UI16				icon;
 	UI16				mountID;
+	struct CreatureAnim_st
+	{
+		UI08 animId;
+		UI08 animLength;
+		CreatureAnim_st() : animId( 0 ), animLength( 0 )
+		{
+		}
+	};
+
+	CreatureAnim_st castAnimArea;
+	CreatureAnim_st castAnimTarget;
+	CreatureAnim_st castAnim3;
+	CreatureAnim_st attackAnim1;
+	CreatureAnim_st attackAnim2;
+	CreatureAnim_st attackAnim3;
+
 public:
 	CCreatures() : creatureID( 0 ), icon( 0 ), mountID( 0 )
 	{
@@ -68,6 +84,96 @@ public:
 	void	MountID( UI16 value )
 	{
 		mountID = value;
+	}
+
+	// Cast Animation (Area-based)
+	UI08 CastAnimAreaId( void ) const
+	{
+		return castAnimArea.animId;
+	}
+	UI08 CastAnimAreaLength( void ) const
+	{
+		return castAnimArea.animLength;
+	}
+	void CastAnimArea( UI08 value, UI08 length )
+	{
+		castAnimArea.animId = value;
+		castAnimArea.animLength = length;
+	}
+
+	// Cast Animation (Target-based)
+	UI08 CastAnimTargetId( void ) const
+	{
+		return castAnimTarget.animId;
+	}
+	UI08 CastAnimTargetLength( void ) const
+	{
+		return castAnimTarget.animLength;
+	}
+	void CastAnimTarget( UI08 value, UI08 length )
+	{
+		castAnimTarget.animId = value;
+		castAnimTarget.animLength = length;
+	}
+
+	// Cast Animation #3
+	UI08 CastAnim3Id( void ) const
+	{
+		return castAnim3.animId;
+	}
+	UI08 CastAnim3Length( void ) const
+	{
+		return castAnim3.animLength;
+	}
+	void CastAnim3( UI08 value, UI08 length )
+	{
+		castAnim3.animId = value;
+		castAnim3.animLength = length;
+	}
+
+	// Attack Animation #1
+	UI08 AttackAnim1Id( void ) const
+	{
+		return attackAnim1.animId;
+	}
+	UI08 AttackAnim1Length( void ) const
+	{
+		return attackAnim1.animLength;
+	}
+	void AttackAnim1( UI08 value, UI08 length )
+	{
+		attackAnim1.animId = value;
+		attackAnim1.animLength = length;
+	}
+
+	// Attack Animation #2
+	UI08 AttackAnim2Id( void ) const
+	{
+		return attackAnim2.animId;
+	}
+	UI08 AttackAnim2Length( void ) const
+	{
+		return attackAnim2.animLength;
+	}
+	void AttackAnim2( UI08 value, UI08 length )
+	{
+		attackAnim2.animId = value;
+		attackAnim2.animLength = length;
+	}
+
+	// Attack Animation #3
+	UI08 AttackAnim3Id( void ) const
+	{
+		return attackAnim3.animId;
+	}
+	UI08 AttackAnim3Length( void ) const
+	{
+		return attackAnim3.animLength;
+	}
+	void AttackAnim3( UI08 value, UI08 length )
+	{
+		attackAnim3.animId = value;
+		attackAnim3.animLength = length;
 	}
 
 	UI16 CreatureID( void ) const

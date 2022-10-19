@@ -478,6 +478,49 @@ void LoadCreatures( void )
 							{
 								cwmWorldState->creatures[i].IsAnimal( true );
 							}
+							else if( UTag.rfind( "ANIM_", 0 ) == 0 ) // Check if UTag starts with "ANIM_"
+							{
+								// The following bit is shared between all the "ANIM_" tags
+								UI08 animId = 0;
+								UI08 animLength = 0;
+								auto csecs = oldstrutil::sections( data, "," );
+								if( csecs.size() > 1 )
+								{
+									animId = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+									animLength = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+								}
+								else
+								{
+									animId = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+									animLength = 7; // default to 7 frames if nothing is specified
+								}
+
+								// Now apply the anim-data to the creature
+								if( UTag == "ANIM_ATTACK1" )
+								{
+									cwmWorldState->creatures[i].AttackAnim1( animId, animLength );
+								}
+								else if( UTag == "ANIM_ATTACK2" )
+								{
+									cwmWorldState->creatures[i].AttackAnim2( animId, animLength );
+								}
+								else if( UTag == "ANIM_ATTACK3" )
+								{
+									cwmWorldState->creatures[i].AttackAnim3( animId, animLength );
+								}
+								else if( UTag == "ANIM_CASTAREA" )
+								{
+									cwmWorldState->creatures[i].CastAnimArea( animId, animLength );
+								}
+								else if( UTag == "ANIM_CASTTARGET" )
+								{
+									cwmWorldState->creatures[i].CastAnimTarget( animId, animLength );
+								}
+								else if( UTag == "ANIM_CAST3" )
+								{
+									cwmWorldState->creatures[i].CastAnim3( animId, animLength );
+								}
+							}
 							break;
 						case 'B':
 							if( UTag == "BASESOUND" )
