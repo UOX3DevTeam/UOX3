@@ -614,6 +614,8 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 							tile.artInfo= &Map->SeekTile( idToPush );
 							tile.tileid = idToPush;
 							
+							losItemList.push_back( tile );
+
 							++itemCount;
 							if( itemCount >= LOSXYMAX ){	// don't overflow
 								break;
