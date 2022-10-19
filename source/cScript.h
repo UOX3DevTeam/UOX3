@@ -106,10 +106,13 @@ enum ScriptEvent
 	seOnMakeItem,
 	seOnPathfindEnd,
 	seOnEnterEvadeState,
+	seOnCarveCorpse,
+	seOnDyeTarget,
 	seOnQuestGump,
 	seOnHelpButton,
 	seOnWarModeToggle,
-	seOnSpecialMove
+	seOnSpecialMove,
+	seOnFacetChange
 };
 
 struct SEGump
@@ -182,6 +185,8 @@ public:
 	SI08		OnSteal( CChar *thief, CItem *theft, CChar *victim );
 	SI08		OnPathfindEnd( CChar *npc, SI08 pathfindResult );
 	SI08		OnEnterEvadeState( CChar *npc, CChar *enemy );
+	SI08		OnCarveCorpse( CChar *player, CItem *corpse );
+	SI08		OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target );
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
@@ -249,6 +254,7 @@ public:
 	SI08		OnHelpButton( CChar *mChar );
 	SI08		OnWarModeToggle( CChar *mChar );
 	SI08		OnSpecialMove( CChar *mChar, UI08 abilityID );
+	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
 	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );

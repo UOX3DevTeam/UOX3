@@ -52,6 +52,8 @@ function CommandRegistration()
 	RegisterCommand( "getjstimer", 2, true ); // Get time remaining for specified timer ID on targeted object
 	RegisterCommand( "setjstimer", 2, true ); // Set time remaining for specified timer ID on targeted object
 	RegisterCommand( "killjstimer", 2, true ); // Kill timer with specified timer ID on targeted object
+	RegisterCommand( "addhouse", 2, true ); // Add a multi by its house ID in houses.dfn
+	RegisterCommand( "addmulti", 2, true ); // Add a multi by its raw multi ID
 }
 
 function command_RENAME( pSock, execString )
@@ -1039,4 +1041,104 @@ function onCallback31( pSock, myTarget )
 	}
 	else
 		pSock.SysMessage( GetDictionaryEntry( 8891, pSock.language )); // You need to target a dynamic object (item or character).
+}
+
+function command_ADDHOUSE( socket, cmdString )
+{
+	if( cmdString )
+	{
+		var stringID = "";
+		var splitString = cmdString.split( " " );
+		if( splitString[0] )
+		{
+			// .addhouse houseID
+			stringID = splitString[0];
+			socket.tempint = parseInt( stringID );
+		}
+
+		if( stringID != "" )
+		{
+			socket.CustomTarget( 32, "Select location for house:" ); // Select location for house
+		}
+	}
+}
+
+function onCallback32( socket, ourObj )
+{
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	var mChar = socket.currentChar;
+	if( mChar )
+	{
+		var x = socket.GetWord( 11 );
+		var y = socket.GetWord( 13 );
+		var z = socket.GetSByte( 16 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		{
+			z += GetTileHeight( socket.GetWord( 17 ));
+		}
+
+		var houseID = socket.tempint;
+		socket.tempint = 0;
+		var newMulti = CreateHouse( houseID, x, y, z, mChar.worldnumber, mChar.instanceID );
+
+		if( !newMulti || !newMulti.IsMulti() )
+		{
+			mChar.SysMessage( "Unable to create house!" ); // Unable to create house!
+		}
+	}
+}
+
+function command_ADDMULTI( socket, cmdString )
+{
+	if( cmdString )
+	{
+		var stringID = "";
+		var splitString = cmdString.split( " " );
+		if( splitString[0] )
+		{
+			// .addmulti multiID
+			stringID = splitString[0];
+			socket.tempint = parseInt( stringID );
+		}
+
+		if( stringID != "" )
+		{
+			socket.CustomTarget( 33, "Select location for multi:" ); // Select location for multi
+		}
+	}
+}
+
+function onCallback33( socket, ourObj )
+{
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	var mChar = socket.currentChar;
+	if( mChar )
+	{
+		var x = socket.GetWord( 11 );
+		var y = socket.GetWord( 13 );
+		var z = socket.GetSByte( 16 );
+
+		// If connected with a client lower than v7.0.9, manually add height of targeted tile
+		if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+		{
+			z += GetTileHeight( socket.GetWord( 17 ));
+		}
+
+		var multiID = socket.tempint;
+		socket.tempint = 0;
+		var newBaseMulti = CreateBaseMulti( multiID, x, y, z, mChar.worldnumber, mChar.instanceID );
+
+		if( !newBaseMulti || !newBaseMulti.IsMulti() )
+		{
+			mChar.SysMessage( "Unable to create base multi!" ); // Unable to create base multi!
+		}
+	}
 }

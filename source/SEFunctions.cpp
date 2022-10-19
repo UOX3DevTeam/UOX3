@@ -1238,6 +1238,138 @@ JSBool SE_CreateBlankItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	return JS_TRUE;
 }
 
+CMultiObj * BuildHouse( CSocket *s, UI08 houseEntry, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = -1, UI08 worldNumber = 0, UI16 instanceId = 0 );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CreateHouse()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates multi based on definition in house DFNs
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CreateHouse( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 4 )
+	{
+		DoSEErrorMessage( "CreateHouse: Invalid number of arguments (takes at least 4, max 8)" );
+		return JS_FALSE;
+	}
+
+	UI08 houseId				= static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
+	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
+	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 iColor					= 0xFFFF;
+	UI08 worldNumber			= 0;
+	UI16 instanceId				= 0;
+	bool checkLocation			= true;
+
+	if( argc > 4 )
+	{
+		worldNumber	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	}
+	if( argc > 5 )
+	{
+		instanceId	= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	}
+	if( argc > 6 )
+	{
+		iColor		= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+	}
+	if( argc > 7 )
+	{
+		checkLocation = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	}
+
+	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
+	auto origContext = cx;
+	auto origObject = obj;
+
+	CMultiObj *newMulti = BuildHouse( nullptr, houseId, checkLocation, xLoc, yLoc, zLoc, worldNumber, instanceId );
+	if( newMulti != nullptr )
+	{
+		// Apply color to house, if it was provided
+		if( iColor != 0xFFFF )
+		{
+			newMulti->SetColour( iColor );
+		}
+
+		JSObject *myObj	= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
+
+	// Restore original script context and object
+	JS_SetGlobalObject( origContext, origObject );
+	return JS_TRUE;
+}
+
+CMultiObj * BuildBaseMulti( UI16 multiId, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_CreateBaseMulti()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates base multi based on ID from multi file
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_CreateBaseMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc < 4 )
+	{
+		DoSEErrorMessage( "CreateBaseMulti: Invalid number of arguments (takes at least 4, max 8)" );
+		return JS_FALSE;
+	}
+
+	UI16 multiId				= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 xLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	SI16 yLoc					= static_cast<SI16>( JSVAL_TO_INT( argv[2] ));
+	SI08 zLoc					= static_cast<SI08>( JSVAL_TO_INT( argv[3] ));
+	UI16 iColor					= 0xFFFF;
+	UI08 worldNumber			= 0;
+	UI16 instanceId				= 0;
+	bool checkLocation			= true;
+
+	if( argc > 4 )
+	{
+		worldNumber				= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	}
+	if( argc > 5 )
+	{
+		instanceId				= static_cast<UI16>( JSVAL_TO_INT( argv[5] ));
+	}
+	if( argc > 6 )
+	{
+		iColor					= static_cast<UI16>( JSVAL_TO_INT( argv[6] ));
+	}
+	if( argc > 7 )
+	{
+		checkLocation = ( JSVAL_TO_BOOLEAN( argv[7] ) == JS_TRUE );
+	}
+
+	// Store original script context and object, in case Item spawned has some event that triggers on spawn and grabs context
+	auto origContext = cx;
+	auto origObject = obj;
+
+	CMultiObj *newMulti = BuildBaseMulti( multiId, checkLocation, xLoc, yLoc, zLoc, worldNumber, instanceId );
+	if( newMulti != nullptr )
+	{
+		// Apply color to house, if it was provided
+		if( iColor != 0xFFFF )
+		{
+			newMulti->SetColour( iColor );
+		}
+
+		JSObject *myObj		= JSEngine->AcquireObject( IUE_ITEM, newMulti, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+		*rval = OBJECT_TO_JSVAL( myObj );
+	}
+	else
+	{
+		*rval = JSVAL_NULL;
+	}
+
+	// Restore original script context and object
+	JS_SetGlobalObject( origContext, origObject );
+	return JS_TRUE;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	JSBool SE_GetMurderThreshold( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 //o-----------------------------------------------------------------------------------------------o

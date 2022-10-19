@@ -517,31 +517,37 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 //|					automatically look for an entry in harditems.dfn and set its location (be it in
 //|					a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack, bool shouldSave )
+CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, 
+	const ObjectType itemType, bool inPack, bool shouldSave, UI08 worldNumber, UI16 instanceId, SI16 xLoc, SI16 yLoc, SI08 zLoc )
 {
-	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
+	if( ValidateObject( mChar ))
 	{
-		std::string charName = getNpcDictName( mChar );
-		Console.warning( oldstrutil::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
-		return nullptr;
-	}
-
-	if( inPack )
-	{
-		// Check if character's backpack can hold more items before creating any item
-		CItem *playerPack = mChar->GetPackItem();
-		if( ValidateObject( playerPack ) )
+		worldNumber = mChar->WorldNumber();
+		instanceId = mChar->GetInstanceID();
+		if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 		{
-			if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+			std::string charName = getNpcDictName( mChar );
+			Console.warning( oldstrutil::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
+			return nullptr;
+		}
+	
+		if( inPack )
+		{
+			// Check if character's backpack can hold more items before creating any item
+			CItem *playerPack = mChar->GetPackItem();
+			if( ValidateObject( playerPack ) )
 			{
-				if( mSock != nullptr )
-					mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
-				inPack = false; // Spawn item at character's feet instead
+				if( playerPack->GetContainsList()->Num() >= playerPack->GetMaxItems() )
+				{
+					if( mSock != nullptr )
+						mSock->sysmessage( 1819 ); // Your backpack cannot hold any more items!
+					inPack = false; // Spawn item at character's feet instead
+				}
 			}
 		}
 	}
 
-	CItem *iCreated = CreateBaseItem( mChar->WorldNumber(), itemType, mChar->GetInstanceID(), shouldSave );
+	CItem *iCreated = CreateBaseItem( worldNumber, itemType, instanceId, shouldSave );
 	if( iCreated == nullptr )
 		return nullptr;
 
@@ -577,7 +583,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 		}
 	}
 
-	return PlaceItem( mSock, mChar, iCreated, inPack );
+	return PlaceItem( mSock, mChar, iCreated, inPack, worldNumber, instanceId, xLoc, yLoc, zLoc );
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -588,7 +594,8 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const U
 //|	Purpose		-	Creates a script item, gives it an amount, and sets
 //|					its location (be it in a pack or on the ground).
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack, const UI16 iColor, bool shouldSave )
+CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount,
+	const ObjectType itemType, bool inPack, const UI16 iColor, bool shouldSave )
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ) )
 	{
@@ -837,16 +844,19 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a multi, and looks for an entry in harditems.dfn
 //o-----------------------------------------------------------------------------------------------o
-CMultiObj * cItem::CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat )
+CMultiObj * cItem::CreateMulti( const std::string& cName, const UI16 iID, const bool isBoat, const UI16 worldNum, const UI16 instanceId, const bool isBaseMulti )
 {
 	CMultiObj *mCreated = static_cast< CMultiObj * >(ObjectFactory::getSingleton().CreateObject( (isBoat) ? OT_BOAT : OT_MULTI ));
 	if( mCreated == nullptr )
 		return nullptr;
 
 	mCreated->SetID( iID );
-	GetScriptItemSettings( mCreated );
-	mCreated->WorldNumber( mChar->WorldNumber() );
-	mCreated->SetInstanceID( mChar->GetInstanceID() );
+	if( !isBaseMulti )
+	{
+		GetScriptItemSettings( mCreated );
+	}
+	mCreated->WorldNumber( worldNum );
+	mCreated->SetInstanceID( instanceId );
 	mCreated->SetDecayable( false );
 	if( !cName.empty() )
 		mCreated->SetName( cName );
@@ -989,9 +999,9 @@ CItem *autoStack( CSocket *mSock, CItem *iToStack, CItem *iPack );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Places an item that was just created
 //o-----------------------------------------------------------------------------------------------o
-CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack )
+CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack, UI08 worldNumber, UI16 instanceId, SI16 xLoc, SI16 yLoc, SI08 zLoc )
 {
-	if( inPack )
+	if( ValidateObject( mChar ) && inPack )
 	{
 		if( iCreated->isPileable() )
 			iCreated = autoStack( mSock, iCreated, mChar->GetPackItem() );	// if it didn't stack, it's iCreated... if it did, then it's the stack!
@@ -1012,9 +1022,14 @@ CItem * cItem::PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const b
 			}
 		}
 	}
-	else
+	else if( ValidateObject( mChar ))
+	{
 		iCreated->SetLocation( mChar );
-
+	}
+	else
+	{
+		iCreated->SetLocation( xLoc, yLoc, zLoc, worldNumber, instanceId );
+	}
 	return iCreated;
 }
 

@@ -1340,6 +1340,22 @@ void CBaseObject::RemoveScriptTrigger( UI16 newValue )
 		(static_cast<CChar *>(this))->UpdateRegion();
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::HasScriptTrigger()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if object has specified script trigger in list of script triggers
+//o------------------------------------------------------------------------------------------------o
+bool CBaseObject::HasScriptTrigger( UI16 scriptTrigger )
+{
+	if( std::find( scriptTriggers.begin(), scriptTriggers.end(), scriptTrigger ) != scriptTriggers.end() )
+	{
+		// ScriptTrigger found!
+		return true;
+	}
+
+	return false;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void ClearScriptTriggers( UI16 newValue )
 //o-----------------------------------------------------------------------------------------------o
@@ -1957,6 +1973,23 @@ UI08 CBaseObject::WorldNumber( void ) const
 }
 void CBaseObject::WorldNumber( UI08 value )
 {
+	if( worldNumber != value && CanBeObjType( OT_CHAR ))
+	{
+		// WorldNumber has changed, check for onFacetChange JS event (characters only)
+		std::vector<UI16> scriptTriggers = GetScriptTriggers();
+		for( auto i : scriptTriggers )
+		{
+			cScript *tScript = JSMapping->GetScript( i );
+			if( tScript != nullptr )
+			{
+				if( tScript->OnFacetChange( static_cast<CChar *>( this ), worldNumber, value ) == 0 );
+				{
+					// Script indicated facet change should not be allowed. Abort!
+					return;
+				}
+			}
+		}
+	}
 	worldNumber = value;
 	Dirty( UT_LOCATION );
 

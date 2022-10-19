@@ -230,6 +230,7 @@ public:
 
 	std::vector<UI16>		GetScriptTriggers( void );
 	void					AddScriptTrigger( UI16 newValue );
+	bool					HasScriptTrigger( UI16 newValue );
 	void					RemoveScriptTrigger( UI16 newValue );
 	void					ClearScriptTriggers( void );
 

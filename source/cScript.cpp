@@ -83,6 +83,8 @@ static JSFunctionSpec my_functions[] =
 	{ "FinishedCommandList",		SE_FinishedCommandList,		0, 0, 0 },
 	{ "CreateDFNItem",				SE_CreateDFNItem,			3, 0, 0 },
 	{ "CreateBlankItem",			SE_CreateBlankItem,			8, 0, 0 },
+	{ "CreateHouse",				SE_CreateHouse,				8, 0, 0 },
+	{ "CreateBaseMulti",			SE_CreateBaseMulti,			8, 0, 0 },
 	{ "SpawnNPC",					SE_SpawnNPC,				6, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
 	{ "FindRootContainer",			SE_FindRootContainer,		2, 0, 0 },
@@ -2522,6 +2524,37 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 	return ( retVal == JS_TRUE );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnFacetChange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for characters with event attached when switching to a different facet
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnFacetChange, "onFacetChange" ))
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = INT_TO_JSVAL( oldFacet );
+	params[2] = INT_TO_JSVAL( newFacet );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFacetChange", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnFacetChange, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	SI08 OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 //o-----------------------------------------------------------------------------------------------o
@@ -3798,6 +3831,70 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnEnterEvadeState, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCarveCorpse()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for corpse of character when player attempts to carve said corpse
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ) || !ValidateObject( corpse ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnCarveCorpse, "onCarveCorpse" ))
+		return RV_NOFUNC;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+	JSObject *corpseObj = JSEngine->AcquireObject( IUE_ITEM, corpse, runTime );
+
+	jsval params[2], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( corpseObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCarveCorpse", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCarveCorpse, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDyeTarget()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for dye tub when player attempts to dye something with it
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ) || !ValidateObject( dyeTub ) || !ValidateObject( target ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnDyeTarget, "onDyeTarget" ))
+		return RV_NOFUNC;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+	JSObject *dyeTubObj = JSEngine->AcquireObject( IUE_ITEM, dyeTub, runTime );
+	JSObject *targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
+
+	jsval params[2], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( dyeTubObj );
+	params[1] = OBJECT_TO_JSVAL( targObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDyeTarget", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDyeTarget, false );
 		return RV_NOFUNC;
 	}
 
