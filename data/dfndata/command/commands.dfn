@@ -50,7 +50,7 @@ PLAYER=0
 {
 TITLE=Admin
 NICKCOLOUR=0x1332	// colour of person's nick (hex), value of 0x0 == no change
-DEFAULTPRIV=0x786F	// default privs assigned (hex)
+DEFAULTPRIV=0x686F	// default privs assigned (hex)
 BODYID=0x03db		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8001	// colour of body person turns
@@ -62,7 +62,7 @@ STRIPHAIR			// Strips off hair & beard
 {
 TITLE=GM
 NICKCOLOUR=0x0000	// colour of person's nick (hex), value of 0x0 == no change
-DEFAULTPRIV=0x786F	// default privs assigned (hex)
+DEFAULTPRIV=0x686F	// default privs assigned (hex)
 BODYID=0x03DB		// default body ID assigned, value of 0x0 == no change
 ALLSKILL=0000		// value that all skills are set to... value of 0 == no change
 BODYCOLOUR=0x8021	// colour of body person turns
