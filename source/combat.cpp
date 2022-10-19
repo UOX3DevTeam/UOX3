@@ -222,8 +222,20 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 							{
 								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
 								{
-									//let's resurrect him!
-									Effects->PlayCharacterAnimation( i, 0x10, 0, 7 );
+									// Play Resurrect casting animation
+									if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+									{
+										Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+									}
+									else
+									{
+										UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
+										UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+
+										// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+										Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
+									}
+
 									NpcResurrectTarget( ourChar );
 									Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
 									i->TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
@@ -237,32 +249,42 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						i->TextMessage( nullptr, 322, TALK, true );
 					break;
 				case AI_HEALER_E: // Evil Healer
-					if( ourChar->IsMurderer() )
+					if( !ourChar->IsMurderer() )
 					{
-						if( objInRange( i, ourChar, DIST_NEARBY ) )	// let's resurrect him
-						{
-							CMultiObj *multiObj = ourChar->GetMultiObj();
-							if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
-							{
-								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
-								{
-									if( i->GetBodyType() == BT_GARGOYLE
-										|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-											&& ( i->GetBodyType() == BT_HUMAN || i->GetBodyType() == BT_ELF )))
-										Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
-									else
-										Effects->PlayCharacterAnimation( i, ACT_SPELL_TARGET, 0, 5 ); // 0x10
-									NpcResurrectTarget( ourChar );
-									Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
-									i->TextMessage( nullptr, ( 323 + RandomNum( 0, 4 ) ), TALK, false );
-								}
-							}
-						}
-						else
-							i->TextMessage( nullptr, 328, TALK, true );
+						i->TextMessage( nullptr, 329, TALK, true ); // I despise all things good. I shall not give thee another chance!
+					}
+					else if( !ObjInRange( i, ourChar, DIST_NEARBY ))	
+					{
+						i->TextMessage( nullptr, 328, TALK, true ); // Come nearer, evil soul, and I'll give you life!
 					}
 					else
-						i->TextMessage( nullptr, 329, TALK, true );
+					{
+						// Proceed with resurrection
+						CMultiObj *multiObj = ourChar->GetMultiObj();
+						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
+						{
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+							{
+								// Play Resurrect casting animation
+								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+								{
+									Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
+								}
+								else
+								{
+									UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
+									UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+
+									// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+									Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
+								}
+
+								NpcResurrectTarget( ourChar );
+								Effects->PlayStaticAnimation( ourChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect
+								i->TextMessage( nullptr, ( 323 + RandomNum( 0, 4 )), TALK, false ); // Random resurrection speak from evil NPC healer
+							}
+						}
+					}
 					break;
 				default:
 					s->sysmessage( 330 );
@@ -1433,35 +1455,102 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 	UI16 charID = mChar->GetID();
 	if( !cwmWorldState->creatures[charID].IsHuman() )
 	{
-		UI08 aa = 0;
-		if( cwmWorldState->creatures[charID].AntiBlink() )
-			aa = RandomNum( 5, 6 ); // some creatures dont have animation #4, or it's not an attack
-		else
-			aa = RandomNum( 4, 6 );
-		if( charID == 5 ) // eagles need special treatment
+		UI08 attackAnim = 0;
+		UI08 attackAnimLength = 0;
+
+		// Get available attack animations for creature
+		UI16 attackAnim1 = static_cast<UI16>( cwmWorldState->creatures[mChar->GetId()].AttackAnim1Id() );
+		UI16 attackAnim2 = static_cast<UI16>( cwmWorldState->creatures[mChar->GetId()].AttackAnim2Id() );
+		UI16 attackAnim3 = static_cast<UI16>( cwmWorldState->creatures[mChar->GetId()].AttackAnim3Id() );
+		UI08 attackAnim1Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim1Length();
+		UI08 attackAnim2Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim2Length();
+		UI08 attackAnim3Length = cwmWorldState->creatures[mChar->GetId()].AttackAnim3Length();
+
+		if( charId == 0x2d8 ) // Special case for Medusa, which has 1 ranged attack anim and 1 melee
 		{
-			switch( RandomNum( 0, 2 ) )
+			CItem *equippedWeapon = GetWeapon( mChar );
+			switch( GetWeaponType( equippedWeapon ))
 			{
-				case 0: aa = 0x1;  break;
-				case 1: aa = 0x14; break;
-				case 2: aa = 0x4;  break;
+				case BOWS:
+				case XBOWS:
+					attackAnim = attackAnim1; // Ranged anim
+					attackAnimLength = attackAnim1Length;
+					break;
+				default:
+					attackAnim = attackAnim2; // Melee anim
+					attackAnimLength = attackAnim2Length;
+					break;
 			}
 		}
-		Effects->PlayCharacterAnimation( mChar, aa, 0, 4 ); // Creature attack anims are only 4 frames long
-		if( RandomNum( 0, 4 ) )
+		else
+		{
+			// Randomize between the available attack animations (as defined in creatures.dfn)
+			auto rndAnimNum = -1;
+			if( attackAnim1 > 0 && attackAnim2 > 0 && attackAnim3 > 0 )
+			{
+				rndAnimNum = RandomNum( 0, 2 );
+			}
+			else if( attackAnim1 > 0 && attackAnim2 > 0 )
+			{
+				rndAnimNum = RandomNum( 0, 1 );
+			}
+			else if( attackAnim1 > 0 )
+			{
+				rndAnimNum = 0;
+			}
+
+			if( rndAnimNum > -1 )
+			{
+				// Select the appropriate animation
+				switch( rndAnimNum )
+				{
+					case 0:
+						attackAnim = attackAnim1;
+						attackAnimLength = attackAnim1Length;
+						break;
+					case 1:
+						attackAnim = attackAnim2;
+						attackAnimLength = attackAnim2Length;
+						break;
+					case 2:
+						attackAnim = attackAnim3;
+						attackAnimLength = attackAnim3Length;
+						break;
+				}
+			}
+			else
+			{
+				// No valid attack animation defined, try to use a default attack animation
+				attackAnim = 0x05;
+				attackAnimLength = 4;
+			}
+		}
+
+		// Play the selected attack animation
+		Effects->PlayCharacterAnimation( mChar, attackAnim, 0, attackAnimLength );
+
+		// Play attack sound effect
+		if( RandomNum( 0, 4 )) // 20% chance of playing SFX when attacking
 		{
 			UI16 toPlay = cwmWorldState->creatures[charID].GetSound( SND_ATTACK );
 			if( toPlay != 0x00 )
+			{
 				Effects->PlaySound( mChar, toPlay );
+			}
 		}
 	}
-	else if( mChar->GetBodyType() == BT_GARGOYLE 
-		|| ( cwmWorldState->ServerData()->ForceNewAnimationPacket() && ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D ))) //mChar->GetSocket()->ClientVerShort() >= CVS_7000 )))
+	else if( mChar->GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+	{
 		CombatAnimsNew( mChar );
+	}
 	else if( mChar->IsOnHorse() )
+	{
 		CombatOnHorse( mChar );
+	}
 	else
+	{
 		CombatOnFoot( mChar );
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2339,6 +2428,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			if( npcAttack->GetPoisoned() > 0 )
 				offensiveWeight /= 2;
 
+			bool monsterAreaCastAnim = false;
 			if( offensiveWeight > rndNum )
 			{
 				// Cast offensive spells
@@ -2401,14 +2491,16 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					case 7:
 						switch( RandomNum( 1, 3 ) )
 						{
-							case 1:		CastSpell( npcAttack, cDefend, 49 );		break;	// Chain Lightning
-							case 2:		CastSpell( npcAttack, cDefend, 51 );		break;	// Flamestrike
-							case 3:		CastSpell( npcAttack, cDefend, 55 );		break;	// Meteor Swarm
+							case 1:		CastSpell( npcAttack, cDefend, 49 );		monsterAreaCastAnim = true;	break;	// Chain Lightning
+							case 2:		CastSpell( npcAttack, cDefend, 51 );		monsterAreaCastAnim = true;	break;	// Flamestrike
+							case 3:		CastSpell( npcAttack, cDefend, 55 );		monsterAreaCastAnim = true;	break;	// Meteor Swarm
 						}
 						break;
 					case 8:
 						CastSpell( npcAttack, cDefend, 57 ); // Earthquake
-						// case 2:		break; //CastSpell( npcAttack, cDefend, 58 );		break;	// Energy Vortex
+						monsterAreaCastAnim = true;
+						// case 2:		break; //CastSpell( npcAttack, cDefend, 58 ); 	// Energy Vortex
+						break;
 					// This is where dragon attacks go eventually when the NPC DFNs are fixed...*/
 					/*
 					case 9:
@@ -2460,6 +2552,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 							break;
 						case 6:
 							CastSpell( npcAttack, cDefend, 46 ); // Mass Curse
+							monsterAreaCastAnim = true;
 							break;
 						case 7:
 							if( spattacks + 1 == 7 )
@@ -2504,8 +2597,15 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			{
 				if( npcAttack->GetBodyType() == BT_HUMAN || npcAttack->GetBodyType() == BT_ELF || npcAttack->GetBodyType() == BT_GARGOYLE )
 				{
+					// "Human" casting
 					SpellInfo curSpellCasting = Magic->spells[npcAttack->GetSpellCast()];
-					Effects->PlaySpellCastingAnimation( npcAttack, curSpellCasting.Action() ); // do the action
+					Effects->PlaySpellCastingAnimation( npcAttack, curSpellCasting.Action(), false, false ); // do the action
+					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ));
+				}
+				else
+				{
+					// Monster casting
+					Effects->PlaySpellCastingAnimation( npcAttack, 0, true, monsterAreaCastAnim );
 					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ) );
 				}
 				Magic->CastSpell( nullptr, npcAttack );

@@ -180,14 +180,17 @@ void HandleHealerAI( CChar& mChar )
 					mChar.TextMessage( nullptr, 770, TALK, true );
 				else if( realChar->IsInnocent() )
 				{
-					if( mChar.GetBodyType() == BT_GARGOYLE ||
-						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 					{
 						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
 					}
-					else // Characters pre-v7.0.0.0
+					else
 					{
-						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
+						UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
+						UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+
+						// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+						Effects->PlayCharacterAnimation( &mChar, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x376A, 0x09, 0x06 );
@@ -215,14 +218,17 @@ void HandleEvilHealerAI( CChar& mChar )
 			{
 				if( realChar->IsMurderer() )
 				{
-					if( mChar.GetBodyType() == BT_GARGOYLE ||
-						(( mChar.GetBodyType() == BT_HUMAN || mChar.GetBodyType() == BT_ELF ) && cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
+					if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 					{
 						Effects->PlayNewCharacterAnimation( &mChar, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
 					}
-					else // Characters pre-v7.0.0.0
+					else
 					{
-						Effects->PlayCharacterAnimation( &mChar, ACT_SPELL_TARGET, 0, 7 ); // Action 0x10
+						UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
+						UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+
+						// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+						Effects->PlayCharacterAnimation( &mChar, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
 					}
 					NpcResurrectTarget( realChar );
 					Effects->PlayStaticAnimation( realChar, 0x3709, 0x09, 0x19 ); //Flamestrike effect

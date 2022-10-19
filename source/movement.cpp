@@ -2166,6 +2166,30 @@ void cMovement::NpcMovement( CChar& mChar )
 				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ) );
 		}
 	}
+	else
+	{
+		// Play some idle/fidgeting animation instead - if character is not busy doing something else
+		if( !mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+		{
+			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+			{
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 1 ));
+				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 4, 15 )));
+
+				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
+				{
+					Effects->PlayNewCharacterAnimation( &mChar, N_ACT_IDLE, 0, RandomNum( 0, 1 ));
+				}
+				else
+				{
+					if( cwmWorldState->creatures[mChar.GetId()].IsHuman() )
+					{
+						Effects->PlayCharacterAnimation( &mChar, RandomNum( static_cast<UI16>( ACT_IDLE_LOOK ), static_cast<UI16>( ACT_IDLE_YAWN )), 0, 5 );
+					}
+				}
+			}
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o

@@ -232,10 +232,9 @@ void cEffects::PlayNewCharacterAnimation( CChar *mChar, UI16 actionID, UI16 subA
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting action
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
+void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionId, bool monsterCast, bool monsterAreaCastAnim )
 {
-	if( mChar->GetBodyType() == BT_GARGOYLE || ( cwmWorldState->ServerData()->ForceNewAnimationPacket() 
-		&& ( mChar->GetSocket() == nullptr || mChar->GetSocket()->ClientType() >= CV_SA2D )))
+	if( !monsterCast && ( mChar->GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() ))
 	{
 		if( mChar->GetBodyType() == BT_GARGOYLE )
 		{
@@ -254,7 +253,7 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 		}
 		return;
 	}
-	else if( mChar->IsOnHorse() )
+	else if( mChar->IsOnHorse() || mChar->GetMounted() ) // Players and NPC are mounted differently...
 	{
 		if( actionID == 0x10 )
 			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_1H, 0, 5 ); // 0x1A
@@ -262,9 +261,36 @@ void cEffects::PlaySpellCastingAnimation( CChar *mChar, UI16 actionID )
 			PlayCharacterAnimation( mChar, ACT_MOUNT_ATT_BOW, 0, 5 ); // 0x1B
 		return;
 	}
-	if( !cwmWorldState->creatures[mChar->GetID()].IsHuman() && actionID == 0x22 )
-		return;
-	PlayCharacterAnimation( mChar, actionID, 0, 7 );
+	else
+	{
+		if( !monsterCast )
+		{
+			// Human old animation packet
+			PlayCharacterAnimation( mChar, actionId, 0, 7 );
+		}
+		else
+		{
+			// Non-human old animation packet
+			if( actionId == 0x22 )
+				return;
+
+			UI16 castAnim = 0;
+			UI08 castAnimLength = 0;
+			if( monsterAreaCastAnim )
+			{
+				castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar->GetId()].CastAnimAreaId() );
+				castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimAreaLength();
+			}
+			else
+			{
+				castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar->GetId()].CastAnimTargetId() );
+				castAnimLength = cwmWorldState->creatures[mChar->GetId()].CastAnimTargetLength();
+			}
+
+			// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+			PlayCharacterAnimation( mChar, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
+		}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
