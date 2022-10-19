@@ -63,17 +63,17 @@ public:
 	void		StoreItemRandomValue( CItem *i, CTownRegion *tReg );
 	PackTypes	getPackType( CItem *i );
 
-	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false, bool shouldSave = true );
+	CItem *		CreateItem( CSocket *mSock, CChar *mChar, const UI16 iID, const UI16 iAmount, const UI16 iColour, const ObjectType itemType, bool inPack = false, bool shouldSave = true, UI08 worldNumber = 0, UI16 instanceId = 0, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127 );
 	CItem *		CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string &item, const UI16 iAmount, const ObjectType itemType, bool inPack = false, const UI16 iColor = 0xFFFF, bool shouldSave = true );
 	CItem *		CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI08 worldNumber, const UI16 iAmount, const UI16 instanceID = 0, const ObjectType itemType = OT_ITEM, const UI16 iColor = 0xFFFF, bool shouldSave = true );
-	CMultiObj *	CreateMulti( CChar *mChar, const std::string& cName, const UI16 iID, const bool isBoat );
+	CMultiObj *	CreateMulti( const std::string& cName, const UI16 iID, const bool isBoat, const UI16 worldNum, const UI16 instanceId, bool isBaseMulti = false );
 	CItem *		CreateRandomItem( CSocket *mSock, const std::string& itemList );
 	CItem *		CreateBaseItem( const UI08 worldNumber, const ObjectType itemType = OT_ITEM, const UI16 instanceID = 0, bool shouldSave = true );
 	CItem *		CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNumber, const UI16 instanceID = 0, bool shouldSave = true, bool useLootlist = false );
 
 private:
 	void		GetScriptItemSettings( CItem *iCreated );
-	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack );
+	CItem *		PlaceItem( CSocket *mSock, CChar *mChar, CItem *iCreated, const bool inPack, UI08 worldNumber = 0, UI16 instanceId = 0, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127 );
 };
 
 class cCharStuff

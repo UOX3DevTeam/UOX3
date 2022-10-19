@@ -86,10 +86,16 @@ void CreateHouseKey( CSocket *mSock, CChar *mChar, CMultiObj *house, UI16 houseI
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Create items for house as defined in house.dfn
 //o-----------------------------------------------------------------------------------------------o
-auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z ) ->void {
+auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CItem *house, UI16 houseID, SI16 x, SI16 y, SI08 z, UI08 worldNum ) ->void {
 	std::string tag, data, UTag;
 	ScriptSection *HouseItem = nullptr;
 	CItem *hItem = nullptr;
+	
+	if( ValidateObject( mChar ))
+	{
+		worldNum = mChar->WorldNumber();
+	}
+	
 	for (const auto &entry : houseItems){
 		auto sect = "HOUSE ITEM "s + entry;
 		HouseItem = FileLookup->FindEntry( sect, house_def );
@@ -105,7 +111,7 @@ auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 				UTag = oldstrutil::upper( tag );
 				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
 				if( UTag == "ITEM" ) {
-					hItem = Items->CreateBaseScriptItem( nullptr, data, mChar->WorldNumber(), 1, hInstanceID );
+					hItem = Items->CreateBaseScriptItem( nullptr, data, worldNum, 1, hInstanceID );
 					if( hItem == nullptr ) {
 						Console << "Error in house creation, item " << data << " could not be made" << myendl;
 						break;
@@ -113,7 +119,10 @@ auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 					else {
 						hItem->SetMovable( 2 );//Non-Moveable by default
 						hItem->SetLocation( house );
-						hItem->SetOwner( mChar );
+						if( ValidateObject( mChar ))
+						{
+							hItem->SetOwner( mChar );
+						}
 						
 						if( house->GetObjType() == OT_ITEM ) {
 							// House is not actually a house, but a house addon! Store reference to addon on item
@@ -145,7 +154,7 @@ auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 					}
 				}
 				else if( UTag == "PACK" ){//put the item in the Builder's Backpack
-					if( ValidateObject( hItem ) ) {
+					if( ValidateObject( mChar ) && ValidateObject( hItem ) ) {
 						CItem *pack = mChar->GetPackItem();
 						hItem->SetCont( pack );
 						hItem->PlaceInPack();
@@ -227,13 +236,14 @@ auto CreateHouseItems( CChar *mChar, std::vector< std::string > houseItems, CIte
 //|	Purpose		-	Check whether the chosen location is valid for house placement
 //o-----------------------------------------------------------------------------------------------o
 auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, SI08 z,
-					  SI16 spaceX, SI16 spaceY, bool isBoat, bool isMulti ) ->bool {
-	const UI08 worldNum = mChar->WorldNumber();
-	const UI16 instanceID = mChar->GetInstanceID();
+					  SI16 spaceX, SI16 spaceY, UI08 worldNum, UI16 instanceId, bool isBoat, bool isMulti ) ->bool {
 
 	auto [width,height] = Map->sizeOfMap(worldNum);
 	if( ( x+spaceX > width || x-spaceX < 0 || y+spaceY > height || y-spaceY < 0 ) && !mChar->IsGM() ) {
-		mSock->sysmessage( 577 );
+		if( mSock )
+		{
+			mSock->sysmessage( 577 ); // =You cannot build your house there!
+		}
 		return false;
 	}
 
@@ -247,7 +257,10 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 				if( mChar->GetCommandLevel() < CL_GM ) {
 					CMultiObj *mMulti = findMulti( curX, curY, z, worldNum, instanceID );
 					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ) ) {
-						mSock->sysmessage( 9027 ); // This object must be placed in your house
+						if( mSock )
+						{
+							mSock->sysmessage( 9027 ); // This object must be placed in your house
+						}
 						return false;
 					}
 
@@ -269,20 +282,29 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 											UI16 origX = mItem->GetX() - doorX.m_IntValue;
 											UI16 origY = mItem->GetY() - doorY.m_IntValue;
 											if( x - origX < 2 || origX - x < 2 || y - origY < 2 || origY - y < 2 ) {
-												mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+												if( mSock )
+												{
+													mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+												}
 												return false;
 											}
 										}
 										
 										if( getDist( point3( x, y, z ), mItem->GetLocation() ) < 2 ) {
-											mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+											if( mSock )
+											{
+												mSock->sysmessage( 9028 ); // You cannot place a house-addon adjacent to a door.
+											}
 											return false;
 										}
 										
 										// Don't allow placing addon if it collides with a blocking tile at same height
 										bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceID, TF_BLOCKING ));
 										if( locationBlocked ) {
-											mSock->sysmessage( 9097 ); // You cannot place this house-addon there, location is blocked!
+											if( mSock )
+											{
+												mSock->sysmessage( 9097 ); // You cannot place this house-addon there, location is blocked!
+											}
 											return false;
 										}
 
@@ -340,28 +362,48 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 				if( retVal1 != 1 || retVal2 != nullptr )
 				{
 					if( isBoat )
-						mSock->sysmessage( 7 );
+					{
+						if( mSock )
+						{
+							mSock->sysmessage( 7 );
+						}
+					}
 					else
 					{
 						if( retVal2 )
 						{
-							mSock->sysmessage( 577 );
+							if( mSock )
+							{
+								mSock->sysmessage( 577 );
+							}
 						}
 						else
 						{
 							switch( retVal1 )
 							{
 							case 0: // Blocked by terrain
-								mSock->sysmessage( 9029 ); // You cannot build your house on the selected terrain!
+								if( mSock )
+								{
+									mSock->sysmessage( 9029 ); // You cannot build your house on the selected terrain!
+								}
 								break;
 							case 2: // Blocked by static item
-								mSock->sysmessage( 9030 ); // You cannot build your house there - location is blocked by one or more items!
+								if( mSock )
+								{
+									mSock->sysmessage( 9030 ); // You cannot build your house there - location is blocked by one or more items!
+								}
 								break;
 							case 3: // Blocked by region settings
-								mSock->sysmessage( 9031 ); // You cannot build your house there - houses not allowed in this region!
+								if( mSock )
+								{
+									mSock->sysmessage( 9031 ); // You cannot build your house there - houses not allowed in this region!
+								}
 								break;
 							default:
-								mSock->sysmessage( 577 ); // You cannot build your house there!
+								if( mSock )
+								{
+									mSock->sysmessage( 577 ); // You cannot build your house there!
+								}
 								break;
 							}
 						}
@@ -383,26 +425,51 @@ UI16 addRandomColor( const std::string& colorlist );
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when player attempts to place a tent/house/boat
 //o-----------------------------------------------------------------------------------------------o
-void BuildHouse( CSocket *mSock, UI08 houseEntry )
+CMultiObj * BuildHouse( CSocket *mSock, UI08 houseEntry, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 )
 {
-	if( mSock->GetDWord( 11 ) == INVALIDSERIAL )
-		return;
+	if( mSock && mSock->GetDWord( 11 ) == INVALIDSERIAL )
+		return nullptr;
+
 	if( !houseEntry )
-		return;
+		return nullptr;
 
-	CChar *mChar = mSock->CurrcharObj();
-	if( !ValidateObject( mChar ) )
-		return;
-
-	const SI16 x = mSock->GetWord( 11 );
-	const SI16 y = mSock->GetWord( 13 );
-	SI08 z = static_cast<SI08>(mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 ) ));
-	//UI32 targetSerial = mSock->GetDWord( 7 );
-	mSock->GetDWord( 7 );
-	if( mSock->GetDWord( 7 ) != INVALIDSERIAL || getDist( mChar->GetLocation(), point3( x, y, z ) ) >= DIST_BUILDRANGE )
+	CChar *mChar = nullptr;
+	if( mSock )
 	{
-		mSock->sysmessage( 577 );
-		return;
+		mChar = mSock->CurrcharObj();
+	if( !ValidateObject( mChar ) )
+		{
+			return nullptr;
+		}
+		else
+		{
+			worldNumber = mChar->WorldNumber();
+			instanceId = mChar->GetInstanceId();
+		}
+	}
+	else
+	{
+		// No socket found, do we have coordinates?
+		if( xLoc == -1 || yLoc == -1 || zLoc == 127 )
+		{
+			return nullptr;
+		}
+	}
+
+	// Use coordinates if provided in arguments, otherwise rely on values stored on socket
+	const SI16 x = xLoc > -1 ? xLoc : mSock->GetWord( 11 );
+	const SI16 y = yLoc > -1 ? yLoc : mSock->GetWord( 13 );
+	SI08 z = zLoc != 127 ? zLoc : static_cast<SI08>( mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 )));
+
+	//UI32 targetSerial = mSock->GetDWord( 7 );
+	if( mSock )
+	{
+		//mSock->GetDWord( 7 );
+		if( mSock->GetDWord( 7 ) != INVALIDSERIAL || GetDist( mChar->GetLocation(), Point3_st( x, y, z )) >= DIST_BUILDRANGE )
+		{
+			mSock->sysmessage( 577 ); // You cannot build your house there!
+			return nullptr;
+		}
 	}
 
 	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
@@ -435,7 +502,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	std::string sect = "HOUSE " + oldstrutil::number( houseEntry );
 	ScriptSection *House = FileLookup->FindEntry( sect, house_def );
 	if( House == nullptr )
-		return;
+		return nullptr; // House entry not found
 
 	std::vector<UI16> scriptIDs;
 	for (const auto &sec : House->collection()){
@@ -591,12 +658,12 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	
 	if( !houseID ) {
 		Console.error( oldstrutil::format("Bad house script # %u!", houseEntry) );
-		return;
+		return nullptr;
 	}
 	
 	const bool isMulti = (houseID >= 0x4000);
-	if( !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, isBoat, isMulti ) ) {
-		return;
+	if( checkLocation && !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ) ) {
+		return nullptr;
 	}
 	
 	constexpr std::uint16_t maxsize = 1024 ;
@@ -605,24 +672,40 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	CItem *fakeHouse = nullptr;
 	if( isMulti ) {
 		if( (houseID%256) > 20 ) {
-			temp = oldstrutil::format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
+			if( ValidateObject( mChar ))
+			{
+				temp = oldstrutil::format(maxsize, "%s's house", mChar->GetName().c_str() ); //This will make the little deed item you see when you have showhs on say the person's name, thought it might be helpful for GMs.
+			}
+			else
+			{
+				temp = "a house";
+			}
 		}
 		else {
 			// Assign name of boat deed/model ship to newly created boat
-			temp = mChar->GetSpeechItem()->GetTitle();
+			temp = "";
+			if( ValidateObject( mChar ))
+			{
+				temp = mChar->GetSpeechItem()->GetTitle();
+			}
+
 			if( temp == "" ) {
 				temp = "a ship";
 			}
 		}
-		house = Items->CreateMulti( mChar, temp, houseID, isBoat );
-		if( house == nullptr ) {
-			return;
+		house = Items->CreateMulti( temp, houseId, isBoat, worldNumber, instanceId );
+		if( house == nullptr )
+		{
+			return nullptr;
 		}
 		
 		house->SetLocation( x, y, z );
 		house->SetDecayable( itemsWillDecay );
 		house->SetDeed( houseDeed ); // crackerjack 8/9/99 - for converting back *into* deeds
-		house->SetOwner( mChar );
+		if( ValidateObject( mChar ))
+		{
+			house->SetOwner( mChar );
+		}
 		// Add all script IDs to multi's list of script IDs
 		for( auto scriptID : scriptIDs ) {
 			house->AddScriptTrigger( scriptID );
@@ -668,7 +751,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		house->SetBanY( by );
 		
 		// Move characters out of the way
-		for (auto &ourChar : findNearbyChars(x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max(sx,sy))){
+		for (auto &ourChar : findNearbyChars(x, y, worldNumber, instanceId, std::max(sx,sy))){
 			if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) &&
 			   ( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) &&
 			   ( ourChar->GetZ() >= house->GetZ() - 16 )) {
@@ -678,7 +761,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		}
 		
 		// Move items out of the way
-		for (auto &ourItem :findNearbyItems( x, y, mChar->WorldNumber(), mChar->GetInstanceID(), std::max( sx, sy ))){
+		for (auto &ourItem :findNearbyItems( x, y, worldNumber, instanceId, std::max( sx, sy ))){
 			if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT ) {
 				if( ( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&
 				   ( ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2 ) &&
@@ -691,9 +774,16 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 	}
 	else {
 		// House addon
-		fakeHouse = Items->CreateItem( mSock, mChar, houseID, 1, 0, OT_ITEM );
+		if( ValidateObject( mChar ))
+		{
+			fakeHouse = Items->CreateItem( mSock, mChar, houseID, 1, 0, OT_ITEM );
+		}
+		else
+		{
+			fakeHouse = Items->CreateItem( nullptr, nullptr, houseId, 1, 0, OT_ITEM, false, true, worldNumber, instanceId, xLoc, yLoc, zLoc );
+		}
 		if( fakeHouse == nullptr ) {
-			return;
+			return nullptr;
 		}
 		fakeHouse->SetLocation( x, y, z );
 		
@@ -703,18 +793,31 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 				mMulti->LockDownItem( fakeHouse );
 			}
 			else {
-				mSock->sysmessage( 9032 ); // This house has reached the limit on locked down items already!
+				if( mSock )
+				{
+					mSock->sysmessage( 9032 ); // This house has reached the limit on locked down items already!
+				}
 				fakeHouse->Delete();
-				return;
+				return nullptr;
 			}
 		}
 		else {
-			mSock->sysmessage( 9033 ); // House addons can only be placed in houses!
+			if( mSock )
+			{
+				mSock->sysmessage( 9033 ); // House addons can only be placed in houses!
+			}
 			fakeHouse->Delete();
-			return;
+			return nullptr;
 		}
 		
-		fakeHouse->SetOwner( mChar );
+		if( ValidateObject( mChar ))
+		{
+			fakeHouse->SetOwner( mChar );
+		}
+		else
+		{
+			fakeHouse->SetOwner( nullptr );
+		}
 		fakeHouse->SetDecayable( false );
 		fakeHouse->SetVisible( VT_PERMHIDDEN );
 		
@@ -731,7 +834,7 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		CBoatObj *bObj = static_cast<CBoatObj *>(house);
 		if( bObj == nullptr || !CreateBoat( mSock, bObj, (houseID%256), houseEntry ) ) {
 			house->Delete();
-			return;
+			return nullptr;
 		}
 
 		bObj->SetWeightMax( weightMax );
@@ -739,30 +842,120 @@ void BuildHouse( CSocket *mSock, UI08 houseEntry )
 		bObj->SetDamageable( isDamageable );
 	}
 
-	mChar->GetSpeechItem()->Delete();
-	mChar->SetSpeechItem( nullptr );
+	if( ValidateObject( mChar ))
+	{
+		mChar->GetSpeechItem()->Delete();
+		mChar->SetSpeechItem( nullptr );
+		CreateHouseKey( mSock, mChar, house, houseId );
+	}
 
-	CreateHouseKey( mSock, mChar, house, houseID );
 	if( !houseItems.empty() ) {
 		if( isMulti ) {
 			fakeHouse = house;
 		}
-		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z );
+		CreateHouseItems( mChar, houseItems, fakeHouse, houseID, x, y, z, worldNumber );
 	}
 
-	if( isMulti || isBoat ) {
+	if( ValidateObject( mChar ) && ( isMulti || isBoat ))
+	{
 		mChar->SetLocation( x + cx, y + cy, z + cz );
-	}
 
-	//Teleport pets as well
-	auto myPets = mChar->GetPetList();
-	for (const auto &pet : myPets->collection()) {
-		if( ValidateObject( pet ) ){
-			if( !pet->GetMounted() && pet->IsNpc() && objInRange( mChar, pet, DIST_SAMESCREEN ) ){
-				pet->SetLocation( mChar );
+		//Teleport pets as well
+		auto myPets = mChar->GetPetList();
+		for( const auto &pet : myPets->collection() )
+		{
+			if( ValidateObject( pet ))
+			{
+				if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+				{
+					pet->SetLocation( mChar );
+				}
 			}
 		}
 	}
+	return house;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	BuildBaseMulti()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Called when a script attempts to create a base multi from raw multi ID
+//o------------------------------------------------------------------------------------------------o
+CMultiObj * BuildBaseMulti( UI16 multiId, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 )
+{
+	if( !multiId )
+		return nullptr;
+
+	// Do we have coordinates?
+	if( xLoc == -1 || yLoc == -1 || zLoc == 127 )
+		return nullptr;
+
+	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
+	SI08 cz = 7;
+
+	// If multiId provided was lower than 0x4000, add 0x4000 so we get the ID the system expects
+	if( multiId < 0x4000 )
+	{
+		multiId += 0x4000;
+	}
+
+	if( checkLocation && !CheckForValidHouseLocation( nullptr, nullptr, xLoc, yLoc, zLoc, sx, sy, worldNumber, instanceId, false, true ))
+	{
+		return nullptr;
+	}
+
+	CMultiObj *iMulti = nullptr;
+	std::string temp = "a multi";
+	iMulti = Items->CreateMulti( temp, multiId, false, worldNumber, instanceId, true );
+	if( iMulti == nullptr )
+	{
+		return nullptr;
+	}
+
+	iMulti->SetLocation( xLoc, yLoc, zLoc );
+	iMulti->SetDecayable( false );
+
+	// Add all script IDs to multi's list of script IDs
+	iMulti->SetDamageable( false );
+
+	time_t buildTimestamp = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
+	iMulti->SetBuildTimestamp( buildTimestamp );
+
+	// Find corners of new iMulti
+	SI16 multiX1 = 0;
+	SI16 multiY1 = 0;
+	SI16 multiX2 = 0;
+	SI16 multiY2 = 0;
+	Map->MultiArea( iMulti, multiX1, multiY1, multiX2, multiY2 );
+
+	// Move characters out of the way
+	for( auto &ourChar : FindNearbyChars( xLoc, yLoc, worldNumber, instanceId, std::max( sx,sy )))
+	{
+		if(( ourChar->GetX() >= multiX1 && ourChar->GetX() <= multiX2 ) &&
+			( ourChar->GetY() >= multiY1 && ourChar->GetY() <= multiY2 ) &&
+			( ourChar->GetZ() >= iMulti->GetZ() - 16 ))
+		{
+			// Move character (NPC or PC, online or offline) to corner of multi so they don't get stuck in multi!
+			ourChar->SetLocation( multiX2, multiY2, iMulti->GetZ() );
+		}
+	}
+
+	// Move items out of the way
+	for( auto &ourItem : FindNearbyItems( xLoc, yLoc, worldNumber, instanceId, std::max( sx, sy )))
+	{
+		if( ourItem->GetVisible() == 0 && ourItem->GetObjType() != OT_MULTI && ourItem->GetObjType() != OT_BOAT )
+		{
+			if(( ourItem->GetX() >= multiX1 && ourItem->GetX() <= multiX2 ) &&
+				( ourItem->GetY() >= multiY1 && ourItem->GetY() <= multiY2 ) &&
+				( ourItem->GetZ() >= iMulti->GetZ() - 16 ))
+			{
+				// Move item to corner of multi so they don't get stuck underneath the multi!
+				ourItem->SetLocation( multiX2, multiY2, iMulti->GetZ() );
+			}
+		}
+	}
+
+	return iMulti;
 }
 
 //o-----------------------------------------------------------------------------------------------o

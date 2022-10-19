@@ -35,6 +35,8 @@ SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
 
 SEngineFunc SE_CreateBlankItem;		// Create an item							***
 SEngineFunc SE_CreateDFNItem;		// Create an item							***
+SEngineFunc SE_CreateHouse;			// Create a house from houses.dfn			***
+SEngineFunc SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
 SEngineFunc SE_BroadcastMessage;	//											***
