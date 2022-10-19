@@ -1077,7 +1077,7 @@ bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
 	{
 		if( LineOfSight( sock, caster, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 		{
-			if( i->isDecayable() || i->isDispellable() )
+			if( i->isDecayable() && i->isDispellable() )
 			{
 				std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
 				for( auto scriptTrig : scriptTriggers )
@@ -1480,6 +1480,35 @@ void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount 
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
+
+	if( target->IsNpc() && target == caster )
+		return; // Don't let NPC curse themselves
+
+	if( target->IsNpc() && caster->IsNpc() )
+	{
+		if( target->GetNPCFlag() == caster->GetNPCFlag() )
+			return; // Don't let NPCs curse other NPCs with same NPC Flag (innocent, evil, neutral)
+
+		switch( caster->GetNPCAiType() )
+		{
+			case 2: // AI_EVIL
+			case 11: // AI_EVIL_CASTER
+			{
+				if( target->GetNPCAiType() == AI_EVIL || target->GetNPCAiType() == AI_EVIL_CASTER )
+					return; // Don't curse NPCs with similar AI types
+				break;
+			}
+			case 5: // AI_FIGHTER
+			case 10: // AI_CASTER
+			{
+				if( target->GetNPCAiType() == AI_FIGHTER || target->GetNPCAiType() == AI_CASTER )
+					return; // Don't curse NPCs with similar AI types
+			}
+			default:
+				break;
+		}
+	}
+
 	SI32 j;
 	if( target->IsNpc() )
 		Combat->AttackTarget( caster, target );
@@ -1570,6 +1599,35 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 		return;	// Player Vendors can't be killed
 	if( target->IsGM() || target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
+
+	if( target->IsNpc() && target == caster )
+		return; // Don't let NPC hit themselves with damaging spell
+
+	if( target->IsNpc() && caster->IsNpc() )
+	{
+		if( target->GetNPCFlag() == caster->GetNPCFlag() )
+			return; // Don't let NPCs damage other NPCs with same NPC Flag (innocent, evil, neutral)
+
+		switch( caster->GetNPCAiType() )
+		{
+			case 2: // AI_EVIL
+			case 11: // AI_EVIL_CASTER
+			{
+				if( target->GetNPCAiType() == AI_EVIL || target->GetNPCAiType() == AI_EVIL_CASTER )
+					return; // Don't damage NPCs with similar AI types
+				break;
+			}
+			case 5: // AI_FIGHTER
+			case 10: // AI_CASTER
+			{
+				if( target->GetNPCAiType() == AI_FIGHTER || target->GetNPCAiType() == AI_CASTER )
+					return; // Don't damage NPCs with similar AI types
+			}
+			default:
+				break;
+		}
+	}
+
 	if( target->IsNpc() )
 		Combat->AttackTarget( target, caster );
 	/*Effects->PlaySound( caster, 0x0029 );*/
@@ -1802,6 +1860,35 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 		return;	// Player Vendors can't be killed
 	if( target->IsInvulnerable() )
 		return;	// GMs/Invuls can't be killed
+
+	if( target->IsNpc() && target == caster )
+		return; // Don't let NPC hit themselves with damaging spell
+
+	if( target->IsNpc() && caster->IsNpc() )
+	{
+		if( target->GetNPCFlag() == caster->GetNPCFlag() )
+			return; // Don't let NPCs damage other NPCs with same NPC Flag (innocent, evil, neutral)
+
+		switch( caster->GetNPCAiType() )
+		{
+			case 2: // AI_EVIL
+			case 11: // AI_EVIL_CASTER
+			{
+				if( target->GetNPCAiType() == AI_EVIL || target->GetNPCAiType() == AI_EVIL_CASTER )
+					return; // Don't damage NPCs with similar AI types
+				break;
+			}
+			case 5: // AI_FIGHTER
+			case 10: // AI_CASTER
+			{
+				if( target->GetNPCAiType() == AI_FIGHTER || target->GetNPCAiType() == AI_CASTER )
+					return; // Don't damage NPCs with similar AI types
+			}
+			default:
+				break;
+		}
+	}
+
 	if( target->IsNpc() )
 		Combat->AttackTarget( target, caster );
 
@@ -1903,6 +1990,34 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 	{
 		// Target is in a safe zone, or invulnerable ignore spell effect
 		return;
+	}
+
+	if( target->IsNpc() && target == caster )
+		return; // Don't let NPC hit themselves with damaging spell
+
+	if( target->IsNpc() && caster->IsNpc() )
+	{
+		if( target->GetNPCFlag() == caster->GetNPCFlag() )
+			return; // Don't let NPCs damage other NPCs with same NPC Flag (innocent, evil, neutral)
+
+		switch( caster->GetNPCAiType() )
+		{
+			case 2: // AI_EVIL
+			case 11: // AI_EVIL_CASTER
+			{
+				if( target->GetNPCAiType() == AI_EVIL || target->GetNPCAiType() == AI_EVIL_CASTER )
+					return; // Don't damage NPCs with similar AI types
+				break;
+			}
+			case 5: // AI_FIGHTER
+			case 10: // AI_CASTER
+			{
+				if( target->GetNPCAiType() == AI_FIGHTER || target->GetNPCAiType() == AI_CASTER )
+					return; // Don't damage NPCs with similar AI types
+			}
+			default:
+				break;
+		}
 	}
 
 	SI32 distx	= abs(target->GetX() - caster->GetX() );
@@ -3770,6 +3885,29 @@ void cMagic::CastSpell( CSocket *s, CChar *caster )
 	{
 		caster->StopSpell();
 		return;
+	}
+
+	// Let human NPC casters say the magic words as they cast spells
+	if( caster->IsNpc() && cwmWorldState->creatures[caster->GetId()].IsHuman() )
+	{
+		std::string temp;
+		if( spells[curSpell].FieldSpell() )
+		{
+			if( caster->GetSkill( MAGERY ) > 600 )
+			{
+				temp = "Vas " + spells[curSpell].Mantra();
+			}
+			else
+			{
+				temp = spells[curSpell].Mantra();
+			}
+		}
+		else
+		{
+			temp = spells[curSpell].Mantra();
+		}
+
+		caster->TextMessage( nullptr, temp, TALK, false );
 	}
 
 	// Consume mana/health/stamina for the spellcast attempt, if 

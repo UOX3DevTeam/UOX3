@@ -161,7 +161,11 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		mChar.TextMessage( mSpell.mantra );
+		if( mChar.isHuman )
+		{
+			mChar.TextMessage( mSpell.mantra );
+		}
+
 		if( spellType == 0 )
 		{
 			deleteReagents( mChar, mSpell );
@@ -352,5 +356,5 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
-	DoTempEffect( 0, sourceChar, ourTarg, 3, (mChar.skills.magery / 100), 0, 0);
+	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round(mChar.skills.magery / 100 ), 0, 0 );
 }

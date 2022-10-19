@@ -204,13 +204,18 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.DoAction( actionID );
 	}
 
-	var tempString;
-	if( mSpell.fieldSpell && mChar.skills.magery > 600 )
-		tempString = "Vas " + mSpell.mantra;
-	else
-		tempString = mSpell.mantra;
+	// Only human casters will say the spellcasting mantras
+	if( mChar.isHuman )
+	{
+		var tempString;
+		if( mSpell.fieldSpell && mChar.skills.magery > 600 )
+			tempString = "Vas " + mSpell.mantra;
+		else
+			tempString = mSpell.mantra;
 
-	mChar.TextMessage( tempString );
+		mChar.TextMessage( tempString );
+	}
+
 	mChar.isCasting = true;
 
 	mChar.StartTimer( delay * 1000, spellNum, true );
@@ -369,7 +374,6 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	// Do skillcheck
 	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		mChar.TextMessage( mSpell.mantra );
 		if( spellType == 0 )
 		{
 			deleteReagents( mChar, mSpell );
@@ -558,7 +562,7 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 		var spellResisted = CheckTargetResist( caster, ourTarg, mSpell.circle );
 
 		//caster.TextMessage( "Casting feeblemind" );
-		DoTempEffect( 0, sourceChar, ourTarg, 4, (mMagery / 100), 0, 0);
+		DoTempEffect( 0, sourceChar, ourTarg, 4, Math.round(mMagery / 100), 0, 0);
 	}
 	else if( spellNum == 4 )	// Heal
 	{

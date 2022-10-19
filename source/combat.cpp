@@ -2316,7 +2316,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 
 	if( npcAttack->GetTimer( tNPC_SPATIMER ) <= cwmWorldState->GetUICurrentTime() )
 	{
-		if( playerDistance < cwmWorldState->ServerData()->CombatMaxSpellRange() )
+		if( playerDistance <= cwmWorldState->ServerData()->CombatMaxSpellRange() )
 		{
 			SI16 spattacks = npcAttack->GetSpAttack();
 			if( spattacks <= 0 )
@@ -2365,7 +2365,17 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					case 5:
 						switch( RandomNum( 1, 2 ) )
 						{
-							case 1:		CastSpell( npcAttack, cDefend, 37 );		break;	// Mind Blast
+							case 1:		
+								if( npcAttack->GetIntelligence() > cDefend->GetIntelligence() )
+								{
+									CastSpell( npcAttack, cDefend, 37 ); // Mind Blast
+									break;
+								}
+								else
+								{
+									// Avoid dumb caster NPCs from killing themselves, and fallthrough to next spell in list instead
+									[[fallthrough]];
+								}
 							case 2:		CastSpell( npcAttack, cDefend, 38 );		break;	// Paralyze
 							//case 3:		CastSpell( npcAttack, cDefend, 33 );		break;	// Blade Spirits
 						}

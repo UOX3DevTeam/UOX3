@@ -148,9 +148,11 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			mChar.DoAction( actionID );
 	}
 
-	var tempString = mSpell.mantra;
+	if( mChar.isHuman )
+	{
+		mChar.TextMessage( mSpell.mantra );
+	}
 
-	mChar.TextMessage( tempString );
 	mChar.isCasting = true;
 
 	mChar.StartTimer( delay * 1000, spellNum, true );
@@ -268,7 +270,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	// Check magery skill for non-GM characters
 	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		mChar.TextMessage( mSpell.mantra );
+		if( mChar.isHuman )
+		{
+			mChar.TextMessage( mSpell.mantra );
+		}
 
 		// Only remove reagents for normal spells
 		if( spellType == 0 )

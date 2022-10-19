@@ -89,28 +89,55 @@ CItem * cEffects::SpawnBloodEffect( UI08 worldNum, UI16 instanceID, UI16 bloodCo
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a message to client to display a moving animation from source object to target object
 //o-----------------------------------------------------------------------------------------------o
-void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode )
+void cEffects::PlayMovingAnimation( CBaseObject *source, CBaseObject *dest, UI16 effect, UI08 speed, UI08 loop, bool explode, UI32 hue, UI32 renderMode, bool playLocalMoveFX )
 {	//0x0f 0x42 = arrow 0x1b 0xfe=bolt
 	if( !ValidateObject( source ) || !ValidateObject( dest ) )
 		return;
 
+	// TODO - if enhanced client/3d client, send packet 0xC7 (CP3DGraphicalEffect) instead
+	// CP3DGraphicalEffect toSend( 0, ( *source ), ( *dest ));
+
 	CPGraphicalEffect2 toSend( 0, (*source), (*dest) );
-	if( source == dest )
-		toSend.Effect( 0x03 );
 	toSend.Model( effect );
 	toSend.SourceLocation( (*source) );
 	toSend.TargetLocation( (*dest) );
+	toSend.Z( dest->GetZ() + 14 );
+	toSend.ZTrg( dest->GetZ() + 11 );
 	toSend.Speed( speed );
 	toSend.Duration( loop );
 	toSend.ExplodeOnImpact( explode );
 	toSend.Hue( hue );
 	toSend.RenderMode( renderMode );//0x00000004
 
-	for(auto &tSock : Network->connClients){
-		if( objInRange( tSock, source, DIST_SAMESCREEN ) && objInRange( tSock, dest, DIST_SAMESCREEN ) )
-			tSock->Send( &toSend );
+	// Edge case, in case someone want to play the moving FX locally on source object
+	if( source == dest && playLocalMoveFX )
+	{
+		toSend.Effect( 0x03 );
+		if( loop == 0 )
+		{
+			// Make sure effect has a fixed duration, or it will stick around for ever!
+			toSend.Duration( 0x05 );
+		}
+		toSend.SourceSerial( 0x0000 );
+		toSend.TargetSerial( 0x0000 );
+		toSend.TargetLocation( 0, 0, 0 );
 	}
 
+	// TODO: Used with 3D graphical effect only
+	/*toSend.EffectId3D( 0x0000 );
+	toSend.ExplodeEffectId( 0x0001 );
+	toSend.MovingEffectId( 0xFFFF );
+	toSend.TargetObjSerial( dest->GetSerial() );
+	toSend.LayerId( 0x01 );
+	toSend.Unknown( 0x0000 );*/
+
+	for( auto &tSock : Network->connClients )
+	{
+		if( objInRange( tSock, source, DIST_SAMESCREEN ) && objInRange( tSock, dest, DIST_SAMESCREEN ) )
+		{
+			tSock->Send( &toSend );
+	}
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
