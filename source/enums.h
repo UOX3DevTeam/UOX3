@@ -440,6 +440,8 @@ enum AITypes
     AI_DUMMY		= 7,
     AI_BANKER		= 8, // handled in JS, but needed to identify NPC for context menus
 	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
+	AI_CASTER		= 10,
+	AI_EVIL_CASTER  = 11,
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
