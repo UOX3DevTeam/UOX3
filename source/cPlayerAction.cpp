@@ -458,7 +458,13 @@ bool CPIGetItem::Handle( void )
 	Effects->PlaySound( tSock, 0x0057, true );
 
 	if( iCont == nullptr )
+	{
+		// Remove item from mapregion it was in before being picked up
 		MapRegion->RemoveItem( i );
+
+		// Add item to mapregion of character who picked up item instead
+		MapRegion->AddItem( i );
+	}
 	i->RemoveFromSight();
 
 	tSock->SetCursorItem( i );
