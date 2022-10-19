@@ -1946,7 +1946,10 @@ void cMovement::NpcMovement( CChar& mChar )
 
 				// NPC is using a ranged weapon, and is within range to shoot at the target
 				CItem *equippedWeapon = Combat->getWeapon( &mChar );
-				if( charDir < 8 && ( charDist <= 1 || (( Combat->getCombatSkill( equippedWeapon ) == ARCHERY || Combat->getCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() ) ) )
+				if( charDir < 8 
+					&& ( charDist <= 1 
+						|| (( Combat->getCombatSkill( equippedWeapon ) == ARCHERY || Combat->GetCombatSkill( equippedWeapon ) == THROWING ) && charDist <= equippedWeapon->GetMaxRange() )
+						|| (( mChar.GetNPCAiType() == AI_CASTER || mChar.GetNPCAiType() == AI_EVIL_CASTER ) && ( charDist <= cwmWorldState->ServerData()->CombatMaxSpellRange() && mChar.GetMana() >= 10 ))))
 				{
 					bool los = LineOfSight( nullptr, &mChar, l->GetX(), l->GetY(), ( l->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
 					if( los )

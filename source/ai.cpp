@@ -287,7 +287,7 @@ auto HandleEvilAI( CChar& mChar )->void {
 								if( !(mChar.GetRace() != 0 && mChar.GetRace() == tempChar->GetRace() && RandomNum( 1, 100 ) > 1 )){	// 1% chance of turning on own race
 									RaceRelate raceComp = Races->Compare( tempChar, &mChar );
 									if( raceComp < RACE_ALLY ){	// Allies
-										if( !(tempChar->GetNPCAiType() == AI_EVIL && raceComp > RACE_ENEMY )){
+										if( !(( tempChar->GetNPCAiType() == AI_EVIL || tempChar->GetNPCAiType() == AI_EVIL_CASTER ) && raceComp > RACE_ENEMY ))
 											if( RandomNum( 1, 100 ) < 85 ){ // 85% chance to attack current target, 15% chance to pick another
 												Combat->AttackTarget( &mChar, tempChar );
 												return;
@@ -429,8 +429,10 @@ void CheckAI( CChar& mChar )
 		case AI_PLAYERVENDOR:											// Player Vendors.
 			break;	// No AI for these special NPC's.
 		case AI_HEALER_G:		HandleHealerAI( mChar );		break;	// Good Healers
+		case AI_EVIL_CASTER:	[[fallthrough]];						// Evil Caster NPCs, use same AI as AI_EVIL
 		case AI_EVIL:			HandleEvilAI( mChar );			break;	// Evil NPC's
 		case AI_GUARD:			HandleGuardAI( mChar );			break;	// Guard
+		case AI_CASTER:			[[fallthrough]];						// Caster - same as AI_FIGHTER, but keep their distance
 		case AI_FIGHTER:		HandleFighterAI( mChar );		break;	// Fighter - same as guard, without teleporting & yelling "HALT!"
 		case AI_ANIMAL:			HandleAnimalAI( mChar );		break;	// Hungry animals
 		case AI_CHAOTIC:		HandleChaoticAI( mChar );		break;	// Energy Vortex / Blade Spirit
