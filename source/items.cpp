@@ -201,7 +201,67 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 						}
 						break;
 					}
-						
+					case DFNTAG_GETT2A:
+					case DFNTAG_GETUOR:
+					case DFNTAG_GETTD:
+					case DFNTAG_GETLBR:
+					case DFNTAG_GETPUB15:
+					case DFNTAG_GETAOS:
+					case DFNTAG_GETSE:
+					case DFNTAG_GETML:
+					case DFNTAG_GETSA:
+					case DFNTAG_GETHS:
+					case DFNTAG_GETTOL:
+					{
+						// Inherit stats for object based on active ruleset
+						bool getParent = false;
+						std::string tagName = "";
+						switch( cwmWorldState->ServerData()->ExpansionCoreShardEra() )
+						{
+							case ER_T2A:	if( tag == DFNTAG_GETT2A ) { getParent = true; tagName = "GETT2A"; }		break;
+							case ER_UOR:	if( tag == DFNTAG_GETUOR ) { getParent = true; tagName = "GETUOR"; }		break;
+							case ER_TD:		if( tag == DFNTAG_GETTD ) { getParent = true; tagName = "GETTD"; }			break;
+							case ER_LBR:	if( tag == DFNTAG_GETLBR ) { getParent = true; tagName = "GETLBR"; }		break;
+							case ER_PUB15:	if( tag == DFNTAG_GETPUB15 ) { getParent = true; tagName = "GETPUB15"; }	break;
+							case ER_AOS:	if( tag == DFNTAG_GETAOS ) { getParent = true; tagName = "GETAOS"; }		break;
+							case ER_SE:		if( tag == DFNTAG_GETSE ) { getParent = true; tagName = "GETSE"; }			break;
+							case ER_ML:		if( tag == DFNTAG_GETML ) { getParent = true; tagName = "GETML"; }			break;
+							case ER_SA:		if( tag == DFNTAG_GETSA ) { getParent = true; tagName = "GETSA"; }			break;
+							case ER_HS:		if( tag == DFNTAG_GETHS ) { getParent = true; tagName = "GETHS"; }			break;
+							case ER_TOL:	if( tag == DFNTAG_GETTOL ) { getParent = true; tagName = "GETTOL"; }		break;
+							default:
+								break;
+						}
+		
+						if( getParent )
+						{
+							std::string scriptEntry = "";
+							if( ssecs.size() == 1 )
+							{
+								scriptEntry = cdata;
+							}
+							else
+							{
+								UI32 rndEntry = RandomNum( 0, static_cast<SI32>( ssecs.size() - 1 ));
+								scriptEntry = oldstrutil::trim( oldstrutil::removeTrailing( ssecs[rndEntry], "//" ));
+							}
+		
+							CScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
+							if( toFind == NULL )
+							{
+								Console.Warning( oldstrutil::format( "Invalid script entry (%s) called with %s tag, item serial 0x%X", scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial() ));
+							}
+							else if( toFind == toApply )
+							{
+								Console.Warning( oldstrutil::format( "Infinite loop avoided with %s tag inside item script [%s]", tagName.c_str(), scriptEntry.c_str() ));
+							}
+							else
+							{
+								ApplyItemSection( applyTo, toFind, scriptEntry );
+							}
+						}
+						break;
+					}
 					case DFNTAG_HP:
 						if( ndata > 0 ) {
 							if( odata && odata > ndata ) {

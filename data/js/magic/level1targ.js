@@ -192,7 +192,10 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
-		mChar.frozen = true;
+		if( !GetServerSetting( "CastSpellsWhileMoving" ))
+		{
+			mChar.frozen = true;
+		}
 	}
 	else
 		mChar.SetTimer( Timer.SPELLTIME, 0 );

@@ -201,7 +201,7 @@ private:
 	std::bitset< SF_BIT_COUNT > serverFeatures;
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<86>	boolVals;				// Many values stored this way, rather than using bools.
+	std::bitset<91>	boolVals;				// Many values stored this way, rather than using bools.
 	std::bitset<64>	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
@@ -264,6 +264,21 @@ private:
 	std::string serverDirectories[CSDDP_COUNT];
 	
 	std::string actualINI;					// 	The actual uox.ini file loaded, used for saveing
+
+	// Expansion
+	// 0 = T2A, 1 = UOR, 2 = TD, 3 = LBR, 4 = Pub15/Pre-AoS, 5 = AoS, 6 = SE, 7 = ML, 8 = SA, 9 = HS, 10 = ToL
+	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
+	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
+	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
+	UI08		expansionTacticsDamageBonus;	// Determines which era ruleset to use for calculating tactics damage bonus
+	UI08		expansionAnatomyDamageBonus;	// Determines which era ruleset to use for calculating anatomy damage bonus
+	UI08		expansionLumberjackDamageBonus;	// Determines which era ruleset to use for calculating lumberjack damage bonus
+	UI08		expansionRacialDamageBonus;		// Determines which era ruleset to use for calculating racial damage bonus
+	UI08		expansionDamageBonusCap;		// Determines which era ruleset to use for calculating damage bonus cap
+	UI08		expansionShieldParry;			// Determines which era ruleset to use for shield parry calculations
+	UI08		expansionWeaponParry;			// Determines which era ruleset to use for weapon parry calculations
+	UI08		expansionWrestlingParry;		// Determines which era ruleset to use for wrestling parry calculations
+	UI08		expansionCombatHitChance;		// Determines which era ruleset to use for calculating melee hit chance
 
 	// Settings
 	SI16		ambientsounds;				//	Ambient sounds - values from 1->10 - higher values indicate sounds occur less often
@@ -452,6 +467,9 @@ public:
 	auto		save() ->bool;
 	auto		save( const std::string &filename ) ->bool;
 
+	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
+	auto		EraStringToEnum( std::string eraString ) ->ExpansionRuleset;
+
 	auto ResetDefaults() ->void ;
 	auto startup() ->void ;
 	//void		RefreshIPs( void );
@@ -509,8 +527,8 @@ public:
 
 	auto		ServerUOGEnabled() const ->bool { return uogEnabled; }
 	auto		ServerUOGEnabled(bool uogValue) ->void {	uogEnabled = uogValue; }
-	auto		ConnectUOServerPoll( bool value ) ->void;
-	auto		ConnectUOServerPoll() const ->bool;
+	auto		FreeshardServerPoll( bool value ) -> void;
+	auto		FreeshardServerPoll() const -> bool;
 	auto		ServerRandomStartingLocation() const ->bool { return randomStartingLocation; }
 	auto		ServerRandomStartingLocation( bool rndStartLocValue ) ->void { randomStartingLocation = rndStartLocValue; }
 	UI32		ServerNetRetryCount() const { return netRetryCount; }
@@ -710,6 +728,21 @@ public:
 	auto		ShowInvulnerableTagOverhead( bool value ) ->void;
 	auto		ShowInvulnerableTagOverhead() const ->bool;
 
+	auto		ShowRaceWithName( bool value ) -> void;
+	auto		ShowRaceWithName() const -> bool;
+
+	auto		ShowRaceInPaperdoll( bool value ) -> void;
+	auto		ShowRaceInPaperdoll() const -> bool;
+
+	auto		ShowGuildInfoInTooltip( bool value ) -> void;
+	auto		ShowGuildInfoInTooltip() const -> bool;
+
+	auto		ShowReputationTitleInTooltip( bool value ) -> void;
+	auto		ShowReputationTitleInTooltip() const -> bool;
+
+	auto		CastSpellsWhileMoving( bool value ) -> void;
+	auto		CastSpellsWhileMoving() const -> bool;
+
 	auto		PetCombatTraining( bool value ) ->void;
 	auto		PetCombatTraining() const ->bool;
 
@@ -892,6 +925,42 @@ public:
 
 	auto		CombatNPCBaseFleeAt( SI16 value ) ->void;
 	SI16		CombatNPCBaseFleeAt() const;
+
+	void		ExpansionCoreShardEra( UI08 value );
+	UI08		ExpansionCoreShardEra( void ) const;
+
+	void		ExpansionArmorCalculation( UI08 value );
+	UI08		ExpansionArmorCalculation() const;
+
+	void		ExpansionStrengthDamageBonus( UI08 value );
+	UI08		ExpansionStrengthDamageBonus() const;
+
+	void		ExpansionTacticsDamageBonus( UI08 value );
+	UI08		ExpansionTacticsDamageBonus() const;
+
+	void		ExpansionAnatomyDamageBonus( UI08 value );
+	UI08		ExpansionAnatomyDamageBonus() const;
+
+	void		ExpansionLumberjackDamageBonus( UI08 value );
+	UI08		ExpansionLumberjackDamageBonus() const;
+
+	void		ExpansionRacialDamageBonus( UI08 value );
+	UI08		ExpansionRacialDamageBonus() const;
+
+	void		ExpansionDamageBonusCap( UI08 value );
+	UI08		ExpansionDamageBonusCap() const;
+
+	void		ExpansionShieldParry( UI08 value );
+	UI08		ExpansionShieldParry() const;
+
+	void		ExpansionWeaponParry( UI08 value );
+	UI08		ExpansionWeaponParry() const;
+
+	void		ExpansionWrestlingParry( UI08 value );
+	UI08		ExpansionWrestlingParry() const;
+
+	void		ExpansionCombatHitChance( UI08 value );
+	UI08		ExpansionCombatHitChance() const;
 
 	auto		CombatNPCBaseReattackAt( SI16 value ) ->void;
 	SI16		CombatNPCBaseReattackAt() const;
