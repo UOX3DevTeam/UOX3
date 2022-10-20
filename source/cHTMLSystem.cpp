@@ -140,17 +140,21 @@ void cHTMLTemplate::Process( void )
 
 	// Get all Network Connections
 	{
-		for (auto &tSock : Network->connClients) {
+		for( auto &tSock : Network->connClients )
+		{
 			tChar = tSock->CurrcharObj();
-			if( ValidateObject( tChar ) ){
-				
-				if( tChar->IsGM() ){
+			if( ValidateObject( tChar ))
+			{
+				if( tChar->IsGM() )
+				{
 					++gm;
 				}
-				else if( tChar->IsCounselor() ){
+				else if( tChar->IsCounselor() )
+				{
 					++cns;
 				}
-				else{
+				else
+				{
 					++ccount;
 				}
 			}
@@ -225,64 +229,31 @@ void cHTMLTemplate::Process( void )
 		Pos = ParsedContent.find( "%tstamp" );
 	}
 
-	// IP(s) + PORT(s)
-	UI16 ServerCount = cwmWorldState->ServerData()->ServerCount();
-	if( ServerCount > 0 )
+	// Server Name
+	auto serverName = cwmWorldState->ServerData()->ServerName();
+	Pos	= ParsedContent.find( "%servername" );
+	while( Pos != std::string::npos )
 	{
-		for( UI16 i = 0; i < ServerCount; ++i )
-		{
-			physicalServer *mServ = cwmWorldState->ServerData()->ServerEntry( i );
-			auto ipToken = oldstrutil::format( "%%ip%i", i+1 );
+		( cwmWorldState->GetKeepRun() ) ? ParsedContent.replace( Pos, 11, serverName ) : ParsedContent.replace( Pos, 11, "Unnamed UOX3 Server" );
+		Pos = ParsedContent.find( "%servername" );
+	}
 
-			if( mServ != nullptr )
-			{
-				Pos = ParsedContent.find( ipToken );
-				while( Pos != std::string::npos )
-				{
-					(cwmWorldState->GetKeepRun())?ParsedContent.replace( Pos, ipToken.size(), mServ->getIP().c_str()):ParsedContent.replace( Pos, ipToken.size(), "Down" );
-					Pos = ParsedContent.find( ipToken );
-				}
-			}
+	// External/WAN ServerIP
+	auto serverIP = cwmWorldState->ServerData()->ExternalIP();
+	Pos	= ParsedContent.find( "%serverip" );
+	while( Pos != std::string::npos )
+	{
+		( cwmWorldState->GetKeepRun() ) ? ParsedContent.replace( Pos, 9, serverIP ) : ParsedContent.replace( Pos, 9, "127.0.0.1" );
+		Pos = ParsedContent.find( "%serverip" );
+	}
 
-			// i think we'll never get higher than 2 digits, anyway...
-			auto portToken = oldstrutil::format( "%%port%i", i+1 );
-
-			if( mServ != nullptr )
-			{
-				Pos = ParsedContent.find( portToken );
-				while( Pos != std::string::npos )
-				{
-
-					auto myPort = std::to_string(mServ->getPort());
-
-					// Both paths do the same. Something seems missing
-					//if (cwmWorldState->GetKeepRun()){
-						ParsedContent.replace(Pos, portToken.size(), myPort);
-					//}
-					//else {
-						//ParsedContent.replace(Pos, portToken.size(), myPort);
-					//}
-					Pos = ParsedContent.find( portToken );
-				}
-			}
-
-			auto serverToken= oldstrutil::format( "%%server%i", i+1 );
-
-			if( mServ != nullptr )
-			{
-				Pos = ParsedContent.find( serverToken );
-				while( Pos != std::string::npos )
-				{
-					if (cwmWorldState->GetKeepRun()) {
-						ParsedContent.replace(Pos, serverToken.size(), mServ->getName());
-					}
-					else {
-						ParsedContent.replace(Pos, serverToken.size(), "Down");
-					}
-					Pos = ParsedContent.find( serverToken );
-				}
-			}
-		}
+	// Server Port
+	auto serverPort = cwmWorldState->ServerData()->ServerPort();
+	Pos	= ParsedContent.find( "%serverport" );
+	while( Pos != std::string::npos )
+	{
+		( cwmWorldState->GetKeepRun() ) ? ParsedContent.replace( Pos, 11, oldstrutil::number( serverPort )) : ParsedContent.replace( Pos, 11, "127.0.0.1" );
+		Pos = ParsedContent.find( "%serverport" );
 	}
 	// PLAYERLIST
 	Pos = ParsedContent.find( "%playerlist%" );
@@ -294,12 +265,19 @@ void cHTMLTemplate::Process( void )
 		std::string myInline	= ParsedContent.substr( Pos, SecondPos - Pos + 12 );
 		std::string PlayerList;
 		{
-			for (auto &tSock : Network->connClients){
+			for( auto &tSock : Network->connClients )
+			{
 				try
 				{
-					if( tSock ) {
+					if( tSock )
+					{
 						auto tChar = tSock->CurrcharObj();
-						if( ValidateObject( tChar ) ){
+						if( ValidateObject( tChar ))
+						{
+							// Don't show names of any online GMs and counselors on normal status page
+							if( this->GetTemplateType() == ETT_ONLINE && ( tChar->IsGM() || tChar->IsCounselor() ))
+								continue;
+
 							std::string parsedInline = myInline;
 							parsedInline.replace( 0, 12, "" );
 							parsedInline.replace( parsedInline.length()-12, 12, "" );
@@ -317,21 +295,29 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerName
 							size_t sPos = parsedInline.find( "%playername" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 11, tChar->GetName() ):parsedInline.replace( sPos, 11, "" );
 								sPos = parsedInline.find( "%playername" );
 							}
 
 							// PlayerTitle
+							auto playerTitle = tChar->GetTitle();
+							if( !playerTitle.empty() )
+							{
+								playerTitle = "(" + playerTitle + ")";
+							}
 							sPos = parsedInline.find( "%playertitle" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 12, tChar->GetTitle() ):parsedInline.replace( sPos, 12, "" );
 								sPos = parsedInline.find( "%playertitle" );
 							}
 
 							// PlayerIP
 							sPos = parsedInline.find( "%playerip" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								CSocket *mySock = tChar->GetSocket();
 
 								auto ClientIP = oldstrutil::format("%i.%i.%i.%i", mySock->ClientIP4(), mySock->ClientIP3(), mySock->ClientIP3(), mySock->ClientIP1() );
@@ -341,7 +327,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerAccount
 							sPos = parsedInline.find( "%playeraccount" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								CAccountBlock& toScan = tChar->GetAccount();
 								if( toScan.wAccountIndex != AB_INVALID_ID )
 									(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 14, toScan.sUsername):parsedInline.replace( sPos, 14, "" );
@@ -350,7 +337,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerX
 							sPos = parsedInline.find( "%playerx" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								std::string myX = oldstrutil::number( tChar->GetX() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myX ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerx" );
@@ -358,7 +346,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerY
 							sPos = parsedInline.find( "%playery" );
-							while( sPos != std::string::npos ) {
+							while( sPos != std::string::npos )
+							{
 								std::string myY = oldstrutil::number( tChar->GetY() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myY ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playery" );
@@ -366,7 +355,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerZ
 							sPos = parsedInline.find( "%playerz" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								std::string myZ = oldstrutil::number( tChar->GetZ() );
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 8, myZ ):parsedInline.replace( sPos, 8, "" );
 								sPos = parsedInline.find( "%playerz" );
@@ -374,7 +364,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerRace -- needs testing
 							sPos = parsedInline.find( "%playerrace" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								RACEID myRace			= tChar->GetRace();
 								const std::string rName	= Races->Name( myRace );
 								size_t raceLenName		= rName.length();
@@ -386,7 +377,8 @@ void cHTMLTemplate::Process( void )
 
 							// PlayerRegion
 							sPos = parsedInline.find( "%playerregion" );
-							while( sPos != std::string::npos ){
+							while( sPos != std::string::npos )
+							{
 								(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 13, tChar->GetRegion()->GetName() ):parsedInline.replace( sPos, 13, "");
 								sPos = parsedInline.find( "%playerregion" );
 							}
@@ -434,6 +426,7 @@ void cHTMLTemplate::Process( void )
 			//			Tokens for the GuildList
 			//			%guildid
 			//			%guildname
+			//			%guildmembercount
 
 			// GuildID
 			size_t sPos;
@@ -453,6 +446,14 @@ void cHTMLTemplate::Process( void )
 			{
 				(cwmWorldState->GetKeepRun())?parsedInline.replace( sPos, 10, myGuild->Name() ):parsedInline.replace( sPos, 10, "" );
 				sPos = parsedInline.find( "%guildname" );
+			}
+
+			// Guild Member Count
+			sPos = parsedInline.find( "%guildmembercount" );
+			while( sPos != std::string::npos )
+			{
+				( cwmWorldState->GetKeepRun() ) ? parsedInline.replace( sPos, 17,  oldstrutil::number( myGuild->NumMembers() )) : parsedInline.replace( sPos, 10, "" );
+				sPos = parsedInline.find( "%guildmembercount" );
 			}
 
 			GuildList += parsedInline;
