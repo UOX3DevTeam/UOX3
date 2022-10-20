@@ -213,37 +213,56 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 					if( fudgedStealing >= chanceToSteal )
 					{
 						// redo stealing code here
-						s->sysmessage( 549, targetRegion->GetName().c_str() );
+						s->sysmessage( 549, targetRegion->GetName().c_str() ); // Congrats go to you, for you have successfully dealt %s a nasty blow this day!
 						targetRegion->DoDamage( targetRegion->GetHealth() / 2 );	// we reduce the region's health by half
-						for (auto &toCheck : MapRegion->PopulateList( mChar )){
-							if(toCheck){
+						for( auto &toCheck : MapRegion->PopulateList( mChar ))
+						{
+							if( toCheck )
+							{
+								CItem *iTownStone = nullptr;
 								auto regItems = toCheck->GetItemList();
-								for (const auto &itemCheck : regItems->collection()){
-									if( ValidateObject( itemCheck ) ){
-										if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetID() != 0x14F0 ) {
+								for( const auto &itemCheck : regItems->collection() )
+								{
+									if( ValidateObject( itemCheck ))
+									{
+										if( itemCheck->GetType() == IT_TOWNSTONE && itemCheck->GetId() != 0x14F0 )
+										{
 											// found our townstone
-											auto charPack = mChar->GetPackItem();
-											if( ValidateObject( charPack ) ) {
-												itemCheck->SetCont( charPack );
-												itemCheck->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
-												s->sysmessage( 550 );
-												targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
-												return;	// dump out
-											}
+											iTownStone = itemCheck;
+											break;
 										}
+									}
+								}
+
+								if( ValidateObject( iTownStone ))
+								{
+									auto charPack = mChar->GetPackItem();
+									if( ValidateObject( charPack ))
+									{
+										iTownStone->SetCont( charPack );
+										iTownStone->SetTempVar( CITV_MOREX, targetRegion->GetRegionNum() );
+										s->sysmessage( 550 ); // Quick, make it back to your town with the stone to deal the death blow to this region!
+										targetRegion->TellMembers( 551, mChar->GetName().c_str() ); // Quickly, %s has stolen your treasured townstone!
+										return;	// dump out
 									}
 								}
 							}
 						}
 					}
 					else
-						s->sysmessage( 552 );
+					{
+						s->sysmessage( 552 ); // Try as you might, you have not the ability to seize the day.
+					}
 				}
 				else
-					s->sysmessage( 553 );
+				{
+					s->sysmessage( 553 ); // This is not a valid region!
+				}
 			}
 			else
-				s->sysmessage( 554 );
+			{
+				s->sysmessage( 554 ); // You have insufficient ability to seize the townstone.
+			}
 			break;
 		case 62:	// attack townstone
 			targetRegion = calcRegionFromXY( mChar->GetX(), mChar->GetY(), mChar->WorldNumber(), mChar->GetInstanceID() );
