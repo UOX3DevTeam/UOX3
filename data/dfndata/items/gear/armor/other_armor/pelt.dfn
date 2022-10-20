@@ -2,7 +2,9 @@
 // Tiger Pelt Chest
 [0x7822]
 {
-get=base_tiger_pelt_chest
+getpub15=0x7822_pub15
+getaos=0x7822_aos
+gettol=0x7822_tol
 }
 
 // Tiger Pelt Chest - Alias
@@ -15,7 +17,9 @@ get=0x7822
 // Tiger Pelt Bustier
 [0x7823]
 {
-get=base_tiger_pelt_bustier
+getpub15=0x7823_pub15
+getaos=0x7823_aos
+gettol=0x7823_tol
 }
 
 // Tiger Pelt Bustier - Alias
@@ -28,7 +32,9 @@ get=0x7823
 // Tiger Pelt Helm
 [0x7828]
 {
-get=base_tiger_pelt_helm
+getpub15=0x7828_pub15
+getaos=0x7828_aos
+gettol=0x7828_tol
 }
 
 // Tiger Pelt Helm - Alias
@@ -41,7 +47,9 @@ get=0x7828
 // Tiger Pelt Leggings
 [0x7824]
 {
-get=base_tiger_pelt_leggings
+getpub15=0x7824_pub15
+getaos=0x7824_aos
+gettol=0x7824_tol
 }
 
 // Tiger Pelt Leggings - Alias
@@ -54,7 +62,9 @@ get=0x7824
 // Tiger Pelt Shorts
 [0x7825]
 {
-get=base_tiger_pelt_shorts
+getpub15=0x7825_pub15
+getaos=0x7825_aos
+gettol=0x7825_tol
 }
 
 // Tiger Pelt Shorts - Alias
@@ -67,7 +77,9 @@ get=0x7825
 // Tiger Pelt Long Skirt
 [0x7826]
 {
-get=base_tiger_pelt_long_skirt
+getpub15=0x7826_pub15
+getaos=0x7826_aos
+gettol=0x7826_tol
 }
 
 // Tiger Pelt Long Skirt - Alias
@@ -80,7 +92,9 @@ get=0x7826
 // Tiger Pelt Skirt
 [0x7827]
 {
-get=base_tiger_pelt_skirt
+getpub15=0x7827_pub15
+getaos=0x7827_aos
+gettol=0x7827_tol
 }
 
 // Tiger Pelt Skirt - Alias
@@ -93,7 +107,9 @@ get=0x7827
 // Tiger Pelt Collar
 [0x7829]
 {
-get=base_tiger_pelt_collar
+getpub15=0x7829_pub15
+getaos=0x7829_aos
+gettol=0x7829_tol
 }
 
 // Tiger Pelt Collar - Alias

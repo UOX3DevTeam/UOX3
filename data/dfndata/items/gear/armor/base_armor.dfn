@@ -1,2830 +1,2203 @@
 // Ringmail
 
+Ringmail Gloves - Base item with shared DFN tags
 [base_ring_gloves]
 {
 get=base_item
 name=ringmail gloves
 id=0x13eb
-weight=200
-value=122 61
-layer=0x07
-def=22
-hp=41 51
-str=20
-dexadd=-1
-restock=15
 decay=1
 good=10
+layer=0x07
+origin=classic
+restock=15
 }
 
+// Ringmail Tunic - Base item with shared DFN tags
 [base_ring_tunic]
 {
 get=base_item
 name=ringmail tunic
 id=0x13ec
-weight=1500
-value=218 109
-layer=0x0d
-def=22
-hp=41 51
-str=20
-dexadd=-2
-restock=15
 decay=1
 good=10
+layer=0x0d
+origin=classic
+restock=15
 }
 
+// Ringmail Sleeves - Base item with shared DFN tags
 [base_ring_sleeves]
 {
 get=base_item
 name=ringmail sleeves
 id=0x13ee
-weight=1500
-value=147 73
-layer=0x13
-def=22
-hp=41 51
-str=20
-dexadd=-1
-restock=15
 decay=1
 good=10
+layer=0x13
+origin=classic
+restock=15
 }
 
+// Ringmail Leggings - Base item with shared DFN tags
 [base_ring_leggings]
 {
 get=base_item
 name=ringmail leggings
 id=0x13f0
-weight=1500
-value=147 73
-layer=0x04
-def=22
-hp=41 51
-str=20
-dexadd=-1
-restock=15
 decay=1
 good=10
+layer=0x04
+origin=classic
+restock=15
 }
 
 // Chainmail
 
+// Chainmail Coif - Base item with shared DFN tags
 [base_chain_coif]
-{ Left facing chain coif
+{
 get=base_item
 name=chainmail coif
 id=0x13bb
-weight=700
-value=130 65
-layer=0x06
-def=28
-hp=36 44
-str=20
-restock=10
 decay=1
 good=11
+layer=0x06
+origin=classic
+restock=10
 }
 
+// Chainmail Leggigns - Base item with shared DFN tags
 [base_chain_leggings]
-{ left facing
+{
 get=base_item
 name=chainmail leggings
 id=0x13be
-weight=700
-value=166 83
-layer=0x04
-def=28
-hp=46 58
-str=20
-dexadd=-3
-restock=10
 decay=1
 good=11
+layer=0x04
+origin=classic
+restock=10
 }
 
+// Chainmail Tunic - Base item with shared DFN tags
 [base_chain_tunic]
-{ left facing
+{
 get=base_item
 name=chainmail tunic
 id=0x13bf
-weight=700
-value=207 103
-layer=0x0d
-def=28
-hp=46 58
-str=20
-dexadd=-5
-restock=10
 decay=1
 good=11
+layer=0x0d
+origin=classic
+restock=10
 }
 
 // Female
 
+// Female Plate - Base item with shared DFN tags
 [base_fem_plate]
 {
 get=base_item
 name=plate armor
 id=0x1c04
-weight=400
-value=245 122
-layer=0x0d
-def=30
-hp=51 65
-str=45
-dexadd=-5
-restock=15
 decay=1
 good=12
+layer=0x0d
+origin=classic
+restock=15
 }
 
 // Platemail
 
+// Platemail Arms - Base item with shared DFN tags
 [base_plate_arms]
 {
 get=base_item
 name=platemail arms
 id=0x1410
-weight=500
-value=181 90
-layer=0x13
-def=40
-hp=51 65
-str=40
-dexadd=-2
-restock=15
 decay=1
 good=12
+layer=0x13
+origin=classic
+restock=15
 }
 
+// Platemail Leggings - Base item with shared DFN tags
 [base_plate_leggings]
 {
 get=base_item
 name=platemail legs
 id=0x1411
-value=218 109
-weight=700
-layer=0x04
-def=40
-hp=51 65
-str=60
-dexadd=-6
-restock=15
 decay=1
 good=12
+layer=0x04
+origin=classic
+restock=15
 }
 
+// Platemail Gorget - Base item with shared DFN tags
 [base_plate_gorget]
 {
 get=base_item
 name=platemail gorget
 id=0x1413
-value=124 70
-weight=200
-layer=0x0a
-def=40
-hp=40 65
-str=30
-dexadd=-1
-restock=15
 decay=1
 good=12
+layer=0x0a
+origin=classic
+restock=15
 }
 
+// Platemail Gloves - Base item with shared DFN tags
 [base_plate_gloves]
 {
 get=base_item
 name=platemail gloves
 id=0x1414
-weight=200
-value=145 72
-layer=0x07
-def=40
-hp=51 65
-str=30
-dexadd=-2
-restock=15
 decay=1
 good=12
+layer=0x07
+origin=classic
+restock=15
 }
 
+// Platemail Chest - Base item with shared DFN tags
 [base_plate_chest]
 {
 get=base_item
 name=platemail
 id=0x1415
-weight=1000
-value=273 136
-layer=0x0d
-def=40
-hp=51 65
-str=60
-dexadd=-8
-restock=15
 decay=1
 good=12
+layer=0x0d
+origin=classic
+restock=15
 }
 
+// Leather
+
+// Leather Sleeves - Base item with shared DFN tags
 [base_leather_sleeves]
-{ left facing
+{
 get=base_item
 name=leather sleeves
 id=0x13c5
-weight=200
-value=80 40
-layer=0x13
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x13
+origin=classic
+restock=15
 }
 
+// Leather Gloves - Base item with shared DFN tags
 [base_leather_gloves]
-{ left facing
+{
 get=base_item
 name=leather gloves
 id=0x13c6
-weight=100
-value=60 30
-layer=0x07
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x07
+origin=classic
+restock=15
 }
 
+// Leather Gorget - Base item with shared DFN tags
 [base_leather_gorget]
-{ left facing
+{
 get=base_item
 name=leather gorget
 id=0x13c7
-weight=200
-value=74 37
-layer=0x0a
-def=13
-hp=13 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x0a
+origin=classic
+restock=15
 }
 
+// Leather Cap - Base item with shared DFN tags
 [base_leather_cap]
-{ left facing
+{
 get=base_item
 name=leather cap
 id=0x1db9
-weight=100
-value=68 31
-layer=0x06
-def=13
-hp=31 37
-str=15
-restock=15
 decay=1
 good=13
+layer=0x06
+origin=classic
+restock=15
 }
 
+// Leather Leggings - Base item with shared DFN tags
 [base_leather_leggings]
-{ facing left
+{
 get=base_item
 name=leather leggings
 id=0x13cb
-weight=400
-value=80 40
-layer=0x04
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x04
+origin=classic
+restock=15
 }
 
+// Leather Tunic - Base item with shared DFN tags
 [base_leather_tunic]
-{ left facing
+{
 get=base_item
 name=leather tunic
 id=0x13cc
-weight=700
-value=101 52
-layer=0x0d
-def=13
-hp=31 37
-str=15
-restock=15
 decay=1
 good=13
+layer=0x0d
+origin=classic
+restock=15
 }
 
-// Female
-
+// Leather Shorts (Female) - Base item with shared DFN tags
 [base_leather_shorts]
-{ left facing - Female
+{
 get=base_item
 name=leather shorts
 id=0x1c00
-weight=300
-value=86 43
-layer=0x04
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x04
+origin=classic
+restock=15
 }
 
+// Leather Armor (Female) - Base item with shared DFN tags
 [base_leather_armor]
-{ left facing - Female
+{
 get=base_item
 name=leather armor
 id=0x1c06
-weight=100
-value=116 58
-layer=0x0d
-def=13
-hp=31 37
-str=15
-restock=15
 decay=1
 good=13
+layer=0x0d
+origin=classic
+restock=15
 }
 
+// Leather Skirt (Female) - Base item with shared DFN tags
 [base_leather_skirt]
-{ left facing - Female
+{
 get=base_item
 name=leather skirt
 id=0x1c08
-weight=100
-value=87 43
-layer=0x04
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x04
+origin=classic
+restock=15
 }
 
+// Leather Bustier (Female) - Base item with shared DFN tags
 [base_leather_bustier]
-{ left facing - Female
+{
 get=base_item
 name=leather bustier
 id=0x1c0a
-weight=100
-value=97 48
-layer=0x0d
-def=13
-hp=31 37
-str=10
-restock=15
 decay=1
 good=13
+layer=0x0d
+origin=classic
+restock=15
 }
 
 //Studded Leather Armor
 
+// Studded Sleeves - Base item with shared DFN tags
 [base_studded_sleeves]
-{ Left Facing
+{
 get=base_item
 name=studded sleeves
 id=0x13d4
-weight=400
-value=87 43
-layer=0x13
-def=16
-hp=36 44
-str=25
-restock=15
 decay=1
 good=13
+layer=0x13
+origin=classic
+restock=15
 }
 
+// Studded Gloves - Base item with shared DFN tags
 [base_studded_gloves]
-{ Left Facing
+{
 get=base_item
 name=studded gloves
 id=0x13d5
-weight=100
-value=73 39
-layer=0x07
-def=16
-hp=36 44
-str=25
-restock=15
 decay=1
 good=13
+layer=0x07
+origin=classic
+restock=15
 }
 
+// Studded Gorget - Base item with shared DFN tags
 [base_studded_gorget]
-{ Left Facing
+{
 get=base_item
 name=studded gorget
 id=0x13d6
-weight=100
-value=73 36
-layer=0x0a
-def=16
-hp=16 44
-str=25
-restock=15
 decay=1
 good=13
+layer=0x0a
+origin=classic
+restock=15
 }
 
+// Studded Leggings - Base item with shared DFN tags
 [base_studded_leggings]
-{ left facing
+{
 get=base_item
 name=studded leggings
 id=0x13da
-weight=300
-value=103 51
-layer=0x04
-def=16
-hp=36 44
-str=35
-restock=15
 decay=1
 good=13
+layer=0x04
+origin=classic
+restock=15
 }
 
+// Studded Tunic - Base item with shared DFN tags
 [base_studded_tunic]
-{ left facing
+{
 get=base_item
 name=studded tunic
 id=0x13db
-weight=700
-value=128 64
-layer=0x0d
-def=16
-hp=36 44
-str=35
-restock=15
 decay=1
 good=13
+layer=0x0d
+origin=classic
+restock=15
 }
 
+// Studded Armor (Female) - Base item with shared DFN tags
 [base_studded_armor]
-{ left facing - Female
+{
 get=base_item
 name=studded armor
 id=0x1c02
-weight=600
-value=142 71
-layer=0x05
-def=16
-hp=101 115
-str=35
-restock=15
 decay=1
 good=13
+layer=0x05
+origin=classic
+restock=15
 }
 
+// Studded Bustier (Female) - Base item with shared DFN tags
 [base_studded_bustier]
-{ left facing - Female
+{
 get=base_item
 name=studded bustier
 id=0x1c0c
-weight=100
-value=120 60
-layer=0x05
-def=16
-hp=101 115
-str=25
-restock=15
 decay=1
 good=13
+layer=0x05
+origin=classic
+restock=15
 }
 
 // Bone Armor
 
+// Bone Arms - Base item with shared DFN tags
 [base_bone_arms]
-{ left facing
+{
 get=base_item
 name=bone arms
 id=0x144e
-weight=200
-value=156 78
-layer=0x13
-def=30
-hp=26 30
-str=40
-dexadd=-2
 decay=1
 good=14
+layer=0x13
+origin=classic
 }
 
+// Bone Armor - Base item with shared DFN tags
 [base_bone_armor]
-{ left facing
+{
 get=base_item
 name=bone armor
 id=0x144f
-weight=600
-value=234 117
-layer=0x0d
-def=30
-hp=26 30
-str=40
-dexadd=-6
 decay=1
 good=14
+layer=0x0d
+origin=classic
 }
 
-[base_bone_gloves]
-{ left facing
+// Bone Gloves - Base item with shared DFN tags
+[base_bone_gauntlets]
+{
 get=base_item
 name=bone gauntlets
 id=0x1450
-weight=200
-value=133 66
-layer=0x07
-def=30
-hp=26 30
-str=40
-dexadd=-1
 decay=1
 good=14
+layer=0x07
+origin=classic
 }
 
-[base_bone_helmet]
-{ left facing
+// Bone Helm - Base item with shared DFN tags
+[base_bone_helm]
+{
 get=base_item
 name=bone helm
 id=0x1451
-weight=300
-value=157 71
-layer=0x06
-def=30
-hp=26 30
-str=40
 decay=1
 good=14
+layer=0x06
+origin=classic
 }
 
-[base_bone_leggings]
-{ left facing
+// Bone Legs - Base item with shared DFN tags
+[base_bone_legs]
+{
 get=base_item
-name=bone leggings
+name=bone legs
 id=0x1452
-weight=300
-value=179 89
-layer=0x04
-def=30
-hp=26 30
-str=40
-dexadd=-4
 decay=1
 good=14
+layer=0x04
+origin=classic
 }
 
-// Helmets
-
-[base_close_helmet]
-{
-get=base_item
-name=close helmet
-id=0x1408
-value=145 72
-weight=500
-layer=0x06
-def=30
-hp=46 58
-str=40
-restock=15
-decay=1
-good=15
-}
-
-[base_helmet]
-{
-get=base_item
-name=helmet
-id=0x140a
-value=116 58
-weight=500
-layer=0x06
-def=30
-hp=46 58
-str=40
-restock=15
-decay=1
-good=15
-}
-
-[base_bascinet]
-{
-get=base_item
-name=bascinet
-id=0x140c
-value=127 46
-weight=500
-layer=0x06
-def=18
-hp=101 115
-str=10
-restock=15
-decay=1
-good=15
-}
-
-[base_nose_helm]
-{
-get=base_item
-name=norse helm
-id=0x140e
-weight=500
-value=145 53
-layer=0x06
-def=30
-hp=46 58
-str=40
-restock=15
-decay=1
-good=15
-}
-
-[base_plate_helm]
-{
-get=base_item
-name=plate helm
-id=0x1412
-value=170 85
-weight=500
-layer=0x06
-def=40
-hp=46 58
-str=40
-dexadd=-1
-restock=15
-decay=1
-good=15
-}
-
+// Orc Helm - Base item with shared DFN tags
 [base_orc_helm]
 {
 get=base_item
 name=orc helm
 id=0x1f0b
-weight=500
-value=105 48
-layer=6
-hp=31 70
-def=20
-restock=15
 decay=1
 good=14
+layer=6
 movable=1
+origin=classic
+restock=15
+}
+
+// Helmets
+
+// Close Helm - Base item with shared DFN tags
+[base_close_helm]
+{
+get=base_item
+name=close helm
+id=0x1408
+decay=1
+good=15
+layer=0x06
+origin=classic
+restock=15
+}
+
+// Helmet - Base item with shared DFN tags
+[base_helmet]
+{
+get=base_item
+name=helmet
+id=0x140a
+decay=1
+good=15
+layer=0x06
+origin=classic
+restock=15
+}
+
+// Bascinet - Base item with shared DFN tags
+[base_bascinet]
+{
+get=base_item
+name=bascinet
+id=0x140c
+decay=1
+good=15
+layer=0x06
+origin=classic
+restock=15
+}
+
+// Norse Helm - Base item with shared DFN tags
+[base_norse_helm]
+{
+get=base_item
+name=norse helm
+id=0x140e
+decay=1
+good=15
+layer=0x06
+origin=classic
+restock=15
+}
+
+// Plate Helm - Base item with shared DFN tags
+[base_plate_helm]
+{
+get=base_item
+name=plate helm
+id=0x1412
+decay=1
+good=15
+layer=0x06
+origin=classic
+restock=15
 }
 
 // SE Plate Armor
 
+// Heavy Platemail Jingasa - Base item with shared DFN tags
 [base_heavy_platemail_jingasa]
 {
 get=base_item
 name=heavy platemail jingasa
 id=0x2777
-weight=500
-value=555 285
-layer=0x06
-hp=59 78
-str=40
-def=40
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Decorative Platemail Kabuto - Base item with shared DFN tags
 [base_decorative_platemail_kabuto]
 {
 get=base_item
 name=decorative platemail kabuto
 id=0x2778
-weight=700
-value=694 352
-layer=0x06
-hp=65 83
-str=50
-def=43
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Platemail Do - Base item with shared DFN tags
 [base_platemail_do]
 {
 get=base_item
 name=platemail do
 id=0x277d
-weight=1100
-value=426 227
-layer=0x0d
-hp=79 86
-str=55
-def=38
-dexadd=-8
-restock=10
 decay=1
 good=12
+layer=0x0d
+origin=se
+restock=10
 }
 
+// Platemail Hiro Sode - Base item with shared DFN tags
 [base_platemail_hiro_sode]
 {
 get=base_item
 name=platemail hiro sode
 id=0x2780
-weight=200
-value=206 103
-layer=0x13
-hp=57 76
-str=50
-def=38
-dexadd=-2
-restock=10
 decay=1
 good=12
+layer=0x13
+origin=se
+restock=10
 }
 
+// Light Platemail Jingasa - Base item with shared DFN tags
 [base_light_platemail_jingasa]
 {
 get=base_item
 name=light platemail jingasa
 id=0x2781
-value=267 121
-weight=500
-layer=0x06
-hp=65 67
-str=51
-def=50
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Small Platemail Jingasa - Base item with shared DFN tags
 [base_small_platemail_jingasa]
 {
 get=base_item
 name=small platemail jingasa
 id=0x2784
-weight=500
-value=267 121
-layer=0x06
-hp=65 67
-str=40
-def=50
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Platemail Battle Kabuto - Base item with shared DFN tags
 [base_platemail_battle_kabuto]
 {
 get=base_item
 name=platemail battle kabuto
 id=0x2785
-weight=700
-value=225 102
-layer=0x06
-hp=71 72
-str=50
-def=43
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Platemail Suneate - Base item with shared DFN tags
 [base_platemail_suneate]
 {
 get=base_item
 name=platemail suneate
 id=0x2788
-weight=700
-value=204 90
-layer=0x18
-hp=57 67
-str=55
-def=38
-dexadd=-6
-restock=10
 decay=1
 good=12
+layer=0x18
+origin=se
+restock=10
 }
 
+// Platemail Kabuto - Base item with shared DFN Tags
 [base_platemail_kabuto]
 {
 get=base_item
 name=platemail kabuto
 id=0x2789
-weight=700
-value=225 102
-layer=0x06
-hp=71 72
-str=50
-def=43
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Kabuto - Base item with shared DFN tags
 [base_kabuto]
 {
 get=base_item
 name=kabuto
 id=0x236c
-weight=500
-value=188 86
-layer=0x06
-hp=45 53
-str=55
-def=36
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x06
+origin=se
+restock=10
 }
 
+// Platemail Haidate - Base item with shared DFN tags
 [base_platemail_haidate]
 {
 get=base_item
 name=platemail haidate
 id=0x278d
-weight=700
-value=214 95
-layer=0x17
-hp=57 67
-str=55
-def=38
-dexadd=-6
-restock=10
 decay=1
 good=12
+layer=0x17
+origin=se
+restock=10
 }
 
-// Chainmail Hatsuburi
+// Chainmail Hatsuburi - Base item with shared DFN tags
 [base_chainmail_hatsuburi]
 {
 get=base_item
 name=chainmail hatsuburi
 id=0x2774
-weight=800
-value=555 285
-layer=0x06
-hp=65 83
-str=35
-def=36
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=se
+restock=10
 }
 
-// Platemail Hatsuburi
+// Platemail Hatsuburi - Base item with shared DFN tags
 [base_platemail_hatsuburi]
 {
 get=base_item
 name=platemail hatsuburi
 id=0x2775
-weight=500
-value=555 285
-layer=0x06
-hp=65 83
-str=45
-def=36
-dexadd=-1
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=se
+restock=10
 }
 
-// Platemail Mempo
+// Platemail Mempo - Base item with shared DFN tags
 [base_platemail_mempo]
 {
 get=base_item
 name=platemail mempo
 id=0x2779
-weight=300
-value=166 87
-layer=0x0a
-hp=42 72
-str=40
-def=38
-dexadd=-1
-restock=10
 decay=1
 good=12
+layer=0x0a
+origin=se
+restock=10
 }
 
 // SE Ninja Leather
 
+// Leather Ninja Hood - Base item with shared DFN tags
 [base_leather_ninja_hood]
 {
 get=base_item
 name=leather ninja hood
 id=0x278e
-weight=200
-value=73 33
-layer=0x06
-hp=30 50
-str=10
-def=15
-restock=10
 decay=1
 good=13
+layer=0x06
+origin=se
+restock=10
 }
 
+// Leather Ninja Belt - Base item with shared DFN tags
 [base_leather_ninja_belt]
 {
 get=base_item
 name=leather ninja belt
 id=0x2790
-weight=100
-value=36 16
-layer=0x0c
-str=10
-restock=10
 decay=1
 good=13
+layer=0x0c
+origin=se
+restock=10
 }
 
+// Leather Ninja Pants - Base item with shared DFN tags
 [base_leather_ninja_pants]
 {
 get=base_item
 name=leather ninja pants
 id=0x2791
-value=45 20
-weight=500
-layer=0x04
-hp=41 51
-str=10
-def=15
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=se
+restock=10
 }
 
+// Leather Ninja Mitts - Base item with shared DFN tags
 [base_leather_ninja_mitts]
 {
 get=base_item
 name=leather ninja mitts
 id=0x2792
-weight=200
-value=71 35
-layer=0x07
-hp=26 26
-str=10
-def=15
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=se
+restock=10
 }
 
+// Leather Ninja Jacket - Base item with shared DFN tags
 [base_leather_ninja_jacket]
 {
 get=base_item
 name=leather ninja jacket
 id=0x2793
-weight=500
-value=70 38
-layer=0x0d
-hp=40 49
-str=10
-def=15
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=se
+restock=10
 }
 
 // SE Samurai Leather
 
+// Leather Jingasa - Base item with shared DFN tags
 [base_leather_jingasa]
 {
 get=base_item
 name=leather jingasa
 id=0x2776
-weight=300
-value=80 37
-layer=0x06
-hp=24 33
-str=20
-def=21
-restock=10
 decay=1
 good=13
+layer=0x06
+origin=se
+restock=10
 }
 
+// Leather Mempo - Base item with shared DFN tags
 [base_leather_mempo]
 {
 get=base_item
 name=leather mempo
 id=0x277a
-weight=200
-value=64 34
-layer=0x0a
-hp=25 41
-str=25
-def=15
 decay=1
 good=13
+layer=0x0a
+origin=se
+restock=10
 }
 
+// Leather Do - Base item with shared DFN tags
 [base_leather_do]
 {
 get=base_item
 name=leather do
 id=0x277b
-weight=600
-value=120 62
-layer=0x0d
-hp=46 55
-str=30
-def=15
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=se
+restock=10
 }
 
+// Leather Hiro Sode - Base item with shared DFN tags
 [base_leather_hiro_sode]
 {
 get=base_item
 name=leather hiro sode
 id=0x277e
-weight=100
-value=45 21
-layer=0x13
-hp=41 51
-str=20
-def=15
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=se
+restock=10
 }
 
+// Leather Suneate - Base item with shared DFN tags
 [base_leather_suneate]
 {
 get=base_item
 name=leather suneate
 id=0x2786
-weight=400
-value=50 21
-layer=0x18
-hp=26 41
-str=15
-def=15
-restock=10
 decay=1
 good=13
+layer=0x18
+origin=se
+restock=10
 }
 
+// Leather Haidate - Base item with shared DFN tags
 [base_leather_haidate]
 {
 get=base_item
 name=leather haidate
 id=0x278a
-weight=400
-value=49 23
-layer=0x17
-hp=31 41
-str=15
-def=15
-restock=10
 decay=1
 good=13
+layer=0x17
+origin=se
+restock=10
 }
 
 // SE Samurai Studded Leather
 
+// Studded Do - Base item with shared DFN tags
 [base_studded_do]
 {
 get=base_item
 name=studded do
 id=0x277c
-weight=800
-value=179 97
-layer=0x0d
-hp=53 61
-str=35
-def=15
 decay=1
 good=13
+layer=0x0d
+origin=se
+restock=10
 }
 
+// Studded Hiro Sode - Base item with shared DFN tags
 [base_studded_hiro_sode]
 {
 get=base_item
 name=studded hiro sode
 id=0x277f
-weight=100
-value=68 30
-layer=0x13
-hp=46 56
-str=20
-def=15
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=se
+restock=10
 }
 
+// Studded Suneate - Base item with shared DFN tags
 [base_studded_suneate]
 {
 get=base_item
 name=studded suneate
 id=0x2787
-weight=500
-value=71 32
-layer=0x18
-hp=36 51
-str=20
-def=15
-restock=10
 decay=1
 good=13
+layer=0x18
+origin=se
+restock=10
 }
 
+// Studded Haidate - Base item with shared DFN tags
 [base_studded_haidate]
 {
 get=base_item
 name=studded haidate
 id=0x278b
-weight=500
-value=69 30
-layer=0x17
-hp=36 46
-str=20
-def=15
-restock=10
 decay=1
 good=13
+layer=0x17
+origin=se
+restock=10
 }
 
+// Studded Mempo - Base item with shared DFN tags
 [base_studded_mempo]
 {
 get=base_item
 name=studded mempo
 id=0x279d
-weight=200
-value=66 32
-layer=0x0a
-hp=21 41
-str=25
-def=15
-restock=10
 decay=1
 good=13
+layer=0x0a
+origin=se
+restock=10
 }
 
 // ML Leaf Armor
 
-// Leaf Arms
+// Leaf Arms - Base item with shared DFN tags
 [base_leaf_arms]
 {
 get=base_item
 name=leaf arms
 id=0x2fc8
-weight=200
-value=71 35
-layer=0x13
-hp=31 41
-str=10
-def=16
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=ml
+restock=10
 }
 
-// Leaf Tunic
+// Leaf Tunic - Base item with shared DFN tags
 [base_leaf_tunic]
 {
 get=base_item
 name=leaf tunic
 id=0x2fc5
-weight=200
-value=117 59
-layer=0x0d
-hp=40 49
-str=15
-def=16
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Leaf Armor (Female)
+// Leaf Armor (Female) - Base item with shared DFN tags
 [base_leaf_armor]
 {
 get=base_item
 name=leaf armor
 id=0x2fcb
-weight=200
-value=117 59
-layer=0x0d
-hp=40 49
-str=15
-def=16
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Leaf Gloves
+// Leaf Gloves - Base item with shared DFN tags
 [base_leaf_gloves]
 {
 get=base_item
 name=leaf gloves
 id=0x2fc6
-weight=200
-value=71 35
-layer=0x07
-hp=31 39
-def=16
-str=10
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=ml
+restock=10
 }
 
-// Leaf Gorget
+// Leaf Gorget - Base item with shared DFN tags
 [base_leaf_gorget]
 {
 get=base_item
 name=leaf gorget
 id=0x2fc7
-weight=200
-value=64 34
-layer=0x0a
-hp=21 41
-str=10
-def=16
-restock=10
 decay=1
 good=13
+layer=0x0a
+origin=ml
+restock=10
 }
 
-// Leaf Leggings
+// Leaf Leggings - Base item with shared DFN tags
 [base_leaf_leggings]
 {
 get=base_item
 name=leaf leggings
 id=0x2fc9
-weight=200
-value=90 45
-layer=0x04
-hp=31 41
-str=15
-def=16
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=ml
+restock=10
 }
 
-// Leaf Tonlet
+// Leaf Tonlet - Base item with shared DFN tags
 [base_leaf_tonlet]
 {
 get=base_item
 name=leaf tonlet
 id=0x2fca
-weight=200
-value=90 45
-layer=0x04
-hp=31 41
-str=10
-def=16
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=ml
+restock=10
 }
 
 // ML Hide Armor
 
-// Hide Pauldrons
+// Hide Pauldrons - Base item with shared DFN tags
 [base_hide_pauldrons]
 {
 get=base_item
 name=hide pauldrons
 id=0x2b77
-weight=400
-value=107 54
-layer=0x13
-hp=36 46
-str=15
-def=22
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=ml
+restock=10
 }
 
-// Hide Tunic
+// Hide Tunic - Base item with shared DFN tags
 [base_hide_tunic]
 {
 get=base_item
 name=hide tunic
 id=0x2b74
-weight=600
-value=172 86
-layer=0x0d
-hp=46 55
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Hide Armor (Female)
+// Hide Armor (Female) - Base item with shared DFN tags
 [base_hide_armor]
 {
 get=base_item
 name=hide armor
 id=0x2b79
-weight=600
-value=172 86
-layer=0x0d
-hp=46 55
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Hide Gloves
+// Hide Gloves - Base item with shared DFN tags
 [base_hide_gloves]
 {
 get=base_item
 name=hide gloves
 id=0x2b75
-weight=200
-value=107 53
-layer=0x07
-hp=36 44
-str=10
-def=22
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=ml
+restock=10
 }
 
-// Hide Pants
+// Hide Pants - Base item with shared DFN tags
 [base_hide_pants]
 {
 get=base_item
 name=hide pants
 id=0x2b78
-weight=500
-value=131 65
-layer=0x04
-hp=36 46
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=ml
+restock=10
 }
 
-// Hide Gorget
+// Hide Gorget - Base item with shared DFN tags
 [base_hide_gorget]
 {
 get=base_item
 name=hide gorget
 id=0x2b76
-weight=300
-value=98 52
-layer=0x0a
-hp=25 46
-str=15
-def=22
-restock=10
 decay=1
 good=13
+layer=0x0a
+origin=ml
+restock=10
 }
 
-// Dragon Sleeves
+// Dragon Sleeves - Base item with shared DFN tags
 [base_dragon_sleeves]
 {
 get=base_item
 name=dragon sleeves
 id=0x2657
-weight=200
-value=98 49
-layer=0x13
-hp=57 76
-def=22
-str=50
-dexadd=-1
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=ml
+restock=10
 }
 
-// Dragon Breastplate
+// Dragon Breastplate - Base item with shared DFN tags
 [base_dragon_breastplate]
 {
 get=base_item
 name=dragon breastplate
 id=0x2641
-weight=1100
-value=172 86
-layer=0x0d
-hp=73 92
-str=50
-def=22
-dexadd=-5
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Dragon Gloves
+// Dragon Gloves - Base item with shared DFN tags
 [base_dragon_gloves]
 {
 get=base_item
 name=dragon gloves
 id=0x2643
-weight=200
-value=98 49
-layer=0x07
-hp=57 74
-str=50
-def=22
-dexadd=-1
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=ml
+restock=10
 }
 
-// Dragon Helm
+// Dragon Helm - Base item with shared DFN tags
 [base_dragon_helm]
 {
 get=base_item
 name=dragon helm
 id=0x2645
-weight=500
-value=115 52
-layer=0x06
-hp=65 83
-str=55
-def=22
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Dragon Leggings
+// Dragon Leggings - Base item with shared DFN tags
 [base_dragon_leggings]
 {
 get=base_item
 name=dragon leggings
 id=0x2647
-weight=600
-value=131 65
-layer=0x04
-hp=57 77
-str=50
-def=22
-dexadd=-5
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=ml
+restock=10
 }
 
 // ML Woodland Armor (Elven Plate)
 
-// Woodland Arms
+// Woodland Arms - Base item with shared DFN tags
 [base_woodland_arms]
 {
 get=base_item
 name=woodland arms
 id=0x2b6c
-weight=500
-value=179 89
-layer=0x13
-hp=51 66
-str=55
-def=40
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=ml
+restock=10
 }
 
-// Woodland Chest
+// Woodland Chest - Base item with shared DFN tags
 [base_woodland_chest]
 {
 get=base_item
 name=woodland chest
 id=0x2b67
-weight=800
-value=313 156
-layer=0x0d
-hp=66 80
-str=65
-def=40
-dexadd=-4
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Woodland Armor (Female)
+// Woodland Armor (Female) - Base item with shared DFN tags
 [base_woodland_armor]
 {
 get=base_item
 name=woodland armor
 id=0x2b6d
-weight=800
-value=313 156
-layer=0x0d
-hp=66 80
-str=65
-def=40
-dexadd=-4
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=ml
+restock=10
 }
 
-// Woodland Gauntlets
+// Woodland Gauntlets - Base item with shared DFN tags
 [base_woodland_gauntlets]
 {
 get=base_item
 name=woodland gauntlets
 id=0x2b6a
-weight=200
-value=178 88
-layer=0x07
-hp=51 64
-str=45
-def=40
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=ml
+restock=10
 }
 
-// Woodland Leggings
+// Woodland Leggings - Base item with shared DFN tags
 [base_woodland_leggings]
 {
 get=base_item
 name=woodland leggings
 id=0x2b6b
-weight=800
-value=239 119
-layer=0x04
-hp=51 67
-str=60
-def=40
-dexadd=-4
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=ml
+restock=10
 }
 
-// Woodland Gorget
+// Woodland Gorget - Base item with shared DFN tags
 [base_woodland_gorget]
 {
 get=base_item
 name=woodland gorget
 id=0x2b69
-weight=300
-value=170 90
-layer=0x0a
-hp=35 67
-str=40
-def=40
-dexadd=-1
-restock=10
 decay=1
 good=13
+layer=0x0a
+origin=ml
+restock=10
 }
+
+//------------------------------------------------------------------------------------------------//
 
 // ML Helmets
 
-// Circlet
+// Circlet - Base item with shared DFN tags
 [base_circlet]
 {
 get=base_item
 name=circlet
 id=0x2b6e
-weight=200
-value=37 17
-layer=0x06
-hp=59 72
-str=10
-def=7
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Royal Circlet
+// Royal Circlet - Base item with shared DFN tags
 [base_royal_circlet]
 {
 get=base_item
 name=royal circlet
 id=0x2b6f
-weight=200
-value=37 17
-layer=0x06
-hp=24 39
-str=10
-def=7
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Gemmed Circlet
+// Gemmed Circlet - Base item with shared DFN tags
 [base_gemmed_circlet]
 {
 get=base_item
 name=gemmed circlet
 id=0x2b70
-weight=200
-value=37 17
-layer=0x06
-hp=24 39
-str=10
-def=7
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Raven Helm
+// Raven Helm - Base item with shared DFN tags
 [base_raven_helm]
 {
 get=base_item
 name=raven helm
 id=0x2b71
-weight=500
-value=188 86
-layer=0x06
-hp=36 59
-str=20
-def=36
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Vulture Helm
+// Vulture Helm - Base item with shared DFN tags
 [base_vulture_helm]
 {
 get=base_item
 name=vulture helm
 id=0x2b72
-weight=500
-value=188 86
-layer=0x06
-hp=59 72
-str=20
-def=36
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Winged Helm
+// Winged Helm - Base item with shared DFN tags
 [base_winged_helm]
 {
 get=base_item
 name=winged helm
 id=0x2b73
-weight=500
-value=188 86
-layer=0x06
-hp=53 61
-str=20
-def=36
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
 
-// Elven Glasses
+// Elven Glasses - Base item with shared DFN tags
 [base_elven_glasses]
 {
 get=base_item
 name=elven glasses
 id=0x2fb8
-weight=200
-value=73 33
-layer=0x06
-hp=43 53
-str=35
-def=14
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=ml
+restock=10
 }
+
+//------------------------------------------------------------------------------------------------//
 
 // SA Gargish Cloth Armor
 
-// Gargish Cloth Arms
+// Gargish Cloth Arms - Base item with shared DFN tags
 [base_gargish_cloth_arms]
 {
 get=base_item
 name=gargish cloth arms
 id=0x0404
-weight=200
-value=57 28
-layer=0x13
-hp=41 51
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Arms (Female)
+// Gargish Cloth Arms (Female) - Base item with shared DFN tags
 [base_female_gargish_cloth_arms]
 {
 get=base_item
 name=gargish cloth arms
 id=0x0403
-weight=200
-value=57 28
-layer=0x13
-hp=41 51
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Chest
+// Gargish Cloth Chest - Base item with shared DFN tags
 [base_gargish_cloth_chest]
 {
 get=base_item
 name=gargish cloth chest
 id=0x0406
-weight=200
-value=107 62
-layer=0x0d
-hp=53 61
-str=20
-def=38
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Female Gargish Cloth Chest
+// Female Gargish Cloth Chest - Base item with shared DFN tags
 [base_female_gargish_cloth_chest]
 {
 get=base_item
 name=gargish cloth chest
 id=0x0405
-weight=200
-value=114 59
-layer=0x0d
-hp=53 61
-str=20
-def=38
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Leggings
+// Gargish Cloth Leggings - Base item with shared DFN tags
 [base_gargish_cloth_leggings]
 {
 get=base_item
 name=gargish cloth leggings
 id=0x040a
-weight=200
-value=60 26
-layer=0x04
-hp=41 51
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=sa
+restock=10
 }
 
-// Female Gargish Cloth Leggings
+// Female Gargish Cloth Leggings - Base item with shared DFN tags
 [base_female_gargish_cloth_leggings]
 {
 get=base_item
 name=gargish cloth leggings
 id=0x0409
-weight=200
-value=65 24
-layer=0x04
-hp=41 51
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Kilt
+// Gargish Cloth Kilt - Base item with shared DFN tags
 [base_gargish_cloth_kilt]
 {
 get=base_item
 name=gargish cloth kilt
 id=0x0408
-weight=200
-value=51 26
-layer=0x04
-hp=41 58
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Kilt (Female)
+// Gargish Cloth Kilt (Female) - Base item with shared DFN tags
 [base_female_gargish_cloth_kilt]
 {
 get=base_item
 name=gargish cloth kilt
 id=0x0407
-weight=200
-value=52 24
-layer=0x04
-hp=41 51
-str=15
-def=38
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=sa
+restock=10
 }
 
-// Gargish Cloth Wing Armor
+// Gargish Cloth Wing Armor - Base item with shared DFN tags
 [base_gargish_cloth_wing_armor]
 {
 get=base_item
 name=gargish cloth wing armor
 id=0x45a4
-weight=200
-layer=0x14
-str=10
 decay=1
 good=13
+layer=0x14
+origin=sa
 }
 
 // SA Gargish Leather Armor
 
-// Gargish Leather Arms
+// Gargish Leather Arms - Base item with shared DFN tags
 [base_gargish_leather_arms]
 {
 get=base_item
 name=gargish leather arms
 id=0x0302
-weight=400
-value=74 38
-layer=0x13
-hp=31 51
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Female Gargish Leather Arms
+// Female Gargish Leather Arms - Base item with shared DFN tags
 [base_gargish_leather_arms]
 {
 get=base_item
 name=gargish leather arms
 id=0x0301
-weight=400
-value=68 39
-layer=0x13
-hp=31 51
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Gargish Leather Chest
+// Gargish Leather Chest - Base item with shared DFN tags
 [base_gargish_leather_chest]
 {
 get=base_item
 name=gargish leather chest
 id=0x0304
-weight=800
-value=106 64
-layer=0x0d
-hp=40 61
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Female Gargish Leather Chest
+// Female Gargish Leather Chest - Base item with shared DFN tags
 [base_female_gargish_leather_chest]
 {
 get=base_item
 name=gargish leather chest
 id=0x0303
-weight=800
-value=106 64
-layer=0x0d
-hp=40 61
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Gargish Leather Leggings
+// Gargish Leather Leggings - Base item with shared DFN tags
 [base_gargish_leather_leggings]
 {
 get=base_item
 name=gargish leather leggings
 id=0x0306
-weight=500
-value=61 27
-layer=0x07
-hp=31 51
-str=15
-def=40
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Leather Leggings
+// Female Gargish Leather Leggings - Base item with shared DFN tags
 [base_female_gargish_leather_leggings]
 {
 get=base_item
 name=gargish leather leggings
 id=0x0305
-weight=500
-value=61 27
-layer=0x04
-hp=31 51
-str=15
-def=40
-restock=10
 decay=1
 good=13
+layer=0x04
+origin=sa
+restock=10
 }
 
-// Gargish Leather Kilt
+// Gargish Leather Kilt - Base item with shared DFN tags
 [base_gargish_leather_kilt]
 {
 get=base_item
 name=gargish leather kilt
 id=0x0311
-weight=500
-value=77 39
-layer=0x07
-hp=31 51
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Leather Kilt
+// Female Gargish Leather Kilt - Base item with shared DFN tags
 [base_female_gargish_leather_kilt]
 {
 get=base_item
 name=gargish leather kilt
 id=0x0310
-weight=500
-value=84 37
-layer=0x07
-hp=31 51
-str=20
-def=40
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Gargish Leather Wing Armor
+// Gargish Leather Wing Armor - Base item with shared DFN tags
 [base_gargish_leather_wing_armor]
 {
 get=base_item
 name=gargish leather wing armor
 id=0x457e
-weight=200
-layer=0x14
-str=10
 decay=1
 good=13
+layer=0x14
+origin=sa
 }
 
 // SA Gargish Plate Armor
 
-// Gargish Plate Arms
+// Gargish Plate Arms - Base item with shared DFN tags
 [base_gargish_plate_arms]
 {
 get=base_item
 name=gargish plate arms
 id=0x0308
-weight=500
-value=304 152
-layer=0x13
-hp=51 66
-str=55
-def=61
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Female Gargish Plate Arms
+// Female Gargish Plate Arms - Base item with shared DFN tags
 [base_female_gargish_plate_arms]
 {
 get=base_item
 name=gargish plate arms
 id=0x0307
-weight=500
-value=336 168
-layer=0x13
-hp=51 66
-str=55
-def=61
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Gargish Plate Chest
+// Gargish Plate Chest - Base item with shared DFN tags
 [base_gargish_plate_chest]
 {
 get=base_item
 name=gargish plate chest
 id=0x030a
-weight=1100
-value=635 338
-layer=0x0d
-hp=66 80
-str=65
-def=61
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Female Gargish Plate Chest
+// Female Gargish Plate Chest - Base item with shared DFN tags
 [base_female_gargish_plate_chest]
 {
 get=base_item
 name=gargish plate chest
 id=0x0309
-weight=1100
-value=661 98
-layer=0x0d
-hp=66 80
-str=65
-def=61
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Gargish Plate Leggings
+// Gargish Plate Leggings - Base item with shared DFN tags
 [base_gargish_plate_leggings]
 {
 get=base_item
 name=gargish plate leggings
 id=0x030e
-weight=700
-value=323 143
-layer=0x07
-hp=51 67
-str=60
-def=61
-dexadd=-6
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Plate Leggings
+// Female Gargish Plate Leggings - Base item with shared DFN tags
 [base_female_gargish_plate_leggings]
 {
 get=base_item
 name=gargish plate leggings
 id=0x030d
-weight=700
-value=338 150
-layer=0x07
-hp=51 67
-str=60
-def=61
-dexadd=-6
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Gargish Plate Kilt
+// Gargish Plate Kilt - Base item with shared DFN tags
 [base_gargish_plate_kilt]
 {
 get=base_item
 name=gargish plate kilt
 id=0x030c
-weight=500
-value=336 149
-layer=0x07
-hp=51 67
-str=55
-def=61
-dexadd=-6
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Plate Kilt
+// Female Gargish Plate Kilt - Base item with shared DFN tags
 [base_female_gargish_plate_kilt]
 {
 get=base_item
 name=gargish plate kilt
 id=0x030b
-weight=500
-value=307 137
-layer=0x07
-hp=51 67
-str=55
-def=61
-dexadd=-6
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
 // SA Gargish Stone Armor
 
-// Gargish Stone Arms
+// Gargish Stone Arms - Base item with shared DFN tags
 [base_gargish_stone_arms]
 {
 get=base_item
 name=gargish stone arms
 id=0x0284
-weight=1000
-value=107 54
-layer=0x13
-hp=41 51
-str=30
-def=45
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Female Gargish Stone Arms
+// Female Gargish Stone Arms - Base item with shared DFN tags
 [base_female_gargish_stone_arms]
 {
 get=base_item
 name=gargish stone arms
 id=0x0283
-weight=1000
-value=107 54
-layer=0x13
-hp=41 51
-str=30
-def=45
-dexadd=-2
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=sa
+restock=10
 }
 
-// Gargish Stone Chest
+// Gargish Stone Chest - Base item with shared DFN tags
 [base_gargish_stone_chest]
 {
 get=base_item
 name=gargish stone chest
 id=0x0286
-weight=1600
-value=195 104
-layer=0x0d
-hp=53 61
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Female Gargish Stone Chest
+// Female Gargish Stone Chest - Base item with shared DFN tags
 [base_female_gargish_stone_chest]
 {
 get=base_item
 name=gargish stone chest
 id=0x0285
-weight=1600
-value=185 98
-layer=0x0d
-hp=53 61
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=sa
+restock=10
 }
 
-// Gargish Stone Leggings
+// Gargish Stone Leggings - Base item with shared DFN tags
 [base_gargish_stone_leggings]
 {
 get=base_item
 name=gargish stone leggings
 id=0x028a
-weight=1600
-value=103 45
-hp=41 51
-layer=0x07
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Stone Leggings
+// Female Gargish Stone Leggings - Base item with shared DFN tags
 [base_female_gargish_stone_leggings]
 {
 get=base_item
 name=gargish stone leggings
 id=0x0289
-weight=1600
-value=105 47
-layer=0x07
-hp=41 51
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Gargish Stone Kilt
+// Gargish Stone Kilt - Base item with shared DFN tags
 [base_gargish_stone_kilt]
 {
 get=base_item
 name=gargish stone kilt
 id=0x0288
-weight=1000
-value=120 53
-layer=0x07
-hp=41 51
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
-// Female Gargish Stone Kilt
+// Female Gargish Stone Kilt - Base item with shared DFN tags
 [base_female_gargish_stone_kilt]
 {
 get=base_item
 name=gargish stone kilt
 id=0x0287
-weight=1000
-value=123 54
-layer=0x07
-hp=41 51
-str=30
-def=45
-dexadd=-8
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=sa
+restock=10
 }
 
 // ToL Dragon Turtle Armor
 
-// Dragon Turtle Hide Arms
+// Dragon Turtle Hide Arms - Base item with shared DFN tags
 [base_dragon_turtle_hide_arms]
 {
 get=base_item
 name=dragon turtle hide arms
 id=0x782e
-weight=200
-value=134 67
-layer=0x13
-hp=36 46
-str=20
-def=30
-restock=10
 decay=1
 good=13
+layer=0x13
+origin=tol
+restock=10
 }
 
-// Dragon Turtle Hide Chest
+// Dragon Turtle Hide Chest - Base item with shared DFN tags
 [base_dragon_turtle_hide_chest]
 {
 get=base_item
 name=dragon turtle hide chest
 id=0x782a
-weight=800
-value=234 117
-layer=0x0d
-hp=46 55
-str=20
-def=30
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=tol
+restock=10
 }
 
-// Dragon Turtle Hide Bustier
+// Dragon Turtle Hide Bustier - Base item with shared DFN tags
 [base_dragon_turtle_hide_bustier]
 {
 get=base_item
 name=dragon turtle hide bustier
 id=0x782b
-weight=600
-value=234 117
-layer=0x0d
-hp=46 55
-str=20
-def=30
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=tol
+restock=10
 }
 
-// Dragon Turtle Hide Helm
+// Dragon Turtle Hide Helm - Base item with shared DFN tags
 [base_dragon_turtle_hide_helm]
 {
 get=base_item
 name=dragon turtle hide helm
 id=0x782d
-weight=400
-value=157 71
-layer=0x06
-hp=24 39
-str=25
-def=30
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=tol
+restock=10
 }
 
-// Dragon Turtle Hide Leggings
+// Dragon Turtle Hide Leggings - Base item with shared DFN tags
 [base_dragon_turtle_hide_leggings]
 {
 get=base_item
 name=dragon turtle hide leggings
 id=0x782c
-weight=600
-value=179 89
-layer=0x07
-hp=36 46
-str=20
-def=30
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=tol
+restock=10
 }
 
 // ToL Tiger Pelt Armor
 
-// Tiger Pelt Chest
+// Tiger Pelt Chest - Base item with shared DFN tags
 [base_tiger_pelt_chest]
 {
 get=base_item
 name=tiger pelt chest
 id=0x7822
-weight=600
-value=172 86
-layer=0x0d
-hp=40 49
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Bustier
+// Tiger Pelt Bustier - Base item with shared DFN tags
 [base_tiger_pelt_bustier]
 {
 get=base_item
 name=tiger pelt bustier
 id=0x7823
-weight=600
-value=172 86
-layer=0x0d
-hp=40 49
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x0d
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Helm
+// Tiger Pelt Helm - Base item with shared DFN tags
 [base_tiger_pelt_helm]
 {
 get=base_item
 name=tiger pelt helm
 id=0x7828
-weight=400
-value=115 52
-layer=0x06
-hp=36 44
-str=25
-def=22
-restock=10
 decay=1
 good=15
+layer=0x06
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Leggings
+// Tiger Pelt Leggings - Base item with shared DFN tags
 [base_tiger_pelt_leggings]
 {
 get=base_item
 name=tiger pelt leggings
 id=0x7824
-weight=400
-value=131 65
-layer=0x07
-hp=31 44
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Shorts
+// Tiger Pelt Shorts - Base item with shared DFN tags
 [base_tiger_pelt_shorts]
 {
 get=base_item
 name=tiger pelt shorts
 id=0x7825
-weight=300
-value=131 65
-layer=0x07
-hp=31 41
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Long Skirt
+// Tiger Pelt Long Skirt - Base item with shared DFN tags
 [base_tiger_pelt_long_skirt]
 {
 get=base_item
 name=tiger pelt long skirt
 id=0x7826
-weight=100
-value=131 65
-layer=0x07
-hp=31 41
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Skirt
+// Tiger Pelt Skirt - Base item with shared DFN tags
 [base_tiger_pelt_skirt]
 {
 get=base_item
 name=tiger pelt skirt
 id=0x7827
-weight=100
-value=131 65
-layer=0x07
-hp=31 41
-str=20
-def=22
-restock=10
 decay=1
 good=13
+layer=0x07
+origin=tol
+restock=10
 }
 
-// Tiger Pelt Collar
+// Tiger Pelt Collar - Base item with shared DFN tags
 [base_tiger_pelt_collar]
 {
 get=base_item
 name=tiger pelt collar
 id=0x7829
-weight=200
-value=94 49
-layer=0x0a
-hp=21 41
-str=25
-def=22
-restock=10
 decay=1
 good=12
+layer=0x0a
+origin=tol
+restock=10
 }
 
 // Shields
 
+// Bronze Shield - Base item with shared DFN tags
 [base_bronze_shield]
 {
 get=base_item
 name=bronze shield
 id=0x1b72
-value=91 45
-weight=600
-layer=0x02
-hp=26 30
-str=20
-def=10
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=classic
+restock=10
+str=20
 }
 
+// Buckler - Base item with shared DFN tags
 [base_buckler]
 {
 get=base_item
 name=buckler
 id=0x1b73
-value=66 33
-weight=500
-layer=0x02
-def=7
-hp=41 51
-str=15
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=classic
+restock=10
 }
 
+// Metal Kite Shield - Base item with shared DFN tags
 [base_metal_kite_shield]
 {
 get=base_item
 name=metal kite shield
 id=0x1b74
-value=135 67
-weight=500
-layer=0x02
-def=16
-hp=101 115
-str=30
-restock=10
-dyeable=1
 decay=1
+dyeable=1
 good=16
+layer=0x02
+origin=classic
+restock=10
 }
 
+// Heater Shield - Base item with shared DFN tags
 [base_heater_shield]
 {
 get=base_item
 name=heater shield
 id=0x1b76
-value=175 87
-weight=800
-layer=0x02
-def=23
-hp=31 37
-str=30
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=classic
+restock=10
 }
 
+// Metal Shield - Base item with shared DFN tags
 [base_metal_shield]
 {
 get=base_item
 name=metal shield
 id=0x1b7b
-value=98 49
-weight=600
-layer=0x02
-def=9
-hp=36 44
-str=10
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=classic
+restock=10
 }
 
-// Kite Shield (wooden)
+// Kite Shield (Wooden) - Base item with shared DFN tags
 [base_wooden_kite_shield]
 {
 get=base_item
 name=kite shield
 id=0x1b78
-weight=700
-value=121 60
-layer=0x02
-hp=46 58
-str=15
-def=12
-restock=10
 decay=1
 good=16
+layer=2
 movable=1
+origin=classic
+restock=10
 }
 
-// Wooden Shield
+// Wooden Shield - Base item with shared DFN tags
 [base_wooden_shield]
 {
 get=base_item
 name=wooden shield
 id=0x1b7a
-weight=500
-value=62 31
-layer=0x02
-hp=21 23
-str=5
-def=8
-restock=10
 decay=1
 good=16
+layer=2
 movable=1
+origin=classic
+restock=10
 }
 
-// Order Shield
+// Order Shield - Base item with shared DFN tags
 [base_order_shield]
 {
 get=base_item
 name=order shield
 id=0x1bc4
-weight=600
-value=196 98
-layer=0x02
-hp=101 115
-def=30
 decay=1
 good=16
+layer=0x02
+origin=classic
 }
 
-// Chaos Shield
+// Chaos Shield - Base item with shared DFN tags
 [base_chaos_shield]
 {
 get=base_item
 name=chaos shield
 id=0x1bc3
-weight=500
-value=209 104
-layer=0x02
-hp=101 115
-def=32
 decay=1
 good=16
+layer=0x02
+origin=classic
 }
 
-// Gargish Chaos Shield
+// Gargish Chaos Shield - Base item with shared DFN tags
 [base_gargish_chaos_shield]
 {
 get=base_item
 name=gargish chaos shield
 id=0x4228
-weight=500
-value=209 104
-layer=0x02
-hp=101 115
-def=32
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Gargish Kite Shield
+// Gargish Kite Shield - Base item with shared DFN tags
 [base_gargish_kite_shield]
 {
 get=base_item
 name=gargish kite shield
 id=0x4201
-weight=700
-value=118 59
-layer=0x02
-hp=47 62
-str=20
-def=18
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Gargish Order Shield
+// Gargish Order Shield - Base item with shared DFN tags
 [base_gargish_order_shield]
 {
 get=base_item
 name=gargish order shield
 id=0x422a
-weight=600
-value=196 98
-layer=0x02
-hp=101 115
-def=30
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Large Plate Shield
+// Large Plate Shield - Base item with shared DFN tags
 [base_large_plate_shield]
 {
 get=base_item
 name=large plate shield
 id=0x4204
-weight=800
-value=209 104
-layer=0x02
-hp=53 67
-str=35
-def=32
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Large Stone Shield
+// Large Stone Shield - Base item with shared DFN tags
 [base_large_stone_shield]
 {
 get=base_item
 name=large stone shield
 id=0x4205
-weight=700
-value=59 29
-layer=0x02
-hp=53 67
-str=10
-def=9
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Medium Plate Shield
+// Medium Plate Shield - Base item with shared DFN tags
 [base_medium_plate_shield]
 {
 get=base_item
 name=medium plate shield
 id=0x4203
-weight=600
-value=118 59
-layer=0x02
-hp=53 67
-str=20
-def=18
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Small Plate Shield
+// Small Plate Shield - Base item with shared DFN tags
 [base_small_plate_shield]
 {
 get=base_item
 name=small plate shield
 id=0x4202
-weight=600
-value=59 29
-layer=0x02
-hp=26 31
-str=10
-def=9
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }
 
-// Gargish Wooden Shield
+// Gargish Wooden Shield - Base item with shared DFN tags
 [base_gargish_wooden_shield]
 {
 get=base_item
 name=gargish wooden shield
 id=0x4200
-weight=500
-value=62 31
-layer=0x02
-hp=21 23
-str=5
-def=8
-restock=10
 decay=1
 good=16
+layer=0x02
+origin=sa
+restock=10
 }

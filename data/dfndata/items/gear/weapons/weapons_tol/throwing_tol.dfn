@@ -1,0 +1,45 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Soul Glaives - ToL stats
+[0x090a_tol]
+{
+get=base_soul_glaive
+weight=800
+value=68 34
+damage=16 20
+hp=31 65
+spd=34
+str=60
+baserange=8
+maxrange=11
+}
+
+// Boomerang - ToL stats
+[0x08ff_tol]
+{
+get=base_boomerang
+baserange=4
+damage=11 15
+hp=31 60
+maxrange=7
+spd=50
+str=25
+value=28 14
+weight=400
+}
+
+// Cyclone - ToL stats
+[0x0901_tol]
+{
+get=base_cyclone
+weight=600
+value=47 23
+damage=13 17
+hp=31 60
+spd=42
+str=40
+}

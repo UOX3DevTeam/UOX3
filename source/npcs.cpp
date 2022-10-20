@@ -763,7 +763,26 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						}
 					}
 					else
+					{
 						Console.warning( oldstrutil::format("Invalid data found in DEF tag inside NPC script [%s]", sectionID.c_str() ));
+					}
+					break;
+				case DFNTAG_DEFBONUS:
+					if( ndata >= 0 )
+					{
+						if( odata && odata > ndata )
+						{
+							applyTo->SetResist( applyTo->GetResist( PHYSICAL ) + static_cast<UI16>( RandomNum( ndata, odata )), PHYSICAL );
+						}
+						else
+						{
+							applyTo->SetResist( applyTo->GetResist( PHYSICAL ) + static_cast<UI16>( ndata ), PHYSICAL );
+						}
+					}
+					else
+					{
+						Console.Warning( oldstrutil::format( "Invalid data found in DEFBONUS tag inside item script [%s]", sectionId.c_str() ));
+					}
 					break;
 				case DFNTAG_DIR:
 					if( !isGate )
@@ -833,6 +852,15 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 						applyTo->SetResist( ( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssects[1], "//" )), nullptr, 0)) ), COLD );
 						applyTo->SetResist( ( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssects[2], "//" )), nullptr, 0)) ), LIGHTNING );
 						applyTo->SetResist( ( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssects[3], "//" )), nullptr, 0)) ), POISON );
+					}
+					break;
+				case DFNTAG_ERBONUS:
+					if( ssects.size() >= 4 )
+					{
+						applyTo->SetResist( applyTo->GetResist( HEAT ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[0], "//" )), nullptr, 0 )), HEAT );
+						applyTo->SetResist( applyTo->GetResist( COLD ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[1], "//" )), nullptr, 0 )), COLD );
+						applyTo->SetResist( applyTo->GetResist( LIGHTNING ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[2], "//" )), nullptr, 0 )), LIGHTNING );
+						applyTo->SetResist( applyTo->GetResist( POISON ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssects[3], "//" )), nullptr, 0 )), POISON );
 					}
 					break;
 				case DFNTAG_EMOTECOLOUR:

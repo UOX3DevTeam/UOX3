@@ -1,0 +1,144 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Large Battle Axe - ToL stats
+[0x13fa_tol]
+{
+get=base_large_battle_axe
+weight=600
+value=33 16
+damage=17 20
+hp=31 70
+spd=37
+str=60
+}
+
+// Two Handed Axe - ToL stats
+[0x1442_tol]
+{
+get=base_two_handed_axe
+weight=800
+value=32 16
+lodamage=16
+hidamage=19
+hp=31 90
+spd=39
+str=40
+}
+
+// Hatchet - ToL stats
+[0x0f43_tol]
+{
+get=base_hatchet
+weight=400
+value=27 12
+damage=13 16
+hp=31 80
+spd=50
+str=20
+}
+
+// Executioner's Axe - ToL stats
+[0x0f45_tol]
+{
+get=base_executioners_axe
+weight=800
+value=30 15
+damage=15 18
+hp=31 70
+spd=42
+str=40
+}
+
+// Battle Axe - ToL stats
+[0x0f47_tol]
+{
+get=base_battle_axe
+weight=400
+value=26 13
+damage=16 19
+hp=31 70
+spd=39
+str=35
+}
+
+// Axe - ToL stats
+[0x0f49_tol]
+{
+get=base_axe
+weight=400
+value=40 20
+damage=14 17
+hp=31 110
+spd=46
+str=35
+}
+
+// Double Axe - ToL stats
+[0x0f4b_tol]
+{
+get=base_double_axe
+weight=800
+value=52 26
+damage=15 18
+hp=31 110
+spd=42
+str=45
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Ornate Axe - ToL stats
+[0x2d28_tol]
+{
+get=base_ornate_axe
+damage=17 20
+hp=30 60
+spd=36
+str=45
+value=47 41
+weight=1200
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Battle Axe - ToL stats
+[0x48b0_tol]
+{
+get=base_gargish_battle_axe
+damage=16 19
+hp=31 70
+spd=39
+str=35
+value=22 11
+weight=400
+}
+
+// Dual Short Axes - ToL stats
+[0x08fd_tol]
+{
+get=base_dual_short_axes
+damage=14 17
+hp=31 110
+spd=45
+str=35
+value=83 41
+weight=400
+}
+
+// Gargish Axe - ToL stats
+[0x48b2_tol]
+{
+get=base_gargish_axe
+damage=14 17
+hp=31 110
+spd=45
+str=35
+value=23 11
+weight=400
+}
