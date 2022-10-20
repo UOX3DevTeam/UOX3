@@ -1170,11 +1170,6 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
 			numButtons = ++tCtr;	break;
-		case BasePage+12:								// Grant title
-			numButtons = 1;
-			toSend.addText( "Unfilled functionality" );
-			toSend.addText( Dictionary->GetEntry( 130, sLang ) );
-			break;
 		case BasePage+13:								// Declare war list
 			toSend.addText( Dictionary->GetEntry( 149, sLang ) );
 			tCtr	= 0;
@@ -1307,6 +1302,9 @@ void CGuildCollection::GumpInput( CPIGumpInput *gi )
 	std::string text = gi->Reply();
 	CSocket *s		= gi->GetSocket();
 
+	if( text.empty() )
+		return;
+
 	if( type != 100 )
 		return;
 	GUILDID trgGuild	= static_cast<GUILDID>(s->TempInt());
@@ -1318,6 +1316,19 @@ void CGuildCollection::GumpInput( CPIGumpInput *gi )
 		case 3:	gMaster->SetGuildTitle( text );			break; // set guildmaster title
 		case 4:	gList[trgGuild]->Charter( text );		break;	// new charter
 		case 5:	gList[trgGuild]->Webpage( text );		break;	// new webpage
+		case 6: // set guild member title
+			auto gMember = CalcCharObjFromSer( s->TempInt2() );
+			if( ValidateObject( gMember ))
+			{
+				gMember->SetGuildTitle( text );
+				auto gSock = gMember->GetSocket();
+				if( gSock != nullptr )
+				{
+					gSock->SysMessage( 1686, text.c_str() ); // You have been granted a guild title of '%s'!
+				}
+				gMember->Dirty( UT_UPDATE );
+			}
+			break;
 	}
 }
 
@@ -1334,14 +1345,21 @@ void CGuildCollection::ToggleAbbreviation( CSocket *s )
 		return;
 
 	if( gList[guildnumber]->Type() != GT_STANDARD )						// Check for Order/Chaos
+	{
 		s->sysmessage( 153 );	// They may not toggle it off!
+	}
 	else
 	{
 		mChar->SetGuildToggle( !mChar->GetGuildToggle() );
 		if( mChar->GetGuildToggle() )						// If set to On then
+		{
 			s->sysmessage( 154 );	// Tell player about the change
+		}
 		else													// Otherwise
+		{
 			s->sysmessage( 155 );	// And tell him also
+		}
+		mChar->Dirty( UT_UPDATE );
 	}
 }
 
@@ -1422,19 +1440,19 @@ void CGuildCollection::GumpChoice( CSocket *s )
 			switch( button )
 			{
 				case 2:		TextEntryGump( s, ser, 100, 1, 30, 158 );	break;	// set guild name
-				case 3:		TextEntryGump( s, ser, 100, 2, 3,  159 );	break;	// set guild abbreviation
+				case 3:		TextEntryGump( s, ser, 100, 2, 4,  159 );	break;	// set guild abbreviation
 				case 4:		Menu( s, BasePage + 3, trgGuild );		break;	// set guild type
 				case 5:		Menu( s, BasePage + 4, trgGuild );		break;	// set guild charter
 				case 6:		Menu( s, BasePage + 8, trgGuild );		break;	// dismiss a member
 				case 7:		Menu( s, BasePage + 13, trgGuild );		break;	// declare war from menu
-				case 8:		s->target( 2, 2, 0, 160 );					break;	// declare war from target
+				case 8:		s->target( 2, 2, 0, 160 );				break;	// declare war from target
 				case 9:		Menu( s, BasePage + 14, trgGuild );		break;	// declare peace
 				case 10:	Menu( s, BasePage + 19, trgGuild );		break;	// declare ally from menu
-				case 11:	s->target( 2, 3, 0, 161 );			break;	// declare ally from target
+				case 11:	s->target( 2, 3, 0, 161 );				break;	// declare ally from target
 				case 12:	Menu( s, BasePage + 10, trgGuild );		break;	// accept candidate seeking membership
 				case 13:	Menu( s, BasePage + 9, trgGuild );		break;	// refuse candidate seeking membership
 				case 14:	TextEntryGump( s, ser, 100, 3, 15,  162 );	break;	// set guild master's title
-				case 15:	Menu( s, BasePage + 12, trgGuild );		break;	// grant title to another member
+				case 15:	s->target( 2, 4, 0, 1685 );				break; // Select guild member to grant title to
 #if defined( _MSC_VER )
 #pragma note( "Move guildstone functionality goes here" )
 #endif
@@ -1487,8 +1505,20 @@ void CGuildCollection::GumpChoice( CSocket *s )
 				tChar = calcCharObjFromSer( gList[trgGuild]->MemberNumber( button - 2 ) );
 				if( ValidateObject( tChar ) )
 				{
+					if( tChar == mChar )
+					{
+						s->sysmessage( 1691 ); // You cannot dismiss yourself from the guild!
+						break;
+					}
+
 					gList[trgGuild]->RemoveMember( (*tChar) );
 					tChar->SetGuildNumber( -1 );
+					s->sysmessage( 1689, tChar->GetName().c_str() ); // You have dismissed %s from your guild!
+					auto tSock = tChar->GetSocket();
+					if( tSock != nullptr )
+					{
+						tSock->sysmessage( 1690 ); // You have been dismissed from your guild!
+					}
 				}
 			}
 			break;
@@ -1625,7 +1655,14 @@ void CGuildCollection::Resign( CSocket *s )
 	mChar->SetGuildNumber( -1 );
 	mChar->SetGuildTitle( "" );
 	if( nGuild->Master() == mChar->GetSerial() && nGuild->NumMembers() != 0 )
+	{
 		nGuild->CalcMaster();
+		auto newGuildMaster = CalcCharObjFromSer( nGuild->Master() );
+		if( ValidateObject( newGuildMaster ))
+		{
+			nGuild->TellMembers( 1692, newGuildMaster->GetName().c_str(), nGuild->Name().c_str() ); // %s is now the new Guild Master of %s!
+		}
+	}
 
 	if( nGuild->NumMembers() == 0 )
 	{
@@ -1639,6 +1676,7 @@ void CGuildCollection::Resign( CSocket *s )
 		Erase( guildnumber );
 		s->sysmessage( 172 );
 	}
+	mChar->Dirty( UT_UPDATE );
 }
 
 //o-----------------------------------------------------------------------------------------------o

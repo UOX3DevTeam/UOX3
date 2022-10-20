@@ -85,6 +85,7 @@ void PlVBuy( CSocket *s )
 	i->SetCont( p );	// move containers
 }
 
+void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry );
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	void HandleGuildTarget( CSocket *s )
 //o-----------------------------------------------------------------------------------------------o
@@ -106,10 +107,39 @@ void HandleGuildTarget( CSocket *s )
 				{
 					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
 					if( mGuild != nullptr )
-						mGuild->NewRecruit( (*trgChar) );
+					{
+						auto trgSock = trgChar->GetSocket();
+						if( mGuild->Master() == mChar->GetSerial() )
+						{
+							// Guild Master can skip the "sponsor a candidate" stage and just recruit people as new members directly
+							mGuild->NewMember(( *trgChar ));
+							trgChar->SetGuildNumber( mChar->GetGuildNumber() );
+							if( mGuild->Type() != GT_STANDARD )
+							{
+								trgChar->SetGuildToggle( true );
+							}
+							s->sysmessage( 1687, trgChar->GetName().c_str() ); // You have recruited %s as a new guild member!
+							if( trgSock )
+							{
+								trgSock->sysmessage( 1688, mGuild->Name().c_str() ); // You have been recruited to join the guild %s!
+							}	
+						}
+						else
+						{
+							mGuild->NewRecruit( (*trgChar) );
+							s->sysmessage( 1985, trgChar->GetName().c_str() ); // You have sponsored %s as a candidate to join the guild!
+							if( trgSock )
+							{
+								trgSock->sysmessage( 1986, mChar->GetName().c_str(), mGuild->Name().c_str() ); // You have been invited by %s to join the guild: %s
+							}							
+						}
+						trgChar->Dirty( UT_UPDATE );
+					}
 				}
 				else
-					s->sysmessage( 1002 );
+				{
+					s->sysmessage( 1002 ); // They are already in a guild!
+				}
 			}
 			break;
 		case 1:		// declare fealty
@@ -117,9 +147,19 @@ void HandleGuildTarget( CSocket *s )
 			if( ValidateObject( trgChar ) )
 			{
 				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber() )	// same guild
+				{
 					mChar->SetGuildFealty( trgChar->GetSerial() );
+					s->sysmessage( 1987, trgChar->GetName().c_str() ); // You have declared fealty to %s!
+					auto trgSock = trgChar->GetSocket();
+					if( trgSock != nullptr )
+					{
+						trgSock->sysmessage( 1988, mChar->GetName().c_str() ); // %s has declared fealty to you!
+					}
+				}
 				else
-					s->sysmessage( 1003 );
+				{
+					s->sysmessage( 1003 ); // They are not in your guild!
+				}
 			}
 			break;
 		case 2:	// declare war
@@ -138,7 +178,10 @@ void HandleGuildTarget( CSocket *s )
 							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_WAR );
 							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
 							if( tGuild != nullptr )
-								tGuild->TellMembers( 1005, mGuild->Name().c_str() );
+							{
+								mGuild->TellMembers( 1989, tGuild->Name().c_str() ); // Your guild has declared war on the guild %s!
+								tGuild->TellMembers( 1005, mGuild->Name().c_str() ); // The guild %s has declared war upon you!
+							}
 						}
 					}
 				}
@@ -162,21 +205,47 @@ void HandleGuildTarget( CSocket *s )
 							mGuild->SetGuildRelation( trgChar->GetGuildNumber(), GR_ALLY );
 							tGuild = GuildSys->Guild( trgChar->GetGuildNumber() );
 							if( tGuild != nullptr )
-								tGuild->TellMembers( 1007, mGuild->Name().c_str() );
+							{
+								mGuild->TellMembers( 1990, tGuild->Name().c_str() ); // Your guild has declared the guild %s as an ally!
+								tGuild->TellMembers( 1007, mGuild->Name().c_str() ); // The guild %s has declared you to be an ally!
+							}
 						}
 					}
 				}
 				else
-					s->sysmessage( 1006 );
+				{
+					s->SysMessage( 1006 ); // They are in your guild!
+				}
 			}
+			break;
+		case 4: // select member to grant title to
+			trgChar = CalcCharObjFromSer( s->GetDWord( 7 ));
+			if( ValidateObject( trgChar ))
+			{
+				if( trgChar->GetGuildNumber() == mChar->GetGuildNumber()  ) // In same guild
+				{
+					mGuild = GuildSys->Guild( mChar->GetGuildNumber() );
+					if( mGuild != nullptr )
+					{
+						s->TempInt2( trgChar->GetSerial() );
+						TextEntryGump( s, mChar->GetSerial(), 100, 6, 15, 1684 );	break;	// grant title to another member
+					}
+				}
+				else
+				{
+					s->SysMessage( 1003 ); // They are not in your guild!
+				}
+			}
+			break;
+		default:
 			break;
 	}
 }
 
-void BuildHouse( CSocket *s, UI08 houseEntry );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void BuildHouseTarget( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
+CMultiObj * BuildHouse( CSocket *s, UI08 houseEntry, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	BuildHouseTarget()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Verifies player has a valid target when trying to place a house
 //o-----------------------------------------------------------------------------------------------o
 void BuildHouseTarget( CSocket *s )
@@ -463,6 +532,21 @@ void DvatTarget( CSocket *s )
 		return;
 	}
 
+	// Look for onDyeTarget event on dye tub
+	std::vector<UI16> scriptTriggers = tempObj->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnDyeTarget( mChar, tempObj, i ) == 0 ) // return false
+			{
+				// Don't continue with hard-coded dyeing
+				return;
+			}
+		}
+	}
+
 	if( i->isDyeable() )
 	{
 		if( i->IsLockedDown() )
@@ -690,6 +774,22 @@ auto newCarveTarget( CSocket *s, CItem *i ) ->void
 	VALIDATESOCKET( s );
 
 	auto mChar = s->CurrcharObj();
+
+	// Look for onCarveCorpse event on item
+	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			if( toExecute->OnCarveCorpse( mChar, i ) == 0 ) // return false
+			{
+				// Don't continue with hard-coded carving
+				return;
+			}
+		}
+	}
+
 	auto c = Items->CreateItem( nullptr, mChar, 0x122A, 1, 0, OT_ITEM ); // add the blood puddle
 	if( c == nullptr )
 		return;
