@@ -1,22 +1,26 @@
 // FENCING WEAPONS
 
-// Spear - N/S
-[0x0f62]
+// CLASSIC
+// Spear - Base item with shared DFN stats
+[base_spear]
 {
 get=base_item
 name=spear
 id=0x0f62
-weight=700
-value=38 36
-damage=2 36
-layer=2
-hp=31 80
-spd=46
-str=30
-restock=10
-movable=1
 decay=1
 good=22
+layer=2
+movable=1
+origin=classic
+restock=10
+}
+
+// Spear - N/S
+[0x0f62]
+{
+getpub15=0x0f62_pub15
+getaos=0x0f62_aos
+gettol=0x0f62_tol
 }
 
 // Spear - E/W
@@ -32,23 +36,38 @@ id=0x0f63
 get=0x0f62 0x0f63
 }
 
-// Kryss - E/W
-[0x1400]
+// Tribal Spear
+[tribalspear]
+{
+getpub15=tribalspear_pub15
+getaos=tribalspear_aos
+gettol=tribalspear_tol
+name=tribal spear
+color=0x0345
+damage=4 40
+script=5038//tribal_spear.js
+}
+
+// Kryss - Base item
+[base_kryss]
 {
 get=base_item
 name=kryss
 id=0x1400
-weight=100
-value=42 21
-damage=3 28
-layer=1
-hp=31 90
-spd=53
-str=10
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=classic
+restock=10
+}
+
+// Kryss - E/W
+[0x1400]
+{
+getpub15=0x1400_pub15
+getaos=0x1400_aos
+gettol=0x1400_tol
 }
 
 // Kryss - N/S
@@ -64,23 +83,26 @@ id=0x1401
 get=0x1400 0x1401
 }
 
-// Short Spear - E/W
-[0x1402]
+// Short Spear - Base item
+[base_short_spear]
 {
 get=base_item
 name=short spear
 id=0x1402
-weight=400
-value=32 16
-damage=4 32
-layer=2
-hp=31 70
-spd=50
-str=15
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=classic
+restock=10
+}
+
+// Short Spear - E/W
+[0x1402]
+{
+getpub15=0x1402_pub15
+getaos=0x1402_aos
+gettol=0x1402_tol
 }
 
 // Short Spear - N/S
@@ -96,23 +118,26 @@ id=0x1403
 get=0x1402 0x1403
 }
 
-// War Fork - E/W
-[0x1404]
+// War Fork - Base item
+[base_war_fork]
 {
 get=base_item
 name=war fork
 id=0x1404
-weight=900
-value=30 15
-damage=4 32
-layer=1
-hp=31 110
-spd=45
-str=35
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=classic
+restock=10
+}
+
+// War Fork - E/W
+[0x1404]
+{
+getpub15=0x1404_pub15
+getaos=0x1404_aos
+gettol=0x1404_tol
 }
 
 // War Fork - N/S
@@ -128,23 +153,26 @@ id=0x1405
 get=0x1404 0x1405
 }
 
-// Pitchfork - N/S
-[0x0e87]
+// Pitchfork - Base item
+[base_pitchfork]
 {
 get=base_item
 name=pitchfork
 id=0x0e87
-weight=1000
-value=25 12
-damage=4 16
-layer=2
-hp=31 60
-spd=45
-str=15
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=classic
+restock=10
+}
+
+// Pitchfork - N/S
+[0x0e87]
+{
+getpub15=0x0e87_pub15
+getaos=0x0e87_aos
+gettol=0x0e87_tol
 }
 
 // Pitchfork - E/W
@@ -160,24 +188,29 @@ id=0x0e88
 get=0x0e87 0x0e88
 }
 
-// AGE OF SHADOWS - Stats balanced for Pub15
-// Pike - E/W
-[0x26be]
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Pike - Base item with shared DFN stats
+[base_pike]
 {
 get=base_item
 name=pike
 id=0x26be
-weight=800
-value=51 31
-damage=4 28
-layer=2
-hp=31 110
-spd=37
-str=20
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=aos
+restock=10
+}
+
+// Pike - E/W
+[0x26be]
+{
+getpub15=0x26be_pub15
+getaos=0x26be_aos
+gettol=0x26be_tol
 }
 
 // Pike - N/S
@@ -193,23 +226,26 @@ id=0x26c8
 get=0x26be 0x26c8
 }
 
-// Lance -  E/W
-[0x26c0]
+// Lance - Base item with shared DFN stats
+[base_lance]
 {
 get=base_item
 name=lance
 id=0x26c0
-weight=1200
-value=44 27
-damage=5 37
-layer=1
-hp=31 110
-spd=26
-str=40
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=aos
+restock=10
+}
+
+// Lance - E/W
+[0x26c0]
+{
+getpub15=0x26c0_pub15
+getaos=0x26c0_aos
+gettol=0x26c0_tol
 }
 
 // Lance - N/S
@@ -224,25 +260,29 @@ id=0x26ca
 get=0x26c0 0x26ca
 }
 
-// SAMURAI EMPIRE - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Lajatang - E/W
-[0x27a7]
+// SAMURAI EMPIRE
+// Lajatang - Base item
+[base_lajatang]
 {
 get=base_item
 name=lajatang
 id=0x27a7
-weight=1200
-value=141 87
-damage=4 32
-layer=2
-hp=90 95
-spd=32
-str=30
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=se
+restock=10
+}
+
+// Lajatang - E/W
+[0x27a7]
+{
+getpub15=0x27a7_pub15
+getaos=0x27a7_aos
+gettol=0x27a7_tol
 }
 
 // Lajatang - N/S
@@ -258,23 +298,26 @@ id=0x27f2
 get=0x27a7 0x27f2
 }
 
-// Tekagi - E/W
-[0x27ab]
+// Tekagi - Base item
+[base_tekagi]
 {
 get=base_item
 name=tekagi
 id=0x27ab
-weight=500
-value=72 35
-damage=3 22
-layer=2
-hp=35 60
-spd=56
-str=5
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=se
+restock=10
+}
+
+// Tekagi - E/W
+[0x27ab]
+{
+getpub15=0x27ab_pub15
+getaos=0x27ab_aos
+gettol=0x27ab_tol
 }
 
 // Tekagi - N/S
@@ -290,23 +333,26 @@ id=0x27f6
 get=0x27ab 0x27f6
 }
 
-// Kama - E/W
-[0x27ad]
+// Kama - Base item
+[base_kama]
 {
 get=base_item
 name=kama
 id=0x27ad
-weight=700
-value=80 48
-damage=3 22
-layer=2
-hp=35 60
-spd=56
-str=10
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=se
+restock=10
+}
+
+// Kama - E/W
+[0x27ad]
+{
+getpub15=0x27ad_pub15
+getaos=0x27ad_aos
+gettol=0x27ad_tol
 }
 
 // Kama - N/S
@@ -322,23 +368,26 @@ id=0x27f8
 get=0x27ad 0x27f8
 }
 
-// Sai - E/W
-[0x27af]
+// Sai - Base item
+[base_sai]
 {
 get=base_item
 name=sai
 id=0x27af
-weight=700
-value=73 45
-damage=3 22
-layer=2
-hp=55 60
-spd=56
-str=10
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=se
+restock=10
+}
+
+// Sai - E/W
+[0x27af]
+{
+getpub15=0x27af_pub15
+getaos=0x27af_aos
+gettol=0x27af_tol
 }
 
 // Sai - N/S
@@ -354,25 +403,29 @@ id=0x27fa
 get=0x27af 0x27fa
 }
 
-// MONDAIN'S LEGACY - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// War Cleaver - N/S
-[0x2d23]
+// MONDAIN'S LEGACY
+// War Cleaver - Base weapon
+[base_war_cleaver]
 {
 get=base_item
 name=war cleaver
 id=0x2d23
-weight=500
-value=39 20
-damage=3 22
-layer=2
-hp=30 60
-spd=50
-str=10
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=ml
+restock=10
+}
+
+// War Cleaver - N/S
+[0x2d23]
+{
+getpub15=0x2d23_pub15
+getaos=0x2d23_aos
+gettol=0x2d23_tol
 }
 
 // War Cleaver - E/W
@@ -388,23 +441,26 @@ id=0x2d2f
 get=0x2d23 0x2d2f
 }
 
-// Elven Spellblade - N/S
-[0x2d20]
+// Elven Spellblade - Base weapon
+[base_elven_spellblade]
 {
 get=base_item
 name=elven spellblade
 id=0x2d20
-weight=500
-value=73 37
-damage=3 25
-layer=2
-hp=30 60
-spd=45
-str=15
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=ml
+restock=10
+}
+
+// Elven Spellblade - N/S
+[0x2d20]
+{
+getpub15=0x2d20_pub15
+getaos=0x2d20_aos
+gettol=0x2d20_tol
 }
 
 // Elven Spellblade - E/W
@@ -420,25 +476,29 @@ id=0x2d2c
 get=0x2d20 0x2d2c
 }
 
-// STYGIAN ABYSS - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Gargish War Fork - N/S
-[0x48be]
+// STYGIAN ABYSS
+// Gargish War Fork - Base weapon
+[base_gargish_war_fork]
 {
 get=base_item
 name=gargish war fork
 id=0x48be
-weight=900
-value=30 15
-damage=4 32
-layer=1
-hp=31 110
-spd=45
-str=35
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish War Fork - N/S
+[0x48be]
+{
+getpub15=0x48be_pub15
+getaos=0x48be_aos
+gettol=0x48be_tol
 }
 
 // Gargish War Fork - E/W
@@ -454,23 +514,26 @@ id=0x48bf
 get=0x48be 0x48bf
 }
 
-// Shortblade - N/S
-[0x0907]
+// Shortblade - Base weapon
+[base_shortblade]
 {
 get=base_item
 name=shortblade
 id=0x0907
-weight=700
-value=77 41
-damage=3 23
-layer=1
-hp=31 120
-spd=49
-str=5
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Shortblade - N/S
+[0x0907]
+{
+getpub15=0x0907_pub15
+getaos=0x0907_aos
+gettol=0x0907_tol
 }
 
 // Shortblade - E/W
@@ -486,23 +549,26 @@ id=0x4076
 get=0x0907 0x4076
 }
 
-// Bloodblade - N/S
-[0x08fe]
+// Bloodblade - Base weapon
+[base_bloodblade]
 {
 get=base_item
 name=bloodblade
 id=0x08fe
-weight=300
-value=63 34
-damage=3 15
-layer=1
-hp=31 95
-spd=55
-str=5
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Bloodblade - N/S
+[0x08fe]
+{
+getpub15=0x08fe_pub15
+getaos=0x08fe_aos
+gettol=0x08fe_tol
 }
 
 // Bloodblade - E/W
@@ -518,23 +584,26 @@ id=0x4072
 get=0x08fe 0x4072
 }
 
-// Gargish Kryss - N/S
-[0x48bc]
+// Gargish Kryss - Base weapon
+[base_gargish_kryss]
 {
 get=base_item
 name=gargish kryss
 id=0x48bc
-weight=100
-value=42 21
-damage=3 28
-layer=1
-hp=31 90
-spd=53
-str=10
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Kryss - N/S
+[0x48bc]
+{
+getpub15=0x48bc_pub15
+getaos=0x48bc_aos
+gettol=0x48bc_tol
 }
 
 // Gargish Kryss - E/W
@@ -550,23 +619,61 @@ id=0x48bd
 get=0x48bc 0x48bd
 }
 
-// Gargish Lance - N/S
-[0x48ca]
+// Spiked Whip - Base weapon
+[base_spiked_whip]
+{
+get=base_item
+name=spiked whip
+id=0xa28a
+decay=1
+good=22
+layer=1
+movable=1
+origin=sa
+restock=10
+}
+
+// Spiked Whip - N/S
+[0xa28a]
+{
+getpub15=0xa28a_pub15
+getaos=0xa28a_aos
+gettol=0xa28a_tol
+}
+
+// Spiked Whip - E/W
+[0xa292]
+{
+get=0xa28a
+id=0xa292
+}
+
+// Spiked Whip - Alias
+[spikedwhip]
+{
+get=0xa28a 0xa292
+}
+
+// Gargish Lance - Base weapon
+[base_gargish_lance]
 {
 get=base_item
 name=gargish lance
 id=0x48ca
-weight=1200
-value=44 27
-damage=5 37
-layer=1
-hp=31 110
-spd=26
-str=40
-restock=10
 decay=1
 good=22
+layer=1
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Lance - N/S
+[0x48ca]
+{
+getpub15=0x48ca_pub15
+getaos=0x48ca_aos
+gettol=0x48ca_tol
 }
 
 // Gargish Lance - E/W
@@ -582,23 +689,26 @@ id=0x48cb
 get=0x48ca 0x48cb
 }
 
-// Gargish Pike - N/S
-[0x48c8]
+// Gargish Pike - Base weapon
+[base_gargish_pike]
 {
 get=base_item
 name=gargish pike
 id=0x48c8
-weight=800
-value=51 31
-damage=4 28
-layer=2
-hp=31 110
-spd=37
-str=20
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Pike - N/S
+[0x48c8]
+{
+getpub15=0x48c8_pub15
+getaos=0x48c8_aos
+gettol=0x48c8_tol
 }
 
 // Gargish Pike - E/W
@@ -614,23 +724,26 @@ id=0x48c9
 get=0x48c8 0x48c9
 }
 
-// Dual Pointed Spear - N/S
-[0x0904]
+// Dual Pointed Spear - Base weapon
+[base_dual_pointed_spear]
 {
 get=base_item
 name=dual pointed spear
 id=0x0904
-weight=700
-value=70 35
-damage=3 23
-layer=2
-hp=31 80
-spd=50
-str=20
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=sa
+restock=10
+}
+
+// Dual Pointed Spear - N/S
+[0x0904]
+{
+getpub15=0x0904_pub15
+getaos=0x0904_aos
+gettol=0x0904_tol
 }
 
 // Dual Pointed Spear - E/W
@@ -646,23 +759,26 @@ id=0x406d
 get=0x0904 0x406d
 }
 
-// Gargish Tekagi - N/S
-[0x48ce]
+// Gargish Tekagi - Base weapon
+[base_gargish_tekagi]
 {
 get=base_item
 name=gargish tekagi
 id=0x48ce
-weight=500
-value=72 35
-damage=3 22
-layer=2
-hp=35 60
-spd=56
-str=5
-restock=10
 decay=1
 good=22
+layer=2
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Tekagi - N/S
+[0x48ce]
+{
+getpub15=0x48ce_pub15
+getaos=0x48ce_aos
+gettol=0x48ce_tol
 }
 
 // Gargish Tekagi - E/W
@@ -676,38 +792,4 @@ id=0x48cf
 [gargishtekagi]
 {
 get=0x48ce 0x48cf
-}
-
-// TIME OF LEGENDS - Stats balanced for Pub15
-
-// Spiked Whip - N/S
-[0xa28a]
-{
-get=base_item
-name=spiked whip
-id=0xa28a
-weight=600
-value=27 14
-damage=4 27
-layer=1
-hp=36 50
-spd=40
-str=5
-decay=1
-good=22
-restock=10
-movable=1
-}
-
-// Spiked Whip - E/W
-[0xa292]
-{
-get=0xa28a
-id=0xa292
-}
-
-// Spiked Whip - Alias
-[spikedwhip]
-{
-get=0xa28a 0xa292
 }

@@ -3,7 +3,9 @@
 // Leather Sleeves - E/W
 [0x13c5]
 {
-get=base_leather_sleeves
+getpub15=0x13c5_pub15
+getaos=0x13c5_aos
+gettol=0x13c5_tol
 }
 
 // Leather Sleeves - N/S
@@ -22,7 +24,9 @@ get=0x13c5 0x13cd
 // Leather Gloves - E/W
 [0x13c6]
 {
-get=base_leather_gloves
+getpub15=0x13c6_pub15
+getaos=0x13c6_aos
+gettol=0x13c6_tol
 }
 
 // Leather Gloves - N/S
@@ -41,7 +45,9 @@ get=0x13c6 0x13ce
 // Leather Gorget
 [0x13c7]
 {
-get=base_leather_gorget
+getpub15=0x13c7_pub15
+getaos=0x13c7_aos
+gettol=0x13c7_tol
 }
 
 // Leather Gorget - Alias
@@ -53,7 +59,9 @@ get=0x13c7
 // Leather Cap - E/W
 [0x1db9]
 {
-get=base_leather_cap
+getpub15=0x1db9_pub15
+getaos=0x1db9_aos
+gettol=0x1db9_tol
 }
 
 // Leather Cap - N/S
@@ -72,7 +80,9 @@ get=0x1db9 0x1dba
 // Leather Leggings - E/W
 [0x13cb]
 {
-get=base_leather_leggings
+getpub15=0x13cb_pub15
+getaos=0x13cb_aos
+gettol=0x13cb_tol
 }
 
 // Leather Leggings - N/S
@@ -91,7 +101,9 @@ get=0x13cb 0x13d2
 // Leather Tunic - E/W
 [0x13cc]
 {
-get=base_leather_tunic
+getpub15=0x13cc_pub15
+getaos=0x13cc_aos
+gettol=0x13cc_tol
 }
 
 // Leather Tunic - N/S
@@ -110,7 +122,9 @@ get=0x13cc 0x13d3
 // Leather Shorts (Female) - E/W
 [0x1c00]
 {
-get=base_leather_shorts
+getpub15=0x1c00_pub15
+getaos=0x1c00_aos
+gettol=0x1c00_tol
 }
 
 // Leather Shorts (Female) - N/S
@@ -129,7 +143,9 @@ get=0x1c00 0x1c01
 // Leather Armor (Female) - E/W
 [0x1c06]
 {
-get=base_leather_armor
+getpub15=0x1c06_pub15
+getaos=0x1c06_aos
+gettol=0x1c06_tol
 }
 
 // Leather Armor (Female) - N/S
@@ -148,7 +164,9 @@ get=0x1c06 0x1c07
 // Leather Skirt (Female) - E/W
 [0x1c08]
 {
-get=base_leather_skirt
+getpub15=0x1c08_pub15
+getaos=0x1c08_aos
+gettol=0x1c08_tol
 }
 
 // Leather Skirt (Female) - N/S
@@ -167,7 +185,9 @@ get=0x1c08 0x1c09
 // Leather Bustier (Female) - E/W
 [0x1c0a]
 {
-get=base_leather_bustier
+getpub15=0x1c0a_pub15
+getaos=0x1c0a_aos
+gettol=0x1c0a_tol
 }
 
 // Leather Bustier (Female) - N/S

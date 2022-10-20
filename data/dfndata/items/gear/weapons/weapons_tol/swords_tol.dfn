@@ -1,0 +1,345 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Cutlass - ToL stats
+[0x1440_tol]
+{
+get=base_cutlass
+weight=800
+value=24 12
+damage=10 14
+hp=31 70
+spd=55
+str=25
+}
+
+// Katana - ToL stats
+[0x13fe_tol]
+{
+get=base_katana
+weight=600
+value=33 20
+damage=10 14
+hp=31 90
+spd=55
+str=25
+}
+
+// Broadsword - ToL stats
+[0x0f5e_tol]
+{
+get=base_broadsword
+weight=600
+value=35 17
+damage=13 17
+hp=31 100
+spd=42
+str=30
+}
+
+// Longsword - ToL stats
+[0x0f60_tol]
+{
+get=base_longsword
+weight=700
+value=55 27
+damage=14 18
+hp=31 110
+spd=39
+str=35
+}
+
+// Long Sword (thin) - ToL stats
+[0x13b7_tol]
+{
+get=base_long_sword
+weight=100
+value=55 27
+damage=15 16
+hp=31 110
+spd=39
+str=35
+}
+
+// Scimitar - ToL stats
+[0x13b5_tol]
+{
+get=base_scimitar
+weight=500
+value=36 18
+damage=12 16
+hp=31 90
+spd=46
+str=25
+}
+
+// Viking Sword - ToL stats
+[0x13b9_tol]
+{
+get=base_viking_sword
+weight=600
+value=55 27
+damage=15 19
+hp=31 100
+spd=37
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Bone Harvester - ToL stats
+[0x26bb_tol]
+{
+get=base_bone_harvester
+weight=300
+value=35 17
+damage=12 16
+hp=31 70
+spd=45
+str=25
+}
+
+// Crescent Blade - ToL stats
+[0x26c1_tol]
+{
+get=base_crescent_blade
+weight=100
+value=48 42
+damage=12 15
+hp=51 80
+spd=55
+str=55
+}
+
+// Paladin Sword - ToL stats
+[0x26ce_tol]
+{
+get=base_paladin_sword
+weight=600
+value=44 41
+damage=20 24
+hp=36 48
+spd=27
+str=85
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// No-Dachi - ToL stats
+[0x27a2_tol]
+{
+get=base_no-dachi
+weight=1000
+value=82 41
+damage=16 19
+hp=31 90
+spd=39
+str=40
+}
+
+// Wakizashi - ToL stats
+[0x27a4_tol]
+{
+get=base_wakizashi
+weight=500
+value=38 19
+damage=10 14
+hp=45 50
+spd=55
+str=20
+}
+
+// Bokuto - ToL stats
+[0x27a8_tol]
+{
+get=base_bokuto
+weight=700
+value=21 10
+damage=10 12
+hp=25 50
+spd=68
+str=20
+}
+
+// Daisho - ToL stats
+[0x27a9_tol]
+{
+get=base_daisho
+weight=800
+value=66 33
+damage=13 16
+hp=45 65
+spd=50
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+
+// Elven Machete - ToL stats
+[0x2d29_tol]
+{
+get=base_elven_machete
+damage=11 15
+hp=30 60
+spd=50
+str=20
+value=31 23
+weight=600
+}
+
+// Radiant Scimitar - ToL stats
+[0x2d29_tol]
+{
+get=base_radiant_scimitar
+damage=12 14
+hp=30 60
+spd=55
+str=20
+value=32 23
+weight=900
+}
+
+// Rune Blade - ToL stats
+[0x2d26_tol]
+{
+get=base_rune_blade
+damage=14 17
+hp=30 60
+spd=45
+str=30
+value=48 42
+weight=700
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Dread Sword - ToL stats
+[0x090b_tol]
+{
+get=base_dread_sword
+damage=14 18
+hp=31 110
+spd=39
+str=35
+value=31 23
+weight=700
+}
+
+// Gargish Bone Harvester - ToL stats
+[0x48c6_tol]
+{
+get=base_gargish_bone_harvester
+damage=12 16
+hp=31 70
+spd=45
+str=25
+value=30 15
+weight=300
+}
+
+// Glass Sword - ToL stats
+[0x090c_tol]
+{
+get=base_glass_sword
+damage=11 15
+hp=31 90
+spd=50
+str=20
+value=28 14
+weight=600
+}
+
+// Gargish Cleaver - ToL stats
+[0x48ae_tol]
+{
+get=base_gargish_cleaver
+damage=10 14
+hp=31 50
+spd=55
+str=10
+value=8 4
+weight=200
+}
+
+// Gargish Katana - ToL stats
+[0x48ba_tol]
+{
+get=base_gargish_katana
+damage=10 14
+hp=31 90
+spd=55
+str=25
+value=17 8
+weight=600
+}
+
+// Gargish Butcher Knife - ToL stats
+[0x48b6_tol]
+{
+get=base_gargish_butcher_knife
+damage=10 13
+hp=31 40
+spd=61
+str=5
+value=8 4
+weight=100
+}
+
+// Stone War Sword - ToL stats
+[0x0900_tol]
+{
+get=base_stone_war_sword
+damage=15 19
+hp=31 100
+spd=36
+str=40
+value=31 23
+weight=600
+}
+
+// Gargish Talwar - ToL stats
+[0x0908_tol]
+{
+get=base_gargish_talwar
+damage=16 19
+hp=31 80
+spd=39
+str=40
+value=63 31
+weight=1600
+}
+
+// Gargish Daisho - ToL stats
+[0x48d0_tol]
+{
+get=base_gargish_daisho
+damage=13 16
+hp=45 65
+spd=50
+str=40
+value=23 11
+weight=800
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Bladed Whip - ToL stats
+[0xa28b_tol]
+{
+get=base_bladed_whip
+damage=13 17
+hp=36 48
+spd=42
+str=20
+value=32 25
+weight=500
+}

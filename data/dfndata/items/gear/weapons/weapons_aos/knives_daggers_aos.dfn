@@ -1,0 +1,95 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Cleaver - AoS stats
+[0x0ec2_aos]
+{
+get=base_cleaver
+weight=100
+value=24 12
+damage=11 13
+hp=31 50
+spd=46
+str=10
+}
+
+// Skinning Knife - AoS stats
+[0x0ec4_aos]
+{
+get=base_skinning_knife
+weight=100
+value=26 13
+damage=9 11
+hp=31 40
+spd=49
+str=5
+}
+
+// Dagger - AoS stats
+[0x0f51_aos]
+{
+get=base_dagger
+weight=100
+value=33 21
+damage=10 11
+hp=31 40
+spd=49
+str=10
+}
+
+// Butcher Knife - AoS stats
+[0x13f6_aos]
+{
+get=base_butcher_knife
+weight=100
+value=21 10
+damage=9 11
+hp=31 40
+spd=49
+str=5
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Leafblade - AoS stats
+[0x2d22_aos]
+{
+get=base_leafblade
+damage=11 14
+hp=30 60
+spd=45
+str=20
+value=25 13
+weight=800
+}
+
+// Assassin Spike - AoS stats
+[0x2d21_aos]
+{
+get=base_assassin_spike
+damage=10 11
+hp=30 60
+spd=60
+str=15
+value=25 13
+weight=400
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Dagger - AoS stats
+[0x0902_aos]
+{
+get=base_gargish_dagger
+damage=10 11
+hp=31 40
+spd=49
+str=10
+value=33 21
+weight=100
+}

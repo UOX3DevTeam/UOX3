@@ -1,9 +1,29 @@
-// Ringmail
+// Copper Armor Bonus for AoS ruleset - applied on top of existing stats
+[copper_armor_bonus_aos]
+{
+defbonus=1
+erbonus=1 0 5 2
+}
 
-// Copper Ringmail Tunic - N/S
+// Copper Armor Bonus for ToL ruleset - applied on top of existing stats
+[copper_armor_bonus_tol]
+{
+defbonus=2
+erbonus=2 0 7 2
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// Copper Ringmail Armor
+
+// Copper Ringmail Gloves - N/S
 [0x13eb-c]
 {
-get=base_ring_gloves
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -22,8 +42,12 @@ get=0x13eb-c 0x13f2-c
 
 // Copper Ringmail Tunic - N/S
 [0x13ec-c]
-{ right facing
-get=base_ring_tunic
+{
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -42,8 +66,12 @@ get=0x13ec-c 0x13ed-c
 
 // Copper Ringmail Sleeves - N/S
 [0x13ee-c]
-{ right facing
-get=base_ring_sleeves
+{
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -62,8 +90,12 @@ get=0x13ee-c 0x13ef-c
 
 // Copper Ringmail Leggings - N/S
 [0x13f0-c]
-{ right facing
-get=base_ring_leggings
+{
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -80,12 +112,40 @@ id=0x13f1
 get=0x13f0-c 0x13f1-c
 }
 
-// Chainmail
+// Chainmail Armor
+
+// Copper Chainmail Coif - N/S
+[0x13bb-c]
+{
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Chainmail Coif - E/S
+[0x13c0-c]
+{
+get=0x13bb-c
+id=0x13c0
+}
+
+// Copper Chainmail Coif - Alias
+[copperchainmailcoif]
+{
+get=0x13bb 0x13c0
+}
 
 // Copper Chainmail Leggings - N/S
 [0x13be-c]
 {
-get=base_chain_leggings
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -105,7 +165,11 @@ get=0x13be-c 0x13c3-c
 // Copper Chainmail Tunic - N/S
 [0x13bf-c]
 {
-get=base_chain_tunic
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -122,32 +186,14 @@ id=0x13c4
 get=0x13bf-c 0x13c4-c
 }
 
-// Copper Chainmail Coif - N/S
-[0x13BB-c]
-{
-get=base_chain_coif
-color=0x96e
-}
-
-// Copper Chainmail Coif - E/W
-[0x13c0-c]
-{
-get=0x13bb-c
-id=0x13c0
-}
-
-// Copper Chainmail Coif - Alias
-[chainmailcoif]
-{
-get=0x13bb-c 0x13c0-c
-}
-
-// Female
-
 // Copper Female Plate - N/S
 [0x1c04-c]
 {
-get=base_fem_plate
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -164,12 +210,16 @@ id=0x1c05
 get=0x1c04-c 0x1c05-c
 }
 
-// platemail
+// Copper Platemail Armor
 
 // Copper Platemail Arms - E/W
 [0x1410-c]
 {
-get=base_plate_arms
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -186,21 +236,25 @@ id=0x1417
 get=0x1410-c 0x1417-c
 }
 
-// Copper Platemail Leggings - E/W
+// Copper Platemail Leggings - N/S
 [0x1411-c]
 {
-get=base_plate_leggings
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Platemail Leggings - N/S
+// Copper Platemail Leggings - E/W
 [0x141a-c]
 {
 get=0x1411-c
 id=0x141a
 }
 
-// Platemail Leggings - Alias
+// Copper Platemail Leggings - Alias
 [copperplatemailleggings]
 {
 get=0x1411-c 0x141a-c
@@ -209,7 +263,11 @@ get=0x1411-c 0x141a-c
 // Copper Platemail Gorget
 [0x1413-c]
 {
-get=base_plate_gorget
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -219,14 +277,18 @@ color=0x96e
 get=0x1413-c
 }
 
-// Copper Platemail Gloves - E/W
+// Copper Platemail Gloves - N/S
 [0x1414-c]
 {
-get=base_plate_gloves
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Platemail Gloves - N/S
+// Copper Platemail Gloves - E/W
 [0x1418-c]
 {
 get=0x1414-c
@@ -239,14 +301,18 @@ id=0x1418
 get=0x1414-c 0x1418-c
 }
 
-// Copper Platemail Chest - E/W
+// Copper Platemail Chest - N/S
 [0x1415-c]
 {
-get=base_plate_chest
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Platemail Chest - N/S
+// Copper Platemail Chest - E/W
 [0x1416-c]
 {
 get=0x1415-c
@@ -259,39 +325,385 @@ id=0x1416
 get=0x1415-c 0x1416-c
 }
 
-// helmets
+// Copper SE Armor
 
-// Copper Close Helm(et) - N/S
-[0x1408-c]
+// Copper Heavy Platemail Jingasa - A
+[0x2777-c]
 {
-get=base_close_helmet
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Close Helm(et) - E/W
+// Copper Heavy Platemail Jingasa - B
+[0x27c2-c]
+{
+get=0x2777-c
+id=0x27c2
+}
+
+// Copper Heavy Platemail Jingasa - Alias
+[copperheavyplatemailjingasa]
+{
+get=0x2777-c 0x27c2-c
+}
+
+// Copper Decorative Platemail Kabuto - A
+[0x2778-c]
+{
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Decorative Platemail Kabuto - B
+[0x27c3-c]
+{
+get=0x2778-c
+id=0x27c3
+}
+
+// Copper Decorative Platemail Kabuto - Alias
+[copperdecorativeplatemailkabuto]
+{
+get=0x2778-c 0x27c3-c
+}
+
+// Copper Platemail Do - A
+[0x277d-c]
+{
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Do - B
+[0x27c8-c]
+{
+get=0x277d-c
+id=0x27c8
+}
+
+// Copper Platemail Do - Alias
+[copperplatemaildo]
+{
+get=0x277d-c 0x27c8-c
+}
+
+// Copper Platemail Hiro Sode - A
+[0x2780-c]
+{
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Hiro Sode - B
+[0x27cb-c]
+{
+get=0x2780-c
+id=0x27cb
+}
+
+// Copper Platemail Hiro Sode - Alias
+[copperplatemailhirosode]
+{
+get=0x2780-c 0x27cb-c
+}
+
+// Copper Platemail Jingasa - A
+[0x2781-c]
+{
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Jingasa - B
+[0x27cc-c]
+{
+get=0x2781-c
+id=0x27cc
+}
+
+// Copper Platemail Jingasa - Alias
+[copperplatemailjingasa]
+{
+get=0x2781-c 0x27cc-c
+}
+
+// Copper Small Platemail Jingasa - A
+[0x2784-c]
+{
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Small Platemail Jingasa - B
+[0x27cf-c]
+{
+get=0x2784-c
+id=0x27cf
+}
+
+// Copper Small Platemail Jingasa - Alias
+[coppersmallplatemailjingasa]
+{
+get=0x2784-c 0x27cf-c
+}
+
+// Copper Platemail Battle Kabuto - A
+[0x2785-c]
+{
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Battle Kabuto - B
+[0x27d0-c]
+{
+get=0x2785-c
+id=0x27d0
+}
+
+// Copper Platemail Battle Kabuto - Alias
+[copperplatemailbattlekabuto]
+{
+get=0x2785-c 0x27d0-c
+}
+
+// Copper Platemail Suneate - A
+[0x2788-c]
+{
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Suneate - B
+[0x27d3-c]
+{
+get=0x2788-c
+id=0x27d3
+}
+
+// Copper Platemail Suneate - Alias
+[copperplatemailsuneate]
+{
+get=0x2788-c 0x27d3-c
+}
+
+// Copper Platemail Kabuto - A
+[0x2789-c]
+{
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Kabuto - B
+[0x27d4-c]
+{
+get=0x2789-c
+id=0x27d4
+}
+
+// Copper Platemail Kabuto - Alias
+[copperplatemailkabuto]
+{
+get=0x2789-c 0x27d4-c
+}
+
+// Copper Kabuto - A
+[0x236c-c]
+{
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Kabuto - B
+[0x236d-c]
+{
+get=0x236c-c
+id=0x236d
+}
+
+// Copper Kabuto - Alias
+[copperkabuto]
+{
+get=0x236c-c 0x236d-c
+}
+
+// Copper Platemail Haidate - A
+[0x278d-c]
+{
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Haidate - B
+[0x27d8-c]
+{
+get=0x278d-c
+id=0x27d8
+}
+
+// Copper Platemail Haidate - Alias
+[copperplatemailhaidate]
+{
+get=0x278d-c 0x27d8-c
+}
+
+// Copper Platemail Hatsuburi - A
+[0x2775-c]
+{
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Hatsuburi - B
+[0x27c0-c]
+{
+get=0x2775-c
+id=0x27c0
+}
+
+// Copper Platemail Hatsuburi - Alias
+[copperplatemailhatsuburi]
+{
+get=0x2775-c 0x27c0-c
+}
+
+// Copper Chainmail Hatsuburi - A
+[0x2774-c]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Chainmail Hatsuburi - B
+[0x27bf-c]
+{
+get=0x2774-c
+id=0x27bf
+}
+
+// Copper Chainmail Hatsuburi - Alias
+[copperchainmailhatsuburi]
+{
+get=0x2774-c 0x27bf-c
+}
+
+// Copper Platemail Mempo - E/W
+[0x2779-c]
+{
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Platemail Mempo - N/S
+[0x27c4-c]
+{
+get=0x2779-c
+id=0x27c4
+}
+
+// Copper Platemail Mempo - Alias
+[copperplatemailmempo]
+{
+get=0x2779-c 0x27c4-c
+}
+
+// Copper Helmets
+
+// Copper Close Helm - E/W
+[0x1408-c]
+{
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Close Helm - N/S
 [0x1409-c]
 {
 get=0x1408-c
 id=0x1409
 }
 
-// Copper Close Helm(et) - Alias
+// Copper Close Helm - Alias
 [copperclosehelm]
 {
 get=0x1408-c 0x1409-c
 }
 
-// Copper Helmet - N/S
+// Copper Helmet - E/W
 [0x140a-c]
 {
-get=base_helmet
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Helmet - E/W
+// Copper Helmet - N/S
 [0x140b-c]
 {
-get=0x140a-c
+get=0x140b-c
 id=0x140b
 }
 
@@ -301,14 +713,18 @@ id=0x140b
 get=0x140a-c 0x140b-c
 }
 
-// Copper Bascinet - N/S
+// Copper Bascinet - E/W
 [0x140c-c]
 {
-get=base_bascinet
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Bascinet - E/W
+// Copper Bascinet - N/S
 [0x140d-c]
 {
 get=0x140c-c
@@ -321,14 +737,18 @@ id=0x140d
 get=0x140c-c 0x140d-c
 }
 
-// Copper Norse Helm - N/S
+// Copper Norse Helm - E/W
 [0x140e-c]
 {
-get=base_nose_helm
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Norse Helm - E/W
+// Copper Norse Helm - N/S
 [0x140f-c]
 {
 get=0x140e-c
@@ -341,14 +761,18 @@ id=0x140f
 get=0x140e-c 0x140f-c
 }
 
-// Copper Plate Helm - E/W
+// Copper Plate Helm - N/S
 [0x1412-c]
 {
-get=base_plate_helm
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Plate Helm - N/S
+// Copper Plate Helm - E/W
 [0x1419-c]
 {
 get=0x1412-c
@@ -361,17 +785,21 @@ id=0x1419
 get=0x1412-c 0x1419-c
 }
 
-// Shields
+// Copper Shields
 
-// Copper Shield
+// Copper Copper Shield
 [0x1b72-c]
 {
-get=base_copper_shield
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Shield - Alias
-[coppershield]
+// Copper Copper Shield - Alias
+[coppercoppershield]
 {
 get=0x1b72-c
 }
@@ -379,7 +807,11 @@ get=0x1b72-c
 // Copper Buckler
 [0x1b73-c]
 {
-get=base_buckler
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -389,50 +821,77 @@ color=0x96e
 get=0x1b73-c
 }
 
-// Copper Metal Kite Shield - N/S
+// Copper Kite Shield (Metal) - N/S
 [0x1b74-c]
 {
-get=base_metal_kite_shield
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
-}
-
-// Copper Metal Kite Shield - E/W
-[0x1b75-c]
-{
-get=0x1b74-c
-id=0x1b75
-}
-
-// Metal Kite Shield - Alias
-[coppermetalkiteshield]
-{
-get=0x1b74-c 0x1b75-c
 }
 
 // Copper Heater Shield - N/S
 [0x1b76-c]
 {
-get=base_heater_shield
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Copper Heater Shield - E/W
-[0x1b77-c]
+// Copper Kite Shield (Wood) - N/S
+[0x1b78-c]
 {
-get=0x1b76-c
-id=0x1b77
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
 }
 
-// Copper Heater Shield - Alias
-[copperheatershield]
+// Copper Kite Shield (wood) - E/W
+[0x1b79-c]
 {
-get=0x1b76-c 0x1b77-c
+get=0x1b78-c
+id=0x1b79
+}
+
+// Copper Kite Shield (wood) - Alias
+[coppermetalkiteshield]
+{
+get=0x1b78-c 0x1b79-c
+}
+
+// AgapiteWooden Shield
+[0x1b7a-c]
+{
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Wooden Shield - Alias
+[copperwoodenshield]
+{
+get=0x1b7a-c
 }
 
 // Copper Metal Shield
 [0x1b7b-c]
 {
-get=base_metal_shield
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
@@ -442,22 +901,43 @@ color=0x96e
 get=0x1b7b-c
 }
 
-// Kite Shield (wooden) - N/S
-[0x1b78-c]
+// Copper Chaos Shield
+[0x1bc3-c]
 {
-get=base_wooden_kite_shield
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
 color=0x96e
 }
 
-// Kite Shield (wooden) - E/W
-[0x1b79-c]
+// Copper Chaos Shield - Alias
+[copperchaosshield]
 {
-get=0x1b78-c
-id=0x1b79
+get=0x1bc3-c
 }
 
-// Kite Shield (wooden) - Alias
-[copperwoodenkiteshield]
+// Copper Order Shield - N/S
+[0x1bc4-c]
 {
-get=0x1b78-c 0x1b79-c
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
+getaos=copper_armor_bonus_aos
+gettol=copper_armor_bonus_tol
+color=0x96e
+}
+
+// Copper Order Shield - E/W
+[0x1bc5-c]
+{
+get=0x1bc5-c
+id=0x1bc5
+}
+
+// Copper Order Shield - Alias
+[copperordershield]
+{
+get=0x1bc4-c 0x1bc5-c
 }

@@ -2,24 +2,28 @@
 
 // Note: Pickaxes are located in DFNDATA\ITEMS\SKILLS\TOOLS\MINING.DFN
 
-// Large Battle Axe - E/W
-[0x13fa]
+// CLASSIC
+// Large Battle Axe - Base item
+[base_large_battle_axe]
 {
 get=base_item
 name=large battle axe
 id=0x13fa
-weight=600
-value=43 21
-damage=6 38
 layer=2
-hp=31 110
-spd=30
-str=40
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Large Battle Axe - E/W
+[0x13fa]
+{
+getpub15=0x13fa_pub15
+getaos=0x13fa_aos
+gettol=0x13fa_tol
 }
 
 // Large Battle Axe - N/S
@@ -35,24 +39,27 @@ id=0x13fb
 get=0x13fa 0x13fb
 }
 
-// Two Handed Axe - E/W
-[0x1442]
+// Two Handed Axe - Base item
+[base_two_handed_axe]
 {
 get=base_item
 name=two handed axe
 id=0x1442
-weight=800
-value=42 21
-damage=5 39
 layer=2
-hp=31 70
-spd=30
-str=35
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Two Handed Axe - E/W
+[0x1442]
+{
+getpub15=0x1442_pub15
+getaos=0x1442_aos
+gettol=0x1442_tol
 }
 
 // Two Handed Axe - N/S
@@ -68,24 +75,27 @@ id=0x1443
 get=0x1442 0x1443
 }
 
-// Hatchet - N/S
-[0x0f43]
+// Hatchet - Base item
+[base_hatchet]
 {
 get=base_item
 name=hatchet
 id=0x0f43
-weight=400
-value=30 15
-damage=2 17
 layer=1
-hp=31 80
-spd=40
-str=15
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Hatchet - N/S
+[0x0f43]
+{
+getpub15=0x0f43_pub15
+getaos=0x0f43_aos
+gettol=0x0f43_tol
 }
 
 // Hatchet - E/W
@@ -101,24 +111,27 @@ id=0x0f44
 get=0x0f43 0x0f44
 }
 
-// Executioner's Axe - N/S
-[0x0f45]
+// Executioner's Axe - Base item
+[base_executioners_axe]
 {
 get=base_item
 name=executioner's axe
 id=0x0f45
-weight=800
-value=38 33
-damage=6 33
 layer=2
-hp=31 90
-spd=37
-str=35
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Executioner's Axe - N/S
+[0x0f45]
+{
+getpub15=0x0f45_pub15
+getaos=0x0f45_aos
+gettol=0x0f45_tol
 }
 
 // Executioner's Axe - E/W
@@ -134,24 +147,27 @@ id=0x0f46
 get=0x0f45 0x0f46
 }
 
-// Battle Axe - N/S
-[0x0f47]
+// Battle Axe - Base item
+[base_battle_axe]
 {
 get=base_item
 name=battle axe
 id=0x0f47
-weight=400
-value=38 36
-damage=6 38
 layer=2
-hp=31 80
-spd=30
-str=40
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Battle Axe - N/S
+[0x0f47]
+{
+getpub15=0x0f47_pub15
+getaos=0x0f47_aos
+gettol=0x0f47_tol
 }
 
 // Battle Axe - E/W
@@ -167,24 +183,27 @@ id=0x0f48
 get=0x0f47 0x0f48
 }
 
-// Axe - N/S
-[0x0f49]
+// Axe - Base item
+[base_axe]
 {
 get=base_item
 name=axe
 id=0x0f49
-weight=400
-value=48 24
-damage=6 33
 layer=2
-hp=31 100
-spd=37
-str=35
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Axe - N/S
+[0x0f49]
+{
+getpub15=0x0f49_pub15
+getaos=0x0f49_aos
+gettol=0x0f49_tol
 }
 
 // Axe - E/W
@@ -200,24 +219,27 @@ id=0x0f4a
 get=0x0f49 0x0f4a
 }
 
-// Double Axe - N/S
-[0x0f4b]
+// Double Axe - Base item
+[base_double_axe]
 {
 get=base_item
 name=double axe
 id=0x0f4b
-weight=800
-value=32 16
-damage=5 35
 layer=2
-hp=31 110
-spd=37
-str=45
 restock=10
 decay=1
 good=24
+origin=classic
 type=216
 movable=1
+}
+
+// Double Axe - N/S
+[0x0f4b]
+{
+getpub15=0x0f4b_pub15
+getaos=0x0f4b_aos
+gettol=0x0f4b_tol
 }
 
 // Double Axe - E/W
@@ -233,26 +255,30 @@ id=0x0f4c
 get=0x0f4b 0x0f4c
 }
 
-// MONDAIN'S LEGACY - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Ornate Axe - N/S
-[0x2d28]
+// MONDAIN'S LEGACY
+// Ornate Axe - Base item
+[base_ornate_axe]
 {
 get=base_item
 name=ornate axe
 id=0x2d28
-weight=1200
-value=48 24
-damage=5 36
-layer=2
-hp=30 65
-spd=29
-str=40
-restock=10
 decay=1
 good=21
-type=216
+layer=2
 movable=1
+origin=ml
+restock=10
+type=216
+}
+
+// Ornate Axe - N/S
+[0x2d28]
+{
+getpub15=0x2d28_pub15
+getaos=0x2d28_aos
+gettol=0x2d28_tol
 }
 
 // Ornate Axe - E/W
@@ -268,26 +294,30 @@ id=0x2d34
 get=0x2d28 0x2d34
 }
 
-// STYGIAN ABYSS - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Gargish Battle Axe - N/S
-[0x48b0]
+// STYGIAN ABYSS
+// Gargish Battle Axe - Base weapon
+[base_gargish_battle_axe]
 {
 get=base_item
 name=gargish battle axe
 id=0x48b0
-weight=400
-value=38 36
-damage=6 38
-layer=2
-hp=31 80
-spd=30
-str=40
-restock=10
 decay=1
 good=21
-type=216
+layer=2
 movable=1
+origin=sa
+restock=10
+type=216
+}
+
+// Gargish Battle Axe - N/S
+[0x48b0]
+{
+getpub15=0x48b0_pub15
+getaos=0x48b0_aos
+gettol=0x48b0_tol
 }
 
 // Gargish Battle Axe - E/W
@@ -303,23 +333,26 @@ id=0x48b1
 get=0x48b0 0x48b1
 }
 
-// Dual Short Axes - N/S
-[0x08fd]
+// Dual Short Axes - Base weapon
+[base_dual_short_axes]
 {
 get=base_item
 name=dual short axes
 id=0x08fd
-weight=400
-value=92 50
-damage=4 31
-layer=2
-hp=31 115
-spd=36
-str=30
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+origin=sa
+restock=10
+}
+
+// Dual Short Axes - N/S
+[0x08fd]
+{
+getpub15=0x08fd_pub15
+getaos=0x08fd_aos
+gettol=0x08fd_tol
 }
 
 // Dual Short Axes - E/W
@@ -335,23 +368,26 @@ id=0x4068
 get=0x08fd 0x4068
 }
 
-// Gargish Axe - N/S
-[0x48b2]
+// Gargish Axe - Base weapon
+[base_gargish_axe]
 {
 get=base_item
 name=gargish axe
 id=0x48b2
-weight=400
-value=48 24
-damage=6 33
-layer=2
-hp=31 100
-spd=37
-str=35
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+origin=sa
+restock=10
+}
+
+// Gargish Axe - N/S
+[0x48b2]
+{
+getpub15=0x48b2_pub15
+getaos=0x48b2_aos
+gettol=0x48b2_tol
 }
 
 // Gargish Axe - E/W

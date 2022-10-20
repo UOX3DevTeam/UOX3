@@ -1,0 +1,9 @@
+
+// Fukiya - ToL stats
+[0x27aa_tol]
+{
+get=base_fukiya
+damage=4 6
+value=51 36
+weight=400
+}

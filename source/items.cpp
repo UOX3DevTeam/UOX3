@@ -133,6 +133,15 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 							applyTo->SetResist( static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0)), POISON );
 						}
 						break;
+					case DFNTAG_ERBONUS:
+						if( ssecs.size() >= 4 )
+						{
+							applyTo->SetResist( applyTo->GetResist( HEAT ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )), HEAT );
+							applyTo->SetResist( applyTo->GetResist( COLD ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )), COLD );
+							applyTo->SetResist( applyTo->GetResist( LIGHTNING ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )), LIGHTNING );
+							applyTo->SetResist( applyTo->GetResist( POISON ) + static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 )), POISON );
+						}
+						break;
 					case DFNTAG_EVENT: applyTo->SetEvent( cdata );	 break;
 					case DFNTAG_DAMAGEABLE:	 applyTo->SetDamageable(ndata != 0); break;
 					case DFNTAG_DEF:
@@ -146,6 +155,23 @@ auto ApplyItemSection( CItem *applyTo, ScriptSection *toApply, std::string secti
 						}
 						else{
 							Console.warning( oldstrutil::format("Invalid data found in DEF tag inside item script [%s]", sectionID.c_str() ));
+						}
+						break;
+					case DFNTAG_DEFBONUS:
+						if( ndata >= 0 )
+						{
+							if( odata && odata > ndata )
+							{
+								applyTo->SetResist( applyTo->GetResist( PHYSICAL ) + static_cast<UI16>( RandomNum( ndata, odata )), PHYSICAL );
+							}
+							else
+							{
+								applyTo->SetResist( applyTo->GetResist( PHYSICAL ) + static_cast<UI16>( ndata ), PHYSICAL );
+							}
+						}
+						else
+						{
+							Console.Warning( oldstrutil::format( "Invalid data found in DEFBONUS tag inside item script [%s]", sectionId.c_str() ));
 						}
 						break;
 					case DFNTAG_DEX:
