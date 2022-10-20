@@ -456,7 +456,7 @@ bool cMovement::isValidDirection( UI08 dir )
 //o-----------------------------------------------------------------------------------------------o
 bool cMovement::isFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 {
-	if( c->IsCasting() )
+	if( c->IsCasting() && !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
 	{
 		if( mSock != nullptr )
 		{
@@ -693,7 +693,7 @@ void cMovement::MoveCharForDirection( CChar *c, SI16 newX, SI16 newY, SI08 newZ 
 		const bool casting = (c->IsCasting() || c->IsJSCasting());
 		if( ( c->IsAtWar() || c->GetAttacker() != nullptr || casting ) && isOnline( *c ) )
 		{	// if it's not an NPC, in combat or casting, and it's online
-			if( casting )
+			if( casting && !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
 			{
 				Effects->PlayStaticAnimation( c, 0x3735, 0, 30 );
 				Effects->PlaySound( c, 0x005C );

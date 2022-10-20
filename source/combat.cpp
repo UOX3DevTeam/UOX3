@@ -1185,17 +1185,32 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			currItem = checkDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );	// Back (Cloak)
 			currItem = checkDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );	// Torso (Outer - Robe)
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 2.8 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 2.8 ));
+				}
+			}
 			break;
 		case 2:		// Arms
 			currItem = checkDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 6.8 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 6.8 ));
+				}
+			}
 			break;
 		case 3:		// Head
 			currItem = checkDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 7.3 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 7.3 ));
+				}
+			}
 			break;
 		case 4:		// Legs
 			currItem = checkDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
@@ -1204,25 +1219,44 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
 			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 4.5 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 4.5 ));
+				}
+			}
 			break;
 		case 5:		// Neck
 			currItem = checkDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 14.5 ));
+				}
+			}
 			break;
 		case 6:		// Hands
 			currItem = checkDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
 			if( findTotal )
-				armorDef = (SI32)(100 * (R32)( armorDef / 14.5 ));
+			{
+				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+				{
+					armorDef = static_cast<SI32>( 100 * static_cast<R32>( armorDef / 14.5 ));
+				}
+			}
 			break;
 		default:
 			break;
 	}
 	if( findTotal )
+	{
 		totalDef += armorDef;
+	}
 	else
+	{
 		totalDef = armorDef;
+	}
 
 	return currItem;
 }
@@ -1246,11 +1280,18 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 		if( hitLoc == 0 )
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
+			{
 				getArmorDef( mChar, total, getLoc, true, resistType );
-			total = (total / 100);
+			}
+			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+			{
+				total = (total / 100);
+			}
 		}
 		else
+		{
 			defendItem = getArmorDef( mChar, total, hitLoc, false, resistType );
+		}
 
 		// Deal damage to armor on hit, if enabled
 		if( total > 0 && doDamage && ValidateObject( defendItem ) && !mChar->IsNpc() && ( cwmWorldState->ServerData()->CombatArmorDamageChance() >= RandomNum( 1, 100 )))
@@ -1711,6 +1752,11 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 
 		bonusDamage /= 7; // get averaage of all 7 armor locations
 		bonusDamage /= 2; // then split damage in half.
+
+		if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
+		{
+			bonusDamage = ( bonusDamage / 100 );
+		}
 	}
 
 	return (baseDamage + static_cast<SI16>(bonusDamage));
@@ -1734,6 +1780,10 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 	{
 		std::string attackerName = getNpcDictName( mChar, targSock );
 
+		// Don't show hit messages for very low amounts of damage
+		if( damage < 5 )
+			return;
+
 		UI08 randHit = RandomNum( 0, 2 );
 		switch( hitLoc )
 		{
@@ -1741,22 +1791,34 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 				switch ( randHit )
 				{
 					case 1:
-						if( damage < 10  )
+						if( damage < 15  )
+						{
 							targSock->sysmessage( 284, attackerName.c_str() ); // %s hits you in your Chest!
+						}
 						else
+						{
 							targSock->sysmessage( 285, attackerName.c_str() ); // %s lands a terrible blow to your Chest!
+						}
 						break;
 					case 2:
-						if( damage < 10 )
+						if( damage < 15 )
+						{
 							targSock->sysmessage( 286, attackerName.c_str() ); // %s lands a blow to your Stomach!
+						}
 						else
+						{
 							targSock->sysmessage( 287, attackerName.c_str() ); // %s knocks the wind out of you!
+						}
 						break;
 					default:
-						if( damage < 10 )
+						if( damage < 15 )
+						{
 							targSock->sysmessage( 288, attackerName.c_str() ); // %s hits you in your Ribs!
+						}
 						else
+						{
 							targSock->sysmessage( 289, attackerName.c_str() ); // %s broke your Rib!
+						}
 						break;
 				}
 				break;
@@ -1772,22 +1834,34 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 				switch( randHit )
 				{
 					case 1:
-						if( damage <  10 )
+						if( damage < 15 )
+						{
 							targSock->sysmessage( 293, attackerName.c_str() ); // %s hits you you straight in the Face!
+						}
 						else
+						{
 							targSock->sysmessage( 294, attackerName.c_str() ); // %s lands a stunning blow to your Head!
+						}
 						break;
 					case 2:
-						if( damage <  10 )
+						if( damage < 15 )
+						{
 							targSock->sysmessage( 295, attackerName.c_str() ); // %s hits you to your Head!
+						}
 						else
+						{
 							targSock->sysmessage( 296, attackerName.c_str() ); // %s smashed a blow across your Face!
+						}
 						break;
 					default:
-						if( damage <  10 )
+						if( damage < 15 )
+						{
 							targSock->sysmessage( 297, attackerName.c_str() ); // %s hits you you square in the Jaw!
+						}
 						else
+						{
 							targSock->sysmessage( 298, attackerName.c_str() ); // %s lands a terrible hit to your Temple!
+						}
 						break;
 				}
 				break;
@@ -1850,52 +1924,211 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 	SI32 RaceDamage = 0;
 	CItem *mWeapon = getWeapon( mChar );
 	CRace *rPtr = Races->Race( ourTarg->GetRace() );
+	auto serverData = cwmWorldState->ServerData();
 
 	switch( damageType )
 	{
 		case NONE:
-			damage = (R32)baseDamage;
+			damage = static_cast<R32>( baseDamage );
 			break;
 		case PHYSICAL:
 			// Race Dmg Modification: Bonus percentage.
 			RaceDamage = Races->DamageFromSkill( getFightSkill, mChar->GetRace() );
 			if( RaceDamage != 0 )
-				baseDamage += (SI16)( (R32)baseDamage * ( (R32)RaceDamage / 1000 ) );
+			{
+				baseDamage += static_cast<SI16>( static_cast<R32>( baseDamage ) * ( static_cast<R32>( RaceDamage ) / 1000 ));
+			}
 
 			// Adjust race and weather weakness
 			baseDamage = AdjustRaceDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc, getFightSkill );
 
 			// Adjust for armour class weakness
-			if( cwmWorldState->ServerData()->CombatArmorClassDamageBonus() )
+			if( serverData->CombatArmorClassDamageBonus() )
+			{
 				baseDamage = AdjustArmorClassDamage( mChar, ourTarg, mWeapon, baseDamage, hitLoc );
+			}
 
-			// Strength Damage Bonus, +20% Damage
-			if( mChar->GetStrength() >= 100 )
-				multiplier = static_cast<R32>( mChar->GetStrength() * 0.3) + 5;
-			else
-				multiplier = static_cast<R32>( mChar->GetStrength() * 0.3);
+			// Publish 5 (April 27, 2000 - UOR patch) had some changes to combat damage:
+			// The lumberjacking skill will provide a bonus to damage when the player is using one of the following axes. 
+			// The higher the characters lumberjacking skill the more damage they will do up to a 25% bonus for 99.9 lumberjacking.
+			// At Grandmaster lumberjacking, the damage bonus is 35%.
+			//	Axe
+			//	Battle Axe
+			//	Double Axe
+			//	Executioner’s Axe
+			//	Hatchet
+			//	Large Battle Axe
+			//	Two - handed Axe
 
-			// Tactics Damage Bonus, % = ( Tactics + 50 )
-			if( mChar->GetSkill( TACTICS ) >= 1000 )
-				multiplier += static_cast<R32>((( mChar->GetSkill( TACTICS ) / 10 ) / 1.6 ) + 6.25 );
+			// Publish 13 (Aug 19, 2001, during Third Dawn era) had some changes to combat damage: https://www.uoguide.com/Publish_13
+			// Hit points for players: (str/2) + 50
+			// Anatomy had a bug prior to this where damage bonus against players was doubled. After fixing this,
+			// the bonus from Anatomy was changed to 20% of Anatomy skill (against both monsters and players) for players
+			// with less than 100.0 Anatomy, and 30% of skill for players who reach 100.0 Anatomy.
+			// Lumberjack damage bonus for axe weapons using same formula as anatomy; 20% bonus up until 99.9 skillpoints, 30% for 100.0 skillpoints
+			// Special hits work on monsters as well as players
+			// NPCs can do special hits if they have anatomy and two-handed melee weapon equipped
+			// All special hits with 2-h weapons now base chance to go off on anatomy skill: Anatomy / 4
+			// Pre-casting re-enabled: Cannot equip anything while casting, after you cast a spell it will "time out" after 30 seconds,
+			// and can no longer target anything. During those 30 seconds, you can equip a weapon, attack with it, and still keep the stored spell.
+			// Upon releasing the spell you automatically unequip the weapon
+
+			// Publish 13 spell changes
+			// Spellbooks no longer required to be equipped to cast spells
+			// Players can gain wrestling and/or tactics skill while having spellbooks equipped
+			// Magic Arrow, Fireball, Lightning Bolt deal noticably more damage than before
+			// Energy Bolt, Explosion, Chain Lightning, Meteor Swarm and Flamestrike spells given small damage increase
+			// Lower reagent cost: Magic Arrow (1 Sulfurous Ash), Fireball (1 Black Pearl), Lightning (1 Mandrake Root, 1 Sulfurous Ash), Explosion (1 Bloodmoos, 1 Mandrake Root)
+			// Harm spell damage now scales inversely with distance to target; the closer to the target, the higher the damage
+
+			// From at least ML forward (https://web.archive.org/web/20080616071554/https://uo.stratics.com/content/arms-armor/combat.php)
+			// Tactics Damage Bonus% = Tactics ÷ 1.6 (Add 6.25% if Tactics >= 100)
+			// Anatomy Damage Bonus% = (Anatomy ÷ 2) + 5
+			// Lumberjack Damage Bonus% = Lumberjack ÷ 5 (Add 10% if Lumberjacking >= 100)
+			// Strength Damage Bonus% = Strength * 0.3 (Add 5% if Strength >= 100)
+			// Final Damage Bonus% = Tactics Bonus + Anatomy Bonus + Lumber Bonus + Strangth Bonus + Damage Increase Items*
+			// Final Damage = Base Damage + (Base Damage * Final Damage Bonus%)
+			// * Damage Increase is capped at 100%.
+
+			// ToL/EJ source: https://www.uoguide.com/Damage_Calculations
+
+			// Strength Damage Bonus
+			if( serverData->ExpansionStrengthDamageBonus() >= ER_TD )
+			{
+				// Third Dawn expansion and later
+				if( mChar->GetStrength() >= 100 )
+				{
+					multiplier = static_cast<R32>( mChar->GetStrength() * 0.3) + 5;
+				}
+				else
+				{
+					multiplier = static_cast<R32>( mChar->GetStrength() * 0.3);
+				}
+			}
 			else
-				multiplier += static_cast<R32>(( mChar->GetSkill( TACTICS ) / 10 ) / 1.6 );
+			{
+				// Pre-publish 13 (T2A, UOR, early TD)
+				// Capped at 200 strength
+				auto strBonusPercent = 20;
+				multiplier = static_cast<R32>((( std::min( mChar->GetStrength(), static_cast<SI16>( 200 )) * strBonusPercent ) / 100 ) / 100 ) + 1;
+			}
+
+			// Tactics Damage Bonus
+			if( serverData->ExpansionTacticsDamageBonus() >= ER_AOS )
+			{
+				// Age of Shadows expansion and later
+				if( mChar->GetSkill( TACTICS ) >= 1000 )
+				{
+					multiplier += static_cast<R32>((( mChar->GetSkill( TACTICS ) / 10 ) / 1.6 ) + 6.25 );
+				}
+				else
+				{
+					multiplier += static_cast<R32>(( mChar->GetSkill( TACTICS ) / 10 ) / 1.6 );
+				}
+			}
+			else
+			{
+				// Pre-AoS (pre-publish 13 (T2A, UOR, early TD))
+				// Tactics Damage Bonus (% = ( Tactics + 50 ))
+				multiplier += static_cast<R32>(( mChar->GetSkill( TACTICS ) + 500 ) / 10 );
+			}
 
 			// Anatomy Damage Bonus
-			if( mChar->GetSkill( ANATOMY ) >= 1000 )
-				multiplier += 30; // 30% Damage at GM Skill or above, 
+			if( serverData->ExpansionAnatomyDamageBonus() >= ER_ML )
+			{
+				// Mondain's Legacy expansion and later
+				if( mChar->GetSkill( ANATOMY ) >= 1000 )
+				{
+					multiplier += static_cast<R32>((( mChar->GetSkill( ANATOMY ) / 2 ) / 10 ) + 5 ); // 50% + 5 bonus damage at GM Skill or above, 
+				}
+				else
+				{
+					multiplier += static_cast<R32>(( mChar->GetSkill( ANATOMY ) / 2 ) / 10 ); // Up to 50% bonus damage at 99.9 skillpoints or below
+				}
+			}
+			else if( serverData->ExpansionAnatomyDamageBonus() >= ER_TD )
+			{
+				// Third Dawn expansion and later
+				if( mChar->GetSkill( ANATOMY ) >= 1000 )
+				{
+					multiplier += 30; // 30% Damage at GM Skill or above, 
+				}
+				else
+				{
+					multiplier += static_cast<R32>( ( ( mChar->GetSkill( ANATOMY ) / 10 ) / 5 ) ); // Up to 20% Damage at 99.9 skillpoints or below
+				}
+			}
 			else
-				multiplier += static_cast<R32>( ( ( mChar->GetSkill( ANATOMY ) / 10 ) / 5 ) ); // Up to 20% Damage at 99.9 skillpoints or below
+			{
+				// Prior to Publish 13, Anatomy bonus was double against players (bug, not a feature)
+				if( ourTarg->IsNpc() ) // Anatomy PvM damage Bonus, % = ( Anat / 5 )
+				{
+					multiplier += static_cast<R32>((( mChar->GetSkill( ANATOMY ) / 10 ) / 5 ));
+				}
+				else // Anatomy PvP damage Bonus, % = ( Anat / 2.5 )
+				{
+					multiplier += static_cast<R32>((( mChar->GetSkill( ANATOMY ) / 10 ) / 2.5 ));
+				}
+			}
 
-			// Lumberjacking Bonus ( 30% Damage at GM Skill )
-			if( mChar->GetSkill( LUMBERJACKING ) >= 1000 )
-				multiplier += 30; // 30% Damage at GM Skill or above, 
+			// Lumberjacking Damage Bonus
+			if( serverData->ExpansionLumberjackDamageBonus() >= ER_TD ) // Third Dawn expansion and later
+			{
+				if( serverData->ExpansionLumberjackDamageBonus() >= ER_HS && RandomNum( 1, 100 ) <= 10 )
+				{
+					// High Seas expansion and later
+					// Publish 69 added a 10% chance for a lumberjacking damage bonus of 100% from base weapon damage
+					// https://www.uoguide.com/Publish_69
+					multiplier += 100;
+				}
+				else
+				{
+					// Third Dawn Expansion (Publish 13) or later
+					if( mChar->GetSkill( LUMBERJACKING ) >= 1000 )
+					{
+						multiplier += 30; // 30% Damage at GM Skill or above, 
+					}
+					else
+					{
+						multiplier += static_cast<R32>( ( ( mChar->GetSkill( LUMBERJACKING ) / 10 ) / 5 ) ); // up to 20% Damage at 99.9 skillpoints or below
+					}
+				}
+			}
 			else
-				multiplier += static_cast<R32>( ( ( mChar->GetSkill( LUMBERJACKING ) / 10 ) / 5 ) ); // up to 20% Damage at 99.9 skillpoints or below
+			{
+				// UO:R expansion
+				if( serverData->ExpansionLumberjackDamageBonus() == ER_UOR )
+				{
+					if( mChar->GetSkill( LUMBERJACKING ) >= 1000 )
+					{
+						multiplier += 35; // At GM skill the damage bonus is 35%.
+					}
+					else
+					{
+						multiplier += static_cast<R32>((( mChar->GetSkill( LUMBERJACKING ) / 10 ) / 4 )); // up to 25% bonus damage at 99.9 skillpoints or below
+					}
+				}
+			}
+
+			// Racial Bonus (Berserk), gargoyles gains +15% Damage Increase per each 20 HP lost
+			if( serverData->ExpansionRacialDamageBonus() >= ER_SA )
+			{
+				if( mChar->GetBodyType() == BT_GARGOYLE )
+				{
+					// Find out how much HP the gargoyle player has lost, in percentage
+					auto hpDifference = (( mChar->GetMaxHP() - mChar->GetHP() ) / mChar->GetMaxHP() ) * 100;
+					if( hpDifference > 20 )
+					{
+						// Add 15% damage bonus for each 20% HP lost
+						multiplier += std::min( static_cast<R32>( floor( static_cast<R32>( hpDifference / 20 )) * static_cast<R32>( 15 )), static_cast<R32>( 60 ));
+					}
+				}
+			}
 
 			// Where does defender tactics damage modifier come from? Which era, if any?
 			// Defender Tactics Damage Modifier, -20% Damage
-			// multiplier = static_cast<R32>(1.0 - ( ( ( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) / 100 ));
+			//multiplier += static_cast<R32>(1.0 - ((( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) / 100 ));
+
 			multiplier /= 100;
 			damage = baseDamage + static_cast<R32>(baseDamage * multiplier);
 			break;
@@ -1904,7 +2137,9 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 
 			// If the attack is magic and the target a NPC but not a human, double the damage
 			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetID()].IsHuman() )
+			{
 				damage *= 2;
+			}
 			break;
 	}
 
@@ -1912,8 +2147,17 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 	if( rPtr != nullptr )
 	{
 		if( rPtr->AffectedBy( damageType ) )
+		{
 			damage *= 2;
 	}
+	}
+
+	if( serverData->ExpansionDamageBonusCap() >= ER_AOS )
+	{
+		// Cap damage at 300% higher than base damage
+		damage = std::min( damage, static_cast<R32>( baseDamage * 4 ));
+	}
+
 	return static_cast<SI16>( roundNumber( damage ));
 }
 
@@ -1929,13 +2173,16 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 	UI16 getDef = 0, attSkill = 1000;
 	R32 damageModifier = 0;
-	R32 damage = (R32)baseDamage;
+	R32 damage = static_cast<R32>( baseDamage );
 
 	if( ValidateObject( mChar ) )
+	{
 		attSkill = mChar->GetSkill( getFightSkill );
+	}
 
 	CSocket *targSock = ourTarg->GetSocket();
 	CItem *shield = getShield( ourTarg );
+	auto serverData = cwmWorldState->ServerData();
 
 	switch( damageType )
 	{
@@ -1943,18 +2190,68 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		case PHYSICAL:		//	Physical damage
 		{
 			// Check Shield Defense
+			bool parrySuccess = false;
 			if( ValidateObject( shield ) )
 			{
+				// Perform a skillcheck to potentially give player a skill increase
 				Skills->CheckSkill( ourTarg, PARRYING, 0, 1000 );
 				
-				// Renaissance Publish (UOR) - https://uo.com/wiki/ultima-online-wiki/technical/previous-publishes/2000-2/2000-publish-05-27th-april/
-				// The higher a shield's AR, the lower the chance to block, but the more damage is absorbed upon blocking
-				// The lower a shield's AR, the higher the chance to block, but the less damage is absorbed upon blocking
-				// parryChance = parrySkill - (shield AR * 2)
-				const UI16 defendParry = ourTarg->GetSkill( PARRYING );
+				// Get parry skill value
+				UI16 defendParry = ourTarg->GetSkill( PARRYING );
+
+				if( serverData->ExpansionShieldParry() <= ER_T2A )
+				{
+					// T2A parry formula: parryChance = parrySkill / 2
+					// AR of shield is then used to absorb a portion of the potential damage dealt; 8 AR shield absorbs 8 damage
+					// Source https://forums.uosecondage.com/viewtopic.php?t=13478
+					R32 parryChance = ( defendParry / 2 ) / 10;
+					if( RandomNum( 1, 100 ) < parryChance )
+					{
+						parrySuccess = true;
+					}
+				}
+				else if( serverData->ExpansionShieldParry() < ER_AOS )
+				{
+					// Renaissance Publish (UOR) - https://uo.com/wiki/ultima-online-wiki/technical/previous-publishes/2000-2/2000-publish-05-27th-april/
+					// The higher a shield's AR, the lower the chance to block, but the more damage is absorbed upon blocking
+					// The lower a shield's AR, the higher the chance to block, but the less damage is absorbed upon blocking
+					// parryChance = parrySkill - (shield AR * 2)
+					R32 parryChance = (defendParry / 10 ) - ( shield->GetResist( PHYSICAL ) * 2 ); // or is it 1.33?
+					if( RandomNum( 1, 100 ) < parryChance )
+					{
+						parrySuccess = true;
+					}
+				}
+				else if( serverData->ExpansionShieldParry() >= ER_AOS )
+				{
+					// Post-AoS Parrying with Shield
+					UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
+
+					// % Chance = (Parrying - Bushido) / 4 (If less than 0, the chance is 0)
+					R32 parryChance = (( defendParry - defendBushido ) / 4 ) / 10;
+					if( defendParry >= 1000 || defendBushido >= 1000 )
+					{
+						parryChance += 5.0;
+					}
+
+					// Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity is higher than 80, the modifier is 0)
+					// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
+					R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
+					parryChance *= ( 1 - dexModifier );
+
+					if( RandomNum( 1, 100 ) < parryChance )
+					{
+						parrySuccess = true;
+					}
+				}
+				/*else
+				{
+					// Old UOX3 parry chance
+					if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ))
+						parrySuccess = true;
+				}*/
 				
-				R32 parryChance = (defendParry / 10 ) - ( shield->GetResist( PHYSICAL ) * 2 ); // or is it 1.33?
-				if( RandomNum( 0, 100 ) < parryChance )
+				if( parrySuccess )
 				{
 					// Play shield parrying FX
 					Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
@@ -1966,30 +2263,226 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
 					{
 						if( targSock != nullptr )
+						{
 							targSock->sysmessage( 1805 ); // You block the attack!
+						}
 						else if( ValidateObject( mChar ) && mChar->GetSocket() != nullptr )
+						{
 							mChar->GetSocket()->sysmessage( 2060 ); // Your attack was blocked!
+						}
 					}
 
-					// Pre-AoS/Pub15/UOR
-					// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
-					if( getFightSkill == ARCHERY )
-						damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) );
+					if( serverData->ExpansionShieldParry() <= ER_T2A )
+					{
+						// http://web.archive.org/web/19991009001809/http://uo.stratics.com/combat.htm
+						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
+						if( getFightSkill == ARCHERY )
+						{
+							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
+						}
+						else
+						{
+							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
+						}
+
+						// Calculate defense given by armor
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
+
+						// Apply damage to shield from parrying action?
+						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
+						{
+							shield->IncHP( shieldDamage );
+						}
+					}
+					else if( serverData->ExpansionShieldParry() < ER_AOS )
+					{
+						// Pre-AoS/Pub15/UOR
+						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
+						if( getFightSkill == ARCHERY )
+						{
+							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) );
+						}
+						else
+						{
+							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
+						}
+
+						// Calculate defense given by armor
+						getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ) );
+
+						// Apply damage to shield from parrying action?
+						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
+						{
+							shield->IncHP( shieldDamage );
+						}
+					}
+					else if( serverData->ExpansionShieldParry() >= ER_AOS )
+					{
+						// Block attack completely
+						damage = 0;
+						getDef = 0;
+
+						if( serverData->ExpansionShieldParry() >= ER_ML )
+						{
+							// If you successfully parry a blow, shield has 20% chance to take a point of damage
+							// Unless attacker's weapon is a mace, in which case chance to take a point of damage is 75%
+							bool damageShield = false;
+							if( getFightSkill == MACEFIGHTING )
+							{
+								damageShield = ( RandomNum( 1, 4 ) < 4 ); // 75% chance
+							}
+							else
+							{
+								damageShield = ( RandomNum( 1, 5 ) == 1 ); // 20% chance
+							}
+
+							if( damageShield )
+							{
+								shield->IncHP( shieldDamage );
+							}
+						}
+					}
 					else
-						damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) / 2 );
+					{
+						// Old Pre-AoS (~Publish 15) block with shield
+						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 
-					// Calculate defense given by armor
-					getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ) );
-
-					// Apply damage to shield from parrying action?
-					if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 0, 100 ) ) // 20% chance by default
-						shield->IncHP( shieldDamage );
+						// Apply damage to shield from parrying action?
+						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
+						{
+							shield->IncHP( shieldDamage );
+						}
+					}
 					
 					if( shield->GetHP() <= 0 )
 					{
 						if( targSock != nullptr )
+						{
 							targSock->sysmessage( 283 ); // Your shield has been destroyed!
+						}
 						shield->Delete();
+					}
+				}
+			}
+			else if( serverData->ExpansionWeaponParry() >= ER_AOS )
+			{
+				// Let's check if character can parry with weapon via Bushido skill
+				CItem *mWeapon = GetWeapon( ourTarg );
+				if( mWeapon )
+				{
+					// Perform a skillcheck for Bushido regardless of weapon equipped
+					Skills->CheckSkill( ourTarg, BUSHIDO, 0, 1000 );
+
+					// Fetch relevant skill values
+					UI16 defendParry = ourTarg->GetSkill( PARRYING );
+					UI16 defendBushido = ourTarg->GetSkill( BUSHIDO );
+					R32 parryChance = 0;
+					R32 dividerValue = 48000; // default for 1H weapon
+
+					if( mWeapon->GetLayer() == IL_LEFTHAND )
+					{
+						dividerValue = 41140;
+					}
+
+					// New = (Parrying * 10) * (Bushido * 10) / dividerValue (Add 5% if Parrying or Bushido skill is 100 or above)
+					R32 parryChanceNew = ( defendParry * defendBushido ) / dividerValue;
+					if( defendParry >= 1000 || defendBushido >= 1000 )
+					{
+						parryChanceNew += 50;
+					}
+
+					// Legacy = (Parrying * 10) / 80 (Add 5% if Parrying skill if 100 or above)
+					R32 parryChanceLegacy = ( defendParry / 80 );
+					if( defendParry >= 1000 )
+					{
+						parryChanceLegacy += 50;
+					}
+
+					// % Chance = Whichever is highest of the New and the Legacy formula.
+					parryChance = std::max( parryChanceNew, parryChanceLegacy );
+
+					// Dexterity Modifier if dex is less than 80*: (80 - Dexterity) / 100 (If Dexterity is higher than 80, the modifier is 0)
+					// Final % Chance of blocking = Base Chance * (1 - Dexterity Modifier)
+					R32 dexModifier = ( ourTarg->GetDexterity() > 80 ? 0 : ( 80 - ourTarg->GetDexterity() ) / 100 );
+					parryChance *= ( 1 - dexModifier );
+
+					// Check if parrying succeedes
+					if( RandomNum( 0, 1000 ) < parryChance )
+					{
+						// Successfully parried! Block attack completely
+						getDef = 0;
+						damage = 0;
+
+						// Play parrying FX
+						Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+
+						if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != NULL )
+						{
+							targSock->SysMessage( 1982 ); // You parry the attack!
+						}
+
+						if( serverData->ExpansionWeaponParry() >= ER_ML )
+						{
+							// If parrying with a weapon, 5% chance weapon will take 1 point of damage
+							// Unless attacker has a mace weapon, then chance is 75% to take 1 point of damage
+							bool damageWeapon = false;
+							if( getFightSkill == MACEFIGHTING )
+							{
+								damageWeapon = ( RandomNum( 1, 4 ) < 4 ); // 75% chance
+							}
+							else
+							{
+								damageWeapon = ( RandomNum( 1, 20 ) == 1 ); // 5% chance
+							}
+
+							// Apply damage to weapon from parrying action?
+							if( damageWeapon )
+							{
+								mWeapon->IncHP( -1 );
+							}
+						}
+						else
+						{
+							// Apply damage to weapon from parrying action?
+							if( !RandomNum( 0, 5 )) // 16.6% chance of weapon damage when parrying
+							{
+								mWeapon->IncHP( -1 );
+							}
+						}
+
+						// Destroy weapon if it ran out of hitpoints
+						if( mWeapon->GetHP() <= 0 )
+						{
+							if( targSock != NULL )
+							{
+								targSock->SysMessage( 1983 ); // Your weapon has been destroyed!
+							}
+							mWeapon->Delete();
+						}
+					}
+				}
+				else if( serverData->ExpansionWrestlingParry() >= ER_TOL && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman() )
+				{
+					// In Publish 97, all NPC creatures with Wrestling skill of 100.0 or higher were given a chance to parry attacks
+					// https://www.uoguide.com/Publish_97
+					R32 parryChance = 0;
+					UI16 defendWrestling = ourTarg->GetSkill( WRESTLING );
+
+					if( defendWrestling >= 1000 )
+					{
+						// ~12.5% chance for a NPC creature with GM Wrestling to parry an attack
+						// TODO Turn the wrestling parry chance into a ini setting
+						parryChance = HalfRandomNum( defendWrestling ) / 8;
+
+						if( RandomNum( 0, 1000 ) < parryChance )
+						{
+							damage = 0;
+							getDef = 0;
+
+							// Play parrying FX
+							Effects->PlayStaticAnimation( ourTarg, 0x37b9, 10, 16 );
+						}
 					}
 				}
 			}
@@ -2003,7 +2496,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		}
 		case POISON:		//	POISON Damage
 			damageModifier = ( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
-			damage = (SI16)roundNumber( ((R32)baseDamage - ( (R32)baseDamage * damageModifier )) );
+			damage = static_cast<SI16>( roundNumber(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
 			getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) );
@@ -2011,9 +2504,11 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 	}
 
 	if( getDef > 0 )
-		damage -= (R32)( ( (R32)getDef * (R32)attSkill ) / 750 );
+	{
+		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
+	}
 
-	return (SI16)roundNumber( damage );
+	return static_cast<SI16>( roundNumber( damage ));
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -2058,10 +2553,16 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		damage = RandomNum( 0, 4 );
 
 	// Half remaining damage by 2 if PUB15 or earlier
-	damage /= 2;
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_PUB15 )
+	{
+		damage /= 2;
+	}
 
-	if( !ourTarg->IsNpc() )
-		damage /= cwmWorldState->ServerData()->CombatNPCDamageRate(); // Rate damage against other players
+	// Divide damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
+	if( mChar->IsNpc() && !ourTarg->IsNpc() )
+	{
+		damage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+	}
 
 	return damage;
 }
@@ -2077,12 +2578,12 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	//Attacker Skill values
 	CItem *mWeapon				= getWeapon( &mChar );
 	const UI08 getFightSkill	= getCombatSkill( mWeapon );
-	const UI16 attackSkill		= std::min( 1000, (SI32)mChar.GetSkill( getFightSkill ) );
+	const UI16 attackSkill		= std::min( 1000, static_cast<SI32>( mChar.GetSkill( getFightSkill )));
 
 	//Defender Skill values
 	CItem *defWeapon			= getWeapon( ourTarg );
 	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
-	const UI16 defendSkill		= std::min( 1000, (SI32)ourTarg->GetSkill( getTargetSkill ) );
+	const UI16 defendSkill		= std::min( 1000, static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
 
 	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
@@ -2118,13 +2619,17 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	}
 
 	if( !checkDist && getFightSkill == ARCHERY )
+	{
 		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
+	}
 
 	if( checkDist )
 	{
 		CPFightOccurring tSend( mChar, (*ourTarg) );
-		for (auto &tSock : FindNearbyPlayers( &mChar ) ) {
-			if (tSock) {
+		for( auto &tSock : FindNearbyPlayers( &mChar ))
+		{
+			if( tSock )
+			{
 				tSock->Send(&tSend);
 			}
 		}
@@ -2135,8 +2640,10 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				UI08 charDir = Movement->Direction( &mChar, ourTarg->GetX(), ourTarg->GetY() );
 				if( mChar.GetDir() != charDir && charDir < 8 )
+				{
 					mChar.SetDir( charDir );
 			}
+		}
 		}
 
 		if( getFightSkill == ARCHERY && mWeapon != nullptr )
@@ -2159,36 +2666,95 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			else
 			{
 				if( mSock != nullptr )
-					mSock->sysmessage( 309 );
+				{
+					mSock->SysMessage( 309 ); // You are out of ammunitions!
+				}
 				return false;
 			}
 		}
 		else
+		{
 			PlaySwingAnimations( &mChar );
+		}
 
 		SI16 staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
 		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ) )
+		{
 			mChar.IncStamina( staminaToLose );
+		}
 
 		const UI16 getDefTactics = ourTarg->GetSkill( TACTICS );
 		bool skillPassed = false;
 
 		// Do a skill check so the fight skill is increased
-		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, (SI32)((getDefTactics * 1.25) + 100) ) );
+		Skills->CheckSkill( &mChar, getFightSkill, 0, std::min( 1000, static_cast<SI32>(( getDefTactics * 1.25 ) + 100 )));
 
-		R32 hitChance = ( ( ( (R32)attackSkill + 500.0 ) / ( ( (R32)defendSkill + 500.0 ) * 2.0) ) * 100.0 );
-		if( hitChance < 0 )
-			hitChance = 0;
-		else if( hitChance > 100 )
-			hitChance = 100;
-
-		// Bonus to hit chance for archery skill since Pub 5/UOR
-		if( getFightSkill == ARCHERY )
+		// Calculate Hit Chance
+		R32 hitChance = 0;
+		switch( cwmWorldState->ServerData()->ExpansionCombatHitChance() )
 		{
-			hitChance += cwmWorldState->ServerData()->CombatArcheryHitBonus();
+			case ER_T2A: // T2A - The Second Age
+			case ER_UOR: // UOR - Renaissance
+			case ER_TD: // TD - Third Dawn
+			case ER_LBR: // LBR - Lord Blackthorn's Revenge
+			case ER_PUB15: // PUB15 - Pub15 (Pre-AoS)
+				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
+				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
+				if( hitChance < 0 )
+				{
+					hitChance = 0;
+				}
+				else if( hitChance > 100 )
+				{
+					hitChance = 100;
+				}
+
+				// Bonus to hit chance for archery skill since Pub 5/UOR
+				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_UOR && getFightSkill == ARCHERY )
+				{
+					hitChance += cwmWorldState->ServerData()->CombatArcheryHitBonus();
+				}
+				break;
+			case ER_AOS: // AoS - Age of Shadows
+			case ER_SE: // SE - Samurai Empire
+			case ER_ML: // ML - Mondain's Legacy
+			case ER_SA: // SA - Stygian Abyss
+			case ER_HS: // HS - High Seas
+			case ER_TOL: // ToL - Time of Legends
+			default:
+				// FORMULA: Hit Chance% = (( [Attacker's Combat Ability + 20] * [100% + Attacker's Hit Chance Increase] ) divided by
+				//	 ( [Defender's Combat Ability + 20] * [100% + Defender's Defense Chance Increase] * 2 )) * 100
+				// For AoS and higher, always give attacker at least 2% chance to hit
+				R32 attHitChanceBonus = 0;
+				R32 defDefenseChanceBonus = 0;
+				R32 maxAttHitChanceBonus = 45;
+				if( cwmWorldState->ServerData()->ExpansionCombatHitChance() >= ER_SA && mChar.GetBodyType() == BT_GARGOYLE )
+				{
+					// If attacker is a Gargoyle player, and ExpansionCombatHitChance is ER_SA or higher, use 50 as hitchance bonus cap instead of 45
+					maxAttHitChanceBonus = 50;
+				}
+				
+				// Fetch bonuses to hitChance/defenseChance from AoS item properties, when implemented
+				//attHitChanceBonus = GetAttackerHitChanceBonus();
+				//defDefenseChanceBonus = GetDefenderDefenseChanceBonus();
+
+				R32 attackerHitChance = ( static_cast<R32>( attackSkill / 10 ) + 20 ) * ( 100 + std::min( attHitChanceBonus, static_cast<R32>( maxAttHitChanceBonus )));
+				R32 defenderDefenseChance = ( static_cast<R32>( defendSkill / 10 ) + 20 ) * ( 100 + std::min( defDefenseChanceBonus, static_cast<R32>( 45 )));
+				hitChance = ( attackerHitChance / ( defenderDefenseChance * 2 )) * 100;
+
+				// Always leave at least 2% chance to hit
+				if( hitChance < 2 )
+				{
+					hitChance = 2;
+				}
+				else if( hitChance > 100 )
+				{
+					hitChance = 100;
+				}
+				break;
 		}
 
-		skillPassed = ( RandomNum( 0, 100 ) <= hitChance );
+		skillPassed = ( RandomNum( 1, 100 ) <= hitChance );
 
 		if( !skillPassed )
 		{
@@ -2222,7 +2788,9 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				{
 					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetID()].GetSound( SND_DEFEND );
 					if( toPlay != 0x00 )
+					{
 						Effects->PlaySound( ourTarg, toPlay );
+					}
 					break;
 				}
 			}
@@ -2243,7 +2811,9 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 
 					if( targSock != nullptr )
-						targSock->sysmessage( 282 );
+					{
+						targSock->SysMessage( 282 ); // You have been poisoned!
+					}
 				}
 			}
 
@@ -2262,17 +2832,20 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					{
 						ourTarg->StopSpell();
 						ourTarg->SetFrozen( false );
-						targSock->sysmessage( 306 );
+						targSock->SysMessage( 306 ); // Your concentration has been broken.
 					}
 				}
 				// Reactive Armor
 				if( ourTarg->GetReactiveArmour() )
 				{
-					SI32 retDamage = (SI32)( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ) );
+					SI32 retDamage = static_cast<SI32>( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ));
 					if( ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar ) )
 					{
-						if( ourTarg->IsNpc() )
-							retDamage *= cwmWorldState->ServerData()->CombatNPCDamageRate();
+						if( ourTarg->IsNpc() && !mChar.IsNpc() )
+						{
+							// Divide reactive damage dealt by NPCs to players by NPCDAMAGERATE value in uox.ini
+							retDamage /= cwmWorldState->ServerData()->CombatNpcDamageRate();
+						}
 						mChar.Damage( retDamage, PHYSICAL, &mChar );
 						Effects->PlayStaticAnimation( ourTarg, 0x374A, 0, 15 );
 					}
@@ -2283,7 +2856,9 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				}
 			}
 			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
+			{
 				PlayHitSoundEffect( &mChar, mWeapon );
+			}
 
 			for( auto scriptTrig : scriptTriggers )
 			{

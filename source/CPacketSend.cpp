@@ -7184,17 +7184,64 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	}
 }
 
+void GetFameTitle( CChar *p, std::string& FameTitle );
 void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 {
-	toolTipEntry tempEntry = {};
+	ToolTipEntry_st tempEntry = {};
+
+	// Fame prefix
+	std::string fameTitle = "";
+	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
+	{
+		if( cwmWorldState->creatures[mChar.GetId()].isHuman() && !mChar.isIncognito() )
+		{
+			GetFameTitle( &mChar, fameTitle );
+			fameTitle = oldstrutil::trim( fameTitle );
+		}
+	}
 
 	// Character Name
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	std::string mCharName = getNpcDictName( &mChar, tSock );
 	std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
-	tempEntry.ourText = oldstrutil::format( " \t%s\t ", convertedString.c_str() );
+	tempEntry.ourText = oldstrutil::format( "%s \t%s\t ", fameTitle.c_str(), convertedString.c_str() );
 
 	FinalizeData( tempEntry, totalStringLen );
+
+	// Show guild title in character tooltip?
+	if( cwmWorldState->ServerData()->ShowGuildInfoInTooltip() )
+	{
+		if( !mChar.isIncognito() )
+		{
+			CGuild *myGuild = GuildSys->Guild( mChar.GetGuildNumber() );
+			if( myGuild != nullptr )
+			{
+				tempEntry.stringNum = 1042971; // ~1_NOTHING~
+				auto guildTitle = mChar.GetGuildTitle();
+				if( guildTitle != "" )
+				{
+					tempEntry.ourText = oldstrutil::format( "%s, %s", guildTitle.c_str(), myGuild->Name().c_str() );
+				}
+				else
+				{
+					tempEntry.ourText = oldstrutil::format( "%s", myGuild->Name().c_str() );
+				}
+				FinalizeData( tempEntry, totalStringLen );
+			}
+		}
+	}
+
+	// Show Race in character tooltip?
+	if( cwmWorldState->ServerData()->ShowRaceWithName() )
+	{
+		if( mChar.GetRace() != 0 && mChar.GetRace() != 65535 && cwmWorldState->creatures[mChar.GetId()].IsHuman() ) // need to check for placeholder race
+		{
+			tempEntry.stringNum = 1042971; // ~1_NOTHING~
+			auto raceName = Races->Name( mChar.GetRace() );
+			tempEntry.ourText = oldstrutil::format( "%s", ( "("s + raceName + ")"s ).c_str() );
+			FinalizeData( tempEntry, totalStringLen );
+		}
+	}
 
 	// Is character Guarded?
 	if( mChar.IsGuarded() )

@@ -4330,6 +4330,69 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 230:	// MAPDIFFSENABLED[0219]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->MapDiffsEnabled() );
 				break;
+			case 231:	// CORESHARDERA
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 232:	// ARMORCALCULATION
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionArmorCalculation() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 233:	// STRENGTHDAMAGEBONUS
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionStrengthDamageBonus() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 234:	// TACTICSDAMAGEBONUS
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionTacticsDamageBonus() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 235:	// ANATOMYDAMAGEBONUS
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionAnatomyDamageBonus() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 236:	// LUMBERJACKDAMAGEBONUS
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionLumberjackDamageBonus() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 237:	// RACIALDAMAGEBONUS
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionRacialDamageBonus() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 238:	// DAMAGEBONUSCAP
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionDamageBonusCap() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 239:	// SHIELDPARRY
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionShieldParry() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
 			case 240:	// PARRYDAMAGECHANCE[0229]
 				*rval = INT_TO_JSVAL( static_cast<UI08>(cwmWorldState->ServerData()->CombatParryDamageChance()));
 				break;
@@ -4342,8 +4405,8 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			case 243:	// ARMORCLASSDAMAGEBONUS[0232]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CombatArmorClassDamageBonus() );
 				break;
-			case 244:	// CUOENABLED[0233]
-				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ConnectUOServerPoll() );
+			case 244:	// FREESHARDSERVERPOLL
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->FreeshardServerPoll() );
 				break;
 			case 245:	// ALCHEMYBONUSENABLED[0234]
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->AlchemyDamageBonusEnabled() );
@@ -4542,6 +4605,42 @@ JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 				break;
 			case 310:	// SHOWWEAPONDAMAGETYPES
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowWeaponDamageTypes() );
+				break;
+			case 311:	// SHOWRACEWITHNAME
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowRaceWithName() );
+				break;
+			case 312:	// SHOWRACEINPAPERDOLL
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowRaceInPaperdoll() );
+				break;
+			case 313:	// WEAPONPARRY
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionWeaponParry() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 314:	// WRESTLINGPARRY
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionWrestlingParry() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 315:	// COMBATHITCHANCE
+			{
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCombatHitChance() )) };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
+			case 316:	// CASTSPELLSWHILEMOVING
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->CastSpellsWhileMoving() );
+				break;
+			case 317:	// SHOWREPUTATIONTITLEINTOOLTIP
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() );
+				break;
+			case 318:	// SHOWGUILDINFOINTOOLTIP
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->ShowGuildInfoInTooltip() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

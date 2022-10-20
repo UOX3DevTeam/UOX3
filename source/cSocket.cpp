@@ -2108,7 +2108,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 			else if( i->GetID( 1 ) == 0x90 )
 				charName = oldstrutil::format( Dictionary->GetEntry( 1739, Language() ).c_str(), charName.c_str() );
 		}
-		if( i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
+		if( cwmWorldState->ServerData()->ShowRaceWithName() && i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
 		{
 			charName += " (";
 			charName += Races->Name( i->GetRace() );

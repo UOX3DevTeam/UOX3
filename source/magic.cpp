@@ -3722,12 +3722,18 @@ bool cMagic::SelectSpell( CSocket *mSock, SI32 num )
 	if( Delay >= 0 )
 	{
 		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue(static_cast<R32>( Delay / 1000 )) );
-		mChar->SetFrozen( true );
+		if( !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
+		{
+			mChar->SetFrozen( true );
+		}
 	}
 	else if( type == 0 && !mChar->IsGM() ) // if they are a gm they don't have a delay :-)
 	{
 		mChar->SetTimer( tCHAR_SPELLTIME, BuildTimeValue( static_cast<R32>(curSpellCasting.Delay() )) );
-		mChar->SetFrozen( true );
+		if( !cwmWorldState->ServerData()->CastSpellsWhileMoving() )
+		{
+			mChar->SetFrozen( true );
+		}
 	}
 	else
 		mChar->SetTimer( tCHAR_SPELLTIME, 0 );
