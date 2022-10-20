@@ -139,7 +139,7 @@ CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
 		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
 		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
 		case 0xD0:	return nullptr;								// Configuration File
-		case 0xD1:	return nullptr;								// Logout Status
+		case 0xD1:	return ( new CPILogoutStatus( s ));			// Logout Status
 		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
 		case 0xD6:	return ( new CPIToolTipRequestAoS( s )		);	// AoS Request for tooltip data
 		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
@@ -1075,7 +1075,60 @@ bool CPIUpdateRangeChange::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPILogoutStatus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for logout requests
+//o------------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD1 (Logout Status)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE extra
+//|
+//|					Notes
+//|						Client + Server packet
+//|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
+//|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
+//o------------------------------------------------------------------------------------------------o
+void CPILogoutStatus::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[RECV]Packet   : CPILogoutStatus 0xD1 --> Length: 2 " << std::endl;
+	}
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+void CPILogoutStatus::InternalReset( void )
+{
+}
+CPILogoutStatus::CPILogoutStatus()
+{
+	InternalReset();
+}
+CPILogoutStatus::CPILogoutStatus( CSocket *s ) : CPInputBuffer( s )
+{
+	InternalReset();
+	Receive();
+}
+void CPILogoutStatus::Receive( void )
+{
+	tSock->Receive( 2, false );
+}
+bool CPILogoutStatus::Handle( void )
+{
+	// Byte 0 == 0xD1
+	// Byte 1 == 0x01 in response to logout request sent by server
+
+	// Construct the response, and send it!
+	CPLogoutResponse logoutResponse( 0x01 );
+	tSock->Send( &logoutResponse );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITips()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with client request for tips/notice windows
