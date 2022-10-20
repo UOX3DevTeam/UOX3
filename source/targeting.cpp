@@ -1492,7 +1492,7 @@ void FriendTarget( CSocket *s )
 	{
 		// %s will now treat %s as a friend.
 		std::string petName = getNpcDictName( pet, s );
-		s->sysmessage( 1624, pet->GetName().c_str(), targChar->GetNameRequest( mChar ).c_str() );
+		s->sysmessage( 1624, petName.c_str(), targChar->GetNameRequest( mChar ).c_str() );
 
 		// Inform the player added as friend
 		CSocket *targSock = targChar->GetSocket();
