@@ -184,8 +184,10 @@ function onUseUnChecked( pUser, iUsed )
 
 				// Calculate chance of hitting bullseye
 				var BullseyeChance = Math.round(((pUser.skills.archery * 0.025) * distancePenalty) + dexBonus);
-				if( InnerChance > 65 )
-					InnerChance = 65;
+				if( bullseyeChance > 65 )
+				{
+					bullseyeChance = 65;
+				}
 
 				// Calculate chance of hitting inner ring
 				var InnerChance = Math.round(((pUser.skills.archery * 0.1) * distancePenalty) + dexBonus);

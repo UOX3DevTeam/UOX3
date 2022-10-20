@@ -64,11 +64,43 @@ function onCallback0( tSock, myTarget )
 			myTarget.id--;
 			return;
 		}
-		if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
+
+		// Is player targeting tribal berry in attempt to create tribal paint?
+		if( myTarget.sectionID == "tribalberry" && ( iUsed.id == 0x1046 || iUsed.id == 0x103a ))
 		{
-			tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
+			if( pUser.skills.cooking >= 800 )
+			{
+				// Delete the sack of flour, and reduce amount of berries in pile by 1`
+				iUsed.Delete();
+				if( myTarget.amount > 1 )
+				{
+					myTarget.amount--;
+				}
+				else
+				{
+					myTarget.Delete();
+				}
+
+				// Great! Let's make some tribal paint
+				var tribalPaint = CreateDFNItem( tSock, pUser, "tribalpaint", 1, "ITEM", true );
+				tSock.SysMessage( GetDictionaryEntry( 6275, tSock.language )); // You combine the berry and the flour into the tribal paint worn by the savages.
+			}
+			else
+			{
+				// Not enough skill
+				tSock.SysMessage( GetDictionaryEntry( 6276, tSock.language )); // You don't have the cooking skill to create the body paint.
+			}
 			return;
 		}
+		else
+		{
+			if( myTarget.id != 0x0FF8 && myTarget.id != 0x0FF9 && myTarget.id != 0x1f9d && myTarget.id != 0x1f9e ) // is the item of the right type?
+			{
+				tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
+				return;
+			}
+		}
+
 		// Check if its in range
 		if( iUsed.container != null )
 		{
@@ -104,6 +136,16 @@ function onCallback0( tSock, myTarget )
 		pUser.SoundEffect( 0x0134, true );
 
 		// Reduce uses left in water source
+		if( myTarget.amount > 1 )
+		{
+			myTarget.amount--;
+		}
+		else
+		{
+			myTarget.Delete();
+		}
+		return;
+
 		if( myTarget.usesLeft > 0 )
 		{
 			myTarget.usesLeft--;
@@ -113,7 +155,7 @@ function onCallback0( tSock, myTarget )
 		{
 			if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e )
 				myTarget.id = 0x0FF7;
-			if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
+			else if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
 				myTarget.id = 0x0FF6;
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "EmptyGlass", 3 );
