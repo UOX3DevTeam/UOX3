@@ -117,6 +117,21 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPILogoutStatus : public CPInputBuffer
+{
+protected:
+	virtual void	InternalReset( void );
+public:
+	virtual			~CPILogoutStatus()
+	{
+	}
+	CPILogoutStatus();
+	CPILogoutStatus( CSocket *s );
+	virtual void	Receive( void ) override;
+	virtual bool	Handle( void ) override;
+	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+};
+
 class CPIKrriosClientSpecial : public CPInputBuffer
 {
 	UI08			type;

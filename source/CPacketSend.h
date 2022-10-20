@@ -708,6 +708,15 @@ public:
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
+class CPLogoutResponse : public CPUOXBuffer
+{
+protected:
+	virtual void	InternalReset( void ) override;
+public:
+	CPLogoutResponse();
+	CPLogoutResponse( UI08 extraByte );
+};
+
 class CPAddItemToCont : public CPUOXBuffer
 {
 protected:

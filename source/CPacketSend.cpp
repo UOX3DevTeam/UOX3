@@ -13,6 +13,7 @@
 #include "Dictionary.h"
 #include "cScript.h"
 #include "CJSMapping.h"
+#include "cRaces.h"
 #include <string>
 #include <locale>
 #include <codecvt>
@@ -825,7 +826,35 @@ void CPRelay::InternalReset( void )
 	SeedIP( 0xFFFFFFFF );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPLogoutResponse()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles outgoing packet with response to client's logout request
+//o------------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD1 (Logout Status)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE 0x01
+//|
+//|					Notes
+//|						Client + Server packet
+//|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
+//|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
+//o------------------------------------------------------------------------------------------------o
+CPLogoutResponse::CPLogoutResponse( UI08 extraByte )
+{
+	InternalReset();
+}
+void CPLogoutResponse::InternalReset( void )
+{
+	pStream.ReserveSize( 2 );
+	pStream.WriteByte( 0, 0xD1 );
+	pStream.WriteByte( 1, 0x01 );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPWornItem()
 //o-----------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles outgoing packet to equip a single item for player and update paperdoll
