@@ -22,7 +22,7 @@ function onAICombatTarget( pChar, pTarget )
 		return false;
 
 	// Don't attack other monsters, unless racial enemies
-	if( pChar.aitype == 2 && pTarget.aitype == 2 && raceCompare >= 0 )
+	if(( pChar.aitype == 2 || pChar.aitype == 11 ) && ( pTarget.aitype == 2 || pTarget.aitype == 11 ) && raceCompare >= 0 )
 		return false;
 
 	// See if pTarget is wearing an orcish kin mask
@@ -41,16 +41,23 @@ function onAICombatTarget( pChar, pTarget )
 	return true;
 }
 
-function onDefense( pAttacker, pDefender )
+function onDamage( pDefender, pAttacker, damageValue, damageType )
 {
-	// See if pAttacker is wearing an orcish kin mask
-	var headWear = pAttacker.FindItemLayer( 0x06 );
+	// Check if the attacker is actually a pet/hireling/summoned creature
+	var pOwner = pAttacker.owner;
+	if( !ValidateObject( pOwner ))
+{
+		pOwner = pAttacker;
+	}
+
+	// See if pOwner is wearing an orcish kin mask
+	var headWear = pOwner.FindItemLayer( 0x06 );
 	if( ValidateObject( headWear ) )
 	{
 		if( headWear.id == 0x141c && headWear.colour == 0x08a4 )
 		{
-			// Punish pAttacker for attacking an orc while wearing a mask of orcish kin!
-			pAttacker.ExplodeItem( headWear, 50, 5, false );
+			// Punish pOwner for attacking an orc while wearing a mask of orcish kin!
+			pOwner.ExplodeItem( headWear, 50, 5, false );
 		}
 	}
 }

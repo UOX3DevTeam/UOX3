@@ -177,6 +177,10 @@ function onCallback0( socket, ourObj )
 			okMsg( socket );
 		}
 		break;
+	case "SECTIONID":
+		ourObj.sectionID = socket.xText.substring( 5 );
+		okMsg( socket );
+		break;
 	case "SHOULDSAVE":
 		ourObj.shouldSave = (nVal == 1);
 		okMsg( socket );

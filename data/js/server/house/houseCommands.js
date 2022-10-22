@@ -117,13 +117,13 @@ function onCallback0( pSocket, myTarget )
 		return;
 	}
 
-	if( iMulti.owner != pUser && !pUser.isGM )
+	if(( !ValidateObject( iMulti.owner ) || iMulti.owner != pUser ) && !pUser.isGM )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 1822, pSocket.language )); // Only the primary house owner can transfer ownership of the house!
 		return;
 	}
 
-	if( !ValidateObject( iSign ) || iSign.owner != pUser )
+	if(( !ValidateObject( iSign ) || ( !ValidateObject( iSign.owner ) && iSign.owner != pUser )) && !pUser.isGM )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 1821, pSocket.language )); // Unable to detect house sign! Try again, or contact a GM if problem persists.
 		return;
@@ -164,7 +164,14 @@ function onCallback0( pSocket, myTarget )
 			}
 
 			myTarget.SetTag( "iMultiSerial", (iMulti.serial).toString() );
-			myTarget.SetTag( "oldMultiOwner", (iMulti.owner.serial).toString() );
+			if( ValidateObject( iMulti.owner ))
+			{
+				myTarget.SetTag( "oldMultiOwner", (iMulti.owner.serial).toString() );
+			}
+			else
+			{
+				myTarget.SetTag( "oldMultiOwner", null );
+			}
 			myTarget.SetTag( "iSignSerial", (iSign.serial).toString() );
 
 			var confirmButtonID = 1;
@@ -215,7 +222,7 @@ function onCallback1( pSocket, myTarget )
 		return;
 	}
 
-	if( !iMulti.IsOwner( pUser ))
+	if( !iMulti.IsOwner( pUser ) && !pUser.isGM )
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 1832, pSocket.language )); // Only the primary house owner may add co-owners!
 		return;
@@ -390,7 +397,7 @@ function AddFriend( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			if( iMulti.friends < iMulti.maxFriends )
 			{
@@ -420,7 +427,7 @@ function onCallback3( pSocket, myTarget )
 
 	if( !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1848, pSocket.language )); // Only house owners and co-owners can add someone to the friend list!
 			return;
@@ -474,7 +481,7 @@ function RemoveFriendTrigger( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 4, GetDictionaryEntry( 1852, pSocket.language )); // Select player to remove as friend:
@@ -499,7 +506,7 @@ function onCallback4( pSocket, myTarget )
 
 	if( !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1853, pSocket.language )); // You need to be inside a house to use house commands!
 			return;
@@ -562,7 +569,7 @@ function AddGuest( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			if( iMulti.guests < iMulti.maxGuests )
 			{
@@ -592,7 +599,7 @@ function onCallback11( pSocket, myTarget )
 
 	if( !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1859, pSocket.language )); // Only house owners and co-owners can add someone to the guest list!
 			return;
@@ -651,7 +658,7 @@ function RemoveGuestTrigger( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 12, GetDictionaryEntry( 1866, pSocket.language )); // Select player to remove as guest:
@@ -676,7 +683,7 @@ function onCallback12( pSocket, myTarget )
 
 	if( !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1867, pSocket.language )); // Only house owners and co-owners can remove someone from the guest list!
 			return;
@@ -738,7 +745,7 @@ function BanPlayer( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnFriendList( pUser ) || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnFriendList( pUser ) || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 5, GetDictionaryEntry( 585, pSocket.language ), 1 ); // Select person to ban from the house.
@@ -763,7 +770,7 @@ function onCallback5( pSocket, myTarget )
 
 	if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1871, pSocket.language )); // Only house owners, co-owners and friends can ban someone from a house!
 			return;
@@ -820,7 +827,7 @@ function UnbanPlayerTrigger( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnFriendList( pUser ) || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnFriendList( pUser ) || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 6, GetDictionaryEntry( 1877, pSocket.language )); // Select player to lift ban for:
@@ -845,7 +852,7 @@ function onCallback6( pSocket, myTarget )
 
 	if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1878, pSocket.language )); // Only house owners, co-owners and friends can lift a ban on someone in a house!
 			return;
@@ -895,7 +902,7 @@ function EjectPlayer( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 7, GetDictionaryEntry( 587, pSocket.language ), 1 ); // Select person to eject from the house.
@@ -920,7 +927,7 @@ function onCallback7( pSocket, myTarget )
 
 	if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1881, pSocket.language )); // Only house owners, co-owners and friends can eject someone from a house!
 			return;
@@ -1002,7 +1009,7 @@ function LockdownItem( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 8, GetDictionaryEntry( 589, pSocket.language )); // Select item to lock down
@@ -1027,7 +1034,7 @@ function onCallback8( pSocket, myTarget )
 
 	if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1887, pSocket.language )); // Only house owners, co-owners and friends can lock down items in a house!
 			return;
@@ -1162,7 +1169,7 @@ function ReleaseItem( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 9, GetDictionaryEntry( 591, pSocket.language ) ); // Select item to release.
@@ -1187,7 +1194,7 @@ function onCallback9( pSocket, myTarget )
 
 	if( !iMulti.IsOnFriendList( pUser ) && !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1896, pSocket.language )); // Only house owners, co-owners and friends can release locked down items in a house!
 			return;
@@ -1245,7 +1252,7 @@ function onCallback9( pSocket, myTarget )
 				if( iMulti.IsOnOwnerList( pUser ))
 				{
 					// Co-owners can only release items locked down by themselves or by friends
-					if( myTarget.owner.serial != pUser.serial && !iMulti.IsOnFriendList( myTarget.owner ) && ( iMulti.IsOnOwnerList( myTarget.owner ) || iMulti.IsOwner( myTarget.owner )))
+					if( !ValidateObject( myTarget.owner ) || ( myTarget.owner.serial != pUser.serial && !iMulti.IsOnFriendList( myTarget.owner ) && ( iMulti.IsOnOwnerList( myTarget.owner ) || iMulti.IsOwner( myTarget.owner ))))
 					{
 						pSocket.SysMessage( GetDictionaryEntry( 1899, pSocket.language )); // You cannot release an item locked down by someone with a higher access level to the house than yourself!
 						return;
@@ -1254,7 +1261,7 @@ function onCallback9( pSocket, myTarget )
 				else
 				{
 					// Friends can only release items they locked down by themselves
-					if( myTarget.owner.serial != pUser.serial )
+					if( !pUser.isGM && ( !ValidateObject( myTarget.owner ) || myTarget.owner.serial != pUser.serial ))
 					{
 						pSocket.SysMessage( GetDictionaryEntry( 1899, pSocket.language )); // You cannot release an item locked down by someone with a higher access level to the house than yourself!
 						return;
@@ -1298,7 +1305,7 @@ function SecureContainer( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
 			pSocket.CustomTarget( 10, GetDictionaryEntry( 1903, pSocket.language )); // Select container to secure:
@@ -1323,7 +1330,7 @@ function onCallback10( pSocket, myTarget )
 
 	if( !iMulti.IsOnOwnerList( pUser ))
 	{
-		if( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != pUser.accountNum ))
+		if( !pUser.isGM && ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != pUser.accountNum ))))
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 1904, pSocket.language )); // Only house owners and co-owners can secure containers in a house!
 			return;
@@ -1486,7 +1493,7 @@ function ChangeHouseLocks( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOwner( pUser ))
+		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
 			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
@@ -1527,7 +1534,7 @@ function DeclareHousePublic( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOwner( pUser ))
+		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
 			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
@@ -1578,7 +1585,7 @@ function DeclareHousePrivate( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOwner( pUser ))
+		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
 			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
@@ -1677,7 +1684,7 @@ function PlaceTrashBarrel( pSocket, iMulti )
 		}
 
 		var pUser = pSocket.currentChar;
-		if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			// First check if there's a trash barrel in the house already
 			var trashContainerCount = iMulti.trashContainers;

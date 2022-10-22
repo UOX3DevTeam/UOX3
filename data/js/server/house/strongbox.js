@@ -7,7 +7,7 @@ function onUseChecked( pUser, iUsed )
 	var iMulti = iUsed.multi;
 	if( ValidateObject( iMulti ))
 	{
-		if( iUsed.owner == pUser || iMulti.owner == pUser )
+		if(( ValidateObject( iUsed.owner ) && iUsed.owner == pUser ) || ( ValidateObject( iMulti.owner ) && iMulti.owner == pUser ))
 		{
 			// Allow access, execute regular hardcoded container code
 			return true;
@@ -31,7 +31,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 	var iMulti = iDroppedOn.multi;
 	if( ValidateObject( iMulti ))
 	{
-		if( iDroppedOn.owner != pDropper && iMulti.owner != pDropper )
+		if(( !ValidateObject( iDroppedOn.owner ) || iDroppedOn.owner != pDropper ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner != pDropper ))
 		{
 			// Don't allow anyone other than owner of strongbox or owner of multi to drop items in container
 			return 0;
