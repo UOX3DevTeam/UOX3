@@ -699,6 +699,7 @@ auto cCharStuff::ApplyNpcSection( CChar *applyTo, ScriptSection *NpcCreation, st
 									mypack->SetType( IT_CONTAINER );
 									mypack->SetDye( true );
 									mypack->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
+									mypack->SetWeightMax( cwmWorldState->ServerData()->MaxPlayerPackWeight() );
 								}
 							}
 						}

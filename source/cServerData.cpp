@@ -337,7 +337,9 @@ const std::map<std::string,std::int32_t> CServerData::uox3inicasevalue{
 	{"COMBATHITCHANCE"s, 315},
 	{"CASTSPELLSWHILEMOVING"s, 316},
 	{"SHOWREPUTATIONTITLEINTOOLTIP"s, 317},
-	{"SHOWGUILDINFOINTOOLTIP"s, 318}
+	{"SHOWGUILDINFOINTOOLTIP"s, 318},
+	{"MAXPLAYERPACKWEIGHT"s, 319},
+	{"MAXPLAYERBANKWEIGHT"s, 320},
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128 ;
@@ -719,6 +721,8 @@ auto CServerData::ResetDefaults()->void {
 	ItemsDetectSpeech( false );
 	MaxPlayerPackItems( 125 );
 	MaxPlayerBankItems( 125 );
+	MaxPlayerPackWeight( 40000 ); // 400.00 stones
+	MaxPlayerBankWeight( 160000 ); // 1600.00 stones
 	ForceNewAnimationPacket( true );
 	MapDiffsEnabled( false );
 	TravelSpellsFromBoatKeys( true );
@@ -2453,35 +2457,64 @@ auto CServerData::MapDiffsEnabled( bool newVal ) ->void {
 }
 
 //o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 MaxPlayerPackItems() const
-//|					void MaxPlayerPackItems( UI16 newVal )
+//|	Function	-	CServerData::MaxPlayerPackItems()
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player (and NPC) backpacks
-//o-----------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerPackItems() const ->std::uint16_t {
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::MaxPlayerPackItems() const -> UI16
+{
 	return maxPlayerPackItems;
 }
-auto CServerData::MaxPlayerPackItems( UI16 newVal ) ->void {
+auto CServerData::MaxPlayerPackItems( UI16 newVal ) -> void
+{
 	maxPlayerPackItems = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 MaxPlayerBankItems() const
-//|					void MaxPlayerBankItems( UI16 newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::MaxPlayerPackWeight()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max weight capacity for player (and NPC) backpacks
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::MaxPlayerPackWeight() const -> SI32
+{
+	return maxPlayerPackWeight;
+}
+auto CServerData::MaxPlayerPackWeight( SI32 newVal ) -> void
+{
+	maxPlayerPackWeight = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::MaxPlayerBankItems()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max item capacity for player bankboxes
-//o-----------------------------------------------------------------------------------------------o
-auto CServerData::MaxPlayerBankItems() const ->std::uint16_t {
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::MaxPlayerBankItems() const -> UI16
+{
 	return maxPlayerBankItems;
 }
-auto CServerData::MaxPlayerBankItems( UI16 newVal ) ->void {
+auto CServerData::MaxPlayerBankItems( UI16 newVal ) -> void
+{
 	maxPlayerBankItems = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool BasicTooltipsOnly() const
-//|					void BasicTooltipsOnly( bool newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::MaxPlayerBankWeight()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max weight capacity for player (and NPC) bankboxes
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::MaxPlayerBankWeight() const -> SI32
+{
+	return maxPlayerBankWeight;
+}
+auto CServerData::MaxPlayerBankWeight( SI32 newVal ) -> void
+{
+	maxPlayerBankWeight = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BasicTooltipsOnly()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether basic tooltips are enabled or not (instead of advanced tooltips)
 //o-----------------------------------------------------------------------------------------------o
 auto CServerData::BasicTooltipsOnly() const ->bool{
@@ -4322,6 +4355,8 @@ auto CServerData::save( const std::string &filename ) ->bool {
 		ofsOutput << "ITEMSDETECTSPEECH=" << ItemsDetectSpeech() << '\n';
 		ofsOutput << "MAXPLAYERPACKITEMS=" << MaxPlayerPackItems() << '\n';
 		ofsOutput << "MAXPLAYERBANKITEMS=" << MaxPlayerBankItems() << '\n';
+		ofsOutput << "MAXPLAYERPACKWEIGHT=" << MaxPlayerPackWeight() << '\n';
+		ofsOutput << "MAXPLAYERBANKWEIGHT=" << MaxPlayerBankWeight() << '\n';
 		ofsOutput << "FORCENEWANIMATIONPACKET=" << ForceNewAnimationPacket() << '\n';
 		ofsOutput << "MAPDIFFSENABLED=" << MapDiffsEnabled() << '\n';
 		ofsOutput << "TOOLUSELIMIT=" << ToolUseLimit() << '\n';
@@ -5679,6 +5714,12 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 318:	// SHOWGUILDINFOINTOOLTIP
 			ShowGuildInfoInTooltip(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 319:	// MAXPLAYERPACKWEIGHT
+			MaxPlayerPackWeight( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 320:	// MAXPLAYERBANKWEIGHT
+			MaxPlayerBankWeight( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
 			break;
 		default:
 			rvalue = false;

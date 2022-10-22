@@ -289,6 +289,8 @@ private:
 	UI08		maxPetOwners;				//	The default max amount of different owners a pet may have in its lifetime
 	UI16		maxPlayerPackItems;			//	The max amount of items a player's backpack can contain
 	UI16		maxPlayerBankItems;			//	The max amount of items a player's bankbox can contain
+	SI32		maxPlayerPackWeight;			//	The max weight capacity of a player's backpack (including subcontainers)
+	SI32		maxPlayerBankWeight;			//	The max weight capacity of a player's bankbox (including subcontainers)
 	UI16		petLoyaltyGainOnSuccess;		//	The default amount of pet loyalty gained on successful use of a pet command
 	UI16		petLoyaltyLossOnFailure;		//	The default amount of pet loyalty lost on a failed attempt to use a pet command
 	UI16		petOfflineTimeout;			//	Offline time after a player looses all pets
@@ -711,10 +713,16 @@ public:
 	auto		MapDiffsEnabled() const ->bool;
 
 	auto		MaxPlayerPackItems( UI16 value ) ->void;
-	auto		MaxPlayerPackItems() const ->std::uint16_t;
+	auto		MaxPlayerPackItems() const -> UI16;
+
+	auto		MaxPlayerPackWeight( SI32 newVal ) -> void;
+	auto		MaxPlayerPackWeight() const -> SI32;
 
 	auto		MaxPlayerBankItems( UI16 value ) ->void;
-	auto		MaxPlayerBankItems() const ->std::uint16_t;
+	auto		MaxPlayerBankItems() const -> UI16;
+
+	auto		MaxPlayerBankWeight( SI32 newVal ) -> void;
+	auto		MaxPlayerBankWeight() const -> SI32;
 
 	auto		BasicTooltipsOnly( bool value ) ->void;
 	auto		BasicTooltipsOnly() const ->bool;

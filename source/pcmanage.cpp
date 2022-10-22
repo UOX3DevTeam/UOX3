@@ -619,6 +619,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 	if( CreatedItems[PACK] != nullptr )
 	{
 		mChar->SetPackItem( CreatedItems[PACK] );
+		CreatedItems[PACK]->SetWeightMax( cwmWorldState->ServerData()->MaxPlayerPackWeight() );
 		CreatedItems[PACK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
 		CreatedItems[PACK]->SetDecayable( false );
 		CreatedItems[PACK]->SetLayer( IL_PACKITEM );
@@ -634,6 +635,7 @@ void CPICreateCharacter::newbieItems( CChar *mChar )
 		CreatedItems[BANK]->SetLayer( IL_BANKBOX );
 		CreatedItems[BANK]->SetType( IT_CONTAINER );
 		CreatedItems[BANK]->SetTempVar( CITV_MOREX, 1 );
+		CreatedItems[BANK]->SetWeightMax( cwmWorldState->ServerData()->MaxPlayerPackWeight() );
 		CreatedItems[BANK]->SetMaxItems( cwmWorldState->ServerData()->MaxPlayerBankItems() );
 		CreatedItems[BANK]->SetOwner( mChar );
 		CreatedItems[BANK]->SetCont( mChar );

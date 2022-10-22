@@ -300,8 +300,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		mChar.health 	= mChar.health - mSpell.health;
 		mChar.stamina	= mChar.stamina - mSpell.stamina;
 	}
-	else if( !mChar.npc && spellType == 0 )
+	if( !mChar.npc && spellType == 0 )
+	{
 		deleteReagents( mChar, mSpell );
+	}
 
 	if( !mChar.InRange( ourTarg, 10 ) )
 	{
