@@ -162,7 +162,7 @@ SILK=0
 TARG=Select target for magic arrow.
 FLAGS=0x01C9
 SOUNDFX=0x01E5
-MOVEFX=36 E4 05 00 01
+MOVEFX=36 E4 05 00 00
 }
 
 // Night Sight

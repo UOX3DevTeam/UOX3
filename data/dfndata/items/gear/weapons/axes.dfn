@@ -13,7 +13,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -49,7 +48,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -85,7 +83,6 @@ layer=1
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -121,7 +118,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -157,7 +153,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -193,7 +188,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -229,7 +223,6 @@ layer=2
 restock=10
 decay=1
 good=24
-origin=classic
 type=216
 movable=1
 }
@@ -268,7 +261,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=ml
 restock=10
 type=216
 }
@@ -307,7 +299,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=sa
 restock=10
 type=216
 }
@@ -343,7 +334,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -378,7 +368,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 

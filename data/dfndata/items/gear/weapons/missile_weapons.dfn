@@ -27,7 +27,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=se
 restock=10
 }
 

@@ -116,6 +116,7 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion(
 	temp_container_serial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
+	sectionId.reserve( MAX_NAME );
 	if( cwmWorldState != nullptr && cwmWorldState->GetLoaded() )
 		SetPostLoaded( true );
 	ShouldSave( true );
@@ -685,6 +686,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 		}
 	}
 
+	outStream << "SectionID=" << sectionId << newLine;
 	outStream << "Name=" << objName << newLine;
 	std::string myLocation = "Location=" + std::to_string( x ) + "," + std::to_string( y ) + "," +std::to_string( z ) + "," + std::to_string( worldNumber ) + "," + std::to_string( instanceID ) + newLine;
 	outStream << myLocation;
@@ -832,6 +834,31 @@ void CBaseObject::SetName( std::string newName )
 		(static_cast<CItem *>(this))->UpdateRegion();
 	else if( CanBeObjType( OT_CHAR ))
 		(static_cast<CChar *>(this))->UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetSectionId()
+//|					CBaseObject::SetSectionId()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets reference to Section ID/Header for object from DFNs
+//o------------------------------------------------------------------------------------------------o
+std::string CBaseObject::GetSectionId( void ) const
+{
+	return sectionId;
+}
+void CBaseObject::SetSectionId( std::string newSectionId )
+{
+	sectionId = newSectionId.substr( 0, MAX_NAME - 1 );
+	Dirty( UT_UPDATE );
+
+	if( CanBeObjType( OT_ITEM ))
+	{
+		( static_cast<CItem *>( this ))->UpdateRegion();
+	}
+	else if( CanBeObjType( OT_CHAR ))
+	{
+		( static_cast<CChar *>( this ))->UpdateRegion();
+	}
 }
 
 //o-----------------------------------------------------------------------------------------------o
@@ -1767,7 +1794,12 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			break;
 		case 'S':
-			if( UTag == "STAMINA" )
+
+			if( UTag == "SECTIONID" )
+			{
+				sectionId = data.substr( 0, MAX_NAME - 1 );
+			}
+			else if( UTag == "STAMINA" )
 			{
 				stamina	= oldstrutil::value<std::int16_t>(data);
 			}
@@ -2236,6 +2268,7 @@ void CBaseObject::RemoveFromRefreshQueue()
 
 void CBaseObject::CopyData( CBaseObject *target )
 {
+	target->SetSectionId( GetSectionId() );
 	target->SetTitle( GetTitle() );
 	target->SetRace( GetRace() );
 	target->SetName( GetName() );

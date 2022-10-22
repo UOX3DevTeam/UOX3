@@ -113,6 +113,7 @@ maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_M
 	objType		= OT_ITEM;
 	name2 = "#";
 	name		= "#";
+	sectionId	= "UNKNOWN";
 	race		= 65535;
 	memset( tempVars, 0, sizeof( tempVars[0] ) * CITV_COUNT );
 	desc.reserve( MAX_NAME );
@@ -2158,24 +2159,24 @@ void CItem::CheckItemIntegrity( void )
 	SERIAL getSerial = GetSerial();
 	if( getSerial == INVALIDSERIAL )
 	{
-		Console.warning(oldstrutil::format( "Item (%s) has an invalid serial number, Deleting", GetName().c_str()) );
+		Console.warning( oldstrutil::format( "Item (%s, from DFN section [%s]) has an invalid serial number, Deleting", GetName().c_str(), GetSectionId().c_str() ));
 		Delete();
 		return;
 	}
 
 	if( getSerial == GetContSerial() )
 	{
-		Console.warning( oldstrutil::format("Item 0x%X (%s) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str()) );
+		Console.warning( oldstrutil::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetCont( nullptr );
 	}
 	if( getSerial == GetOwner() )
 	{
-		Console.warning( oldstrutil::format("Item 0x%X (%s) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str()) );
+		Console.warning( oldstrutil::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetOwner( nullptr );
 	}
 	if( getSerial == GetSpawn() )
 	{
-		Console.warning( oldstrutil::format("Item 0x%X (%s) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str() ));
+		Console.warning( oldstrutil::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetSpawn( INVALIDSERIAL );
 	}
 

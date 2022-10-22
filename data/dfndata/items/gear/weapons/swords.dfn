@@ -11,7 +11,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=classic
 restock=10
 }
 
@@ -45,7 +44,6 @@ id=0x13fe
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -79,7 +77,6 @@ id=0x0f5e
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -113,7 +110,6 @@ id=0x0f60
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -147,7 +143,6 @@ id=0x13b7
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -181,7 +176,6 @@ id=0x13b5
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -215,7 +209,6 @@ id=0x13b9
 decay=1
 good=21
 layer=1
-origin=classic
 restock=10
 }
 
@@ -253,7 +246,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=aos
 restock=10
 }
 
@@ -288,7 +280,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=aos
 restock=10
 }
 
@@ -323,7 +314,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=aos
 restock=10
 }
 
@@ -361,7 +351,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=se
 restock=10
 }
 
@@ -396,7 +385,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=se
 restock=10
 }
 
@@ -431,7 +419,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=se
 restock=10
 }
 
@@ -466,7 +453,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=se
 restock=10
 }
 
@@ -505,7 +491,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=ml
 restock=10
 }
 
@@ -540,7 +525,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=ml
 restock=10
 }
 
@@ -575,7 +559,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=ml
 restock=10
 }
 
@@ -613,7 +596,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -648,7 +630,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -683,7 +664,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -718,7 +698,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -753,7 +732,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -788,7 +766,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -823,7 +800,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -858,7 +834,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 
@@ -893,7 +868,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -931,7 +905,6 @@ decay=1
 good=21
 layer=1
 movable=1
-origin=tol
 restock=10
 }
 

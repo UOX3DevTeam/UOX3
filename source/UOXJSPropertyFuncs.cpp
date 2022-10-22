@@ -253,6 +253,7 @@ JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
 			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( tNPC_EVADETIME );		break;
 			case TIMER_LOYALTYTIME:		*vp = INT_TO_JSVAL( tNPC_LOYALTYTIME );		break;
+			case TIMER_IDLEANIMTIME:	*vp = INT_TO_JSVAL( tNPC_IDLEANIMTIME );	break;
 			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( tPC_LOGOUT );			break;
 
 			// Socket Timers (PC only)
@@ -419,6 +420,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		JSString *tString = nullptr;
 		switch( JSVAL_TO_INT( id ) )
 		{
+			case CIP_SECTIONID:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetSectionId().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
 			case CIP_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetName().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -909,6 +914,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		TIMERVAL newTime;
 		switch( JSVAL_TO_INT( id ) )
 		{
+			case CIP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );					break;
 			case CIP_NAME:			gPriv->SetName( encaps.toString() );						break;
 			case CIP_X:				gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );				break;
 			case CIP_Y:				gPriv->SetLocation( gPriv->GetX(), (SI16)encaps.toInt(), gPriv->GetZ() );				break;
@@ -1423,6 +1429,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );					break;
 			case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv, true ) );				break;
 			case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );			break;
+			case CCP_FLEEAT:		*vp = INT_TO_JSVAL( gPriv->GetFleeAt() );				break;
+			case CCP_REATTACKAT:	*vp = INT_TO_JSVAL( gPriv->GetReattackAt() );			break;
 			case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChance() );		break;
 			case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );					break;
 			case CCP_HUNGERRATE:
@@ -1787,6 +1795,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		{
 			case CCP_ACCOUNTNUM:	gPriv->SetAccountNum( (UI16)encaps.toInt() );						break;
 			case CCP_CREATEDON:		break;
+			case CCP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );									break;
 			case CCP_NAME:	gPriv->SetName( encaps.toString() );										break;
 			case CCP_TITLE:	gPriv->SetTitle( encaps.toString() );										break;
 			case CCP_X:		gPriv->SetLocation( (SI16)encaps.toInt(), gPriv->GetY(), gPriv->GetZ() );	break;
@@ -1894,6 +1903,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_HUNGER:		gPriv->SetHunger( (SI08)encaps.toInt() );			break;
 			case CCP_THIRST:		gPriv->SetThirst( (SI08)encaps.toInt() );			break;
 			case CCP_CANATTACK:		gPriv->SetCanAttack( encaps.toBool() );				break;
+			case CCP_FLEEAT:		gPriv->SetFleeAt( static_cast<SI16>( encaps.toInt() ));	break;
+			case CCP_REATTACKAT:	gPriv->SetReattackAt( static_cast<SI16>( encaps.toInt() ));			break;
 			case CCP_BRKPEACE:		gPriv->SetBrkPeaceChance( encaps.toInt() );		break;
 			case CCP_SETPEACE:		gPriv->SetPeace( encaps.toInt() );					break;
 			case CCP_FROZEN:		gPriv->SetFrozen( encaps.toBool() );				break;

@@ -57,9 +57,16 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.murdercount );
 		break;
 	case "HUE":
+	case "SKIN":
 	case "COLOR":
 	case "COLOUR":
 		socket.SysMessage( "0x" + (ourObj.colour).toString(16) + " (" + ourObj.colour + ")" );
+		break;
+	case "ORGHUE":
+	case "ORGSKIN":
+	case "ORGCOLOR":
+	case "ORGCOLOUR":
+		socket.SysMessage( "0x" + ( ourObj.orgSkin ).toString( 16 ) + " ( " + ourObj.orgSkin + ")" );
 		break;
 	case "MAXHP":
 		socket.SysMessage( ourObj.maxhp );
@@ -141,6 +148,9 @@ function onCallback0( socket, ourObj )
 		}
 		break;
 	}
+	case "SECTIONID":
+		socket.SysMessage( ourObj.sectionID );
+		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
 		break;

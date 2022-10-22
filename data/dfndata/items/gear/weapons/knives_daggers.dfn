@@ -11,7 +11,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=classic
 restock=10
 }
 
@@ -46,7 +45,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=classic
 restock=10
 }
 
@@ -81,7 +79,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=classic
 restock=10
 }
 
@@ -116,7 +113,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=classic
 restock=10
 }
 
@@ -154,7 +150,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=ml
 restock=10
 }
 
@@ -189,7 +184,6 @@ decay=1
 good=25
 layer=1
 movable=1
-origin=ml
 restock=10
 }
 
@@ -227,7 +221,6 @@ decay=1
 good=22
 layer=1
 movable=1
-origin=sa
 restock=10
 }
 

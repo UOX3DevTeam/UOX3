@@ -117,6 +117,7 @@ CChar *cCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 		if( !shouldSave )
 			cCreated->ShouldSave( false );
 
+		cCreated->SetSectionId( ourNPC );
 		cCreated->SetSkillTitles( true );
 		cCreated->SetNpc( true );
 		cCreated->SetLoDamage( 1 );

@@ -11,7 +11,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 maxuses=75
 usesleft=25
@@ -50,7 +49,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 maxuses=75
 usesleft=25
@@ -89,7 +87,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 }
 
@@ -124,7 +121,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 }
 
@@ -159,7 +155,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 }
 
@@ -194,7 +189,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 }
 
@@ -248,7 +242,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=classic
 restock=10
 }
 
@@ -286,7 +279,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=aos
 restock=10
 }
 
@@ -321,7 +313,6 @@ decay=1
 good=21
 layer=2
 movable=1
-origin=aos
 restock=10
 }
 
@@ -356,7 +347,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=aos
 restock=10
 }
 
@@ -394,7 +384,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=ml
 restock=10
 }
 
@@ -432,7 +421,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -467,7 +455,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -502,7 +489,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -537,7 +523,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
@@ -572,7 +557,6 @@ decay=1
 good=22
 layer=2
 movable=1
-origin=sa
 restock=10
 }
 
