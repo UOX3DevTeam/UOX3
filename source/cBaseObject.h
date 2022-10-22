@@ -69,6 +69,7 @@ protected:
 	SERIAL		owner;
 	RACEID		race;
 	std::string 	name;
+	std::string 	sectionId;
 	SI16			strength;
 	SI16			dexterity;
 	SI16			intelligence;
@@ -201,6 +202,9 @@ public:
 	std::string				GetNameRequest( CChar *nameRequester );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
+
+	std::string				GetSectionId( void ) const;
+	void					SetSectionId( std::string newSectionID );
 
 	virtual SI16			GetStrength( void ) const;
 	virtual SI16			GetDexterity( void ) const;

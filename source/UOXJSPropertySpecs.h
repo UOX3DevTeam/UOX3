@@ -110,6 +110,7 @@ static JSPropertySpec CTimerProperties[] =
 	{ "SUMMONTIME",			TIMER_SUMMONTIME,		JSPROP_ENUMPERMRO },
 	{ "EVADETIME",			TIMER_EVADETIME,		JSPROP_ENUMPERMRO },
 	{ "LOYALTYTIME",		TIMER_LOYALTYTIME,		JSPROP_ENUMPERMRO },
+	{ "IDLEANIMTIME",		TIMER_IDLEANIMTIME,		JSPROP_ENUMPERMRO },
 	{ "LOGOUT",				TIMER_LOGOUT,			JSPROP_ENUMPERMRO },
 
 	// Socket Timers
@@ -225,6 +226,7 @@ static JSPropertySpec CGuildProperties[] =
 
 static JSPropertySpec CCharacterProps[] =
 {
+	{ "sectionID",		CCP_SECTIONID,		JSPROP_ENUMANDPERM },
 	{ "name",			CCP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CCP_TITLE,			JSPROP_ENUMANDPERM },
 	{ "x",				CCP_X,				JSPROP_ENUMANDPERM },
@@ -235,6 +237,9 @@ static JSPropertySpec CCharacterProps[] =
 	{ "oldZ",			CCP_OLDZ,			JSPROP_ENUMANDPERM },
 	{ "id",				CCP_ID,				JSPROP_ENUMANDPERM },
 	{ "colour",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "color",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "skin",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "hue",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
 	{ "controlSlots",	CCP_CONTROLSLOTS,	JSPROP_ENUMANDPERM },
 	{ "controlSlotsUsed",	CCP_CONTROLSLOTSUSED,	JSPROP_ENUMANDPERM },
 	{ "orneriness",		CCP_ORNERINESS,		JSPROP_ENUMANDPERM },
@@ -261,6 +266,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO  },
 	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM },
+	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM },
+	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM },
 	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM },
 	{ "setPeace",		CCP_SETPEACE,		JSPROP_ENUMANDPERM },
 	{ "hunger",			CCP_HUNGER,			JSPROP_ENUMANDPERM },
@@ -404,6 +411,7 @@ static JSPropertySpec CCharacterProps[] =
 
 static JSPropertySpec CItemProps[] =
 {
+	{ "sectionID",		CIP_SECTIONID,		JSPROP_ENUMANDPERM },
 	{ "name",			CIP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CIP_TITLE,			JSPROP_ENUMANDPERM },
 	{ "x",				CIP_X,				JSPROP_ENUMANDPERM },
@@ -414,6 +422,9 @@ static JSPropertySpec CItemProps[] =
 	{ "oldZ",			CIP_OLDZ,			JSPROP_ENUMANDPERM },
 	{ "id",				CIP_ID,				JSPROP_ENUMANDPERM },
 	{ "colour",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "color",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "skin",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "hue",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
 	{ "owner",			CIP_OWNER,			JSPROP_ENUMANDPERM },
 	{ "visible",		CIP_VISIBLE,		JSPROP_ENUMANDPERM },
 	{ "serial",			CIP_SERIAL,			JSPROP_ENUMANDPERM },

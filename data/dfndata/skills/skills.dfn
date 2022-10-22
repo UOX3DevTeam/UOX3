@@ -282,7 +282,7 @@ SKILLPOINT=990,5,0
 SKILLPOINT=1000,0,0
 }
 
-// Cartogrophy
+// Cartography
 [SKILL 12]
 {
 NAME=CARTOGRAPHY

@@ -171,6 +171,7 @@ JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
+JSMethodFunc CBase_HasScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 
@@ -427,6 +428,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "AddFriend",			CChar_AddFriend,			1, 0, 0 },
 	{ "RemoveFriend",		CChar_RemoveFriend,			1, 0, 0 },
@@ -504,6 +506,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },
 	{ "SecureContainer",	CMulti_SecureContainer,		1, 0, 0 },

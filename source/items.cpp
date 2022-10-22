@@ -1053,6 +1053,9 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		{
 			iCreated->SetAmount( iAmount );
 		}
+
+		// Keep reference to DFN sectionId item was created from
+		iCreated->SetSectionId( ourItem );
 	}
 
 	return iCreated;

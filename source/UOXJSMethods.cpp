@@ -1801,7 +1801,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( speechType == UNKNOWN )
 			speechType = SAY;
 
-		if( myChar->GetNPCAiType() == AI_EVIL )
+		if( myChar->GetNpcAiType() == AI_EVIL || myChar->GetNpcAiType() == AI_EVIL_CASTER )
 		{
 			if( !txtHue )
 				txtHue = 0x0026;
@@ -9224,8 +9224,43 @@ JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsva
 	return JS_TRUE;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBase_HasScriptTrigger()
+//|	Prototype	-	void HasScriptTrigger( scriptTrigger )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if object has a specific scriptTrigger in it's list of scriptTriggers
+//o------------------------------------------------------------------------------------------------o
+JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		MethodError( "HasScriptTrigger: Invalid number of arguments (takes 1)" );
+		return JS_FALSE;
+	}
+
+	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( myObj ))
+	{
+		MethodError( "Invalid Object assigned (HasScriptTrigger)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ))
+	{
+		MethodError( "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
+	}
+
+	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	if( scriptId > 0 && myObj->HasScriptTrigger( scriptId ))
+	{
+		*rval = BOOLEAN_TO_JSVAL( true );
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRegion_AddScriptTrigger()
 //|	Prototype	-	void AddScriptTrigger( scriptTrigger )
 //o-----------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers

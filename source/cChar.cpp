@@ -273,6 +273,7 @@ raceGate( DEFCHAR_RACEGATE ), step( DEFCHAR_STEP ), priv( DEFCHAR_PRIV ), Poison
 	id		= 0x0190;
 	objType = OT_CHAR;
 	name	= "Mr. noname";
+	sectionId	= "UNKNOWN";
 
 	memset( &regen[0],			0, sizeof( TIMERVAL )	* 3 );
 	memset( &weathDamage[0],	0, sizeof( TIMERVAL )	* WEATHNUM );

@@ -8,7 +8,6 @@ layer=1
 restock=5
 decay=1
 good=27
-origin=classic
 }
 
 // Wand

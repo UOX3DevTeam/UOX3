@@ -13,7 +13,6 @@ movable=1
 decay=1
 good=23
 ammofx=0x090a
-origin=sa
 }
 
 // Soul Glaives - E/W
@@ -49,7 +48,6 @@ movable=1
 decay=1
 good=23
 ammofx=0x08ff
-origin=sa
 }
 
 // Boomerang - E/W
@@ -87,7 +85,6 @@ good=23
 ammofx=0x0901
 baserange=6
 maxrange=9
-origin=sa
 }
 
 // Cyclone - N/S
