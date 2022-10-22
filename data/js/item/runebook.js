@@ -542,6 +542,10 @@ function onGumpPress( pSocket, myButton, gumpData )
 					runeBook.more = 0;
 				}
 				runeBook.SetTag( "rune" + ( myButton - 100 ) + "Data", null );
+
+				// Reduce runecount in book
+				var runeCount = parseInt( runeBook.GetTag( "runeCount" ));
+				runeBook.SetTag( "runeCount", runeCount - 1 );
 				pSocket.SysMessage( GetDictionaryEntry( 9264, pSocket.language )); // You have removed the rune.
 			}
 			else
@@ -940,10 +944,10 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 		}
 
 		// Make sure there's space in the runebook for the new rune
-		var runeCount = runeBook.GetTag( "runeCount" );
+		var runeCount = parseInt( runeBook.GetTag( "runeCount" ));
 		if( runeCount >= maxRunes )
 		{
-			ppSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language )); // This runebook is full.
+			pSocket.SysMessage( GetDictionaryEntry( 9273, pSocket.language )); // This runebook is full.
 			return false;
 		}
 
@@ -963,7 +967,7 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 				runeBook.SetTag( "runeCount", runeCount + 1 );
 				iDropped.Delete();
 
-				var tempMsg = GetDictionaryEntry( 9273, pSocket.language ); // You've added a rune named %s to your Runebook.
+				var tempMsg = GetDictionaryEntry( 9274, pSocket.language ); // You've added a rune named %s to your Runebook.
 				pSocket.SysMessage( tempMsg.replace(/%s/gi, iName ));
 				pSocket.CloseGump( 0xffff + scriptID, 0 );
 				onUseChecked( pUser, runeBook );

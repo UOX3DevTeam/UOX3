@@ -2181,11 +2181,15 @@ void CItem::CheckItemIntegrity( void )
 
 	if( type == IT_CONTAINER && GetLayer() == IL_PACKITEM && (contObj != nullptr && contObj->CanBeObjType( OT_CHAR )))
 	{
-		UI16 maxItemsVal = GetMaxItems();
-		if( maxItemsVal == 0 )
+		if( GetMaxItems() == 0 )
 		{
 			SetMaxItems(cwmWorldState->ServerData()->MaxPlayerPackItems());
-			Console.warning(oldstrutil::format("Container (%s) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string(GetSerial()).c_str(), std::to_string(contObj->GetSerial()).c_str()));
+			Console.warning( oldstrutil::format( "Container (%s, from DFN section [%s]) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
+		}
+		if( GetWeightMax() == 0 )
+		{
+			SetWeightMax( cwmWorldState->ServerData()->MaxPlayerPackWeight() );
+			Console.warning( oldstrutil::format( "Container (%s, from DFN section [%s]) with weightMax set to 0 detected on character (%s). Resetting weightMax for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
 		}
 	}
 }

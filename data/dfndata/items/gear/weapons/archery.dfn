@@ -15,7 +15,6 @@ good=23
 ammo=0x1bfb
 ammofx=0x1bfe
 maxrange=8
-origin=classic
 }
 
 // Crossbow - N/S
@@ -90,7 +89,6 @@ good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
-origin=classic
 }
 
 // Bow - N/S
@@ -131,7 +129,6 @@ good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
-origin=aos
 }
 
 // Composite Bow - E/W
@@ -170,7 +167,6 @@ good=23
 ammo=0x1bfb
 ammofx=0x1bfe
 maxrange=7
-origin=aos
 }
 
 // Repeating Crossbow - E/W
@@ -211,7 +207,6 @@ good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
-origin=se
 }
 
 // Yumi - E/W
@@ -252,7 +247,6 @@ good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
-origin=ml
 }
 
 // Elven Composite Longbow - E/W
@@ -290,7 +284,6 @@ good=23
 ammo=0x0f3f
 ammofx=0x0f42
 maxrange=10
-origin=ml
 }
 
 // Magical Shortbow - E/W

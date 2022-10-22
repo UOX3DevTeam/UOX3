@@ -270,11 +270,6 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	// Check magery skill for non-GM characters
 	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
 	{
-		if( mChar.isHuman )
-		{
-			mChar.TextMessage( mSpell.mantra );
-		}
-
 		// Only remove reagents for normal spells
 		if( spellType == 0 )
 		{
@@ -293,8 +288,10 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		mChar.health 	= mChar.health - mSpell.health;
 		mChar.stamina	= mChar.stamina - mSpell.stamina;
 	}
-	else if( !mChar.npc && spellType == 0 )
+	if( !mChar.npc && spellType == 0 )
+	{
 		deleteReagents( mChar, mSpell );
+	}
 
 	sourceChar.SoundEffect( mSpell.soundEffect, true );
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
