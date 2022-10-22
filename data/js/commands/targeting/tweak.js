@@ -108,21 +108,22 @@ const itemProp = {
 	restock:86,
 	scripttrigger:87,
 	sectionalist:88,
-	sellvalue:89,
-	spawnsection:90,
-	speed:91,
-	strength:92,
-	tempTimer:93,
-	type:94,
-	usesLeft:95,
-	visible:96,
-	weight:97,
-	weightMax:98,
-	wipable:99,
-	worldnumber:100,
-	x:101,
-	y:102,
-	z:103
+	sectionID:89,
+	sellvalue:90,
+	spawnsection:91,
+	speed:92,
+	strength:93,
+	tempTimer:94,
+	type:95,
+	usesLeft:96,
+	visible:97,
+	weight:98,
+	weightMax:99,
+	wipable:100,
+	worldnumber:101,
+	x:102,
+	y:103,
+	z:104
 };
 
 // List of character properties to handle
@@ -223,46 +224,47 @@ var charProp = {
 	region:293,
 	sayColour:294,
 	scripttrigger:295,
-	singClickSer:296,
-	skillLock:297,
-	skills:298,
-	skillsused:299,
-	skillToPeace:300,
-	skillToProv:301,
-	skillToTame:302,
-	spattack:303,
-	spdelay:304,
-	spellCast:305,
-	split:306,
-	splitchance:307,
-	squelch:308,
-	stabled:309,
-	stamina:310,
-	stealth:311,
-	strength:312,
-	tamed:313,
-	tamedHungerRate:314,
-	tamedThirstRate:315,
-	target:316,
-	tempdex:317,
-	tempint:318,
-	tempstr:319,
-	thirst:320,
-	thirstWildChance:321,
-	title:322,
-	town:323,
-	townPriv:324,
-	trainer:325,
-	visible:326,
-	vulnerable:327,
-	wandertype:328,
-	weight:329,
-	willhunger:330,
-	willthirst:331,
-	worldnumber:332,
-	x:333,
-	y:334,
-	z:335
+	sectionID:296,
+	singClickSer:297,
+	skillLock:298,
+	skills:299,
+	skillsused:300,
+	skillToPeace:301,
+	skillToProv:302,
+	skillToTame:303,
+	spattack:304,
+	spdelay:305,
+	spellCast:306,
+	split:307,
+	splitchance:308,
+	squelch:309,
+	stabled:310,
+	stamina:311,
+	stealth:312,
+	strength:313,
+	tamed:314,
+	tamedHungerRate:315,
+	tamedThirstRate:316,
+	target:317,
+	tempdex:318,
+	tempint:319,
+	tempstr:320,
+	thirst:321,
+	thirstWildChance:322,
+	title:323,
+	town:324,
+	townPriv:325,
+	trainer:326,
+	visible:327,
+	vulnerable:328,
+	wandertype:329,
+	weight:330,
+	willhunger:331,
+	willthirst:332,
+	worldnumber:333,
+	x:334,
+	y:335,
+	z:336
 }
 
 // List of character skills to handle
@@ -432,8 +434,8 @@ var accountProp = {
 };*/
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
-const itemPropCount = 84;
-const charPropCount = 136;
+const itemPropCount = 85;
+const charPropCount = 137;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
@@ -1216,6 +1218,10 @@ function HandleItemTarget( pSocket, myTarget )
 					itemValue 		=  (myTarget.hasOwnProperty('sectionalist') ? (myTarget.sectionalist ? "true" : "false") : "<BASEFONT color=#EECD8B>n/a</BASEFONT>");
 				}
 				break;
+			case itemProp.sectionID:
+				itemLabelTooltip 	= GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
+				itemValue 			= myTarget.sectionID;
+				break;
 			case itemProp.sellvalue:
 				itemLabelTooltip 	= GetDictionaryEntry( 8191, pSocket.language ); // Item's sell value - price player can sell item to NPC shopkeeper for
 				itemValue 			= (myTarget.sellvalue).toString();
@@ -1399,12 +1405,15 @@ function HandleCharTarget( pSocket, myTarget )
 				case 115:
 					gumpPage = 8;
 					break;
+				case 132:
+					gumpPage = 9;
+					break;
 				default:
 					break;
 			}
 
 			// Only add these when it's time for a new page
-			if( i == 13 || i == 30 || i == 47 || i == 64 || i == 81 || i == 98 || i == 115 )
+			if( i == 13 || i == 30 || i == 47 || i == 64 || i == 81 || i == 98 || i == 115 || i == 132 )
 			{
 				pageXlabelStartY = 59;
 				pageXbuttonStartY = 60;
@@ -1858,6 +1867,10 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.scripttrigger:
 				charLabelTooltip 	= GetDictionaryEntry( 8390, pSocket.language ); // JS Script assigned to character
 				charValue 			= (myTarget.scripttrigger).toString();
+				break;
+			case charProp.sectionID:
+				charLabelTooltip 	= GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
+				charValue 			= ( myTarget.sectionID ).toString();
 				break;
 			case charProp.singClickSer:
 				charLabelTooltip 	= GetDictionaryEntry( 8391, pSocket.language ); // Toggles whether single-clicks shows serial of clicked object
@@ -3868,6 +3881,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = GetDictionaryEntry( 8175, pSocket.language ); // Secondary name of object, revealed using item identification
 			maxLength = 127;
 			break;
+		case itemProp.sectionID:
+			propertyName = "sectionID";
+			propertyType = "Text";
+			propertyHint = GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
+			maxLength = 127;
+			break;
 		case itemProp.spawnsection:
 			propertyName = "spawnSection";
 			propertyType = "Text";
@@ -3879,6 +3898,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "foodList";
 			propertyType = "Text";
 			propertyHint = GetDictionaryEntry( 8325, pSocket.language ); // ID of foodlist that a creature will accept as food, from UOX3/dfndata/items/itemlists/foodlists.dfn
+			maxLength = 127;
+			break;
+		case charProp.sectionID:
+			propertyName = "sectionID";
+			propertyType = "Text";
+			propertyHint = GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
 			maxLength = 127;
 			break;
 		case charProp.guildTitle:

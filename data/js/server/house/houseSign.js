@@ -19,7 +19,7 @@ var maxOwners = 0;
 var visitCount = 0;
 var iMulti;
 var iSign;
-var houseOwner = "";
+var houseOwner = "Unknown";
 var houseIsPublic = false;
 var houseCoOwnerList = [];
 var houseFriendList = [];
@@ -51,8 +51,12 @@ function onUseUnChecked( pUser, iUsed )
 
 			// Let's keep track of some data for use in the house menu gump!
 			// First, get an up-to-date reference to owner of house
-			var houseOwnerSerial = iMulti.owner.serial & 0x00FFFFFF;
-			houseOwner = (CalcCharFromSer(houseOwnerSerial)).name;
+			var houseOwnerSerial = -1;
+			if( ValidateObject( iMulti.owner ))
+			{
+				houseOwnerSerial = iMulti.owner.serial & 0x00FFFFFF;
+				houseOwner = (CalcCharFromSer(houseOwnerSerial)).name;
+			}
 
 			// The double-clicked item is the house sign!
 			iSign = iUsed;
@@ -61,11 +65,13 @@ function onUseUnChecked( pUser, iUsed )
 			// TODO - OR, if option is enabled, simply check if player is holding a KEY
 			// This key-based option would do away with lists of owners/co-owners. Keyholder is owner!
 			// If multiple people hold key to house - well, multiple people own the house.
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ) || pUser.isGM )
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
 			{
 				// Store serial of sign in multi's MORE property
 				if( iMulti.more == 0 )
+				{
 					iMulti.more = iUsed.serial;
+				}
 
 				// Set scripttrigger 15000 on houses that were created prior to the version that
 				// automatically adds this based on tag in houses.dfn
@@ -74,10 +80,14 @@ function onUseUnChecked( pUser, iUsed )
 				for( var i = 0; i < scriptTriggers.length; i++ )
 				{
 					if( scriptTriggers[i] == 15000 )
+					{
 						scriptFound = true;
+					}
 				}
 				if( !scriptFound )
+				{
 					iMulti.scripttrigger = 15000;
+				}
 
 				// Then grab some other data and store them in global
 				// (across this instance of the script only) variables
@@ -135,7 +145,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 2: // Open house sign selection gump
 			if( houseIsPublic )
 			{
-				if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+				if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
 				{
 					houseSignSelectionGump( pUser );
 				}
@@ -150,13 +160,15 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case 3: // Change house sign
 			if( houseIsPublic )
 			{
-				if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+				if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
 				{
 					if( pSocket.GetWord( 21 ) > 0 )
 					{
 						var newID = pSocket.GetWord( 21 );
 						if( iSign.id % 2 == 0 )
+						{
 							iSign.id = newID;
+						}
 						else
 						{
 							newID -= 1;
@@ -177,7 +189,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			houseOwnerGump( pUser );
 			break;
 		case 4: // Change House Name
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
 			{
 				houseSignNameInputGump( pUser );
 			}
@@ -187,7 +199,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 5: // Confirm New Name
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
 			{
 				var newName = gumpData.getEdit(0);
 				if( newName.length <= 60 ) // Estimated longest name that fits inside sign gump
@@ -200,7 +212,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 10: // List co-owners
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
 			{
 				displayPlayerList( pUser, "owner" );
 			}
@@ -210,19 +222,23 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 11: // Add player as co-owner - only actual owner should be able to do this!
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "AddOwner", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1832, pSocket.language )); // Only the primary house owner may add co-owners!
 			break;
 		case 12: // Remove player as co-owner
-			if( iMulti.IsOwner( pUser ) || iMulti.IsOnOwnerList( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ) || iMulti.IsOnOwnerList( pUser ))
+			{
 				TriggerEvent( 15002, "RemoveOwnerTrigger", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1839, pSocket.language )); // Only the primary house owner can remove co-owners!
 			break;
 		case 13: // Clear co-owner list - only actual owner should be able to do this!
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 14;
 				var confirmString = GetDictionaryEntry( 1946, pSocket.language ); // Are you sure you want to <I>clear the co-owner list</I> for this house?
@@ -234,30 +250,36 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 14: // Confirm clear co-owner list
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				iMulti.ClearOwnerList();
 				pSocket.SysMessage( GetDictionaryEntry( 1948, pSocket.language )); // Owner list for this house has been cleared!
 			}
 			break;
 		case 20: // List friends
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				displayPlayerList( pUser, "friend" );
+			}
 			break;
 		case 21: // Add player as friend of multi
-			if( iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
+			{
 				TriggerEvent( 15002, "AddFriend", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1848, pSocket.language )); // Only house owners and co-owners can add someone to the friend list!
 			break;
 		case 22: // Remove player as friend of multi
-			if( iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
+			{
 				TriggerEvent( 15002, "RemoveFriendTrigger", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1853, pSocket.language )); // Only house owners and co-owners can remove someone from the friend list!
 			break;
 		case 23: // Clear friend list - only actual owner should be able to do this!
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 24;
 				var confirmString = GetDictionaryEntry( 1949, pSocket.language ); // Are you sure you want to <I>clear the friend list</I> for this house?
@@ -269,46 +291,60 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 24: // Confirm clear friend list
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				iMulti.ClearFriendList();
 				pSocket.SysMessage( GetDictionaryEntry( 1951, pSocket.language )); // Friend list for this house has been cleared!
 			}
 			break;
 		case 30: // Ban player from house
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				TriggerEvent( 15002, "BanPlayer", pSocket, iMulti );
+			}
 			break;
 		case 31: // Eject someone from house
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				TriggerEvent( 15002, "EjectPlayer", pSocket, iMulti );
+			}
 			break;
 		case 32: // List banned players
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				displayPlayerList( pUser, "banned" );
+			}
 			break;
 		case 33: // Remove someone from ban list
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				TriggerEvent( 15002, "UnbanPlayerTrigger", pSocket, iMulti );
+			}
 			break;
 		case 40: // List guests
-			if( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ) || iMulti.IsOnFriendList( pUser ))
+			{
 				displayPlayerList( pUser, "guest" );
+			}
 			break;
 		case 41: // Add player as guest of multi
-			if( iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
+			{
 				TriggerEvent( 15002, "AddGuest", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1859, pSocket.language )); // Only house owners and co-owners can add someone to the guest list!
 			break;
 		case 42: // Remove player as guest of multi
-			if( iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))
+			if( pUser.isGM || iMulti.IsOnOwnerList( pUser )|| ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))
+			{
 				TriggerEvent( 15002, "RemoveGuestTrigger", pSocket, iMulti );
+			}
 			else
 				pSocket.SysMessage( GetDictionaryEntry( 1867, pSocket.language )); // Only house owners and co-owners can remove someone from the guest list!
 			break;
 		case 43: // Clear guest list - only actual owner should be able to do this!
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 44;
 				var confirmString = GetDictionaryEntry( 1952, pSocket.language ); // Are you sure you want to <I>clear the guest list</I> for this house?
@@ -320,14 +356,14 @@ function onGumpPress( pSocket, pButton, gumpData )
 			}
 			break;
 		case 44: // Confirm clear guest list
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				iMulti.ClearGuestList();
 				pSocket.SysMessage( GetDictionaryEntry( 1954, pSocket.language )); // Friend list for this house has been cleared!
 			}
 			break;
 		case 50: // Transfer primary ownership of house
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 55;
 				var confirmString = GetDictionaryEntry( 1955, pSocket.language ); // Are you sure you want to <I>transfer ownership</I> of this house?
@@ -337,7 +373,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				pSocket.SysMessage( GetDictionaryEntry( 1822, pSocket.language )); // Only the primary house owner can transfer ownership of the house!
 			break;
 		case 51: // Demolish house and get a deed back
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 56;
 				var confirmString = GetDictionaryEntry( 1956, pSocket.language ); // Are you sure you want to <I>demolish</I> this house?
@@ -347,7 +383,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				pSocket.SysMessage( GetDictionaryEntry( 1957, pSocket.language )); // Only the primary house owner can demolish the house!
 			break;
 		case 52: // Change the house locks
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 57;
 				var confirmString = GetDictionaryEntry( 1958, pSocket.language ); // Are you sure you want to <I>change the locks</I> on this house?
@@ -357,7 +393,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				pSocket.SysMessage( GetDictionaryEntry( 1959, pSocket.language )); // Only the primary house owner can change the house locks!
 			break;
 		case 53: // Declare building to be public
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 58;
 				var confirmString = GetDictionaryEntry( 1960, pSocket.language ); // Are you sure you want to make this house <I>Public</I>?
@@ -367,7 +403,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 				pSocket.SysMessage( GetDictionaryEntry( 1961, pSocket.language )); // Only the primary house owner can declare the house as public!
 			break;
 		case 54: // Declare building to be private
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
 			{
 				var confirmButtonID = 59;
 				var confirmString = GetDictionaryEntry( 1962, pSocket.language ); // Are you sure you want to make this house <I>Private</I>?
@@ -377,38 +413,56 @@ function onGumpPress( pSocket, pButton, gumpData )
 				pSocket.SysMessage( GetDictionaryEntry( 1963, pSocket.language )); // Only the primary house owner can declare the house as private!
 			break;
 		case 55: // Confirm transfer of ownership
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "TransferOwnership", pSocket, iMulti );
+			}
 			break;
 		case 56: // Confirm demolish house
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "DemolishHouse", pSocket, iMulti );
+			}
 			break;
 		case 57: // Confirm change locks
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "ChangeHouseLocks", pSocket, iMulti );
+			}
 			break;
 		case 58: // Confirm turn house public
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "DeclareHousePublic", pSocket, iMulti );
+			}
 			break;
 		case 59: // Confirm turn house private
-			if( iMulti.IsOwner( pUser ))
+			if( pUser.isGM || iMulti.IsOwner( pUser ))
+			{
 				TriggerEvent( 15002, "DeclareHousePrivate", pSocket, iMulti );
+			}
 			break;
 		default:
 			break;
 	}
 
 	// Handle owner/friend/ban-list removal buttons
-	if( pButton >= 100 && pButton <= 250 && iMulti.IsOwner( pUser ))
+	if( pButton >= 100 && pButton <= 250 && ( iMulti.IsOwner( pUser ) || pUser.isGM ))
+	{
 		TriggerEvent( 15002, "RemoveOwner", pSocket, houseCoOwnerList[(pButton-100)], iMulti );
-	else if( pButton >= 300 && pButton <= 450 && ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum )))
+	}
+	else if( pButton >= 300 && pButton <= 450 && ( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))))
+	{
 		TriggerEvent( 15002, "RemoveFriend", pSocket, houseFriendList[(pButton-300)], iMulti );
-	else if( pButton >= 500 && pButton <= 650 && ( iMulti.IsOnFriendList( pUser ) || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum ))))
+	}
+	else if( pButton >= 500 && pButton <= 650 && ( pUser.isGM || ( iMulti.IsOnFriendList( pUser ) || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))))
+	{
 		TriggerEvent( 15002, "UnbanPlayer", pSocket, houseBanList[(pButton-500)], iMulti );
-	else if( pButton >= 700 && pButton <= 750 && ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum )))
+	}
+	else if( pButton >= 700 && pButton <= 750 && ( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum ))))
+	{
 		TriggerEvent( 15002, "RemoveGuest", pSocket, houseGuestList[(pButton-700)], iMulti );
+	}
 }
 
 // Display list of co-owners, friends or banned players

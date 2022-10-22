@@ -1,8 +1,15 @@
 function CommandRegistration()
 {
 	RegisterCommand( "telestuff", 1, true );
+	RegisterCommand( "move", 1, true );
 	RegisterCommand( "tele", 1, true );
 	RegisterCommand( "teleport", 1, true );
+}
+
+// Alias of TELESTUFF
+function command_MOVE( socket, cmdString )
+{
+	command_TELESTUFF( pSocket, cmdString );
 }
 
 function command_TELESTUFF( socket, cmdString )

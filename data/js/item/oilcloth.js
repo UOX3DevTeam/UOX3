@@ -48,5 +48,15 @@ function onCallback0( pSock, myTarget )
 		}
 	}
 	else
+	{
+		if( myTarget.isChar && myTarget == pUser && ( myTarget.id == 0x00b7 || myTarget.id == 0x00b8 ))
+		{
+			pSock.SysMessage( GetDictionaryEntry( 1681, pSock.language )); // You wipe away all of your body paint.
+			pUser.id = pUser.orgID;
+			pUser.colour = pUser.orgSkin;
+			return;
+		}
+
 		pSock.SysMessage( GetDictionaryEntry( 2755, pSock.language )); // That's not an item!
+	}
 }

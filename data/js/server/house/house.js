@@ -80,11 +80,11 @@ function onEntrance( iMulti, charEntering, objType )
 		}
 
 		// Prevent unauthorized visitors from entering private buildings
-		if( !ValidateObject( charEntering.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
+		if( !ValidateObject( charEntering.owner ) || !ValidateObject( iMulti.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
 		{
 			if( !iMulti.isPublic && protectPrivateHouses
 				&& ( !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ) && !iMulti.IsOnGuestList( charEntering )
-					&& ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
+					&& ( !coOwnHousesOnSameAccount || !ValidateObject( iMulti.owner ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
 			{
 				// Prevent unauthorized visitors from entering private buildings
 				PreventMultiAccess( iMulti, charEntering, 1, 1817 ); // This is a private home
