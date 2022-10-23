@@ -87,7 +87,10 @@ CFLAGS          += $(OPTIMIZER) $(OS_CFLAGS) $(DEFINES) $(INCLUDES) $(XCFLAGS)
 LDFLAGS		= $(XLDFLAGS)
 
 ifndef NO_LIBM
+# BeOS, FreeBSD, and HP-UX do not require the extra linking of "-lm"
+ifeq (,$(filter BeOS FreeBSD HP-UX WINNT WINCE OpenVMS,$(OS_ARCH)))
 LDFLAGS += -lm
+endif
 endif
 
 # Prevent floating point errors caused by VC++ optimizations
