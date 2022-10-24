@@ -1,13 +1,22 @@
 #!/usr/bin/env bash
 echo "Building spidermonkey"
 cd spidermonkey
-make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
+if [ "$(uname)" = "FreeBSD" ]
+then
+  gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang
+else
+  make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
+fi
 
 if [ "$(uname)" = "Darwin" ]
 then
         # Mac OS X
         ar rcs libjs32.a Darwin_DBG.OBJ/*.o
         cp Darwin_DBG.OBJ/jsautocfg.h ./
+elif [ "$(uname)" = "FreeBSD" ]
+then
+        ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o
+        cp FreeBSD_DBG.OBJ/jsautocfg.h ./
 elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]
 then
         # Linux
@@ -17,12 +26,17 @@ fi
 cd ../zlib
 echo "Bulding zlib"
 make distclean
-./configure 
-make 
+./configure
+make
 
 cd ../source
 echo "Building UOX3"
-make
+if [ "$(uname)" = "FreeBSD" ]
+then
+  gmake
+else
+  make
+fi
 cp uox3 ..
 cd ..
 echo "Done! You should now find the compiled uox3 binary in the root UOX3 project directory. Copy this binary to a separate directory dedicated to running your UOX3 shard, along with the contents of the UOX3/data directory, to avoid potential git conflicts and accidental overwriting of data when pulling UOX3 updates in the future."

@@ -3751,7 +3751,7 @@ JSBool SE_DeleteFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetServerSetting( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	*rval = NULL;
+	*rval = reinterpret_cast<long>(nullptr);
 
 	if( argc != 1 )
 	{
