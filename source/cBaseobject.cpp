@@ -1739,7 +1739,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "DAMAGEABLE" )
 			{
-				SetDamageable( oldstrutil::value<std::uint8_t>( data ) == 1 );
+				SetDamageable( oldstrutil::value<UI08>( data ) == 1 );
 			}
 			else if( UTag == "DIRECTION" || UTag == "DIR" )
 			{
@@ -1789,7 +1789,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "DISABLED" )
 			{
-				SetDisabled( oldstrutil::value<std::int16_t>( data ) == 1 );
+				SetDisabled( oldstrutil::value<SI16>( data ) == 1 );
 			}
 			else
 			{
@@ -1799,7 +1799,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'F':
 			if( UTag == "FAME" )
 			{
-				SetFame( oldstrutil::value<std::int16_t>( data ));
+				SetFame( oldstrutil::value<SI16>( data ));
 			}
 			else
 			{
@@ -1809,11 +1809,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'H':
 			if( UTag == "HITPOINTS" )
 			{
-				hitpoints = oldstrutil::value<std::int16_t>( data );
+				hitpoints = oldstrutil::value<SI16>( data );
 			}
 			else if( UTag == "HIDAMAGE" )
 			{
-				hiDamage = oldstrutil::value<std::int16_t>( data );
+				hiDamage = oldstrutil::value<SI16>( data );
 			}
 			else
 			{
@@ -1823,7 +1823,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'I':
 			if( UTag == "ID" )
 			{
-				id = oldstrutil::value<std::int16_t>( data );
+				id = oldstrutil::value<SI16>( data );
 			}
 			else if( UTag == "INTELLIGENCE" )
 			{
@@ -1834,12 +1834,12 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				}
 				else
 				{
-					intelligence = oldstrutil::value<std::int16_t>( data );
+					intelligence = oldstrutil::value<SI16>( data );
 				}
 			}
 			else if( UTag == "INTELLIGENCE2" )
 			{
-				in2	= oldstrutil::value<std::int16_t>( data );
+				in2	= oldstrutil::value<SI16>( data );
 			}
 			else
 			{
@@ -1849,11 +1849,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'K':
 			if( UTag == "KARMA" )
 			{
-				SetKarma( oldstrutil::value<std::int16_t>( data ));
+				SetKarma( oldstrutil::value<SI16>( data ));
 			}
 			else if( UTag == "KILLS" )
 			{
-				SetKills( oldstrutil::value<std::int16_t>( data ));
+				SetKills( oldstrutil::value<SI16>( data ));
 			}
 			else
 			{
@@ -1880,7 +1880,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "LODAMAGE" )
 			{
-				loDamage = oldstrutil::value<std::int16_t>( data );
+				loDamage = oldstrutil::value<SI16>( data );
 			}
 			else
 			{
@@ -1890,11 +1890,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'M':
 			if( UTag == "MANA" )
 			{
-				mana = oldstrutil::value<std::int16_t>( data );
+				mana = oldstrutil::value<SI16>( data );
 			}
 			else if( UTag == "MULTIID" )
 			{
-				tempMulti = (oldstrutil::value<std::uint32_t>( data ));
+				tempMulti = (oldstrutil::value<UI32>( data ));
 				multis = nullptr;
 			}
 			else
@@ -1915,7 +1915,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'O':
 			if( UTag == "OWNERID" )
 			{
-				owner = oldstrutil::value<std::uint32_t>( data );
+				owner = oldstrutil::value<UI32>( data );
 			}
 			else
 			{
@@ -1925,7 +1925,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'P':
 			if( UTag == "POISONED" )
 			{
-				poisoned = oldstrutil::value<std::uint8_t>( data );
+				poisoned = oldstrutil::value<UI08>( data );
 			}
 			else
 			{
@@ -1935,7 +1935,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'R':
 			if( UTag == "RACE" )
 			{
-				race = oldstrutil::value<std::uint16_t>( data );
+				race = oldstrutil::value<UI16>( data );
 			}
 			else if( UTag == "REPUTATION" )
 			{
@@ -1959,15 +1959,15 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "STAMINA" )
 			{
-				stamina	= oldstrutil::value<std::int16_t>( data );
+				stamina	= oldstrutil::value<SI16>( data );
 			}
 			else if( UTag == "SPAWNERID" )
 			{
-				spawnSerial = oldstrutil::value<std::uint32_t>( data );
+				spawnSerial = oldstrutil::value<UI32>( data );
 			}
 			else if( UTag == "SERIAL" )
 			{
-				serial = oldstrutil::value<std::uint32_t>( data );
+				serial = oldstrutil::value<UI32>( data );
 			}
 			else if( UTag == "STRENGTH" )
 			{
@@ -1978,17 +1978,17 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 				}
 				else
 				{
-					strength = oldstrutil::value<std::int16_t>( data );
+					strength = oldstrutil::value<SI16>( data );
 				}
 			}
 			else if( UTag == "STRENGTH2" )
 			{
-				st2	= oldstrutil::value<std::int16_t>( data );
+				st2	= oldstrutil::value<SI16>( data );
 			}
 			else if( UTag == "SCPTRIG" )
 			{
-				//scriptTrig	= oldstrutil::value<std::uint16_t>(data);
-				std::uint16_t scriptId = oldstrutil::value<std::uint16_t>( data );
+				//scriptTrig	= oldstrutil::value<UI16>(data);
+				UI16 scriptId = oldstrutil::value<UI16>( data );
 				if( scriptId != 0 && scriptId != 65535 )
 				{
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -1998,7 +1998,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					}
 					else
 					{
-						this->AddScriptTrigger( oldstrutil::value<std::uint16_t>( data ));
+						this->AddScriptTrigger( oldstrutil::value<UI16>( data ));
 					}
 				}
 			}
@@ -2054,15 +2054,15 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'W':
 			if( UTag == "WEIGHT" )
 			{
-				SetWeight( oldstrutil::value<std::int32_t>( data ));
+				SetWeight( oldstrutil::value<SI32>( data ));
 			}
 			else if( UTag == "WIPE" )
 			{
-				SetWipeable( oldstrutil::value<std::uint8_t>( data ) == 1 );
+				SetWipeable( oldstrutil::value<UI08>( data ) == 1 );
 			}
 			else if( UTag == "WORLDNUMBER" )
 			{
-				worldNumber = oldstrutil::value<std::uint8_t>( data );
+				worldNumber = oldstrutil::value<UI08>( data );
 			}
 			else
 			{
@@ -2099,7 +2099,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			else if( UTag == "X" ) // For backwards compatibility with older UOX3 versions
 			{
-				x = oldstrutil::value<std::uint16_t>( data );
+				x = oldstrutil::value<UI16>( data );
 			}
 			else
 			{
@@ -2109,7 +2109,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'Y':
 			if( UTag == "Y" ) // For backwards compatibility with older UOX3 versions
 			{
-				y = oldstrutil::value<std::uint16_t>( data );
+				y = oldstrutil::value<UI16>( data );
 			}
 			else
 			{
@@ -2119,7 +2119,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'Z':
 			if( UTag == "Z" ) // For backwards compatibility with older UOX3 versions
 			{
-				z = oldstrutil::value<std::uint16_t>( data );
+				z = oldstrutil::value<UI16>( data );
 			}
 			else
 			{

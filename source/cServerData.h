@@ -60,7 +60,7 @@ enum ServerFeatures
 	SF_BIT_COUNT
 };
 
-enum AssistantFeatures : std::uint64_t
+enum AssistantFeatures : UI64
 {
 	AF_NONE = 0,
 
@@ -190,7 +190,7 @@ public:
 	auto GetName() const -> const std::string&;
 	auto GetDomain() const -> const std::string&;
 	auto GetIP() const -> const std::string&;
-	auto GetPort() const -> std::uint16_t;
+	auto GetPort() const -> UI16;
 
 private:
 	std::string name;
@@ -416,11 +416,11 @@ private:
 	UI32		guardPayment;				//	Time (in seconds) between payments for guards
 
 	void	PostLoadDefaults();
-	static const std::map<std::string, std::int32_t> uox3IniCaseValue;
+	static const std::map<std::string, SI32> uox3IniCaseValue;
 public:
 	UI64		DisabledAssistantFeatures;
 	
-	auto 		LookupINIValue( const std::string& tag ) -> std::int32_t;
+	auto 		LookupINIValue( const std::string& tag ) -> SI32;
 
 	auto		SetServerFeature( ServerFeatures, bool ) -> void;
 	auto		SetServerFeatures( size_t ) -> void;
@@ -456,7 +456,7 @@ public:
 	LIGHTLEVEL	WorldLightBrightLevel() const;
 	LIGHTLEVEL	WorldLightCurrentLevel() const;
 	LIGHTLEVEL	DungeonLightLevel() const;
-	auto		ServerStartPrivs() const -> std::uint16_t;
+	auto		ServerStartPrivs() const -> UI16;
 	SI16		ServerStartGold() const;
 
 	auto		ServerMoon( SI16 slot, SI16 value ) -> void;
@@ -490,7 +490,7 @@ public:
 	auto		ExternalIP() const -> const std::string &;
 	auto 		ExternalIP( const std::string &ip ) -> void;
 	auto		ServerPort( UI16 setport ) -> void;
-	auto		ServerPort() const -> std::uint16_t;
+	auto		ServerPort() const -> UI16;
 	auto		ServerConsoleLog( bool setting ) -> void;
 	auto		ServerConsoleLog() const -> bool;
 	auto		ServerNetworkLog( bool setting ) -> void;
@@ -514,22 +514,22 @@ public:
 	auto		ServerMainThreadTimer( UI32 threadtimer ) -> void;
 	UI32		ServerMainThreadTimerStatus() const;
 	auto		ServerSkillTotalCap( UI16 cap ) -> void;
-	auto		ServerSkillTotalCapStatus() const -> std::uint16_t;
+	auto		ServerSkillTotalCapStatus() const -> UI16;
 	auto		ServerSkillCap( UI16 cap ) -> void;
-	auto		ServerSkillCapStatus() const -> std::uint16_t;
+	auto		ServerSkillCapStatus() const -> UI16;
 	auto		ServerSkillDelay( UI08 skdelay ) -> void;
 	UI08		ServerSkillDelayStatus() const;
 	auto		ServerStatCap( UI16 cap ) -> void;
-	auto		ServerStatCapStatus() const -> std::uint16_t;
+	auto		ServerStatCapStatus() const -> UI16;
 	auto		MaxStealthMovement( SI16 value ) -> void;
 	SI16		MaxStealthMovement() const;
 	auto		MaxStaminaMovement( SI16 value ) -> void;
 	SI16		MaxStaminaMovement() const;
 	auto		SystemTimer( cSD_TID timerId, UI16 value ) -> void;
-	auto		SystemTimer( cSD_TID timerId ) const -> std::uint16_t;
+	auto		SystemTimer( cSD_TID timerId ) const -> UI16;
 	TIMERVAL	BuildSystemTimeValue( cSD_TID timerId ) const;
 	auto		SysMsgColour( UI16 value ) -> void;
-	auto		SysMsgColour() const -> std::uint16_t;
+	auto		SysMsgColour() const -> UI16;
 
 	auto		ServerUOGEnabled() const -> bool { return uogEnabled; }
 	auto		ServerUOGEnabled( bool uogValue ) -> void {	uogEnabled = uogValue; }
@@ -795,10 +795,10 @@ public:
 	auto		CoOwnHousesOnSameAccount() const -> bool;
 
 	auto		MaxHousesOwnable( UI16 value ) -> void;
-	auto		MaxHousesOwnable() const -> std::uint16_t;
+	auto		MaxHousesOwnable() const -> UI16;
 
 	auto		MaxHousesCoOwnable( UI16 value ) -> void;
-	auto		MaxHousesCoOwnable() const -> std::uint16_t;
+	auto		MaxHousesCoOwnable() const -> UI16;
 
 	auto		PaperdollGuildButton( bool value ) -> void;
 	auto		PaperdollGuildButton() const -> bool;
@@ -807,7 +807,7 @@ public:
 	auto		CombatMonstersVsAnimals() const -> bool;
 
 	auto		CombatAnimalsAttackChance( UI16 value ) -> void;
-	auto		CombatAnimalsAttackChance() const -> std::uint16_t;
+	auto		CombatAnimalsAttackChance() const -> UI16;
 
 	auto		CombatArcheryShootDelay( R32 value ) -> void;
 	R32			CombatArcheryShootDelay() const;
@@ -885,10 +885,10 @@ public:
 	UI08		MaxPetOwners() const;
 
 	auto		SetPetLoyaltyGainOnSuccess( UI16 value ) -> void;
-	auto		GetPetLoyaltyGainOnSuccess() const -> std::uint16_t;
+	auto		GetPetLoyaltyGainOnSuccess() const -> UI16;
 
 	auto		SetPetLoyaltyLossOnFailure( UI16 value ) -> void;
-	auto		GetPetLoyaltyLossOnFailure() const -> std::uint16_t;
+	auto		GetPetLoyaltyLossOnFailure() const -> UI16;
 
 	auto		MaxSafeTeleportsPerDay( UI08 value ) -> void;
 	UI08		MaxSafeTeleportsPerDay() const;
@@ -918,7 +918,7 @@ public:
 	auto		PetThirstOffline() const -> bool;
 
 	auto		PetOfflineTimeout( UI16 value ) -> void;
-	auto		PetOfflineTimeout() const -> std::uint16_t;
+	auto		PetOfflineTimeout() const -> UI16;
 
 	auto		BuyThreshold( SI16 value ) -> void;
 	SI16		BuyThreshold() const;
@@ -999,25 +999,25 @@ public:
 	R32			NPCMountedFleeingSpeed() const;
 
 	auto		TitleColour( UI16 value ) -> void;
-	auto		TitleColour() const -> std::uint16_t;
+	auto		TitleColour() const -> UI16;
 
 	auto		LeftTextColour( UI16 value ) -> void;
-	auto		LeftTextColour() const -> std::uint16_t;
+	auto		LeftTextColour() const -> UI16;
 
 	auto		RightTextColour( UI16 value ) -> void;
-	auto		RightTextColour() const -> std::uint16_t;
+	auto		RightTextColour() const -> UI16;
 
 	auto		ButtonCancel( UI16 value ) -> void;
-	auto		ButtonCancel() const -> std::uint16_t;
+	auto		ButtonCancel() const -> UI16;
 
 	auto		ButtonLeft( UI16 value ) -> void;
-	auto		ButtonLeft() const -> std::uint16_t;
+	auto		ButtonLeft() const -> UI16;
 
 	auto		ButtonRight( UI16 value ) -> void;
-	auto		ButtonRight() const -> std::uint16_t;
+	auto		ButtonRight() const -> UI16;
 
 	auto		BackgroundPic( UI16 value ) -> void;
-	auto		BackgroundPic() const -> std::uint16_t;
+	auto		BackgroundPic() const -> UI16;
 
 	auto		TownNumSecsPollOpen( UI32 value ) -> void;
 	UI32		TownNumSecsPollOpen() const;
@@ -1032,43 +1032,43 @@ public:
 	UI32		TownGuardPayment() const;
 
 	auto		RepMaxKills( UI16 value ) -> void;
-	auto		RepMaxKills() const -> std::uint16_t;
+	auto		RepMaxKills() const -> UI16;
 
 	auto		ResLogs( SI16 value ) -> void;
 	SI16		ResLogs() const;
 
 	auto		ResLogTime( UI16 value ) -> void;
-	auto		ResLogTime() const -> std::uint16_t;
+	auto		ResLogTime() const -> UI16;
 
 	auto		ResOre( SI16 value ) -> void;
 	SI16		ResOre() const;
 
 	auto		ResOreTime( UI16 value ) -> void;
-	auto		ResOreTime() const -> std::uint16_t;
+	auto		ResOreTime() const -> UI16;
 
 	auto		ResourceAreaSize( UI16 value ) -> void;
-	auto		ResourceAreaSize() const -> std::uint16_t;
+	auto		ResourceAreaSize() const -> UI16;
 
 	auto		ResFish( SI16 value ) -> void;
 	SI16		ResFish() const;
 
 	auto		ResFishTime( UI16 value ) -> void;
-	auto		ResFishTime() const -> std::uint16_t;
+	auto		ResFishTime() const -> UI16;
 
 	auto		AccountFlushTimer( R64 value ) -> void;
 	R64			AccountFlushTimer() const;
 
 	auto		TrackingBaseRange( UI16 value ) -> void;
-	auto		TrackingBaseRange() const -> std::uint16_t;
+	auto		TrackingBaseRange() const -> UI16;
 
 	auto		TrackingMaxTargets( UI08 value ) -> void;
 	UI08		TrackingMaxTargets() const;
 
 	auto		TrackingBaseTimer( UI16 value ) -> void;
-	auto		TrackingBaseTimer() const -> std::uint16_t;
+	auto		TrackingBaseTimer() const -> UI16;
 
 	auto		TrackingRedisplayTime( UI16 value ) -> void;
-	auto		TrackingRedisplayTime() const -> std::uint16_t;
+	auto		TrackingRedisplayTime() const -> UI16;
 
 	// Sept 22, 2002 - Support for HideWhileMounted fix.
 	auto		CharHideWhileMounted( bool value ) -> void;
@@ -1099,10 +1099,10 @@ public:
 
 	auto		NumServerLocations() const -> size_t;
 
-	auto		ServerSecondsPerUOMinute() const -> std::uint16_t;
+	auto		ServerSecondsPerUOMinute() const -> UI16;
 	auto		ServerSecondsPerUOMinute( UI16 newVal ) -> void;
 
-	auto		ServerLanguage() const -> std::uint16_t;
+	auto		ServerLanguage() const -> UI16;
 	auto		ServerLanguage( UI16 newVal ) -> void;
 
 	UI32		MaxClientBytesIn() const;
@@ -1114,7 +1114,7 @@ public:
 	UI32		NetTrafficTimeban() const;
 	auto		NetTrafficTimeban( UI32 newVal ) -> void;
 
-	auto		GetJSEngineSize() const -> std::uint16_t;
+	auto		GetJSEngineSize() const -> UI16;
 	auto		SetJSEngineSize( UI16 newVal ) -> void;
 
 	SI16		ServerTimeDay() const;
@@ -1144,7 +1144,7 @@ public:
 	auto		matchIP( const Ip4Addr_st &ip ) const -> Ip4Addr_st;
 
 	PhysicalServer *ServerEntry( UI16 entryNum );
-	auto			ServerCount() const -> std::uint16_t;
+	auto			ServerCount() const -> UI16;
 
 private:
 	bool			resettingDefaults;

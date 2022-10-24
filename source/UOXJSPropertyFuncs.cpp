@@ -1045,7 +1045,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_SCRIPTTRIGGER:
 			{
 				// For backwards compatibility; clears out other scripts and assigns a specific script
-				std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+				UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
@@ -1062,7 +1062,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			{
 				if( *vp != JSVAL_NULL )
 				{
-					std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+					UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
@@ -2010,7 +2010,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SCRIPTTRIGGER:
 			{
 				// For backwards compatibility; clears out other scripts and assigns a specific script
-				std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+				UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
@@ -2027,7 +2027,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			{
 				if( *vp != JSVAL_NULL )
 				{
-					std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+					UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
@@ -2535,7 +2535,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CREGP_SCRIPTTRIGGER:
 			{
 				// For backwards compatibility; clears out other scripts and assigns a specific script
-				std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+				UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
@@ -2552,7 +2552,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			{
 				if( *vp != JSVAL_NULL )
 				{
-					std::uint16_t scriptId = static_cast<UI16>( encaps.toInt() );
+					UI16 scriptId = static_cast<UI16>( encaps.toInt() );
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{

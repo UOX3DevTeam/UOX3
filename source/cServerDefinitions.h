@@ -62,7 +62,7 @@ private:
 	auto BuildPriorityMap( DEFINITIONCATEGORIES category, UI08 &wasPrioritized ) -> void;
 	auto CleanPriorityMap() -> void;
 
-	auto GetPriority( const char *file ) -> std::int16_t;
+	auto GetPriority( const char *file ) -> SI16;
 
 	auto Cleanup() -> void;
 public:

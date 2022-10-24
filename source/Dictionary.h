@@ -23,7 +23,7 @@ public:
 	auto GetEntry( int message_number ) -> std::string&;
 
 	auto ShowList() -> void;
-	auto LoadDictionary( const std::string filepath = "", const std::string &language = "" ) -> std::int32_t;
+	auto LoadDictionary( const std::string filepath = "", const std::string &language = "" ) -> SI32;
 	auto NumberOfEntries() const -> size_t;
 	auto GetValid() const -> bool;
 private:

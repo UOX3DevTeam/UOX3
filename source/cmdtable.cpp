@@ -755,7 +755,7 @@ void Command_Respawn( void )
 {
 	UI32 spawnedItems		= 0;
 	UI32 spawnedNpcs		= 0;
-	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&spawnedItems, &spawnedNpcs]( std::pair<std::uint16_t, CSpawnRegion *> entry )
+	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&spawnedItems, &spawnedNpcs]( std::pair<UI16, CSpawnRegion *> entry )
 	{
 		if( entry.second )
 		{
@@ -783,7 +783,7 @@ void Command_RegSpawn( CSocket *s )
 
 		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
-			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<std::uint16_t, CSpawnRegion *> entry )
+			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
 				if( entry.second )
 				{

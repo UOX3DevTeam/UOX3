@@ -287,7 +287,7 @@ auto CConsole::operator << ( const std::int8_t *output ) -> CConsole&
 auto CConsole::operator << ( const std::uint8_t &output ) -> CConsole&
 {
 	StartOfLineCheck();
-	std::cout << static_cast<std::uint16_t>( output );
+	std::cout << static_cast<UI16>( output );
 	return ( *this );
 }
 //================================================================================================
@@ -298,7 +298,7 @@ auto CConsole::operator << ( const std::int8_t &output ) -> CConsole&
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::uint16_t &output ) -> CConsole&
+auto CConsole::operator << ( const UI16 &output ) -> CConsole&
 {
 	StartOfLineCheck();
 	std::cout << output;

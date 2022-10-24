@@ -74,7 +74,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m )
 	std::string tag	= gump->First();
 	if( oldstrutil::upper( oldstrutil::extractSection( tag, " ", 0, 0 )) == "TYPE" )
 	{
-		targType = oldstrutil::value<std::uint8_t>( oldstrutil::extractSection( tag, " ", 1, 1 ));
+		targType = oldstrutil::value<UI08>( oldstrutil::extractSection( tag, " ", 1, 1 ));
 		tag = gump->Next();
 	}
 	for(; !gump->AtEnd(); tag = gump->Next() )
@@ -1133,7 +1133,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 					if( secs.size() > 1 )
 					{
 						std::string tmp		= oldstrutil::trim( oldstrutil::removeTrailing( secs[0], "//" ));
-						UI16 num			= oldstrutil::value<std::uint16_t>( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )));
+						UI16 num			= oldstrutil::value<UI16>( oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" )));
 
 						if( addAtLoc.m_IntValue == 1 )
 						{

@@ -2744,7 +2744,7 @@ JSBool SE_IterateOverSpawnRegions( JSContext *cx, JSObject *obj, uintN argc, jsv
 
 	if( myScript != nullptr )
 	{
-		std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&myScript, &b]( std::pair<std::uint16_t, CSpawnRegion*> entry )
+		std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&myScript, &b]( std::pair<UI16, CSpawnRegion*> entry )
 		{
 			if( entry.second )
 			{

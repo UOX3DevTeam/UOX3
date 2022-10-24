@@ -8452,9 +8452,9 @@ bool CountHousesOwnedFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	}
 	return true;
 }
-auto CChar::CountHousesOwned( bool countCoOwnedHouses ) -> std::uint32_t
+auto CChar::CountHousesOwned( bool countCoOwnedHouses ) -> UI32
 {
-	auto b = std::uint32_t( 0 );
+	auto b = UI32( 0 );
 	if( cwmWorldState->ServerData()->TrackHousesPerAccount() || countCoOwnedHouses )
 	{
 		// Count all houses owned by characters on player's account by iterating over all multis on the server(!)

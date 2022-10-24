@@ -768,7 +768,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		return nullptr;
 	}
 
-	constexpr std::uint16_t maxSize = 1024;
+	constexpr UI16 maxSize = 1024;
 	std::string temp;
 	CMultiObj *house = nullptr;
 	CItem *fakeHouse = nullptr;

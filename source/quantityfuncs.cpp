@@ -6,7 +6,7 @@
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of items in a container
 //o------------------------------------------------------------------------------------------------o
-auto GetSubTotalItemCount( CItem *objCont ) -> std::uint32_t
+auto GetSubTotalItemCount( CItem *objCont ) -> UI32
 {
 	UI32 total = 0;
 	auto pCont = objCont->GetContainsList();
@@ -49,7 +49,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o------------------------------------------------------------------------------------------------o
-auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false ) -> std::uint32_t
+auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false ) -> UI32
 {
 	UI32 total = 0;
 	auto pCont = p->GetContainsList();
@@ -96,7 +96,7 @@ UI32 GetItemAmount( CChar *s, UI16 realId, UI16 realColour, UI32 realMoreVal, bo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a certain amount of an item of specified color in a pack
 //o------------------------------------------------------------------------------------------------o
-auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal ) -> std::uint32_t
+auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal ) -> UI32
 {
 	if( !ValidateObject( p ))
 		return 0;

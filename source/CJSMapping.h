@@ -27,10 +27,10 @@ public:
 	CJSMappingSection( SCRIPTTYPE sT );
 	~CJSMappingSection();
 
-	auto jsCollection() const -> const std::map<JSObject*, std::uint16_t>& { return scriptJSMap; }
-	auto jsCollection()  -> std::map<JSObject*, std::uint16_t>& { return scriptJSMap; }
-	auto collection() const -> const std::map<std::uint16_t, cScript*>& { return scriptIdMap; }
-	auto collection()  -> std::map<std::uint16_t, cScript*>& { return scriptIdMap; }
+	auto jsCollection() const -> const std::map<JSObject*, UI16>& { return scriptJSMap; }
+	auto jsCollection()  -> std::map<JSObject*, UI16>& { return scriptJSMap; }
+	auto collection() const -> const std::map<UI16, cScript*>& { return scriptIdMap; }
+	auto collection()  -> std::map<UI16, cScript*>& { return scriptIdMap; }
 	
 
 	void		Reload( UI16 toLoad );

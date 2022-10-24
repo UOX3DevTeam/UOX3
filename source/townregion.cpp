@@ -755,7 +755,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 				}
 				else if( UTag == "SCRIPT" )
 				{
-					std::uint16_t scriptId = static_cast<std::uint16_t>( duint );
+					UI16 scriptId = static_cast<UI16>( duint );
 					if( scriptId != 0 )
 					{
 						cScript *toExecute	= JSMapping->GetScript( scriptId );
@@ -1894,7 +1894,7 @@ auto CTownRegion::SendEnemyTowns( CSocket *sock ) -> void
 	auto Enemy = CGumpDisplay( sock, 300, 300 );
 
 	UI08 enemyCount = 0;
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [this, &enemyCount, &Enemy]( const std::pair<std::uint16_t, CTownRegion*> &entry )
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [this, &enemyCount, &Enemy]( const std::pair<UI16, CTownRegion*> &entry )
 	{
 		if(( entry.first != regionNum ) && ( Races->CompareByRace( race, entry.second->GetRace() ) <= RACE_ENEMY ))
 		{

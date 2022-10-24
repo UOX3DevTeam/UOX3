@@ -6452,7 +6452,7 @@ void CPGameServerList::AddServer( UI16 servNum, PhysicalServer *data )
 	UI32 baseOffset = 6 + servNum * 40;
 	pStream.WriteShort(  baseOffset, servNum + 1 );
 	pStream.WriteString( static_cast<size_t>( baseOffset ) + 2, data->GetName(), data->GetName().length() );
-	auto ip = std::uint32_t( 0 );
+	auto ip = UI32( 0 );
 
 	inet_pton( AF_INET, data->GetIP().c_str(), &ip );
 	

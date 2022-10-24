@@ -7,12 +7,12 @@
 #include "uox3.h"
 #include "ssection.h"
 
-constexpr auto DFN_STRING 		= std::uint8_t( 0 );
-constexpr auto DFN_NUMERIC 		= std::uint8_t( 1 );
-constexpr auto DFN_UPPERSTRING 	= std::uint8_t( 2 );
-constexpr auto DFN_NODATA 		= std::uint8_t( 3 );
-constexpr auto DFN_UNKNOWN 		= std::uint8_t( 4 );
-constexpr auto DFN_DOUBLENUMERIC= std::uint8_t( 5 );
+constexpr auto DFN_STRING 		= UI08( 0 );
+constexpr auto DFN_NUMERIC 		= UI08( 1 );
+constexpr auto DFN_UPPERSTRING 	= UI08( 2 );
+constexpr auto DFN_NODATA 		= UI08( 3 );
+constexpr auto DFN_UNKNOWN 		= UI08( 4 );
+constexpr auto DFN_DOUBLENUMERIC= UI08( 5 );
 
 using namespace std::string_literals;
 // 04302004 - Added DFN_UPPERSTRING to support the new DFNTAG_ADDMENUITEM tag

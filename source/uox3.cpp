@@ -668,7 +668,7 @@ auto UnloadSpawnRegions() -> void
 //o------------------------------------------------------------------------------------------------o
 auto UnloadRegions() -> void
 {
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), []( const std::pair<std::uint16_t, CTownRegion *> &entry )
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), []( const std::pair<UI16, CTownRegion *> &entry )
 	{
 		if( entry.second )
 		{
@@ -864,8 +864,8 @@ auto UpdateStats( CBaseObject *mObj, UI08 x ) -> void
 auto CollectGarbage() -> void
 {
 	Console << "Performing Garbage Collection...";
-	auto objectsDeleted = std::uint32_t( 0 );
-	std::for_each( cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(), [&objectsDeleted]( std::pair<CBaseObject*, std::uint32_t> entry )
+	auto objectsDeleted = UI32( 0 );
+	std::for_each( cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(), [&objectsDeleted]( std::pair<CBaseObject*, UI32> entry )
 	{
 		if( entry.first )
 		{
@@ -2175,7 +2175,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 	}
 	if(( nextCheckTownRegions <= GetUICurrentTime() ) || GetOverflow() )
 	{
-		std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[]( std::pair<const std::uint16_t, CTownRegion*> &town )
+		std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(),[]( std::pair<const UI16, CTownRegion*> &town )
 		{
 			if( town.second != nullptr )
 			{
@@ -2499,7 +2499,7 @@ auto CWorldMain::CheckAutoTimers() -> void
 	SpeechSys->Poll();
 
 	// Implement RefreshItem() / StatWindow() queue here
-	std::for_each( cwmWorldState->refreshQueue.begin(), cwmWorldState->refreshQueue.end(), []( std::pair<CBaseObject*, std::uint32_t> entry )
+	std::for_each( cwmWorldState->refreshQueue.begin(), cwmWorldState->refreshQueue.end(), []( std::pair<CBaseObject*, UI32> entry )
 	{
 		if( ValidateObject( entry.first ))
 		{
@@ -2923,7 +2923,7 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( nullptr, applyTo, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0],"//") ), oldstrutil::value<std::uint16_t>( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0],"//") ), oldstrutil::value<UI16>( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
 							}
 							else
 							{
@@ -2980,10 +2980,10 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return CPU time used, Emulates clock()
 //o------------------------------------------------------------------------------------------------o
-auto GetClock() -> std::uint32_t
+auto GetClock() -> UI32
 {
 	auto now = std::chrono::system_clock::now();
-	return static_cast<std::uint32_t>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
+	return static_cast<UI32>( std::chrono::duration_cast<std::chrono::milliseconds>( now - current ).count() );
 }
 
 //o------------------------------------------------------------------------------------------------o

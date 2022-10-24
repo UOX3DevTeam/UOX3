@@ -120,7 +120,7 @@ auto CDictionary::ShowList() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load dictionary file for selected language
 //o------------------------------------------------------------------------------------------------o
-auto CDictionary::LoadDictionary( const std::string filepath, const std::string &language ) -> std::int32_t
+auto CDictionary::LoadDictionary( const std::string filepath, const std::string &language ) -> SI32
 {
 	if( !filepath.empty() )
 	{
@@ -145,7 +145,7 @@ auto CDictionary::LoadDictionary( const std::string filepath, const std::string 
 		Console.PrintSpecial(CRED, "failed");
 	}
 
-	return static_cast<std::int32_t>( msgdata.size() );
+	return static_cast<SI32>( msgdata.size() );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -262,7 +262,7 @@ CDictionaryContainer::CDictionaryContainer()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loop through all supported dictionary languages and load each dictionary 
 //o------------------------------------------------------------------------------------------------o
-auto CDictionaryContainer::LoadDictionaries( const std::string &filepath ) -> std::int32_t
+auto CDictionaryContainer::LoadDictionaries( const std::string &filepath ) -> SI32
 {
 	SI32 rValue = 0;
 	for( auto i = static_cast<int>( DL_DEFAULT ); i < static_cast<int>( DL_COUNT ); i++ )

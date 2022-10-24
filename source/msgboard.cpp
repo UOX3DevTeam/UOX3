@@ -341,7 +341,7 @@ void MsgBoardWritePost( std::ofstream& mFile, const MsgBoardPost_st& msgBoardPos
 	{
 		// Write length of line as next byte, and
 		// then write the line as next X bytes
-		auto lineSize = static_cast<std::uint8_t>( entry.size() );
+		auto lineSize = static_cast<UI08>( entry.size() );
 		mFile.write(( const char * )&lineSize, 1 );
 		mFile.write( entry.c_str(), lineSize );
 	});
@@ -403,7 +403,7 @@ SERIAL MsgBoardWritePost( MsgBoardPost_st& msgBoardPost, const std::string& file
 	auto totalSize			= static_cast<UI16>( 15 + posterSize + subjSize + timeSize );
 	std::for_each( msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(), [&totalSize]( const std::string &entry )
 	{
-		totalSize += 1 + static_cast<std::uint16_t>( entry.size() );
+		totalSize += 1 + static_cast<UI16>( entry.size() );
 	});
 
 	msgBoardPost.size			= totalSize;
