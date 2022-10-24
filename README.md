@@ -23,8 +23,14 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
 First step, open a new terminal and enter the commands below:
 
-1) (Linux) `sudo apt install git` - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
-1) (macOS) `xcode-select --install` - This will install git if not already installed, along with required make and gcc tools
+1) Install prerequisites:
+
+   * **Linux:** `sudo apt install git` - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.
+
+   * **macOS:** `xcode-select --install` - This will install git if not already installed, along with required make and gcc tools
+
+   * **FreeBSD:** `pkg install git gmake` - This will install git and gmake if not already installed. Alternatively, build `git` and `gmake` via ports if desired.
+
 2) `git clone https://github.com/UOX3DevTeam/UOX3.git` - This will clone the stable master branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (v1.7.0) is also included, as well as a minimal set of files required to compile zlib-1.2.11.
 
 <details>
@@ -48,7 +54,7 @@ First step, open a new terminal and enter the commands below:
 
 ## Step 2: Compile UOX3
 <details>
-  <summary>Compiling with GNU Make and GCC (v9.x and above)</summary>
+  <summary>Compiling with GNU Make and GCC (v9.x and above) or Clang</summary>
 
 You'll need a couple tools before you can compile UOX3 on Linux, like **GNU Make** (*v4.2.1* or higher recommended) and **gcc** (*v9.x* or higher recommended). Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (example specific to Debian/Ubuntu Linux flavours):
 
@@ -79,13 +85,18 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
   If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):
 
   - `cd spidermonkey`
-  - `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc`
   ### Linux ###
+  - `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc`
   - `ar -r libjs32.a Linux_All_DBG.OBJ/*.o`
   - `cp Linux_All_DBG.OBJ/jsautocfg.h ./`
   ### macOS ###
+  - `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc`
   - `ar rcs libjs32.a Darwin_DBG.OBJ/*.o`
   - `cp Darwin_DBG.OBJ/jsautocfg.h ./`
+  ### FreeBSD ###
+  - `gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang`
+  - `ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o`
+  - `cp FreeBSD_DBG.OBJ/jsautocfg.h ./`
 
   *Next up, compile a static library of the included zlib package:*
 
@@ -97,7 +108,7 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
   *At this point, now cd to the root UOX3 project directory and build UOX3:*
 
   - `cd ../source`
-  - `make`
+  - `make` (`gmake` under FreeBSD)
 
 </details>
 
