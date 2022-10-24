@@ -258,6 +258,7 @@ else
     uname=`(uname -sr || echo unknown) 2>/dev/null`
   fi
   case "$uname" in
+  FreeBSD*)  CFLAGS=${CFLAGS-"-O -fPIC"} ;;
   HP-UX*)    SFLAGS=${CFLAGS-"-O +z"}
              CFLAGS=${CFLAGS-"-O"}
 #            LDSHARED=${LDSHARED-"ld -b +vnocompatwarnings"}

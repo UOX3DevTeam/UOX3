@@ -28,6 +28,7 @@ constexpr auto MAX_TRIES = 3;
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
+#include <sys/socket.h>
 #endif
 using namespace std::string_literals ;
 //=================================================================================
