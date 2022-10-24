@@ -28,9 +28,7 @@ constexpr auto MAX_TRIES = 3;
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
-#if defined(__DragonFly__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
-  #include <sys/socket.h>  // AF_INET, SOCK_DGRAM, and struct sockaddr
-#endif
+#include <sys/socket.h>
 #endif
 using namespace std::string_literals ;
 //=================================================================================
