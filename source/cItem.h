@@ -69,188 +69,188 @@ protected:
 
 	std::bitset<WEATHNUM>	weatherBools;	// For elemental weaponry.  So a Heat weapon would be a fire weapon, and does elemental damage to Heat weak races
 
-	void			RemoveSelfFromCont( void );
+	auto			RemoveSelfFromCont() -> void;
 	virtual void	RemoveSelfFromOwner( void ) override;
 	virtual void	AddSelfToOwner( void ) override;
 
-	void			CheckItemIntegrity( void );
+	auto			CheckItemIntegrity() -> void;
 	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool	LoadRemnants( void ) override;
 
 	UI16			entryMadeFrom;
 	UI32			spells[3];		// For spellbooks (eventually should be a derived class)
 
-	void			CopyData( CItem *target );
+	auto			CopyData( CItem *target ) -> void;
 
 public:
 
-	GenericList<CItem *> *	GetContainsList( void );
+	auto	GetContainsList() -> GenericList<CItem *> *;
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
-	UI16			EntryMadeFrom( void ) const;
-	void			EntryMadeFrom( UI16 newValue );
+	auto			EntryMadeFrom() const -> UI16;
+	auto			EntryMadeFrom( UI16 newValue ) -> void;
 
-	bool			GetWeatherDamage( WeatherType effectNum ) const;
-	void			SetWeatherDamage( WeatherType effectNum, bool value );
+	auto			GetWeatherDamage( WeatherType effectNum ) const -> bool;
+	auto			SetWeatherDamage( WeatherType effectNum, bool value ) -> void;
 
-	CItem *			Dupe( ObjectType itemType = OT_ITEM );
+	auto			Dupe( ObjectType itemType = OT_ITEM ) -> CItem *;
 
-	CBaseObject *	GetCont(   void ) const;
-	SERIAL			GetContSerial( void ) const;
+	auto			GetCont() const -> CBaseObject *;
+	auto			GetContSerial() const -> SERIAL;
 
-	bool			SetCont(   CBaseObject *newCont, bool removeFromView = false );
-	bool			SetContSerial( SERIAL newSerial );
+	auto			SetCont(   CBaseObject *newCont, bool removeFromView = false ) -> bool;
+	auto			SetContSerial( SERIAL newSerial ) -> bool;
 
-	SI08			GetGridLocation( void ) const;
-	void			SetGridLocation( SI08 newLoc );
+	auto			GetGridLocation() const -> SI08;
+	auto			SetGridLocation( SI08 newLoc ) -> void;
 
-	bool			IsDoorOpen( void ) const;
-	bool			IsPileable( void ) const;
-	bool			IsDyeable( void ) const;
-	bool			IsCorpse( void ) const;
-	bool			IsHeldOnCursor( void ) const;
-	bool			IsGuarded( void ) const;
-	bool			IsSpawnerList( void ) const;
-	bool			IsMarkedByMaker( void ) const;
+	auto			IsDoorOpen() const -> bool;
+	auto			IsPileable() const -> bool;
+	auto			IsDyeable() const -> bool;
+	auto			IsCorpse() const -> bool;
+	auto			IsHeldOnCursor() const -> bool;
+	auto			IsGuarded() const -> bool;
+	auto			IsSpawnerList() const -> bool;
+	auto			IsMarkedByMaker() const -> bool;
 
-	bool			IsNewbie( void ) const;
-	bool			IsDecayable( void ) const;
-	bool			IsDispellable( void ) const;
-	bool			IsDivineLocked( void ) const;
+	auto			IsNewbie() const -> bool;
+	auto			IsDecayable() const -> bool;
+	auto			IsDispellable() const -> bool;
+	auto			IsDivineLocked() const -> bool;
 
-	void			SetDoorOpen( bool newValue );
-	void			SetPileable( bool newValue );
-	void			SetDye( bool newValue );
-	void			SetCorpse( bool newValue );
-	void			SetHeldOnCursor( bool newValue );
+	auto			SetDoorOpen( bool newValue ) -> void;
+	auto			SetPileable( bool newValue ) -> void;
+	auto			SetDye( bool newValue ) -> void;
+	auto			SetCorpse( bool newValue ) -> void;
+	auto			SetHeldOnCursor( bool newValue ) -> void;
 	virtual void	SetGuarded( bool newValue );
-	void			SetSpawnerList( bool newValue );
-	void			SetMakersMark( bool newValue );
+	auto			SetSpawnerList( bool newValue ) -> void;
+	auto			SetMakersMark( bool newValue ) -> void;
 
-	void			SetNewbie( bool newValue );
-	void			SetDecayable( bool newValue );
-	void			SetDispellable( bool newValue );
-	void			SetDivineLock( bool newValue );
+	auto			SetNewbie( bool newValue ) -> void;
+	auto			SetDecayable( bool newValue ) -> void;
+	auto			SetDispellable( bool newValue ) -> void;
+	auto			SetDivineLock( bool newValue ) -> void;
 
 	auto			GetName2() const -> const std::string&;
-	SERIAL			GetCreator( void ) const;
-	std::string 	GetDesc( void ) const;
-	std::string 	GetEvent( void ) const;
+	auto			GetCreator() const -> SERIAL;
+	auto			GetDesc() const -> std::string;
+	auto 			GetEvent() const -> std::string;
 
 	auto			SetName2( const std::string &value ) -> void;
-	void			SetCreator( SERIAL newValue );
-	void			SetDesc( std::string newValue );
-	void			SetEvent( std::string newValue );
+	auto			SetCreator( SERIAL newValue ) -> void;
+	auto			SetDesc( std::string newValue ) -> void;
+	auto			SetEvent( std::string newValue ) -> void;
 
-	void			PlaceInPack( void );
+	auto			PlaceInPack() -> void;
 	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
 	virtual void	SetLocation( const CBaseObject *toSet ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, SI08 newLoc, UI08 world, UI16 instanceId );
-	void			IncZ( SI16 newValue );
-	void			IncLocation( SI16 xInc, SI16 yInc );
+	auto			IncZ( SI16 newValue ) -> void;
+	auto			IncLocation( SI16 xInc, SI16 yInc ) -> void;
 
-	void			SetRegion( UI16 newValue );
-	CTownRegion		*GetRegion( void ) const;
-	UI16			GetRegionNum( void ) const;
+	auto			SetRegion( UI16 newValue ) -> void;
+	auto			GetRegion() const -> CTownRegion*;
+	auto			GetRegionNum() const -> UI16;
 
-	bool			InDungeon( void );
+	auto			InDungeon() -> bool;
 
-	ItemLayers		GetLayer( void ) const;
-	void			SetLayer( ItemLayers newValue );
+	auto			GetLayer() const -> ItemLayers;
+	auto			SetLayer( ItemLayers newValue ) -> void;
 
-	ItemTypes		GetType( void ) const;
-	void			SetType( ItemTypes newValue );
+	auto			GetType() const -> ItemTypes;
+	auto			SetType( ItemTypes newValue ) -> void;
 
-	SI08			GetOffSpell( void ) const;
-	void			SetOffSpell( SI08 newValue );
+	auto			GetOffSpell() const -> SI08;
+	auto			SetOffSpell( SI08 newValue ) -> void;
 
-	UI32			GetTempVar( CITempVars whichVar ) const;
-	void			SetTempVar( CITempVars whichVar, UI32 newVal );
-	UI08			GetTempVar( CITempVars whichVar, UI08 part ) const;
-	void			SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal );
+	auto			GetTempVar( CITempVars whichVar ) const -> UI32;
+	auto			SetTempVar( CITempVars whichVar, UI32 newVal ) -> void;
+	auto			GetTempVar( CITempVars whichVar, UI08 part ) const -> UI08;
+	auto			SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal ) -> void;
 
-	UI16			GetAmount( void ) const;
-	void			SetAmount( UI32 newValue );
-	bool			IncAmount( SI32 incValue, bool noDelete = false );
+	auto			GetAmount() const -> UI16;
+	auto			SetAmount( UI32 newValue ) -> void;
+	auto			IncAmount( SI32 incValue, bool noDelete = false ) -> bool;
 
 	virtual UI16	GetMaxHP( void ) const;
 	virtual void	SetMaxHP( UI16 newValue );
 
-	UI08			GetSpeed( void ) const;
-	void			SetSpeed( UI08 newValue );
+	auto			GetSpeed() const -> UI08;
+	auto			SetSpeed( UI08 newValue ) -> void;
 
-	UI08			GetMaxRange( void ) const;
-	void			SetMaxRange( UI08 newValue );
+	auto			GetMaxRange() const -> UI08;
+	auto			SetMaxRange( UI08 newValue ) -> void;
 
-	UI08			GetBaseRange( void ) const;
-	void			SetBaseRange( UI08 newValue );
+	auto			GetBaseRange() const -> UI08;
+	auto			SetBaseRange( UI08 newValue ) -> void;
 
-	SI08			GetMovable( void ) const;
-	void			SetMovable( SI08 newValue );
+	auto			GetMovable() const -> SI08;
+	auto			SetMovable( SI08 newValue ) -> void;
 
-	TIMERVAL		GetTempTimer( void ) const;
-	TIMERVAL		GetDecayTime( void ) const;
+	auto			GetTempTimer() const -> TIMERVAL;
+	auto			GetDecayTime() const -> TIMERVAL;
 
-	void			SetTempTimer( TIMERVAL newValue );
-	void			SetDecayTime( TIMERVAL newValue );
+	auto			SetTempTimer( TIMERVAL newValue ) -> void;
+	auto			SetDecayTime( TIMERVAL newValue ) -> void;
 
 	virtual UI08	GetPriv( void ) const;
 	virtual void	SetPriv( UI08 newValue );
 
-	UI32			GetBuyValue( void ) const;
-	void			SetBuyValue( UI32 newValue );
-	UI32			GetSellValue( void ) const;
-	void			SetSellValue( UI32 newValue );
+	auto			GetBuyValue() const -> UI32;
+	auto			SetBuyValue( UI32 newValue ) -> void;
+	auto			GetSellValue() const -> UI32;
+	auto			SetSellValue( UI32 newValue ) -> void;
 
-	UI16			GetRestock( void ) const;
-	void			SetRestock( UI16 newValue );
+	auto			GetRestock() const -> UI16;
+	auto			SetRestock( UI16 newValue ) -> void;
 
-	UI16			GetMaxUses( void ) const;
-	void			SetMaxUses( UI16 newValue );
+	auto			GetMaxUses() const -> UI16;
+	auto			SetMaxUses( UI16 newValue ) -> void;
 
-	UI16			GetUsesLeft( void ) const;
-	void			SetUsesLeft( UI16 newValue );
+	auto			GetUsesLeft() const -> UI16;
+	auto			SetUsesLeft( UI16 newValue ) -> void;
 
-	ARMORCLASS		GetArmourClass( void ) const;
-	void			SetArmourClass( ARMORCLASS newValue );
+	auto			GetArmourClass() const -> ARMORCLASS;
+	auto			SetArmourClass( ARMORCLASS newValue ) -> void;
 
-	SI08			GetRank( void ) const;
-	void			SetRank( SI08 newValue );
+	auto			GetRank() const -> SI08;
+	auto			SetRank( SI08 newValue ) -> void;
 
-	SI16			GetGood( void ) const;
-	void			SetGood( SI16 newValue );
+	auto			GetGood() const -> SI16;
+	auto			SetGood( SI16 newValue ) -> void;
 
-	SI32			GetRndValueRate( void ) const;
-	void			SetRndValueRate( SI32 newValue );
+	auto			GetRndValueRate() const -> SI32;
+	auto			SetRndValueRate( SI32 newValue ) -> void;
 
-	SI08			GetMadeWith( void ) const;
-	void			SetMadeWith( SI08 newValue );
+	auto			GetMadeWith() const -> SI08;
+	auto			SetMadeWith( SI08 newValue ) -> void;
 
-	UI16			GetAmmoId( void ) const;
-	void			SetAmmoId( UI16 newValue );
+	auto			GetAmmoId() const -> UI16;
+	auto			SetAmmoId( UI16 newValue ) -> void;
 
-	UI16			GetAmmoHue( void ) const;
-	void			SetAmmoHue( UI16 newValue );
+	auto			GetAmmoHue() const -> UI16;
+	auto			SetAmmoHue( UI16 newValue ) -> void;
 
-	UI16			GetAmmoFX( void ) const;
-	void			SetAmmoFX( UI16 newValue );
+	auto			GetAmmoFX() const -> UI16;
+	auto			SetAmmoFX( UI16 newValue ) -> void;
 
-	UI16			GetAmmoFXHue( void ) const;
-	void			SetAmmoFXHue( UI16 newValue );
+	auto			GetAmmoFXHue() const -> UI16;
+	auto			SetAmmoFXHue( UI16 newValue ) -> void;
 
-	UI16			GetAmmoFXRender( void ) const;
-	void			SetAmmoFXRender( UI16 newValue );
+	auto			GetAmmoFXRender() const -> UI16;
+	auto			SetAmmoFXRender( UI16 newValue ) -> void;
 
-	SI32			GetWeightMax( void ) const;
-	void			SetWeightMax( SI32 newValue );
+	auto			GetWeightMax() const -> SI32;
+	auto			SetWeightMax( SI32 newValue ) -> void;
 
-	SI32			GetBaseWeight( void ) const;
-	void			SetBaseWeight( SI32 newValue );
+	auto			GetBaseWeight() const -> SI32;
+	auto			SetBaseWeight( SI32 newValue ) -> void;
 
-	UI16			GetMaxItems( void ) const;
-	void			SetMaxItems( UI16 newValue );
+	auto			GetMaxItems() const -> UI16;
+	auto			SetMaxItems( UI16 newValue ) -> void;
 
 	// Note: Value range to -ALLSKILLS-1 to ALLSKILLS+1
 	// To calculate skill used to made this item:
@@ -265,32 +265,32 @@ public:
 	// creator. A negative value if the play is not skilled
 	// enough!
 
-	SERIAL			GetGlow( void ) const;
-	void			SetGlow( SERIAL newValue );
+	auto			GetGlow() const -> SERIAL;
+	auto			SetGlow( SERIAL newValue ) -> void;
 
-	COLOUR			GetGlowColour( void ) const;
-	void			SetGlowColour( COLOUR newValue );
+	auto			GetGlowColour() const -> COLOUR;
+	auto			SetGlowColour( COLOUR newValue ) -> void;
 
-	UI08			GetGlowEffect( void ) const;
-	void			SetGlowEffect( UI08 newValue );
+	auto			GetGlowEffect() const -> UI08;
+	auto			SetGlowEffect( UI08 newValue ) -> void;
 
 	CItem();
 	virtual			~CItem();
 
-	UI08			IsFieldSpell( void ) const;
-	bool			IsLockedDown( void ) const;
-	bool			IsShieldType( void ) const;
-	bool			IsMetalType( void ) const;
-	bool			IsLeatherType( void ) const;
-	bool			CanBeLockedDown( void ) const;
-	void			LockDown( void );
-	bool			IsContType( void ) const;
-	void			UpdateRegion( void );
+	auto			IsFieldSpell() const -> UI08;
+	auto			IsLockedDown() const -> bool;
+	auto			IsShieldType() const -> bool;
+	auto			IsMetalType() const -> bool;
+	auto			IsLeatherType() const -> bool;
+	auto			CanBeLockedDown() const -> bool;
+	auto			LockDown() -> void;
+	auto			IsContType() const -> bool;
+	auto			UpdateRegion() -> void;
 
-	void			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A );
+	auto			TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow = 0.0f, UI16 Colour = 0x005A ) -> void;
 	virtual void	Update( CSocket *mSock = nullptr, bool drawGamePlayer = false, bool sendToSelf = true ) override;
 	virtual void	SendToSocket( CSocket *mSock, bool drawGamePlayer = false ) override;
-	void			SendPackItemToSocket( CSocket *mSock );
+	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 
 	virtual bool	Save( std::ofstream &outStream ) override;
@@ -301,8 +301,8 @@ public:
 	virtual void	Delete( void ) override;
 	virtual bool	CanBeObjType( ObjectType toCompare ) const override;
 
-	UI32			GetSpell( UI08 part ) const;
-	void			SetSpell( UI08 part, UI32 newValue );
+	auto			GetSpell( UI08 part ) const -> UI32;
+	auto			SetSpell( UI08 part, UI32 newValue ) -> void;
 };
 
 class CSpawnItem : public CItem
@@ -312,7 +312,7 @@ protected:
 	std::string			spawnSection;
 	bool				isSectionAList;
 
-	void				CopyData( CSpawnItem *target );
+	auto				CopyData( CSpawnItem *target ) -> void;
 public:
 	GenericList<CBaseObject *>		spawnedList;
 
@@ -321,28 +321,28 @@ public:
 	{
 	}
 
-	UI08				GetInterval( UI08 part ) const;
-	void				SetInterval( UI08 part, UI08 newVal );
-	std::string			GetSpawnSection( void ) const;
-	void				SetSpawnSection( const std::string &newVal );
-	bool				IsSectionAList( void ) const;
-	void				IsSectionAList( bool newVal );
+	auto				GetInterval( UI08 part ) const -> UI08;
+	auto				SetInterval( UI08 part, UI08 newVal ) -> void;
+	auto				GetSpawnSection() const -> std::string;
+	auto				SetSpawnSection( const std::string &newVal ) -> void;
+	auto				IsSectionAList() const -> bool;
+	auto				IsSectionAList( bool newVal ) -> void;
 
 	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
 	virtual bool		DumpBody( std::ofstream &outStream ) const override;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
-	bool				DoRespawn( void );	// Will replace RespawnItem() eventually
-	bool				HandleItemSpawner( void );
-	bool				HandleNPCSpawner( void );
-	bool				HandleSpawnContainer( void );
+	auto				DoRespawn() -> bool;	// Will replace RespawnItem() eventually
+	auto				HandleItemSpawner() -> bool;
+	auto				HandleNPCSpawner() -> bool;
+	auto				HandleSpawnContainer() -> bool;
 
 	virtual void		Cleanup( void ) override;
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
-	CSpawnItem *		Dupe( void );
+	auto		Dupe() -> CSpawnItem *;
 };
 
 #endif

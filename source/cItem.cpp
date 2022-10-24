@@ -135,7 +135,7 @@ CItem::~CItem()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container object
 //o------------------------------------------------------------------------------------------------o
-CBaseObject * CItem::GetCont( void ) const
+auto CItem::GetCont( void ) const -> CBaseObject *
 {
 	return contObj;
 }
@@ -145,7 +145,7 @@ CBaseObject * CItem::GetCont( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the container's serial
 //o------------------------------------------------------------------------------------------------o
-SERIAL CItem::GetContSerial( void ) const
+auto CItem::GetContSerial( void ) const -> SERIAL
 {
 	if( contObj != nullptr )
 		return contObj->GetSerial();
@@ -160,11 +160,11 @@ SERIAL CItem::GetContSerial( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets "Grid Location" - for UOKR
 //o------------------------------------------------------------------------------------------------o
-SI08 CItem::GetGridLocation( void ) const
+auto CItem::GetGridLocation( void ) const -> SI08
 {
 	return gridLoc;
 }
-void CItem::SetGridLocation( SI08 newLoc )
+auto CItem::SetGridLocation( SI08 newLoc ) -> void
 {
 	gridLoc = newLoc;
 	UpdateRegion();
@@ -177,14 +177,14 @@ void CItem::SetGridLocation( SI08 newLoc )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the temp value of the object
 //o------------------------------------------------------------------------------------------------o
-UI32 CItem::GetTempVar( CITempVars whichVar ) const
+auto CItem::GetTempVar( CITempVars whichVar ) const -> UI32
 {
 	if( whichVar == CITV_COUNT )
 		return 0;
 
 	return tempVars[whichVar];
 }
-void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
+auto CItem::SetTempVar( CITempVars whichVar, UI32 newVal ) -> void
 {
 	if( whichVar == CITV_COUNT )
 		return;
@@ -201,7 +201,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI32 newVal )
 //|	Purpose		-	Gets/Sets one of the words of the temp value
 //|	Notes		-	Valid values for part are 1->4.  If outside that, behaves as if it were 1
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetTempVar( CITempVars whichVar, UI08 part ) const
+auto CItem::GetTempVar( CITempVars whichVar, UI08 part ) const -> UI08
 {
 	UI08 rVal = 0;
 
@@ -218,7 +218,7 @@ UI08 CItem::GetTempVar( CITempVars whichVar, UI08 part ) const
 	}
 	return rVal;
 }
-void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
+auto CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal ) -> void
 {
 	if( whichVar == CITV_COUNT )
 		return;
@@ -250,7 +250,7 @@ void CItem::SetTempVar( CITempVars whichVar, UI08 part, UI08 newVal )
 //|						Also copes with removing and adding to a map region
 //|						Returns false if item needs deleting, true if fine
 //o------------------------------------------------------------------------------------------------o
-bool CItem::SetContSerial( SERIAL newSerial )
+auto CItem::SetContSerial( SERIAL newSerial ) -> bool
 {
 	if( newSerial != INVALIDSERIAL )
 	{
@@ -265,7 +265,7 @@ bool CItem::SetContSerial( SERIAL newSerial )
 	}
 	return SetCont( nullptr );
 }
-bool CItem::SetCont( CBaseObject *newCont, bool removeFromView )
+auto CItem::SetCont( CBaseObject *newCont, bool removeFromView ) -> bool
 {
 	if( IsPostLoaded() )
 	{
@@ -401,7 +401,7 @@ bool CItem::SetCont( CBaseObject *newCont, bool removeFromView )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Determine if item is inside a dungeon
 //o------------------------------------------------------------------------------------------------o
-bool CItem::InDungeon( void )
+auto CItem::InDungeon() -> bool
 {
 	bool rValue = false;
 	if( GetRegion() != nullptr )
@@ -417,11 +417,11 @@ bool CItem::InDungeon( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets door's open state
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsDoorOpen( void ) const
+auto CItem::IsDoorOpen() const -> bool
 {
 	return bools.test( BIT_DOOROPEN );
 }
-void CItem::SetDoorOpen( bool newValue )
+auto CItem::SetDoorOpen( bool newValue ) -> void
 {
 	bools.set( BIT_DOOROPEN, newValue );
 	UpdateRegion();
@@ -433,11 +433,11 @@ void CItem::SetDoorOpen( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's pileable state
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsPileable( void ) const
+auto CItem::IsPileable() const -> bool
 {
 	return bools.test( BIT_PILEABLE );
 }
-void CItem::SetPileable( bool newValue )
+auto CItem::SetPileable( bool newValue ) -> void
 {
 	bools.set( BIT_PILEABLE, newValue );
 	UpdateRegion();
@@ -449,11 +449,11 @@ void CItem::SetPileable( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maker's mark on item
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsMarkedByMaker( void ) const
+auto CItem::IsMarkedByMaker() const -> bool
 {
 	return bools.test( BIT_MAKERSMARK );
 }
-void CItem::SetMakersMark( bool newValue )
+auto CItem::SetMakersMark( bool newValue ) -> void
 {
 	bools.set( BIT_MAKERSMARK, newValue );
 	UpdateRegion();
@@ -465,11 +465,11 @@ void CItem::SetMakersMark( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's dyeable state
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsDyeable( void ) const
+auto CItem::IsDyeable() const -> bool
 {
 	return bools.test( BIT_DYEABLE );
 }
-void CItem::SetDye( bool newValue )
+auto CItem::SetDye( bool newValue ) -> void
 {
 	bools.set( BIT_DYEABLE, newValue );
 	UpdateRegion();
@@ -481,11 +481,11 @@ void CItem::SetDye( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's corpse state
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsCorpse( void ) const
+auto CItem::IsCorpse() const -> bool
 {
 	return bools.test( BIT_CORPSE );
 }
-void CItem::SetCorpse( bool newValue )
+auto CItem::SetCorpse( bool newValue ) -> void
 {
 	bools.set( BIT_CORPSE, newValue );
 	UpdateRegion();
@@ -497,11 +497,11 @@ void CItem::SetCorpse( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is being held on cursor by a player
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsHeldOnCursor( void ) const
+auto CItem::IsHeldOnCursor() const -> bool
 {
 	return bools.test( BIT_HELDONCURSOR );
 }
-void CItem::SetHeldOnCursor( bool newValue )
+auto CItem::SetHeldOnCursor( bool newValue ) -> void
 {
 	bools.set( BIT_HELDONCURSOR, newValue );
 	UpdateRegion();
@@ -513,7 +513,7 @@ void CItem::SetHeldOnCursor( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's guarded state
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsGuarded( void ) const
+auto CItem::IsGuarded() const -> bool
 {
 	return bools.test( BIT_GUARDED );
 }
@@ -529,11 +529,11 @@ void CItem::SetGuarded( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether spawner points to a a NPCLIST/ITEMLIST instead of an NPC/Item
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsSpawnerList( void ) const
+auto CItem::IsSpawnerList() const -> bool
 {
 	return bools.test( BIT_SPAWNERLIST );
 }
-void CItem::SetSpawnerList( bool newValue )
+auto CItem::SetSpawnerList( bool newValue ) -> void
 {
 	bools.set( BIT_SPAWNERLIST, newValue );
 	UpdateRegion();
@@ -565,11 +565,11 @@ auto CItem::SetName2( const std::string &value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets serial of item's creator - used for crafting and maker's marks
 //o------------------------------------------------------------------------------------------------o
-SERIAL CItem::GetCreator( void ) const
+auto CItem::GetCreator() const -> SERIAL
 {
 	return creator;
 }
-void CItem::SetCreator( SERIAL newValue )
+auto CItem::SetCreator( SERIAL newValue ) -> void
 {
 	creator = newValue;
 	UpdateRegion();
@@ -581,11 +581,11 @@ void CItem::SetCreator( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's description property - used for playervendors, among other things
 //o------------------------------------------------------------------------------------------------o
-std::string CItem::GetDesc( void ) const
+auto CItem::GetDesc() const -> std::string
 {
 	return desc;
 }
-void CItem::SetDesc( std::string newValue )
+auto CItem::SetDesc( std::string newValue ) -> void
 {
 	desc = newValue.substr( 0, MAX_NAME - 1 );
 	UpdateRegion();
@@ -597,11 +597,11 @@ void CItem::SetDesc( std::string newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's event property - used to attach items to specific events
 //o------------------------------------------------------------------------------------------------o
-std::string CItem::GetEvent( void ) const
+auto CItem::GetEvent() const -> std::string
 {
 	return eventName;
 }
-void CItem::SetEvent( std::string newValue )
+auto CItem::SetEvent( std::string newValue ) -> void
 {
 	eventName = newValue.substr( 0, MAX_NAME - 1 );
 	UpdateRegion();
@@ -612,7 +612,7 @@ void CItem::SetEvent( std::string newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increases item's Z height by specified value
 //o------------------------------------------------------------------------------------------------o
-void CItem::IncZ( SI16 newValue )
+auto CItem::IncZ( SI16 newValue ) -> void
 {
 	SetZ( z + newValue );
 	UpdateRegion();
@@ -623,7 +623,7 @@ void CItem::IncZ( SI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Increases item's X and Y coordinates by specified values
 //o------------------------------------------------------------------------------------------------o
-void CItem::IncLocation( SI16 xInc, SI16 yInc )
+auto CItem::IncLocation( SI16 xInc, SI16 yInc ) -> void
 {
 	SetLocation(( GetX() + xInc ), ( GetY() + yInc ), GetZ(), GetGridLocation(), WorldNumber(), GetInstanceId() );
 }
@@ -731,19 +731,19 @@ void CItem::SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 insta
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets the town region the item is in
 //o------------------------------------------------------------------------------------------------o
-CTownRegion *CItem::GetRegion( void ) const
+auto CItem::GetRegion() const -> CTownRegion*
 {
 	if( cwmWorldState->townRegions.find( regionNum ) == cwmWorldState->townRegions.end() )
 		return cwmWorldState->townRegions[0xFF];
 
 	return cwmWorldState->townRegions[regionNum];
 }
-void CItem::SetRegion( UI16 newValue )
+auto CItem::SetRegion( UI16 newValue ) -> void
 {
 	regionNum = newValue;
 	UpdateRegion();
 }
-UI16 CItem::GetRegionNum( void ) const
+auto CItem::GetRegionNum() const -> UI16
 {
 	return regionNum;
 }
@@ -754,11 +754,11 @@ UI16 CItem::GetRegionNum( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's layer property
 //o------------------------------------------------------------------------------------------------o
-ItemLayers CItem::GetLayer( void ) const
+auto CItem::GetLayer() const -> ItemLayers
 {
 	return layer;
 }
-void CItem::SetLayer( ItemLayers newValue )
+auto CItem::SetLayer( ItemLayers newValue ) -> void
 {
 	CBaseObject *getCont = GetCont();
 	if( ValidateObject( getCont ) && getCont->GetObjType() == OT_CHAR )	// if we're on a char
@@ -786,11 +786,11 @@ void CItem::SetLayer( ItemLayers newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's type property
 //o------------------------------------------------------------------------------------------------o
-ItemTypes CItem::GetType( void ) const
+auto CItem::GetType() const -> ItemTypes
 {
 	return type;
 }
-void CItem::SetType( ItemTypes newValue )
+auto CItem::SetType( ItemTypes newValue ) -> void
 {
 	type = newValue;
 	UpdateRegion();
@@ -802,16 +802,15 @@ void CItem::SetType( ItemTypes newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's offspell property - Unused?
 //o------------------------------------------------------------------------------------------------o
-SI08 CItem::GetOffSpell( void ) const
+auto CItem::GetOffSpell() const -> SI08
 {
 	return offspell;
 }
-void CItem::SetOffSpell( SI08 newValue )
+auto CItem::SetOffSpell( SI08 newValue ) -> void
 {
 	offspell = newValue;
 	UpdateRegion();
 }
-
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetAmount()
@@ -819,11 +818,11 @@ void CItem::SetOffSpell( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's amount property, adjusts weight according to new value
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmount( void ) const
+auto CItem::GetAmount() const -> UI16
 {
 	return amount;
 }
-void CItem::SetAmount( UI32 newValue )
+auto CItem::SetAmount( UI32 newValue ) -> void
 {
 	CBaseObject *getCont = GetCont();
 	if( ValidateObject( getCont ))
@@ -854,7 +853,7 @@ void CItem::SetAmount( UI32 newValue )
 //|	Purpose		-	Increases item's amount property by specified amount,
 //|					adjusts weight according to new value
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IncAmount( SI32 incValue, bool noDelete )
+auto CItem::IncAmount( SI32 incValue, bool noDelete ) -> bool
 {
 	bool iDeleted = false;
 	SI32 newAmt = ( amount + incValue );
@@ -899,11 +898,11 @@ void CItem::SetMaxHP( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's max uses property
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetMaxUses( void ) const
+auto CItem::GetMaxUses() const -> UI16
 {
 	return maxUses;
 }
-void CItem::SetMaxUses( UI16 newValue )
+auto CItem::SetMaxUses( UI16 newValue ) -> void
 {
 	maxUses = newValue;
 	UpdateRegion();
@@ -915,11 +914,11 @@ void CItem::SetMaxUses( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's property for remaining uses
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetUsesLeft( void ) const
+auto CItem::GetUsesLeft() const -> UI16
 {
 	return usesLeft;
 }
-void CItem::SetUsesLeft( UI16 newValue )
+auto CItem::SetUsesLeft( UI16 newValue ) -> void
 {
 	usesLeft = newValue;
 	Dirty( UT_UPDATE );
@@ -932,11 +931,11 @@ void CItem::SetUsesLeft( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's speed property - used to determine weapon attack speed
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetSpeed( void ) const
+auto CItem::GetSpeed() const -> UI08
 {
 	return spd;
 }
-void CItem::SetSpeed( UI08 newValue )
+auto CItem::SetSpeed( UI08 newValue ) -> void
 {
 	spd = newValue;
 	UpdateRegion();
@@ -948,11 +947,11 @@ void CItem::SetSpeed( UI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's maximum range - primarily used by throwing/archery weapons
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetMaxRange( void ) const
+auto CItem::GetMaxRange() const -> UI08
 {
 	return maxRange;
 }
-void CItem::SetMaxRange( UI08 newValue )
+auto CItem::SetMaxRange( UI08 newValue ) -> void
 {
 	maxRange = newValue;
 	UpdateRegion();
@@ -964,11 +963,11 @@ void CItem::SetMaxRange( UI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's base range - primarily used by throwing weapons
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetBaseRange( void ) const
+auto CItem::GetBaseRange() const -> UI08
 {
 	return baseRange;
 }
-void CItem::SetBaseRange( UI08 newValue )
+auto CItem::SetBaseRange( UI08 newValue ) -> void
 {
 	baseRange = newValue;
 	UpdateRegion();
@@ -980,11 +979,11 @@ void CItem::SetBaseRange( UI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's movable property
 //o------------------------------------------------------------------------------------------------o
-SI08 CItem::GetMovable( void ) const
+auto CItem::GetMovable() const -> SI08
 {
 	return movable;
 }
-void CItem::SetMovable( SI08 newValue )
+auto CItem::SetMovable( SI08 newValue ) -> void
 {
 	movable = newValue;
 	UpdateRegion();
@@ -996,11 +995,11 @@ void CItem::SetMovable( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's temptimer
 //o------------------------------------------------------------------------------------------------o
-TIMERVAL CItem::GetTempTimer( void ) const
+auto CItem::GetTempTimer() const -> TIMERVAL
 {
 	return tempTimer;
 }
-void CItem::SetTempTimer( TIMERVAL newValue )
+auto CItem::SetTempTimer( TIMERVAL newValue ) -> void
 {
 	tempTimer = newValue;
 }
@@ -1011,11 +1010,11 @@ void CItem::SetTempTimer( TIMERVAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's decay timer
 //o------------------------------------------------------------------------------------------------o
-TIMERVAL CItem::GetDecayTime( void ) const
+auto CItem::GetDecayTime() const -> TIMERVAL
 {
 	return decayTime;
 }
-void CItem::SetDecayTime( TIMERVAL newValue )
+auto CItem::SetDecayTime( TIMERVAL newValue ) -> void
 {
 	decayTime = newValue;
 }
@@ -1042,11 +1041,11 @@ void CItem::SetPriv( UI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the item's sell value - determines how much player can sell it for
 //o------------------------------------------------------------------------------------------------o
-UI32 CItem::GetSellValue( void ) const
+auto CItem::GetSellValue() const -> UI32
 {
 	return value[1];
 }
-void CItem::SetSellValue( UI32 newValue )
+auto CItem::SetSellValue( UI32 newValue ) -> void
 {
 	value[1] = newValue;
 	UpdateRegion();
@@ -1058,11 +1057,11 @@ void CItem::SetSellValue( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for it
 //o------------------------------------------------------------------------------------------------o
-UI32 CItem::GetBuyValue( void ) const
+auto CItem::GetBuyValue() const -> UI32
 {
 	return value[0];
 }
-void CItem::SetBuyValue( UI32 newValue )
+auto CItem::SetBuyValue( UI32 newValue ) -> void
 {
 	value[0] = newValue;
 	UpdateRegion();
@@ -1074,11 +1073,11 @@ void CItem::SetBuyValue( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's restock value in vendor sellpack
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetRestock( void ) const
+auto CItem::GetRestock() const -> UI16
 {
 	return restock;
 }
-void CItem::SetRestock( UI16 newValue )
+auto CItem::SetRestock( UI16 newValue ) -> void
 {
 	restock = newValue;
 	UpdateRegion();
@@ -1090,11 +1089,11 @@ void CItem::SetRestock( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's armour class
 //o------------------------------------------------------------------------------------------------o
-ARMORCLASS CItem::GetArmourClass( void ) const
+auto CItem::GetArmourClass() const -> ARMORCLASS
 {
 	return armorClass;
 }
-void CItem::SetArmourClass( ARMORCLASS newValue )
+auto CItem::SetArmourClass( ARMORCLASS newValue ) -> void
 {
 	armorClass = newValue;
 	UpdateRegion();
@@ -1106,11 +1105,11 @@ void CItem::SetArmourClass( ARMORCLASS newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's rank value - used in crafting
 //o------------------------------------------------------------------------------------------------o
-SI08 CItem::GetRank( void ) const
+auto CItem::GetRank() const -> SI08
 {
 	return rank;
 }
-void CItem::SetRank( SI08 newValue )
+auto CItem::SetRank( SI08 newValue ) -> void
 {
 	rank = newValue;
 	UpdateRegion();
@@ -1122,11 +1121,11 @@ void CItem::SetRank( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's good value - used by advanced trade system
 //o------------------------------------------------------------------------------------------------o
-SI16 CItem::GetGood( void ) const
+auto CItem::GetGood() const -> SI16
 {
 	return good;
 }
-void CItem::SetGood( SI16 newValue )
+auto CItem::SetGood( SI16 newValue ) -> void
 {
 	good = newValue;
 	UpdateRegion();
@@ -1138,11 +1137,11 @@ void CItem::SetGood( SI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets item's random value rate - used by advanced trade system
 //o------------------------------------------------------------------------------------------------o
-SI32 CItem::GetRndValueRate( void ) const
+auto CItem::GetRndValueRate() const -> SI32
 {
 	return rndValueRate;
 }
-void CItem::SetRndValueRate( SI32 newValue )
+auto CItem::SetRndValueRate( SI32 newValue ) -> void
 {
 	rndValueRate = newValue;
 }
@@ -1153,11 +1152,11 @@ void CItem::SetRndValueRate( SI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ID of skill used to create item
 //o------------------------------------------------------------------------------------------------o
-SI08 CItem::GetMadeWith( void ) const
+auto CItem::GetMadeWith() const -> SI08
 {
 	return madeWith;
 }
-void CItem::SetMadeWith( SI08 newValue )
+auto CItem::SetMadeWith( SI08 newValue ) -> void
 {
 	madeWith = newValue;
 	UpdateRegion();
@@ -1169,11 +1168,11 @@ void CItem::SetMadeWith( SI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets serial of glow item attached to item
 //o------------------------------------------------------------------------------------------------o
-SERIAL CItem::GetGlow( void ) const
+auto CItem::GetGlow() const -> SERIAL
 {
 	return glow;
 }
-void CItem::SetGlow( SERIAL newValue )
+auto CItem::SetGlow( SERIAL newValue ) -> void
 {
 	glow = newValue;
 	UpdateRegion();
@@ -1185,11 +1184,11 @@ void CItem::SetGlow( SERIAL newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 //o------------------------------------------------------------------------------------------------o
-COLOUR CItem::GetGlowColour( void ) const
+auto CItem::GetGlowColour( void ) const -> COLOUR
 {
 	return glowColour;
 }
-void CItem::SetGlowColour( COLOUR newValue )
+auto CItem::SetGlowColour( COLOUR newValue ) -> void
 {
 	glowColour = newValue;
 	UpdateRegion();
@@ -1201,11 +1200,11 @@ void CItem::SetGlowColour( COLOUR newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of glow item attached to item
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::GetGlowEffect( void ) const
+auto CItem::GetGlowEffect( void ) const -> UI08
 {
 	return glowEffect;
 }
-void CItem::SetGlowEffect( UI08 newValue )
+auto CItem::SetGlowEffect( UI08 newValue ) -> void
 {
 	glowEffect = newValue;
 	UpdateRegion();
@@ -1217,11 +1216,11 @@ void CItem::SetGlowEffect( UI08 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets ammo Id for ammo used by ranged weapon
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmmoId( void ) const
+auto CItem::GetAmmoId() const -> UI16
 {
 	return ammo[0];
 }
-void CItem::SetAmmoId( UI16 newValue )
+auto CItem::SetAmmoId( UI16 newValue ) -> void
 {
 	ammo[0] = newValue;
 	UpdateRegion();
@@ -1233,11 +1232,11 @@ void CItem::SetAmmoId( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets hue of ammo used by ranged weapon
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmmoHue( void ) const
+auto CItem::GetAmmoHue() const -> UI16
 {
 	return ammo[1];
 }
-void CItem::SetAmmoHue( UI16 newValue )
+auto CItem::SetAmmoHue( UI16 newValue ) -> void
 {
 	ammo[1] = newValue;
 	UpdateRegion();
@@ -1249,11 +1248,11 @@ void CItem::SetAmmoHue( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets projectile FX shown when firing ranged weapon
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmmoFX( void ) const
+auto CItem::GetAmmoFX() const -> UI16
 {
 	return ammoFX[0];
 }
-void CItem::SetAmmoFX( UI16 newValue )
+auto CItem::SetAmmoFX( UI16 newValue ) -> void
 {
 	ammoFX[0] = newValue;
 	UpdateRegion();
@@ -1265,11 +1264,11 @@ void CItem::SetAmmoFX( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets colour of projectiles fired by ranged weapons
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmmoFXHue( void ) const
+auto CItem::GetAmmoFXHue() const -> UI16
 {
 	return ammoFX[1];
 }
-void CItem::SetAmmoFXHue( UI16 newValue )
+auto CItem::SetAmmoFXHue( UI16 newValue ) -> void
 {
 	ammoFX[1] = newValue;
 	UpdateRegion();
@@ -1281,11 +1280,11 @@ void CItem::SetAmmoFXHue( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the render mode of projectile FX played when firing ranged weapons
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetAmmoFXRender( void ) const
+auto CItem::GetAmmoFXRender() const -> UI16
 {
 	return ammoFX[2];
 }
-void CItem::SetAmmoFXRender( UI16 newValue )
+auto CItem::SetAmmoFXRender( UI16 newValue ) -> void
 {
 	ammoFX[2] = newValue;
 	UpdateRegion();
@@ -1297,11 +1296,11 @@ void CItem::SetAmmoFXRender( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum weight (in stones) a container can hold
 //o------------------------------------------------------------------------------------------------o
-SI32 CItem::GetWeightMax( void ) const
+auto CItem::GetWeightMax() const -> SI32
 {
 	return weightMax;
 }
-void CItem::SetWeightMax( SI32 newValue )
+auto CItem::SetWeightMax( SI32 newValue ) -> void
 {
 	weightMax = newValue;
 	UpdateRegion();
@@ -1313,11 +1312,11 @@ void CItem::SetWeightMax( SI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets base item weight - primarily used to store original container weight
 //o------------------------------------------------------------------------------------------------o
-SI32 CItem::GetBaseWeight( void ) const
+auto CItem::GetBaseWeight() const -> SI32
 {
 	return baseWeight;
 }
-void CItem::SetBaseWeight( SI32 newValue )
+auto CItem::SetBaseWeight( SI32 newValue ) -> void
 {
 	baseWeight = newValue;
 	UpdateRegion();
@@ -1329,11 +1328,11 @@ void CItem::SetBaseWeight( SI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets maximum amount of items a container can hold
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::GetMaxItems( void ) const
+auto CItem::GetMaxItems() const -> UI16
 {
 	return maxItems;
 }
-void CItem::SetMaxItems( UI16 newValue )
+auto CItem::SetMaxItems( UI16 newValue ) -> void
 {
 	maxItems = newValue;
 	UpdateRegion();
@@ -1344,7 +1343,7 @@ void CItem::SetMaxItems( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether item belongs to a field spell - and if so - which one
 //o------------------------------------------------------------------------------------------------o
-UI08 CItem::IsFieldSpell( void ) const
+auto CItem::IsFieldSpell() const -> UI08
 {
 	switch( id )
 	{
@@ -1365,7 +1364,7 @@ UI08 CItem::IsFieldSpell( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether item can be locked down
 //o------------------------------------------------------------------------------------------------o
-bool CItem::CanBeLockedDown( void ) const
+auto CItem::CanBeLockedDown() const -> bool
 {
 	if( type == IT_DOOR || type == IT_LOCKEDDOOR )	// can't lock down a door
 		return false;
@@ -1388,11 +1387,11 @@ bool CItem::CanBeLockedDown( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is locked down and immovable
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsLockedDown( void ) const
+auto CItem::IsLockedDown() const -> bool
 {
 	return ( movable == 3 );
 }
-void CItem::LockDown( void )
+auto CItem::LockDown() -> void
 {
 	movable = 3;
 	UpdateRegion();
@@ -1403,7 +1402,7 @@ void CItem::LockDown( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether item is a shield
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsShieldType( void ) const
+auto CItem::IsShieldType() const -> bool
 {
 	if( id >= 0x1B72 && id <= 0x1B7B )
 		return true;
@@ -1492,7 +1491,7 @@ void CItem::AddSelfToOwner( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove item (self) from container it's in
 //o------------------------------------------------------------------------------------------------o
-void CItem::RemoveSelfFromCont( void )
+auto CItem::RemoveSelfFromCont() -> void
 {
 	if( contObj != nullptr )
 	{
@@ -1532,7 +1531,7 @@ void CItem::RemoveSelfFromCont( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Make a copy of item and copy all properties from old item to new
 //o------------------------------------------------------------------------------------------------o
-CItem * CItem::Dupe( ObjectType itemType )
+auto CItem::Dupe( ObjectType itemType ) -> CItem *
 {
 	CItem *target = static_cast<CItem *>(ObjectFactory::GetSingleton().CreateObject( itemType ));
 	if( target == nullptr )
@@ -1543,7 +1542,7 @@ CItem * CItem::Dupe( ObjectType itemType )
 	return target;
 }
 
-void CItem::CopyData( CItem *target )
+auto CItem::CopyData( CItem *target ) -> void
 {
 	CBaseObject::CopyData( target );
 
@@ -1645,11 +1644,11 @@ void CItem::CopyData( CItem *target )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets weather damage of item - primarily used by weapons
 //o------------------------------------------------------------------------------------------------o
-bool CItem::GetWeatherDamage( WeatherType effectNum ) const
+auto CItem::GetWeatherDamage( WeatherType effectNum ) const -> bool
 {
 	return weatherBools.test( effectNum );
 }
-void CItem::SetWeatherDamage( WeatherType effectNum, bool value )
+auto CItem::SetWeatherDamage( WeatherType effectNum, bool value ) -> void
 {
 	weatherBools.set( effectNum, value );
 	UpdateRegion();
@@ -2163,7 +2162,7 @@ bool CItem::LoadRemnants( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if item has a container type
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsContType( void ) const
+auto CItem::IsContType() const -> bool
 {
 	if( GetLayer() == IL_PACKITEM || GetLayer() == IL_BANKBOX )
 		return true;
@@ -2274,11 +2273,11 @@ const UI32 BIT_DIVINELOCK	=	3;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item can decay
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsDecayable( void ) const
+auto CItem::IsDecayable() const -> bool
 {
 	return priv.test( BIT_DECAYABLE );
 }
-void CItem::SetDecayable( bool newValue )
+auto CItem::SetDecayable( bool newValue ) -> void
 {
 	if( newValue )
 	{
@@ -2295,11 +2294,11 @@ void CItem::SetDecayable( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is marked as a newbie item (doesn't drop on death)
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsNewbie( void ) const
+auto CItem::IsNewbie() const -> bool
 {
 	return priv.test( BIT_NEWBIE );
 }
-void CItem::SetNewbie( bool newValue )
+auto CItem::SetNewbie( bool newValue ) -> void
 {
 	priv.set( BIT_NEWBIE, newValue );
 	UpdateRegion();
@@ -2311,11 +2310,11 @@ void CItem::SetNewbie( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether item is dispellable (part of a field spell, for instance)
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsDispellable( void ) const
+auto CItem::IsDispellable() const -> bool
 {
 	return priv.test( BIT_DISPELLABLE );
 }
-void CItem::SetDispellable( bool newValue )
+auto CItem::SetDispellable( bool newValue ) -> void
 {
 	priv.set( BIT_DISPELLABLE, newValue );
 	UpdateRegion();
@@ -2327,11 +2326,11 @@ void CItem::SetDispellable( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether container was locked by a GM
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsDivineLocked( void ) const
+auto CItem::IsDivineLocked() const -> bool
 {
 	return priv.test( BIT_DIVINELOCK );
 }
-void CItem::SetDivineLock( bool newValue )
+auto CItem::SetDivineLock( bool newValue ) -> void
 {
 	priv.set( BIT_DIVINELOCK, newValue );
 	UpdateRegion();
@@ -2343,11 +2342,11 @@ void CItem::SetDivineLock( bool newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Create-DFNs entry the item was made from
 //o------------------------------------------------------------------------------------------------o
-UI16 CItem::EntryMadeFrom( void ) const
+auto CItem::EntryMadeFrom() const -> UI16
 {
 	return entryMadeFrom;
 }
-void CItem::EntryMadeFrom( UI16 newValue )
+auto CItem::EntryMadeFrom( UI16 newValue ) -> void
 {
 	entryMadeFrom = newValue;
 	UpdateRegion();
@@ -2386,7 +2385,7 @@ void CItem::SetWeight( SI32 newVal, bool doWeightUpdate )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if it's a metal object
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsMetalType( void ) const
+auto CItem::IsMetalType() const -> bool
 {
 	if( id >= 0x1B72 && id <= 0x1B7B )
 		return true;
@@ -2420,7 +2419,7 @@ bool CItem::IsMetalType( void ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if it's a leather object
 //o------------------------------------------------------------------------------------------------o
-bool CItem::IsLeatherType( void ) const
+auto CItem::IsLeatherType() const -> bool
 {
 	if( id >= 0x13C6 && id <= 0x13E2 )
 		return true;
@@ -2449,7 +2448,7 @@ inline bool operator > ( const CItem& x, const CItem& y )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Display "speech" over an item
 //o------------------------------------------------------------------------------------------------o
-void CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour )
+auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colour ) -> void
 {
 	UnicodeTypes dictLang	= ZERO;
 	SERIAL speakTo			= INVALIDSERIAL;
@@ -2647,7 +2646,7 @@ void CItem::SendToSocket( CSocket *mSock, bool drawGamePlayer )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item contained in a pack to specified socket
 //o------------------------------------------------------------------------------------------------o
-void CItem::SendPackItemToSocket( CSocket *mSock )
+auto CItem::SendPackItemToSocket( CSocket *mSock ) -> void
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( mChar != nullptr )
@@ -2793,7 +2792,7 @@ void CItem::RemoveFromSight( CSocket *mSock )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Puts an item at a random location inside a pack
 //o------------------------------------------------------------------------------------------------o
-void CItem::PlaceInPack( void )
+auto CItem::PlaceInPack() -> void
 {
 	auto itemCont = this->GetCont();
 	if( !ValidateObject( itemCont ))
@@ -2886,7 +2885,7 @@ void CItem::PlaceInPack( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets spells in a spellbook item
 //o------------------------------------------------------------------------------------------------o
-UI32 CItem::GetSpell( UI08 part ) const
+auto CItem::GetSpell( UI08 part ) const -> UI32
 {
 	UI32 rValue = 0;
 	if( part < 3 )
@@ -2895,7 +2894,7 @@ UI32 CItem::GetSpell( UI08 part ) const
 	}
 	return rValue;
 }
-void CItem::SetSpell( UI08 part, UI32 newValue )
+auto CItem::SetSpell( UI08 part, UI32 newValue ) -> void
 {
 	if( part < 3 )
 	{
@@ -3043,7 +3042,7 @@ void CItem::Cleanup( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks region item exists in as updated since last save
 //o------------------------------------------------------------------------------------------------o
-void CItem::UpdateRegion( void )
+auto CItem::UpdateRegion() -> void
 {
 	// Make sure to only mark region as changed if item is supposed to be saved
 	if( ShouldSave() )
@@ -3090,7 +3089,7 @@ void CItem::Delete( void )
 	}
 }
 
-GenericList<CItem *> * CItem::GetContainsList( void )
+auto CItem::GetContainsList() -> GenericList<CItem *> *
 {
 	return &Contains;
 }
@@ -3123,7 +3122,7 @@ isSectionAList( false )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Min and Max interval for spawner to respawn
 //o------------------------------------------------------------------------------------------------o
-UI08 CSpawnItem::GetInterval( UI08 part ) const
+auto CSpawnItem::GetInterval( UI08 part ) const -> UI08
 {
 	UI08 rValue = 0;
 	if( part < 2 )
@@ -3132,7 +3131,7 @@ UI08 CSpawnItem::GetInterval( UI08 part ) const
 	}
 	return rValue;
 }
-void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
+auto CSpawnItem::SetInterval( UI08 part, UI08 newVal ) -> void
 {
 	if( part < 2 )
 	{
@@ -3148,11 +3147,11 @@ void CSpawnItem::SetInterval( UI08 part, UI08 newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets Script section to spawn from
 //o------------------------------------------------------------------------------------------------o
-std::string CSpawnItem::GetSpawnSection( void ) const
+auto CSpawnItem::GetSpawnSection() const -> std::string
 {
 	return spawnSection;
 }
-void CSpawnItem::SetSpawnSection( const std::string &newVal )
+auto CSpawnItem::SetSpawnSection( const std::string &newVal ) -> void
 {
 	spawnSection = newVal;
 	UpdateRegion();
@@ -3164,11 +3163,11 @@ void CSpawnItem::SetSpawnSection( const std::string &newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets script section as a spawner list
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::IsSectionAList( void ) const
+auto CSpawnItem::IsSectionAList() const -> bool
 {
 	return isSectionAList;
 }
-void CSpawnItem::IsSectionAList( bool newVal )
+auto CSpawnItem::IsSectionAList( bool newVal ) -> void
 {
 	isSectionAList = newVal;
 	UpdateRegion();
@@ -3246,7 +3245,7 @@ bool CSpawnItem::HandleLine( std::string &UTag, std::string &data )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Will eventually take the place of RespawnItem()
 //o------------------------------------------------------------------------------------------------o
-bool CSpawnItem::DoRespawn( void )
+auto CSpawnItem::DoRespawn() -> bool
 {
 	bool rValue = false;
 	switch( GetType() )
@@ -3264,7 +3263,7 @@ bool CSpawnItem::DoRespawn( void )
 
 	return rValue;
 }
-bool CSpawnItem::HandleItemSpawner( void )
+auto CSpawnItem::HandleItemSpawner() -> bool
 {
 	bool shouldSpawn = true;
 	for( CBaseObject *mObj = spawnedList.First(); !spawnedList.Finished(); mObj = spawnedList.Next() )
@@ -3303,7 +3302,7 @@ bool CSpawnItem::HandleItemSpawner( void )
 	return false;
 }
 
-bool CSpawnItem::HandleNPCSpawner( void )
+auto CSpawnItem::HandleNPCSpawner() -> bool
 {
 	if( spawnedList.Num() < GetAmount() )
 	{
@@ -3325,7 +3324,7 @@ bool CSpawnItem::HandleNPCSpawner( void )
 	}
 	return false;
 }
-bool CSpawnItem::HandleSpawnContainer( void )
+auto CSpawnItem::HandleSpawnContainer() -> bool
 {
 	if( Contains.Num() < GetAmount() )
 	{
@@ -3515,7 +3514,7 @@ bool CSpawnItem::CanBeObjType( ObjectType toCompare ) const
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a new CSpawnItem and copies all of this objects properties to the new one
 //o------------------------------------------------------------------------------------------------o
-CSpawnItem * CSpawnItem::Dupe( void )
+auto CSpawnItem::Dupe() -> CSpawnItem *
 {
 	CSpawnItem *target = static_cast<CSpawnItem *> (ObjectFactory::GetSingleton().CreateObject( OT_SPAWNER ));
 	if( target == nullptr )
@@ -3532,7 +3531,7 @@ CSpawnItem * CSpawnItem::Dupe( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Copies all of this objects properties to the new one
 //o------------------------------------------------------------------------------------------------o
-void CSpawnItem::CopyData( CSpawnItem *target )
+auto CSpawnItem::CopyData( CSpawnItem *target ) -> void
 {
 	CItem::CopyData( target );
 
