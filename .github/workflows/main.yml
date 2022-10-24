@@ -11,15 +11,28 @@ on:
       - '**.js'
       - '**.dfn'
       - '**.scp'
-
+  workflow_dispatch:
+      
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: prepare automake
-      run: chmod +x automake.sh
-    - name: automake
-      run: ./automake.sh
+    - uses: actions/checkout@v3
+    - name: prepare spidermonkey
+      run: |
+        cd spidermonkey
+        make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc
+        ar -r libjs32.a Linux_All_DBG.OBJ/*.o
+        cp Linux_All_DBG.OBJ/jsautocfg.h ./
+    - name: prepare zlib
+      run: |
+        cd ../zlib
+        make distclean
+        ./configure
+        make
+    - name: build uox3
+      run: |
+        cd ../source
+        make
