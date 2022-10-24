@@ -34,13 +34,13 @@ get=0x13eb-d
 id=0x13f2
 }
 
-// DullCopper Ringmail Gloves - Alias
+// Dull Copper Ringmail Gloves - Alias
 [dullcopperringmailgloves]
 {
 get=0x13eb-d 0x13f2-d
 }
 
-// DullCopper Ringmail Tunic - N/S
+// Dull Copper Ringmail Tunic - N/S
 [0x13ec-d]
 {
 getpub15=0x13ec_pub15
@@ -51,20 +51,20 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Ringmail Tunic - E/W
+// Dull Copper Ringmail Tunic - E/W
 [0x13ed-d]
 {
 get=0x13ec-d
 id=0x13ed
 }
 
-// DullCopper Ringmail Tunic - Alias
+// Dull Copper Ringmail Tunic - Alias
 [dullcopperringmailtunic]
 {
 get=0x13ec-d 0x13ed-d
 }
 
-// DullCopper Ringmail Sleeves - N/S
+// Dull Copper Ringmail Sleeves - N/S
 [0x13ee-d]
 {
 getpub15=0x13ee_pub15
@@ -75,20 +75,20 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Ringmail Sleeves - E/W
+// Dull Copper Ringmail Sleeves - E/W
 [0x13ef-d]
 {
 get=0x13ee-d
 id=0x13ef
 }
 
-// DullCopper Ringmail Sleeves - Alias
+// Dull Copper Ringmail Sleeves - Alias
 [dullcopperringmailsleeves]
 {
 get=0x13ee-d 0x13ef-d
 }
 
-// DullCopper Ringmail Leggings - N/S
+// Dull Copper Ringmail Leggings - N/S
 [0x13f0-d]
 {
 getpub15=0x13f0_pub15
@@ -99,14 +99,14 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Ringmail Leggings - E/W
+// Dull Copper Ringmail Leggings - E/W
 [0x13f1-d]
 {
 get=0x13f0-d
 id=0x13f1
 }
 
-// DullCopper Ringmail Leggings - Alias
+// Dull Copper Ringmail Leggings - Alias
 [dullcopperringmailleggings]
 {
 get=0x13f0-d 0x13f1-d
@@ -138,7 +138,7 @@ id=0x13c0
 get=0x13bb 0x13c0
 }
 
-// DullCopper Chainmail Leggings - N/S
+// Dull Copper Chainmail Leggings - N/S
 [0x13be-d]
 {
 getpub15=0x13be_pub15
@@ -149,20 +149,20 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Chainmail Leggings - E/W
+// Dull Copper Chainmail Leggings - E/W
 [0x13c3-d]
 {
 get=0x13be-d
 id=0x13c3
 }
 
-// DullCopper Chainmail Leggings - Alias
+// Dull Copper Chainmail Leggings - Alias
 [dullcopperchainmailleggings]
 {
 get=0x13be-d 0x13c3-d
 }
 
-// DullCopper Chainmail Tunic - N/S
+// Dull Copper Chainmail Tunic - N/S
 [0x13bf-d]
 {
 getpub15=0x13bf_pub15
@@ -173,20 +173,20 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Chainmail Tunic - E/W
+// Dull Copper Chainmail Tunic - E/W
 [0x13c4-d]
 {
 get=0x13bf-d
 id=0x13c4
 }
 
-// DullCopper Chainmail Tunic - Alias
+// Dull Copper Chainmail Tunic - Alias
 [dullcopperchainmailtunic]
 {
 get=0x13bf-d 0x13c4-d
 }
 
-// DullCopper Female Plate - N/S
+// Dull Copper Female Plate - N/S
 [0x1c04-d]
 {
 getpub15=0x1c04_pub15
@@ -197,14 +197,14 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Female Plate - E/W
+// Dull Copper Female Plate - E/W
 [0x1c05-d]
 {
 get=0x1c04-d
 id=0x1c05
 }
 
-// DullCopper Female Plate - Alias
+// Dull Copper Female Plate - Alias
 [dullcopperfemaleplate]
 {
 get=0x1c04-d 0x1c05-d
@@ -212,7 +212,7 @@ get=0x1c04-d 0x1c05-d
 
 // Dull Copper Platemail Armor
 
-// DullCopper Platemail Arms - E/W
+// Dull Copper Platemail Arms - E/W
 [0x1410-d]
 {
 getpub15=0x1410_pub15
@@ -223,14 +223,14 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Platemail Arms - N/S
+// Dull Copper Platemail Arms - N/S
 [0x1417-d]
 {
 get=0x1410-d
 id=0x1417
 }
 
-// DullCopper Platemail Arms - Alias
+// Dull Copper Platemail Arms - Alias
 [dullcopperplatemailarms]
 {
 get=0x1410-d 0x1417-d
@@ -260,7 +260,7 @@ id=0x141a
 get=0x1411-d 0x141a-d
 }
 
-// DullCopper Platemail Gorget
+// Dull Copper Platemail Gorget
 [0x1413-d]
 {
 getpub15=0x1413_pub15
@@ -271,7 +271,7 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Platemail Gorget - Alias
+// Dull Copper Platemail Gorget - Alias
 [dullcopperplatemailgorget]
 {
 get=0x1413-d
@@ -295,7 +295,7 @@ get=0x1414-d
 id=0x1418
 }
 
-// DullCopper Platemail Gloves - Alias
+// Dull Copper Platemail Gloves - Alias
 [dullcopperplatemailgloves]
 {
 get=0x1414-d 0x1418-d
@@ -319,7 +319,7 @@ get=0x1415-d
 id=0x1416
 }
 
-// DullCopper Platemail Chest - Alias
+// Dull Copper Platemail Chest - Alias
 [dullcopperplatemailchest]
 {
 get=0x1415-d 0x1416-d
@@ -707,7 +707,7 @@ get=0x140b-d
 id=0x140b
 }
 
-// DullCopper Helmet - Alias
+// Dull Copper Helmet - Alias
 [dullcopperhelmet]
 {
 get=0x140a-d 0x140b-d
@@ -731,7 +731,7 @@ get=0x140c-d
 id=0x140d
 }
 
-// DullCopper Bascinet - Alias
+// Dull Copper Bascinet - Alias
 [dullcopperbascinet]
 {
 get=0x140c-d 0x140d-d
@@ -755,7 +755,7 @@ get=0x140e-d
 id=0x140f
 }
 
-// DullCopper Norse Helm - Alias
+// Dull Copper Norse Helm - Alias
 [dullcoppernorsehelm]
 {
 get=0x140e-d 0x140f-d
@@ -779,7 +779,7 @@ get=0x1412-d
 id=0x1419
 }
 
-// DullCopper Plate Helm - Alias
+// Dull Copper Plate Helm - Alias
 [dullcopperplatehelm]
 {
 get=0x1412-d 0x1419-d
@@ -787,7 +787,7 @@ get=0x1412-d 0x1419-d
 
 // Dull Copper Shields
 
-// DullCopper DullCopper Shield
+// Dull Copper Dull Copper Shield
 [0x1b72-d]
 {
 getpub15=0x1b72_pub15
@@ -798,13 +798,13 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper DullCopper Shield - Alias
+// Dull Copper Dull Copper Shield - Alias
 [dullcopperdullcoppershield]
 {
 get=0x1b72-d
 }
 
-// DullCopper Buckler
+// Dull Copper Buckler
 [0x1b73-d]
 {
 getpub15=0x1b73_pub15
@@ -815,7 +815,7 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Buckler - Alias
+// Dull Copper Buckler - Alias
 [dullcopperbuckler]
 {
 get=0x1b73-d
@@ -884,7 +884,7 @@ color=0x973
 get=0x1b7a-d
 }
 
-// DullCopper Metal Shield
+// Dull Copper Metal Shield
 [0x1b7b-d]
 {
 getpub15=0x1b7b_pub15
@@ -895,7 +895,7 @@ gettol=dullcopper_armor_bonus_tol
 color=0x973
 }
 
-// DullCopper Metal Shield - Alias
+// Dull Copper Metal Shield - Alias
 [dullcoppermetalshield]
 {
 get=0x1b7b-d

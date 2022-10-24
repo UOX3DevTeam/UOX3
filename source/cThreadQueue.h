@@ -5,8 +5,9 @@
 #include <queue>
 #include <mutex>
 
-//==============================================================================
-enum MessageType {
+//o------------------------------------------------------------------------------------------------o
+enum MessageType
+{
 	MSG_WORLDSAVE = 0,
 	MSG_SHUTDOWN,
 	MSG_UNKNOWN,
@@ -20,26 +21,28 @@ enum MessageType {
 	MSG_COUNT
 };
 
-struct MessagePassed {
+struct MessagePassed_st
+{
 	MessageType	 actualMessage;
 	std::string	 data;
 };
 
-//==============================================================================
-class CThreadQueue {
+//o------------------------------------------------------------------------------------------------o
+class CThreadQueue
+{
 private:
-	std::queue< MessagePassed >	internalQueue;
+	std::queue<MessagePassed_st> internalQueue;
 	std::mutex queuelock;
 public:
 	CThreadQueue() = default;
-	auto NewMessage( MessageType toAdd, const std::string& data="" ) ->void;
-	auto GrabMessage()->MessagePassed ;
-	auto Empty()->bool;
-	auto operator<<( MessageType newMessage )->CThreadQueue & ;
-	auto operator<<( char *toPush )->CThreadQueue & ;
-	auto operator<<( const char *toPush )->CThreadQueue &;
-	auto operator<<( const std::string& toPush )->CThreadQueue &;
-	auto bulkData() ->std::queue<MessagePassed> ;
+	auto NewMessage( MessageType toAdd, const std::string& data = "" ) -> void;
+	auto GrabMessage()->MessagePassed_st;
+	auto Empty() -> bool;
+	auto operator<<( MessageType newMessage ) -> CThreadQueue &;
+	auto operator<<( char *toPush ) -> CThreadQueue &;
+	auto operator<<( const char *toPush ) -> CThreadQueue &;
+	auto operator<<( const std::string& toPush ) -> CThreadQueue &;
+	auto BulkData() -> std::queue<MessagePassed_st>;
 };
 
 extern CThreadQueue messageLoop;

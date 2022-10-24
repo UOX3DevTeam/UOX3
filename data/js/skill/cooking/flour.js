@@ -34,7 +34,9 @@ function onUseChecked ( pUser, iUsed )
 		}
 	}
 	else
+	{
 		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+	}
 	return false;
 }
 
@@ -42,13 +44,13 @@ function onCallback0( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var StrangeByte   = tSock.GetWord( 1 );
-	var targX	= tSock.GetWord( 11 );
-	var targY	= tSock.GetWord( 13 );
-	var targZ	= tSock.GetSByte( 16 );
+	var strangeByte = tSock.GetWord( 1 );
+	var targX = tSock.GetWord( 11 );
+	var targY = tSock.GetWord( 13 );
+	var targZ = tSock.GetSByte( 16 );
 
-	var tileID = tSock.GetWord(17);
-	if( tileID == 0 || ( StrangeByte == 0 && myTarget.isChar ))
+	var tileID = tSock.GetWord( 17 );
+	if( tileID == 0 || ( strangeByte == 0 && myTarget.isChar ))
 	{
 		//Target is a MapTile, or a Character
 		tSock.SysMessage( GetDictionaryEntry( 6075, tSock.language )); // That is not a pitcher of water
@@ -56,7 +58,7 @@ function onCallback0( tSock, myTarget )
 	}
 
 	// Target is a Dynamic Item
-	if( StrangeByte == 0 )
+	if( strangeByte == 0 )
 	{
 		// If target self, close the flour bag
 		if( myTarget == iUsed )
@@ -131,7 +133,9 @@ function onCallback0( tSock, myTarget )
 			iUsed.Refresh();
 		}
 		else
+		{
 			iUsed.Delete();
+		}
 
 		pUser.SoundEffect( 0x0134, true );
 
@@ -154,9 +158,13 @@ function onCallback0( tSock, myTarget )
 		else
 		{
 			if( myTarget.id == 0x0FF8 || myTarget.id == 0x1f9e )
+			{
 				myTarget.id = 0x0FF7;
+			}
 			else if( myTarget.id == 0x0ff9 || myTarget.id == 0x1f9d )
+			{
 				myTarget.id = 0x0FF6;
+			}
 			myTarget.SetTag( "ContentsType", 1 );
 			myTarget.SetTag( "EmptyGlass", 3 );
 			myTarget.usesLeft = 0;
@@ -168,5 +176,7 @@ function onCallback0( tSock, myTarget )
 		tSock.SysMessage( GetDictionaryEntry( 6078, tSock.language )); // You make some dough.
 	}
 	else // Target is a static item
+	{
 		tSock.SysMessage( GetDictionaryEntry( 6079, tSock.language )); // You cannot use that for making dough.
+	}
 }

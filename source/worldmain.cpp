@@ -1,6 +1,6 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	worldmain.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
 //|
 //|						1.0
@@ -15,7 +15,7 @@
 //|							others to more appropriate locations.
 //|						Added a proper constructor rather than ResetDefaults()
 //|						Grouped timers together in an array using an enum.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "cGuild.h"
 #include "townregion.h"
@@ -32,9 +32,9 @@
 
 CWorldMain *cwmWorldState = nullptr;
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 const bool			DEFWORLD_KEEPRUN			= true;
 const bool			DEFWORLD_ERROR				= false;
 const bool			DEFWORLD_SECURE				= true;
@@ -55,16 +55,18 @@ const bool			DEFWORLD_RELOADINGSCRIPTS	= false;
 const bool			DEFWORLD_CLASSESINITIALIZED	= false;
 
 CWorldMain::CWorldMain() : error( DEFWORLD_ERROR ),
-keeprun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ),  Loaded( DEFWORLD_LOADED ),
-uotickcount( DEFWORLD_UOTICKCOUNT ), starttime( DEFWORLD_STARTTIME ), endtime( DEFWORLD_ENDTIME ), lclock( DEFWORLD_LCLOCK ),
-overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldtime( DEFWORLD_OLDTIME ), newtime( DEFWORLD_NEWTIME ),
-autosaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ),
+keepRun( DEFWORLD_KEEPRUN ), secure( DEFWORLD_SECURE ), hasLoaded( DEFWORLD_LOADED ),
+uoTickCount( DEFWORLD_UOTICKCOUNT ), startTime( DEFWORLD_STARTTIME ), endTime( DEFWORLD_ENDTIME ), lClock( DEFWORLD_LCLOCK ),
+overflow( DEFWORLD_OVERFLOW ), uiCurrentTime( DEFWORLD_UICURRENTTIME ), oldTime( DEFWORLD_OLDTIME ), newTime( DEFWORLD_NEWTIME ),
+autoSaved( DEFWORLD_AUTOSAVED ), worldSaveProgress( DEFWORLD_SAVEPROGRESS ), playersOnline( DEFWORLD_PLAYERSONLINE ),
 reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLASSESINITIALIZED )
 {
-	sData = nullptr ;
+	sData = nullptr;
 	
-	for( SI32 mTID = (SI32)tWORLD_NEXTFIELDEFFECT; mTID < (SI32)tWORLD_COUNT; ++mTID )
+	for( SI32 mTID = static_cast<SI32>( tWORLD_NEXTFIELDEFFECT ); mTID < static_cast<SI32>( tWORLD_COUNT ); ++mTID )
+	{
 		worldTimers[mTID] = 0;
+	}
 	creatures.clear();
 	prowessTitles.resize( 0 );
 	murdererTags.resize( 0 );
@@ -76,52 +78,51 @@ reloadingScripts( DEFWORLD_RELOADINGSCRIPTS ), classesInitialized( DEFWORLD_CLAS
 	refreshQueue.clear();
 	deletionQueue.clear();
 	spawnRegions.clear();
-	uoxtimeout.tv_sec	= 0;
-	uoxtimeout.tv_usec	= 0;
-	
+	uoxTimeout.tv_sec	= 0;
+	uoxTimeout.tv_usec	= 0;	
 }
-//==========================================================================================================
-auto CWorldMain::startup() ->void {
-	
-
-}
-//==========================================================================================================
-auto CWorldMain::setServerData(CServerData &server_data) ->void{
-	
-	sData = &server_data ;
+//==================================================================================================
+auto CWorldMain::Startup() -> void
+{
 }
 
-//==========================================================================================================
+//==================================================================================================
+auto CWorldMain::SetServerData( CServerData &server_data ) -> void
+{	
+	sData = &server_data;
+}
 
-
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	TIMERVAL GetTimer( CWM_TID timerID ) const
-//|					void SetTimer( CWM_TID timerID, TIMERVAL newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetTimer()
+//|					CWorldMain::SetTimer()
 //|	Date		-	10/17/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles all the world timers (next time we check NPC AI, etc)
-//o-----------------------------------------------------------------------------------------------o
-TIMERVAL CWorldMain::GetTimer( CWM_TID timerID ) const
+//o------------------------------------------------------------------------------------------------o
+TIMERVAL CWorldMain::GetTimer( CWM_TID timerId ) const
 {
-	TIMERVAL rvalue = 0;
-	if( timerID != tWORLD_COUNT )
-		rvalue = worldTimers[timerID];
-	return rvalue;
+	TIMERVAL rValue = 0;
+	if( timerId != tWORLD_COUNT )
+	{
+		rValue = worldTimers[timerId];
+	}
+	return rValue;
 }
-void CWorldMain::SetTimer( CWM_TID timerID, TIMERVAL newVal )
+void CWorldMain::SetTimer( CWM_TID timerId, TIMERVAL newVal )
 {
-	if( timerID != tWORLD_COUNT )
-		worldTimers[timerID] = newVal;
+	if( timerId != tWORLD_COUNT )
+	{
+		worldTimers[timerId] = newVal;
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetError( void ) const
-//|					void SetError( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetError()
+//|					CWorldMain::SetError()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets if we have generated an error
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetError( void ) const
 {
 	return error;
@@ -131,29 +132,29 @@ void CWorldMain::SetError( bool newVal )
 	error = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetKeepRun( void ) const
-//|					void SetKeepRun( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetKeepRun()
+//|					CWorldMain::SetKeepRun()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets if server should be kept running
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetKeepRun( void ) const
 {
-	return keeprun;
+	return keepRun;
 }
 void CWorldMain::SetKeepRun( bool newVal )
 {
-	keeprun = newVal;
+	keepRun = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetSecure( void ) const
-//|					void SetSecure( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetSecure()
+//|					CWorldMain::SetSecure()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether console "secure" mode is enabled/disabled
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetSecure( void ) const
 {
 	return secure;
@@ -163,31 +164,29 @@ void CWorldMain::SetSecure( bool newVal )
 	secure = newVal;
 }
 
-
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetLoaded( void ) const
-//|					void SetLoaded( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetLoaded() const
+//|					CWorldMain::SetLoaded()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether UOX has been loaded
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetLoaded( void ) const
 {
-	return Loaded;
+	return hasLoaded;
 }
 void CWorldMain::SetLoaded( bool newVal )
 {
-	Loaded = newVal;
+	hasLoaded = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetUICurrentTime( void ) const
-//|					void SetUICurrentTime( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetUICurrentTime()
+//|					CWorldMain::SetUICurrentTime()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets current time
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetUICurrentTime( void ) const
 {
 	return uiCurrentTime;
@@ -197,29 +196,29 @@ void CWorldMain::SetUICurrentTime( UI32 newVal )
 	uiCurrentTime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetUOTickCount( void ) const
-//|					void SetUOTickCount( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetUOTickCount()
+//|					CWorldMain::SetUOTickCount()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets UO Minutes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetUOTickCount( void ) const
 {
-	return uotickcount;
+	return uoTickCount;
 }
 void CWorldMain::SetUOTickCount( UI32 newVal )
 {
-	uotickcount = newVal;
+	uoTickCount = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetOverflow( void ) const
-//|					void SetOverflow( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetOverflow()
+//|					CWorldMain::SetOverflow()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether we overflowed the time
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetOverflow( void ) const
 {
 	return overflow;
@@ -229,110 +228,110 @@ void CWorldMain::SetOverflow( bool newVal )
 	overflow = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 CWorldMain::GetStartTime( void ) const
-//|					void CWorldMain::SetStartTime( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetStartTime()
+//|					CWorldMain::SetStartTime()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server started up
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetStartTime( void ) const
 {
-	return starttime;
+	return startTime;
 }
 void CWorldMain::SetStartTime( UI32 newVal )
 {
-	starttime = newVal;
+	startTime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetEndTime( void ) const
-//|					void SetEndTime( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetEndTime()
+//|					CWorldMain::SetEndTime()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time when server will shutdown
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetEndTime( void ) const
 {
-	return endtime;
+	return endTime;
 }
 void CWorldMain::SetEndTime( UI32 newVal )
 {
-	endtime = newVal;
+	endTime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetLClock( void ) const
-//|					void SetLClock( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetLClock()
+//|					CWorldMain::SetLClock()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets end time
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetLClock( void ) const
 {
-	return lclock;
+	return lClock;
 }
 void CWorldMain::SetLClock( UI32 newVal )
 {
-	lclock = newVal;
+	lClock = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetNewTime( void ) const
-//|					void SetNewTime( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetNewTime()
+//|					CWorldMain::SetNewTime()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto worldsave
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetNewTime( void ) const
 {
-	return newtime;
+	return newTime;
 }
 void CWorldMain::SetNewTime( UI32 newVal )
 {
-	newtime = newVal;
+	newTime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetOldTime( void ) const
-//|					void SetOldTime( UI32 newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetOldTime()
+//|					CWorldMain::SetOldTime()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto worldsave
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetOldTime( void ) const
 {
-	return oldtime;
+	return oldTime;
 }
 void CWorldMain::SetOldTime( UI32 newVal )
 {
-	oldtime = newVal;
+	oldTime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetAutoSaved( void ) const
-//|					void SetAutoSaved( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetAutoSaved()
+//|					CWorldMain::SetAutoSaved()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets whether world was autosaved
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether world was autoSaved
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetAutoSaved( void ) const
 {
-	return autosaved;
+	return autoSaved;
 }
 void CWorldMain::SetAutoSaved( bool newVal )
 {
-	autosaved = newVal;
+	autoSaved = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SaveStatus GetWorldSaveProgress( void ) const
-//|					void SetWorldSaveProgress( SaveStatus newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetWorldSaveProgress()
+//|					CWorldMain::SetWorldSaveProgress()
 //|	Date		-	3/12/2003
 //|	Changes		-	10/10/2003 - Now uses enum SaveStatus for ease of use
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets status of World saves (Not Saving, Saving, Just Saved)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SaveStatus CWorldMain::GetWorldSaveProgress( void ) const
 {
 	return worldSaveProgress;
@@ -342,13 +341,13 @@ void CWorldMain::SetWorldSaveProgress( SaveStatus newVal )
 	worldSaveProgress = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	size_t GetPlayersOnline( void ) const
-//|					void SetPlayersOnline( size_t newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetPlayersOnline()
+//|					CWorldMain::SetPlayersOnline()
 //|	Date		-	3/12/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total Players Online
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 size_t CWorldMain::GetPlayersOnline( void ) const
 {
 	return playersOnline;
@@ -358,25 +357,27 @@ void CWorldMain::SetPlayersOnline( size_t newVal )
 	playersOnline = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CWorldMain::DecPlayersOnline( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::DecPlayersOnline()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Decrements the counter for players online
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CWorldMain::DecPlayersOnline( void )
 {
 	if( playersOnline == 0 )
+	{
 		throw std::runtime_error( "Decrementing a 0 count which will rollover" );
+	}
 	--playersOnline;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetReloadingScripts( void ) const
-//|					void SetReloadingScripts( bool newVal )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetReloadingScripts()
+//|					CWorldMain::SetReloadingScripts()
 //|	Date		-	6/22/2004
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether server is reloading its scripts
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetReloadingScripts( void ) const
 {
 	return reloadingScripts;
@@ -386,28 +387,30 @@ void CWorldMain::SetReloadingScripts( bool newVal )
 	reloadingScripts = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CheckTimers( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::CheckTimers()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check shutdown timers
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CWorldMain::CheckTimers( void )
 {
-	SetOverflow( ( GetLClock() > GetUICurrentTime() ) );
+	SetOverflow(( GetLClock() > GetUICurrentTime() ));
 	if( GetEndTime() )
 	{
 		if( GetEndTime() <= GetUICurrentTime() )
+		{
 			SetKeepRun( false );
+		}
 	}
 	SetLClock( GetUICurrentTime() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetNewIPTime( void ) const
-//|					void SetNewIPTime( UI32 newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetNewIPTime()
+//|					CWorldMain::SetNewIPTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time for next auto IP update
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetNewIPTime( void ) const
 {
 	return newIPtime;
@@ -417,12 +420,12 @@ void CWorldMain::SetNewIPTime( UI32 newVal )
 	newIPtime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 GetOldIPTime( void ) const
-//|					void SetOldIPTime( UI32 newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetOldIPTime()
+//|					CWorldMain::SetOldIPTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets time of last auto IP update
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CWorldMain::GetOldIPTime( void ) const
 {
 	return oldIPtime;
@@ -432,27 +435,27 @@ void CWorldMain::SetOldIPTime( UI32 newVal )
 	oldIPtime = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetIPUpdated( void ) const
-//|					void SetIPUpdated( bool newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::GetIPUpdated()
+//|					CWorldMain::SetIPUpdated()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether IPs have been updated
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::GetIPUpdated( void ) const
 {
-	return ipupdated;
+	return ipUpdated;
 }
 void CWorldMain::SetIPUpdated( bool newVal )
 {
-	ipupdated = newVal;
+	ipUpdated = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ClassesInitialized( void ) const
-//|					void ClassesInitialized( bool newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::ClassesInitialized()
+//|					CWorldMain::ClassesInitialized()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether base classes been initialized (in case of early shut down)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWorldMain::ClassesInitialized( void ) const
 {
 	return classesInitialized;
@@ -462,12 +465,12 @@ void CWorldMain::ClassesInitialized( bool newVal )
 	classesInitialized = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void doWorldLight( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::DoWorldLight()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set world light level based on time of day and script settings
-//o-----------------------------------------------------------------------------------------------o
-void CWorldMain::doWorldLight( void )
+//o------------------------------------------------------------------------------------------------o
+void CWorldMain::DoWorldLight( void )
 {
 	UI08 worlddarklevel		= ServerData()->WorldLightDarkLevel();
 	UI08 worldbrightlevel	= ServerData()->WorldLightBrightLevel();
@@ -475,33 +478,39 @@ void CWorldMain::doWorldLight( void )
 	UI08 currentHour		= ServerData()->ServerTimeHours();
 	UI08 currentMinute		= ServerData()->ServerTimeMinutes();
 
-	R32 currentTime			= R32( currentHour + ( currentMinute / 60.0f) );
-	R32 hourIncrement		= R32( fabs( ( worlddarklevel - worldbrightlevel ) / 12.0f ) );	// we want the amount to subtract from LightMax in the morning / add to LightMin in evening
+	R32 currentTime			= R32( currentHour + ( currentMinute / 60.0f ));
+	R32 hourIncrement		= R32( fabs(( worlddarklevel - worldbrightlevel ) / 12.0f )); // we want the amount to subtract from LightMax in the morning / add to LightMin in evening
 
 	if( ampm )
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( roundNumber( worldbrightlevel + ( hourIncrement * currentTime) ) ) );
+	{
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( RoundNumber( worldbrightlevel + ( hourIncrement * currentTime ))));
+	}
 	else
-		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( roundNumber( worlddarklevel - ( hourIncrement * currentTime) ) ) );
+	{
+		ServerData()->WorldLightCurrentLevel( static_cast<UI08>( RoundNumber( worlddarklevel - ( hourIncrement * currentTime ))));
+	}
 }
 
-void fileArchive( void );
+void FileArchive( void );
 void CollectGarbage( void );
-void sysBroadcast( const std::string& txt );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SaveNewWorld( bool x )
+void SysBroadcast( const std::string& txt );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::SaveNewWorld()
 //|	Date		-	1997
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the UOX world
 //|
 //|	Changes		-	10/21/2002	-	fix for archiving. Now it wont always archive :)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveNewWorld( bool x )
 {
 	static UI32 save_counter = 0;
 
-	std::for_each(cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [](std::pair<std::uint16_t,CSpawnRegion*> entry){
-		if (entry.second){
-			entry.second->checkSpawned();
+	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), []( std::pair<std::uint16_t, CSpawnRegion*> entry )
+	{
+		if( entry.second )
+		{
+			entry.second->CheckSpawned();
 		}
 	});
 
@@ -511,15 +520,19 @@ void CWorldMain::SaveNewWorld( bool x )
 		Console.PrintSectionBegin();
 		if( ServerData()->ServerAnnounceSavesStatus() )
 		{
-			sysBroadcast( Dictionary->GetEntry( 1615 ) );
+			SysBroadcast( Dictionary->GetEntry( 1615 )); // World data saving, you may experience some lag for the next several minutes.
 			SpeechSys->Poll();
 		}
 		Network->ClearBuffers();
 
 		if( x )
+		{
 			Console << "Starting manual world data save...." << myendl;
+		}
 		else
+		{
 			Console << "Starting automatic world data save...." << myendl;
+		}
 
 		if( ServerData()->ServerBackupStatus() && ServerData()->Directory( CSDDP_BACKUP ).length() > 1 )
 		{
@@ -527,12 +540,12 @@ void CWorldMain::SaveNewWorld( bool x )
 			if(( save_counter % ServerData()->BackupRatio() ) == 0 )
 			{
 				Console << "Archiving world files." << myendl;
-				fileArchive();
+				FileArchive();
 			}
 		}
 		Console << "Saving Misc. data... ";
-		ServerData()->save();
-		Console.log( "Server data save", "server.log" );
+		ServerData()->SaveIni();
+		Console.Log( "Server data save", "server.log" );
 		RegionSave();
 		Console.PrintDone();
 		MapRegion->Save();
@@ -543,7 +556,9 @@ void CWorldMain::SaveNewWorld( bool x )
 		SaveStatistics();
 
 		if( ServerData()->ServerAnnounceSavesStatus() )
-			sysBroadcast( "World Save Complete." );
+		{
+			SysBroadcast( "World Save Complete." );
+		}
 
 		//	If accounts are to be loaded then they should be loaded
 		//	all the time if using the web interface
@@ -553,98 +568,102 @@ void CWorldMain::SaveNewWorld( bool x )
 		SetWorldSaveProgress( SS_JUSTSAVED );
 
 		char saveTimestamp[100];
-		time_t tempTimestamp = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		time_t tempTimestamp = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 		struct tm curtime;
-		lcltime(tempTimestamp, curtime);
+		lcltime( tempTimestamp, curtime );
 		strftime( saveTimestamp, 50, "%F at %T", &curtime );
 
 		Console << "World save complete on " << saveTimestamp << myendl;
 		Console.PrintSectionBegin();
 	}
 	CollectGarbage();
-	uiCurrentTime = getclock();
+	uiCurrentTime = GetClock();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void RegionSave( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::RegionSave()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all town regions and saves them to disk
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CWorldMain::RegionSave()
 {
 	std::string regionsFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
 	std::ofstream regionsDestination( regionsFile.c_str() );
 	if( !regionsDestination )
 	{
-		Console.error( oldstrutil::format("Failed to open %s for writing", regionsFile.c_str()) );
+		Console.Error( oldstrutil::format( "Failed to open %s for writing", regionsFile.c_str() ));
 		return;
 	}
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination](const std::pair<std::uint16_t,CTownRegion*> &town){
-		if (town.second) {
-			town.second->Save(regionsDestination);
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<std::uint16_t, CTownRegion*> &town )
+	{
+		if( town.second )
+		{
+			town.second->Save( regionsDestination );
 		}
 	});
 	regionsDestination.close();
 }
-//=================================================================================================
-auto CWorldMain::ServerData()->CServerData *{
+
+//==================================================================================================
+auto CWorldMain::ServerData()->CServerData *
+{
 	return sData;
 }
 
-//=================================================================================================
-auto CWorldMain::ServerProfile() -> CServerProfile *{
+//==================================================================================================
+auto CWorldMain::ServerProfile() -> CServerProfile *
+{
 	return &sProfile;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SaveStatistics( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWorldMain::SaveStatistics()
 //|	Date		-	February 5th, 2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out some useful statistics so that some tools
 //|						such as WorldBuilder can do some memory reserve shortcuts
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CWorldMain::SaveStatistics( void )
 {
 	std::string		statsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "statistics.wsc";
 	std::ofstream	statsDestination( statsFile.c_str() );
 	if( !statsDestination )
 	{
-		Console.error( oldstrutil::format("Failed to open %s for writing", statsFile.c_str()) );
+		Console.Error( oldstrutil::format( "Failed to open %s for writing", statsFile.c_str() ));
 		return;
 	}
 	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
-	statsDestination << "PLAYERCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_CHAR ) << '\n';
-	statsDestination << "ITEMCOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_ITEM ) << '\n';
-	statsDestination << "MULTICOUNT=" << ObjectFactory::getSingleton().CountOfObjects( OT_MULTI ) << '\n';
+	statsDestination << "PLAYERCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) << '\n';
+	statsDestination << "ITEMCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) << '\n';
+	statsDestination << "MULTICOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ) << '\n';
 	statsDestination << "}" << '\n' << '\n';
 
 	statsDestination.close();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Class		-	CServerProfile
+//o------------------------------------------------------------------------------------------------o
+//|	Class		-	CWorldMain::CServerProfile()
 //|	Date		-	2004
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Version History
 //|
 //|						1.0		 		2004
 //|						Original implementation
 //|						Moving all profiling variables into their own class managed
 //|						by CWorldMain in order to take them out of global scope
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CServerProfile::CServerProfile() : networkTime( 0 ), timerTime( 0 ), autoTime( 0 ), loopTime( 0 ),
 networkTimeCount( 1000 ), timerTimeCount( 1000 ), autoTimeCount( 1000 ), loopTimeCount( 1000 ),
 globalRecv( 0 ), globalSent( 0 )
 {
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 NetworkTime( void ) const
-//|					void NetworkTime( UI32 newVal )
-//|					void IncNetworkTime( UI32 toInc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::NetworkTime()
+//|					CServerProfile::IncNetworkTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments networkTime
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::NetworkTime( void ) const
 {
 	return networkTime;
@@ -658,13 +677,12 @@ void CServerProfile::IncNetworkTime( UI32 toInc )
 	networkTime += toInc;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 TimerTime( void ) const
-//|					void TimerTime( UI32 newVal )
-//|					void IncTimerTime( UI32 toInc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::TimerTime()
+//|					CServerProfile::IncTimerTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments timerTime
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::TimerTime( void ) const
 {
 	return timerTime;
@@ -678,13 +696,12 @@ void CServerProfile::IncTimerTime( UI32 toInc )
 	timerTime += toInc;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 AutoTime( void ) const
-//|					void AutoTime( UI32 newVal )
-//|					void IncAutoTime( UI32 toInc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::AutoTime()
+//|					CServerProfile::IncAutoTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments autoTime
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::AutoTime( void ) const
 {
 	return autoTime;
@@ -698,13 +715,12 @@ void CServerProfile::IncAutoTime( UI32 toInc )
 	autoTime += toInc;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 LoopTime( void ) const
-//|					void LoopTime( UI32 newVal )
-//|					void IncLoopTime( UI32 toInc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::LoopTime()
+//|					CServerProfile::IncLoopTime()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments loopTime
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::LoopTime( void ) const
 {
 	return loopTime;
@@ -718,13 +734,12 @@ void CServerProfile::IncLoopTime( UI32 toInc )
 	loopTime += toInc;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 NetworkTimeCount( void ) const
-//|					void NetworkTimeCount( UI32 newVal )
-//|					void IncNetworkTimeCount( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::NetworkTimeCount()
+//|					CServerProfile::IncNetworkTimeCount()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments networkTimeCount
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::NetworkTimeCount( void ) const
 {
 	return networkTimeCount;
@@ -738,13 +753,12 @@ void CServerProfile::IncNetworkTimeCount( void )
 	++networkTimeCount;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 TimerTimeCount( void ) const
-//|					void TimerTimeCount( UI32 newVal )
-//|					void IncTimerTimeCount( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::TimerTimeCount()
+//|					CServerProfile::IncTimerTimeCount()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments timerTimeCount
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::TimerTimeCount( void ) const
 {
 	return timerTimeCount;
@@ -758,13 +772,12 @@ void CServerProfile::IncTimerTimeCount( void )
 	++timerTimeCount;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 AutoTimeCount( void ) const
-//|					void AutoTimeCount( UI32 newVal )
-//|					void IncAutoTimeCount( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::AutoTimeCount()
+//|					CServerProfile::IncAutoTimeCount()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments autoTimeCount
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::AutoTimeCount( void ) const
 {
 	return autoTimeCount;
@@ -778,13 +791,12 @@ void CServerProfile::IncAutoTimeCount( void )
 	++autoTimeCount;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI32 LoopTimeCount( void ) const
-//|					void LoopTimeCount( UI32 newVal )
-//|					void IncLoopTimeCount( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::LoopTimeCount()
+//|					CServerProfile::IncLoopTimeCount()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets/Increments amount of simulation cycles
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI32 CServerProfile::LoopTimeCount( void ) const
 {
 	return loopTimeCount;
@@ -798,12 +810,12 @@ void CServerProfile::IncLoopTimeCount( void )
 	++loopTimeCount;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 GlobalReceived( void ) const
-//|					void GlobalReceived( SI32 newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::GlobalReceived()
+//|					CServerProfile::GlobalReceived()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total amount of bytes received by server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI32 CServerProfile::GlobalReceived( void ) const
 {
 	return globalRecv;
@@ -813,12 +825,12 @@ void CServerProfile::GlobalReceived( SI32 newVal )
 	globalRecv = newVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 GlobalSent( void ) const
-//|					void GlobalSent( SI32 newVal )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerProfile::GlobalSent()
+//|					CServerProfile::GlobalSent()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total amount of bytes sent by server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI32 CServerProfile::GlobalSent( void ) const
 {
 	return globalSent;

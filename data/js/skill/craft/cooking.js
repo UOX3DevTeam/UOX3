@@ -28,12 +28,12 @@ const myPage = [
 
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 4
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	for ( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
@@ -55,7 +55,7 @@ function pageX( socket, pUser, pageNum )
 		}
 		myGump.AddButton( 220, 60 + ( index * 20 ), 4005, 4007, 1, 0, ( 100 * pageNum ) + i );
 
-		myGump.AddText( 255, 60 + ( index * 20 ), LabelHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ) );
+		myGump.AddText( 255, 60 + ( index * 20 ), LabelHue, GetDictionaryEntry( myPage[pageNum - 1][i], socket.language ));
 
 		myGump.AddButton( 480, 60 + ( index * 20 ), 4011, 4012, 1, 0, 2000 + ( 100 * pageNum ) + i );
 	}
@@ -66,7 +66,7 @@ function pageX( socket, pUser, pageNum )
 const mills = [
 		0x188b, 0x1893, 0x1920, 0x1922, 0x192c, 0x192e
 ];
-function findNearbyMills( pUser, trgItem, pSock )
+function FindNearbyMills( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -77,7 +77,7 @@ function findNearbyMills( pUser, trgItem, pSock )
 const ovens = [
 		0x461, 0x46F, 0x92B, 0x93F
 ];
-function findNearbyOvens( pUser, trgItem, pSock )
+function FindNearbyOvens( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -89,7 +89,7 @@ const heatSources = [
 		0x0461, 0x0480, 0x092B, 0x0933, 0x0937, 0x0942, 0x0945, 0x0950, 0x0953,
 		0x095e, 0x0961, 0x096c, 0x0de3, 0x0de8, 0x0fac
 ];
-function findNearbyHeatSources( pUser, trgItem, pSock )
+function FindNearbyHeatSources( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -110,7 +110,7 @@ function onTimer( pUser, timerID )
 		case 2: // Page 2 - Preparation
 		case 3: // Page 3 - Baking
 		case 4: // Page 4 - Barbecue
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 	}
 }
@@ -171,7 +171,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( pButton >= 300 && pButton <= 311 )
 	{
 		// Baking - Requires Oven
-		nearbyOven = AreaItemFunction( "findNearbyOvens", pUser, 2, pSock );
+		nearbyOven = AreaItemFunction( "FindNearbyOvens", pUser, 2, pSock );
 		if( nearbyOven > 0 )
 		{
 			pUser.SetTempTag( "MAKELAST", pButton );
@@ -197,7 +197,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	else if( pButton >= 400 && pButton <= 405 )
 	{
 		// Barbecue - Requires Fire/Generic Heat Source
-		nearbyHeatSource = AreaItemFunction( "findNearbyHeatSources", pUser, 2, pSock );
+		nearbyHeatSource = AreaItemFunction( "FindNearbyHeatSources", pUser, 2, pSock );
 		if( nearbyHeatSource > 0 )
 		{
 			pUser.SetTempTag( "MAKELAST", pButton );
@@ -238,7 +238,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 3: // Page 3 - Baking
 		case 4: // Page 4 - Barbecue
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 		// Make Items
 		// Page 1 - Ingredients
@@ -398,7 +398,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			else
 			{
 				// Look for nearby dynamic mill
-				var nearbyMill = AreaItemFunction( "findnearbyMills", pUser, 2, pSock );
+				var nearbyMill = AreaItemFunction( "FindNearbyMills", pUser, 2, pSock );
 				if( nearbyMill == 0 )
 				{
 					// No dynamic oven found nearby! Look for a static one?

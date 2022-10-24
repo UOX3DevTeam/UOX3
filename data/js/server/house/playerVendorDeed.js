@@ -46,7 +46,7 @@ function onUseChecked( pUser, iUsed )
 
 		// Make sure player is not trying to place the player vendor too close to a door!
 		// Check for nearby doors
-		var foundDoor = AreaItemFunction( "checkForNearbyDoors", pUser, 3, pSocket );
+		var foundDoor = AreaItemFunction( "CheckForNearbyDoors", pUser, 3, pSocket );
 		if( foundDoor )
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 2861, pSocket.language )); // You cannot place a player vendor adjacent to a door!
@@ -79,7 +79,7 @@ function onUseChecked( pUser, iUsed )
 	return false;
 }
 
-function checkForNearbyDoors( pUser, itemToCheck, pSocket )
+function CheckForNearbyDoors( pUser, itemToCheck, pSocket )
 {
 	if( ValidateObject( itemToCheck ))
 	{

@@ -1666,8 +1666,31 @@
 // Begging Text
 1662=Could thee spare a few coppers?
 1663=My little son Timmy requires an operation have ye some gold to help d'cause?
-1664=My wife is pregnant with our 7th child, have some pitty in the form of some gold for a desperate man.
+1664=My wife is pregnant with our 7th child, have some pity in the form of some gold for a desperate man.
 // End begging text
+1670=You cannot disguise yourself while wearing body paint
+1671=You cannot polymorph while wearing body paint
+1672=You cannot use incognito while wearing body paint
+1673=You can't do that while incognito.
+1674=You can't do that while polymorphed.
+1675=Your skin is scorched as the tribal paint burns away!
+1676=Your body paint has worn off!
+1677=You cannot disguise yourself while incognito.
+1678=You cannot disguise yourself while polymorphed.
+1679=You are already disguised.
+1680=You now bear the markings of the savage tribe.  Your body paint will last about a week or you can remove it with an oil cloth.
+1681=You wipe away all of your body paint.
+1682=The Tribal Spear breaks apart in your hands as you pick it up!
+1683=%s starts swinging a bola around
+1684=Enter new title for guild member:
+1685=Select guild member to set title for
+1686=You have been granted a guild title of %s!
+1687=You have recruited %s as a new guild member!
+1688=You have been recruited to join the guild %s!
+1689=You have dismissed %s from your guild!
+1690=You have been dismissed from your guild!
+1691=You cannot dismiss yourself from the guild!
+1692=%s is now the new Guild Master of %s!
 // Tweak Char Menu Stuff
 1700=Invalid Button Pressed
 1701=Enter a new Name for the character.
@@ -1951,6 +1974,15 @@
 1979=Tokuno Islands
 1980=Ter Mur
 1981=Members of the %s race cannot wear this
+1982=You parry the attack!
+1983=Your weapon has been destroyed!
+1984=You are not a member of this guild!
+1985=You have sponsored %s as a candidate to join the guild!
+1986=You have been invited by %s to join the guild: %s
+1987=You have declared fealty to %s!
+1988=%s has declared fealty to you!
+1989=Your guild has declared war on the guild %s!
+1990=Your guild has declared the guild %s as an ally!
 // JS-Based Tweak Menu
 1991=Invalid object targeted!
 1992=Unknown object targeted!
@@ -3296,6 +3328,9 @@
 6214=This potion's ingredients are unknown to you.
 6215=You already know what kind of potion that is: %s
 6250=You step out of the shadows.
+6275=You combine the berry and the flour into the tribal paint worn by the savages.
+6276=You don't have the cooking skill to create the body paint.
+6277=Resource ID not found in list of resources used to craft item.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3546,6 +3581,7 @@
 8210=Redirecting to 'radditem command...
 8211=Redirecting to 'raddnpc command...
 8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Section ID from DFNs object originated from
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type

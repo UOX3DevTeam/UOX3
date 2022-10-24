@@ -5,7 +5,7 @@
 
 
 // Forward declare
-struct __STARTLOCATIONDATA__ ;
+struct __STARTLOCATIONDATA__;
 
 class CPCharLocBody : public CPUOXBuffer
 {
@@ -20,7 +20,7 @@ public:
 	}
 	virtual void	Flag( UI08 toPut );
 	virtual void	HighlightColour( UI08 color );
-	CPCharLocBody &	operator=( CChar &toCopy );
+	CPCharLocBody &	operator = ( CChar &toCopy );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
@@ -49,7 +49,7 @@ public:
 	virtual			~CPacketSpeech()
 	{
 	}
-	CPacketSpeech	&operator=( CSpeechEntry &toCopy );
+	CPacketSpeech	&operator = ( CSpeechEntry &toCopy );
 };
 
 class CPWalkDeny : public CPUOXBuffer
@@ -89,7 +89,7 @@ public:
 	CPExtMove( CChar &toCopy );
 	virtual void	FlagColour( UI08 newValue );
 	virtual void	SetFlags( CChar &totoCopy );
-	CPExtMove		&operator=( CChar &toCopy );
+	CPExtMove		&operator = ( CChar &toCopy );
 };
 
 class CPAttackOK : public CPUOXBuffer
@@ -103,7 +103,7 @@ public:
 	}
 	CPAttackOK( CChar &toCopy );
 	virtual void	Serial( SERIAL newSerial );
-	CPAttackOK		&operator=( CChar &toCopy );
+	CPAttackOK		&operator = ( CChar &toCopy );
 };
 
 class CPRemoveItem : public CPUOXBuffer
@@ -117,7 +117,7 @@ public:
 	}
 	CPRemoveItem( CBaseObject &toCopy );
 	virtual void	Serial( SERIAL newSerial );
-	CPRemoveItem	&operator=( CBaseObject &toCopy );
+	CPRemoveItem	&operator = ( CBaseObject &toCopy );
 };
 
 class CPWorldChange : public CPUOXBuffer
@@ -173,7 +173,7 @@ public:
 	{
 	}
 	CPBuyItem( CBaseObject &i );
-	CPBuyItem		&operator=( CBaseObject &toCopy );
+	CPBuyItem		&operator = ( CBaseObject &toCopy );
 	void			Serial( SERIAL toSet );
 };
 
@@ -208,7 +208,7 @@ public:
 	virtual void	Layer( UI08 layer );
 	virtual void	CharSerial( SERIAL chSer );
 	virtual void	Colour( SI16 newColour );
-	CPWornItem		&operator=( CItem &toCopy );
+	CPWornItem		&operator = ( CItem &toCopy );
 };
 
 class CPCharacterAnimation : public CPUOXBuffer
@@ -229,7 +229,7 @@ public:
 	virtual void	DoBackwards( bool newValue );
 	virtual void	RepeatFlag( bool newValue );
 	virtual void	FrameDelay( UI08 delay );
-	CPCharacterAnimation &operator=( CChar &toCopy );
+	CPCharacterAnimation &operator = ( CChar &toCopy );
 };
 
 class CPNewCharacterAnimation : public CPUOXBuffer
@@ -247,7 +247,7 @@ public:
 	virtual void	Action( UI16 action );
 	virtual void	SubAction( UI16 subAction );
 	virtual void	SubSubAction( UI08 subSubAction );
-	CPNewCharacterAnimation &operator=( CChar &toCopy );
+	CPNewCharacterAnimation &operator = ( CChar &toCopy );
 };
 
 class CPDrawGamePlayer : public CPUOXBuffer
@@ -276,7 +276,7 @@ public:
 	CPPersonalLightLevel( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Level( UI08 lightLevel );
-	CPPersonalLightLevel &operator=( CChar &toCopy );
+	CPPersonalLightLevel &operator = ( CChar &toCopy );
 };
 
 class CPPlaySoundEffect : public CPUOXBuffer
@@ -295,7 +295,7 @@ public:
 	virtual void	X( SI16 xLoc );
 	virtual void	Y( SI16 yLoc );
 	virtual void	Z( SI16 zLoc );
-	CPPlaySoundEffect &operator=( CBaseObject &toCopy );
+	CPPlaySoundEffect &operator = ( CBaseObject &toCopy );
 };
 
 class CPPaperdoll : public CPUOXBuffer
@@ -312,7 +312,7 @@ public:
 	virtual void	Serial( SERIAL tSerial );
 	virtual void	FlagByte( UI08 fVal );
 	virtual void	Text( const std::string& toPut );
-	CPPaperdoll &	operator=( CChar &toCopy );
+	CPPaperdoll &	operator = ( CChar &toCopy );
 };
 
 class CPWeather : public CPUOXBuffer
@@ -392,8 +392,8 @@ public:
 	virtual void	Player( SERIAL toSet );
 	virtual void	Corpse( SERIAL toSet );
 	virtual void	FallDirection( UI08 toFall );
-	CPDeathAction &	operator=( CChar &dying );
-	CPDeathAction & operator=( CItem &corpse );
+	CPDeathAction &	operator = ( CChar &dying );
+	CPDeathAction & operator = ( CItem &corpse );
 };
 
 class CPPlayMusic : public CPUOXBuffer
@@ -401,12 +401,12 @@ class CPPlayMusic : public CPUOXBuffer
 protected:
 	virtual void	InternalReset( void ) override;
 public:
-	CPPlayMusic( SI16 musicID );
+	CPPlayMusic( SI16 musicId );
 	CPPlayMusic();
 	virtual			~CPPlayMusic()
 	{
 	}
-	virtual void	MusicID( SI16 musicID );
+	virtual void	MusicId( SI16 musicId );
 };
 
 class CPDrawContainer : public CPUOXBuffer
@@ -423,7 +423,7 @@ public:
 	virtual void	Model( UI16 newModel );
 	virtual void	ContType( UI16 contType );
 	virtual void	Serial( SERIAL toSet );
-	CPDrawContainer &operator=( CItem &toCopy );
+	CPDrawContainer &operator = ( CItem &toCopy );
 };
 
 //	0x7C Packet
@@ -431,7 +431,7 @@ public:
 //	Open Dialog Box (Variable # of bytes)
 //	BYTE cmd
 //	BYTE[2] blockSize
-//	BYTE[4] dialogID (echo'd back to the server in 7d)
+//	BYTE[4] dialogId (echo'd back to the server in 7d)
 //	BYTE[2] menuid (echo'd back to server in 7d)
 //	BYTE length of question
 //	BYTE[length of question] question text
@@ -461,7 +461,7 @@ public:
 	virtual void	Question( std::string toAdd );
 	virtual void	AddResponse( UI16 modelNum, UI16 colour, std::string responseText );
 	virtual void	Finalize( void );
-	CPOpenGump &operator=( CChar &toCopy );
+	CPOpenGump &operator = ( CChar &toCopy );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
@@ -636,7 +636,7 @@ public:
 	virtual void	Location( SI16 x, SI16 y );
 	virtual void	Active( UI08 value );
 	virtual void	AddSerial( SERIAL targetSerial );
-	CPTrackingArrow &operator=( CBaseObject &toCopy );
+	CPTrackingArrow &operator = ( CBaseObject &toCopy );
 };
 
 class CPBounce : public CPUOXBuffer
@@ -665,7 +665,7 @@ public:
 	CPDyeVat( CBaseObject &target );
 	virtual void	Serial( SERIAL toSet );
 	virtual void	Model( SI16 toSet );
-	CPDyeVat &		operator=( CBaseObject &target );
+	CPDyeVat &		operator = ( CBaseObject &target );
 };
 
 class CPMultiPlacementView : public CPUOXBuffer
@@ -684,7 +684,7 @@ public:
 	virtual void	DeedSerial( SERIAL toSet );
 	virtual void	MultiModel( SI16 toSet );
 	virtual void	SetHue( UI16 hueValue );
-	CPMultiPlacementView &operator=( CItem &target );
+	CPMultiPlacementView &operator = ( CItem &target );
 };
 
 class CPEnableClientFeatures : public CPUOXBuffer
@@ -753,7 +753,7 @@ public:
 	CPKickPlayer();
 	CPKickPlayer( CChar &toCopy );
 	virtual void	Serial( SERIAL toSet );
-	CPKickPlayer &	operator=( CChar &toCopy );
+	CPKickPlayer &	operator = ( CChar &toCopy );
 };
 
 class CPResurrectMenu : public CPUOXBuffer
@@ -800,8 +800,8 @@ public:
 	CPSkillsValues( CChar &toCopy );
 	virtual void	NumSkills( UI08 numSkills );
 	virtual void	SetCharacter( CChar &toCopy );
-	virtual void	SkillEntry( SI16 skillID, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock );
-	CPSkillsValues &operator=( CChar &toCopy );
+	virtual void	SkillEntry( SI16 skillId, SI16 skillVal, SI16 baseSkillVal, SkillLock skillLock );
+	CPSkillsValues &operator = ( CChar &toCopy );
 };
 
 class CPMapMessage : public CPUOXBuffer
@@ -875,8 +875,8 @@ public:
 	CPGumpTextEntry( const std::string& text );
 	CPGumpTextEntry( const std::string& text1, const std::string& text2 );
 	virtual void	Serial( SERIAL id );
-	virtual void	ParentID( UI08 newVal );
-	virtual void	ButtonID( UI08 newVal );
+	virtual void	ParentId( UI08 newVal );
+	virtual void	ButtonId( UI08 newVal );
 	virtual void	Cancel( UI08 newVal );	// 0 = disable, 1 = enable
 	virtual void	Style( UI08 newVal );	// 0 = disable, 1 = normal, 2 = numerical
 	virtual void	Format( SERIAL id );	// if style 1, max text len, if style 2, max num len
@@ -896,7 +896,7 @@ public:
 	{
 	}
 	virtual	void	SetMap( UI08 newMap );
-	CPMapChange&	operator=( CBaseObject& moving );
+	CPMapChange&	operator = ( CBaseObject& moving );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
@@ -904,10 +904,10 @@ class CPCloseGump : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void ) override;
-	UI32			_gumpID;
-	UI32			_buttonID;
+	UI32			_gumpId;
+	UI32			_buttonId;
 public:
-	CPCloseGump( UI32 dialogID, UI32 buttonID );
+	CPCloseGump( UI32 dialogId, UI32 buttonId );
 	virtual			~CPCloseGump()
 	{
 	}
@@ -954,20 +954,20 @@ public:
 	CPCorpseClothing( CItem *corpse );
 	virtual void	NumberOfItems( UI16 numItems );
 	virtual void	AddItem( CItem *toAdd, UI16 itemNum );
-	CPCorpseClothing& operator=( CItem& corpse );
+	CPCorpseClothing& operator = ( CItem& corpse );
 };
 
 class CPOpenBuyWindow : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void ) override;
-	virtual void	CopyData( CItem& toCopy, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock );
+	virtual void	CopyData( CItem& toCopy, CChar *vendorId, CPItemsInContainer& iic, CSocket *mSock );
 public:
 	virtual			~CPOpenBuyWindow()
 	{
 	}
 	CPOpenBuyWindow();
-	CPOpenBuyWindow( CItem *container, CChar *vendorID, CPItemsInContainer& iic, CSocket *mSock );
+	CPOpenBuyWindow( CItem *container, CChar *vendorId, CPItemsInContainer& iic, CSocket *mSock );
 	virtual void	NumberOfItems( UI08 numItems );
 	virtual UI08	NumberOfItems( void ) const;
 	virtual void	AddItem( CItem *toAdd, CTownRegion *tReg, UI16 &baseOffset );
@@ -978,7 +978,7 @@ class CPCharAndStartLoc : public CPUOXBuffer
 {
 protected:
 	virtual void	InternalReset( void ) override;
-	virtual void	CopyData( CAccountBlock& toCopy );
+	virtual void	CopyData( CAccountBlock_st& toCopy );
 	UI16			packetSize;
 	UI08			numCharacters;
 public:
@@ -986,12 +986,12 @@ public:
 	{
 	}
 	CPCharAndStartLoc();
-	CPCharAndStartLoc( CAccountBlock& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
+	CPCharAndStartLoc( CAccountBlock_st& account, UI08 numCharacters, UI08 numLocations, CSocket *mSock );
 	virtual void	NumberOfLocations( UI08 numLocations, CSocket *mSock );
 	virtual void	AddCharacter( CChar *toAdd, UI08 charOffset );
-	virtual auto 	AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset  ) ->void;
-	virtual auto	NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) ->void;
-	CPCharAndStartLoc& operator=( CAccountBlock& actbBlock );
+	virtual auto 	AddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset  ) -> void;
+	virtual auto	NewAddStartLocation( __STARTLOCATIONDATA__ *sLoc, UI08 locOffset ) -> void;
+	CPCharAndStartLoc& operator = ( CAccountBlock_st& actbBlock );
 	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
 };
 
@@ -1027,6 +1027,25 @@ public:
 	CPGraphicalEffect2( UI08 effectType, CBaseObject &src );
 	virtual void	Hue( UI32 hue );
 	virtual void	RenderMode( UI32 mode );
+};
+
+class CP3DGraphicalEffect : public CPGraphicalEffect2
+{
+protected:
+	virtual void	InternalReset( void ) override;
+public:
+	virtual			~CP3DGraphicalEffect()
+	{
+	}
+	CP3DGraphicalEffect( UI08 effectType );
+	CP3DGraphicalEffect( UI08 effectType, CBaseObject &src, CBaseObject &trg );
+	CP3DGraphicalEffect( UI08 effectType, CBaseObject &src );
+	virtual void	EffectId3D( UI16 effectId3D );
+	virtual void	ExplodeEffectId( UI16 explodeEffectId );
+	virtual void	MovingEffectId( UI16 movingEffectId );
+	virtual void	TargetObjSerial( SERIAL targetObjSerial );
+	virtual void	LayerId( UI08 layerId );
+	virtual void	Unknown( UI16 unknown );
 };
 
 class CPDrawObject : public CPUOXBuffer
@@ -1090,7 +1109,7 @@ public:
 	CPGameServerList();
 	CPGameServerList( UI16 numServers );
 	virtual void	NumberOfServers( UI16 numItems );
-	virtual void	AddServer( UI16 servNum, physicalServer *data );
+	virtual void	AddServer( UI16 servNum, PhysicalServer *data );
 	virtual void 	addEntry( const std::string & name, UI32 addressBig );
 };
 
@@ -1121,7 +1140,7 @@ public:
 	}
 	CPGodModeToggle();
 	CPGodModeToggle( CSocket *s );
-	CPGodModeToggle& operator=( CSocket *s );
+	CPGodModeToggle& operator = ( CSocket *s );
 	virtual void	ToggleStatus( bool toSet );
 };
 
@@ -1229,9 +1248,9 @@ public:
 	void			Name( std::string value );
 	void			Message( const char *value );
 	void			GhostIt( UI08 method );
-	CPUnicodeSpeech &operator=( CBaseObject &toCopy );
-	CPUnicodeSpeech &operator=( CPITalkRequestAscii &talking );
-	CPUnicodeSpeech &operator=( CPITalkRequestUnicode &talking );
+	CPUnicodeSpeech &operator = ( CBaseObject &toCopy );
+	CPUnicodeSpeech &operator = ( CPITalkRequestAscii &talking );
+	CPUnicodeSpeech &operator = ( CPITalkRequestUnicode &talking );
 };
 
 class CPUnicodeMessage : public CPUOXBuffer
@@ -1258,7 +1277,7 @@ public:
 	void			Name( std::string value );
 	void			Message( const char *value );
 	void			Message( const std::string value );
-	CPUnicodeMessage &operator=( CBaseObject &toCopy );
+	CPUnicodeMessage &operator = ( CBaseObject &toCopy );
 };
 
 class CPAllNames3D : public CPUOXBuffer
@@ -1292,7 +1311,7 @@ public:
 	void			Object( CItem& obj );
 	void			Serial( SERIAL value );
 	void			NewPage( SI16 pNum = -1 );
-	void			NewPage( SI16 pNum, const std::vector< std::string > *lines );
+	void			NewPage( SI16 pNum, const std::vector<std::string> *lines );
 	void			AddLine( const std::string& line );
 	void			Finalize( void );
 };
@@ -1300,14 +1319,14 @@ public:
 class CPSendGumpMenu : public CPUOXBuffer
 {
 protected:
-	std::vector< std::string >		commands, text;
+	std::vector<std::string>		commands, text;
 public:
 	virtual			~CPSendGumpMenu()
 	{
 	}
 	CPSendGumpMenu();
-	void			UserID( SERIAL value );
-	void			GumpID( SERIAL value );
+	void			UserId( SERIAL value );
+	void			GumpId( SERIAL value );
 	void			X( UI32 value );
 	void			Y( UI32 value );
 
@@ -1363,28 +1382,28 @@ public:
 class CPToolTip : public CPUOXBuffer
 {
 protected:
-	struct toolTipEntry
+	struct ToolTipEntry_st
 	{
 		std::string ourText;
 		UI32 stringNum;
 		size_t stringLen;
 	};
-	std::vector< toolTipEntry > ourEntries;
+	std::vector<ToolTipEntry_st> ourEntries;
 
-	struct toolTipEntryWide
+	struct ToolTipEntryWide_st
 	{
 		std::wstring ourText;
 		UI32 stringNum;
 		size_t stringLen;
 	};
-	std::vector< toolTipEntryWide > ourWideEntries;
+	std::vector<ToolTipEntryWide_st> ourWideEntries;
 	CSocket *tSock;
 	virtual void	InternalReset( void ) override;
 	virtual void	CopyData( SERIAL objSer, bool addAmount = true, bool playerVendor = false );
 	void				CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount = true, bool playerVendor = false );
 	void				CopyCharData( CChar& mChar, size_t &totalStringLen );
-	void				FinalizeData( toolTipEntry tempEntry, size_t &totalStringLen );
-	void				FinalizeWideData( toolTipEntryWide tempEntry, size_t &totalStringLen );
+	void				FinalizeData( ToolTipEntry_st tempEntry, size_t &totalStringLen );
+	void				FinalizeWideData( ToolTipEntryWide_st tempEntry, size_t &totalStringLen );
 public:
 	virtual			~CPToolTip()
 	{
@@ -1422,7 +1441,7 @@ public:
 	CPOpenMessageBoard( CSocket *mSock );
 };
 
-struct msgBoardPost_st;
+struct MsgBoardPost_st;
 
 class CPOpenMsgBoardPost : public CPUOXBuffer
 {
@@ -1430,12 +1449,12 @@ protected:
 	bool			bFullPost;
 
 	virtual void	InternalReset( void ) override;
-	virtual void	CopyData( CSocket *mSock, const msgBoardPost_st &mbPost );
+	virtual void	CopyData( CSocket *mSock, const MsgBoardPost_st &mbPost );
 public:
 	virtual			~CPOpenMsgBoardPost()
 	{
 	}
-	CPOpenMsgBoardPost( CSocket *mSock, const msgBoardPost_st& mbPost, bool fullPost );
+	CPOpenMsgBoardPost( CSocket *mSock, const MsgBoardPost_st& mbPost, bool fullPost );
 };
 
 class CPSendMsgBoardPosts : public CPUOXBuffer

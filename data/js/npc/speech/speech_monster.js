@@ -247,27 +247,27 @@ function Speech( myNPC, myString )
 					break;
 				case 1: // [word] thee!
 					responseString = keywordEntry + " thee!";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 2: // [word]?
 					responseString = keywordEntry + "?";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 3: // [word]! [word].
 					responseWord = responses[RandomNumber( 0, responses.length - 1 )];
-					responseWord = responseWord[0].toUpperCase() + responseWord.slice(1); // Capitalize 1st letter
+					responseWord = responseWord[0].toUpperCase() + responseWord.slice( 1 ); // Capitalize 1st letter
 					responseString = keywordEntry + "! " + responseWord + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 4: // [word].
 					responseString = keywordEntry + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 5: // [word]? [word].
 					responseWord = responses[RandomNumber( 0, responses.length - 1 )];
-					responseWord = responseWord[0].toUpperCase() + responseWord.slice(1); // Capitalize 1st letter
+					responseWord = responseWord[0].toUpperCase() + responseWord.slice( 1 ); // Capitalize 1st letter
 					responseString = keywordEntry + "? " + responseWord + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				default:
 					break;

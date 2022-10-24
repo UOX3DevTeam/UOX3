@@ -1,4 +1,5 @@
 // This event runs instead of regular, hard-coded target selection for AI_EVIL
+
 const monstersVsAnimals = GetServerSetting( "MonstersVsAnimals" );
 const animalAttackChance = GetServerSetting( "AnimalAttackChance" );
 
@@ -46,7 +47,7 @@ function onDamage( pDefender, pAttacker, damageValue, damageType )
 	// Check if the attacker is actually a pet/hireling/summoned creature
 	var pOwner = pAttacker.owner;
 	if( !ValidateObject( pOwner ))
-{
+	{
 		pOwner = pAttacker;
 	}
 

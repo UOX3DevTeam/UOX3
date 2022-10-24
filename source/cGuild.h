@@ -26,22 +26,22 @@ const std::string GTypeNames[GT_COUNT] = { "Standard", "Order", "Chaos", "Unknow
 const std::string GRelationNames[GR_COUNT] = { "Neutral", "War", "Ally", "Unknown", "Same" };
 const SI16 BasePage = 8000;
 
-typedef std::map< GUILDID, GUILDRELATION >	GUILDREL;
-typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
-typedef std::map< GUILDID, GUILDRELATION >::iterator GUILDREL_ITERATOR;
+typedef std::map<GUILDID, GUILDRELATION>	GUILDREL;
+typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
+typedef std::map<GUILDID, GUILDRELATION>::iterator GUILDREL_ITERATOR;
 
 class CGuild
 {
 private:
 	std::string		name;
-	std::string abbreviation;
+	std::string		abbreviation;
 	GuildType		gType;
 	std::string		charter;
 	std::string		webpage;
 	SERIAL			stone;
 	SERIAL			master;
-	std::vector< SERIAL >	recruits;
-	std::vector< SERIAL >	members;
+	std::vector<SERIAL>	recruits;
+	std::vector<SERIAL>	members;
 	GUILDREL		relationList;
 
 	std::vector<SERIAL>::iterator	recruitPtr;
@@ -59,10 +59,10 @@ public:
 	GUILDID		NextAlly( void );
 	bool		FinishedAlly( void );
 
-	CGuild() ;
+	CGuild();
 	~CGuild();
 	const std::string	Name() const;
-	auto Abbreviation() const ->const std::string&;
+	auto Abbreviation() const -> const std::string&;
 	GuildType Type() const;
 	const std::string	Charter() const;
 	const std::string	Webpage() const;
@@ -78,7 +78,7 @@ public:
 	SERIAL		MemberNumber( size_t rNum ) const;
 
 	void		Name( std::string txt );
-	auto Abbreviation( const std::string &value) ->void;
+	auto		Abbreviation( const std::string &value) -> void;
 	void		Type( GuildType nType );
 	void		Charter( const std::string &txt );
 	void		Webpage( const std::string &txt );
@@ -108,7 +108,7 @@ public:
 	void		SetGuildFaction( GuildType newFaction );
 	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );
 	void		Save( std::ofstream &toSave, GUILDID gNum );
-	void		Load( ScriptSection *toRead );
+	void		Load( CScriptSection *toRead );
 
 	GUILDREL *	GuildRelationList();	// NOTE: This is aimed ONLY at menu stuff
 
@@ -131,7 +131,7 @@ private:
 	GUILDLIST		gList;
 
 	void			ToggleAbbreviation( CSocket *s );
-	void			TransportGuildStone( CSocket *s, GUILDID guildID );
+	void			TransportGuildStone( CSocket *s, GUILDID guildId );
 	void			Erase( GUILDID toErase );
 	GUILDID			MaximumGuild( void );
 public:

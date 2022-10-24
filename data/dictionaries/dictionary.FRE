@@ -1832,6 +1832,29 @@
 1663=Mon petit garcon Tom a besoin d'une operation... Pourriez vous m'aider avec un peu d'or?
 1664=Ma femme est enceinte de notre 7e enfant,ayez un peu de pitie et donnez un peu d'or a un homme desespere...
 // Fin du texte de mendiant
+1670=Vous ne pouvez pas vous déguiser en portant de la peinture corporelle.
+1671=Vous ne pouvez pas vous polymorpher en portant de la peinture corporelle.
+1672=Vous ne pouvez pas utiliser incognito en portant de la peinture corporelle.
+1673=Vous ne pouvez pas faire ça en étant incognito.
+1674=Tu ne peux pas faire ça en étant polymorphe.
+1675=Votre peau est roussie par la peinture tribale qui se consume!
+1676=Votre peinture corporelle a disparu!
+1677=Tu ne peux pas te déguiser quand tu es incognito.
+1678=Tu ne peux pas te déguiser en polymorphe.
+1679=Vous êtes déjà déguisé.
+1680=Vous portez maintenant les marques de la tribu des sauvages.  Votre peinture corporelle durera environ une semaine ou vous pouvez l'enlever avec un chiffon gras.
+1681=Vous essuyez toute votre peinture corporelle.
+1682=La lance tribale se brise dans tes mains alors que tu la ramasses!
+1683=%s commence à se balancer avec un bola.
+1684=Entrez un nouveau titre pour le membre de la guilde:
+1685=Sélectionnez le membre de la guilde pour lequel vous souhaitez donner un titre.
+1686=Vous avez obtenu le titre de guilde de %s!
+1687=Vous avez recruté %s comme nouveau membre de la guilde!
+1688=Vous avez été recruté pour rejoindre la guilde %s!
+1689=Vous avez renvoyé %s de votre guilde!
+1690=Vous avez été renvoyé de votre guilde!
+1691=Tu ne peux pas te renvoyer toi-même de la guilde!
+1692=%s est maintenant le nouveau Maître de Guilde de %s!
 // Menu de modification de personnages
 1700=Le bouton appuye est invalide.
 1701=Entrez le nouveau nom pour le personnage.
@@ -2115,6 +2138,15 @@
 1979=Tokuno (Îles)
 1980=Ter Mur
 1981=Les membres de la race %s ne peuvent pas porter ceci
+1982=Tu pares l'attaque !
+1983=Votre arme a été détruite !
+1984=Tu n'es pas membre de cette guilde !
+1985=Tu as parrainé %s comme candidat pour rejoindre la guilde !
+1986=Tu as été invité par %s à rejoindre la guilde : %s
+1987=Vous avez déclaré votre fidélité à %s !
+1988=%s vous a déclaré sa fidélité !
+1989=Ta guilde a déclaré la guerre à la guilde %s !
+1990=Ta guilde a déclaré la guilde %s comme alliée !
 // JS-Based Tweak Menu
 1991=Objet invalide visé !
 1992=Objet inconnu visé !
@@ -3460,6 +3492,9 @@
 6214=Les ingrédients de cette potion vous sont inconnus.
 6215=Vous savez déjà de quel genre de potion il s'agit : %s
 6250=Vous sortez de l'ombre.
+6275=Vous combinez la baie et la farine dans la peinture tribale portée par les sauvages.
+6276=Vous n'avez pas la compétence cuisine pour créer la peinture corporelle.
+6277=Resource ID non trouvée dans la liste des ressources utilisées pour fabriquer l'objet.
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -3710,6 +3745,7 @@
 8210=Redirection vers la commande 'radditem...
 8211=Redirection vers la commande 'raddnpc'...
 8212=Syntaxe de commande valide pour l'ajout répété d'objets : 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection].
+8213=Identification de la section dans les DFNs d'où provient l'objet.
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numéro de compte associé au joueur. Contrôlé par le serveur (en lecture seule).
 8301=Type d'IA du PNJ

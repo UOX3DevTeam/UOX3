@@ -87,7 +87,7 @@ get=0x13f0 0x13f1
 // Chainmail
 
 // Chainmail Coif - N/S
-[0x13BB]
+[0x13bb]
 {
 getpub15=0x13bb_pub15
 getaos=0x13bb_aos
@@ -171,7 +171,6 @@ id=0x1c05
 {
 get=0x1c04 0x1c05
 }
-
 
 // Platemail Arms - E/W
 [0x1410]

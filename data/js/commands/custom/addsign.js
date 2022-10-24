@@ -1,3 +1,5 @@
+// This command is a shortcut to add house signs - brings up a menu to select from
+
 function CommandRegistration()
 {
 	RegisterCommand( "addsign", 2, true );
@@ -41,15 +43,23 @@ function SignGump( pUser )
 
 			myGump.AddHTMLGump( 30, 45, 60, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9917, pSock.language ) + "</basefont>" ); // Next
 			if( page <= 6 )
+			{
 				myGump.AddButton( 30, 60, 0xFA5, 0xFA7, 0, page + 1, 0 );
+			}
 			else
+			{
 				myGump.AddButton( 30, 60, 0xFA5, 0xFA7, 0, 1, 0 );
+			}
 
 			myGump.AddHTMLGump( 30, 85, 60, 20, false, false, "<basefont color=#ffffff>" + GetDictionaryEntry( 9918, pSock.language ) + "</basefont>" ); // Back
 			if( page >= 1 )
+			{
 				myGump.AddButton( 30, 100, 0xFAE, 0xFB0, 0, page - 1, 0 );
+			}
 			else
+			{
 				myGump.AddButton( 30, 100, 0xFAE, 0xFB0, 0, pages, 0 );
+			}
 		}
 
 		var x = ( xpos + 1 ) * 50;

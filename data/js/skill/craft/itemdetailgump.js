@@ -1699,7 +1699,7 @@ function ItemDetailGump( pUser )
 		var resourceColour = resource[1];
         var resourceIDs = resource[2];
 	}
-	itemdetails( itemGump, pUser );
+	ItemDetailsGump( itemGump, pUser );
 	itemGump.AddText( 330, 40, textHue, createName );
 	itemGump.AddPicture( 20, 50, createID );
 	var minSkillReq = 0;
@@ -1799,7 +1799,7 @@ function ItemDetailGump( pUser )
 	else if( chance > 1.0 )
 		chance = 1.0; // Cap chance at 100%
 
-	itemGump.AddText( 430, 80, textHue, (chance * 100).toFixed( 1 ) + "%" ); // Success Chance:
+	itemGump.AddText( 430, 80, textHue, ( chance * 100 ).toFixed( 1 ) + "%" ); // Success Chance:
 	if( !exceptionalWearablesOnly || CheckTileFlag( createID, 22 )) // TF_WEARABLE
 	{
 		if( exceptionalChance == 0 )
@@ -1808,7 +1808,7 @@ function ItemDetailGump( pUser )
 		}
 		else
 		{
-			itemGump.AddText( 430, 100, textHue, Math.min( 100, Math.max(0, (exceptionalChance - 5))).toFixed( 0 ) + "%" + " - " + Math.min( 100, (exceptionalChance + 5)).toFixed( 0 ) + "%" ); // Exceptional Chance:
+			itemGump.AddText( 430, 100, textHue, Math.min( 100, Math.max( 0, ( exceptionalChance - 5 ))).toFixed( 0 ) + "%" + " - " + Math.min( 100, ( exceptionalChance + 5 )).toFixed( 0 ) + "%" ); // Exceptional Chance:
 		}
 	}
 	else if( exceptionalWearablesOnly || !CheckTileFlag( createID, 22 )) // TF_WEARABLE?
@@ -1819,7 +1819,7 @@ function ItemDetailGump( pUser )
 	itemGump.Free();
 }
 
-function itemdetails( itemGump, pUser )
+function ItemDetailsGump( itemGump, pUser )
 {
 	var socket = pUser.socket;
 	itemGump.AddPage( 0 );
@@ -1885,9 +1885,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 8: // Page 8
 						case 9: // Page 9
 						case 10: // Page 10
-							TriggerEvent( Carpentry, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Carpentry, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Carpentry, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Carpentry, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1900,9 +1900,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 2: // Page 2
 						case 3: // Page 3
 						case 4: // Page 4
-							TriggerEvent( Alchemy, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Alchemy, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Alchemy, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Alchemy, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1914,9 +1914,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 1: // Page 1
 						case 2: // Page 2
 						case 3: // Page 3
-							TriggerEvent( Fletching, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Fletching, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Fletching, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Fletching, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1933,9 +1933,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 6: // Page 6
 						case 7: // Page 7
 						case 8: // Page 8
-							TriggerEvent( Tailoring, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Tailoring, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Tailoring, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Tailoring, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1951,9 +1951,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 5: // Page 5
 						case 6: // Page 6
 						case 7: // Page 7
-							TriggerEvent( Blacksmithing, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Blacksmithing, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Blacksmithing, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Blacksmithing, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1966,9 +1966,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 2: // Page 2
 						case 3: // Page 3
 						case 4: // Page 4
-							TriggerEvent( Cooking, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Cooking, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Cooking, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Cooking, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;
@@ -1986,9 +1986,9 @@ function onGumpPress( pSock, pButton, gumpData )
 						case 7: // Page 7
 						case 8: // Page 8
 						case 9: // Page 9
-							TriggerEvent( Tinkering, "pageX", pSock, pUser, pUser.GetTempTag( "page" ));
+							TriggerEvent( Tinkering, "PageX", pSock, pUser, pUser.GetTempTag( "page" ));
 							break;
-						default: TriggerEvent( Tinkering, "pageX", pSock, pUser, 1 );
+						default: TriggerEvent( Tinkering, "PageX", pSock, pUser, 1 );
 							break;
 					}
 					break;

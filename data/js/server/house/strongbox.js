@@ -58,9 +58,13 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
     if( iPickupSpot == 1 || iPickupSpot == 3 || iPickupSpot == 5 )
     {
     	if( iWeight == 0 || iWeight == 25500 )
+    	{
 			pDropper.weight = pDropper.weight - 25500;
+    	}
 		else
+		{
 			pDropper.weight = pDropper.weight - iWeight;
+		}
 	}
 
 	//return 0; // bounce

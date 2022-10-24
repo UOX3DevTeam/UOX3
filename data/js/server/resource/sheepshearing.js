@@ -1,4 +1,4 @@
-function shearSheep( pUser, sheep )
+function ShearSheep( pUser, sheep )
 {
 	if( !sheep || !pUser )
 		return false;

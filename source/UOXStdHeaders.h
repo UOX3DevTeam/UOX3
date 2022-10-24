@@ -1,7 +1,6 @@
 #ifndef __StdHeaders_H__
 #define __StdHeaders_H__
 
-
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -34,12 +33,8 @@
 // We use exceptions in a lot of places
 #include <stdexcept>
 
-
-
-
 #include <sys/types.h>
 #include <sys/stat.h>
-
 
 #if PLATFORM == WINDOWS
 #include <sys/timeb.h>

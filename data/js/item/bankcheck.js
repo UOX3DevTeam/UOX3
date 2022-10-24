@@ -5,7 +5,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
-	var bankBox = pUser.FindItemLayer(29);
+	var bankBox = pUser.FindItemLayer( 29 );
 	if( ValidateObject( bankBox ) && iUsed.container && iUsed.container.serial == bankBox.serial )
 	{
 		var checkSize = iUsed.GetTag( "CheckSize" );

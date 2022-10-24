@@ -1,7 +1,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var itemOwner = GetPackOwner( iUsed, 0 );
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -34,17 +34,27 @@ function onCallback0( pSock, myTarget )
 			if( myTarget.poison > 0 )
 			{
 				if( myTarget.poison > 2 )
+				{
 					myTarget.poison -= 2;
+				}
 				else
+				{
 					myTarget.poison = 0;
+				}
 				if( myTarget.poison == 0 )
+				{
 					pSock.SysMessage( GetDictionaryEntry( 2752, pSock.language )); // You carefully wipe the item clean of poison.
+				}
 				else
+				{
 					pSock.SysMessage( GetDictionaryEntry( 2753, pSock.language )); // You carefully wipe the item, but some poison still lingers.
+				}
 				pUser.UseResource( 1, 0x175d, 0x07d1 );
 			}
 			else
+			{
 				pSock.SysMessage( GetDictionaryEntry( 2754, pSock.language )); // That item is not poisoned.
+			}
 		}
 	}
 	else

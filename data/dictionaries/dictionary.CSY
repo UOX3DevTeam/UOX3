@@ -1668,6 +1668,29 @@
 1663=Můj synáček Timmy potřebuje operaci, máte nějaké zlaťáky na pomoc?
 1664=Moje žena čeká naše sedmé dítě, have some litty in the form of some gold for a desperate man.
 // End begging text
+1670=Nemůžeš se maskovat, když máš na sobě barvu na tělo
+1671=Nemůžete se polymorfovat, když máte na sobě barvu na tělo
+1672=Nemůžete použít inkognito, když máte na sobě body paint.
+1673=Nemůžete to dělat, když jste inkognito.
+1674=Nemůžete to udělat, když jste v polymorfii.
+1675=Tvá kůže je spálená, jak se kmenová barva vypaluje!
+1676=Tvá tělová barva se setřela!
+1677=Nemůžeš se maskovat, když jsi inkognito.
+1678=Nemůžeš se maskovat, když jsi polymorphed.
+1679=Jsi již převlečený.
+1680=Nosíš nyní znaky divokého kmene.  Barva na tvém těle vydrží asi týden, případně ji můžeš odstranit olejovou utěrkou.
+1681=Všechnu barvu ze svého těla setřeš.
+1682=Kmenové kopí se ti rozpadne v rukou, když ho zvedneš!
+1683=%s se začne ohánět bolou.
+1684=Zadej nový titul pro člena cechu:
+1685=Zvolte člena cechu, kterému chcete nastavit titul.
+1686=Byl ti udělen cechovní titul %s!
+1687=Přijal jsi %s jako nového člena cechu!
+1688=Byl jsi přijat do cechu %s!
+1689=Vyřadil jsi %s z cechu!
+1690=Byl jsi propuštěn ze svého cechu!
+1691=Nemůžeš se z cechu propustit!
+1692=%s je nyní novým cechmistrem cechu %s!
 // Tweak Char Menu Stuff
 1700=Stisknuto neplatné tlačítko
 1701=Zadejte nové jméno postavy.
@@ -1951,6 +1974,15 @@
 1979=Ostrovy Tokuno
 1980=Ter Mur
 1981=Příslušníci rasy %s nemohou nosit toto.
+1982=Odrazíš útok!
+1983=Vaše zbraň byla zničena!
+1984=Nejste členem tohoto cechu!
+1985=Sponzoroval jsi %s jako kandidáta na vstup do cechu!
+1986=Byl jsi vyzván %s, abys vstoupil do cechu: %s
+1987=Vyhlásil jsi věrnost %s!
+1988=%s ti vyhlásil věrnost!
+1989=Váš cech vyhlásil válku cechu %s!
+1990=Váš cech prohlásil cech %s za svého spojence!
 // JS-Based Tweak Menu
 1991=Neplatný objekt zaměřen!
 1992=Neznámý cílový objekt!
@@ -3303,6 +3335,9 @@
 6214=Složení tohoto lektvaru ti není známo.
 6215=Již víš, o jaký lektvar se jedná: %s
 6250=Vystupuješ ze stínu.
+6275=Spojíte bobule a mouku do kmenové barvy, kterou nosí divoši.
+6276=Nemáš dovednost vaření, abys mohl vytvořit barvu na tělo.
+6277=Identifikační číslo suroviny nebylo nalezeno v seznamu surovin použitých k výrobě předmětu.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -3553,6 +3588,7 @@
 8210=Přesměrování na příkaz 'radditem...
 8211=Přesměrování na příkaz 'raddnpc...
 8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=ID sekce z DFNs objekt pochází z
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC

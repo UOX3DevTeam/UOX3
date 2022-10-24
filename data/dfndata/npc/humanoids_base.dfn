@@ -18,7 +18,7 @@ FLAG=NEUTRAL
 
 //------------------------------------------------------------------------------------------------//
 
-//ORC-KIN
+// ORC-KIN
 
 // Orc - Base NPC with shared DFN tags
 [base_orc]
