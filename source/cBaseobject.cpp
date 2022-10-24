@@ -1292,6 +1292,11 @@ void CBaseObject::SetTitle( std::string newtitle )
 	title = newtitle.substr( 0, MAX_TITLE - 1 );
 }
 
+std::string CBaseObject::TestDummyFunction( void ) const
+{
+	return testDummyVar;
+}
+
 //o-----------------------------------------------------------------------------------------------o
 //|	Function	-	UI16 GetScriptTriggers( void ) const
 //o-----------------------------------------------------------------------------------------------o
