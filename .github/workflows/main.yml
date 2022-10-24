@@ -28,11 +28,11 @@ jobs:
         cp Linux_All_DBG.OBJ/jsautocfg.h ./
     - name: prepare zlib
       run: |
-        cd ../zlib
+        cd zlib
         make distclean
         ./configure
         make
     - name: build uox3
       run: |
-        cd ../source
+        cd source
         make
