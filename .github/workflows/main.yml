@@ -22,4 +22,4 @@ jobs:
     - name: prepare automake
       run: chmod +x automake.sh
     - name: automake
-      run: ./automake.sh
+      run: bash automake.sh -x
