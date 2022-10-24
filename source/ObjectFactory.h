@@ -6,7 +6,7 @@
 #include <functional>
 
 class CBaseObject;
-using factory_collection = std::unordered_map<std::uint32_t, CBaseObject*>;
+using factory_collection = std::unordered_map<UI32, CBaseObject*>;
 
 //o------------------------------------------------------------------------------------------------o
 // ObjectFactory
@@ -24,25 +24,25 @@ class ObjectFactory
 	//o--------------------------------------------------------------------------------------------o
 	struct SerialGen_st
 	{
-		std::uint32_t serialNumber;
-		SerialGen_st( std::uint32_t initial = 0 );
-		auto Next() -> std::uint32_t;
-		auto RegisterSerial( std::uint32_t serial ) -> void;
+		UI32 serialNumber;
+		SerialGen_st( UI32 initial = 0 );
+		auto Next() -> UI32;
+		auto RegisterSerial( UI32 serial ) -> void;
 		// Note, this only frees up the serial number if
 		// deregisterd one was the last one created
-		auto UnregisterSerial( std::uint32_t serial ) -> void;
-		auto operator = ( std::uint32_t value ) ->SerialGen_st&;
-		auto operator = ( std::int32_t value ) ->SerialGen_st&;
+		auto UnregisterSerial( UI32 serial ) -> void;
+		auto operator = ( UI32 value ) ->SerialGen_st&;
+		auto operator = ( SI32 value ) ->SerialGen_st&;
 	};
 	SerialGen_st item_serials;
 	SerialGen_st character_serials;
 	
-	auto NextSerial( ObjectType type ) -> std::uint32_t;
-	auto RemoveObject( std::uint32_t serial, factory_collection *collection ) -> bool;
+	auto NextSerial( ObjectType type ) -> UI32;
+	auto RemoveObject( UI32 serial, factory_collection *collection ) -> bool;
 	ObjectFactory();
 	
-	auto FindCharacter( std::uint32_t serial ) -> CBaseObject*;
-	auto FindItem( std::uint32_t serial ) -> CBaseObject*;
+	auto FindCharacter( UI32 serial ) -> CBaseObject*;
+	auto FindItem( UI32 serial ) -> CBaseObject*;
 	auto CollectionForType( ObjectType type ) -> factory_collection*;
 	auto CollectionForType( ObjectType type ) const -> const factory_collection*;
 public:
@@ -58,7 +58,7 @@ public:
 	// would generate. This is used in world loads, where the serial number is supplied
 	//o--------------------------------------------------------------------------------------------o
 	auto RegisterObject( CBaseObject *object ) -> bool;
-	auto RegisterObject( CBaseObject *object, std::uint32_t serial ) -> bool;
+	auto RegisterObject( CBaseObject *object, UI32 serial ) -> bool;
 	
 	//o--------------------------------------------------------------------------------------------o
 	// This removes an object from the collection. Note, however that the serial number is not
@@ -69,7 +69,7 @@ public:
 	//o--------------------------------------------------------------------------------------------o
 	// Iterate over objects
 	//o--------------------------------------------------------------------------------------------o
-	auto IterateOver( ObjectType type, std::uint32_t &b, void *extra, std::function<bool( CBaseObject*, std::uint32_t &, void * )> function ) -> std::uint32_t;
+	auto IterateOver( ObjectType type, UI32 &b, void *extra, std::function<bool( CBaseObject*, UI32 &, void * )> function ) -> UI32;
 	
 	//o--------------------------------------------------------------------------------------------o
 	// This removes the object from the collection, and deletes the object
@@ -82,13 +82,13 @@ public:
 	auto CreateObject( ObjectType type ) -> CBaseObject *;
 	auto CreateBlankObject( ObjectType type ) -> CBaseObject *;
 	
-	auto FindObject( std::uint32_t toFind ) -> CBaseObject *;
+	auto FindObject( UI32 toFind ) -> CBaseObject *;
 	auto ValidObject( CBaseObject *object, ObjectType type = ObjectType::OT_CBO ) -> bool;
 
 	//o--------------------------------------------------------------------------------------------o
 	// Probably should be a size_t return, but uo can only handle a uint32
 	//o--------------------------------------------------------------------------------------------o
-	auto CountOfObjects( ObjectType type ) const -> std::uint32_t;
+	auto CountOfObjects( ObjectType type ) const -> UI32;
 	
 	auto SizeOfObjects( ObjectType type ) const -> size_t;
 };

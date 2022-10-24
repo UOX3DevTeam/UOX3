@@ -388,7 +388,7 @@ void CWhoList::Update( void )
 	}
 
 	Delete();
-	constexpr std::uint16_t maxsize = 512;
+	constexpr UI16 maxsize = 512;
 
 	size_t i				= 0;
 	const UI32 numPerPage	= 13;
@@ -410,7 +410,7 @@ void CWhoList::Update( void )
 	{
 		for( i = 0; i < k; ++i )
 		{
-			CSocket *tSock	= Network->GetSockPtr( static_cast<std::uint32_t>( i ));
+			CSocket *tSock	= Network->GetSockPtr( static_cast<UI32>( i ));
 			CChar *tChar	= tSock->CurrcharObj();
 			if( !ValidateObject( tChar ))
 				continue;

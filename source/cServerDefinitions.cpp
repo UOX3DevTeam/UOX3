@@ -432,7 +432,7 @@ void CServerDefinitions::DisplayPriorityMap()
 }
 
 //==================================================================================================
-auto CServerDefinitions::GetPriority( const char *file ) -> std::int16_t
+auto CServerDefinitions::GetPriority( const char *file ) -> SI16
 {
 	auto retVal = defaultPriority;
 	auto lowername = oldstrutil::lower( file );

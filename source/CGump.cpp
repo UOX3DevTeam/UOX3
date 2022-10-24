@@ -142,7 +142,7 @@ void CGump::AddButton( UI16 x, UI16 y, UI16 imageUp, UI16 imageDown, UI16 behavi
 //o------------------------------------------------------------------------------------------------o
 void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string text )
 {
-	UI32 textId = static_cast<std::uint32_t>( TextList.size() );
+	UI32 textId = static_cast<UI32>( TextList.size() );
 
 	TextList.push_back( text );
 	TagList.push_back( oldstrutil::format( "text %u %u %u %u", x, y, hue, textId ));

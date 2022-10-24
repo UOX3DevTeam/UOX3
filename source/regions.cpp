@@ -788,7 +788,7 @@ void CMapHandler::Save( void )
 	for( i = 0; i < Map->MapCount(); ++i )
 	{
 		auto [mapWidth, mapHeight] = Map->SizeOfMap( i );
-		onePercent += static_cast<std::int32_t>(( mapWidth / MapColSize ) * ( mapHeight / MapRowSize ));
+		onePercent += static_cast<SI32>(( mapWidth / MapColSize ) * ( mapHeight / MapRowSize ));
 	}
 	onePercent /= 100.0f;
 	const size_t bufferSize = 1024 * 1024;

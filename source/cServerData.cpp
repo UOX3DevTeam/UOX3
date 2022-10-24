@@ -21,7 +21,7 @@ using namespace std::string_literals;
 // constant data
 //==================================================================================================
 //==================================================================================================
-const std::map<std::string, std::int32_t> CServerData::uox3IniCaseValue
+const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 {
 	// these numbers dont have to be in order, and can skip aound
 	// they just CANT be repeated (now we could add some protection
@@ -348,95 +348,95 @@ constexpr auto SKILLTOTALCAP = 7000;
 constexpr auto SKILLCAP = 1000;
 constexpr auto STATCAP = 225;
 
-constexpr auto BIT_ANNOUNCESAVES		= std::uint32_t( 0);
-constexpr auto BIT_ANNOUNCEJOINPART		= std::uint32_t( 1 );
-constexpr auto BIT_SERVERBACKUP			= std::uint32_t( 2 );
-constexpr auto BIT_SHOOTONANIMALBACK	= std::uint32_t( 3 );
-constexpr auto BIT_NPCTRAINING			= std::uint32_t( 4 );
-constexpr auto BIT_LOOTDECAYSONCORPSE	= std::uint32_t( 5 );
-constexpr auto BIT_GUARDSENABLED		= std::uint32_t( 6 );
-constexpr auto BIT_PLAYDEATHANIMATION	= std::uint32_t( 7 );
-constexpr auto BIT_AMBIENTFOOTSTEPS		= std::uint32_t( 8 );
-constexpr auto BIT_INTERNALACCOUNTS		= std::uint32_t( 9 );
-constexpr auto BIT_SHOWOFFLINEPCS		= std::uint32_t( 10 );
-constexpr auto BIT_ROGUESTATUS			= std::uint32_t( 11 );
-constexpr auto BIT_SNOOPISCRIME			= std::uint32_t( 12 );
-constexpr auto BIT_PERSECUTIONSTATUS	= std::uint32_t( 13 );
-constexpr auto BIT_SELLBYNAME			= std::uint32_t( 14 );
-constexpr auto BIT_TRADESYSSTATUS		= std::uint32_t( 15 );
-constexpr auto BIT_RANKSYSSTATUS		= std::uint32_t( 16 );
-constexpr auto BIT_CUTSCROLLREQ			= std::uint32_t( 17 );
-constexpr auto BIT_SHOWHITMESSAGE		= std::uint32_t( 18 );
-constexpr auto BIT_ESCORTSTATUS			= std::uint32_t( 19 );
-constexpr auto BIT_MONSTERSVSANIMALS	= std::uint32_t( 20 );
-constexpr auto BIT_PETHUNGEROFFLINE		= std::uint32_t( 21 );
-constexpr auto BIT_HIDEWHILEMOUNTED		= std::uint32_t( 22 );
-constexpr auto BIT_OVERLOADPACKETS		= std::uint32_t( 23 );
-constexpr auto BIT_ARMORAFFECTMANAREGEN = std::uint32_t( 24 );
-constexpr auto BIT_ANIMALSGUARDED		= std::uint32_t( 25 );
-constexpr auto BIT_ADVANCEDPATHFIND		= std::uint32_t( 26 );
-constexpr auto BIT_LOOTINGISCRIME		= std::uint32_t( 27 );
-constexpr auto BIT_BASICTOOLTIPSONLY	= std::uint32_t( 28 );
-constexpr auto BIT_GLOBALITEMDECAY		= std::uint32_t( 29 );
-constexpr auto BIT_SCRIPTITEMSDECAYABLE	= std::uint32_t( 30 );
-constexpr auto BIT_BASEITEMSDECAYABLE	= std::uint32_t( 31 );
-constexpr auto BIT_ITEMDECAYINHOUSES	= std::uint32_t( 32 );
-constexpr auto BIT_PAPERDOLLGUILDBUTTON = std::uint32_t( 33 );
-constexpr auto BIT_ATTSPEEDFROMSTAMINA	= std::uint32_t( 34 );
-constexpr auto BIT_SHOWDAMAGENUMBERS	= std::uint32_t( 35 );
+constexpr auto BIT_ANNOUNCESAVES		= UI32( 0);
+constexpr auto BIT_ANNOUNCEJOINPART		= UI32( 1 );
+constexpr auto BIT_SERVERBACKUP			= UI32( 2 );
+constexpr auto BIT_SHOOTONANIMALBACK	= UI32( 3 );
+constexpr auto BIT_NPCTRAINING			= UI32( 4 );
+constexpr auto BIT_LOOTDECAYSONCORPSE	= UI32( 5 );
+constexpr auto BIT_GUARDSENABLED		= UI32( 6 );
+constexpr auto BIT_PLAYDEATHANIMATION	= UI32( 7 );
+constexpr auto BIT_AMBIENTFOOTSTEPS		= UI32( 8 );
+constexpr auto BIT_INTERNALACCOUNTS		= UI32( 9 );
+constexpr auto BIT_SHOWOFFLINEPCS		= UI32( 10 );
+constexpr auto BIT_ROGUESTATUS			= UI32( 11 );
+constexpr auto BIT_SNOOPISCRIME			= UI32( 12 );
+constexpr auto BIT_PERSECUTIONSTATUS	= UI32( 13 );
+constexpr auto BIT_SELLBYNAME			= UI32( 14 );
+constexpr auto BIT_TRADESYSSTATUS		= UI32( 15 );
+constexpr auto BIT_RANKSYSSTATUS		= UI32( 16 );
+constexpr auto BIT_CUTSCROLLREQ			= UI32( 17 );
+constexpr auto BIT_SHOWHITMESSAGE		= UI32( 18 );
+constexpr auto BIT_ESCORTSTATUS			= UI32( 19 );
+constexpr auto BIT_MONSTERSVSANIMALS	= UI32( 20 );
+constexpr auto BIT_PETHUNGEROFFLINE		= UI32( 21 );
+constexpr auto BIT_HIDEWHILEMOUNTED		= UI32( 22 );
+constexpr auto BIT_OVERLOADPACKETS		= UI32( 23 );
+constexpr auto BIT_ARMORAFFECTMANAREGEN = UI32( 24 );
+constexpr auto BIT_ANIMALSGUARDED		= UI32( 25 );
+constexpr auto BIT_ADVANCEDPATHFIND		= UI32( 26 );
+constexpr auto BIT_LOOTINGISCRIME		= UI32( 27 );
+constexpr auto BIT_BASICTOOLTIPSONLY	= UI32( 28 );
+constexpr auto BIT_GLOBALITEMDECAY		= UI32( 29 );
+constexpr auto BIT_SCRIPTITEMSDECAYABLE	= UI32( 30 );
+constexpr auto BIT_BASEITEMSDECAYABLE	= UI32( 31 );
+constexpr auto BIT_ITEMDECAYINHOUSES	= UI32( 32 );
+constexpr auto BIT_PAPERDOLLGUILDBUTTON = UI32( 33 );
+constexpr auto BIT_ATTSPEEDFROMSTAMINA	= UI32( 34 );
+constexpr auto BIT_SHOWDAMAGENUMBERS	= UI32( 35 );
 // 37 free!
-constexpr auto BIT_EXTENDEDSTARTINGSTATS	= std::uint32_t( 38 );
-constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= std::uint32_t( 39 );
-constexpr auto BIT_ASSISTANTNEGOTIATION		= std::uint32_t( 40 );
-constexpr auto BIT_KICKONASSISTANTSILENCE	= std::uint32_t( 41 );
-constexpr auto BIT_CLASSICUOMAPTRACKER		= std::uint32_t( 42 );
-constexpr auto BIT_PROTECTPRIVATEHOUSES		= std::uint32_t( 43 );
-constexpr auto BIT_TRACKHOUSESPERACCOUNT	= std::uint32_t( 44 );
-constexpr auto BIT_CANOWNANDCOOWNHOUSES		= std::uint32_t( 45 );
-constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT	= std::uint32_t( 46 );
-constexpr auto BIT_ITEMSDETECTSPEECH		= std::uint32_t( 47 );
-constexpr auto BIT_FORCENEWANIMATIONPACKET	= std::uint32_t( 48 );
-constexpr auto BIT_MAPDIFFSENABLED			= std::uint32_t( 49 );
-constexpr auto BIT_ARMORCLASSDAMAGEBONUS	= std::uint32_t( 50 );
-constexpr auto BIT_FREESHARDSERVERPOLL		= std::uint32_t( 51 );
-constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED 	= std::uint32_t( 52 );
-constexpr auto BIT_PETTHIRSTOFFLINE         	= std::uint32_t( 53 );
-constexpr auto BIT_USEUNICODEMESSAGES 			= std::uint32_t( 54 );
-constexpr auto BIT_HUNGERSYSTEMENABLED			= std::uint32_t( 55 );
-constexpr auto BIT_THIRSTSYSTEMENABLED			= std::uint32_t( 56 );
-constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS		= std::uint32_t( 57 );
-constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= std::uint32_t( 58 );
-constexpr auto BIT_MARKRUNESINMULTIS			= std::uint32_t( 59 );
-constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= std::uint32_t( 60 );
-constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= std::uint32_t( 61 );
-constexpr auto BIT_CONSOLELOG					= std::uint32_t( 62 );
-constexpr auto BIT_NETWORKLOG					= std::uint32_t( 63 );
-constexpr auto BIT_SPEECHLOG					= std::uint32_t( 64 );
-constexpr auto BIT_CONTEXTMENUS					= std::uint32_t( 65 );
-constexpr auto BIT_CHECKPETCONTROLDIFFICULTY	= std::uint32_t( 66 );
-constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS		= std::uint32_t( 67 );
-constexpr auto BIT_ITEMSINTERRUPTCASTING		= std::uint32_t( 68 );
-constexpr auto BIT_STATSAFFECTSKILLCHECKS		= std::uint32_t( 69 );
-constexpr auto BIT_TOOLUSELIMIT					= std::uint32_t( 70 );
-constexpr auto BIT_TOOLUSEBREAK					= std::uint32_t( 71 );
-constexpr auto BIT_ITEMREPAIRDURABILITYLOSS		= std::uint32_t( 72 );
-constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS	= std::uint32_t( 73 );
-constexpr auto BIT_CRAFTCOLOUREDWEAPONS				= std::uint32_t( 74 );
-constexpr auto BIT_TELEPORTTONEARESTSAFELOC			= std::uint32_t( 75 );
-constexpr auto BIT_ALLOWAWAKENPCS					= std::uint32_t( 76 );
-constexpr auto BIT_DISPLAYMAKERSMARK				= std::uint32_t( 77 );
-constexpr auto BIT_SHOWNPCTITLESOVERHEAD			= std::uint32_t( 78 );
-constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD		= std::uint32_t( 79 );
-constexpr auto BIT_PETCOMBATTRAINING				= std::uint32_t( 80 );
-constexpr auto BIT_HIRELINGCOMBATTRAINING			= std::uint32_t( 81 );
-constexpr auto BIT_NPCCOMBATTRAINING				= std::uint32_t( 82 );
-constexpr auto BIT_SHOWITEMRESISTSTATS				= std::uint32_t( 83 );
-constexpr auto BIT_SHOWWEAPONDAMAGETYPES			= std::uint32_t( 84 );
-constexpr auto BIT_SHOWRACEWITHNAME					= std::uint32_t( 85 );
-constexpr auto BIT_SHOWRACEINPAPERDOLL				= std::uint32_t( 86 );
-constexpr auto BIT_CASTSPELLSWHILEMOVING			= std::uint32_t( 87 );
-constexpr auto BIT_SHOWREPTITLEINTOOLTIP			= std::uint32_t( 88 );
-constexpr auto BIT_SHOWGUILDINFOINTOOLTIP			= std::uint32_t( 89 );
+constexpr auto BIT_EXTENDEDSTARTINGSTATS	= UI32( 38 );
+constexpr auto BIT_EXTENDEDSTARTINGSKILLS	= UI32( 39 );
+constexpr auto BIT_ASSISTANTNEGOTIATION		= UI32( 40 );
+constexpr auto BIT_KICKONASSISTANTSILENCE	= UI32( 41 );
+constexpr auto BIT_CLASSICUOMAPTRACKER		= UI32( 42 );
+constexpr auto BIT_PROTECTPRIVATEHOUSES		= UI32( 43 );
+constexpr auto BIT_TRACKHOUSESPERACCOUNT	= UI32( 44 );
+constexpr auto BIT_CANOWNANDCOOWNHOUSES		= UI32( 45 );
+constexpr auto BIT_COOWNHOUSESONSAMEACCOUNT	= UI32( 46 );
+constexpr auto BIT_ITEMSDETECTSPEECH		= UI32( 47 );
+constexpr auto BIT_FORCENEWANIMATIONPACKET	= UI32( 48 );
+constexpr auto BIT_MAPDIFFSENABLED			= UI32( 49 );
+constexpr auto BIT_ARMORCLASSDAMAGEBONUS	= UI32( 50 );
+constexpr auto BIT_FREESHARDSERVERPOLL		= UI32( 51 );
+constexpr auto BIT_ALCHEMYDAMAGEBONUSENABLED 	= UI32( 52 );
+constexpr auto BIT_PETTHIRSTOFFLINE         	= UI32( 53 );
+constexpr auto BIT_USEUNICODEMESSAGES 			= UI32( 54 );
+constexpr auto BIT_HUNGERSYSTEMENABLED			= UI32( 55 );
+constexpr auto BIT_THIRSTSYSTEMENABLED			= UI32( 56 );
+constexpr auto BIT_TRAVELSPELLSFROMBOATKEYS		= UI32( 57 );
+constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= UI32( 58 );
+constexpr auto BIT_MARKRUNESINMULTIS			= UI32( 59 );
+constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= UI32( 60 );
+constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= UI32( 61 );
+constexpr auto BIT_CONSOLELOG					= UI32( 62 );
+constexpr auto BIT_NETWORKLOG					= UI32( 63 );
+constexpr auto BIT_SPEECHLOG					= UI32( 64 );
+constexpr auto BIT_CONTEXTMENUS					= UI32( 65 );
+constexpr auto BIT_CHECKPETCONTROLDIFFICULTY	= UI32( 66 );
+constexpr auto BIT_SHOWNPCTITLESINTOOLTIPS		= UI32( 67 );
+constexpr auto BIT_ITEMSINTERRUPTCASTING		= UI32( 68 );
+constexpr auto BIT_STATSAFFECTSKILLCHECKS		= UI32( 69 );
+constexpr auto BIT_TOOLUSELIMIT					= UI32( 70 );
+constexpr auto BIT_TOOLUSEBREAK					= UI32( 71 );
+constexpr auto BIT_ITEMREPAIRDURABILITYLOSS		= UI32( 72 );
+constexpr auto BIT_HIDESTATSFORUNKNOWNMAGICITEMS	= UI32( 73 );
+constexpr auto BIT_CRAFTCOLOUREDWEAPONS				= UI32( 74 );
+constexpr auto BIT_TELEPORTTONEARESTSAFELOC			= UI32( 75 );
+constexpr auto BIT_ALLOWAWAKENPCS					= UI32( 76 );
+constexpr auto BIT_DISPLAYMAKERSMARK				= UI32( 77 );
+constexpr auto BIT_SHOWNPCTITLESOVERHEAD			= UI32( 78 );
+constexpr auto BIT_SHOWINVULNERABLETAGOVERHEAD		= UI32( 79 );
+constexpr auto BIT_PETCOMBATTRAINING				= UI32( 80 );
+constexpr auto BIT_HIRELINGCOMBATTRAINING			= UI32( 81 );
+constexpr auto BIT_NPCCOMBATTRAINING				= UI32( 82 );
+constexpr auto BIT_SHOWITEMRESISTSTATS				= UI32( 83 );
+constexpr auto BIT_SHOWWEAPONDAMAGETYPES			= UI32( 84 );
+constexpr auto BIT_SHOWRACEWITHNAME					= UI32( 85 );
+constexpr auto BIT_SHOWRACEINPAPERDOLL				= UI32( 86 );
+constexpr auto BIT_CASTSPELLSWHILEMOVING			= UI32( 87 );
+constexpr auto BIT_SHOWREPTITLEINTOOLTIP			= UI32( 88 );
+constexpr auto BIT_SHOWGUILDINFOINTOOLTIP			= UI32( 89 );
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -511,14 +511,14 @@ constexpr auto BIT_SHOWGUILDINFOINTOOLTIP			= std::uint32_t( 89 );
 // NOTE:	Very important the first lookups required duplication or the search fails on them
 
 //+++++++++++++++++++++++++++++++++++++++++++++++
-auto CServerData::LookupINIValue( const std::string& tag ) -> std::int32_t
+auto CServerData::LookupINIValue( const std::string& tag ) -> SI32
 {
 	auto iter = uox3IniCaseValue.find( tag );
 	if( iter != uox3IniCaseValue.end() )
 	{
 		return iter->second;
 	}
-	return std::numeric_limits<std::int32_t>::max();
+	return std::numeric_limits<SI32>::max();
 }
 
 
@@ -1013,11 +1013,11 @@ auto CServerData::matchIP( const Ip4Addr_st &ip ) const -> Ip4Addr_st
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set server port to specified value, or to default port if no value specified
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerPort() const -> std::uint16_t
+auto CServerData::ServerPort() const -> UI16
 {
 	return port;
 }
-auto CServerData::ServerPort( std::uint16_t setport ) -> void
+auto CServerData::ServerPort( UI16 setport ) -> void
 {
 	if( setport == 0 )
 	{
@@ -1146,7 +1146,7 @@ auto CServerData::ServerContextMenus( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for system messages displayed in bottom left
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::SysMsgColour() const -> std::uint16_t
+auto CServerData::SysMsgColour() const -> UI16
 {
 	return sysMsgColour;
 }
@@ -1161,7 +1161,7 @@ auto CServerData::SysMsgColour( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets server world save timer
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSavesTimerStatus() const -> std::uint32_t
+auto CServerData::ServerSavesTimerStatus() const -> UI32
 {
 	return serverSavesTimer;
 }
@@ -1180,7 +1180,7 @@ auto CServerData::ServerSavesTimer( UI32 timer ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets cap for individual skills
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillCapStatus() const -> std::uint16_t
+auto CServerData::ServerSkillCapStatus() const -> UI16
 {
 	return skillCap;
 }
@@ -1199,7 +1199,7 @@ auto CServerData::ServerSkillCap( UI16 cap ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets total cap for all skills
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillTotalCapStatus() const -> std::uint16_t
+auto CServerData::ServerSkillTotalCapStatus() const -> UI16
 {
 	return skillTotalCap;
 }
@@ -1218,7 +1218,7 @@ auto CServerData::ServerSkillTotalCap( UI16 cap ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global delay for skill usage
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSkillDelayStatus() const -> std::uint8_t
+auto CServerData::ServerSkillDelayStatus() const -> UI08
 {
 	return skillDelay;
 }
@@ -1233,7 +1233,7 @@ auto CServerData::ServerSkillDelay( UI08 skdelay ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the total stat cap
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStatCapStatus() const -> std::uint16_t
+auto CServerData::ServerStatCapStatus() const -> UI16
 {
 	return statCap;
 }
@@ -1251,7 +1251,7 @@ auto CServerData::ServerStatCap( UI16 cap ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max number of steps allowed to take while stealthed
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxStealthMovement() const -> std::int16_t
+auto CServerData::MaxStealthMovement() const -> SI16
 {
 	return maxStealthMovement;
 }
@@ -1265,7 +1265,7 @@ auto CServerData::MaxStealthMovement( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max number of steps allowed while running before stamina is reduced
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxStaminaMovement() const -> std::int16_t
+auto CServerData::MaxStaminaMovement() const -> SI16
 {
 	return maxStaminaMovement;
 }
@@ -1284,7 +1284,7 @@ auto CServerData::BuildSystemTimeValue( cSD_TID timerId ) const ->TIMERVAL
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets a specific server timer
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::SystemTimer( cSD_TID timerid ) const -> std::uint16_t
+auto CServerData::SystemTimer( cSD_TID timerid ) const -> UI16
 {
 	return serverTimers[timerid];
 }
@@ -1406,7 +1406,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCoreShardEra( void ) const -> std::uint8_t
+auto CServerData::ExpansionCoreShardEra( void ) const -> UI08
 {
 	return coreShardEra;
 }
@@ -1436,7 +1436,7 @@ auto CServerData::ExpansionCoreShardEra( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionArmorCalculation() const -> std::uint8_t
+auto CServerData::ExpansionArmorCalculation() const -> UI08
 {
 	if( static_cast<ExpansionRuleset>( expansionArmorCalculation ) == ER_CORE )
 	{
@@ -1475,7 +1475,7 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionStrengthDamageBonus() const -> std::uint8_t
+auto CServerData::ExpansionStrengthDamageBonus() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionStrengthDamageBonus ) == ER_CORE )
 	{
@@ -1510,7 +1510,7 @@ auto CServerData::ExpansionStrengthDamageBonus( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionTacticsDamageBonus() const -> std::uint8_t
+auto CServerData::ExpansionTacticsDamageBonus() const -> UI08
 {
 	if( static_cast<ExpansionRuleset>( expansionTacticsDamageBonus ) == ER_CORE )
 	{
@@ -1545,7 +1545,7 @@ auto CServerData::ExpansionTacticsDamageBonus( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionAnatomyDamageBonus() const -> std::uint8_t
+auto CServerData::ExpansionAnatomyDamageBonus() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus ) == ER_CORE )
 	{
@@ -1580,7 +1580,7 @@ auto CServerData::ExpansionAnatomyDamageBonus( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionLumberjackDamageBonus() const -> std::uint8_t
+auto CServerData::ExpansionLumberjackDamageBonus() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionLumberjackDamageBonus ) == ER_CORE )
 	{
@@ -1615,7 +1615,7 @@ auto CServerData::ExpansionLumberjackDamageBonus( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionRacialDamageBonus() const -> std::uint8_t
+auto CServerData::ExpansionRacialDamageBonus() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionRacialDamageBonus ) == ER_CORE )
 	{
@@ -1650,7 +1650,7 @@ auto CServerData::ExpansionRacialDamageBonus( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionDamageBonusCap() const -> std::uint8_t
+auto CServerData::ExpansionDamageBonusCap() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionDamageBonusCap ) == ER_CORE )
 	{
@@ -1685,7 +1685,7 @@ auto CServerData::ExpansionDamageBonusCap( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionShieldParry() const -> std::uint8_t
+auto CServerData::ExpansionShieldParry() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionShieldParry ) == ER_CORE )
 	{
@@ -1720,7 +1720,7 @@ auto CServerData::ExpansionShieldParry( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWeaponParry() const -> std::uint8_t
+auto CServerData::ExpansionWeaponParry() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionWeaponParry ) == ER_CORE )
 	{
@@ -1755,7 +1755,7 @@ auto CServerData::ExpansionWeaponParry( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionWrestlingParry() const -> std::uint8_t
+auto CServerData::ExpansionWrestlingParry() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionWrestlingParry ) == ER_CORE )
 	{
@@ -1790,7 +1790,7 @@ auto CServerData::ExpansionWrestlingParry( UI08 setting ) -> void
 //|						10 = HS - High Seas
 //|						11 = ToL - Time of Legends
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ExpansionCombatHitChance() const -> std::uint8_t
+auto CServerData::ExpansionCombatHitChance() const -> UI08
 {
 	if(  static_cast<ExpansionRuleset>( expansionCombatHitChance ) == ER_CORE )
 	{
@@ -1911,7 +1911,7 @@ auto CServerData::DeathAnimationStatus( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets intensity of ambient world sounds, bird chirps, animal sounds, etc
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::WorldAmbientSounds() const -> std::int16_t
+auto CServerData::WorldAmbientSounds() const -> SI16
 {
 	return ambientSounds;
 }
@@ -2062,7 +2062,7 @@ auto CServerData::PlayerPersecutionStatus( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether html stats are enabled or disabled
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::HtmlStatsStatus() const -> std::int16_t
+auto CServerData::HtmlStatsStatus() const -> SI16
 {
 	return htmlStatusEnabled;
 }
@@ -2105,7 +2105,7 @@ auto CServerData::SellByNameStatus( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum amount of items that can be sold in one go to a vendor
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::SellMaxItemsStatus() const -> std::int16_t
+auto CServerData::SellMaxItemsStatus() const -> SI16
 {
 	return sellMaxItems;
 }
@@ -2277,7 +2277,7 @@ auto CServerData::CheckSpawnRegionSpeed( R64 value ) -> void
 //|	Purpose		-	Gets/Sets the posting level for bulletin boards
 //|					UNUSED?
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MsgBoardPostingLevel() const -> std::uint8_t
+auto CServerData::MsgBoardPostingLevel() const -> UI08
 {
 	return msgPostingLevel;
 }
@@ -2292,7 +2292,7 @@ auto CServerData::MsgBoardPostingLevel( UI08 value ) -> void
 //|	Purpose		-	Gets/Sets the post removal level for bulleting boards
 //|					UNUSED?
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MsgBoardPostRemovalLevel() const -> std::uint8_t
+auto CServerData::MsgBoardPostRemovalLevel() const -> UI08
 {
 	return msgRemovalLevel;
 }
@@ -2309,7 +2309,7 @@ auto CServerData::MsgBoardPostRemovalLevel( UI08 value ) -> void
 //|						1 = mine mountainsides/cavefloors only
 //|						2 = mine in mining regions only (not working?)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MineCheck() const -> std::uint8_t
+auto CServerData::MineCheck() const -> UI08
 {
 	return mineCheck;
 }
@@ -2435,7 +2435,7 @@ auto CServerData::NPCSpellCastSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the stamina loss for using the fishing skill
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::FishingStaminaLoss() const -> std::int16_t
+auto CServerData::FishingStaminaLoss() const -> SI16
 {
 	return fishingstaminaloss;
 }
@@ -2450,7 +2450,7 @@ auto CServerData::FishingStaminaLoss( SI16 value ) -> void
 //|	Purpose		-	Gets/Sets the NPC damage divisor. If character is a player, damage from NPCs is
 //|					divided by this value.
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNpcDamageRate() const -> std::int16_t
+auto CServerData::CombatNpcDamageRate() const -> SI16
 {
 	return combatNpcDamageRate;
 }
@@ -2480,7 +2480,7 @@ auto CServerData::AlchemyDamageBonusEnabled( bool newVal ) -> void
 //|					explosion potions based on this formula: 
 //|						bonusDamage = attackerAlchemySkill / alchemyDamageBonusModifier
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::AlchemyDamageBonusModifier() const -> std::uint8_t
+auto CServerData::AlchemyDamageBonusModifier() const -> UI08
 {
 	return alchemyDamageBonusModifier;
 }
@@ -2508,7 +2508,7 @@ auto CServerData::ItemsInterruptCasting( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the amount of stamina lost by swinging weapon in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAttackStamina() const -> std::int16_t
+auto CServerData::CombatAttackStamina() const -> SI16
 {
 	return combatAttackStamina;
 }
@@ -2523,7 +2523,7 @@ auto CServerData::CombatAttackStamina( SI16 value ) -> void
 //|	Purpose		-	Gets/Sets the global difficulty level for crafting items
 //|					1 = easy, 5 = default, 10 = difficult
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::SkillLevel() const -> std::uint8_t
+auto CServerData::SkillLevel() const -> UI08
 {
 	return skillLevel;
 }
@@ -2991,7 +2991,7 @@ auto CServerData::CombatMonstersVsAnimals( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can own
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxHousesOwnable() const -> std::uint16_t
+auto CServerData::MaxHousesOwnable() const -> UI16
 {
 	return maxHousesOwnable;
 }
@@ -3005,7 +3005,7 @@ auto CServerData::MaxHousesOwnable( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of houses that a player can co-own
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxHousesCoOwnable() const -> std::uint16_t
+auto CServerData::MaxHousesCoOwnable() const -> UI16
 {
 	return maxHousesCoOwnable;
 }
@@ -3019,7 +3019,7 @@ auto CServerData::MaxHousesCoOwnable( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance of monsters attacking animals
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatAnimalsAttackChance() const -> std::uint16_t
+auto CServerData::CombatAnimalsAttackChance() const -> UI16
 {
 	return combatAnimalAttackChance;
 }
@@ -3038,7 +3038,7 @@ auto CServerData::CombatAnimalsAttackChance( UI16 value ) -> void
 //|	Purpose		-	Gets/Sets the delay hit bonus (in percentage) in combat for Archery. Can be negative!
 //|					This bonus was mentioned in official patch notes for Publish 5 (UOR patch).
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArcheryHitBonus() const -> std::int8_t
+auto CServerData::CombatArcheryHitBonus() const -> SI08
 {
 	return combatArcheryHitBonus;
 }
@@ -3078,7 +3078,7 @@ auto CServerData::CombatArcheryShootDelay( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets chance for weapons to take damage in combat (on hit)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageChance() const -> std::uint8_t
+auto CServerData::CombatWeaponDamageChance() const -> UI08
 {
 	return combatWeaponDamageChance;
 }
@@ -3096,7 +3096,7 @@ auto CServerData::CombatWeaponDamageChance( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min amount of damage (in hitpoints) weapons will take from combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageMin() const -> std::uint8_t
+auto CServerData::CombatWeaponDamageMin() const -> UI08
 {
 	return combatWeaponDamageMin;
 }
@@ -3110,7 +3110,7 @@ auto CServerData::CombatWeaponDamageMin( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of damage (in hitpoints) weapons will take from combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatWeaponDamageMax() const -> std::uint8_t
+auto CServerData::CombatWeaponDamageMax() const -> UI08
 {
 	return combatWeaponDamageMax;
 }
@@ -3124,7 +3124,7 @@ auto CServerData::CombatWeaponDamageMax( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage armor in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageChance() const -> std::uint8_t
+auto CServerData::CombatArmorDamageChance() const -> UI08
 {
 	return combatArmorDamageChance;
 }
@@ -3142,7 +3142,7 @@ auto CServerData::CombatArmorDamageChance( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to armor in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageMin() const -> std::uint8_t
+auto CServerData::CombatArmorDamageMin() const -> UI08
 {
 	return combatArmorDamageMin;
 }
@@ -3156,7 +3156,7 @@ auto CServerData::CombatArmorDamageMin( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to armor in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatArmorDamageMax() const -> std::uint8_t
+auto CServerData::CombatArmorDamageMax() const -> UI08
 {
 	return combatArmorDamageMax;
 }
@@ -3170,7 +3170,7 @@ auto CServerData::CombatArmorDamageMax( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to damage items used to parry in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageChance() const -> std::uint8_t
+auto CServerData::CombatParryDamageChance() const -> UI08
 {
 	return combatParryDamageChance;
 }
@@ -3188,7 +3188,7 @@ auto CServerData::CombatParryDamageChance( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the min damage dealt to items used to parry in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageMin() const -> std::uint8_t
+auto CServerData::CombatParryDamageMin() const -> UI08
 {
 	return combatParryDamageMin;
 }
@@ -3202,7 +3202,7 @@ auto CServerData::CombatParryDamageMin( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max damage dealt to items used to parry in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatParryDamageMax() const -> std::uint8_t
+auto CServerData::CombatParryDamageMax() const -> UI08
 {
 	return combatParryDamageMax;
 }
@@ -3216,7 +3216,7 @@ auto CServerData::CombatParryDamageMax( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the chance to spawn blood splatter effects during combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatBloodEffectChance() const -> std::uint8_t
+auto CServerData::CombatBloodEffectChance() const -> UI08
 {
 	return combatBloodEffectChance;
 }
@@ -3262,7 +3262,7 @@ auto CServerData::ThirstSystemEnabled( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the damage taken from players being hungry
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::HungerDamage() const -> std::int16_t
+auto CServerData::HungerDamage() const -> SI16
 {
 	return hungerDamage;
 }
@@ -3276,7 +3276,7 @@ auto CServerData::HungerDamage( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the stamina drain from players being thirsty
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ThirstDrain() const -> std::int16_t
+auto CServerData::ThirstDrain() const -> SI16
 {
 	return thirstDrain;
 }
@@ -3290,7 +3290,7 @@ auto CServerData::ThirstDrain( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the interval in seconds between checks for the player offline time
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::PetOfflineTimeout() const -> std::uint16_t
+auto CServerData::PetOfflineTimeout() const -> UI16
 {
 	return petOfflineTimeout;
 }
@@ -3333,7 +3333,7 @@ auto CServerData::PetThirstOffline( bool newVal ) -> void
 //|	Purpose		-	Gets/Sets the threshold for when money is taken from a player's bank account
 //|					when buying something from a vendor instead of from their backpack
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::BuyThreshold() const -> std::int16_t
+auto CServerData::BuyThreshold() const -> SI16
 {
 	return buyThreshold;
 }
@@ -3508,7 +3508,7 @@ auto CServerData::TravelSpellsWhileAggressor( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of control slots a player has available (0 for disable)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxControlSlots() const -> std::uint8_t
+auto CServerData::MaxControlSlots() const -> UI08
 {
 	return maxControlSlots;
 }
@@ -3522,7 +3522,7 @@ auto CServerData::MaxControlSlots( UI08 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of active followers/pets a player can have (0 for disable)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxFollowers() const -> std::uint8_t
+auto CServerData::MaxFollowers() const -> UI08
 {
 	return maxFollowers;
 }
@@ -3536,7 +3536,7 @@ auto CServerData::MaxFollowers( UI08 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of different owners a pet can have in its lifetime
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxPetOwners() const -> std::uint8_t
+auto CServerData::MaxPetOwners() const -> UI08
 {
 	return maxPetOwners;
 }
@@ -3550,7 +3550,7 @@ auto CServerData::MaxPetOwners( UI08 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty gained on successful use of pet command
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GetPetLoyaltyGainOnSuccess() const -> std::uint16_t
+auto CServerData::GetPetLoyaltyGainOnSuccess() const -> UI16
 {
 	return petLoyaltyGainOnSuccess;
 }
@@ -3564,7 +3564,7 @@ auto CServerData::SetPetLoyaltyGainOnSuccess( UI16 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the pet loyalty loss for failed use of pet command
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GetPetLoyaltyLossOnFailure() const -> std::uint16_t
+auto CServerData::GetPetLoyaltyLossOnFailure() const -> UI16
 {
 	return petLoyaltyLossOnFailure;
 }
@@ -3578,7 +3578,7 @@ auto CServerData::SetPetLoyaltyLossOnFailure( UI16 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Gets/Sets the max amount of teleports to safety players get per day via help menu when stuck
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxSafeTeleportsPerDay() const -> std::uint8_t
+auto CServerData::MaxSafeTeleportsPerDay() const -> UI08
 {
 	return maxSafeTeleports;
 }
@@ -3692,7 +3692,7 @@ auto CServerData::CraftColouredWeapons( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the ratio of worldsaves that get backed up
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::BackupRatio() const -> std::int16_t
+auto CServerData::BackupRatio() const -> SI16
 {
 	return backupRatio;
 }
@@ -3706,7 +3706,7 @@ auto CServerData::BackupRatio( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which combat can be engaged
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatMaxRange() const -> std::int16_t
+auto CServerData::CombatMaxRange() const -> SI16
 {
 	return combatMaxRange;
 }
@@ -3720,7 +3720,7 @@ auto CServerData::CombatMaxRange( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum range at which spells can be cast in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatMaxSpellRange() const -> std::int16_t
+auto CServerData::CombatMaxSpellRange() const -> SI16
 {
 	return combatMaxSpellRange;
 }
@@ -3748,7 +3748,7 @@ auto CServerData::CombatAnimalsGuarded( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs start fleeing in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNPCBaseFleeAt() const -> std::int16_t
+auto CServerData::CombatNPCBaseFleeAt() const -> SI16
 {
 	return combatNpcBaseFleeAt;
 }
@@ -3762,7 +3762,7 @@ auto CServerData::CombatNPCBaseFleeAt( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the global health threshold where NPCs reattack after fleeing in combat
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::CombatNPCBaseReattackAt() const -> std::int16_t
+auto CServerData::CombatNPCBaseReattackAt() const -> SI16
 {
 	return combatNpcBaseReattackAt;
 }
@@ -3860,7 +3860,7 @@ auto CServerData::NPCMountedFleeingSpeed( R32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for titles in gumps
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TitleColour() const -> std::uint16_t
+auto CServerData::TitleColour() const -> UI16
 {
 	return titleColour;
 }
@@ -3874,7 +3874,7 @@ auto CServerData::TitleColour( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for left text in gumps (2 column ones)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::LeftTextColour() const -> std::uint16_t
+auto CServerData::LeftTextColour() const -> UI16
 {
 	return leftTextColour;
 }
@@ -3888,7 +3888,7 @@ auto CServerData::LeftTextColour( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default text colour for right text in gumps (2 column ones)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::RightTextColour() const -> std::uint16_t
+auto CServerData::RightTextColour() const -> UI16
 {
 	return rightTextColour;
 }
@@ -3902,7 +3902,7 @@ auto CServerData::RightTextColour( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for cancel button in gumps
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonCancel() const -> std::uint16_t
+auto CServerData::ButtonCancel() const -> UI16
 {
 	return buttonCancel;
 }
@@ -3916,7 +3916,7 @@ auto CServerData::ButtonCancel( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for left button (navigation) in gumps
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonLeft() const -> std::uint16_t
+auto CServerData::ButtonLeft() const -> UI16
 {
 	return buttonLeft;
 }
@@ -3930,7 +3930,7 @@ auto CServerData::ButtonLeft( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Button ID for right button (navigation) in gumps
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ButtonRight() const -> std::uint16_t
+auto CServerData::ButtonRight() const -> UI16
 {
 	return buttonRight;
 }
@@ -3944,7 +3944,7 @@ auto CServerData::ButtonRight( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default Gump ID for background gump
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::BackgroundPic() const -> std::uint16_t
+auto CServerData::BackgroundPic() const -> UI16
 {
 	return backgroundPic;
 }
@@ -3958,7 +3958,7 @@ auto CServerData::BackgroundPic( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) for which a town voting poll is open
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TownNumSecsPollOpen() const -> std::uint32_t
+auto CServerData::TownNumSecsPollOpen() const -> UI32
 {
 	return numSecsPollOpen;
 }
@@ -3972,7 +3972,7 @@ auto CServerData::TownNumSecsPollOpen( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) that a PC would be a mayor
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TownNumSecsAsMayor() const -> std::uint32_t
+auto CServerData::TownNumSecsAsMayor() const -> UI32
 {
 	return numSecsAsMayor;
 }
@@ -3986,7 +3986,7 @@ auto CServerData::TownNumSecsAsMayor( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between periods of taxes for PCs
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TownTaxPeriod() const -> std::uint32_t
+auto CServerData::TownTaxPeriod() const -> UI32
 {
 	return taxPeriod;
 }
@@ -4000,7 +4000,7 @@ auto CServerData::TownTaxPeriod( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time (in seconds) between payments for guards
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TownGuardPayment() const -> std::uint32_t
+auto CServerData::TownGuardPayment() const -> UI32
 {
 	return guardPayment;
 }
@@ -4014,7 +4014,7 @@ auto CServerData::TownGuardPayment( UI32 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the threshold in player kills before a player turns red (murderer)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::RepMaxKills() const -> std::uint16_t
+auto CServerData::RepMaxKills() const -> UI16
 {
 	return maxMurdersAllowed;
 }
@@ -4028,7 +4028,7 @@ auto CServerData::RepMaxKills( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of logs in a given resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResLogs() const -> std::int16_t
+auto CServerData::ResLogs() const -> SI16
 {
 	return logsPerArea;
 }
@@ -4042,7 +4042,7 @@ auto CServerData::ResLogs( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single log to respawn in a resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResLogTime() const -> std::uint16_t
+auto CServerData::ResLogTime() const -> UI16
 {
 	return logsRespawnTimer;
 }
@@ -4056,7 +4056,7 @@ auto CServerData::ResLogTime( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of ore in a given resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResOre() const -> std::int16_t
+auto CServerData::ResOre() const -> SI16
 {
 	return orePerArea;
 }
@@ -4070,7 +4070,7 @@ auto CServerData::ResOre( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single ore to respawn in a resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResOreTime() const -> std::uint16_t
+auto CServerData::ResOreTime() const -> UI16
 {
 	return oreRespawnTimer;
 }
@@ -4084,7 +4084,7 @@ auto CServerData::ResOreTime( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the size of each resource area to split the world into (min 8x8)
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResourceAreaSize() const -> std::uint16_t
+auto CServerData::ResourceAreaSize() const -> UI16
 {
 	return resourceAreaSize;
 }
@@ -4102,7 +4102,7 @@ auto CServerData::ResourceAreaSize( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the maximum number of fish in a given resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResFish() const -> std::int16_t
+auto CServerData::ResFish() const -> SI16
 {
 	return fishPerArea;
 }
@@ -4116,7 +4116,7 @@ auto CServerData::ResFish( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the time it takes for 1 single fish to respawn in a resource area
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ResFishTime() const -> std::uint16_t
+auto CServerData::ResFishTime() const -> UI16
 {
 	return fishRespawnTimer;
 }
@@ -4162,7 +4162,7 @@ auto CServerData::SetClientFeature( ClientFeatures bitNum, bool nVal ) -> void
 //|	Purpose		-	Gets/Sets which client side features to enable for connecting clients
 //|	Notes		-	See ClientFeatures enum in cServerData.h for full list
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GetClientFeatures() const -> std::uint32_t
+auto CServerData::GetClientFeatures() const -> UI32
 {
 	return static_cast<UI32>( clientFeatures.to_ulong() );
 }
@@ -4217,7 +4217,7 @@ auto CServerData::SetSpawnRegionsFacetStatus( UI32 nVal, bool status ) -> void
 {
 	spawnRegionsFacets.set( nVal, status );
 }
-auto CServerData::GetSpawnRegionsFacetStatus() const -> std::uint32_t
+auto CServerData::GetSpawnRegionsFacetStatus() const -> UI32
 {
 	return static_cast<UI32>( spawnRegionsFacets.to_ulong() );
 }
@@ -4302,7 +4302,7 @@ auto CServerData::SetDisabledAssistantFeature( AssistantFeatures bitNum, bool nV
 //|	Notes		-	Example of assistant: Razor, AssistUO
 //|					See ClientFeatures enum in cServerData.h for full list
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GetDisabledAssistantFeatures() const -> std::uint64_t
+auto CServerData::GetDisabledAssistantFeatures() const -> UI64
 {
 	return CServerData::DisabledAssistantFeatures;
 }
@@ -4439,7 +4439,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 	if( ofsOutput.is_open() )
 	{
 		ofsOutput << "// UOX Initialization File. V";
-		ofsOutput << ( static_cast<std::uint16_t>( 1 ) << 8 | static_cast<std::uint16_t>( 2 )) << '\n' << "//================================" << '\n' << '\n';
+		ofsOutput << ( static_cast<UI16>( 1 ) << 8 | static_cast<UI16>( 2 )) << '\n' << "//================================" << '\n' << '\n';
 		ofsOutput << "[system]" << '\n' << "{" << '\n';
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
 		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
@@ -4856,7 +4856,7 @@ auto CServerData::Load( const std::string &filename ) -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the base (minimum) range even beginner trackers can track at
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingBaseRange() const -> std::uint16_t
+auto CServerData::TrackingBaseRange() const -> UI16
 {
 	return trackingBaseRange;
 }
@@ -4870,7 +4870,7 @@ auto CServerData::TrackingBaseRange( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of targets someone can see in the tracking window
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingMaxTargets() const -> std::uint8_t
+auto CServerData::TrackingMaxTargets() const -> UI08
 {
 	return trackingMaxTargets;
 }
@@ -4891,7 +4891,7 @@ auto CServerData::TrackingMaxTargets( UI08 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the max amount of time a grandmaster tracker can track someone
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingBaseTimer() const -> std::uint16_t
+auto CServerData::TrackingBaseTimer() const -> UI16
 {
 	return trackingBaseTimer;
 }
@@ -4905,7 +4905,7 @@ auto CServerData::TrackingBaseTimer( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets how often in seconds the tracking message is updated and displayed
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::TrackingRedisplayTime() const -> std::uint16_t
+auto CServerData::TrackingRedisplayTime() const -> UI16
 {
 	return trackingMsgRedisplayTimer;
 }
@@ -6006,7 +6006,7 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default amount of starting gold for new characters
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStartGold() const -> std::int16_t
+auto CServerData::ServerStartGold() const -> SI16
 {
 	return startGold;
 }
@@ -6023,7 +6023,7 @@ auto CServerData::ServerStartGold( SI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default starting privs for new characters
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerStartPrivs() const -> std::uint16_t
+auto CServerData::ServerStartPrivs() const -> UI16
 {
 	return startPrivs;
 }
@@ -6037,7 +6037,7 @@ auto CServerData::ServerStartPrivs( UI16 value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the phase of one of the game's two moons
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerMoon( SI16 slot ) const -> std::int16_t
+auto CServerData::ServerMoon( SI16 slot ) const -> SI16
 {
 	SI16 rValue = -1;
 	if( slot >= 0 && slot <= 1 )
@@ -6191,7 +6191,7 @@ auto CServerData::NumServerLocations() const -> size_t
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the number of real life seconds per UO minute
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerSecondsPerUOMinute() const -> std::uint16_t
+auto CServerData::ServerSecondsPerUOMinute() const -> UI16
 {
 	return secondsPerUoMinute;
 }
@@ -6205,7 +6205,7 @@ auto CServerData::ServerSecondsPerUOMinute( UI16 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the default (if any) language used for the server
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::ServerLanguage() const -> std::uint16_t
+auto CServerData::ServerLanguage() const -> UI16
 {
 	return serverLanguage;
 }
@@ -6227,7 +6227,7 @@ auto CServerData::ServerLanguage( UI16 newVal ) -> void
 //|	Purpose		-	Gets/Sets max incoming bytes received from a socket in each 10 second period
 //|					If amount exceeds this cap, client might receive a warning/get kicked
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxClientBytesIn() const -> std::uint32_t
+auto CServerData::MaxClientBytesIn() const -> UI32
 {
 	return maxBytesIn;
 }
@@ -6242,7 +6242,7 @@ auto CServerData::MaxClientBytesIn( UI32 newVal ) -> void
 //|	Purpose		-	Gets/Sets max outgoing bytes sent to a socket in each 10 second period
 //|					If amount exceeds this cap, client might receive a warning/get kicked
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::MaxClientBytesOut() const -> std::uint32_t
+auto CServerData::MaxClientBytesOut() const -> UI32
 {
 	return maxBytesOut;
 }
@@ -6257,7 +6257,7 @@ auto CServerData::MaxClientBytesOut( UI32 newVal ) -> void
 //|	Purpose		-	Gets/Sets max amount of time a player will be temporarily banned for if they
 //|					exceed their alotted network traffic budget
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::NetTrafficTimeban() const -> std::uint32_t
+auto CServerData::NetTrafficTimeban() const -> UI32
 {
 	return trafficTimeban;
 }
@@ -6273,7 +6273,7 @@ auto CServerData::NetTrafficTimeban( UI32 newVal ) -> void
 //|	Purpose		-	Gets/Sets jsEngineSize (in MB), used to define max bytes per JSRuntime
 //|					before a last ditch GC effort is made
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::GetJSEngineSize() const -> std::uint16_t
+auto CServerData::GetJSEngineSize() const -> UI16
 {
 	return jsEngineSize;
 }
@@ -6392,7 +6392,7 @@ auto CServerData::LoadTimeTags( std::ifstream &input ) -> void
 }
 
 //==============================================================================================
-auto CServerData::ServerTimeDay() const -> std::int16_t
+auto CServerData::ServerTimeDay() const -> SI16
 {
 	return days;
 }
@@ -6402,7 +6402,7 @@ auto CServerData::ServerTimeDay( SI16 nValue ) -> void
 	days = nValue;
 }
 //==============================================================================================
-auto CServerData::ServerTimeHours() const -> std::uint8_t
+auto CServerData::ServerTimeHours() const -> UI08
 {
 	return hours;
 }
@@ -6412,7 +6412,7 @@ auto CServerData::ServerTimeHours( UI08 nValue ) -> void
 	hours = nValue;
 }
 //==============================================================================================
-auto CServerData::ServerTimeMinutes() const -> std::uint8_t
+auto CServerData::ServerTimeMinutes() const -> UI08
 {
 	return minutes;
 }
@@ -6423,7 +6423,7 @@ auto CServerData::ServerTimeMinutes( UI08 nValue ) -> void
 	minutes = nValue;
 }
 //==============================================================================================
-auto CServerData::ServerTimeSeconds() const -> std::uint8_t
+auto CServerData::ServerTimeSeconds() const -> UI08
 {
 	return seconds;
 }
@@ -6510,7 +6510,7 @@ auto CServerData::IncDay() -> bool
 
 
 //==============================================================================================
-auto CServerData::ServerEntry( std::uint16_t entryNum ) -> PhysicalServer *
+auto CServerData::ServerEntry( UI16 entryNum ) -> PhysicalServer *
 {
 	PhysicalServer *rValue = nullptr;
 	if( entryNum < serverList.size() )
@@ -6520,7 +6520,7 @@ auto CServerData::ServerEntry( std::uint16_t entryNum ) -> PhysicalServer *
 	return rValue;
 }
 //==============================================================================================
-auto CServerData::ServerCount() const -> std::uint16_t
+auto CServerData::ServerCount() const -> UI16
 {
 	return static_cast<UI16>( serverList.size() );
 }
@@ -6564,7 +6564,7 @@ auto PhysicalServer::GetIP() const -> const std::string &
 	return ip;
 }
 //==============================================================================================
-auto PhysicalServer::GetPort() const -> std::uint16_t
+auto PhysicalServer::GetPort() const -> UI16
 {
 	return port;
 }

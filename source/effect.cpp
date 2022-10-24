@@ -523,7 +523,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	auto csecs = oldstrutil::sections( addItem, "," );
 	if( csecs.size() > 1 )
 	{
-		amount	= oldstrutil::value<std::uint16_t>( oldstrutil::extractSection( addItem, ",", 1, 1 ));
+		amount	= oldstrutil::value<UI16>( oldstrutil::extractSection( addItem, ",", 1, 1 ));
 		addItem	= oldstrutil::extractSection( addItem, ",", 0, 0 );
 	}
 

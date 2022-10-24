@@ -3302,7 +3302,7 @@ auto InitIdToItemType() -> void
 				{
 					for( SI32 i = 0; i <= sectionCount; i++ )
 					{
-						idToItemType[ oldstrutil::value<std::uint16_t>( oldstrutil::extractSection( data, ",", i, i ), 16 )] = iType;
+						idToItemType[ oldstrutil::value<UI16>( oldstrutil::extractSection( data, ",", i, i ), 16 )] = iType;
 					}
 				}
 				else

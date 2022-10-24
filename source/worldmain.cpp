@@ -506,7 +506,7 @@ void CWorldMain::SaveNewWorld( bool x )
 {
 	static UI32 save_counter = 0;
 
-	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), []( std::pair<std::uint16_t, CSpawnRegion*> entry )
+	std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), []( std::pair<UI16, CSpawnRegion*> entry )
 	{
 		if( entry.second )
 		{
@@ -594,7 +594,7 @@ void CWorldMain::RegionSave()
 		Console.Error( oldstrutil::format( "Failed to open %s for writing", regionsFile.c_str() ));
 		return;
 	}
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<std::uint16_t, CTownRegion*> &town )
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<UI16, CTownRegion*> &town )
 	{
 		if( town.second )
 		{

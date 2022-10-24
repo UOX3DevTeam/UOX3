@@ -195,25 +195,25 @@ inline std::string TimeStamp( void )
 	return "";
 }
 #endif
-inline void StartMilliTimer( std::uint32_t &Seconds, std::uint32_t &Milliseconds )
+inline void StartMilliTimer( UI32 &Seconds, UI32 &Milliseconds )
 {
 	auto timenow	= std::chrono::system_clock::now().time_since_epoch();
 	auto sec		= std::chrono::duration_cast<std::chrono::seconds>( timenow ).count();
 	auto milli		= std::chrono::duration_cast<std::chrono::milliseconds>( timenow ).count() - ( 1000 * sec );
-	Seconds			= static_cast<std::uint32_t>( sec );
-	Milliseconds	= static_cast<std::uint32_t>( milli );
+	Seconds			= static_cast<UI32>( sec );
+	Milliseconds	= static_cast<UI32>( milli );
 }
-inline std::uint32_t CheckMilliTimer( std::uint32_t &Seconds, std::uint32_t &Milliseconds )
+inline UI32 CheckMilliTimer( UI32 &Seconds, UI32 &Milliseconds )
 {
 	auto timenow	= std::chrono::system_clock::now().time_since_epoch();
 	auto sec		= std::chrono::duration_cast<std::chrono::seconds>( timenow ).count();
 	auto milli		= std::chrono::duration_cast<std::chrono::milliseconds>( timenow ).count() - ( 1000 * sec );
-	return static_cast<std::uint32_t>(( 1000 *( sec - Seconds )) + ( milli - Milliseconds ));
+	return static_cast<UI32>(( 1000 *( sec - Seconds )) + ( milli - Milliseconds ));
 }
 
-inline std::uint32_t GetMinutesSinceEpoch()
+inline UI32 GetMinutesSinceEpoch()
 {
-	return static_cast<std::uint32_t>( std::chrono::duration_cast<std::chrono::minutes>( std::chrono::system_clock::now().time_since_epoch() ).count() );
+	return static_cast<UI32>( std::chrono::duration_cast<std::chrono::minutes>( std::chrono::system_clock::now().time_since_epoch() ).count() );
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -15,7 +15,7 @@
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor
 //o------------------------------------------------------------------------------------------------o
-ObjectFactory::SerialGen_st::SerialGen_st( std::uint32_t initial ) :serialNumber( initial )
+ObjectFactory::SerialGen_st::SerialGen_st( UI32 initial ) :serialNumber( initial )
 {	
 }
 
@@ -24,7 +24,7 @@ ObjectFactory::SerialGen_st::SerialGen_st( std::uint32_t initial ) :serialNumber
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Return what next serial will be
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::Next() -> std::uint32_t
+auto ObjectFactory::SerialGen_st::Next() -> UI32
 {
 	return serialNumber++;
 }
@@ -34,7 +34,7 @@ auto ObjectFactory::SerialGen_st::Next() -> std::uint32_t
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register next serial number in series
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::RegisterSerial(std::uint32_t serial) -> void
+auto ObjectFactory::SerialGen_st::RegisterSerial(UI32 serial) -> void
 {
 	if( serial >= serialNumber )
 	{
@@ -47,7 +47,7 @@ auto ObjectFactory::SerialGen_st::RegisterSerial(std::uint32_t serial) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Free up specified serial number if it was the last one registered
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::UnregisterSerial( std::uint32_t serial ) -> void
+auto ObjectFactory::SerialGen_st::UnregisterSerial( UI32 serial ) -> void
 {
 	if( serialNumber == ( serial + 1 ))
 	{
@@ -60,14 +60,14 @@ auto ObjectFactory::SerialGen_st::UnregisterSerial( std::uint32_t serial ) -> vo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Override operators
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::SerialGen_st::operator = ( std::uint32_t value ) ->SerialGen_st&
+auto ObjectFactory::SerialGen_st::operator = ( UI32 value ) ->SerialGen_st&
 {
 	serialNumber = value;
 	return *this;
 }
-auto ObjectFactory::SerialGen_st::operator = ( std::int32_t value ) ->SerialGen_st&
+auto ObjectFactory::SerialGen_st::operator = ( SI32 value ) ->SerialGen_st&
 {
-	serialNumber = static_cast<std::uint32_t>( value );
+	serialNumber = static_cast<UI32>( value );
 	return *this;
 }
 
@@ -99,7 +99,7 @@ auto ObjectFactory::GetSingleton() -> ObjectFactory&
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the next free serial to use when creating an object of a given type
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::NextSerial( ObjectType type ) -> std::uint32_t
+auto ObjectFactory::NextSerial( ObjectType type ) -> UI32
 {
 	switch( type )
 	{
@@ -111,7 +111,7 @@ auto ObjectFactory::NextSerial( ObjectType type ) -> std::uint32_t
 		case OT_CHAR:
 			return character_serials.Next();
 		default:
-			return std::numeric_limits<std::uint32_t>::max();
+			return std::numeric_limits<UI32>::max();
 	}
 }
 
@@ -178,7 +178,7 @@ auto ObjectFactory::CollectionForType( ObjectType type ) const -> const factory_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find and return item from collection based on specified serial
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::FindCharacter( std::uint32_t serial ) ->CBaseObject*
+auto ObjectFactory::FindCharacter( UI32 serial ) ->CBaseObject*
 {
 	auto iter = chars.find( serial );
 	if( iter != chars.end() )
@@ -193,7 +193,7 @@ auto ObjectFactory::FindCharacter( std::uint32_t serial ) ->CBaseObject*
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find and return item from collection based on specified serial
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::FindItem( std::uint32_t serial ) ->CBaseObject*
+auto ObjectFactory::FindItem( UI32 serial ) ->CBaseObject*
 {
 	// We look for items first
 	CBaseObject *object = nullptr;
@@ -218,7 +218,7 @@ auto ObjectFactory::FindItem( std::uint32_t serial ) ->CBaseObject*
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Erase object from collection, if found there
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::RemoveObject( std::uint32_t serial, factory_collection *collection ) -> bool
+auto ObjectFactory::RemoveObject( UI32 serial, factory_collection *collection ) -> bool
 {
 	auto rValue = false;
 	auto iter = collection->find( serial );
@@ -251,7 +251,7 @@ auto ObjectFactory::RegisterObject( CBaseObject *object ) -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Register object using specified serial number
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::RegisterObject( CBaseObject *object, std::uint32_t serial ) -> bool
+auto ObjectFactory::RegisterObject( CBaseObject *object, UI32 serial ) -> bool
 {
 	auto rValue = false;
 	if( object )
@@ -304,7 +304,7 @@ auto ObjectFactory::UnregisterObject( CBaseObject *object ) -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Iterate over all objects of a specified object type
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::IterateOver( ObjectType type, std::uint32_t &b, void *extra, std::function<bool( CBaseObject*, std::uint32_t &, void * )> function ) -> std::uint32_t
+auto ObjectFactory::IterateOver( ObjectType type, UI32 &b, void *extra, std::function<bool( CBaseObject*, UI32 &, void * )> function ) -> UI32
 {
 	auto collection = CollectionForType( type );
 	if( collection )
@@ -397,7 +397,7 @@ auto ObjectFactory::CreateBlankObject( ObjectType type ) ->CBaseObject *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate and return object from provided serial
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::FindObject( std::uint32_t serial ) -> CBaseObject *
+auto ObjectFactory::FindObject( UI32 serial ) -> CBaseObject *
 {
 	CBaseObject *object = nullptr;
 	if( serial >= BASEITEMSERIAL )
@@ -416,13 +416,13 @@ auto ObjectFactory::FindObject( std::uint32_t serial ) -> CBaseObject *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of objects that exist of a given object type
 //o------------------------------------------------------------------------------------------------o
-auto ObjectFactory::CountOfObjects( ObjectType type ) const -> std::uint32_t
+auto ObjectFactory::CountOfObjects( ObjectType type ) const -> UI32
 {
-	auto rValue = std::uint32_t( 0 );
+	auto rValue = UI32( 0 );
 	auto collection = CollectionForType( type );
 	if( collection )
 	{
-		rValue = static_cast<std::uint32_t>( collection->size() );
+		rValue = static_cast<UI32>( collection->size() );
 	}
 	return rValue;
 }
@@ -464,7 +464,7 @@ auto ObjectFactory::ValidObject( CBaseObject *object, ObjectType type ) -> bool
 {
 	auto findObject = []( CBaseObject* object, factory_collection &collect )
 	{
-		auto iter = std::find_if( collect.begin(), collect.end(), [object] ( std::pair<std::uint32_t, CBaseObject *> entry )
+		auto iter = std::find_if( collect.begin(), collect.end(), [object] ( std::pair<UI32, CBaseObject *> entry )
 		{
 			return entry.second = object;
 		});

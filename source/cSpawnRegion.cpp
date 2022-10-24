@@ -673,7 +673,7 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 		const UI08 spawnItems	= ( shouldSpawnItems ? 100 : 49 );
 		for( UI16 i = 0; i < call && ( shouldSpawnItems || shouldSpawnChars ); ++i )
 		{
-			if( RandomNum( static_cast<std::uint16_t>( spawnChars ), static_cast<std::uint16_t>( spawnItems )) > 49 )
+			if( RandomNum( static_cast<UI16>( spawnChars ), static_cast<UI16>( spawnItems )) > 49 )
 			{
 				if( shouldSpawnItems )
 				{
@@ -702,7 +702,7 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 		}
 	}
 
-	SetNextTime( BuildTimeValue( static_cast<R32>( RandomNum( static_cast<std::uint16_t>( GetMinTime() * 60 ), static_cast<std::uint16_t>( GetMaxTime() * 60 )))));
+	SetNextTime( BuildTimeValue( static_cast<R32>( RandomNum( static_cast<UI16>( GetMinTime() * 60 ), static_cast<UI16>( GetMaxTime() * 60 )))));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -727,7 +727,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 		switch( tag )
 		{
 			case DFNTAG_ID:
-				npcId = oldstrutil::value<std::uint16_t>( cdata ); // static_cast<UI16>( ndata );
+				npcId = oldstrutil::value<UI16>( cdata ); // static_cast<UI16>( ndata );
 				goto foundNpcId;
 			default:
 				break;
