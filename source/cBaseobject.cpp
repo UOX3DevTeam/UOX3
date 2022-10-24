@@ -742,7 +742,6 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	std::string myLocation = "Location=" + std::to_string( x ) + "," + std::to_string( y ) + "," +std::to_string( z ) + "," + std::to_string( worldNumber ) + "," + std::to_string( instanceId ) + newLine;
 	outStream << myLocation;
 	outStream << "Title=" << title << newLine;
-	outStream << "Origin=" << origin << newLine;
 
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
@@ -1416,21 +1415,6 @@ std::string CBaseObject::GetTitle( void ) const
 void CBaseObject::SetTitle( std::string newtitle )
 {
 	title = newtitle.substr( 0, MAX_TITLE - 1 );
-}
-
-//o------------------------------------------------------------------------------------------------o
-//|	Function	-	CBaseObject::GetOrigin()
-//|					CBaseObject::SetOrigin()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets/Sets the object's origin
-//o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetOrigin( void ) const
-{
-	return origin;
-}
-void CBaseObject::SetOrigin( std::string newOrigin )
-{
-	origin = newOrigin.substr( 0, MAX_ORIGIN );
 }
 
 //o------------------------------------------------------------------------------------------------o
