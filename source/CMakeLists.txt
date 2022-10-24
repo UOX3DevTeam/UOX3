@@ -44,7 +44,7 @@ add_library(uox
 		vendor.cpp
 		ObjectFactory.cpp
 		cItem.cpp
-		cplayeraction.cpp
+		cPlayerAction.cpp
 		pcmanage.cpp
 		weight.cpp
 		PartySystem.cpp
