@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -x
+
 echo "Building spidermonkey"
 cd spidermonkey
 if [ "$(uname)" = "FreeBSD" ]
