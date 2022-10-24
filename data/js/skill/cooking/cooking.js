@@ -40,7 +40,9 @@ function onUseChecked( pUser, iUsed )
 		}
 	}
 	else
+	{
 		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+	}
 	return false;
 }
 
@@ -53,8 +55,8 @@ function Cooking( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var StrangeByte = tSock.GetWord( 1 );
-	var tileID = tSock.GetWord(17);
+	var strangeByte = tSock.GetWord( 1 );
+	var tileID = tSock.GetWord( 17 );
 	var foodColor = iUsed.colour;
 	var cookingMsg = "";
 
@@ -94,9 +96,13 @@ function Cooking( tSock, myTarget )
             pUser.StartTimer( 5000, 9, true );
             pUser.SoundEffect( 0x0057, true );
             if( iUsed.amount > 1 )
+            {
                 iUsed.amount -= 1;
+            }
             else
+            {
                 iUsed.Delete();
+            }
             return;
         }
 
@@ -155,9 +161,13 @@ function onTimer( pUser, timerID )
 		case 3:
 			var rndBread = RandomNumber( 0, 1 );
 			if( rndBread )
+			{
 				CreateDFNItem( socket, pUser, "0x103B", 1, "ITEM", true ); // makes a loaf of bread
+			}
 			else
+			{
 				CreateDFNItem( socket, pUser, "0x103C", 1, "ITEM", true ); // makes a loaf of bread
+			}
 			socket.SysMessage( GetDictionaryEntry( 6051, socket.language )); // You bake a loaf of bread.
 			break;
 		case 4:

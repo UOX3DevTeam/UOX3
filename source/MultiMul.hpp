@@ -13,65 +13,69 @@
 
 #include "UOPData.hpp"
 #include "mapclasses.h"
-class tileinfo ;
-//=========================================================================================================
-// multi_item
-//=========================================================================================================
-// A tile item in a multi.  Contains its offset from the center point of the multi structure, its altitude relative to the center point of the tile, and its multi flag (is it a placeholder item, should be replaced with a dynamic).
-struct multi_item {
-	std::uint16_t tileid ;
-	int altitude ;
-	int offsetx ;
-	int offsety ;
-	std::uint16_t flag ;
-	CTile *info ;
-	multi_item() ;
+class TileInfo;
+//==================================================================================================
+// MultiItem_st
+//==================================================================================================
+// A tile item in a multi.  Contains its offset from the center point of the multi structure, its 
+// altitude relative to the center point of the tile, and its multi flag (is it a placeholder item, 
+// should be replaced with a dynamic).
+struct MultiItem_st
+{
+	std::uint16_t tileId;
+	int altitude;
+	int offsetX;
+	int offsetY;
+	std::uint16_t flag;
+	CTile *info;
+	MultiItem_st();
 };
 
-//=========================================================================================================
+//==================================================================================================
 // collection_item
-//=========================================================================================================
-// So a multi is a colleciton (thus collection_item) of multi_item.  T
-struct collection_item {
-	int min_y;
-	int max_y;
-	int min_alt ;
-	int max_alt;
-	int min_x ;
-	int max_x ;
-	std::vector<multi_item> items ;
-	collection_item();
-	static const std::unordered_map<int,std::string> collection_names ;
-	static auto name(int multi_id) ->std::string ;
-	auto itemsAt(int offsetx,int offsety) ->std::vector<multi_item> ;
+//==================================================================================================
+// So a multi is a colleciton (thus collection_item) of MultiItem_st.
+struct CollectionItem_st
+{
+	int minY;
+	int maxY;
+	int minAlt;
+	int maxAlt;
+	int minX;
+	int maxX;
+	std::vector<MultiItem_st> items;
+	CollectionItem_st();
+	static const std::unordered_map<int, std::string> collectionNames;
+	static auto Name( int multiId ) -> std::string;
+	auto ItemsAt( int offsetX, int offsetY ) -> std::vector<MultiItem_st>;
 };
-//=========================================================================================================
-// multicollection
-//=========================================================================================================
 
-//=========================================================
-class multicollection : public uopfile {
-	constexpr static auto hssize = 908592;
-	tileinfo *info ;
-	std::unordered_map<int, collection_item> _multis ;
+//==================================================================================================
+// multicollection
+//==================================================================================================
+class MultiCollection : public UopFile
+{
+	constexpr static auto hsSize = 908592;
+	TileInfo *info;
+	std::unordered_map<int, CollectionItem_st> _multis;
 	
-	std::string _housingbin ;
-	auto processEntry(std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data) ->bool final ;
-	auto processHash(std::uint64_t hash,std::size_t entry , std::vector<std::uint8_t> &data) ->bool final ;
-	auto processData(bool isHS, int index, std::vector<std::uint8_t> &data) ->void ;
+	std::string _housingBin;
+	auto ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
+	auto ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool final;
+	auto ProcessData( bool isHS, int index, std::vector<std::uint8_t> &data ) -> void;
 	
 public:
-	multicollection(const std::filesystem::path &uodir = std::filesystem::path(),tileinfo *info = nullptr);
+	MultiCollection( const std::filesystem::path &uodir = std::filesystem::path(), TileInfo *info = nullptr );
 	
-	auto load(const std::filesystem::path &uodir,tileinfo *info=nullptr) ->bool ;
-	auto load(const std::filesystem::path &uodir,const std::string &housingbin,tileinfo *info = nullptr) ->bool ;
-	auto loadMul(const std::filesystem::path &uodir,tileinfo *info = nullptr) ->bool;
-	auto size() const ->size_t ;
-	auto multis() const -> const std::unordered_map<int, collection_item>& ;
-	auto multis()  ->  std::unordered_map<int, collection_item>& ;
-	auto multi(std::uint16_t multid) ->collection_item& ;
-	auto multi(std::uint16_t multid) const ->const collection_item&;
-	auto exists(std::uint16_t multid) const ->bool ;
+	auto LoadMultiCollection( const std::filesystem::path &uodir, TileInfo *info = nullptr ) -> bool;
+	auto LoadMultiCollection( const std::filesystem::path &uodir, const std::string &housingbin, TileInfo *info = nullptr ) -> bool;
+	auto LoadMul( const std::filesystem::path &uodir, TileInfo *info = nullptr ) -> bool;
+	auto Size() const -> size_t;
+	auto Multis() const -> const std::unordered_map<int, CollectionItem_st>&;
+	auto Multis() -> std::unordered_map<int, CollectionItem_st>&;
+	auto Multi( std::uint16_t multid ) -> CollectionItem_st&;
+	auto Multi( std::uint16_t multid ) const -> const CollectionItem_st&;
+	auto Exists( std::uint16_t multid ) const -> bool;
 };
 
 #endif /* MultiMul_hpp */

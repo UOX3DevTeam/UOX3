@@ -40,7 +40,7 @@ function onUseChecked( pUser, iUsed )
 		}
 
 		// Store some info for later
-		pUser.SetTempTag( "fishingToolSerial", (iUsed.serial).toString() );
+		pUser.SetTempTag( "fishingToolSerial", ( iUsed.serial ).toString() );
 		iUsed.more = pUser.serial;
 
 		socket.CustomTarget( 1, GetDictionaryEntry( 9310, socket.language )); // What water do you want to fish in?
@@ -329,13 +329,15 @@ function CheckDistance( socket, mChar, maxDistance )
 		return false;
 	}
 	else
+	{
 		return true;
+	}
 }
 
 // Weighted randomizer for quick and easy distribution of fishing resources based on difficulty
 function weightedRandom( min, max )
 {
- 	return Math.round(max / ( Math.random() * max + min ));
+ 	return Math.round( max / ( Math.random() * max + min ));
 }
 
 function onTimer( fishingTool, timerID )
@@ -420,7 +422,9 @@ function onTimer( fishingTool, timerID )
 
 					// Play cast animation in reverse to catch fish (for non-gargoyle characters only)
 					if( mChar.gender != 4 && mChar.gender != 5 )
+					{
 						mChar.DoAction( 0x0b, null, 7, 0, true );
+					}
 
 					// Play another splash effect with sound
 					mChar.SoundEffect( 0x364, true );
@@ -479,9 +483,13 @@ function onTimer( fishingTool, timerID )
 								break;
 							case 6: // big fish
 								if( isDeepSeaFishing )
+								{
 									fishType = "big_fish";
+								}
 								else
+								{
 									fishType = "randomfish";
+								}
 								break;
 						}
 					}
@@ -505,9 +513,13 @@ function onTimer( fishingTool, timerID )
 								break;
 							case 6: // big fish
 								if( isDeepSeaFishing )
+								{
 									fishType = "big_fish";
+								}
 								else
+								{
 									fishType = "randomfish";
+								}
 								break;
 							/*case 6: // treasure map
 								fishType = "treasuremap";
@@ -542,9 +554,13 @@ function onTimer( fishingTool, timerID )
 							case 7:
 							case 6: // big fish
 								if( isDeepSeaFishing )
+								{
 									fishType = "big_fish";
+								}
 								else
+								{
 									fishType = "randomfish";
+								}
 								break;
 							/*case 7: // treasure map
 								fishType = "treasuremap";
@@ -602,13 +618,15 @@ function onTimer( fishingTool, timerID )
 					{
 						var npcToSpawn = "seaserpent";
 						if( isDeepSeaFishing )
+						{
 							npcToSpawn = "deepseaserpent";
+						}
 
 						let rndNum = RandomNumber( 1, 100 );
 						if( rndNum <= 2 ) // 2% chance of fishing sea serpent on success
 						{
 							var catchText = GetDictionaryEntry( 9316, socket.language ); // You pull out an item along with a monster : %s
-							socket.SysMessage( catchText.replace(/%s/gi, itemCaught.name ));
+							socket.SysMessage( catchText.replace( /%s/gi, itemCaught.name ));
 
 							// Spawn Sea Serpent or Deep Sea Serpent
 							var nSpawned = SpawnNPC( npcToSpawn, targX, targY, targZ, mChar.worldnumber, mChar.instanceID );
@@ -622,7 +640,7 @@ function onTimer( fishingTool, timerID )
 							else
 							{
 								var catchText = GetDictionaryEntry( 9315, socket.language ); // You pull out an item : %s
-								socket.SysMessage( catchText.replace(/%s/gi, itemCaught.name ));
+								socket.SysMessage( catchText.replace( /%s/gi, itemCaught.name ));
 							}
 						}
 					}
@@ -630,12 +648,14 @@ function onTimer( fishingTool, timerID )
 					{
 						// Low skilled fisherman, in either shallow or deep water
 						var catchText = GetDictionaryEntry( 9315, socket.language ); // You pull out an item : %s
-						socket.SysMessage( catchText.replace(/%s/gi, itemCaught.name ));
+						socket.SysMessage( catchText.replace( /%s/gi, itemCaught.name ));
 					}
 
 					// Play moving effect for item caught
 					if( itemCaught != null )
+					{
 						DoMovingEffect( targX, targY, targZ, mChar.x, mChar.y, mChar.z + 5, itemCaught.id, 0x01, 0x00, false );
+					}
 					break;
 				}
 				else
@@ -660,7 +680,9 @@ function onTimer( fishingTool, timerID )
 					}
 
 					if( RandomNumber( 0, 1 ))	// 50% chance to destroy some resources
+					{
 						mResource.fishAmount = mResource.fishAmount - 1;
+					}
 				}
 			}
 			break;
@@ -698,9 +720,13 @@ function onTimer( fishingTool, timerID )
 					socket.clickY = null;
 					socket.clickZ = null;
 					if( fishingTool.GetTag( "fabledNet" ))
+					{
 						FabledDeepSeaFishingResult( socket, mChar, fishingTool );
+					}
 					else
+					{
 						DeepSeaFishingResult( socket, mChar, fishingTool );
+					}
 				}
 				else if( fishingTool.morex < 14 )
 				{
@@ -716,7 +742,9 @@ function onTimer( fishingTool, timerID )
 						DoStaticEffect( effectX, effectY, targZ, 0x352D, 0x3, 0x10, false );
 					}
 					if( RandomNumber( 0, 1 ))
+					{
 						fishingTool.SoundEffect( 0x364, true );
+					}
 					fishingTool.morex++;
 					fishingTool.StartTimer( 1500, 10, true );
 				}
@@ -736,7 +764,9 @@ function ShipwreckFishing( mChar, mItem, targX, targY, targZ )
 
 	// Play cast animation in reverse to catch fish (for non-gargoyle characters only)
 	if( mChar.gender != 4 && mChar.gender != 5 )
+	{
 		mChar.DoAction( 0x0b, null, 7, 0, true );
+	}
 
 	// Play another splash effect with sound
 	mChar.SoundEffect( 0x364, true );
@@ -750,7 +780,9 @@ function ShipwreckFishing( mChar, mItem, targX, targY, targZ )
 	var chanceToFishTreasure = 0;
 	var fishingTries = mItem.GetTag( "fishingTries" );
 	if( fishingTries >= 20 )
+	{
 		chanceToFishTreasure = 100;
+	}
 	else if( fishingTries >= 5 )
 	{
 		chanceToFishTreasure = 20 + ( 4 * fishingTries );
@@ -824,7 +856,7 @@ function ShipwreckFishing( mChar, mItem, targX, targY, targZ )
 		else
 		{
 			var catchText = GetDictionaryEntry( 9315, mChar.socket.language ); // You pull out an item : %s
-			mChar.socket.SysMessage( catchText.replace(/%s/gi, itemCaught.name ));
+			mChar.socket.SysMessage( catchText.replace( /%s/gi, itemCaught.name ));
 
 			mItem.SetTag( "fishingTries", fishingTries + 1 );
 		}
@@ -836,7 +868,7 @@ function DeepSeaFishingResult( socket, mChar, fishingNet )
 	var targX = fishingNet.x;
 	var targY = fishingNet.y;
 
-	var spawnCount = fishingNet.morey + RandomNumber( Math.round(fishingNet.morez / 2), Math.round(fishingNet.morez) );
+	var spawnCount = fishingNet.morey + RandomNumber( Math.round( fishingNet.morez / 2 ), Math.round( fishingNet.morez ));
 	for( var i = 0; i < spawnCount; i++ )
 	{
 		// Find a valid spawn location
@@ -903,7 +935,7 @@ function FabledDeepSeaFishingResult( socket, mChar, fishingNet )
 	var targX = fishingNet.x;
 	var targY = fishingNet.y;
 
-	var spawnCount = fishingNet.morey + RandomNumber( Math.round(fishingNet.morez / 2), Math.round(fishingNet.morez) );
+	var spawnCount = fishingNet.morey + RandomNumber( Math.round( fishingNet.morez / 2 ), Math.round( fishingNet.morez ));
 	for( var i = 0; i < spawnCount; i++ )
 	{
 		// Find a valid spawn location

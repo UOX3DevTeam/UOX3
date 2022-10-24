@@ -22,7 +22,7 @@ function onSkill( pUser, objType, skillUsed )
 		}
 
 		// See if a creature serial was stored via hard-coded context menu, and use that if so
-		var creatureToTame = CalcCharFromSer( parseInt(pUser.GetTag( "tameSerial" )));
+		var creatureToTame = CalcCharFromSer( parseInt( pUser.GetTag( "tameSerial" )));
 		if( ValidateObject( creatureToTame ))
 		{
 			pUser.SetTag( "tameSerial", null );
@@ -30,7 +30,7 @@ function onSkill( pUser, objType, skillUsed )
 		}
 		else
 		{
-			pSock.CustomTarget( 0, GetDictionaryEntry( 859, pSock.language ) );
+			pSock.CustomTarget( 0, GetDictionaryEntry( 859, pSock.language )); // Tame which animal?
 		}
 	}
 
@@ -49,12 +49,12 @@ function onCallback0( pSock, ourObj )
 
 		if( !skillToTame )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage ) ); // You can't tame that creature
+			pSock.SysMessage( GetDictionaryEntry( 1593, pLanguage )); // You can't tame that creature
 			return;
 		}
 		else if( !hasBeenOwner && skillToTame > pUser.skills.taming )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 2398, pLanguage ) ); // You are not skilled enough to tame that creature
+			pSock.SysMessage( GetDictionaryEntry( 2398, pLanguage )); // You are not skilled enough to tame that creature
 			return;
 		}
 
@@ -68,7 +68,7 @@ function onCallback0( pSock, ourObj )
 		if( pUser.petCount >= maxFollowers )
 		{
 			var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
-			pSock.SysMessage( tempMsg.replace(/%i/gi, maxFollowers ));
+			pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 			return;
 		}
 
@@ -78,14 +78,20 @@ function onCallback0( pSock, ourObj )
 			return;
 		}
 
-		if( !ourObj.InRange( pUser, 3 ) )
-			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage ) ); // That is out of range
+		if( !ourObj.InRange( pUser, 3 ))
+		{
+			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage )); // That is out of range
+		}
 		else if( ourObj.tamed )
 		{
 			if( ourObj.owner && ourObj.owner.serial == pUser.serial )
-				pSock.SysMessage( GetDictionaryEntry( 1594, pLanguage ) ); // You already control that creature!
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1594, pLanguage )); // You already control that creature!
+			}
 			else
-				pSock.SysMessage( GetDictionaryEntry( 1595, pLanguage ) ); // That creature is already controlled by another!
+			{
+				pSock.SysMessage( GetDictionaryEntry( 1595, pLanguage )); // That creature is already controlled by another!
+			}
 		}
 		else if( !pUser.CanSee( ourObj ))
 		{
@@ -96,14 +102,16 @@ function onCallback0( pSock, ourObj )
 			pSock.tempObj2 = ourObj;
 			pUser.TextMessage( GetDictionaryEntry( 2392, pSock.language ), false, 0x59 ); // You start to tame the creature
 			var tempMsg = GetDictionaryEntry( 1596, pSock.language ) // *%s starts to tame %t*
-			tempMsg = tempMsg.replace(/%s/gi, pUser.name )
-			pUser.EmoteMessage( tempMsg.replace(/%t/gi, ourObj.name ) );
+			tempMsg = tempMsg.replace( /%s/gi, pUser.name )
+			pUser.EmoteMessage( tempMsg.replace( /%t/gi, ourObj.name ));
 
 			pUser.StartTimer( 3000, 1, true );
 		}
 	}
 	else
+	{
 		pSock.SysMessage( GetDictionaryEntry( 1603, pSock.language )); // You can't tame that!
+	}
 }
 
 function onTimer( pUser, timerID )
@@ -119,20 +127,24 @@ function onTimer( pUser, timerID )
 	{
 		SayTameMessage( pUser, toTame );
 		if( !CheckTameSuccess( pUser, toTame ))
+		{
 			pUser.StartTimer( 3000, 2, true );
+		}
 	}
 	else if( timerID == 2 )
 	{
 		SayTameMessage( pUser, toTame );
 		if( !CheckTameSuccess( pUser, toTame ))
+		{
 			pUser.StartTimer( 3000, 3, true );
+		}
 	}
 	else if( timerID == 3 )
 	{
 		SayTameMessage( pUser, toTame );
 		if( !CheckTameSuccess( pUser, toTame ))
 		{
-			pUser.socket.SysMessage( GetDictionaryEntry( 1601, pUser.socket.language ) ); //You were unable to tame it.
+			pUser.socket.SysMessage( GetDictionaryEntry( 1601, pUser.socket.language )); //You were unable to tame it.
 			pUser.socket.tempObj2 = null;
 		}
 	}
@@ -187,7 +199,9 @@ function CheckTameSuccess( pUser, toTame )
 
 		// Apply modifications to certain pets the first time they're tamed
 		if( toTame.ownerCount == 1 )
+		{
 			ApplyPostTameModifications( toTame );
+		}
 
 		toTame.Follow( pUser );
 		pUser.controlSlotsUsed = pUser.controlSlotsUsed + toTame.controlSlots;
@@ -231,25 +245,25 @@ function SayTameMessage( pUser, toTame )
 	if( pSock == null )
 		return;
 
-	switch( RandomNumber( 0, 3 ) )
+	switch( RandomNumber( 0, 3 ))
 	{
-		case 0: pUser.TextMessage( GetDictionaryEntry( 1597, pSock.language ) );	break; // I've always wanted a pet like you.
-		case 1: pUser.TextMessage( GetDictionaryEntry( 1598, pSock.language ) );	break; // Will you be my friend?
+		case 0: pUser.TextMessage( GetDictionaryEntry( 1597, pSock.language ));	break; // I've always wanted a pet like you.
+		case 1: pUser.TextMessage( GetDictionaryEntry( 1598, pSock.language ));	break; // Will you be my friend?
 		case 2:
 		{
 			var tempMsg = GetDictionaryEntry( 1599, pSock.language ) // Here %s.
-			tempMsg = tempMsg.replace(/%s/gi, toTame.name );
-			tempMsg = tempMsg.replace('a ', '');
-			tempMsg = tempMsg.replace('an ', '');
+			tempMsg = tempMsg.replace( /%s/gi, toTame.name );
+			tempMsg = tempMsg.replace( 'a ', '' );
+			tempMsg = tempMsg.replace( 'an ', '' );
 			pUser.TextMessage( tempMsg );
 			break;
 		}
 		case 3:
 		{
 			var tempMsg = GetDictionaryEntry( 1600, pSock.language ) // Good %s.
-			tempMsg = tempMsg.replace(/%s/gi, toTame.name );
-			tempMsg = tempMsg.replace('a ', '');
-			tempMsg = tempMsg.replace('an ', '');
+			tempMsg = tempMsg.replace( /%s/gi, toTame.name );
+			tempMsg = tempMsg.replace( 'a ', '' );
+			tempMsg = tempMsg.replace( 'an ', '' );
 			pUser.TextMessage( tempMsg );
 			break;
 		}
@@ -284,7 +298,7 @@ function RunTameChecks( pUser )
 	if( pUser.petCount >= maxFollowers )
 	{
 		var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
-		pSock.SysMessage( tempMsg.replace(/%i/gi, maxFollowers ));
+		pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 		return false;
 	}
 
@@ -343,7 +357,9 @@ function NeedsSubduing( toTame )
 		case 0x00a9: // Fire Beetle
 		{
 			if( toTame.health > ( toTame.maxHealth / 10 )) // If health is higher than 10% of max
+			{
 				return true;
+			}
 			break;
 		}
 		default:

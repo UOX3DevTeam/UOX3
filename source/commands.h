@@ -7,7 +7,7 @@
 const UI32 BIT_STRIPHAIR	= 1;
 const UI32 BIT_STRIPITEMS	= 2;
 
-struct commandLevel_st
+struct CommandLevel_st
 {
 	std::string			name;			// name of level
 	std::string			title;			// Title of level, displayed in front of name
@@ -17,17 +17,18 @@ struct commandLevel_st
 	UI16				allSkillVals;	// if 0, skills left same, if not, all skills set to this value
 	UI16				targBody;		// target body value
 	UI16				bodyColour;		// target body colour
-	std::bitset< 8 >	stripOff;		// strips off hair, beard and clothes
-	commandLevel_st() : name( "" ), title( "" ), commandLevel( 0 ), defaultPriv( 0 ), nickColour( 0 ),
+	std::bitset<8>		stripOff;		// strips off hair, beard and clothes
+	CommandLevel_st() : name( "" ), title( "" ), commandLevel( 0 ), defaultPriv( 0 ), nickColour( 0 ),
 	allSkillVals( 0 ), targBody( 0 ), bodyColour( 0 )
 	{
 		stripOff.reset();
 	}
 };
 
-class cCommands {
+class CCommands
+{
 private:
-	std::vector< commandLevel_st *> clearance;
+	std::vector<CommandLevel_st *>	clearance;
 	COMMANDMAP_ITERATOR				cmdPointer;
 	TARGETMAP_ITERATOR				targPointer;
 	std::string						commandString;
@@ -40,8 +41,8 @@ public:
 	std::string		CommandString( UI08 section, UI08 end = 0 );
 	void			CommandString( std::string newValue );
 
-	commandLevel_st *GetClearance( std::string clearName );	// return by command name
-	commandLevel_st *GetClearance( UI08 commandLevel );		// return by command level
+	CommandLevel_st *GetClearance( std::string clearName );	// return by command name
+	CommandLevel_st *GetClearance( UI08 commandLevel );		// return by command level
 	UI16			GetColourByLevel( UI08 commandLevel );
 	void			Command( CSocket *s, CChar *c, std::string text, bool checkSocketAccess = false );
 	void			Load( void );
@@ -52,18 +53,18 @@ public:
 	const std::string NextCommand( void );
 	bool			FinishedCommandList( void );
 
-	CommandMapEntry *CommandDetails( const std::string& cmdName );
+	CommandMapEntry_st *CommandDetails( const std::string& cmdName );
 
-	cCommands() = default;
-	auto startup() ->void ;
-	~cCommands();
+	CCommands() = default;
+	auto Startup() -> void;
+	~CCommands();
 
-	void			Register( const std::string &cmdName, UI16 scriptID, UI08 cmdLevel, bool isEnabled );
+	void			Register( const std::string &cmdName, UI16 scriptId, UI08 cmdLevel, bool isEnabled );
 	void			UnRegister( const std::string &cmdName, cScript *toRegister );
 	void			SetCommandStatus( const std::string &cmdName, bool isEnabled );
 };
 
-extern cCommands	*Commands;
+extern CCommands	*Commands;
 
 #endif
 

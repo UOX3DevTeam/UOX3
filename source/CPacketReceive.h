@@ -7,7 +7,7 @@ class CPIFirstLogin : public CPInputBuffer
 {
 protected:
 	virtual void		InternalReset( void );
-	std::string			userID;
+	std::string			userId;
 	std::string			password;
 	UI08				unknown;
 public:
@@ -194,7 +194,7 @@ class CPIStatusRequest : public CPInputBuffer
 {
 	UI32			pattern;
 	UI08			getType;
-	SERIAL			playerID;
+	SERIAL			playerId;
 public:
 	virtual			~CPIStatusRequest()
 	{
@@ -257,7 +257,7 @@ public:
 class CPIDblClick : public CPInputBuffer
 {
 protected:
-	SERIAL			objectID;
+	SERIAL			objectId;
 public:
 	virtual			~CPIDblClick()
 	{
@@ -272,7 +272,7 @@ public:
 class CPISingleClick : public CPInputBuffer
 {
 protected:
-	SERIAL			objectID;
+	SERIAL			objectId;
 public:
 	virtual			~CPISingleClick()
 	{
@@ -398,23 +398,23 @@ public:
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
 
-	SERIAL			ButtonID( void ) const;
-	SERIAL			GumpID( void ) const;
+	SERIAL			ButtonId( void ) const;
+	SERIAL			GumpId( void ) const;
 	SERIAL			ID( void ) const;
 	UI32			SwitchCount( void ) const;
 	UI32			TextCount( void ) const;
 	UI32			SwitchValue( UI32 index ) const;
 
-	UI16			GetTextID( UI08 number ) const;
+	UI16			GetTextId( UI08 number ) const;
 	UI16			GetTextLength( UI08 number ) const;
 	std::string		GetTextString( UI08 number ) const;
 
 protected:
-	SERIAL				id, buttonID, gumpID;
+	SERIAL				id, buttonId, gumpId;
 	UI32				switchCount, textCount;
 	UI32				textOffset;
 
-	std::vector< UI16 >	textLocationOffsets;
+	std::vector<UI16>	textLocationOffsets;
 
 	void				BuildTextLocations( void );
 };
@@ -580,11 +580,11 @@ protected:
 	UI08	unknown7;
 	UI08	unknown8;
 	UI08	unknown9;
-	UI16	shirtID;
+	UI16	shirtId;
 	COLOUR	faceColour;
-	UI16	faceID;
+	UI16	faceId;
 
-	void	newbieItems( CChar *mChar );
+	void	NewbieItems( CChar *mChar );
 public:
 	virtual			~CPICreateCharacter()
 	{
@@ -677,7 +677,7 @@ class CPIDyeWindow : public CPInputBuffer
 protected:
 	SERIAL			changing;
 	COLOUR			newValue;
-	UI16			modelID;
+	UI16			modelId;
 public:
 	virtual			~CPIDyeWindow()
 	{

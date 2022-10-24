@@ -1668,6 +1668,29 @@
 1663=Il mio piccolo figlio Timmy ha bisogno di un'operazione, avete dell'oro per aiutare la causa?
 1664=Mia moglie è incinta del nostro settimo figlio, abbiate un po' di pietà sotto forma di oro per un uomo disperato.
 // End begging text
+1670=Non ci si può camuffare indossando la vernice per il corpo.
+1671=Non si può polimorfizzare mentre si indossa la pittura del corpo
+1672=Non si può usare l'incognito mentre si indossa la vernice per il corpo.
+1673=Non puoi farlo mentre sei in incognito.
+1674=Non puoi farlo mentre sei polimorfo.
+1675=La tua pelle è bruciata mentre la pittura tribale si consuma!
+1676=La tua pittura corporea si è consumata!
+1677=Non puoi camuffarti in incognito.
+1678=Non puoi camuffarti mentre sei polimorfo.
+1679=Sei già mascherato.
+1680=Ora porti i segni della tribù dei selvaggi.  La pittura corporea durerà circa una settimana o potrà essere rimossa con un panno ad olio.
+1681=Togliete tutta la vernice dal corpo.
+1682=La Lancia Tribale si spezza nelle tue mani mentre la raccogli!
+1683=%s inizia a far oscillare una bola.
+1684=Inserisci un nuovo titolo per il membro della gilda:
+1685=Seleziona il membro della gilda per cui impostare il titolo
+1686=Ti è stato assegnato il titolo di gilda di %s!
+1687=Hai reclutato %s come nuovo membro della gilda!
+1688=Sei stato reclutato per unirti alla gilda %s!
+1689=Hai allontanato %s dalla tua gilda!
+1690=Sei stato allontanato dalla tua gilda!
+1691=Non puoi licenziarti dalla gilda!
+1692=%s è ora il nuovo capogilda di %s!
 // Tweak Char Menu Stuff
 1700=Tasto non valido premuto
 1701=Inserisci un nuovo nome per il personaggio.
@@ -1951,6 +1974,15 @@
 1979=Isole Tokuno
 1980=Ter Mur
 1981=I membri della razza %s non possono indossare questo
+1982=Si para l'attacco!
+1983=La tua arma è stata distrutta!
+1984=Non sei un membro di questa gilda!
+1985=Hai sponsorizzato %s come candidato a entrare nella gilda!
+1986=Sei stato invitato da %s a unirti alla gilda: %s
+1987=Hai dichiarato fedeltà a %s!
+1988=%s ti ha dichiarato fedeltà!
+1989=La tua gilda ha dichiarato guerra alla gilda %s!
+1990=La tua gilda ha dichiarato la gilda %s come alleata!
 // JS-Based Tweak Menu
 1991=Oggetto non valido mirato!
 1992=Oggetto sconosciuto preso di mira!
@@ -3296,6 +3328,9 @@
 6214=Gli ingredienti di questa pozione ti sono sconosciuti.
 6215=Sai già che tipo di pozione è questa: %s
 6250=Esci dall'ombra.
+6275=Si combinano le bacche e la farina per ottenere la pittura tribale indossata dai selvaggi.
+6276=Non hai l'abilità di cucinare per creare la pittura per il corpo.
+6277=Identità della risorsa non trovata nell'elenco delle risorse utilizzate per creare l'oggetto.
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -3546,6 +3581,7 @@
 8210=Redirezione al comando 'radditem...
 8211=Rinvio al comando 'raddnpc...
 8212=Sintassi comando non valida per ripetere l'aggiunta di oggetti: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Identità della sezione da cui proviene l'oggetto DFN
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG

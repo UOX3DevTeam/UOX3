@@ -1,3 +1,4 @@
+// This class is responsible for the creation and destruction of ingame objects
 
 #include "ObjectFactory.h"
 
@@ -9,71 +10,121 @@
 #include <algorithm>
 #include <climits>
 
-//=========================================================
-// ObjectFactory::serialgen_t
-//=========================================================
-//=========================================================
-ObjectFactory::serialgen_t::serialgen_t(std::uint32_t initial) :serial_number(initial){
-	
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SerialGen_st::SerialGen_st()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Constructor
+//o------------------------------------------------------------------------------------------------o
+ObjectFactory::SerialGen_st::SerialGen_st( std::uint32_t initial ) :serialNumber( initial )
+{	
 }
-//=========================================================
-auto ObjectFactory::serialgen_t::next() -> std::uint32_t {
-	return serial_number++;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SerialGen_st::Next()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return what next serial will be
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::SerialGen_st::Next() -> std::uint32_t
+{
+	return serialNumber++;
 }
-//=========================================================
-auto ObjectFactory::serialgen_t::registerSerial(std::uint32_t serial) ->void {
-	if (serial >= serial_number) {
-		serial_number = serial + 1 ;
-	}
-}
-//=========================================================
-auto ObjectFactory::serialgen_t::unregisterSerial(std::uint32_t serial) ->void {
-	if (serial_number == (serial+1)){
-		serial_number = serial ;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SerialGen_st::RegisterSerial()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Register next serial number in series
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::SerialGen_st::RegisterSerial(std::uint32_t serial) -> void
+{
+	if( serial >= serialNumber )
+	{
+		serialNumber = serial + 1;
 	}
 }
 
-//=========================================================
-auto ObjectFactory::serialgen_t::operator=(std::uint32_t value) ->serialgen_t& {
-	serial_number = value ;
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SerialGen_st::UnregisterSerial()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Free up specified serial number if it was the last one registered
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::SerialGen_st::UnregisterSerial( std::uint32_t serial ) -> void
+{
+	if( serialNumber == ( serial + 1 ))
+	{
+		serialNumber = serial;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SerialGen_st::operator = ()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Override operators
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::SerialGen_st::operator = ( std::uint32_t value ) ->SerialGen_st&
+{
+	serialNumber = value;
 	return *this;
 }
-//=========================================================
-auto ObjectFactory::serialgen_t::operator=(std::int32_t value) ->serialgen_t& {
-	serial_number = static_cast<std::uint32_t>(value) ;
+auto ObjectFactory::SerialGen_st::operator = ( std::int32_t value ) ->SerialGen_st&
+{
+	serialNumber = static_cast<std::uint32_t>( value );
 	return *this;
 }
 
-//=========================================================
-// ObjectFactory
-//=========================================================
-//=========================================================
-ObjectFactory::ObjectFactory():character_serials(1),item_serials(BASEITEMSERIAL){
-	
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::ObjectFactory()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Constructor
+//|
+//| Notes		-	Starting Characters with a serial of 1, rather than 0. 
+//|					The UO Client doesn't always respond well to a serial of 0
+//o------------------------------------------------------------------------------------------------o
+ObjectFactory::ObjectFactory():character_serials( 1 ), item_serials( BASEITEMSERIAL )
+{	
 }
-//=========================================================
-auto ObjectFactory::getSingleton() -> ObjectFactory& {
-	static ObjectFactory instance ;
-	return instance ;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::GetSingleton()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Creates and returns singleton instance for object factory
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::GetSingleton() -> ObjectFactory&
+{
+	static ObjectFactory instance;
+	return instance;
 }
-//=========================================================
-auto ObjectFactory::nextSerial(ObjectType type) -> std::uint32_t {
-	switch (type){
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::NextSerial()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Finds the next free serial to use when creating an object of a given type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::NextSerial( ObjectType type ) -> std::uint32_t
+{
+	switch( type )
+	{
 		case OT_ITEM:
 		case OT_MULTI:
 		case OT_BOAT:
 		case OT_SPAWNER:
-			return item_serials.next();
+			return item_serials.Next();
 		case OT_CHAR:
-			return character_serials.next();
+			return character_serials.Next();
 		default:
 			return std::numeric_limits<std::uint32_t>::max();
 	}
 }
-//=========================================================
-auto ObjectFactory::collectionForType(ObjectType type) -> factory_collection* {
-	factory_collection *collection = nullptr ;
-	switch (type) {
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::CollectionForType()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return collection of objects of specific type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::CollectionForType( ObjectType type ) -> factory_collection*
+{
+	factory_collection *collection = nullptr;
+	switch( type )
+	{
 		case OT_MULTI:
 		case OT_BOAT:
 			collection = &multis;
@@ -89,13 +140,20 @@ auto ObjectFactory::collectionForType(ObjectType type) -> factory_collection* {
 		default:
 			break;
 	}
-	return collection ;
+	return collection;
 	
 }
-//=========================================================
-auto ObjectFactory::collectionForType(ObjectType type) const -> const factory_collection* {
-	const factory_collection *collection = nullptr ;
-	switch (type) {
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::CollectionForType() const
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return const collection of objects of specific type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::CollectionForType( ObjectType type ) const -> const factory_collection*
+{
+	const factory_collection *collection = nullptr;
+	switch( type )
+	{
 		case OT_MULTI:
 		case OT_BOAT:
 			collection = &multis;
@@ -111,177 +169,275 @@ auto ObjectFactory::collectionForType(ObjectType type) const -> const factory_co
 		default:
 			break;
 	}
-	return collection ;
+	return collection;
 	
 }
-//=========================================================
-auto ObjectFactory::findCharacter(std::uint32_t serial) ->CBaseObject*{
-	auto iter = chars.find(serial) ;
-	if (iter != chars.end()){
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::FindCharacter()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find and return item from collection based on specified serial
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::FindCharacter( std::uint32_t serial ) ->CBaseObject*
+{
+	auto iter = chars.find( serial );
+	if( iter != chars.end() )
+	{
 		return iter->second;
 	}
-	return nullptr ;
+	return nullptr;
 }
 
-//=========================================================
-auto ObjectFactory::findItem(std::uint32_t serial) ->CBaseObject*{
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::FindItem()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find and return item from collection based on specified serial
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::FindItem( std::uint32_t serial ) ->CBaseObject*
+{
 	// We look for items first
-	CBaseObject *object = nullptr ;
-	auto iter = items.find(serial) ;
-	if (iter != items.end()){
+	CBaseObject *object = nullptr;
+	auto iter = items.find( serial );
+	if( iter != items.end() )
+	{
 		object = iter->second;
 	}
-	else {
-		iter = multis.find(serial);
-		if (iter!= multis.end()){
-			object = iter->second ;
+	else
+	{
+		iter = multis.find( serial );
+		if( iter!= multis.end() )
+		{
+			object = iter->second;
 		}
 	}
-	return object ;
+	return object;
 }
 
-//=========================================================
-auto ObjectFactory::removeObject(std::uint32_t serial,factory_collection *collection)->bool{
-	auto rvalue = false ;
-	auto iter = collection->find(serial) ;
-	if (iter != collection->end()){
-		rvalue = true ;
-		collection->erase(iter);
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::RemoveObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Erase object from collection, if found there
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::RemoveObject( std::uint32_t serial, factory_collection *collection ) -> bool
+{
+	auto rValue = false;
+	auto iter = collection->find( serial );
+	if( iter != collection->end() )
+	{
+		rValue = true;
+		collection->erase( iter );
 	}
-	return rvalue ;
+	return rValue;
 }
 
-//=========================================================
-auto ObjectFactory::RegisterObject( CBaseObject *object) ->bool {
-	auto rvalue = false ;
-	if (object) {
-		rvalue = this->RegisterObject(object, object->GetSerial());
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::RegisterObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	We want to register an object with the world, that previously
+//|					does not exist in our containers
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::RegisterObject( CBaseObject *object ) -> bool
+{
+	auto rValue = false;
+	if( object )
+	{
+		rValue = this->RegisterObject( object, object->GetSerial() );
 	}
-	return rvalue ;
+	return rValue;
 }
-//=========================================================
-auto ObjectFactory::RegisterObject( CBaseObject *object, std::uint32_t serial) ->bool {
-	auto rvalue = false ;
-	if (object){
-		switch (object->GetObjType()) {
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::RegisterObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Register object using specified serial number
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::RegisterObject( CBaseObject *object, std::uint32_t serial ) -> bool
+{
+	auto rValue = false;
+	if( object )
+	{
+		switch( object->GetObjType() )
+		{
 			case OT_MULTI:
 			case OT_BOAT:
-				rvalue = true ;
-				item_serials.registerSerial(serial);
-				multis.insert_or_assign(serial, object);
+				rValue = true;
+				item_serials.RegisterSerial( serial );
+				multis.insert_or_assign( serial, object );
 				break;
 			case OT_SPAWNER:
 			case OT_ITEM:
-				rvalue = true ;
-				item_serials.registerSerial(serial);
-				items.insert_or_assign(serial, object);
+				rValue = true;
+				item_serials.RegisterSerial( serial );
+				items.insert_or_assign( serial, object );
 				break;
 			case OT_CHAR:
-				rvalue = true ;
-				character_serials.registerSerial(serial);
-				chars.insert_or_assign(serial, object);
+				rValue = true;
+				character_serials.RegisterSerial( serial );
+				chars.insert_or_assign( serial, object );
 				break;
 				
 			default:
 				break;
 		}
 	}
-	return rvalue ;
+	return rValue;
 }
-//=========================================================
-auto ObjectFactory::UnregisterObject(CBaseObject *object) ->bool {
-	auto rvalue = false ;
-	if (object) {
-		auto collection = collectionForType(object->GetObjType());
-		rvalue = removeObject(object->GetSerial(), collection);
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::UnregisterObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Remove object from collection - but don't destroy it
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::UnregisterObject( CBaseObject *object ) -> bool
+{
+	auto rValue = false;
+	if( object )
+	{
+		auto collection = CollectionForType( object->GetObjType() );
+		rValue = RemoveObject( object->GetSerial(), collection );
 	}
-	return rvalue ;
+	return rValue;
 }
-//=========================================================
-auto ObjectFactory::IterateOver(ObjectType type, std::uint32_t &b, void *extra, std::function<bool(CBaseObject*,std::uint32_t &,void *)> function) ->std::uint32_t{
-	auto collection = collectionForType(type) ;
-	if (collection) {
-		// less save way
-		for (auto [serial,object] : *collection){
-			if (object){
-				if (!function(object,b,extra)){
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::IterateOver()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Iterate over all objects of a specified object type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::IterateOver( ObjectType type, std::uint32_t &b, void *extra, std::function<bool( CBaseObject*, std::uint32_t &, void * )> function ) -> std::uint32_t
+{
+	auto collection = CollectionForType( type );
+	if( collection )
+	{
+		// less safe way
+		for( auto [serial, object] : *collection )
+		{
+			if( object )
+			{
+				if( !function( object, b, extra ))
+				{
 					break;
 				}
 			}
 		}
-		return 0 ;
+		return 0;
 	}
-	return 0xFFFFFFFF ;
-}
-//=========================================================
-auto ObjectFactory::DestroyObject(CBaseObject *object) ->bool {
-	auto rvalue = false ;
-	if (object){
-		UnregisterObject(object);
-		delete object ;
-		object = nullptr ;
-		rvalue = true ;
-	}
-	return rvalue ;
+	return 0xFFFFFFFF;
 }
 
-//=========================================================
-auto ObjectFactory::CreateObject(ObjectType type) -> CBaseObject * {
-	auto object = CreateBlankObject(type);
-	if (object) {
-		object->SetSerial(nextSerial(type));
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::DestroyObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Unregister object and destroy it from memory, either as part of server shutdown,
+//|					or because object has been deleted.
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::DestroyObject( CBaseObject *object ) -> bool
+{
+	auto rValue = false;
+	if( object )
+	{
+		UnregisterObject( object );
+		delete object;
+		object = nullptr;
+		rValue = true;
+	}
+	return rValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::CreateObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create a new object with a serial number, and return it back to the creator
+//|					From DFNs, or a PC, by and large.
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::CreateObject( ObjectType type ) -> CBaseObject *
+{
+	auto object = CreateBlankObject( type );
+	if( object )
+	{
+		object->SetSerial(NextSerial( type ));
 	}
 	return object;
 }
-//=========================================================
-auto ObjectFactory::CreateBlankObject(ObjectType type) ->CBaseObject * {
-	CBaseObject *object = nullptr ;
-	switch(type) {
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::CreateBlankObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Create a new blank object without a serial number. Serial will be provided
+//|					when loading object from worldfiles
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::CreateBlankObject( ObjectType type ) ->CBaseObject *
+{
+	CBaseObject *object = nullptr;
+	switch( type )
+	{
 		case OT_ITEM:
-			object = new CItem() ;
+			object = new CItem();
 			break;
 		case OT_MULTI:
-			object = new CMultiObj() ;
+			object = new CMultiObj();
 			break;
 		case OT_BOAT:
-			object = new CBoatObj() ;
+			object = new CBoatObj();
 			break;
 		case OT_SPAWNER:
-			object = new CSpawnItem() ;
+			object = new CSpawnItem();
 			break;
 		case OT_CHAR:
-			object = new CChar() ;
+			object = new CChar();
 			break;
 		default:
 			break;
 	}
-	return object ;
+	return object;
 }
-//=========================================================
-auto ObjectFactory::FindObject( std::uint32_t serial ) -> CBaseObject * {
-	CBaseObject *object = nullptr ;
-	if (serial >= BASEITEMSERIAL) {
-		object = findItem(serial);
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::FindObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate and return object from provided serial
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::FindObject( std::uint32_t serial ) -> CBaseObject *
+{
+	CBaseObject *object = nullptr;
+	if( serial >= BASEITEMSERIAL )
+	{
+		object = FindItem( serial );
 	}
-	else {
-		object = findCharacter(serial);
+	else
+	{
+		object = FindCharacter( serial );
 	}
-	return object ;
+	return object;
 }
-//=========================================================
-auto ObjectFactory::CountOfObjects(ObjectType type) const -> std::uint32_t {
-	auto rvalue = std::uint32_t(0) ;
-	auto collection = collectionForType(type);
-	if (collection){
-		rvalue = static_cast<std::uint32_t>(collection->size());
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::CountOfObjects()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the amount of objects that exist of a given object type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::CountOfObjects( ObjectType type ) const -> std::uint32_t
+{
+	auto rValue = std::uint32_t( 0 );
+	auto collection = CollectionForType( type );
+	if( collection )
+	{
+		rValue = static_cast<std::uint32_t>( collection->size() );
 	}
-	return rvalue ;
+	return rValue;
 }
-//=========================================================
-auto ObjectFactory::SizeOfObjects(ObjectType type) const ->size_t {
-	auto collection = collectionForType(type);
-	auto size = size_t(0) ;
-	switch (type) {
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::SizeOfObjects()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the size of memory allocated to given object type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::SizeOfObjects( ObjectType type ) const -> size_t
+{
+	auto collection = CollectionForType( type );
+	auto size = size_t( 0 );
+	switch( type )
+	{
 		case OT_ITEM:
 		case OT_SPAWNER:
 			size = sizeof( CItem );
@@ -296,39 +452,53 @@ auto ObjectFactory::SizeOfObjects(ObjectType type) const ->size_t {
 		default:
 			break;
 	}
-	return collection->size() * size ;
-	
+	return collection->size() * size;
 }
-//=========================================================
-auto ObjectFactory::validObject(CBaseObject *object,ObjectType type ) ->bool {
-	auto findObject = [](CBaseObject* object , factory_collection &collect) {
-		auto iter = std::find_if(collect.begin(),collect.end(),[object] (std::pair<std::uint32_t,CBaseObject *> entry){
-			return entry.second = object ;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ObjectFactory::ValidObject()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	(Unused) Checks if specified object is a valid object of specified type
+//o------------------------------------------------------------------------------------------------o
+auto ObjectFactory::ValidObject( CBaseObject *object, ObjectType type ) -> bool
+{
+	auto findObject = []( CBaseObject* object, factory_collection &collect )
+	{
+		auto iter = std::find_if( collect.begin(), collect.end(), [object] ( std::pair<std::uint32_t, CBaseObject *> entry )
+		{
+			return entry.second = object;
 		});
-		if (iter != collect.end()){
-			return true ;
+		if( iter != collect.end() )
+		{
+			return true;
 		}
-		return false ;
+		return false;
 		
 	};
-	auto rvalue = false ;
-	if (type == ObjectType::OT_CHAR) {
-		rvalue = findObject(object,chars) ;
+	auto rValue = false;
+	if( type == ObjectType::OT_CHAR )
+	{
+		rValue = findObject( object, chars );
 	}
-	else if ((type == ObjectType::OT_BOAT) || (type == ObjectType::OT_MULTI)){
-		rvalue = findObject(object,multis) ;
+	else if(( type == ObjectType::OT_BOAT ) || ( type == ObjectType::OT_MULTI ))
+	{
+		rValue = findObject( object, multis );
 	}
-	else if ((type == ObjectType::OT_ITEM) || (type == ObjectType::OT_SPAWNER)){
-		rvalue = findObject(object,items);
+	else if(( type == ObjectType::OT_ITEM ) || ( type == ObjectType::OT_SPAWNER ))
+	{
+		rValue = findObject( object, items );
 	}
-	else {
-		rvalue = findObject(object,chars) ;
-		if (!rvalue) {
-			rvalue = findObject(object, items);
-			if (!rvalue) {
-				rvalue = findObject(object, multis);
+	else
+	{
+		rValue = findObject( object, chars );
+		if( !rValue )
+		{
+			rValue = findObject( object, items );
+			if( !rValue )
+			{
+				rValue = findObject( object, multis );
 			}
 		}
 	}
-	return rvalue ;
+	return rValue;
 }

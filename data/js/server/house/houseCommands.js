@@ -1,5 +1,5 @@
 // houseCommands.js - v1.0.1
-// Last Updated 2021-07-11
+// Last Updated 2022-09-09
 //
 // The functions in this script are shared between spoken house commands (triggered in
 // js/server/house/house.js attached to multi) and the buttons in the house menu gump triggered in
@@ -9,18 +9,18 @@
 // directly attached to any in-game object, but used as a resource for other scripts.
 
 // Check if tracking of house ownership is done on a per-account (instead of per-char) basis (from uox.ini)
-const trackHousesPerAccount = GetServerSetting( "TRACKHOUSESPERACCOUNT" ); //TrackHousesPerAccount();
+const trackHousesPerAccount = GetServerSetting( "TrackHousesPerAccount" );
 
 // Check if players can own and co-own houses at the same time (from uox.ini)
-const canOwnAndCoOwnHouses = GetServerSetting( "CANOWNANDCOOWNHOUSES" ); //CanOwnAndCoOwnHouses();
+const canOwnAndCoOwnHouses = GetServerSetting( "CanOwnAndCoOwnHouses" );
 
 // Fetch uox.ini setting for whether characters on same account as house owner will be
 // treated as if they were co-owners of the house
-const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ); //CoOwnHousesOnSameAccount();
+const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
 
 // Fetch max amount of houses someone can own/co-own (from uox.ini)
-const maxHousesOwnable = GetServerSetting( "MAXHOUSESOWNABLE" ); //MaxHousesOwnable();
-const maxHousesCoOwnable = GetServerSetting( "MAXHOUSESCOOWNABLE" ); //MaxHousesCoOwnable();
+const maxHousesOwnable = GetServerSetting( "MaxHousesOwnable" );
+const maxHousesCoOwnable = GetServerSetting( "MaxHousesCoOwnable" );
 
 // Transfer house ownership - Trigger
 function TransferOwnership( pSocket, iMulti )
@@ -47,7 +47,7 @@ function TransferOwnership( pSocket, iMulti )
 			if( iMulti.more == 0 )
 			{
 				// No serial stored in house's MORE value; we need to find the sign in some other way!
-				AreaItemFunction( "findHouseSign", pUser, 30, pSocket );
+				AreaItemFunction( "FindHouseSign", pUser, 30, pSocket );
 				iSign = pSocket.tempObj2;
 			}
 			else
@@ -81,14 +81,14 @@ function TransferOwnership( pSocket, iMulti )
 	}
 	else
 	{
-		console.error( "Invalid socket provided in TransferOwnership() function in houseCommands.js!" );
+		Console.Error( "Invalid socket provided in TransferOwnership() function in houseCommands.js!" );
 	}
 }
 
 // For houses that don't have a reference to the house sign stored in their MORE property,
 // this will find any nearby house signs (within 30 tiles of multi center) and see if any of them
 // has a reference to the multi itself
-function findHouseSign( pChar, itemToCheck, pSocket )
+function FindHouseSign( pChar, itemToCheck, pSocket )
 {
 	var iMulti = pSocket.tempObj;
 	if( ValidateObject( iMulti ) && ValidateObject( itemToCheck ) && itemToCheck.type == 203 )
@@ -146,7 +146,7 @@ function onCallback0( pSocket, myTarget )
 			var housesOwned = myTarget.housesOwned;
 			if( housesOwned >= maxHousesOwnable )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language ) ); // That player cannot own any more houses!
+				pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language )); // That player cannot own any more houses!
 				myTarget.SysMessage( GetDictionaryEntry( 1827, myTarget.socket.language ), housesOwned, maxHousesOwnable, (trackHousesPerAccount ? "account" : "character") ); // You already own %i houses, you may not place another (Max %i per %s)!
 				return false;
 			}
@@ -157,26 +157,26 @@ function onCallback0( pSocket, myTarget )
 				var housesCoOwned = myTarget.housesCoOwned;
 				if( housesCoOwned > 0 )
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language ) ); // That player cannot own any more houses!
+					pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language )); // That player cannot own any more houses!
 					myTarget.SysMessage( GetDictionaryEntry( 1828, myTarget.socket.language ), housesCoOwned ); // You are already a co-owner of %i houses, and you cannot own and co-own houses at the same time!
 					return false;
 				}
 			}
 
-			myTarget.SetTag( "iMultiSerial", (iMulti.serial).toString() );
+			myTarget.SetTag( "iMultiSerial", ( iMulti.serial ).toString() );
 			if( ValidateObject( iMulti.owner ))
 			{
-				myTarget.SetTag( "oldMultiOwner", (iMulti.owner.serial).toString() );
+				myTarget.SetTag( "oldMultiOwner", ( iMulti.owner.serial ).toString() );
 			}
 			else
 			{
 				myTarget.SetTag( "oldMultiOwner", null );
 			}
-			myTarget.SetTag( "iSignSerial", (iSign.serial).toString() );
+			myTarget.SetTag( "iSignSerial", ( iSign.serial ).toString() );
 
 			var confirmButtonID = 1;
 			var confirmString = pUser.name + " " + GetDictionaryEntry( 2853, pSocket.language ) + "<BR><B>" + iMulti.name + "</B>"; // wants to transfer ownership of this house to you:
-			confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
+			ConfirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 
 			pSocket.SysMessage( GetDictionaryEntry( 1826, pSocket.language ), myTarget.name ); // House ownership transfer initiated, waiting for response from %s...
 		}
@@ -199,13 +199,17 @@ function AddOwner( pSocket, iMulti )
 			if( iMulti.owners < iMulti.maxOwners )
 			{
 				pSocket.tempObj = iMulti;
-				pSocket.CustomTarget( 1, GetDictionaryEntry( 1830, pSocket.language ) ); // Select player to add as co-owner:
+				pSocket.CustomTarget( 1, GetDictionaryEntry( 1830, pSocket.language )); // Select player to add as co-owner:
 			}
 			else
+			{
 				pSocket.SysMessage( GetDictionaryEntry( 1831, pSocket.language ));; // The co-owner list is full!
+			}
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1832, pSocket.language )); // Only the primary house owner may add co-owners!
+		}
 	}
 }
 
@@ -263,7 +267,7 @@ function onCallback1( pSocket, myTarget )
 
 				var confirmButtonID = 2;
 				var confirmString = pUser.name + " " + GetDictionaryEntry( 2856, pSocket.language ) + "<BR><B>" + iMulti.name + "</B>"; // wants to add you as co-owner of this house:
-				confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
+				ConfirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 				pSocket.SysMessage( GetDictionaryEntry( 1835, pSocket.language ), myTarget.name ); // Adding %s as co-owner, waiting for response...
 			}
 			else
@@ -277,7 +281,9 @@ function onCallback1( pSocket, myTarget )
 		}
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 // Remove co-owner - Trigger
@@ -297,7 +303,7 @@ function RemoveOwnerTrigger( pSocket, iMulti )
 			pSocket.CustomTarget( 2, GetDictionaryEntry( 1838, pSocket.language )); // Select player to remove as co-owner:
 		}
 		else
-			pSocket.SysMessage( GetDictionaryEntry( 1839, pSocket.language ) ); // Only the primary house owner can remove co-owners!
+			pSocket.SysMessage( GetDictionaryEntry( 1839, pSocket.language )); // Only the primary house owner can remove co-owners!
 	}
 }
 
@@ -316,7 +322,7 @@ function onCallback2( pSocket, myTarget )
 
 	if( !iMulti.IsOwner( pUser ) && ( !iMulti.IsOnOwnerList( pUser ) || myTarget != pUser ))
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1840, pSocket.language ) ); // Only the primary house owner can remove other co-owners! Co-owners can only remove themselves.
+		pSocket.SysMessage( GetDictionaryEntry( 1840, pSocket.language )); // Only the primary house owner can remove other co-owners! Co-owners can only remove themselves.
 		return;
 	}
 
@@ -326,7 +332,9 @@ function onCallback2( pSocket, myTarget )
 		RemoveOwner( pSocket, myTarget, iMulti );
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 function RemoveOwner( pSocket, charToRemove, iMulti )
@@ -339,7 +347,7 @@ function RemoveOwner( pSocket, charToRemove, iMulti )
 
 	if( !ValidateObject( charToRemove ) || !charToRemove.isChar || charToRemove.npc )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
 		return;
 	}
 
@@ -366,12 +374,18 @@ function RemoveOwner( pSocket, charToRemove, iMulti )
 
 				// Remove ex-co-owner's keys to the house. How to delete, specifically the keys owned by this guy and not by everyone else, though?
 				if( iMulti.IsOwner( pUser ))
+				{
 					pSocket.SysMessage( GetDictionaryEntry( 1842, pSocket.language ), charToRemove.name ); // You have removed %s as a co-owner of your house! You might want to change the locks on your doors!
+				}
 				else
+				{
 					pSocket.SysMessage( GetDictionaryEntry( 1843, pSocket.language )); // You have removed yourself as co-owner of this house!
+				}
 
 				if( charToRemove.online && charToRemove != pUser )
+				{
 					charToRemove.socket.SysMessage( GetDictionaryEntry( 1844, charToRemove.socket.language ), iMulti.name ); // You have been removed as a co-owner of %s!
+				}
 			}
 		}
 		else
@@ -405,10 +419,14 @@ function AddFriend( pSocket, iMulti )
 				pSocket.CustomTarget( 3, GetDictionaryEntry( 561, pSocket.language )); // Select person to make a friend of the house.
 			}
 			else
+			{
 				pSocket.SysMessage( GetDictionaryEntry( 1847, pSocket.language )); // The friends list is full!
+			}
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1848, pSocket.language )); // Only house owners and co-owners can add someone to the friend list!
+		}
 	}
 }
 
@@ -448,7 +466,9 @@ function onCallback3( pSocket, myTarget )
 					 // 1088=%s has been made a friend of the house.
 					 pUser.SysMessage( GetDictionaryEntry( 1088, pSocket.language ), myTarget.name ); //%s has been made a friend of the house.
 					 if( myTarget.online )
+					 {
 					 	myTarget.SysMessage( GetDictionaryEntry( 1089, myTarget.socket.language )); // You have been made a friend of the house.
+					 }
 				}
 				else
 				{
@@ -466,7 +486,9 @@ function onCallback3( pSocket, myTarget )
 		}
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 // Remove friend - Trigger
@@ -487,7 +509,9 @@ function RemoveFriendTrigger( pSocket, iMulti )
 			pSocket.CustomTarget( 4, GetDictionaryEntry( 1852, pSocket.language )); // Select player to remove as friend:
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1853, pSocket.language )); // Only house owners and co-owners can add remove someone from the friend list!
+		}
 	}
 }
 
@@ -519,7 +543,9 @@ function onCallback4( pSocket, myTarget )
 		RemoveFriend( pSocket, myTarget, iMulti );
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 function RemoveFriend( pSocket, charToRemove, iMulti )
@@ -532,7 +558,7 @@ function RemoveFriend( pSocket, charToRemove, iMulti )
 
 	if( !ValidateObject( charToRemove ) || !charToRemove.isChar || charToRemove.npc )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
 		return;
 	}
 
@@ -549,7 +575,9 @@ function RemoveFriend( pSocket, charToRemove, iMulti )
 		pSocket.SysMessage( GetDictionaryEntry( 1854, pSocket.language ), charToRemove.name ); // You have removed %s from the friend list of this house!
 
 		if( charToRemove.online )
+		{
 			charToRemove.socket.SysMessage( GetDictionaryEntry( 1855, charToRemove.socket.language ), iMulti.name ); // You have been removed as a friend of %s!
+		}
 	}
 	else
 	{
@@ -577,10 +605,14 @@ function AddGuest( pSocket, iMulti )
 				pSocket.CustomTarget( 11, GetDictionaryEntry( 1857, pSocket.language )); // Select player to add as guest:
 			}
 			else
+			{
 				pSocket.SysMessage( GetDictionaryEntry( 1858, pSocket.language )); // The guest list is full!
+			}
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1859, pSocket.language )); // Only house owners and co-owners can add someone to the guest list!
+		}
 	}
 }
 
@@ -620,30 +652,34 @@ function onCallback11( pSocket, myTarget )
 						iMulti.AddToGuestList( myTarget );
 						pUser.SysMessage( GetDictionaryEntry( 1860, pSocket.language ), myTarget.name ); // You have added %s to the guest list for this house.
 						if( myTarget.online )
+						{
 							myTarget.SysMessage( GetDictionaryEntry( 1861, myTarget.socket.language ), pUser.name, iMulti.name ); // You have been added by %s as a guest of %s
+						}
 					}
 					else
 					{
-						pSocket.SysMessage( GetDictionaryEntry( 1862, pSocket.language ) ); // You cannot add a owner or co-owner of the house to the guest list!
+						pSocket.SysMessage( GetDictionaryEntry( 1862, pSocket.language )); // You cannot add a owner or co-owner of the house to the guest list!
 					}
 				}
 				else
 				{
-					pSocket.SysMessage( GetDictionaryEntry( 1863, pSocket.language ) ); // You cannot add a player on the ban list as a guest of the house!
+					pSocket.SysMessage( GetDictionaryEntry( 1863, pSocket.language )); // You cannot add a player on the ban list as a guest of the house!
 				}
 			}
 			else
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 1864, pSocket.language ) ); // You cannot add a player on the friend list as a guest of the house!
+				pSocket.SysMessage( GetDictionaryEntry( 1864, pSocket.language )); // You cannot add a player on the friend list as a guest of the house!
 			}
 		}
 		else
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 1865, pSocket.language ) ); // That player is already on the guest list!
+			pSocket.SysMessage( GetDictionaryEntry( 1865, pSocket.language )); // That player is already on the guest list!
 		}
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 // Remove guest - Trigger
@@ -664,7 +700,9 @@ function RemoveGuestTrigger( pSocket, iMulti )
 			pSocket.CustomTarget( 12, GetDictionaryEntry( 1866, pSocket.language )); // Select player to remove as guest:
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1867, pSocket.language )); // Only house owners and co-owners can remove someone from the guest list!
+		}
 	}
 }
 
@@ -696,7 +734,9 @@ function onCallback12( pSocket, myTarget )
 		RemoveGuest( pSocket, myTarget, iMulti );
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 function RemoveGuest( pSocket, charToRemove, iMulti )
@@ -709,7 +749,7 @@ function RemoveGuest( pSocket, charToRemove, iMulti )
 
 	if( !ValidateObject( charToRemove ) || !charToRemove.isChar || charToRemove.npc )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
 		return;
 	}
 
@@ -726,7 +766,9 @@ function RemoveGuest( pSocket, charToRemove, iMulti )
 		pSocket.SysMessage( GetDictionaryEntry( 1868, pSocket.language ), charToRemove.name ); // You have removed %s from the guest list of this house!
 
 		if( charToRemove.online )
+		{
 			charToRemove.socket.SysMessage( GetDictionaryEntry( 1869, charToRemove.socket.language ), iMulti.nam ); // You have been removed as a guest of %s!
+		}
 	}
 	else
 	{
@@ -751,7 +793,9 @@ function BanPlayer( pSocket, iMulti )
 			pSocket.CustomTarget( 5, GetDictionaryEntry( 585, pSocket.language ), 1 ); // Select person to ban from the house.
 		}
 		else
-			pSocket.SysMessage( GetDictionaryEntry( 1871, pSocket.language ) ); // Only house owners, co-owners and friends can ban someone from a house!
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 1871, pSocket.language )); // Only house owners, co-owners and friends can ban someone from a house!
+		}
 	}
 }
 
@@ -787,9 +831,13 @@ function onCallback5( pSocket, myTarget )
 				// Check if ban list can hold more people, but either way, continue to the
 				// ejection from house part!
 				if( iMulti.bans < iMulti.maxBans )
+				{
 					iMulti.AddToBanList( myTarget );
+				}
 				else
+				{
 					pSocket.SysMessage( GetDictionaryEntry( 1872, pSocket.language )); // The ban-list is full!
+				}
 
 				if( iMulti.IsInMulti( myTarget ))
 				{
@@ -800,7 +848,9 @@ function onCallback5( pSocket, myTarget )
 				// 1085=%s has been banned from this house.
 				pSocket.SysMessage( GetDictionaryEntry( 1085, pSocket.language ), myTarget.name ); // %s has been banned from this house.
 				if( myTarget.online )
+				{
 					myTarget.SysMessage( GetDictionaryEntry( 1873, myTarget.socket.language ), iMulti.name ); // You have been banned from %s
+				}
 			}
 			else
 			{
@@ -813,7 +863,9 @@ function onCallback5( pSocket, myTarget )
 		}
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 function UnbanPlayerTrigger( pSocket, iMulti )
@@ -833,7 +885,9 @@ function UnbanPlayerTrigger( pSocket, iMulti )
 			pSocket.CustomTarget( 6, GetDictionaryEntry( 1877, pSocket.language )); // Select player to lift ban for:
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1878, pSocket.language )); // Only house owners, co-owners and friends can lift a ban on someone in a house!
+		}
 	}
 }
 
@@ -865,7 +919,9 @@ function onCallback6( pSocket, myTarget )
 		UnbanPlayer( pSocket, myTarget, iMulti );
 	}
 	else
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+	{
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
+	}
 }
 
 function UnbanPlayer( pSocket, charToRemove, iMulti )
@@ -878,7 +934,7 @@ function UnbanPlayer( pSocket, charToRemove, iMulti )
 
 	if( !ValidateObject( charToRemove ) || !charToRemove.isChar || charToRemove.npc )
 	{
-		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language ) ); // Not a valid target!
+		pSocket.SysMessage( GetDictionaryEntry( 1103, pSocket.language )); // Not a valid target!
 		return;
 	}
 
@@ -888,7 +944,9 @@ function UnbanPlayer( pSocket, charToRemove, iMulti )
 		pSocket.SysMessage( GetDictionaryEntry( 1879, pSocket.language ), charToRemove.name ); // You have lifted the ban on %s for your house.
 	}
 	else
+	{
 		pSocket.SysMessage( GetDictionaryEntry( 1880, pSocket.language )); // That player is not on the ban list!
+	}
 }
 
 function EjectPlayer( pSocket, iMulti )
@@ -908,7 +966,9 @@ function EjectPlayer( pSocket, iMulti )
 			pSocket.CustomTarget( 7, GetDictionaryEntry( 587, pSocket.language ), 1 ); // Select person to eject from the house.
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1881, pSocket.language )); // Only house owners, co-owners and friends can eject someone from a house!
+		}
 	}
 }
 
@@ -944,7 +1004,7 @@ function onCallback7( pSocket, myTarget )
 		}
 
 		// Eject player to SE corner of house
-		if( iMulti.IsInMulti( myTarget ) )
+		if( iMulti.IsInMulti( myTarget ))
 		{
 			if( !iMulti.IsOnOwnerList( myTarget ) || myTarget == pUser )
 			{
@@ -963,7 +1023,9 @@ function onCallback7( pSocket, myTarget )
 		}
 	}
 	else
+	{
 		pSocket.SysMessage( GetDictionaryEntry( 1886, pSocket.language )); // You cannot eject that from your house!
+	}
 }
 
 function EjectPlayerActual( iMulti, charToEject )
@@ -985,11 +1047,15 @@ function EjectPlayerActual( iMulti, charToEject )
 
 		multiCornerZ = GetMapElevation( banX, banY, iMulti.worldnumber );
 		if( multiCornerZ < iMulti.z )
+		{
 			multiCornerZ = iMulti.z;
+		}
 
 		charToEject.Teleport( banX, banY, multiCornerZ );
 		if( charToEject.online )
+		{
 			charToEject.socket.walkSequence = -1;
+		}
 	}
 }
 
@@ -1015,7 +1081,9 @@ function LockdownItem( pSocket, iMulti )
 			pSocket.CustomTarget( 8, GetDictionaryEntry( 589, pSocket.language )); // Select item to lock down
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1887, pSocket.language )); // Only house owners, co-owners and friends can lock down items in a house!
+		}
 	}
 }
 
@@ -1073,12 +1141,12 @@ function onCallback8( pSocket, myTarget )
 				}
 
 				var targetRootContainer = FindRootContainer( targetContainer, 0 );
-				if( targetContainer.movable != 3 || ( ValidateObject(targetRootContainer) && !iMulti.IsInMulti( targetRootContainer )))
+				if( targetContainer.movable != 3 || ( ValidateObject( targetRootContainer) && !iMulti.IsInMulti( targetRootContainer )))
 				{
 					pSocket.SysMessage( GetDictionaryEntry( 1892, pSocket.language )); // You cannot lock down items in a container that's not locked down in your house!
 					return;
 				}
-				else if( iMulti.IsSecureContainer( targetContainer ) || ( ValidateObject(targetRootContainer) && iMulti.IsSecureContainer( targetRootContainer )))
+				else if( iMulti.IsSecureContainer( targetContainer ) || ( ValidateObject( targetRootContainer ) && iMulti.IsSecureContainer( targetRootContainer )))
 				{
 					pSocket.SysMessage( GetDictionaryEntry( 1893, pSocket.language )); // You don't need to lock down items inside secure containers!
 					return;
@@ -1095,7 +1163,7 @@ function onCallback8( pSocket, myTarget )
 			if( CheckTileFlag( myTarget.id, 6 ))
 			{
 				// Check for nearby doors
-				var foundDoor = AreaItemFunction( "checkForNearbyDoors", myTarget, 3, pSocket );
+				var foundDoor = AreaItemFunction( "CheckForNearbyDoors", myTarget, 3, pSocket );
 				if( foundDoor )
 				{
 					pSocket.SysMessage( GetDictionaryEntry( 1890, pSocket.language )); // You cannot lock down blocking items adjacent to a door.
@@ -1124,7 +1192,7 @@ function onCallback8( pSocket, myTarget )
 	}
 }
 
-function checkForNearbyDoors( myTarget, itemToCheck, pSocket )
+function CheckForNearbyDoors( myTarget, itemToCheck, pSocket )
 {
 	if( ValidateObject( itemToCheck ))
 	{
@@ -1148,11 +1216,15 @@ function checkForNearbyDoors( myTarget, itemToCheck, pSocket )
 				var origX = itemToCheck.x  - itemToCheck.GetTag( "DOOR_X" );
 				var origY = itemToCheck.y  - itemToCheck.GetTag( "DOOR_Y" );
 				if( myTarget.x - origX < 2 || origX - myTarget.x < 2 || myTarget.y - origY < 2 || origY - myTarget.y < 2 )
+				{
 					return true;
+				}
 			}
 
 			if( myTarget.DistanceTo( itemToCheck ) <= 2 )
+			{
 				return true;
+			}
 		}
 	}
 	return false;
@@ -1172,10 +1244,12 @@ function ReleaseItem( pSocket, iMulti )
 		if( pUser.isGM || ( iMulti.IsOnOwnerList( pUser ) || iMulti.IsOnFriendList( pUser ) || ( coOwnHousesOnSameAccount && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 		{
 			pSocket.tempObj = iMulti;
-			pSocket.CustomTarget( 9, GetDictionaryEntry( 591, pSocket.language ) ); // Select item to release.
+			pSocket.CustomTarget( 9, GetDictionaryEntry( 591, pSocket.language )); // Select item to release.
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1896, pSocket.language )); // Only house owners, co-owners and friends can release locked down items in a house!
+		}
 	}
 }
 
@@ -1291,7 +1365,9 @@ function onCallback9( pSocket, myTarget )
 		}
 	}
 	else
+	{
 		pSocket.SysMessage( GetDictionaryEntry( 1108, pSocket.language )); // Invalid item!
+	}
 }
 
 function SecureContainer( pSocket, iMulti )
@@ -1311,7 +1387,9 @@ function SecureContainer( pSocket, iMulti )
 			pSocket.CustomTarget( 10, GetDictionaryEntry( 1903, pSocket.language )); // Select container to secure:
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1904, pSocket.language )); // Only house owners and co-owners can secure containers in a house!
+		}
 	}
 }
 
@@ -1344,19 +1422,19 @@ function onCallback10( pSocket, myTarget )
 		{
 			if( myTarget.type != 1 && myTarget.type != 87 ) // Unlocked containers and trash barrels
 			{
-				pSocket.SysMessage(  GetDictionaryEntry( 1905, pSocket.language ) ); // You can only secure unlocked containers!
+				pSocket.SysMessage( GetDictionaryEntry( 1905, pSocket.language )); // You can only secure unlocked containers!
 			}
 			else if( myTarget.container != null )
 			{
-				pSocket.SysMessage(  GetDictionaryEntry( 1906, pSocket.language ) ); // You can only secure containers that are not inside other containers!
+				pSocket.SysMessage( GetDictionaryEntry( 1906, pSocket.language )); // You can only secure containers that are not inside other containers!
 			}
 			else if( !iMulti.IsInMulti( myTarget ))
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 1907, pSocket.language ) ); // You can only secure containers that are in your house!
+				pSocket.SysMessage( GetDictionaryEntry( 1907, pSocket.language )); // You can only secure containers that are in your house!
 			}
 			else if( myTarget.type == 1 && myTarget.movable == 2 && ( myTarget.id == 0x09A8 || myTarget.id == 0x0E80 ))
 			{
-				pSocket.SysMessage(  GetDictionaryEntry( 1908, pSocket.language ) ); // You cannot secure strongboxes; they're already secure!
+				pSocket.SysMessage( GetDictionaryEntry( 1908, pSocket.language )); // You cannot secure strongboxes; they're already secure!
 			}
 			else
 			{
@@ -1367,11 +1445,13 @@ function onCallback10( pSocket, myTarget )
 		}
 		else
 		{
-			pSocket.SysMessage(  GetDictionaryEntry( 1910, pSocket.language ) ); // This house cannot have any additional secure containers!
+			pSocket.SysMessage(  GetDictionaryEntry( 1910, pSocket.language )); // This house cannot have any additional secure containers!
 		}
 	}
 	else
+	{
 		pSocket.SysMessage( GetDictionaryEntry( 1108, pSocket.language )); // Invalid item!
+	}
 }
 
 // Demolish house - Trigger
@@ -1400,7 +1480,7 @@ function DemolishHouse( pSocket, iMulti )
 				if( charInHouse.aitype == 17 ) // player vendor AI
 				{
 					var tempName = GetDictionaryEntry( 580, pSocket.language ); // A vendor deed for %s.
-					tempName = ( tempName.replace(/%s/gi, charInHouse.name ));
+					tempName = ( tempName.replace( /%s/gi, charInHouse.name ));
 
 					var pvDeed = CreateBlankItem( pSocket, pSocket.currentChar, 1, tempName, 0x14F0, 0x0, "ITEM", true );
 					if( ValidateObject( pvDeed ))
@@ -1436,7 +1516,9 @@ function DemolishHouse( pSocket, iMulti )
 				if( itemInHouse.type == 87 ) // trash container
 				{
 					if( iMulti.IsSecureContainer( itemInHouse ))
+					{
 						iMulti.UnsecureContainer( itemInHouse );
+					}
 					iMulti.RemoveTrashCont( itemInHouse );
 					itemInHouse.Delete();
 				}
@@ -1447,14 +1529,15 @@ function DemolishHouse( pSocket, iMulti )
 				else if( itemInHouse.isLockedDown )
 				{
 					if( iMulti.IsSecureContainer( itemInHouse ))
+					{
 						iMulti.UnsecureContainer( itemInHouse );
+					}
 					iMulti.ReleaseItem( itemInHouse );
 
 					// Drop all items contained in house to ground level so they're not stuck in the middle of the air!
 					var groundZ = GetMapElevation( itemInHouse.x, itemInHouse.y, pSocket.currentChar.worldnumber );
 					itemInHouse.Teleport( itemInHouse.x, itemInHouse.y, groundZ );
 				}
-
 			}
 
 			// Kill all the keys related to the house - they are of no use any more
@@ -1462,7 +1545,7 @@ function DemolishHouse( pSocket, iMulti )
 
 			// Remove file that keeps track of visitors to house, if any exists
 			//TriggerEvent( 15000, "RemoveTrackingFile", iMulti );
-			var fileName = "house"+(iMulti.serial).toString()+".jsdata";
+			var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
 			var folderName = "houseVisits";
 			DeleteFile( fileName, folderName );
 
@@ -1478,7 +1561,9 @@ function DemolishHouse( pSocket, iMulti )
 			iMulti.Delete();
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1911, pSocket.language )); // Only the primary house owner can demolish the house!
+		}
 	}
 }
 
@@ -1496,16 +1581,16 @@ function ChangeHouseLocks( pSocket, iMulti )
 		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
-			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
+			var foundOpenFrontDoor = AreaItemFunction( "CheckForOpenFrontDoors", iMulti, 40, pSocket );
 			if( foundOpenFrontDoor )
 			{
-				pSocket.SysMessage( GetDictionaryEntry( 1912, pSocket.language ) ); // You cannot change the house locks while the front doors are open!
+				pSocket.SysMessage( GetDictionaryEntry( 1912, pSocket.language )); // You cannot change the house locks while the front doors are open!
 				return;
 			}
 
 			// First off, remove all old keys!
 			iMulti.KillKeys();
-			pSocket.SysMessage( GetDictionaryEntry( 1913, pSocket.language ) ) // All old house keys associated with house have been deleted.
+			pSocket.SysMessage( GetDictionaryEntry( 1913, pSocket.language )) // All old house keys associated with house have been deleted.
 
 			// Next up, create a new master key for the new owner, and
 			// make sure all the doors are linked to this master key
@@ -1519,7 +1604,9 @@ function ChangeHouseLocks( pSocket, iMulti )
 			}
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1915, pSocket.language )); //Only the house owner can change the house locks!
+		}
 	}
 }
 
@@ -1537,7 +1624,7 @@ function DeclareHousePublic( pSocket, iMulti )
 		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
-			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
+			var foundOpenFrontDoor = AreaItemFunction( "CheckForOpenFrontDoors", iMulti, 40, pSocket );
 			if( foundOpenFrontDoor )
 			{
 				pSocket.SysMessage( GetDictionaryEntry( 1916, pSocket.language )); // You cannot change the public status of the house while the front doors are open!
@@ -1564,13 +1651,17 @@ function DeclareHousePublic( pSocket, iMulti )
 
 				// Unlock the door if it's a front door!
 				if( itemInHouse.GetTag( "DoorType" ) == "front" )
+				{
 					itemInHouse.type = 12;
+				}
 			}
 
 			pSocket.SysMessage( GetDictionaryEntry( 1917, pSocket.language )); // House has been declared public; front doors cannot be locked, and have been automatically unlocked!
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1918, pSocket.language )); // Only the house owner can change the public status of the house!
+		}
 	}
 }
 
@@ -1588,7 +1679,7 @@ function DeclareHousePrivate( pSocket, iMulti )
 		if( pUser.isGM || iMulti.IsOwner( pUser ))
 		{
 			// Some doors might be outside the house because they are open......
-			var foundOpenFrontDoor = AreaItemFunction( "checkForOpenFrontDoors", iMulti, 40, pSocket );
+			var foundOpenFrontDoor = AreaItemFunction( "CheckForOpenFrontDoors", iMulti, 40, pSocket );
 			if( foundOpenFrontDoor )
 			{
 				pSocket.SysMessage( GetDictionaryEntry( 1916, pSocket.language )); // You cannot change the public status of the house while the front doors are open!
@@ -1618,7 +1709,9 @@ function DeclareHousePrivate( pSocket, iMulti )
 						// Eject character from house
 						EjectPlayerActual( iMulti, charInHouse );
 						if( charInHouse.online )
+						{
 							charInHouse.SysMessage( GetDictionaryEntry( 1920, charInHouse.socket.language )); // 1920=You have been ejected due to a change in public status of the house.
+						}
 					}
 				}
 			}
@@ -1632,7 +1725,9 @@ function DeclareHousePrivate( pSocket, iMulti )
 			iSign = CalcItemFromSer( serialPart1, serialPart2, serialPart3, serialPart4 );
 
 			if( ValidateObject( iSign ))
+			{
 				iSign.id = 0x0BD2;
+			}
 
 			iMulti.isPublic = false;
 
@@ -1651,23 +1746,29 @@ function DeclareHousePrivate( pSocket, iMulti )
 
 				// Lock the door if it's a front door!
 				if( itemInHouse.GetTag( "DoorType" ) == "front" )
+				{
 					itemInHouse.type = 13;
+				}
 			}
-			pSocket.SysMessage( GetDictionaryEntry( 1921, pSocket.language ) ); // 1921=This house is now private.
+			pSocket.SysMessage( GetDictionaryEntry( 1921, pSocket.language )); // 1921=This house is now private.
 		}
 		else
-			pSocket.SysMessage( GetDictionaryEntry( 1922, pSocket.language ) ); // 1922=Only the house owner can change the public status of the house!
+		{
+			pSocket.SysMessage( GetDictionaryEntry( 1922, pSocket.language )); // 1922=Only the house owner can change the public status of the house!
+		}
 	}
 }
 
-function checkForOpenFrontDoors( iMulti, itemToCheck, pSocket )
+function CheckForOpenFrontDoors( iMulti, itemToCheck, pSocket )
 {
 	if( ValidateObject( itemToCheck ))
 	{
 		if(( itemToCheck.type == 12 || itemToCheck.type == 13 ) && ( itemToCheck.more == iMulti.serial || itemToCheck.multi == iMulti ))
 		{
 			if( itemToCheck.GetTag( "DoorType" ) == "front" && itemToCheck.isDoorOpen )
+			{
 				return true;
+			}
 		}
 	}
 	return false;
@@ -1703,7 +1804,9 @@ function PlaceTrashBarrel( pSocket, iMulti )
 			}
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1924, pSocket.language )); // Only house owners or co-owners can place a trash barrel in a house!
+		}
 	}
 }
 
@@ -1746,11 +1849,13 @@ function PlaceStrongbox( pSocket, iMulti )
 			pSocket.SysMessage( GetDictionaryEntry( 1927, pSocket.language )); // You have a new strongbox. Only you and the house owner may access this box.
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 1928, pSocket.language )); // You may not place a strongbox.
+		}
 	}
 }
 
-function confirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
+function ConfirmActionGump( pSocket, myTarget, confirmString, confirmButtonID )
 {
 	var confirmGump = new Gump;
 	confirmGump.AddPage( 0 );
@@ -1772,7 +1877,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 	var pUser = pSocket.currentChar;
 
 	// Calculate multi!
-	var iMultiSerial = parseInt(pUser.GetTag( "iMultiSerial" ));
+	var iMultiSerial = parseInt( pUser.GetTag( "iMultiSerial" ));
 	var iMultiSerial1 = ( iMultiSerial >> 24 );
 	var iMultiSerial2 = ( iMultiSerial >> 16 );
 	var iMultiSerial3 = ( iMultiSerial >> 8 );
@@ -1780,7 +1885,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 	var iMulti = CalcMultiFromSer( iMultiSerial1, iMultiSerial2, iMultiSerial3, iMultiSerial4 );
 
 	// Calculate sign on multi!
-	var iSignSerial = parseInt(pUser.GetTag( "iSignSerial" ));
+	var iSignSerial = parseInt( pUser.GetTag( "iSignSerial" ));
 	var iSignSerial1 = ( iSignSerial >> 24 );
 	var iSignSerial2 = ( iSignSerial >> 16 );
 	var iSignSerial3 = ( iSignSerial >> 8 );
@@ -1881,8 +1986,10 @@ function onGumpPress( pSocket, pButton, gumpData )
 				if( ValidateObject( newKeyCopy ))
 				{
 					var bankBox = pUser.FindItemLayer( 29 );
-					if( ValidateObject(bankBox) && bankBox.isItem )
+					if( ValidateObject( bankBox ) && bankBox.isItem )
+					{
 						newKeyCopy.container = bankBox;
+					}
 					else
 					{
 						// Create a new bankbox for the player, since they do not automatically get created until first time the bank is used
@@ -1891,12 +1998,14 @@ function onGumpPress( pSocket, pButton, gumpData )
 						newBankBox.layer = 29;
 						newBankBox.owner = pUser;
 						newBankBox.container = pUser;
-						newBankBox.maxItems = parseInt(GetServerSetting( "MAXPLAYERBANKITEMS" ));
+						newBankBox.maxItems = parseInt( GetServerSetting( "MAXPLAYERBANKITEMS" ));
 						newBankBox.type = 1;
 						newBankBox.morex = 1;
 
-						if( ValidateObject(newBankBox) )
+						if( ValidateObject( newBankBox ))
+						{
 							newKeyCopy.container = newBankBox;
+						}
 					}
 				}
 				else
@@ -1905,9 +2014,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 				}
 
 				if( oldMultiOwner.online )
+				{
 					oldMultiOwner.socket.SysMessage( GetDictionaryEntry( 1081, oldMultiOwner.socket.language ), pUser.name ); // You have transferred your house to %s.
+				}
 				if( pUser.online )
+				{
 					pSocket.SysMessage( GetDictionaryEntry( 1082, pSocket.language ), pUser.name ); // %s has transferred a house to you.
+				}
 			}
 			break;
 		}

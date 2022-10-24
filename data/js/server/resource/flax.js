@@ -13,22 +13,24 @@ function onUseChecked( pUser, iUsed )
 		return false;
 	}
 
-	if( !iUsed.GetTag("initialized")) // Unless flax have been picked before, initialize settings
+	if( !iUsed.GetTag( "initialized" )) // Unless flax have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",1); 	// Marks tree as initialized
-		iUsed.SetTag("Flax",1); 		// If set to 1, there is flax to be picked
+		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
+		iUsed.SetTag( "Flax", 1 ); 		// If set to 1, there is flax to be picked
 	}
-	var Flax = iUsed.GetTag("Flax");
-	if (Flax == 0)
+	var flax = iUsed.GetTag( "Flax" );
+	if( flax == 0 )
 	{	
 		pUser.SysMessage( GetDictionaryEntry( 2531, pUser.socket.language )); // You find no flax to pick. Try again later.
 	}
-	if( Flax == 1 )
+	if( flax == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
+		{
 			pUser.SysMessage( GetDictionaryEntry( 2532, pUser.socket.language )); // You fail to pick any flax.
+		}
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( GetDictionaryEntry( 2533, pUser.socket.language )); // You harvest some flax.
@@ -44,6 +46,6 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("Flax", 1);
+		iUsed.SetTag( "Flax", 1 );
 	}
 }

@@ -2,13 +2,13 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	var itemOwner = GetPackOwner(iUsed, 0);
+	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( iUsed.movable == 2 || iUsed.movable == 3 )
 	{
 		socket.SysMessage( GetDictionaryEntry( 774, socket.language )); // That is locked down and you cannot use it
 		return false;
 	}
-	else if( itemOwner == null || itemOwner.serial != pUser.serial)
+	else if( itemOwner == null || itemOwner.serial != pUser.serial )
 	{
 		socket.SysMessage( GetDictionaryEntry( 6019, socket.language )); // This must be in your backpack or equipped before it can be used.
 		return false;
@@ -30,7 +30,7 @@ function onCallback0( socket, myTarget )
 {
 	var pUser = socket.currentChar;
 
-	if( !socket.GetWord(1) && ValidateObject( myTarget ) && myTarget.npc )
+	if( !socket.GetWord( 1 ) && ValidateObject( myTarget ) && myTarget.npc )
 	{
 		if( myTarget.tamed || !myTarget.skillToTame )
 		{
@@ -89,12 +89,12 @@ function onCallback1( socket, myTarget )
 
 	// If user cancels targeting with Escape, ClassicUO still sends a targeting response (unlike
 	// regular UO client), but one byte in the packet is always 255 when this happens
-	var cancelCheck = parseInt(socket.GetByte(11));
+	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck != 255 )
 	{
 		var pUser = socket.currentChar;
-		var targX = socket.GetWord(11);
-		var targY = socket.GetWord(13);
+		var targX = socket.GetWord( 11 );
+		var targY = socket.GetWord( 13 );
 		var skillToHerd = targetChar.skillToTame;
 		var minSkill = 0;
 		var maxSkill = skillToHerd;

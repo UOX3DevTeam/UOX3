@@ -78,9 +78,9 @@ function onUseChecked( pUser, iUsed )
 				case 8: // Page 8
 				case 9: // Page 9
 				case 10: // Page 10
-					TriggerEvent( Carpentry, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Carpentry, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Carpentry, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Carpentry, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -100,9 +100,9 @@ function onUseChecked( pUser, iUsed )
 				case 2: // Page 2
 				case 3: // Page 3
 				case 4: // Page 4
-					TriggerEvent( Alchemy, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Alchemy, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Alchemy, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Alchemy, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -121,9 +121,9 @@ function onUseChecked( pUser, iUsed )
 				case 1: // Page 1
 				case 2: // Page 2
 				case 3: // Page 3
-					TriggerEvent( Fletching, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Fletching, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Fletching, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Fletching, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -147,9 +147,9 @@ function onUseChecked( pUser, iUsed )
 				case 6: // Page 6
 				case 7: // Page 7
 				case 8: // Page 8
-					TriggerEvent( Tailoring, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Tailoring, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Tailoring, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Tailoring, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -171,12 +171,12 @@ function onUseChecked( pUser, iUsed )
 				case 5: // Page 5
 				case 6: // Page 6
 				case 7: // Page 7
-					TriggerEvent( blacksmithID, "pageX", socket, pUser, tempPage );
+					TriggerEvent( blacksmithID, "PageX", socket, pUser, tempPage );
 					break;
 				case 8:
-					TriggerEvent( blacksmithID, "page8", socket, pUser );
+					TriggerEvent( blacksmithID, "Page8", socket, pUser );
 					break;
-				default: TriggerEvent( blacksmithID, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( blacksmithID, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -197,9 +197,9 @@ function onUseChecked( pUser, iUsed )
 				case 2: // Page 2
 				case 3: // Page 3
 				case 4: // Page 4
-					TriggerEvent( Cooking, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Cooking, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Cooking, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Cooking, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}
@@ -224,9 +224,9 @@ function onUseChecked( pUser, iUsed )
 				case 7: // Page 7
 				case 8: // Page 8
 				case 9: // Page 9
-					TriggerEvent( Tinkering, "pageX", socket, pUser, tempPage );
+					TriggerEvent( Tinkering, "PageX", socket, pUser, tempPage );
 					break;
-				default: TriggerEvent( Tinkering, "pageX", socket, pUser, 1 );
+				default: TriggerEvent( Tinkering, "PageX", socket, pUser, 1 );
 					break;
 			}
 		}

@@ -17,43 +17,51 @@ function onUseChecked( pUser, iUsed )
 		return false;
 	}
 
-	if( !iUsed.GetTag("initialized")) // Unless pears have been picked before, initialize settings
+	if( !iUsed.GetTag( "initialized" )) // Unless pears have been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized",1); 	// Marks tree as initialized
-		iUsed.SetTag("Pears",1); 		// If set to 1, there are pears to be picked, if 0 there are no ripe pears
-		iUsed.SetTag("PearCounter", maxResource); 	// Add 5 pears to the tree initially
+		iUsed.SetTag( "initialized", 1 ); 	// Marks tree as initialized
+		iUsed.SetTag( "Pears", 1 ); 		// If set to 1, there are pears to be picked, if 0 there are no ripe pears
+		iUsed.SetTag( "PearCounter", maxResource ); 	// Add 5 pears to the tree initially
 	}
-	var Pears = iUsed.GetTag("Pears");
-	var PearCount = iUsed.GetTag("PearCounter");
-	if (Pears == 0)
+	var pears = iUsed.GetTag( "Pears" );
+	var pearCount = iUsed.GetTag( "PearCounter" );
+	if( pears == 0 )
 	{	
 		pUser.SysMessage( GetDictionaryEntry( 2544, pUser.socket.language )); // You find no ripe pears to pick. Try again later.
 	}
-	if( Pears == 1 )
+	if( pears == 1 )
 	{
 		iUsed.SoundEffect( 0x004F, true );
 		var loot = RollDice( 1, 3, 0 );
 		if( loot == 2 )
+		{
 			pUser.SysMessage( GetDictionaryEntry( 2545, pUser.socket.language )); // You fail to pick any pears.
+		}
 		if( loot == 3 || loot == 1 )
 	 	{
 			pUser.SysMessage( GetDictionaryEntry( 2546, pUser.socket.language )); // You pick a pear from the tree.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x0994", 1, "ITEM", true );
-			PearCount--;
-			iUsed.SetTag( "PearCounter", PearCount );
-			if( PearCount == 1)
+			pearCount--;
+			iUsed.SetTag( "PearCounter", pearCount );
+			if( pearCount == 1 )
+			{
 				pUser.SysMessage(yEntry( 2547, pUser.socket.language )); // There is 1 ripe pear left on the tree.
+			}
 			else
 			{
 				var pearCountMsg = GetDictionaryEntry( 2548, pUser.socket.language ); // There are %i ripe pears left on the tree.
-				pUser.SysMessage( pearCountMsg.replace(/%i/gi, PearCount ));
+				pUser.SysMessage( pearCountMsg.replace( /%i/gi, pearCount ));
 			}
-		    if( PearCount == 0 )
+		    if( pearCount == 0 )
 			{
 				if( iUsed.id == 0x0da6 )
+				{
 					iUsed.id = 0x0da5;
+				}
 				else if( iUsed.id == 0x0daa )
+				{
 					iUsed.id = 0x0da9; 
+				}
 				iUsed.SetTag( "Pears", 0 );
 				iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay of 30 seconds until next time pears respawn
 			}
@@ -66,11 +74,15 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("PearCounter", maxResource);
-		iUsed.SetTag("Pears", 1);
+		iUsed.SetTag( "PearCounter", maxResource );
+		iUsed.SetTag( "Pears", 1 );
 		if( iUsed.id == 0x0da5 )
+		{
 			iUsed.id = 0x0da6;
+		}
 		else if( iUsed.id == 0x0da9 )
+		{
 			iUsed.id = 0x0daa; 
+		}
 	}
 }

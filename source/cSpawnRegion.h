@@ -6,22 +6,22 @@ class CSpawnRegion	//Regionspawns
 private:
 	std::string name;			// Any Name to show up when this region is spawned [512]
 
-	std::vector< std::string >	sNpcs;				// Individual Npcs
-	std::vector< std::string > 	sItems;				// Individual Items
+	std::vector<std::string>	sNpcs;				// Individual Npcs
+	std::vector<std::string> 	sItems;				// Individual Items
 
-	UI16		regionnum;			// Region Number
+	UI16		regionNum;			// Region Number
 
 	// These two will replace maxspawn
-	size_t		maxcspawn;			// Maximum amount of characters to spawn
-	size_t		maxispawn;			// Maximum amount of items to spawn
+	size_t		maxCharSpawn;			// Maximum amount of characters to spawn
+	size_t		maxItemSpawn;			// Maximum amount of items to spawn
 
 	// These two will replace current
-	SI32		curcspawn;			// Current amount of spawned characters
-	SI32		curispawn;			// Current amount of spawned items
+	SI32		curCharSpawn;			// Current amount of spawned characters
+	SI32		curItemSpawn;			// Current amount of spawned items
 
-	UI08		mintime;			// Minimum spawn time
-	UI08		maxtime;			// Maximum spawn time
-	TIMERVAL	nexttime;			// Nextspawn time for this region
+	UI08		minTime;			// Minimum spawn time
+	UI08		maxTime;			// Maximum spawn time
+	TIMERVAL	nextTime;			// Nextspawn time for this region
 
 	// Box values
 	SI16		x1;					// Top left X
@@ -35,22 +35,22 @@ private:
 	bool		isSpawner;			// Whether the items spawned are spawner objects or not
 	UI16		call;				// # of times that an NPC or Item is spawned from a list
 	UI08		worldNumber;		// which world are we spawning in?
-	UI16		instanceID;			// Which instance are we spawning in?
+	UI16		instanceId;			// Which instance are we spawning in?
 
-	GenericList< CChar * >	spawnedChars;
-	GenericList< CItem * >	spawnedItems;
+	GenericList<CChar *>	spawnedChars;
+	GenericList<CItem *>	spawnedItems;
 	std::map<UI32, SI08>	validLandPosCheck;
 	std::map<UI32, SI08>	validWaterPosCheck;
-	std::vector< point3 >	validLandPos;
-	std::vector< point3 >	validWaterPos;
+	std::vector<Point3_st>	validLandPos;
+	std::vector<Point3_st>	validWaterPos;
 
 
 public:
 	CSpawnRegion( UI16 spawnregion );
 	~CSpawnRegion();
 
-	void		Load( ScriptSection *toScan );
-	void		doRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned );
+	void		Load( CScriptSection *toScan );
+	void		DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned );
 
 	const std::string	GetName( void ) const;
 	UI16		GetRegionNum( void ) const;
@@ -71,8 +71,8 @@ public:
 	UI16		GetCall( void ) const;
 	bool		GetOnlyOutside( void ) const;
 	bool		IsSpawner( void ) const;
-	auto		GetNPC( void ) const ->std::vector< std::string >;
-	auto		GetItem( void ) const ->std::vector< std::string >;;
+	auto		GetNPC( void ) const -> std::vector<std::string>;
+	auto		GetItem( void ) const -> std::vector<std::string>;
 
 	void		SetName( const std::string& newName );
 	void		SetRegionNum( UI16 newVal );
@@ -96,18 +96,18 @@ public:
 	void		SetItem( const std::string &newVal );
 	void		SetItemList( std::string newVal );
 
-	UI16		GetInstanceID( void ) const;
-	void		SetInstanceID( UI16 newVal );
+	UI16		GetInstanceId( void ) const;
+	void		SetInstanceId( UI16 newVal );
 
 	UI08		WorldNumber( void ) const;
 	void		WorldNumber( UI08 newVal );
 
-	void		checkSpawned();
-	void		deleteSpawnedChar( CChar *toDelete );
-	void		deleteSpawnedItem( CItem *toDelete );
+	void		CheckSpawned();
+	void		DeleteSpawnedChar( CChar *toDelete );
+	void		DeleteSpawnedItem( CItem *toDelete );
 
-	GenericList< CItem * > *	GetSpawnedItemsList( void );
-	GenericList< CChar * > *	GetSpawnedCharsList( void );
+	GenericList<CItem *> *	GetSpawnedItemsList( void );
+	GenericList<CChar *> *	GetSpawnedCharsList( void );
 private:
 	CChar *		RegionSpawnChar( void );
 	CItem *		RegionSpawnItem( void );

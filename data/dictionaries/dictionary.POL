@@ -1668,6 +1668,29 @@
 1663=Mój mały syn Timmy wymaga operacji, macie trochę złota, żeby pomóc?
 1664=Moja żona jest w ciąży z naszym siódmym dzieckiem, miejcie trochę litości w postaci złota dla zdesperowanego człowieka.
 // End begging text
+1670=Nie możesz się przebrać, gdy nosisz farbę do ciała.
+1671=Nie możesz polimorfować podczas noszenia farby do ciała.
+1672=Nie możesz używać incognito nosząc farbę do ciała.
+1673=Nie możesz tego zrobić będąc incognito.
+1674=Nie możesz tego zrobić będąc polimorfowanym.
+1675=Twoja skóra jest spalona, gdy farba plemienna się wypala!
+1676=Twoja farba na ciele uległa zużyciu!
+1677=Nie możesz się przebrać będąc incognito.
+1678=Nie możesz się przebrać będąc polimorficznym.
+1679=Jesteś już przebrany.
+1680=Od teraz nosisz oznaczenia dzikiego plemienia.  Twoja farba na ciele utrzyma się około tygodnia lub możesz ją usunąć za pomocą olejnej szmatki.
+1681=Wycierasz całą swoją farbę z ciała.
+1682=Plemienna Włócznia rozpada się w twoich rękach, gdy ją podnosisz!
+1683=%s zaczyna wymachiwać bola wokół siebie
+1684=Wprowadź nowy tytuł dla członka gildii:
+1685=Wybierz członka gildii, dla którego chcesz ustawić tytuł
+1686= Otrzymałeś tytuł gildii %s!
+1687=Zrekrutowałeś %s jako nowego członka gildii!
+1688=Zrekrutowano cię do gildii %s!
+1689=Odrzuciłeś %s ze swojej gildii!
+1690=Zostałeś zwolniony ze swojej gildii!
+1691=Nie możesz się zwolnić z gildii!
+1692=%s jest teraz nowym Mistrzem Gildii %s!
 // Tweak Char Menu Stuff
 1700=Nieważny przycisk wciśnięty
 1701=Wprowadź nowe Imię dla postaci.
@@ -1951,6 +1974,15 @@
 1979=Wyspy Tokuno
 1980=Ter Mur
 1981=Członkowie rasy %s nie mogą tego nosić
+1982=Parujesz atak!
+1983=Twoja broń została zniszczona!
+1984=Nie jesteś członkiem tej gildii!
+1985=Zasponsorowałeś %s jako kandydata do wstąpienia do gildii!
+1986=Zostałeś zaproszony przez %s do przystąpienia do gildii: %s
+1987=Złożyłeś deklarację lojalności wobec %s!
+1988=%s zadeklarował ci wierność!
+1989=Twoja gildia wypowiedziała wojnę gildii %s!
+1990=Twoja gildia zadeklarowała gildię %s jako sojusznika!
 // Menu zmian oparte na JS
 1991=Nieprawidłowy obiekt namierzony!
 1992=Nieznany obiekt namierzony!
@@ -3296,6 +3328,9 @@
 6214=Składniki tego eliksiru są dla ciebie nieznane.
 6215=Już wiesz jaki to rodzaj eliksiru: %s
 6250=Wychodzisz z cienia.
+6275=Łączysz jagody i mąkę w plemienną farbę noszoną przez dzikusów.
+6276=Nie masz umiejętności gotowania, by stworzyć farbę do ciała.
+6277=Nie znaleziono ID źródła na liście zasobów użytych do stworzenia przedmiotu.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -3546,6 +3581,7 @@
 8210=Przekierowanie do 'polecenia radditem...
 8211=Przekierowanie do polecenia 'raddnpc...
 8212=Nieprawidłowa składnia polecenia powtarzającego dodawanie obiektów: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Identyfikator sekcji z DFN, z którego pochodzi obiekt
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC

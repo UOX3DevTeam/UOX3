@@ -17,28 +17,28 @@ const std::string ScriptNames[SCPT_COUNT] = { "SCRIPT_LIST", "COMMAND_SCRIPTS", 
 class CJSMappingSection
 {
 private:
-	std::map< UI16, cScript * > scriptIDMap;
-	std::map< JSObject *, UI16 >	 scriptJSMap;
+	std::map<UI16, cScript *>			scriptIdMap;
+	std::map<JSObject *, UI16>			scriptJSMap;
 
-	std::map< UI16, cScript * >::iterator scriptIDIter;
+	std::map<UI16, cScript *>::iterator	scriptIdIter;
 
-	SCRIPTTYPE								scriptType;
+	SCRIPTTYPE							scriptType;
 public:
 	CJSMappingSection( SCRIPTTYPE sT );
 	~CJSMappingSection();
 
-	auto jsCollection() const ->const std::map<JSObject*,std::uint16_t>& {return scriptJSMap;}
-	auto jsCollection()  -> std::map<JSObject*,std::uint16_t>& {return scriptJSMap;}
-	auto collection() const ->const std::map<std::uint16_t,cScript*>& {return scriptIDMap;}
-	auto collection()  -> std::map<std::uint16_t,cScript*>& {return scriptIDMap;}
+	auto jsCollection() const -> const std::map<JSObject*, std::uint16_t>& { return scriptJSMap; }
+	auto jsCollection()  -> std::map<JSObject*, std::uint16_t>& { return scriptJSMap; }
+	auto collection() const -> const std::map<std::uint16_t, cScript*>& { return scriptIdMap; }
+	auto collection()  -> std::map<std::uint16_t, cScript*>& { return scriptIdMap; }
 	
 
 	void		Reload( UI16 toLoad );
 	void		Parse( Script *fileAssocData );
 
-	bool		IsInMap( UI16 scriptID );
+	bool		IsInMap( UI16 scriptId );
 
-	UI16		GetScriptID( JSObject *toFind );
+	UI16		GetScriptId( JSObject *toFind );
 	cScript *	GetScript( UI16 toFind );
 	cScript *	GetScript( JSObject *toFind );
 
@@ -50,37 +50,37 @@ public:
 class CJSMapping
 {
 private:
+	CJSMappingSection *				mapSection[SCPT_COUNT];
 
-	CJSMappingSection * mapSection[SCPT_COUNT];
-	CEnvoke *	 envokeByID;
-	CEnvoke *	 envokeByType;
+	CEnvoke *						envokeById;
+	CEnvoke *						envokeByType;
 
-	void		 Cleanup( void );
-	void		 Parse( SCRIPTTYPE toParse = SCPT_COUNT );
+	void				Cleanup( void );
+	void				Parse( SCRIPTTYPE toParse = SCPT_COUNT );
 
 public:
 	CJSMapping() = default;
 	~CJSMapping();
-	void	 ResetDefaults( void );
+	void				ResetDefaults( void );
 
-	void				Reload( UI16 scriptID = 0xFFFF );
-	void				Reload( SCRIPTTYPE sectionID );
+	void				Reload( UI16 scriptId = 0xFFFF );
+	void				Reload( SCRIPTTYPE sectionId );
 
 	CJSMappingSection *	GetSection( SCRIPTTYPE toGet );
 
-	UI16				GetScriptID( JSObject *toFind );
+	UI16				GetScriptId( JSObject *toFind );
 
 	cScript *			GetScript( UI16 toFind );
 	cScript *			GetScript( JSObject *toFind );
 
-	CEnvoke *			GetEnvokeByID( void );
+	CEnvoke *			GetEnvokeById( void );
 	CEnvoke *			GetEnvokeByType( void );
 };
 
 class CEnvoke
 {
 private:
-	std::map< UI16, UI16 >	envokeList;
+	std::map<UI16, UI16>	envokeList;
 	std::string				envokeType;
 
 public:
@@ -88,8 +88,8 @@ public:
 	~CEnvoke();
 
 	void	Parse( void );
-	bool	Check( UI16 envokeID ) const;
-	UI16	GetScript( UI16 envokeID ) const;
+	bool	Check( UI16 envokeId ) const;
+	UI16	GetScript( UI16 envokeId ) const;
 };
 
 extern CJSMapping *JSMapping;

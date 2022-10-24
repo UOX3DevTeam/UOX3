@@ -1,3 +1,5 @@
+// GM commands for teleporting user and/or other objects around
+
 function CommandRegistration()
 {
 	RegisterCommand( "telestuff", 1, true );
@@ -14,19 +16,23 @@ function command_MOVE( socket, cmdString )
 
 function command_TELESTUFF( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 250, socket.language );
+	var targMsg = GetDictionaryEntry( 250, socket.language ); // Select player/object to teleport.
 	socket.CustomTarget( 0, targMsg );
 }
 
 function onCallback0( socket, ourObj )
 {
 	var targMsg;
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
 	{
 		if( ourObj.isChar )
-			targMsg = GetDictionaryEntry( 1045, socket.language );
+		{
+			targMsg = GetDictionaryEntry( 1045, socket.language ); // Select location to put this character.
+		}
 		else
-			targMsg = GetDictionaryEntry( 1046, socket.language );
+		{
+			targMsg = GetDictionaryEntry( 1046, socket.language ); // Select location to put this item.
+		}
 
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, targMsg );
@@ -43,9 +49,13 @@ function onCallback1( socket, ourObj )
 		if( toTele )
 		{
 			if( toTele.isChar )
-				dictMsg = GetDictionaryEntry( 1047, socket.language );
+			{
+				dictMsg = GetDictionaryEntry( 1047, socket.language ); // Moving character...
+			}
 			else
-				dictMsg = GetDictionaryEntry( 1048, socket.language );
+			{
+				dictMsg = GetDictionaryEntry( 1048, socket.language ); // Moving item...
+			}
 
 			var x = socket.GetWord( 11 );
 			var y = socket.GetWord( 13 );
@@ -53,7 +63,9 @@ function onCallback1( socket, ourObj )
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
 			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			{
 				z += GetTileHeight( socket.GetWord( 17 ));
+			}
 
 			doTele( toTele, x, y, z );
 
@@ -65,7 +77,7 @@ function onCallback1( socket, ourObj )
 
 function command_TELE( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 185, socket.language );
+	var targMsg = GetDictionaryEntry( 185, socket.language ); // Select teleport target.
 	socket.CustomTarget( 2, targMsg );
 }
 
@@ -100,7 +112,9 @@ function onCallback2( socket, ourObj )
 
 				// If connected with a client lower than v7.0.9, manually add height of targeted tile
 				if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+				{
 					targZ += GetTileHeight( socket.GetWord( 17 ));
+				}
 			}
 			doTele( mChar, targX, targY, targZ );
 		}

@@ -22,7 +22,7 @@
 
 CHandleCombat *Combat = nullptr;
 
-#define SWINGAT (UI32)1.75 * 1000
+#define SWINGAT static_cast<UI32>( 1.75 ) * 1000
 
 const UI08 BODYPERCENT = 0;
 //const UI08 ARMSPERCENT = 1;
@@ -34,39 +34,44 @@ const UI08 TOTALTARGETSPOTS = 6; // Wonder if that should be one?
 
 const UI08 LOCPERCENTAGES[TOTALTARGETSPOTS] = { 44, 14, 14, 14, 7, 7 };
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool StartAttack( CChar *cAttack, CChar *cTarget )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::StartAttack()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle characters initiating combat with other characters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 {
 	if( !ValidateObject( cAttack ) || !ValidateObject( cTarget ) || cAttack == cTarget )
 		return false;
+
 	if( cAttack->IsDead() || cTarget->IsDead() )
 		return false;
+
 	if( cAttack->GetTarg() == cTarget )
 		return false;
+
 	if( cTarget->GetVisible() > 2 )
 		return false;
-	if( !objInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+
+	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return false;
 
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
 		return false;
-	if( cAttack->GetNPCAiType() == AI_DUMMY ) // If passive, don't allow attack
+
+	if( cAttack->GetNpcAiType() == AI_DUMMY ) // If passive, don't allow attack
 		return false;
 
 	// If two NPCs try to fight, do some extra checks to make sure they're allowed to (ignore if both are pets)
 	if( cAttack->IsNpc() && cTarget->IsNpc() && ( cAttack->GetOwner() == INVALIDSERIAL && cTarget->GetOwner() == INVALIDSERIAL ))
 	{
 		// Are both the NPCs non-human?
-		if( !cwmWorldState->creatures[cAttack->GetID()].IsHuman() && !cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
+		if( !cwmWorldState->creatures[cAttack->GetId()].IsHuman() && !cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
 		{
-			if( cAttack->GetNPCAiType() == AI_ANIMAL && cTarget->GetNPCAiType() == AI_ANIMAL )
+			if( cAttack->GetNpcAiType() == AI_ANIMAL && cTarget->GetNpcAiType() == AI_ANIMAL )
 			{
 				// Don't allow combat if both attacker and target have AI_ANIMAL, same body type and belong to same race
-				if( cAttack->GetID() == cTarget->GetID() && cAttack->GetRace() == cTarget->GetRace() )
+				if( cAttack->GetId() == cTarget->GetId() && cAttack->GetRace() == cTarget->GetRace() )
 				{
 					return false;
 				}
@@ -86,12 +91,14 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	}
 
 	// Check if combat is allowed in attacker AND target's regions, but allow it if it's a guard
-	if( cAttack->GetNPCAiType() != AI_GUARD && ( cAttack->GetRegion()->IsSafeZone() || cTarget->GetRegion()->IsSafeZone() ))
+	if( cAttack->GetNpcAiType() != AI_GUARD && ( cAttack->GetRegion()->IsSafeZone() || cTarget->GetRegion()->IsSafeZone() ))
 	{
 		// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
 		CSocket *cSocket = cAttack->GetSocket();
 		if( cSocket )
-			cSocket->sysmessage( 1799 );
+		{
+			cSocket->SysMessage( 1799 ); // Hostile actions are not permitted in this safe area.
+		}
 		return false;
 	}
 
@@ -99,10 +106,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
-	cAttack->SetAttackFirst( ( cTarget->GetTarg() != cAttack ) );
-	if( !cTarget->IsInvulnerable() && (!ValidateObject( cTarget->GetTarg() ) || !objInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )) )	// Only invuln don't fight back
+	cAttack->SetAttackFirst(( cTarget->GetTarg() != cAttack ));
+	if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
 	{
-		if( cTarget->GetNPCAiType() != AI_DUMMY )
+		if( cTarget->GetNpcAiType() != AI_DUMMY )
 		{
 			cTarget->SetTarg( cAttack );
 			cTarget->SetAttacker( cAttack );
@@ -117,80 +124,102 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 		}
 	}
 
-	if( WillResultInCriminal( cAttack, cTarget ) ) //REPSYS
+	if( WillResultInCriminal( cAttack, cTarget )) //REPSYS
 	{
-		criminal( cAttack );
+		MakeCriminal( cAttack );
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
-		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
+		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
 		{
-			cTarget->TextMessage( nullptr, 335, TALK, true );
-			callGuards( cTarget, cAttack );
+			cTarget->TextMessage( nullptr, 335, TALK, true ); // Help! Guards! I've been attacked!
+			CallGuards( cTarget, cAttack );
 		}
 	}
 
 	if( cAttack->GetVisible() == VT_TEMPHIDDEN || cAttack->GetVisible() == VT_INVISIBLE )
+	{
 		cAttack->ExposeToView();
+	}
 
 	if( !cAttack->IsNpc() )
+	{
 		cAttack->BreakConcentration( cAttack->GetSocket() );
+	}
 	else
 	{
-		UI16 toPlay = cwmWorldState->creatures[cAttack->GetID()].GetSound( SND_STARTATTACK );
+		UI16 toPlay = cwmWorldState->creatures[cAttack->GetId()].GetSound( SND_STARTATTACK );
 		if( toPlay != 0x00 )
+		{
 			Effects->PlaySound( cAttack, toPlay );
+		}
 
 		// if the source is an npc, make sure they're in war mode and reset their movement time
 		if( !cAttack->IsAtWar() )
+		{
 			cAttack->ToggleCombat();
+		}
 		if( cAttack->GetMounted() )
-			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetMountedWalkingSpeed() ) );
+		{
+			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetMountedWalkingSpeed() ));
+		}
 		else
-			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetWalkingSpeed() ) );
+		{
+			cAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( cAttack->GetWalkingSpeed() ));
+		}
 	}
 
 	// Only unhide the defender, if they're going to return the attack (otherwise they're doing nothing!)
 	if( returningAttack )
 	{
 		if( cTarget->GetVisible() == VT_TEMPHIDDEN || cAttack->GetVisible() == VT_INVISIBLE )
+		{
 			cTarget->ExposeToView();
+		}
 
 		if( !cTarget->IsNpc() )
+		{
 			cTarget->BreakConcentration( cTarget->GetSocket() );
+		}
 
 		// if the target is an npc, and not a guard, make sure they're in war mode and update their movement time
 		// ONLY IF THEY'VE CHANGED ATTACKER
-		if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD )
+		if( cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD )
 		{
 			if( !cTarget->IsAtWar() )
+			{
 				cTarget->ToggleCombat();
+			}
 			if( cTarget->GetMounted() )
-				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetMountedWalkingSpeed() ) );
+			{
+				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetMountedWalkingSpeed() ));
+			}
 			else
-				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetWalkingSpeed() ) );
+			{
+				cTarget->SetTimer( tNPC_MOVETIME, BuildTimeValue( cTarget->GetWalkingSpeed() ));
+			}
 		}
 	}
 	return true;
 }
 
-void callGuards( CChar *mChar, CChar *targChar );
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayerAttack( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
+void CallGuards( CChar *mChar, CChar *targChar );
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayerAttack()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle player attacking (Double-clicking whilst in war mode)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlayerAttack( CSocket *s )
 {
 	if( s == nullptr )
 		return;
 
 	CChar *ourChar = s->CurrcharObj();
-	if( !ValidateObject( ourChar ) )
+	if( !ValidateObject( ourChar ))
 		return;
 
 	// Don't allow attacking other characters if invulnerable
 	if( ourChar->IsInvulnerable() )
 	{
-		s->sysmessage( 1973 ); // You cannot engage in combat while invulnerable!
+		s->SysMessage( 1973 ); // You cannot engage in combat while invulnerable!
 		return;
 	}
 
@@ -200,53 +229,55 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		ourChar->SetTarg( nullptr );
 		return;
 	}
-	CChar *i = calcCharObjFromSer( serial );
-	if( !ValidateObject( i ) )
+	CChar *i = CalcCharObjFromSer( serial );
+	if( !ValidateObject( i ))
 	{
 		ourChar->SetTarg( nullptr );
 		return;
 	}
 	if( ourChar->IsDead() )
 	{
-		if( i->IsNpc() )
+		if( i->IsNpc() ) // if target is an NPC
 		{
-			switch( i->GetNPCAiType() )
+			switch( i->GetNpcAiType() )
 			{
-				case AI_HEALER_G:	// Good Healer
-					if( !ourChar->IsCriminal() && !ourChar->IsMurderer() )
-					{ // Character is innocent
-						if( objInRange( i, ourChar, DIST_NEARBY ) )
+				case AI_HEALER_G: // Good Healer
+					if( ourChar->IsCriminal() || ourChar->IsMurderer() )
+					{
+						i->TextMessage( nullptr, 322, TALK, true ); // I will not give life to a scoundrel like thee!
+					}
+					else if( !ObjInRange( i, ourChar, DIST_NEARBY ))
+					{
+						i->TextMessage( nullptr, 321, TALK, true ); // Come nearer, ghost, and I'll give you life!
+					}
+					else
+					{
+						// Proceed with resurrection
+						CMultiObj *multiObj = ourChar->GetMultiObj();
+						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							CMultiObj *multiObj = ourChar->GetMultiObj();
-							if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
-								if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+								// Play Resurrect casting animation
+								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 								{
-									// Play Resurrect casting animation
-									if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
-									{
-										Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
-									}
-									else
-									{
-										UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
-										UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
-
-										// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
-										Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
-									}
-
-									NpcResurrectTarget( ourChar );
-									Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
-									i->TextMessage( nullptr, ( 316 + RandomNum( 0, 4 ) ), TALK, false );
+									Effects->PlayNewCharacterAnimation( i, N_ACT_SPELL, S_ACT_SPELL_TARGET ); // Action 0x0b, subAction 0x00
 								}
+								else
+								{
+									UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
+									UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+
+									// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
+									Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
+								}
+
+								NpcResurrectTarget( ourChar );
+								Effects->PlayStaticAnimation( ourChar, 0x376A, 0x09, 0x06 );
+								i->TextMessage( nullptr, ( 316 + RandomNum( 0, 4 )), TALK, false ); // Random resurrection speak from NPC healer
 							}
 						}
-						else
-							i->TextMessage( nullptr, 321, TALK, true );
 					}
-					else // Character is criminal or murderer
-						i->TextMessage( nullptr, 322, TALK, true );
 					break;
 				case AI_HEALER_E: // Evil Healer
 					if( !ourChar->IsMurderer() )
@@ -263,7 +294,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 						CMultiObj *multiObj = ourChar->GetMultiObj();
 						if( !ValidateObject( multiObj ) || multiObj->GetOwner() == ourChar->GetSerial() )
 						{
-							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+							if( LineOfSight( s, ourChar, i->GetX(), i->GetY(), ( i->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 							{
 								// Play Resurrect casting animation
 								if( i->GetBodyType() == BT_GARGOYLE	|| cwmWorldState->ServerData()->ForceNewAnimationPacket() )
@@ -287,12 +318,12 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					}
 					break;
 				default:
-					s->sysmessage( 330 );
+					s->SysMessage( 330 ); // You are dead and cannot do that.
 					break;
 			}
 			return;
-		} //if isNpc
-		else
+		}
+		else // if target is a player
 		{
 			if( cwmWorldState->ServerData()->PlayerPersecutionStatus() )
 			{
@@ -302,12 +333,12 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			}
 			else
 			{
-				s->sysmessage( 330 );
+				s->SysMessage( 330 ); // You are dead and cannot do that.
 				return;
 			}
-		}//if isNpc
-	}//if isDead
-	else if( ourChar->GetTarg() != i )
+		}
+	}
+	else if( ourChar->GetTarg() != i ) // if player is alive
 	{
 		std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
 		for( auto scriptTrig : scriptTriggers )
@@ -325,9 +356,9 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			}
 		}
 
-		if( !ourChar->GetCanAttack() ) //Is our char allowed to attack
+		if( !ourChar->GetCanAttack() ) // Is our char allowed to attack
 		{
-			s->sysmessage( 1778 );
+			s->SysMessage( 1778 ); // You are currently under the effect of peace and can not attack!
 			return;
 		}
 
@@ -335,64 +366,70 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		if( ourChar->GetRegion()->IsSafeZone() || i->GetRegion()->IsSafeZone() )
 		{
 			// Either attacker or target is in a safe zone where all aggressive actions are forbidden, disallow
-			s->sysmessage( 1799 );
+			s->SysMessage( 1799 ); // You are no longer affected by peace!
 			return;
 		}
 
 		ourChar->SetTarg( i );
 		if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+		{
 			ourChar->ExposeToView();
+		}
 		if( i->IsDead() || i->GetHP() <= 0 )
 		{
-			s->sysmessage( 331 );
+			s->SysMessage( 331 ); // That person is already dead!
 			return;
 		}
-		if( i->GetNPCAiType() == AI_PLAYERVENDOR ) // PlayerVendors
+		if( i->GetNpcAiType() == AI_PLAYERVENDOR ) // PlayerVendors
 		{
-			s->sysmessage( 332, i->GetName().c_str() );
+			s->SysMessage( 332, i->GetName().c_str() ); // %s cannot be harmed.
 			return;
 		}
 		if( i->IsInvulnerable() )
 		{
-			s->sysmessage( 333 );
+			s->SysMessage( 333 ); // You cannot fight the invincible.
 			return;
 		}
 		if( i->IsEvading() )
 		{
-			s->sysmessage( 1792 );
+			s->SysMessage( 1792 ); // The targeted NPC is in a state of evasion and cannot be attacked.
 			return;
 		}
 
 		// Deal with players attacking NPCs they're escorting!
 		if( i->IsNpc() && i->GetQuestType() == 0xFF && i->GetOwnerObj() == ourChar )
 		{
-			i->SetNpcWander( WT_FREE );   // Wander freely
-			i->SetFTarg( nullptr );			 // Reset follow target
-			i->SetQuestType( 0 );         // Reset quest type
-			i->SetQuestDestRegion( 0 );   // Reset quest destination region
+			i->SetNpcWander( WT_FREE );		// Wander freely
+			i->SetFTarg( nullptr );			// Reset follow target
+			i->SetQuestType( 0 );			// Reset quest type
+			i->SetQuestDestRegion( 0 );		// Reset quest destination region
 			// Set a timer to automatically delete the NPC
-			i->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
+			i->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
 			i->SetOwner( nullptr );
-			i->TextMessage( nullptr, 1797, TALK, false ); // Send out the rant about being abandoned
+			i->TextMessage( nullptr, 1797, TALK, false ); // Woe is me! My escort has betrayed me!
 		}
 
-		//flag them FIRST so that anything attacking them as a result of this is not flagged.
-		if( WillResultInCriminal( ourChar, i ) ) //REPSYS
+		// flag them FIRST so that anything attacking them as a result of this is not flagged.
+		if( WillResultInCriminal( ourChar, i )) // REPSYS
 		{
-			criminal( ourChar );
+			MakeCriminal( ourChar );
 			bool regionGuarded = ( i->GetRegion()->IsGuarded() );
-			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[i->GetID()].IsHuman() )
+			if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded && i->IsNpc() && i->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[i->GetId()].IsHuman() )
 			{
-				i->TextMessage( nullptr, 335, TALK, true );
-				callGuards( i, ourChar );
+				i->TextMessage( nullptr, 335, TALK, true ); // Help! Guards! I've been attacked!
+				CallGuards( i, ourChar );
 			}
 		}
 
+		// If target is guarded by a pet, cause pet to attack player
 		if( i->IsGuarded() )
-			petGuardAttack( ourChar, i, i );
+		{
+			PetGuardAttack( ourChar, i, i );
+		}
 
 		// Send attacker message to all nearby players
-		for (auto &tSock : FindNearbyPlayers( ourChar )){
+		for( auto &tSock : FindNearbyPlayers( ourChar ))
+		{
 			if( tSock )
 			{
 				// Valid socket found
@@ -400,30 +437,31 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = getNpcDictName( ourChar, tSock );
-					std::string targetName = getNpcDictName( i, tSock );
+					std::string attackerName = GetNpcDictName( ourChar, tSock );
+					std::string targetName = GetNpcDictName( i, tSock );
 
-					// Send a TextMessage visible only to the witness
-					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+					// Send an emote about attacking target to nearby witness
+					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
 				}
 			}
 		}
 
 		if( !i->IsNpc() )
 		{
+			// Send a message about being attacked to the target, if they're a player
 			CSocket *iSock = i->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = getNpcDictName( ourChar, iSock );
-				i->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // "Attacker is attacking you!" sent to target socket only
+				std::string attackerName = GetNpcDictName( ourChar, iSock );
+				i->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
 
-		// keep the target highlighted
+		// Keep the target highlighted
 		CPAttackOK toSend = (*i);
 		s->Send( &toSend );
 
-		if( i->GetNPCAiType() != AI_GUARD && !ValidateObject( i->GetTarg() ) )
+		if( i->GetNpcAiType() != AI_GUARD && !ValidateObject( i->GetTarg() ))
 		{
 			i->SetAttacker( ourChar );
 			i->SetAttackFirst( false );
@@ -434,11 +472,11 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void AttackTarget( CChar *cAttack, CChar *cTarget )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::AttackTarget()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle the attacking action in combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 {
 	// Check if OnCombatStart event exists, necessary here to make event run for NPCs attacking
@@ -461,28 +499,29 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 	if( !cAttack->GetCanAttack() || cAttack->IsEvading() ) // Is the char allowed to attack?
 		return;
 
-	if( !StartAttack( cAttack, cTarget ) )
+	if( !StartAttack( cAttack, cTarget )) // Is the char allowed to initiate combat with the target?
 		return;
 
-	// If the target is an innocent, not a racial or guild ally/enemy, then flag them as criminal
+	// If the target is an innocent, not a racial or guild ally/enemy, then flag attacker as criminal
 	// and, of course, call the guards ;>
-	if( WillResultInCriminal( cAttack, cTarget ) )
+	if( WillResultInCriminal( cAttack, cTarget ))
 	{
-		criminal( cAttack );
+		MakeCriminal( cAttack );
 		bool regionGuarded = ( cTarget->GetRegion()->IsGuarded() );
 		if( cwmWorldState->ServerData()->GuardsStatus() && regionGuarded )
 		{
-			if( cTarget->IsNpc() && cTarget->GetNPCAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetID()].IsHuman() )
+			if( cTarget->IsNpc() && cTarget->GetNpcAiType() != AI_GUARD && cwmWorldState->creatures[cTarget->GetId()].IsHuman() )
 			{
-				cTarget->TextMessage( nullptr, 1282, TALK, true );
-				callGuards( cTarget, cAttack );
+				cTarget->TextMessage( nullptr, 1282, TALK, true ); // Help! Guards! I've been attacked!
+				CallGuards( cTarget, cAttack );
 			}
 		}
 	}
 	if( cAttack->DidAttackFirst() )
 	{
 		// Send attacker message to all nearby players
-		for (auto &tSock : FindNearbyPlayers( cAttack )) {
+		for( auto &tSock : FindNearbyPlayers( cAttack ))
+		{
 			if( tSock )
 			{
 				// Valid socket found
@@ -490,11 +529,11 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = getNpcDictName( cAttack, tSock );
-					std::string targetName = getNpcDictName( cTarget, tSock );
+					std::string attackerName = GetNpcDictName( cAttack, tSock );
+					std::string targetName = GetNpcDictName( cTarget, tSock );
 
-					// Send a TextMessage visible only to the witness
-					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // Attacker emotes "You see attacker attacking target" to all nearby
+					// Send an emote about attacking target to nearby witness
+					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
 				}
 			}
 		}
@@ -504,44 +543,46 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = getNpcDictName( cAttack, iSock );
-				cTarget->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() );	// Target should get an emote only to his socket "Target is attacking you!"
+				std::string attackerName = GetNpcDictName( cAttack, iSock );
+				cTarget->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem * getWeapon( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetWeapon()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find what weapon (if any) character is holding
-//o-----------------------------------------------------------------------------------------------o
-CItem * CHandleCombat::getWeapon( CChar *i )
+//o------------------------------------------------------------------------------------------------o
+CItem * CHandleCombat::GetWeapon( CChar *i )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( i ))
 		return nullptr;
 
 	CItem *j = i->GetItemAtLayer( IL_RIGHTHAND );
-	if( ValidateObject( j ) )
+	if( ValidateObject( j ))
 	{
 		if( j->GetType() == IT_SPELLBOOK )	// spell books aren't weapons
 			return nullptr;
+
 		return j;
 	}
 	j = i->GetItemAtLayer( IL_LEFTHAND );
 	if( ValidateObject( j ) && !j->IsShieldType() )
 		return j;
+
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem * getShield( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetShield()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check players hands for a shield
-//o-----------------------------------------------------------------------------------------------o
-CItem * CHandleCombat::getShield( CChar *i )
+//o------------------------------------------------------------------------------------------------o
+CItem * CHandleCombat::GetShield( CChar *i )
 {
-	if( ValidateObject( i ) )
+	if( ValidateObject( i ))
 	{
 		CItem *shield = i->GetItemAtLayer( IL_LEFTHAND );
 		if( ValidateObject( shield ) && shield->IsShieldType() )
@@ -550,19 +591,19 @@ CItem * CHandleCombat::getShield( CChar *i )
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 getWeaponType( CItem *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetWeaponType()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find what weapon type a character is holding (based on its ID)
-//o-----------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::getWeaponType( CItem *i )
+//o------------------------------------------------------------------------------------------------o
+UI08 CHandleCombat::GetWeaponType( CItem *i )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( i ))
 		return WRESTLING;
 
-	switch( i->GetID() )
+	switch( i->GetId() )
 	{
-			// Slashing Swords
+		// Slashing Swords
 		case 0x0EC4: //skinning knife
 		case 0x0EC5: //skinning knife
 		case 0x0F60: //longsword
@@ -585,7 +626,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x48C6: //gargish bone harvester - SA
 		case 0x48C7: //gargish bone harvester - SA
 			return DEF_SWORDS;
-			// Default Swords
+		// Default Swords
 		case 0x13F6: //butcher knife
 		case 0x13F7: //butcher knife
 		case 0x13FE: //katana
@@ -607,7 +648,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0xA28B: //bladed whip - ToL
 		case 0xA293: //bladed whip - ToL
 			return SLASH_SWORDS;
-			// One-Handed Lg. Swords
+		// One-Handed Lg. Swords
 		case 0x0F5E: //broadsword
 		case 0x0F5F: //broadsword
 		case 0x257D: //longsword - LBR
@@ -631,7 +672,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0xA345: //gargoyle skull sword south
 		case 0xA346: //gargoyle skull sword east
 			return ONEHND_LG_SWORDS;
-			// Two-Handed Lg. Swords
+		// Two-Handed Lg. Swords
 		case 0x143E: //halberd
 		case 0x143F: //halberd
 		case 0x26BD: //bladed staff - AoS
@@ -648,7 +689,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x0908: //gargish talwar - SA
 		case 0x4075: //gargish talwar - SA
 			return TWOHND_LG_SWORDS;
-			// Bardiche
+		// Bardiche
 		case 0x0F4D: //bardiche
 		case 0x0F4E: //bardiche
 		case 0x26BA: //scythe - AoS
@@ -660,7 +701,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x48C4: //gargish scythe - SA
 		case 0x48C5: //gargish scythe - SA
 			return BARDICHE;
-			// One-Handed Axes
+		// One-Handed Axes
 		case 0x0EC2: //cleaver
 		case 0x0EC3: //cleaver
 		case 0x0E85: //pickaxe
@@ -670,7 +711,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x48AE: //gargish cleaver
 		case 0x48AF: //gargish cleaver
 			return ONEHND_AXES;
-			// Two-Handed Axes
+		// Two-Handed Axes
 		case 0x13FA: //large battle axe
 		case 0x13FB: //large battle axe
 		case 0x1442: //two handed axe
@@ -696,7 +737,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x48B2: //gargish axe - SA
 		case 0x48B3: //gargish axe - SA
 			return TWOHND_AXES;
-			// Default Maces
+		// Default Maces
 		case 0x13E3: //smith's hammer
 		case 0x13E4: //smith's hammer
 		case 0x13B3: //club
@@ -730,7 +771,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0xA289: //barbed whip - ToL
 		case 0xA291: //barbed whip - ToL
 			return DEF_MACES;
-			// Large Maces
+		// Large Maces
 		case 0x13F4: //crook
 		case 0x13F5: //crook
 		case 0x13F8: //gnarled staff
@@ -775,7 +816,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0xA347: //gargoyle skull staff south
 		case 0xA348: //gargoyle skull staff east
 			return LG_MACES;
-			// Bows
+		// Bows
 		case 0x13B1: //bow
 		case 0x13B2: //bow
 		case 0x26C2: //composite bow - AoS
@@ -788,7 +829,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x2D1F: //magical shortbow - ML
 		case 0x2D2B: //magical shortbow - ML
 			return BOWS;
-			// Crossbows
+		// Crossbows
 		case 0x0F4F: //crossbow
 		case 0x0F50: //crossbow
 		case 0x13FC: //heavy crossbow
@@ -799,7 +840,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0x27AA: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 		case 0x27F5: //fukiya - SE - Blowgun, uses Dart ammo (0x2806 or 0x2804)
 			return BLOWGUNS;
-			// Normal Fencing Weapons
+		// Normal Fencing Weapons
 		case 0x0F51: //dagger
 		case 0x0F52: //dagger
 		case 0x1400: //kryss
@@ -826,7 +867,7 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 		case 0xA28A: //spiked whip - ToL
 		case 0xA292: //spiked whip - ToL
 			return DEF_FENCING;
-			// Stabbing Fencing Weapons
+		// Stabbing Fencing Weapons
 		case 0x0E87: //pitchfork
 		case 0x0E88: //pitchfork
 		case 0x0F62: //spear
@@ -880,17 +921,17 @@ UI08 CHandleCombat::getWeaponType( CItem *i )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 getBowType( CItem *bItem )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetBowType()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Find if character is holding a Bow or XBow
-//o-----------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::getBowType( CItem *bItem )
+//o------------------------------------------------------------------------------------------------o
+UI08 CHandleCombat::GetBowType( CItem *bItem )
 {
-	if( !ValidateObject( bItem ) )
+	if( !ValidateObject( bItem ))
 		return 0;
 
-	switch( getWeaponType( bItem ) )
+	switch( GetWeaponType( bItem ))
 	{
 		case BOWS:
 			return BOWS;
@@ -903,17 +944,17 @@ UI08 CHandleCombat::getBowType( CItem *bItem )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 getCombatSkill( CItem *wItem )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetCombatSkill()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets your combat skill based on the weapon in your hand (if any)
-//o-----------------------------------------------------------------------------------------------o
-UI08 CHandleCombat::getCombatSkill( CItem *wItem )
+//o------------------------------------------------------------------------------------------------o
+UI08 CHandleCombat::GetCombatSkill( CItem *wItem )
 {
-	if( !ValidateObject( wItem ) )
+	if( !ValidateObject( wItem ))
 		return WRESTLING;
 
-	switch( getWeaponType( wItem ) )
+	switch( GetWeaponType( wItem ))
 	{
 		case DEF_SWORDS:
 		case SLASH_SWORDS:
@@ -944,28 +985,30 @@ UI08 CHandleCombat::getCombatSkill( CItem *wItem )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 calcAtt( CChar *p, bool doDamage  )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalcAttackPower()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate total attack power and do damage to the weapon
-//o-----------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
+//o------------------------------------------------------------------------------------------------o
+SI16 CHandleCombat::CalcAttackPower( CChar *p, bool doDamage )
 {
-	if( !ValidateObject( p ) )
+	if( !ValidateObject( p ))
 		return 0;
 
 	SI16 getDamage = 0;
 
-	CItem *weapon = getWeapon( p );
-	if( ValidateObject( weapon ) )
+	CItem *weapon = GetWeapon( p );
+	if( ValidateObject( weapon ))
 	{
 		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
 		{
 			// Calculate random damage dealt by weapon based on lo/hi damage from dfns
-			if( weapon->GetLoDamage() >= weapon->GetHiDamage() ) {
+			if( weapon->GetLoDamage() >= weapon->GetHiDamage() )
+			{
 				getDamage += weapon->GetLoDamage();
 			}
-			else {
+			else
+			{
 				getDamage += RandomNum( weapon->GetLoDamage(), weapon->GetHiDamage() );
 			}
 
@@ -980,9 +1023,8 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 				weaponDamageMin = cwmWorldState->ServerData()->CombatWeaponDamageMin();
 				weaponDamageMax = cwmWorldState->ServerData()->CombatWeaponDamageMax();
 
-				weaponDamage -= static_cast<std::uint8_t>( RandomNum( static_cast<std::uint16_t>(weaponDamageMin), static_cast<std::uint16_t>(weaponDamageMax) ));
+				weaponDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( weaponDamageMin ), static_cast<UI16>( weaponDamageMax )));
 				weapon->IncHP( weaponDamage );
-
 
 				// If weapon hp has reached 0, destroy it
 				if( weapon->GetHP() <= 0 )
@@ -991,8 +1033,8 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 					if( mSock != nullptr )
 					{
 						std::string name;
-						getTileName( (*weapon), name );
-						mSock->sysmessage( 311, name.c_str() ); // Your %s has been destroyed.
+						GetTileName(( *weapon ), name );
+						mSock->SysMessage( 311, name.c_str() ); // Your %s has been destroyed.
 					}
 					weapon->Delete();
 				}
@@ -1001,114 +1043,147 @@ SI16 CHandleCombat::calcAtt( CChar *p, bool doDamage )
 	}
 	else if( p->IsNpc() )
 	{
-		if( p->GetLoDamage() >= p->GetHiDamage() ){
+		if( p->GetLoDamage() >= p->GetHiDamage() )
+		{
 			getDamage = p->GetLoDamage();
 		}
-		else if( p->GetHiDamage() > 2 ){
+		else if( p->GetHiDamage() > 2 )
+		{
 			getDamage = RandomNum( p->GetLoDamage(), p->GetHiDamage() );
 		}
 	}
 	else
 	{
 		UI16 getWrestSkill = ( p->GetSkill( WRESTLING ) / 65 );
-		if( getWrestSkill > 0 ) {
+		if( getWrestSkill > 0 )
+		{
 			getDamage = HalfRandomNum( getWrestSkill );
 		}
-		else{
+		else
+		{
 			getDamage = RandomNum( 1, 2 );
 		}
 	}
 	if( getDamage < 1 )
+	{
 		getDamage = 1;
+	}
 	return getDamage;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 calcLowDamage( CChar *p )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalcLowDamage()
 //|	Date		-	11. Mar, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate low damage value of the char
-//o-----------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::calcLowDamage( CChar *p )
+//o------------------------------------------------------------------------------------------------o
+SI16 CHandleCombat::CalcLowDamage( CChar *p )
 {
-	if( !ValidateObject( p ) )
+	if( !ValidateObject( p ))
 		return 0;
 
 	SI16 getDamage = 0;
 
-	CItem *weapon = getWeapon( p );
-	if( ValidateObject( weapon ) )
+	CItem *weapon = GetWeapon( p );
+	if( ValidateObject( weapon ))
 	{
 		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
 		{
 			if( weapon->GetLoDamage() >= weapon->GetHiDamage() )
+			{
 				getDamage = weapon->GetHiDamage();
+			}
 			else
+			{
 				getDamage = weapon->GetLoDamage();
+			}
 		}
 	}
 	else if( p->IsNpc() )
 	{
 		if( p->GetLoDamage() >= p->GetHiDamage() )
+		{
 			getDamage = p->GetHiDamage();
+		}
 		else if( p->GetHiDamage() > 2 )
+		{
 			getDamage = p->GetLoDamage();
+		}
 	}
 	else
 	{
 		UI16 getWrestSkill = ( p->GetSkill( WRESTLING ) / 65 );
 		if( getWrestSkill > 0 )
-			getDamage = ( getWrestSkill / 2);
+		{
+			getDamage = ( getWrestSkill / 2 );
+		}
 		else
+		{
 			getDamage = 1;
+		}
 	}
 	if( getDamage < 1 )
+	{
 		getDamage = 1;
+	}
 	return getDamage;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 calcHighDamage( CChar *p )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalcHighDamage()
 //|	Date		-	11. Mar, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate high damage value of the char
-//o-----------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::calcHighDamage( CChar *p )
+//o------------------------------------------------------------------------------------------------o
+SI16 CHandleCombat::CalcHighDamage( CChar *p )
 {
-	if( !ValidateObject( p ) )
+	if( !ValidateObject( p ))
 		return 0;
 
 	SI16 getDamage = 0;
 
-	CItem *weapon = getWeapon( p );
-	if( ValidateObject( weapon ) )
+	CItem *weapon = GetWeapon( p );
+	if( ValidateObject( weapon ))
 	{
 		if( weapon->GetLoDamage() > 0 && weapon->GetHiDamage() > 0 )
 		{
 			if( weapon->GetLoDamage() >= weapon->GetHiDamage() )
+			{
 				getDamage = weapon->GetLoDamage();
+			}
 			else
+			{
 				getDamage = weapon->GetHiDamage();
-
+			}
 		}
 	}
 	else if( p->IsNpc() )
 	{
 		if( p->GetLoDamage() >= p->GetHiDamage() )
+		{
 			getDamage = p->GetLoDamage();
+		}
 		else if( p->GetHiDamage() > 2 )
+		{
 			getDamage = p->GetHiDamage();
+		}
 	}
 	else
 	{
 		UI16 getWrestSkill = ( p->GetSkill( WRESTLING ) / 65 );
 		if( getWrestSkill > 0 )
+		{
 			getDamage = getWrestSkill;
+		}
 		else
+		{
 			getDamage = 2;
+		}
 	}
 	if( getDamage < 1 )
+	{
 		getDamage = 1;
+	}
 	return getDamage;
 }
 
@@ -1137,9 +1212,9 @@ SI16 CHandleCombat::calcHighDamage( CChar *p )
 			Hands (hitLoc 6):	AR / 14.5
 
 		Functions:
-			checkDef( CItem *checkItem, CItem& currItem, SI32 &currDef )
-			getArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
-			calcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
+			CheckDef( CItem *checkItem, CItem& currItem, SI32 &currDef )
+			GetArmorDef( CChar *mChar, CItem& defItem, UI08 bodyLoc, bool findTotal )
+			CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage )
 
 	All information on armor defence values, divisors, and combat calculations gleaned from uo.stratics.com
 	http://uo.stratics.com/content/arms-armor/armor.shtml
@@ -1148,14 +1223,14 @@ SI16 CHandleCombat::calcHighDamage( CChar *p )
 	http://uo.stratics.com/content/aos/combatchanges.shtml
 */
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem *checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CheckDef()
 //|	Date		-	3/03/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks the defense of checkItem vs the defense of currItem and returns
 //|							the item with the greater Def and its def value
-//o-----------------------------------------------------------------------------------------------o
-CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+CItem *CHandleCombat::CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType )
 {
 	if( ValidateObject( checkItem ) && checkItem->GetResist( resistType ) > currDef )
 	{
@@ -1165,25 +1240,25 @@ CItem *CHandleCombat::checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef
 	return currItem;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CItem * getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetArmorDef()
 //|	Date		-	3/03/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the item covering the location bodyLoc with the greatest AR and
 //|							returns it along with its def value
-//o-----------------------------------------------------------------------------------------------o
-CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+CItem * CHandleCombat::GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal, WeatherType resistType )
 {
 	SI32 armorDef = 0;
 	CItem *currItem = nullptr;
 	switch( bodyLoc )
 	{
 		case 1:		// Torso
-			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType );	// Shirt
-			currItem = checkDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType );	// Torso (Inner - Chest Armor)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType );	// Torso (Middle - Tunic, etc)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );	// Back (Cloak)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );	// Torso (Outer - Robe)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERSHIRT ), currItem, armorDef, resistType );	// Shirt
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_TUNIC ), currItem, armorDef, resistType );		// Torso (Inner - Chest Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERSHIRT ), currItem, armorDef, resistType );	// Torso (Middle - Tunic, etc)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_CLOAK ), currItem, armorDef, resistType );		// Back (Cloak)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ROBE ), currItem, armorDef, resistType );		// Torso (Outer - Robe)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1193,7 +1268,7 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 2:		// Arms
-			currItem = checkDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_ARMS ), currItem, armorDef, resistType );	// Arms
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1203,7 +1278,7 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 3:		// Head
-			currItem = checkDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_HELM ), currItem, armorDef, resistType );	// Head
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1213,11 +1288,11 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 4:		// Legs
-			currItem = checkDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
-			currItem = checkDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType );	// Pants
-			currItem = checkDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType );	// Waist (Half Apron)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
-			currItem = checkDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_FOOTWEAR ), currItem, armorDef, resistType );	// Shoes
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_PANTS ), currItem, armorDef, resistType );	// Pants
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_WAIST ), currItem, armorDef, resistType );	// Waist (Half Apron)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_OUTERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Outer - Skirt, Kilt)
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_INNERLEGGINGS ), currItem, armorDef, resistType );	// Legs (Inner - Leg Armor)
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1227,7 +1302,7 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 5:		// Neck
-			currItem = checkDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_NECK ), currItem, armorDef, resistType );	// Neck
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1237,7 +1312,7 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 			}
 			break;
 		case 6:		// Hands
-			currItem = checkDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
+			currItem = CheckDef( mChar->GetItemAtLayer( IL_GLOVES ), currItem, armorDef, resistType );	// Gloves
 			if( findTotal )
 			{
 				if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1249,6 +1324,7 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 		default:
 			break;
 	}
+
 	if( findTotal )
 	{
 		totalDef += armorDef;
@@ -1261,36 +1337,36 @@ CItem * CHandleCombat::getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, 
 	return currItem;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalcDef()
 //|	Date		-	3/03/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the defense value of a specific location or the entire character based on hitLoc
-//o-----------------------------------------------------------------------------------------------o
-UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
+//o------------------------------------------------------------------------------------------------o
+UI16 CHandleCombat::CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherType resistType )
 {
-	if( !ValidateObject( mChar ) )
+	if( !ValidateObject( mChar ))
 		return 0;
 
 	SI32 total = mChar->GetResist( resistType );
 
-	if( !mChar->IsNpc() || cwmWorldState->creatures[mChar->GetID()].IsHuman() ) // Polymorphed Characters and GM's can still wear armor
+	if( !mChar->IsNpc() || cwmWorldState->creatures[mChar->GetId()].IsHuman() ) // Polymorphed Characters and GM's can still wear armor
 	{
 		CItem *defendItem = nullptr;
 		if( hitLoc == 0 )
 		{
 			for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 			{
-				getArmorDef( mChar, total, getLoc, true, resistType );
+				GetArmorDef( mChar, total, getLoc, true, resistType );
 			}
 			if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
 			{
-				total = (total / 100);
+				total = ( total / 100 );
 			}
 		}
 		else
 		{
-			defendItem = getArmorDef( mChar, total, hitLoc, false, resistType );
+			defendItem = GetArmorDef( mChar, total, hitLoc, false, resistType );
 		}
 
 		// Deal damage to armor on hit, if enabled
@@ -1303,7 +1379,7 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 			armorDamageMin = cwmWorldState->ServerData()->CombatArmorDamageMin();
 			armorDamageMax = cwmWorldState->ServerData()->CombatArmorDamageMax();
 
-			armorDamage -= static_cast<std::uint8_t>(RandomNum( static_cast<std::uint16_t>(armorDamageMin), static_cast<std::uint16_t>(armorDamageMax )));
+			armorDamage -= static_cast<UI08>( RandomNum( static_cast<UI16>( armorDamageMin ), static_cast<UI16>( armorDamageMax )));
 			defendItem->IncHP( armorDamage );
 
 			if( defendItem->GetHP() <= 0 )
@@ -1312,8 +1388,8 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 				if( mSock != nullptr )
 				{
 					std::string name;
-					getTileName( (*defendItem), name );
-					mSock->sysmessage( 311, name.c_str() );
+					GetTileName(( *defendItem ), name );
+					mSock->SysMessage( 311, name.c_str() ); // Your %s has been destroyed.
 				}
 				defendItem->Delete();
 			}
@@ -1322,26 +1398,26 @@ UI16 CHandleCombat::calcDef( CChar *mChar, UI08 hitLoc, bool doDamage, WeatherTy
 
 	//if( total < 2 && hitLoc != 0 )
 	//	total = 2;
-	return (UI16)total;
+	return static_cast<UI16>( total );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CombatAnimsNew( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CombatAnimsNew()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for characters (including gargoyles) in clients v7.0.0.0+
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatAnimsNew( CChar *i )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( i ))
 		return;
 
 	UI16 animToPlay		= N_ACT_ATT;		// 0x00
 	UI16 subAnimToPlay	= S_ACT_WRESTLE;	// 0x00
-	CItem *j		= getWeapon( i );
+	CItem *j			= GetWeapon( i );
 
 	if( i->IsFlying() || i->IsOnHorse() )
 	{
-		switch( getWeaponType( j ) )
+		switch( GetWeaponType( j ))
 		{
 			case BOWS:
 			case XBOWS:
@@ -1367,7 +1443,7 @@ void CHandleCombat::CombatAnimsNew( CChar *i )
 	}
 	else
 	{
-		switch( getWeaponType( j ) )
+		switch( GetWeaponType( j ))
 		{
 			case BOWS:				subAnimToPlay = S_ACT_BOW;	break; // 0x01
 			case XBOWS:
@@ -1376,7 +1452,7 @@ void CHandleCombat::CombatAnimsNew( CChar *i )
 			case DEF_SWORDS:
 			case SLASH_SWORDS:
 			case ONEHND_LG_SWORDS:
-				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? (RandomNum( 0, 3 ) > 2 ? S_ACT_1H_PIERCE : S_ACT_1H_BASH ) : S_ACT_1H_SLASH ); // 0x05, 0x03 and 0x04
+				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? ( RandomNum( 0, 3 ) > 2 ? S_ACT_1H_PIERCE : S_ACT_1H_BASH ) : S_ACT_1H_SLASH ); // 0x05, 0x03 and 0x04
 				break;
 			case ONEHND_AXES:
 			case DEF_MACES:			subAnimToPlay = ( RandomNum( 0, 3 ) > 2 ? S_ACT_1H_SLASH : S_ACT_1H_BASH ); break; // 0x04 and 0x03
@@ -1387,7 +1463,7 @@ void CHandleCombat::CombatAnimsNew( CChar *i )
 			case DUAL_SWORD:
 			case DUAL_FENCING_SLASH:
 			case BARDICHE:
-				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? (RandomNum( 0, 3 ) > 2 ? S_ACT_2H_PIERCE : S_ACT_2H_BASH ) : S_ACT_2H_SLASH ); // 0x08, 0x06 and 0x07
+				subAnimToPlay = ( RandomNum( 0, 2 ) > 1 ? ( RandomNum( 0, 3 ) > 2 ? S_ACT_2H_PIERCE : S_ACT_2H_BASH ) : S_ACT_2H_SLASH ); // 0x08, 0x06 and 0x07
 				break;
 			case TWOHND_AXES:
 			case LG_MACES:			subAnimToPlay = ( RandomNum( 0, 3 ) > 2 ? S_ACT_2H_BASH : S_ACT_2H_SLASH ); break; // 0x06 and 0x07
@@ -1398,22 +1474,22 @@ void CHandleCombat::CombatAnimsNew( CChar *i )
 	Effects->PlayNewCharacterAnimation( i, animToPlay, subAnimToPlay );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CombatOnHorse( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CombatOnHorse()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for mounted characters in clients v6.x and below
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnHorse( CChar *i )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( i ))
 		return;
 
 	UI16 animToPlay = ACT_MOUNT_ATT_1H; // 0x1A;
-	CItem *j		= getWeapon( i );
+	CItem *j		= GetWeapon( i );
 	UI08 frameCount = 5;
 
 	// Normal mounted characters
-	switch( getWeaponType( j ) )
+	switch( GetWeaponType( j ))
 	{
 		case BOWS:				animToPlay = ACT_MOUNT_ATT_BOW;		break; // 0x1B
 		case XBOWS:
@@ -1442,19 +1518,19 @@ void CHandleCombat::CombatOnHorse( CChar *i )
 	Effects->PlayCharacterAnimation( i, animToPlay, 0, frameCount );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CombatOnFoot( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CombatOnFoot()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play combat animations for characters on foot in clients v6.x and below
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatOnFoot( CChar *i )
 {
-	if( !ValidateObject( i ) )
+	if( !ValidateObject( i ))
 		return;
 
 	UI16 animToPlay	= 0x00;
-	CItem *j		= getWeapon( i );
-	switch( getWeaponType( j ) )
+	CItem *j		= GetWeapon( i );
+	switch( GetWeaponType( j ))
 	{
 		case BOWS:				animToPlay = ACT_ATT_BOW;		break; // 0x12
 		case XBOWS:
@@ -1464,18 +1540,18 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 		case ONEHND_LG_SWORDS:
 		case DUAL_SWORD:
 		case DUAL_FENCING_SLASH:
-		case ONEHND_AXES:		animToPlay = (RandomNum( 0, 2 ) < 1 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_PIERCE );	break; // 0x09 and 0x0A
-		case DEF_MACES:			animToPlay = (RandomNum( 0, 2 ) < 2 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_BASH );		break; // 0x09 and 0x0B
+		case ONEHND_AXES:		animToPlay = ( RandomNum( 0, 2 ) < 1 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_PIERCE );	break; // 0x09 and 0x0A
+		case DEF_MACES:			animToPlay = ( RandomNum( 0, 2 ) < 2 ? ACT_ATT_1H_SLASH : ACT_ATT_1H_BASH );		break; // 0x09 and 0x0B
 		case LG_MACES:
 		case TWOHND_LG_SWORDS:
 		case BARDICHE:
-		case TWOHND_AXES:		animToPlay = (RandomNum( 0, 1 ) ? ACT_ATT_2H_BASH : ACT_ATT_2H_SLASH );	break; // 0x0C and 0x0D
+		case TWOHND_AXES:		animToPlay = ( RandomNum( 0, 1 ) ? ACT_ATT_2H_BASH : ACT_ATT_2H_SLASH );	break; // 0x0C and 0x0D
 		case DUAL_FENCING_STAB:
 		case DEF_FENCING:		animToPlay = ACT_ATT_1H_PIERCE;	break; // 0x0A
 		case TWOHND_FENCING:	animToPlay = ACT_ATT_2H_PIERCE;	break; // 0x0E
 		case WRESTLING:
 		default:
-			switch( RandomNum( 0, 2 ) )
+			switch( RandomNum( 0, 2 ))
 			{
 				case 0:		animToPlay = ACT_ATT_1H_BASH;		break; // 0x0B
 				case 1:		animToPlay = ACT_ATT_1H_SLASH;		break; // 0x09
@@ -1486,15 +1562,15 @@ void CHandleCombat::CombatOnFoot( CChar *i )
 	Effects->PlayCharacterAnimation( i, animToPlay, 0, 7 );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlaySwingAnimations( CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlaySwingAnimations()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the attack/swing-animation for specified character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 {
-	UI16 charID = mChar->GetID();
-	if( !cwmWorldState->creatures[charID].IsHuman() )
+	UI16 charId = mChar->GetId();
+	if( !cwmWorldState->creatures[charId].IsHuman() )
 	{
 		UI08 attackAnim = 0;
 		UI08 attackAnimLength = 0;
@@ -1573,7 +1649,7 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 		// Play attack sound effect
 		if( RandomNum( 0, 4 )) // 20% chance of playing SFX when attacking
 		{
-			UI16 toPlay = cwmWorldState->creatures[charID].GetSound( SND_ATTACK );
+			UI16 toPlay = cwmWorldState->creatures[charId].GetSound( SND_ATTACK );
 			if( toPlay != 0x00 )
 			{
 				Effects->PlaySound( mChar, toPlay );
@@ -1594,25 +1670,25 @@ void CHandleCombat::PlaySwingAnimations( CChar *mChar )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayMissedSoundEffect( CChar *p )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayMissedSoundEffect()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the "Missed" Sound Effect
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlayMissedSoundEffect( CChar *p )
 {
-	CItem *weapon = getWeapon( p );
+	CItem *weapon = GetWeapon( p );
 
-	if( !ValidateObject( p ) )
+	if( !ValidateObject( p ))
 		return;
 
-	switch( getWeaponType( weapon ) )
+	switch( GetWeaponType( weapon ))
 	{
 		case BOWS:
 		case XBOWS: Effects->PlaySound( p, RandomNum( 0x04c8, 0x04c9 )); break;
 		case BLOWGUNS: Effects->PlaySound( p, 0x052F ); break;
 		default:
-			switch( RandomNum( 0, 2 ) )
+			switch( RandomNum( 0, 2 ))
 			{
 				case 0:
 					Effects->PlaySound( p, 0x0238 );
@@ -1627,17 +1703,17 @@ void CHandleCombat::PlayMissedSoundEffect( CChar *p )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayHitSoundEffect( CChar *p, CItem *weapon )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PlayHitSoundEffect()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do the "Hit" Sound Effect
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 {
-	if( !ValidateObject( p ) || !ValidateObject( weapon ) )
+	if( !ValidateObject( p ) || !ValidateObject( weapon ))
 		return;
 
-	switch( getWeaponType( weapon ) )
+	switch( GetWeaponType( weapon ))
 	{
 		case ONEHND_AXES:
 		case TWOHND_AXES:
@@ -1672,7 +1748,7 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 			break;
 		case WRESTLING:
 		default:
-			switch( RandomNum( 0, 3 ) ) // Wrestling
+			switch( RandomNum( 0, 3 )) // Wrestling
 			{
 				case 0:		Effects->PlaySound( p, 0x0135 );	break;
 				case 1:		Effects->PlaySound( p, 0x0137 );	break;
@@ -1682,53 +1758,55 @@ void CHandleCombat::PlayHitSoundEffect( CChar *p, CItem *weapon )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::AdjustRaceDamage()
 //|	Date		-	3rd July, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adjusts the damage dealt to defend by weapon based on
 //|						race and weather weaknesses
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::AdjustRaceDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc, UI08 getFightSkill )
 {
 	SI16 amount		= 0;
 
-	if( !ValidateObject( defend ) || !ValidateObject( weapon ) )
+	if( !ValidateObject( defend ) || !ValidateObject( weapon ))
 		return bDamage;
 
 	if( weapon->GetRace() == defend->GetRace() )
+	{
 		amount = bDamage;
+	}
 	CRace *rPtr = Races->Race( defend->GetRace() );
 	if( rPtr != nullptr )
 	{
 		for( SI32 i = LIGHT; i < WEATHNUM; ++i )
 		{
-			if( weapon->GetWeatherDamage( (WeatherType)i ) && rPtr->AffectedBy( (WeatherType)i ) )
+			if( weapon->GetWeatherDamage( static_cast<WeatherType>( i )) && rPtr->AffectedBy( static_cast<WeatherType>( i )))
 			{
-				amount += ApplyDefenseModifiers( (WeatherType)i, attack, defend, getFightSkill, hitLoc, bDamage, false );
+				amount += ApplyDefenseModifiers( static_cast<WeatherType>( i ), attack, defend, getFightSkill, hitLoc, bDamage, false );
 			}
 		}
 	}
-	return (bDamage	+ amount);
+	return ( bDamage + amount );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 AdjustArmorClassDamage( CChar *attack, CChar *defend, CItem *weapon, SI16 bDamage, UI08 hitLoc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::AdjustArmorClassDamage()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adjusts the damage dealt to defender based on potential armour class weakness
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CItem *attackerWeapon, SI16 baseDamage, UI08 hitLoc )
 {
 	SI32 bonusDamage = 0;
 
-	if( !ValidateObject( defender ) || !ValidateObject( attackerWeapon ) )
+	if( !ValidateObject( defender ) || !ValidateObject( attackerWeapon ))
 		return baseDamage;
 
 	CItem *defenderItem = NULL;
 	if( hitLoc != 0 )
 	{
 		// If hit location system is enabled, check armor class of item at specified hit location
-		defenderItem = getArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL );
+		defenderItem = GetArmorDef( attacker, bonusDamage, hitLoc, false, PHYSICAL );
 
 		if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 		{
@@ -1742,7 +1820,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 		SI32 bonusPotential = 0;
 		for( UI08 getLoc = 1; getLoc < 7; ++getLoc )
 		{
-			defenderItem = getArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL );
+			defenderItem = GetArmorDef( attacker, bonusPotential, getLoc, false, PHYSICAL );
 
 			if( ValidateObject( defenderItem ) && attackerWeapon->GetArmourClass() == defenderItem->GetArmourClass() )
 			{
@@ -1750,7 +1828,7 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 			}
 		}
 
-		bonusDamage /= 7; // get averaage of all 7 armor locations
+		bonusDamage /= 7; // get average of all 7 armor locations
 		bonusDamage /= 2; // then split damage in half.
 
 		if( cwmWorldState->ServerData()->ExpansionArmorCalculation() < ER_AOS )
@@ -1759,16 +1837,15 @@ SI16 CHandleCombat::AdjustArmorClassDamage( CChar *attacker, CChar *defender, CI
 		}
 	}
 
-	return (baseDamage + static_cast<SI16>(bonusDamage));
+	return ( baseDamage + static_cast<SI16>( bonusDamage ));
 }
 
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::DoHitMessage()
 //|	Date		-	3rd July, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints out the hit message, if enabled
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage )
 {
 	if( !ValidateObject( ourTarg ) || !ValidateObject( mChar ) || ourTarg->IsNpc() )
@@ -1778,7 +1855,7 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 
 	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr )
 	{
-		std::string attackerName = getNpcDictName( mChar, targSock );
+		std::string attackerName = GetNpcDictName( mChar, targSock );
 
 		// Don't show hit messages for very low amounts of damage
 		if( damage < 5 )
@@ -1793,31 +1870,31 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 					case 1:
 						if( damage < 15  )
 						{
-							targSock->sysmessage( 284, attackerName.c_str() ); // %s hits you in your Chest!
+							targSock->SysMessage( 284, attackerName.c_str() ); // %s hits you in your Chest!
 						}
 						else
 						{
-							targSock->sysmessage( 285, attackerName.c_str() ); // %s lands a terrible blow to your Chest!
+							targSock->SysMessage( 285, attackerName.c_str() ); // %s lands a terrible blow to your Chest!
 						}
 						break;
 					case 2:
 						if( damage < 15 )
 						{
-							targSock->sysmessage( 286, attackerName.c_str() ); // %s lands a blow to your Stomach!
+							targSock->SysMessage( 286, attackerName.c_str() ); // %s lands a blow to your Stomach!
 						}
 						else
 						{
-							targSock->sysmessage( 287, attackerName.c_str() ); // %s knocks the wind out of you!
+							targSock->SysMessage( 287, attackerName.c_str() ); // %s knocks the wind out of you!
 						}
 						break;
 					default:
 						if( damage < 15 )
 						{
-							targSock->sysmessage( 288, attackerName.c_str() ); // %s hits you in your Ribs!
+							targSock->SysMessage( 288, attackerName.c_str() ); // %s hits you in your Ribs!
 						}
 						else
 						{
-							targSock->sysmessage( 289, attackerName.c_str() ); // %s broke your Rib!
+							targSock->SysMessage( 289, attackerName.c_str() ); // %s broke your Rib!
 						}
 						break;
 				}
@@ -1825,9 +1902,9 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 			case 2:	// Arms
 				switch( randHit )
 				{
-					case 1:		targSock->sysmessage( 290, attackerName.c_str() );		break; // %s hits you in your Left Arm!
-					case 2:		targSock->sysmessage( 291, attackerName.c_str() );		break; // %s hits you in your Right Arm!
-					default:	targSock->sysmessage( 292, attackerName.c_str() );		break; // %s hits you in your Right Arm!
+					case 1:		targSock->SysMessage( 290, attackerName.c_str() );		break; // %s hits you in your Left Arm!
+					case 2:		targSock->SysMessage( 291, attackerName.c_str() );		break; // %s hits you in your Right Arm!
+					default:	targSock->SysMessage( 292, attackerName.c_str() );		break; // %s hits you in your Right Arm!
 				}
 				break;
 			case 3:	// Head
@@ -1836,31 +1913,31 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 					case 1:
 						if( damage < 15 )
 						{
-							targSock->sysmessage( 293, attackerName.c_str() ); // %s hits you you straight in the Face!
+							targSock->SysMessage( 293, attackerName.c_str() ); // %s hits you you straight in the Face!
 						}
 						else
 						{
-							targSock->sysmessage( 294, attackerName.c_str() ); // %s lands a stunning blow to your Head!
+							targSock->SysMessage( 294, attackerName.c_str() ); // %s lands a stunning blow to your Head!
 						}
 						break;
 					case 2:
 						if( damage < 15 )
 						{
-							targSock->sysmessage( 295, attackerName.c_str() ); // %s hits you to your Head!
+							targSock->SysMessage( 295, attackerName.c_str() ); // %s hits you to your Head!
 						}
 						else
 						{
-							targSock->sysmessage( 296, attackerName.c_str() ); // %s smashed a blow across your Face!
+							targSock->SysMessage( 296, attackerName.c_str() ); // %s smashed a blow across your Face!
 						}
 						break;
 					default:
 						if( damage < 15 )
 						{
-							targSock->sysmessage( 297, attackerName.c_str() ); // %s hits you you square in the Jaw!
+							targSock->SysMessage( 297, attackerName.c_str() ); // %s hits you you square in the Jaw!
 						}
 						else
 						{
-							targSock->sysmessage( 298, attackerName.c_str() ); // %s lands a terrible hit to your Temple!
+							targSock->SysMessage( 298, attackerName.c_str() ); // %s lands a terrible hit to your Temple!
 						}
 						break;
 				}
@@ -1868,32 +1945,32 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 			case 4:	// Legs
 				switch( randHit )
 				{
-					case 1:		targSock->sysmessage( 299, attackerName.c_str() );		break; // %s hits you in the Left Thigh!
-					case 2:		targSock->sysmessage( 300, attackerName.c_str() );		break; // %s hits you in the Right Thigh!
-					default:	targSock->sysmessage( 301, attackerName.c_str() );		break; // %s hits you in the Groin!
+					case 1:		targSock->SysMessage( 299, attackerName.c_str() );		break; // %s hits you in the Left Thigh!
+					case 2:		targSock->SysMessage( 300, attackerName.c_str() );		break; // %s hits you in the Right Thigh!
+					default:	targSock->SysMessage( 301, attackerName.c_str() );		break; // %s hits you in the Groin!
 				}
 				break;
 			case 5:	// Neck
-				targSock->sysmessage( 302, attackerName.c_str() ); // %s hits you to your Throat!
+				targSock->SysMessage( 302, attackerName.c_str() ); // %s hits you to your Throat!
 				break;
 			case 6:	// Hands
 				switch( randHit )
 				{
-					case 1:		targSock->sysmessage( 303, attackerName.c_str() );		break; // %s hits you in the Left Hand!
-					case 2:		targSock->sysmessage( 304, attackerName.c_str() );		break; // s hits you in the Right Hand!
-					default:	targSock->sysmessage( 305, attackerName.c_str() );		break; // %s hits you in the Right Hand!
+					case 1:		targSock->SysMessage( 303, attackerName.c_str() );		break; // %s hits you in the Left Hand!
+					case 2:		targSock->SysMessage( 304, attackerName.c_str() );		break; // s hits you in the Right Hand!
+					default:	targSock->SysMessage( 305, attackerName.c_str() );		break; // %s hits you in the Right Hand!
 				}
 				break;
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 CalculateHitLoc( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalculateHitLoc()
 //|	Date		-	3rd July, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	calculates where on the body the person was hit and returns that
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 CHandleCombat::CalculateHitLoc( void )
 {
 	SI08 hitLoc = RandomNum( 0, 99 ); // Determine area of Body Hit
@@ -1909,20 +1986,20 @@ SI08 CHandleCombat::CalculateHitLoc( void )
 	return hitLoc;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::ApplyDamageBonuses()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies damage bonuses based on race/weather weakness and character skills
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage )
 {
-	if( !ValidateObject( ourTarg ) || !ValidateObject( mChar ) )
+	if( !ValidateObject( ourTarg ) || !ValidateObject( mChar ))
 		return baseDamage;
 
 	R32 multiplier = 1;
 	R32 damage = 0;
 	SI32 RaceDamage = 0;
-	CItem *mWeapon = getWeapon( mChar );
+	CItem *mWeapon = GetWeapon( mChar );
 	CRace *rPtr = Races->Race( ourTarg->GetRace() );
 	auto serverData = cwmWorldState->ServerData();
 
@@ -2051,11 +2128,11 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 				// Third Dawn expansion and later
 				if( mChar->GetSkill( ANATOMY ) >= 1000 )
 				{
-					multiplier += 30; // 30% Damage at GM Skill or above, 
+					multiplier += 30; // 30% Damage at GM Skill or above,
 				}
 				else
 				{
-					multiplier += static_cast<R32>( ( ( mChar->GetSkill( ANATOMY ) / 10 ) / 5 ) ); // Up to 20% Damage at 99.9 skillpoints or below
+					multiplier += static_cast<R32>((( mChar->GetSkill( ANATOMY ) / 10 ) / 5 )); // Up to 20% Damage at 99.9 skillpoints or below
 				}
 			}
 			else
@@ -2090,7 +2167,7 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 					}
 					else
 					{
-						multiplier += static_cast<R32>( ( ( mChar->GetSkill( LUMBERJACKING ) / 10 ) / 5 ) ); // up to 20% Damage at 99.9 skillpoints or below
+						multiplier += static_cast<R32>((( mChar->GetSkill( LUMBERJACKING ) / 10 ) / 5 )); // up to 20% Damage at 99.9 skillpoints or below
 					}
 				}
 			}
@@ -2125,18 +2202,18 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 				}
 			}
 
-			// Where does defender tactics damage modifier come from? Which era, if any?
+			// Where does this come from??
 			// Defender Tactics Damage Modifier, -20% Damage
 			//multiplier += static_cast<R32>(1.0 - ((( ourTarg->GetSkill( TACTICS ) * 20 ) / 1000 ) / 100 ));
 
 			multiplier /= 100;
-			damage = baseDamage + static_cast<R32>(baseDamage * multiplier);
+			damage = baseDamage + static_cast<R32>( baseDamage * multiplier );
 			break;
 		default:
-			damage = static_cast<R32>(baseDamage);
+			damage = static_cast<R32>( baseDamage );
 
 			// If the attack is magic and the target a NPC but not a human, double the damage
-			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetID()].IsHuman() )
+			if( getFightSkill == MAGERY && ourTarg->IsNpc() && !cwmWorldState->creatures[ourTarg->GetId()].IsHuman() )
 			{
 				damage *= 2;
 			}
@@ -2146,10 +2223,10 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 	// If the race is weak to this element double the damage
 	if( rPtr != nullptr )
 	{
-		if( rPtr->AffectedBy( damageType ) )
+		if( rPtr->AffectedBy( damageType ))
 		{
 			damage *= 2;
-	}
+		}
 	}
 
 	if( serverData->ExpansionDamageBonusCap() >= ER_AOS )
@@ -2158,30 +2235,30 @@ SI16 CHandleCombat::ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CC
 		damage = std::min( damage, static_cast<R32>( baseDamage * 4 ));
 	}
 
-	return static_cast<SI16>( roundNumber( damage ));
+	return static_cast<SI16>( RoundNumber( damage ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::ApplyDefenseModifiers()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies defense modifiers based on shields/parrying, armor values and elemental damage
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage )
 {
-	if( !ValidateObject( ourTarg ) )
+	if( !ValidateObject( ourTarg ))
 		return baseDamage;
 
 	UI16 getDef = 0, attSkill = 1000;
 	R32 damageModifier = 0;
 	R32 damage = static_cast<R32>( baseDamage );
 
-	if( ValidateObject( mChar ) )
+	if( ValidateObject( mChar ))
 	{
 		attSkill = mChar->GetSkill( getFightSkill );
 	}
 
 	CSocket *targSock = ourTarg->GetSocket();
-	CItem *shield = getShield( ourTarg );
+	CItem *shield = GetShield( ourTarg );
 	auto serverData = cwmWorldState->ServerData();
 
 	switch( damageType )
@@ -2191,11 +2268,11 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		{
 			// Check Shield Defense
 			bool parrySuccess = false;
-			if( ValidateObject( shield ) )
+			if( ValidateObject( shield ))
 			{
 				// Perform a skillcheck to potentially give player a skill increase
 				Skills->CheckSkill( ourTarg, PARRYING, 0, 1000 );
-				
+
 				// Get parry skill value
 				UI16 defendParry = ourTarg->GetSkill( PARRYING );
 
@@ -2215,7 +2292,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					// Renaissance Publish (UOR) - https://uo.com/wiki/ultima-online-wiki/technical/previous-publishes/2000-2/2000-publish-05-27th-april/
 					// The higher a shield's AR, the lower the chance to block, but the more damage is absorbed upon blocking
 					// The lower a shield's AR, the higher the chance to block, but the less damage is absorbed upon blocking
-					// parryChance = parrySkill - (shield AR * 2)
+					// parryChance = parrySkill - (shield AR * 2) 
 					R32 parryChance = (defendParry / 10 ) - ( shield->GetResist( PHYSICAL ) * 2 ); // or is it 1.33?
 					if( RandomNum( 1, 100 ) < parryChance )
 					{
@@ -2250,7 +2327,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					if( HalfRandomNum( defendParry ) >= HalfRandomNum( attSkill ))
 						parrySuccess = true;
 				}*/
-				
+
 				if( parrySuccess )
 				{
 					// Play shield parrying FX
@@ -2258,17 +2335,17 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 
 					auto loShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMin();
 					auto hiShieldDamage = cwmWorldState->ServerData()->CombatParryDamageMax();
-					SI16 shieldDamage = -(RandomNum( static_cast<SI16>(loShieldDamage), static_cast<SI16>(hiShieldDamage) ));
+					SI16 shieldDamage = -( RandomNum( static_cast<SI16>( loShieldDamage ), static_cast<SI16>( hiShieldDamage )));
 
 					if( cwmWorldState->ServerData()->CombatDisplayHitMessage() )
 					{
 						if( targSock != nullptr )
 						{
-							targSock->sysmessage( 1805 ); // You block the attack!
+							targSock->SysMessage( 1805 ); // You block the attack!
 						}
 						else if( ValidateObject( mChar ) && mChar->GetSocket() != nullptr )
 						{
-							mChar->GetSocket()->sysmessage( 2060 ); // Your attack was blocked!
+							mChar->GetSocket()->SysMessage( 2060 ); // Your attack was blocked!
 						}
 					}
 
@@ -2300,7 +2377,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
 						if( getFightSkill == ARCHERY )
 						{
-							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ) );
+							damage -= static_cast<R32>( shield->GetResist( PHYSICAL ));
 						}
 						else
 						{
@@ -2308,7 +2385,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						}
 
 						// Calculate defense given by armor
-						getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ) );
+						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 
 						// Apply damage to shield from parrying action?
 						if( cwmWorldState->ServerData()->CombatParryDamageChance() >= RandomNum( 1, 100 )) // 20% chance by default
@@ -2354,12 +2431,12 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 							shield->IncHP( shieldDamage );
 						}
 					}
-					
+
 					if( shield->GetHP() <= 0 )
 					{
 						if( targSock != nullptr )
 						{
-							targSock->sysmessage( 283 ); // Your shield has been destroyed!
+							targSock->SysMessage( 283 ); // Your shield has been destroyed!
 						}
 						shield->Delete();
 					}
@@ -2490,16 +2567,16 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 			// No shield, no weapon parry, no wrestling parry - armor needs to take the brunt of damage!
 			if( damage > 0 && getDef == 0 )
 			{
-				getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ) );
+				getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 			}
 			break;
 		}
 		case POISON:		//	POISON Damage
-			damageModifier = ( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
-			damage = static_cast<SI16>( roundNumber(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
+			damageModifier = ( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ) / 100 );
+			damage = static_cast<SI16>( RoundNumber(( static_cast<R32>( baseDamage ) - ( static_cast<R32>( baseDamage ) * damageModifier ))));
 			break;
 		default:			//	Elemental damage
-			getDef = HalfRandomNum( calcDef( ourTarg, hitLoc, doArmorDamage, damageType ) );
+			getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, damageType ));
 			break;
 	}
 
@@ -2508,15 +2585,15 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 		damage -= static_cast<R32>(( static_cast<R32>( getDef ) * static_cast<R32>( attSkill )) / 750 );
 	}
 
-	return static_cast<SI16>( roundNumber( damage ));
+	return static_cast<SI16>( RoundNumber( damage ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CalcDamage()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate damage based on hit location, damage bonuses, defense modifiers
-//o-----------------------------------------------------------------------------------------------o
-SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
+//o------------------------------------------------------------------------------------------------o
+SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc )
 {
 	SI16 damage = -1;
 
@@ -2533,11 +2610,15 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	}
 
 	if( damage >= 0 )
+	{
 		return damage;
+	}
 	else
+	{
 		damage = 0;
+	}
 
-	const SI16 baseDamage = calcAtt( mChar, true );
+	const SI16 baseDamage = CalcAttackPower( mChar, true );
 
 	if( baseDamage == -1 )  // No damage if weapon breaks
 		return 0;
@@ -2550,7 +2631,9 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	damage = ApplyDefenseModifiers( PHYSICAL, mChar, ourTarg, getFightSkill, hitLoc, damage, true );
 
 	if( damage <= 0 )
+	{
 		damage = RandomNum( 0, 4 );
+	}
 
 	// Half remaining damage by 2 if PUB15 or earlier
 	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_PUB15 )
@@ -2567,25 +2650,25 @@ SI16 CHandleCombat::calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 	return damage;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::HandleCombat()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles combat related stuff during combat loop
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 {
-	const UI16 ourDist			= getDist( &mChar, ourTarg );
+	const UI16 ourDist			= GetDist( &mChar, ourTarg );
 	//Attacker Skill values
-	CItem *mWeapon				= getWeapon( &mChar );
-	const UI08 getFightSkill	= getCombatSkill( mWeapon );
+	CItem *mWeapon				= GetWeapon( &mChar );
+	const UI08 getFightSkill	= GetCombatSkill( mWeapon );
 	const UI16 attackSkill		= std::min( 1000, static_cast<SI32>( mChar.GetSkill( getFightSkill )));
 
 	//Defender Skill values
-	CItem *defWeapon			= getWeapon( ourTarg );
-	const UI08 getTargetSkill	= getCombatSkill( defWeapon );
+	CItem *defWeapon			= GetWeapon( ourTarg );
+	const UI08 getTargetSkill	= GetCombatSkill( defWeapon );
 	const UI16 defendSkill		= std::min( 1000, static_cast<SI32>( ourTarg->GetSkill( getTargetSkill )));
 
-	bool checkDist		= (ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
+	bool checkDist = ( ourDist <= 1 && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 );
 
 	// Trigger onSwing for scripts attached to attacker
 	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
@@ -2625,7 +2708,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 	if( checkDist )
 	{
-		CPFightOccurring tSend( mChar, (*ourTarg) );
+		CPFightOccurring tSend( mChar, ( *ourTarg ));
 		for( auto &tSock : FindNearbyPlayers( &mChar ))
 		{
 			if( tSock )
@@ -2642,8 +2725,8 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( mChar.GetDir() != charDir && charDir < 8 )
 				{
 					mChar.SetDir( charDir );
+				}
 			}
-		}
 		}
 
 		if( getFightSkill == ARCHERY && mWeapon != nullptr )
@@ -2652,15 +2735,16 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			if(( cwmWorldState->GetUICurrentTime() - mChar.LastMoveTime() ) < static_cast<UI32>( cwmWorldState->ServerData()->CombatArcheryShootDelay() * 1000 ))
 				return false;
 
-			UI16 ammoID = mWeapon->GetAmmoID();
+			UI16 ammoId = mWeapon->GetAmmoId();
 			UI16 ammoHue = mWeapon->GetAmmoHue();
 			UI16 ammoFX = mWeapon->GetAmmoFX();
 			UI16 ammoFXHue = mWeapon->GetAmmoFXHue();
 			UI16 ammoFXRender = mWeapon->GetAmmoFXRender();
 
-			if( mChar.IsNpc() || ( ammoID != 0 && DeleteItemAmount( &mChar, 1, ammoID,  ammoHue ) == 1 ))
+			if( mChar.IsNpc() || ( ammoId != 0 && DeleteItemAmount( &mChar, 1, ammoId,  ammoHue ) == 1 ))
 			{
 				PlaySwingAnimations( &mChar );
+				//Effects->PlayMovingAnimation( &mChar, ourTarg, ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 				Effects->PlayMovingAnimation( mChar.GetX(), mChar.GetY(), mChar.GetZ() + 5, ourTarg->GetX(), ourTarg->GetY(), ourTarg->GetZ(), ammoFX, 0x08, 0x00, 0x00, static_cast<UI32>( ammoFXHue ), static_cast<UI32>( ammoFXRender ));
 			}
 			else
@@ -2678,7 +2762,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 
 		SI16 staminaToLose = cwmWorldState->ServerData()->CombatAttackStamina();
-		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ) )
+		if( staminaToLose && ( !mChar.IsGM() && !mChar.IsCounselor() ))
 		{
 			mChar.IncStamina( staminaToLose );
 		}
@@ -2759,11 +2843,11 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		if( !skillPassed )
 		{
 			// It's a miss!
-			if( getFightSkill == ARCHERY && mWeapon->GetAmmoID() != 0 && !RandomNum( 0, 2 ) )
+			if( getFightSkill == ARCHERY && mWeapon->GetAmmoId() != 0 && !RandomNum( 0, 2 ))
 			{
-				UI16 ammoID = mWeapon->GetAmmoID();
+				UI16 ammoId = mWeapon->GetAmmoId();
 				UI16 ammoHue = mWeapon->GetAmmoHue();
-				Items->CreateItem( nullptr, ourTarg, ammoID, 1, ammoHue, OT_ITEM, false );
+				Items->CreateItem( nullptr, ourTarg, ammoId, 1, ammoHue, OT_ITEM, false );
 			}
 
 			PlayMissedSoundEffect( &mChar );
@@ -2776,7 +2860,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			Skills->CheckSkill( &mChar, TACTICS, 0, 1000 );
 			Skills->CheckSkill( ourTarg, TACTICS, 0, 1000 );
 
-			switch( ourTarg->GetID() )
+			switch( ourTarg->GetId() )
 			{
 				case 0x025E:	// elf/human/garg female
 				case 0x0191:
@@ -2786,7 +2870,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				case 0x029A:	Effects->PlaySound( ourTarg, RandomNum( 0x0155, 0x0158 ));				break;
 				default:
 				{
-					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetID()].GetSound( SND_DEFEND );
+					UI16 toPlay = cwmWorldState->creatures[ourTarg->GetId()].GetSound( SND_DEFEND );
 					if( toPlay != 0x00 )
 					{
 						Effects->PlaySound( ourTarg, toPlay );
@@ -2798,17 +2882,16 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			UI08 poisonStrength = mChar.GetPoisonStrength();
 			if( poisonStrength && ourTarg->GetPoisoned() < poisonStrength )
 			{
-				if( (( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
+				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
 				{
 					// Apply poison on target
 					ourTarg->SetPoisoned( poisonStrength );
 
 					// Set time until next time poison "ticks"
-					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue(static_cast<R32>(getPoisonTickTime( poisonStrength ))));
+					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
 
 					// Set time until poison wears off completely
-					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * getPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
-
+					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
 
 					if( targSock != nullptr )
 					{
@@ -2819,7 +2902,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 			// Calculate damage
 			const UI08 hitLoc = CalculateHitLoc();
-			UI16 ourDamage = calcDamage( &mChar, ourTarg, getFightSkill, hitLoc );
+			UI16 ourDamage = CalcDamage( &mChar, ourTarg, getFightSkill, hitLoc );
 			if( ourDamage > 0 )
 			{
 				// Show hit messages, if enabled
@@ -2839,7 +2922,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 				if( ourTarg->GetReactiveArmour() )
 				{
 					SI32 retDamage = static_cast<SI32>( ourDamage * ( ourTarg->GetSkill( MAGERY ) / 2000.0 ));
-					if( ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar ) )
+					if( ourTarg->Damage( ourDamage - retDamage, PHYSICAL, &mChar ))
 					{
 						if( ourTarg->IsNpc() && !mChar.IsNpc() )
 						{
@@ -2855,7 +2938,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 					[[maybe_unused]] bool retVal = ourTarg->Damage( ourDamage, PHYSICAL, &mChar, true );
 				}
 			}
-			if( cwmWorldState->creatures[mChar.GetID()].IsHuman() )
+			if( cwmWorldState->creatures[mChar.GetId()].IsHuman() )
 			{
 				PlayHitSoundEffect( &mChar, mWeapon );
 			}
@@ -2884,11 +2967,11 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	QuickSwitch()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows beneficial spells to be cast on self during combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
@@ -2901,11 +2984,11 @@ inline void QuickSwitch( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 	mChar->SetTarg( ourTarg );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CastSpell()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles spellcasting during combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 {
 	if( !ValidateObject( mChar ) || !ValidateObject( ourTarg ) || mChar == ourTarg )
@@ -2913,31 +2996,48 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 
 	if( mChar->GetMana() <= Magic->spells[spellNum].Mana() )
 		return false;
+
 	switch( spellNum )
 	{
 		case 7:
 			if( !mChar->GetReactiveArmour() )
+			{
 				mChar->SetSpellCast( spellNum );
+			}
 			else
+			{
 				return false;
+			}
 			break;
 		case 11:
 			if( mChar->GetPoisoned() > 0 )
+			{
 				QuickSwitch( mChar, ourTarg, spellNum );
+			}
 			else
+			{
 				return false;
+			}
 			break;
 		case 29:
 			if( mChar->GetMaxHP() > mChar->GetHP() )
+			{
 				QuickSwitch( mChar, ourTarg, spellNum );
+			}
 			else
+			{
 				return false;
+			}
 			break;
 		case 36:
 			if( !mChar->IsTempReflected() && !mChar->IsPermReflected() )
+			{
 				mChar->SetSpellCast( spellNum );
+			}
 			else
+			{
 				return false;
+			}
 			break;
 		case 1:
 		case 3:
@@ -2968,11 +3068,11 @@ bool CHandleCombat::CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16 playerDistance )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::HandleNPCSpellAttack()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the casting of spells by NPCs during combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16 playerDistance )
 {
 	if( !npcAttack->GetCanAttack() || npcAttack->IsEvading() )
@@ -2985,8 +3085,11 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			SI16 spattacks = npcAttack->GetSpAttack();
 			if( spattacks <= 0 )
 				return;
+
 			if( spattacks > 8 )
+			{
 				spattacks = 8;
+			}
 
 			npcAttack->StopSpell();
 
@@ -2995,22 +3098,24 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 			// Establish a simple baseline for letting NPC determine whether to cast offensive or defensive spells
 			// The higher the NPC's current health percentage, the more likely they will be to cast offensive spells
 			// The lower their health percentage, the more likely they will be to cast defensive spells
-			offensiveWeight = static_cast<UI16>(std::round(( npcAttack->GetHP() * 100 ) / npcAttack->GetMaxHP() ));
+			offensiveWeight = static_cast<UI16>( std::round(( npcAttack->GetHP() * 100 ) / npcAttack->GetMaxHP() ));
 
 			UI16 rndNum = RandomNum( 1, 100 );
 
 			// Cut weighting towards offensive spells in half if NPC is poisoned; we want him to cast cures!
 			if( npcAttack->GetPoisoned() > 0 )
+			{
 				offensiveWeight /= 2;
+			}
 
 			bool monsterAreaCastAnim = false;
 			if( offensiveWeight > rndNum )
 			{
 				// Cast offensive spells
-				switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+				switch(( RandomNum( static_cast<SI16>( 0 ), spattacks ) + 1 ))
 				{
 					case 1: // Spell Circle 1 - Offensive Spells
-						switch( RandomNum( 1, 4 ) )
+						switch( RandomNum( 1, 4 ))
 						{
 							case 1:		CastSpell( npcAttack, cDefend, 1 );			break;	// Clumsy
 							case 2:		CastSpell( npcAttack, cDefend, 3 );			break;	// Feeble Mind
@@ -3028,7 +3133,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 						CastSpell( npcAttack, cDefend, 30 ); // Lightning
 						break;
 					case 5:
-						switch( RandomNum( 1, 2 ) )
+						switch( RandomNum( 1, 2 ))
 						{
 							case 1:		
 								if( npcAttack->GetIntelligence() > cDefend->GetIntelligence() )
@@ -3048,23 +3153,23 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 					case 6:
 						if( cDefend->IsNpc() )
 						{
-							if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->IsDispellable() && cDefend->GetNPCAiType() != AI_GUARD )
+							if( cDefend->GetTimer( tNPC_SUMMONTIME ) > 0 && cDefend->IsDispellable() && cDefend->GetNpcAiType() != AI_GUARD )
 							{
-								if( npcAttack->GetSkill( MAGERY ) > RandomNum( 1, 1000 ) )
+								if( npcAttack->GetSkill( MAGERY ) > RandomNum( 1, 1000 ))
 								{
 									CastSpell( npcAttack, cDefend, 41 );
 									break;
 								}
 							}
 						}
-						switch( RandomNum( 1, 2 ) )
+						switch( RandomNum( 1, 2 ))
 						{
 							case 1:		CastSpell( npcAttack, cDefend, 42 );		break;	// Energy Bolt
 							case 2:		CastSpell( npcAttack, cDefend, 43 );		break;	// Explosion
 						}
 						break;
 					case 7:
-						switch( RandomNum( 1, 3 ) )
+						switch( RandomNum( 1, 3 ))
 						{
 							case 1:		CastSpell( npcAttack, cDefend, 49 );		monsterAreaCastAnim = true;	break;	// Chain Lightning
 							case 2:		CastSpell( npcAttack, cDefend, 51 );		monsterAreaCastAnim = true;	break;	// Flamestrike
@@ -3093,12 +3198,12 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				if( offensiveWeight > rndNum / 1.5 )
 				{
 					// Cast buffs/debuffs
-					switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+					switch(( RandomNum( static_cast<SI16>( 0 ), spattacks ) + 1 ))
 					{
 						case 1:
 							[[fallthrough]];
 						case 2:
-							switch( RandomNum( 1, 4 ) )
+							switch( RandomNum( 1, 4 ))
 							{
 								case 1:		CastSpell( npcAttack, cDefend, 1 );			break;	// Clumsy
 								case 2:		CastSpell( npcAttack, cDefend, 3 );			break;	// Feeble Mind
@@ -3116,7 +3221,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 								break;
 							[[fallthrough]]; // Fallthrough if target is poisoned already and if NPC can cast spells from next circle
 						case 4:
-							switch( RandomNum( 1, 2 ) )
+							switch( RandomNum( 1, 2 ))
 							{
 								case 1:		CastSpell( npcAttack, cDefend, 27 );		break;	// Curse
 								case 2:		CastSpell( npcAttack, cDefend, 31 );		break;	// Mana Drain
@@ -3143,17 +3248,21 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				else
 				{
 					// Critical health levels! Let's focus on heals and cures
-					switch(( RandomNum( static_cast<SI16>(0), spattacks ) + 1 ))
+					switch(( RandomNum( static_cast<SI16>( 0 ), spattacks ) + 1 ))
 					{
 						case 1:
 							if(( spattacks + 1 >= 2 ) && !CastSpell( npcAttack, cDefend, 11 )) // Cast cure if we're poisoned, else move on to Heal
+							{
 								CastSpell( npcAttack, cDefend, 4 );	// Heal (personal...switch target temporarily to self and then back after casting)
+							}
 							break;
 						case 2:
 							[[fallthrough]];
 						case 3:
 							if( !CastSpell( npcAttack, cDefend, 11 )) // Cast cure if we're poisoned, else move on to Heal
+							{
 								CastSpell( npcAttack, cDefend, 4 );	// Heal (personal...switch target temporarily to self and then back after casting)
+							}
 							break;
 						case 4:
 						case 5:
@@ -3173,7 +3282,7 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				if( npcAttack->GetBodyType() == BT_HUMAN || npcAttack->GetBodyType() == BT_ELF || npcAttack->GetBodyType() == BT_GARGOYLE )
 				{
 					// "Human" casting
-					SpellInfo curSpellCasting = Magic->spells[npcAttack->GetSpellCast()];
+					CSpellInfo curSpellCasting = Magic->spells[npcAttack->GetSpellCast()];
 					Effects->PlaySpellCastingAnimation( npcAttack, curSpellCasting.Action(), false, false ); // do the action
 					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ));
 				}
@@ -3181,75 +3290,93 @@ void CHandleCombat::HandleNPCSpellAttack( CChar *npcAttack, CChar *cDefend, UI16
 				{
 					// Monster casting
 					Effects->PlaySpellCastingAnimation( npcAttack, 0, true, monsterAreaCastAnim );
-					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ) );
+					npcAttack->SetTimer( tNPC_MOVETIME, BuildTimeValue( 0.75 ));
 				}
 				Magic->CastSpell( nullptr, npcAttack );
 			}
 
 			//Adjust spellDelay based on UOX.INI setting:
-			SI08 spellDelay = floor( ( npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed() ) + 0.5 );
+			SI08 spellDelay = floor(( npcAttack->GetSpDelay() / cwmWorldState->ServerData()->NPCSpellCastSpeed() ) + 0.5 );
 
-			npcAttack->SetTimer( tNPC_SPATIMER, BuildTimeValue( spellDelay ) );
+			npcAttack->SetTimer( tNPC_SPATIMER, BuildTimeValue( spellDelay ));
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	R32 GetCombatTimeout( CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::GetCombatTimeout()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate delay between attacks in combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 {
 	SI16 statOffset = 0;
 	if( cwmWorldState->ServerData()->CombatAttackSpeedFromStamina() )
+	{
 		statOffset = mChar->GetStamina();
+	}
 	else
+	{
 		statOffset = mChar->GetDexterity();
+	}
 
 	R32 getDelay = 0;
 	if( mChar->IsNpc() ) // Allow NPCs more speed based off of available stamina than players
-		getDelay	= (R32)( (R32)std::min( statOffset, static_cast<SI16>(300) ) + 100 );
+	{
+		getDelay = static_cast<R32>( static_cast<R32>( std::min( statOffset, static_cast<SI16>( 300 ))) + 100 );
+	}
 	else
-		getDelay	= (R32)( (R32)std::min( statOffset, static_cast<SI16>(100) ) + 100 );
+	{
+		getDelay = static_cast<R32>( static_cast<R32>( std::min( statOffset, static_cast<SI16>( 100 ))) + 100 );
+	}
 
 	SI32 getOffset	= 0;
 	SI32 baseValue	= 15000;
 
 	CChar *ourTarg = mChar->GetTarg();
 
-	CItem *mWeapon = getWeapon( mChar );
-	if( ValidateObject( mWeapon ) )
+	CItem *mWeapon = GetWeapon( mChar );
+	if( ValidateObject( mWeapon ))
 	{
 		if( mWeapon->GetSpeed() == 0 )
+		{
 			mWeapon->SetSpeed( 35 );
+		}
 		getOffset = mWeapon->GetSpeed();
 	}
 	else
 	{
 		if( mChar->GetSkill( WRESTLING ) < 800 )
-			getOffset = (((SI32)(mChar->GetSkill( WRESTLING ) / 200 )) * 5) + 30;
+		{
+			getOffset = (( static_cast<SI32>( mChar->GetSkill( WRESTLING ) / 200 )) * 5 ) + 30;
+		}
 		else
+		{
 			getOffset = 50;
+		}
 	}
 
 	//Allow faster strikes on fleeing targets
-	if( ValidateObject(ourTarg) )
+	if( ValidateObject( ourTarg ))
+	{
 		if( ourTarg->GetNpcWander() == WT_FLEE)
+		{
 			baseValue = 10000;
+		}
+	}
 
 	R32 globalAttackSpeed = cwmWorldState->ServerData()->GlobalAttackSpeed(); //Defaults to 1.0
 
-	getDelay = (baseValue / (getDelay * getOffset)) / globalAttackSpeed;
+	getDelay = ( baseValue / ( getDelay * getOffset )) / globalAttackSpeed;
 	return getDelay;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void InvalidateAttacker( CChar *mChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::InvalidateAttacker()
 //|	Date		-	3rd July, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::InvalidateAttacker( CChar *mChar )
 {
 	CChar *ourTarg = mChar->GetTarg();
@@ -3263,7 +3390,9 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		{
 			//Check if ourTarg validates as another character. If not, don't use
 			if( !ValidateObject( ourTarg ))
+			{
 				ourTarg = nullptr;
+			}
 
 			// -1 == event doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -3275,15 +3404,19 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		}
 	}
 
-	if( mChar->IsNpc() && mChar->GetNPCAiType() == AI_GUARD )
+	if( mChar->IsNpc() && mChar->GetNpcAiType() == AI_GUARD )
 	{
-		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ) );
+		mChar->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 20 ));
 		mChar->SetNpcWander( WT_FREE );
 		if( mChar->GetMounted() )
-			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetMountedWalkingSpeed() ) );
+		{
+			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetMountedWalkingSpeed() ));
+		}
 		else
-			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetWalkingSpeed() ) );
-		mChar->TextMessage( nullptr, 281, TALK, false );
+		{
+			mChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar->GetWalkingSpeed() ));
+		}
+		mChar->TextMessage( nullptr, 281, TALK, false ); // Thou have suffered thy punishment, scoundrel.
 	}
 
 	if( ValidateObject( ourTarg ) && ourTarg->GetTarg() == mChar )
@@ -3292,11 +3425,13 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		ourTarg->SetAttacker( nullptr );
 		ourTarg->SetAttackFirst( false );
 		if( ourTarg->IsAtWar() )
+		{
 			ourTarg->ToggleCombat();
+		}
 	}
 	mChar->SetTarg( nullptr );
 	CChar *attAttacker = mChar->GetAttacker();
-	if( ValidateObject( attAttacker ) )
+	if( ValidateObject( attAttacker ))
 	{
 		attAttacker->SetAttackFirst( false );
 		attAttacker->SetAttacker( nullptr );
@@ -3304,30 +3439,34 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	mChar->SetAttacker( nullptr );
 	mChar->SetAttackFirst( false );
 	if( mChar->IsAtWar() && mChar->IsNpc() )
+	{
 		mChar->ToggleCombat();
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Kill( CChar *mChar, CChar *ourTarg )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::Kill()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle death during combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 {
-	if( ValidateObject( mChar ) )
+	if( ValidateObject( mChar ))
 	{
-		if( mChar->GetNPCAiType() == AI_GUARD && ourTarg->IsNpc() )
+		if( mChar->GetNpcAiType() == AI_GUARD && ourTarg->IsNpc() )
 		{
 			Effects->PlayCharacterAnimation( ourTarg, ( RandomNum( 0, 1 ) ? ACT_DIE_BACKWARD : ACT_DIE_FORWARD ), 0, 6 ); // 0x15 or 0x16, either is 6 frames long
-			Effects->playDeathSound( ourTarg );
+			Effects->PlayDeathSound( ourTarg );
 
 			ourTarg->Delete(); // NPC was killed by a Guard, don't leave a corpse behind
 			if( mChar->IsAtWar() )
+			{
 				mChar->ToggleCombat();
+			}
 			return;
 		}
 
-		if( mChar->GetNPCAiType() == AI_ANIMAL && !mChar->IsTamed() )
+		if( mChar->GetNpcAiType() == AI_ANIMAL && !mChar->IsTamed() )
 		{
 			mChar->SetHunger( 6 );
 
@@ -3335,11 +3474,13 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 			{
 				// Note: What if ourTarg is a non-human NPC which doesn't have death animation 0x15?
 				Effects->PlayCharacterAnimation( ourTarg, 0x15 );
-				Effects->playDeathSound( ourTarg );
+				Effects->PlayDeathSound( ourTarg );
 
 				ourTarg->Delete(); // eating animals, don't give body
 				if( mChar->IsAtWar() )
+				{
 					mChar->ToggleCombat();
+				}
 				return;
 			}
 		}
@@ -3348,11 +3489,11 @@ void CHandleCombat::Kill( CChar *mChar, CChar *ourTarg )
 	HandleDeath( ourTarg, mChar );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CombatLoop( CSocket *mSock, CChar& mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::CombatLoop()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the main combat loop for characters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 {
 	CChar *ourTarg = mChar.GetTarg();
@@ -3362,7 +3503,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
 	{
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
-		Console.warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
+		Console.Warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
 #endif
 		return;
 	}
@@ -3371,40 +3512,48 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	if( mChar.GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 		bool validTarg = false;
-		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->isFree() && ( ourTarg->IsNpc() || isOnline( (*ourTarg) ) ) )
+		if( !mChar.IsDead() && ValidateObject( ourTarg ) && !ourTarg->IsFree() && ( ourTarg->IsNpc() || IsOnline(( *ourTarg ))))
 		{
-			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNPCAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE )
+			if( !ourTarg->IsInvulnerable() && !ourTarg->IsDead() && ourTarg->GetNpcAiType() != AI_PLAYERVENDOR && ourTarg->GetVisible() == VT_VISIBLE )
 			{
-				if( charInRange( &mChar, ourTarg ) )
+				if( CharInRange( &mChar, ourTarg ))
 				{
-					CItem *equippedWeapon = getWeapon( &mChar );
-					if( getCombatSkill( equippedWeapon ) == ARCHERY || getCombatSkill( equippedWeapon ) == THROWING )
+					CItem *equippedWeapon = GetWeapon( &mChar );
+					if( GetCombatSkill( equippedWeapon ) == ARCHERY || GetCombatSkill( equippedWeapon ) == THROWING )
 					{
-						if( getDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
+						if( GetDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
 						{
 							return;
 						}
 					}
 
 					validTarg = true;
-					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 2 ) )
-						HandleNPCSpellAttack( &mChar, ourTarg, getDist( &mChar, ourTarg ) );
+					if( mChar.IsNpc() && mChar.GetSpAttack() > 0 && mChar.GetMana() > 0 && !RandomNum( 0, 2 ))
+					{
+						HandleNPCSpellAttack( &mChar, ourTarg, GetDist( &mChar, ourTarg ));
+					}
 					else
+					{
 						combatHandled = HandleCombat( mSock, mChar, ourTarg );
+					}
 
-					if( !ValidateObject( ourTarg->GetTarg() ) || !objInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ) )		//if the defender is swung at, and they don't have a target already, set this as their target
+					if( !ValidateObject( ourTarg->GetTarg() ) || !ObjInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ))		//if the defender is swung at, and they don't have a target already, set this as their target
+					{
 						StartAttack( ourTarg, &mChar );
+					}
 				}
-				else if( mChar.IsNpc() && mChar.GetNPCAiType() == AI_GUARD && mChar.GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() )
+				else if( mChar.IsNpc() && mChar.GetNpcAiType() == AI_GUARD && mChar.GetRegion()->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() )
 				{
 					validTarg = true;
 					mChar.SetLocation( ourTarg );
 					Effects->PlaySound( &mChar, 0x01FE );
 					Effects->PlayStaticAnimation( &mChar, 0x372A, 0x09, 0x06 );
-					mChar.TextMessage( nullptr, 1616, TALK, true );
+					mChar.TextMessage( nullptr, 1616, TALK, true ); // Halt, scoundrel!
 				}
 				else
+				{
 					InvalidateAttacker( &mChar );
+				}
 			}
 		}
 		if( !validTarg )
@@ -3413,100 +3562,124 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			mChar.SetAttacker( nullptr );
 			mChar.SetAttackFirst( false );
 			if( mChar.IsAtWar() )
+			{
 				mChar.ToggleCombat();
+			}
 		}
 		else if( combatHandled )
-			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar ) ) );
+		{
+			mChar.SetTimer( tCHAR_TIMEOUT, BuildTimeValue( GetCombatTimeout( &mChar )));
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::SpawnGuard()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle spawning a guard in guarded areas
 //|					NEED TO REWORK FOR REGIONAL GUARD STUFF
-//o-----------------------------------------------------------------------------------------------o
-auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z ) ->void {
-	if( ValidateObject( mChar )  && ValidateObject( targChar ) ) {
-		if( !targChar->IsDead() && !targChar->IsInvulnerable() ){
-			auto targRegion = mChar->GetRegion();
-			if( targRegion->IsGuarded() && cwmWorldState->ServerData()->GuardsStatus() ){
-				
-				auto reUseGuard = false;
-				CChar *getGuard = nullptr;
-				auto toCheck = MapRegion->GetMapRegion( mChar );
-				
-				if(toCheck){
-					auto regChars = toCheck->GetCharList();
-					for (const auto &getGuard : regChars->collection()){
-						if( ValidateObject( getGuard ) ){
-							if( getGuard->IsNpc() && (getGuard->GetNPCAiType() == AI_GUARD )){
-								if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  ) {
-									if( charInRange( getGuard, targChar ) ){
-										reUseGuard = true;
-									}
-								}
-								else if( getGuard->GetTarg() == targChar ) {
-									return;
-								}
-							}
+//o------------------------------------------------------------------------------------------------o
+auto  CHandleCombat::SpawnGuard( CChar *mChar, CChar *targChar, SI16 x, SI16 y, SI08 z ) -> void
+{
+	if( !ValidateObject( mChar ) || !ValidateObject( targChar ))
+		return;
+
+	if( targChar->IsDead() || targChar->IsInvulnerable() )
+		return;
+
+	auto targRegion = mChar->GetRegion();
+
+	if( !targRegion->IsGuarded() || !cwmWorldState->ServerData()->GuardsStatus() )
+		return;
+
+	auto reUseGuard		= false;
+	CChar *getGuard		= nullptr;
+	auto toCheck		= MapRegion->GetMapRegion( mChar );
+	if( toCheck )
+	{
+		auto regChars = toCheck->GetCharList();
+		for( const auto &getGuard : regChars->collection() )
+		{
+			if( ValidateObject( getGuard ))
+			{
+				if( getGuard->IsNpc() && ( getGuard->GetNpcAiType() == AI_GUARD ))
+				{
+					if( !ValidateObject( getGuard->GetTarg() ) || getGuard->GetTarg() == targChar  )
+					{
+						if( CharInRange( getGuard, targChar ))
+						{
+							reUseGuard = true;
 						}
 					}
-					
-				}
-				// 1/13/2003 - Fix for JSE NocSpawner
-				if( !reUseGuard ) {
-					getGuard = targRegion->GetRandomGuard();
-					if( ValidateObject( getGuard ) ) {
-						getGuard->SetLocation( x, y, z, mChar->WorldNumber(), mChar->GetInstanceID() );
-						Npcs->PostSpawnUpdate( getGuard );
-					}
-					else{
+					else if( getGuard->GetTarg() == targChar )
+					{
 						return;
-					}
-				}
-				//
-				if( ValidateObject( getGuard ) ) {
-					getGuard->SetAttackFirst( true );
-					getGuard->SetAttacker( targChar );
-					getGuard->SetTarg( targChar );
-					getGuard->SetNpcWander( WT_FREE );
-					if( !getGuard->IsAtWar() ){
-						getGuard->ToggleCombat();
-					}
-					
-					if( reUseGuard ){
-						getGuard->SetLocation( targChar );
-					}
-					else {
-						if( getGuard->GetMounted() ){
-							getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetMountedWalkingSpeed() ) );
-						}
-						else{
-							getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ) );
-						}
-						getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ) );
-						
-						Effects->PlaySound( getGuard, 0x01FE );
-						Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
-						
-						getGuard->TextMessage( nullptr, 313, TALK, true );
 					}
 				}
 			}
 		}
+		
+	}
+	
+	// 1/13/2003 - Fix for JSE NocSpawner
+	if( !reUseGuard )
+	{
+		getGuard = targRegion->GetRandomGuard();
+		if( ValidateObject( getGuard ))
+		{
+			getGuard->SetLocation( x, y, z, mChar->WorldNumber(), mChar->GetInstanceId() );
+			Npcs->PostSpawnUpdate( getGuard );
+		}
+		else
+		{
+			return;
+		}
+	}
+	//
+	if( ValidateObject( getGuard ))
+	{
+		getGuard->SetAttackFirst( true );
+		getGuard->SetAttacker( targChar );
+		getGuard->SetTarg( targChar );
+		getGuard->SetNpcWander( WT_FREE );
+		if( !getGuard->IsAtWar() )
+		{
+			getGuard->ToggleCombat();
+		}
+
+		if( reUseGuard )
+		{
+			getGuard->SetLocation( targChar );
+		}
+		else
+		{
+			if( getGuard->GetMounted() )
+			{
+				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetMountedWalkingSpeed() ));
+			}
+			else
+			{
+				getGuard->SetTimer( tNPC_MOVETIME, BuildTimeValue( getGuard->GetWalkingSpeed() ));
+			}
+			getGuard->SetTimer( tNPC_SUMMONTIME, BuildTimeValue( 25 ));
+
+			Effects->PlaySound( getGuard, 0x01FE );
+			Effects->PlayStaticAnimation( getGuard, 0x372A, 0x09, 0x06 );
+
+			getGuard->TextMessage( nullptr, 313, TALK, true ); // Thou shalt regret thine actions, swine!
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CHandleCombat::PetGuardAttack()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the pet guarding an item / character and have him attack
 //|					the person using / attacking the item / character
-//o-----------------------------------------------------------------------------------------------o
-void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard )
+//o------------------------------------------------------------------------------------------------o
+void CHandleCombat::PetGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard )
 {
-	if( !ValidateObject( mChar ) || !ValidateObject( guarded ) )
+	if( !ValidateObject( mChar ) || !ValidateObject( guarded ))
 		return;
 
 	if( mChar->IsCounselor() || mChar->IsGM() )
@@ -3515,21 +3688,25 @@ void CHandleCombat::petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 	if( !ValidateObject( petGuard ))
 	{
 		// No pet guard was passed into function, so let's look for one ourself
-		petGuard = Npcs->getGuardingPet( owner, guarded );
+		petGuard = Npcs->GetGuardingPet( owner, guarded );
 	}
 
-	if( ValidateObject( petGuard ) && objInRange( mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange() ) )
+	if( ValidateObject( petGuard ) && ObjInRange( mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange() ))
 	{
 		if( mChar->GetSerial() == petGuard->GetOwner() )
 			return;
 
-		if( !Npcs->checkPetFriend( mChar, petGuard ) )
+		if( !Npcs->CheckPetFriend( mChar, petGuard ))
+		{
 			AttackTarget( petGuard, mChar );
+		}
 		else
 		{
 			CSocket *oSock = owner->GetSocket();
 			if( oSock != nullptr )
-				oSock->sysmessage( 1629 );
+			{
+				oSock->SysMessage( 1629 ); // Your pet refuses to attack his friend!
+			}
 		}
 	}
 }

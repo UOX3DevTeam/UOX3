@@ -21,13 +21,13 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 777, socket.language ) ); // You cannot use that material for tailoring.
+			socket.SysMessage( GetDictionaryEntry( 777, socket.language )); // You cannot use that material for tailoring.
 			return;
 		}
 
 		if( ourObj.movable == 2 || ourObj.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 6022, socket.language ) ); // This has to be in your backpack before you can use it.
+			socket.SysMessage( GetDictionaryEntry( 6022, socket.language )); // This has to be in your backpack before you can use it.
 			return;
 		}
 
@@ -36,20 +36,30 @@ function onCallback1( socket, ourObj )
 		{
 			CreateBlankItem( socket, mChar, 50, "#", 0x1766, 0, "ITEM", true );
 			if( ourObj.amount > 1 )
+			{
 				ourObj.amount = ourObj.amount - 1;
+			}
 			else
+			{
 				ourObj.Delete();
+			}
 		}
-		else if( ( resID >= 0x175D && resID <= 0x1768 ) || resID == 0x1078 || resID == 0x1079 || resID == 0x1081 || resID == 0x1082 ) // A valid tailoring resource
+		else if(( resID >= 0x175D && resID <= 0x1768 ) || resID == 0x1078 || resID == 0x1079 || resID == 0x1081 || resID == 0x1082 ) // A valid tailoring resource
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
+			{
 				socket.MakeMenu( 39, 34 );
+			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 775, socket.language ) ); // You can't use material outside your backpack.
+			{
+				socket.SysMessage( GetDictionaryEntry( 775, socket.language )); // You can't use material outside your backpack.
+			}
 		}
 		else
-			socket.SysMessage( GetDictionaryEntry( 6006, socket.language ) ); // You can't make anything from that material.
+		{
+			socket.SysMessage( GetDictionaryEntry( 6006, socket.language )); // You can't make anything from that material.
+		}
 	}
 }
 

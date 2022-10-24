@@ -23,48 +23,48 @@ enum WeaponTypes
 	THROWN
 };
 
-class CHandleCombat {
+class CHandleCombat
+{
 private:
 	bool	HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg );
 
 	bool	CastSpell( CChar *mChar, CChar *ourTarg, SI08 spellNum );
 
-	SI16	calcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
+	SI16	CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc );
 
 	void	PlaySwingAnimations( CChar *mChar );
 	void	PlayHitSoundEffect( CChar *mChar, CItem *mWeapon );
 	void	PlayMissedSoundEffect( CChar *mChar );
 
 	void	HandleNPCSpellAttack( CChar *mChar, CChar *ourTarg, UI16 playerDistance );
-	void	HandleSplittingNPCs( CChar *toSplit );
 
-	CItem *	checkDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType );
-	CItem *	getArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE);
+	CItem *	CheckDef( CItem *checkItem, CItem *currItem, SI32 &currDef, WeatherType resistType );
+	CItem *	GetArmorDef( CChar *mChar, SI32 &totalDef, UI08 bodyLoc, bool findTotal = false, WeatherType resistType = NONE );
 
 public:
 	bool	StartAttack( CChar *mChar, CChar *ourTarg );
 	void	InvalidateAttacker( CChar *mChar );
 
-	R32	GetCombatTimeout( CChar *mChar );
+	R32		GetCombatTimeout( CChar *mChar );
 	void	PlayerAttack( CSocket *s );
 	void	AttackTarget( CChar *mChar, CChar *ourTarg );
-	void	petGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard = nullptr );
+	void	PetGuardAttack( CChar *mChar, CChar *owner, CBaseObject *guarded, CChar *petGuard = nullptr );
 
 	void	CombatLoop( CSocket *mSock, CChar& mChar );
 	void	Kill( CChar *mChar, CChar *ourTarg );
 
 	void	DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI16 damage );
 	SI08	CalculateHitLoc( void );
-	UI16	calcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL );
-	SI16	calcAtt( CChar *mChar, bool doDamage = false );
-	SI16	calcLowDamage( CChar *p );
-	SI16	calcHighDamage( CChar *p );
-	UI08	getCombatSkill( CItem *wItem );
-	UI08	getBowType( CItem *bItem );
-	UI08	getWeaponType( CItem *i );
+	UI16	CalcDef( CChar *mChar, UI08 hitLoc, bool doDamage = false, WeatherType element = PHYSICAL );
+	SI16	CalcAttackPower( CChar *mChar, bool doDamage = false );
+	SI16	CalcLowDamage( CChar *p );
+	SI16	CalcHighDamage( CChar *p );
+	UI08	GetCombatSkill( CItem *wItem );
+	UI08	GetBowType( CItem *bItem );
+	UI08	GetWeaponType( CItem *i );
 
-	CItem *	getShield( CChar *mChar );
-	CItem *	getWeapon( CChar *mChar );
+	CItem *	GetShield( CChar *mChar );
+	CItem *	GetWeapon( CChar *mChar );
 
 	SI16	ApplyDamageBonuses( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage );
 	SI16	ApplyDefenseModifiers( WeatherType damageType, CChar *mChar, CChar *ourTarg, UI08 getFightSkill, UI08 hitLoc, SI16 baseDamage, bool doArmorDamage );

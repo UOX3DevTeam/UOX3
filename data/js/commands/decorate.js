@@ -192,7 +192,7 @@ function command_DECORATE( socket, cmdString )
 			default:
 			{
 				var tempMsg = GetDictionaryEntry( 8012, socket.language ); // Unknown subcommand (%s) provided for DECORATE command.
-				socket.SysMessage( tempMsg.replace(/%s/gi, splitString[0] ));
+				socket.SysMessage( tempMsg.replace( /%s/gi, splitString[0] ));
 				break;
 			}
 		}
@@ -209,7 +209,7 @@ function command_DECORATE( socket, cmdString )
 function GetDecorationType( socket, splitString )
 {
 	objectType = "";
-	if( splitString != "" && typeof(splitString) != "undefined" )
+	if( splitString != "" && typeof( splitString ) != "undefined" )
 	{
 		switch( splitString.toUpperCase() )
 		{
@@ -260,7 +260,7 @@ function GetFacet( socket, splitString )
 {
 	facetName = "";
 	facetID = -1;
-	if( splitString != "" && typeof(splitString) != "undefined" )
+	if( splitString != "" && typeof( splitString ) != "undefined" )
 	{
 		switch( splitString.toUpperCase() )
 		{
@@ -313,14 +313,18 @@ function HandleDecorateCopy( socket, splitString )
 	targetFacetID = -1;
 
 	if( splitString[1] )
+	{
 		sourceFacet = splitString[1].toUpperCase();
+	}
 	if( splitString[2] )
+	{
 		targetFacet = splitString[2].toUpperCase();
+	}
 	if( sourceFacet != "" && targetFacet != "" )
 	{
 		var tempMsg = GetDictionaryEntry( 8014, socket.language ); // Copying ALL decorations from facet '%s' to facet '%t'...
-		tempMsg = tempMsg.replace(/%s/gi, sourceFacet.toLowerCase() );
-		socket.SysMessage( tempMsg.replace(/%t/gi, targetFacet.toLowerCase() ));
+		tempMsg = tempMsg.replace( /%s/gi, sourceFacet.toLowerCase() );
+		socket.SysMessage( tempMsg.replace( /%t/gi, targetFacet.toLowerCase() ));
 
 		switch( sourceFacet )
 		{
@@ -378,9 +382,9 @@ function HandleDecorateCopy( socket, splitString )
 			if( totalCopied > 0 )
 			{
 				var tempMsg = GetDictionaryEntry( 8016, socket.language ); // %i decorations copied from %s to %t.
-				tempMsg = tempMsg.replace(/%i/gi, totalCopied.toString() );
-				tempMsg = tempMsg.replace(/%s/gi, sourceFacet );
-				socket.SysMessage( tempMsg.replace(/%t/gi, targetFacet ));
+				tempMsg = tempMsg.replace( /%i/gi, totalCopied.toString() );
+				tempMsg = tempMsg.replace( /%s/gi, sourceFacet );
+				socket.SysMessage( tempMsg.replace( /%t/gi, targetFacet ));
 			}
 			else
 			{
@@ -451,7 +455,7 @@ function HandleDecorateClean( socket )
 	if( totalCleaned > 0 )
 	{
 		var tempMsg = GetDictionaryEntry( 8021, socket.language ); // %i duplicate items removed.
-		socket.SysMessage( tempMsg.replace(/%i/gi, totalCleaned.toString() ));
+		socket.SysMessage( tempMsg.replace( /%i/gi, totalCleaned.toString() ));
 	}
 	else
 	{
@@ -514,8 +518,8 @@ function HandleDecorateUnloadEvent( socket )
 	if( totalCleaned > 0 )
 	{
 		var tempMsg = GetDictionaryEntry( 9095, socket.language ); // %i event decorations removed for event %s.
-		tempMsg = tempMsg.replace(/%s/gi, eventName.toLowerCase() );
-		socket.SysMessage( tempMsg.replace(/%i/gi, totalCleaned.toString() ));
+		tempMsg = tempMsg.replace( /%s/gi, eventName.toLowerCase() );
+		socket.SysMessage( tempMsg.replace( /%i/gi, totalCleaned.toString() ));
 	}
 	else
 	{
@@ -608,7 +612,7 @@ function HandleDecorateSave( socket, splitString )
 					continue; // No decorations found, of any type. Check next facet!
 
 				var tempMsg = GetDictionaryEntry( 9091, socket.language ); // ...%i decorations saved!
-				socket.SysMessage( tempMsg.replace(/%i/gi, iterateCount.toString() ));
+				socket.SysMessage( tempMsg.replace( /%i/gi, iterateCount.toString() ));
 
 				// With facetID/Name sorted, let's loop through each objectType
 				for( var j = 0; j < objectTypeCount; j++ )
@@ -689,8 +693,8 @@ function HandleDecorateSave( socket, splitString )
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
 						var tempMsg2 = GetDictionaryEntry( 8033, socket.language ); // %i decorations saved to custom world template '%s'. Check <SCRIPTSDATADIRECTORY>/worldtemplates/ for output files!
-						tempMsg2 = tempMsg2.replace(/%i/gi, iterateCount.toString() );
-						socket.SysMessage( tempMsg2.replace(/%s/gi, objectType ));
+						tempMsg2 = tempMsg2.replace( /%i/gi, iterateCount.toString() );
+						socket.SysMessage( tempMsg2.replace( /%s/gi, objectType ));
 					}
 					else
 					{
@@ -768,8 +772,8 @@ function HandleDecorateSave( socket, splitString )
 						socket.CloseGump( scriptID + 0xffff, 0 );
 
 						var tempMsg3 = GetDictionaryEntry( 8035, socket.language ); // %i decorations successfully saved to templates for facet '%s'. Check <SCRIPTDATADIRECTORY/worldtemplates/ for saved template files!
-						tempMsg3 = tempMsg3.replace(/%i/gi, iterateCount.toString() );
-						socket.SysMessage( tempMsg3.replace(/%s/gi, facetName ));
+						tempMsg3 = tempMsg3.replace( /%i/gi, iterateCount.toString() );
+						socket.SysMessage( tempMsg3.replace( /%s/gi, facetName ));
 					}
 				}
 				else if( objectType != "" && facetID == -1 )
@@ -829,9 +833,9 @@ function HandleDecorateSave( socket, splitString )
 							continue;
 
 						var tempMsg3 = GetDictionaryEntry( 8036, socket.language ); // Saving %i decorations of type '%s' for facet '%t'...
-						tempMsg3 = tempMsg3.replace(/%i/gi, iterateCount.toString() );
-						tempMsg3 = tempMsg3.replace(/%s/gi, objectType );
-						socket.SysMessage( tempMsg3.replace(/%t/gi, facetName ));
+						tempMsg3 = tempMsg3.replace( /%i/gi, iterateCount.toString() );
+						tempMsg3 = tempMsg3.replace( /%s/gi, objectType );
+						socket.SysMessage( tempMsg3.replace( /%t/gi, facetName ));
 
 						switch( objectType.toUpperCase() )
 						{
@@ -882,9 +886,9 @@ function HandleDecorateSave( socket, splitString )
 				if( iterateCount > 0 )
 				{
 					var tempMsg4 = GetDictionaryEntry( 8037, socket.language ); // %i items of type '%s' detected in facet '%t'. Saving...
-					tempMsg4 = tempMsg4.replace(/%i/gi, iterateCount.toString() );
-					tempMsg4 = tempMsg4.replace(/%s/gi, objectType );
-					socket.SysMessage( tempMsg4.replace(/%t/gi, facetName ));
+					tempMsg4 = tempMsg4.replace( /%i/gi, iterateCount.toString() );
+					tempMsg4 = tempMsg4.replace( /%s/gi, objectType );
+					socket.SysMessage( tempMsg4.replace( /%t/gi, facetName ));
 
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
@@ -898,8 +902,8 @@ function HandleDecorateSave( socket, splitString )
 				else
 				{
 					var tempMsg5 = GetDictionaryEntry( 8040, socket.language ); // No decorations of type '%s' was found in facet '%t'.
-					tempMsg5 = tempMsg5.replace(/%s/gi, objectType );
-					socket.SysMessage( tempMsg5.replace(/%t/gi, facetName ));
+					tempMsg5 = tempMsg5.replace( /%s/gi, objectType );
+					socket.SysMessage( tempMsg5.replace( /%t/gi, facetName ));
 				}
 
 				socket.CloseGump( scriptID + 0xffff, 0 );
@@ -915,12 +919,12 @@ function HandleDecorateSave( socket, splitString )
 				// User provided coordinates to save a custom decorations file
 				objectType = splitString[1]; // functions as custom filename
 				GetFacet( socket, splitString[2] );
-				x1 = parseInt(splitString[3]);
-				y1 = parseInt(splitString[4]);
-				x2 = parseInt(splitString[5]);
-				y2 = parseInt(splitString[6]);
+				x1 = parseInt( splitString[3] );
+				y1 = parseInt( splitString[4] );
+				x2 = parseInt( splitString[5] );
+				y2 = parseInt( splitString[6] );
 
-				if( isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2) || objectType == "" || facetID == -1 )
+				if( isNaN( x1 ) || isNaN( y1 ) || isNaN( x2 ) || isNaN( y2 ) || objectType == "" || facetID == -1 )
 				{
 					socket.SysMessage( GetDictionaryEntry( 8041, socket.language )); // Invalid arguments provided - with 7 arguments the syntax is: 'decorate save <filename> <facetName> x1 y1 x2 y2
 					return;
@@ -933,9 +937,9 @@ function HandleDecorateSave( socket, splitString )
 				if( iterateCount > 0 )
 				{
 					var tempMsg6 = GetDictionaryEntry( 8042, socket.language ); // %i items detected in facet '%s'. Saving to custom world template titled '%t'...
-					tempMsg6 = tempMsg6.replace(/%i/gi, iterateCount.toString() );
-					tempMsg6 = tempMsg6.replace(/%s/gi, objectType );
-					socket.SysMessage( tempMsg6.replace(/%t/gi, facetName ));
+					tempMsg6 = tempMsg6.replace( /%i/gi, iterateCount.toString() );
+					tempMsg6 = tempMsg6.replace( /%s/gi, objectType );
+					socket.SysMessage( tempMsg6.replace( /%t/gi, facetName ));
 					if( SaveDecorationsToFile( socket, decorateArray, true ))
 					{
 						socket.SysMessage( GetDictionaryEntry( 8043, socket.language )); // World template save completed. Check <SCRIPTDATADIRECTORY>/worldtemplates/ for saved template files!
@@ -958,26 +962,26 @@ function HandleDecorateSave( socket, splitString )
 function SaveDecorationToArray( toCheck, arrayRef )
 {
 	// Item properties to save
-	var itemType = (toCheck.type).toString();
-	var itemID = (toCheck.id).toString();
+	var itemType = ( toCheck.type ).toString();
+	var itemID = ( toCheck.id ).toString();
 	var itemName = toCheck.name;
-	var itemHue = (toCheck.colour).toString();
-	var itemX = (toCheck.x).toString();
-	var itemY = (toCheck.y).toString();
-	var itemZ = (toCheck.z).toString();
-	var itemWorld = (toCheck.worldnumber).toString();
-	var itemInstanceID = (toCheck.instanceID).toString();
-	var itemMovable = (toCheck.movable).toString();
-	var itemVisible = (toCheck.visible).toString();
-	var itemDirection = (toCheck.dir).toString();
-	var itemWeight = (toCheck.weight).toString();
-	var itemWeightMax = (toCheck.weightMax).toString();
-	var itemMaxItems = (toCheck.maxItems).toString();
-	var itemAmount = (toCheck.amount).toString();
-	var more = (toCheck.more).toString();
-	var moreX = (toCheck.morex).toString();
-	var moreY = (toCheck.morey).toString();
-	var moreZ = (toCheck.morez).toString();
+	var itemHue = ( toCheck.colour ).toString();
+	var itemX = ( toCheck.x ).toString();
+	var itemY = ( toCheck.y ).toString();
+	var itemZ = ( toCheck.z ).toString();
+	var itemWorld = ( toCheck.worldnumber ).toString();
+	var itemInstanceID = ( toCheck.instanceID ).toString();
+	var itemMovable = ( toCheck.movable ).toString();
+	var itemVisible = ( toCheck.visible ).toString();
+	var itemDirection = ( toCheck.dir ).toString();
+	var itemWeight = ( toCheck.weight ).toString();
+	var itemWeightMax = ( toCheck.weightMax ).toString();
+	var itemMaxItems = ( toCheck.maxItems ).toString();
+	var itemAmount = ( toCheck.amount ).toString();
+	var more = ( toCheck.more ).toString();
+	var moreX = ( toCheck.morex ).toString();
+	var moreY = ( toCheck.morey ).toString();
+	var moreZ = ( toCheck.morez ).toString();
 	var spawnSection = 0;
 	var sectionAList = 0;
 	var minInterval = 0;
@@ -985,9 +989,9 @@ function SaveDecorationToArray( toCheck, arrayRef )
 	if( toCheck.isSpawner )
 	{
 		spawnSection = toCheck.spawnsection;
-		sectionAList = (toCheck.sectionalist).toString();
-		minInterval = (toCheck.mininterval).toString();
-		maxInterval = (toCheck.maxinterval).toString();
+		sectionAList = ( toCheck.sectionalist ).toString();
+		minInterval = ( toCheck.mininterval ).toString();
+		maxInterval = ( toCheck.maxinterval ).toString();
 	}
 
 	// Form new string with object properties separated by a |
@@ -1042,11 +1046,17 @@ function SaveDecorationsToFile( socket, arrayRef, singleSave )
 	var mFile = new UOXCFile();
 	var fileName = "";
 	if( saveEvent )
+	{
 		fileName = "event_" + eventName + ".jsdata";
+	}
 	else if( saveCustom )
+	{
 		fileName = objectType + ".jsdata";
+	}
 	else
+	{
 		fileName = facetName + "_" + objectType +".jsdata";
+	}
 
 	// Open world file template contained in worldfileTemplates subfolder of js/jsdata/ (true flag)
 	mFile.Open( fileName, "w", "worldtemplates", true );
@@ -1126,43 +1136,57 @@ function HandleDecorateLoad( socket, splitString )
 				{
 					case 0:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8046, socket.language )); // Loading decorations for Felucca...
+						}
 						facetID = 0;
 						facetName = "felucca";
 						break;
 					case 1:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8047, socket.language )); // Loading decorations for Trammel...
+						}
 						facetID = 1;
 						facetName = "trammel";
 						break;
 					case 2:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8048, socket.language )); // Loading decorations for Ilshenar...
+						}
 						facetID = 2;
 						facetName = "ilshenar";
 						break;
 					case 3:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8049, socket.language )); // Loading decorations for Malas...
+						}
 						facetID = 3;
 						facetName = "malas";
 						break;
 					case 4:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8050, socket.language )); // Loading decorations for Tokuno...
+						}
 						facetID = 4;
 						facetName = "tokuno";
 						break;
 					case 5:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8051, socket.language )); // Loading decorations for Termur...
+						}
 						facetID = 5;
 						facetName = "termur";
 						break;
 					default:
 						if( !silentMode )
+						{
 							socket.SysMessage( GetDictionaryEntry( 8052, socket.language )); // Invalid facet selected, loading aborted!
+						}
 						return;
 				}
 
@@ -1197,7 +1221,9 @@ function HandleDecorateLoad( socket, splitString )
 							break;
 						default:
 							if( !silentMode )
+							{
 								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
+							}
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1217,7 +1243,7 @@ function HandleDecorateLoad( socket, splitString )
 			// First, attempt to get objectType
 			GetDecorationType( socket, splitString[1] );
 
-			if( objectType == "" && typeof(splitString[1]) != "undefined" )
+			if( objectType == "" && typeof( splitString[1] ) != "undefined" )
 			{
 				// We didn't get a valid decorationType - neither one of the default ones, nor a custom one. Did user supply a facet first, instead?
 				GetFacet( socket, splitString[1] );
@@ -1240,7 +1266,7 @@ function HandleDecorateLoad( socket, splitString )
 					if( !silentMode )
 					{
 						var tempMsg = GetDictionaryEntry( 8054, socket.language ); // Unable to load decorations from custom file. Does the file (%s.jsdata) exist?
-						socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+						socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 					}
 					socket.CloseGump( scriptID + 0xffff, 0 );
 					return;
@@ -1258,7 +1284,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8055, socket.language ); // Loading %s for Felucca...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 0;
 							facetName = "felucca";
@@ -1268,7 +1294,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8056, socket.language ); // Loading %s for Trammel...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 1;
 							facetName = "trammel";
@@ -1278,7 +1304,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8057, socket.language ); // Loading %s for Ilshenar...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 2;
 							facetName = "ilshenar";
@@ -1288,7 +1314,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8058, socket.language ); // Loading %s for Malas...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 3;
 							facetName = "malas";
@@ -1298,7 +1324,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8059, socket.language ); // Loading %s for Tokuno...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 4;
 							facetName = "tokuno";
@@ -1308,7 +1334,7 @@ function HandleDecorateLoad( socket, splitString )
 							if( !silentMode )
 							{
 								var tempMsg = GetDictionaryEntry( 8060, socket.language ); // Loading %s for Termur...
-								socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+								socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 							}
 							facetID = 5;
 							facetName = "termur";
@@ -1316,7 +1342,9 @@ function HandleDecorateLoad( socket, splitString )
 							break;
 						default:
 							if( !silentMode )
+							{
 								socket.SysMessage( GetDictionaryEntry( 8052, socket.language )); // Invalid facet selected, loading aborted!
+							}
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1364,7 +1392,9 @@ function HandleDecorateLoad( socket, splitString )
 							break;
 						default:
 							if( !silentMode )
+							{
 								socket.SysMessage( GetDictionaryEntry( 8053, socket.language )); // Invalid objectType selected, loading aborted!
+							}
 							socket.CloseGump( scriptID + 0xffff, 0 );
 							return;
 					}
@@ -1402,8 +1432,8 @@ function HandleDecorateLoad( socket, splitString )
 				if( !silentMode )
 				{
 					var tempMsg = GetDictionaryEntry( 8061, socket.language ); // Unable to load decorations from file. Does the file (%s_%t.jsdata) you're trying to load exist?
-					tempMsg = tempMsg.replace(/%s/gi, facetName );
-					socket.SysMessage( tempMsg.replace(/%t/gi, objectType ));
+					tempMsg = tempMsg.replace( /%s/gi, facetName );
+					socket.SysMessage( tempMsg.replace( /%t/gi, objectType ));
 				}
 				socket.CloseGump( scriptID + 0xffff, 0 );
 				return;
@@ -1484,11 +1514,17 @@ function LoadDecorationsFromFile( socket )
 	var fileName = "";
 
 	if( loadEvent )
+	{
 		fileName = "event_" + eventName + ".jsdata";
+	}
 	else if( loadCustom )
+	{
 		fileName = objectType + ".jsdata";
+	}
 	else
+	{
 		fileName = facetName + "_" + objectType + ".jsdata";
+	}
 
 	mFile.Open( fileName, "r", "worldtemplates", true );
 
@@ -1549,10 +1585,10 @@ function DecorateWorld( socket )
 	var moreZ = 0;
 
 	var newItemCount = 0;
-	var twentyPercent = Math.round(arrayLength * 0.2);
-	var fortyPercent = Math.round(arrayLength * 0.4);
-	var sixtyPercent = Math.round(arrayLength * 0.6);
-	var eightyPercent = Math.round(arrayLength * 0.8);
+	var twentyPercent = Math.round( arrayLength * 0.2 );
+	var fortyPercent = Math.round( arrayLength * 0.4 );
+	var sixtyPercent = Math.round( arrayLength * 0.6 );
+	var eightyPercent = Math.round( arrayLength * 0.8 );
 	var progress = 0;
 	var fontColor = "";
 
@@ -1567,75 +1603,75 @@ function DecorateWorld( socket )
 		if( splitStringLength == 1 )
 		{
 			// Version number exists, read it and move on to the next go
-			templateVer = parseInt(splitString);
+			templateVer = parseInt( splitString );
 			continue;
 		}
 
 		for( var j = 0; j < splitString.length; j++ )
 		{
-			if( typeof(splitString[j]) == "undefined" )
+			if( typeof( splitString[j] ) == "undefined" )
 				continue;
 
 			if( j == 0 ) // ID
-				id = parseInt(splitString[j]);
+				id = parseInt( splitString[j] );
 			else if ( j == 1 ) // Name
 				name = splitString[j];
 			else if( j == 2 ) // Hue/Color
-				hue = parseInt(splitString[j]);
+				hue = parseInt( splitString[j] );
 			else if( j == 3 ) // Type
-				type = parseInt(splitString[j]);
+				type = parseInt( splitString[j] );
 			else if( j == 4 ) // X
-				x = parseInt(splitString[j]);
+				x = parseInt( splitString[j] );
 			else if( j == 5 ) // Y
-				y = parseInt(splitString[j]);
+				y = parseInt( splitString[j] );
 			else if( j == 6 ) // Z
-				z = parseInt(splitString[j]);
+				z = parseInt( splitString[j] );
 			else if( j == 7 ) // WorldNumber
-				worldNum = parseInt(splitString[j]);
+				worldNum = parseInt( splitString[j] );
 			else if( j == 8 ) // InstanceID
-				instanceID = parseInt(splitString[j]);
+				instanceID = parseInt( splitString[j] );
 			else if( j == 9 ) // Movable
-				movable = parseInt(splitString[j]);
+				movable = parseInt( splitString[j] );
 			else if( j == 10 ) // Visible
-				visible = parseInt(splitString[j]);
+				visible = parseInt( splitString[j] );
 			else if( j == 11 ) // Dir
-				dir = parseInt(splitString[j]);
+				dir = parseInt( splitString[j] );
 			else if( j == 12 ) // Weight
-				weight = parseInt(splitString[j]);
+				weight = parseInt( splitString[j] );
 			else if( j == 13 ) // WeightMax
-				itemWeightMax = parseInt(splitString[j]);
+				itemWeightMax = parseInt( splitString[j] );
 			else if( j == 14 ) // MaxItems
-				maxItems = parseInt(splitString[j]);
+				maxItems = parseInt( splitString[j] );
 			else if( j == 15 ) // Amount
-				amount = parseInt(splitString[j]);
+				amount = parseInt( splitString[j] );
 			else if( j == 16 ) // SpawnSection
 				spawnSection = splitString[j];
 			else if( j == 17 ) // sectionAList
-				sectionAList = parseInt(splitString[j]);
+				sectionAList = parseInt( splitString[j] );
 			else if( j == 18 ) // minInterval
-				minInterval = parseInt(splitString[j]);
+				minInterval = parseInt( splitString[j] );
 			else if( j == 19 ) // maxInterval
-				maxInterval = parseInt(splitString[j]);
+				maxInterval = parseInt( splitString[j] );
 			else if( templateVer == 0 )
 			{
 				if( j >= 20 ) // ScriptTriggers
 				{
-					scriptTriggers.push(parseInt(splitString[j]));
+					scriptTriggers.push(parseInt( splitString[j] ));
 				}
 			}
 			else if( templateVer >= 1 )
 			{
 				// more, morex, morey and morez were added
 				if( j == 20 )
-					more = parseInt(splitString[j]);
+					more = parseInt( splitString[j] );
 				else if( j == 21 )
-					moreX = parseInt(splitString[j]);
+					moreX = parseInt( splitString[j] );
 				else if( j == 22 )
-					moreY = parseInt(splitString[j]);
+					moreY = parseInt( splitString[j] );
 				else if( j == 23 )
-					moreZ = parseInt(splitString[j]);
+					moreZ = parseInt( splitString[j] );
 				else if( j >= 24 )
-					scriptTriggers.push(parseInt(splitString[j]));
+					scriptTriggers.push( parseInt( splitString[j] ));
 			}
 		}
 
@@ -1682,13 +1718,21 @@ function DecorateWorld( socket )
 			decorateWait.Free();*/
 
 			if( progress == 20 )
+			{
 				progress = 0;
+			}
 			else if( progress == 40 )
+			{
 				progress = 0;
+			}
 			else if( progress == 60 )
+			{
 				progress = 0;
+			}
 			else if( progress == 80 )
+			{
 				progress = 0;
+			}
 		}
 
 		var newItem;
@@ -1716,8 +1760,8 @@ function DecorateWorld( socket )
 			if( x < 0 || y < 0 )
 			{
 				newItem.Delete();
-				socket.SysMessage( "Error: Invalid coordinates (x "+x+", y "+y+") detected for an item with ID " + id + ". Deleting item."  );
-				Console.Error( "Error: Invalid coordinates (x "+x+", y "+y+") detected for an item with ID " + id + ". Deleting item." );
+				socket.SysMessage( "Error: Invalid coordinates (x " + x + ", y " + y + ") detected for an item with ID " + id + ". Deleting item."  );
+				Console.Error( "Error: Invalid coordinates (x " + x + ", y " + y + ") detected for an item with ID " + id + ". Deleting item." );
 				continue;
 			}
 			newItem.x = x;
@@ -1732,10 +1776,14 @@ function DecorateWorld( socket )
 			newItem.maxItems = maxItems;
 			newItem.decayable = false;
 			if( maxItems == 0 )
+			{
 				newItem.maxItems = 125;
+			}
 			newItem.weightMax = itemWeightMax;
 			if( itemWeightMax == 0 )
+			{
 				newItem.weightMax = 400000;
+			}
 			newItem.amount = amount;
 
 			// Add new if statements with each version of worldfile templates
@@ -1791,8 +1839,8 @@ function DecorateWorld( socket )
 	}
 
 	var tempMsg = GetDictionaryEntry( 8066, socket.language ); // %i decorations added!
-	tempMsg = tempMsg.replace(/%i/gi, newItemCount.toString() );
-	socket.SysMessage( tempMsg.replace(/%s/gi, objectType ));
+	tempMsg = tempMsg.replace( /%i/gi, newItemCount.toString() );
+	socket.SysMessage( tempMsg.replace( /%s/gi, objectType ));
 	socket.CloseGump( scriptID + 0xffff, 0 );
 }
 
@@ -1803,7 +1851,7 @@ function onIterate( toCheck )
 		if(( saveCustom || saveEvent ) && saveAll )
 		{
 			// Only save items that match event type if we're saving event decorations
-			if( saveEvent && (toCheck.event).toLowerCase() != eventName )
+			if( saveEvent && ( toCheck.event ).toLowerCase() != eventName )
 				return false;
 
 			/*if( !saveEvent && toCheck.worldnumber != facetID )
@@ -2000,7 +2048,7 @@ function onIterate( toCheck )
 
 function CheckForEventItems( srcItem, trgItem, pSock )
 {
-	if( (trgItem.event).toLowerCase() == eventName )
+	if(( trgItem.event ).toLowerCase() == eventName )
 	{
 		trgItem.Delete();
 		return true;

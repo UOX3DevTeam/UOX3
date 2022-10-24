@@ -1,9 +1,9 @@
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	 ssection.h
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Script Section class implementation
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __SSECTION_H__
 #define __SSECTION_H__
 
@@ -15,13 +15,13 @@
 //						Format: ADDMENUITEM=Group/SubGroupID,ImageID,PositionWeight,Type,Flags
 //						Where:
 //							Group				: Actual group owner that this item will be listed under on the addmenu gump
-//							TileID				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display
+//							TileId				: (-2) None, (-1) Use block ItemID for image (=>0) New tileid to display
 //							PositionWeight		:	Basic measure in which is used to base the items location in the addmenu page.
 //													Basically a value of 0 - 8/10 which ever max amount of entries we get on an addgump page
 //													(0) having the highest priority, etc. To kind of help sorting Otherwise items will be listed
 //													as they are read in from the DFN's at parsing time.
 //							Flags				:	(0) not visible on the addmenu  (1) Visible on the addmenu
-//							ObjectID			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
+//							ObjectId			: This is the ID number that is added via the addmenu. ADDITEM=ObjectID escentially
 //
 enum DFNTAGS
 {
@@ -261,82 +261,86 @@ typedef struct __ADDMENUITEM__
 {
 	UI32	itemIndex;
 	std::string itemName;
-	UI32	groupID;
-	UI32	tileID;
+	UI32	groupId;
+	UI32	tileId;
 	UI32	weightPosition;
 	UI32	objectFlags;
-	std::string	objectID;
-	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupID( 0 ), tileID( 0 ),
-	weightPosition( 0 ), objectFlags( 0 ), objectID( "" )
+	std::string	objectId;
+	__ADDMENUITEM__() : itemIndex( 0 ), itemName( "" ), groupId( 0 ), tileId( 0 ),
+	weightPosition( 0 ), objectFlags( 0 ), objectId( "" )
 	{
 	}
 } ADDMENUITEM, *LPADDMENUITEM;
 
-extern std::multimap< UI32, ADDMENUITEM >						g_mmapAddMenuMap;
-typedef std::multimap< UI32, ADDMENUITEM >::iterator			ADDMENUMAP_ITERATOR;
-typedef std::multimap< UI32, ADDMENUITEM >::const_iterator		ADDMENUMAP_CITERATOR;
+extern std::multimap<UI32, ADDMENUITEM>						g_mmapAddMenuMap;
+typedef std::multimap<UI32, ADDMENUITEM>::iterator			ADDMENUMAP_ITERATOR;
+typedef std::multimap<UI32, ADDMENUITEM>::const_iterator	ADDMENUMAP_CITERATOR;
 
-class ScriptSection
+class CScriptSection
 {
 	friend class Script;
 private:
-	struct sectData {
+	struct SectData_st
+	{
 		std::string tag;
 		std::string data;
-		sectData() : tag( "" ), data( "" ) {
+		SectData_st() : tag( "" ), data( "" )
+		{
 		}
 	};
-	struct sectDataV2 {
+	struct SectDataV2_st
+	{
 		DFNTAGS tag;
 		std::string	cdata;
 		SI32	ndata;
 		SI32	odata;
-		sectDataV2() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 ) {
+		SectDataV2_st() : tag( DFNTAG_COUNTOFTAGS ), cdata( "" ), ndata( -1 ), odata( -1 )
+		{
 		}
 	};
 
-	std::vector< sectData * > data;
-	std::vector< sectDataV2 * > dataV2;
-	std::vector< sectData * >::iterator	 currentPos;
-	std::vector< sectDataV2 * >::iterator currentPos2;
+	std::vector<SectData_st *>				data;
+	std::vector<SectDataV2_st *>			dataV2;
+	std::vector<SectData_st *>::iterator	currentPos;
+	std::vector<SectDataV2_st *>::iterator	currentPos2;
 	DEFINITIONCATEGORIES	dfnCat;
 
-	bool npcList;
-	bool itemList;
+	bool					npcList;
+	bool					itemList;
 
-	std::string npcListData;
-	std::string itemListData;
+	std::string				npcListData;
+	std::string				itemListData;
 
 public:
-	auto collection() const -> const std::vector<sectData *>& ;
-	auto collection()  -> std::vector<sectData *>&;
-	auto collection2() const -> const std::vector<sectDataV2 *>& ;
-	auto collection2()  -> std::vector<sectDataV2 *>&;
+	auto collection() const -> const std::vector<SectData_st *>&;
+	auto collection()  -> std::vector<SectData_st *>&;
+	auto collection2() const -> const std::vector<SectDataV2_st *>&;
+	auto collection2()  -> std::vector<SectDataV2_st *>&;
 
-	ScriptSection();
-	ScriptSection(std::ifstream& input, DEFINITIONCATEGORIES d);
-	~ScriptSection();
-	auto First() ->std::string;
-	auto Next() ->std::string;
-	auto Prev() ->std::string;
-	auto AtEnd() ->bool ;
-	auto FirstTag() ->DFNTAGS ;
-	auto NextTag() ->DFNTAGS ;
-	auto PrevTag() ->DFNTAGS;
-	auto AtEndTags() ->bool;
-	auto GrabData() ->std::string;
-	auto GrabData( SI32& ndata, SI32& odata ) ->std::string;
-	auto FlushData() ->bool;
-	auto NumEntries() const ->size_t;
-	auto MoveTo( size_t position ) ->std::string ;
-	auto CloseFile() ->bool;
-	auto Remove( size_t position )->void;
-	auto Append( std::string tag, std::string data ) ->void;
-	auto ItemListExist() const ->bool;
-	auto NpcListExist() const ->bool;
-	auto ItemListData() const ->std::string;
-	auto NpcListData() const ->std::string ;
-	auto createSection( std::ifstream& inputbuf ) ->void ;
+	CScriptSection();
+	CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d );
+	~CScriptSection();
+	auto First() -> std::string;
+	auto Next() -> std::string;
+	auto Prev() -> std::string;
+	auto AtEnd() -> bool;
+	auto FirstTag() -> DFNTAGS;
+	auto NextTag() -> DFNTAGS;
+	auto PrevTag() -> DFNTAGS;
+	auto AtEndTags() -> bool;
+	auto GrabData() -> std::string;
+	auto GrabData( SI32& ndata, SI32& odata ) -> std::string;
+	auto FlushData() -> bool;
+	auto NumEntries() const -> size_t;
+	auto MoveTo( size_t position ) -> std::string;
+	auto CloseFile() -> bool;
+	auto Remove( size_t position ) -> void;
+	auto Append( std::string tag, std::string data ) -> void;
+	auto ItemListExist() const -> bool;
+	auto NpcListExist() const -> bool;
+	auto ItemListData() const -> std::string;
+	auto NpcListData() const -> std::string;
+	auto CreateSection( std::ifstream& inputbuf ) -> void;
 };
 
 #endif

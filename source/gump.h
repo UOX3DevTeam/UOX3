@@ -6,8 +6,8 @@ void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 class CGump
 {
 private:
-	std::vector< std::string > TagList;
-	std::vector< std::string > TextList;
+	std::vector<std::string> TagList;
+	std::vector<std::string> TextList;
 	bool NoMove;
 	bool NoClose;
 	UI32 Serial;
@@ -21,9 +21,9 @@ public:
 	void Send( CSocket *target );
 
 	// Common add functions
-	void AddBackground( UI16 x, UI16 y, UI16 GumpID, UI16 width, UI16 height );
-	void AddGump( UI16 x, UI16 y, UI16 GumpID );
-	void AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueID  );
+	void AddBackground( UI16 x, UI16 y, UI16 GumpId, UI16 width, UI16 height );
+	void AddGump( UI16 x, UI16 y, UI16 GumpId );
+	void AddButton( UI16 x, UI16 y, UI16 ImageUp, UI16 ImageDown, UI16 Behaviour, UI16 Page, UI32 UniqueId  );
 	void AddText( UI16 x, UI16 y, UI16 hue, std::string Text );
 	UI16 StartPage( void );
 
@@ -34,10 +34,10 @@ public:
 	void SetSerial( UI32 newSerial );
 };
 
-class GumpDisplay
+class CGumpDisplay
 {
 private:
-	struct GumpInfo
+	struct GumpInfo_st
 	{
 		std::string name;
 		UI32 value;
@@ -53,18 +53,18 @@ private:
 		// 6 -> 2 byte decimal display
 	};
 
-	std::vector< GumpInfo * > gumpData;
+	std::vector<GumpInfo_st *> gumpData;
 	UI16 width, height;	// gump width / height
 	CSocket *toSendTo;
-	std::vector< std::string > one, two;
+	std::vector<std::string> one, two;
 	std::string title;
 public:
-	void AddData( GumpInfo *toAdd );
+	void AddData( GumpInfo_st *toAdd );
 	void AddData( std::string toAdd, UI32 value, UI08 type = 0 );
 	void AddData( std::string toAdd, const std::string &toSet, UI08 type = 4 );
-	GumpDisplay( CSocket *target );
-	GumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
-	~GumpDisplay();
+	CGumpDisplay( CSocket *target );
+	CGumpDisplay( CSocket *target, UI16 gumpWidth, UI16 gumpHeight );
+	~CGumpDisplay();
 	void SetTitle( const std::string& newTitle );
 	void Send( UI32 gumpNum, bool isMenu, SERIAL serial );
 	void Delete( void );

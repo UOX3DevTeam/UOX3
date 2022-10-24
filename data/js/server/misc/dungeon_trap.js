@@ -46,6 +46,7 @@ function onCollide( pSock, pChar, iTrap )
 		case 0x1108: // inactive wall spike trap
 		case 0x111b: // inactive wall spike trap
 			trapFxLength = ( !trapFxLength ? 0x10 : trapFxLength );
+			// fallthrough
 		case 0x119a: // inactive floor spike trap
 		case 0x11a0: // inactive floor spike trap
 			trapFxLength = ( !trapFxLength ? 0x09 : trapFxLength );
@@ -314,7 +315,7 @@ function ApplyTrapDamage( iTrap, trgChar )
 			var trapDamageMultiplier = iTrap.GetMoreVar( "morez", 2 );
 
 			// Apply damage to character
-			trgChar.Damage( RandomNumber( iTrap.lodamage, iTrap.hidamage ) * parseInt(trapDamageMultiplier) ); // Deal 6 to 36 damage
+			trgChar.Damage( RandomNumber( iTrap.lodamage, iTrap.hidamage ) * parseInt( trapDamageMultiplier )); // Deal 6 to 36 damage
 
 			// Make character react to damage
 			if( trgChar.gender == 0 )
@@ -356,9 +357,9 @@ function onMoveDetect( iTrap, pChar, rangeToChar, oldCharX, oldCharY )
 	{
 		maxRange = 0x04; // Min range for this trap to work correctly
 	}
-	var oldRangeX = Math.abs(iTrap.x - oldCharX);
-	var oldRangeY = Math.abs(iTrap.y - oldCharY);
-	var flameItem = CalcItemFromSer( parseInt(iTrap.GetTempTag( "flameItem" )));
+	var oldRangeX = Math.abs( iTrap.x - oldCharX );
+	var oldRangeY = Math.abs( iTrap.y - oldCharY );
+	var flameItem = CalcItemFromSer( parseInt( iTrap.GetTempTag( "flameItem" )));
 
 	// Handle player walking out of range
 	if( rangeToChar >= maxRange )

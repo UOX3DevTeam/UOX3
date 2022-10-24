@@ -38,7 +38,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 
 function SendServerPollInfo( pSocket )
 {
-	var uptime = Math.floor(GetCurrentClock() / 1000) - Math.floor(GetStartTime() / 1000);
+	var uptime = Math.floor( GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
 	var totalAccounts = GetAccountCount();
 	var totalOnline = GetPlayerCount();
 	var totalItems = 0;
