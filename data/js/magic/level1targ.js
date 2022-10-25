@@ -393,6 +393,7 @@ function onSpellSuccess( mSock, mChar, ourTarg, spellID )
 	if( spellNum == -1 )
 	{
 		if( spellID != -1 )
+		{
 			spellNum = spellID;
 		}
 		else
