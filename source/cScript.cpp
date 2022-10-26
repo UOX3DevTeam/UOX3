@@ -4111,12 +4111,12 @@ SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
 	JSObject *dyeTubObj = JSEngine->AcquireObject( IUE_ITEM, dyeTub, runTime );
 	JSObject *targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
 
-	jsval params[2], rval;
+	jsval params[3], rval;
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( dyeTubObj );
-	params[1] = OBJECT_TO_JSVAL( targObj );
+	params[2] = OBJECT_TO_JSVAL( targObj );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDyeTarget", 2, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDyeTarget", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnDyeTarget, false );

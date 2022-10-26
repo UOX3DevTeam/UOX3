@@ -1,3 +1,12 @@
+27/10/2022 - Xuri
+	Fixed an issue with onDyeTarget event where the dyetub and target object parameters were not set properly
+	Fixed some incorrect casting animation-related variable assignments for AI_HEALER and AI_EVIL_HEALER
+	Fixed an issue with pets not going wild from lack of loyalty to their owners when at zero loyalty
+	Addressed issues with idle/fidget animation setup that could cause NPCs to blink out of existence
+	Removed stray semicolon behind control statement related to triggering of OnFacetChange JS event
+	Fixed an issue with Bless spell when cast from item
+	Some minor code cleanup
+
 24/10/2022 - Xuri (0.99.6-RC1)
 	Misc cleanup and standardization of style and naming conventions in code and scripts
 	Added comments for all dictionary-based system messages in code for maintainability reasons

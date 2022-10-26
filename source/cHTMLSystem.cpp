@@ -61,7 +61,7 @@ bool CountNPCFunctor( CBaseObject *a, UI32 &b, void *extraData )
 	bool retVal = true;
 	if( ValidateObject( a ))
 	{
-		CChar *j = static_cast< CChar * >( a );
+		CChar *j = static_cast<CChar *>( a );
 		if( j->IsNpc() )
 		{
 			++b;

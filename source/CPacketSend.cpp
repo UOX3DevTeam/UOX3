@@ -4211,7 +4211,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 					for( size_t j = 0; j < mList->size(); ++j )
 					{
 						CPartyEntry *mEntry = ( *mList )[j];
-						CChar * partyMember = mEntry->Member();
+						CChar *partyMember = mEntry->Member();
 
 						if( partyMember->GetSerial() == mSock->CurrcharObj()->GetSerial() )
 							continue;
@@ -4252,7 +4252,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				for( auto i = 0; i < numRecruits; i++ )
 				{
 					SERIAL recruitSerial = mGuild->RecruitNumber( i );
-					CChar * guildRecruit = CalcCharObjFromSer( recruitSerial );
+					CChar *guildRecruit = CalcCharObjFromSer( recruitSerial );
 					if( guildRecruit != nullptr && guildRecruit->GetSocket() != nullptr )
 					{
 						if( guildRecruit->GetSerial() == mChar->GetSerial() )
@@ -4286,7 +4286,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				for( auto i = 0; i < numMembers; i++ )
 				{
 					SERIAL memberSerial = mGuild->MemberNumber( i );
-					CChar * guildMember = CalcCharObjFromSer( memberSerial );
+					CChar *guildMember = CalcCharObjFromSer( memberSerial );
 					if( guildMember != nullptr && guildMember->GetSocket() != nullptr )
 					{
 						if( guildMember->GetSerial() == mChar->GetSerial() )

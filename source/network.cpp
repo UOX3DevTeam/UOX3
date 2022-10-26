@@ -442,7 +442,7 @@ void CNetworkStuff::LogOut( CSocket *s )
 	{
 		if( s->PickupSpot() == PL_GROUND )
 		{
-			CItem * i = s->GetCursorItem();
+			CItem *i = s->GetCursorItem();
 			i->SetCont( nullptr );
 			i->SetLocation( p->GetX(), p->GetY(), p->GetZ() );
 		}

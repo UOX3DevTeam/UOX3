@@ -1177,7 +1177,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						}
 						else
 						{
-							CItem * newItem = Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
+							CItem *newItem = Items->CreateScriptItem( s, mChar, tmp, num, itemType, true );
 							if( ValidateObject( newItem ))
 							{
 								if( forceDecayOff.m_IntValue == 1 )
@@ -1247,7 +1247,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 						}
 						else
 						{
-							CItem * newItem = Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
+							CItem *newItem = Items->CreateScriptItem( s, mChar, data, 0, itemType, true );
 							if( ValidateObject( newItem ))
 							{
 								if( forceDecayOff.m_IntValue == 1 )

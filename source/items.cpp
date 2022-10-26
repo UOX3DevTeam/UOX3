@@ -884,7 +884,7 @@ CItem *cItem::CreateRandomItem( CSocket *mSock, const std::string& itemList )
 //o------------------------------------------------------------------------------------------------o
 auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const UI08 worldNum, const UI16 instanceId, bool shouldSave, bool useLootlist ) -> CItem *
 {
-	CItem * iCreated = nullptr;
+	CItem *iCreated = nullptr;
 	std::string sect;
 
 	// Are we looking for a LOOTLIST, or an ITEMLIST?

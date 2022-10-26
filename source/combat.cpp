@@ -265,8 +265,8 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 								}
 								else
 								{
-									UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
-									UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+									UI16 castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
+									UI08 castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
 
 									// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
 									Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
@@ -303,8 +303,8 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 								}
 								else
 								{
-									UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
-									UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
+									UI16 castAnim = static_cast<UI16>( cwmWorldState->creatures[i->GetId()].CastAnimTargetId() );
+									UI08 castAnimLength = cwmWorldState->creatures[i->GetId()].CastAnimTargetLength();
 
 									// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
 									Effects->PlayCharacterAnimation( i, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
@@ -2281,7 +2281,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					// T2A parry formula: parryChance = parrySkill / 2
 					// AR of shield is then used to absorb a portion of the potential damage dealt; 8 AR shield absorbs 8 damage
 					// Source https://forums.uosecondage.com/viewtopic.php?t=13478
-					R32 parryChance = ( defendParry / 2 ) / 10;
+					R32 parryChance = static_cast<R32>(( defendParry / 2 ) / 10);
 					if( RandomNum( 1, 100 ) < parryChance )
 					{
 						parrySuccess = true;
@@ -2419,7 +2419,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 							}
 						}
 					}
-					else
+					/*else
 					{
 						// Old Pre-AoS (~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
@@ -2430,7 +2430,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 						{
 							shield->IncHP( shieldDamage );
 						}
-					}
+					}*/
 
 					if( shield->GetHP() <= 0 )
 					{
@@ -2470,7 +2470,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 
 					// Legacy = (Parrying * 10) / 80 (Add 5% if Parrying skill if 100 or above)
-					R32 parryChanceLegacy = ( defendParry / 80 );
+					R32 parryChanceLegacy = static_cast<R32>( defendParry / 80 );
 					if( defendParry >= 1000 )
 					{
 						parryChanceLegacy += 50;

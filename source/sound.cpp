@@ -430,7 +430,7 @@ auto cEffects::PlayTileSound( CChar *mChar, CSocket *mSock ) -> void
 	switch( mChar->GetStep() )	// change step info
 	{
 		case 0:
-			if( !isRunning || ( isRunning && onHorse ))
+			if(( !isRunning && !onHorse) || ( isRunning && onHorse ))
 			{
 				mChar->SetStep( 1 );	// step 2
 			}

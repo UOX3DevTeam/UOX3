@@ -3432,19 +3432,19 @@ auto CSpawnItem::HandleSpawnContainer() -> bool
 									// Place item in container and randomize location
 									iCreated->SetCont( this );
 									iCreated->PlaceInPack();
-								}
 
-								if( amountToSpawn > 1 && !iCreated->IsPileable() )
-								{
-									// Eee, item cannot pile, we need to spawn individual ones
-									for( int i = 1; i < amountToSpawn; i++ )
+									if( amountToSpawn > 1 && !iCreated->IsPileable() )
 									{
-										CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceId(), OT_ITEM, 0xFFFF, false );
-										if( ValidateObject( iCreated2 ))
+										// Eee, item cannot pile, we need to spawn individual ones
+										for( int i = 1; i < amountToSpawn; i++ )
 										{
-											// Place item in container and randomize location
-											iCreated2->SetCont( this );
-											iCreated2->PlaceInPack();
+											CItem *iCreated2 = Items->CreateBaseScriptItem( this, listEntry, this->WorldNumber(), 1, this->GetInstanceId(), OT_ITEM, 0xFFFF, false );
+											if( ValidateObject( iCreated2 ))
+											{
+												// Place item in container and randomize location
+												iCreated2->SetCont( this );
+												iCreated2->PlaceInPack();
+											}
 										}
 									}
 								}

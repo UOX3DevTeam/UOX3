@@ -2467,18 +2467,99 @@ void CMovement::NpcMovement( CChar& mChar )
 		{
 			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 1 ));
-				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 4, 15 )));
+				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( 3 ));
+				mChar.SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
 
 				if( mChar.GetBodyType() == BT_GARGOYLE || cwmWorldState->ServerData()->ForceNewAnimationPacket() )
 				{
-					Effects->PlayNewCharacterAnimation( &mChar, N_ACT_IDLE, 0, RandomNum( 0, 1 ));
+					// When using new animation packet, client generally handles which animations
+					// to play based on the type, but doesn't work for all creatures
+					switch( mChar.GetId() )
+					{
+						case 0x5: // Eagle
+						case 0xc5: // Chaos Dragon
+						case 0xc6: // Order Dragon
+							// Play only the default idle
+							Effects->PlayNewCharacterAnimation( &mChar, N_ACT_IDLE, 0, 0 );
+							break;
+						case 0x90: // Sea Horse
+						case 0x5f: // Turkey
+						{
+							// Play only one non-standard idle anim, using old animation packet
+							Effects->PlayCharacterAnimation( &mChar, 3, 0, 5 );
+							break;
+						}
+						case 0x91: // Sea Serpent
+						case 0x96: // Sea Serpent
+						case 0x97: // Dolphin
+						{
+							// Randomize between two non-standard idle anims, using old animation packet
+							auto rndVal = static_cast<UI16>( RandomNum( 3, 4 ));
+							Effects->PlayCharacterAnimation( &mChar, rndVal, 0, ( rndVal == 3 ? 14 : 19 ));
+							break;
+						}
+						case 0x2b1: // Time Lord
+							// No idle variation/fidget
+							break;
+						default:
+							// Randomize between two idles, let client handle which specific anim
+							// to play for each specific creature
+							Effects->PlayNewCharacterAnimation( &mChar, N_ACT_IDLE, 0, RandomNum( 0, 1 ));
+							break;
+					}
 				}
 				else
 				{
 					if( cwmWorldState->creatures[mChar.GetId()].IsHuman() )
 					{
 						Effects->PlayCharacterAnimation( &mChar, RandomNum( static_cast<UI16>( ACT_IDLE_LOOK ), static_cast<UI16>( ACT_IDLE_YAWN )), 0, 5 );
+					}
+					else
+					{
+						// With old animation packet, more control is needed of which animation to play
+						// and how long they should play for
+						switch( mChar.GetId() )
+						{
+							case 0x5: // Eagle
+							case 0xc5: // Chaos Dragon
+							case 0xc6: // Order Dragon
+								// Play only the default idle
+								Effects->PlayCharacterAnimation( &mChar, ACT_MONSTER_IDLE_1, 0, 5 );
+								break;
+							case 0x90: // Sea Horse
+							case 0x5f: // Turkey
+							{
+								// Play only one non-standard idle anim
+								Effects->PlayCharacterAnimation( &mChar, ACT_ANIMAL_IDLE, 0, 5 );
+								break;
+							}
+							case 0x91: // Sea Serpent
+							case 0x96: // Sea Serpent
+							case 0x97: // Dolphin
+							{
+								// Randomize between two non-standard idle anims
+								auto rndVal = static_cast<UI16>( RandomNum( 3, 4 ));
+								Effects->PlayCharacterAnimation( &mChar, rndVal, 0, ( rndVal == 3 ? 14 : 19 ));
+								break;
+							}
+							case 0x2b1: // Time Lord
+								// No idle variation/fidget
+								break;
+							default:
+								if( cwmWorldState->creatures[mChar.GetId()].IsAnimal() && !cwmWorldState->creatures[mChar.GetId()].CanFly() )
+								{
+									// Animal, excluding birds, which have animation setups like monsters
+									auto rndVal = static_cast<UI16>( RandomNum( 9, 10 ));
+									Effects->PlayCharacterAnimation( &mChar, rndVal, 0, ( rndVal == 9 ? 5 : 3 ));
+								}
+								else
+								{
+									// Monster
+									auto rndVal = static_cast<UI16>( RandomNum( 17, 18 ));
+									Effects->PlayCharacterAnimation( &mChar, rndVal, 0, 5 );
+								}
+								break;
+						}
 					}
 				}
 			}

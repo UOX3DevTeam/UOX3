@@ -2169,7 +2169,7 @@ void CBaseObject::WorldNumber( UI08 value )
 			cScript *tScript = JSMapping->GetScript( i );
 			if( tScript != nullptr )
 			{
-				if( tScript->OnFacetChange( static_cast<CChar *>( this ), worldNumber, value ) == 0 );
+				if( tScript->OnFacetChange( static_cast<CChar *>( this ), worldNumber, value ) == 0 )
 				{
 					// Script indicated facet change should not be allowed. Abort!
 					return;

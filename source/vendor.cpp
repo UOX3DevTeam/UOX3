@@ -452,7 +452,7 @@ bool CPISellItem::Handle( void )
 				}
 
 				CItem *join = nullptr;
-				GenericList< CItem * > *pCont = boughtPack->GetContainsList();
+				GenericList<CItem *> *pCont = boughtPack->GetContainsList();
 				for( k = pCont->First(); !pCont->Finished(); k = pCont->Next() )
 				{
 					if( ValidateObject( k ))
@@ -571,7 +571,7 @@ void RestockNPC( CChar& i, bool stockAll )
 	CItem *ci = i.GetItemAtLayer( IL_SELLCONTAINER );
 	if( ValidateObject( ci ))
 	{
-		GenericList< CItem * > *ciCont = ci->GetContainsList();
+		GenericList<CItem *> *ciCont = ci->GetContainsList();
 		for( CItem *c = ciCont->First(); !ciCont->Finished(); c = ciCont->Next() )
 		{
 			if( ValidateObject( c ))
