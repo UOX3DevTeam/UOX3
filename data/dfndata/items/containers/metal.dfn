@@ -29,7 +29,7 @@ good=6
 maxitems=125
 }
 
-[strongbox]
+[metalbox]
 {
 get=0x0e80 0x09a8
 }
@@ -44,7 +44,7 @@ maxitems=25
 script=15005
 }
 
-[playerstrongbox]
+[strongbox]
 {
 get=0x0e80
 }
