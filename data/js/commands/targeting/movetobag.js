@@ -1,3 +1,5 @@
+// This command lets GMs move a targeted object to their own backpack
+
 function CommandRegistration()
 {
 	RegisterCommand( "movetobag", 2, true );
@@ -6,7 +8,7 @@ function CommandRegistration()
 
 function command_MOVETOBAG( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 197, socket.language );
+	var targMsg = GetDictionaryEntry( 197, socket.language ); // Select an item to move into your bag.
 	socket.CustomTarget( 0, targMsg );
 }
 

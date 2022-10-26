@@ -1,9 +1,9 @@
 #if !defined( __GENERICLIST_H__ )
 #define __GENERICLIST_H__
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File	-	GenericList.h
 //|	Date	-	2021-05-04
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose	-	Created as a counterpart of CDataList, based on std::list this class will behave
 //|						as expected when removing records in the middle of the array.
 //|
@@ -11,101 +11,123 @@
 //|
 //|					1.0		 		2021-05-04
 //|					Initial implementation.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include <iostream>
 #include <cstdint>
 #include <unordered_set>
-
+#include <algorithm>
+//o------------------------------------------------------------------------------------------------o
+// GenericList
+//o------------------------------------------------------------------------------------------------o
+// Why this design can lead to issues
+// It stores iterators in an array (for push/pop).  However
+// if any object is deleted, there is no guarantee that the existing iterators
+// remain valid.  One may assume , because of a list, that each iterator is independent.
+// However, the implementation is not defined, and the spec does not guarantee itererator
+// validity outside the scope of use.  On the note of implementation, Soustrap has stated
+// that one shoud almost always use vector versus list, as in most cases (due to implementation)
+// it is faster.  This can be reimplemented if one assumes: 1. it only is a list of pointers, which it seems to be,
+// and 2: one does not have duplicates stored.  If those are valid, this class can be reimpemented without storing
+// iterators outside the working scope
+//o------------------------------------------------------------------------------------------------o
 template <typename T>
 class GenericList
 {
+
 private:
-	typedef std::list<T>							GENERICLIST;
-	typedef typename std::list<T>::iterator			GENERICLIST_ITERATOR;
-	typedef typename std::list<T>::const_iterator	GENERICLIST_CITERATOR;
+	using GENERICLIST = std::list<T>;
+	using GENERICLIST_ITERATOR = typename std::list<T>::iterator;
+	using GENERICLIST_CITERATOR = typename std::list<T>::const_iterator;
 
-	GENERICLIST					objData;
-	GENERICLIST_ITERATOR		objIterator;
-	std::vector<GENERICLIST_ITERATOR>		objIteratorBackup;
+	std::list<T> objData;
+	typename std::list<T>::iterator	objIterator;
+	std::vector<GENERICLIST_ITERATOR> objIteratorBackup;
 
-	GENERICLIST_ITERATOR FindEntry( T toFind )
+	auto FindEntry( T toFind ) -> GENERICLIST_ITERATOR
 	{
-		return std::find(objData.begin(), objData.end(), toFind);
+		return std::find( objData.begin(), objData.end(), toFind );
 	}
 
-	bool Begin( void )
+	auto Begin() -> bool
 	{
-		return (objIterator == objData.begin());
+		return ( objIterator == objData.begin() );
 	}
 public:
+
 	GenericList()
 	{
-		objData.resize(0);
-		objIteratorBackup.resize(0);
+		objData.resize( 0 );
+		objIteratorBackup.resize( 0 );
 		objIterator = objData.end();
 	}
 
-	~GenericList()
+	~GenericList() = default;
+
+	auto collection() const -> const std::list<T> &
 	{
-		objData.clear();
-		objIteratorBackup.clear();
+		return objData;
 	}
 
-	T GetCurrent( void )
+	auto collection() -> std::list<T>&
 	{
-		T rvalue = nullptr;
+		return objData;
+	}
+
+	auto GetCurrent() -> T
+	{
+		T rValue = nullptr;
 		if( objIterator != objData.end() )
 		{
-			rvalue = (*objIterator);
+			rValue = ( *objIterator );
 		}
-		return rvalue;
+		return rValue;
 	}
 
-	T First( void )
+	auto First() -> T
 	{
 		objIterator = objData.end();
 		return Next();
 	}
 
-	T Next( void )
+	auto Next() -> T
 	{
-		T rvalue = nullptr;
+		T rValue = nullptr;
 		if( !Begin() )
 		{
 			--objIterator;
-			rvalue = (*objIterator);
+			rValue = ( *objIterator );
 		}
 		else
 		{
 			objIterator = objData.end();
 		}
-		return rvalue;
+		return rValue;
 	}
 
-	bool Finished( void )
+	auto Finished() -> bool
 	{
-		return (objIterator == objData.end());
+		return ( objIterator == objData.end() );
 	}
 
-	size_t Num( void ) const
+	auto Num() const -> size_t
 	{
 		return objData.size();
 	}
 
-	void Clear()
+	auto Clear() -> void
 	{
 		objData.clear();
 	}
 
-	bool Add( T toAdd, bool checkForExisting = true )
+	auto Add( T toAdd, bool checkForExisting = true ) -> bool
 	{
 		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
 		{
 			return false;
 		}
 
-		const bool updateCounter = (objIterator == objData.end());
-		objData.push_back(toAdd);
+		const bool updateCounter = ( objIterator == objData.end() );
+		objData.push_back( toAdd );
 		if( updateCounter )
 		{
 			objIterator = objData.end();
@@ -114,15 +136,15 @@ public:
 		return true;
 	}
 
-	bool AddInFront( T toAdd, bool checkForExisting = true )
+	auto AddInFront( T toAdd, bool checkForExisting = true ) -> bool
 	{
 		if( checkForExisting && FindEntry( toAdd ) != objData.end() )
 		{
 			return false;
 		}
 
-		const bool updateCounter = (objIterator == objData.end());
-		objData.push_front(toAdd);
+		const bool updateCounter = ( objIterator == objData.end() );
+		objData.push_front( toAdd );
 		if( updateCounter )
 		{
 			objIterator = objData.end();
@@ -131,7 +153,7 @@ public:
 		return true;
 	}
 
-	bool Remove( T toRemove, bool handleAlloc = false )
+	auto Remove( T toRemove, bool handleAlloc = false ) -> bool
 	{
 		GENERICLIST_ITERATOR rIter = FindEntry( toRemove );
 		if( rIter != objData.end() )
@@ -148,9 +170,9 @@ public:
 					++objIteratorBackup[q];
 				}
 			}
-			objData.erase(rIter);
+			objData.erase( rIter );
 
-			if (handleAlloc)
+			if( handleAlloc )
 			{
 				delete toRemove;
 			}
@@ -159,7 +181,7 @@ public:
 		return false;
 	}
 
-	void Pop(void)
+	auto Pop() -> void
 	{
 		if( !objIteratorBackup.empty() )
 		{
@@ -172,56 +194,46 @@ public:
 		}
 	}
 
-	void Push( void )
+	auto Push() -> void
 	{
 		objIteratorBackup.push_back(objIterator);
 	}
 
-	void Reverse( void )
+	auto Reverse() -> void
 	{
 		objData.reverse();
 	}
 
-	void Sort( void )
+	auto Sort() -> void
 	{
 		objData.sort();
 	}
 
-	void Sort( bool Comparer( T one, T two ))
+	auto Sort( bool Comparer( T one, T two )) -> void
 	{
-		objData.sort(Comparer);
+		objData.sort( Comparer );
 	}
 };
 
-template <typename SERIAL>
+//o------------------------------------------------------------------------------------------------o
+// RegionSerialList
+//o------------------------------------------------------------------------------------------------o
 class RegionSerialList
 {
 private:
-	typedef std::unordered_set<SERIAL>							REGIONSERIALLIST;
-	typedef typename std::unordered_set<SERIAL>::iterator		REGIONSERIALLIST_ITERATOR;
-	typedef typename std::unordered_set<SERIAL>::const_iterator	REGIONSERIALLIST_CITERATOR;
-
-	REGIONSERIALLIST					objSerials;
-	REGIONSERIALLIST_ITERATOR		objIterator;
-	std::pair<REGIONSERIALLIST_ITERATOR, bool> insertResult;
+	std::unordered_set<SERIAL> objSerials;
 
 public:
-	RegionSerialList()
-	{
-	}
+	RegionSerialList() = default;
+	~RegionSerialList() = default;
 
-	~RegionSerialList()
+	auto Add( SERIAL toAdd ) -> bool
 	{
-		objSerials.clear();
-	}
-
-	bool Add( SERIAL toAdd )
-	{
-		insertResult = objSerials.insert( toAdd );
+		auto insertResult = objSerials.insert( toAdd );
 		return insertResult.second;
 	}
 
-	size_t Remove( SERIAL toRemove )
+	auto Remove( SERIAL toRemove ) -> size_t
 	{
 		return objSerials.erase( toRemove );
 	}

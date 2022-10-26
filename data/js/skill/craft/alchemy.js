@@ -25,12 +25,12 @@ const myPage = [
 	[10925, 10926, 10927]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 4
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
@@ -73,7 +73,7 @@ function onTimer( pUser, timerID )
 		case 2: // Page 2
 		case 3: // Page 3
 		case 4: // Page 4
-			TriggerEvent( scriptID, "pageX", socket, pUser, timerID );
+			TriggerEvent( scriptID, "PageX", socket, pUser, timerID );
 			break;
 		default:
 			break;
@@ -88,7 +88,14 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( !ValidateObject( pUser ) || pUser.dead )
 		return;
 
+	// Don't continue if player no longer has access to the crafting tool
 	var bItem = pSock.tempObj;
+	if( !ValidateObject( bItem ) || !pUser.InRange( bItem, 3 ))
+	{
+		pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
+		return;
+	}
+
 	var gumpID = scriptID + 0xffff;
 	var makeID = 0;
 	var itemDetailsID = 0;
@@ -119,7 +126,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 3: // Page 3
 		case 4: // Page 4
 			pSock.CloseGump( gumpID, 0 );
-			TriggerEvent( scriptID, "pageX", pSock, pUser, pButton );
+			TriggerEvent( scriptID, "PageX", pSock, pUser, pButton );
 			break;
 		// Make Items
 		case 100: // Refresh

@@ -28,21 +28,33 @@ function command_RNDTILE( pSock, cmdString )
 			{
 				pSock.xText = splitString[0] + " " + splitString[1] + " " + splitString[2];
 				if( splitString[3] && splitString[3] != "true" && splitString[3] != "false" )
+				{
 					pSock.tempint = parseInt( splitString[3] );
+				}
 				else
+				{
 					pSock.xText = pSock.xText + " " + splitString[3];
+				}
 				if( splitString[4] )
+				{
 					pSock.xText = pSock.xText + " " + splitString[4];
+				}
 				pSock.CustomTarget( 0, GetDictionaryEntry( 8097, pSock.language )); // Select first corner of bounding box:
 			}
 			else
+			{
 				pSock.SysMessage( GetDictionaryEntry( 8098, pSock.language )); // <startID> must be lower than <endID>!
+			}
 		}
 		else
+		{
 			pSock.SysMessage( GetDictionaryEntry( 8099, pSock.language )); // A minimum of three arguments must be included; <startID> <endID> and <hue>
+		}
 	}
 	else
+	{
 		pSock.SysMessage( GetDictionaryEntry( 8100, pSock.language )); // Syntax: 'RNDTILE <startID> <endID> <hue> <Z>(optional) <movable true/false>(optional)
+	}
 }
 
 //First target location in boundary box
@@ -60,7 +72,9 @@ function onCallback0( pSock, myTarget )
 	var itemHue = splitString[2];
 	var toFreeze = splitString[3];
 	if( toFreeze != "true" ) // if movable status hasn't been set to true, set it to false
+	{
 		toFreeze = "false";
+	}
 	pSock.xText = targX + " " + targY + " " + startID + " " + endID + " " + itemHue + " " + toFreeze;
 	pSock.CustomTarget( 1, GetDictionaryEntry( 8101, pSock.language )); // Select second corner of bounding box:
 }
@@ -81,7 +95,9 @@ function onCallback1( pSock, myTarget )
 
 		// If connected with a client lower than v7.0.9, manually add height of targeted tile
 		if( pSock.clientMajorVer <= 7 && pSock.clientSubVer < 9 )
+		{
 			targZ += GetTileHeight( pSock.GetWord( 17 ));
+		}
 	}
 
 	var startID = parseInt( splitString[2] );
@@ -110,9 +126,13 @@ function onCallback1( pSock, myTarget )
 			if( newItem )
 			{
 				if( toFreeze == "true" ) //if movable status has been set to true, make item immovable
+				{
 					newItem.movable = 2;
+				}
 				if( itemHue ) //if a hue has been specified, set hue of new item
+				{
 					newItem.colour = itemHue;
+				}
 				newItem.SetLocation( i, j, targZ, pSock.currentChar.worldnumber, pSock.currentChar.instanceID );
 				newItem.decayable = false;
 			}

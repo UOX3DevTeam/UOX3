@@ -660,7 +660,7 @@
 668=Ten przedmiot nie może być uwięziony!
 669=Nie możesz tego zablokować!
 670=Nie możesz się tu teleportować!
-671=Poddaj się wannabe Jesus!
+671=Nie możesz się tam teleportować!
 672=Nie możesz się tam teleportować!
 673=Ten przedmiot został zabezpieczony boską magią.  Nie możesz odblokować tego przedmiotu.
 674=Odblokujesz ten przedmiot.
@@ -1668,6 +1668,29 @@
 1663=Mój mały syn Timmy wymaga operacji, macie trochę złota, żeby pomóc?
 1664=Moja żona jest w ciąży z naszym siódmym dzieckiem, miejcie trochę litości w postaci złota dla zdesperowanego człowieka.
 // End begging text
+1670=Nie możesz się przebrać, gdy nosisz farbę do ciała.
+1671=Nie możesz polimorfować podczas noszenia farby do ciała.
+1672=Nie możesz używać incognito nosząc farbę do ciała.
+1673=Nie możesz tego zrobić będąc incognito.
+1674=Nie możesz tego zrobić będąc polimorfowanym.
+1675=Twoja skóra jest spalona, gdy farba plemienna się wypala!
+1676=Twoja farba na ciele uległa zużyciu!
+1677=Nie możesz się przebrać będąc incognito.
+1678=Nie możesz się przebrać będąc polimorficznym.
+1679=Jesteś już przebrany.
+1680=Od teraz nosisz oznaczenia dzikiego plemienia.  Twoja farba na ciele utrzyma się około tygodnia lub możesz ją usunąć za pomocą olejnej szmatki.
+1681=Wycierasz całą swoją farbę z ciała.
+1682=Plemienna Włócznia rozpada się w twoich rękach, gdy ją podnosisz!
+1683=%s zaczyna wymachiwać bola wokół siebie
+1684=Wprowadź nowy tytuł dla członka gildii:
+1685=Wybierz członka gildii, dla którego chcesz ustawić tytuł
+1686= Otrzymałeś tytuł gildii %s!
+1687=Zrekrutowałeś %s jako nowego członka gildii!
+1688=Zrekrutowano cię do gildii %s!
+1689=Odrzuciłeś %s ze swojej gildii!
+1690=Zostałeś zwolniony ze swojej gildii!
+1691=Nie możesz się zwolnić z gildii!
+1692=%s jest teraz nowym Mistrzem Gildii %s!
 // Tweak Char Menu Stuff
 1700=Nieważny przycisk wciśnięty
 1701=Wprowadź nowe Imię dla postaci.
@@ -1951,6 +1974,15 @@
 1979=Wyspy Tokuno
 1980=Ter Mur
 1981=Członkowie rasy %s nie mogą tego nosić
+1982=Parujesz atak!
+1983=Twoja broń została zniszczona!
+1984=Nie jesteś członkiem tej gildii!
+1985=Zasponsorowałeś %s jako kandydata do wstąpienia do gildii!
+1986=Zostałeś zaproszony przez %s do przystąpienia do gildii: %s
+1987=Złożyłeś deklarację lojalności wobec %s!
+1988=%s zadeklarował ci wierność!
+1989=Twoja gildia wypowiedziała wojnę gildii %s!
+1990=Twoja gildia zadeklarowała gildię %s jako sojusznika!
 // Menu zmian oparte na JS
 1991=Nieprawidłowy obiekt namierzony!
 1992=Nieznany obiekt namierzony!
@@ -2159,6 +2191,18 @@
 2204=Lista Przyjaciół
 2205=Duchy zmarłych nie są domeną wiedzy o zwierzętach.
 2206=Nie możesz myśleć o niczym, co znasz od ręki.
+2250=Niezrozumiały
+2251=Bardzo nieszczęśliwy
+2252=Raczej nieszczęśliwy.
+2253=Nieszczęśliwy
+2254=Trochę zadowolony
+2255=Zadowolony
+2256=Cieszący się
+2257=Raczej szczęśliwy
+2258=Bardzo szczęśliwy
+2259=Bardzo szczęśliwy
+2260=Cudownie Szczęśliwy
+2261=Euforyczny
 // [2300-2449] Najemnicy
 2300=%s został usunięty z listy przyjaciół %s.
 2301=Ty zostałeś usunięty z listy przyjaciół %s.
@@ -2467,6 +2511,15 @@
 2759=Czy twoi rodzice nigdy nie mówili ci, żeby nie biegać z nożyczkami w ręku?!
 2760=Nie możesz rozwikłać magii pobłogosławionego przedmiotu.
 2761=Ta istota oparła się próbie jej rozwiązania!
+2762=Nieprawidłowa ilość parametrów - wymaga 2 (timerID,scriptID)!
+2763=Pobierz pozostały czas timera JS dla jakiego obiektu?
+2764=Timer wygaśnie o: %s
+2765=Pozostały czas: %d sekund
+2766=Żaden timer JS z timerID %d i scriptID %u nie jest aktywny na obiekcie!
+2767=Nieprawidłowa liczba parametrów - wymaga 3 (timerID,expiryTime,scriptID)!
+2768=Ustawić pozostały czas timera JS dla jakiego obiektu?
+2769=Zabij określony timer JS dla jakiego obiektu?
+2770=Zdefiniowany timer JS został zabity dla wybranego obiektu.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE
@@ -3274,6 +3327,10 @@
 6213=Ta mikstura mogła być zrobiona z popiołu siarkowego.
 6214=Składniki tego eliksiru są dla ciebie nieznane.
 6215=Już wiesz jaki to rodzaj eliksiru: %s
+6250=Wychodzisz z cienia.
+6275=Łączysz jagody i mąkę w plemienną farbę noszoną przez dzikusów.
+6276=Nie masz umiejętności gotowania, by stworzyć farbę do ciała.
+6277=Nie znaleziono ID źródła na liście zasobów użytych do stworzenia przedmiotu.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -3521,6 +3578,10 @@
 8207=Zasięg bazowy broni dystansowej (tylko SA i późniejsze)
 8208=Obecne pozostałe użycia elementu (nie może przekroczyć wartości właściwości maxUses)
 8209=Maksymalna ilość użyć, jakie może mieć element
+8210=Przekierowanie do 'polecenia radditem...
+8211=Przekierowanie do polecenia 'raddnpc...
+8212=Nieprawidłowa składnia polecenia powtarzającego dodawanie obiektów: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Identyfikator sekcji z DFN, z którego pochodzi obiekt
 // [8300-8499] Menu ustawień - opisy właściwości znaków
 8300=Numer konta powiązanego z graczem. Kontrolowany przez serwer (tylko do odczytu)
 8301=Typ SI NPC
@@ -3653,6 +3714,11 @@
 8428=Współrzędna X postaci w świecie
 8429=Współrzędna Y postaci w świecie
 8430=Współrzędna Z postaci w świecie
+8431=Kordunek X do góry po lewej stronie dla granicy typu wędrówki postaci
+8432=Kordyna górnego lewego Y dla granicy wędrówki postaci
+8433=Prawa dolna współrzędna X dla granicy wędrówki postaci
+8434=Prawy dolny współrzędny Y dla granicy wędrówki postaci
+8435=Współrzędna Z dla granicy wędrówki postaci
 // [8500-8549] Menu Tweak - opisy właściwości Multi
 8500=Obecna liczba graczy zbanowanych w Multi. Kontrolowane przez serwer (tylko do odczytu)
 8501=Współrzędna X dla lokalizacji banów w Multi
@@ -3990,6 +4056,12 @@
 9128=Nie masz szans na sprowokowanie tej istoty.
 9129=Ten cel jest odporny na obrażenia fizyczne!
 9130=Twoja broń nie może przebić się przez magiczną barierę tej istoty.
+9140=o wyjątkowej jakości
+9141=wykonane przez
+9142=Odblokowujesz deskę.
+9143=Zablokujesz deskę.
+9144=Otworzysz deskę, ale nadal jest ona zablokowana.
+9150=Nie wykryto plecaka, nie można dodać przedmiotu! Spróbuj komendy 'addpack?
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!
@@ -4339,6 +4411,8 @@
 11218=Łuk
 11219=Kusza
 11220=Ciężka kusza
+11221=Łuk kompozytowy
+11222=Kusza powtarzalna
 // 11401 - 11600 Umiejętność krawiecka
 11401=MENU KRAWIECTWA
 11402=SKÓRA/SKÓRY

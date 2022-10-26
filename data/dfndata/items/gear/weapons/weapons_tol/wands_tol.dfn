@@ -1,0 +1,17 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Wand - ToL stats
+[0x0df2_tol]
+{
+get=base_wand
+weight=100
+value=26 12
+damage=11 15
+hp=31 110
+spd=50
+str=5
+}

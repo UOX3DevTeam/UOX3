@@ -37,12 +37,18 @@ function onCallback1( socket, ourObj )
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
+			{
 				socket.MakeMenu( 51, 8 );
+			}
 			else
+			{
 				socket.SysMessage( GetDictionaryEntry( 778, socket.language ) ); // You can't use items outside your backpack.
+			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 6006, socket.language ) ); // You can't make anything from that material.
+		}
 	}
 }
 

@@ -1,0 +1,354 @@
+//-==========================================================-
+//-=                                                        =-
+//-=             Ultima Offline eXperiment 3                =-
+//-=                Script name: humanoids.dfn              =-
+//-=                                                        =-
+//-==========================================================-
+
+// Base humanoid with shared DFN tags
+[base_humanoid]
+{
+DIRECTION=RND
+BACKPACK
+NPCWANDER=4
+FX2=20
+NPCAI=2
+FLAG=NEUTRAL
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// ORC-KIN
+
+// Orc - Base NPC with shared DFN tags
+[base_orc]
+{
+GET=base_humanoid
+NAME=#//an orc
+NAMELIST=3
+ID=0x0011
+EQUIPITEM=0x1711
+CARVE=78
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=classic
+}
+
+// Orc
+[orc]
+{
+GETPUB15=orc_pub15
+GETAOS=orc_aos
+GETTOL=orc_tol
+}
+
+// Orc - Variant with club
+[cluborc]
+{
+GET=orc
+ID=0x0029
+EQUIPITEM=0x13b4
+}
+
+// Orc Captain - Base NPC with shared DFN tags
+[base_orccaptain]
+{
+GET=base_humanoid
+NAME=#//an orc captain
+NAMELIST=3
+ID=0x0007
+EQUIPITEM=0x1442
+EQUIPITEM=0x13ec
+EQUIPITEM=0x1f0b
+EQUIPITEM=0x1711
+CARVE=80
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=classic
+}
+
+// Orc Captain
+[orccaptain]
+{
+GETPUB15=orccaptain_pub15
+GETAOS=orccaptain_aos
+GETTOL=orccaptain_tol
+}
+
+// Orc Mage - Base NPC with shared DFN tags
+[base_orcmage]
+{
+GET=base_humanoid
+NAME=#//an orcish mage
+ID=0x008c
+CARVE=82
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=classic
+}
+
+// Orc Mage
+[orcmage]
+{
+GETPUB15=orcmage_pub15
+GETAOS=orcmage_aos
+GETTOL=orcmage_tol
+}
+
+// Orc Lord - Base NPC with shared DFN tags
+[base_orclord]
+{
+GET=base_humanoid
+NAME=#//an orcish lord
+ID=0x008a
+EQUIPITEM=0x1442
+EQUIPITEM=0x13ec
+EQUIPITEM=0x1f0b
+EQUIPITEM=0x1711
+CARVE=81
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=classic
+}
+
+// Orc Lord
+[orclord]
+{
+GETPUB15=orclord_pub15
+GETAOS=orclord_aos
+GETTOL=orclord_tol
+}
+
+// Orc Bomber - Base NPC with shared DFN tags
+[base_orcbomber]
+{
+GET=base_humanoid
+NAME=#//an orc bomber
+ID=0x00b6
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=td
+}
+
+// Orc Bomber
+[orcbomber]
+{
+GETPUB15=orcbomber_pub15
+GETAOS=orcbomber_aos
+GETTOL=orcbomber_tol
+}
+
+// Orc Scout - Base NPC with shared DFN tags
+[base_orcscout]
+{
+GET=base_humanoid
+NAME=#//an orc scout
+ID=0x00b5
+EQUIPITEM=0x13b1
+EQUIPITEM=0x1711
+PACKITEM=0x0f3f,100
+RACE=22
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+ORIGIN=td
+}
+
+// Orc Scout
+[orcscout]
+{
+GETPUB15=orcscout_pub15
+GETAOS=orcscout_aos
+GETTOL=orcscout_tol
+}
+
+// Orc Brute - Base NPC with shared DFN tags
+[base_orcbrute]
+{
+GET=base_humanoid
+NAME=#//an orc brute
+ID=0x00bd
+EQUIPITEM=0x1406
+PACKITEM=0x1f0b
+RACE=22
+CUSTOMINTTAG=provImmune 1
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+SCRIPT=3208//special orc brute AI
+ORIGIN=td
+}
+
+// Orc Brute
+[orcbrute]
+{
+GETPUB15=orcbrute_pub15
+GETAOS=orcbrute_aos
+GETTOL=orcbrute_tol
+}
+
+// Orc Chopper - Base NPC with shared DFN tags
+[base_orcchopper]
+{
+GET=base_humanoid
+NAME=5145//an orc chopper
+ID=0x0007
+RACE=22
+COLOUR=0x096d
+EQUIPITEM=0x0f45
+EQUIPITEM=0x13ec
+SCRIPT=3001//monster speech
+SCRIPT=3207//generic orc AI
+SCRIPT=3210//special orc chopper ai
+ORIGIN=td
+}
+
+// Orc Chopper
+[orcchopper]
+{
+GETPUB15=orcchopper_pub15
+GETAOS=orcchopper_aos
+GETTOL=orcchopper_tol
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// LIZARD-MEN
+
+// Lizardman - Base NPC with shared DFN tags
+[base_lizardman]
+{
+GET=base_humanoid
+NAME=#//a lizardman
+NAMELIST=4
+ID=0x0021
+LOOT=randomgemsandjewelry
+CARVE=73
+RACE=5
+SCRIPT=3001//monster speech
+ORIGIN=classic
+}
+
+// Lizardman
+[lizardman]
+{
+GETPUB15=lizardman_pub15
+GETAOS=lizardman_aos
+GETTOL=lizardman_tol
+}
+
+// Lizardman - Spear variant
+[spearlizardman]
+{
+GET=lizardman
+ID=0x0023
+EQUIPITEM=0x1402
+FENCING=500 700
+}
+
+// Lizardman - Mace variant
+[macelizardman]
+{
+GET=lizardman
+ID=0x0024
+EQUIPITEM=0x1406
+MACEFIGHTING=500 700
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// RAT-MEN
+
+// Ratman - Base NPC with shared DFN tags
+[base_ratman]
+{
+GET=base_humanoid
+NAME=#//a ratman
+NAMELIST=6
+ID=0x002a
+LOOT=randomreagents,2
+CARVE=85
+RACE=23
+SCRIPT=3001//monster speech
+ORIGIN=classic
+}
+
+// Ratman
+[ratman]
+{
+GETPUB15=ratman_pub15
+GETAOS=ratman_aos
+GETTOL=ratman_tol
+}
+
+// Ratman - Mace variant
+[maceratman]
+{
+GET=ratman
+ID=0x002c
+EQUIPITEM=0x0f5c
+MACEFIGHTING=500 750
+}
+
+// Ratman - Sword variant
+[swordratman]
+{
+GET=ratman
+ID=0x002d
+EQUIPITEM=0x0f60
+SWORDSMANSHIP=500 750
+}
+
+// Ratman Mage - Base NPC with shared DFN tags
+[base_ratmanmage]
+{
+GET=base_humanoid
+NAME=#//a ratman shaman
+NAMELIST=6
+ID=0x008f
+SKIN=0x03ea
+PACKITEM=0x1515
+SPATTACK=4
+SPADELAY=10
+LOOT=randomreagents,5
+LOOT=lowlevelscrolls
+CARVE=87
+RACE=23
+ORIGIN=classic
+SCRIPT=3001//monster speech
+}
+
+// Ratman Mage
+[ratmanmage]
+{
+GETPUB15=ratmanmage_pub15
+GETAOS=ratmanmage_aos
+GETTOL=ratmanmage_tol
+}
+
+// Ratman Archer - Base NPC with shared DFN tags
+[base_ratmanarcher]
+{
+GET=base_humanoid
+NAME=#//a ratman
+NAMELIST=6
+ID=0x008e
+EQUIPITEM=0x13b1
+PACKITEM=0x0f3f,50
+PACKITEM=0x1515
+CARVE=85
+RACE=23
+ORIGIN=classic
+SCRIPT=3001//monster speech
+}
+
+// Ratman Archer
+[ratmanarcher]
+{
+GETPUB15=ratmanarcher_pub15
+GETAOS=ratmanarcher_aos
+GETTOL=ratmanarcher_tol
+}

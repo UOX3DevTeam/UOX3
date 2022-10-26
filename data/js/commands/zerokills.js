@@ -5,9 +5,9 @@ function CommandRegistration()
 
 function command_ZEROKILLS( socket, cmdString )
 {
-	socket.SysMessage( GetDictionaryEntry( 22, socket.language ) );
+	socket.SysMessage( GetDictionaryEntry( 22, socket.language )); // Zeroing all player kills...
 	var count = IterateOver( "CHARACTER" );
-	socket.SysMessage( GetDictionaryEntry( 23, socket.language ) );
+	socket.SysMessage( GetDictionaryEntry( 23, socket.language )); // All player kills are now 0.
 }
 
 function onIterate( toCheck )

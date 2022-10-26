@@ -2,12 +2,12 @@
 #include "weight.h"
 #include "mapstuff.h"
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	weight.cpp
 //|	Date		-	Pre-1999
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Weight Calculations
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
 //|						1.0			Pre - 1999
@@ -53,38 +53,38 @@
 //|									organized, hopefully the current implementation works, but special care will need to be taken in theese functions.
 //|
 //|							How we accomplish this:
-//|								calcWeight() will calc and return the total weight of a pack based upon all items inside, their amounts, etc
-//|								calcCharWeight() will calc and return the total weight of a Character, using calcWeight() to recurse his packs, and ignoring
+//|								CalcWeight() will calc and return the total weight of a pack based upon all items inside, their amounts, etc
+//|								CalcCharWeight() will calc and return the total weight of a Character, using CalcWeight() to recurse his packs, and ignoring
 //|									items/layers we don't want to add weight for (bank box, etc)
-//|								calcAddWeight() Calculates the total weight of adding the new item to the container, returns false if it is over the weight limit
-//|								calcSubtractWeight() Calculates the total weight of subtracting the item from the container, returns false if it's over the weight limit
-//|								addItemWeight() this function will have two overloads, basically it adds the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
-//|								subtractItemWeight() this function will have two overloads, basically it subtracts the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
-//|								isOverloaded() returns true if a character can move or false if not (based upon his strength and weight)
-//|								checkPackWeight() returns false if a pack is at its maximum weight or not based upon MAX_PACKWEIGHT
-//|								checkCharWeight() returns false if a character is at their maximum weight or not based upon MAX_CHARWEIGHT
-//o-----------------------------------------------------------------------------------------------o
+//|								CalcAddWeight() Calculates the total weight of adding the new item to the container, returns false if it is over the weight limit
+//|								CalcSubtractWeight() Calculates the total weight of subtracting the item from the container, returns false if it's over the weight limit
+//|								AddItemWeight() this function will have two overloads, basically it adds the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
+//|								SubtractItemWeight() this function will have two overloads, basically it subtracts the weight of CItem *i to the total weight of CItem *pack or CChar *mChar
+//|								IsOverloaded() returns true if a character can move or false if not (based upon his strength and weight)
+//|								CheckPackWeight() returns false if a pack is at its maximum weight or not based upon MAX_PACKWEIGHT
+//|								CheckCharWeight() returns false if a character is at their maximum weight or not based upon MAX_CHARWEIGHT
+//o------------------------------------------------------------------------------------------------o
 
 CWeight *Weight = nullptr;
 
 //const SI32 MAX_PACKWEIGHT = 400000;	// Lets have maximum weight of packs be 400 stones for now
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 calcWeight( CItem *pack )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CalcWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of a pack based upon all items inside,
 //|							their amounts, etc. This function should never need to be called
 //|							but is available for bruteforce weight updating
-//o-----------------------------------------------------------------------------------------------o
-SI32 CWeight::calcWeight( CItem *pack )
+//o------------------------------------------------------------------------------------------------o
+SI32 CWeight::CalcWeight( CItem *pack )
 {
 	SI32 totalWeight = 0;
 	SI32 contWeight = 0;
 
-	GenericList< CItem * > *pCont = pack->GetContainsList();
+	GenericList<CItem *> *pCont = pack->GetContainsList();
 	for( CItem *i = pCont->First(); !pCont->Finished(); i = pCont->Next() )
 	{
-		if( !ValidateObject( i ) )
+		if( !ValidateObject( i ))
 			continue;
 
 		if( i->IsContType() )	// Item is a container
@@ -93,196 +93,234 @@ SI32 CWeight::calcWeight( CItem *pack )
 			 // This only works if the weight gotten from the tiledata is correct, however. If it's undefined it defaults to 255 stones!
 			 // Instead, the code should maybe subtract the weight of all items contained in the container before re-adding them?*/
 
-			contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
-			if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
+			contWeight = i->GetBaseWeight();	// Find the base container weight, stored when item was created
+			if( contWeight == 0 )				// If they have no weight grab the tiledata weight for the item
 			{
-				CTile& tile = Map->SeekTile( i->GetID() );
-				contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+				CTile& tile = Map->SeekTile( i->GetId() );
+				contWeight = static_cast<SI32>( tile.Weight() * 100 );	// Add the weight of the container
 			}
-			contWeight += calcWeight( i );	// Find and add the weight of the items in the container
-			i->SetWeight( contWeight, false );		// Also update the weight property of the container
+			contWeight += CalcWeight( i );		// Find and add the weight of the items in the container
+			i->SetWeight( contWeight, false );	// Also update the weight property of the container
 			totalWeight += contWeight;
 			if( totalWeight >= MAX_WEIGHT )
+			{
 				return MAX_WEIGHT;
+			}
 		}
 		else
 		{
-			if( !calcAddWeight( i, totalWeight ) )
+			if( !CalcAddWeight( i, totalWeight ))
+			{
 				return MAX_WEIGHT;
+			}
 		}
 	}
 	return totalWeight;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 calcCharWeight( CChar *mChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CalcCharWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of a character based upon all items he owns,
 //|							This function should never need to be called but is available for
 //|							bruteforce weight updating
-//o-----------------------------------------------------------------------------------------------o
-SI32 CWeight::calcCharWeight( CChar *mChar )
+//o------------------------------------------------------------------------------------------------o
+SI32 CWeight::CalcCharWeight( CChar *mChar )
 {
 	SI32 totalWeight = 0;
 	SI32 contWeight = 0;
 
 	for( CItem *i = mChar->FirstItem(); !mChar->FinishedItems(); i = mChar->NextItem() )
 	{
-		if( !ValidateObject( i ) )
+		if( !ValidateObject( i ))
 			continue;
 
-		if( IsWeightedContainer( i ) )
+		if( IsWeightedContainer( i ))
 		{
 			if( i->GetLayer() == IL_PACKITEM )
 			{
-				contWeight = i->GetBaseWeight(); // Find the base container weight, stored when item was created
-				if( contWeight == 0 )	// If they have no weight grab the tiledata weight for the item
+				contWeight = i->GetBaseWeight();	// Find the base container weight, stored when item was created
+				if( contWeight == 0 )				// If they have no weight grab the tiledata weight for the item
 				{
-					CTile& tile = Map->SeekTile( i->GetID() );
-					contWeight = static_cast<SI32>( tile.Weight() * 100);	// Add the weight of the container
+					CTile& tile = Map->SeekTile( i->GetId() );
+					contWeight = static_cast<SI32>( tile.Weight() * 100 );	// Add the weight of the container
 				}
-				contWeight += calcWeight( i );	// Find and add the weight of the items in the container
+				contWeight += CalcWeight( i );	// Find and add the weight of the items in the container
 				i->SetWeight( contWeight, false );		// Also update the weight property of the container
 				totalWeight += contWeight;
 			}
 			else
+			{
 				totalWeight += i->GetWeight();	// Normal item, just add its weight
+			}
 		}
 		if( totalWeight >= MAX_WEIGHT )
+		{
 			return MAX_WEIGHT;
+		}
 	}
 	return totalWeight;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool calcAddWeight( CItem *item, SI32 &totalWeight )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CalcAddWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the total weight of adding an item to a container, returns
 //|							false if the item is over the max weight limit
-//o-----------------------------------------------------------------------------------------------o
-bool CWeight::calcAddWeight( CItem *item, SI32 &totalWeight )
+//o------------------------------------------------------------------------------------------------o
+bool CWeight::CalcAddWeight( CItem *item, SI32 &totalWeight )
 {
 	SI32 itemWeight = item->GetWeight();
 	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
 	{
-		CTile& tile = Map->SeekTile( item->GetID() );
-		itemWeight = static_cast<SI32>( tile.Weight() * 100);
-	}
-
-	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
-		totalWeight += (item->GetAmount() * itemWeight);
-	else	// Else just the items weight
-		totalWeight += itemWeight;
-
-	if( totalWeight > MAX_WEIGHT )	// Don't let them go over the weight limit
-		return false;
-	return true;
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool calcSubtractWeight( CItem *item, SI32 &totalWeight )
-//|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Calculate the total weight of removing an item from a container, returns
-//|							false if the item is over the max weight limit or less than 0
-//o-----------------------------------------------------------------------------------------------o
-bool CWeight::calcSubtractWeight( CItem *item, SI32 &totalWeight )
-{
-	SI32 itemWeight = item->GetWeight();
-	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
-	{
-		CTile& tile = Map->SeekTile( item->GetID() );
+		CTile& tile = Map->SeekTile( item->GetId() );
 		itemWeight = static_cast<SI32>( tile.Weight() * 100 );
 	}
 
-	if( item->GetAmount() > 1 )	// Stackable items weight is Amount * Weight
-		totalWeight -= (item->GetAmount() * itemWeight);
-	else	// Else just the items weight
-		totalWeight -= itemWeight;
+	if( item->GetAmount() > 1 )
+	{
+		// Stackable items weight is Amount * Weight
+		totalWeight += ( item->GetAmount() * itemWeight );
+	}
+	else
+	{
+		// Else just the items weight
+		totalWeight += itemWeight;
+	}
 
-	if( totalWeight < 0 || totalWeight > MAX_WEIGHT )	// Don't let them go under 0 or over the weight limit
+	if( totalWeight > MAX_WEIGHT )	// Don't let them go over the weight limit
 		return false;
+
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void addItemWeight( CBaseObject *getObj, Citem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CalcSubtractWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds an items weight to the total weight of the object
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::addItemWeight( CBaseObject *getObj, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Calculate the total weight of removing an item from a container, returns
+//|							false if the item is over the max weight limit or less than 0
+//o------------------------------------------------------------------------------------------------o
+bool CWeight::CalcSubtractWeight( CItem *item, SI32 &totalWeight )
 {
-	if( getObj->GetObjType() == OT_CHAR )
-		addItemWeight( static_cast<CChar *>(getObj), item );
+	SI32 itemWeight = item->GetWeight();
+	if( itemWeight == 0 )	// If they have no weight find the weight of the tile
+	{
+		CTile& tile = Map->SeekTile( item->GetId() );
+		itemWeight = static_cast<SI32>( tile.Weight() * 100 );
+	}
+
+	if( item->GetAmount() > 1 )
+	{
+		// Stackable items weight is Amount * Weight
+		totalWeight -= ( item->GetAmount() * itemWeight );
+	}
 	else
-		addItemWeight( static_cast<CItem *>(getObj), item );
+	{
+		// Else just the items weight
+		totalWeight -= itemWeight;
+	}
+
+	if( totalWeight < 0 || totalWeight > MAX_WEIGHT )	// Don't let them go under 0 or over the weight limit
+		return false;
+
+	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void addItemWeight( CChar *mChar, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::AddItemWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds an items weight to the total weight of the character
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::addItemWeight( CChar *mChar, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds an items weight to the total weight of the object
+//o------------------------------------------------------------------------------------------------o
+void CWeight::AddItemWeight( CBaseObject *getObj, CItem *item )
 {
-	SI32 totalWeight = mChar->GetWeight();
-
-	if( item->GetCont() != mChar || IsWeightedContainer( item ) )
+	if( getObj->GetObjType() == OT_CHAR )
 	{
-		if( calcAddWeight( item, totalWeight ) )
-			mChar->SetWeight( totalWeight );
-		else
-			mChar->SetWeight( MAX_WEIGHT );
+		AddItemWeight( static_cast<CChar *>( getObj ), item );
+	}
+	else
+	{
+		AddItemWeight( static_cast<CItem *>( getObj ), item );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void addItemWeight( CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::AddItemWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Adds an items weight to the total weight of the pack updating
-//|							the packs container in the process
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::addItemWeight( CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds an items weight to the total weight of the character
+//o------------------------------------------------------------------------------------------------o
+void CWeight::AddItemWeight( CChar *mChar, CItem *item )
 {
-	SI32 totalWeight = pack->GetWeight();
+	SI32 totalWeight = mChar->GetWeight();
 
-	if( calcAddWeight( item, totalWeight ) )
-		pack->SetWeight( totalWeight, false );//why false?
-	else
-		pack->SetWeight( MAX_WEIGHT, false );
-
-	CBaseObject *pCont = pack->GetCont();
-	if( ValidateObject( pCont ) )
+	if( item->GetCont() != mChar || IsWeightedContainer( item ))
 	{
-		if( pCont->CanBeObjType( OT_ITEM ) )
+		if( CalcAddWeight( item, totalWeight ))
 		{
-			CItem *pPack = static_cast<CItem *>(pCont);
-			if( ValidateObject( pPack ) )
-				addItemWeight( pPack, item );
+			mChar->SetWeight( totalWeight );
 		}
 		else
 		{
-			CChar *packOwner = static_cast<CChar *>(pCont);
-			if( ValidateObject( packOwner ) )
+			mChar->SetWeight( MAX_WEIGHT );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::AddItemWeight()
+//|	Date		-	2/23/2003
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds an items weight to the total weight of the pack updating
+//|							the packs container in the process
+//o------------------------------------------------------------------------------------------------o
+void CWeight::AddItemWeight( CItem *pack, CItem *item )
+{
+	SI32 totalWeight = pack->GetWeight();
+
+	if( CalcAddWeight( item, totalWeight ))
+	{
+		pack->SetWeight( totalWeight, false ); // why false?
+	}
+	else
+	{
+		pack->SetWeight( MAX_WEIGHT, false );
+	}
+
+	CBaseObject *pCont = pack->GetCont();
+	if( ValidateObject( pCont ))
+	{
+		if( pCont->CanBeObjType( OT_ITEM ))
+		{
+			CItem *pPack = static_cast<CItem *>( pCont );
+			if( ValidateObject( pPack ))
 			{
-				if( IsWeightedContainer( pack ) )
-					addItemWeight( packOwner, item );
+				AddItemWeight( pPack, item );
+			}
+		}
+		else
+		{
+			CChar *packOwner = static_cast<CChar *>( pCont );
+			if( ValidateObject( packOwner ))
+			{
+				if( IsWeightedContainer( pack ))
+				{
+					AddItemWeight( packOwner, item );
+				}
 			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool IsWeightedContainer( CItem *toCheck )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::IsWeightedContainer()
 //|	Date		-	3/11/2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper function to handle most of our layer checks in one place
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CWeight::IsWeightedContainer( CItem *toCheck )
 {
 	switch( toCheck->GetLayer() )
@@ -302,144 +340,181 @@ bool CWeight::IsWeightedContainer( CItem *toCheck )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void subtractItemWeight( CBaseObject *getObj, Citem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::SubtractItemWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Subtracts an items weight from the total weight of the object
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::subtractItemWeight( CBaseObject *getObj, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+void CWeight::SubtractItemWeight( CBaseObject *getObj, CItem *item )
 {
 	if( getObj->GetObjType() == OT_CHAR )
-		subtractItemWeight( static_cast<CChar *>(getObj), item );
-	else
-		subtractItemWeight( static_cast<CItem *>(getObj), item );
-}
-
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void subtractItemWeight( CChar *mChar, CItem *item )
-//|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Subtracts an items weight from the total weight of the character
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::subtractItemWeight( CChar *mChar, CItem *item )
-{
-	SI32 totalWeight = mChar->GetWeight();
-
-	if( item->GetCont() != mChar || IsWeightedContainer( item ) )
 	{
-		if( calcSubtractWeight( item, totalWeight ) )
-			mChar->SetWeight( totalWeight );
-		else
-			mChar->SetWeight( 0 );
+		SubtractItemWeight( static_cast<CChar *>( getObj ), item );
+	}
+	else
+	{
+		SubtractItemWeight( static_cast<CItem *>( getObj ), item );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void subtractItemWeight( CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::SubtractItemWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Subtracts an items weight from the total weight of the pack updating
-//|							the packs container in the process
-//o-----------------------------------------------------------------------------------------------o
-void CWeight::subtractItemWeight( CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Subtracts an items weight from the total weight of the character
+//o------------------------------------------------------------------------------------------------o
+void CWeight::SubtractItemWeight( CChar *mChar, CItem *item )
 {
-	SI32 totalWeight = pack->GetWeight();
+	SI32 totalWeight = mChar->GetWeight();
 
-	if( calcSubtractWeight( item, totalWeight ) )
-		pack->SetWeight( totalWeight, false );
-	else
-		pack->SetWeight( 0, false );
-
-	CBaseObject *pCont = pack->GetCont();
-	if( ValidateObject( pCont ) )
+	if( item->GetCont() != mChar || IsWeightedContainer( item ))
 	{
-		if( pCont->CanBeObjType( OT_ITEM ) )
+		if( CalcSubtractWeight( item, totalWeight ))
 		{
-			CItem *pPack = static_cast<CItem *>(pCont);
-			if( ValidateObject( pPack ) )
-				subtractItemWeight( pPack, item );
+			mChar->SetWeight( totalWeight );
 		}
 		else
 		{
-			CChar *packOwner = static_cast<CChar *>(pCont);
-			if( ValidateObject( packOwner ) )
+			mChar->SetWeight( 0 );
+		}
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::SubtractItemWeight()
+//|	Date		-	2/23/2003
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Subtracts an items weight from the total weight of the pack updating
+//|							the packs container in the process
+//o------------------------------------------------------------------------------------------------o
+void CWeight::SubtractItemWeight( CItem *pack, CItem *item )
+{
+	SI32 totalWeight = pack->GetWeight();
+
+	if( CalcSubtractWeight( item, totalWeight ))
+	{
+		pack->SetWeight( totalWeight, false );
+	}
+	else
+	{
+		pack->SetWeight( 0, false );
+	}
+
+	CBaseObject *pCont = pack->GetCont();
+	if( ValidateObject( pCont ))
+	{
+		if( pCont->CanBeObjType( OT_ITEM ))
+		{
+			CItem *pPack = static_cast<CItem *>( pCont );
+			if( ValidateObject( pPack ))
 			{
-				if( IsWeightedContainer( pack ) )
-					subtractItemWeight( packOwner, item );
+				SubtractItemWeight( pPack, item );
+			}
+		}
+		else
+		{
+			CChar *packOwner = static_cast<CChar *>( pCont );
+			if( ValidateObject( packOwner ))
+			{
+				if( IsWeightedContainer( pack ))
+				{
+					SubtractItemWeight( packOwner, item );
+				}
 			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool isOverloaded( CChar *mChar ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::IsOverloaded()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the character is overloaded based upon his strength
-//o-----------------------------------------------------------------------------------------------o
-bool CWeight::isOverloaded( CChar *mChar ) const
+//o------------------------------------------------------------------------------------------------o
+bool CWeight::IsOverloaded( CChar *mChar ) const
 {
-	if( (mChar->GetWeight() / 100) > ((mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr()) + 40) )
+	if( static_cast<R32>( mChar->GetWeight() / 100 ) > (( mChar->GetStrength() * cwmWorldState->ServerData()->WeightPerStr() ) + 40 ))
 		return true;
+
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CheckPackWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns false if a pack will be overloaded when items weight is added
 //|							or true if not based upon MAX_PACKWEIGHT
-//o-----------------------------------------------------------------------------------------------o
-bool CWeight::checkPackWeight( CChar *ourChar, CItem *pack, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+bool CWeight::CheckPackWeight( CChar *ourChar, CItem *pack, CItem *item )
 {
-	if( !ValidateObject( pack ) )
+	if( !ValidateObject( pack ))
 		return true;
 
-	if( pack->GetContSerial() < BASEITEMSERIAL )		// If the pack's container is a character, (it's his root pack), we don't have a container weight limit
-		return checkCharWeight( ourChar, static_cast<CChar *>(pack->GetCont()), item );
+	if( pack->GetContSerial() < BASEITEMSERIAL ) // If the pack's container is a character, (it's his root pack), we don't have a container weight limit
+		return CheckCharWeight( ourChar, static_cast<CChar *>( pack->GetCont() ), item );
 
 	const SI32 packWeight = pack->GetWeight();
 	SI32 packWeightMax = pack->GetWeightMax();
 	SI32 itemWeight = item->GetWeight();
 	if( item->GetAmount() > 1 )
+	{
 		itemWeight *= item->GetAmount();
-	if( (itemWeight + packWeight) <= packWeightMax ) // <= MAX_PACKWEIGHT )
-	{	// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
-		if( pack->GetCont() == nullptr )	// No container above pack
+	}
+
+	if(( itemWeight + packWeight ) <= packWeightMax ) // <= MAX_PACKWEIGHT )
+	{
+		// Calc the weight and compare to packWeightMax //MAX_PACKWEIGHT
+		if( pack->GetCont() == nullptr ) // No container above pack
 			return true;
-		if( pack->GetContSerial() >= BASEITEMSERIAL )	// pack is in another pack, lets ensure it won't overload that pack
-			return checkPackWeight( ourChar, static_cast<CItem *>(pack->GetCont()), item );
+
+		if( pack->GetContSerial() >= BASEITEMSERIAL ) // pack is in another pack, lets ensure it won't overload that pack
+			return CheckPackWeight( ourChar, static_cast<CItem *>( pack->GetCont() ), item );
 	}
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CWeight::CheckCharWeight()
 //|	Date		-	2/23/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns false if a character will be overloaded when items weight is added
 //|							or true if not based upon MAX_CHARWEIGHT
-//o-----------------------------------------------------------------------------------------------o
-bool CWeight::checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item )
+//o------------------------------------------------------------------------------------------------o
+bool CWeight::CheckCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount )
 {
-	if( !ValidateObject( mChar ) )
+	if( !ValidateObject( mChar ))
 		return true;
 
 	SI32 MAX_CHARWEIGHT = 0;
 	if( mChar->IsGM() )
-		MAX_CHARWEIGHT = ( MAX_WEIGHT - 1 );	// Weight on GM maxes only at our logical limit
+	{
+		MAX_CHARWEIGHT = ( MAX_WEIGHT - 1 ); // Weight on GM maxes only at our logical limit
+	}
 	else
-		MAX_CHARWEIGHT = 200000;	// Normal characters have hardcap of 2,000 stones
+	{
+		MAX_CHARWEIGHT = 200000; // Normal characters have hardcap of 2,000 stones
+	}
 
 	const SI32 charWeight = mChar->GetWeight();
 	SI32 itemWeight = 0;
-	if( ourChar != mChar )	// Item weight has already been added to the character if we picked it up
+	if( ourChar != mChar ) // Item weight has already been added to the character if we picked it up
+	{
 		itemWeight = item->GetWeight();
-	if( item->GetAmount() > 1 )
+	}
+
+	if( amount > 0 )
+	{
+		// Calculate weight based on amount of items (supplied as function parameter) picked up from pile
+		itemWeight *= amount;
+	}
+	else if( item->GetAmount() > 1 )
+	{
 		itemWeight *= item->GetAmount();
-	if( (itemWeight + charWeight) <= MAX_CHARWEIGHT )
+	}
+
+	if(( itemWeight + charWeight ) <= MAX_CHARWEIGHT )
 		return true;
 
 	return false;

@@ -36,20 +36,30 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 	{
 		var goldAmount = 0;
       	if( baseGoldOnStackSize == true ) // If gold-reward is based on stack-size
+      	{
          	goldAmount = iStackSize;
+      	}
 		else if( baseGoldOnWeight == true ) // If gold-reward is based on item-weight
 		{
 			if( iDropped.weight != 0 )
+			{
 	            goldAmount = ( Math.ceil( iDropped.weight / 100 )); //rounds up to nearest whole number
+			}
 	        else if( Math.ceil( iDropped.weight / 100 ) > 100 )
+	        {
 	        	goldAmount = maxGoldForWeight; // Cap Gold-for-weight so players cannot abuse weight bugs to gain absurd amount of gold
+	        }
 			else
+			{
 	            goldAmount = 1; // Default to 1 gold for items that have no weight defined
+			}
       	}
       	else if( baseGoldOnSellValue == true ) // If gold-reward is based on item sell-value
       	{
 			if( iDropped.sellvalue != 0 )
+			{
 				goldAmount = Math.ceil( iDropped.sellvalue / 2 );
+			}
       	}
 
       	// Now, spit out some gold for the player!
@@ -57,10 +67,12 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
       	{
 			var newGold = CreateDFNItem( pSocket, pDropper, "0x0EED", goldAmount, "ITEM", true );
 			var outMessage = GetDictionaryEntry( 1938, pSocket.language ); // The trash container disposes of unwanted junk and spits out %i gold coins in return!
-			iDroppedOn.TextMessage( outMessage.replace(/%i/gi, goldAmount ), false, 0x7ef, 0, pDropper.serial );
+			iDroppedOn.TextMessage( outMessage.replace( /%i/gi, goldAmount ), false, 0x7ef, 0, pDropper.serial );
       	}
 	    else
+	    {
       		iDroppedOn.TextMessage( GetDictionaryEntry( 1934, pSocket.language), false, 0x7ef, 0, pDropper.serial ); // The trash container disposes of your worthless junk.
+	    }
 
       	// Finally, delete the item that was dropped, since we already handed out the gold for it!
       	iDropped.Delete();
@@ -79,7 +91,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
    			pDropper.SysMessage( GetDictionaryEntry( 1935, pSocket.language)); // That container cannot hold any more items!
    			return 0;
    		}
-   		if( !iDroppedOn.multi.IsSecureContainer( iDroppedOn ))
+   		if( iDropped.multi && !iDroppedOn.multi.IsSecureContainer( iDroppedOn ))
    		{
 	   		if( iDroppedOn.weight >= maxContainerWeight || iDroppedOn.weight + iDropped.weight > maxContainerWeight )
 	   		{
@@ -98,7 +110,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 		iDroppedOn.StartTimer( trashDisposeTimer, 1, true );
 		var outMessage = GetDictionaryEntry( 1939, pSocket.language ); // The item will be deleted in %i minutes.
 		var timeToDisposal = (trashDisposeTimer / 1000 / 60);
-		iDroppedOn.TextMessage( outMessage.replace(/%i/gi, timeToDisposal ), false, 0x7ef, 0, pDropper.serial );
+		iDroppedOn.TextMessage( outMessage.replace( /%i/gi, timeToDisposal ), false, 0x7ef, 0, pDropper.serial );
    	}
 
     // Subtract weight if item dropped was picked up from one of these spots:
@@ -107,9 +119,13 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
     if( iPickupSpot == 1 || iPickupSpot == 3 || iPickupSpot == 5 )
     {
     	if( iWeight == 0 || iWeight == 25500 )
+    	{
 			pDropper.weight = pDropper.weight - 25500;
+    	}
 		else
+		{
 			pDropper.weight = pDropper.weight - iWeight;
+		}
 	}
 
 	return 2; // Don't use hard code, don't bounce item

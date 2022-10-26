@@ -1,11 +1,11 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSPropertyFuncts.cpp
 //|	Date		-	12/14/2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	1.0		14th December, 2001 Initial implementation
 //|							Defines the property specifications for race, region, guild,
 //|							item and chars
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSPropertySpecs__
 #define __UOXJSPropertySpecs__
 
@@ -110,6 +110,7 @@ static JSPropertySpec CTimerProperties[] =
 	{ "SUMMONTIME",			TIMER_SUMMONTIME,		JSPROP_ENUMPERMRO },
 	{ "EVADETIME",			TIMER_EVADETIME,		JSPROP_ENUMPERMRO },
 	{ "LOYALTYTIME",		TIMER_LOYALTYTIME,		JSPROP_ENUMPERMRO },
+	{ "IDLEANIMTIME",		TIMER_IDLEANIMTIME,		JSPROP_ENUMPERMRO },
 	{ "LOGOUT",				TIMER_LOGOUT,			JSPROP_ENUMPERMRO },
 
 	// Socket Timers
@@ -225,6 +226,7 @@ static JSPropertySpec CGuildProperties[] =
 
 static JSPropertySpec CCharacterProps[] =
 {
+	{ "sectionID",		CCP_SECTIONID,		JSPROP_ENUMANDPERM },
 	{ "name",			CCP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CCP_TITLE,			JSPROP_ENUMANDPERM },
 	{ "x",				CCP_X,				JSPROP_ENUMANDPERM },
@@ -235,6 +237,9 @@ static JSPropertySpec CCharacterProps[] =
 	{ "oldZ",			CCP_OLDZ,			JSPROP_ENUMANDPERM },
 	{ "id",				CCP_ID,				JSPROP_ENUMANDPERM },
 	{ "colour",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "color",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "skin",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "hue",			CCP_COLOUR,			JSPROP_ENUMANDPERM },
 	{ "controlSlots",	CCP_CONTROLSLOTS,	JSPROP_ENUMANDPERM },
 	{ "controlSlotsUsed",	CCP_CONTROLSLOTSUSED,	JSPROP_ENUMANDPERM },
 	{ "orneriness",		CCP_ORNERINESS,		JSPROP_ENUMANDPERM },
@@ -261,6 +266,8 @@ static JSPropertySpec CCharacterProps[] =
 	{ "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM },
 	{ "attack",			CCP_ATTACK,			JSPROP_ENUMPERMRO  },
 	{ "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM },
+	{ "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM },
+	{ "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM },
 	{ "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM },
 	{ "setPeace",		CCP_SETPEACE,		JSPROP_ENUMANDPERM },
 	{ "hunger",			CCP_HUNGER,			JSPROP_ENUMANDPERM },
@@ -279,6 +286,7 @@ static JSPropertySpec CCharacterProps[] =
 	{ "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM },
 	{ "dead",			CCP_DEAD,			JSPROP_ENUMPERMRO  },
 	{ "npc",			CCP_NPC,			JSPROP_ENUMANDPERM },
+	{ "isAwake",		CCP_AWAKE,			JSPROP_ENUMANDPERM },
 	{ "online",			CCP_ONLINE,			JSPROP_ENUMPERMRO  },
 	{ "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM },
 	{ "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM },
@@ -297,6 +305,11 @@ static JSPropertySpec CCharacterProps[] =
 	{ "maxmana",		CCP_MAXMANA,		JSPROP_ENUMANDPERM },
 	{ "oldWandertype",	CCP_OLDWANDERTYPE,	JSPROP_ENUMANDPERM },
 	{ "wandertype",		CCP_WANDERTYPE,		JSPROP_ENUMANDPERM },
+	{ "fx1",			CCP_FX1,			JSPROP_ENUMANDPERM },
+	{ "fy1",			CCP_FY1,			JSPROP_ENUMANDPERM },
+	{ "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM },
+	{ "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM },
+	{ "fz",				CCP_FZ,				JSPROP_ENUMANDPERM },
 	{ "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM },
 	{ "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM },
 	{ "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM },
@@ -398,6 +411,7 @@ static JSPropertySpec CCharacterProps[] =
 
 static JSPropertySpec CItemProps[] =
 {
+	{ "sectionID",		CIP_SECTIONID,		JSPROP_ENUMANDPERM },
 	{ "name",			CIP_NAME,			JSPROP_ENUMANDPERM },
 	{ "title",			CIP_TITLE,			JSPROP_ENUMANDPERM },
 	{ "x",				CIP_X,				JSPROP_ENUMANDPERM },
@@ -408,6 +422,9 @@ static JSPropertySpec CItemProps[] =
 	{ "oldZ",			CIP_OLDZ,			JSPROP_ENUMANDPERM },
 	{ "id",				CIP_ID,				JSPROP_ENUMANDPERM },
 	{ "colour",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "color",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "skin",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
+	{ "hue",			CIP_COLOUR,			JSPROP_ENUMANDPERM },
 	{ "owner",			CIP_OWNER,			JSPROP_ENUMANDPERM },
 	{ "visible",		CIP_VISIBLE,		JSPROP_ENUMANDPERM },
 	{ "serial",			CIP_SERIAL,			JSPROP_ENUMANDPERM },
@@ -483,6 +500,7 @@ static JSPropertySpec CItemProps[] =
 	{ "madeWith",		CIP_MADEWITH,		JSPROP_ENUMANDPERM },
 	{ "entryMadeFrom",	CIP_ENTRYMADEFROM,	JSPROP_ENUMANDPERM },
 	{ "isPileable",		CIP_ISPILEABLE,		JSPROP_ENUMANDPERM },
+	{ "isMarkedByMaker",CIP_ISMARKEDBYMAKER,JSPROP_ENUMANDPERM },
 	{ "isDyeable",		CIP_ISDYEABLE,		JSPROP_ENUMANDPERM },
 	{ "isDamageable",	CIP_ISDAMAGEABLE,	JSPROP_ENUMANDPERM },
 	{ "isWipeable",		CIP_ISWIPEABLE,		JSPROP_ENUMANDPERM },

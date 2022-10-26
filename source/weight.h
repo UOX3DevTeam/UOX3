@@ -6,25 +6,25 @@ const SI32 MAX_WEIGHT = 6553500;	// Max weight (This number / 100, thus max actu
 class CWeight
 {
 private:
-	bool	calcAddWeight( CItem *item, SI32 &totalWeight );
-	bool	calcSubtractWeight( CItem *item, SI32 &totalWeight );
+	bool	CalcAddWeight( CItem *item, SI32 &totalWeight );
+	bool	CalcSubtractWeight( CItem *item, SI32 &totalWeight );
 	bool	IsWeightedContainer( CItem *toCheck );
 
 public:
-	SI32	calcCharWeight( CChar *mChar );
-	SI32	calcWeight( CItem *pack );
+	SI32	CalcCharWeight( CChar *mChar );
+	SI32	CalcWeight( CItem *pack );
 
-	bool	isOverloaded( CChar *mChar ) const;
-	bool	checkPackWeight( CChar *ourChar, CItem *pack, CItem *item );
-	bool	checkCharWeight( CChar *ourChar, CChar *mChar, CItem *item );
+	bool	IsOverloaded( CChar *mChar ) const;
+	bool	CheckPackWeight( CChar *ourChar, CItem *pack, CItem *item );
+	bool	CheckCharWeight( CChar *ourChar, CChar *mChar, CItem *item, UI16 amount = 0 );
 
-	void	addItemWeight( CBaseObject *getObj, CItem *item );
-	void	addItemWeight( CChar *mChar, CItem *item );
-	void	addItemWeight( CItem *pack, CItem *item );
+	void	AddItemWeight( CBaseObject *getObj, CItem *item );
+	void	AddItemWeight( CChar *mChar, CItem *item );
+	void	AddItemWeight( CItem *pack, CItem *item );
 
-	void	subtractItemWeight( CBaseObject *getObj, CItem *item );
-	void	subtractItemWeight( CChar *mChar, CItem *item );
-	void	subtractItemWeight( CItem *pack, CItem *item );
+	void	SubtractItemWeight( CBaseObject *getObj, CItem *item );
+	void	SubtractItemWeight( CChar *mChar, CItem *item );
+	void	SubtractItemWeight( CItem *pack, CItem *item );
 };
 
 extern CWeight *Weight;

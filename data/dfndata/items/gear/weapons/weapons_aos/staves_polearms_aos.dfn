@@ -1,0 +1,207 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Crook - AoS stats
+[0x13f4_aos]
+{
+get=base_crook
+weight=200
+value=33 24
+damage=13 15
+hp=31 50
+spd=40
+str=20
+}
+
+// Shepherd's Crook - AoS stats
+[0x0e81_aos]
+{
+get=base_shepherds_crook
+weight=200
+value=33 24
+damage=13 15
+hp=31 50
+spd=40
+str=20
+}
+
+// Gnarled Staff - AoS stats
+[0x13f8_aos]
+{
+get=base_gnarled_staff
+weight=300
+value=24 12
+damage=15 17
+hp=31 50
+spd=33
+str=20
+}
+
+// Black Staff - AoS stats
+[0x0df0_aos]
+{
+get=base_black_staff
+weight=600
+value=27 24
+damage=13 16
+hp=31 70
+spd=39
+str=35
+}
+
+// Quarter Staff - AoS stats
+[0x0e89_aos]
+{
+get=base_quarter_staff
+weight=400
+value=30 15
+damage=11 14
+hp=31 60
+spd=48
+str=30
+}
+
+// Halberd - AoS stats
+[0x143e_aos]
+{
+get=base_halberd
+weight=1600
+value=50 25
+damage=18 19
+hp=31 80
+spd=25
+str=95
+}
+
+// Bardiche - AoS stats
+[0x0f4d_aos]
+{
+get=base_bardiche
+weight=700
+value=68 34
+damage=17 18
+hp=31 100
+spd=28
+str=45
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Scythe - AoS stats
+[0x26ba_aos]
+{
+get=base_scythe
+weight=500
+value=39 19
+damage=15 18
+hp=31 100
+spd=32
+str=45
+}
+
+// Bladed Staff - AoS stats
+[0x26bd_aos]
+{
+get=base_bladed_staff
+weight=400
+value=40 20
+damage=14 16
+hp=21 110
+spd=37
+str=40
+}
+
+// Double Bladed Staff - AoS stats
+[0x26bf_aos]
+{
+get=base_double_bladed_staff
+weight=200
+value=47 24
+damage=12 13
+hp=31 80
+spd=49
+str=50
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+
+// Wild Staff - AoS stats
+[0x2d25_aos]
+{
+get=base_wild_staff
+damage=10 13
+hp=30 60
+spd=45
+str=15
+value=29 15
+weight=800
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Bardiche - AoS stats
+[0x48b4_aos]
+{
+get=base_gargish_bardiche
+damage=17 18
+hp=31 100
+spd=28
+str=45
+value=68 34
+weight=700
+}
+
+// Gargish Scythe - AoS stats
+[0x48c4_aos]
+{
+get=base_gargish_scythe
+damage=15 18
+hp=31 100
+spd=32
+str=45
+value=39 19
+weight=500
+}
+
+// Serpentstone Staff - AoS stats
+[0x0906_aos]
+{
+get=base_serpentstone_staff
+damage=16 19
+hp=31 50
+spd=30
+str=35
+value=29 15
+weight=300
+}
+
+// Gargish Gnarled Staff - AoS stats
+[0x48b8_aos]
+{
+get=base_gargish_gnarled_staff
+damage=15 17
+hp=31 50
+spd=33
+str=20
+value=24 12
+weight=300
+}
+
+// Glass Staff - AoS stats
+[0x0905_aos]
+{
+get=base_glass_staff
+damage=11 14
+hp=31 70
+spd=45
+str=20
+value=11 6
+weight=400
+}

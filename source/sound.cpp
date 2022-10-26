@@ -7,91 +7,102 @@
 #include "CPacketSend.h"
 #include "regions.h"
 
+using namespace std::string_literals;
 
 cEffects *Effects;
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlaySound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect for player, echo's to all players if allHear is true
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::PlaySound( CSocket *mSock, UI16 soundID, bool allHear )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::PlaySound( CSocket *mSock, UI16 soundId, bool allHear )
 {
 	if( mSock == nullptr )
 		return;
+
 	CChar *mChar = mSock->CurrcharObj();
-	if( !ValidateObject( mChar ) )
+	if( !ValidateObject( mChar ))
 		return;
 
-	CPPlaySoundEffect toSend = (*mChar);
-	toSend.Model( soundID );
+	CPPlaySoundEffect toSend = ( *mChar );
+	toSend.Model( soundId );
 
 	if( allHear )
-	{
-		SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+	{		
+		auto nearbyChars = FindNearbyPlayers( mChar );
+		std::for_each( nearbyChars.begin(), nearbyChars.end(), [&toSend]( CSocket *entry )
 		{
-			(*cIter)->Send( &toSend );
-		}
+			entry->Send( &toSend );
+		});
 	}
 	mSock->Send( &toSend );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlaySound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays sound effect originating from object for all players nearby(default) or originator only
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundID, bool allHear )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::PlaySound( CBaseObject *baseObj, UI16 soundId, bool allHear )
 {
-	if( !ValidateObject( baseObj ) )
+	if( !ValidateObject( baseObj ))
 		return;
-	CPPlaySoundEffect toSend = (*baseObj);
-	toSend.Model( soundID );
+
+	CPPlaySoundEffect toSend = ( *baseObj );
+	toSend.Model( soundId );
 
 	if( allHear )
 	{
-		SOCKLIST nearbyChars = FindPlayersInVisrange( baseObj );
-		for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+		auto  nearbyChars = FindPlayersInVisrange( baseObj );
+		std::for_each( nearbyChars.begin(), nearbyChars.end(), [&toSend]( CSocket *entry )
 		{
-			(*cIter)->Send( &toSend );
-		}
+			entry->Send( &toSend );
+		});
 	}
 	else
 	{
 		if( baseObj->GetObjType() == OT_CHAR )
 		{
-			CSocket *mSock = (static_cast<CChar *>(baseObj))->GetSocket();
+			CSocket *mSock = ( static_cast<CChar *>( baseObj ))->GetSocket();
 			if( mSock != nullptr )
+			{
 				mSock->Send( &toSend );
+			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void itemSound( CSocket *s, CItem *item, bool allHear )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::ItemSound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play item drop sound based on ID (Gems, Gold, or Default)
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::ItemSound( CSocket *s, CItem *item, bool allHear )
 {
-	UI16 itemID = item->GetID();
-	if( itemID >= 0x0F0F && itemID <= 0x0F20 )		// Large Gem Stones
+	UI16 itemId = item->GetId();
+	if( itemId >= 0x0F0F && itemId <= 0x0F20 )		// Large Gem Stones
+	{
 		PlaySound( s, 0x0034, allHear );
-	else if( itemID >= 0x0F21 && itemID <= 0x0F30 )	// Small Gem Stones
+	}
+	else if( itemId >= 0x0F21 && itemId <= 0x0F30 )	// Small Gem Stones
+	{
 		PlaySound( s, 0x0033, allHear );
-	else if( itemID >= 0x0EEA && itemID <= 0x0EF2 )	// Gold
-		goldSound( s, item->GetAmount(), allHear );
+	}
+	else if( itemId >= 0x0EEA && itemId <= 0x0EF2 )	// Gold
+	{
+		GoldSound( s, item->GetAmount(), allHear );
+	}
 	else
 	{
-		UI16 effectID = 0x0042;
+		UI16 effectId = 0x0042;
 		CBaseObject *getCont = item->GetCont();
 		if( getCont != nullptr )
 		{
 			if( getCont->GetObjType() == OT_ITEM )
 			{
-				CItem *iCont = static_cast<CItem *>(getCont);
-				switch( iCont->GetID() )
+				CItem *iCont = static_cast<CItem *>( getCont );
+				switch( iCont->GetId() )
 				{
 					case 0x0E75:	// backpack
 					case 0x0E76:	// leather bag
@@ -100,7 +111,7 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 					case 0x2AF8:	// Shopkeeper buy, sell and sold layers
 					case 0x2256:	// bagball
 					case 0x2257:	// bagball
-						effectID = 0x0048;
+						effectId = 0x0048;
 						break;
 					case 0x0E7A:	// picnic basket
 					case 0x24D5:	// SE basket
@@ -115,115 +126,129 @@ void cEffects::itemSound( CSocket *s, CItem *item, bool allHear )
 					case 0x24DD:	// SE basket
 					case 0x24DB:	// SE basket
 					case 0x24DC:	// SE basket
-						effectID = 0x004F;
+						effectId = 0x004F;
+						break;
+					default:
 						break;
 				}
 			}
 			else
-				effectID = 0x0048;
+			{
+				effectId = 0x0048;
+			}
 		}
-		PlaySound( s, effectID, allHear );
+		PlaySound( s, effectId, allHear );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void goldSound( CSocket *s, UI32 goldtotal, bool allHear )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::GoldSound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play gold drop sound based on Amount
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::goldSound( CSocket *s, UI32 goldtotal, bool allHear )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::GoldSound( CSocket *s, UI32 goldTotal, bool allHear )
 {
-	if( goldtotal <= 1 )
+	if( goldTotal <= 1 )
+	{
 		PlaySound( s, 0x0035, allHear );
-	else if( goldtotal < 6 )
+	}
+	else if( goldTotal < 6 )
+	{
 		PlaySound( s, 0x0036, allHear );
+	}
 	else
+	{
 		PlaySound( s, 0x0037, allHear );
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void playDeathSound( CChar *i )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlayDeathSound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send death sound to all sockets in range
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::playDeathSound( CChar *i )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::PlayDeathSound( CChar *i )
 {
-	if( i->GetOrgID() == 0x0191 || i->GetOrgID() == 0x025E || i->GetOrgID() == 0x029B || i->GetOrgID() == 0x00B8 || i->GetOrgID() == 0x00BA || i->GetID() == 0x02EF ) // Female Death (human/elf/gargoyle/savage)
+	if( i->GetOrgId() == 0x0191 || i->GetOrgId() == 0x025E || i->GetOrgId() == 0x029B || i->GetOrgId() == 0x00B8 || i->GetOrgId() == 0x00BA || i->GetId() == 0x02EF ) // Female Death (human/elf/gargoyle/savage)
 	{
 		UI16 deathSound = 0x0150 + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );
 	}
-	else if( i->GetOrgID() == 0x0190 || i->GetOrgID() == 0x025D || i->GetOrgID() == 0x029A || i->GetOrgID() == 0x00B7 || i->GetOrgID() == 0x00B9 || i->GetOrgID() == 0x02EE ) // Male Death (human/elf/gargoyle/savage)
+	else if( i->GetOrgId() == 0x0190 || i->GetOrgId() == 0x025D || i->GetOrgId() == 0x029A || i->GetOrgId() == 0x00B7 || i->GetOrgId() == 0x00B9 || i->GetOrgId() == 0x02EE ) // Male Death (human/elf/gargoyle/savage)
 	{
 		UI16 deathSound = 0x015A + RandomNum( 0, 3 );
 		PlaySound( i, deathSound );
 	}
 	else
 	{
-		const UI16 toPlay = cwmWorldState->creatures[i->GetOrgID()].GetSound( SND_DIE );
+		const UI16 toPlay = cwmWorldState->creatures[i->GetOrgId()].GetSound( SND_DIE );
 		if( toPlay != 0x00 )
+		{
 			Effects->PlaySound( i, toPlay );
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void playMusic( CSocket *s, UI16 number )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlayMusic()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays midi/mp3 in client
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::playMusic( CSocket *s, UI16 number )
+//o------------------------------------------------------------------------------------------------o
+void cEffects::PlayMusic( CSocket *s, UI16 number )
 {
 	CPPlayMusic toSend( number );
 	s->Send( &toSend );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void PlayBGSound( CSocket& mSock, CChar& mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlayBGSound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play background sounds based on location
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 {
-	std::vector< CChar * > inrange;
-	inrange.reserve( 11 );
+	std::vector<CChar *> inRange;
+	inRange.reserve( 11 );
 
-	REGIONLIST nearbyRegions = MapRegion->PopulateList( (&mChar) );
-	for( REGIONLIST_CITERATOR rIter = nearbyRegions.begin(); rIter != nearbyRegions.end(); ++rIter )
+	for( auto &MapArea : MapRegion->PopulateList( &mChar ))
 	{
-		CMapRegion *MapArea = (*rIter);
-		if( MapArea == nullptr )	// no valid region
-			continue;
-		GenericList< CChar * > *regChars = MapArea->GetCharList();
-		regChars->Push();
-		for( CChar *tempChar = regChars->First(); !regChars->Finished(); tempChar = regChars->Next() )
+		if( MapArea )
 		{
-			if( !ValidateObject( tempChar ) || tempChar->isFree() || tempChar->GetInstanceID() != mChar.GetInstanceID() )
-				continue;
-			if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && charInRange( (&mChar), tempChar ) )
-				inrange.push_back( tempChar );
-
-			if( inrange.size() == 11 )
-				break;
+			auto regChars = MapArea->GetCharList();
+			for( const auto &tempChar : regChars->collection() )
+			{
+				if( ValidateObject( tempChar ) && !tempChar->IsFree() && ( tempChar->GetInstanceId() == mChar.GetInstanceId() ))
+				{
+					if( tempChar->IsNpc() && !tempChar->IsDead() && !tempChar->IsAtWar() && CharInRange(( &mChar ), tempChar ))
+					{
+						inRange.push_back( tempChar );
+					}
+					
+					if( inRange.size() == 11 )
+					{
+						break;
+					}
+				}
+			}
 		}
-		regChars->Pop();
 	}
 
 	UI16 basesound = 0;
-	if( !inrange.empty() )
+	if( !inRange.empty() )
 	{
-		CChar *soundSrc = inrange[RandomNum( static_cast<size_t>(0), inrange.size() - 1 )];
-		UI16 xx			= soundSrc->GetID();
+		CChar *soundSrc = inRange[RandomNum( static_cast<size_t>( 0 ), inRange.size() - 1 )];
+		UI16 xx	= soundSrc->GetId();
 		if( cwmWorldState->creatures.find( xx ) == cwmWorldState->creatures.end() )
 			return;
 
 		//Play creature sounds, but add a small chance that they won't, to give players a break every now and then
-		UI08 soundChance = static_cast<UI08>(RandomNum( static_cast<size_t>(0), inrange.size() + 9  ));
+		UI08 soundChance = static_cast<UI08>( RandomNum( static_cast<size_t>( 0 ), inRange.size() + 9 ));
 		if( soundChance > 5 )
 		{
 			basesound = cwmWorldState->creatures[xx].GetSound( SND_IDLE );
 			if( basesound != 0x00 )
 			{
-				CPPlaySoundEffect toSend = (*soundSrc);
+				CPPlaySoundEffect toSend = ( *soundSrc );
 				toSend.Model( basesound );
 				mSock.Send( &toSend );
 			}
@@ -233,7 +258,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	{
 		if( RandomNum( 0, 3332 ) == 33 )
 		{
-			switch( RandomNum( 0, 6 ) )
+			switch( RandomNum( 0, 6 ))
 			{
 				case 0: basesound = 595;	break; // gnome sound
 				case 1: basesound = 287;	break; // bigfoot 1
@@ -242,6 +267,7 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 				case 4: basesound = 179;	break; // lion sound
 				case 5: basesound = 246;	break; // mystic
 				case 6: basesound = 253;	break; // mystic II
+				default:					break;
 			}
 			if( basesound != 0 )
 			{
@@ -253,12 +279,12 @@ void cEffects::PlayBGSound( CSocket& mSock, CChar& mChar )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void doSocketMusic( CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::DoSocketMusic()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to client to play specific midi/mp3
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::doSocketMusic( CSocket *s )
+//o------------------------------------------------------------------------------------------------o
+auto cEffects::DoSocketMusic( CSocket *s ) -> void
 {
 	// Return if the socket is not valid
 	if( s == nullptr )
@@ -287,59 +313,52 @@ void cEffects::doSocketMusic( CSocket *s )
 		// Otherwise, fetch the actual region player is in
 		mReg = mChar->GetRegion();
 		if( mReg == nullptr )
-		{
 			return;
-		}
 	}
 
 	UI16 musicList = mReg->GetMusicList();
-	if( musicList == 0 )
+	if( musicList != 0 )
 	{
-		return;
-	}
-
-	if( mChar->IsDead() )
-	{
-		sect = "MUSICLIST DEATH";
-	}
-	else if( mChar->IsAtWar() )
-	{
-		sect = "MUSICLIST COMBAT";
-	}
-	else
-	{
-		sect = std::string("MUSICLIST ") + strutil::number( musicList );
-	}
-
-	ScriptSection *MusicList = FileLookup->FindEntry( sect, regions_def );
-	if( MusicList == nullptr )
-	{
-		return;
-	}
-	std::string data;
-	for( std::string tag = MusicList->First(); !MusicList->AtEnd(); tag = MusicList->Next() )
-	{
-		data = MusicList->GrabData();
-		if( strutil::upper( tag ) == "MUSIC" )
+		if( mChar->IsDead() )
 		{
-			musicArray[i++] = static_cast<SI08>(std::stoi(data, nullptr, 0));
+			sect = "MUSICLIST DEATH";
 		}
-	}
-	if( i != 0 )
-	{
-		i = RandomNum( 0, i - 1 );
-		playMusic( s, musicArray[i] );
+		else if( mChar->IsAtWar() )
+		{
+			sect = "MUSICLIST COMBAT";
+		}
+		else
+		{
+			sect = std::string( "MUSICLIST " ) + oldstrutil::number( musicList );
+		}
+		
+		auto MusicList = FileLookup->FindEntry( sect, regions_def );
+		if( MusicList )
+		{
+			for( const auto &sec : MusicList->collection() )
+			{
+				if( oldstrutil::upper( sec->tag ) == "MUSIC" )
+				{
+					musicArray[i++] = static_cast<SI08>( std::stoi( sec->data, nullptr, 0 ));
+				}
+			}
+			if( i != 0 )
+			{
+				i = RandomNum( 0, i - 1 );
+				PlayMusic( s, musicArray[i] );
+			}
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void playTileSound( CSocket *mSock )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cEffects::PlayTileSound()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Play a sound based on the tile character is on
-//o-----------------------------------------------------------------------------------------------o
-void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+auto cEffects::PlayTileSound( CChar *mChar, CSocket *mSock ) -> void
 {
-	if( !ValidateObject( mChar ) )
+	if( !ValidateObject( mChar ))
 		return;
 
 	if( mChar->GetVisible() != VT_VISIBLE || ( mChar->IsGM() || mChar->IsCounselor() ))
@@ -361,96 +380,138 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 
 	bool onHorse = mChar->IsOnHorse();
 	bool isRunning = ( mChar->GetRunning() > 0 );
-
-	CStaticIterator msi(  mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
-	Static_st *stat = msi.Next();
-
-	if( stat )
+	auto artwork = Map->ArtAt( mChar->GetX(), mChar->GetY(), mChar->WorldNumber() );
+	std::sort( artwork.begin(), artwork.end(), []( const Tile_st &lhs, const Tile_st &rhs )
 	{
-		CTile& tile = Map->SeekTile( stat->itemid );
-		if( tile.CheckFlag( TF_WET ) )
-			tileType = TT_WATER;
-		else if( tile.CheckFlag( TF_SURFACE) || tile.CheckFlag( TF_CLIMBABLE ) )
+		return ( lhs.altitude + lhs.artInfo->Height() ) < ( rhs.altitude + rhs.artInfo->Height() );
+	});
+
+	// now find the static that works for us
+	// start from the bottom of the vector, as we want the first one that is below us
+	auto alt = mChar->GetZ(); // so we dont keep calling it
+	auto iter = std::find_if( artwork.rbegin(), artwork.rend(), [alt]( const Tile_st &value )
+	{
+		return alt >= ( value.altitude + value.artInfo->Height() );
+	});
+
+	if( iter != artwork.rend() )
+	{
+		if( iter->artInfo->CheckFlag( TF_WET ))
 		{
-			char search1[10];
-			strcpy( search1, "wood" );
-			if( strstr( tile.Name(), search1 ) )
+			tileType = TT_WATER;
+		}
+		if( iter->artInfo->CheckFlag( TF_SURFACE) || iter->artInfo->CheckFlag( TF_CLIMBABLE ))
+		{
+			auto pos = iter->artInfo->Name().find( "wood" );
+			if( pos != std::string::npos )
+			{
 				tileType = TT_WOODEN;
-			strcpy( search1, "ston" );
-			if( strstr( tile.Name(), search1 ) )
-				tileType = TT_STONE;
-			strcpy( search1, "gras" );
-			if( strstr( tile.Name(), search1 ) )
-				tileType = TT_GRASS;
+			}
+			else
+			{
+				pos = iter->artInfo->Name().find( "ston" );
+				if( pos != std::string::npos )
+				{
+					tileType = TT_STONE;
+				}
+				else
+				{
+					pos = iter->artInfo->Name().find( "gras" );
+					if( pos != std::string::npos )
+					{
+						tileType = TT_GRASS;
+					}
+				}
+			}
 		}
 	}
 
-	UI16 soundID = 0;
+	UI16 soundId = 0;
 	switch( mChar->GetStep() )	// change step info
 	{
 		case 0:
-			if( !isRunning || ( isRunning && onHorse ) )
+			if(( !isRunning && !onHorse) || ( isRunning && onHorse ))
+			{
 				mChar->SetStep( 1 );	// step 2
-			else if( isRunning || ( !isRunning && onHorse ) )
+			}
+			else if( isRunning || ( !isRunning && onHorse ))
+			{
 				mChar->SetStep( 2 );	// Running step 2
+			}
 			switch( tileType )
 			{
 				case TT_NORMAL:
 					if( onHorse )
 					{
 						if( isRunning )
-							soundID = 0x012A;
-						else		
-							soundID = 0x024C;
+						{
+							soundId = 0x012A;
+						}
+						else
+						{
+							soundId = 0x024C;
+						}
 					}
 					else
-						soundID = 0x012B;
+					{
+						soundId = 0x012B;
+					}
 					break;
 				case TT_WATER:	// water
 					break;
 				case TT_STONE: // stone
-					soundID = 0x0130;
+					soundId = 0x0130;
 					break;
 				case TT_WOODEN: // wooden
-					soundID = 0x0123;
+					soundId = 0x0123;
 					break;
 				case TT_OTHER: // other
 					[[fallthrough]];
 				case TT_GRASS: // grass
-					soundID = 0x012D;
+					soundId = 0x012D;
 					break;
 			}
 			break;
 		case 1:
-			if( !isRunning || ( isRunning && onHorse ) )
+			if( !isRunning || ( isRunning && onHorse ))
+			{
 				mChar->SetStep( 0 );	// step 1
-			else if( isRunning || ( !isRunning && onHorse ) )
+			}
+			else if( isRunning || ( !isRunning && onHorse ))
+			{
 				mChar->SetStep( 3 );	// Running step 4
+			}
 			switch( tileType )
 			{
 				case TT_NORMAL:
 					if( onHorse )
 					{
 						if( isRunning )
-							soundID = 0x0129;
+						{
+							soundId = 0x0129;
+						}
 						else
-							soundID = 0x024B;
+						{
+							soundId = 0x024B;
+						}
 					}
 					else
-						soundID = 0x012C;
+					{
+						soundId = 0x012C;
+					}
 					break;
 				case TT_WATER:	// water
 					break;
 				case TT_STONE: // stone
-					soundID = 0x012F;
+					soundId = 0x012F;
 					break;
 				case TT_WOODEN: // wooden
-					soundID = 0x0122;
+					soundId = 0x0122;
 					break;
 				case TT_OTHER: // other
 					[[fallthrough]];
 				case TT_GRASS: // grass
-					soundID = 0x012E;
+					soundId = 0x012E;
 					break;
 			}
 			break;
@@ -461,26 +522,26 @@ void cEffects::playTileSound( CChar *mChar, CSocket *mSock )
 			mChar->SetStep( 0 ); // Running step 0
 			break;
 		default:
-			mChar->SetStep( 1 );	// pause
+			mChar->SetStep( 1 ); // pause
 			break;
 	}
 
-	if( soundID )			// if we have a valid sound
+	if( soundId )			// if we have a valid sound
 	{
-		if( mSock == nullptr && ValidateObject( mChar ) )
+		if( mSock == nullptr && ValidateObject( mChar ))
 		{
 			// It's an NPC!
-			SOCKLIST nearbyChars = FindNearbyPlayers( mChar );
-			for( SOCKLIST_CITERATOR cIter = nearbyChars.begin(); cIter != nearbyChars.end(); ++cIter )
+			auto nearbyChars = FindNearbyPlayers( mChar );
+			std::for_each( nearbyChars.begin(), nearbyChars.end(), [soundId, this]( CSocket *entry )
 			{
-				PlaySound( (*cIter), soundID, false );
-			}
+				PlaySound( entry, soundId, false );
+			});
 			return;
 		}
 		else
 		{
 			// It's a player!
-			PlaySound( mSock, soundID, true );
+			PlaySound( mSock, soundId, true );
 		}
 	}
 }
