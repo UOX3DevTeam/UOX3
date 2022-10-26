@@ -35,29 +35,30 @@ enum cC_TID
 	tNPC_SUMMONTIME,
 	tNPC_EVADETIME,
 	tNPC_LOYALTYTIME,
+	tNPC_IDLEANIMTIME,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
 };
 
-struct DamageTrackEntry
+struct DamageTrackEntry_st
 {
-	DamageTrackEntry() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageType( PHYSICAL ), lastDamageDone( INVALIDSERIAL ) { }
-	DamageTrackEntry( SERIAL dmgr, SI32 dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageType( dmgType ), lastDamageDone( lstDmgDn ) { }
+	DamageTrackEntry_st() : damager( INVALIDSERIAL ), damageDone( 0 ), lastDamageType( PHYSICAL ), lastDamageDone( INVALIDSERIAL ) { }
+	DamageTrackEntry_st( SERIAL dmgr, SI32 dmgDn, WeatherType dmgType, TIMERVAL lstDmgDn ) : damager( dmgr ), damageDone( dmgDn ), lastDamageType( dmgType ), lastDamageDone( lstDmgDn ) { }
 	SERIAL		damager;			// who did the damage?
 	SI32		damageDone;			// how much damage has been accumulated?
 	WeatherType lastDamageType;			// what type of damage was dealt most recently?
 	TIMERVAL	lastDamageDone;		// when was the last time that damage was done?
 };
 
-bool DTEgreater( DamageTrackEntry &elem1, DamageTrackEntry &elem2 );
+bool DTEgreater( DamageTrackEntry_st &elem1, DamageTrackEntry_st &elem2 );
 
 class CChar : public CBaseObject
 {
 private:
-	typedef std::map< ItemLayers, CItem * >				LAYERLIST;
-	typedef std::map< ItemLayers, CItem * >::iterator	LAYERLIST_ITERATOR;
-	typedef GenericList< DamageTrackEntry * >				DAMAGETRACK;
+	typedef std::map<ItemLayers, CItem *>				LAYERLIST;
+	typedef std::map<ItemLayers, CItem *>::iterator		LAYERLIST_ITERATOR;
+	typedef GenericList<DamageTrackEntry_st *>			DAMAGETRACK;
 
 	struct NPCValues_st
 	{
@@ -86,7 +87,7 @@ private:
 
 		SI08				wanderMode; // NPC Wander Mode
 		SI08				oldWanderMode; // Used for fleeing npcs
-		std::deque< UI08 >	pathToFollow;	// let's use a queue of directions to follow
+		std::deque<UI08>	pathToFollow;	// let's use a queue of directions to follow
 
 		SI16				spellAttack;
 		SI08				spellDelay;	// won't time out for more than 255 seconds!
@@ -99,8 +100,8 @@ private:
 		SI16				reAttackAt;	// HP Level to re-Attack at
 
 		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
-		CHARLIST			petFriends;			// Temporary list of friends a pet has
-		GenericList< CChar * >	petOwnerList;	// Persistent list of owners a pet has previously had
+		std::vector<CChar *>	petFriends;		// Temporary list of friends a pet has
+		GenericList<CChar *>	petOwnerList;	// Persistent list of owners a pet has previously had
 		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
 		UI16				loyalty;			// Pet's current loyalty to its master
 		UI16				orneriness;			// Difficulty to control pet
@@ -115,7 +116,7 @@ private:
 
 		cNPC_FLAG			npcFlag;
 
-		std::bitset< 8 >	boolFlags;
+		std::bitset<8>		boolFlags;
 
 		R32					walkingSpeed;
 		R32					runningSpeed;
@@ -135,11 +136,11 @@ private:
 		SERIAL		robe;
 
 		SERIAL		trackingTarget; // Tracking target ID
-		CHARLIST	trackingTargets;
+		std::vector<CChar*>	trackingTargets;
 
 		UI16		accountNum;
 
-		UI16		origID; // Backup of body type for polymorph
+		UI16		origId; // Backup of body type for polymorph
 		UI16		origSkin;
 		std::string	origName; // original name - for Incognito
 
@@ -154,7 +155,7 @@ private:
 		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
 		UI08		postType;
 		SERIAL		callNum;		// Callnum GM or Counsellor is on
-		SERIAL		playerCallNum;	// Players call number in GM or Counsellor Queue
+		SERIAL		playerCallNum;	// Players call number in GM or Counsellor requestQueue
 
 		UI08		squelched; // Squelching
 		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
@@ -162,15 +163,15 @@ private:
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
 
-		SERIAL		townvote;
-		SI08		townpriv;  //0=non resident (Other privledges added as more functionality added)
+		SERIAL		townVote;
+		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
 
 		CItem *		speechItem;
 		UI08		speechMode;
-		UI08		speechID;
+		UI08		speechId;
 		cScript *	speechCallback;
 		// speechMode valid values
 		// 0 normal speech
@@ -197,22 +198,22 @@ protected:
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
 
-	std::bitset< 64 >		bools;	// lots of flags
-	std::bitset< 16 >		priv;
+	std::bitset<64>		bools;	// lots of flags
+	std::bitset<16>		priv;
 
-	SI16		guildnumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-	SERIAL		guildfealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
-	std::string	guildtitle;	// Title Guildmaster granted player						(DasRaetsel)
+	SI16		guildNumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
+	SERIAL		guildFealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
+	std::string	guildTitle;	// Title Guildmaster granted player						(DasRaetsel)
 
 	TIMERVAL	charTimers[tCHAR_COUNT];
 
 	TIMERVAL	regen[3];
 	TIMERVAL	weathDamage[WEATHNUM];			// Light Damage timer
-	UI08		nextact;						//time to next spell action..
+	UI08		nextAct;						//time to next spell action..
 
-	SI08		fonttype; // Speech font to use
-	COLOUR		saycolor;
-	COLOUR		emotecolor;
+	SI08		fontType; // Speech font to use
+	COLOUR		sayColor;
+	COLOUR		emoteColor;
 
 	SI08		stealth; // stealth ( steps already done, -1=not using )
 	SI08		cell; // Reserved for jailing players
@@ -220,10 +221,10 @@ protected:
 	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 	UI32		lastMoveTime; // Timestamp for when character moved last
 
-	CItem *		packitem; // Characters backpack
+	CItem *		packItem; // Characters backpack
 	SERIAL		targ; // Current combat target
 	SERIAL		attacker; // Character who attacked this character
-	UI16		advobj; //Has used advance gate?
+	UI16		advObj; //Has used advance gate?
 	RACEID		raceGate;						// Race gate that has been used
 
 	SI08		spellCast;
@@ -235,10 +236,10 @@ protected:
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
-	GenericList< CChar * >	petsControlled;
-	ITEMLIST				ownedItems;
-	std::bitset< 32 >		skillUsed[2];	// no more than 64 skills
-	std::bitset< UT_COUNT >	updateTypes;
+	GenericList<CChar *>	petsControlled;
+	std::vector<CItem *>	ownedItems;
+	std::bitset<32>			skillUsed[2];	// no more than 64 skills
+	std::bitset<UT_COUNT>	updateTypes;
 
 	UI16		maxHP;
 	UI16		maxHP_oldstr;
@@ -285,9 +286,9 @@ public:
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
 
-	GenericList< CChar * > *	GetPetList( void );
-	GenericList< CChar * > *	GetPetOwnerList( void );
-	ITEMLIST *	GetOwnedItems( void );
+	GenericList<CChar *> *	GetPetList( void );
+	GenericList<CChar *> *	GetPetOwnerList( void );
+	auto		GetOwnedItems() -> std::vector<CItem *>*;
 
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
@@ -295,7 +296,7 @@ public:
 	void		DoLoyaltyUpdate( void );
 	void		DoHunger( CSocket *mSock );
 	void		DoThirst( CSocket* mSock );
-	void		checkPetOfflineTimeout( void );
+	void		CheckPetOfflineTimeout( void );
 	SI08		GetHunger( void ) const;
 	SI08        GetThirst( void ) const;
 	UI16		GetTamedHungerRate( void ) const;
@@ -340,8 +341,9 @@ public:
 	bool		DecHunger( const SI08 amt = 1 );
 	bool		DecThirst( const SI08 amt = 1 );
 
-	bool		isUnicode( void ) const;
+	bool		IsUnicode( void ) const;
 	bool		IsNpc( void ) const;
+	bool		IsAwake( void ) const;
 	bool		IsEvading( void ) const;
 	bool		IsShop( void ) const;
 	bool		IsDead( void ) const;
@@ -365,8 +367,9 @@ public:
 	bool		IsCasting( void ) const;
 	bool		IsJSCasting( void ) const;
 
-	void		setUnicode( bool newVal );
+	void		SetUnicode( bool newVal );
 	void		SetNpc( bool newVal );
+	void		SetAwake( bool newVal );
 	void		SetEvadeState( bool newVal );
 	void		SetShop( bool newVal );
 	void		SetDead( bool newValue );
@@ -401,12 +404,12 @@ public:
 	std::string	GetGuildTitle( void ) const;
 	void		SetGuildTitle( const std::string &newValue );
 
-	TIMERVAL	GetTimer( cC_TID timerID ) const;
+	TIMERVAL	GetTimer( cC_TID timerId ) const;
 	TIMERVAL	GetRegen( UI08 part ) const;
 	TIMERVAL	GetWeathDamage( UI08 part ) const;
 	UI08		GetNextAct( void ) const;
 
-	void		SetTimer( cC_TID timerID, TIMERVAL value );
+	void		SetTimer( cC_TID timerId, TIMERVAL value );
 	void		SetRegen( TIMERVAL newValue, UI08 part );
 	void		SetWeathDamage( TIMERVAL newValue, UI08 part );
 	void		SetNextAct( UI08 newVal );
@@ -432,7 +435,7 @@ public:
 	void			SetStep( UI08 newValue );
 	void			SetRegion( UI16 newValue );
 	virtual void	SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
-	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID ) override;
+	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId ) override;
 	virtual void	SetLocation( SI16 newX, SI16 newY, SI08 newZ ) override;
 	virtual void	SetLocation( const CBaseObject *toSet ) override;
 	void			WalkZ( SI08 newZ );
@@ -601,8 +604,8 @@ public:
 
 	virtual void	SetPoisoned( UI08 newValue ) override;
 
-	bool			inDungeon( void );
-	bool			inBuilding( void );
+	bool			InDungeon( void );
+	bool			InBuilding( void );
 
 	void			TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool spamTimer );
 	void			TextMessage( CSocket *s, SI32 dictEntry, SpeechType msgType, int spamTimer, ... );
@@ -630,7 +633,7 @@ protected:
 	virtual void	AddSelfToOwner( void ) override;
 public:
 	void		ClearFriendList( void );
-	CHARLIST *	GetFriendList( void );
+	auto 		GetFriendList() -> std::vector<CChar *>*;
 
 	void		ClearPetOwnerList( void );
 	bool		AddPetOwnerToList( CChar *toAdd );
@@ -640,7 +643,7 @@ public:
 	bool		AddFriend( CChar *toAdd );
 	bool		RemoveFriend( CChar *toRemove );
 
-	SI16		GetNPCAiType( void ) const;
+	SI16		GetNpcAiType( void ) const;
 	SI16		GetTaming( void ) const;
 	SI16		GetPeaceing( void ) const;
 	SI16		GetProvoing( void ) const;
@@ -741,17 +744,17 @@ public:
 
 	// Player Characters
 public:
-	void					SetAccount( CAccountBlock& actbAccount );
-	CAccountBlock &			GetAccount(void);
+	void					SetAccount( CAccountBlock_st& actbAccount );
+	CAccountBlock_st &		GetAccount(void);
 	UI16					GetAccountNum( void ) const;
 	void					SetAccountNum( UI16 newVal );
 
 	void		SetRobe( SERIAL newValue );
 	SERIAL		GetRobe( void ) const;
 
-	UI16		GetOrgID( void ) const;
+	UI16		GetOrgId( void ) const;
 	void		SetOrgSkin( UI16 value );
-	void		SetOrgID( UI16 value );
+	void		SetOrgId( UI16 value );
 	UI16		GetOrgSkin( void ) const;
 	std::string	GetOrgName( void ) const;
 	void		SetOrgName( std::string newName );
@@ -789,11 +792,11 @@ public:
 
 	CItem *		GetSpeechItem( void ) const;
 	UI08		GetSpeechMode( void ) const;
-	UI08		GetSpeechID( void ) const;
+	UI08		GetSpeechId( void ) const;
 	cScript *	GetSpeechCallback( void ) const;
 
 	void		SetSpeechMode( UI08 newValue );
-	void		SetSpeechID( UI08 newValue );
+	void		SetSpeechId( UI08 newValue );
 	void		SetSpeechCallback( cScript *newValue );
 	void		SetSpeechItem( CItem *newValue );
 

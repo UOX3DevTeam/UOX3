@@ -1,6 +1,6 @@
 function onDeath( pDead, iCorpse )
 {
-	var masterBrute = CalcCharFromSer( parseInt(pDead.GetTempTag( "masterBruteSerial" )));
+	var masterBrute = CalcCharFromSer( parseInt( pDead.GetTempTag( "masterBruteSerial" )));
 	if( ValidateObject( masterBrute ))
 	{
 		var orcLordCount = masterBrute.GetTempTag( "orcLordsThrown" );

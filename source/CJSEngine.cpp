@@ -1,16 +1,16 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	CJSEngine.cpp
 //|	Date		-	2/22/2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	JS Engine Handling
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
 //|					1.0			2/22/2006
 //|					Extracted JSObject handling from cScript and encapsulated it in a global class.
 //|					Moved global JSEngine loading code into the class.
 //|					Created CJSRuntime class to handle multiple runtimes (for threading purposes).
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "CJSEngine.h"
 #include "UOXJSClasses.h"
@@ -20,81 +20,88 @@
 
 CJSEngine *JSEngine = nullptr;
 
-CJSEngine::CJSEngine( void )
+//==================================================================================================
+auto CJSEngine::Startup() -> void
 {
 	runtimeList.resize( 0 );
-
 	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
 
 	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
-	auto maxBytesSize = std::max( static_cast<UI16>(16), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
+	auto maxBytesSize = std::max( static_cast<UI16>( 16 ), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
 
 	// Use minimum of INI-provided value and hard-defined maximum
 	// maxBytes definition: "Maximum nominal heap before last ditch GC"
-	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>(maxBytesSize) * 1024 * 1024 ), maxEngineSize );
+	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>( maxBytesSize ) * 1024 * 1024 ), maxEngineSize );
 
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
 
-	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Default Runtime
-	runtimeList.push_back( new CJSRuntime( engineMaxBytes ) );	// Console Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Default Runtime
+	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
 
 	Console << "JavaScript engine startup complete." << myendl;
 	Console.PrintSectionBegin();
 }
-CJSEngine::~CJSEngine( void )
+//===================================================================
+CJSEngine::~CJSEngine()
 {
-	Console << "Destroying JS instances... ";
-
+	// Why?  we are shutting down, the process memory will take care of this for us in theory
+	/*
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != nullptr )
+		if(( *rIter))
 		{
-			delete (*rIter);
-			(*rIter) = nullptr;
+			delete ( *rIter );
 		}
 	}
-
-	runtimeList.resize( 0 );
-
-	Console.PrintDone();
+	*/
 }
 
 void CJSEngine::Reload( void )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != nullptr )
-			(*rIter)->Reload();
+		if(( *rIter ) != nullptr )
+		{
+			( *rIter )->Reload();
+		}
 	}
 }
 void CJSEngine::CollectGarbage( void )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != nullptr )
-			(*rIter)->CollectGarbage();
+		if(( *rIter ) != nullptr )
+		{
+			( *rIter )->CollectGarbage();
+		}
 	}
 }
 
 JSRuntime *CJSEngine::GetRuntime( UI08 runTime ) const
 {
 	if( runTime >= runtimeList.size() )
+	{
 		runTime = 0;
+	}
 
 	return runtimeList[runTime]->GetRuntime();
 }
 JSContext *CJSEngine::GetContext( UI08 runTime ) const
 {
 	if( runTime >= runtimeList.size() )
+	{
 		runTime = 0;
+	}
 
 	return runtimeList[runTime]->GetContext();
 }
 JSObject *CJSEngine::GetObject( UI08 runTime ) const
 {
 	if( runTime >= runtimeList.size() )
+	{
 		runTime = 0;
+	}
 
 	return runtimeList[runTime]->GetObject();
 }
@@ -103,10 +110,10 @@ UI08 CJSEngine::FindActiveRuntime( JSRuntime *rT ) const
 {
 	for( RUNTIMELIST_CITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != nullptr )
+		if(( *rIter ) != nullptr )
 		{
-			if( rT == (*rIter)->GetRuntime() )
-				return static_cast<UI08>(rIter - runtimeList.begin());
+			if( rT == ( *rIter )->GetRuntime() )
+				return static_cast<UI08>( rIter - runtimeList.begin() );
 		}
 	}
 	return 0;
@@ -116,7 +123,9 @@ JSObject *CJSEngine::GetPrototype( UI08 runTime, JSPrototypes protoNum ) const
 {
 	JSObject *retVal = nullptr;
 	if( runTime < runtimeList.size() )
+	{
 		retVal = runtimeList[runTime]->GetPrototype( protoNum );
+	}
 
 	return retVal;
 }
@@ -125,7 +134,9 @@ JSObject *CJSEngine::AcquireObject( IUEEntries iType, void *index, UI08 runTime 
 {
 	JSObject *retVal = nullptr;
 	if( index != nullptr && runTime < runtimeList.size() )
+	{
 		retVal = runtimeList[runTime]->AcquireObject( iType, index );
+	}
 
 	return retVal;
 }
@@ -133,17 +144,23 @@ void CJSEngine::ReleaseObject( IUEEntries iType, void *index )
 {
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
-		if( (*rIter) != nullptr )
-			(*rIter)->ReleaseObject( iType, index );
+		if(( *rIter ) != nullptr )
+		{
+			( *rIter )->ReleaseObject( iType, index );
+		}
 	}
 }
 
-
+//========================================================================================================
+// CJSRuntime
+//======================================================================================================
 CJSRuntime::CJSRuntime( UI32 engineSize )
 {
 	jsRuntime = JS_NewRuntime( engineSize );
 	if( jsRuntime == nullptr )
+	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
+	}
 
 	// No need to use a large number here, it's not stack size as documentation indicated,
 	// but "chunk size of the stack pool". Recommendations are to leave it at 8192. In
@@ -154,11 +171,15 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 	JS_SetVersion( jsContext, JSVERSION_1_7 );
 
 	if( jsContext == nullptr )
+	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
+	}
 
 	jsGlobal = JS_NewObject( jsContext, &global_class, nullptr, nullptr );
 	if( jsGlobal == nullptr )
+	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
+	}
 	JS_LockGCThing( jsContext, jsGlobal );
 	//JS_AddRoot( jsContext, &jsGlobal );
 	JS_InitStandardClasses( jsContext, jsGlobal );
@@ -197,33 +218,33 @@ CJSRuntime::~CJSRuntime( void )
 
 void CJSRuntime::Cleanup( void )
 {
-	std::vector< JSOBJECTMAP >::iterator oIter;
+	std::vector<JSOBJECTMAP>::iterator oIter;
 	for( oIter = objectList.begin(); oIter != objectList.end(); ++oIter )
 	{
-		JSOBJECTMAP& ourList = (*oIter);
+		JSOBJECTMAP& ourList = ( *oIter );
 		for( JSOBJECTMAP_ITERATOR lIter = ourList.begin(); lIter != ourList.end(); ++lIter )
 		{
-			JS_UnlockGCThing( jsContext, (*lIter).second );
-			//JS_RemoveRoot( jsContext, &(*lIter).second );
+			JS_UnlockGCThing( jsContext, ( *lIter ).second );
+			//JS_RemoveRoot( jsContext, &( *lIter ).second );
 
-			JS_SetPrivate( jsContext, (*lIter).second, nullptr );
+			JS_SetPrivate( jsContext, ( *lIter ).second, nullptr );
 		}
 		ourList.clear();
 	}
 	objectList.resize( 0 );
 }
-void CJSRuntime::Reload( void )
+void CJSRuntime::Reload()
 {
 	Cleanup();
 
 	objectList.resize( IUE_COUNT );
 }
-void CJSRuntime::CollectGarbage( void )
+void CJSRuntime::CollectGarbage()
 {
 	JS_GC( jsContext );
 }
 
-void CJSRuntime::InitializePrototypes( void )
+void CJSRuntime::InitializePrototypes()
 {
 	protoList.resize( JSP_COUNT );
 
@@ -234,8 +255,8 @@ void CJSRuntime::InitializePrototypes( void )
 	protoList[JSP_ITEM]		=	JS_InitClass( cx, obj, nullptr, &UOXItem_class.base,	nullptr,		0,		CItemProps,				CItem_Methods,		nullptr,	nullptr );
 	protoList[JSP_SPELL]	=	JS_InitClass( cx, obj, nullptr, &UOXSpell_class,		nullptr,		0,		CSpellProperties,		nullptr,			nullptr,	nullptr );
 	protoList[JSP_SPELLS]	=	JS_InitClass( cx, obj, nullptr, &UOXSpells_class,		nullptr,		0,		nullptr,				nullptr,			nullptr,	nullptr );
-	protoList[JSP_GLOBALSKILL]	=	JS_InitClass( cx, obj, nullptr, &UOXGlobalSkill_class,		nullptr,		0,		CGlobalSkillProperties,	nullptr,			nullptr,	nullptr );
-	protoList[JSP_GLOBALSKILLS]	=	JS_InitClass( cx, obj, nullptr, &UOXGlobalSkills_class,		nullptr,		0,		nullptr,					nullptr,			nullptr,	nullptr );
+	protoList[JSP_GLOBALSKILL]		= JS_InitClass( cx, obj, nullptr, &UOXGlobalSkill_class,		nullptr,		0,		CGlobalSkillProperties,	nullptr,			nullptr,	nullptr );
+	protoList[JSP_GLOBALSKILLS]		= JS_InitClass( cx, obj, nullptr, &UOXGlobalSkills_class,		nullptr,		0,		nullptr,					nullptr,			nullptr,	nullptr );
 	protoList[JSP_CREATEENTRY]		= JS_InitClass( cx, obj, nullptr, &UOXCreateEntry_class,	nullptr, 0,		CCreateEntryProperties, nullptr,			nullptr,	nullptr );
 	protoList[JSP_CREATEENTRIES]	= JS_InitClass( cx, obj, nullptr, &UOXCreateEntries_class,	nullptr, 0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_TIMER]	=	JS_InitClass( cx, obj, nullptr, &UOXTimer_class,		nullptr,		0,		CTimerProperties,		nullptr,			nullptr,	nullptr );
@@ -294,7 +315,9 @@ JSObject *CJSRuntime::GetPrototype( JSPrototypes protoNum ) const
 {
 	JSObject *retVal = nullptr;
 	if( protoNum != JSP_COUNT )
+	{
 		retVal = protoList[protoNum];
+	}
 
 	return retVal;
 }
@@ -302,7 +325,7 @@ JSObject *CJSRuntime::GetPrototype( JSPrototypes protoNum ) const
 JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 {
 	JSObject *retVal = nullptr;
-	if( iType != IUE_COUNT && static_cast<size_t>(iType) < objectList.size() )
+	if( iType != IUE_COUNT && static_cast<size_t>( iType ) < objectList.size() )
 	{
 		retVal = FindAssociatedObject( iType, index );
 		if( retVal == nullptr )
@@ -322,7 +345,7 @@ void CJSRuntime::ReleaseObject( IUEEntries iType, void *index )
 	JSOBJECTMAP_ITERATOR toSearch = objectList[iType].find( index );
 	if( toSearch != objectList[iType].end() )
 	{
-		JSObject *toRelease = (*toSearch).second;
+		JSObject *toRelease = ( *toSearch ).second;
 		JS_UnlockGCThing( jsContext, toRelease );
 		//JS_RemoveRoot( jsContext, &toRelease );
 		JS_SetPrivate( jsContext, toRelease, nullptr );
@@ -334,7 +357,9 @@ JSObject *CJSRuntime::FindAssociatedObject( IUEEntries iType, void *index )
 	JSObject *retVal = nullptr;
 	JSOBJECTMAP_CITERATOR toSearch = objectList[iType].find( index );
 	if( toSearch != objectList[iType].end() )
-		retVal = (*toSearch).second;
+	{
+		retVal = ( *toSearch ).second;
+	}
 
 	return retVal;
 }

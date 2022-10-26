@@ -8,6 +8,7 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	if( !damaged.skillsused.healing && !damaged.skillsused.veterinary )
 	{
 		// Player shouldn't have this script attached if they're not actively healing. Remove!
+		damaged.SetTempTag( "slipCount", null );
 		damaged.RemoveScriptTrigger( healSlipScriptID );
 	}
 
@@ -17,7 +18,9 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	{
 		damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
 		if( damaged.socket )
+		{
 			damaged.socket.SysMessage( GetDictionaryEntry( 9088, damaged.socket.language )); // Your fingers slip!
+		}
 	}
 	return true;
 }

@@ -1,3 +1,5 @@
+// This command can be used to kill all characters (or a percentage of all characters)
+
 function CommandRegistration()
 {
 	RegisterCommand( "killall", 2, true );
@@ -7,12 +9,13 @@ function command_KILLALL( socket, cmdString )
 {
 	percentToKill = 100;
 	if( cmdString )
+	{
 		percentToKill = parseInt( cmdString );
+	}
 
 	var count = IterateOver( "CHARACTER" );
-
 	var tempMsg = GetDictionaryEntry( 8010, socket.language ); // Killed %i characters
-	socket.SysMessage( tempMsg.replace(/%i/gi, count.toString() ));
+	socket.SysMessage( tempMsg.replace( /%i/gi, count.toString() ));
 }
 
 function onIterate( toCheck )

@@ -35,7 +35,9 @@ function onBuyFromVendor( pSock, vendor, iBought )
 function onBoughtFromVendor( pSock, Vendor, iBought )
 {
 	if( pSock && iBought )
+	{
 		onUseChecked( pSock.currentChar, iBought );
+	}
 }
 
 function onUseChecked( pUser, iUsed )
@@ -43,13 +45,21 @@ function onUseChecked( pUser, iUsed )
 	// randomize the horse given
 	var look = RollDice( 1, 4, 0 );
 	if( look == 1 )
+	{
 		var nSpawned = SpawnNPC( "horse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	}
 	else if( look == 2 )
+	{
 		var nSpawned = SpawnNPC( "brownhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	}
 	else if( look == 3 )
+	{
 		var nSpawned = SpawnNPC( "grayhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	}
 	else if( look == 4 )
+	{
 		var nSpawned = SpawnNPC( "darkhorse", pUser.x, pUser.y, pUser.z, pUser.worldnumber, pUser.instanceID );
+	}
 	if( nSpawned )
 	{
 		// set owner to the envoker
@@ -71,7 +81,9 @@ function onUseChecked( pUser, iUsed )
 		iUsed.Delete();
 	}
 	else
+	{
 		pUser.SysMessage( "Creature failed to spawn, reason unknown." );
+	}
 
 	return false;
 }

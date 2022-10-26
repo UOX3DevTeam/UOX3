@@ -6,13 +6,13 @@ function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
 
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
 
 	//Check if user is in range of combat dummy
-	if( !iUsed.InRange( pUser, 1 ) )
+	if( !iUsed.InRange( pUser, 1 ))
 	{
 		pUser.SysMessage( GetDictionaryEntry( 482, pSock.language )); //You need to be closer to use that.
 		return false;
@@ -20,7 +20,7 @@ function onUseChecked( pUser, iUsed )
 	else if( iUsed.id == 0x1070 || iUsed.id == 0x1074 ) //if training dummy is motionless
 	{
 		//Determine weapon-type by calling external script and loading a value set there afterwards
-		var weaponType = TriggerEvent( 2500, "getWeaponType", pUser, null );
+		var weaponType = TriggerEvent( 2500, "GetWeaponType", pUser, null );
 		if( weaponType == "BOWS" || weaponType == "XBOWS" )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 938, pSock.language )); //Practice archery on archery buttes!
@@ -30,12 +30,18 @@ function onUseChecked( pUser, iUsed )
 		//Check if character is mounted or not, and then call up an external script to determine combat animations
 		var combatAnim = 0;
 		if( pUser.isonhorse )
-			combatAnim = TriggerEvent( 2501, "getHorseCombatAnim", pUser, weaponType );
+		{
+			combatAnim = TriggerEvent( 2501, "GetHorseCombatAnim", pUser, weaponType );
+		}
 		else
-			combatAnim = TriggerEvent( 2501, "getFootCombatAnim", pUser, weaponType );
+		{
+			combatAnim = TriggerEvent( 2501, "GetFootCombatAnim", pUser, weaponType );
+		}
 
 		if( !isNaN( combatAnim ) && combatAnim != 0 )
+		{
 			pUser.DoAction( combatAnim );
+		}
 
 		//Play some random sound effects when the training dummy is hit
 		switch( RandomNumber( 0, 2 ) )
@@ -49,15 +55,23 @@ function onUseChecked( pUser, iUsed )
 
 		//Change the motionless dummy to a swinging dummy!
 		if( iUsed.id == 0x1070 )
+		{
 			iUsed.id++;
+		}
 		else if( iUsed.id == 0x1074 )
+		{
 			iUsed.id++;
+		}
 
 		//Check the player's tactics skill to see if he gets chance to gain more skill
 		if( pUser.skills.tactics > 250 )
+		{
 			pUser.SysMessage( GetDictionaryEntry( 939, pSock.language )); //You feel you would gain no more from using that.
+		}
 		else
+		{
 			pUser.CheckSkill( 27, 0, 250 );
+		}
 
 		// Automatically set training dummies as damageable if they're not already
 		if( damageableDummies && !iUsed.isDamageable )
@@ -89,9 +103,13 @@ function onUseChecked( pUser, iUsed )
 
 		    // Update the training dummy's health
 		    if( iUsed.health > dummyRandomDamage )
+		    {
 		    	iUsed.health = iUsed.health - dummyRandomDamage;
+		    }
 		    else
+		    {
 		    	iUsed.health = 1;
+		    }
 
 		    // Refresh the dummy's health bar nearby players
 		    iUsed.UpdateStats( 0 );

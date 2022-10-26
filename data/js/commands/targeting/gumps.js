@@ -1,3 +1,4 @@
+// These commands show item or character properties for targeted objects
 function CommandRegistration()
 {
 	RegisterCommand( "istats", 1, true );
@@ -6,7 +7,7 @@ function CommandRegistration()
 
 function command_ISTATS( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 182, socket.language );
+	var targMsg = GetDictionaryEntry( 182, socket.language ); // Select item to inspect.
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -36,9 +37,13 @@ function onCallback0( socket, ourObj )
 		addHexEntry( myGump, "Colour:", ourObj.colour );
 		var contObj = ourObj.container;
 		if( contObj )
+		{
 			addHexEntry( myGump, "Container:", contObj.serial );
+		}
 		else
+		{
 			addStringEntry( myGump, "Container:", "0xffffffff" );
+		}
 		addHexEntry( myGump, "Layer:", ourObj.layer );
 		addEntry( myGump, "Type:", ourObj.type );
 		addEntry( myGump, "Movable:", ourObj.movable );
@@ -52,9 +57,13 @@ function onCallback0( socket, ourObj )
 		addEntry( myGump, "Amount:", ourObj.amount );
 		var ownerObj = ourObj.owner;
 		if( ownerObj )
+		{
 			addHexEntry( myGump, "Owner:", ownerObj.serial );
+		}
 		else
+		{
 			addStringEntry( myGump, "Owner:", "0xffffffff" );
+		}
 		addEntry( myGump, "Strength:", ourObj.strength );
 		var hpmax = ourObj.health.toString() + " " + ourObj.maxhp.toString();
 		addStringEntry( myGump, "HP/Max:", hpmax );
@@ -72,11 +81,11 @@ function onCallback0( socket, ourObj )
 		addEntry( myGump, "Poisoned:", ourObj.poison );
 		addEntry( myGump, "Weight:", ourObj.weight );
 		addEntry( myGump, "BaseWeight:", ourObj.baseWeight );
-		addEntry( myGump, "Decay:", ourObj.decayable?1:0 );
+		addEntry( myGump, "Decay:", ourObj.decayable ? 1 : 0 );
 		addEntry( myGump, "Buy Value:", ourObj.buyvalue );
 		addEntry( myGump, "Sell Value:", ourObj.sellvalue );
 
-		addEntry( myGump, "Is Corpse:", ourObj.corpse?1:0 );
+		addEntry( myGump, "Is Corpse:", ourObj.corpse ? 1 : 0 );
 		var scriptTriggers = ourObj.scriptTriggers;
 		for( var i = 0; i < scriptTriggers.length; i++ )
 		{
@@ -86,10 +95,14 @@ function onCallback0( socket, ourObj )
 		if( ourObj.isSpawner )
 		{
 			if( ourObj.spawnsection )
+			{
 				addStringEntry( myGump, "SpawnSection:", ourObj.spawnsection );
+			}
 			else
+			{
 				addStringEntry( myGump, "SpawnSection:", "0" );
-			addEntry( myGump, "IsASpawnList:", ourObj.sectionalist?1:0 );
+			}
+			addEntry( myGump, "IsASpawnList:", ourObj.sectionalist ? 1 : 0 );
 			addEntry( myGump, "Min Spawn Time:", ourObj.mininterval );
 			addEntry( myGump, "Max Spawn Time:", ourObj.maxinterval );
 		}
@@ -98,7 +111,9 @@ function onCallback0( socket, ourObj )
 		myGump.Free;
 	}
 	else
+	{
 		SendStaticStats( socket );
+	}
 }
 
 function command_CSTATS( socket, cmdString )
@@ -110,7 +125,7 @@ function command_CSTATS( socket, cmdString )
 	}
 	else
 	{
-		var targMsg = GetDictionaryEntry( 183, socket.language );
+		var targMsg = GetDictionaryEntry( 183, socket.language ); // Select char to inspect.
 		socket.CustomTarget( 1, targMsg );
 	}
 }
@@ -167,14 +182,22 @@ function onCallback1( socket, ourObj )
 		var attChar = ourObj.attacker;
 		var targChar = ourObj.target;
 		if( attChar )
+		{
 			addHexEntry( myGump, "Attacker:", attChar.serial );
+		}
 		if( targChar )
+		{
 			addHexEntry( myGump, "Target:", targChar.serial );
+		}
 		var ourRace = ourObj.race;
 		if( ourRace )
+		{
 			addEntry( myGump, "Race:", ourRace.id );
+		}
 		else
+		{
 			addEntry( myGump, "Race:", 0 );
+		}
 		addEntry( myGump, "CommandLevel:", ourObj.commandlevel );
 		var scriptTriggers = ourObj.scriptTriggers;
 		for( var i = 0; i < scriptTriggers.length; i++ )

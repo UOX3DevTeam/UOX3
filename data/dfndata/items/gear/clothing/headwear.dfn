@@ -311,6 +311,21 @@ id=0x154c
 get=0x154b 0x154c
 }
 
+[savagemask]
+{
+get=tribalmaskred
+name=savage mask
+colorlist=11
+}
+
+[savagemask-newbie]
+{
+get=tribalmaskred
+name=savage mask
+colorlist=11
+newbie=1
+}
+
 // Bear Mask
 [0x1545]
 {

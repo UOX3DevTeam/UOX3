@@ -10,7 +10,9 @@ function onUseChecked( pUser, iUsed )
 		gumpID = scriptID+0xffff;
 	}
 	else
+	{
 		return false;
+	}
 
 	// Find owner of root container iUsed is contained in, if any
 	var packOwner = GetPackOwner( iUsed, 0 );
@@ -18,6 +20,7 @@ function onUseChecked( pUser, iUsed )
 	{
 		pUser.visible = 0;
 	}
+
 	// If bedroll is rolled up
 	if( iUsed.id == 0x0a57 || iUsed.id == 0x0a58 || iUsed.id == 0x0a59 )
 	{
@@ -30,18 +33,22 @@ function onUseChecked( pUser, iUsed )
 		}
 		else // Perform distance check
 		{
-			if( !iUsed.InRange( pUser, 2 ) )
+			if( !iUsed.InRange( pUser, 2 ))
 			{
-				pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language ) ); //You need to be closer to use that.
+				pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
 				return false;
 			}
 		}
 
 		// Unroll bedroll
 		if( iUsed.id == 0x0a57 || iUsed.id == 0x0a58 )
+		{
 			iUsed.id = 0x0a55;
+		}
 		else if( iUsed.id == 0x0a59 )
+		{
 			iUsed.id = 0x0a56;
+		}
 	}
 	else if( iUsed.id == 0x0a55 || iUsed.id == 0x0a56 ) // If bedroll is unrolled
 	{
@@ -66,22 +73,34 @@ function onUseChecked( pUser, iUsed )
 						displayGump( srcSock, pUser );
 					}
 					else
-						pUser.SysMessage( GetDictionaryEntry( 2704, srcSock.language ) ); // There are no secure campfires nearby.
+					{
+						pUser.SysMessage( GetDictionaryEntry( 2704, srcSock.language )); // There are no secure campfires nearby.
+					}
 				}
 				else
-					pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language ) ); //You need to be closer to use that.
+				{
+					pUser.SysMessage( GetDictionaryEntry( 482, srcSock.language )); //You need to be closer to use that.
+				}
 			}
 			else
-				pUser.SysMessage( GetDictionaryEntry( 2705, srcSock.language ) ); // This needs to be lying on the ground.
+			{
+				pUser.SysMessage( GetDictionaryEntry( 2705, srcSock.language )); // This needs to be lying on the ground.
+			}
 		}
 		else
-			pUser.SysMessage( GetDictionaryEntry( 2706, srcSock.language ) ); // You cannot do this while in combat, or while having a criminal flag.
+		{
+			pUser.SysMessage( GetDictionaryEntry( 2706, srcSock.language )); // You cannot do this while in combat, or while having a criminal flag.
+		}
 
 		// Roll up bedroll
 		if( iUsed.id == 0x0a55 )
+		{
 			iUsed.id = 0x0a58;
+		}
 		else if( iUsed.id == 0x0a56 )
+		{
 			iUsed.id = 0x0a59;
+		}
 		iUsed.container = pUser.pack;
 		iUsed.decaytime = 0;
 	}
@@ -96,7 +115,9 @@ function findCampfire( pUser, trgItem )
 		// If it does, return true, as this campfire is secure for the player
 		var checkSecureStatus = trgItem.GetTag( pUser.serial & 0x00FFFFFF );
 		if( checkSecureStatus )
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -105,13 +126,13 @@ function displayGump(srcSock, pUser)
 {
 	var myGump = new Gump;
 
-	myGump.AddPage(0);
+	myGump.AddPage( 0 );
 	myGump.AddBackground( 0, 0, 400, 350, 0xA28 );
-	myGump.AddText( 65, 10, 0, GetDictionaryEntry( 2707, srcSock.language ) ); // Logging out via camping
+	myGump.AddText( 65, 10, 0, GetDictionaryEntry( 2707, srcSock.language )); // Logging out via camping
 	myGump.AddButton( 26, 300, 0xfa5, 1, 0, 1 );
 	myGump.AddButton( 280, 300, 0xfa5, 1, 0, 0 );
-	myGump.AddText( 60, 300, 0, GetDictionaryEntry( 2708, srcSock.language ) ); // CONTINUE
-	myGump.AddText( 315, 300, 0, GetDictionaryEntry( 2709, srcSock.language ) ); // CANCEL
+	myGump.AddText( 60, 300, 0, GetDictionaryEntry( 2708, srcSock.language )); // CONTINUE
+	myGump.AddText( 315, 300, 0, GetDictionaryEntry( 2709, srcSock.language )); // CANCEL
 	myGump.AddXMFHTMLGump( 60, 60, 300, 200, 1011016, true, true ); //Secure camp logout text
 	myGump.Send( srcSock );
 	myGump.Free();
@@ -124,7 +145,7 @@ function onGumpPress(srcSock, myButtonID )
 	switch( myButtonID )
 	{
 		case 0: // User cancelled manually, so kill timer to auto-close gump, and reset tempObj
-			srcSock.SysMessage( GetDictionaryEntry( 2710, srcSock.language ) ); // You cancel the logout.
+			srcSock.SysMessage( GetDictionaryEntry( 2710, srcSock.language )); // You cancel the logout.
 			srcSock.tempObj = null;
 			if( iUsed )
 			{
@@ -133,7 +154,7 @@ function onGumpPress(srcSock, myButtonID )
 			}
 			break;
 		case 1: // Log out button
-			srcSock.SysMessage( GetDictionaryEntry( 2711, srcSock.language ) ); // Logging out.
+			srcSock.SysMessage( GetDictionaryEntry( 2711, srcSock.language )); // Logging out.
 			if( iUsed )
 			{
 				iUsed.KillTimers();

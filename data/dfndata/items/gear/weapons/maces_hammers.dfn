@@ -1,22 +1,25 @@
 // MACES
 
-// War Axe - E/W
-[0x13af]
+// CLASSIC
+// War Axe - Base item
+[base_war_axe]
 {
 get=base_item
 name=war axe
 id=0x13af
-weight=800
-value=38 19
-damage=9 27
-layer=1
-hp=31 80
-spd=40
-str=35
-restock=10
 decay=1
 good=24
+layer=1
 movable=1
+restock=10
+}
+
+// War Axe - E/W
+[0x13af]
+{
+getpub15=0x13af_pub15
+getaos=0x13af_aos
+gettol=0x13af_tol
 }
 
 // War Axe - N/S
@@ -32,26 +35,28 @@ id=0x13b0
 get=0x13af 0x13b0
 }
 
-// Smith's Hammer - E/W
-[0x13e3]
+// Smith's Hammer - Base item
+[base_smiths_hammer]
 {
 get=base_item
 name=smith's hammer
 id=0x13e3
-weight=800
-value=36 18
-damage=6 18
-layer=1
-hp=31 60
-spd=30
-str=30
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
 maxuses=75
 usesleft=25
 script=2200// uses left tooltip
+}
+
+// Smith's Hammer - E/W
+[0x13e3]
+{
+getpub15=0x13e3_pub15
+getaos=0x13e3_aos
+gettol=0x13e3_tol
 }
 
 // Smith's Hammer - N/S
@@ -67,23 +72,25 @@ id=0x13e4
 get=0x13e3 0x13e4
 }
 
-// Club - E/W
-[0x13b3]
+// Club - Base item with DFN tags
+[base_club]
 {
 get=base_item
 name=club
 id=0x13b3
-weight=900
-value=27 13
-damage=8 24
-layer=1
-hp=31 40
-spd=40
-str=10
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Club - E/W
+[0x13b3]
+{
+getpub15=0x13b3_pub15
+getaos=0x13b3_aos
+gettol=0x13b3_tol
 }
 
 // Club - N/S
@@ -99,23 +106,25 @@ id=0x13b4
 get=0x13b3 0x13b4
 }
 
-// Sledge Hammer - E/W
-[0x0fb4]
+// Sledge Hammer - Base item
+[base_sledge_hammer]
 {
 get=base_item
 name=sledge hammer
 id=0x0fb4
-weight=900
-value=32 16
-damage=12 38
-layer=1
-hp=31 60
-spd=15
-str=60
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Sledge Hammer - E/W
+[0x0fb4]
+{
+getpub15=0x0fb4_pub15
+getaos=0x0fb4_aos
+gettol=0x0fb4_tol
 }
 
 // Sledge Hammer - N/S
@@ -131,23 +140,25 @@ id=0x0fb5
 get=0x0fb4 0x0fb5
 }
 
-// Mace - N/S
-[0x0f5c]
+// Mace - Base item
+[base_mace]
 {
 get=base_item
 name=mace
 id=0x0f5c
-weight=1400
-value=38 30
-damage=8 32
-layer=1
-hp=31 70
-spd=30
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Mace - N/S
+[0x0f5c]
+{
+getpub15=0x0f5c_pub15
+getaos=0x0f5c_aos
+gettol=0x0f5c_tol
 }
 
 // Mace - E/W
@@ -163,23 +174,25 @@ id=0x0f5d
 get=0x0f5c 0x0f5d
 }
 
-// War Mace - E/W
-[0x1406]
+// War Mace - Base item
+[base_war_mace]
 {
 get=base_item
 name=war mace
 id=0x1406
-weight=1700
-value=37 18
-damage=10 30
-layer=1
-hp=31 110
-spd=32
-str=30
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// War Mace - E/W
+[0x1406]
+{
+getpub15=0x1406_pub15
+getaos=0x1406_aos
+gettol=0x1406_tol
 }
 
 // War Mace - N/S
@@ -195,23 +208,25 @@ id=0x1407
 get=0x1406 0x1407
 }
 
-// War Hammer - E/W
-[0x1438]
+// War Hammer - Base item
+[base_war_hammer]
 {
 get=base_item
 name=war hammer
 id=0x1438
-weight=1000
-value=27 13
-damage=8 36
-layer=2
-hp=31 110
-spd=31
-str=40
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// War Hammer - E/W
+[0x1438]
+{
+getpub15=0x1438_pub15
+getaos=0x1438_aos
+gettol=0x1438_tol
 }
 
 // War Hammer - N/S
@@ -227,23 +242,25 @@ id=0x1439
 get=0x1438 0x1439
 }
 
-// Maul - E/W
-[0x143a]
+// Maul - Base item
+[base_maul]
 {
 get=base_item
 name=maul
 id=0x143a
-weight=1400
-value=31 15
-damage=10 30
-layer=1
-hp=31 70
-spd=30
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Maul - E/W
+[0x143a]
+{
+getpub15=0x143a_pub15
+getaos=0x143a_aos
+gettol=0x143a_tol
 }
 
 // Maul - N/S
@@ -259,23 +276,25 @@ id=0x143b
 get=0x143a 0x143b
 }
 
-// Hammer Pick - E/W
-[0x143c]
+// Hammer Pick - Base item
+[base_hammer_pick]
 {
 get=base_item
 name=hammer pick
 id=0x143c
-weight=900
-value=31 15
-damage=6 33
-layer=1
-hp=31 70
-spd=30
-str=35
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Hammer Pick - E/W
+[0x143c]
+{
+getpub15=0x143c_pub15
+getaos=0x143c_aos
+gettol=0x143c_tol
 }
 
 // Hammer Pick - N/S
@@ -291,25 +310,28 @@ id=0x143d
 get=0x143c 0x143d
 }
 
-// AGE OF SHADOWS - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Scepter - E/W
-[0x26bc]
+// AGE OF SHADOWS
+// Scepter - Base item
+[base_scepter]
 {
 get=base_item
 name=scepter
 id=0x26bc
-weight=800
-value=48 26
-damage=10 31
-layer=1
-hp=31 110
-spd=28
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Scepter - E/W
+[0x26bc]
+{
+getpub15=0x26bc_pub15
+getaos=0x26bc_aos
+gettol=0x26bc_tol
 }
 
 // Scepter - N/S
@@ -325,24 +347,28 @@ id=0x26c6
 get=0x26bc 0x26c6
 }
 
-// SAMURAI EMPIRE - Stats balanced for Pub15
-// Tessen - E/W
-[0x27a3]
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Tessen - Base item
+[base_tessen]
 {
 get=base_item
 name=tessen
 id=0x27a3
-weight=500
-value=124 68
-damage=6 23
-layer=2
-hp=55 60
-spd=54
-str=25
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// Tessen - E/W
+[0x27a3]
+{
+getpub15=0x27a3_pub15
+getaos=0x27a3_aos
+gettol=0x27a3_tol
 }
 
 // Tessen - N/S
@@ -358,23 +384,25 @@ id=0x27ee
 get=0x27a3 0x27ee
 }
 
-// Tetsubo - E/W
-[0x27a6]
+// Tetsubo - Base item
+[base_tetsubo]
 {
 get=base_item
 name=tetsubo
 id=0x27a6
-weight=700
-value=64 35
-damage=7 27
-layer=2
-hp=60 65
-spd=43
-str=25
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// Tetsubo - E/W
+[0x27a6]
+{
+getpub15=0x27a6_pub15
+getaos=0x27a6_aos
+gettol=0x27a6_tol
 }
 
 // Tetsubo - N/S
@@ -390,23 +418,25 @@ id=0x27f1
 get=0x27a6 0x27f1
 }
 
-// Nunchaku - E/W
-[0x27ae]
+// Nunchaku - Base item
+[base_nunchaku]
 {
 get=base_item
 name=nunchaku
 id=0x27ae
-weight=400
-value=52 28
-damage=7 27
-layer=2
-hp=40 55
-spd=43
-str=15
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// Nunchaku - E/W
+[0x27ae]
+{
+getpub15=0x27ae_pub15
+getaos=0x27ae_aos
+gettol=0x27ae_tol
 }
 
 // Nunchaku - N/S
@@ -422,24 +452,28 @@ id=0x27f9
 get=0x27ae 0x27f9
 }
 
-// MONDAIN'S LEGACY - Stats balanced for Pub15
-// Diamond Mace - E/W
-[0x2d24]
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Diamond Mace - Base item
+[base_diamond_mace]
 {
 get=base_item
 name=diamond mace
 id=0x2d24
-weight=1000
-value=28 14
-damage=9 29
-layer=1
-hp=30 60
-spd=30
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Diamond Mace - E/W
+[0x2d24]
+{
+getpub15=0x2d24_pub15
+getaos=0x2d24_aos
+gettol=0x2d24_tol
 }
 
 // Diamond Mace - N/S
@@ -455,24 +489,28 @@ id=0x2d30
 get=0x27ae 0x2d30
 }
 
-// STYGIAN ABYSS - Stats balanced for Pub15
-// Gargish Maul - N/S
-[0x48c2]
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Maul - Base weapon
+[base_gargish_maul]
 {
 get=base_item
 name=gargish maul
 id=0x48c2
-weight=1400
-value=31 15
-damage=10 30
-layer=1
-hp=31 70
-spd=30
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Maul - N/S
+[0x48c2]
+{
+getpub15=0x48c2_pub15
+getaos=0x48c2_aos
+gettol=0x48c2_tol
 }
 
 // Gargish Maul - E/W
@@ -488,23 +526,25 @@ id=0x48c3
 get=0x48c2 0x48c3
 }
 
-// Disc Mace - N/S
-[0x0903]
+// Disc Mace - Base weapon
+[base_disc_mace]
 {
 get=base_item
 name=disc mace
 id=0x0903
-weight=1400
-value=76 42
-damage=8 25
-layer=1
-hp=31 110
-spd=35
-str=20
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Disc Mace - N/S
+[0x0903]
+{
+getpub15=0x0903_pub15
+getaos=0x0903_aos
+gettol=0x0903_tol
 }
 
 // Disc Mace - E/W
@@ -520,23 +560,25 @@ id=0x406e
 get=0x0903 0x406e
 }
 
-// Gargish War Hammer - N/S
-[0x48c0]
+// Gargish War Hammer - Base weapon
+[base_gargish_war_hammer]
 {
 get=base_item
 name=gargish war hammer
 id=0x48c0
-weight=1000
-value=27 13
-damage=8 36
-layer=2
-hp=31 110
-spd=31
-str=40
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// Gargish War Hammer - N/S
+[0x48c0]
+{
+getpub15=0x48c0_pub15
+getaos=0x48c0_aos
+gettol=0x48c0_tol
 }
 
 // Gargish War Hammer - E/W
@@ -552,23 +594,25 @@ id=0x48c1
 get=0x48c0 0x48c1
 }
 
-// Gargish Tessen - N/S
-[0x48cc]
+// Gargish Tessen - Base weapon
+[base_gargish_tessen]
 {
 get=base_item
 name=gargish tessen
 id=0x48cc
-weight=500
-value=124 68
-damage=6 23
-layer=2
-hp=55 60
-spd=54
-str=25
-restock=10
 decay=1
 good=26
+layer=2
 movable=1
+restock=10
+}
+
+// Gargish Tessen - N/S
+[0x48cc]
+{
+getpub15=0x48cc_pub15
+getaos=0x48cc_aos
+gettol=0x48cc_tol
 }
 
 // Gargish Tessen - E/W
@@ -584,24 +628,28 @@ id=0x48cd
 get=0x48cc 0x48cd
 }
 
-// TIME OF LEGENDS - Stats balanced for Pub15
-// Barbed Whip - N/S
-[0xa289]
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Barbed Whip - Base weapon
+[base_barbed_whip]
 {
 get=base_item
 name=barbed whip
 id=0xa289
-weight=500
-value=28 14
-damage=9 29
-layer=1
-hp=36 50
-spd=30
-str=10
-restock=10
 decay=1
 good=26
+layer=1
 movable=1
+restock=10
+}
+
+// Barbed Whip - N/S
+[0xa289]
+{
+getpub15=0xa289_pub15
+getaos=0xa289_aos
+gettol=0xa289_tol
 }
 
 // Barbed Whip - E/W

@@ -6,7 +6,7 @@
 #define __books_h
 
 #include "cChar.h"
-class cBooks
+class CBooks
 {
 public:
 	void CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook ); // "formats and creates a new bok file"
@@ -17,6 +17,6 @@ public:
 	void DeleteBook( CItem *id ); // deletes bok-file.
 };
 
-extern cBooks *Books;
+extern CBooks *Books;
 
 #endif

@@ -1,3 +1,5 @@
+// This command is an alias for 'set race # that sets the race ID of target
+
 function CommandRegistration()
 {
 	RegisterCommand( "setrace", 2, true );

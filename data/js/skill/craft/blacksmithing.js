@@ -207,12 +207,12 @@ const craftItems = [
 	]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 7
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	var resourceHue = pUser.GetTempTag( "resourceHue" );
 
 	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
@@ -248,12 +248,12 @@ function pageX( socket, pUser, pageNum )
 	myGump.Free();
 }
 
-function page8( socket, pUser )
+function Page8( socket, pUser )
 {
 	//Ingot Choices
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", 8 );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	var iron 		= pUser.ResourceCount( 0x1BF2 );
 	var bronze 		= pUser.ResourceCount( 0x1BF2, 0x06d6 );
 	var copper 		= pUser.ResourceCount( 0x1BF2, 0x07dd );
@@ -282,7 +282,7 @@ function page8( socket, pUser )
 		{
 			if( i > 0 )
 			{
-				myGump.AddButton( 370, 260, 4005, 4007, 0, (i / 10) + 1, 0 );
+				myGump.AddButton( 370, 260, 4005, 4007, 0, ( i / 10 ) + 1, 0 );
 				myGump.AddHTMLGump( 405, 263, 100, 18, 0, 0, "<basefont color=#ffffff>" + GetDictionaryEntry( 10100, socket.language ) + "</basefont>" );// NEXT PAGE
 			}
 
@@ -302,7 +302,7 @@ function page8( socket, pUser )
 	myGump.Free();
 }
 
-function findNearbyAnvils( pUser, trgItem, pSock )
+function FindNearbyAnvils( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -310,7 +310,7 @@ function findNearbyAnvils( pUser, trgItem, pSock )
 	return ( trgItem.id == 0x0faf || trgItem.id == 0x0fb0 || trgItem.id == 0x2dd5 || trgItem.id == 0x2dd6 );
 }
 
-function findNearbyForges( pUser, trgItem, pSock )
+function FindNearbyForges( pUser, trgItem, pSock )
 {
 	if( !ValidateObject( trgItem ) || !trgItem.isItem )
 		return false;
@@ -337,8 +337,8 @@ function onCallback1( pSock, ourObj )
 		return;
 	}
 
-	var nearbyAnvil = AreaItemFunction( "findNearbyAnvils", mChar, 3, pSock );
-	var nearbyForge = AreaItemFunction( "findNearbyForges", mChar, 3, pSock );
+	var nearbyAnvil = AreaItemFunction( "FindNearbyAnvils", mChar, 3, pSock );
+	var nearbyForge = AreaItemFunction( "FindNearbyForges", mChar, 3, pSock );
 	if( nearbyForge == 0 || nearbyAnvil == 0)
 	{
 		// No forge nearby
@@ -351,9 +351,13 @@ function onCallback1( pSock, ourObj )
 	var entryMadeFrom = ourObj.entryMadeFrom;
 	var createEntry;
 	if( entryMadeFrom != null && entryMadeFrom != 0 )
+	{
 		createEntry = CreateEntries[entryMadeFrom];
+	}
 	if( createEntry != null && createEntry.id != ourObj.id )
+	{
 		createEntry = null;
+	}
 
 	var resourceName = "iron ingot";
 	var resourceAmount = 0;
@@ -499,7 +503,7 @@ function onCallback2( pSock, ourObj )
 		return;
 
 	var bItem = pSock.tempObj;
-	var anvil = AreaItemFunction( "findNearbyAnvils", mChar, 3, pSock );
+	var anvil = AreaItemFunction( "FindNearbyAnvils", mChar, 3, pSock );
 	var gumpID = blacksmithID + 0xffff;
 	pSock.tempObj = null;
 
@@ -667,10 +671,10 @@ function onTimer( pUser, timerID )
 		case 5: // Page 5
 		case 6: // Page 6
 		case 7: // Page 7
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 		case 8: // Page 8
-			page8( socket, pUser );
+			Page8( socket, pUser );
 			break;
 		default:
 			break;
@@ -729,7 +733,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	// If button pressed is one of the crafting buttons (or "make last"), check that anvil was found
 	if(( pButton >= 100 && pButton <= 704 ) || pButton == 5000 )
 	{
-		anvil = AreaItemFunction( "findNearbyAnvils", pUser, 2, pSock );
+		anvil = AreaItemFunction( "FindNearbyAnvils", pUser, 2, pSock );
 		if( anvil > 0 )
 		{
 			if( pButton == 5000 )
@@ -765,14 +769,14 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 6: // Page 6
 		case 7: // Page 7
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 		case 49: // Repair Item
 			RepairTarget( pSock );
 			break;
 		case 50: // Select Materials
 			pSock.CloseGump( gumpID, 0 );
-			page8( pSock, pUser );
+			Page8( pSock, pUser );
 			break;
 		case 52: // Smelt Item
 			SmeltTarget( pSock );
@@ -973,7 +977,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			pUser.SetTempTag( "prevActionResult", null );
 			pUser.SetTempTag( "ORE", newOreID );
 			pUser.SetTempTag( "resourceHue", newResourceHue );
-			page8( pSock, pUser );
+			Page8( pSock, pUser );
 			break;
 		// Show Item Details
 		case 2100: // Ringmail Gloves

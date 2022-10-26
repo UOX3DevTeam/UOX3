@@ -58,11 +58,15 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight, gumpMainBackground );
 	adminWelcome.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Close Gump" ); // Close Gump menu
+	}
 
 	// Add a checkered overlay over the background we just added
 	if( enableTransparentGump )
+	{
 		adminWelcome.AddCheckerTrans( 0, 5, gumpMainBackgroundWidth, gumpMainBackgroundHeight - 10 );
+	}
 
 	// Add a header at the top of the page
 	adminWelcome.AddHTMLGump( 0, 5, 400, 60, 0, 0, "<CENTER><h1><BASEFONT color=#FFFFFF>Welcome to UOX3</BASEFONT></h1></CENTER>" );
@@ -74,8 +78,10 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	// adminWelcome.AddBackground( 15, 117, 260, 80, 3000 );
 	adminWelcome.AddHTMLGump( 20, 117, 240, 80, true, false, "<p>Start with the <basefont color=#3D9A2B>default world</basefont> to get a world already decorated with doors, signs and other items, and a variety of NPCs!</p>" );
 	adminWelcome.AddHTMLGump( 120, 117, 120, 80, false, false, " " );
-		if( enableTooltips )
+	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
+	}
 	adminWelcome.AddGump( -30, 150, 30065 );
 
 	// adminWelcome.AddBackground( 15, 205, 260, 80, 3000 );
@@ -87,37 +93,53 @@ function DisplayAdminWelcomeGump( socket, pChar )
 
 	adminWelcome.AddButton( 290, 145, defaultWorldButtonOff, defaultWorldButtonOn, 0, 2, 0 ); 	// Okay Button
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Okay, load default UOX3 world, please!" ); // Okay, load worldfiles
+	}
 	adminWelcome.AddHTMLGump( 285, 125, 160, 30, false, false, "<basefont color=#5ADC40>Default World</basefont>" );
 
 	adminWelcome.AddButton( 290, 230, blankSlateButtonOff, blankSlateButtonOn, 0, 20, 0 ); 	// Cancel Button
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "I want to start with a blank slate!" ); // Cancel Gump menu
+	}
 	adminWelcome.AddHTMLGump( 290, 210, 85, 30, false, false, "<basefont color=#AD3C3C>Blank Slate</basefont>" );
 
 	////////// PAGE 2 //////////
 	if( facetFelucca )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 2, 0 );
+	}
 
 	////////// PAGE 3 //////////
 	if( facetTrammel )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 3, 8 );
+	}
 
 	////////// PAGE 4 //////////
 	if( facetIlshenar )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 4, 16 );
+	}
 
 	////////// PAGE 5 //////////
 	if( facetMalas )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 5, 24 );
+	}
 
 	////////// PAGE 6 //////////
 	if( facetTokuno )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 6, 32 );
+	}
 
 	////////// PAGE 7 //////////
 	if( facetTermur )
+	{
 		adminWelcome = AddPageDetails( socket, adminWelcome, 7, 40 );
+	}
 
 	////////// PAGE 20 - Blank Slate //////////
 	// Add the first page, with greeting and basic options
@@ -128,7 +150,9 @@ function DisplayAdminWelcomeGump( socket, pChar )
 	adminWelcome.AddBackground( 10, 25, 140, 230, gumpSecondaryBackground );
 	// Add a checkered overlay over the background we just added
 	if( enableTransparentGump )
+	{
 		adminWelcome.AddCheckerTrans( 0, 5, gumpMainBackgroundWidth, gumpMainBackgroundHeight - 10 );
+	}
 
 	// Add a header at the top of the page
 	adminWelcome.AddHTMLGump( 0, 5, 400, 60, 0, 0, "<CENTER><h1><BASEFONT color=#AD3C3C>UOX3 - A Blank Slate</BASEFONT></h1></CENTER>" );
@@ -161,7 +185,9 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	adminWelcome.AddBackground( 0, 0, 530, gumpMainBackgroundHeight + 130, gumpMainBackground );
 
 	if( enableTransparentGump )
+	{
 		adminWelcome.AddCheckerTrans( 0, 5, 530, gumpMainBackgroundHeight + 120 );
+	}
 
 	adminWelcome.AddButton( 460, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 
@@ -171,42 +197,73 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	// Add section with facet buttons
 	adminWelcome.AddBackground( 275, 30, 115, 275, gumpSecondaryBackground );
 	adminWelcome.AddHTMLGump( 280, 40, 100, 20, 0, 0, "<CENTER><BIG><BASEFONT color=#3D9A2B>Facets</BASEFONT></BIG></CENTER>" );
+
+	// If Felucca facet is enabled
 	if( facetFelucca )
-		adminWelcome.AddButton( 280, 60, (pageNum == 2 ? 10820 : 10800), (pageNum == 2 ? 10800 : 10820), 0, 2, 0 );
+	{
+		adminWelcome.AddButton( 280, 60, ( pageNum == 2 ? 10820 : 10800 ), ( pageNum == 2 ? 10800 : 10820 ), 0, 2, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 60, 10840 );
+	}
 
+	// If Trammel facet is enabled
 	if( facetTrammel )
-		adminWelcome.AddButton( 280, 100, (pageNum == 3 ? 10820 : 10800), (pageNum == 3 ? 10800 : 10820), 0, 3, 0 );
+	{
+		adminWelcome.AddButton( 280, 100, ( pageNum == 3 ? 10820 : 10800 ), ( pageNum == 3 ? 10800 : 10820 ), 0, 3, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 100, 10840 );
+	}
 
+	// If Ilshenar facet is enabled
 	if( facetIlshenar )
-		adminWelcome.AddButton( 280, 140, (pageNum == 4 ? 10820 : 10800), (pageNum == 4 ? 10800 : 10820), 0, 4, 0 );
+	{
+		adminWelcome.AddButton( 280, 140, ( pageNum == 4 ? 10820 : 10800 ), ( pageNum == 4 ? 10800 : 10820 ), 0, 4, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 140, 10840 );
+	}
 
+	// If Malas facet is enabled
 	if( facetMalas )
-		adminWelcome.AddButton( 280, 180, (pageNum == 5 ? 10820 : 10800), (pageNum == 5 ? 10800 : 10820), 0, 5, 0 );
+	{
+		adminWelcome.AddButton( 280, 180, ( pageNum == 5 ? 10820 : 10800 ), ( pageNum == 5 ? 10800 : 10820 ), 0, 5, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 180, 10840 );
+	}
 
+	// If Tokuno facet is enabled
 	if( facetTokuno )
-		adminWelcome.AddButton( 280, 220, (pageNum == 6 ? 10820 : 10800), (pageNum == 6 ? 10800 : 10820), 0, 6, 0 );
+	{
+		adminWelcome.AddButton( 280, 220, ( pageNum == 6 ? 10820 : 10800 ), ( pageNum == 6 ? 10800 : 10820 ), 0, 6, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 220, 10840 );
+	}
 
+	// If Termur facet is enabled
 	if( facetTermur )
-		adminWelcome.AddButton( 280, 260, (pageNum == 7 ? 10820 : 10800), (pageNum == 7 ? 10800 : 10820), 0, 7, 0 );
+	{
+		adminWelcome.AddButton( 280, 260, ( pageNum == 7 ? 10820 : 10800 ), ( pageNum == 7 ? 10800 : 10820 ), 0, 7, 0 );
+	}
 	else
+	{
 		adminWelcome.AddGump( 280, 260, 10840 );
+	}
 
-	adminWelcome.AddHTMLGump( 310, 65, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 2 ? "EEEEEE" : "BEBEBE") + ">FELUCCA</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 105, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 3 ? "EEEEEE" : "BEBEBE") + ">TRAMMEL</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 145, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 4 ? "EEEEEE" : "BEBEBE") + ">ILSHENAR</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 185, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 5 ? "EEEEEE" : "BEBEBE") + ">MALAS</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 225, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 6 ? "EEEEEE" : "BEBEBE") + ">TOKUNO</BASEFONT>" );
-	adminWelcome.AddHTMLGump( 310, 265, 70, 20, 0, 0, "<BASEFONT color=#" + (pageNum == 7 ? "EEEEEE" : "BEBEBE") + ">TER MUR</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 65, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 2 ? "EEEEEE" : "BEBEBE") + ">FELUCCA</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 105, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 3 ? "EEEEEE" : "BEBEBE") + ">TRAMMEL</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 145, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 4 ? "EEEEEE" : "BEBEBE") + ">ILSHENAR</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 185, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 5 ? "EEEEEE" : "BEBEBE") + ">MALAS</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 225, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 6 ? "EEEEEE" : "BEBEBE") + ">TOKUNO</BASEFONT>" );
+	adminWelcome.AddHTMLGump( 310, 265, 70, 20, 0, 0, "<BASEFONT color=#" + ( pageNum == 7 ? "EEEEEE" : "BEBEBE") + ">TER MUR</BASEFONT>" );
 
 	// Add section with object category checkboxes
 	adminWelcome.AddBackground( 400, 30, 115, 275, gumpSecondaryBackground );
@@ -225,28 +282,44 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	}
 	adminWelcome.AddHTMLGump( 445, 65, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Doors</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Doors!<br> Almost every building has one - or more!" );
+	}
 	adminWelcome.AddHTMLGump( 445, 95, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Signs</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Shops signs, roadsigns, etc." );
+	}
 	adminWelcome.AddHTMLGump( 445, 125, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Lights</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Lights!<br> lampposts, candles, wall-mounted torches, etc." );
-	adminWelcome.AddHTMLGump(445, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
+	}
+	adminWelcome.AddHTMLGump( 445, 155, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Moongates</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Moongates at fixed locations around the world" );
+	}
 	adminWelcome.AddHTMLGump( 445, 185, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Containers</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Containers! Bookcases, drawers, crates, etc." );
+	}
 	adminWelcome.AddHTMLGump( 445, 215, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Teleporters</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Teleporters that teleport players<br> from one location to another" );
+	}
 	adminWelcome.AddHTMLGump( 445, 245, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Misc</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Misc items like plants,<br> and smaller decorations in houses, etc" );
+	}
 	adminWelcome.AddHTMLGump( 445, 275, 70, 20, 0, 0, "<BASEFONT color=#EEEEEE>Spawns</BASEFONT>" );
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Spawn Regions with NPCs" );
+	}
 
 	adminWelcome.AddGump( 483, 0, 10410 );
 	adminWelcome.AddGump( 483, 200, 10412 );
@@ -259,10 +332,14 @@ function AddPageDetails( socket, adminWelcome, pageNum, checkboxStartID )
 	// Add buttons to cancel/get things going
 	adminWelcome.AddButton( 308, 313, previousPageButtonOff, previousPageButtonOn, 0, 1, 0 ); 	// Previous Page Button
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Go back!" );
+	}
 	adminWelcome.AddButton( 420, 305, defaultWorldButtonOff, defaultWorldButtonOn, 1, 0, 2 ); 	// Okay Button
 	if( enableTooltips )
+	{
 		adminWelcome.AddToolTip( tooltipClilocID, socket, "Load default UOX3 world" );
+	}
 
 	var facetText = "";
 	switch( pageNum )
@@ -309,12 +386,16 @@ function DisplayLoadingWorldTips( socket )
 	worldLoadTips.AddBackground( 0, 0, gumpMainBackgroundWidth, gumpMainBackgroundHeight + 120, gumpMainBackground );
 	worldLoadTips.AddButton( 345, 5, exitButtonOff, exitButtonOn, 1, 0, 0 ); 	// Exit Button
 	if( enableTooltips )
+	{
 		worldLoadTips.AddToolTip( tooltipClilocID, socket, "Close Gump" ); // Close Gump menu
+	}
 	worldLoadTips.AddBackground( 265, 95, 125, 290, gumpSecondaryBackground );
 
 	// Add a checkered overlay over the background we just added
 	if( enableTransparentGump )
+	{
 		worldLoadTips.AddCheckerTrans( 0, 5, gumpMainBackgroundWidth, gumpMainBackgroundHeight + 110 );
+	}
 
 	// Add a header at the top of the page
 	worldLoadTips.AddHTMLGump( 0, 5, 400, 60, 0, 0, "<CENTER><h1><BASEFONT color=#FFFFFF>Loading Default UOX3 World...</BASEFONT></h1></CENTER>" );
@@ -334,7 +415,9 @@ function DisplayLoadingWorldTips( socket )
 
 	worldLoadTips.AddButton( 150, 393, 12006, 12007, 1, 0, 0 ); 	// Close Button
 	if( enableTooltips )
+	{
 		worldLoadTips.AddToolTip( tooltipClilocID, socket, "Sounds good. Let me have at it!" );
+	}
 
 	worldLoadTips.Send( socket );
 	worldLoadTips.Free();
@@ -410,7 +493,7 @@ function onTimer( timerObj, timerID )
 
 			for( var i = 0; i < numCheckedBoxes; i++ )
 			{
-				buttonID = tempGumpData.getButton(i);
+				buttonID = tempGumpData.getButton( i );
 				if( buttonID >= 0 && buttonID <= 7 )
 				{
 					facetName = "felucca";

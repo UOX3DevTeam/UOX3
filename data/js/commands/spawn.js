@@ -1,3 +1,4 @@
+// This command is used to enable/disable spawn regions in specific facets
 const facetList = [ "felucca", "trammel", "ilshenar", "malas", "tokuno", "termur" ];
 
 function CommandRegistration()
@@ -9,7 +10,7 @@ function CommandRegistration()
 function command_ENABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;
-	var facetNum = parseInt(cmdString);
+	var facetNum = parseInt( cmdString );
 
 	if( !isNaN( facetNum ) && facetNum >= 0 )
 	{
@@ -18,7 +19,7 @@ function command_ENABLESPAWNS( socket, cmdString )
 	}
 	else
 	{
-		var cmdStringTemp = ( cmdString.replace(/ /g, "" ));
+		var cmdStringTemp = ( cmdString.replace( / /g, "" ));
 		var facetListIndex = facetList.indexOf( cmdStringTemp.toLowerCase() );
 		if( facetListIndex != -1 )
 		{
@@ -31,7 +32,7 @@ function command_ENABLESPAWNS( socket, cmdString )
 function command_DISABLESPAWNS( socket, cmdString )
 {
 	var pUser = socket.currentChar;
-	var facetNum = parseInt(cmdString);
+	var facetNum = parseInt( cmdString );
 
 	if( !isNaN( facetNum ) && facetNum >= 0 )
 	{
@@ -40,7 +41,7 @@ function command_DISABLESPAWNS( socket, cmdString )
 	}
 	else
 	{
-		var cmdStringTemp = ( cmdString.replace(/ /g, "" ));
+		var cmdStringTemp = ( cmdString.replace( / /g, "" ));
 		var facetListIndex = facetList.indexOf( cmdStringTemp.toLowerCase() );
 		if( facetListIndex != -1 )
 		{
