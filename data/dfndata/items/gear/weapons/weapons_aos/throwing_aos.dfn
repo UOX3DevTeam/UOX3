@@ -1,0 +1,45 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Soul Glaives - AoS stats
+[0x090a_aos]
+{
+get=base_soul_glaive
+weight=800
+value=69 32
+damage=17 19
+hp=31 65
+spd=27
+str=60
+baserange=8
+maxrange=11
+}
+
+// Boomerang - AoS stats
+[0x08ff_aos]
+{
+get=base_boomerang
+baserange=4
+damage=12 14
+hp=31 60
+maxrange=7
+spd=40
+str=25
+value=29 13
+weight=400
+}
+
+// Cyclone - AoS stats
+[0x0901_aos]
+{
+get=base_cyclone
+weight=600
+value=48 22
+damage=14 16
+hp=31 60
+spd=33
+str=40
+}

@@ -15,7 +15,7 @@
 // 1.4 		3rd  November, 2001
 //			Addition of Tag functions.
 
-typedef JSBool (SEngineFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+typedef JSBool ( SEngineFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // 90 functions so far
 // *	== prototype
@@ -35,6 +35,8 @@ SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
 
 SEngineFunc SE_CreateBlankItem;		// Create an item							***
 SEngineFunc SE_CreateDFNItem;		// Create an item							***
+SEngineFunc SE_CreateHouse;			// Create a house from houses.dfn			***
+SEngineFunc SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
 SEngineFunc SE_BroadcastMessage;	//											***
@@ -104,7 +106,7 @@ SEngineFunc SE_GetPackOwner;			//										***
 SEngineFunc SE_FindRootContainer;		//										***
 SEngineFunc SE_CalcTargetedItem;		//										***
 SEngineFunc SE_CalcTargetedChar;		//										***
-SEngineFunc SE_GetTileIDAtMapCoord;		//										***
+SEngineFunc SE_GetTileIdAtMapCoord;		//										***
 
 SEngineFunc SE_StringToNum;				// Marked for Deletion
 SEngineFunc SE_NumToString;				// Marked for Deletion

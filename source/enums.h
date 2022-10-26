@@ -12,8 +12,6 @@ enum DistinctLanguage
 	DL_ITALIAN,
 	DL_CZECH,
 	DL_POLISH,
-	DL_RUSSIAN,
-    DL_JAPANESE,
     DL_COUNT
 };
 
@@ -440,6 +438,8 @@ enum AITypes
     AI_DUMMY		= 7,
     AI_BANKER		= 8, // handled in JS, but needed to identify NPC for context menus
 	AI_STABLEMASTER = 9, // handled in JS, but needed to identify NPC for context menus
+	AI_CASTER		= 10,
+	AI_EVIL_CASTER  = 11,
     AI_PLAYERVENDOR	= 17,
     AI_PET_GUARD	= 32,
     AI_CHAOTIC		= 88,
@@ -609,7 +609,7 @@ enum ItemLayers
     IL_SECURETRADE			= 0x1F
 };
 
-enum TargetIDs
+enum TargetIds
 {
     TARGET_ADDSCRIPTNPC = 0,
     TARGET_TELE,
@@ -757,6 +757,23 @@ enum BodyType
 	BT_GARGOYLE,
 	BT_OTHER,
 	BT_COUNT
+};
+
+enum ExpansionRuleset
+{
+	ER_CORE,
+	ER_T2A,
+	ER_UOR,
+	ER_TD,
+	ER_LBR,
+	ER_PUB15,
+	ER_AOS,
+	ER_SE,
+	ER_ML,
+	ER_SA,
+	ER_HS,
+	ER_TOL,
+	ER_COUNT
 };
 
 enum Actions // Pre-v7.0.0.0

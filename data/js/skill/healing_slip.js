@@ -18,7 +18,9 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	{
 		damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
 		if( damaged.socket )
+		{
 			damaged.socket.SysMessage( GetDictionaryEntry( 9088, damaged.socket.language )); // Your fingers slip!
+		}
 	}
 	return true;
 }

@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 25. August, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b-6</small></p>
+	<p style="margin:0"><small>Last Updated: 24. November, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,16 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>November 24th, 2022</h4>
+						<ul>
+							<li>Added details for new JS Event: onCarveCorpse</li>
+							<li>Added details for new JS Functions: CreateHouse, CreateBaseMulti</li>
+							<li>Added details for new JS Method: HasScriptTrigger</li>
+						</ul>
+						<h4>October 1st, 2022</h4>
+						<ul>
+							<li>Added details for new JS Events: onFacetChange, onDyeTarget</li>
+						</ul>
 						<h4>August 25th, 2022</h4>
 						<ul>
 							<li>Added details for new JS Function: GetStartTime</li>
@@ -591,6 +601,42 @@ function onCallback0( socket, ourObj )
 			targSock.Disconnect();
 		}
 	}
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnCarveCorpse" id="eventOnCarveCorpse"><span>onCarveCorpse</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onCarveCorpse( pChar, iCorpse )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom behaviour when players carves corpses</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered for corpse object when player tries to carve it</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to prevent hardcoded carving of corpse, and prevent other scripts with same event from running</li>
+								<li><strong>return true</strong> to proceed with hardcoded carving of corpse and/or allow other scripts with same event to run</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onCarveCorpse( pChar, iCorpse )
+{
+	pChar.TextMessage( "I'll just carve this corpse..." );
+	iCorpse.TextMessage( "But I'm not dead yet!" );
+	return false;
 }</code></pre></p>
 						</div>
 					</div>
@@ -1528,6 +1574,45 @@ function onDispel( objDispelled, objType )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnDyeTarget" id="eventOnDyeTarget"><span>onDyeTarget</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onDyeTarget( pUser, dyeTub, targItem )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allowing custom behaviour when targeting items to dye with a dye tub</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When pUser attempts to use dyeTub to dye targItem, the event is triggered from dyeTub's script</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> (or nothing) to override hard coded dye behaviour</li>
+								<li><strong>return true/1</strong> to allow hard coded dye behaviour to proceed as normal</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onDyeTarget( pUser, dyeTub, targItem )
+{
+	if( targItem.type == 11 )
+	{
+		pUser.TextMessage( "I can't dye doors!" );
+		return false;
+	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnEnterEvadeState" id="eventOnEnterEvadeState"><span>onEnterEvadeState</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -1721,6 +1806,58 @@ function onEnterRegion( pEntering, regionEntered )
 		pEquipper.TextMessage( "This item cannot be equipped by humans!" );
 		return false;
 	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnFacetChange" id="eventOnFacetChange"><span>onFacetChange</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onFacetChange( mChar, oldFacet, newFacet )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows custom behaviour to be added for characters that moves from one facet to another, or to deny this change altogether</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When character with event attached in a script moves from one facet to another</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> (or nothing) to disallow facet change</li>
+								<li><strong>return true</strong> to allow facet change</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This event only runs for characters, and using the event in the global script is not supported.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onFacetChange( mChar, oldFacet, newFacet )
+{
+	// Add a specific script to all characters that switch to the Trammel facet,
+	// but remove said script if character moves to any other facet
+	switch( newFacet )
+	{
+		case 1: // Trammel
+			mChar.AddScriptTrigger( X ); // X is a scriptID
+			break;
+		default:
+			mChar.RemoveScriptTrigger( X ); // X is a scriptID
+			break;
+
+	}
+
+	// Return true allows the facet change to happen like normal
 	return true;
 }</code></pre></p>
 						</div>
@@ -5031,6 +5168,42 @@ function myAreaFunc( srcChar, trgItem, pSock )
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_CreateBaseMulti"/>
+							<label for="spoiler_function_item_CreateBaseMulti">CreateBaseMulti <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>MULTI CreateBaseMulti( multiID, x, y, z, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Creates a base multi based on ID from client's multi files, at specified location</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
+										<ul>
+											<li>multiID - ID from client's multi files</li>
+											<li>x, y, z - coordinates to create house at</li>
+											<li>worldNum - world to create house in</li>
+											<li>instanceID - instance to create house in</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Create a base multi exactly at pUser's location:
+function onUseChecked( pUser, iUsed )
+{
+	var multiID = 0x13ed; // Multi ID for a 7x8 house foundation
+	var myMulti = CreateBaseMulti( multiID, pUser.x, pUser.y, pUser.z, pUser.worldNum, pUser.instanceID );
+	return false;
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CreateBlankItem"/>
 							<label for="spoiler_function_item_CreateBlankItem">CreateBlankItem <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -5115,6 +5288,42 @@ function onUseChecked( pUser, iUsed )
 {
 	var myItem = CreateDFNItem( null, null, "0x09d0", 10, "ITEM", false, 0, iUsed.worldnumber, iUsed.instanceID );
 	iUsed.TextMessage( "Oh my, 10 apples just spawned on top of me! Magic!" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_CreateHouse"/>
+							<label for="spoiler_function_item_CreateHouse">CreateHouse <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>MULTI CreateHouse( houseID, x, y, z, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Creates a house based on houseID from house.dfn, at specified location</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
+										<ul>
+											<li>houseID - from house.dfn</li>
+											<li>x, y, z - coordinates to create house at</li>
+											<li>worldNum - world to create house in</li>
+											<li>instanceID - instance to create house in</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Create a house exactly at pUser's location:
+function onUseChecked( pUser, iUsed )
+{
+	var houseID = 1; // Small Brick house from house.dfn
+	var myHouse = CreateHouse( houseID, pUser.x, pUser.y, pUser.z, pUser.worldNum, pUser.instanceID );
+	return false;
 }</code></pre>
 								</div>
 							</div>
@@ -7479,6 +7688,26 @@ myDoor.KillJSTimer( 0, 4500 );
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_HasScriptTrigger"/>
+							<label for="spoiler_method_baseObj_HasScriptTrigger">HasScriptTrigger <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void HasScriptTrigger( scriptID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if object has script with specified ID attached</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// hasScript is true if script 8000 is present on object
+var hasScript = myObject.HasScriptTrigger( 8000 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseobj_hasSpell"/>
 							<label for="spoiler_method_baseobj_hasSpell">HasSpell <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -8538,6 +8767,7 @@ Timer.SPATIMER		// Time until next time NPC can cast a spell
 Timer.SUMMONTIME	// Time until a summoned NPC will vanish
 Timer.EVADETIME		// Time until an NPC will exit evade state
 Timer.LOYALTYTIME 	// Time until next time pet loyalty drops
+Timer.IDLEANIMTIME 	// Time until next time character plays idle animation
 Timer.LOGOUT 		// Time it takes for a player char to vanish after logout</code></pre></p>
 										<p>See also: GetTimer()/SetTimer() Socket Methods.</p>
 								</div>
@@ -13610,6 +13840,10 @@ myObject.propertyName = newValue;
 							Get/Set the character's fame level</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.fleeAt</span> <strong>(int, <em>0 - 100</em>)</strong><br>
+							Get/Set percentage health threshold the NPC will flee at in combat</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.fontType</span> <strong>(int, <em>0 - 12</em>)</strong><br>
 							Get/Set font type used by character's speech (0-9 ASCII, 0-12 Unicode)</p>
 						</div>
@@ -13764,6 +13998,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.raceGate</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
 							Get/Set ID of Race for which character has used a Race Gate, if any</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.reAttackAt</span> <strong>(int, <em>0 - 100</em>)</strong><br>
+							Get/Set percentage health threshold the NPC will re-attack current target in combat at</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.serial</span> <strong>(int, <em>0 - 4294967295</em>)</strong><br>
@@ -13968,6 +14206,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set name of character</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Section ID from DFNs that object originated from</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.title</span> <strong>(text, <em>max 60 characters</em>)</strong><br>
@@ -14624,6 +14866,10 @@ myObject.propertyName = newValue;
 							Get/Set secondary name of item - used in relation to magical items whose names get revealed upon successful use of Item Identification</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Section ID from DFNs that object originated from</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.title</span> <strong>(text, <em>max 59 characters</em>)</strong><br>
 							Get/Set title of item. Currently not used for anything</p>
 						</div>
@@ -15165,7 +15411,7 @@ myObject.propertyName = newValue;
 									<li>76 (UT_ITS) - Italian (Switzerland)</li>
 									<li>83 (UT_PLK) - Polish (Poland)</li>
 									<li>84 (UT_PTB) - Portuguese (Brazil)</li>
-									<li>84 (UT_PTG) - Portuguese (Portugal)</li>
+									<li>85 (UT_PTG) - Portuguese (Portugal)</li>
 								</ul>
 							</div>
 						</div>

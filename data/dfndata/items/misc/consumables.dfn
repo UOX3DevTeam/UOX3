@@ -1,0 +1,15 @@
+[tribalpaint]
+{
+get=base_item
+id=0x09ec
+name=savage kin paint
+color=0x0835
+pileable=1
+weight=200
+script=5037//tribal_paint.js
+}
+
+[savagekinpaint]
+{
+get=tribalpaint
+}

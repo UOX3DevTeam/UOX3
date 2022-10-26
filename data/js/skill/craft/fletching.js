@@ -23,12 +23,12 @@ const myPage = [
 	[ 11218, 11219, 11220 ]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 3
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	for ( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
@@ -70,7 +70,7 @@ function onTimer( pUser, timerID )
 		case 1: // Page 1 - Materials
 		case 2: // Page 2 - Ammunition
 		case 3: // Page 3 - Weapons
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 	}
 }
@@ -141,7 +141,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 2: // Page 2 - Ammunition
 		case 3: // Page 3 - Weapons
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 		// Make Items
 		case 100: // Kindling

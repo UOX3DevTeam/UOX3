@@ -53,7 +53,6 @@ add_library(uox
 		quantityfuncs.cpp
 		wholist.cpp
 		SEFunctions.cpp
-		cPlayerAction.cpp
 		effect.cpp
 		queue.cpp
 		worldmain.cpp

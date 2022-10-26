@@ -38,12 +38,12 @@ const myPage = [
 	[11465, 11466, 11467, 11468, 11469]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 8
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 
 	for( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
@@ -91,7 +91,7 @@ function onTimer( pUser, timerID )
 		case 6: // Page 6
 		case 7: // Page 7
 		case 8: // Page 8
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 		default:
 			break;
@@ -171,7 +171,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 7: // Page 7
 		case 8: // Page 8
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 /*		case 51: // Repair Item
 			var targMsg = GetDictionaryEntry( 485, pSock.language ); //
@@ -553,10 +553,10 @@ function onCallback2( pSock, ourObj )
 			// were a match for the resource we're trying to return
 			for( var j = 0; j <= resourceIDs.length; j++ )
 			{
-				if( !isNaN(parseInt(resourceIDs[j])) )
+				if( !isNaN( parseInt( resourceIDs[j] )))
 				{
 					// If we found some resource that match up to cloth, or leather, go for it
-					var resourceType = TriggerEvent( 2506, "GetResourceType", parseInt(resourceIDs[j]) );
+					var resourceType = TriggerEvent( 2506, "GetResourceType", parseInt( resourceIDs[j] ));
 					/*mChar.TextMessage( "MaterialType: " + materialType );
 					mChar.TextMessage( "ResourceType: " + resourceType );
 					mChar.TextMessage( "resourceID: " + resourceIDs[j] );*/

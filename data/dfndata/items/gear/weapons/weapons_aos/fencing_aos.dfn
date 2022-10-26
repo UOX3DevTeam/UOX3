@@ -1,0 +1,295 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Spear - AoS stats
+[0x0f62_aos]
+{
+get=base_spear
+weight=700
+value=38 36
+damage=13 15
+hp=31 80
+spd=42
+str=50
+}
+
+// Tribal Spear - AoS stats
+[tribalspear_aos]
+{
+get=base_spear
+weight=700
+value=38 36
+damage=16 19
+hp=31 80
+spd=42
+str=50
+}
+
+// Kryss - AoS stats
+[0x1400_aos]
+{
+get=base_kryss
+weight=100
+value=42 21
+damage=10 12
+hp=31 90
+spd=53
+str=10
+}
+
+// Short Spear - AoS stats
+[0x1402_aos]
+{
+get=base_short_spear
+weight=400
+value=32 16
+damage=10 13
+hp=31 70
+spd=55
+str=40
+}
+
+// War Fork - AoS stats
+[0x1404_aos]
+{
+get=base_war_fork
+weight=900
+value=32 17
+damage=12 13
+hp=31 110
+spd=43
+str=45
+}
+
+// Pitchfork - AoS stats
+[0x0e87_aos]
+{
+get=base_pitchfork
+weight=1000
+value=25 12
+damage=13 14
+hp=31 60
+spd=43
+str=50
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Pike - AoS stats
+[0x26be_aos]
+{
+get=base_pike
+weight=800
+value=53 27
+damage=14 16
+hp=31 110
+spd=37
+str=50
+}
+
+// Lance - AoS stats
+[0x26c0_aos]
+{
+get=base_lance
+weight=1200
+value=46 23
+damage=17 18
+hp=31 50
+spd=24
+str=95
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Lajatang - AoS stats
+[0x27a7_aos]
+{
+get=base_lajatang
+weight=1200
+value=145 73
+damage=16 18
+hp=90 95
+spd=33
+str=65
+}
+
+// Tekagi - AoS stats
+[0x27ab_aos]
+{
+get=base_tekagi
+weight=500
+value=74 37
+damage=10 13
+hp=35 60
+spd=60
+str=10
+}
+
+// Kama - AoS stats
+[0x27ad_aos]
+{
+weight=700
+value=82 41
+damage=10 13
+hp=35 60
+spd=60
+str=15
+}
+
+// Sai - AoS stats
+[0x27af_aos]
+{
+get=base_sai
+weight=700
+value=75 38
+damage=10 13
+hp=55 60
+spd=60
+str=15
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// War Cleaver - AoS stats
+[0x2d23_aos]
+{
+get=base_war_cleaver
+damage=10 13
+hp=30 60
+spd=51
+str=15
+value=39 20
+weight=500
+}
+
+// Elven Spellblade - AoS stats
+[0x2d20_aos]
+{
+get=base_elven_spellblade
+damage=12 15
+hp=30 60
+spd=45
+str=35
+value=73 37
+weight=500
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish War Fork - AoS stats
+[0x48be_aos]
+{
+get=base_gargish_war_fork
+damage=12 13
+hp=31 110
+spd=43
+str=45
+value=32 17
+weight=900
+}
+
+// Shortblade - AoS stats
+[0x0907_aos]
+{
+get=base_shortblade
+damage=10 12
+hp=31 110
+spd=51
+str=10
+value=45 23
+weight=900
+}
+
+// Bloodblade - AoS stats
+[0x08fe_aos]
+{
+get=base_bloodblade
+damage=10 11
+hp=31 90
+spd=60
+str=10
+value=37 19
+weight=400
+}
+
+// Gargish Kryss - AoS stats
+[0x48bc_aos]
+{
+get=base_gargish_kryss
+damage=10 12
+hp=31 90
+spd=53
+str=10
+value=42 21
+weight=100
+}
+
+// Gargish Lance - AoS stats
+[0x48ca_aos]
+{
+get=base_gargish_lance
+damage=17 18
+hp=31 110
+spd=24
+str=95
+value=49 25
+weight=1200
+}
+
+// Gargish Pike - AoS stats
+[0x48c8_aos]
+{
+get=base_gargish_pike
+damage=14 16
+hp=31 110
+spd=37
+str=50
+value=57 29
+weight=800
+}
+
+// Dual Pointed Spear - AoS stats
+[0x0904_aos]
+{
+get=base_dual_pointed_spear
+damage=11 14
+hp=31 80
+spd=51
+str=40
+value=70 35
+weight=700
+}
+
+// Gargish Tekagi - AoS stats
+[0x48ce_aos]
+{
+get=base_gargish_tekagi
+damage=10 13
+hp=35 60
+spd=51
+str=10
+value=80 40
+weight=500
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Spiked Whip - AoS stats
+[0xa28a_aos]
+{
+get=base_spiked_whip
+damage=13 16
+hp=36 48
+spd=40
+str=20
+value=25 13
+weight=500
+}

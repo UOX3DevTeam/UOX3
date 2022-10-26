@@ -1,9 +1,9 @@
 #ifndef __UOXSTRUCT_H
 #define __UOXSTRUCT_H
 
-const UI08 BIT_ANIMAL		=	2;
-const UI08 BIT_ANTIBLINK	=	1;
 const UI08 BIT_CANFLY		=	0;
+const UI08 BIT_ANTIBLINK	=	1;
+const UI08 BIT_ANIMAL		=	2;
 const UI08 BIT_WATER		=	3;
 const UI08 BIT_AMPHI		=	4;
 const UI08 BIT_HUMAN		=	5;
@@ -13,12 +13,12 @@ class CCreatures
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	// soundflags  0: normal, 5 sounds (attack-started,idle, attack, defence, dying)
 	//             1: birds .. only one "bird-shape" and zillions of sounds ...
-	//             2: only 3 sounds ->  (attack,defence,dying)
-	//             3: only 4 sounds ->   (attack-started,attack,defnce,dying)
+	//             2: only 3 sounds ->  (attack, defence, dying)
+	//             3: only 4 sounds ->   (attack-started, attack, defence, dying)
 	//             4: only 1 sound !!
 	//
 	// who_am_i bit # 1 creature can fly (must have the animations, so better not change)
-	//              # 2 anti-blink: these creatures don't have animation #4, if not set creature will randomly disappear in battle
+	//              # (OUTDATED) 2 anti-blink: these creatures don't have animation #4, if not set creature will randomly disappear in battle
 	//                              if you find a creature that blinks while fighting, set that bit
 	//              # 3 animal-bit
 	//              # 4 water creatures
@@ -28,55 +28,161 @@ class CCreatures
 	// icon: used for tracking, to set the appropriate icon
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 private:
-	UI16				creatureID;
+	UI16				creatureId;
 	UI16				soundList[SND_COUNT];
-	std::bitset< 6 >	who_am_i;
+	std::bitset<6>		who_am_i;
 	UI16				icon;
-	UI16				mountID;
+	UI16				mountId;
+	struct CreatureAnim_st
+	{
+		UI08 animId;
+		UI08 animLength;
+		CreatureAnim_st() : animId( 0 ), animLength( 0 )
+		{
+		}
+	};
+
+	CreatureAnim_st castAnimArea;
+	CreatureAnim_st castAnimTarget;
+	CreatureAnim_st castAnim3;
+	CreatureAnim_st attackAnim1;
+	CreatureAnim_st attackAnim2;
+	CreatureAnim_st attackAnim3;
+
 public:
-	CCreatures() : creatureID( 0 ), icon( 0 ), mountID( 0 )
+	CCreatures() : creatureId( 0 ), icon( 0 ), mountId( 0 )
 	{
 		who_am_i.reset();
 		memset( soundList, 0x00, SND_COUNT );
 	}
-	UI16	GetSound( monsterSound soundType ) const
+	UI16 GetSound( monsterSound soundType ) const
 	{
-		return soundList[static_cast<UI08>(soundType)];
+		return soundList[static_cast<UI08>( soundType )];
 	}
-	void	SetSound( monsterSound soundType, UI16 newVal )
+	void SetSound( monsterSound soundType, UI16 newVal )
 	{
-		soundList[static_cast<UI08>(soundType)] = newVal;
+		soundList[static_cast<UI08>( soundType )] = newVal;
 	}
-	UI16	Icon( void ) const
+	UI16 Icon( void ) const
 	{
 		return icon;
 	}
-	UI08	WhoAmI( void ) const
+	UI08 WhoAmI( void ) const
 	{
-		return static_cast<UI08>(who_am_i.to_ulong());
+		return static_cast<UI08>( who_am_i.to_ulong() );
 	}
 
-	void	Icon( UI16 value )
+	void Icon( UI16 value )
 	{
 		icon = value;
 	}
 
-	UI16	MountID( void ) const
+	UI16 MountId( void ) const
 	{
-		return mountID;
+		return mountId;
 	}
-	void	MountID( UI16 value )
+	void MountId( UI16 value )
 	{
-		mountID = value;
+		mountId = value;
 	}
 
-	UI16 CreatureID( void ) const
+	// Cast Animation (Area-based)
+	UI08 CastAnimAreaId( void ) const
 	{
-		return creatureID;
+		return castAnimArea.animId;
 	}
-	void	CreatureID( UI16 value )
+	UI08 CastAnimAreaLength( void ) const
 	{
-		creatureID = value;
+		return castAnimArea.animLength;
+	}
+	void CastAnimArea( UI08 value, UI08 length )
+	{
+		castAnimArea.animId = value;
+		castAnimArea.animLength = length;
+	}
+
+	// Cast Animation (Target-based)
+	UI08 CastAnimTargetId( void ) const
+	{
+		return castAnimTarget.animId;
+	}
+	UI08 CastAnimTargetLength( void ) const
+	{
+		return castAnimTarget.animLength;
+	}
+	void CastAnimTarget( UI08 value, UI08 length )
+	{
+		castAnimTarget.animId = value;
+		castAnimTarget.animLength = length;
+	}
+
+	// Cast Animation #3
+	UI08 CastAnim3Id( void ) const
+	{
+		return castAnim3.animId;
+	}
+	UI08 CastAnim3Length( void ) const
+	{
+		return castAnim3.animLength;
+	}
+	void CastAnim3( UI08 value, UI08 length )
+	{
+		castAnim3.animId = value;
+		castAnim3.animLength = length;
+	}
+
+	// Attack Animation #1
+	UI08 AttackAnim1Id( void ) const
+	{
+		return attackAnim1.animId;
+	}
+	UI08 AttackAnim1Length( void ) const
+	{
+		return attackAnim1.animLength;
+	}
+	void AttackAnim1( UI08 value, UI08 length )
+	{
+		attackAnim1.animId = value;
+		attackAnim1.animLength = length;
+	}
+
+	// Attack Animation #2
+	UI08 AttackAnim2Id( void ) const
+	{
+		return attackAnim2.animId;
+	}
+	UI08 AttackAnim2Length( void ) const
+	{
+		return attackAnim2.animLength;
+	}
+	void AttackAnim2( UI08 value, UI08 length )
+	{
+		attackAnim2.animId = value;
+		attackAnim2.animLength = length;
+	}
+
+	// Attack Animation #3
+	UI08 AttackAnim3Id( void ) const
+	{
+		return attackAnim3.animId;
+	}
+	UI08 AttackAnim3Length( void ) const
+	{
+		return attackAnim3.animLength;
+	}
+	void AttackAnim3( UI08 value, UI08 length )
+	{
+		attackAnim3.animId = value;
+		attackAnim3.animLength = length;
+	}
+
+	UI16 CreatureId( void ) const
+	{
+		return creatureId;
+	}
+	void CreatureId( UI16 value )
+	{
+		creatureId = value;
 	}
 
 	bool	IsAnimal( void ) const		{		return who_am_i.test( BIT_ANIMAL );		}
@@ -93,16 +199,16 @@ public:
 	void	IsAmphibian( bool value )	{		who_am_i.set( BIT_AMPHI, value );		}
 };
 
-struct point3
+struct Point3_st
 {
 	R32		x, y, z;
-	point3(): x( 0 ), y( 0 ), z( 0 )
+	Point3_st(): x( 0 ), y( 0 ), z( 0 )
 	{
 	}
-	point3( UI16 X, UI16 Y, SI08 Z ) : x( X ), y( Y ), z( Z )
+	Point3_st( UI16 X, UI16 Y, SI08 Z ) : x( X ), y( Y ), z( Z )
 	{
 	}
-	point3( R32 X, R32 Y, R32 Z ) : x( X ), y( Y ), z( Z )
+	Point3_st( R32 X, R32 Y, R32 Z ) : x( X ), y( Y ), z( Z )
 	{
 	}
 	void	Assign( UI16 X, UI16 Y, SI08 Z );
@@ -114,63 +220,63 @@ struct point3
 	void	Normalize( void );
 };
 
-inline bool operator==( point3 const &a, point3 const &b )
+inline bool operator == ( Point3_st const &a, Point3_st const &b )
 {
-	return (a.x == b.x && a.y == b.y && a.z == b.z );
+	return ( a.x == b.x && a.y == b.y && a.z == b.z );
 }
-inline point3 operator+( point3 const &a, point3 const &b )
+inline Point3_st operator + ( Point3_st const &a, Point3_st const &b )
 {
-	return (point3( a.x + b.x, a.y + b.y, a.z + b.z ));
+	return ( Point3_st( a.x + b.x, a.y + b.y, a.z + b.z ));
 }
 
-inline point3 operator-( point3 const &a, point3 const &b )
+inline Point3_st operator - ( Point3_st const &a, Point3_st const &b )
 {
-	return (point3( a.x - b.x, a.y - b.y, a.z - b.z ));
+	return ( Point3_st( a.x - b.x, a.y - b.y, a.z - b.z ));
 }
-inline point3 operator*( point3 const &a, R32 const &b )
+inline Point3_st operator * ( Point3_st const &a, R32 const &b )
 {
-	return point3( a.x*b, a.y*b, a.z*b );
+	return Point3_st( a.x * b, a.y * b, a.z * b );
 }
-inline point3 operator*( R32 const &a, point3 const &b )
+inline Point3_st operator * ( R32 const &a, Point3_st const &b )
 {
-	return point3( a * b.x, a * b.y, a * b.z );
+	return Point3_st( a * b.x, a * b.y, a * b.z );
 }
-inline point3 operator/( point3 const &a, R32 const &b )
+inline Point3_st operator / ( Point3_st const &a, R32 const &b )
 {
 	R32 inv = 1.f / b;
-	return point3( a.x * inv, a.y * inv, a.z * inv );
+	return Point3_st( a.x * inv, a.y * inv, a.z * inv );
 }
-inline void point3::Assign( UI16 X, UI16 Y, SI08 Z )
+inline void Point3_st::Assign( UI16 X, UI16 Y, SI08 Z )
 {
 	x = X;
 	y = Y;
 	z = Z;
 }
-inline void point3::Assign( R32 X, R32 Y, R32 Z )
+inline void Point3_st::Assign( R32 X, R32 Y, R32 Z )
 {
 	x = X;
 	y = Y;
 	z = Z;
 }
-inline R64 point3::Mag3D( void ) const
+inline R64 Point3_st::Mag3D( void ) const
 {
-	return (R32)sqrt( x*x + y*y + z*z );
+	return static_cast<R32>( sqrt( x * x + y * y + z * z ));
 }
-inline R32 point3::MagSquared3D( void ) const
+inline R32 Point3_st::MagSquared3D( void ) const
 {
-	return ( x*x + y*y + z*z );
-}
-
-inline R64 point3::Mag( void ) const
-{
-	return (R32)sqrt( x*x + y*y );
-}
-inline R32 point3::MagSquared( void ) const
-{
-	return ( x*x + y*y );
+	return ( x * x + y * y + z * z );
 }
 
-inline void point3::Normalize( void )
+inline R64 Point3_st::Mag( void ) const
+{
+	return static_cast<R32>( sqrt( x * x + y * y ));
+}
+inline R32 Point3_st::MagSquared( void ) const
+{
+	return ( x * x + y * y );
+}
+
+inline void Point3_st::Normalize( void )
 {
 	R32 foo = 1 / Mag3D();
 	x *= foo;
@@ -178,7 +284,7 @@ inline void point3::Normalize( void )
 	z *= foo;
 }
 
-struct UOXFileWrapper
+struct UOXFileWrapper_st
 {
 	FILE *mWrap;
 };
@@ -189,8 +295,8 @@ struct GoPlaces_st
 	SI16 y;
 	SI08 z;
 	UI08 worldNum;
-	UI16 instanceID;
-	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 ), instanceID( 0 )
+	UI16 instanceId;
+	GoPlaces_st() : x( -1 ), y( -1 ), z( -1 ), worldNum( 0 ), instanceId( 0 )
 	{
 	}
 };
@@ -199,9 +305,9 @@ struct GoPlaces_st
 class CTeleLocationEntry
 {
 private:
-	point3	src;
+	Point3_st	src;
 	UI08	srcWorld;
-	point3	trg;
+	Point3_st	trg;
 	UI08	trgWorld;
 public:
 	CTeleLocationEntry() : srcWorld( 0xFF ), trgWorld( 0 )
@@ -209,7 +315,7 @@ public:
 		src.Assign( 0, 0, ILLEGAL_Z );
 		trg.Assign( 0, 0, ILLEGAL_Z );
 	}
-	point3 SourceLocation( void ) const
+	Point3_st SourceLocation( void ) const
 	{
 		return src;
 	}
@@ -225,7 +331,7 @@ public:
 	{
 		srcWorld = newVal;
 	}
-	point3 TargetLocation( void ) const
+	Point3_st TargetLocation( void ) const
 	{
 		return trg;
 	}
@@ -244,34 +350,34 @@ public:
 };
 
 // Instalog Locations
-struct LogoutLocationEntry
+struct LogoutLocationEntry_st
 {
 	SI16 x1 = 0;
 	SI16 y1 = 0;
 	SI16 x2 = 0;
 	SI16 y2 = 0;
 	UI08 worldNum = 0;
-	UI16 instanceID = 0;
+	UI16 instanceId = 0;
 };
 
 // SOS Locations
-struct SOSLocationEntry
+struct SOSLocationEntry_st
 {
 	SI16 x1 = 0;
 	SI16 y1 = 0;
 	SI16 x2 = 0;
 	SI16 y2 = 0;
 	UI08 worldNum = 0;
-	UI16 instanceID = 0;
+	UI16 instanceId = 0;
 };
 
-struct advance_st
+struct Advance_st
 {
 	UI16 base;
 	UI08 success;
 	UI08 failure;
 	UI08 amtToGain;
-	advance_st() : base( 0 ), success( 0 ), failure( 0 ), amtToGain( 1 )
+	Advance_st() : base( 0 ), success( 0 ), failure( 0 ), amtToGain( 1 )
 	{
 	}
 };

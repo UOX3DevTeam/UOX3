@@ -235,3 +235,13 @@ id=0x0993
 weight=500
 value=100 50
 }
+
+[tribalberry]
+{
+get=base_item
+name=tribal berry
+id=0x09d0
+pileable=1
+weight=100
+colour=0x0006
+}

@@ -24,7 +24,9 @@ function onUseChecked( pUser, iUsed )
 					iUsed.amount -= 1;
 					var eKindling = CreateDFNItem( pSock, pUser, "0x0de3", 1, "ITEM", false );
         			if( eKindling && eKindling.isItem )
+        			{
 						iUsed = eKindling;
+        			}
 				}
 				iUsed.AddScriptTrigger( 5008 );
 				iUsed.container = null;
@@ -43,13 +45,19 @@ function onUseChecked( pUser, iUsed )
 				iUsed.StartTimer( 30000, 1, true );
 			}
 			else // You fail to ignite the campfire.
+			{
 				pUser.SysMessage( GetDictionaryEntry( 1764, pSock.language ));
+			}
 		}
 		else // There is not a spot nearby to place your campfire.
+		{
 			pUser.SysMessage( GetDictionaryEntry( 1789, pSock.language ));
+		}
 	}
 	else // That item must be in your backpack before it can be used.
+	{
 		pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language ));
+	}
 	return false;
 }
 
@@ -85,9 +93,13 @@ function onCollide( pSock, pUser, iUsed )
 	if( iUsed.id == 0x0de3 )
 	{
 		if( pUser.gender == 0 )
+		{
 			pUser.SoundEffect( 343, false );
+		}
 		else if( pUser.gender == 1 )
+		{
 			pUser.SoundEffect( 806, false );
+		}
 		pUser.TextMessage( "Ouch!", false );
 		pUser.Damage( 2 );
 	}

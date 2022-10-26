@@ -42,10 +42,14 @@ function GetHintMessage( iUsed, useHtml )
 	{
 		case 500716: // hint text from Covetous
 			if( useHtml )
+			{
 				hintText = "<BASEFONT COLOR=#668cff>";
+			}
 			hintText += "A small plaque on the bottom of the frame reads: 3-4-1-5.";
 			if( useHtml )
+			{
 				hintText += "<BASEFONT COLOR=#FFFFFF>";
+			}
 			break;
 		case 500718: // hint text from Covetous
 			hintText = "You seem not to be able to free the note, but upon it you see the writing: 3-4-1-5.";

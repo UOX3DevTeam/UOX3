@@ -31,7 +31,7 @@ public:
 	}
 	void	Effect( UI08 p1, UI08 p2 )
 	{
-		effect = (UI16)((p1<<8) + p2);
+		effect = static_cast<UI16>(( p1 << 8 ) + p2 );
 	}
 	void	Speed( UI08 newVal )
 	{
@@ -71,7 +71,7 @@ public:
 	}
 	void	Effect( UI08 p1, UI08 p2 )
 	{
-		effect = (UI16)((p1<<8) + p2);
+		effect = static_cast<UI16>(( p1 << 8 ) + p2 );
 	}
 	void	Speed( UI08 newVal )
 	{
@@ -83,7 +83,7 @@ public:
 	}
 };
 
-struct reag_st
+struct Reag_st
 {
 	UI08 ginseng;
 	UI08 moss;
@@ -93,12 +93,12 @@ struct reag_st
 	UI08 ash;
 	UI08 shade;
 	UI08 garlic;
-	reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 )
+	Reag_st() : ginseng( 0 ), moss( 0 ), drake( 0 ), pearl( 0 ), silk( 0 ), ash( 0 ), shade( 0 ), garlic( 0 )
 	{
 	}
 };
 
-class SpellInfo
+class CSpellInfo
 {
 private:
 	SI16		mana;
@@ -108,7 +108,7 @@ private:
 	R32			damageDelay;	// Minimum delay between targeting of a damage spell and the application of damage
 	R32			recoveryDelay;	// Minimum delay between the end of one spellcast and the start of another
 	UI16		action;
-	reag_st		reags;
+	Reag_st		reags;
 	std::string mantra;
 	std::string strToSay;	// string visualized with targ. system
 	bool		enabled;
@@ -124,7 +124,7 @@ private:
 	UI16		jsScript;
 	SI16		baseDmg;
 public:
-	SpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
+	CSpellInfo() : mana( 0 ), stamina( 0 ), health( 0 ), delay( 0 ), damageDelay( 0 ), recoveryDelay( 1.0f ), action( 0 ), mantra( "" ), strToSay( "" ), enabled( false ),
 	circle( 1 ), flags( 0 ), effect( INVALIDID ), hiskill( 0 ), loskill( 0 ), sclo( 0 ), schi( 0 ), jsScript( 0 ), baseDmg( 0 )
 	{
 	}
@@ -190,11 +190,11 @@ public:
 	{
 		return baseDmg;
 	}
-	reag_st	Reagants( void ) const
+	Reag_st	Reagants( void ) const
 	{
 		return reags;
 	}
-	reag_st *ReagantsPtr( void )
+	Reag_st *ReagantsPtr( void )
 	{
 		return &reags;
 	}
@@ -232,43 +232,43 @@ public:
 	}
 	bool RequireTarget( void ) const
 	{
-		return (flags&0x01) == 0x01;
+		return ( flags & 0x01 ) == 0x01;
 	}
 	bool RequireItemTarget( void ) const
 	{
-		return (flags&0x02) == 0x02;
+		return ( flags & 0x02 ) == 0x02;
 	}
 	bool RequireLocTarget( void ) const
 	{
-		return (flags&0x04) == 0x04;
+		return ( flags & 0x04 ) == 0x04;
 	}
 	bool RequireCharTarget( void ) const
 	{
-		return (flags&0x08) == 0x08;
+		return ( flags & 0x08 ) == 0x08;
 	}
 	bool RequireNoTarget( void ) const
 	{
-		return (flags&0x00) == 0x00;
+		return ( flags & 0x00 ) == 0x00;
 	}
 	bool TravelSpell( void ) const
 	{
-		return (flags&0x10) == 0x10;
+		return ( flags & 0x10 ) == 0x10;
 	}
 	bool FieldSpell( void ) const
 	{
-		return (flags&0x20) == 0x20;
+		return ( flags & 0x20 ) == 0x20;
 	}
 	bool SpellReflectable( void ) const
 	{
-		return (flags&0x40) == 0x40;
+		return ( flags & 0x40 ) == 0x40;
 	}
 	bool AggressiveSpell( void ) const
 	{
-		return (flags&0x80) == 0x80;
+		return ( flags & 0x80 ) == 0x80;
 	}
 	bool Resistable( void ) const
 	{
-		return (flags&0x100) == 0x100;
+		return ( flags & 0x100 ) == 0x100;
 	}
 	void Mantra( const std::string& toPut )
 	{
@@ -319,7 +319,7 @@ public:
 		jsScript = scpAssign;
 	}
 	UI16	Effect( void )const		{	return effect;	}
-	void	Effect( UI16 newVal )	{	effect = newVal;}
+	void	Effect( UI16 newVal )	{	effect = newVal; }
 	CMagicMove MoveEffect( void ) const
 	{
 		return moveEffect;
@@ -367,20 +367,20 @@ public:
 
 #define MAGIC_DEFN bool (*) ()
 
-struct MagicTable_s
+struct MagicTable_st
 {
 	SI32			spell_name;
-	bool			(*mag_extra) ();	// extra data - see above
+	bool			( *mag_extra ) ();	// extra data - see above
 };
 
-bool AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_STUB_LIST ), SI08 curSpell );
+bool AreaAffectSpell( CSocket *sock, CChar *caster, void ( *trgFunc )( MAGIC_AREA_STUB_LIST ), SI08 curSpell );
 bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, SI08 spellNum );
 bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length );
 SI16 CalcSpellDamageMod( CChar *caster, CChar *target, SI16 baseDamage, bool spellResisted );
 
-extern const MagicTable_s						magic_table[];
+extern const MagicTable_st						magic_table[];
 
 MAG_CHARHANDLER( splClumsy );
 MAG_NOHANDLER( splCreateFood );

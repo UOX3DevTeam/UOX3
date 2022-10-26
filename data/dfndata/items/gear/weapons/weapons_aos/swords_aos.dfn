@@ -1,0 +1,343 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Cutlass - AoS stats
+[0x1440_aos]
+{
+get=base_cutlass
+weight=800
+value=32 27
+damage=11 13
+hp=31 70
+spd=44
+str=25
+}
+
+// Katana - AoS stats
+[0x13fe_aos]
+{
+get=base_katana
+weight=600
+value=42 21
+damage=11 13
+hp=31 90
+spd=46
+str=25
+}
+
+// Broadsword - AoS stats
+[0x0f5e_aos]
+{
+get=base_broadsword
+weight=600
+value=44 22
+damage=14 15
+hp=31 100
+spd=33
+str=30
+}
+
+// Longsword - AoS stats
+[0x0f60_aos]
+{
+get=base_longsword
+weight=700
+value=60 30
+damage=15 16
+hp=31 110
+spd=30
+str=35
+}
+
+// Long Sword (thin) - AoS stats
+[0x13b7_aos]
+{
+get=base_long_sword
+weight=100
+value=33 33
+damage=15 16
+hp=31 110
+spd=30
+str=35
+}
+
+// Scimitar - AoS stats
+[0x13b5_aos]
+{
+get=base_scimitar
+weight=500
+value=43 21
+damage=13 15
+hp=31 90
+spd=37
+str=25
+}
+
+// Viking Sword - AoS stats
+[0x13b9_aos]
+{
+get=base_viking_sword
+weight=600
+value=66 33
+damage=15 17
+hp=31 100
+spd=28
+str=40
+}
+
+// AGE OF SHADOWS
+
+// Bone Harvester - AoS stats
+[0x26bb_aos]
+{
+get=base_bone_harvester
+weight=300
+value=47 23
+damage=13 15
+hp=31 70
+spd=36
+str=25
+}
+
+// Crescent Blade - AoS stats
+[0x26c1_aos]
+{
+get=base_crescent_blade
+weight=100
+value=48 24
+damage=11 14
+hp=51 80
+spd=47
+str=55
+}
+
+// Paladin Sword - AoS stats
+[0x26ce_aos]
+{
+get=base_paladin_sword
+weight=600
+value=44 22
+damage=20 22
+hp=36 48
+spd=24
+str=85
+}
+
+// SAMURAI EMPIRE
+
+// No-Dachi - AoS stats
+[0x27a2_aos]
+{
+get=base_no-dachi
+weight=1000
+value=83 42
+damage=16 18
+hp=31 90
+spd=33
+str=40
+}
+
+// Wakizashi - AoS stats
+[0x27a4_aos]
+{
+get=base_wakizashi
+weight=500
+value=51 26
+damage=11 13
+hp=45 50
+spd=45
+str=20
+}
+
+// Bokuto - AoS stats
+[0x27a8_aos]
+{
+get=base_bokuto
+weight=700
+value=28 14
+damage=11 12
+hp=25 50
+spd=60
+str=20
+}
+
+// Daisho - AoS stats
+[0x27a9_aos]
+{
+get=base_daisho
+weight=800
+value=67 34
+damage=13 15
+hp=45 65
+spd=40
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+
+// Elven Machete - AoS stats
+[0x2d29_aos]
+{
+get=base_elven_machete
+damage=12 14
+hp=30 60
+spd=40
+str=20
+value=24 12
+weight=600
+}
+
+// Radiant Scimitar - AoS stats
+[0x2d29_aos]
+{
+get=base_radiant_scimitar
+damage=13 13
+hp=30 60
+spd=45
+str=20
+value=24 12
+weight=900
+}
+
+// Rune Blade - AoS stats
+[0x2d26_aos]
+{
+get=base_rune_blade
+damage=14 16
+hp=30 60
+spd=40
+str=30
+value=48 24
+weight=700
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Dread Sword - AoS stats
+[0x090b_aos]
+{
+get=base_dread_sword
+damage=15 17
+hp=31 110
+spd=33
+str=35
+value=24 12
+weight=700
+}
+
+// Gargish Bone Harvester - AoS stats
+[0x48c6_aos]
+{
+get=base_gargish_bone_harvester
+damage=11 13
+hp=45 50
+spd=45
+str=20
+value=51 26
+weight=500
+}
+
+// Glass Sword - AoS stats
+[0x090c_aos]
+{
+get=base_glass_sword
+damage=12 14
+hp=31 90
+spd=40
+str=20
+value=37 19
+weight=600
+}
+
+// Gargish Cleaver - AoS stats
+[0x48ae_aos]
+{
+get=base_gargish_cleaver
+damage=11 13
+hp=31 50
+spd=46
+str=10
+value=24 12
+weight=100
+}
+
+// Gargish Katana - AoS stats
+[0x48ba_aos]
+{
+get=base_gargish_katana
+damage=11 13
+hp=31 90
+spd=46
+str=25
+value=42 21
+weight=600
+}
+
+// Gargish Butcher Knife - AoS stats
+[0x48b6_aos]
+{
+get=base_gargish_butcher_knife
+damage=9 11
+hp=31 40
+spd=49
+str=5
+value=21 10
+weight=100
+}
+
+// Stone War Sword - AoS stats
+[0x0900_aos]
+{
+get=base_stone_war_sword
+damage=16 18
+hp=31 100
+spd=30
+str=40
+value=24 12
+weight=600
+}
+
+// Gargish Talwar - AoS stats
+[0x0908_aos]
+{
+get=base_gargish_talwar
+damage=16 18
+hp=31 80
+spd=33
+str=40
+value=64 32
+weight=1600
+}
+
+// Gargish Daisho - AoS stats
+[0x48d0_aos]
+{
+get=base_gargish_daisho
+damage=13 15
+hp=45 65
+spd=40
+str=40
+value=67 34
+weight=800
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Bladed Whip - AoS stats
+[0xa28b_aos]
+{
+get=base_bladed_whip
+damage=14 16
+hp=36 48
+spd=36
+str=20
+value=24 12
+weight=500
+}

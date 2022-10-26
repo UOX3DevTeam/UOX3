@@ -1,9 +1,9 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	books.cpp
 //|	Date		-	12/05/1999
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writable and Pre-Defined Book Handling
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
 //|					0.9			12/05/1999
@@ -20,7 +20,7 @@
 //|					Fixed several issues with the fstream handling to ensure validity of data from .bok files.
 //|					Slimmed down the cBook class making use of packet classes for handling data from the client.
 //|					Added support for the new book header packet removing support for the old book header packet.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "books.h"
 #include "cServerDefinitions.h"
@@ -29,36 +29,38 @@
 #include "StringUtility.hpp"
 #include "osunique.hpp"
 
-using namespace std::string_literals ;
+using namespace std::string_literals;
 
-cBooks *Books = nullptr;
+CBooks *Books = nullptr;
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CPINewBookHeader::Handle( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CPINewBookHeader::Handle()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the .bok file with changes to the author or title
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CPINewBookHeader::Handle( void )
 {
 	if( tSock != nullptr )
 	{
 		const SERIAL bookSer = tSock->GetDWord( 3 );
-		CItem *mBook = calcItemObjFromSer( bookSer );
-		if( !ValidateObject( mBook ) )
+		CItem *mBook = CalcItemObjFromSer( bookSer );
+		if( !ValidateObject( mBook ))
 			return true;
 
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( bookSer, 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( bookSer, 16 ) + std::string( ".bok" );
 
-		if( !FileExists( fileName ) )
+		if( !FileExists( fileName ))
+		{
 			Books->CreateBook( fileName, tSock->CurrcharObj(), mBook );
+		}
 
 		std::fstream file( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 
 		if( file.is_open() )	// If it isn't open now, our create and open failed
 		{
 			const size_t titleLen = tSock->GetWord( 11 );
-			const size_t authorLen = tSock->GetWord( 13+titleLen );
+			const size_t authorLen = tSock->GetWord( 13 + titleLen );
 
 			char titleBuff[62];
 			char authBuff[32];
@@ -66,8 +68,8 @@ bool CPINewBookHeader::Handle( void )
 			memset( titleBuff, 0x00, 62 );
 			memset( authBuff, 0x00, 32 );
 
-			memcpy( titleBuff, &tSock->Buffer()[13], (titleLen>61?61:titleLen) );
-			memcpy( authBuff, &tSock->Buffer()[15+titleLen], (authorLen>31?31:authorLen) );
+			memcpy( titleBuff, &tSock->Buffer()[13], ( titleLen > 61 ? 61 : titleLen ));
+			memcpy( authBuff, &tSock->Buffer()[15 + titleLen], ( authorLen > 31 ? 31 : authorLen ));
 
 			mBook->SetName( titleBuff );
 
@@ -78,53 +80,66 @@ bool CPINewBookHeader::Handle( void )
 				file.write( authBuff, 32 );
 
 				if( file.fail() )
-					Console.error( oldstrutil::format("Couldn't write to book file %s", fileName.c_str()) );
+				{
+					Console.Error( oldstrutil::format( "Couldn't write to book file %s", fileName.c_str() ));
+				}
 			}
 			else
-				Console.error( oldstrutil::format("Failed to seek to book file %s", fileName.c_str() ));
+			{
+				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+			}
 			file.close();
 		}
 		else
-			Console.error( oldstrutil::format("Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
+		{
+			Console.Error( oldstrutil::format( "Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
+		}
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void OpenPreDefBook( CSocket *mSock, CItem *i )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBooks::OpenPreDefBook()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens "Read Only" Books defined in /misc/books.dfn
-//o-----------------------------------------------------------------------------------------------o
-auto cBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) ->void {
-	if( mSock) {
-		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
+//o------------------------------------------------------------------------------------------------o
+auto CBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) -> void
+{
+	if( mSock )
+	{
+		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ));
 		auto book = FileLookup->FindEntry( temp, misc_def );
-		if(book) {
-
+		if( book )
+		{
 			CPNewBookHeader toSend;
 			toSend.Serial( i->GetSerial() );
 			toSend.Flag1( 0 );
 			toSend.Flag2( 0 );
 
 			bool part1 = false, part2 = false, part3 = false;
-			for (const auto &sec : book->collection()){
-				auto tag = sec->tag ;
+			for( const auto &sec : book->collection() )
+			{
+				auto tag = sec->tag;
 				auto UTag = oldstrutil::upper( tag );
-				auto data = sec->data ;
-				if( UTag == "PAGES" ) {
+				auto data = sec->data;
+				if( UTag == "PAGES" )
+				{
 					part1 = true;
-					toSend.Pages( static_cast<UI16>(std::stoul(data, nullptr, 0)) );
+					toSend.Pages( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
 				}
-				else if( UTag == "TITLE" ) {
+				else if( UTag == "TITLE" )
+				{
 					part2 = true;
 					toSend.Title( data );
 				}
-				else if( UTag == "AUTHOR" ) {
+				else if( UTag == "AUTHOR" )
+				{
 					part3 = true;
 					toSend.Author( data );
 				}
-				if( part1 && part2 && part3 ){
+				if( part1 && part2 && part3 )
+				{
 					break;
 				}
 			}
@@ -137,13 +152,13 @@ auto cBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) ->void {
 }
 
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBooks::OpenBook()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens Writable books based on their .bok file
-//o-----------------------------------------------------------------------------------------------o
-void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
+//o------------------------------------------------------------------------------------------------o
+void CBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 {
 	if( mSock != nullptr )
 	{
@@ -154,11 +169,11 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		UI16 numPages = 0;
 
 		std::string bookTitle, bookAuthor;
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string( ".bok" );
 
 		std::ifstream file( fileName.c_str(), std::ios::in | std::ios::binary );
 
-		bool bookExists = (file.is_open());
+		bool bookExists = ( file.is_open() );
 		if( bookExists )
 		{
 			file.seekg( 0, std::ios::beg );
@@ -175,47 +190,59 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 				bookAuthor = tempString;
 
 				file.read( rBuffer, 2 );
-				numPages = static_cast<UI16>((rBuffer[0]<<8) + rBuffer[1]);
+				numPages = static_cast<UI16>(( rBuffer[0] << 8 ) + rBuffer[1]);
 
 				cpbpToSend.Serial( mBook->GetSerial() );
 				for( UI16 pageNum = 0; pageNum < numPages; ++pageNum )
 				{
 					UI08 blankLineCtr = 0;
-					std::vector< std::string > tempLines;
+					std::vector<std::string> tempLines;
 					tempLines.resize( 0 );
 					for( UI08 lineNum = 0; lineNum < 8; ++lineNum )
 					{
 						file.read( tempString, 34 );
 						tempLines.push_back( tempString );
 						if( tempString[0] == 0x00 )
+						{
 							++blankLineCtr;
+						}
 					}
 					if( blankLineCtr == 8 )
+					{
 						tempLines.clear();
+					}
 					cpbpToSend.NewPage( -1, &tempLines );
 				}
 				cpbpToSend.Finalize();
 			}
 			else
-				Console.error( oldstrutil::format("Failed to seek to book file %s", fileName.c_str()) );
+			{
+				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+			}
 
 			file.close();
 		}
 		else
 		{
-			numPages = static_cast<UI16>(mBook->GetTempVar( CITV_MOREY ));				// if new book get number of maxpages ...
+			numPages = static_cast<UI16>( mBook->GetTempVar( CITV_MOREY ));	// if new book get number of maxpages ...
 			if( numPages < 1 || numPages > 255 )
+			{
 				numPages = 16;
+			}
 		}
 
 		if( bookAuthor.empty() )
 		{
 			CChar *mChar = mSock->CurrcharObj();
-			if( ValidateObject( mChar ) )
+			if( ValidateObject( mChar ))
+			{
 				bookAuthor = mChar->GetName();
+			}
 		}
 		if( bookTitle.empty() )
+		{
 			bookTitle = "a book";
+		}
 
 		bInfo.Pages( numPages );
 
@@ -237,34 +264,44 @@ void cBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		mSock->Send( &bInfo );
 
 		if( bookExists ) // dont send book contents if the file doesnt exist (yet)!
+		{
 			mSock->Send( &cpbpToSend );
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBooks::ReadPreDefBook()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends pager number "p" of a Pre-defined Book to the socket
-//o-----------------------------------------------------------------------------------------------o
-auto cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )->void {
-	if( mSock){
-		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ) );
-		ScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
-		if( book ) {
+//o------------------------------------------------------------------------------------------------o
+auto CBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p ) -> void
+{
+	if( mSock )
+	{
+		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ));
+		CScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
+		if( book )
+		{
 			UI16 curPage = p;
-			for (const auto &sec : book->collection()){
-				auto tag = sec->tag ;
-				if( tag == "PAGE" ){
+			for( const auto &sec : book->collection() )
+			{
+				auto tag = sec->tag;
+				if( tag == "PAGE" )
+				{
 					--curPage;
-					if( curPage == 0 ){ // we found our page
+					if( curPage == 0 ) // we found our page
+					{
 						temp = "PAGE "s + sec->data;
 						auto page = FileLookup->FindEntry( temp, misc_def );
-						if( page) {
-							CPBookPage cpbpSend( (*i) );
+						if( page )
+						{
+							CPBookPage cpbpSend(( *i ));
 							cpbpSend.NewPage( p );
-							for (const auto &sec2:page->collection()) {
-								temp = sec2->data ;
+							for( const auto &sec2 : page->collection() )
+							{
+								temp = sec2->data;
 								cpbpSend.AddLine( temp );
 							}
 							cpbpSend.Finalize();
@@ -278,18 +315,18 @@ auto cBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p )->void {
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CPIBookPage::Handle( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CPIBookPage::Handle()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the .bok file with changes made on a specific page.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CPIBookPage::Handle( void )
 {
 	if( tSock != nullptr )
 	{
-		CItem *mBook = calcItemObjFromSer( tSock->GetDWord( 3 ) );
-		if( !ValidateObject( mBook ) )
+		CItem *mBook = CalcItemObjFromSer( tSock->GetDWord( 3 ));
+		if( !ValidateObject( mBook ))
 			return true;
 
 		const UI16 pageNum = tSock->GetWord( 9 );
@@ -297,16 +334,20 @@ bool CPIBookPage::Handle( void )
 		if( mBook->GetTempVar( CITV_MOREX ) != 666 ) // Just incase, make sure it is a writable book
 		{
 			if( mBook->GetTempVar( CITV_MOREX ) != 999 )
+			{
 				Books->ReadPreDefBook( tSock, mBook, pageNum );
+			}
 			return true;
 		}
 
-		const std::string fileName	= cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string(".bok");
-		UI16 totalLines		= tSock->GetWord( 11 );
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string( ".bok" );
+		UI16 totalLines	= tSock->GetWord( 11 );
 
 		// Cap amount of lines sent in one go at 8 per page
 		if( totalLines > 8 )
+		{
 			totalLines = 8;
+		}
 
 		// Each page has 8 lines of 34 bytes for each line
 		char tempLines[8][34];
@@ -325,52 +366,60 @@ bool CPIBookPage::Handle( void )
 					break;
 			}
 			if( tempLines[lineNum][i] != 0x00 )
+			{
 				tempLines[lineNum][i] = 0x00;
+			}
 		}
 
-		if( !FileExists( fileName ) )
+		if( !FileExists( fileName ))
+		{
 			Books->CreateBook( fileName, tSock->CurrcharObj(), mBook );
+		}
 
 		std::fstream file( fileName.c_str(), std::ios::in | std::ios::out | std::ios::binary );
 		if( file.is_open() )
 		{
-			file.seekp( (((static_cast<size_t>(pageNum)-1)*272)+32+62+2), std::ios::beg );
+			file.seekp(((( static_cast<size_t>( pageNum ) - 1 ) * 272 ) + 32 + 62 + 2 ), std::ios::beg );
 			if( !file.fail() )
 			{
 				for( UI08 j = 0; j < totalLines; ++j )
 				{
-					file.write( (const char *)&tempLines[j], 34 );
+					file.write(( const char * )&tempLines[j], 34 );
 				}
 			}
 			else
-				Console.error( oldstrutil::format("Failed to seek to book file %s", fileName.c_str()) );
+			{
+				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+			}
 			file.close();
 		}
 		else
-			Console.error( oldstrutil::format("Couldn't write to book file %s", fileName.c_str()) );
+		{
+			Console.Error( oldstrutil::format( "Couldn't write to book file %s", fileName.c_str() ));
+		}
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void DeleteBook( CItem *id )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBooks::DeleteBook()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes the .bok file associated with the book item
-//o-----------------------------------------------------------------------------------------------o
-void cBooks::DeleteBook( CItem *id )
+//o------------------------------------------------------------------------------------------------o
+void CBooks::DeleteBook( CItem *id )
 {
-	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( id->GetSerial(), 16 ) + std::string(".bok");
+	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( id->GetSerial(), 16 ) + std::string( ".bok" );
 	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBooks::CreateBook()
 //|	Date		-	11/5/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formats a newly created .bok file, this must be done with any new book file
-//o-----------------------------------------------------------------------------------------------o
-void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook )
+//o------------------------------------------------------------------------------------------------o
+void CBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook )
 {
 	char wBuffer[2];
 	char line[34];
@@ -379,7 +428,9 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 
 	UI16 maxpages = static_cast<UI16>(mBook->GetTempVar( CITV_MOREY ));
 	if( maxpages < 1 || maxpages > 255 )
+	{
 		maxpages = 16;
+	}
 
 	const std::string author	= mChar->GetName();
 	const std::string title		= "a book";
@@ -388,8 +439,8 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 	memset( titleBuff, 0x00, 62 );
 	memset( authBuff, 0x00, 32 );
 
-	strncopy( titleBuff, 62,title.c_str(), 61 );
-	strncopy( authBuff,32, author.c_str(), 31 );
+	strncopy( titleBuff, 62, title.c_str(), 61 );
+	strncopy( authBuff, 32, author.c_str(), 31 );
 
 	std::ofstream file( fileName.c_str(), std::ios::out | std::ios::binary | std::ios::trunc );
 
@@ -398,15 +449,15 @@ void cBooks::CreateBook( const std::string& fileName, CChar *mChar, CItem *mBook
 	file.write( titleBuff, 62 );
 	file.write( authBuff, 32 );
 
-	wBuffer[0] = static_cast<SI08>(maxpages>>8);
-	wBuffer[1] = static_cast<SI08>(maxpages%256);
-	file.write( (const char *)&wBuffer, 2 );
+	wBuffer[0] = static_cast<SI08>( maxpages >> 8 );
+	wBuffer[1] = static_cast<SI08>( maxpages % 256 );
+	file.write(( const char * )&wBuffer, 2 );
 
 	for( UI16 i = 0; i < maxpages; ++i )
 	{
 		for( UI08 lineNum = 0; lineNum < 8; ++lineNum )
 		{
-			file.write( (const char *)&line, 34 );
+			file.write(( const char * )&line, 34 );
 		}
 	}
 

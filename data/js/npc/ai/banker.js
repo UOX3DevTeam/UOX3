@@ -87,7 +87,7 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 								if( parseInt( bankContents[0] ) < maxBankItemAmt )
 								{
 									pTalking.UseResource( depositAmt, 0x0EED, 0 );
-									divideDepositedGold( pTalking, bankBox, depositAmt );
+									DivideDepositedGold( pTalking, bankBox, depositAmt );
 									pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
 								}
 								else
@@ -129,7 +129,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 			pTalking.TextMessage( withdrawAmt );
 			if( bankBox )
 			{
-				var goldInBank = countGoldInBank( pTalking, bankBox );
+				var goldInBank = CountGoldInBank( pTalking, bankBox );
 				if( withdrawAmt > goldInBank )
 				{
 					pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
@@ -138,7 +138,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 				{
 					if( withdrawAmt > 65535 )
 					{
-						divideWithdrawnGold( pTalking, bankBox, withdrawAmt );
+						DivideWithdrawnGold( pTalking, bankBox, withdrawAmt );
 					}
 					else
 					{
@@ -160,7 +160,7 @@ function CheckBalance( pSock, pTalking, pTalkingTo, bankBox )
 {
 	if( bankBox )
 	{
-		var goldInBank = countGoldInBank( pTalking, bankBox );
+		var goldInBank = CountGoldInBank( pTalking, bankBox );
 		pTalkingTo.TextMessage( GetDictionaryEntry( 7007, pSock.language ) + " " + goldInBank, true, 0x03b2 ); // Thy current bank balance is:
 	}
 }
@@ -176,7 +176,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 	{
 		// This should rarely be necessary, all players should have had a bank-box added
 		// upon character creation.
-		bankBox = createNewBankBox( pTalking );
+		bankBox = CreateNewBankBox( pTalking );
 		if( !ValidateObject( bankBox ))
 		{
 			return;
@@ -193,7 +193,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 
 		var bankMsg = GetDictionaryEntry( 7008, pSock.language ); // Bank container has %i items, %u stones
 		bankMsg = bankMsg.replace(/%i/gi, itemAmount);
-		pTalking.TextMessage( bankMsg.replace(/%u/gi, stones ), false, 0x096a );
+		pTalking.TextMessage( bankMsg.replace( /%u/gi, stones ), false, 0x096a );
 	}
 }
 
@@ -211,7 +211,7 @@ function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 		var checkSize = parseInt( splitString[1], 10 );
 		if( bankBox )
 		{
-			var goldInBank = countGoldInBank( pTalking, bankBox );
+			var goldInBank = CountGoldInBank( pTalking, bankBox );
 			if( checkSize > goldInBank )
 			{
 				pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
@@ -243,7 +243,7 @@ function CreateCheck( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 }
 
 // Creates a new bank box for players that, for some reason, do not already have one
-function createNewBankBox( pTalking )
+function CreateNewBankBox( pTalking )
 {
 	// Create a new bankbox for the player
 	var newBankBox = CreateDFNItem( pTalking.socket, pTalking, "0x09ab", 1, "ITEM", false );
@@ -251,7 +251,7 @@ function createNewBankBox( pTalking )
 	newBankBox.layer = 29;
 	newBankBox.owner = pTalking;
 	newBankBox.container = pTalking;
-	newBankBox.maxItems = parseInt(GetServerSetting( "MAXPLAYERBANKITEMS" ));
+	newBankBox.maxItems = parseInt( GetServerSetting( "MAXPLAYERBANKITEMS" ));
 	newBankBox.type = 1;
 	newBankBox.morex = 1;
 	if( newBankBox )
@@ -289,7 +289,7 @@ function countBankContents( pTalking, bankBox )
 
 // Count the gold in player's bankbox!
 // If ResourceCount JS Method worked with items, this could be removed
-function countGoldInBank( pTalking, bankBox )
+function CountGoldInBank( pTalking, bankBox )
 {
 	var mItem;
 	var goldInBank = 0;
@@ -343,7 +343,7 @@ function onCallback0( pSock, ourObj )
 }
 
 // Divide gold to be withdrawn into several piles of max 65535 each
-function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
+function DivideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 {
 	var numOfGoldPiles = ( withdrawAmt / 65535 );
 	var i = 0; var newGoldPile;
@@ -364,7 +364,7 @@ function divideWithdrawnGold( pTalking, bankBox, withdrawAmt )
 }
 
 // Divide gold to be deposited into several piles of max 65535 each
-function divideDepositedGold( pTalking, bankBox, depositAmt )
+function DivideDepositedGold( pTalking, bankBox, depositAmt )
 {
 	var numOfGoldPiles = ( depositAmt / 65535 );
 	var i = 0; var newGoldPile;
