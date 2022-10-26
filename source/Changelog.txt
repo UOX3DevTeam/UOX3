@@ -1,5 +1,8 @@
 27/10/2022 - DragonSlayer
 	Added aliases in item definitions for containers
+	Consolidated all light item scripts into one, with options for auto-lights (lampposts) based on environment brightness level and more
+	Removed old light scripts (Xuri)
+	Updated consolidated lights.js script to handle custom dir values on lights, modified source of sound effects when turning lights on/off and made a few other minor adjustments (Xuri)
 
 27/10/2022 - Xuri
 	Fixed an issue with onDyeTarget event where the dyetub and target object parameters were not set properly
