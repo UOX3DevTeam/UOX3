@@ -147,165 +147,165 @@
 // Later some of these should be enhanced to eat resources
 
 // 09fb <> 09fd, E, wall sconce
-0x9fb=545
-0x9fd=545
+0x9fb=500
+0x9fd=500
 // 0a00 <> 0a02, S, wall sconce
-0xa00=545
-0xa02=545
+0xa00=500
+0xa02=500
 // 0a05 <> 0a07, E, wall torch
-0xa05=545
-0xa07=545
+0xa05=500
+0xa07=500
 // 0a0a <> 0a0c, S, wall torch
-0xa0a=545
-0xa0c=545
+0xa0a=500
+0xa0c=500
 // 0f64 <> 0a12, player carryable torch
-0xf64=545
-0xf6b=545
-0xa12=545
+0xf64=500
+0xf6b=500
+0xa12=500
 // 0a18 <> 0a15, E, hanging lantern
-0xa18=545
-0xa15=545
+0xa18=500
+0xa15=500
 // 0a1d <> 0a1a, S, hanging lantern
-0xa1d=545
-0xa1a=545
+0xa1d=500
+0xa1a=500
 // 0a25 <> 0a22, lantern
-0xa25=545
-0xa22=545
+0xa25=500
+0xa22=500
 // 0a26 <> 0b1a, candlestick candle
-0xa26=545
-0xb1a=545
+0xa26=500
+0xb1a=500
 // 0a27 <> 0b1d, small candlabra
-0xa27=545
-0xb1d=545
+0xa27=500
+0xb1d=500
 // 0a28 <> 0a0f, player carryable candle
-0xa28=545
-0xa0f=545
+0xa28=500
+0xa0f=500
 // 0a29 <> 0b26, large candlabra
-0xa29=545
-0xb26=545
+0xa29=500
+0xb26=500
 // 0b21 <> 0b20, simple lamp post
-0xb21=545
-0xb20=545
+0xb21=500
+0xb20=500
 // 0b23 <> 0b22, glass lamp post
-0xb23=545
-0xb22=545
+0xb23=500
+0xb22=500
 // 0b25 <> 0b24, fancy lamp post
-0xb25=545
-0xb24=545
+0xb25=500
+0xb24=500
 // 1849 <> 184a, SW heating stand
-0x1849=545
-0x184a=545
+0x1849=500
+0x184a=500
 // 184d <> 184e, NE heating stand
-0x184d=545
-0x184e=545
+0x184d=500
+0x184e=500
 // 1853 <> 1854, right skull with candle
-0x1853=545
-0x1854=545
+0x1853=500
+0x1854=500
 // 1857 <> 1858, left skull with candle
-0x1857=545
-0x1858=545
+0x1857=500
+0x1858=500
 // 142f <> 142c, thick candle
-0x142f=545
-0x142c=545
+0x142f=500
+0x142c=500
 // 1433 <> 1430, middle candle
-0x1433=545
-0x1430=545
+0x1433=500
+0x1430=500
 // 1437 <> 1434, slim candle
-0x1437=545
-0x1434=545
+0x1437=500
+0x1434=500
 // 3D97 off <> 3D94 on, S, wall torch
-0x3D97=545
-0x3D94=545
+0x3D97=500
+0x3D94=500
 // 3D9B off <> 3D98 on, E, wall torch
-3D9B=545
-3D98=545
+0x3D9B=500
+0x3D98=500
 // SE Lights
 // 24BB on <> 24BC off, paper lantern brown
-0x24BB=545
-0x24BC=545
+0x24BB=500
+0x24BC=500
 // 24BD on <> 24BE off, paper lantern yellow
-0x24BD=545
-0x24BE=545
+0x24BD=500
+0x24BE=500
 // 24BF on <> 24C0 off, lantern tall stone
-0x24BF=545
-0x24C0=545
+0x24BF=500
+0x24C0=500
 // 24C1 on <> 24C2 off, round hanging lantern red S
-0x24C1=545
-0x24C2=545
+0x24C1=500
+0x24C2=500
 // 24C3 on <> 24C4 off, round hanging lantern red E
-0x24C3=545
-0x24C4=545
+0x24C3=500
+0x24C4=500
 // 24C5 on <> 24C6 off, round hanging lantern white S
-0x24C5=545
-0x24C6=545
+0x24C5=500
+0x24C6=500
 // 24C7 on <> 24C8 off, round hanging lantern white E
-0x24C7=545
-0x24C8=545
+0x24C7=500
+0x24C8=500
 // 24C9 on <> 24CA off, round table lantern
-0x24C9=545
-0x24CA=545
+0x24C9=500
+0x24CA=500
 // ML lights
 // 2CFD off <> 2CFE on, Red beetle S
-0x2CFD=545
-0x2CFE=545
+0x2CFD=500
+0x2CFE=500
 // 2CFF off <> 2D00 on, Red beetle E
-0x2CFF=545
-0x2D00=545
+0x2CFF=500
+0x2D00=500
 // 2D01 off <> 2D02 on, Green table beetle E
-0x2D01=545
-0x2D02=545
+0x2D01=500
+0x2D02=500
 // 2D03 off <> 2D04 on, Green table beetle S
-0x2D03=545
-0x2D04=545
+0x2D03=500
+0x2D04=500
 // 4C40 off <> 4C41 on, Lamp Dragon S
-0x4C40=545
-0x4C41=545
+0x4C40=500
+0x4C41=500
 // 4C42 off <> 4C43 on, Lamp Dragon E
-0x4C42=545
-0x4C43=545
+0x4C42=500
+0x4C43=500
 // 4CDE on, Lamp Dragon S Anim
-0x4CDE=545
-0x4CDF=545
-0x4CE0=545
-0x4CE1=545
+0x4CDE=500
+0x4CDF=500
+0x4CE0=500
+0x4CE1=500
 // 4CE2 on, Lamp Dragon E Anim
-0x4CE2=545
-0x4CE3=545
-0x4CE4=545
-0x4CE5=545
+0x4CE2=500
+0x4CE3=500
+0x4CE4=500
+0x4CE5=500
 // 4C44 off <> 4C45 on, Lamp B Bird S
-0x4C44=545
-0x4C45=545
+0x4C44=500
+0x4C45=500
 // 4C46 off <> 4C47 on, Lamp B Bird E
-0x4C46=545
-0x4C47=545
+0x4C46=500
+0x4C47=500
 // 4C48 off <> 4C49 on, Lamp Koi S
-0x4C48=545
-0x4C49=545
+0x4C48=500
+0x4C49=500
 // 4C4A off <> 4C4B on, Lamp Koi E
-0x4C4A=545
-0x4C4B=545
+0x4C4A=500
+0x4C4B=500
 // 4C4C off <> 4C4D on, Dragon Egg S
-0x4C4C=545
-0x4C4D=545
+0x4C4C=500
+0x4C4D=500
 // 4C4E off <> 4C4F on, Dragon Egg E
-0x4C4E=545
-0x4C4F=545
+0x4C4E=500
+0x4C4F=500
 // 4C50 off <> 4C51 on, Lamp Stain Glass S
-0x4C50=545
-0x4C51=545
+0x4C50=500
+0x4C51=500
 // 4C52 off <> 4C53 on, Lamp Stand Classic S
-0x4C52=545
-0x4C53=545
+0x4C52=500
+0x4C53=500
 // 4C54 off <> 4C55 on, Lamp Stand Classic E
-0x4C54=545
-0x4C55=545
+0x4C54=500
+0x4C55=500
 // 4C56 off <> 4C57 on, Lamp Stand Bell S
-0x4C56=545
-0x4C57=545
+0x4C56=500
+0x4C57=500
 // 4C58 off <> 4C59 on, Lamp Stand Bell E
-0x4C58=545
-0x4C59=545
+0x4C58=500
+0x4C59=500
 // light sources end
 // -----------------
 // -----------------------------------
