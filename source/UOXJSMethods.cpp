@@ -2256,6 +2256,11 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		MethodError( "Action: Invalid character" );
 		return JS_FALSE;
 	}
+
+	// Reset idle anim timer so it doesn't interrupt the DoAction anim
+	myChar->SetTimer( tNPC_IDLEANIMTIME, BuildTimeValue( RandomNum( 5, 20 )));
+
+	// Play the requested animation
 	if( myChar->GetBodyType() == BT_GARGOYLE || targSubAction != -1 )
 	{
 		Effects->PlayNewCharacterAnimation( myChar, targAction, static_cast<UI16>( targSubAction ));

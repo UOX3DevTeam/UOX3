@@ -2086,7 +2086,7 @@ void CSocket::ObjMessage( const std::string& txt, CBaseObject *getObj, R32 secsF
 
 		if( getObj->GetObjType() == OT_ITEM )
 		{
-			CItem *getItem = static_cast< CItem *>( getObj );
+			CItem *getItem = static_cast<CItem *>( getObj );
 			if( getItem->IsCorpse() )
 			{
 				CChar *targChar = getItem->GetOwnerObj();
@@ -2456,7 +2456,7 @@ void CSocket::StatWindow( CBaseObject *targObj, bool updateParty )
 				for( size_t j = 0; j < mList->size(); ++j )
 				{
 					CPartyEntry *mEntry = ( *mList )[j];
-					CChar * partyMember = mEntry->Member();
+					CChar *partyMember = mEntry->Member();
 
 					if( !IsOnline( *partyMember ) || !IsOnline( *mChar) || partyMember->GetSerial() == mChar->GetSerial() )
 						continue;

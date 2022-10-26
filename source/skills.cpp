@@ -708,7 +708,7 @@ void CSkills::SmeltOre( CSocket *s )
 			// Combine source stack into target stack, if it fits
 			if( targetAmount + ( sourceAmount * amountMultiplier ) <= MAX_STACK )
 			{
-				CChar * forgeOwner = FindItemOwner( forge );
+				CChar *forgeOwner = FindItemOwner( forge );
 
 				SI32 newTargetWeight = ( targetAmount + ( sourceAmount * amountMultiplier )) * forge->GetBaseWeight();
 				SI32 subtractWeight = ( targetAmount * forge->GetBaseWeight() ) + ( sourceAmount * itemToSmelt->GetBaseWeight() );

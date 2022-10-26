@@ -217,8 +217,8 @@ void HandleHealerAI( CChar& mChar )
 					}
 					else
 					{
-						UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
-						UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+						UI16 castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
+						UI08 castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
 
 						// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
 						Effects->PlayCharacterAnimation( &mChar, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));
@@ -257,8 +257,8 @@ void HandleEvilHealerAI( CChar& mChar )
 					}
 					else
 					{
-						UI16 castAnim = castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
-						UI08 castAnimLength = castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
+						UI16 castAnim = static_cast<UI16>( cwmWorldState->creatures[mChar.GetId()].CastAnimTargetId() );
+						UI08 castAnimLength = cwmWorldState->creatures[mChar.GetId()].CastAnimTargetLength();
 
 						// Play cast anim, but fallback to default attack anim (0x04) with anim length of 4 frames if no cast anim was defined in creatures.dfn
 						Effects->PlayCharacterAnimation( &mChar, ( castAnim != 0 ? castAnim : 0x04 ), 0, ( castAnimLength != 0 ? castAnimLength : 4 ));

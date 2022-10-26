@@ -46,7 +46,7 @@ bool Party::AddMember( CChar *i )
 			for( size_t j = 0; j < members.size(); ++j )
 			{
 				CPartyEntry *toFind = members[j];
-				CChar * partyMember = toFind->Member();
+				CChar *partyMember = toFind->Member();
 				if( partyMember != nullptr )
 				{
 					if( partyMember->GetSerial() != i->GetSerial() )

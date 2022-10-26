@@ -257,19 +257,22 @@ auto CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 					hiZ += static_cast<SI16>( std::stoi( data, nullptr, 0 ));
 				}
 			}
-			if( ValidateObject( hItem ) && hItem->GetCont() == nullptr )
+			if( ValidateObject( hItem ))
 			{
-				hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceId );
-			}
-
-			if( hItem->GetMulti() == INVALIDSERIAL && hItem->GetType() != IT_HOUSESIGN && hItem->GetType() != IT_DOOR )
-			{
-				// Add item to multi. It's not a door, nor a sign - could be stairs in a custom foundation!
-				CMultiObj *mMulti = FindMulti( house );
-				if( ValidateObject( mMulti ))
+				if( hItem->GetCont() == nullptr )
 				{
-					hItem->SetMulti( mMulti );
-					mMulti->AddToMulti( hItem );
+					hItem->SetLocation( hiX, hiY, hiZ, hWorld, hInstanceId );
+				}
+
+				if( hItem->GetMulti() == INVALIDSERIAL && hItem->GetType() != IT_HOUSESIGN && hItem->GetType() != IT_DOOR )
+				{
+					// Add item to multi. It's not a door, nor a sign - could be stairs in a custom foundation!
+					CMultiObj *mMulti = FindMulti( house );
+					if( ValidateObject( mMulti ))
+					{
+						hItem->SetMulti( mMulti );
+						mMulti->AddToMulti( hItem );
+					}
 				}
 			}
 		}

@@ -5226,7 +5226,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 			// If ini-setting for worldmap packets is enabled
 			if( cwmWorldState->ServerData()->GetClassicUOMapTracker() )
 			{
-				CChar * mChar = tSock->CurrcharObj();
+				CChar *mChar = tSock->CurrcharObj();
 
 				if( type == 0x00 )
 				{

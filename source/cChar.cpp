@@ -6428,22 +6428,6 @@ void CChar::DoLoyaltyUpdate( void )
 		UI16 loyaltyRate = cwmWorldState->ServerData()->SystemTimer( tSERVER_LOYALTYRATE );
 		if( GetLoyalty() > 0 )
 		{
-			// Is loyalty already at the lowest threshold from the last time this check ran?
-			if( GetLoyalty() == 0 )
-			{
-				// Make pet go wild from lack of loyalty
-				CChar *owner = GetOwnerObj();
-				if( ValidateObject( owner ))
-				{
-					// Reduce player's control slot usage by the amount of control slots taken up by the pet
-					owner->SetControlSlotsUsed( std::max( 0, owner->GetControlSlotsUsed() - GetControlSlots() ));
-				}
-
-				// Release the pet
-				Npcs->ReleasePet( this );
-				return;
-			}
-
 			// Reduce loyalty by 1, reset timer
 			SetLoyalty( std::max( 0, GetLoyalty() - 1 ));
 			SetTimer( tNPC_LOYALTYTIME, BuildTimeValue( static_cast<R32>( loyaltyRate )));
@@ -6495,6 +6479,22 @@ void CChar::DoLoyaltyUpdate( void )
 							break;
 					}
 				}
+			}
+
+			// Is loyalty already at the lowest threshold from the last time this check ran?
+			if( GetLoyalty() == 0 )
+			{
+				// Make pet go wild from lack of loyalty
+				CChar *owner = GetOwnerObj();
+				if( ValidateObject( owner ))
+				{
+					// Reduce player's control slot usage by the amount of control slots taken up by the pet
+					owner->SetControlSlotsUsed( std::max( 0, owner->GetControlSlotsUsed() - GetControlSlots() ));
+				}
+
+				// Release the pet
+				Npcs->ReleasePet( this );
+				return;
 			}
 		}
 	}
@@ -8113,7 +8113,7 @@ bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 				// If blood colour is 0xffff in the race setup, inherit color of NPC instead!
 				bloodColour = GetSkin();
 			}
-			CItem * bloodEffect = Effects->SpawnBloodEffect( WorldNumber(), GetInstanceId(), bloodColour, bloodType );
+			CItem *bloodEffect = Effects->SpawnBloodEffect( WorldNumber(), GetInstanceId(), bloodColour, bloodType );
 			if( ValidateObject( bloodEffect ))
 			{
 				// Finally, set blood's location to match that of the character

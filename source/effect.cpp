@@ -1460,7 +1460,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->More2( more2 );
 			break;
 		case 11: // Bless Spell
-			if( source != nullptr )
+			if( source == nullptr )
 			{
 				// No source! Effect gotten from equipping an item?
 				// Apply same bonus to all stats
