@@ -97,10 +97,14 @@ function onCallback0( pSock, ourObj )
 			return;
 		}
 		else
+		{
 			pSock.SysMessage( GetDictionaryEntry( 6201, pSock.language )); // That's not something you can taste.
-			return;
+		}
+		return;
 	}
 	else
+	{
 		pSock.SysMessage( GetDictionaryEntry( 2094, pSock.language )); // You feel that such an action would be inappropriate.
-		return;
+	}
+	return;
 }

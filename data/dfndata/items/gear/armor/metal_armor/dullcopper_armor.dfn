@@ -1,10 +1,30 @@
-// Ringmail
+// Dull Copper Armor Bonus for AoS ruleset - applied on top of existing stats
+[dullcopper_armor_bonus_aos]
+{
+defbonus=6
+hpbonus=50
+}
 
-// DullCopper Ringmail Tunic - N/S
+// Dull Copper Armor Bonus for ToL ruleset - applied on top of existing stats
+[dullcopper_armor_bonus_tol]
+{
+defbonus=10
+hpbonus=50
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// Dull Copper Ringmail Armor
+
+// Dull Copper Ringmail Gloves - N/S
 [0x13eb-d]
 {
-get=base_ring_gloves
-color=0x96e
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
 // DullCopper Ringmail Gloves - E/W
@@ -14,450 +34,910 @@ get=0x13eb-d
 id=0x13f2
 }
 
-// DullCopper Ringmail Gloves - Alias
+// Dull Copper Ringmail Gloves - Alias
 [dullcopperringmailgloves]
 {
 get=0x13eb-d 0x13f2-d
 }
 
-// DullCopper Ringmail Tunic - N/S
+// Dull Copper Ringmail Tunic - N/S
 [0x13ec-d]
-{ right facing
-get=base_ring_tunic
-color=0x96e
+{
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Ringmail Tunic - E/W
+// Dull Copper Ringmail Tunic - E/W
 [0x13ed-d]
 {
 get=0x13ec-d
 id=0x13ed
 }
 
-// DullCopper Ringmail Tunic - Alias
+// Dull Copper Ringmail Tunic - Alias
 [dullcopperringmailtunic]
 {
 get=0x13ec-d 0x13ed-d
 }
 
-// DullCopper Ringmail Sleeves - N/S
+// Dull Copper Ringmail Sleeves - N/S
 [0x13ee-d]
-{ right facing
-get=base_ring_sleeves
-color=0x96e
+{
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Ringmail Sleeves - E/W
+// Dull Copper Ringmail Sleeves - E/W
 [0x13ef-d]
 {
 get=0x13ee-d
 id=0x13ef
 }
 
-// DullCopper Ringmail Sleeves - Alias
+// Dull Copper Ringmail Sleeves - Alias
 [dullcopperringmailsleeves]
 {
 get=0x13ee-d 0x13ef-d
 }
 
-// DullCopper Ringmail Leggings - N/S
+// Dull Copper Ringmail Leggings - N/S
 [0x13f0-d]
-{ right facing
-get=base_ring_leggings
-color=0x96e
+{
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Ringmail Leggings - E/W
+// Dull Copper Ringmail Leggings - E/W
 [0x13f1-d]
 {
 get=0x13f0-d
 id=0x13f1
 }
 
-// DullCopper Ringmail Leggings - Alias
+// Dull Copper Ringmail Leggings - Alias
 [dullcopperringmailleggings]
 {
 get=0x13f0-d 0x13f1-d
 }
 
-// Chainmail
+// Chainmail Armor
 
-// DullCopper Chainmail Leggings - N/S
-[0x13be-d]
+// Dull Copper Chainmail Coif - N/S
+[0x13bb-d]
 {
-get=base_chain_leggings
-color=0x96e
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Chainmail Leggings - E/W
-[0x13c3-d]
-{
-get=0x13be-d
-id=0x13c3
-}
-
-// DullCopper Chainmail Leggings - Alias
-[dullcopperchainmailleggings]
-{
-get=0x13be-d 0x13c3-d
-}
-
-// DullCopper Chainmail Tunic - N/S
-[0x13bf-d]
-{
-get=base_chain_tunic
-color=0x96e
-}
-
-// DullCopper Chainmail Tunic - E/W
-[0x13c4-d]
-{
-get=0x13bf-d
-id=0x13c4
-}
-
-// DullCopper Chainmail Tunic - Alias
-[dullcopperchainmailtunic]
-{
-get=0x13bf-d 0x13c4-d
-}
-
-// DullCopper Chainmail Coif - N/S
-[0x13BB-d]
-{
-get=base_chain_coif
-color=0x96e
-}
-
-// DullCopper Chainmail Coif - E/W
+// Dull Copper Chainmail Coif - E/S
 [0x13c0-d]
 {
 get=0x13bb-d
 id=0x13c0
 }
 
-// DullCopper Chainmail Coif - Alias
-[chainmailcoif]
+// Dull Copper Chainmail Coif - Alias
+[dullcopperchainmailcoif]
 {
-get=0x13bb-d 0x13c0-d
+get=0x13bb 0x13c0
 }
 
-// Female
+// Dull Copper Chainmail Leggings - N/S
+[0x13be-d]
+{
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
 
-// DullCopper Female Plate - N/S
+// Dull Copper Chainmail Leggings - E/W
+[0x13c3-d]
+{
+get=0x13be-d
+id=0x13c3
+}
+
+// Dull Copper Chainmail Leggings - Alias
+[dullcopperchainmailleggings]
+{
+get=0x13be-d 0x13c3-d
+}
+
+// Dull Copper Chainmail Tunic - N/S
+[0x13bf-d]
+{
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Chainmail Tunic - E/W
+[0x13c4-d]
+{
+get=0x13bf-d
+id=0x13c4
+}
+
+// Dull Copper Chainmail Tunic - Alias
+[dullcopperchainmailtunic]
+{
+get=0x13bf-d 0x13c4-d
+}
+
+// Dull Copper Female Plate - N/S
 [0x1c04-d]
 {
-get=base_fem_plate
-color=0x96e
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Female Plate - E/W
+// Dull Copper Female Plate - E/W
 [0x1c05-d]
 {
 get=0x1c04-d
 id=0x1c05
 }
 
-// DullCopper Female Plate - Alias
+// Dull Copper Female Plate - Alias
 [dullcopperfemaleplate]
 {
 get=0x1c04-d 0x1c05-d
 }
 
-// platemail
+// Dull Copper Platemail Armor
 
-// DullCopper Platemail Arms - E/W
+// Dull Copper Platemail Arms - E/W
 [0x1410-d]
 {
-get=base_plate_arms
-color=0x96e
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Platemail Arms - N/S
+// Dull Copper Platemail Arms - N/S
 [0x1417-d]
 {
 get=0x1410-d
 id=0x1417
 }
 
-// DullCopper Platemail Arms - Alias
+// Dull Copper Platemail Arms - Alias
 [dullcopperplatemailarms]
 {
 get=0x1410-d 0x1417-d
 }
 
-// DullCopper Platemail Leggings - E/W
+// Dull Copper Platemail Leggings - N/S
 [0x1411-d]
 {
-get=base_plate_leggings
-color=0x96e
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Platemail Leggings - N/S
+// Dull Copper Platemail Leggings - E/W
 [0x141a-d]
 {
 get=0x1411-d
 id=0x141a
 }
 
-// Platemail Leggings - Alias
+// Dull Copper Platemail Leggings - Alias
 [dullcopperplatemailleggings]
 {
 get=0x1411-d 0x141a-d
 }
 
-// DullCopper Platemail Gorget
+// Dull Copper Platemail Gorget
 [0x1413-d]
 {
-get=base_plate_gorget
-color=0x96e
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Platemail Gorget - Alias
+// Dull Copper Platemail Gorget - Alias
 [dullcopperplatemailgorget]
 {
 get=0x1413-d
 }
 
-// DullCopper Platemail Gloves - E/W
+// Dull Copper Platemail Gloves - N/S
 [0x1414-d]
 {
-get=base_plate_gloves
-color=0x96e
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Platemail Gloves - N/S
+// Dull Copper Platemail Gloves - E/W
 [0x1418-d]
 {
 get=0x1414-d
 id=0x1418
 }
 
-// DullCopper Platemail Gloves - Alias
+// Dull Copper Platemail Gloves - Alias
 [dullcopperplatemailgloves]
 {
 get=0x1414-d 0x1418-d
 }
 
-// DullCopper Platemail Chest - E/W
+// Dull Copper Platemail Chest - N/S
 [0x1415-d]
 {
-get=base_plate_chest
-color=0x96e
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Platemail Chest - N/S
+// Dull Copper Platemail Chest - E/W
 [0x1416-d]
 {
 get=0x1415-d
 id=0x1416
 }
 
-// DullCopper Platemail Chest - Alias
+// Dull Copper Platemail Chest - Alias
 [dullcopperplatemailchest]
 {
 get=0x1415-d 0x1416-d
 }
 
-// helmets
+// Dull Copper SE Armor
 
-// DullCopper Close Helm(et) - N/S
-[0x1408-d]
+// Dull Copper Heavy Platemail Jingasa - A
+[0x2777-d]
 {
-get=base_close_helmet
-color=0x96e
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Close Helm(et) - E/W
+// Dull Copper Heavy Platemail Jingasa - B
+[0x27c2-d]
+{
+get=0x2777-d
+id=0x27c2
+}
+
+// Dull Copper Heavy Platemail Jingasa - Alias
+[dullcopperheavyplatemailjingasa]
+{
+get=0x2777-d 0x27c2-d
+}
+
+// Dull Copper Decorative Platemail Kabuto - A
+[0x2778-d]
+{
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Decorative Platemail Kabuto - B
+[0x27c3-d]
+{
+get=0x2778-d
+id=0x27c3
+}
+
+// Dull Copper Decorative Platemail Kabuto - Alias
+[dullcopperdecorativeplatemailkabuto]
+{
+get=0x2778-d 0x27c3-d
+}
+
+// Dull Copper Platemail Do - A
+[0x277d-d]
+{
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Do - B
+[0x27c8-d]
+{
+get=0x277d-d
+id=0x27c8
+}
+
+// Dull Copper Platemail Do - Alias
+[dullcopperplatemaildo]
+{
+get=0x277d-d 0x27c8-d
+}
+
+// Dull Copper Platemail Hiro Sode - A
+[0x2780-d]
+{
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Hiro Sode - B
+[0x27cb-d]
+{
+get=0x2780-d
+id=0x27cb
+}
+
+// Dull Copper Platemail Hiro Sode - Alias
+[dullcopperplatemailhirosode]
+{
+get=0x2780-d 0x27cb-d
+}
+
+// Dull Copper Platemail Jingasa - A
+[0x2781-d]
+{
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Jingasa - B
+[0x27cc-d]
+{
+get=0x2781-d
+id=0x27cc
+}
+
+// Dull Copper Platemail Jingasa - Alias
+[dullcopperplatemailjingasa]
+{
+get=0x2781-d 0x27cc-d
+}
+
+// Dull Copper Small Platemail Jingasa - A
+[0x2784-d]
+{
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Small Platemail Jingasa - B
+[0x27cf-d]
+{
+get=0x2784-d
+id=0x27cf
+}
+
+// Dull Copper Small Platemail Jingasa - Alias
+[dullcoppersmallplatemailjingasa]
+{
+get=0x2784-d 0x27cf-d
+}
+
+// Dull Copper Platemail Battle Kabuto - A
+[0x2785-d]
+{
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Battle Kabuto - B
+[0x27d0-d]
+{
+get=0x2785-d
+id=0x27d0
+}
+
+// Dull Copper Platemail Battle Kabuto - Alias
+[dullcopperplatemailbattlekabuto]
+{
+get=0x2785-d 0x27d0-d
+}
+
+// Dull Copper Platemail Suneate - A
+[0x2788-d]
+{
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Suneate - B
+[0x27d3-d]
+{
+get=0x2788-d
+id=0x27d3
+}
+
+// Dull Copper Platemail Suneate - Alias
+[dullcopperplatemailsuneate]
+{
+get=0x2788-d 0x27d3-d
+}
+
+// Dull Copper Platemail Kabuto - A
+[0x2789-d]
+{
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Kabuto - B
+[0x27d4-d]
+{
+get=0x2789-d
+id=0x27d4
+}
+
+// Dull Copper Platemail Kabuto - Alias
+[dullcopperplatemailkabuto]
+{
+get=0x2789-d 0x27d4-d
+}
+
+// Dull Copper Kabuto - A
+[0x236c-d]
+{
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Kabuto - B
+[0x236d-d]
+{
+get=0x236c-d
+id=0x236d
+}
+
+// Dull Copper Kabuto - Alias
+[dullcopperkabuto]
+{
+get=0x236c-d 0x236d-d
+}
+
+// Dull Copper Platemail Haidate - A
+[0x278d-d]
+{
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Haidate - B
+[0x27d8-d]
+{
+get=0x278d-d
+id=0x27d8
+}
+
+// Dull Copper Platemail Haidate - Alias
+[dullcopperplatemailhaidate]
+{
+get=0x278d-d 0x27d8-d
+}
+
+// Dull Copper Platemail Hatsuburi - A
+[0x2775-d]
+{
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Hatsuburi - B
+[0x27c0-d]
+{
+get=0x2775-d
+id=0x27c0
+}
+
+// Dull Copper Platemail Hatsuburi - Alias
+[dullcopperplatemailhatsuburi]
+{
+get=0x2775-d 0x27c0-d
+}
+
+// Dull Copper Chainmail Hatsuburi - A
+[0x2774-d]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Chainmail Hatsuburi - B
+[0x27bf-d]
+{
+get=0x2774-d
+id=0x27bf
+}
+
+// Dull Copper Chainmail Hatsuburi - Alias
+[dullcopperchainmailhatsuburi]
+{
+get=0x2774-d 0x27bf-d
+}
+
+// Dull Copper Platemail Mempo - E/W
+[0x2779-d]
+{
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Platemail Mempo - N/S
+[0x27c4-d]
+{
+get=0x2779-d
+id=0x27c4
+}
+
+// Dull Copper Platemail Mempo - Alias
+[dullcopperplatemailmempo]
+{
+get=0x2779-d 0x27c4-d
+}
+
+// Dull Copper Helmets
+
+// Dull Copper Close Helm - E/W
+[0x1408-d]
+{
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Close Helm - N/S
 [0x1409-d]
 {
 get=0x1408-d
 id=0x1409
 }
 
-// DullCopper Close Helm(et) - Alias
+// Dull Copper Close Helm - Alias
 [dullcopperclosehelm]
 {
 get=0x1408-d 0x1409-d
 }
 
-// DullCopper Helmet - N/S
+// Dull Copper Helmet - E/W
 [0x140a-d]
 {
-get=base_helmet
-color=0x96e
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Helmet - E/W
+// Dull Copper Helmet - N/S
 [0x140b-d]
 {
-get=0x140a-d
+get=0x140b-d
 id=0x140b
 }
 
-// DullCopper Helmet - Alias
+// Dull Copper Helmet - Alias
 [dullcopperhelmet]
 {
 get=0x140a-d 0x140b-d
 }
 
-// DullCopper Bascinet - N/S
+// Dull Copper Bascinet - E/W
 [0x140c-d]
 {
-get=base_bascinet
-color=0x96e
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Bascinet - E/W
+// Dull Copper Bascinet - N/S
 [0x140d-d]
 {
 get=0x140c-d
 id=0x140d
 }
 
-// DullCopper Bascinet - Alias
+// Dull Copper Bascinet - Alias
 [dullcopperbascinet]
 {
 get=0x140c-d 0x140d-d
 }
 
-// DullCopper Norse Helm - N/S
+// Dull Copper Norse Helm - E/W
 [0x140e-d]
 {
-get=base_nose_helm
-color=0x96e
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Norse Helm - E/W
+// Dull Copper Norse Helm - N/S
 [0x140f-d]
 {
 get=0x140e-d
 id=0x140f
 }
 
-// DullCopper Norse Helm - Alias
+// Dull Copper Norse Helm - Alias
 [dullcoppernorsehelm]
 {
 get=0x140e-d 0x140f-d
 }
 
-// DullCopper Plate Helm - E/W
+// Dull Copper Plate Helm - N/S
 [0x1412-d]
 {
-get=base_plate_helm
-color=0x96e
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Plate Helm - N/S
+// Dull Copper Plate Helm - E/W
 [0x1419-d]
 {
 get=0x1412-d
 id=0x1419
 }
 
-// DullCopper Plate Helm - Alias
+// Dull Copper Plate Helm - Alias
 [dullcopperplatehelm]
 {
 get=0x1412-d 0x1419-d
 }
 
-// Shields
+// Dull Copper Shields
 
-// DullCopper DullCopper Shield
+// Dull Copper Dull Copper Shield
 [0x1b72-d]
 {
-get=base_dullcopper_shield
-color=0x96e
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper DullCopper Shield - Alias
+// Dull Copper Dull Copper Shield - Alias
 [dullcopperdullcoppershield]
 {
 get=0x1b72-d
 }
 
-// DullCopper Buckler
+// Dull Copper Buckler
 [0x1b73-d]
 {
-get=base_buckler
-color=0x96e
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Buckler - Alias
+// Dull Copper Buckler - Alias
 [dullcopperbuckler]
 {
 get=0x1b73-d
 }
 
-// DullCopper Metal Kite Shield - N/S
+// Dull Copper Kite Shield (Metal) - N/S
 [0x1b74-d]
 {
-get=base_metal_kite_shield
-color=0x96e
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Metal Kite Shield - E/W
-[0x1b75-d]
-{
-get=0x1b74-d
-id=0x1b75
-}
-
-// Metal Kite Shield - Alias
-[dullcoppermetalkiteshield]
-{
-get=0x1b74-d 0x1b75-d
-}
-
-// DullCopper Heater Shield - N/S
+// Dull Copper Heater Shield - N/S
 [0x1b76-d]
 {
-get=base_heater_shield
-color=0x96e
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// DullCopper Heater Shield - E/W
-[0x1b77-d]
-{
-get=0x1b76-d
-id=0x1b77
-}
-
-// DullCopper Heater Shield - Alias
-[dullcopperheatershield]
-{
-get=0x1b76-d 0x1b77-d
-}
-
-// DullCopper Metal Shield
-[0x1b7b-d]
-{
-get=base_metal_shield
-color=0x96e
-}
-
-// DullCopper Metal Shield - Alias
-[dullcoppermetalshield]
-{
-get=0x1b7b-d
-}
-
-// Kite Shield (wooden) - N/S
+// Dull Copper Kite Shield (Wood) - N/S
 [0x1b78-d]
 {
-get=base_wooden_kite_shield
-color=0x96e
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
 }
 
-// Kite Shield (wooden) - E/W
+// Dull Copper Kite Shield (wood) - E/W
 [0x1b79-d]
 {
 get=0x1b78-d
 id=0x1b79
 }
 
-// Kite Shield (wooden) - Alias
-[dullcopperwoodenkiteshield]
+// Dull Copper Kite Shield (wood) - Alias
+[dullcoppermetalkiteshield]
 {
 get=0x1b78-d 0x1b79-d
+}
+
+// AgapiteWooden Shield
+[0x1b7a-d]
+{
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Wooden Shield - Alias
+[dullcopperwoodenshield]
+{
+get=0x1b7a-d
+}
+
+// Dull Copper Metal Shield
+[0x1b7b-d]
+{
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Metal Shield - Alias
+[dullcoppermetalshield]
+{
+get=0x1b7b-d
+}
+
+// Dull Copper Chaos Shield
+[0x1bc3-d]
+{
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Chaos Shield - Alias
+[dullcopperchaosshield]
+{
+get=0x1bc3-d
+}
+
+// Dull Copper Order Shield - N/S
+[0x1bc4-d]
+{
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
+getaos=dullcopper_armor_bonus_aos
+gettol=dullcopper_armor_bonus_tol
+color=0x973
+}
+
+// Dull Copper Order Shield - E/W
+[0x1bc5-d]
+{
+get=0x1bc5-d
+id=0x1bc5
+}
+
+// Dull Copper Order Shield - Alias
+[dullcopperordershield]
+{
+get=0x1bc4-d 0x1bc5-d
 }

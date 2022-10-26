@@ -61,9 +61,9 @@ function onMakeItem( pSock, crafter, itemCrafted, craftEntryID )
 	}
 
 	// Clean up some tags while we're here
-	crafter.SetTempTag( "targetedSubResourceID", null );
+	crafter.SetTempTag( "targetedSubResourceId", null );
 	crafter.SetTempTag( "targetedSubResourceName", null );
-	crafter.SetTempTag( "targetedMainResourceID", null );
+	crafter.SetTempTag( "targetedMainResourceId", null );
 	crafter.SetTempTag( "targetedMainResourceSerial", null );
 
 	// Remove script from player

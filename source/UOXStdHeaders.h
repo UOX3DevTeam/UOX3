@@ -1,7 +1,6 @@
 #ifndef __StdHeaders_H__
 #define __StdHeaders_H__
 
-
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -34,33 +33,20 @@
 // We use exceptions in a lot of places
 #include <stdexcept>
 
-
-
-
-#   include <sys/types.h>
-#   include <sys/stat.h>
-
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #if PLATFORM == WINDOWS
-
-#undef min
-#undef max
-
-#define WIN32_LEAN_AND_MEAN
 #include <sys/timeb.h>
-#endif
 
-#if PLATFORM != WINDOWS
+#else
 
-
-#   include <unistd.h>
-#	include <sys/time.h>
-#	include <sys/signal.h>
-#	include <errno.h>		// for errno
-
+#include <unistd.h>
+#include <sys/time.h>
+#include <sys/signal.h>
+#include <errno.h>		// for errno
 
 #endif
-
 
 #include "jsapi.h"
 

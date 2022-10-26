@@ -61,12 +61,16 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 	// Longitude
 	var absLong = (( xCoord - xCenter ) * 360 ) / xWidth;
 	if( absLong > 180 )
+	{
 		absLong = -180 + ( absLong % 180 );
+	}
 
 	var xEast = ( absLong >= 0 );
 
 	if( absLong < 0 )
+	{
 		absLong = -absLong;
+	}
 
 	var xLongDeg = Math.round( absLong );
 	var xLongMin = Math.round(( absLong % 1 ) * 60 );
@@ -74,12 +78,16 @@ function GetMapCoordinates( xCoord, yCoord, worldNum )
 	// Latitude
 	var absLat = (( yCoord - yCenter ) * 360 ) / yHeight;
 	if( absLat > 180 )
+	{
 		absLat = -180 + ( absLat % 180 );
+	}
 
 	var ySouth = ( absLat >= 0 );
 
 	if( absLat < 0 )
+	{
 		absLat = -absLat;
+	}
 
 	var yLatDeg = Math.round( absLat );
 	var yLatMin = Math.round(( absLat % 1 ) * 60 );

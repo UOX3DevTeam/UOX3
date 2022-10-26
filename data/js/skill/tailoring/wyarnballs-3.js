@@ -18,7 +18,9 @@ function onUseChecked ( pUser, iUsed )
 			pSocket.CustomTarget( 0, GetDictionaryEntry( 6043, pSocket.language )); // What spinning wheel do you want to spin the wool on?
 		}
 		else
+		{
 			pSocket.SysMessage( GetDictionaryEntry( 775, pSocket.language )); // You can't use material outside your backpack.
+		}
 	}
 	return false;
 }
@@ -30,13 +32,12 @@ function onCallback0( pSocket, myTarget )
 
 	var iUsed 		= pSocket.tempObj;
 	var pUser 		= pSocket.currentChar;
-	var StrangeByte = pSocket.GetWord( 1 );
 	var tileID		= pSocket.GetWord( 17 );
 
 	if( !ValidateObject( myTarget ))
 	{
 		// Map/statictile targeted
-		if( !(tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C || tileID == 0x10a4 )) //only allow first IDs in the spinning wheel anims
+		if( !( tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C || tileID == 0x10a4 )) //only allow first IDs in the spinning wheel anims
 		{
 			pSocket.SysMessage( GetDictionaryEntry( 6044, pSocket.language )); // You may only spin wool on a spinning wheel.
 			return;
@@ -49,7 +50,7 @@ function onCallback0( pSocket, myTarget )
 
 		if( Math.abs( pUser.x - targX ) > 3 || Math.abs( pUser.y - targY ) > 3 || Math.abs( pUser.z - targZ ) > 20 )
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ) ); // That is too far away
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away
 			return;
 		}
 	}
@@ -58,18 +59,22 @@ function onCallback0( pSocket, myTarget )
 		// Get tileID from myTarget, in case this function was called from the houseAddonUse.js script
 		tileID = myTarget.id;
 
-		if( !myTarget.isItem || !(tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C || tileID == 0x10a4 )) //only allow first IDs in the spinning wheel anims
+		if( !myTarget.isItem || !( tileID == 0x1015 || tileID == 0x1019 || tileID == 0x101C || tileID == 0x10a4 )) //only allow first IDs in the spinning wheel anims
 		{
-			if( tileID == 0x1015+1 || tileID == 0x1019+1 || tileID == 0x101c+1 || tileID == 0x10a4+1 )
-				pSocket.SysMessage( GetDictionaryEntry( 6026, pSocket.language ) ); // That is already in use.
+			if( tileID == 0x1015 + 1 || tileID == 0x1019 + 1 || tileID == 0x101c + 1 || tileID == 0x10a4 + 1 )
+			{
+				pSocket.SysMessage( GetDictionaryEntry( 6026, pSocket.language )); // That is already in use.
+			}
 			else
+			{
 				pSocket.SysMessage( GetDictionaryEntry( 6044, pSocket.language )); // You may only spin wool on a spinning wheel.
+			}
 			return;
 		}
 
-		if( !pUser.InRange( myTarget, 3 ) )
+		if( !pUser.InRange( myTarget, 3 ))
 		{
-			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language ) ); // That is too far away
+			pSocket.SysMessage( GetDictionaryEntry( 393, pSocket.language )); // That is too far away
 			return;
 		}
 	}
@@ -81,7 +86,7 @@ function onCallback0( pSocket, myTarget )
   		return;
 	}
 
-	if( pUser.CheckSkill( 34, 0, 1000 ) )
+	if( pUser.CheckSkill( 34, 0, 1000 ))
 	{
 		pUser.UseResource( 1, iUsed.id ); 	// remove some wool
 		pUser.SoundEffect( 0x021A, true );
@@ -91,7 +96,9 @@ function onCallback0( pSocket, myTarget )
 		pSocket.SysMessage( GetDictionaryEntry( 6046, pSocket.language )); // You spin some balls of yarn, and put them in your backpack.
 	}
 	else
+	{
 		pSocket.SysMessage( GetDictionaryEntry( 821, pSocket.language )); // You failed to spin your material.
+	}
 }
 
 function onTimer( spinWheel, timerID )

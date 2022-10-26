@@ -8,14 +8,14 @@
 #include "StringUtility.hpp"
 
 
-cCommands *Commands			= nullptr;
+CCommands *Commands			= nullptr;
 
-cCommands::cCommands()
+auto CCommands::Startup() -> void
 {
 	CommandReset();
 }
 
-cCommands::~cCommands()
+CCommands::~CCommands()
 {
 	CommandMap.clear();
 	TargetMap.clear();
@@ -27,84 +27,84 @@ cCommands::~cCommands()
 	}
 	clearance.clear();
 }
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI08 NumArguments( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::NumArguments()
 //|	Date		-	3/12/2003
 //|	Changes		-	4/2/2003 - Reduced to a UI08
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Number of arguments in a command
-//o-----------------------------------------------------------------------------------------------o
-UI08 cCommands::NumArguments( void )
+//o------------------------------------------------------------------------------------------------o
+UI08 CCommands::NumArguments( void )
 {
-	auto secs = strutil::sections( commandString, " ");
-	return static_cast<UI08>(secs.size());
+	auto secs = oldstrutil::sections( commandString, " ");
+	return static_cast<UI08>( secs.size() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 Argument( UI08 argNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::Argument()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Grabs argument argNum and converts it to an integer
-//o-----------------------------------------------------------------------------------------------o
-SI32 cCommands::Argument( UI08 argNum )
+//o------------------------------------------------------------------------------------------------o
+SI32 CCommands::Argument( UI08 argNum )
 {
 	SI32 retVal = 0;
 	std::string tempString = CommandString( argNum + 1, argNum + 1 );
 	if( !tempString.empty() )
 	{
-		try {
-			retVal = std::stoi(tempString, nullptr, 0);
+		try
+		{
+			retVal = std::stoi( tempString, nullptr, 0 );
 		} 
-		catch (const std::invalid_argument & e) {
-			Console.error( strutil::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+		catch( const std::invalid_argument & e )
+		{
+			Console.Error( oldstrutil::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
 		}
 	}
 
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	std::string CommandString( UI08 section, UI08 end )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::CommandString()
 //|	Date		-	4/02/2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the Comm value
-//o-----------------------------------------------------------------------------------------------o
-std::string cCommands::CommandString( UI08 section, UI08 end )
+//o------------------------------------------------------------------------------------------------o
+std::string CCommands::CommandString( UI08 section, UI08 end )
 {
 	std::string retString;
 	if( end != 0 )
 	{
-		retString = strutil::extractSection(commandString, " ", section - 1, end - 1 );
+		retString = oldstrutil::extractSection( commandString, " ", section - 1, end - 1 );
 	}
 	else
 	{
-		retString = strutil::extractSection(commandString, " ", section - 1 );
+		retString = oldstrutil::extractSection( commandString, " ", section - 1 );
 	}
 	return retString;
 }
-void cCommands::CommandString( std::string newValue )
+void CCommands::CommandString( std::string newValue )
 {
 	commandString = newValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::Command()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles commands sent from client
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	25 June, 2003
 //|						Made it accept a CPITalkRequest, allowing to remove
 //|						the need for Offset and unicode decoding
-//o-----------------------------------------------------------------------------------------------o
-void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
+//o------------------------------------------------------------------------------------------------o
+void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 {
-	CommandString( strutil::simplify( text ));
+	CommandString( oldstrutil::simplify( text ));
 	if( NumArguments() < 1 )
-	{
 		return;
-	}
 	
 	// Discard the leading command prefix
-	std::string command = strutil::upper( CommandString( 1, 1 ));
+	std::string command = oldstrutil::upper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
@@ -113,31 +113,43 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 		{
 			bool plClearance = false;
 			if( checkSocketAccess )
+			{
 				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			}
 			else
+			{
 				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			}
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
 				if( checkSocketAccess )
+				{
 					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				}
 				else
+				{
 					Log( command, mChar, nullptr, "Insufficient clearance" );
-				s->sysmessage( 337 );
+				}
+				s->SysMessage( 337 ); // Access denied.
 				return;
 			}
-			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptID );
+			cScript *toExecute = JSMapping->GetScript( toFind->second.scriptId );
 			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.print( strutil::format("Executing JS command %s\n", command.c_str() ));
+				Console.Print( oldstrutil::format( "Executing JS command %s\n", command.c_str() ));
 #endif
-				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ) );
+				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ));
 			}
 			if( checkSocketAccess )
+			{
 				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			}
 			else
+			{
 				Log( command, mChar, nullptr, "Cleared" );
+			}
 			return;
 		}
 	}
@@ -147,55 +159,73 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 	{
 		bool plClearance = false;
 		if( checkSocketAccess )
+		{
 			plClearance = ( s->CurrcharObj()->GetCommandLevel() >= findTarg->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+		}
 		else
+		{
 			plClearance = ( mChar->GetCommandLevel() >= findTarg->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+		}
 		if( !plClearance )
 		{
 			if( checkSocketAccess )
+			{
 				Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+			}
 			else
+			{
 				Log( command, mChar, nullptr, "Insufficient clearance" );
-			s->sysmessage( 337 );
+			}
+			s->SysMessage( 337 ); // Access denied.
 			return;
 		}
 		if( checkSocketAccess )
+		{
 			Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+		}
 		else
+		{
 			Log( command, mChar, nullptr, "Cleared" );
+		}
 		switch( findTarg->second.cmdType )
 		{
 			case CMD_TARGET:
-				s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
+				s->SendTargetCursor( 0, findTarg->second.targId, 0, findTarg->second.dictEntry );
 				break;
 			case CMD_TARGETXYZ:
 				if( NumArguments() == 4 )
 				{
-					s->ClickX( static_cast<SI16>(Argument( 1 )) );
-					s->ClickY( static_cast<SI16>(Argument( 2 )) );
-					s->ClickZ( static_cast<SI08>(Argument( 3 )) );
-					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
+					s->ClickX( static_cast<SI16>( Argument( 1 )));
+					s->ClickY( static_cast<SI16>( Argument( 2 )));
+					s->ClickZ( static_cast<SI08>( Argument( 3 )));
+					s->SendTargetCursor( 0, findTarg->second.targId, 0, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( 340 );
+				{
+					s->SysMessage( 340 ); // This command takes three numbers as arguments.
+				}
 				break;
 			case CMD_TARGETINT:
 				if( NumArguments() == 2 )
 				{
-					s->TempInt( Argument( 1 ) );
-					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
+					s->TempInt( Argument( 1 ));
+					s->SendTargetCursor( 0, findTarg->second.targId, 0, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( 338 );
+				{
+					s->SysMessage( 338 ); // This command takes one number as an argument.
+				}
 				break;
 			case CMD_TARGETTXT:
 				if( NumArguments() > 1 )
 				{
-					s->XText( CommandString( 2 ) );
-					s->target( 0, findTarg->second.targID, 0, findTarg->second.dictEntry );
+					s->XText( CommandString( 2 ));
+					s->SendTargetCursor( 0, findTarg->second.targId, 0, findTarg->second.dictEntry );
 				}
 				else
-					s->sysmessage( 9026 ); // This command requires more arguments!
+				{
+					s->SysMessage( 9026 ); // This command requires more arguments!
+				}
 				break;
 		}
 	}
@@ -223,7 +253,7 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 
 			if( !cmdHandled )
 			{
-				s->sysmessage( 336 ); // Unrecognized command.
+				s->SysMessage( 336 ); // Unrecognized command.
 			}
 			return;
 		}
@@ -231,49 +261,61 @@ void cCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 		{
 			bool plClearance = false;
 			if( checkSocketAccess )
+			{
 				plClearance = ( s->CurrcharObj()->GetCommandLevel() >= toFind->second.cmdLevelReq || s->CurrcharObj()->GetAccount().wAccountIndex == 0 );
+			}
 			else
+			{
 				plClearance = ( mChar->GetCommandLevel() >= toFind->second.cmdLevelReq || mChar->GetAccount().wAccountIndex == 0 );
+			}
 			// from now on, account 0 ALWAYS has admin access, regardless of command level
 			if( !plClearance )
 			{
 				if( checkSocketAccess )
+				{
 					Log( command, s->CurrcharObj(), nullptr, "Insufficient clearance" );
+				}
 				else
+				{
 					Log( command, mChar, nullptr, "Insufficient clearance" );
-				s->sysmessage( 337 );
+				}
+				s->SysMessage( 337 ); // Access denied.
 				return;
 			}
 			if( checkSocketAccess )
+			{
 				Log( command, s->CurrcharObj(), nullptr, "Cleared" );
+			}
 			else
+			{
 				Log( command, mChar, nullptr, "Cleared" );
+			}
 
 			switch( toFind->second.cmdType )
 			{
 				case CMD_FUNC:
-					(*((CMD_EXEC)toFind->second.cmd_extra)) ();
+					(*(( CMD_EXEC )toFind->second.cmd_extra )) ();
 					break;
 				case CMD_SOCKFUNC:
-					(*((CMD_SOCKEXEC)toFind->second.cmd_extra)) (s);
+					(*(( CMD_SOCKEXEC )toFind->second.cmd_extra )) ( s );
 					break;
 				default:
-					s->sysmessage( 346 );
+					s->SysMessage( 346 ); // BUG: Command has a bad command type set!
 					break;
 			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Load( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::Load()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Load the command table
-//o-----------------------------------------------------------------------------------------------o
-void cCommands::Load( void )
+//o------------------------------------------------------------------------------------------------o
+void CCommands::Load( void )
 {
 	SI16 commandCount = 0;
-	ScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
+	CScriptSection *commands = FileLookup->FindEntry( "COMMAND_OVERRIDE", command_def );
 	if( commands == nullptr )
 	{
 		InitClearance();
@@ -284,24 +326,26 @@ void cCommands::Load( void )
 	std::string data;
 	std::string UTag;
 
-	STRINGLIST	badCommands;
+	std::vector<std::string>		badCommands;
 	for( tag = commands->First(); !commands->AtEnd(); tag = commands->Next() )
 	{
 		data						= commands->GrabData();
 		COMMANDMAP_ITERATOR toFind	= CommandMap.find( tag );
 		TARGETMAP_ITERATOR findTarg	= TargetMap.find( tag );
 		if( toFind == CommandMap.end() && findTarg == TargetMap.end() )
+		{
 			badCommands.push_back( tag ); // make sure we don't index into array at -1
+		}
 		else
 		{
 			++commandCount;
 			if( toFind != CommandMap.end() )
 			{
-				toFind->second.cmdLevelReq		= static_cast<UI08>(std::stoul(data, nullptr, 0)) ;
+				toFind->second.cmdLevelReq		= static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 			}
 			else if( findTarg != TargetMap.end() )
 			{
-				findTarg->second.cmdLevelReq	= static_cast<UI08>(std::stoul(data, nullptr, 0));
+				findTarg->second.cmdLevelReq	= static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 			}
 		}
 		// check for commands here
@@ -309,71 +353,84 @@ void cCommands::Load( void )
 	if( !badCommands.empty() )
 	{
 		Console << myendl;
-		STRINGLIST_CITERATOR tablePos = badCommands.begin();
-		while( tablePos != badCommands.end() )
+		std::for_each( badCommands.begin(), badCommands.end(), [this]( const std::string &entry )
 		{
-			Console << "Invalid command '" << (*tablePos).c_str() << "' found in commands.dfn!" << myendl;
-			++tablePos;
-		}
+			Console << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
+		});
 	}
 
 	Console << "   o Loading command levels";
 #if defined( UOX_DEBUG_MODE )
 	Console << myendl;
 #endif
-	ScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
+	CScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == nullptr )
+	{
 		InitClearance();
+	}
 	else
 	{
 		size_t currentWorking;
-		for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+		for( const auto &sec : cmdClearance->collection() )
 		{
-			data			= cmdClearance->GrabData();
-			currentWorking	= clearance.size();
-			clearance.push_back( new commandLevel_st );
+			tag = sec->tag;
+			data = sec->data;
+			currentWorking = clearance.size();
+			clearance.push_back( new CommandLevel_st );
 			clearance[currentWorking]->name			= tag;
-			clearance[currentWorking]->commandLevel = static_cast<UI08>(std::stoul(data, nullptr, 0));
+			clearance[currentWorking]->commandLevel = static_cast<UI08>( std::stoul( data, nullptr, 0 ));
 		}
-		std::vector< commandLevel_st * >::const_iterator cIter;
+		std::vector<CommandLevel_st *>::const_iterator cIter;
 		for( cIter = clearance.begin(); cIter != clearance.end(); ++cIter )
 		{
-			commandLevel_st *ourClear = (*cIter);
-			if( ourClear == nullptr )
-				continue;
-			cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
-			if( cmdClearance == nullptr )
-				continue;
-			for( tag = cmdClearance->First(); !cmdClearance->AtEnd(); tag = cmdClearance->Next() )
+			CommandLevel_st *ourClear = ( *cIter );
+			if( ourClear )
 			{
-				UTag = strutil::upper( tag );
-				data = cmdClearance->GrabData();
-				if( UTag == "NICKCOLOUR" ) {
-					ourClear->nickColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "TITLE" ) {
-					ourClear->title = data;
-				}
-				else if( UTag == "DEFAULTPRIV" ) {
-					ourClear->defaultPriv = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "BODYID" ) {
-					ourClear->targBody = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "ALLSKILL" ) {
-					ourClear->allSkillVals = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "BODYCOLOUR" ) {
-					ourClear->bodyColour = static_cast<UI16>(std::stoul(data, nullptr, 0));
-				}
-				else if( UTag == "STRIPHAIR" ) {
-					ourClear->stripOff.set( BIT_STRIPHAIR, true );
-				}
-				else if( UTag == "STRIPITEMS" ) {
-					ourClear->stripOff.set( BIT_STRIPITEMS, true );
-				}
-				else {
-					Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+				cmdClearance = FileLookup->FindEntry( ourClear->name, command_def );
+				if( cmdClearance )
+				{
+					for( const auto &sec : cmdClearance->collection() )
+					{
+						tag = sec->tag;
+						data = sec->data;
+						UTag = oldstrutil::upper( tag );
+						if( UTag == "NICKCOLOUR" )
+						{
+							ourClear->nickColour = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+						}
+						else if( UTag == "TITLE" )
+						{
+							ourClear->title = data;
+						}
+						else if( UTag == "DEFAULTPRIV" )
+						{
+							ourClear->defaultPriv = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+						}
+						else if( UTag == "BODYID" )
+						{
+							ourClear->targBody = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+						}
+						else if( UTag == "ALLSKILL" )
+						{
+							ourClear->allSkillVals = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+						}
+						else if( UTag == "BODYCOLOUR" )
+						{
+							ourClear->bodyColour = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+						}
+						else if( UTag == "STRIPHAIR" )
+						{
+							ourClear->stripOff.set( BIT_STRIPHAIR, true );
+						}
+						else if( UTag == "STRIPITEMS" )
+						{
+							ourClear->stripOff.set( BIT_STRIPITEMS, true );
+						}
+						else
+						{
+							Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+						}
+					}
 				}
 			}
 		}
@@ -384,23 +441,25 @@ void cCommands::Load( void )
 	for( cScript *ourScript = commandSection->First(); !commandSection->Finished(); ourScript = commandSection->Next() )
 	{
 		if( ourScript != nullptr )
+		{
 			ourScript->ScriptRegistration( "Command" );
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::Log()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes toLog to a file
-//o-----------------------------------------------------------------------------------------------o
-void cCommands::Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
+//o------------------------------------------------------------------------------------------------o
+void CCommands::Log( const std::string &command, CChar *player1, CChar *player2, const std::string &extraInfo )
 {
 	std::string logName	= cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + "command.log";
 	std::ofstream logDestination;
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.error( strutil::format("Unable to open command log file %s!", logName.c_str() ));
+		Console.Error( oldstrutil::format( "Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -408,30 +467,32 @@ void cCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 
 	logDestination << "[" << dateTime << "] ";
 	logDestination << player1->GetName() << " (serial: " << std::hex << player1->GetSerial() << ") ";
-	logDestination << "used command <" << command << (CommandString( 2 ) != "" ? " " : "") << CommandString( 2 ) << "> ";
-	if( ValidateObject( player2 ) )
+	logDestination << "used command <" << command << ( CommandString( 2 ) != "" ? " " : "" ) << CommandString( 2 ) << "> ";
+	if( ValidateObject( player2 ))
+	{
 		logDestination << "on player " << player2->GetName() << " (serial: " << player2->GetSerial() << " )";
+	}
 	logDestination << "Extra Info: " << extraInfo << std::endl;
 	logDestination.close();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *GetClearance( std::string clearName )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	*CCommands::GetClearance()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the command level of a character
-//o-----------------------------------------------------------------------------------------------o
-commandLevel_st *cCommands::GetClearance( std::string clearName )
+//o------------------------------------------------------------------------------------------------o
+CommandLevel_st *CCommands::GetClearance( std::string clearName )
 {
 	if( clearance.empty() )
 	{
 		return nullptr;
 	}
-	commandLevel_st *clearPointer;
-	std::vector< commandLevel_st * >::const_iterator clearIter;
+	CommandLevel_st *clearPointer;
+	std::vector<CommandLevel_st *>::const_iterator clearIter;
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
-		clearPointer = (*clearIter);
-		if( strutil::upper( clearName ) == clearPointer->name )
+		clearPointer = ( *clearIter );
+		if( oldstrutil::upper( clearName ) == clearPointer->name )
 		{
 			return clearPointer;
 		}
@@ -439,16 +500,17 @@ commandLevel_st *cCommands::GetClearance( std::string clearName )
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetColourByLevel( UI08 commandLevel )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::GetColourByLevel()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get a players nick color based on his command level
-//o-----------------------------------------------------------------------------------------------o
-UI16 cCommands::GetColourByLevel( UI08 commandLevel )
+//o------------------------------------------------------------------------------------------------o
+UI16 CCommands::GetColourByLevel( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
 	if( clearanceSize == 0 )
 		return 0x005A;
+
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0]->nickColour;
 
@@ -460,17 +522,17 @@ UI16 cCommands::GetColourByLevel( UI08 commandLevel )
 	return clearance[clearanceSize - 1]->nickColour;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void InitClearance( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::InitClearance()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Initialize command levels
-//o-----------------------------------------------------------------------------------------------o
-void cCommands::InitClearance( void )
+//o------------------------------------------------------------------------------------------------o
+void CCommands::InitClearance( void )
 {
-	clearance.push_back( new commandLevel_st );	// 0 -> 3
-	clearance.push_back( new commandLevel_st );
-	clearance.push_back( new commandLevel_st );
-	clearance.push_back( new commandLevel_st );
+	clearance.push_back( new CommandLevel_st );	// 0 -> 3
+	clearance.push_back( new CommandLevel_st );
+	clearance.push_back( new CommandLevel_st );
+	clearance.push_back( new CommandLevel_st );
 
 	clearance[0]->name = "ADMIN";
 	clearance[1]->name = "GM";
@@ -520,16 +582,17 @@ void cCommands::InitClearance( void )
 	clearance[2]->stripOff.set( BIT_STRIPITEMS, true );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	commandLevel_st *GetClearance( UI08 commandLevel )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::GetClearance()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Geta characters command level
-//o-----------------------------------------------------------------------------------------------o
-commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
+//o------------------------------------------------------------------------------------------------o
+CommandLevel_st *CCommands::GetClearance( UI08 commandLevel )
 {
 	size_t clearanceSize = clearance.size();
 	if( clearanceSize == 0 )
 		return nullptr;
+
 	if( commandLevel > clearance[0]->commandLevel )
 		return clearance[0];
 
@@ -541,66 +604,71 @@ commandLevel_st *cCommands::GetClearance( UI08 commandLevel )
 	return clearance[clearanceSize - 1];
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CommandExists( const std::string cmdName )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::CommandExists()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if a command is valid
-//o-----------------------------------------------------------------------------------------------o
-bool cCommands::CommandExists( const std::string& cmdName )
+//o------------------------------------------------------------------------------------------------o
+bool CCommands::CommandExists( const std::string& cmdName )
 {
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	return ( toFind != CommandMap.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string FirstCommand( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::FirstCommand()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get first command in cmd_table
-//o-----------------------------------------------------------------------------------------------o
-const std::string cCommands::FirstCommand( void )
+//o------------------------------------------------------------------------------------------------o
+const std::string CCommands::FirstCommand( void )
 {
 	cmdPointer = CommandMap.begin();
 	if( FinishedCommandList() )
 		return "";
+
 	return cmdPointer->first;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string NextCommand( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::NextCommand()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get next command in cmd_table
-//o-----------------------------------------------------------------------------------------------o
-const std::string cCommands::NextCommand( void )
+//o------------------------------------------------------------------------------------------------o
+const std::string CCommands::NextCommand( void )
 {
 	if( FinishedCommandList() )
 		return "";
+
 	++cmdPointer;
 	if( FinishedCommandList() )
 		return "";
+
 	return cmdPointer->first;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool FinishedCommandList( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::FinishedCommandList()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get end of cmd_table
-//o-----------------------------------------------------------------------------------------------o
-bool cCommands::FinishedCommandList( void )
+//o------------------------------------------------------------------------------------------------o
+bool CCommands::FinishedCommandList( void )
 {
 	return ( cmdPointer == CommandMap.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cmdtable_mapentry *CommandDetails( const std::string cmdName )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCommands::CommandDetails()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get command info
-//o-----------------------------------------------------------------------------------------------o
-CommandMapEntry *cCommands::CommandDetails( const std::string& cmdName )
+//o------------------------------------------------------------------------------------------------o
+CommandMapEntry_st *CCommands::CommandDetails( const std::string& cmdName )
 {
-	if( !CommandExists( cmdName ) )
+	if( !CommandExists( cmdName ))
 		return nullptr;
+
 	COMMANDMAP_ITERATOR toFind = CommandMap.find( cmdName );
 	if( toFind == CommandMap.end() )
 		return nullptr;
-	return &(toFind->second);
+
+	return &( toFind->second );
 }

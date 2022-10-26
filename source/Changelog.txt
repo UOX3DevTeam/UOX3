@@ -1,3 +1,393 @@
+27/10/2022 - DragonSlayer
+	Added aliases in item definitions for containers
+	Consolidated all light item scripts into one, with options for auto-lights (lampposts) based on environment brightness level and more
+	Removed old light scripts (Xuri)
+	Updated consolidated lights.js script to handle custom dir values on lights, modified source of sound effects when turning lights on/off and made a few other minor adjustments (Xuri)
+
+27/10/2022 - Xuri
+	Fixed an issue with onDyeTarget event where the dyetub and target object parameters were not set properly
+	Fixed some incorrect casting animation-related variable assignments for AI_HEALER and AI_EVIL_HEALER
+	Fixed an issue with pets not going wild from lack of loyalty to their owners when at zero loyalty
+	Addressed issues with idle/fidget animation setup that could cause NPCs to blink out of existence
+	Removed stray semicolon behind control statement related to triggering of OnFacetChange JS event
+	Fixed an issue with Bless spell when cast from item
+	Some minor code cleanup
+
+24/10/2022 - Xuri (0.99.6-RC1)
+	Misc cleanup and standardization of style and naming conventions in code and scripts
+	Added comments for all dictionary-based system messages in code for maintainability reasons
+	Fixed an issue where line of sight checks for dynamic items would fail
+	Fixed an issue where items being picked up by a player would not be added to the correct mapregion if bouncing back to its original location when dropped
+	Fixed an issue where NPC spellcasters would damage/kill themselves by attempting to cast Mind Blast at their target. Now they'll only cast this if they're actually smarter than their target
+	Fixed an issue where NPC spellcasters would damage and kill members of their own species/ai/race via AoE spells
+	Fixed an issue where the max spellcast range defined in UOX.INI was off for NPCs by 1 tile
+	Added spoken words of power for spells cast by human NPCs
+	Fixed an exploit with the Dispel Field spell
+	Admins and GMs are no longer dispellable...
+	Fixed a bug where spell effects would get stuck on caster if they cast a spell with a moving effect at themselves
+	Added two new NPC AI types that can be used for NPCs that are primarily casters:
+		AI_CASTER (10)			// Same as AI_FIGHTER (5), but will try to stay at casting range
+		AI_EVIL_CASTER (11)		// Same as AI_EVIL (2), but will try to stay at casting range
+	Changed the NPCAI tags of some NPCs from 5 to 10 and from 2 to 11
+	Added some visual flair to let NPCs play idle/fidget animations from time to time
+	Added some visual flair to let NPCs play casting animations when using magic spells
+	Added support for new tags in creatures.dfn to define some animation behaviour for non-player creatures in combat (ANTIBLINK tag no longer needed):
+		ANIM_CASTAREA=#,frameCount		// Animation to use when casting area-targeted spells
+		ANIM_CASTTARGET=#,frameCount 	// Animation to use when casting target-based spells
+		ANIM_ATTACK1=#,frameCount 		// First attack animation
+		ANIM_ATTACK2=#,frameCount 		// (optional) Second attack animation
+		ANIM_ATTACK3=#,frameCount 		// (optional) Third attack animation
+	Updated creatures.dfn with entries for all known creatures in the UO client, as well as icons, sounds and combat/casting animations for all of those.
+	Fixed an issue with creature DFN setup for Elf ghosts which prevented paperdoll context menu from working
+	Added new JS Events:
+		onCarveCorpse( pUser, iCorpse )				// Triggers for iCorpse when being carved by pUser
+		onFacetChange( mChar, oldFacet, newFacet ) 	// Triggers for character when moving between facets
+		onDyeTarget( pUser, dyeTub, targItem ) 		// Triggers for dyeTub when player tries dying an item
+	Added new JS Functions to create houses (from house.dfn) and base multis (using raw multi IDs):
+		CreateHouse( houseID, x, y, z, worldNum, instanceID );
+		CreateBaseMulti( multiID, x, y, z, worldNum, instanceID );
+	Added new JS Character/Item Method:
+		.HasScriptTrigger( scriptID )	// Returns true if script with scriptID is present on object
+	Added new JS commands for GMs in js/commands/custom/misc-cmd.js
+		'addhouse houseID 	// Add house from house.dfn at target location
+		'addmulti multiID 	// Add base multi from client multi files at target location
+	Added new INI settings:
+		SHOWRACEWITHNAME=1 				// If enabled, shows a character's race along with their name. Defaults to 1
+		SHOWITEMRESISTSTATS=0/1 		// If enabled, shows item resistance stats in item tooltip. Defaults to 0
+		SHOWWEAPONDAMAGETYPES=1/0 		// If enabled, shows weapon damage types in item tooltip. Defaults to 1
+		CASTSPELLSWHILEMOVING=0/1 		// If enabled, players can cast spells while moving, without having to stop
+		SHOWREPUTATIONTITLEINTOOLTIP=1/0 // If enabled, shows player's reputation title in tooltip. Defaults to 1
+		SHOWGUILDINFOINTOOLTIP=1/0 		// If enabled, shows player's guild info in tooltip. Defaults to 1
+		SHOWRACEINPAPERDOLL=1/0 		// If enabled, shows a character's race in the paperdoll. Defaults to 1
+		SHOWNPCTITLESINTOOLTIPS=1/0 	// If enabled, shows NPC titles in tooltip. Defaults to 1
+	Renamed 0xf1_connectUOServerPoll.js to 0xf1_freeshardServerPoll.js, and updated script to respond to the "standard" freeshard server poll request rather than the more specific (and now dead) ConnectUO one.
+	Renamed INI setting CUOENABLED to FREESHARDSERVERPOLL
+	Added new INI settings under [expansion settings] section to help shard admins customize some key behaviours of their shard, based on their preferred "era" of UO. Note that a value of "core" means the setting inherits the chosen era from the CORESHARDERA setting:
+			CORESHARDERA=pub15
+				Defines the "core" era of the shard. Defaults to pub15 (Publish 15).
+					any 				- determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15
+					uor or later 		- enables bonus hit chance for archery via ARCHERYHITBONUS setting
+					pub15 or earlier	- final combat damage value reduced by half
+			ARMORCALCULATION=core
+				Defines era to base armor calculations on
+					pub15 or earlier 	- different armor pieces contribute different percentage of the total Armor Rating
+					aos or later 		- each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats
+			STRENGTHDAMAGEBONUS=core
+				Defines era to base strength damage bonus on
+					uor or earlier 		- 20% damage bonus based on strength, capped at 200 strength
+					td or later 		- 35% damage bonus based on strength if 100 strength or more, otherwise 30% damage bonus
+			TACTICSDAMAGEBONUS=core
+				Defines era to base tactics damage bonus on
+					pub15 or earlier 	- bonus = Tactics skill + 50
+					aos or later 		- 68.75% damage bonus if GM Tactics, 62.5% bonus if below
+			ANATOMYDAMAGEBONUS=core
+				Defines era to base anatomy damage bonus on
+					uor or earlier 		- bonus = Anatomy / 5 vs NPCs, Anatomy / 2.5 vs Players
+					td or later 		- 30% damage bonus at GM anatomy, up to 20% below GM
+					ml or later 		- 50% + 5 damage bonus at GM anatomy, up to 50% below GM
+			LUMBERJACKDAMAGEBONUS=core
+				Defines era to base lumberjacking damage bonus on
+					uor or earlier 		- 35% damage bonus at GM skill, up to 25% below GM
+					td or later 		- 30% damage bonus at GM skill, up to 20% below GM
+					hs or later 		- 10% chance of 100% damage bonus
+			RACIALDAMAGEBONUS=core
+				Defines era to base racial damage bonus on
+					sa or later 		- Gargoyles gain +15% damage bonus per each 20 HP lost
+			DAMAGEBONUSCAP=core
+				Defines era to base damage bonus cap on
+					pub15 or earlier 	- No cap on damage bonus multiplier
+					aos or later 		- Total damage bonus multiplier capped at 300% higher than base damage
+			SHIELDPARRY=core
+				Defines era to base shield parry calculations on
+					t2a 				- chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery
+					uor to pub15 		- higher AR equals lower block chance, but more damage absorbed.
+					aos or later 		- chance to block dependent on parry skill vs bushido skill, with dex modifier
+			WEAPONPARRY=core
+				Defines era to base weapon parry calculations on
+					aos or later 		- chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 16.6% chance weapon will take damage from parrying
+					ml or later 		- chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 5% chance weapon will take damage from parrying, or 75% if opponent has mace
+			WRESTLINGPARRY=core
+				Defines era to base wrestling parry calculations on
+					tol or later 		- From 12.5% chance (at GM wrestling, increases with higher skill) that an NPC will parry an attack
+			COMBATHITCHANCE=core
+				Defines era to base combat hit chance calculations on
+					t2a to pub15 		- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
+					uor to pub15 		- Additional bonus hit chance for archery
+					aos to tol 			- hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit
+		Supported era values:
+			t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
+	Added (optional) new Item/NPC DFN tags to help determine which variants of Items/NPCs to load from DFNs, based on chosen era in CORESHARDERA setting:
+		GETT2A=<sectionID>		// Inherit DFN section if core shard era is The Second Age
+		GETTD=<sectionID>		// Inherit DFN section if core shard era is Third Dawn
+		GETUOR=<sectionID>		// Inherit DFN section if core shard era is UO Renaissance
+		GETLBR=<sectionID>		// Inherit DFN section if core shard era is Lord Blackthorn's Revenge
+		GETPUB15=<sectionID>	// Inherit DFN section if core shard era is Pub15
+		GETAOS=<sectionID>		// Inherit DFN section if core shard era is Age of Shadows
+		GETSE=<sectionID>		// Inherit DFN section if core shard era is Samurai Empire
+		GETML=<sectionID>		// Inherit DFN section if core shard era is Mondain's Legacy
+		GETSA=<sectionID>		// Inherit DFN section if core shard era is Stygian Abyss
+		GETTOL=<sectionID>		// Inherit DFN section if core shard era is Time of Legends
+	Added new Item/Character DFN tags that provide defensive bonuses on top of existing DEF/ELEMENTALRESIST values:
+		DEFBONUS=minVal [maxVal] 			// Def/Physical resistance bonus (maxVal optional)
+		ERBONUS=heat cold energy poison 	// Elemental resistance bonus
+	Crafted armor made from coloured ingots now provide additional defensive bonuses based on color of ingots (for AoS/ToL variant of items)
+	Fixed a bug where players not a member of a guild could still interact with the guildstone of said guild
+	Guild masters can no longer dismiss themselves from their own guild; if they want to leave they'll have to resign
+	Fixed a bug where cancelling text input for various guild functions could blank out the guild name, abbreviation, guildmaster title, charter or website
+	Fixed a bug where guild abbreviations (and titles) would show when turned off, and would not show when turned on
+	Added guild master ability to grant guild titles to targeted guild members
+	Added system message feedback various guild interactions, including: inviting players to join, swearing fealty, declaring war, entering alliances, granting titles
+	Added support for showing guild titles and guild names in character tooltips
+	Guild titles, names and abbreviations are now hidden for players who are incognito
+	Players invited to join a guild by the Guild Master directly will now automatically be accepted into the guild
+	Fixed a potential null-reference exception related to moving Townstones
+	Fixed a bug where adding or removing friends for a pet would not properly inform the involved players
+	Traps in dungeons will now only trigger for player characters, and will ignore all NPCs
+	Tweaked HTML templates for server status pages; shard name shown more prominently, names of GMs/Counselors hidden from regular player list, information on UOX3 build version hidden in player-facing pages, and a few other small adjustments
+	Fixed an issue with archery butte script (js/item/archerybutte.js) where chance of hitting a bullseye was not calculated correctly
+	UOX3 now responds correctly to logout requests from the client
+	Fixed reagent requirements for inscribing Explosion spell (thanks, Azzerhoden Razeri)
+	Removed redundant VALUE tags from JewlerShopping shoplist (thanks, Azzerhoden Razeri)
+	Reduced combat hit message spam by increasing the lower damage threshold for when they can show up
+	Added NPC definitions for savage shaman, savage warrior (male and female) and savage rider in dfndata/npc/savages.dfn.
+	Added special AI scripts for savages and savage shamans, to handle their special abilities
+	Added tribal paint consumable item (dfndata/items/misc/consumables.dfn)
+	Added ability to cook tribal paint via flour and tribal berries (js/skill/cooking/flour.js)
+	Added some helper scripts for magic:
+		js/magic/helper/check_resist.js (6000)				// Test target's resist versus caster and spell circle
+		js/magic/helper/calc_final_spell_damage.js (6001)	// Calculate spell damage from provided base damage
+	Added a timer-related script that can be used to keep track of long-term timers (up to 49 days) on objects, and which will remove itself from the object when there are no more active timers left. Currently used to keep track of tribal paint applied to players:
+		js/server/timer/long_term_timers.js (3)
+	Fixed an issue where player backpacks did not have a max weight set, which could cause issues for scripts that relied on checking max weight of backpack to work
+	Added new UOX.INI settings to let shard admins control the maximum weight that player backpacks and bankboxes can hold:
+		MAXPLAYERPACKWEIGHT=40000	// 400.00 stones by default
+		MAXPLAYERBANKWEIGHT=160000	// 1600.00 stones by default
+	Fixed an issue where spells setup in JS did not correctly consume reagents when cast (thanks, Azzerhoden Razeri)
+	Fixed a bug where casting spells would sometimes leave the player in a "frozen" state client-side
+	Fixed a bug where RECALL=1 was missing from town of Vesper in regions.dfn
+	Fixed an issue where runebooks did not keep correct count of runes added/dropped (thanks, Azzerhoden Razeri, Dragon Slayer
+	Fixed an issue where the runebook script would crash because of a misspelled object variable (thanks, Azzerhoden Razeri)
+	Added missing spell scrolls to the MageShopping shoplist
+	Added new property for Items and NPCs loaded from DFNs (also available as a JS object property):
+		sectionID 	// Keeps track of the [sectionID] an item or NPC originated from
+	Added support for getting/setting new sectionID property via 'get and 'set commands
+	Exposed Character properties to JS engine:
+		.fleeAt 		// Percentage health threshold for NPC fleeing in combat
+		.reAttackAt		// Percentage health threshold for NPC re-attacking in combat if fleeing
+	Added new character timer (also available in JS engine) for time between each time a character plays an idle animation
+	Added 'move as an alias command for 'telestuff (js/commands/targeting/tele.js)
+	Fixed missing socket reference in bankcheck.js
+	Added missing tribal paint (js/item/tribal_paint.js), spear (js/item/tribal_spear.js) and bola (js/npc/special/bola_ability.js) scripts
+	Updated js/item/oilcloth.js to support wiping away tribal paint from the player
+	Updated js/npc/ai/monster/orc.js AI script to make sure owners of pets attacking the orc will get their orcish kin masks destroyed
+	Players can no longer use Polymorph spell while incognitoed, or while under effect of tribal paint
+	Players can no longer use Incognito spell while polymorphed, or while under effect of tribal paint
+	Facial hair is now removed from players who are under the effects of Incognito spell that changes their gender for female
+	Expanded the amount of possible house entries in dfndata/house/house.dfn from 255 to 65535
+
+24/10/2022 - ldilley
+	Fixed cPlayerAction.cpp case in source/CMakeLists.txt (was cplayeraction.cpp).
+	Added FreeBSD build support for SpiderMonkey, zlib, and UOX3.
+	Updated README.md with FreeBSD build instructions.
+	Fixed a compile error due to NULL being defined as nullptr (non-int type) and not 0 (zero)
+
+26/08/2022 - Xuri (0.99.5b-7)
+	Fixed a missing definition for GetStartTime JS function which would cause an error in the help menu script
+	Tweaked some messages output to the UOX3 console during startup for improved clarity
+
+25/08/2022 - Xuri (0.99.5b-6)
+	Increased world load speed by almost 20% by reducing how often loading progress is written to the console
+	Increased world save speed by almost 50% through the use of binary mode and buffer tweaks for ofstream combined with a cached newline char and std::to_string instead of static_cast
+	Fixed a server crash involving killing NPCs of a specific spawn region using the 'spawnkill # command
+	Fixed a server crash involving moving items from decaying corpses to the ground
+	Fixed a server crash involving carving up human corpses
+	Fixed a server crash related to AreaCharacterFunction JS function, which could trigger for any script that potentially kills any NPC this function iterates over (like explosion potions)
+	Fixed a server crash related to GMs attempting to add items from add-menu while having no backpack
+	Fixed a client crash issue caused by attempting to sell house deeds back to architect NPCs
+	Fixed an issue where players would get incorrect amounts of gold for selling house deeds back to architect NPCs
+	Fixed an issue with characters dying onboard boats which prevented players from packing up the boats later
+	Added new item property in code (via bools bitset) that can be used to enable/disable maker's mark on crafted items. This property can be set to true for items crafted at exceptional quality by GM craftsmen
+	Exposed the new item property to JS engine:
+		.isMarkedByMaker	 	// If true, maker's mark will be displayed
+	Updated default item tooltip to display " of exceptional quality" for items crafted with exceptional quality
+	Updated default item tooltip to display "[Crafted] by [Crafter's Name]" for exceptional quality items crafted by GM craftsmen. The [Crafted] text comes from the MADEWORD defined in dfndata/skills/skills.dfn for the primary skill used to craft the item
+	Updated old-school single-click names for items (when AoS bit is disabled in client/server features) to display exceptional status and/or maker's mark for appropriate items
+	Fixed an issue with the display of titles for NPCs that used dictionary lookups for their title
+	Added new UOX.INI settings under the [settings] section:
+		DISPLAYMAKERSMARK=1/0			// Controls if maker's marks on crafted items are shown on a global level
+		SHOWNPCTITLESOVERHEAD=1/0 		// Controls whether NPC titles are shown over their heads
+		SHOWINVULNERABLETAGOVERHEAD=0/1 // Controls whether invulnerable tags are shown overhead
+		GLOBALRESTOCKMULTIPLIER=1.0 	// Global multiplier applied to RESTOCK property of items when loaded from DFNs
+	Added new UOX.INI settings under the [combat] section:
+		PETCOMBATTRAINING=1/0 			// Controls whether pets can gain skills/stats from combat
+		HIRELINGCOMBATTRAINING=1/0 		// Controls whether hirelings can gain skills/stats from combat
+		NPCCOMBATTRAINING=0/1 			// Controls whether NPCs in general can gain skills/stats from combat
+	Fixed an issue where a player meeting the exact minimum requirements for crafting an item would always fail
+	Fixed a bug with teleporting off boats to valid nearby locations when double-clicking boat planks while standing on it
+	Updated behaviour of planks on boats:
+		Boat key can unlock plank, but won't automatically open it
+		Boat key used on an open, unlocked plank will lock and automatically close the plank
+		Boat key used on an open, locked plank will unlock the plank and leave it open
+		Player using an unlocked plank now opens it
+		Player using an open plank will disembark (if onboard) or embark (if not) the boat
+		Player can always open a locked plank if they're on the boat, even with no key, to allow disembarking the boat.
+		Planks that are open, but locked cannot be accessed from outside the boat, and will close automatically after five of seconds
+	Updated behaviour of Magic Lock/Unlock spells:
+		Magic Lock cannot be used on objects inside a multi
+		Magic Lock applies difficulty to lock based on caster's Magery skill
+		Magic Lock effect will last between 7 to 50 seconds (depending on caster's Magery skill)
+		Any object that can be locked via Magic Lock spell can also be unlocked via Magic Unlock spell, if caster has high enough Magery skill
+	Fixed a bug where certain JS Functions, Methods and Properties would occasionally pass incorrect values to scripts that called upon them. Scripts that rely on the GetCurrentClock() Function, the .GetTimer() Method, .decayTime, .logTime, .oreTime and .fishTime Properties might need to be updated to account for the fix, which causes larger values to be passed in than before.
+	Fixed a bug related to GetCurrentClock() that caused decay and respawning of dungeon chests from working properly
+	Fixed a bug related to GetCurrentClock() and .logTime/.fishTime that prevented consumption and regeneration of log/fish resources from working properly
+	Added a new JS Function:
+		GetStartTime()	// Returns a timestamp for when server started up
+	Fixed a bug related to GetCurrentClock() where server uptime stats in help menu was showing up incorrectly
+	Fixed a bug related to GetCurrentClock() and purging of registrations of visitors in public houses so their visits can be counted again later
+	Fixed a bug related to GetCurrentClock() that caused monster speech to not work properly
+	Fixed a Z-related issue that sometimes prevented players from fishing when standing on the shoreline next to the sea
+	Fixed an issue with Animal Lore skill that would always return a pet's loyalty level as "Wild"
+	Increased max range pets can be from their owner in order to still be included in moongate/teleporter travel from 12 to 24 tiles
+	Fixed an issue where the alchemy bonus damage for explosion potions was off by an order of magnitude
+	Fixed an issue where food IDs from foodlists referenced by other foodlists was not detected as valid food for tamed pets or NPCs
+	Fixed an issue where Alchemy crafting skill did not properly check for the existence of the crafting tool before proceeding with the crafting process
+	Fixed an issue that prevented the Teleport spell from working as intended
+	Fixed an issue where players would still get 1 gold even if STARTGOLD in uox.ini was set to 0
+	Fixed an issue with mount restrictions script that prevented players from mounting Unicorns, Ki-rins and Cu Sidhes
+	Fixed an issue where aggressive creatures wouldn't stop attacking player after being tamed (js/skill/taming.js)
+	Added a system message to inform the player when they've dropped out of stealth due to taking too many steps
+	Fixed an issue where hunger level of NPCs instantly dropped upon spawning because hunger timer was not active yet
+	Fixed a bug where character corpses would appear with a [unidentified] tag attached
+	Fixed an issue where the [unidentified] tag did not show up for unidentified magic items
+	Added ANIMAL tag to a small bunch of creature definitions (dfndata/creatures/creatures.dfn)
+	Fixed an issue with Bowcraft skill where player could not gain enough skill from crafting bows to reach min requirement for crossbows, and similiarly could not reach min requirement for heavy crossbows from crossbows
+	Updated default value of MURDERDECAYTIMER INI setting from 60 seconds to 28800 seconds (8 hours), to match the amount of time it would take for one (short term) murder count to decay on LBR-era OSI shards.
+
+10/08/2022 - Xuri (0.99.5b-5)
+	Fixed an issue involving player deaths and moving items from backpacks to corpses
+	Fixed NPC Carpenters not selling carpentry tools
+	Fixed an issue with trashbarrel script (js/server/house/trashbarrel.js) that prevented it from working on stand-alone containers not in a house
+	Fixed a logic issue that resulted in some crafted items not having full item details show up in tooltips
+	Fixed an issue where reloading ini file would keep loading in the same starting locations over and over without ever clearing the list, making it grow in size with every reload
+
+15/07/2022 - Xuri
+	Added new JS Methods for Characters and Items, for getting/setting expiry time for a specific timer belonging to a specific script attached to an object, or to kill said timer completely:
+		.GetJSTimer( timerID, scriptID )
+		.SetJSTimer( timerID, timeInMilliseconds, scriptID )
+		.KillJSTimer( timerID, scriptID )
+	Added new JS commands:
+		'getjstimer timerID,scriptID 	// Spits out remaining time before timer expires
+		'setjstimer timerID,timeInMilliseconds,scriptID // Updates expiry time for specified timer
+		'killjstimer timerID,scriptID 	// Kills specific timer completely
+	Updated JS Docs with info on the new JS timer-related methods
+	Updated dictionaries with new lines used by new JS timer-related commands
+
+11/07/2022 - Xuri (0.99.5b-4)
+	Fixed an issue with incorrect sized Stat Window Info packet (0x11) being sent for clients when only T2A client/server features are enabled, which could cause client to freeze on login
+
+05/07/2022 - Xuri (0.99.5b-3)
+	Fixed an issue where multis could vanish because multi data was not always correctly saved out to house.wsc; now multi data is saved to the same wsc files as other items instead. UOX3 still reads house.wsc content on world load, but will delete the file on the first world save, as it's no longer needed.
+
+05/07/2022 - punt
+	Fix for invalid uo directory causing crash
+	Address an error in the using the error prone generic list (push/pop). Had an additional push, without a corresponding pop
+
+05/07/2022 - Xuri
+	Wrapped some debug messages related to sockets in debug defines
+	Adjusted fix for mining to be more flexible with name of tiles
+	Fixed an issue that caused double saves on shutdown, with second shutdown wiping out some objects because they'd already been unloaded from system after first save
+
+04/07/2022 - Xuri
+	Fixed an issue with mining that allowed mining on non-valid static tiles
+	Fixed an issue that prevented boats from moving
+	Fixed an issue that prevented boats from being blocked by blocking tiles
+	Fixed an issue where salute and bow emotes got reversed
+
+12/06/2022 (on or about) - punt
+	Modernized and replaced all mul handling
+	Changed dynamic allocation of basic classes to static
+	Perhaps speed improvement
+
+03/06/2022 - punt
+	Modernized ObjectFactory and replaced external hash with use of unordered_map
+
+31/05/2022 - Xuri
+	Fixed an issue with the provocation skill (skill/js/provocation.js) that prevented successfully provoked creatures from attacking one another
+
+28/05/2022 - Xuri
+	Fixed issue in js/server/house/houseCommands.js that caused any attempts to create secure containers in houses to fail (thanks Hughesbuddy!)
+
+23/05/2022 - Xuri
+	Fix for logic error that prevented stamina loss when shoving past other characters
+
+22/05/2022 - Xuri
+	Exposed the NPC wander properties FX1, FY1, FX2, FY2 and FZ to the JS engine, and updated get, set and tweak JS commands to handle these
+	Updated dictionary files with tweak-menu specific messages for NPC wander properties
+	Fixed an issue with weight calculation when picking up partial piles of items - now uses weight of the specific amount of items picked up on cursor, and not the weight of the full pile
+	Fixed an issue with weight calculation of bank box contents, which didn't take into account the amount of items in item piles
+
+21/05/2022 - Xuri
+	The TOOLUSELIMIT and TOOLUSEBREAK ini settings now also properly affect mining tools when enabled
+
+12/05/2022 - Xuri
+	Fixed an issue where slips counted while using the Healing skill (js/skill/healing_slip.js) would never be reset (thanks Hughesbuddy!)
+	Adjusted fishing script (js/skill/fishing.js) to reduce the chance of fishing up sea serpents on failure in shallow and deep waters, and also added a chance for players to fish up deep sea serpents while in deep waters
+	Adjusted scissors script (js/skill/tailoring/scissors.js) to stop preventing use of scissors while the system thinks the player is running, but just show the associated message without any other impact
+
+08/05/2022 - Xuri
+	Fixed an issue where non-mounted NPCs didn't get proper default values set for mounted walking, running and fleeing speeds
+
+03/04/2022 - Xuri
+	Fixed a bug with skill check code that resulted in much lower than expected success rate at using skills (non-crafting ones in particular)
+	Updated code for how the minimum 50% success-rate is calculated for crafters who meet all minimum skill requirements for crafting an item, which previously incorrectly gave crafters a much higher chance of success!
+	Tweaked how rank is calculated for crafted items to modify the final rank based on base chance of success at crafting item. This brings the chance of crafting exceptional (10/10 rank) items more in line with how difficult this was in LBR era on official shards
+	Adjusted how estimated chance for crafting exceptional items is calculated in crafting script (js/skill/craft/itemdetailgump.js) to be more in line with what actually takes place in code
+
+22/03/2022 - Xuri
+	Reverted from using strncpy_s to strncpy due to some unforeseen side effects that could cause script errors and crashes. Additional work might be required in order to safely convert to strncpy_s
+	Updated 'radd command to provide better feedback when using incorrect syntax. Also added redirects to 'radditem and 'raddnpc commands when "item" or "npc" is detected as a parameter of this command
+
+07/03/2022 - punt
+	Added all-in-one solution and project files for VS2022 that compiles both UOX3, Spidermonkey and zlib at the same time
+	Updated cmake project to compile static version of Spidermonkey library
+	Various source changes made to address warnings
+	Updated project files and filters to be more consistent between VS2017 and VS2022 solutions (Xuri)
+
+02/03/2022 - Xuri (0.99.5b-2)
+	Added a new feature that allows shard admins/scripters to mark specific NPCs as "permanently awake", in order to keep UOX3 running scripts, timers and updates for these NPCs even if they are in regions that are "asleep" because of no nearby online players.
+		A new UOX.INI setting has been added which can turn this feature on/off:
+			ALLOWAWAKENPCS=0/1 	// If disabled, NPCs marked as awake are treated as regular NPCs
+		New NPC DFN tag added to mark an NPC as awake or not:
+			AWAKE=0/1 		// 0 = disabled (default), 1 = enabled
+		New Character JS Property added to toggle an NPC's awake state via JS:
+			.isAwake 		// 0 = disabled (default), 1 = enabled
+		'get and 'set commands updated with the new awake property:
+			'get awake
+			'set awake 0/1
+	IP of shard in shard list is now sent to client in little endian instead of big endian, which should correct the ping displayed in shard list, which previously showed a timeout (punt)
+
+28/02/2022 - Xuri
+	Updated UOX.INI setting NETWORKLOG to actually control logging of network traffic for all connected clients, without needing each socket to have logging enabled via the manual console command 'Z'. This console command can still be used, however, to override a disabled INI setting and enable network traffic logging for connected clients.
+	Updated 'get and 'set commands to support getting/setting a range of socket properties for a targeted (online) player:
+		tempInt 			// int (temporary value)
+		tempInt2 			// int (temporary value)
+		xText 				// string (temporary string)
+		clickX 				// int (x coordinate of where player clicked with targeting cursor)
+		clickY 				// int (y coordinate of where player clicked with targeting cursor)
+		clickZ 				// int (z coordinate of where player clicked with targeting cursor)
+		walkSequence 		// int (movement sequence number, between 0 and 255)
+		currentSpellType 	// int (current spell being cast by a player)
+		logging 			// bool (enable to override disabled NETWORKLOG setting)
+		pickupX 			// int (x coordinate of where player picked up an item from)
+		pickupY 			// int (y coordinate of where player picked up an item from)
+		pickupZ 			// int (z coordinate of where player picked up an item from)
+		pickupSpot 			// int (0 = nowhere, 1 = ground, 2 = ownpack, 3 = otherpack, 4 = paperdoll, 5 = bank)
+		language 			// string (language code)
+	Fixed an issue where CUSTOMINTTAG in NPC DFNs would not get read properly, but would instead print an (incorrect) warning about how the tag was formatted
+
+27/02/2022 - Xuri
+	Fixed a server crash related to attempting to play music for non-existent sockets
+
 26/02/2022 - Xuri
 	Fixed a server crash caused by a couple of items in "stone walls 4" section of add-menu that were missing their ID in ItemMenu.bulk.dfn (thanks, Humility)
 	Fixed an issue where items added to house (multi) definition would not be attached to the house if their coordinates were not within the boundaries of the house. This prevented the usage of house foundation multis with custom stairs, for instance.

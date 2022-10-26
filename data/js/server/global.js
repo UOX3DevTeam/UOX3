@@ -1,6 +1,5 @@
 // Global Script
 // Supported Events trigger for every character/item, use with care
-
 function onLogin( socket, pChar )
 {
 	// Display Admin Welcome Gump for characters on admin account, until a choice has been made

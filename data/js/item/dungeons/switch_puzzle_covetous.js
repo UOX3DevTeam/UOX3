@@ -4,9 +4,13 @@ function onUseChecked( pUser, iSwitch )
 {
 	// Flip the switch
 	if( iSwitch.id == 0x1091 || iSwitch.id == 0x108f )
+	{
 		iSwitch.id++;
+	}
 	else
+	{
 		iSwitch.id--;
+	}
 
 	// Play a switch flipping sound
 	iSwitch.SoundEffect( 0x004a, true );
@@ -133,7 +137,11 @@ function ResetAllSwitches( srcItem, trgItem )
 
 	var switchNum = trgItem.morex;
 	if( switchNum == 3 )
+	{
 		trgItem.morey = 1; // First switch
+	}
 	else
+	{
 		trgItem.morey = 0;
+	}
 }

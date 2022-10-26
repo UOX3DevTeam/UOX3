@@ -957,7 +957,6 @@ practice_gnarled_staff
 // Random polearm - Halberd, Bardiche
 [ITEMLIST 150]
 {
-200|itemlist=134,10
 50|blank
 25|0x143e
 25|0x0f4d

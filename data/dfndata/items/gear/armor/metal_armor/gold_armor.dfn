@@ -1,9 +1,33 @@
-// Ringmail
+// Gold Armor Bonus for AoS ruleset - applied on top of existing stats
+[gold_armor_bonus_aos]
+{
+defbonus=1
+erbonus=1 2 0 2
+}
+// luck=40
+// lowerreq=30
 
-// Gold Ringmail Tunic - N/S
+// Gold Armor Bonus for ToL ruleset - applied on top of existing stats
+[gold_armor_bonus_tol]
+{
+defbonus=2
+erbonus=2 3 0 3
+}
+// luck=40
+// lowerreq=30
+
+//------------------------------------------------------------------------------------------------//
+
+// Gold Ringmail Armor
+
+// Gold Ringmail Gloves - N/S
 [0x13eb-g]
 {
-get=base_ring_gloves
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -22,8 +46,12 @@ get=0x13eb-g 0x13f2-g
 
 // Gold Ringmail Tunic - N/S
 [0x13ec-g]
-{ right facing
-get=base_ring_tunic
+{
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -42,8 +70,12 @@ get=0x13ec-g 0x13ed-g
 
 // Gold Ringmail Sleeves - N/S
 [0x13ee-g]
-{ right facing
-get=base_ring_sleeves
+{
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -62,8 +94,12 @@ get=0x13ee-g 0x13ef-g
 
 // Gold Ringmail Leggings - N/S
 [0x13f0-g]
-{ right facing
-get=base_ring_leggings
+{
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -80,12 +116,40 @@ id=0x13f1
 get=0x13f0-g 0x13f1-g
 }
 
-// Chainmail
+// Chainmail Armor
+
+// Gold Chainmail Coif - N/S
+[0x13bb-g]
+{
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Chainmail Coif - E/S
+[0x13c0-g]
+{
+get=0x13bb-g
+id=0x13c0
+}
+
+// Gold Chainmail Coif - Alias
+[goldchainmailcoif]
+{
+get=0x13bb 0x13c0
+}
 
 // Gold Chainmail Leggings - N/S
 [0x13be-g]
 {
-get=base_chain_leggings
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -105,7 +169,11 @@ get=0x13be-g 0x13c3-g
 // Gold Chainmail Tunic - N/S
 [0x13bf-g]
 {
-get=base_chain_tunic
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -122,32 +190,14 @@ id=0x13c4
 get=0x13bf-g 0x13c4-g
 }
 
-// Gold Chainmail Coif - N/S
-[0x13BB-g]
-{
-get=base_chain_coif
-color=0x8a5
-}
-
-// Gold Chainmail Coif - E/W
-[0x13c0-g]
-{
-get=0x13bb-g
-id=0x13c0
-}
-
-// Gold Chainmail Coif - Alias
-[chainmailcoif]
-{
-get=0x13bb-g 0x13c0-g
-}
-
-// Female
-
 // Gold Female Plate - N/S
 [0x1c04-g]
 {
-get=base_fem_plate
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -164,12 +214,16 @@ id=0x1c05
 get=0x1c04-g 0x1c05-g
 }
 
-// platemail
+// Gold Platemail Armor
 
 // Gold Platemail Arms - E/W
 [0x1410-g]
 {
-get=base_plate_arms
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -186,21 +240,25 @@ id=0x1417
 get=0x1410-g 0x1417-g
 }
 
-// Gold Platemail Leggings - E/W
+// Gold Platemail Leggings - N/S
 [0x1411-g]
 {
-get=base_plate_leggings
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Platemail Leggings - N/S
+// Gold Platemail Leggings - E/W
 [0x141a-g]
 {
 get=0x1411-g
 id=0x141a
 }
 
-// Platemail Leggings - Alias
+// Gold Platemail Leggings - Alias
 [goldplatemailleggings]
 {
 get=0x1411-g 0x141a-g
@@ -209,7 +267,11 @@ get=0x1411-g 0x141a-g
 // Gold Platemail Gorget
 [0x1413-g]
 {
-get=base_plate_gorget
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -219,14 +281,18 @@ color=0x8a5
 get=0x1413-g
 }
 
-// Gold Platemail Gloves - E/W
+// Gold Platemail Gloves - N/S
 [0x1414-g]
 {
-get=base_plate_gloves
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Platemail Gloves - N/S
+// Gold Platemail Gloves - E/W
 [0x1418-g]
 {
 get=0x1414-g
@@ -239,14 +305,18 @@ id=0x1418
 get=0x1414-g 0x1418-g
 }
 
-// Gold Platemail Chest - E/W
+// Gold Platemail Chest - N/S
 [0x1415-g]
 {
-get=base_plate_chest
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Platemail Chest - N/S
+// Gold Platemail Chest - E/W
 [0x1416-g]
 {
 get=0x1415-g
@@ -259,39 +329,385 @@ id=0x1416
 get=0x1415-g 0x1416-g
 }
 
-// helmets
+// Gold SE Armor
 
-// Gold Close Helm(et) - N/S
-[0x1408-g]
+// Gold Heavy Platemail Jingasa - A
+[0x2777-g]
 {
-get=base_close_helmet
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Close Helm(et) - E/W
+// Gold Heavy Platemail Jingasa - B
+[0x27c2-g]
+{
+get=0x2777-g
+id=0x27c2
+}
+
+// Gold Heavy Platemail Jingasa - Alias
+[goldheavyplatemailjingasa]
+{
+get=0x2777-g 0x27c2-g
+}
+
+// Gold Decorative Platemail Kabuto - A
+[0x2778-g]
+{
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Decorative Platemail Kabuto - B
+[0x27c3-g]
+{
+get=0x2778-g
+id=0x27c3
+}
+
+// Gold Decorative Platemail Kabuto - Alias
+[golddecorativeplatemailkabuto]
+{
+get=0x2778-g 0x27c3-g
+}
+
+// Gold Platemail Do - A
+[0x277d-g]
+{
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Do - B
+[0x27c8-g]
+{
+get=0x277d-g
+id=0x27c8
+}
+
+// Gold Platemail Do - Alias
+[goldplatemaildo]
+{
+get=0x277d-g 0x27c8-g
+}
+
+// Gold Platemail Hiro Sode - A
+[0x2780-g]
+{
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Hiro Sode - B
+[0x27cb-g]
+{
+get=0x2780-g
+id=0x27cb
+}
+
+// Gold Platemail Hiro Sode - Alias
+[goldplatemailhirosode]
+{
+get=0x2780-g 0x27cb-g
+}
+
+// Gold Platemail Jingasa - A
+[0x2781-g]
+{
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Jingasa - B
+[0x27cc-g]
+{
+get=0x2781-g
+id=0x27cc
+}
+
+// Gold Platemail Jingasa - Alias
+[goldplatemailjingasa]
+{
+get=0x2781-g 0x27cc-g
+}
+
+// Gold Small Platemail Jingasa - A
+[0x2784-g]
+{
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Small Platemail Jingasa - B
+[0x27cf-g]
+{
+get=0x2784-g
+id=0x27cf
+}
+
+// Gold Small Platemail Jingasa - Alias
+[goldsmallplatemailjingasa]
+{
+get=0x2784-g 0x27cf-g
+}
+
+// Gold Platemail Battle Kabuto - A
+[0x2785-g]
+{
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Battle Kabuto - B
+[0x27d0-g]
+{
+get=0x2785-g
+id=0x27d0
+}
+
+// Gold Platemail Battle Kabuto - Alias
+[goldplatemailbattlekabuto]
+{
+get=0x2785-g 0x27d0-g
+}
+
+// Gold Platemail Suneate - A
+[0x2788-g]
+{
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Suneate - B
+[0x27d3-g]
+{
+get=0x2788-g
+id=0x27d3
+}
+
+// Gold Platemail Suneate - Alias
+[goldplatemailsuneate]
+{
+get=0x2788-g 0x27d3-g
+}
+
+// Gold Platemail Kabuto - A
+[0x2789-g]
+{
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Kabuto - B
+[0x27d4-g]
+{
+get=0x2789-g
+id=0x27d4
+}
+
+// Gold Platemail Kabuto - Alias
+[goldplatemailkabuto]
+{
+get=0x2789-g 0x27d4-g
+}
+
+// Gold Kabuto - A
+[0x236c-g]
+{
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Kabuto - B
+[0x236d-g]
+{
+get=0x236c-g
+id=0x236d
+}
+
+// Gold Kabuto - Alias
+[goldkabuto]
+{
+get=0x236c-g 0x236d-g
+}
+
+// Gold Platemail Haidate - A
+[0x278d-g]
+{
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Haidate - B
+[0x27d8-g]
+{
+get=0x278d-g
+id=0x27d8
+}
+
+// Gold Platemail Haidate - Alias
+[goldplatemailhaidate]
+{
+get=0x278d-g 0x27d8-g
+}
+
+// Gold Platemail Hatsuburi - A
+[0x2775-g]
+{
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Hatsuburi - B
+[0x27c0-g]
+{
+get=0x2775-g
+id=0x27c0
+}
+
+// Gold Platemail Hatsuburi - Alias
+[goldplatemailhatsuburi]
+{
+get=0x2775-g 0x27c0-g
+}
+
+// Gold Chainmail Hatsuburi - A
+[0x2774-g]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Chainmail Hatsuburi - B
+[0x27bf-g]
+{
+get=0x2774-g
+id=0x27bf
+}
+
+// Gold Chainmail Hatsuburi - Alias
+[goldchainmailhatsuburi]
+{
+get=0x2774-g 0x27bf-g
+}
+
+// Gold Platemail Mempo - E/W
+[0x2779-g]
+{
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Platemail Mempo - N/S
+[0x27c4-g]
+{
+get=0x2779-g
+id=0x27c4
+}
+
+// Gold Platemail Mempo - Alias
+[goldplatemailmempo]
+{
+get=0x2779-g 0x27c4-g
+}
+
+// Gold Helmets
+
+// Gold Close Helm - E/W
+[0x1408-g]
+{
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Close Helm - N/S
 [0x1409-g]
 {
 get=0x1408-g
 id=0x1409
 }
 
-// Gold Close Helm(et) - Alias
+// Gold Close Helm - Alias
 [goldclosehelm]
 {
 get=0x1408-g 0x1409-g
 }
 
-// Gold Helmet - N/S
+// Gold Helmet - E/W
 [0x140a-g]
 {
-get=base_helmet
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Helmet - E/W
+// Gold Helmet - N/S
 [0x140b-g]
 {
-get=0x140a-g
+get=0x140b-g
 id=0x140b
 }
 
@@ -301,14 +717,18 @@ id=0x140b
 get=0x140a-g 0x140b-g
 }
 
-// Gold Bascinet - N/S
+// Gold Bascinet - E/W
 [0x140c-g]
 {
-get=base_bascinet
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Bascinet - E/W
+// Gold Bascinet - N/S
 [0x140d-g]
 {
 get=0x140c-g
@@ -321,14 +741,18 @@ id=0x140d
 get=0x140c-g 0x140d-g
 }
 
-// Gold Norse Helm - N/S
+// Gold Norse Helm - E/W
 [0x140e-g]
 {
-get=base_nose_helm
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Norse Helm - E/W
+// Gold Norse Helm - N/S
 [0x140f-g]
 {
 get=0x140e-g
@@ -341,14 +765,18 @@ id=0x140f
 get=0x140e-g 0x140f-g
 }
 
-// Gold Plate Helm - E/W
+// Gold Plate Helm - N/S
 [0x1412-g]
 {
-get=base_plate_helm
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Plate Helm - N/S
+// Gold Plate Helm - E/W
 [0x1419-g]
 {
 get=0x1412-g
@@ -361,12 +789,16 @@ id=0x1419
 get=0x1412-g 0x1419-g
 }
 
-// Shields
+// Gold Shields
 
 // Gold Gold Shield
 [0x1b72-g]
 {
-get=base_gold_shield
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -379,7 +811,11 @@ get=0x1b72-g
 // Gold Buckler
 [0x1b73-g]
 {
-get=base_buckler
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -389,50 +825,77 @@ color=0x8a5
 get=0x1b73-g
 }
 
-// Gold Metal Kite Shield - N/S
+// Gold Kite Shield (Metal) - N/S
 [0x1b74-g]
 {
-get=base_metal_kite_shield
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
-}
-
-// Gold Metal Kite Shield - E/W
-[0x1b75-g]
-{
-get=0x1b74-g
-id=0x1b75
-}
-
-// Metal Kite Shield - Alias
-[goldmetalkiteshield]
-{
-get=0x1b74-g 0x1b75-g
 }
 
 // Gold Heater Shield - N/S
 [0x1b76-g]
 {
-get=base_heater_shield
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Gold Heater Shield - E/W
-[0x1b77-g]
+// Gold Kite Shield (Wood) - N/S
+[0x1b78-g]
 {
-get=0x1b76-g
-id=0x1b77
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
 }
 
-// Gold Heater Shield - Alias
-[goldheatershield]
+// Gold Kite Shield (wood) - E/W
+[0x1b79-g]
 {
-get=0x1b76-g 0x1b77-g
+get=0x1b78-g
+id=0x1b79
+}
+
+// Gold Kite Shield (wood) - Alias
+[goldmetalkiteshield]
+{
+get=0x1b78-g 0x1b79-g
+}
+
+// AgapiteWooden Shield
+[0x1b7a-g]
+{
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Wooden Shield - Alias
+[goldwoodenshield]
+{
+get=0x1b7a-g
 }
 
 // Gold Metal Shield
 [0x1b7b-g]
 {
-get=base_metal_shield
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
@@ -442,22 +905,43 @@ color=0x8a5
 get=0x1b7b-g
 }
 
-// Kite Shield (wooden) - N/S
-[0x1b78-g]
+// Gold Chaos Shield
+[0x1bc3-g]
 {
-get=base_wooden_kite_shield
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
 color=0x8a5
 }
 
-// Kite Shield (wooden) - E/W
-[0x1b79-g]
+// Gold Chaos Shield - Alias
+[goldchaosshield]
 {
-get=0x1b78-g
-id=0x1b79
+get=0x1bc3-g
 }
 
-// Kite Shield (wooden) - Alias
-[goldwoodenkiteshield]
+// Gold Order Shield - N/S
+[0x1bc4-g]
 {
-get=0x1b78-g 0x1b79-g
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
+getaos=gold_armor_bonus_aos
+gettol=gold_armor_bonus_tol
+color=0x8a5
+}
+
+// Gold Order Shield - E/W
+[0x1bc5-g]
+{
+get=0x1bc5-g
+id=0x1bc5
+}
+
+// Gold Order Shield - Alias
+[goldordershield]
+{
+get=0x1bc4-g 0x1bc5-g
 }

@@ -5,7 +5,7 @@ const manaCost = 30;
 
 function onAISliver( mNPC )
 {
-	var nextFireBallTime = mNPC.GetTag( "nextFB" );
+	var nextFireBallTime = parseInt( mNPC.GetTag( "nextFB" ));
 	if( mNPC.target != null && ( nextFireBallTime < GetCurrentClock() || nextFireBallTime > GetCurrentClock() + ( fireBreathDelay * 2000 )) && mNPC.InRange( mNPC.target, maxRange ))
 	{
 		var chanceOfFireBreath = mNPC.GetTag( "fbChance" );
@@ -15,7 +15,7 @@ function onAISliver( mNPC )
 			chanceOfFireBreath = 1;
 			nextFireBallTime = (( RandomNumber( fireBreathDelay, fireBreathDelay * 2 ) * 1000 ) + GetCurrentClock() );
 			mNPC.SetTag( "fbChance", chanceOfFireBreath );
-			mNPC.SetTag( "nextFB", nextFireBallTime );
+			mNPC.SetTag( "nextFB", nextFireBallTime.toString() );
 			if( !mNPC.CanSee( mNPC.target ))
 				return;
 			CastFireBreath( mNPC );

@@ -2,7 +2,8 @@
 {
 decay=1
 str=1
-damage=2 8
+lodamage=2
+hidamage=8
 speed=25
 hp=31 80
 layer=1

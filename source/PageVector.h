@@ -1,17 +1,17 @@
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| File		-	PageVector.h
-//o-----------------------------------------------------------------------------------------------o
-//| Purpose		-	HelpRequest and PageVector classes. For use in the GM and Couselor queues
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	CHelpRequest and PageVector classes. For use in the GM and Couselor queues
+//o------------------------------------------------------------------------------------------------o
 
 #ifndef __PAGEVECTOR_H__
 #define __PAGEVECTOR_H__
 
-class HelpRequest
+class CHelpRequest
 {
 private:
-	SERIAL			helpReqID;
+	SERIAL			helpReqId;
 	SERIAL			playerPaging;		// player who is paging
 	SERIAL			playerHandling;		// player who is handling it
 	SI08			priority;			// priority of the page
@@ -20,11 +20,11 @@ private:
 	std::string		reason;				// reason for the page
 
 public:
-	HelpRequest() : helpReqID( INVALIDSERIAL ), playerPaging( INVALIDSERIAL ), playerHandling( INVALIDSERIAL ), priority( 0 ), handled( false ), timeOfPage( 0 )
+	CHelpRequest() : helpReqId( INVALIDSERIAL ), playerPaging( INVALIDSERIAL ), playerHandling( INVALIDSERIAL ), priority( 0 ), handled( false ), timeOfPage( 0 )
 	{
-		reason= "";
+		reason = "";
 	}
-	~HelpRequest();
+	~CHelpRequest();
 
 	SERIAL			WhoPaging( void ) const;
 	SERIAL			WhoHandling( void ) const;
@@ -32,7 +32,7 @@ public:
 	bool			IsHandled( void ) const;
 	time_t			TimeOfPage( void ) const;
 	std::string		Reason( void ) const;
-	SERIAL			RequestID( void ) const;
+	SERIAL			RequestId( void ) const;
 
 	void			WhoPaging( SERIAL pPaging );
 	void			WhoHandling( SERIAL pHandling );
@@ -40,26 +40,26 @@ public:
 	void			IsHandled( bool pHandled );
 	void			TimeOfPage( time_t pTime );
 	void			Reason( const std::string &pReason );
-	void			RequestID( SERIAL hrid );
+	void			RequestId( SERIAL hrid );
 };
 
 class PageVector
 {
 private:
-	std::vector< HelpRequest * >			Queue;
-	std::vector< HelpRequest * >::iterator	currentPos;
+	std::vector<CHelpRequest *>				requestQueue;
+	std::vector<CHelpRequest *>::iterator	currentPos;
 	std::string								title;	// GM/Counselor Queue
 
 	R32						avgEntryTime, maxEntryTime, minEntryTime;
-	SERIAL					maxID;
+	SERIAL					maxId;
 
 	void					KillQueue( void );
 public:
-	SERIAL			Add( HelpRequest *toAdd );
+	SERIAL			Add( CHelpRequest *toAdd );
 	bool			Remove( void );
-	HelpRequest *	First( void );
-	HelpRequest *	Next( void );
-	HelpRequest *	Current( void );
+	CHelpRequest *	First( void );
+	CHelpRequest *	Next( void );
+	CHelpRequest *	Current( void );
 	bool			AtEnd( void ) const;
 	size_t			NumEntries( void ) const;
 	PageVector();

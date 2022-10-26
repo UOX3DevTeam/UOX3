@@ -1,0 +1,9 @@
+
+// Fukiya - AoS stats
+[0x27aa_aos]
+{
+get=base_fukiya
+damage=4 6
+value=52 34
+weight=400
+}

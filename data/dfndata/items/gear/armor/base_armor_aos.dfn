@@ -1,0 +1,2001 @@
+
+// Ringmail Gloves - Aos stats
+[0x13eb_aos]
+{
+get=base_ring_gloves
+def=3
+elementresist=3 1 3 5
+hp=40 50
+str=40
+value=93 26
+weight=200
+}
+
+// Ringmail Tunic - AoS stats
+[0x13ec_aos]
+{
+get=base_ring_tunic
+def=3
+elementresist=30 10 30 50
+hp=40 50
+str=40
+value=121 60
+weight=1500
+}
+
+// Ringmail Sleeves - AoS stats
+[0x13ee_aos]
+{
+get=base_ring_sleeves
+def=3
+elementresist=3 1 3 5
+hp=40 50
+str=40
+value=85 42
+weight=1500
+}
+
+// Ringmail Leggings - AoS stats
+[0x13f0_aos]
+{
+get=base_ring_leggings
+def=3
+elementresist=3 1 3 5
+hp=40 50
+str=40
+value=90 45
+weight=1500
+}
+
+// Chainmail
+
+// Chainmail Coif - AoS stats
+[0x13bb_aos]
+{
+get=base_chain_coif
+def=4
+elementresist=4 4 2 1
+hp=35 60
+str=60
+value=17 6
+weight=100
+}
+
+// Chainmail Leggings - AoS stats
+[0x13be_aos]
+{
+get=base_chain_leggings
+def=4
+elementresist=4 4 2 1
+hp=45 60
+str=60
+value=149 74
+weight=700
+}
+
+// Chainmail Tunic - AoS stats
+[0x13bf_aos]
+{
+get=base_chain_tunic
+def=4
+elementresist=4 4 2 1
+hp=45 60
+str=60
+value=143 71
+weight=700
+}
+
+// Plate Armor
+
+// Female Plate - AoS stats
+[0x1c04_aos]
+{
+get=base_fem_plate
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=95
+value=226 113
+weight=400
+}
+
+// Platemail Arms - AoS stats
+[0x1410_aos]
+{
+get=base_plate_arms
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=80
+value=188 94
+weight=500
+}
+
+// Platemail Leggings - AoS stats
+[0x1411_aos]
+{
+get=base_plate_leggings
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=90
+value=218 109
+weight=700
+}
+
+// Platemail Gorget - AoS stats
+[0x1413_aos]
+{
+get=base_plate_gorget
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=45
+value=104 52
+weight=200
+}
+
+// Platemail Gloves - AoS stats (default)
+[0x1414_aos]
+{
+get=base_plate_gloves
+def=3
+elementresist=3 2 2 3
+hp=25 30
+str=55
+value=155 72
+weight=200
+}
+
+// Platemail Chest - AoS stats
+[0x1415_aos]
+{
+get=base_plate_chest
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=95
+value=243 121
+weight=1000
+}
+
+// Leather
+
+// Leather Sleeves - AoS stats (default)
+[0x13c5_aos]
+{
+get=base_leather_sleeves
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=80 40
+weight=200
+}
+
+// Leather Gloves - AoS stats
+[0x13c6_aos]
+{
+get=base_leather_gloves
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=60 30
+weight=100
+}
+
+// Leather Gorget - AoS stats
+[0x13c7_aos]
+{
+get=base_leather_gorget
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=74 37
+weight=100
+}
+
+// Leather Cap - AoS stats
+[0x1db9_aos]
+{
+get=base_leather_cap
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=10 5
+weight=200
+}
+
+// Leather Leggings - AoS stats
+[0x13cb_aos]
+{
+get=base_leather_leggings
+def=2
+elementresist=4 3 3 3
+hp=30 40
+layer=0x04
+str=20
+value=80 40
+weight=400
+}
+
+// Leather Tunic - AoS stats
+[0x13cc_aos]
+{
+get=base_leather_tunic
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=25
+value=101 52
+weight=600
+}
+
+// Leather Shorts (Female) - AoS stats
+[0x1c00_aos]
+{
+get=base_leather_shorts
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=86 14
+weight=300
+}
+
+// Leather Armor (Female) - AoS stats
+[0x1c06_aos]
+{
+get=base_leather_armor
+def=2
+elementresist=3 2 4 4
+hp=30 40
+str=20
+value=116 18
+weight=200
+}
+
+// Leather Skirt (Female) - AoS stats
+[0x1c08_aos]
+{
+get=base_leather_skirt
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=87 11
+weight=100
+}
+
+// Leather Bustier (Female) - AoS stats
+[0x1c0a_aos]
+{
+get=base_leather_bustier
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=97 27
+weight=100
+}
+
+// Studded Leather
+
+// Studded Sleeves - AoS stats
+[0x13d4_aos]
+{
+get=base_studded_sleeves
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=25
+value=87 43
+weight=400
+}
+
+// Studded Gloves - AoS stats
+[0x13d5_aos]
+{
+get=base_studded_gloves
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=25
+value=79 39
+weight=100
+}
+
+// Studded Gorget - AoS stats
+[0x13d6_aos]
+{
+get=base_studded_gorget
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=25
+value=73 36
+weight=100
+}
+
+// Studded Leggings - AoS stats
+[0x13da_aos]
+{
+get=base_studded_leggings
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=30
+value=103 51
+weight=500
+}
+
+// Studded Tunic - AoS stats
+[0x13db_aos]
+{
+get=base_studded_tunic
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=35
+value=128 64
+weight=800
+}
+
+// Studded Armor (Female) - AoS stats
+[0x1c02_aos]
+{
+get=base_studded_armor
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=35
+value=142 71
+weight=600
+}
+
+// Studded Bustier (Female) - AoS stats
+[0x1c0c_aos]
+{
+get=base_studded_bustier
+def=2
+elementresist=4 3 4 3
+hp=35 45
+str=35
+value=120 60
+weight=100
+}
+
+// Bone Armor
+
+// Bone Arms - AoS stats
+[0x144e_aos]
+{
+get=base_bone_arms
+def=3
+elementresist=3 4 4 2
+hp=25 30
+str=55
+value=145 72
+weight=200
+}
+
+// Bone Armor - AoS stats
+[0x144f_aos]
+{
+get=base_bone_armor
+def=3
+elementresist=3 4 4 2
+hp=25 30
+str=60
+value=205 94
+weight=600
+}
+
+// Bone Gloves - AoS stats
+[0x1450_aos]
+{
+get=base_bone_gauntlets
+name=bone gloves
+def=3
+elementresist=3 4 4 2
+hp=25 30
+str=55
+value=127 55
+weight=200
+}
+
+// Bone Helmet - AoS stats
+[0x1451_aos]
+{
+get=base_bone_helm
+name=bone helmet
+def=3
+elementresist=3 4 4 2
+hp=25 30
+str=20
+value=19 9
+weight=300
+}
+
+// Bone Legs - AoS stats
+[0x1452_aos]
+{
+get=base_bone_legs
+def=3
+elementresist=3 4 4 2
+hp=25 30
+str=55
+value=164 69
+weight=300
+}
+
+// Orc Helm - AoS stats
+[0x1f0b_aos]
+{
+get=base_orc_helm
+def=3
+elementresist=1 3 5 3
+hp=30 50
+str=30
+value=13 6
+weight=100
+}
+
+// Helmets
+
+// Close Helmet - AoS stats
+[0x1408_aos]
+{
+get=base_close_helm
+name=close helmet
+def=3
+elementresist=3 3 3 3
+hp=45 60
+str=55
+value=18 9
+weight=500
+}
+
+// Helmet - AoS stats
+[0x140a_aos]
+{
+get=base_helmet
+def=2
+elementresist=4 4 2 3
+hp=45 60
+str=45
+value=18 9
+weight=500
+}
+
+// Bascinet - AoS stats
+[0x140c_aos]
+{
+get=base_bascinet
+def=7
+elementresist=2 2 2 2
+hp=40 50
+str=40
+value=18 9
+weight=500
+}
+
+// Norse Helm - AoS stats
+[0x140e_aos]
+{
+get=base_norse_helm
+def=4
+elementresist=1 4 2 4
+hp=45 60
+str=55
+value=18 9
+weight=500
+}
+
+// Plate Helm - AoS stats
+[0x1412_aos]
+{
+get=base_plate_helm
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=80
+value=21 10
+weight=500
+}
+
+// SE Plate Armor
+
+// Heavy Platemail Jingasa - AoS stats
+[0x2777_aos]
+{
+get=base_heavy_platemail_jingasa
+def=7
+elementresist=2 2 3 2
+hp=50 70
+str=55
+value=85 40
+weight=500
+}
+
+// Decorative Platemail Kabuto - AoS stats
+[0x2778_aos]
+{
+get=base_decorative_platemail_kabuto
+def=6
+elementresist=2 2 3 2
+hp=55 75
+str=70
+value=106 49
+weight=600
+}
+
+// Platemail Do - AoS stats
+[0x277d_aos]
+{
+get=base_platemail_do
+def=5
+elementresist=4 3 2 3
+hp=60 70
+str=85
+value=259 133
+weight=1000
+}
+
+// Platemail Hiro Sode - AoS stats
+[0x2780_aos]
+{
+get=base_platemail_hiro_sode
+def=5
+elementresist=3 2 2 3
+hp=55 75
+str=75
+value=222 111
+weight=200
+}
+
+// Light Platemail Jingasa - AoS stats
+[0x2781_aos]
+{
+get=base_light_platemail_jingasa
+def=7
+elementresist=2 2 3 2
+hp=55 60
+str=55
+value=33 16
+weight=500
+}
+
+// Small Platemail Jingasa - AoS stats
+[0x2784_aos]
+{
+get=base_small_platemail_jingasa
+def=7
+elementresist=2 2 3 2
+hp=55 60
+str=55
+value=33 16
+weight=500
+}
+
+// Platemail Battle Kabuto - AoS stats
+[0x2785_aos]
+{
+get=base_platemail_battle_kabuto
+def=6
+elementresist=2 2 3 2
+hp=60 65
+str=70
+value=28 13
+weight=600
+}
+
+// Platemail Suneate - AoS stats
+[0x2788_aos]
+{
+get=base_platemail_suneate
+def=5
+elementresist=3 2 2 3
+hp=55 65
+str=80
+value=223 117
+weight=700
+}
+
+// Platemail Kabuto - AoS stats
+[0x2789_aos]
+{
+get=base_platemail_kabuto
+def=6
+elementresist=2 2 3 2
+hp=60 65
+str=70
+value=28 13
+weight=600
+}
+
+// Kabuto - AoS stats
+[0x236c_aos]
+{
+get=base_kabuto
+def=5
+elementresist=3 3 4 2
+hp=38 48
+str=80
+value=23 11
+weight=500
+}
+
+// Platemail Haidate - AoS stats
+[0x278d_aos]
+{
+get=base_platemail_haidate
+def=5
+elementresist=3 2 2 3
+hp=55 65
+str=80
+value=233 122
+weight=700
+}
+
+// Chainmail Hatsuburi - AoS stats
+[0x2774_aos]
+{
+get=base_chainmail_hatsuburi
+def=5
+elementresist=2 2 3 2
+hp=55 75
+str=50
+value=85 40
+weight=700
+}
+
+// Platemail Hatsuburi - AoS stats
+[0x2775_aos]
+{
+get=base_platemail_hatsuburi
+def=5
+elementresist=3 2 3 2
+hp=55 75
+str=65
+value=85 40
+weight=500
+}
+
+// Platemail Mempo - AoS stats
+[0x2779_aos]
+{
+get=base_platemail_mempo
+def=5
+elementresist=3 2 2 3
+hp=60 70
+str=50
+value=154 76
+weight=300
+}
+
+// SE Ninja Leather
+
+// Leather Ninja Hood - AoS stats
+[0x278e_aos]
+{
+get=base_leather_ninja_hood
+def=2
+elementresist=4 3 4 3
+hp=25 45
+str=10
+value=9 4
+weight=200
+}
+
+// Leather Ninja Belt - AoS stats
+[0x2790_aos]
+{
+get=base_leather_ninja_belt
+str=10
+value=28 14
+weight=100
+}
+
+// Leather Ninja Pants - AoS stats
+[0x2791_aos]
+{
+get=base_leather_ninja_pants
+def=2
+elementresist=4 3 3 3
+hp=40 50
+str=10
+value=49 26
+weight=300
+}
+
+// Leather Ninja Mitts - AoS stats
+[0x2792_aos]
+{
+get=base_leather_ninja_mitts
+def=3
+elementresist=4 3 3 3
+hp=29 29
+str=10
+value=68 29
+weight=200
+}
+
+// Leather Ninja Jacket - AoS stats
+[0x2793_aos]
+{
+get=base_leather_ninja_jacket
+def=2
+elementresist=5 4 3 3
+hp=30 40
+str=10
+value=43 23
+weight=500
+}
+
+// SE Samurai Leather
+
+// Leather Jingasa - AoS stats
+[0x2776_aos]
+{
+get=base_leather_jingasa
+def=3
+elementresist=3 3 4 2
+hp=20 30
+str=25
+value=13 6
+weight=300
+}
+
+// Leather Mempo - AoS stats
+[0x277a_aos]
+{
+get=base_leather_mempo
+def=2
+elementresist=4 3 3 3
+hp=35 40
+str=30
+value=59 29
+weight=200
+}
+
+// Leather Do - AoS stats
+[0x277b_aos]
+{
+get=base_leather_do
+def=2
+elementresist=5 4 3 3
+hp=35 45
+str=40
+value=73 36
+weight=600
+}
+
+// Leather Hiro Sode - AoS stats
+[0x277e_aos]
+{
+get=base_leather_hiro_sode
+def=2
+elementresist=4 3 3 3
+hp=40 50
+str=25
+value=49 23
+weight=100
+}
+
+// Leather Suneate - AoS stats
+[0x2786_aos]
+{
+get=base_leather_suneate
+def=2
+elementresist=4 3 3 3
+hp=25 40
+str=20
+value=55 27
+weight=400
+}
+
+// Leather Haidate - AoS stats
+[0x278a_aos]
+{
+get=base_leather_haidate
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=20
+value=54 30
+weight=400
+}
+
+// SE Samurai Studded Armor
+
+// Studded Do - AoS stats
+[0x277c_aos]
+{
+get=base_studded_do
+def=2
+elementresist=5 4 3 3
+hp=40 50
+str=55
+value=109 57
+weight=800
+}
+
+// Studded Hiro Sode - AoS stats
+[0x277f_aos]
+{
+get=base_studded_hiro_sode
+def=2
+elementresist=4 3 3 3
+hp=45 55
+str=30
+value=73 32
+weight=100
+}
+
+// Studded Suneate - AoS stats
+[0x2787_aos]
+{
+get=base_studded_suneate
+def=2
+elementresist=4 3 3 3
+hp=35 50
+str=30
+value=78 42
+weight=500
+}
+
+// Studded Haidate - AoS stats
+[0x278b_aos]
+{
+get=base_studded_haidate
+def=2
+elementresist=4 3 3 3
+hp=35 45
+str=30
+value=76 39
+weight=500
+}
+
+// Studded Mempo - AoS stats
+[0x279d_aos]
+{
+get=base_studded_mempo
+def=2
+elementresist=4 3 3 3
+hp=30 40
+str=30
+value=61 28
+weight=200
+}
+
+// ML Leaf Armor
+
+// Leaf Arms - AoS stats
+[0x2fc8_aos]
+{
+get=base_leaf_arms
+def=2
+elementresist=3 2 2 4
+hp=30 40
+str=15
+value=77 38
+weight=200
+}
+
+// Leaf Tunic - AoS stats
+[0x2fc5_aos]
+{
+get=base_leaf_tunic
+def=2
+elementresist=3 2 2 4
+hp=30 40
+str=20
+value=102 47
+weight=200
+}
+
+// Leaf Armor (Female) - AoS stats
+[0x2fcb_aos]
+{
+get=base_leaf_armor
+def=2
+elementresist=3 2 2 4
+hp=30 40
+str=20
+value=102 47
+weight=200
+}
+
+// Leaf Gloves - AoS stats
+[0x2fc6_aos]
+{
+get=base_leaf_gloves
+def=2
+elementresist=3 2 2 4
+hp=34 46
+str=10
+value=68 29
+weight=200
+}
+
+// Leaf Gorget - AoS stats
+[0x2fc7_aos]
+{
+get=base_leaf_gorget
+def=2
+elementresist=3 2 2 4
+hp=30 40
+str=10
+value=59 29
+weight=200
+}
+
+// Leaf Leggings - AoS stats
+[0x2fc9_aos]
+{
+get=base_leaf_leggings
+def=2
+elementresist=3 2 2 4
+hp=30 40
+str=20
+value=82 35
+weight=200
+}
+
+// Leaf Tonlet - AoS stats
+[0x2fca_aos]
+{
+get=base_leaf_tonlet
+def=2
+elementresist=3 2 2 4
+hp=36 48
+str=10
+value=82 35
+weight=200
+}
+
+// ML Hide Armor
+
+// Hide Pauldrons - AoS stats
+[0x2b77_aos]
+{
+get=base_hide_pauldrons
+def=3
+elementresist=3 4 4 3
+hp=35 45
+str=20
+value=116 58
+weight=400
+}
+
+// Hide Tunic - AoS stats
+[0x2b74_aos]
+{
+get=base_hide_tunic
+def=3
+elementresist=3 4 4 3
+hp=35 45
+str=25
+value=150 69
+weight=600
+}
+
+// Hide Armor (Female) - AoS stats
+[0x2b79_aos]
+{
+get=base_hide_armor
+def=3
+elementresist=3 4 4 3
+hp=35 45
+str=25
+value=150 69
+weight=600
+}
+
+// Hide Gloves - AoS stats
+[0x2b75_aos]
+{
+get=base_hide_gloves
+def=4
+elementresist=3 4 4 3
+hp=40 52
+str=15
+value=102 44
+weight=200
+}
+
+// Hide Pants - AoS stats
+[0x2b78_aos]
+{
+get=base_hide_pants
+def=3
+elementresist=3 4 4 3
+hp=35 45
+str=25
+value=120 51
+weight=500
+}
+
+// Hide Gorget - AoS stats
+[0x2b76_aos]
+{
+get=base_hide_gorget
+def=3
+elementresist=3 4 4 3
+hp=35 45
+str=15
+value=91 45
+weight=300
+}
+
+// Dragon Armor
+
+// Dragon Sleeves - AoS stats
+[0x2657_aos]
+{
+get=base_dragon_sleeves
+def=3
+elementresist=3 3 3 3
+hp=44 75
+str=75
+value=106 53
+weight=200
+}
+
+// Dragon Breastplate - AoS stats
+[0x2641_aos]
+{
+get=base_dragon_breastplate
+def=3
+elementresist=4 4 3 3
+hp=55 75
+str=75
+value=150 69
+weight=1000
+}
+
+// Dragon Gloves - AoS stats
+[0x2643_aos]
+{
+get=base_dragon_gloves
+def=4
+elementresist=3 3 3 3
+hp=63 86
+str=80
+value=93 40
+weight=200
+}
+
+// Dragon Helm - AoS stats
+[0x2645_aos]
+{
+get=base_dragon_helm
+def=3
+elementresist=3 3 4 3
+hp=55 75
+str=75
+value=14 7
+weight=500
+}
+
+// Dragon Leggings - AoS stats
+[0x2647_aos]
+{
+get=base_dragon_leggings
+def=3
+elementresist=3 3 3 3
+hp=55 75
+str=75
+value=120 51
+weight=600
+}
+
+// ML Woodland Armor
+
+// Woodland Arms - AoS stats
+[0x2b6c_aos]
+{
+get=base_woodland_arms
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=80
+value=193 96
+weight=500
+}
+
+// Woodland Chest - AoS stats
+[0x2b67_aos]
+{
+get=base_woodland_chest
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=95
+value=273 125
+weight=800
+}
+
+// Woodland Armor (Female) - AoS stats
+[0x2b6d_aos]
+{
+get=base_woodland_armor
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=95
+value=273 125
+weight=800
+}
+
+// Woodland Gauntlet - AoS stats
+[0x2b6a_aos]
+{
+get=base_woodland_gauntlets
+def=6
+elementresist=3 2 2 3
+hp=57 75
+str=75
+value=170 73
+weight=200
+}
+
+// Woodland Leggings - AoS stats
+[0x2b6b_aos]
+{
+get=base_woodland_leggings
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=90
+value=219 93
+weight=800
+}
+
+// Woodland Gorget - AoS stats
+[0x2b69_aos]
+{
+get=base_woodland_gorget
+def=5
+elementresist=3 2 2 3
+hp=50 65
+str=45
+value=157 78
+weight=300
+}
+
+// ML Helmets
+
+// Circlet - AoS stats
+[0x2b6e_aos]
+{
+get=base_circlet
+def=1
+elementresist=5 2 3 2
+hp=50 65
+str=10
+value=5 2
+weight=200
+}
+
+// Royal Circlet - AoS stats
+[0x2b6f_aos]
+{
+get=base_royal_circlet
+def=1
+elementresist=5 2 3 2
+hp=20 35
+str=10
+value=5 2
+weight=200
+}
+
+// Gemmed Circlet - AoS stats
+[0x2b70_aos]
+{
+get=base_gemmed_circlet
+def=1
+elementresist=5 2 3 2
+hp=20 35
+str=10
+value=5 2
+weight=200
+}
+
+// Raven Helm - AoS stats
+[0x2b71_aos]
+{
+get=base_raven_helm
+def=5
+elementresist=1 2 3 2
+hp=50 65
+str=25
+value=23 11
+weight=500
+}
+
+// Vulture Helm - AoS stats
+[0x2b72_aos]
+{
+get=base_vulture_helm
+def=5
+elementresist=1 2 3 2
+hp=50 65
+str=25
+value=23 11
+weight=500
+}
+
+// Winged Helm - AoS stats
+[0x2b73_aos]
+{
+get=base_winged_helm
+def=5
+elementresist=1 2 3 2
+hp=45 55
+str=25
+value=23 11
+weight=500
+}
+
+// Elven Glasses - AoS stats
+[0x2fb8_aos]
+{
+get=base_elven_glasses
+def=2
+elementresist=4 4 5 6
+hp=36 48
+str=45
+value=9 4
+weight=200
+}
+
+// SA Gargoyle Armor
+
+// Gargish Cloth Arms - AoS stats
+[0x0404_aos]
+{
+get=base_gargish_cloth_arms
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=61 30
+weight=200
+}
+
+// Gargish Cloth Arms (Female) - AoS stats
+[0x0403_aos]
+{
+get=base_female_gargish_cloth_arms
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=62 30
+weight=200
+}
+
+// Gargish Cloth Chest - AoS stats
+[0x0406_aos]
+{
+get=base_gargish_cloth_chest
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=25
+value=66 36
+weight=200
+}
+
+// Female Gargish Cloth Chest - AoS stats
+[0x0405_aos]
+{
+get=base_female_gargish_cloth_chest
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=25
+value=70 35
+weight=200
+}
+
+// Gargish Cloth Leggings - AoS stats
+[0x040a_aos]
+{
+get=base_gargish_cloth_leggings
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=66 34
+weight=200
+}
+
+// Female Gargish Cloth Leggings - AoS stats
+[0x0409_aos]
+{
+get=base_female_gargish_cloth_leggings
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=71 32
+weight=200
+}
+
+// Gargish Cloth Kilt - AoS stats
+[0x0408_aos]
+{
+get=base_gargish_cloth_kilt
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=56 34
+weight=200
+}
+
+// Gargish Cloth Kilt (Female) - AoS stats
+[0x0407_aos]
+{
+get=base_female_gargish_cloth_kilt
+def=5
+elementresist=7 6 6 6
+hp=40 50
+str=20
+value=57 32
+weight=200
+}
+
+// Gargish Cloth Wing Armor - AoS stats
+[0x45a4_aos]
+{
+get=base_gargish_cloth_wing_armor
+str=10
+weight=200
+}
+
+// SA Gargish Leather Armor
+
+// Gargish Leather Arms - AoS stats
+[0x0302_aos]
+{
+get=base_gargish_leather_arms
+def=5
+elementresist=6 7 6 6
+hp=30 50
+str=25
+value=80 41
+weight=400
+}
+
+// Female Gargish Leather Arms - AoS stats
+[0x0301_aos]
+{
+get=base_gargish_leather_arms
+def=5
+elementresist=6 7 6 6
+hp=30 50
+str=25
+value=73 42
+weight=400
+}
+
+// Gargish Leather Chest - AoS stats
+[0x0304_aos]
+{
+get=base_gargish_leather_chest
+def=5
+elementresist=6 7 6 6
+hp=30 50
+str=25
+value=65 38
+weight=800
+}
+
+// Female Gargish Leather Chest - AoS stats
+[0x0303_aos]
+{
+get=base_female_gargish_leather_chest
+def=5
+elementresist=6 7 6 6
+hp=30 50
+str=25
+value=65 38
+weight=800
+}
+
+// Gargish Leather Leggings - AoS stats
+[0x0306_aos]
+{
+get=base_gargish_leather_leggings
+def=5
+elementresist=6 7 7 6
+hp=30 50
+str=20
+value=67 36
+weight=500
+}
+
+// Female Gargish Leather Leggings - AoS stats
+[0x0305_aos]
+{
+get=base_female_gargish_leather_leggings
+def=5
+elementresist=6 7 7 6
+hp=30 50
+str=20
+value=67 36
+weight=500
+}
+
+// Gargish Leather Kilt - AoS stats
+[0x0311_aos]
+{
+get=base_gargish_leather_kilt
+def=5
+elementresist=6 7 7 6
+hp=30 50
+str=25
+value=85 50
+weight=500
+}
+
+// Female Gargish Leather Kilt - AoS stats
+[0x0310_aos]
+{
+get=base_female_gargish_leather_kilt
+def=5
+elementresist=6 7 7 6
+hp=30 50
+str=25
+value=92 48
+weight=500
+}
+
+// Gargish Leather Wing Armor - AoS stats
+[0x457e_aos]
+{
+get=base_gargish_leather_wing_armor
+str=10
+weight=200
+}
+
+// SA Gargish Plate Armor
+
+// Gargish Plate Arms - AoS stats
+[0x0308_aos]
+{
+get=base_gargish_plate_arms
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=80
+value=328 164
+weight=500
+}
+
+// Female Gargish Plate Arms - AoS stats
+[0x0307_aos]
+{
+get=base_female_gargish_plate_arms
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=80
+value=363 181
+weight=500
+}
+
+// Gargish Plate Chest - AoS stats
+[0x030a_aos]
+{
+get=base_gargish_plate_chest
+def=8
+elementresist=7 6 5 6
+hp=50 65
+str=95
+value=386 198
+weight=100
+}
+
+// Female Gargish Plate Chest - AoS stats
+[0x0309_aos]
+{
+get=base_female_gargish_plate_chest
+def=8
+elementresist=7 6 5 6
+hp=50 65
+str=95
+value=402 58
+weight=100
+}
+
+// Gargish Plate Leggings - AoS stats
+[0x030e_aos]
+{
+get=base_gargish_plate_leggings
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=90
+value=352 184
+weight=700
+}
+
+// Female Gargish Plate Leggings - AoS stats
+[0x030d_aos]
+{
+get=base_female_gargish_plate_leggings
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=90
+value=369 194
+weight=700
+}
+
+// Gargish Plate Kilt - AoS stats
+[0x030c_aos]
+{
+get=base_gargish_plate_kilt
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=80
+value=367 193
+weight=500
+}
+
+// Female Gargish Plate Kilt - AoS stats
+[0x030b_aos]
+{
+get=base_female_gargish_plate_kilt
+def=8
+elementresist=6 5 5 6
+hp=50 65
+str=80
+value=336 176
+weight=500
+}
+
+// SA Gargish Stone Armor
+
+// Gargish Stone Arms - AoS stats
+[0x0284_aos]
+{
+get=base_gargish_stone_arms
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=116 58
+weight=1000
+}
+
+// Female Gargish Stone Arms - AoS stats
+[0x0283_aos]
+{
+get=base_female_gargish_stone_arms
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=116 58
+weight=1000
+}
+
+// Gargish Stone Chest - AoS stats
+[0x0286_aos]
+{
+get=base_gargish_stone_chest
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=119 61
+weight=1500
+}
+
+// Female Gargish Stone Chest - AoS stats
+[0x0285_aos]
+{
+get=base_female_gargish_stone_chest
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=113 58
+weight=1500
+}
+
+// Gargish Stone Leggings - AoS stats
+[0x028a_aos]
+{
+get=base_gargish_stone_leggings
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=113 59
+weight=1500
+}
+
+// Female Gargish Stone Leggings - AoS stats
+[0x0289_aos]
+{
+get=base_female_gargish_stone_leggings
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=116 61
+weight=1500
+}
+
+// Gargish Stone Kilt - AoS stats
+[0x0288_aos]
+{
+get=base_gargish_stone_kilt
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=131 69
+weight=1000
+}
+
+// Female Gargish Stone Kilt - AoS stats
+[0x0287_aos]
+{
+get=base_female_gargish_stone_kilt
+def=6
+elementresist=6 4 4 8
+hp=40 50
+str=40
+value=134 70
+weight=1000
+}
+
+// ToL Dragon Turtle Hide Armor
+
+// Dragon Turtle Hide Arms - AoS stats
+[0x782e_aos]
+{
+get=base_dragon_turtle_hide_arms
+def=4
+elementresist=2 2 3 4
+hp=35 45
+str=30
+value=116 58
+weight=200
+}
+
+// Dragon Turtle Hide Chest - AoS stats
+[0x782a_aos]
+{
+get=base_dragon_turtle_hide_chest
+def=4
+elementresist=2 2 3 4
+hp=35 45
+str=30
+value=205 94
+weight=800
+}
+
+// Dragon Turtle Hide Bustier - AoS stats
+[0x782b_aos]
+{
+get=base_dragon_turtle_hide_bustier
+def=4
+elementresist=2 2 3 4
+hp=35 45
+str=30
+value=205 94
+weight=600
+}
+
+// Dragon Turtle Hide Helm - AoS stats
+[0x782d_aos]
+{
+get=base_dragon_turtle_hide_helm
+def=4
+elementresist=2 2 3 4
+hp=20 35
+str=30
+value=19 9
+weight=400
+}
+
+// Dragon Turtle Hide Leggings - AoS stats
+[0x782c_aos]
+{
+get=base_dragon_turtle_hide_leggings
+def=4
+elementresist=2 2 3 4
+hp=35 45
+str=30
+value=164 69
+weight=600
+}
+
+// ToL Tiger Pelt Armor
+
+// Tiger Pelt Chest - AoS stats
+[0x7822_aos]
+{
+get=base_tiger_pelt_chest
+def=3
+elementresist=5 4 3 3
+hp=30 40
+str=30
+value=150 69
+weight=600
+}
+
+// Tiger Pelt Bustier - AoS stats
+[0x7823_aos]
+{
+get=base_tiger_pelt_bustier
+def=3
+elementresist=5 4 3 3
+hp=30 40
+str=25
+value=150 69
+weight=600
+}
+
+// Tiger Pelt Helm - AoS stats
+[0x7828_aos]
+{
+get=base_tiger_pelt_helm
+def=3
+elementresist=4 3 4 3
+hp=30 40
+str=30
+value=14 7
+weight=400
+}
+
+// Tiger Pelt Leggings - AoS stats
+[0x7824_aos]
+{
+get=base_tiger_pelt_leggings
+def=3
+elementresist=4 3 3 3
+hp=30 40
+str=30
+value=120 51
+weight=400
+}
+
+// Tiger Pelt Shorts - AoS stats
+[0x7825_aos]
+{
+get=base_tiger_pelt_shorts
+def=3
+elementresist=4 3 3 3
+hp=30 40
+str=25
+value=120 51
+weight=300
+}
+
+// Tiger Pelt Long Skirt - AoS stats
+[0x7826_aos]
+{
+get=base_tiger_pelt_long_skirt
+def=3
+elementresist=4 3 3 3
+hp=30 40
+str=25
+value=120 51
+weight=100
+}
+
+// Tiger Pelt Skirt - AoS stats
+[0x7827_aos]
+{
+get=base_tiger_pelt_skirt
+def=3
+elementresist=4 3 3 3
+hp=30 40
+str=25
+value=120 51
+weight=100
+}
+
+// Tiger Pelt Collar - AoS stats
+[0x7829_aos]
+{
+get=base_tiger_pelt_collar
+def=3
+elementresist=4 3 3 3
+hp=30 40
+str=30
+value=87 43
+weight=200
+}
+
+// Shields
+
+// Bronze Shield - AoS stats
+[0x1b72_aos]
+{
+get=base_bronze_shield
+elementresist=0 1 0 0
+hp=30
+str=35
+value=91 45
+weight=600
+}
+
+// Buckler - AoS stats
+[0x1b73_aos]
+{
+get=base_buckler
+elementresist=0 0 0 1
+hp=40 50
+str=20
+value=50 25
+weight=500
+}
+
+// Metal Kite Shield - AoS stats
+[0x1b74_aos]
+{
+get=base_metal_kite_shield
+elementresist=0 0 1 0
+hp=45 60
+str=45
+value=123 62
+weight=700
+}
+
+// Heater Shield - AoS stats
+[0x1b76_aos]
+{
+get=base_heater_shield
+elementresist=1 0 0 0
+hp=50 65
+str=90
+value=231 115
+weight=800
+}
+
+// Metal Shield - AoS stats
+[0x1b7b_aos]
+{
+get=base_metal_shield
+elementresist=1 0 0 0
+hp=50 65
+str=45
+value=121 60
+weight=600
+}
+
+// Kite Shield (Wooden) - AoS stats
+[0x1b78_aos]
+{
+get=base_wooden_kite_shield
+elementresist=0 0 1 0
+hp=50 65
+str=20
+value=70 35
+weight=500
+}
+
+// Wooden Shield - AoS stats
+[0x1b7a_aos]
+{
+get=base_wooden_shield
+elementresist=0 0 1 0
+hp=20 25
+str=20
+value=30 15
+weight=500
+}
+
+// Order Shield - AoS stats
+[0x1bc4_aos]
+{
+get=base_order_shield
+def=1
+hp=100 125
+str=95
+value=181 91
+weight=700
+}
+
+// Chaos Shield - AoS stats
+[0x1bc3_aos]
+{
+get=base_chaos_shield
+def=1
+hp=115
+str=95
+value=193 97
+weight=500
+}
+
+// Gargish Chaos Shield - AoS stats
+[0x4228_aos]
+{
+get=base_gargish_chaos_shield
+def=1
+hp=100 125
+str=95
+value=193 96
+weight=500
+}
+
+// Gargish Kite Shield - AoS stats
+[0x4201_aos]
+{
+get=base_gargish_kite_shield
+elementresist=0 0 1 0
+hp=45 60
+str=45
+value=109 54
+weight=700
+}
+
+// Gargish Order Shield - AoS stats
+[0x422a_aos]
+{
+get=base_gargish_order_shield
+def=1
+hp=100 125
+str=95
+value=181 90
+weight=700
+}
+
+// Large Plate Shield - AoS stats
+[0x4204_aos]
+{
+get=base_large_plate_shield
+elementresist=1 0 0 0
+hp=50 65
+str=90
+value=193 96
+weight=800
+}
+
+// Large Stone Shield - AoS stats
+[0x4205_aos]
+{
+get=base_large_stone_shield
+elementresist=0 0 0 1
+hp=50 65
+str=20
+value=54 27
+weight=700
+}
+
+// Medium Plate Shield - AoS stats
+[0x4203_aos]
+{
+get=base_medium_plate_shield
+elementresist=1 0 0 0
+hp=50 65
+str=45
+value=109 54
+weight=600
+}
+
+// Small Plate Shield - AoS stats
+[0x4202_aos]
+{
+get=base_small_plate_shield
+elementresist=0 1 0 0
+hp=25 30
+str=20
+value=54 27
+weight=600
+}

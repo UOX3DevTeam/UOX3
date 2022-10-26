@@ -1,8 +1,14 @@
-BASE		:= ..
-SPIDER		:= $(BASE)/spidermonkey
-ZLIB		:= $(BASE)/zlib
+BASE      := ..
+SPIDER    := $(BASE)/spidermonkey
+ZLIB      := $(BASE)/zlib
+PLATFORM  := $(shell uname)
 
-CXX			:= g++
+ifeq ($(PLATFORM),FreeBSD)
+CXX     	:= clang++
+else
+CXX     	:= g++
+endif
+
 CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3

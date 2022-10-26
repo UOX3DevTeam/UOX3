@@ -1,6 +1,5 @@
 // Teleporter into the City of Wind, which comes with a skill requirement
 // Only characters with 71.5 Magery or above can enter the city
-
 function onCollide( pSock, pChar, iObject )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )
@@ -18,7 +17,7 @@ function onCollide( pSock, pChar, iObject )
 	for( var i = 0; i < petList.length; i++ )
 	{
 		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
+		if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 24 ))
 		{
 			tempPet.Teleport( 5166, 244, 15 );
 			tempPet.Follow( pChar );

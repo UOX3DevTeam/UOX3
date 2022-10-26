@@ -1,3 +1,5 @@
+// This command allows GM to fetch
+
 function CommandRegistration()
 {
 	RegisterCommand( "get", 2, true );
@@ -9,10 +11,12 @@ function command_GET( socket, cmdString )
 	{
 		socket.xText = cmdString;
 		var tempMsg = GetDictionaryEntry( 8079, socket.language ); // Choose target to get %s property for:
-		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ));
+		socket.CustomTarget( 0, tempMsg.replace( /%s/gi, cmdString ));
 	}
 	else
+	{
 		socket.SysMessage( GetDictionaryEntry( 8080, socket.language )); // No property was specified for the GET command.
+	}
 }
 
 // Common Object Properties
@@ -25,7 +29,7 @@ function onCallback0( socket, ourObj )
 	}
 
 	var splitString = socket.xText.split( " ", 1 );
-	var uKey 	= splitString[0].toUpperCase();
+	var uKey = splitString[0].toUpperCase();
 	switch( uKey )
 	{
 	case "NAME":
@@ -57,9 +61,16 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.murdercount );
 		break;
 	case "HUE":
+	case "SKIN":
 	case "COLOR":
 	case "COLOUR":
-		socket.SysMessage( "0x" + (ourObj.colour).toString(16) + " (" + ourObj.colour + ")" );
+		socket.SysMessage( "0x" + ( ourObj.colour ).toString( 16 ) + " ( " + ourObj.colour + ")" );
+		break;
+	case "ORGHUE":
+	case "ORGSKIN":
+	case "ORGCOLOR":
+	case "ORGCOLOUR":
+		socket.SysMessage( "0x" + ( ourObj.orgSkin ).toString( 16 ) + " ( " + ourObj.orgSkin + ")" );
 		break;
 	case "MAXHP":
 		socket.SysMessage( ourObj.maxhp );
@@ -67,11 +78,18 @@ function onCallback0( socket, ourObj )
 	case "MANA":
 		socket.SysMessage( ourObj.mana );
 		break;
+	case "MULTI":
+		socket.SysMessage( ourObj.multi );
+		break;
 	case "OWNER":
 		if( ourObj.owner )
+		{
 			socket.SysMessage( ourObj.owner.serial + " - " + ourObj.owner.name );
+		}
 		else
+		{
 			socket.SysMessage( "null" );
+		}
 		break;
 	case "PERMANENTMAGICREFLECT":
 		socket.SysMessage( ourObj.permanentMagicReflect );
@@ -103,9 +121,13 @@ function onCallback0( socket, ourObj )
 		break;
 	case "RACE":
 		if( ourObj.race )
+		{
 			socket.SysMessage( ourObj.race.id + " - " + ourObj.race.name );
+		}
 		else
+		{
 			socket.SysMessage( "null" );
+		}
 		break;
 	case "INSTANCEID":
 		socket.SysMessage( ourObj.instanceID );
@@ -117,7 +139,7 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( ourObj.isDamageable );
 		break;
 	case "REGION":
-		socket.SysMessage( ourObj.region.id + " (" + ourObj.region.name + ")" );
+		socket.SysMessage( ourObj.region.id + " ( " + ourObj.region.name + ")" );
 		break;
 	case "SCRIPTTRIGGER":
 	{
@@ -138,16 +160,25 @@ function onCallback0( socket, ourObj )
 		}
 		break;
 	}
+	case "SECTIONID":
+		socket.SysMessage( ourObj.sectionID );
+		break;
 	case "SHOULDSAVE":
 		socket.SysMessage( ourObj.shouldSave );
 		break;
 	default:
 		if( ourObj.isChar )
+		{
 			HandleGetChar( socket, ourObj, uKey );
+		}
 		else if( ourObj.isItem )
+		{
 			HandleGetItem( socket, ourObj, uKey );
+		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+		}
 		break;
 	}
 }
@@ -158,13 +189,13 @@ function HandleGetItem( socket, ourItem, uKey )
 	switch( uKey )
 	{
 	case "ID":
-		var ourID = (ourItem.id).toString(16);
+		var ourID = ( ourItem.id ).toString( 16 );
 		while( ourID.length < 4 )
 		{
 			ourID = "0" + ourID;
 		}
 		ourID = "0x" + ourID;
-		socket.SysMessage( ourID + " (" + ourItem.id + ")" );
+		socket.SysMessage( ourID + " ( " + ourItem.id + ")" );
 		break;
 	case "AMOUNT":
 		socket.SysMessage( ourItem.amount );
@@ -195,28 +226,28 @@ function HandleGetItem( socket, ourItem, uKey )
 		socket.SysMessage( ourItem.maxRange );
 		break;
 	case "MORE":
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.more).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.more + " (" + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more + " ( " + hexVal + ")" );
 		break;
 	case "MOREX":
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morex).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morex + " (" + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morex ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morex + " ( " + hexVal + ")" );
 		break;
 	case "MOREY":
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morey).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morey + " (" + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morey ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morey + " ( " + hexVal + ")" );
 		break;
 	case "MOREZ":
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morez).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morez + " (" + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morez ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morez + " ( " + hexVal + ")" );
 		break;
 	case "MOREXYZ":
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morex).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morex + " (" + hexVal + ")" );
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morey).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morey + " (" + hexVal + ")" );
-		var hexVal = "0x" + ("00000000"+(Number(ourItem.morez).toString(16))).slice(-8)
-		socket.SysMessage( ourItem.morez + " (" + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morex ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morex + " ( " + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morey ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morey + " ( " + hexVal + ")" );
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morez ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.morez + " ( " + hexVal + ")" );
 		break;
 	case "NEWBIE":
 		socket.SysMessage( ourItem.isNewbie );
@@ -254,7 +285,7 @@ function HandleGetItem( socket, ourItem, uKey )
 		socket.SysMessage( ourItem.ac );
 		break;
 	case "LAYER":
-		socket.SysMessage( "0x" + (ourItem.layer).toString(16) + "(" + ourItem.layer + ")" );
+		socket.SysMessage( "0x" + ( ourItem.layer ).toString( 16 ) + "( " + ourItem.layer + ")" );
 		break;
 	case "LODAMAGE":
 		socket.SysMessage( ourItem.lodamage );
@@ -280,9 +311,13 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	case "RACE":
 		if( ourItem.race )
+		{
 			socket.SysMessage( ourItem.race.id + " - " + ourItem.race.name );
+		}
 		else
+		{
 			socket.SysMessage( "null" );
+		}
 		break;
 	case "MAXUSES":
 		socket.SysMessage( ourItem.maxUses );
@@ -292,7 +327,9 @@ function HandleGetItem( socket, ourItem, uKey )
 		break;
 	default:
 		if( ourItem.isSpawner )
+		{
 			HandleGetSpawner( socket, ourItem, uKey );
+		}
 		else
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
@@ -336,10 +373,10 @@ function HandleGetChar( socket, ourChar, uKey )
 	switch( uKey )
 	{
 	case "ID":
-		socket.SysMessage( "0x" + (ourChar.id).toString(16) + " (" + ourChar.id + ")" );
+		socket.SysMessage( "0x" + ( ourChar.id ).toString( 16 ) + " ( " + ourChar.id + ")" );
 		break;
 	case "ORGID":
-		socket.SysMessage( "0x" + (ourChar.orgID).toString(16) + " (" + ourChar.orgID + ")" );
+		socket.SysMessage( "0x" + ( ourChar.orgID ).toString( 16 ) + " ( " + ourChar.orgID + ")" );
 		break;
 	case "ACTUALSTR":
 	case "ACTUALSTRENGTH":
@@ -426,6 +463,21 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "Z":
 		socket.SysMessage( ourChar.z );
 		break;
+	case "FX1":
+		socket.SysMessage( ourChar.fx1 );
+		break;
+	case "FY1":
+		socket.SysMessage( ourChar.fy1 );
+		break;
+	case "FX2":
+		socket.SysMessage( ourChar.fx2 );
+		break;
+	case "FY2":
+		socket.SysMessage( ourChar.fy2 );
+		break;
+	case "FZ":
+		socket.SysMessage( ourChar.fz );
+		break;
 	case "CANTRAIN":
 		socket.SysMessage( ourChar.trainer );
 		break;
@@ -453,6 +505,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "HUNGERRATE":
 		socket.SysMessage( ourChar.hungerRate );
+		break;
+	case "AWAKE":
+		socket.SysMessage( ourChar.isAwake );
 		break;
 	case "LANGUAGE":
 		if( !ourChar.npc );
@@ -484,10 +539,10 @@ function HandleGetChar( socket, ourChar, uKey )
 				var timeDifference = currentDate.getTime() - createdDate.getTime();
 
 				// Calculate the amount of days
-				var daysDifference = timeDifference / (1000 * 3600 * 24);
+				var daysDifference = timeDifference / ( 1000 * 3600 * 24 );
 
 				// Display final number of days
-				socket.SysMessage( "Character is " + daysDifference.toFixed(2) + " days old." );
+				socket.SysMessage( "Character is " + daysDifference.toFixed( 2 ) + " days old." );
 			}
 			else
 			{
@@ -519,9 +574,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var currentChar = myAccount.currentChar;
 			if( ValidateObject( currentChar ))
+			{
 				socket.SysMessage( "currentChar: " + myAccount.currentChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "Invalid character" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CURRENTCHAR> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -539,7 +598,9 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			socket.SysMessage( "isBanned: " + myAccount.isBanned );
 			if( myAccount.isBanned && myAccount.timeban == 0 )
+			{
 				socket.SysMessage( "User is permanently banned." );
+			}
 			else if( myAccount.isBanned && myAccount.timeban > 0 )
 			{
 				var bannedUntil = new Date( myAccount.timeban * 60 * 1000 )
@@ -674,9 +735,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character1;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character1: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 1!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER1> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -686,9 +751,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character2;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character2: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 2!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER2> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -698,9 +767,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character3;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character3: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 3!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER3> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -710,9 +783,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character4;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character4: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 4!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER4> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -722,9 +799,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character5;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character5: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 5!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER5> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -734,9 +815,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character6;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character6: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 6!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER6> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -746,9 +831,13 @@ function HandleGetChar( socket, ourChar, uKey )
 			var myAccount = ourChar.account;
 			var accountChar = myAccount.character7;
 			if( ValidateObject( accountChar ))
+			{
 				socket.SysMessage( "character7: " + accountChar.name );
+			}
 			else
+			{
 				socket.SysMessage( "No character in slot 7!" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET CHARACTER7> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -775,7 +864,9 @@ function HandleGetChar( socket, ourChar, uKey )
 				socket.SysMessage( "User is banned until " + bannedUntil );
 			}
 			else
+			{
 				socket.SysMessage( "Timeban: 0 minutes" );
+			}
 			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <GET TIMEBAN> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 		}
 		break;
@@ -798,7 +889,7 @@ function HandleGetChar( socket, ourChar, uKey )
 				var daysDifference = timeDifference / (1000 * 3600 * 24);
 
 				// Display final number of days
-				socket.SysMessage( "Account is " + daysDifference.toFixed(2) + " days old." );
+				socket.SysMessage( "Account is " + daysDifference.toFixed( 2 ) + " days old." );
 			}
 			else
 			{
@@ -808,8 +899,61 @@ function HandleGetChar( socket, ourChar, uKey )
 		}
 		break;
 	default:
-		socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+		if( !HandleGetSocket( socket, uKey ))
+		{
+			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+		}
 		break;
 	}
 }
 
+function HandleGetSocket( socket, uKey )
+{
+	switch( uKey )
+	{
+		case "TEMPINT":
+			socket.SysMessage( socket.tempInt );
+			break;
+		case "TEMPINT2":
+			socket.SysMessage( socket.tempInt2 );
+			break;
+		case "XTEXT":
+			socket.SysMessage( socket.xText );
+			break;
+		case "CLICKX":
+			socket.SysMessage( socket.clickX );
+			break;
+		case "CLICKY":
+			socket.SysMessage( socket.clickY );
+			break;
+		case "CLICKZ":
+			socket.SysMessage( socket.clickZ );
+			break;
+		case "WALKSEQUENCE":
+			socket.SysMessage( socket.walkSequence );
+			break;
+		case "CURRENTSPELLTYPE":
+			socket.SysMessage( socket.currentSpellType );
+			break;
+		case "LOGGING":
+			socket.SysMessage( socket.logging );
+			break;
+		case "PICKUPX":
+			socket.SysMessage( socket.pickupX );
+			break;
+		case "PICKUPY":
+			socket.SysMessage( socket.pickupY );
+			break;
+		case "PICKUPZ":
+			socket.SysMessage( socket.pickupZ );
+			break;
+		case "PICKUPSPOT":
+			socket.SysMessage( socket.pickupSpot );
+			break;
+		default:
+			socket.SysMessage( GetDictionaryEntry( 8081, socket.language ) + " " + uKey ); // Invalid property provided for get command:
+			break;
+	}
+
+	return true;
+}

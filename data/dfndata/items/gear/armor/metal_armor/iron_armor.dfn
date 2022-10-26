@@ -3,8 +3,9 @@
 // Ringmail Gloves - N/S
 [0x13eb]
 {
-get=base_ring_gloves
-id=0x13eb
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
 }
 
 // Ringmail Gloves - E/W
@@ -23,8 +24,9 @@ get=0x13eb 0x13f2
 // Ringmail Tunic - N/S
 [0x13ec]
 {
-get=base_ring_tunic
-id=0x13ec
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
 }
 
 // Ringmail Tunic - E/W
@@ -43,8 +45,9 @@ get=0x13ec 0x13ed
 // Ringmail Sleeves - N/S
 [0x13ee]
 {
-get=base_ring_sleeves
-id=0x13ee
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
 }
 
 // Ringmail Sleeves - E/W
@@ -63,8 +66,9 @@ get=0x13ee 0x13ef
 // Ringmail Leggings - N/S
 [0x13f0]
 {
-get=base_ring_leggings
-id=0x13f0
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
 }
 
 // Ringmail Leggings - E/W
@@ -83,10 +87,11 @@ get=0x13f0 0x13f1
 // Chainmail
 
 // Chainmail Coif - N/S
-[0x13BB]
+[0x13bb]
 {
-get=base_chain_coif
-id=0x13bb
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
 }
 
 // Chainmail Coif - E/W
@@ -105,8 +110,9 @@ get=0x13bb 0x13c0
 // Chainmail Leggings - N/S
 [0x13be]
 {
-get=base_chain_leggings
-id=0x13be
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
 }
 
 // Chainmail Leggings - E/W
@@ -125,8 +131,9 @@ get=0x13be 0x13c3
 // Chainmail Tunic - N/S
 [0x13bf]
 {
-get=base_chain_tunic
-id=0x13bf
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
 }
 
 // Chainmail Tunic - E/W
@@ -142,13 +149,14 @@ id=0x13c4
 get=0x13bf 0x13c4
 }
 
-// Female
+// Platemail
 
 // Female Plate - N/S
 [0x1c04]
 {
-get=base_fem_plate
-id=0x1c04
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
 }
 
 // Female Plate - E/W
@@ -164,13 +172,12 @@ id=0x1c05
 get=0x1c04 0x1c05
 }
 
-// Platemail
-
 // Platemail Arms - E/W
 [0x1410]
 {
-get=base_plate_arms
-id=0x1410
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
 }
 
 // Platemail Arms - N/S
@@ -189,8 +196,9 @@ get=0x1410 0x1417
 // Platemail Leggings - E/W
 [0x1411]
 {
-get=base_plate_leggings
-id=0x1411
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
 }
 
 // Platemail Leggings - N/S
@@ -209,8 +217,9 @@ get=0x1411 0x141a
 // Platemail Gorget
 [0x1413]
 {
-get=base_plate_gorget
-id=0x1413
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
 }
 
 // Platemail Gorget - Alias
@@ -222,8 +231,9 @@ get=0x1413
 // Platemail Gloves - E/W
 [0x1414]
 {
-get=base_plate_gloves
-id=0x1414
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
 }
 
 // Platemail Gloves - N/S
@@ -242,8 +252,9 @@ get=0x1414 0x1418
 // Platemail Chest - E/W
 [0x1415]
 {
-get=base_plate_chest
-id=0x1415
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
 }
 
 // Platemail Chest - N/S
@@ -261,11 +272,12 @@ get=0x1415 0x1416
 
 // Helmets
 
-// Close Helm(et) - N/S
+// Close Helm(et) - N/S Variant
 [0x1408]
 {
-get=base_close_helmet
-id=0x1408
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
 }
 
 // Close Helm(et) - E/W
@@ -284,8 +296,9 @@ get=0x1408 0x1409
 // Helmet - N/S
 [0x140a]
 {
-get=base_helmet
-id=0x140a
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
 }
 
 // Helmet - E/W
@@ -304,8 +317,9 @@ get=0x140a 0x140b
 // Bascinet - N/S
 [0x140c]
 {
-get=base_bascinet
-id=0x140c
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
 }
 
 // Bascinet - E/W
@@ -324,8 +338,9 @@ get=0x140c 0x140d
 // Norse Helm - N/S
 [0x140e]
 {
-get=base_nose_helm
-id=0x140e
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
 }
 
 // Norse Helm - E/W
@@ -344,8 +359,9 @@ get=0x140e 0x140f
 // Plate Helm - E/W
 [0x1412]
 {
-get=base_plate_helm
-id=0x1412
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
 }
 
 // Plate Helm - N/S
@@ -366,8 +382,9 @@ get=0x1412 0x1419
 // Heavy Platemail Jingasa - A
 [0x2777]
 {
-get=base_heavy_platemail_jingasa
-id=0x2777
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
 }
 
 // Heavy Platemail Jingasa - B
@@ -386,8 +403,9 @@ get=0x2777 0x27c2
 // Decorative Platemail Kabuto - A
 [0x2778]
 {
-get=base_decorative_platemail_kabuto
-id=0x2778
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
 }
 
 // Decorative Platemail Kabuto - B
@@ -406,8 +424,9 @@ get=0x2778 0x27c3
 // Platemail Do - A
 [0x277d]
 {
-get=base_platemail_do
-id=0x277d
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
 }
 
 // Platemail Do - B
@@ -426,8 +445,9 @@ get=0x277d 0x27c8
 // Platemail Hiro Sode - A
 [0x2780]
 {
-get=base_platemail_hiro_sode
-id=0x2780
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
 }
 
 // Platemail Hiro Sode - B
@@ -446,8 +466,9 @@ get=0x2780 0x27cb
 // Platemail Jingasa - A
 [0x2781]
 {
-get=base_light_platemail_jingasa
-id=0x2781
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
 }
 
 // Platemail Jingasa - B
@@ -466,8 +487,9 @@ get=0x2781 0x27cc
 // Small Platemail Jingasa - A
 [0x2784]
 {
-get=base_small_platemail_jingasa
-id=0x2784
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
 }
 
 // Small Platemail Jingasa - B
@@ -486,8 +508,9 @@ get=0x2784 0x27cf
 // Platemail Battle Kabuto - A
 [0x2785]
 {
-get=base_battle_platemail_kabuto
-id=0x2785
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
 }
 
 // Platemail Battle Kabuto - B
@@ -506,8 +529,9 @@ get=0x2785 0x27d0
 // Platemail Suneate - A
 [0x2788]
 {
-get=base_platemail_suneate
-id=0x2788
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
 }
 
 // Platemail Suneate - B
@@ -526,8 +550,9 @@ get=0x2788 0x27d3
 // Platemail Kabuto - A
 [0x2789]
 {
-get=base_platemail_kabuto
-id=0x2789
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
 }
 
 // Platemail Kabuto - B
@@ -546,8 +571,9 @@ get=0x2789 0x27d4
 // Kabuto - A
 [0x236c]
 {
-get=base_kabuto
-id=0x236c
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
 }
 
 // Kabuto - B
@@ -566,8 +592,9 @@ get=0x236c 0x236d
 // Platemail Haidate - A
 [0x278d]
 {
-get=base_platemail_haidate
-id=0x278d
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
 }
 
 // Platemail Haidate - B
@@ -583,31 +610,12 @@ id=0x27d8
 get=0x278d 0x27d8
 }
 
-// Chainmail Hatsuburi - A
-[0x2774]
-{
-get=base_chainmail_hatsuburi
-id=0x2774
-}
-
-// Chainmail Hatsuburi - B
-[0x27bf]
-{
-get=0x2774
-id=0x27bf
-}
-
-// Chainmail Hatsuburi - Alias
-[chainmailhatsuburi]
-{
-get=0x2774 0x27bf
-}
-
 // Platemail Hatsuburi - A
 [0x2775]
 {
-get=base_platemail_hatsuburi
-id=0x2775
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
 }
 
 // Platemail Hatsuburi - B
@@ -623,11 +631,33 @@ id=0x27c0
 get=0x2775 0x27c0
 }
 
+// Chainmail Hatsuburi - A
+[0x2774]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+}
+
+// Chainmail Hatsuburi - B
+[0x27bf]
+{
+get=0x2774
+id=0x27bf
+}
+
+// Chainmail Hatsuburi - Alias
+[chainmailhatsuburi]
+{
+get=0x2774 0x27bf
+}
+
 // Platemail Mempo - E/W
 [0x2779]
 {
-get=base_platemail_mempo
-id=0x2779
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
 }
 
 // Platemail Mempo - N/S
@@ -648,8 +678,9 @@ get=0x2779 0x27c4
 // Bronze Shield
 [0x1b72]
 {
-get=base_bronze_shield
-id=0x1b72
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
 }
 
 // Bronze Shield - Alias
@@ -661,8 +692,9 @@ get=0x1b72
 // Buckler
 [0x1b73]
 {
-get=base_buckler
-id=0x1b73
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
 }
 
 // Buckler - Alias
@@ -674,8 +706,9 @@ get=0x1b73
 // Metal Kite Shield - N/S
 [0x1b74]
 {
-get=base_metal_kite_shield
-id=0x1b74
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
 }
 
 // Metal Kite Shield - E/W
@@ -694,8 +727,9 @@ get=0x1b74 0x1b75
 // Heater Shield - N/S
 [0x1b76]
 {
-get=base_heater_shield
-id=0x1b76
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
 }
 
 // Heater Shield - E/W
@@ -711,24 +745,12 @@ id=0x1b77
 get=0x1b76 0x1b77
 }
 
-// Metal Shield
-[0x1b7b]
-{
-get=base_metal_shield
-id=0x1b7b
-}
-
-// Metal Shield - Alias
-[metalshield]
-{
-get=0x1b7b
-}
-
 // Kite Shield (wooden) - N/S
 [0x1b78]
 {
-get=base_wooden_kite_shield
-id=0x1b78
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
 }
 
 // Kite Shield (wooden) - E/W
@@ -747,8 +769,9 @@ get=0x1b78 0x1b79
 // Wooden Shield
 [0x1b7a]
 {
-get=base_wooden_shield
-id=0x1b7a
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
 }
 
 // Wooden Shield - Alias
@@ -757,11 +780,26 @@ id=0x1b7a
 get=0x1b7a
 }
 
+// Metal Shield
+[0x1b7b]
+{
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+}
+
+// Metal Shield - Alias
+[metalshield]
+{
+get=0x1b7b
+}
+
 // Chaos Shield
 [0x1bc3]
 {
-get=base_chaos_shield
-id=0x1bc3
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
 }
 
 // Chaos Shield - Alias
@@ -773,14 +811,15 @@ get=0x1bc3
 // Order Shield - N/S
 [0x1bc4]
 {
-get=base_order_shield
-id=0x1bc4
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
 }
 
 // Order Shield - E/W
 [0x1bc5]
 {
-get=order_shield
+get=0x1bc4
 id=0x1bc5
 }
 
@@ -795,8 +834,9 @@ get=0x1bc4 0x1bc5
 // Gargish Chaos Shield - E/W
 [0x4228]
 {
-get=base_gargish_chaos_shield
-id=0x4228
+getpub15=0x4228_pub15
+getaos=0x4228_aos
+gettol=0x4228_tol
 }
 
 // Gargish Chaos Shield - N/S
@@ -815,8 +855,9 @@ get=0x4228 0x4229
 // Gargish Kite Shield - N/S
 [0x4201]
 {
-get=base_gargish_kite_shield
-id=0x4201
+getpub15=0x4201_pub15
+getaos=0x4201_aos
+gettol=0x4201_tol
 }
 
 // Gargish Kite Shield - E/W
@@ -835,8 +876,9 @@ get=0x4201 0x4206
 // Gargish Order Shield - E/W
 [0x422a]
 {
-get=base_gargish_order_shield
-id=0x422a
+getpub15=0x422a_pub15
+getaos=0x422a_aos
+gettol=0x422a_tol
 }
 
 // Gargish Order Shield - N/S
@@ -855,8 +897,9 @@ get=0x422a 0x422c
 // Large Plate Shield - N/S
 [0x4204]
 {
-get=base_large_plate_shield
-id=0x4204
+getpub15=0x4204_pub15
+getaos=0x4204_aos
+gettol=0x4204_tol
 }
 
 // Large Plate Shield - E/W
@@ -875,8 +918,9 @@ get=0x4204 0x4208
 // Large Stone Shield - N/S
 [0x4205]
 {
-get=base_large_stone_shield
-id=0x4205
+getpub15=0x4205_pub15
+getaos=0x4205_aos
+gettol=0x4205_tol
 }
 
 // Large Stone Shield - E/W
@@ -895,8 +939,9 @@ get=0x4205 0x420b
 // Medium Plate Shield - N/S
 [0x4203]
 {
-get=base_medium_plate_shield
-id=0x4203
+getpub15=0x4203_pub15
+getaos=0x4203_aos
+gettol=0x4203_tol
 }
 
 // Medium Plate Shield - E/W
@@ -915,8 +960,9 @@ get=0x4203 0x4209
 // Small Plate Shield - N/S
 [0x4202]
 {
-get=base_small_plate_shield
-id=0x4202
+getpub15=0x4202_pub15
+getaos=0x4202_aos
+gettol=0x4202_tol
 }
 
 // Small Plate Shield - E/W
@@ -935,8 +981,9 @@ get=0x4202 0x420a
 // Gargish Wooden Shield - N/S
 [0x4200]
 {
-get=base_gargish_wooden_shield
-id=0x4200
+getpub15=0x4200_pub15
+getaos=0x4200_aos
+gettol=0x4200_tol
 }
 
 // Gargish Wooden Shield - E/W
@@ -957,8 +1004,9 @@ get=0x4200 0x4207
 // Circlet
 [0x2b6e]
 {
-get=base_circlet
-id=0x2b6e
+getpub15=0x2b6e_pub15
+getaos=0x2b6e_aos
+gettol=0x2b6e_tol
 }
 
 // Circlet - Alias
@@ -970,8 +1018,9 @@ get=0x2b6e
 // Royal Circlet
 [0x2b6f]
 {
-get=base_royal_circlet
-id=0x2b6f
+getpub15=0x2b6f_pub15
+getaos=0x2b6f_aos
+gettol=0x2b6f_tol
 }
 
 // Royal Circlet - Alias
@@ -983,7 +1032,9 @@ get=0x2b6f
 // Gemmed Circlet
 [0x2b70]
 {
-get=base_gemmed_circlet
+getpub15=0x2b70_pub15
+getaos=0x2b70_aos
+gettol=0x2b70_tol
 }
 
 // Gemmed Circlet - Alias
