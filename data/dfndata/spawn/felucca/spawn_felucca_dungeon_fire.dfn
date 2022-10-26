@@ -3,7 +3,7 @@
 
 [REGIONSPAWN 4000]
 {
-NAME=Fire DUngeon Level 1 Pt1
+NAME=Fire Dungeon Level 1 Pt1
 NPCLIST=fireLevelOne
 MAXNPCS=50
 X1=5764
@@ -18,7 +18,7 @@ CALL=5
 
 [REGIONSPAWN 4001]
 {
-NAME=Fire DUngeon Level 1 Pt2
+NAME=Fire Dungeon Level 1 Pt2
 NPCLIST=fireLevelOne
 MAXNPCS=50
 X1=5668

@@ -26,155 +26,155 @@
 // VALIDLANDPOS=#,#,#	// Can be used to hard-define valid spawn-locations on land
 // VALIDWATERPOS=#,#,#	// Can be used to hard-define valid spawn-locations on water
 // }				// Of course this is the closing }
-//=============================================
+//================================================
 // Felucca Town Spawns
-//=============================================
-// spawn_felucca_town_britain.dfn		 [0-99]
-// spawn_felucca_town_buc_den.dfn		 [100-199]
-// spawn_felucca_town_cove.dfn			 [200-299]
-// spawn_felucca_town_jhelom.dfn		 [300-399]
-// spawn_felucca_town_magincia.dfn		 [400-499]
-// spawn_felucca_town_minoc.dfn			 [500-599]
-// spawn_felucca_town_moonglow.dfn		 [600-699]
-// spawn_felucca_town_nujelm.dfn		 [700-799]
-// spawn_felucca_town_ocllo.dfn			 [800-899]
-// spawn_felucca_town_serpents_hold.dfn 	 [900-999]
-// spawn_felucca_town_skara_brae.dfn		 [1000-1099]
-// spawn_felucca_town_trinsic.dfn		 [1100-1199]
-// spawn_felucca_town_vesper.dfn		 [1200-1299]
-// spawn_felucca_town_yew.dfn			 [1300-1399]
-// spawn_felucca_town_wind.dfn			 [1400-1499]
-// spawn_felucca_town_delucia.dfn		 [1500-1599]
-// spawn_felucca_town_papua.dfn			 [1600-1699]
-// resevered.dfn			 	 [1700-1799]
-// resevered.dfn			 	 [1800-1899]
-// resevered.dfn			 	 [1900-1999]
-//=============================================
+//================================================
+// spawn_felucca_town_britain.dfn		 	[0-99]
+// spawn_felucca_town_buc_den.dfn		 	[100-199]
+// spawn_felucca_town_cove.dfn			 	[200-299]
+// spawn_felucca_town_jhelom.dfn		 	[300-399]
+// spawn_felucca_town_magincia.dfn		 	[400-499]
+// spawn_felucca_town_minoc.dfn			 	[500-599]
+// spawn_felucca_town_moonglow.dfn		 	[600-699]
+// spawn_felucca_town_nujelm.dfn		 	[700-799]
+// spawn_felucca_town_ocllo.dfn			 	[800-899]
+// spawn_felucca_town_serpents_hold.dfn  	[900-999]
+// spawn_felucca_town_skara_brae.dfn	 	[1000-1099]
+// spawn_felucca_town_trinsic.dfn		 	[1100-1199]
+// spawn_felucca_town_vesper.dfn		 	[1200-1299]
+// spawn_felucca_town_yew.dfn			 	[1300-1399]
+// spawn_felucca_town_wind.dfn			 	[1400-1499]
+// spawn_felucca_town_delucia.dfn		 	[1500-1599]
+// spawn_felucca_town_papua.dfn			 	[1600-1699]
+// reserved.dfn			 	 		 		[1700-1799]
+// reserved.dfn			 	 		 		[1800-1899]
+// reserved.dfn			 	 		 		[1900-1999]
+//=====================================================
 // Felucca Treasure Spawns
-//=============================================
-// spawn_felucca_treasure_covetous.dfn		 [2000-2099]
-// spawn_felucca_treasure_deceit.dfn		 [2100-2199]
-// spawn_felucca_treasure_despise.dfn		 [2200-2299]
-// spawn_felucca_treasure_destard.dfn		 [2300-2399]
-// spawn_felucca_treasure_fire.dfn		 [2400-2499]
-// spawn_felucca_treasure_ice.dfn		 [2500-2599]
-// spawn_felucca_treasure_hythloth.dfn		 [2600-2699]
-// spawn_felucca_treasure_shame.dfn		 [2700-2799]
-// spawn_felucca_treasure_wrong.dfn		 [2800-2899]
-// spawn_felucca_treasure_terathankeep.dfn       [2900-2999]
-// spawn_felucca_treasure_misc.dfn		 [3000-3100]
-//=============================================
+//=====================================================
+// spawn_felucca_treasure_covetous.dfn	 	[2000-2099]
+// spawn_felucca_treasure_deceit.dfn	 	[2100-2199]
+// spawn_felucca_treasure_despise.dfn	 	[2200-2299]
+// spawn_felucca_treasure_destard.dfn	 	[2300-2399]
+// spawn_felucca_treasure_fire.dfn		 	[2400-2499]
+// spawn_felucca_treasure_ice.dfn		 	[2500-2599]
+// spawn_felucca_treasure_hythloth.dfn	 	[2600-2699]
+// spawn_felucca_treasure_shame.dfn		 	[2700-2799]
+// spawn_felucca_treasure_wrong.dfn		 	[2800-2899]
+// spawn_felucca_treasure_terathankeep.dfn 	[2900-2999]
+// spawn_felucca_treasure_misc.dfn		 	[3000-3100]
+//=====================================================
 // Felucca Dungeon Spawns
-//=============================================
-// spawn_felucca_dungeon_covetous.dfn		 [3500-3549]
-// spawn_felucca_dungeon_deceit.dfn		 [3550-3599]
-// spawn_felucca_dungeon_despise.dfn		 [3600-3649]
-// spawn_felucca_dungeon_destard.dfn		 [3650-3699]
-// spawn_felucca_dungeon_hythloth.dfn		 [3700-3749]
-// spawn_felucca_dungeon_shame.dfn		 [3750-3799]
-// spawn_felucca_dungeon_wrong.dfn		 [3800-3849]  // Note: Not Spawned old pre lbr days
-// spawn_felucca_dungeon_wrong_lbr.dfn		 [3850-3899]
-// spawn_felucca_dungeon_wind.dfn		 [3900-3949]  // Note: Not Spawned
-// spawn_felucca_dungeon_britain_sewers.dfn	 [3950-3999]
-// spawn_felucca_dungeon_fire.dfn		 [4000-4049]
-// spawn_felucca_dungeon_ice.dfn		 [4050-4099]
-// spawn_felucca_dungeon_terathan_keep.dfn	 [4100-4149]
-// spawn_felucca_dungeon_delucia_passage.dfn	 [4150-4199]
-// spawn_felucca_dungeon_orc dungeon.dfn 	 [4200-4249]
-// spawn_felucca_dungeon_khaldun.dfn 		 [4250-4299]  // Note: Not Spawned npc are not in yet
-// spawn_felucca_dungeon_solen_hives.dfn	 [4300-4349]  // Note: Not Spawned npcs and teleport locations not in yet
-// spawn_felucca_dungeon_blackthorns.dfn 	 [4350-4399]  // Note: Not Spawned Is not Pre AOS
-// spawn_felucca_dungeon_painted_caves.dfn	 [4400-4449]  // Note: Not Spawned Is Not Pre AOS
-// spawn_felucca_dungeon_prism_of_light.dfn	 [4450-4499]  // Note: Not Spawned Is Not Pre AOS
-// spawn_felucca_dungeon_sanctuary.dfn		 [4500-4549]  // Note: Not Spawned Is Not Pre AOS
+//=====================================================
+// spawn_felucca_dungeon_covetous.dfn	 	[3500-3549]
+// spawn_felucca_dungeon_deceit.dfn		 	[3550-3599]
+// spawn_felucca_dungeon_despise.dfn	 	[3600-3649]
+// spawn_felucca_dungeon_destard.dfn	 	[3650-3699]
+// spawn_felucca_dungeon_hythloth.dfn	 	[3700-3749]
+// spawn_felucca_dungeon_shame.dfn		 	[3750-3799]
+// spawn_felucca_dungeon_wrong.dfn		 	[3800-3849]  // Note: Not Spawned old pre lbr days
+// spawn_felucca_dungeon_wrong_lbr.dfn	 	[3850-3899]
+// spawn_felucca_dungeon_wind.dfn		 	[3900-3949]  // Note: Not Spawned
+// spawn_felucca_dungeon_britain_sewers.dfn	[3950-3999]
+// spawn_felucca_dungeon_fire.dfn		 	[4000-4049]
+// spawn_felucca_dungeon_ice.dfn			[4050-4099]
+// spawn_felucca_dungeon_terathan_keep.dfn	[4100-4149]
+// spawn_felucca_dungeon_delucia_passage.dfn [4150-4199]
+// spawn_felucca_dungeon_orc dungeon.dfn 	[4200-4249]
+// spawn_felucca_dungeon_khaldun.dfn 		[4250-4299]  // Note: Not Spawned npc are not in yet
+// spawn_felucca_dungeon_solen_hives.dfn	[4300-4349]  // Note: Not Spawned npcs and teleport locations not in yet
+// spawn_felucca_dungeon_blackthorns.dfn 	[4350-4399]  // Note: Not Spawned Is not Pre AOS
+// spawn_felucca_dungeon_painted_caves.dfn	[4400-4449]  // Note: Not Spawned Is Not Pre AOS
+// spawn_felucca_dungeon_prism_of_light.dfn	[4450-4499]  // Note: Not Spawned Is Not Pre AOS
+// spawn_felucca_dungeon_sanctuary.dfn		[4500-4549]  // Note: Not Spawned Is Not Pre AOS
 // spawn_felucca_dungeon_palace_of_paroxysmus.dfn [4550-4599] // Note: Not Spawned Is Not Pre AOS
-//=============================================
+//=====================================================
 // Felucca Over World Spawns
-//=============================================
-// spawn_felucca_world_graveyards.dfn		 [5500-5510]
-// spawn_felucca_world_forts.dfn		 [5511-5520]
-// spawn_felucca_world_guardposts.dfn		 [5521-5530]
-// spawn_felucca_world_zoo.dfn			 [5531-5550]
-// resevered.dfn			 	 [5551-5599]
-// spawn_felucca_world_lands.dfn 		 [5600-6000]
-// spawn_felucca_world_oceans.dfn		 [6001-6200]  // Note: Not Spawned
-// spawn_felucca_world_lostlands.dfn		 [6201-6400]
-// spawn_felucca_world_lostlands_water.dfn	 [6401-6500]  // Note: Not Spawned
-//=============================================
+//=====================================================
+// spawn_felucca_world_graveyards.dfn		[5500-5510]
+// spawn_felucca_world_forts.dfn		 	[5511-5520]
+// spawn_felucca_world_guardposts.dfn		[5521-5530]
+// spawn_felucca_world_zoo.dfn			 	[5531-5550]
+// reserved.dfn			 	 				[5551-5599]
+// spawn_felucca_world_lands.dfn 		 	[5600-6000]
+// spawn_felucca_world_oceans.dfn		 	[6001-6200]  // Note: Not Spawned
+// spawn_felucca_world_lostlands.dfn		[6201-6400]
+// spawn_felucca_world_lostlands_water.dfn	[6401-6500]  // Note: Not Spawned
+//=====================================================
 // Trammel Town Spawns
-//=============================================
-// spawn_trammel_town_britain.dfn		 [7000-7099]
-// spawn_trammel_town_buc_den.dfn		 [7100-7199]
-// spawn_trammel_town_cove.dfn			 [7200-7299]
-// spawn_trammel_town_jhelom.dfn		 [7300-7399]
-// spawn_trammel_town_magincia.dfn		 [7400-7499]
-// spawn_trammel_town_minoc.dfn			 [7500-7599]
-// spawn_trammel_town_moonglow.dfn		 [7600-7699]
-// spawn_trammel_town_nujelm.dfn		 [7700-7799]
-// spawn_trammel_town_new_haven.dfn		 [7800-7899]
-// spawn_trammel_town_serpents_hold.dfn 	 [7900-7999]
-// spawn_trammel_town_skara_brae.dfn		 [8000-8099]
-// spawn_trammel_town_trinsic.dfn		 [8100-8199]
-// spawn_trammel_town_vesper.dfn		 [8200-8299]
-// spawn_trammel_town_yew.dfn			 [8300-8399]
-// spawn_trammel_town_wind.dfn			 [8400-8499]
-// spawn_trammel_town_delucia.dfn		 [8500-8599]
-// spawn_trammel_town_papua.dfn			 [8600-8699]
-// resevered.dfn			 	 [8700-8799]
-// resevered.dfn			 	 [8800-8899]
-// resevered.dfn			 	 [8900-8999]
-//=============================================
+//=====================================================
+// spawn_trammel_town_britain.dfn		 	[7000-7099]
+// spawn_trammel_town_buc_den.dfn		 	[7100-7199]
+// spawn_trammel_town_cove.dfn			 	[7200-7299]
+// spawn_trammel_town_jhelom.dfn		 	[7300-7399]
+// spawn_trammel_town_magincia.dfn		 	[7400-7499]
+// spawn_trammel_town_minoc.dfn			 	[7500-7599]
+// spawn_trammel_town_moonglow.dfn		 	[7600-7699]
+// spawn_trammel_town_nujelm.dfn		 	[7700-7799]
+// spawn_trammel_town_new_haven.dfn		 	[7800-7899]
+// spawn_trammel_town_serpents_hold.dfn 	[7900-7999]
+// spawn_trammel_town_skara_brae.dfn		[8000-8099]
+// spawn_trammel_town_trinsic.dfn		 	[8100-8199]
+// spawn_trammel_town_vesper.dfn		 	[8200-8299]
+// spawn_trammel_town_yew.dfn			 	[8300-8399]
+// spawn_trammel_town_wind.dfn			 	[8400-8499]
+// spawn_trammel_town_delucia.dfn		 	[8500-8599]
+// spawn_trammel_town_papua.dfn			 	[8600-8699]
+// reserved.dfn			 	 				[8700-8799]
+// reserved.dfn			 	 				[8800-8899]
+// reserved.dfn			 	 				[8900-8999]
+//=====================================================
 // Trammel Treasure Spawns
-//=============================================
-// spawn_trammel_treasure_covetous.dfn		 [9000-9099]
-// spawn_trammel_treasure_deceit.dfn		 [9100-9199]
-// spawn_trammel_treasure_despise.dfn		 [9200-9299]
-// spawn_trammel_treasure_destard.dfn		 [9300-9399]
-// spawn_trammel_treasure_fire.dfn		 [9400-9499]
-// spawn_trammel_treasure_ice.dfn		 [9500-9599]
-// spawn_trammel_treasure_hythloth.dfn		 [9600-9699]
-// spawn_trammel_treasure_shame.dfn		 [9700-9799]
-// spawn_trammel_treasure_wrong.dfn		 [9800-9899]
-// spawn_trammel_treasure_terathankeep.dfn       [9900-9999]
-// spawn_trammel_treasure_misc.dfn		 [10000-10099]
-//=============================================
+//=====================================================
+// spawn_trammel_treasure_covetous.dfn		[9000-9099]
+// spawn_trammel_treasure_deceit.dfn		[9100-9199]
+// spawn_trammel_treasure_despise.dfn		[9200-9299]
+// spawn_trammel_treasure_destard.dfn		[9300-9399]
+// spawn_trammel_treasure_fire.dfn		 	[9400-9499]
+// spawn_trammel_treasure_ice.dfn		 	[9500-9599]
+// spawn_trammel_treasure_hythloth.dfn		[9600-9699]
+// spawn_trammel_treasure_shame.dfn		 	[9700-9799]
+// spawn_trammel_treasure_wrong.dfn		 	[9800-9899]
+// spawn_trammel_treasure_terathankeep.dfn  [9900-9999]
+// spawn_trammel_treasure_misc.dfn		 	[10000-10099]
+//=======================================================
 // Trammel Dungeon Spawns
-//=============================================
-// spawn_trammel_dungeon_covetous.dfn		 [13500-13549]
-// spawn_trammel_dungeon_deceit.dfn		 [13550-13599]
-// spawn_trammel_dungeon_despise.dfn		 [13600-13649]
-// spawn_trammel_dungeon_destard.dfn		 [13650-13699]
-// spawn_trammel_dungeon_hythloth.dfn		 [13700-13749]
-// spawn_trammel_dungeon_shame.dfn		 [13750-13799]
-// spawn_trammel_dungeon_wrong.dfn		 [13800-13849]  // Note: Not Spawned old pre lbr days
-// spawn_trammel_dungeon_wrong_lbr.dfn		 [13850-13899]
-// spawn_trammel_dungeon_wind.dfn		 [13900-13949]  // Note: Not Spawned
-// spawn_trammel_dungeon_britain_sewers.dfn	 [13950-13999]
-// spawn_trammel_dungeon_fire.dfn		 [14000-14049]
-// spawn_trammel_dungeon_ice.dfn		 [14050-14099]
-// spawn_trammel_dungeon_terathan_keep.dfn	 [14100-14149]
-// spawn_trammel_dungeon_delucia_passage.dfn	 [14150-14199]
-// spawn_trammel_dungeon_orc dungeon.dfn 	 [14200-14249]
-// spawn_trammel_dungeon_khaldun.dfn 		 [14250-14299]  // Note: Not Spawned npc are not in yet
-// spawn_trammel_dungeon_solen_hives.dfn	 [14300-14349]  // Note: Not Spawned npcs and teleport locations not in yet
-// spawn_trammel_dungeon_blackthorns.dfn 	 [14350-14399]  // Note: Not Spawned Is not Pre AOS
-// spawn_trammel_dungeon_painted_caves.dfn	 [14400-14449]  // Note: Not Spawned Is Not Pre AOS
-// spawn_trammel_dungeon_prism_of_light.dfn	 [14450-14499]  // Note: Not Spawned Is Not Pre AOS
-// spawn_trammel_dungeon_sanctuary.dfn		 [14500-14549]  // Note: Not Spawned Is Not Pre AOS
+//=======================================================
+// spawn_trammel_dungeon_covetous.dfn		[13500-13549]
+// spawn_trammel_dungeon_deceit.dfn		 	[13550-13599]
+// spawn_trammel_dungeon_despise.dfn		[13600-13649]
+// spawn_trammel_dungeon_destard.dfn		[13650-13699]
+// spawn_trammel_dungeon_hythloth.dfn		[13700-13749]
+// spawn_trammel_dungeon_shame.dfn		 	[13750-13799]
+// spawn_trammel_dungeon_wrong.dfn		 	[13800-13849]  // Note: Not Spawned old pre lbr days
+// spawn_trammel_dungeon_wrong_lbr.dfn		[13850-13899]
+// spawn_trammel_dungeon_wind.dfn		 	[13900-13949]  // Note: Not Spawned
+// spawn_trammel_dungeon_britain_sewers.dfn	[13950-13999]
+// spawn_trammel_dungeon_fire.dfn		 	[14000-14049]
+// spawn_trammel_dungeon_ice.dfn		 	[14050-14099]
+// spawn_trammel_dungeon_terathan_keep.dfn	[14100-14149]
+// spawn_trammel_dungeon_delucia_passage.dfn [14150-14199]
+// spawn_trammel_dungeon_orc dungeon.dfn 	[14200-14249]
+// spawn_trammel_dungeon_khaldun.dfn 		[14250-14299]  // Note: Not Spawned npc are not in yet
+// spawn_trammel_dungeon_solen_hives.dfn	[14300-14349]  // Note: Not Spawned npcs and teleport locations not in yet
+// spawn_trammel_dungeon_blackthorns.dfn 	[14350-14399]  // Note: Not Spawned Is not Pre AOS
+// spawn_trammel_dungeon_painted_caves.dfn	[14400-14449]  // Note: Not Spawned Is Not Pre AOS
+// spawn_trammel_dungeon_prism_of_light.dfn	[14450-14499]  // Note: Not Spawned Is Not Pre AOS
+// spawn_trammel_dungeon_sanctuary.dfn		[14500-14549]  // Note: Not Spawned Is Not Pre AOS
 // spawn_trammel_dungeon_palace_of_paroxysmus.dfn [14550-14599] // Note: Not Spawned Is Not Pre AOS
-//=============================================
+//=======================================================
 // Trammel Over World Spawns
-//=============================================
-// spawn_trammel_world_graveyards.dfn		 [15500-15510]
-// spawn_trammel_world_forts.dfn		 [15511-15520]
-// spawn_trammel_world_guardposts.dfn		 [15521-15530]
-// spawn_trammel_world_zoo.dfn			 [15531-15550]
-// resevered.dfn			 	 [15551-15599]
-// spawn_trammel_world_lands.dfn 		 [15600-16000]
-// spawn_trammel_world_oceans.dfn		 [16001-16200]  // Note: Not Spawned
-// spawn_trammel_world_lostlands.dfn		 [16201-16400]
-// spawn_trammel_world_lostlands_water.dfn	 [16401-16500]  // Note: Not Spawned
-//=============================================
+//=======================================================
+// spawn_trammel_world_graveyards.dfn		[15500-15510]
+// spawn_trammel_world_forts.dfn		 	[15511-15520]
+// spawn_trammel_world_guardposts.dfn		[15521-15530]
+// spawn_trammel_world_zoo.dfn			 	[15531-15550]
+// reserved.dfn			 	 				[15551-15599]
+// spawn_trammel_world_lands.dfn 		 	[15600-16000]
+// spawn_trammel_world_oceans.dfn		 	[16001-16200]  // Note: Not Spawned
+// spawn_trammel_world_lostlands.dfn		[16201-16400]
+// spawn_trammel_world_lostlands_water.dfn	[16401-16500]  // Note: Not Spawned
+//=======================================================
 // Ilishenar Treasure Spawns
-//=============================================
-// spawn_ilishenar_treasure_wyrms_lair.dfn	 [17000-17099]
+//=======================================================
+// spawn_ilishenar_treasure_wyrms_lair.dfn	[17000-17099]
