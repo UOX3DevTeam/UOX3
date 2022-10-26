@@ -1,0 +1,19 @@
+// spawn_trammel_dungeon_britain_sewers.dfn
+// [13950-13999]
+
+[REGIONSPAWN 13950]
+{
+NAME=Sewers
+NPCLIST=BritainSewers
+MAXNPCS=50
+X1=6029
+Y1=1427
+X2=6125
+Y2=1507
+WORLD=1
+MINTIME=10
+MAXTIME=20
+CALL=5
+}
+
+EOF
