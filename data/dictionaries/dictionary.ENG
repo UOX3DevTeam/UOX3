@@ -280,11 +280,11 @@
 290=%s hits you in your Left Arm!
 291=%s hits you in your Right Arm!
 292=%s hits you in your Right Arm!
-293=%s hits you you straight in the Face!
+293=%s hits you straight in the Face!
 294=%s lands a stunning blow to your Head!
 295=%s hits you to your Head!
 296=%s smashed a blow across your Face!
-297=%s hits you you square in the Jaw!
+297=%s hits you square in the Jaw!
 298=%s lands a terrible hit to your Temple!
 299=%s hits you in the Left Thigh!
 300=%s hits you in the Right Thigh!
@@ -656,11 +656,11 @@
 664=You successful untrap this item!
 665=You miss to untrap this item!
 666=All your base are belong to us!
-667=This items doesn't seem to be trapped!
-668=This items cannot be trapped!
+667=This item doesn't seem to be trapped!
+668=This item cannot be trapped!
 669=You cannot lock this!
 670=You can't teleport here!
-671=Give up wannabe Jesus!
+671=You can't teleport there!
 672=You cannot teleport there!
 673=This item has been protected with divine magic.  You cannot unlock this item.
 674=You unlock the item.
@@ -1666,8 +1666,31 @@
 // Begging Text
 1662=Could thee spare a few coppers?
 1663=My little son Timmy requires an operation have ye some gold to help d'cause?
-1664=My wife is pregnant with our 7th child, have some pitty in the form of some gold for a desperate man.
+1664=My wife is pregnant with our 7th child, have some pity in the form of some gold for a desperate man.
 // End begging text
+1670=You cannot disguise yourself while wearing body paint
+1671=You cannot polymorph while wearing body paint
+1672=You cannot use incognito while wearing body paint
+1673=You can't do that while incognito.
+1674=You can't do that while polymorphed.
+1675=Your skin is scorched as the tribal paint burns away!
+1676=Your body paint has worn off!
+1677=You cannot disguise yourself while incognito.
+1678=You cannot disguise yourself while polymorphed.
+1679=You are already disguised.
+1680=You now bear the markings of the savage tribe.  Your body paint will last about a week or you can remove it with an oil cloth.
+1681=You wipe away all of your body paint.
+1682=The Tribal Spear breaks apart in your hands as you pick it up!
+1683=%s starts swinging a bola around
+1684=Enter new title for guild member:
+1685=Select guild member to set title for
+1686=You have been granted a guild title of %s!
+1687=You have recruited %s as a new guild member!
+1688=You have been recruited to join the guild %s!
+1689=You have dismissed %s from your guild!
+1690=You have been dismissed from your guild!
+1691=You cannot dismiss yourself from the guild!
+1692=%s is now the new Guild Master of %s!
 // Tweak Char Menu Stuff
 1700=Invalid Button Pressed
 1701=Enter a new Name for the character.
@@ -1951,6 +1974,15 @@
 1979=Tokuno Islands
 1980=Ter Mur
 1981=Members of the %s race cannot wear this
+1982=You parry the attack!
+1983=Your weapon has been destroyed!
+1984=You are not a member of this guild!
+1985=You have sponsored %s as a candidate to join the guild!
+1986=You have been invited by %s to join the guild: %s
+1987=You have declared fealty to %s!
+1988=%s has declared fealty to you!
+1989=Your guild has declared war on the guild %s!
+1990=Your guild has declared the guild %s as an ally!
 // JS-Based Tweak Menu
 1991=Invalid object targeted!
 1992=Unknown object targeted!
@@ -2159,6 +2191,18 @@
 2204=Friend's List
 2205=The spirits of the dead are not the province of animal lore.
 2206=You can't think of anything you know offhand.
+2250=Confused
+2251=Extremely Unhappy
+2252=Rather Unhappy
+2253=Unhappy
+2254=Somewhat Content
+2255=Content
+2256=Happy
+2257=Rather Happy
+2258=Very Happy
+2259=Extremely Happy
+2260=Wonderfully Happy
+2261=Euphoric
 // [2300-2449] Hirelings
 2300=%s has been removed from %s's friend list.
 2301=You have been removed from %s's friend list.
@@ -2467,6 +2511,15 @@
 2759=Didn't your parents ever tell you not to run with scissors in your hand?!
 2760=You cannot unravel the magic of a blessed item.
 2761=The creature resisted the attempt to dispel it!
+2762=Invalid number of parameters - requires 2 (timerID,scriptID)!
+2763=Fetch remaining time of JS timer for which object?
+2764=Timer will expire at: %s
+2765=Remaining time: %d seconds
+2766=No JS timer with timerID %d and scriptID %u active on object!
+2767=Invalid number of parameters - requires 3 (timerID,expiryTime,scriptID)!
+2768=Set remaining time of JS timer for which object?
+2769=Kill specified JS timer for which object?
+2770=Specified JS timer has been killed for selected object.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -3274,6 +3327,10 @@
 6213=This potion may have been made from sulfurous ash.
 6214=This potion's ingredients are unknown to you.
 6215=You already know what kind of potion that is: %s
+6250=You step out of the shadows.
+6275=You combine the berry and the flour into the tribal paint worn by the savages.
+6276=You don't have the cooking skill to create the body paint.
+6277=Resource ID not found in list of resources used to craft item.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3521,6 +3578,10 @@
 8207=Base range of ranged weapon (SA and later only)
 8208=Item's current remaining uses (cannot exceed value of maxUses property)
 8209=Maximum amount of uses item can have
+8210=Redirecting to 'radditem command...
+8211=Redirecting to 'raddnpc command...
+8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Section ID from DFNs object originated from
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -3653,6 +3714,11 @@
 8428=X coordinate of character in the world
 8429=Y coordinate of character in the world
 8430=Z coordinate of character in the world
+8431=Top left X coord for character's wandertype boundary
+8432=Top left Y coord for character's wandertype boundary
+8433=Bottom right X coord for character's wandertype boundary
+8434=Bottom right Y coord for character's wandertype boundary
+8435=Z coord for character's wandertype boundary
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Current number of players banned from Multi. Controlled by Server (Read-Only)
 8501=X coordinate for Multi's ban-location
@@ -3990,6 +4056,12 @@
 9128=You have no chance of provoking that creature.
 9129=That target is immune to physical damage!
 9130=Your weapon cannot penetrate the creature's magical barrier.
+9140=of exceptional quality
+9141=Crafted by
+9142=You unlock the plank.
+9143=You lock the plank.
+9144=You open the plank, though it's still locked.
+9150=No backpack detected, unable to add item! Try the 'addpack command?
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -4339,6 +4411,8 @@
 11218=Bow
 11219=Crossbow
 11220=Heavy Crossbow
+11221=Composite Bow
+11222=Repeating Crossbow
 // 11401 - 11600 Tailoring Crafting Skill
 11401=TAILORING MENU
 11402=LEATHER/HIDES

@@ -34,11 +34,13 @@
 // Global script, events within triggered for all applicable objects
 0=server/global.js
 
+//-------------------------------------------
+// CORE:[0-99] Reserved for specific core server needs
+//-------------------------------------------
 1=server/misc/admin_welcome.js
 2=server/misc/helpgump.js
-//-------------------------------------------
-// CORE:[0-99] Rerserved for specific core server needs
-//-------------------------------------------
+3=server/timer/long_term_timers.js
+
 // turn furniture start[50-54]
 50=server/misc/furniture_smartturn.js
 //-------------------------------------------
@@ -116,6 +118,7 @@
 542=server/light/candle08_off.js
 543=server/light/candle09_on.js
 544=server/light/candle09_off.js
+545=item/lights.js
 //-------------------------------------------
 // Resource Harvesting[2000-2099]
 2001=server/resource/apples.js
@@ -181,6 +184,8 @@
 3209=npc/ai/monster/orc_brute_thrown_lord.js
 3210=npc/ai/monster/orc_chopper.js
 3211=npc/ai/monster/exodus_clockwork.js
+3212=npc/ai/monster/savage.js
+3213=npc/ai/monster/savage_shaman.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -204,6 +209,7 @@
 3510=npc/special/immortality.js
 3511=npc/special/colossal_blow.js
 3512=npc/special/physical_immunity.js
+3513=npc/special/bola_ability.js
 
 //-------------------------------------------
 // General Skills [4000-4499]
@@ -282,6 +288,14 @@
 5033=item/sextant.js
 5034=item/iron_maiden.js
 5035=item/gate_opener.js
+5037=item/tribal_paint.js
+5038=item/tribal_spear.js
+
+//-------------------------------------------
+// Magic Related Scripts [6000-6500]
+//-------------------------------------------
+6000=magic/helper/check_resist.js
+6001=magic/helper/calc_final_spell_damage.js
 
 //-------------------------------------------
 // Combat Scripts [7000-7499]
@@ -405,7 +419,7 @@
 
 [PACKET_SCRIPTS]
 { // 1500-1999
-1500=server/network/0xf1_connectUoServerPoll.js
+1500=server/network/0xf1_freeshardServerPoll.js
 1501=server/network/0x7f_uogatewayServerPoll.js
 }
 

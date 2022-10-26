@@ -16,17 +16,17 @@ function onUseChecked( pUser, iUsed )
 		return false;
 	}
 
-	if( !iUsed.GetTag("initialized")) // Unless honey has been picked before, initialize settings
+	if( !iUsed.GetTag( "initialized")) // Unless honey has been picked before, initialize settings
 	{
-		iUsed.SetTag("initialized", 1 ); 	// Marks hive as initialized
-		iUsed.SetTag("Honey",1); 			// If set to 1, there is honey to be harvested, if 0 there is no honey ready for harvesting
-		iUsed.SetTag("HoneyCounter", maxResource); 	// Add 5 honey to the hive initially
+		iUsed.SetTag( "initialized", 1 ); 	// Marks hive as initialized
+		iUsed.SetTag( "Honey", 1 ); 			// If set to 1, there is honey to be harvested, if 0 there is no honey ready for harvesting
+		iUsed.SetTag( "HoneyCounter", maxResource ); 	// Add 5 honey to the hive initially
 	}
 
-	var Honey = iUsed.GetTag("Honey");
-	var HoneyCount = iUsed.GetTag("HoneyCounter");
+	var honey = iUsed.GetTag( "Honey" );
+	var honeyCount = iUsed.GetTag( "HoneyCounter" );
 
-	if( Honey == 0 )
+	if( honey == 0 )
 	{
 		pUser.SysMessage( GetDictionaryEntry( 2515, pUser.socket.language )); // You find no ripe honey to collect. Try again later.
 	}
@@ -49,10 +49,12 @@ function onUseChecked( pUser, iUsed )
 			pUser.socket.SysMessage( GetDictionaryEntry( 2513, pUser.socket.language )); // You manage to grab some wax and honey from the beehive without getting stung.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", 1, "ITEM", true );
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", 1, "ITEM", true );
-			HoneyCount--;
-			iUsed.SetTag( "HoneyCounter", HoneyCount );
-			if( HoneyCount == 1)
+			honeyCount--;
+			iUsed.SetTag( "HoneyCounter", honeyCount );
+			if( honeyCount == 1)
+			{
 				pUser.SysMessage( GetDictionaryEntry( 2516, pUser.socket.language )); // There is very few collectable resources left in the beehive.
+			}
 			else
 			{
 				pUser.SysMessage( GetDictionaryEntry( 2517, pUser.socket.language )); // There are still some collectable resources left in the beehive.
@@ -63,10 +65,12 @@ function onUseChecked( pUser, iUsed )
 			pUser.socket.SysMessage(GetDictionaryEntry( 2514, pUser.socket.language )); // You manage to grab some wax and honey from the beehive, but fail to avoid getting stung.
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x1422", 1, "ITEM", true );
 			var itemMade = CreateDFNItem( pUser.socket, pUser, "0x09ec", 1, "ITEM", true );
-			HoneyCount--;
-			iUsed.SetTag( "HoneyCounter", HoneyCount );
-			if( HoneyCount == 1)
+			honeyCount--;
+			iUsed.SetTag( "HoneyCounter", honeyCount );
+			if( honeyCount == 1)
+			{
 				pUser.SysMessage( GetDictionaryEntry( 2516, pUser.socket.language )); // There is very few collectable resources left in the beehive.
+			}
 			else
 			{
 				pUser.SysMessage( GetDictionaryEntry( 2517, pUser.socket.language )); // There are still some collectable resources left in the beehive.
@@ -76,7 +80,7 @@ function onUseChecked( pUser, iUsed )
 			iUsed.SoundEffect( 0x0231, true );
 		}
 
-		if( HoneyCount == 0 )
+		if( honeyCount == 0 )
 		{
 			iUsed.SetTag( "Honey", 0 );
 			iUsed.StartTimer( resourceGrowthDelay, 1, true ); // Puts in a delay until next time honey respawn
@@ -90,7 +94,7 @@ function onTimer( iUsed, timerID )
 {
 	if( timerID == 1 )
 	{
-		iUsed.SetTag("HoneyCounter", maxResource);
-		iUsed.SetTag("Honey", 1);
+		iUsed.SetTag( "HoneyCounter", maxResource );
+		iUsed.SetTag( "Honey", 1 );
 	}
 }

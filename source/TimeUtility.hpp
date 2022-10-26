@@ -7,18 +7,20 @@
 #include <string>
 #include <chrono>
 
-namespace timeutil {
-	std::string timenow();
+namespace timeutil
+{
+	std::string timeNow();
 	
-	struct Interval {
+	struct Interval_st
+	{
 	private:
-		std::chrono::time_point<std::chrono::steady_clock> start_time ;
+		std::chrono::time_point<std::chrono::steady_clock> startTime;
 		
 	public:
-		Interval();
-		void start() ;
-		long long elapsed() ;
-		long long stop() ;
+		Interval_st();
+		void Start();
+		long long Elapsed();
+		long long Stop();
 	};
 }
 

@@ -1,0 +1,110 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// CLASSIC
+// Crossbow - AoS stats
+[0x0f4f_aos]
+{
+get=base_crossbow
+weight=700
+value=46 23
+damage=18 20
+hp=36 48
+spd=24
+str=35
+}
+
+// Heavy Crossbow - AoS stats
+[0x13fc_aos]
+{
+get=base_heavy_crossbow
+weight=900
+value=56 28
+damage=19 20
+hp=31 100
+spd=22
+str=80
+}
+
+// Bow - AoS stats
+[0x13b1_aos]
+{
+get=base_bow
+weight=700
+value=46 23
+damage=16 18
+hp=36 48
+spd=25
+str=30
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Composite Bow - AoS stats
+[0x26c2_aos]
+{
+get=base_composite_bow
+value=51 24
+damage=15 17
+hp=36 48
+spd=25
+str=45
+weight=500
+}
+
+// Repeating Crossbow - AoS stats
+[0x26c3_aos]
+{
+get=base_repeating_crossbow
+value=58 26
+damage=10 12
+hp=36 48
+spd=41
+str=30
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Yumi - AoS stats
+[0x27a5_aos]
+{
+get=base_yumi
+weight=800
+value=54 25
+damage=14 16
+hp=36 48
+spd=33
+str=35
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Elven Composite Longbow - AoS stats
+[0x2d1e_aos]
+{
+get=base_elven_composite_longbow
+weight=800
+value=52 26
+damage=16 18
+hp=36 48
+spd=30
+str=45
+}
+
+// Magical Shortbow - AoS stats
+[0x2d2b_aos]
+{
+get=base_magical_shortbow
+weight=600
+value=51 26
+damage=13 15
+hp=36 48
+spd=36
+str=45
+}

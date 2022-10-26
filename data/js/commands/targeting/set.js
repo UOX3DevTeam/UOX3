@@ -1,3 +1,5 @@
+// This command is used to set values for various properties on objects
+
 function CommandRegistration()
 {
 	RegisterCommand( "set", 2, true );
@@ -20,10 +22,12 @@ function command_SET( socket, cmdString )
 		}
 
 		socket.xText = cmdString;
-		socket.CustomTarget( 0, GetDictionaryEntry( 8102, socket.language ) + " " + cmdString );
+		socket.CustomTarget( 0, GetDictionaryEntry( 8102, socket.language ) + " " + cmdString ); // Choose target to set:
 	}
 	else
+	{
 		socket.SysMessage( GetDictionaryEntry( 8103, socket.language )); // No property was specified for the SET command.
+	}
 }
 
 // Common Object properties
@@ -36,8 +40,8 @@ function onCallback0( socket, ourObj )
 	}
 
 	var splitString = socket.xText.split( " " );
-	var uKey 	= splitString[0].toUpperCase();
-	var nVal 	= parseInt( splitString[1] );
+	var uKey = splitString[0].toUpperCase();
+	var nVal = parseInt( splitString[1] );
 	switch( uKey )
 	{
 	case "NAME":
@@ -100,7 +104,7 @@ function onCallback0( socket, ourObj )
 		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
 		break;
 	case "PERMANENTMAGICREFLECT":
-		ourObj.permanentMagicReflect = (nVal == 1);
+		ourObj.permanentMagicReflect = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "POISON":
@@ -132,7 +136,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "WIPABLE":
 	case "WIPEABLE":
-		ourObj.wipable = (nVal == 1);
+		ourObj.wipable = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "RACE":
@@ -153,7 +157,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "SCRIPTTRIGGER":
 		// Add a single script trigger to object; overwrites existing list of scripts
-		if( parseInt(nVal) == 0 )
+		if( parseInt( nVal ) == 0 )
 		{
 			ourObj.RemoveScriptTrigger( 0 );
 			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
@@ -166,7 +170,7 @@ function onCallback0( socket, ourObj )
 		break;
 	case "SCRIPTTRIGGERS":
 		// Add script trigger to list of triggers on objects
-		if( parseInt(nVal) == 0 )
+		if( parseInt( nVal ) == 0 )
 		{
 			ourObj.RemoveScriptTrigger( 0 );
 			socket.SysMessage( GetDictionaryEntry( 2044, socket.language )); // All script triggers have been cleared from target!
@@ -177,17 +181,27 @@ function onCallback0( socket, ourObj )
 			okMsg( socket );
 		}
 		break;
+	case "SECTIONID":
+		ourObj.sectionID = socket.xText.substring( 5 );
+		okMsg( socket );
+		break;
 	case "SHOULDSAVE":
-		ourObj.shouldSave = (nVal == 1);
+		ourObj.shouldSave = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	default:
 		if( ourObj.isChar )
+		{
 			HandleSetChar( socket, ourObj, uKey, splitString );
+		}
 		else if( ourObj.isItem )
+		{
 			HandleSetItem( socket, ourObj, uKey, splitString );
+		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
+		}
 		break;
 	}
 }
@@ -195,7 +209,7 @@ function onCallback0( socket, ourObj )
 // Item-specific properties
 function HandleSetItem( socket, ourItem, uKey, splitString )
 {
-	var nVal 	= parseInt( splitString[1] );
+	var nVal = parseInt( splitString[1] );
 
 	switch( uKey )
 	{
@@ -295,11 +309,11 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		}
 		break;
 	case "NEWBIE":
-		ourItem.isNewbie = (nVal == 1);
+		ourItem.isNewbie = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "DIVINELOCK":
-		ourItem.divinelock = (nVal == 1);
+		ourItem.divinelock = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "DIR":
@@ -335,7 +349,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		okMsg( socket );
 		break;
 	case "DECAYABLE":
-		ourItem.decayable = (nVal == 1);
+		ourItem.decayable = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "VISIBLE":
@@ -403,7 +417,9 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		break;
 	default:
 		if( ourItem.isSpawner )
+		{
 			HandleSetSpawner( socket, ourItem, uKey, splitString );
+		}
 		else
 		{
 			if( uKey == "SPAWNSECTION" || uKey == "MININTERVAL" || uKey == "MAXINTERVAL" )
@@ -412,7 +428,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 			}
 			else
 			{
-			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
+				socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
 			}
 		}
 		break;
@@ -422,7 +438,7 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 // Spawner-specific properties
 function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
-	var nVal 	= parseInt( splitString[1] );
+	var nVal = parseInt( splitString[1] );
 
 	switch( uKey )
 	{
@@ -431,7 +447,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 		if( splitValues[2] )
 		{
 			ourSpawn.spawnsection = splitValues[1];
-			ourSpawn.sectionalist = (splitValues[2] == "TRUE");
+			ourSpawn.sectionalist = ( splitValues[2] == "TRUE" );
 		}
 		else
 		{
@@ -456,7 +472,7 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 // Character-specific properties
 function HandleSetChar( socket, ourChar, uKey, splitString )
 {
-	var nVal 	= parseInt( splitString[1] );
+	var nVal = parseInt( splitString[1] );
 
 	switch( uKey )
 	{
@@ -544,7 +560,7 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		okMsg( socket );
 		break;
 	case "VULNERABLE":
-		ourChar.vulnerable = (nVal == 1);
+		ourChar.vulnerable = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "SPLIT":
@@ -563,15 +579,35 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		ourChar.z = nVal;
 		okMsg( socket );
 		break;
+	case "FX1":
+		ourChar.fx1 = nVal;
+		okMsg( socket );
+		break;
+	case "FY1":
+		ourChar.fy1 = nVal;
+		okMsg( socket );
+		break;
+	case "FX2":
+		ourChar.fx2 = nVal;
+		okMsg( socket );
+		break;
+	case "FY2":
+		ourChar.fy2 = nVal;
+		okMsg( socket );
+		break;
+	case "FZ":
+		ourChar.fz = nVal;
+		okMsg( socket );
+		break;
 	case "CANTRAIN":
 		if( ourChar.npc )
 		{
-			ourChar.trainer = (nVal == 1);
+			ourChar.trainer = ( nVal == 1 );
 			okMsg( socket );
 		}
 		break;
 	case "FROZEN":
-		ourChar.frozen = (nVal == 1);
+		ourChar.frozen = ( nVal == 1 );
 		okMsg( socket );
 		break;
 	case "VISIBLE":
@@ -597,6 +633,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "HUNGER":
 		ourChar.hunger = nVal;
+		okMsg( socket );
+		break;
+	case "AWAKE":
+		ourChar.isAwake = nVal;
 		okMsg( socket );
 		break;
 	case "LANGUAGE":
@@ -637,7 +677,9 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 					okMsg( socket );
 				}
 				else
+				{
 					socket.SysMessage( GetDictionaryEntry( 8109, socket.language ) + " " + newPass.length ); // Password must be longer than 3 characters! Current length:
+				}
 			}
 			break;
 		}
@@ -660,7 +702,9 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 				// Also set a default timeban of 24 hours (60 * 24), and disconnect user, if online
 				myAccount.timeban = 60 * 24;
 				if( myAccount.isOnline && ValidateObject( myAccount.currentChar ) && myAccount.currentChar.socket != null )
+				{
 					myAccount.currentChar.Disconnect();
+				}
 			}
 			else
 			{
@@ -817,12 +861,73 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		}
 		break;
 	default:
-		if( ourChar.SetSkillByName( uKey, nVal ) )
+		if( ourChar.SetSkillByName( uKey, nVal ))
+		{
 			okMsg( socket );
+		}
+		else if( HandleSetSocket( socket, uKey, splitString ))
+		{
+			okMsg( socket );
+		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
+		}
 		break;
 	}
+}
+
+function HandleSetSocket( socket, uKey, splitString )
+{
+	var nVal = parseInt( splitString[1] );
+
+	switch( uKey )
+	{
+		case "TEMPINT":
+			socket.tempInt = parseInt( nVal );
+			break;
+		case "TEMPINT2":
+			socket.tempInt2 = parseInt( nVal );
+			break;
+		case "XTEXT":
+			socket.xText = nVal;
+			break;
+		case "CLICKX":
+			socket.clickX = parseInt( nVal );
+			break;
+		case "CLICKY":
+			socket.clickY = parseInt( nVal );
+			break;
+		case "CLICKZ":
+			socket.clickZ = parseInt( nVal );
+			break;
+		case "WALKSEQUENCE":
+			socket.walkSequence = parseInt( nVal );
+			break;
+		case "CURRENTSPELLTYPE":
+			socket.currentSpellType = parseInt( nVal );
+			break;
+		case "LOGGING":
+			socket.logging = parseInt( nVal );
+			break;
+		case "PICKUPX":
+			socket.pickupX = parseInt( nVal );
+			break;
+		case "PICKUPY":
+			socket.pickupY = parseInt( nVal );
+			break;
+		case "PICKUPZ":
+			socket.pickupZ = parseInt( nVal );
+			break;
+		case "PICKUPSPOT":
+			socket.pickupSpot = parseInt( nVal );
+			break;
+		default:
+			socket.SysMessage( GetDictionaryEntry( 8105, socket.language ) + " " + uKey ); // Invalid set command + uKey
+			return false;
+	}
+
+	return true;
 }
 
 function onCallback1( socket, ourObj )
@@ -840,7 +945,7 @@ function command_SETPOISONED( socket, cmdString )
 {
 	if( cmdString )
 	{
-		var targMsg = GetDictionaryEntry( 240, socket.language );
+		var targMsg = GetDictionaryEntry( 240, socket.language ); // Select creature to set POISONED.
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, targMsg );
 	}
@@ -858,6 +963,7 @@ function onCallback2( socket, ourObj )
 }
 
 function okMsg( socket )
-{ //Sends verification to the player that the specified value was successfully set.
-	socket.SysMessage( GetDictionaryEntry( 1756, socket.language ));
+{
+	// Sends verification to the player that the specified value was successfully set.
+	socket.SysMessage( GetDictionaryEntry( 1756, socket.language )); // Value successfully set.
 }

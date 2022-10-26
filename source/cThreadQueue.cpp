@@ -1,51 +1,64 @@
 #include "cThreadQueue.h"
+#include <algorithm>
 
-CThreadQueue					messageLoop;
+//==============================================================================
+// We instantiate this right at the start 
+CThreadQueue messageLoop;
 
-CThreadQueue::CThreadQueue()
-{
-}
-
-CThreadQueue &CThreadQueue::operator<<( MessageType newMessage )
+//=============================================================
+auto CThreadQueue::operator << ( MessageType newMessage ) -> CThreadQueue &
 {
 	NewMessage( newMessage, "" );
-	return (*this);
+	return ( *this );
 }
-CThreadQueue &CThreadQueue::operator <<( char *toPush )
-{
-	NewMessage( MSG_PRINT, toPush );
-	return (*this);
-}
-CThreadQueue &CThreadQueue::operator <<( const char *toPush )
+//=============================================================
+auto CThreadQueue::operator << ( char *toPush ) -> CThreadQueue &
 {
 	NewMessage( MSG_PRINT, toPush );
 	return ( *this );
 }
-CThreadQueue &CThreadQueue::operator <<( const std::string& toPush )
+//=============================================================
+auto CThreadQueue::operator << ( const char *toPush ) -> CThreadQueue &
+{
+	NewMessage( MSG_PRINT, toPush );
+	return ( *this );
+}
+//=============================================================
+auto CThreadQueue::operator << ( const std::string& toPush ) -> CThreadQueue &
 {
 	NewMessage( MSG_PRINT, toPush.c_str() );
 	return ( *this );
 }
-bool CThreadQueue::Empty( void )
+//=============================================================
+auto CThreadQueue::Empty() -> bool
 {
-	std::scoped_lock lock(queuelock);
+	std::scoped_lock lock( queuelock );
 	bool retVal = internalQueue.empty();
 	return retVal;
 }
-MessagePassed CThreadQueue::GrabMessage( void )
+//=============================================================
+auto CThreadQueue::GrabMessage() -> MessagePassed_st
 {
-	std::scoped_lock lock(queuelock);
-	MessagePassed toReturn = internalQueue.front();
+	std::scoped_lock lock( queuelock );
+	MessagePassed_st toReturn = internalQueue.front();
 	internalQueue.pop();
 
 	return toReturn;
 }
-void CThreadQueue::NewMessage( MessageType toAdd, const std::string& data )
+//=============================================================
+auto CThreadQueue::NewMessage( MessageType toAdd, const std::string& data ) -> void
 {
-	std::scoped_lock lock(queuelock);
-	MessagePassed adding;
+	MessagePassed_st adding;
 	adding.actualMessage = toAdd;
-	adding.data = data ;
+	adding.data = data;
+	std::scoped_lock lock( queuelock );
 	internalQueue.push( adding );
-
+}
+//=============================================================
+auto CThreadQueue::BulkData() -> std::queue<MessagePassed_st>
+{
+	std::queue<MessagePassed_st> returnQueue;
+	std::scoped_lock lock( queuelock );
+	std::swap( returnQueue, internalQueue );
+	return returnQueue;
 }

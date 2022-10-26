@@ -20,7 +20,7 @@ const inactiveTimer = 60; // After this amount of seconds, an inactive trap will
 
 function onCollide( pSock, pChar, iTrap )
 {
-	if( !ValidateObject( pChar ) || !ValidateObject( iTrap ) || ( !pChar.npc && ( pChar.dead || pChar.isGM || pChar.isCounselor )))
+	if( !ValidateObject( pChar ) || !ValidateObject( iTrap ) || pChar.npc || ( !pChar.npc && ( pChar.dead || pChar.isGM || pChar.isCounselor )))
 		return false;
 
 	// Is trap in a disarmed/already active state? Do nothing
@@ -46,6 +46,7 @@ function onCollide( pSock, pChar, iTrap )
 		case 0x1108: // inactive wall spike trap
 		case 0x111b: // inactive wall spike trap
 			trapFxLength = ( !trapFxLength ? 0x10 : trapFxLength );
+			// fallthrough
 		case 0x119a: // inactive floor spike trap
 		case 0x11a0: // inactive floor spike trap
 			trapFxLength = ( !trapFxLength ? 0x09 : trapFxLength );
@@ -63,7 +64,9 @@ function onCollide( pSock, pChar, iTrap )
 			DoStaticEffect( iTrap.x, iTrap.y, iTrap.z, trapFX, 0x0, trapFxLength, false );
 
 			if( iTrap.id == 0x119a || iTrap.id == 0x11a0 )
+			{
 				iTrap.id += 2;
+			}
 
 			// Search for characters the trap can damage
 			AreaCharacterFunction( "SearchForNearbyChars", iTrap, 0 );
@@ -184,9 +187,13 @@ function onTimer( timerObj, timerID )
 
 				// Play a trap effect
 				if( timerObj.id == 0x119c || timerObj.id == 0x11a2 )
+				{
 					DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, timerObj.id - 1, 0x10, trapFxLength, false );
+				}
 				else
+				{
 					DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, timerObj.id + 1, 0x10, trapFxLength, false );
+				}
 				break;
 			case 0x11c0: // fire column trap
 				timerObj.id = 0x11c5;
@@ -204,7 +211,9 @@ function onTimer( timerObj, timerID )
 			case 0x10ff: // stone face trap (active)
 			case 0x1112: // stone face trap (active)
 				if( timerID == 0 )
+				{
 					timerObj.SoundEffect( 0x54, true ); // Play only once
+				}
 				DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, timerObj.id - 1, 30, 0x15, false );
 				break;
 			case 0x1104: // saw trap
@@ -212,7 +221,9 @@ function onTimer( timerObj, timerID )
 			case 0x11ad: // saw trap
 			case 0x11b2: // saw trap
 				if( timerID == 2 )
+				{
 					timerObj.SoundEffect( 0x021c, true ); // Repeat sound effect half ways
+				}
 				break;
 			case 0x1125: // mushroom trap
 				DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, timerObj.id + 1, 0x10, 0x15, false );
@@ -304,13 +315,17 @@ function ApplyTrapDamage( iTrap, trgChar )
 			var trapDamageMultiplier = iTrap.GetMoreVar( "morez", 2 );
 
 			// Apply damage to character
-			trgChar.Damage( RandomNumber( iTrap.lodamage, iTrap.hidamage ) * parseInt(trapDamageMultiplier) ); // Deal 6 to 36 damage
+			trgChar.Damage( RandomNumber( iTrap.lodamage, iTrap.hidamage ) * parseInt( trapDamageMultiplier )); // Deal 6 to 36 damage
 
 			// Make character react to damage
 			if( trgChar.gender == 0 )
+			{
 				trgChar.SoundEffect( 343, false );
+			}
 			else if( trgChar.gender == 1 )
+			{
 				trgChar.SoundEffect( 806, false );
+			}
 			trgChar.TextMessage( "Ouch!", false );
 			break;
 		case 0x113d: // gas trap
@@ -339,10 +354,12 @@ function onMoveDetect( iTrap, pChar, rangeToChar, oldCharX, oldCharY )
 	// Grab some info from the trap
 	var maxRange = iTrap.GetMoreVar( "more", 1 );
 	if( maxRange < 0x04 )
+	{
 		maxRange = 0x04; // Min range for this trap to work correctly
-	var oldRangeX = Math.abs(iTrap.x - oldCharX);
-	var oldRangeY = Math.abs(iTrap.y - oldCharY);
-	var flameItem = CalcItemFromSer( parseInt(iTrap.GetTempTag( "flameItem" )));
+	}
+	var oldRangeX = Math.abs( iTrap.x - oldCharX );
+	var oldRangeY = Math.abs( iTrap.y - oldCharY );
+	var flameItem = CalcItemFromSer( parseInt( iTrap.GetTempTag( "flameItem" )));
 
 	// Handle player walking out of range
 	if( rangeToChar >= maxRange )

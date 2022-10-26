@@ -7,7 +7,9 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 857, pSock.language ) ); // What do you wish to appraise and identify?
+	{
+		pSock.CustomTarget( 0, GetDictionaryEntry( 857, pSock.language )); // What do you wish to appraise and identify?
+	}
 
 	return true;
 }
@@ -27,7 +29,7 @@ function onCallback0( pSock, ourObj )
 		var pLanguage = pSock.language;
 		if( ourObj.corpse )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1546, pLanguage ) ); // You have to use your forensics evaluation skill to know more about this corpse.
+			pSock.SysMessage( GetDictionaryEntry( 1546, pLanguage )); // You have to use your forensics evaluation skill to know more about this corpse.
 			return;
 		}
 		else if( ourObj.isItemHeld || ourObj.worldnumber != pUser.worldnumber || ourObj.instanceID != pUser.instanceID )
@@ -41,9 +43,9 @@ function onCallback0( pSock, ourObj )
 			return;
 		}
 
-		if( !idFromWand && !pUser.CheckSkill( 3, 250, 500 ) )
+		if( !idFromWand && !pUser.CheckSkill( 3, 250, 500 ))
 		{
-			pSock.SysMessage( GetDictionaryEntry( 1545, pLanguage ) ); // You can't quite tell what this item is...
+			pSock.SysMessage( GetDictionaryEntry( 1545, pLanguage )); // You can't quite tell what this item is...
 			return;
 		}
 
@@ -56,7 +58,11 @@ function onCallback0( pSock, ourObj )
 		}
 
 		var tempMsg = GetDictionaryEntry( 1547, pLanguage ); // You found that this item appears to be called: %s
-		tempMsg = ( tempMsg.replace(/%s/gi, ourObj.name ));
+		tempMsg = ( tempMsg.replace( /%s/gi, ourObj.name ));
+		if( GetServerSetting( "RankSystem" ) && ourObj.rank == 10 )
+		{
+			tempMsg += " " + GetDictionaryEntry( 9140, pLanguage ); // of exceptional quality
+		}
 		ourObj.TextMessage( tempMsg, false, 0x3b2, 0, pUser.serial );
 
 		var creatorSerial = ourObj.creator;
@@ -69,42 +75,40 @@ function onCallback0( pSock, ourObj )
 				{
 					let madeWord = Skills[ourObj.madeWith].madeWord;
 					let tempMsg = GetDictionaryEntry( 1548, pLanguage ); // It is %s by %s.
-					tempMsg = ( tempMsg.replace(/%s/gi, madeWord ));
-					tempMsg = ( tempMsg.replace(/%w/gi, creator.name ));
-				}
-				else if( ourObj.madeWith < 0 )
-				{
-					let madeWord = Skills[0-ourObj.madeWith].madeWord;
-					let tempMsg = GetDictionaryEntry( 1548, pLanguage ); // It is %s by %s.
-					tempMsg = ( tempMsg.replace(/%s/gi, madeWord ));
-					tempMsg = ( tempMsg.replace(/%w/gi, creator.name ));
+					tempMsg = ( tempMsg.replace( /%s/gi, madeWord ));
+					tempMsg = ( tempMsg.replace( /%w/gi, creator.name ));
 				}
 				else
 				{
 					let tempMsg = GetDictionaryEntry( 1549, pLanguage ); // It is made by %s.
-					tempMsg = ( tempMsg.replace(/%s/gi, creator.name ));
+					tempMsg = ( tempMsg.replace( /%s/gi, creator.name ));
 				}
 
 				ourObj.TextMessage( tempMsg, false, 0x3b2, 0, pUser.serial );
 			}
 			else
+			{
 				pSock.SysMessage( GetDictionaryEntry( 1550, pSock.language )); // You don't know its creator!
+			}
 		}
 		else
+		{
 			pSock.SysMessage( GetDictionaryEntry( 1550, pSock.language )); // You don't know its creator!
+		}
 
 		if( idFromWand || pUser.skills.itemid > 350 )
 		{
 			if( ourObj.type != 15 ) // IT_MAGICWAND
 			{
 				if( ourObj.name2 == "" || ourObj.name2 == "#" )
+				{
 					pSock.SysMessage( GetDictionaryEntry( 1553, pSock.language )); // This item has no hidden magical properties
+				}
 				return;
 			}
 
 			if( idFromWand || pUser.CheckSkill( 3, 500, 750 ))
 			{
-				pSock.SysMessage( "spellNum: " + spellNum );
 				var spellNum = ourObj.morey;
 				var spellName = GetDictionaryEntry( 592 + spellNum, pSock.language );
 				if( spellName != "" )
@@ -121,14 +125,20 @@ function onCallback0( pSock, ourObj )
 				}
 			}
 			else
+			{
 				pSock.SysMessage( GetDictionaryEntry( 1554, pSock.language )); // This item is enchanted with a spell, but you cannot determine which.
+			}
 		}
 		else
+		{
 			pSock.SysMessage( GetDictionaryEntry( 1552, pSock.language )); // You can't tell if it is magical or not.
+		}
 	}
 	else
 	{
 		if( pSock )
-			pSock.SysMessage( GetDictionaryEntry( 711, pSock.language ) ); // That is not a valid item.
+		{
+			pSock.SysMessage( GetDictionaryEntry( 711, pSock.language )); // That is not a valid item.
+		}
 	}
 }

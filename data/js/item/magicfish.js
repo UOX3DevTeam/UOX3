@@ -17,17 +17,17 @@ function onUseChecked( pUser, iUsed )
 		}
 		switch ( iUsed.morey )
 		{
-			case 1:		// Prized Fish
+			case 1:	// Prized Fish
 				pUser.StaticEffect( 0x375A, 0, 15 );
 				pUser.SoundEffect( 0x1E7, true );
 				DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 6, 15 ), 0, 0 );
-				DoTempEffect( 0, pUser, pUser, 8, ( 10 + RandomNumber( 1, 10 ) ), 0, 0 )
+				DoTempEffect( 0, pUser, pUser, 8, ( 10 + RandomNumber( 1, 10 )), 0, 0 )
 				pUser.tempint = ( pUser.tempint + 5 );
 				pUser.isUsingPotion = true;
 				pUser.EmoteMessage( GetDictionaryEntry( 9302, socket.language ) ); // You swallow the fish whole!
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); // Disallow immediately using another potion
 				break;
-			case 2:		// wondrous fish
+			case 2:	// wondrous fish
 				pUser.StaticEffect( 0x375A, 0, 15 );
 				pUser.SoundEffect( 0x1E7, true );
 				DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 20, 30 ), 0, 0 );
@@ -36,7 +36,7 @@ function onUseChecked( pUser, iUsed )
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); // Disallow immediately using another potion
 				break;
-			case 3:		// truly rare fish
+			case 3:	// truly rare fish
 				pUser.StaticEffect( 0x375A, 0, 15 );
 				pUser.SoundEffect( 0x1E7, true );
 				DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 20, 30 ), 0, 0 );
@@ -45,7 +45,7 @@ function onUseChecked( pUser, iUsed )
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); // Disallow immediately using another potion
 				break;
-			case 4:		// highly peculiar fish
+			case 4:	// highly peculiar fish
 				pUser.StaticEffect( 0x375A, 0, 15 );
 				pUser.SoundEffect( 0x1E7, true );
 				DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 20, 30 ), 0, 0 );

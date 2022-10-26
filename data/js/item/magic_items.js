@@ -85,17 +85,29 @@ function onDeath( cNpc, iCorpse )
 		// Determine max amount of magic items that can potentially spawn for a given NPC
 		var maxItemAmount = 0;
 		if( npcFame < 3000 )
+		{
 			maxItemAmount = 1;
+		}
 		else if( npcFame < 6000 )
+		{
 			maxItemAmount = 2;
+		}
 		else if( npcFame < 8000 )
+		{
 			maxItemAmount = 3;
+		}
 		else if( npcFame < 10000 )
+		{
 			maxItemAmount = 5;
+		}
 		else if( npcFame < 15000 )
+		{
 			maxItemAmount = 6;
+		}
 		else
+		{
 			maxItemAmount = 7;
+		}
 
 		for( var i = 0; i < maxItemAmount; i++ )
 		{
@@ -105,7 +117,7 @@ function onDeath( cNpc, iCorpse )
 			if( spawnMagicItem )
 			{
 				// Determine what type of magic loot to create
-				itemType = weightedRandom( 1, 4 );
+				itemType = WeightedRandom( 1, 4 );
 				switch( itemType )
 				{
 					case 1: // Weapon
@@ -123,7 +135,9 @@ function onDeath( cNpc, iCorpse )
 				// Actually create the magic loot!
 				var magicItem = GenerateMagicItem( itemType, null );
 				if( ValidateObject( magicItem ))
+				{
 					magicItem.container = iCorpse;
+				}
 			}
 		}
 	}
@@ -140,7 +154,9 @@ function onCreateDFN( objMade, objType )
 	{
 		var fameLevel = objMade.morex;
 		if( fameLevel == 0 )
+		{
 			fameLevel = RandomNumber( 1, 10000 );
+		}
 
 		MagicLootChanceCalculator( fameLevel, true );
 
@@ -149,7 +165,7 @@ function onCreateDFN( objMade, objType )
 		var itemType = objMade.morey;
 		if( itemType == 5 )
 		{
-			itemType = weightedRandom( 1, 4 );
+			itemType = WeightedRandom( 1, 4 );
 			switch( itemType )
 			{
 				case 1: // Weapon
@@ -171,7 +187,9 @@ function onCreateDFN( objMade, objType )
 		// Delete the newly created magicItem, since we only used it as a temporary item and copied
 		// all its properties to objMade already
 		if( ValidateObject( magicItem ))
+		{
 			magicItem.Delete();
+		}
 	}
 }
 
@@ -209,9 +227,13 @@ function MagicLootChanceCalculator( fameLevel, guaranteedLoot )
 	// Time to do a check to see if we should spawn a magic item or not
 	var iNum = RandomNumber( 0, dropRateNum );
 	if( iNum == dropRateNum )
+	{
 		return true; // success!
+	}
 	else
+	{
 		return false; // no such luck
+	}
 }
 
 // Generate a magic item of specified itemType (weapon, armor) based on a given fame level. targCont is container to put item in
@@ -221,7 +243,7 @@ function GenerateMagicItem( itemType, placeHolderItem )
 	var tierNum = RandomNumber( 1, maxTierLevel );
 
 	// Let's put in a small chance of getting an item from a higher tier
-	tierNum = calcTierBonus( tierNum );
+	tierNum = CalcTierBonus( tierNum );
 
 	// Time to create the magic item itself
 	var magicItem;
@@ -249,7 +271,7 @@ function GenerateMagicItem( itemType, placeHolderItem )
 	return magicItem;
 }
 
-function calcTierBonus( tierVal )
+function CalcTierBonus( tierVal )
 {
 	if( tierVal < 5 )
 	{
@@ -375,13 +397,21 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		// 1 Magical Effect
 		rndBonus = RandomNumber( 0, 3 );
 		if( rndBonus == 0 )
+		{
 			addHpBonus = true;
+		}
 		else if( rndBonus == 1 )
+		{
 			addAccBonus = true;
+		}
 		else if( rndBonus == 2 )
+		{
 			addDmgBonus = true;
+		}
 		else if( rndBonus == 3 )
+		{
 			addSilverBonus = true;
+		}
 	}
 	else if( rndBonus >= 70 && rndBonus < 99 )
 	{
@@ -463,13 +493,13 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 	// Are we adding HP bonuses?
 	if( addHpBonus )
 	{
-		calcHpBonus( rndWeapon, 0 );
+		CalcHpBonus( rndWeapon, 0 );
 	}
 
 	// Are we adding ACC bonuses?
 	if( addAccBonus )
 	{
-		calcAccuracyBonus( rndWeapon, addHpBonus );
+		CalcAccuracyBonus( rndWeapon, addHpBonus );
 	}
 	else if( addHpBonus )
 	{
@@ -490,7 +520,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 	if( addDmgBonus )
 	{
 		rndWeapon.name2 += " of ";
-		calcDamageBonus( rndWeapon );
+		CalcDamageBonus( rndWeapon );
 	}
 
 	// Are we adding Spell bonuses?
@@ -507,7 +537,7 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 			rndWeapon.name2 += " of ";
 		}
 
-		calcWeaponSpellBonus( rndWeapon );
+		CalcWeaponSpellBonus( rndWeapon );
 	}
 
 	rndWeapon.name = "a magic " + tempName;
@@ -519,7 +549,9 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 	}
 
 	if( outputMagicItemNamesToFile )
-		addToDatabase( 0, rndWeapon.name2 );
+	{
+		AddToDatabase( 0, rndWeapon.name2 );
+	}
 
 	if( ValidateObject( rndWeapon ) && ValidateObject( placeHolderItem ))
 	{
@@ -531,7 +563,9 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 				if( typeof( rndWeapon[itemProp] ) != "undefined" && rndWeapon[itemProp] != null )
 				{
 					if( itemProp == "race" && rndWeapon.race != null )
+					{
 						placeHolderItem.race = rndWeapon.race.id;
+					}
 					else
 					{
 						placeHolderItem[itemProp] = rndWeapon[itemProp];
@@ -545,24 +579,28 @@ function CreateMagicWeapon( tierNum, placeHolderItem )
 		for( var i = 0; i < scriptTriggerList.length; i++ )
 		{
 			if( scriptTriggerList[i] != 0 && scriptTriggerList[i] != magicItemScriptID )
+			{
 				placeHolderItem.AddScriptTrigger( scriptTriggerList[i] );
+			}
 		}
 
 		// Set accBonus tag too!
 		if( rndWeapon.GetTag( "accBonus" ))
+		{
 			placeHolderItem.SetTag( "accBonus", rndWeapon.GetTag( "accBonus" ));
+		}
 	}
 	return rndWeapon;
 }
 
-function calcHpBonus( rndItem, itemType )
+function CalcHpBonus( rndItem, itemType )
 {
 	// Define some variables
 	var hpBonus = 0;
 	var hpBonusName = "";
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -593,7 +631,9 @@ function calcHpBonus( rndItem, itemType )
 
 	// if itemType is armor, halve the hp bonus
 	if( itemType == 1 )
+	{
 		hpBonus /= 2;
+	}
 
 	// Let's add that bonus and adjust the weapon's magical name accordingly
 	rndItem.maxhp += hpBonus;
@@ -601,7 +641,7 @@ function calcHpBonus( rndItem, itemType )
 	rndItem.name2 += hpBonusName;
 }
 
-function calcAccuracyBonus( rndWeapon, addHpBonus )
+function CalcAccuracyBonus( rndWeapon, addHpBonus )
 {	// Let's add some Weapon Bonuses! (Bonii?)
 
 	// Define some variables
@@ -610,7 +650,7 @@ function calcAccuracyBonus( rndWeapon, addHpBonus )
 	var accBonusName = "";
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -676,7 +716,7 @@ function calcAccuracyBonus( rndWeapon, addHpBonus )
 	}
 }
 
-function calcDamageBonus( rndWeapon )
+function CalcDamageBonus( rndWeapon )
 {	// Let's add some Weapon Bonuses! (Bonii?)
 
 	// Define some variables
@@ -684,7 +724,7 @@ function calcDamageBonus( rndWeapon )
 	var dmgBonusName = "";
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -728,7 +768,7 @@ function calcDamageBonus( rndWeapon )
 	rndWeapon.name2 += dmgBonusName;
 }
 
-function calcWeaponSpellBonus( rndWeapon )
+function CalcWeaponSpellBonus( rndWeapon )
 {
 	// Define some variables
 	var spellBonusName = "";
@@ -737,7 +777,7 @@ function calcWeaponSpellBonus( rndWeapon )
 	var spellCharges = 0;
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -919,7 +959,7 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 	// Are we adding HP bonuses?
 	if( addHpBonus )
 	{
-		calcHpBonus( rndArmor, 1 );
+		CalcHpBonus( rndArmor, 1 );
 		rndArmor.name2 += " ";
 	}
 
@@ -929,7 +969,7 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 	// Are we adding AR bonuses?
 	if( addArmorBonus )
 	{
-		calcArmorBonus( rndArmor );
+		CalcArmorBonus( rndArmor );
 	}
 
 	// Are we adding spell bonuses?
@@ -945,7 +985,7 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 			rndArmor.name2 += " of ";
 		}
 
-		calcArmorSpellBonus( rndArmor );
+		CalcArmorSpellBonus( rndArmor );
 
 		// Add script that handles equip effects to the magic armor
 		rndArmor.AddScriptTrigger( armorSpellsScriptID );
@@ -960,7 +1000,9 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 	}
 
 	if( outputMagicItemNamesToFile )
-		addToDatabase( 1, rndArmor.name2 );
+	{
+		AddToDatabase( 1, rndArmor.name2 );
+	}
 
 	if( ValidateObject( rndArmor ) && ValidateObject( placeHolderItem ))
 	{
@@ -972,7 +1014,9 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 				if( typeof( rndArmor[itemProp] ) != "undefined" && rndArmor[itemProp] != null )
 				{
 					if( itemProp == "race" && rndArmor.race != null )
+					{
 						placeHolderItem.race = rndArmor.race.id;
+					}
 					else
 					{
 						placeHolderItem[itemProp] = rndArmor[itemProp];
@@ -986,20 +1030,22 @@ function CreateMagicArmor( tierNum, placeHolderItem )
 		for( var i = 0; i < scriptTriggerList.length; i++ )
 		{
 			if( scriptTriggerList[i] != 0 && scriptTriggerList[i] != magicItemScriptID )
+			{
 				placeHolderItem.AddScriptTrigger( scriptTriggerList[i] );
+			}
 		}
 	}
 	return rndArmor;
 }
 
-function calcArmorBonus( rndArmor )
+function CalcArmorBonus( rndArmor )
 {
 	// Define some variables
 	var arBonus = 0;
 	var arBonusName = "";
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -1038,7 +1084,7 @@ function calcArmorBonus( rndArmor )
 	rndArmor.name2 += " " + arBonusName;
 }
 
-function calcArmorSpellBonus( rndArmor )
+function CalcArmorSpellBonus( rndArmor )
 {
 	// Define some variables
 	var spellBonusName = "";
@@ -1047,7 +1093,7 @@ function calcArmorSpellBonus( rndArmor )
 	var spellCharges = 0;
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
 	var bonusTier = RandomNumber( 1, maxTierLevel );
@@ -1310,7 +1356,7 @@ function CreateMagicWand( tierNum, placeHolderItem )
 	rndWand.name2 = rndWand.name;
 
 	rndWand.name2 += " of ";
-	calcWandSpellBonus( rndWand );
+	CalcWandSpellBonus( rndWand );
 
 	rndWand.name = "magic " + tempName;
 
@@ -1321,7 +1367,9 @@ function CreateMagicWand( tierNum, placeHolderItem )
 	}
 
 	if( outputMagicItemNamesToFile )
-		addToDatabase( 0, rndWand.name2 );
+	{
+		AddToDatabase( 0, rndWand.name2 );
+	}
 
 	if( ValidateObject( rndWand ) && ValidateObject( placeHolderItem ))
 	{
@@ -1333,7 +1381,9 @@ function CreateMagicWand( tierNum, placeHolderItem )
 				if( typeof( rndWand[itemProp] ) != "undefined" && rndWand[itemProp] != null )
 				{
 					if( itemProp == "race" && rndWand.race != null )
+					{
 						placeHolderItem.race = rndWand.race.id;
+					}
 					else
 					{
 						placeHolderItem[itemProp] = rndWand[itemProp];
@@ -1347,19 +1397,21 @@ function CreateMagicWand( tierNum, placeHolderItem )
 		for( var i = 0; i < scriptTriggerList.length; i++ )
 		{
 			if( scriptTriggerList[i] != 0 && scriptTriggerList[i] != magicItemScriptID )
+			{
 				placeHolderItem.AddScriptTrigger( scriptTriggerList[i] );
+			}
 		}
 	}
 	return rndWand;
 }
 
 // Weighted randomizer for quick and easy randomization where lower scores have higher weights than higher ones
-function weightedRandom( min, max )
+function WeightedRandom( min, max )
 {
- 	return Math.round(max / ( Math.random() * max + min ));
+ 	return Math.round( max / ( Math.random() * max + min ));
 }
 
-function calcWandSpellBonus( rndWand )
+function CalcWandSpellBonus( rndWand )
 {
 	// Define some variables
 	var spellBonusName = "";
@@ -1368,10 +1420,10 @@ function calcWandSpellBonus( rndWand )
 	var spellCharges = 0;
 
 	// Let's put in a small chance of getting a better bonus
-	maxTierLevel = calcTierBonus( maxTierLevel );
+	maxTierLevel = CalcTierBonus( maxTierLevel );
 
 	// Which bonus-tier are we adding, exactly?
-	var bonusTier = weightedRandom( 1, maxTierLevel );
+	var bonusTier = WeightedRandom( 1, maxTierLevel );
 
 	switch( bonusTier )
 	{
@@ -1472,16 +1524,20 @@ function calcWandSpellBonus( rndWand )
 }
 
 // Debug-function to output list of names generated by script
-function addToDatabase( itemType, rndItemName )
+function AddToDatabase( itemType, rndItemName )
 {
 	var j = 0;
 	var addName = true;
 	var magicName = "";
 	var mFileWrite = new UOXCFile();
 	if( itemType == 0 ) // weapon
+	{
 		mFileWrite.Open( "magicweapons_list.txt", "a" );
+	}
 	else
+	{
 		mFileWrite.Open( "magicarmors_list.txt", "a" );
+	}
 	mFileWrite.Write( rndItemName + "\n");
 	mFileWrite.Close()
 	mFileWrite.Free();
@@ -1511,7 +1567,7 @@ function CreateMagicRing( tierNum, placeHolderItem )
 	rndRing.name2 = rndRing.name;
 
 	rndRing.name2 += " of ";
-	calcRingSpellBonus( rndRing );
+	CalcRingSpellBonus( rndRing );
 
 	rndRing.name = "a magic " + tempName;
 
@@ -1522,7 +1578,7 @@ function CreateMagicRing( tierNum, placeHolderItem )
 	}
 
 	if( outputMagicItemNamesToFile )
-		addToDatabase( 0, rndRing.name2 );
+		AddToDatabase( 0, rndRing.name2 );
 
 	if( ValidateObject( rndRing ) && ValidateObject( placeHolderItem ))
 	{
@@ -1534,7 +1590,9 @@ function CreateMagicRing( tierNum, placeHolderItem )
 				if( typeof( rndRing[itemProp] ) != "undefined" && rndRing[itemProp] != null )
 				{
 					if( itemProp == "race" && rndRing.race != null )
+					{
 						placeHolderItem.race = rndRing.race.id;
+					}
 					else
 					{
 						placeHolderItem[itemProp] = rndRing[itemProp];
@@ -1548,13 +1606,15 @@ function CreateMagicRing( tierNum, placeHolderItem )
 		for( var i = 0; i < scriptTriggerList.length; i++ )
 		{
 			if( scriptTriggerList[i] != 0 && scriptTriggerList[i] != magicItemScriptID )
+			{
 				placeHolderItem.AddScriptTrigger( scriptTriggerList[i] );
+			}
 		}
 	}
 	return rndRing;
 }
 
-function calcRingSpellBonus( rndWand )
+function CalcRingSpellBonus( rndWand )
 {
 	// Define some variables
 	var spellBonusName = "";
@@ -1590,20 +1650,4 @@ function calcRingSpellBonus( rndWand )
 
 	// Let's add the bonus-name
 	rndWand.name2 += spellBonusName;
-}
-
-// Debug-function to output list of names generated by script
-function addToDatabase( itemType, rndItemName )
-{
-	var j = 0;
-	var addName = true;
-	var magicName = "";
-	var mFileWrite = new UOXCFile();
-	if( itemType == 0 ) // weapon
-		mFileWrite.Open( "magicweapons_list.txt", "a" );
-	else
-		mFileWrite.Open( "magicarmors_list.txt", "a" );
-	mFileWrite.Write( rndItemName + "\n");
-	mFileWrite.Close()
-	mFileWrite.Free();
 }

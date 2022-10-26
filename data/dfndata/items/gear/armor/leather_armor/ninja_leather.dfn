@@ -3,7 +3,9 @@
 // Leather Ninja Hood - N/S
 [0x278e]
 {
-get=base_leather_ninja_hood
+getpub15=0x278e_pub15
+getaos=0x278e_aos
+gettol=0x278e_tol
 }
 
 // Leather Ninja Hood - E/W
@@ -22,7 +24,9 @@ get=0x278e 0x27d9
 // Leather Ninja Belt - A
 [0x2790]
 {
-get=base_leather_ninja_belt
+getpub15=0x2790_pub15
+getaos=0x2790_aos
+gettol=0x2790_tol
 }
 
 // Leather Ninja Belt - B
@@ -41,7 +45,9 @@ get=0x2790 0x27db
 // Leather Ninja Pants - N/S
 [0x2791]
 {
-get=base_leather_ninja_pants
+getpub15=0x2791_pub15
+getaos=0x2791_aos
+gettol=0x2791_tol
 }
 
 // Ninja Leather Pants - E/W
@@ -60,7 +66,9 @@ get=0x2791 0x27dc
 // Leather Ninja Mitts - E/W
 [0x2792]
 {
-get=base_leather_ninja_mitts
+getpub15=0x2792_pub15
+getaos=0x2792_aos
+gettol=0x2792_tol
 }
 
 // Leather Ninja Mitts - N/S
@@ -79,7 +87,9 @@ get=0x2792 0x27dd
 // Leather Ninja Jacket - A
 [0x2793]
 {
-get=base_leather_ninja_jacket
+getpub15=0x2793_pub15
+getaos=0x2793_aos
+gettol=0x2793_tol
 }
 
 // Leather Ninja Jacket - B

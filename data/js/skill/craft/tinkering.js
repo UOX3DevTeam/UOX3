@@ -41,12 +41,12 @@ const myPage = [
 	[ 11980, 11981, 11982 ]
 ];
 
-function pageX( socket, pUser, pageNum )
+function PageX( socket, pUser, pageNum )
 {
 	// Pages 1 - 9
 	var myGump = new Gump;
 	pUser.SetTempTag( "page", pageNum );
-	TriggerEvent( craftGumpID, "craftinggump", myGump, socket );
+	TriggerEvent( craftGumpID, "CraftingGumpMenu", myGump, socket );
 	for ( var i = 0; i < myPage[pageNum - 1].length; i++ )
 	{
 		var index = i % 10;
@@ -94,7 +94,7 @@ function onTimer( pUser, timerID )
 		case 7: // Page 7 - Multi-Component Items
 		case 8: // Page 8 - Candles
 		case 9: // Page 9 - Traps
-			pageX( socket, pUser, timerID );
+			PageX( socket, pUser, timerID );
 			break;
 	}
 }
@@ -171,7 +171,7 @@ function onGumpPress( pSock, pButton, gumpData )
 		case 8: // Page 8 - Candles
 		case 9: // Page 9 - Traps
 			pSock.CloseGump( gumpID, 0 );
-			pageX( pSock, pUser, pButton );
+			PageX( pSock, pUser, pButton );
 			break;
 		// Make Items
 		// Page 1 - Wooden Items
@@ -570,7 +570,7 @@ function onCallback2( pSock, targObj )
 				// Set a temporary tag on character with ID of selected gem
 				// We'll check for this ID in the crafting process, and remove it
 				// in the onMakeItem event script (crafting_complete.js)
-				pUser.SetTempTag( "targetedSubResourceID", targObj.id );
+				pUser.SetTempTag( "targetedSubResourceId", targObj.id );
 				pUser.SetTempTag( "targetedSubResourceName", targObj.name );
 			}
 

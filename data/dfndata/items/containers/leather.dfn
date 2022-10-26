@@ -2,7 +2,7 @@
 [0x09b0]
 { S
 get=base_item
-name=belt pouch
+name=pouch
 id=0x09b0
 weight=100
 weightmax=40000
@@ -13,6 +13,27 @@ decay=1
 good=5
 maxitems=125
 dyeable=1
+}
+
+[0x0e79]
+{ E
+get=base_item
+name=pouch
+id=0x0e79
+weight=100
+weightmax=40000
+value=7 3
+type=1
+restock=10
+decay=1
+good=5
+maxitems=125
+dyeable=1
+}
+
+[pouch]
+{
+get=0x09b0 0x0e79
 }
 
 [0x09b2]
@@ -47,6 +68,11 @@ maxitems=125
 dyeable=1
 }
 
+[backpack]
+{
+get=0x09b2 0x0e75
+}
+
 [0x0e76]
 {
 get=base_item
@@ -63,24 +89,13 @@ maxitems=125
 dyeable=1
 }
 
-[0x0e79]
-{ E
-get=base_item
-name=pouch
-id=0x0e79
-weight=100
-weightmax=40000
-value=7 3
-type=1
-restock=10
-decay=1
-good=5
-maxitems=125
-dyeable=1
+[bag]
+{
+get=0x0e76
 }
 
 [0x0e7a]
-{ E
+{
 get=base_item
 name=picnic basket
 id=0x0e7a
@@ -93,4 +108,9 @@ decay=1
 good=5
 maxitems=125
 dyeable=1
+}
+
+[picnicbasket]
+{
+get=0x0e7a
 }

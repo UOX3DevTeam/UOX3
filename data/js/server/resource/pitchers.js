@@ -146,25 +146,25 @@ function onCallback0( pSock, myTarget ) // Fill empty Pitchers/bottles/jugs
 				{
 				case 0x0ff6:
 					var msg = GetDictionaryEntry( 2562, pSock.language ); // You fill the pitcher with %s.
-					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
+					pSock.SysMessage( msg.replace( /%%s/gi, Liquid ));
 					switchPitcherID( pSock, Pitcher );
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x0ff7:case 0x09a7:
 					var msg = GetDictionaryEntry( 2562, pSock.language ); // You fill the pitcher with %s.
-					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
+					pSock.SysMessage( msg.replace( /%%s/gi, Liquid ));
 					switchPitcherID( pSock, Pitcher );
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x099b:case 0x099f:case 0x09c7:
 					var msg = GetDictionaryEntry( 2563, pSock.language ); // You fill the bottle with %s.
-					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
+					pSock.SysMessage( msg.replace( /%%s/gi, Liquid ));
 					Pitcher.name = "bottle of "+Liquid;
 					switchPitcherID( pSock, myTarget );
 					break;
 				case 0x09c8:
 					var msg = GetDictionaryEntry( 2564, pSock.language ); // You fill the jug with %s.
-					pSock.SysMessage( msg.replace(/%%s/gi, Liquid ));
+					pSock.SysMessage( msg.replace( /%%s/gi, Liquid ));
 					Pitcher.name = "jug of "+Liquid;
 					switchPitcherID( pSock, myTarget );
 					break;
@@ -295,15 +295,19 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 				if( pThirst >= 0 )
 				{
 					if( pThirst == 0 || pThirst == 1 )
-						pSock.SysMessage( GetDictionaryEntry( (2054), pSock.language ) ); // You drink the beverage, but are still extremely thirsty.
+					{
+						pSock.SysMessage( GetDictionaryEntry(( 2054 ), pSock.language )); // You drink the beverage, but are still extremely thirsty.
+					}
 					else
-						pSock.SysMessage( GetDictionaryEntry( (2054 + pThirst - 1), pSock.language ) ); // You drink the beverage, but are still extremely thirsty.
+					{
+						pSock.SysMessage( GetDictionaryEntry(( 2054 + pThirst - 1 ), pSock.language )); // You drink the beverage, but are still extremely thirsty.
+					}
 					pUser.thirst += 1;
 				}
 			}
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 2053, pSock.language ) ); // You are simply too full to drink any more!
+				pSock.SysMessage( GetDictionaryEntry( 2053, pSock.language )); // You are simply too full to drink any more!
 				return;
 			}
 
@@ -332,17 +336,17 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			{
 				if( Pitcher.id == 0x09c8 )
 				{
-					pSock.SysMessage( GetDictionaryEntry( 2572, pSock.language ) ); // The jug is empty!
+					pSock.SysMessage( GetDictionaryEntry( 2572, pSock.language )); // The jug is empty!
 					Pitcher.name = "empty jug";
 				}
 				else if( Pitcher.id == 0x099b || Pitcher.id == 0x099f || Pitcher.id == 0x09c7 )
 				{
-					pSock.SysMessage( GetDictionaryEntry( 2573, pSock.language ) ); // The bottle is empty.
+					pSock.SysMessage( GetDictionaryEntry( 2573, pSock.language )); // The bottle is empty.
 					Pitcher.name = "empty bottle";
 				}
 				else
 				{
-					pSock.SysMessage( GetDictionaryEntry( 2574, pSock.language ) ); // The pitcher is empty.
+					pSock.SysMessage( GetDictionaryEntry( 2574, pSock.language )); // The pitcher is empty.
 					switchPitcherID( pSock, Pitcher );
 				}
 				Pitcher.SetTag( "ContentsType", 1);
@@ -353,12 +357,12 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		}
 		if(( tileID == 0x00d8 || tileID == 0x00e7 ) && ( Pitcher.GetTag( "ContentsType" ) == 3 ))
 		{
-			pSock.SysMessage( GetDictionaryEntry( 2575, pSock.language ) ); // You can't put the milk back in the cow, fool!
+			pSock.SysMessage( GetDictionaryEntry( 2575, pSock.language )); // You can't put the milk back in the cow, fool!
 		}
 		else
 		{
 			var tempMsg = GetDictionaryEntry( 2576, pSock.language ); // You resist the urge to empty the %s over the head of your target.
-			pSock.SysMessage( tempMsg.replace(/%s/gi, Pitcher.GetTag( "ContentsName" ) ));
+			pSock.SysMessage( tempMsg.replace(/%s/gi, Pitcher.GetTag( "ContentsName" )));
 		}
 		return;
 	}
@@ -374,7 +378,9 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 		{
 			// Reduce remaining uses of flour bag by 1 (or delete it if it only has 1 use left)
 			if( Pitcher.usesLeft <= 1 )
+			{
 				myTarget.Delete();
+			}
 			else
 			{
 				// Reduce uses left in flour bag by 1
@@ -414,7 +420,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			setupLiquidObject( myTarget );
 		}
 		//If both source and target containers are goblets/mugs/glasses
-		if( Pitcher.GetTag( "EmptyGlass" ) == 1 && ( myTarget.GetTag( "EmptyGlass" ) == 2 )) // || !myTarget.GetTag( "EmptyGlass" ) ) )
+		if( Pitcher.GetTag( "EmptyGlass" ) == 1 && ( myTarget.GetTag( "EmptyGlass" ) == 2 )) // || !myTarget.GetTag( "EmptyGlass" )) )
 		{
 			pUser.SoundEffect( 576, 1 );
 			myTarget.SetTag( "EmptyGlass", 1 );
@@ -481,7 +487,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			{
 			case 0x0ff6:case 0x0ff7:case 0x09a7:
 				var tmpMsg = GetDictionaryEntry( 2578, pSock.language ); // You pour the %s into the empty pitcher.
-				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
+				pSock.SysMessage( tmpMsg.replace( /%s/gi, Liquid ));
 				if( Pitcher.usesLeft > 5 )
 				{
 					Pitcher.usesLeft = 5;
@@ -493,7 +499,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			case 0x099b:case 0x099f:case 0x09c7:
 				var tmpMsg = GetDictionaryEntry( 2579, pSock.language ); // You pour the %s into the empty bottle.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
-				myTarget.name = "bottle of "+Liquid;
+				myTarget.name = "bottle of " + Liquid;
 				if( Pitcher.usesLeft > 5 )
 				{
 					Pitcher.usesLeft = 5;
@@ -504,7 +510,7 @@ function onCallback1( pSock, myTarget ) // Pour Full Pitchers somewhere
 			case 0x09c8:
 				var tmpMsg = GetDictionaryEntry( 2580, pSock.language ); // You pour the %s into the empty jug.
 				pSock.SysMessage( tmpMsg.replace(/%s/gi, Liquid ));
-				myTarget.name = "jug of "+Liquid;
+				myTarget.name = "jug of " + Liquid;
 				myTarget.usesLeft = Pitcher.usesLeft;
 				switchPitcherID( pSock, Pitcher );
 				break;
@@ -1066,7 +1072,7 @@ function onTooltip( myObj )
 	if( usesLeft > 0 )
 	{
 		tooltipText = GetDictionaryEntry( 9403 ); // uses remaining: %i
-		tooltipText = ( tooltipText.replace(/%i/gi, (usesLeft).toString()) );
+		tooltipText = ( tooltipText.replace( /%i/gi, ( usesLeft ).toString() ));
 		myObj.SetTempTag( "clilocTooltip", 1042971 ); // ~1_NOTHING~
 	}
 	return tooltipText;

@@ -1,3 +1,5 @@
+// This command is used to show the item type and some details about that for targeted object
+
 function CommandRegistration()
 {
 	RegisterCommand( "showdetail", 1, true );
@@ -22,7 +24,9 @@ function onCallback0( socket, ourObj )
 		case 1:	// container/backpack
 			message = "Container/backpack:";
 			if( ourObj.moreb > 0 )
+			{
 				message += "Magically trapped";
+			}
 			break;
 		case 2:	// opener for castle gate 1
 		case 4:	// opener for castle gate 2
@@ -41,7 +45,9 @@ function onCallback0( socket, ourObj )
 		case 8:	// locked container
 			message = "Locked container:";
 			if( ourObj.moreb > 0 )
+			{
 				message += "Magically trapped";
+			}
 			break;
 		case 9:	// Spellbook (item 14FA)
 			message = "Spellbook";
@@ -150,15 +156,23 @@ function onCallback0( socket, ourObj )
 			break;
 		case 35: // townstone deed/stone
 			if( ourObj.id == 0x14F0 )
+			{
 				message = "Townstone deed, will make townstone";
+			}
 			else
+			{
 				message = "Townstone, use to find out information on the town";
+			}
 			break;
 		case 50: // recall rune
 			if( ourObj.morex == 0 && ourObj.morey == 0 && ourObj.morez == 0 )	// changed, to fix, Lord Vader
+			{
 				message ="Unmarked recall rune";
+			}
 			else
+			{
 				message = "This will rename a recall rune";
+			}
 			break;
 		case 51: // Moongate;
 		case 52:
@@ -186,14 +200,18 @@ function onCallback0( socket, ourObj )
 		case 63:	// spawn container
 			message = "Item Spawn container:";
 			if( ourObj.moreb > 0 )
+			{
 				message += "Magically trapped:";
+			}
 			message += ":Respawn max time: " + ourObj.maxinterval.toString();
 			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
 		case 64:	// locked spawn container
 			message = "Locked item spawn container:";
 			if( ourObj.moreb > 0 )
+			{
 				message += "Magically trapped:";
+			}
 			message += ":Respawn max time: " + ourObj.maxinterval.toString();
 			message += ":Respawn min time: " + ourObj.mininterval.toString();
 			break;
@@ -220,9 +238,13 @@ function onCallback0( socket, ourObj )
 		case 83:	// race gates
 			message = "Race Gate:Turns into race num: " + ourObj.morex.toString();
 			if( ourObj.morey == 1 )
+			{
 				message += "Constantly reuseable:";
+			}
 			else
+			{
 				message += "One time use only:";
+			}
 			break;
 		case 85:	// damage object
 			var minDam = ourObj.morex + ourObj.morey;
@@ -277,5 +299,7 @@ function onCallback0( socket, ourObj )
 		socket.SysMessage( message );
 	}
 	else
-		socket.SysMessage( GetDictionaryEntry( 1656 ) );
+	{
+		socket.SysMessage( GetDictionaryEntry( 1656 )); // Invalid item selected!
+	}
 }

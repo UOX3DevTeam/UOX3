@@ -45,20 +45,28 @@ function onUseChecked( pUser, iUsed )
 	if( pUser.petCount >= maxFollowers )
 	{
 		var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
-		pSock.SysMessage( tempMsg.replace(/%i/gi, maxFollowers ));
+		pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 		return;
 	}
 
 	// Check if player has enough resources to construct the golem
 	// 1 power crystal, 50 iron ingots, 50 bronze ingots and 5 gears
 	if( pUser.ResourceCount( 0x1f1c ) < 1 )
+	{
 		socket.SysMessage(); // You need a power crystal to construct a golem.
+	}
 	else if( pUser.ResourceCount( 0x1bf2 ) < 50 )
+	{
 		socket.SysMessage(); // You need more iron ingots to construct a golem.
+	}
 	else if( pUser.ResourceCount( 0x1bf2, 0x06d6 ) < 50 )
+	{
 		socket.SysMessage(); // You need more bronze ingots to construct a golem.
+	}
 	else if( pUser.ResourceCount( ) < 5 )
+	{
 		socket.SysMessage(); // You need more gears to construct a golem.
+	}
 	else
 	{
 		// Construct the golem!
@@ -92,15 +100,25 @@ function ApplyGolemPower( golemNPC, pUser )
 	var powerScale;
 	var tinkerSkill = pUser.skills.tinkering;
 	if( tinkerSkill >= 1000 )
+	{
 		powerScale = 1.0;
+	}
 	else if( tinkerSkill >= 900 )
+	{
 		powerScale = 0.9;
+	}
 	else if( tinkerSkill >= 800 )
+	{
 		powerScale = 0.8;
+	}
 	else if( tinkerSkill >= 700 )
+	{
 		powerScale = 0.7;
+	}
 	else
+	{
 		powerScale = 0.6;
+	}
 
 	// Scale golem NPC's attributes and skills
 	golemNPC.strength *= powerScale;

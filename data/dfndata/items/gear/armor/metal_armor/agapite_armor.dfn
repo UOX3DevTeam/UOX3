@@ -1,9 +1,29 @@
-// Ringmail
+// Agapite Armor Bonus for AoS ruleset - applied on top of existing stats
+[agapite_armor_bonus_aos]
+{
+defbonus=2
+erbonus=3 2 2 2
+}
 
-// Agapite Ringmail Tunic - N/S
+// Agapite Armor Bonus for ToL ruleset - applied on top of existing stats
+[agapite_armor_bonus_tol]
+{
+defbonus=2
+erbonus=7 2 2 2
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// Agapite Ringmail Armor
+
+// Agapite Ringmail Gloves - N/S
 [0x13eb-a]
 {
-get=base_ring_gloves
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -22,8 +42,12 @@ get=0x13eb-a 0x13f2-a
 
 // Agapite Ringmail Tunic - N/S
 [0x13ec-a]
-{ right facing
-get=base_ring_tunic
+{
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -40,10 +64,14 @@ id=0x13ed
 get=0x13ec-a 0x13ed-a
 }
 
-// Aagapite Ringmail Sleeves - N/S
+// Agapite Ringmail Sleeves - N/S
 [0x13ee-a]
-{ right facing
-get=base_ring_sleeves
+{
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -62,8 +90,12 @@ get=0x13ee-a 0x13ef-a
 
 // Agapite Ringmail Leggings - N/S
 [0x13f0-a]
-{ right facing
-get=base_ring_leggings
+{
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -80,12 +112,40 @@ id=0x13f1
 get=0x13f0-a 0x13f1-a
 }
 
-// Chainmail
+// Chainmail Armor
+
+// Agapite Chainmail Coif - N/S
+[0x13bb-a]
+{
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Chainmail Coif - E/S
+[0x13c0-a]
+{
+get=0x13bb-a
+id=0x13c0
+}
+
+// Agapite Chainmail Coif - Alias
+[agapitechainmailcoif]
+{
+get=0x13bb 0x13c0
+}
 
 // Agapite Chainmail Leggings - N/S
 [0x13be-a]
 {
-get=base_chain_leggings
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -105,7 +165,11 @@ get=0x13be-a 0x13c3-a
 // Agapite Chainmail Tunic - N/S
 [0x13bf-a]
 {
-get=base_chain_tunic
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -122,32 +186,14 @@ id=0x13c4
 get=0x13bf-a 0x13c4-a
 }
 
-// Agapite Chainmail Coif - N/S
-[0x13BB-a]
-{
-get=base_chain_coif
-color=0x979
-}
-
-// Agapite Chainmail Coif - E/W
-[0x13c0-a]
-{
-get=0x13bb-a
-id=0x13c0
-}
-
-// Agapite Chainmail Coif - Alias
-[chainmailcoif]
-{
-get=0x13bb-a 0x13c0-a
-}
-
-// Female
-
 // Agapite Female Plate - N/S
 [0x1c04-a]
 {
-get=base_fem_plate
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -164,12 +210,16 @@ id=0x1c05
 get=0x1c04-a 0x1c05-a
 }
 
-// platemail
+// Agapite Platemail Armor
 
 // Agapite Platemail Arms - E/W
 [0x1410-a]
 {
-get=base_plate_arms
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -186,21 +236,25 @@ id=0x1417
 get=0x1410-a 0x1417-a
 }
 
-// Agapite Platemail Leggings - E/W
+// Agapite Platemail Leggings - N/S
 [0x1411-a]
 {
-get=base_plate_leggings
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Platemail Leggings - N/S
+// Agapite Platemail Leggings - E/W
 [0x141a-a]
 {
 get=0x1411-a
 id=0x141a
 }
 
-// Platemail Leggings - Alias
+// Agapite Platemail Leggings - Alias
 [agapiteplatemailleggings]
 {
 get=0x1411-a 0x141a-a
@@ -209,7 +263,11 @@ get=0x1411-a 0x141a-a
 // Agapite Platemail Gorget
 [0x1413-a]
 {
-get=base_plate_gorget
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -219,14 +277,18 @@ color=0x979
 get=0x1413-a
 }
 
-// Agapite Platemail Gloves - E/W
+// Agapite Platemail Gloves - N/S
 [0x1414-a]
 {
-get=base_plate_gloves
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Platemail Gloves - N/S
+// Agapite Platemail Gloves - E/W
 [0x1418-a]
 {
 get=0x1414-a
@@ -239,14 +301,18 @@ id=0x1418
 get=0x1414-a 0x1418-a
 }
 
-// Agapite Platemail Chest - E/W
+// Agapite Platemail Chest - N/S
 [0x1415-a]
 {
-get=base_plate_chest
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Platemail Chest - N/S
+// Agapite Platemail Chest - E/W
 [0x1416-a]
 {
 get=0x1415-a
@@ -259,39 +325,385 @@ id=0x1416
 get=0x1415-a 0x1416-a
 }
 
-// helmets
+// Agapite SE Armor
 
-// Agapite Close Helm(et) - N/S
-[0x1408-a]
+// Agapite Heavy Platemail Jingasa - A
+[0x2777-a]
 {
-get=base_close_helmet
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Close Helm(et) - E/W
+// Agapite Heavy Platemail Jingasa - B
+[0x27c2-a]
+{
+get=0x2777-a
+id=0x27c2
+}
+
+// Agapite Heavy Platemail Jingasa - Alias
+[agapiteheavyplatemailjingasa]
+{
+get=0x2777-a 0x27c2-a
+}
+
+// Agapite Decorative Platemail Kabuto - A
+[0x2778-a]
+{
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Decorative Platemail Kabuto - B
+[0x27c3-a]
+{
+get=0x2778-a
+id=0x27c3
+}
+
+// Agapite Decorative Platemail Kabuto - Alias
+[agapitedecorativeplatemailkabuto]
+{
+get=0x2778-a 0x27c3-a
+}
+
+// Agapite Platemail Do - A
+[0x277d-a]
+{
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Do - B
+[0x27c8-a]
+{
+get=0x277d-a
+id=0x27c8
+}
+
+// Agapite Platemail Do - Alias
+[agapiteplatemaildo]
+{
+get=0x277d-a 0x27c8-a
+}
+
+// Agapite Platemail Hiro Sode - A
+[0x2780-a]
+{
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Hiro Sode - B
+[0x27cb-a]
+{
+get=0x2780-a
+id=0x27cb
+}
+
+// Agapite Platemail Hiro Sode - Alias
+[agapiteplatemailhirosode]
+{
+get=0x2780-a 0x27cb-a
+}
+
+// Agapite Platemail Jingasa - A
+[0x2781-a]
+{
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Jingasa - B
+[0x27cc-a]
+{
+get=0x2781-a
+id=0x27cc
+}
+
+// Agapite Platemail Jingasa - Alias
+[agapiteplatemailjingasa]
+{
+get=0x2781-a 0x27cc-a
+}
+
+// Agapite Small Platemail Jingasa - A
+[0x2784-a]
+{
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Small Platemail Jingasa - B
+[0x27cf-a]
+{
+get=0x2784-a
+id=0x27cf
+}
+
+// Agapite Small Platemail Jingasa - Alias
+[agapitesmallplatemailjingasa]
+{
+get=0x2784-a 0x27cf-a
+}
+
+// Agapite Platemail Battle Kabuto - A
+[0x2785-a]
+{
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Battle Kabuto - B
+[0x27d0-a]
+{
+get=0x2785-a
+id=0x27d0
+}
+
+// Agapite Platemail Battle Kabuto - Alias
+[agapiteplatemailbattlekabuto]
+{
+get=0x2785-a 0x27d0-a
+}
+
+// Agapite Platemail Suneate - A
+[0x2788-a]
+{
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Suneate - B
+[0x27d3-a]
+{
+get=0x2788-a
+id=0x27d3
+}
+
+// Agapite Platemail Suneate - Alias
+[agapiteplatemailsuneate]
+{
+get=0x2788-a 0x27d3-a
+}
+
+// Agapite Platemail Kabuto - A
+[0x2789-a]
+{
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Kabuto - B
+[0x27d4-a]
+{
+get=0x2789-a
+id=0x27d4
+}
+
+// Agapite Platemail Kabuto - Alias
+[agapiteplatemailkabuto]
+{
+get=0x2789-a 0x27d4-a
+}
+
+// Agapite Kabuto - A
+[0x236c-a]
+{
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Kabuto - B
+[0x236d-a]
+{
+get=0x236c-a
+id=0x236d
+}
+
+// Agapite Kabuto - Alias
+[agapitekabuto]
+{
+get=0x236c-a 0x236d-a
+}
+
+// Agapite Platemail Haidate - A
+[0x278d-a]
+{
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Haidate - B
+[0x27d8-a]
+{
+get=0x278d-a
+id=0x27d8
+}
+
+// Agapite Platemail Haidate - Alias
+[agapiteplatemailhaidate]
+{
+get=0x278d-a 0x27d8-a
+}
+
+// Agapite Platemail Hatsuburi - A
+[0x2775-a]
+{
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Hatsuburi - B
+[0x27c0-a]
+{
+get=0x2775-a
+id=0x27c0
+}
+
+// Agapite Platemail Hatsuburi - Alias
+[agapiteplatemailhatsuburi]
+{
+get=0x2775-a 0x27c0-a
+}
+
+// Agapite Chainmail Hatsuburi - A
+[0x2774-a]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Chainmail Hatsuburi - B
+[0x27bf-a]
+{
+get=0x2774-a
+id=0x27bf
+}
+
+// Agapite Chainmail Hatsuburi - Alias
+[agapitechainmailhatsuburi]
+{
+get=0x2774-a 0x27bf-a
+}
+
+// Agapite Platemail Mempo - E/W
+[0x2779-a]
+{
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Platemail Mempo - N/S
+[0x27c4-a]
+{
+get=0x2779-a
+id=0x27c4
+}
+
+// Agapite Platemail Mempo - Alias
+[agapiteplatemailmempo]
+{
+get=0x2779-a 0x27c4-a
+}
+
+// Agapite Helmets
+
+// Agapite Close Helm - E/W
+[0x1408-a]
+{
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Close Helm - N/S
 [0x1409-a]
 {
 get=0x1408-a
 id=0x1409
 }
 
-// Agapite Close Helm(et) - Alias
+// Agapite Close Helm - Alias
 [agapiteclosehelm]
 {
 get=0x1408-a 0x1409-a
 }
 
-// Agapite Helmet - N/S
+// Agapite Helmet - E/W
 [0x140a-a]
 {
-get=base_helmet
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Helmet - E/W
+// Agapite Helmet - N/S
 [0x140b-a]
 {
-get=0x140a-a
+get=0x140b-a
 id=0x140b
 }
 
@@ -301,14 +713,18 @@ id=0x140b
 get=0x140a-a 0x140b-a
 }
 
-// Agapite Bascinet - N/S
+// Agapite Bascinet - E/W
 [0x140c-a]
 {
-get=base_bascinet
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Bascinet - E/W
+// Agapite Bascinet - N/S
 [0x140d-a]
 {
 get=0x140c-a
@@ -321,14 +737,18 @@ id=0x140d
 get=0x140c-a 0x140d-a
 }
 
-// Agapite Norse Helm - N/S
+// Agapite Norse Helm - E/W
 [0x140e-a]
 {
-get=base_nose_helm
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Norse Helm - E/W
+// Agapite Norse Helm - N/S
 [0x140f-a]
 {
 get=0x140e-a
@@ -341,14 +761,18 @@ id=0x140f
 get=0x140e-a 0x140f-a
 }
 
-// Agapite Plate Helm - E/W
+// Agapite Plate Helm - N/S
 [0x1412-a]
 {
-get=base_plate_helm
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Plate Helm - N/S
+// Agapite Plate Helm - E/W
 [0x1419-a]
 {
 get=0x1412-a
@@ -361,12 +785,16 @@ id=0x1419
 get=0x1412-a 0x1419-a
 }
 
-// Shields
+// Agapite Shields
 
 // Agapite Bronze Shield
 [0x1b72-a]
 {
-get=base_bronze_shield
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -379,7 +807,11 @@ get=0x1b72-a
 // Agapite Buckler
 [0x1b73-a]
 {
-get=base_buckler
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -389,50 +821,77 @@ color=0x979
 get=0x1b73-a
 }
 
-// Agapite Metal Kite Shield - N/S
+// Agapite Kite Shield (Metal) - N/S
 [0x1b74-a]
 {
-get=base_metal_kite_shield
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
-}
-
-// Agapite Metal Kite Shield - E/W
-[0x1b75-a]
-{
-get=0x1b74-a
-id=0x1b75
-}
-
-// Metal Kite Shield - Alias
-[agapitemetalkiteshield]
-{
-get=0x1b74-a 0x1b75-a
 }
 
 // Agapite Heater Shield - N/S
 [0x1b76-a]
 {
-get=base_heater_shield
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Agapite Heater Shield - E/W
-[0x1b77-a]
+// Agapite Kite Shield (Wood) - N/S
+[0x1b78-a]
 {
-get=0x1b76-a
-id=0x1b77
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
 }
 
-// Agapite Heater Shield - Alias
-[agapiteheatershield]
+// Agapite Kite Shield (wood) - E/W
+[0x1b79-a]
 {
-get=0x1b76-a 0x1b77-a
+get=0x1b78-a
+id=0x1b79
+}
+
+// Agapite Kite Shield (wood) - Alias
+[agapitemetalkiteshield]
+{
+get=0x1b78-a 0x1b79-a
+}
+
+// AgapiteWooden Shield
+[0x1b7a-a]
+{
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Wooden Shield - Alias
+[agapitewoodenshield]
+{
+get=0x1b7a-a
 }
 
 // Agapite Metal Shield
 [0x1b7b-a]
 {
-get=base_metal_shield
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
@@ -442,22 +901,43 @@ color=0x979
 get=0x1b7b-a
 }
 
-// Kite Shield (wooden) - N/S
-[0x1b78-a]
+// Agapite Chaos Shield
+[0x1bc3-a]
 {
-get=base_wooden_kite_shield
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
 color=0x979
 }
 
-// Kite Shield (wooden) - E/W
-[0x1b79-a]
+// Agapite Chaos Shield - Alias
+[agapitechaosshield]
 {
-get=0x1b78-a
-id=0x1b79
+get=0x1bc3-a
 }
 
-// Kite Shield (wooden) - Alias
-[agapitewoodenkiteshield]
+// Agapite Order Shield - N/S
+[0x1bc4-a]
 {
-get=0x1b78-a 0x1b79-a
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
+getaos=agapite_armor_bonus_aos
+gettol=agapite_armor_bonus_tol
+color=0x979
+}
+
+// Agapite Order Shield - E/W
+[0x1bc5-a]
+{
+get=0x1bc5-a
+id=0x1bc5
+}
+
+// Agapite Order Shield - Alias
+[agapiteordershield]
+{
+get=0x1bc4-a 0x1bc5-a
 }
