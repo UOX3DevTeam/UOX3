@@ -1,3 +1,5 @@
+// Commands dealing with getting/setting/adding/removing JS scripts to/from objects
+
 function CommandRegistration()
 {
 	RegisterCommand( "getscptrig", 2, true );
@@ -36,7 +38,7 @@ function command_SETSCPTRIG( socket, cmdString )
 {
 	if( cmdString )
 	{
-		if( parseInt(cmdString) == 0 )
+		if( parseInt( cmdString ) == 0 )
 		{
 			socket.tempint = 0;
 			socket.CustomTarget( 3, GetDictionaryEntry( 2043, socket.language )); // Select target to remove ALL script triggers from:
@@ -44,13 +46,13 @@ function command_SETSCPTRIG( socket, cmdString )
 		}
 
 		var tempDictString = GetDictionaryEntry( 2038, socket.language ); // Select target to set script trigger (%i) for:
-		tempDictString = ( tempDictString.replace(/%i/gi, cmdString ));
+		tempDictString = ( tempDictString.replace( /%i/gi, cmdString ));
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 1, tempDictString );
 	}
 	else
 	{
-		socket.SysMessage( GetDictionaryEntry( 1755, socket.language ));
+		socket.SysMessage( GetDictionaryEntry( 1755, socket.language )); // This command requires additional arguments
 	}
 }
 
@@ -80,13 +82,13 @@ function command_ADDSCPTRIG( socket, cmdString )
 {
 	if( cmdString )
 	{
-		if( parseInt(cmdString) == 0 )
+		if( parseInt( cmdString ) == 0 )
 		{
 			return;
 		}
 
 		var tempDictString = GetDictionaryEntry( 2039, socket.language ); // Select target to add script trigger (%i) for:
-		tempDictString = ( tempDictString.replace(/%i/gi, cmdString ));
+		tempDictString = ( tempDictString.replace( /%i/gi, cmdString ));
 		socket.tempint = parseInt( cmdString );
 		socket.CustomTarget( 2, tempDictString );
 	}
@@ -113,7 +115,7 @@ function command_REMOVESCPTRIG( socket, cmdString )
 {
 	if( cmdString )
 	{
-		if( parseInt(cmdString) == 0 )
+		if( parseInt( cmdString ) == 0 )
 		{
 			socket.tempint = 0;
 			socket.CustomTarget( 3, GetDictionaryEntry( 2043, socket.language )); // Select target to remove ALL script triggers from:
@@ -152,6 +154,7 @@ function onCallback3( socket, ourObj )
 }
 
 function okMsg( socket )
-{ //Sends verification to the player that the specified value was successfully set.
+{
+	//Sends verification to the player that the specified value was successfully set.
 	socket.SysMessage( GetDictionaryEntry( 84, socket.language ));
 }

@@ -1,3 +1,190 @@
+27/10/2022 - Xuri
+	Fixed an issue with onDyeTarget event where the dyetub and target object parameters were not set properly
+	Fixed some incorrect casting animation-related variable assignments for AI_HEALER and AI_EVIL_HEALER
+	Fixed an issue with pets not going wild from lack of loyalty to their owners when at zero loyalty
+	Addressed issues with idle/fidget animation setup that could cause NPCs to blink out of existence
+	Removed stray semicolon behind control statement related to triggering of OnFacetChange JS event
+	Fixed an issue with Bless spell when cast from item
+	Some minor code cleanup
+
+24/10/2022 - Xuri (0.99.6-RC1)
+	Misc cleanup and standardization of style and naming conventions in code and scripts
+	Added comments for all dictionary-based system messages in code for maintainability reasons
+	Fixed an issue where line of sight checks for dynamic items would fail
+	Fixed an issue where items being picked up by a player would not be added to the correct mapregion if bouncing back to its original location when dropped
+	Fixed an issue where NPC spellcasters would damage/kill themselves by attempting to cast Mind Blast at their target. Now they'll only cast this if they're actually smarter than their target
+	Fixed an issue where NPC spellcasters would damage and kill members of their own species/ai/race via AoE spells
+	Fixed an issue where the max spellcast range defined in UOX.INI was off for NPCs by 1 tile
+	Added spoken words of power for spells cast by human NPCs
+	Fixed an exploit with the Dispel Field spell
+	Admins and GMs are no longer dispellable...
+	Fixed a bug where spell effects would get stuck on caster if they cast a spell with a moving effect at themselves
+	Added two new NPC AI types that can be used for NPCs that are primarily casters:
+		AI_CASTER (10)			// Same as AI_FIGHTER (5), but will try to stay at casting range
+		AI_EVIL_CASTER (11)		// Same as AI_EVIL (2), but will try to stay at casting range
+	Changed the NPCAI tags of some NPCs from 5 to 10 and from 2 to 11
+	Added some visual flair to let NPCs play idle/fidget animations from time to time
+	Added some visual flair to let NPCs play casting animations when using magic spells
+	Added support for new tags in creatures.dfn to define some animation behaviour for non-player creatures in combat (ANTIBLINK tag no longer needed):
+		ANIM_CASTAREA=#,frameCount		// Animation to use when casting area-targeted spells
+		ANIM_CASTTARGET=#,frameCount 	// Animation to use when casting target-based spells
+		ANIM_ATTACK1=#,frameCount 		// First attack animation
+		ANIM_ATTACK2=#,frameCount 		// (optional) Second attack animation
+		ANIM_ATTACK3=#,frameCount 		// (optional) Third attack animation
+	Updated creatures.dfn with entries for all known creatures in the UO client, as well as icons, sounds and combat/casting animations for all of those.
+	Fixed an issue with creature DFN setup for Elf ghosts which prevented paperdoll context menu from working
+	Added new JS Events:
+		onCarveCorpse( pUser, iCorpse )				// Triggers for iCorpse when being carved by pUser
+		onFacetChange( mChar, oldFacet, newFacet ) 	// Triggers for character when moving between facets
+		onDyeTarget( pUser, dyeTub, targItem ) 		// Triggers for dyeTub when player tries dying an item
+	Added new JS Functions to create houses (from house.dfn) and base multis (using raw multi IDs):
+		CreateHouse( houseID, x, y, z, worldNum, instanceID );
+		CreateBaseMulti( multiID, x, y, z, worldNum, instanceID );
+	Added new JS Character/Item Method:
+		.HasScriptTrigger( scriptID )	// Returns true if script with scriptID is present on object
+	Added new JS commands for GMs in js/commands/custom/misc-cmd.js
+		'addhouse houseID 	// Add house from house.dfn at target location
+		'addmulti multiID 	// Add base multi from client multi files at target location
+	Added new INI settings:
+		SHOWRACEWITHNAME=1 				// If enabled, shows a character's race along with their name. Defaults to 1
+		SHOWITEMRESISTSTATS=0/1 		// If enabled, shows item resistance stats in item tooltip. Defaults to 0
+		SHOWWEAPONDAMAGETYPES=1/0 		// If enabled, shows weapon damage types in item tooltip. Defaults to 1
+		CASTSPELLSWHILEMOVING=0/1 		// If enabled, players can cast spells while moving, without having to stop
+		SHOWREPUTATIONTITLEINTOOLTIP=1/0 // If enabled, shows player's reputation title in tooltip. Defaults to 1
+		SHOWGUILDINFOINTOOLTIP=1/0 		// If enabled, shows player's guild info in tooltip. Defaults to 1
+		SHOWRACEINPAPERDOLL=1/0 		// If enabled, shows a character's race in the paperdoll. Defaults to 1
+		SHOWNPCTITLESINTOOLTIPS=1/0 	// If enabled, shows NPC titles in tooltip. Defaults to 1
+	Renamed 0xf1_connectUOServerPoll.js to 0xf1_freeshardServerPoll.js, and updated script to respond to the "standard" freeshard server poll request rather than the more specific (and now dead) ConnectUO one.
+	Renamed INI setting CUOENABLED to FREESHARDSERVERPOLL
+	Added new INI settings under [expansion settings] section to help shard admins customize some key behaviours of their shard, based on their preferred "era" of UO. Note that a value of "core" means the setting inherits the chosen era from the CORESHARDERA setting:
+			CORESHARDERA=pub15
+				Defines the "core" era of the shard. Defaults to pub15 (Publish 15).
+					any 				- determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15
+					uor or later 		- enables bonus hit chance for archery via ARCHERYHITBONUS setting
+					pub15 or earlier	- final combat damage value reduced by half
+			ARMORCALCULATION=core
+				Defines era to base armor calculations on
+					pub15 or earlier 	- different armor pieces contribute different percentage of the total Armor Rating
+					aos or later 		- each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats
+			STRENGTHDAMAGEBONUS=core
+				Defines era to base strength damage bonus on
+					uor or earlier 		- 20% damage bonus based on strength, capped at 200 strength
+					td or later 		- 35% damage bonus based on strength if 100 strength or more, otherwise 30% damage bonus
+			TACTICSDAMAGEBONUS=core
+				Defines era to base tactics damage bonus on
+					pub15 or earlier 	- bonus = Tactics skill + 50
+					aos or later 		- 68.75% damage bonus if GM Tactics, 62.5% bonus if below
+			ANATOMYDAMAGEBONUS=core
+				Defines era to base anatomy damage bonus on
+					uor or earlier 		- bonus = Anatomy / 5 vs NPCs, Anatomy / 2.5 vs Players
+					td or later 		- 30% damage bonus at GM anatomy, up to 20% below GM
+					ml or later 		- 50% + 5 damage bonus at GM anatomy, up to 50% below GM
+			LUMBERJACKDAMAGEBONUS=core
+				Defines era to base lumberjacking damage bonus on
+					uor or earlier 		- 35% damage bonus at GM skill, up to 25% below GM
+					td or later 		- 30% damage bonus at GM skill, up to 20% below GM
+					hs or later 		- 10% chance of 100% damage bonus
+			RACIALDAMAGEBONUS=core
+				Defines era to base racial damage bonus on
+					sa or later 		- Gargoyles gain +15% damage bonus per each 20 HP lost
+			DAMAGEBONUSCAP=core
+				Defines era to base damage bonus cap on
+					pub15 or earlier 	- No cap on damage bonus multiplier
+					aos or later 		- Total damage bonus multiplier capped at 300% higher than base damage
+			SHIELDPARRY=core
+				Defines era to base shield parry calculations on
+					t2a 				- chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery
+					uor to pub15 		- higher AR equals lower block chance, but more damage absorbed.
+					aos or later 		- chance to block dependent on parry skill vs bushido skill, with dex modifier
+			WEAPONPARRY=core
+				Defines era to base weapon parry calculations on
+					aos or later 		- chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 16.6% chance weapon will take damage from parrying
+					ml or later 		- chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 5% chance weapon will take damage from parrying, or 75% if opponent has mace
+			WRESTLINGPARRY=core
+				Defines era to base wrestling parry calculations on
+					tol or later 		- From 12.5% chance (at GM wrestling, increases with higher skill) that an NPC will parry an attack
+			COMBATHITCHANCE=core
+				Defines era to base combat hit chance calculations on
+					t2a to pub15 		- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
+					uor to pub15 		- Additional bonus hit chance for archery
+					aos to tol 			- hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit
+		Supported era values:
+			t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
+	Added (optional) new Item/NPC DFN tags to help determine which variants of Items/NPCs to load from DFNs, based on chosen era in CORESHARDERA setting:
+		GETT2A=<sectionID>		// Inherit DFN section if core shard era is The Second Age
+		GETTD=<sectionID>		// Inherit DFN section if core shard era is Third Dawn
+		GETUOR=<sectionID>		// Inherit DFN section if core shard era is UO Renaissance
+		GETLBR=<sectionID>		// Inherit DFN section if core shard era is Lord Blackthorn's Revenge
+		GETPUB15=<sectionID>	// Inherit DFN section if core shard era is Pub15
+		GETAOS=<sectionID>		// Inherit DFN section if core shard era is Age of Shadows
+		GETSE=<sectionID>		// Inherit DFN section if core shard era is Samurai Empire
+		GETML=<sectionID>		// Inherit DFN section if core shard era is Mondain's Legacy
+		GETSA=<sectionID>		// Inherit DFN section if core shard era is Stygian Abyss
+		GETTOL=<sectionID>		// Inherit DFN section if core shard era is Time of Legends
+	Added new Item/Character DFN tags that provide defensive bonuses on top of existing DEF/ELEMENTALRESIST values:
+		DEFBONUS=minVal [maxVal] 			// Def/Physical resistance bonus (maxVal optional)
+		ERBONUS=heat cold energy poison 	// Elemental resistance bonus
+	Crafted armor made from coloured ingots now provide additional defensive bonuses based on color of ingots (for AoS/ToL variant of items)
+	Fixed a bug where players not a member of a guild could still interact with the guildstone of said guild
+	Guild masters can no longer dismiss themselves from their own guild; if they want to leave they'll have to resign
+	Fixed a bug where cancelling text input for various guild functions could blank out the guild name, abbreviation, guildmaster title, charter or website
+	Fixed a bug where guild abbreviations (and titles) would show when turned off, and would not show when turned on
+	Added guild master ability to grant guild titles to targeted guild members
+	Added system message feedback various guild interactions, including: inviting players to join, swearing fealty, declaring war, entering alliances, granting titles
+	Added support for showing guild titles and guild names in character tooltips
+	Guild titles, names and abbreviations are now hidden for players who are incognito
+	Players invited to join a guild by the Guild Master directly will now automatically be accepted into the guild
+	Fixed a potential null-reference exception related to moving Townstones
+	Fixed a bug where adding or removing friends for a pet would not properly inform the involved players
+	Traps in dungeons will now only trigger for player characters, and will ignore all NPCs
+	Tweaked HTML templates for server status pages; shard name shown more prominently, names of GMs/Counselors hidden from regular player list, information on UOX3 build version hidden in player-facing pages, and a few other small adjustments
+	Fixed an issue with archery butte script (js/item/archerybutte.js) where chance of hitting a bullseye was not calculated correctly
+	UOX3 now responds correctly to logout requests from the client
+	Fixed reagent requirements for inscribing Explosion spell (thanks, Azzerhoden Razeri)
+	Removed redundant VALUE tags from JewlerShopping shoplist (thanks, Azzerhoden Razeri)
+	Reduced combat hit message spam by increasing the lower damage threshold for when they can show up
+	Added NPC definitions for savage shaman, savage warrior (male and female) and savage rider in dfndata/npc/savages.dfn.
+	Added special AI scripts for savages and savage shamans, to handle their special abilities
+	Added tribal paint consumable item (dfndata/items/misc/consumables.dfn)
+	Added ability to cook tribal paint via flour and tribal berries (js/skill/cooking/flour.js)
+	Added some helper scripts for magic:
+		js/magic/helper/check_resist.js (6000)				// Test target's resist versus caster and spell circle
+		js/magic/helper/calc_final_spell_damage.js (6001)	// Calculate spell damage from provided base damage
+	Added a timer-related script that can be used to keep track of long-term timers (up to 49 days) on objects, and which will remove itself from the object when there are no more active timers left. Currently used to keep track of tribal paint applied to players:
+		js/server/timer/long_term_timers.js (3)
+	Fixed an issue where player backpacks did not have a max weight set, which could cause issues for scripts that relied on checking max weight of backpack to work
+	Added new UOX.INI settings to let shard admins control the maximum weight that player backpacks and bankboxes can hold:
+		MAXPLAYERPACKWEIGHT=40000	// 400.00 stones by default
+		MAXPLAYERBANKWEIGHT=160000	// 1600.00 stones by default
+	Fixed an issue where spells setup in JS did not correctly consume reagents when cast (thanks, Azzerhoden Razeri)
+	Fixed a bug where casting spells would sometimes leave the player in a "frozen" state client-side
+	Fixed a bug where RECALL=1 was missing from town of Vesper in regions.dfn
+	Fixed an issue where runebooks did not keep correct count of runes added/dropped (thanks, Azzerhoden Razeri, Dragon Slayer
+	Fixed an issue where the runebook script would crash because of a misspelled object variable (thanks, Azzerhoden Razeri)
+	Added missing spell scrolls to the MageShopping shoplist
+	Added new property for Items and NPCs loaded from DFNs (also available as a JS object property):
+		sectionID 	// Keeps track of the [sectionID] an item or NPC originated from
+	Added support for getting/setting new sectionID property via 'get and 'set commands
+	Exposed Character properties to JS engine:
+		.fleeAt 		// Percentage health threshold for NPC fleeing in combat
+		.reAttackAt		// Percentage health threshold for NPC re-attacking in combat if fleeing
+	Added new character timer (also available in JS engine) for time between each time a character plays an idle animation
+	Added 'move as an alias command for 'telestuff (js/commands/targeting/tele.js)
+	Fixed missing socket reference in bankcheck.js
+	Added missing tribal paint (js/item/tribal_paint.js), spear (js/item/tribal_spear.js) and bola (js/npc/special/bola_ability.js) scripts
+	Updated js/item/oilcloth.js to support wiping away tribal paint from the player
+	Updated js/npc/ai/monster/orc.js AI script to make sure owners of pets attacking the orc will get their orcish kin masks destroyed
+	Players can no longer use Polymorph spell while incognitoed, or while under effect of tribal paint
+	Players can no longer use Incognito spell while polymorphed, or while under effect of tribal paint
+	Facial hair is now removed from players who are under the effects of Incognito spell that changes their gender for female
+	Expanded the amount of possible house entries in dfndata/house/house.dfn from 255 to 65535
+
+24/10/2022 - ldilley
+	Fixed cPlayerAction.cpp case in source/CMakeLists.txt (was cplayeraction.cpp).
+	Added FreeBSD build support for SpiderMonkey, zlib, and UOX3.
+	Updated README.md with FreeBSD build instructions.
+	Fixed a compile error due to NULL being defined as nullptr (non-int type) and not 0 (zero)
+
 26/08/2022 - Xuri (0.99.5b-7)
 	Fixed a missing definition for GetStartTime JS function which would cause an error in the help menu script
 	Tweaked some messages output to the UOX3 console during startup for improved clarity

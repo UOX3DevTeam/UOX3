@@ -1,5 +1,4 @@
 // Teleporter between Orc Caves levels 2 and 3
-
 function onCollide( pSock, pChar, iObject )
 {
 	if( !ValidateObject( pChar ) || !pChar.isChar || pChar.npc )

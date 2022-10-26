@@ -1668,6 +1668,29 @@
 1663=Mi pequeño hijo Timmy necesita una operación, ¿tenéis algo de oro para ayudar a la causa?
 1664=Mi mujer está embarazada de nuestro séptimo hijo, tenga un poco de piedad en forma de oro para un hombre desesperado.
 // Fin del texto inicial
+1670=No puedes disfrazarte mientras llevas pintura corporal
+1671=No puedes polimorfar mientras llevas pintura corporal
+1672=No puedes usar el incógnito mientras llevas pintura corporal
+1673=No puedes hacer eso mientras estás de incógnito
+1674=No puedes hacer eso mientras estás polimorfo.
+1675=Tu piel se chamusca al quemarse la pintura tribal.
+1676=¡Tu pintura corporal se ha desgastado!
+1677=No puedes disfrazarte mientras estás de incógnito.
+1678=No puedes disfrazarte mientras estás polimorfo.
+1679=Ya estás disfrazado.
+1680=Ahora llevas las marcas de la tribu salvaje.  Tu pintura corporal durará aproximadamente una semana o puedes quitarla con un paño de aceite.
+1681=Limpias toda tu pintura corporal.
+1682=¡La Lanza Tribal se rompe en tus manos al recogerla!
+1683=%s empieza a balancear una bola
+1684=Introduce un nuevo título para el miembro del gremio:
+1685=Selecciona el miembro del gremio para establecer el título
+1686=¡Se te ha concedido el título de gremio de %s!
+1687=¡Has reclutado a %s como nuevo miembro del gremio!
+1688=¡Has reclutado a %s como nuevo miembro del gremio!
+1689=¡Has despedido a %s de tu gremio!
+1690=¡Has sido expulsado de tu gremio!
+1691=¡No puedes darte de baja del gremio!
+1692=¡%s es ahora el nuevo Maestro del Gremio de %s!
 // Ajustar las cosas del menú Char
 1700=Botón no válido pulsado
 1701=Introducir un nuevo nombre para el personaje.
@@ -1951,6 +1974,15 @@
 1979=Islas Tokuno
 1980=Ter Mur
 1981=Los miembros de la raza %s no pueden llevar esto
+1982=¡Paraste el ataque!
+1983=¡Tu arma ha sido destruida!
+1984=¡No eres miembro de este gremio!
+1985=¡Has apadrinado a %s como candidato a unirse al gremio!
+1986=Has sido invitado por %s a unirte al gremio: %s
+1987=¡Has declarado fidelidad a %s!
+1988=¡%s te ha declarado lealtad!
+1989=¡Tu gremio ha declarado la guerra al gremio %s!
+1990=¡Tu gremio ha declarado al gremio %s como aliado!
 // Menú de ajustes basado en JS
 1991=¡Objeto inválido apuntado!
 1992=¡Objetivo desconocido!
@@ -3296,6 +3328,9 @@
 6214=Los ingredientes de esta poción son desconocidos para usted.
 6215=Ya sabe qué tipo de poción es: %s
 6250=Sales de las sombras.
+6275=Combinas la baya y la harina en la pintura tribal que llevan los salvajes.
+6276=No tienes la habilidad de cocinar para crear la pintura corporal.
+6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3546,6 +3581,7 @@
 8210=Redirigiendo a 'radditem command...
 8211=Redirigiendo a 'raddnpc comando...
 8212=Sintaxis de comando válida para repetir la adición de objetos: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Identificación de la sección de DFNs de la que procede el objeto
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ

@@ -1,3 +1,6 @@
+// These commands let shard admins wipe either all or a selection of objects based on certain
+// conditions specified in command parameters
+
 function CommandRegistration()
 {
 	RegisterCommand( "wipe", 3, true );
@@ -30,18 +33,18 @@ function CallWipe( socket, cmdString )
 			facetToWipe = socket.currentChar.worldnumber;
 			socket.clickX = parseInt( splitString[0] );
 			socket.clickY = parseInt( splitString[1] );
-			socket.SetWord( 11, parseInt( splitString[2] ) );
-			socket.SetWord( 13, parseInt( splitString[3] ) );
+			socket.SetWord( 11, parseInt( splitString[2] ));
+			socket.SetWord( 13, parseInt( splitString[3] ));
 			DoWipe( socket, null );
 		}
 		else if( splitString[0] )
 		{
 			// Wipe all objects, or based on type and facet
-			var mChar	= socket.currentChar;
-			all		= true;
+			var mChar = socket.currentChar;
+			all	= true;
 			forceWipe = false;
-			var uKey 	= splitString[0].toUpperCase();
-			var saidAll 	= ( uKey == "ALL" );
+			var uKey = splitString[0].toUpperCase();
+			var saidAll = ( uKey == "ALL" );
 			//if( saidAll )
 			//{
 				if( splitString[1] && splitString[1].toUpperCase() == "FORCE" )
@@ -86,7 +89,7 @@ function CallWipe( socket, cmdString )
 						all = false;
 						// Facet (%s) not found. Valid facets: 0/felucca, 1/trammel, 2/ilshenar, 3/malas, 4/tokuno, 5/termur
 						var tempMsg = GetDictionaryEntry( 8111, socket.language );
-						socket.SysMessage( tempMsg.replace(/%s/gi, facetString ));
+						socket.SysMessage( tempMsg.replace( /%s/gi, facetString ));
 						return;
 				}
 			}
@@ -94,12 +97,12 @@ function CallWipe( socket, cmdString )
 			if( facetString != "" )
 			{
 				var tempMsg = GetDictionaryEntry( 8112, socket.language ); // Wiping %s on facet: " + facetString
-				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ) + " " + facetString );
+				socket.SysMessage( tempMsg.replace( /%s/gi, uKey ) + " " + facetString );
 			}
 			else
 			{
 				var tempMsg = GetDictionaryEntry( 8113, socket.language ); // Wiping %s on ALL facets...
-				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ));
+				socket.SysMessage( tempMsg.replace( /%s/gi, uKey ));
 			}
 
 			Console.PrintSectionBegin();
@@ -174,7 +177,7 @@ function CallWipe( socket, cmdString )
 			if( !wipePerformed )
 			{
 				var tempMsg = GetDictionaryEntry( 8114, socket.language ); // Invalid parameter %s. Valid params: all / items / npcs / spawners / (x1 y1 x2 y2), facet
-				socket.SysMessage( tempMsg.replace(/%s/gi, uKey ));
+				socket.SysMessage( tempMsg.replace( /%s/gi, uKey ));
 			}
 
 			Console.PrintDone();
@@ -199,8 +202,8 @@ function onCallback0( socket, ourObj )
 	var cancelCheck = parseInt( socket.GetByte( 11 ));
 	if( cancelCheck != 255 )
 	{
-		socket.clickX 	= socket.GetWord( 11 );
-		socket.clickY 	= socket.GetWord( 13 );
+		socket.clickX = socket.GetWord( 11 );
+		socket.clickY = socket.GetWord( 13 );
 		socket.CustomTarget( 1, GetDictionaryEntry( 8116, socket.language ), 1 ); // Choose bottom corner to wipe
 	}
 }
@@ -259,20 +262,20 @@ function DoWipe( socket, ourObj )
 	var counterStr	= counter.toString();
 
 	var tempMsg = GetDictionaryEntry( 8118, socket.language ); // Wiped %i items
-	socket.SysMessage( tempMsg.replace(/%s/gi, counterStr ));
+	socket.SysMessage( tempMsg.replace( /%s/gi, counterStr ));
 	Console.Print( "Wipe deleted " + counterStr + " items.\n" );
 	Console.PrintDone();
 
 	// Reset temporary socket variables and reset global variables
 	socket.clickX = -1;
 	socket.clickY = -1;
-	x1 	= 0;
-	y1 	= 0;
-	x2 	= 0;
-	y2 	= 0;
-	iWipe 	= false;
+	x1 = 0;
+	y1 = 0;
+	x2 = 0;
+	y2 = 0;
+	iWipe = false;
 	all	= false;
-	isItem	= false;
+	isItem = false;
 }
 
 // Iterate through all objects of specified type
@@ -339,7 +342,9 @@ function onIterate( toCheck )
 					var tX 		= toCheck.x;
 					var tY 		= toCheck.y;
 					if( tX >= x1 && tX <= x2 && tY >= y1 && tY <= y2 )
+					{
 						shouldWipe = !iWipe;
+					}
 					if( shouldWipe )
 					{
 						toCheck.Delete();

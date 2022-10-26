@@ -11,10 +11,12 @@ decay=1
 good=23
 }
 
-// SAMURAI EMPIRE - Stats balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Fukiya - E/W
-[0x27aa]
+// SAMURAI EMPIRE
+
+// Fukiya - Base weapon
+[base_fukiya]
 {
 get=base_item
 name=fukiya
@@ -24,13 +26,21 @@ ammofx=0x2804
 decay=1
 good=22
 layer=2
-restock=10
 movable=1
+restock=10
+}
+
+// Fukiya - E/W
+[0x27aa]
+{
+getpub15=0x27aa_pub15
+getaos=0x27aa_aos
+gettol=0x27aa_tol
 }
 
 // Fukiya - N/S
 [0x27f5]
-{
+{ North/South
 get=0x27aa
 id=0x27f5
 }

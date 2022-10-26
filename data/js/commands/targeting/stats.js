@@ -1,3 +1,5 @@
+// GM commands to adjust character stats
+
 function CommandRegistration()
 {
 	RegisterCommand( "fullstats", 2, true );
@@ -104,6 +106,6 @@ function onCallback4( socket, ourObj )
 		var mSpell = Spells[4];
 		ourObj.MagicEffect( 4 );
 		ourObj.SoundEffect( mSpell.soundEffect, true );
-		ourObj.SetPoisoned(0,0);
+		ourObj.SetPoisoned( 0, 0 );
 	}
 }

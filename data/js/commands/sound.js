@@ -1,3 +1,5 @@
+// These commands are used to play specific SFX and/or Music for the command user
+
 function CommandRegistration()
 {
 	RegisterCommand( "sfx", 2, true );

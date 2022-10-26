@@ -1,463 +1,945 @@
-// Ringmail
+// Shadow Armor Bonus for AoS ruleset - applied on top of existing stats
+[shadow_armor_bonus_aos]
+{
+defbonus=2
+erbonus=1 0 0 5
+hpbonus=100
+}
 
-// ShadowIron Ringmail Tunic - N/S
+// Shadow Armor Bonus for ToL ruleset - applied on top of existing stats
+[shadow_armor_bonus_tol]
+{
+defbonus=3
+erbonus=2 0 0 7
+hpbonus=100
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// Shadow Ringmail Armor
+
+// Shadow Ringmail Gloves - N/S
 [0x13eb-s]
 {
-get=base_ring_gloves
+getpub15=0x13eb_pub15
+getaos=0x13eb_aos
+gettol=0x13eb_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Ringmail Gloves - E/W
+// Shadow Ringmail Gloves - E/W
 [0x13f2-s]
 {
 get=0x13eb-s
 id=0x13f2
 }
 
-// ShadowIron Ringmail Gloves - Alias
-[shadowironringmailgloves]
+// Shadow Ringmail Gloves - Alias
+[shadowringmailgloves]
 {
 get=0x13eb-s 0x13f2-s
 }
 
-// ShadowIron Ringmail Tunic - N/S
+// Shadow Ringmail Tunic - N/S
 [0x13ec-s]
-{ right facing
-get=base_ring_tunic
+{
+getpub15=0x13ec_pub15
+getaos=0x13ec_aos
+gettol=0x13ec_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Ringmail Tunic - E/W
+// Shadow Ringmail Tunic - E/W
 [0x13ed-s]
 {
 get=0x13ec-s
 id=0x13ed
 }
 
-// ShadowIron Ringmail Tunic - Alias
-[shadowironringmailtunic]
+// Shadow Ringmail Tunic - Alias
+[shadowringmailtunic]
 {
 get=0x13ec-s 0x13ed-s
 }
 
-// ShadowIron Ringmail Sleeves - N/S
+// Shadow Ringmail Sleeves - N/S
 [0x13ee-s]
-{ right facing
-get=base_ring_sleeves
+{
+getpub15=0x13ee_pub15
+getaos=0x13ee_aos
+gettol=0x13ee_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Ringmail Sleeves - E/W
+// Shadow Ringmail Sleeves - E/W
 [0x13ef-s]
 {
 get=0x13ee-s
 id=0x13ef
 }
 
-// ShadowIron Ringmail Sleeves - Alias
-[shadowironringmailsleeves]
+// Shadow Ringmail Sleeves - Alias
+[shadowringmailsleeves]
 {
 get=0x13ee-s 0x13ef-s
 }
 
-// ShadowIron Ringmail Leggings - N/S
+// Shadow Ringmail Leggings - N/S
 [0x13f0-s]
-{ right facing
-get=base_ring_leggings
+{
+getpub15=0x13f0_pub15
+getaos=0x13f0_aos
+gettol=0x13f0_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Ringmail Leggings - E/W
+// Shadow Ringmail Leggings - E/W
 [0x13f1-s]
 {
 get=0x13f0-s
 id=0x13f1
 }
 
-// ShadowIron Ringmail Leggings - Alias
-[shadowironringmailleggings]
+// Shadow Ringmail Leggings - Alias
+[shadowringmailleggings]
 {
 get=0x13f0-s 0x13f1-s
 }
 
-// Chainmail
+// Chainmail Armor
 
-// ShadowIron Chainmail Leggings - N/S
-[0x13be-s]
+// Shadow Chainmail Coif - N/S
+[0x13bb-s]
 {
-get=base_chain_leggings
+getpub15=0x13bb_pub15
+getaos=0x13bb_aos
+gettol=0x13bb_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Chainmail Leggings - E/W
-[0x13c3-s]
-{
-get=0x13be-s
-id=0x13c3
-}
-
-// ShadowIron Chainmail Leggings - Alias
-[shadowironchainmailleggings]
-{
-get=0x13be-s 0x13c3-s
-}
-
-// ShadowIron Chainmail Tunic - N/S
-[0x13bf-s]
-{
-get=base_chain_tunic
-color=0x966
-}
-
-// ShadowIron Chainmail Tunic - E/W
-[0x13c4-s]
-{
-get=0x13bf-s
-id=0x13c4
-}
-
-// ShadowIron Chainmail Tunic - Alias
-[shadowironchainmailtunic]
-{
-get=0x13bf-s 0x13c4-s
-}
-
-// ShadowIron Chainmail Coif - N/S
-[0x13BB-s]
-{
-get=base_chain_coif
-color=0x966
-}
-
-// ShadowIron Chainmail Coif - E/W
+// Shadow Chainmail Coif - E/S
 [0x13c0-s]
 {
 get=0x13bb-s
 id=0x13c0
 }
 
-// ShadowIron Chainmail Coif - Alias
-[chainmailcoif]
+// Shadow Chainmail Coif - Alias
+[shadowchainmailcoif]
 {
-get=0x13bb-s 0x13c0-s
+get=0x13bb 0x13c0
 }
 
-// Female
-
-// ShadowIron Female Plate - N/S
-[0x1c04-s]
+// Shadow Chainmail Leggings - N/S
+[0x13be-s]
 {
-get=base_fem_plate
+getpub15=0x13be_pub15
+getaos=0x13be_aos
+gettol=0x13be_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Female Plate - E/W
+// Shadow Chainmail Leggings - E/W
+[0x13c3-s]
+{
+get=0x13be-s
+id=0x13c3
+}
+
+// Shadow Chainmail Leggings - Alias
+[shadowchainmailleggings]
+{
+get=0x13be-s 0x13c3-s
+}
+
+// Shadow Chainmail Tunic - N/S
+[0x13bf-s]
+{
+getpub15=0x13bf_pub15
+getaos=0x13bf_aos
+gettol=0x13bf_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Chainmail Tunic - E/W
+[0x13c4-s]
+{
+get=0x13bf-s
+id=0x13c4
+}
+
+// Shadow Chainmail Tunic - Alias
+[shadowchainmailtunic]
+{
+get=0x13bf-s 0x13c4-s
+}
+
+// Shadow Female Plate - N/S
+[0x1c04-s]
+{
+getpub15=0x1c04_pub15
+getaos=0x1c04_aos
+gettol=0x1c04_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Female Plate - E/W
 [0x1c05-s]
 {
 get=0x1c04-s
 id=0x1c05
 }
 
-// ShadowIron Female Plate - Alias
-[shadowironfemaleplate]
+// Shadow Female Plate - Alias
+[shadowfemaleplate]
 {
 get=0x1c04-s 0x1c05-s
 }
 
-// platemail
+// Shadow Platemail Armor
 
-// ShadowIron Platemail Arms - E/W
+// Shadow Platemail Arms - E/W
 [0x1410-s]
 {
-get=base_plate_arms
+getpub15=0x1410_pub15
+getaos=0x1410_aos
+gettol=0x1410_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Platemail Arms - N/S
+// Shadow Platemail Arms - N/S
 [0x1417-s]
 {
 get=0x1410-s
 id=0x1417
 }
 
-// ShadowIron Platemail Arms - Alias
-[shadowironplatemailarms]
+// Shadow Platemail Arms - Alias
+[shadowplatemailarms]
 {
 get=0x1410-s 0x1417-s
 }
 
-// ShadowIron Platemail Leggings - E/W
+// Shadow Platemail Leggings - N/S
 [0x1411-s]
 {
-get=base_plate_leggings
+getpub15=0x1411_pub15
+getaos=0x1411_aos
+gettol=0x1411_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Platemail Leggings - N/S
+// Shadow Platemail Leggings - E/W
 [0x141a-s]
 {
 get=0x1411-s
 id=0x141a
 }
 
-// Platemail Leggings - Alias
-[shadowironplatemailleggings]
+// Shadow Platemail Leggings - Alias
+[shadowplatemailleggings]
 {
 get=0x1411-s 0x141a-s
 }
 
-// ShadowIron Platemail Gorget
+// Shadow Platemail Gorget
 [0x1413-s]
 {
-get=base_plate_gorget
+getpub15=0x1413_pub15
+getaos=0x1413_aos
+gettol=0x1413_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Platemail Gorget - Alias
-[shadowironplatemailgorget]
+// Shadow Platemail Gorget - Alias
+[shadowplatemailgorget]
 {
 get=0x1413-s
 }
 
-// ShadowIron Platemail Gloves - E/W
+// Shadow Platemail Gloves - N/S
 [0x1414-s]
 {
-get=base_plate_gloves
+getpub15=0x1414_pub15
+getaos=0x1414_aos
+gettol=0x1414_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Platemail Gloves - N/S
+// Shadow Platemail Gloves - E/W
 [0x1418-s]
 {
 get=0x1414-s
 id=0x1418
 }
 
-// ShadowIron Platemail Gloves - Alias
-[shadowironplatemailgloves]
+// Shadow Platemail Gloves - Alias
+[shadowplatemailgloves]
 {
 get=0x1414-s 0x1418-s
 }
 
-// ShadowIron Platemail Chest - E/W
+// Shadow Platemail Chest - N/S
 [0x1415-s]
 {
-get=base_plate_chest
+getpub15=0x1415_pub15
+getaos=0x1415_aos
+gettol=0x1415_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Platemail Chest - N/S
+// Shadow Platemail Chest - E/W
 [0x1416-s]
 {
 get=0x1415-s
 id=0x1416
 }
 
-// ShadowIron Platemail Chest - Alias
-[shadowironplatemailchest]
+// Shadow Platemail Chest - Alias
+[shadowplatemailchest]
 {
 get=0x1415-s 0x1416-s
 }
 
-// helmets
+// Shadow SE Armor
 
-// ShadowIron Close Helm(et) - N/S
-[0x1408-s]
+// Shadow Heavy Platemail Jingasa - A
+[0x2777-s]
 {
-get=base_close_helmet
+getpub15=0x2777_pub15
+getaos=0x2777_aos
+gettol=0x2777_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Close Helm(et) - E/W
+// Shadow Heavy Platemail Jingasa - B
+[0x27c2-s]
+{
+get=0x2777-s
+id=0x27c2
+}
+
+// Shadow Heavy Platemail Jingasa - Alias
+[shadowheavyplatemailjingasa]
+{
+get=0x2777-s 0x27c2-s
+}
+
+// Shadow Decorative Platemail Kabuto - A
+[0x2778-s]
+{
+getpub15=0x2778_pub15
+getaos=0x2778_aos
+gettol=0x2778_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Decorative Platemail Kabuto - B
+[0x27c3-s]
+{
+get=0x2778-s
+id=0x27c3
+}
+
+// Shadow Decorative Platemail Kabuto - Alias
+[shadowdecorativeplatemailkabuto]
+{
+get=0x2778-s 0x27c3-s
+}
+
+// Shadow Platemail Do - A
+[0x277d-s]
+{
+getpub15=0x277d_pub15
+getaos=0x277d_aos
+gettol=0x277d_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Do - B
+[0x27c8-s]
+{
+get=0x277d-s
+id=0x27c8
+}
+
+// Shadow Platemail Do - Alias
+[shadowplatemaildo]
+{
+get=0x277d-s 0x27c8-s
+}
+
+// Shadow Platemail Hiro Sode - A
+[0x2780-s]
+{
+getpub15=0x2780_pub15
+getaos=0x2780_aos
+gettol=0x2780_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Hiro Sode - B
+[0x27cb-s]
+{
+get=0x2780-s
+id=0x27cb
+}
+
+// Shadow Platemail Hiro Sode - Alias
+[shadowplatemailhirosode]
+{
+get=0x2780-s 0x27cb-s
+}
+
+// Shadow Platemail Jingasa - A
+[0x2781-s]
+{
+getpub15=0x2781_pub15
+getaos=0x2781_aos
+gettol=0x2781_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Jingasa - B
+[0x27cc-s]
+{
+get=0x2781-s
+id=0x27cc
+}
+
+// Shadow Platemail Jingasa - Alias
+[shadowplatemailjingasa]
+{
+get=0x2781-s 0x27cc-s
+}
+
+// Shadow Small Platemail Jingasa - A
+[0x2784-s]
+{
+getpub15=0x2784_pub15
+getaos=0x2784_aos
+gettol=0x2784_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Small Platemail Jingasa - B
+[0x27cf-s]
+{
+get=0x2784-s
+id=0x27cf
+}
+
+// Shadow Small Platemail Jingasa - Alias
+[shadowsmallplatemailjingasa]
+{
+get=0x2784-s 0x27cf-s
+}
+
+// Shadow Platemail Battle Kabuto - A
+[0x2785-s]
+{
+getpub15=0x2785_pub15
+getaos=0x2785_aos
+gettol=0x2785_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Battle Kabuto - B
+[0x27d0-s]
+{
+get=0x2785-s
+id=0x27d0
+}
+
+// Shadow Platemail Battle Kabuto - Alias
+[shadowplatemailbattlekabuto]
+{
+get=0x2785-s 0x27d0-s
+}
+
+// Shadow Platemail Suneate - A
+[0x2788-s]
+{
+getpub15=0x2788_pub15
+getaos=0x2788_aos
+gettol=0x2788_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Suneate - B
+[0x27d3-s]
+{
+get=0x2788-s
+id=0x27d3
+}
+
+// Shadow Platemail Suneate - Alias
+[shadowplatemailsuneate]
+{
+get=0x2788-s 0x27d3-s
+}
+
+// Shadow Platemail Kabuto - A
+[0x2789-s]
+{
+getpub15=0x2789_pub15
+getaos=0x2789_aos
+gettol=0x2789_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Kabuto - B
+[0x27d4-s]
+{
+get=0x2789-s
+id=0x27d4
+}
+
+// Shadow Platemail Kabuto - Alias
+[shadowplatemailkabuto]
+{
+get=0x2789-s 0x27d4-s
+}
+
+// Shadow Kabuto - A
+[0x236c-s]
+{
+getpub15=0x236c_pub15
+getaos=0x236c_aos
+gettol=0x236c_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Kabuto - B
+[0x236d-s]
+{
+get=0x236c-s
+id=0x236d
+}
+
+// Shadow Kabuto - Alias
+[shadowkabuto]
+{
+get=0x236c-s 0x236d-s
+}
+
+// Shadow Platemail Haidate - A
+[0x278d-s]
+{
+getpub15=0x278d_pub15
+getaos=0x278d_aos
+gettol=0x278d_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Haidate - B
+[0x27d8-s]
+{
+get=0x278d-s
+id=0x27d8
+}
+
+// Shadow Platemail Haidate - Alias
+[shadowplatemailhaidate]
+{
+get=0x278d-s 0x27d8-s
+}
+
+// Shadow Platemail Hatsuburi - A
+[0x2775-s]
+{
+getpub15=0x2775_pub15
+getaos=0x2775_aos
+gettol=0x2775_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Hatsuburi - B
+[0x27c0-s]
+{
+get=0x2775-s
+id=0x27c0
+}
+
+// Shadow Platemail Hatsuburi - Alias
+[shadowplatemailhatsuburi]
+{
+get=0x2775-s 0x27c0-s
+}
+
+// Shadow Chainmail Hatsuburi - A
+[0x2774-s]
+{
+getpub15=0x2774_pub15
+getaos=0x2774_aos
+gettol=0x2774_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Chainmail Hatsuburi - B
+[0x27bf-s]
+{
+get=0x2774-s
+id=0x27bf
+}
+
+// Shadow Chainmail Hatsuburi - Alias
+[shadowchainmailhatsuburi]
+{
+get=0x2774-s 0x27bf-s
+}
+
+// Shadow Platemail Mempo - E/W
+[0x2779-s]
+{
+getpub15=0x2779_pub15
+getaos=0x2779_aos
+gettol=0x2779_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Platemail Mempo - N/S
+[0x27c4-s]
+{
+get=0x2779-s
+id=0x27c4
+}
+
+// Shadow Platemail Mempo - Alias
+[shadowplatemailmempo]
+{
+get=0x2779-s 0x27c4-s
+}
+
+// Shadow Helmets
+
+// Shadow Close Helm - E/W
+[0x1408-s]
+{
+getpub15=0x1408_pub15
+getaos=0x1408_aos
+gettol=0x1408_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Close Helm - N/S
 [0x1409-s]
 {
 get=0x1408-s
 id=0x1409
 }
 
-// ShadowIron Close Helm(et) - Alias
-[shadowironclosehelm]
+// Shadow Close Helm - Alias
+[shadowclosehelm]
 {
 get=0x1408-s 0x1409-s
 }
 
-// ShadowIron Helmet - N/S
+// Shadow Helmet - E/W
 [0x140a-s]
 {
-get=base_helmet
+getpub15=0x140a_pub15
+getaos=0x140a_aos
+gettol=0x140a_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Helmet - E/W
+// Shadow Helmet - N/S
 [0x140b-s]
 {
-get=0x140a-s
+get=0x140b-s
 id=0x140b
 }
 
-// ShadowIron Helmet - Alias
-[shadowironhelmet]
+// Shadow Helmet - Alias
+[shadowhelmet]
 {
 get=0x140a-s 0x140b-s
 }
 
-// ShadowIron Bascinet - N/S
+// Shadow Bascinet - E/W
 [0x140c-s]
 {
-get=base_bascinet
+getpub15=0x140c_pub15
+getaos=0x140c_aos
+gettol=0x140c_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Bascinet - E/W
+// Shadow Bascinet - N/S
 [0x140d-s]
 {
 get=0x140c-s
 id=0x140d
 }
 
-// ShadowIron Bascinet - Alias
-[shadowironbascinet]
+// Shadow Bascinet - Alias
+[shadowbascinet]
 {
 get=0x140c-s 0x140d-s
 }
 
-// ShadowIron Norse Helm - N/S
+// Shadow Norse Helm - E/W
 [0x140e-s]
 {
-get=base_nose_helm
+getpub15=0x140e_pub15
+getaos=0x140e_aos
+gettol=0x140e_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Norse Helm - E/W
+// Shadow Norse Helm - N/S
 [0x140f-s]
 {
 get=0x140e-s
 id=0x140f
 }
 
-// ShadowIron Norse Helm - Alias
-[shadowironnorsehelm]
+// Shadow Norse Helm - Alias
+[shadownorsehelm]
 {
 get=0x140e-s 0x140f-s
 }
 
-// ShadowIron Plate Helm - E/W
+// Shadow Plate Helm - N/S
 [0x1412-s]
 {
-get=base_plate_helm
+getpub15=0x1412_pub15
+getaos=0x1412_aos
+gettol=0x1412_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Plate Helm - N/S
+// Shadow Plate Helm - E/W
 [0x1419-s]
 {
 get=0x1412-s
 id=0x1419
 }
 
-// ShadowIron Plate Helm - Alias
-[shadowironplatehelm]
+// Shadow Plate Helm - Alias
+[shadowplatehelm]
 {
 get=0x1412-s 0x1419-s
 }
 
-// Shields
+// Shadow Shields
 
-// ShadowIron ShadowIron Shield
+// Shadow Shadow Shield
 [0x1b72-s]
 {
-get=base_shadowiron_shield
+getpub15=0x1b72_pub15
+getaos=0x1b72_aos
+gettol=0x1b72_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron ShadowIron Shield - Alias
-[shadowironshadowironshield]
+// Shadow Shadow Shield - Alias
+[shadowshadowshield]
 {
 get=0x1b72-s
 }
 
-// ShadowIron Buckler
+// Shadow Buckler
 [0x1b73-s]
 {
-get=base_buckler
+getpub15=0x1b73_pub15
+getaos=0x1b73_aos
+gettol=0x1b73_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Buckler - Alias
-[shadowironbuckler]
+// Shadow Buckler - Alias
+[shadowbuckler]
 {
 get=0x1b73-s
 }
 
-// ShadowIron Metal Kite Shield - N/S
+// Shadow Kite Shield (Metal) - N/S
 [0x1b74-s]
 {
-get=base_metal_kite_shield
+getpub15=0x1b74_pub15
+getaos=0x1b74_aos
+gettol=0x1b74_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Metal Kite Shield - E/W
-[0x1b75-s]
-{
-get=0x1b74-s
-id=0x1b75
-}
-
-// Metal Kite Shield - Alias
-[shadowironmetalkiteshield]
-{
-get=0x1b74-s 0x1b75-s
-}
-
-// ShadowIron Heater Shield - N/S
+// Shadow Heater Shield - N/S
 [0x1b76-s]
 {
-get=base_heater_shield
+getpub15=0x1b76_pub15
+getaos=0x1b76_aos
+gettol=0x1b76_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// ShadowIron Heater Shield - E/W
-[0x1b77-s]
-{
-get=0x1b76-s
-id=0x1b77
-}
-
-// ShadowIron Heater Shield - Alias
-[shadowironheatershield]
-{
-get=0x1b76-s 0x1b77-s
-}
-
-// ShadowIron Metal Shield
-[0x1b7b-s]
-{
-get=base_metal_shield
-color=0x966
-}
-
-// ShadowIron Metal Shield - Alias
-[shadowironmetalshield]
-{
-get=0x1b7b-s
-}
-
-// Kite Shield (wooden) - N/S
+// Shadow Kite Shield (Wood) - N/S
 [0x1b78-s]
 {
-get=base_wooden_kite_shield
+getpub15=0x1b78_pub15
+getaos=0x1b78_aos
+gettol=0x1b78_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
 color=0x966
 }
 
-// Kite Shield (wooden) - E/W
+// Shadow Kite Shield (wood) - E/W
 [0x1b79-s]
 {
 get=0x1b78-s
 id=0x1b79
 }
 
-// Kite Shield (wooden) - Alias
-[shadowironwoodenkiteshield]
+// Shadow Kite Shield (wood) - Alias
+[shadowmetalkiteshield]
 {
 get=0x1b78-s 0x1b79-s
+}
+
+// AgapiteWooden Shield
+[0x1b7a-s]
+{
+getpub15=0x1b7a_pub15
+getaos=0x1b7a_aos
+gettol=0x1b7a_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Wooden Shield - Alias
+[shadowwoodenshield]
+{
+get=0x1b7a-s
+}
+
+// Shadow Metal Shield
+[0x1b7b-s]
+{
+getpub15=0x1b7b_pub15
+getaos=0x1b7b_aos
+gettol=0x1b7b_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Metal Shield - Alias
+[shadowmetalshield]
+{
+get=0x1b7b-s
+}
+
+// Shadow Chaos Shield
+[0x1bc3-s]
+{
+getpub15=0x1bc3_pub15
+getaos=0x1bc3_aos
+gettol=0x1bc3_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Chaos Shield - Alias
+[shadowchaosshield]
+{
+get=0x1bc3-s
+}
+
+// Shadow Order Shield - N/S
+[0x1bc4-s]
+{
+getpub15=0x1bc4_pub15
+getaos=0x1bc4_aos
+gettol=0x1bc4_tol
+getaos=shadow_armor_bonus_aos
+gettol=shadow_armor_bonus_tol
+color=0x966
+}
+
+// Shadow Order Shield - E/W
+[0x1bc5-s]
+{
+get=0x1bc5-s
+id=0x1bc5
+}
+
+// Shadow Order Shield - Alias
+[shadowordershield]
+{
+get=0x1bc4-s 0x1bc5-s
 }

@@ -1,20 +1,20 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| ssection.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Script Section class implementation
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
 #include "uox3.h"
 #include "ssection.h"
 
-constexpr auto DFN_STRING = std::uint8_t(0);
-constexpr auto DFN_NUMERIC = std::uint8_t(1);
-constexpr auto DFN_UPPERSTRING = std::uint8_t(2);
-constexpr auto DFN_NODATA = std::uint8_t(3);
-constexpr auto DFN_UNKNOWN = std::uint8_t(4);
-constexpr auto DFN_DOUBLENUMERIC = std::uint8_t(5);
+constexpr auto DFN_STRING 		= UI08( 0 );
+constexpr auto DFN_NUMERIC 		= UI08( 1 );
+constexpr auto DFN_UPPERSTRING 	= UI08( 2 );
+constexpr auto DFN_NODATA 		= UI08( 3 );
+constexpr auto DFN_UNKNOWN 		= UI08( 4 );
+constexpr auto DFN_DOUBLENUMERIC= UI08( 5 );
 
-using namespace std::string_literals ;
+using namespace std::string_literals;
 // 04302004 - Added DFN_UPPERSTRING to support the new DFNTAG_ADDMENUITEM tag
 const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 {
@@ -56,6 +56,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_DAMAGEABLE,
 	DFN_NUMERIC,		//	DFNTAG_DECAY,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DEF,
+	DFN_DOUBLENUMERIC,	//	DFNTAG_DEFBONUS,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DETECTINGHIDDEN,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_DEX,
 	DFN_NUMERIC,		//	DFNTAG_DEXADD,
@@ -67,6 +68,7 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_DYEBEARD,
 	DFN_NUMERIC,		//	DFNTAG_DYEHAIR,
 	DFN_STRING,			//	DFNTAG_ELEMENTRESIST,
+	DFN_STRING,			//	DFNTAG_ERBONUS,
 	DFN_NUMERIC,		//	DFNTAG_EMOTECOLOUR,
 	DFN_DOUBLENUMERIC,	//	DFNTAG_ENTICEMENT,
 	DFN_UPPERSTRING,	//	DFNTAG_EQUIPITEM,
@@ -88,6 +90,17 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_NUMERIC,		//	DFNTAG_FZ1,
 	DFN_UPPERSTRING,	//	DFNTAG_FOOD,
 	DFN_UPPERSTRING,	//	DFNTAG_GET,
+	DFN_UPPERSTRING,	//	DFNTAG_GETT2A,
+	DFN_UPPERSTRING,	//	DFNTAG_GETUOR,
+	DFN_UPPERSTRING,	//	DFNTAG_GETTD,
+	DFN_UPPERSTRING,	//	DFNTAG_GETLBR,
+	DFN_UPPERSTRING,	//	DFNTAG_GETPUB15,
+	DFN_UPPERSTRING,	//	DFNTAG_GETAOS,
+	DFN_UPPERSTRING,	//	DFNTAG_GETSE,
+	DFN_UPPERSTRING,	//	DFNTAG_GETML,
+	DFN_UPPERSTRING,	//	DFNTAG_GETSA,
+	DFN_UPPERSTRING,	//	DFNTAG_GETHS,
+	DFN_UPPERSTRING,	//	DFNTAG_GETTOL,
 	DFN_NUMERIC,		//	DFNTAG_GLOW,
 	DFN_NUMERIC,		//	DFNTAG_GLOWBC,
 	DFN_NUMERIC,		//	DFNTAG_GLOWTYPE,
@@ -236,15 +249,16 @@ const UI08 dfnDataTypes[DFNTAG_COUNTOFTAGS] =
 	DFN_DOUBLENUMERIC	//	DFNTAG_WRESTLING
 };
 
-struct strToDFNLookup
+struct StrToDFNLookup_st
 {
 	std::string strToAdd;
 	DFNTAGS	dfnToAdd;
 };
 
-const std::map< std::string, DFNTAGS > strToDFNTag{
-	{"AC"s,				DFNTAG_AC},
-	{"ADDMENUITEM"s,			DFNTAG_ADDMENUITEM},
+const std::map<std::string, DFNTAGS> strToDFNTag
+{
+	{"AC"s,					DFNTAG_AC},
+	{"ADDMENUITEM"s,		DFNTAG_ADDMENUITEM},
 	{"ADVOBJ"s,				DFNTAG_ADVOBJ},
 	{"ALCHEMY"s,			DFNTAG_ALCHEMY},
 	{"AMMO"s,				DFNTAG_AMMO},
@@ -264,7 +278,7 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"BUSHIDO"s,			DFNTAG_BUSHIDO},
 	{"CAMPING"s,			DFNTAG_CAMPING},
 	{"CARPENTRY"s,			DFNTAG_CARPENTRY},
-	{"CARTOGRAPHY"s,			DFNTAG_CARTOGRAPHY},
+	{"CARTOGRAPHY"s,		DFNTAG_CARTOGRAPHY},
 	{"CARVE"s,				DFNTAG_CARVE},
 	{"CHIVALRY"s,			DFNTAG_CHIVALRY},
 	{"COLD"s,				DFNTAG_COLD},
@@ -273,26 +287,27 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"COLORLIST"s,			DFNTAG_COLOURLIST},
 	{"COLOURLIST"s,			DFNTAG_COLOURLIST},
 	{"COLORMATCHHAIR"s,		DFNTAG_COLOURMATCHHAIR},
-	{"COLOURMATCHHAIR"s,		DFNTAG_COLOURMATCHHAIR},
-	{"CONTROLSLOTS"s,			DFNTAG_CONTROLSLOTS},
+	{"COLOURMATCHHAIR"s,	DFNTAG_COLOURMATCHHAIR},
+	{"CONTROLSLOTS"s,		DFNTAG_CONTROLSLOTS},
 	{"COOKING"s,			DFNTAG_COOKING},
 	{"CORPSE"s,				DFNTAG_CORPSE},
 	{"CREATOR"s,			DFNTAG_CREATOR},
-	{"CUSTOMSTRINGTAG"s,		DFNTAG_CUSTOMSTRINGTAG},
-	{"CUSTOMINTTAG"s,			DFNTAG_CUSTOMINTTAG},
+	{"CUSTOMSTRINGTAG"s,	DFNTAG_CUSTOMSTRINGTAG},
+	{"CUSTOMINTTAG"s,		DFNTAG_CUSTOMINTTAG},
 	{"DAMAGE"s,				DFNTAG_DAMAGE},
 	{"DAMAGEABLE"s,			DFNTAG_DAMAGEABLE},
 	{"DECAY"s,				DFNTAG_DECAY},
 	{"DEF"s,				DFNTAG_DEF},
-	{"DETECTINGHIDDEN"s,		DFNTAG_DETECTINGHIDDEN},
+	{"DEFBONUS"s,			DFNTAG_DEFBONUS},
+	{"DETECTINGHIDDEN"s,	DFNTAG_DETECTINGHIDDEN},
 	{"DEX"s,				DFNTAG_DEX},
 	{"DEXTERITY"s,			DFNTAG_DEX},
-	{"DX"s,				DFNTAG_DEX},
+	{"DX"s,					DFNTAG_DEX},
 	{"DEXADD"s,				DFNTAG_DEXADD},
 	{"DX2"s,				DFNTAG_DEXADD},
 	{"DIR"s,				DFNTAG_DIR},
 	{"DIRECTION"s,			DFNTAG_DIR},
-	{"DISPELLABLE"s,			DFNTAG_DISPELLABLE},
+	{"DISPELLABLE"s,		DFNTAG_DISPELLABLE},
 	{"DISABLED"s,			DFNTAG_DISABLED},
 	{"DOORFLAG"s,			DFNTAG_DOORFLAG},
 	{"DYE"s,				DFNTAG_DYE},
@@ -300,18 +315,19 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"DYEHAIR"s,			DFNTAG_DYEHAIR},
 	{"DYEBEARD"s,			DFNTAG_DYEBEARD},
 	{"ELEMENTRESIST"s,		DFNTAG_ELEMENTRESIST},
+	{"ERBONUS"s,			DFNTAG_ERBONUS},	
 	{"EMOTECOLOR"s,			DFNTAG_EMOTECOLOUR},
-	{"EMOTECOLOUR"s,			DFNTAG_EMOTECOLOUR},
+	{"EMOTECOLOUR"s,		DFNTAG_EMOTECOLOUR},
 	{"ENTICEMENT"s,			DFNTAG_ENTICEMENT},
-	{"EVALUATINGINTEL"s,		DFNTAG_EVALUATINGINTEL},
+	{"EVALUATINGINTEL"s,	DFNTAG_EVALUATINGINTEL},
 	{"EVENT"s,				DFNTAG_EVENT},
 	{"FAME"s,				DFNTAG_FAME},
 	{"FENCING"s,			DFNTAG_FENCING},
 	{"FISHING"s,			DFNTAG_FISHING},
 	{"FLAG"s,				DFNTAG_FLAG},
 	{"FLEEAT"s,				DFNTAG_FLEEAT},
-	{"FLEEINGSPEED"s,			DFNTAG_FLEEINGSPEED},
-	{"FLEEINGSPEEDMOUNTED"s,	DFNTAG_FLEEINGSPEEDMOUNTED},
+	{"FLEEINGSPEED"s,		DFNTAG_FLEEINGSPEED},
+	{"FLEEINGSPEEDMOUNTED"s,DFNTAG_FLEEINGSPEEDMOUNTED},
 	{"FOCUS"s,				DFNTAG_FOCUS},
 	{"FORENSICS"s,			DFNTAG_FORENSICS},
 	{"FX1"s,				DFNTAG_FX1},
@@ -321,6 +337,17 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"FZ1"s,				DFNTAG_FZ1},
 	{"FOOD"s,				DFNTAG_FOOD},
 	{"GET"s,				DFNTAG_GET},
+	{"GETT2A"s,				DFNTAG_GETT2A},
+	{"GETUOR"s,				DFNTAG_GETUOR},
+	{"GETTD"s,				DFNTAG_GETTD},
+	{"GETLBR"s,				DFNTAG_GETLBR},
+	{"GETPUB15"s,			DFNTAG_GETPUB15},
+	{"GETAOS"s,				DFNTAG_GETAOS},
+	{"GETSE"s,				DFNTAG_GETSE},
+	{"GETML"s,				DFNTAG_GETML},
+	{"GETSA"s,				DFNTAG_GETSA},
+	{"GETHS"s,				DFNTAG_GETHS},
+	{"GETTOL"s,				DFNTAG_GETTOL},
 	{"GLOW"s,				DFNTAG_GLOW},
 	{"GLOWBC"s,				DFNTAG_GLOWBC},
 	{"GLOWTYPE"s,			DFNTAG_GLOWTYPE},
@@ -334,17 +361,17 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"HIDAMAGE"s,			DFNTAG_HIDAMAGE},
 	{"HIDING"s,				DFNTAG_HIDING},
 	{"HIRELING"s,			DFNTAG_HIRELING},
-	{"HP"s,				DFNTAG_HP},
+	{"HP"s,					DFNTAG_HP},
 	{"HPMAX"s,				DFNTAG_HPMAX},
-	{"ID"s,				DFNTAG_ID},
+	{"ID"s,					DFNTAG_ID},
 	{"IMBUING"s,			DFNTAG_IMBUING},
-	{"IN"s,				DFNTAG_INTELLIGENCE},
-	{"INTELLIGENCE"s,			DFNTAG_INTELLIGENCE},
+	{"IN"s,					DFNTAG_INTELLIGENCE},
+	{"INTELLIGENCE"s,		DFNTAG_INTELLIGENCE},
 	{"INT"s,				DFNTAG_INTELLIGENCE},
 	{"IN2"s,				DFNTAG_INTADD},
 	{"INTADD"s,				DFNTAG_INTADD},
 	{"INTERVAL"s,			DFNTAG_INTERVAL},
-	{"INSCRIPTION"s,			DFNTAG_INSCRIPTION},
+	{"INSCRIPTION"s,		DFNTAG_INSCRIPTION},
 	{"EQUIPITEM"s,			DFNTAG_EQUIPITEM},
 	{"ITEMLIST"s,			DFNTAG_ITEMLIST},
 	{"ITEMID"s,				DFNTAG_ITEMID},
@@ -355,14 +382,14 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"LAYER"s,				DFNTAG_LAYER},
 	{"LIGHT"s,				DFNTAG_LIGHT},
 	{"LIGHTNING"s,			DFNTAG_LIGHTNING},
-	{"LOCKPICKING"s,			DFNTAG_LOCKPICKING},
+	{"LOCKPICKING"s,		DFNTAG_LOCKPICKING},
 	{"LODAMAGE"s,			DFNTAG_LODAMAGE},
 	{"LOOT"s,				DFNTAG_LOOT},
 	{"LOYALTY"s,			DFNTAG_MAXLOYALTY},
 	{"LUMBERJACKING"s,		DFNTAG_LUMBERJACKING},
-	{"MACEFIGHTING"s,			DFNTAG_MACEFIGHTING},
+	{"MACEFIGHTING"s,		DFNTAG_MACEFIGHTING},
 	{"MAGERY"s,				DFNTAG_MAGERY},
-	{"MAGICRESISTANCE"s,		DFNTAG_MAGICRESISTANCE},
+	{"MAGICRESISTANCE"s,	DFNTAG_MAGICRESISTANCE},
 	{"MANA"s,				DFNTAG_MANA},
 	{"MANAMAX"s,			DFNTAG_MANAMAX},
 	{"MAXHP"s,				DFNTAG_MAXHP},
@@ -378,7 +405,7 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"MOREX"s,				DFNTAG_MOREX},
 	{"MOREY"s,				DFNTAG_MOREY},
 	{"MOREZ"s,				DFNTAG_MOREZ},
-	{"MUSICIANSHIP"s,			DFNTAG_MUSICIANSHIP},
+	{"MUSICIANSHIP"s,		DFNTAG_MUSICIANSHIP},
 	{"MYSTICISM"s,			DFNTAG_MYSTICISM},
 	{"NAME"s,				DFNTAG_NAME},
 	{"NAME2"s,				DFNTAG_NAME2},
@@ -394,29 +421,29 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"OFFSPELL"s,			DFNTAG_OFFSPELL},
 	{"PACKITEM"s,			DFNTAG_PACKITEM},
 	{"PARRYING"s,			DFNTAG_PARRYING},
-	{"PEACEMAKING"s,			DFNTAG_PEACEMAKING},
+	{"PEACEMAKING"s,		DFNTAG_PEACEMAKING},
 	{"PILEABLE"s,			DFNTAG_PILEABLE},
 	{"POLY"s,				DFNTAG_POLY},
-	{"POISONDAMAGE"s,			DFNTAG_POISONDAMAGE},
+	{"POISONDAMAGE"s,		DFNTAG_POISONDAMAGE},
 	{"POISONSTRENGTH"s,		DFNTAG_POISONSTRENGTH},
 	{"POISONED"s,			DFNTAG_POISONED},
 	{"POISONING"s,			DFNTAG_POISONING},
 	{"PRIV"s,				DFNTAG_PRIV},
-	{"PROVOCATION"s,			DFNTAG_PROVOCATION},
+	{"PROVOCATION"s,		DFNTAG_PROVOCATION},
 	{"RACE"s,				DFNTAG_RACE},
 	{"RAIN"s,				DFNTAG_RAIN},
 	{"RANK"s,				DFNTAG_RANK},
 	{"REATTACKAT"s,			DFNTAG_REATTACKAT},
 	{"RESISTFIRE"s,			DFNTAG_RESISTFIRE},
 	{"RESISTCOLD"s,			DFNTAG_RESISTCOLD},
-	{"RESISTLIGHTNING"s,		DFNTAG_RESISTLIGHTNING},
-	{"RESISTPOISON"s,			DFNTAG_RESISTPOISON},
+	{"RESISTLIGHTNING"s,	DFNTAG_RESISTLIGHTNING},
+	{"RESISTPOISON"s,		DFNTAG_RESISTPOISON},
 	{"REMOVETRAP"s,			DFNTAG_REMOVETRAP},
 	{"RESTOCK"s,			DFNTAG_RESTOCK},
 	{"RSHOPITEM"s,			DFNTAG_RSHOPITEM},
 	{"RUNS"s,				DFNTAG_RUNS},
-	{"RUNNINGSPEED"s,			DFNTAG_RUNNINGSPEED},
-	{"RUNNINGSPEEDMOUNTED"s,	DFNTAG_RUNNINGSPEEDMOUNTED},
+	{"RUNNINGSPEED"s,		DFNTAG_RUNNINGSPEED},
+	{"RUNNINGSPEEDMOUNTED"s, DFNTAG_RUNNINGSPEEDMOUNTED},
 	{"SAYCOLOR"s,			DFNTAG_SAYCOLOUR},
 	{"SAYCOLOUR"s,			DFNTAG_SAYCOLOUR},
 	{"SCRIPT"s,				DFNTAG_SCRIPT},
@@ -433,14 +460,14 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"SPADELAY"s,			DFNTAG_SPADELAY},
 	{"SPATTACK"s,			DFNTAG_SPATTACK},
 	{"SPAWNOBJ"s,			DFNTAG_SPAWNOBJ},
-	{"SPAWNOBJLIST"s,			DFNTAG_SPAWNOBJLIST},
+	{"SPAWNOBJLIST"s,		DFNTAG_SPAWNOBJLIST},
 	{"SPD"s,				DFNTAG_SPD},
 	{"SPEED"s,				DFNTAG_SPD},
-	{"SPELLWEAVING"s,			DFNTAG_SPELLWEAVING},
-	{"SPIRITSPEAK"s,			DFNTAG_SPIRITSPEAK},
+	{"SPELLWEAVING"s,		DFNTAG_SPELLWEAVING},
+	{"SPIRITSPEAK"s,		DFNTAG_SPIRITSPEAK},
 	{"SPLIT"s,				DFNTAG_SPLIT},
-	{"SPLITCHANCE"s,			DFNTAG_SPLITCHANCE},
-	{"ST"s,				DFNTAG_STRENGTH},
+	{"SPLITCHANCE"s,		DFNTAG_SPLITCHANCE},
+	{"ST"s,					DFNTAG_STRENGTH},
 	{"STAMINA"s,			DFNTAG_STAMINA},
 	{"STAMINAMAX"s,			DFNTAG_STAMINAMAX},
 	{"STR"s,				DFNTAG_STRENGTH},
@@ -453,8 +480,8 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"TACTICS"s,			DFNTAG_TACTICS},
 	{"TAILORING"s,			DFNTAG_TAILORING},
 	{"TAMING"s,				DFNTAG_TAMING},
-	{"TAMEDHUNGER"s,			DFNTAG_TAMEDHUNGER},
-	{"TAMEDTHIRST"s,			DFNTAG_TAMEDTHIRST},
+	{"TAMEDHUNGER"s,		DFNTAG_TAMEDHUNGER},
+	{"TAMEDTHIRST"s,		DFNTAG_TAMEDTHIRST},
 	{"TASTEID"s,			DFNTAG_TASTEID},
 	{"THROWING"s,			DFNTAG_THROWING},
 	{"TINKERING"s,			DFNTAG_TINKERING},
@@ -468,148 +495,168 @@ const std::map< std::string, DFNTAGS > strToDFNTag{
 	{"VALUE"s,				DFNTAG_VALUE},
 	{"VETERINARY"s,			DFNTAG_VETERINARY},
 	{"VISIBLE"s,			DFNTAG_VISIBLE},
-	{"WALKINGSPEED"s,			DFNTAG_WALKINGSPEED},
-	{"WALKINGSPEEDMOUNTED"s,	DFNTAG_WALKINGSPEEDMOUNTED},
+	{"WALKINGSPEED"s,		DFNTAG_WALKINGSPEED},
+	{"WALKINGSPEEDMOUNTED"s, DFNTAG_WALKINGSPEEDMOUNTED},
 	{"WEIGHT"s,				DFNTAG_WEIGHT},
 	{"WEIGHTMAX"s,			DFNTAG_WEIGHTMAX},
 	{"WILLHUNGER"s,			DFNTAG_WILLHUNGER},
 	{"WIPE"s,				DFNTAG_WIPE},
 	{"WRESTLING"s,			DFNTAG_WRESTLING}
-	
 };
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	DFNTAGS FindDFNTagFromStr( std::string strToFind )
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-
-//o-----------------------------------------------------------------------------------------------o
-auto FindDFNTagFromStr( const std::string &strToFind ) ->DFNTAGS{
-	auto iter = strToDFNTag.find( oldstrutil::upper( strToFind ) );
-	if (iter != strToDFNTag.end()) {
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	FindDFNTagFromStr()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Find a valid DFN tag from a provided string
+//o------------------------------------------------------------------------------------------------o
+auto FindDFNTagFromStr( const std::string &strToFind ) ->DFNTAGS
+{
+	auto iter = strToDFNTag.find( oldstrutil::upper( strToFind ));
+	if( iter != strToDFNTag.end() )
+	{
 		return iter->second;
 	}
 	return DFNTAG_COUNTOFTAGS;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ScriptSection( void ) : dfnCat( NUM_DEFS ),
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::CScriptSection() : dfnCat( NUM_DEFS ),
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
-//o-----------------------------------------------------------------------------------------------o
-ScriptSection::ScriptSection() : dfnCat( NUM_DEFS ),
-npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false ) {
+//o------------------------------------------------------------------------------------------------o
+CScriptSection::CScriptSection() : dfnCat( NUM_DEFS ),
+npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
+{
 	data.resize( 0 );
 	dataV2.resize( 0 );
 	currentPos	= data.end();
 	currentPos2	= dataV2.end();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	ScriptSection( std::fstream& input, DEFINITIONCATEGORIES d )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::CScriptSection( std::fstream& input, DEFINITIONCATEGORIES d )
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default constructor, initializing all variables
 //|						and grabbing a section from the file passed in
-//o-----------------------------------------------------------------------------------------------o
-ScriptSection::ScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d ) :
-dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" ) {
+//o------------------------------------------------------------------------------------------------o
+CScriptSection::CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d ) :
+dfnCat( d ), npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
+{
 	data.resize( 0 );
 	dataV2.resize( 0 );
-	createSection( input );
+	CreateSection( input );
 	currentPos	= data.end();
 	currentPos2	= dataV2.end();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool AtEnd( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::AtEnd()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if at end of the section
-//o-----------------------------------------------------------------------------------------------o
-bool ScriptSection::AtEnd() {
+//o------------------------------------------------------------------------------------------------o
+bool CScriptSection::AtEnd()
+{
 	return ( currentPos == data.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string First( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::First()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the first tag at the start of the section
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::First()->std::string {
-	std::string rvalue;
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::First() -> std::string
+{
+	std::string rValue;
 	currentPos = data.begin();
-	if( !AtEnd() ) {
-		rvalue = (*currentPos)->tag;
+	if( !AtEnd() )
+	{
+		rValue = ( *currentPos )->tag;
 	}
-	return rvalue;
+	return rValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string Next( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::Next()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the next tag in the section, or nullptr if no more
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::Next() ->std::string {
-	std::string rvalue;
-	if( !AtEnd() ) {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::Next() -> std::string
+{
+	std::string rValue;
+	if( !AtEnd() )
+	{
 		++currentPos;
-		if( !AtEnd() ){
-			rvalue = (*currentPos)->tag;
+		if( !AtEnd() )
+		{
+			rValue = ( *currentPos )->tag;
 		}
 	}
-	return rvalue;
+	return rValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string MoveTo( size_t position )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::MoveTo()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Moves to position in the section and returns the tag there
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::MoveTo( size_t position ) ->std::string {
-	std::string rvalue;
-	std::vector< sectData * >::iterator curPos	= currentPos;
-	currentPos	= (data.begin() + position);
-	if( !AtEnd() ) {
-		rvalue = (*currentPos)->tag;
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::MoveTo( size_t position ) -> std::string
+{
+	std::string rValue;
+	std::vector<SectData_st *>::iterator curPos = currentPos;
+	currentPos = ( data.begin() + position );
+	if( !AtEnd() )
+	{
+		rValue = ( *currentPos )->tag;
 	}
-	else {
-		currentPos	= curPos;
+	else
+	{
+		currentPos = curPos;
 	}
-	return rvalue;
+	return rValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string GrabData( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::GrabData()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the data for the current tag
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::GrabData() -> std::string {
-	std::string rvalue;
-	if( !AtEnd() ) {
-		rvalue = (*currentPos)->data;
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::GrabData() -> std::string
+{
+	std::string rValue;
+	if( !AtEnd() )
+	{
+		rValue = ( *currentPos )->data;
 	}
-	return rvalue;
+	return rValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	~ScriptSection()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::~CScriptSection()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Default deconstructor, removing any allocated memory
 //|						and closing any files that may be open
-//o-----------------------------------------------------------------------------------------------o
-ScriptSection::~ScriptSection() {
+//o------------------------------------------------------------------------------------------------o
+CScriptSection::~CScriptSection()
+{
 	if( !FlushData() )
-		Console.error( "Section unable to flush data!" );
+	{
+		Console.Error( "Section unable to flush data!" );
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool FlushData( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::FlushData()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes all tag/data pairs and resizes array to 0
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::FlushData() ->bool {
-	for( size_t i = 0; i < data.size(); ++i ) {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::FlushData() -> bool
+{
+	for( size_t i = 0; i < data.size(); ++i )
+	{
 		delete data[i];
 	}
-	for( size_t j = 0; j < dataV2.size(); ++j ) {
+	for( size_t j = 0; j < dataV2.size(); ++j )
+	{
 		delete dataV2[j];
 	}
 	data.resize( 0 );
@@ -617,264 +664,313 @@ auto ScriptSection::FlushData() ->bool {
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	size_t NumEntries( void ) const
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::NumEntries()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the number of entries in the section
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::NumEntries() const ->size_t {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::NumEntries() const -> size_t
+{
 	return data.size();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string Prev( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::Prev()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the previous tag, or nullptr if at start
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::Prev() ->std::string {
-	std::string rvalue;
-	if( currentPos != data.begin() ) {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::Prev() -> std::string
+{
+	std::string rValue;
+	if( currentPos != data.begin() )
+	{
 		--currentPos;
-		if( !AtEnd() ) {
-			rvalue = (*currentPos)->tag;
+		if( !AtEnd() )
+		{
+			rValue = ( *currentPos )->tag;
 		}
 	}
-	return rvalue;
+	return rValue;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Remove( size_t position )
-//|	Changes		-   (11-15-2001)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::Remove()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes the tag/data pair at position in the array
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::Remove( size_t position ) ->void {
-	if( AtEnd() ){
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::Remove( size_t position ) -> void
+{
+	if( AtEnd() )
+	{
 		return;
 	}
 	delete data[position];
 	data.erase( data.begin() + position );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Append( std::string tagToAdd, std::string dataToAdd )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::Append()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new tag/data pair at the end of the section
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::Append( std::string tagToAdd, std::string dataToAdd ) ->void {
-	sectData *toAdd	= new sectData;
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::Append( std::string tagToAdd, std::string dataToAdd ) -> void
+{
+	SectData_st *toAdd	= new SectData_st;
 	toAdd->tag		= tagToAdd;
 	toAdd->data		= dataToAdd;
 	data.push_back( toAdd );
 }
 
-auto ScriptSection::GrabData( SI32& ndata, SI32& odata ) ->std::string {
-	std::string rvalue;
-	if( AtEndTags() ) {
+auto CScriptSection::GrabData( SI32& ndata, SI32& odata ) -> std::string
+{
+	std::string rValue;
+	if( AtEndTags() )
+	{
 		ndata = INVALIDSERIAL;
 		odata = INVALIDSERIAL;
 	}
-	else {
-		ndata	= (*currentPos2)->ndata;
-		odata	= (*currentPos2)->odata;
-		rvalue	= (*currentPos2)->cdata;
+	else
+	{
+		ndata	= ( *currentPos2 )->ndata;
+		odata	= ( *currentPos2 )->odata;
+		rValue	= ( *currentPos2 )->cdata;
 	}
-	return rvalue;
+	return rValue;
 }
-auto ScriptSection::AtEndTags() ->bool{
-	if( currentPos2 == dataV2.end() ){
+auto CScriptSection::AtEndTags() -> bool
+{
+	if( currentPos2 == dataV2.end() )
+	{
 		return true;
 	}
 	return false;
 }
-auto ScriptSection::PrevTag() ->DFNTAGS {
+auto CScriptSection::PrevTag() ->DFNTAGS
+{
 	DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
-	if( currentPos2 != dataV2.begin() ) {
+	if( currentPos2 != dataV2.begin() )
+	{
 		--currentPos2;
-		if( !AtEndTags() ){
-			rValue = (*currentPos2)->tag;
+		if( !AtEndTags() )
+		{
+			rValue = ( *currentPos2 )->tag;
 		}
 	}
 	return rValue;
 }
-auto ScriptSection::NextTag() ->DFNTAGS {
+auto CScriptSection::NextTag() ->DFNTAGS
+{
 	DFNTAGS rValue = DFNTAG_COUNTOFTAGS;
-	if( !AtEndTags() ) {
+	if( !AtEndTags() )
+	{
 		++currentPos2;
-		if( !AtEndTags() ){
-			rValue = (*currentPos2)->tag;
+		if( !AtEndTags() )
+		{
+			rValue = ( *currentPos2 )->tag;
 		}
 	}
 	return rValue;
 }
-auto ScriptSection::FirstTag() ->DFNTAGS {
+auto CScriptSection::FirstTag() ->DFNTAGS
+{
 	currentPos2 = dataV2.begin();
-	if( AtEndTags() ){
+	if( AtEndTags() )
+	{
 		return DFNTAG_COUNTOFTAGS;
 	}
-	return (*currentPos2)->tag;
+	return ( *currentPos2 )->tag;
 }
 
-//==============================================================================================
-auto ScriptSection::collection() const -> const std::vector<sectData *>& {
+//==================================================================================================
+auto CScriptSection::collection() const -> const std::vector<SectData_st *>&
+{
 	return data;
 }
-//==============================================================================================
-auto ScriptSection::collection()  -> std::vector<sectData *>&{
+//==================================================================================================
+auto CScriptSection::collection()  -> std::vector<SectData_st *>&
+{
 	return data;
 
 }
-//==============================================================================================
-auto ScriptSection::collection2() const -> const std::vector<sectDataV2 *>& {
+//==================================================================================================
+auto CScriptSection::collection2() const -> const std::vector<SectDataV2_st *>&
+{
 	return dataV2;
 }
-//==============================================================================================
-auto ScriptSection::collection2()  -> std::vector<sectDataV2 *>&{
+//==================================================================================================
+auto CScriptSection::collection2()  -> std::vector<SectDataV2_st *>&
+{
 	return dataV2;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ItemListExist( void ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::ItemListExist()
 //|	Date		-	12 January, 2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if an item list tag exists in section
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::ItemListExist() const ->bool {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::ItemListExist() const -> bool
+{
 	return itemList;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool NpcListExist( void ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::NpcListExist()
 //|	Date		-	12 January, 2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if an npc list tag exists in section
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::NpcListExist() const ->bool {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::NpcListExist() const -> bool
+{
 	return npcList;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string ItemListData( void ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::ItemListData()
 //|	Date		-	12 January, 2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the itemlist data
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::ItemListData() const ->std::string {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::ItemListData() const -> std::string
+{
 	return itemListData;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	const std::string NpcListData( void ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::NpcListData()
 //|	Date		-	12 January, 2003
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the npclist data
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::NpcListData() const ->std::string {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::NpcListData() const -> std::string
+{
 	return npcListData;
 }
 
 UI32 groupHolder = 0;
 UI32 itemIndexHolder = 0;
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void createSection( std::fstream& input )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CScriptSection::CreateSection()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates section data from the input stream passed in
-//o-----------------------------------------------------------------------------------------------o
-auto ScriptSection::createSection( std::ifstream& input ) ->void {
+//o------------------------------------------------------------------------------------------------o
+auto CScriptSection::CreateSection( std::ifstream& input ) -> void
+{
 	char line[2048];
 	std::string sLine;
-	sectData *toAdd		= nullptr;
-	sectDataV2 *toAdd2	= nullptr;
+	SectData_st *toAdd		= nullptr;
+	SectDataV2_st *toAdd2	= nullptr;
 	DFNTAGS mTag;
 	std::string tag, value, localName;
 	// Now the reverse comes into play!
-	while( !input.eof() && sLine.substr( 0, 1 ) != "}" && !input.fail() ) {
-		input.getline(line, 2047);
+	while( !input.eof() && sLine.substr( 0, 1 ) != "}" && !input.fail() )
+	{
+		input.getline( line, 2047 );
 		line[input.gcount()] = 0;
 
 		sLine = line;
 		sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
-		if( sLine != "}" && !sLine.empty() ) {
+		if( sLine != "}" && !sLine.empty() )
+		{
 			// do something here
-			if( sLine.substr( 0, 1 ) != "}" ) {
+			if( sLine.substr( 0, 1 ) != "}" )
+			{
 				auto secs = oldstrutil::sections( sLine, "=" );
 				tag = "";
-				if( secs.size() >= 1 ) {
-					try {
+				if( secs.size() >= 1 )
+				{
+					try
+					{
 						tag = oldstrutil::trim( oldstrutil::removeTrailing( secs[0], "//" ));
 					}
-					catch (...)	{
+					catch (...)
+					{
 						tag = "";
 					}
 				}
 				auto utag = oldstrutil::upper( tag );
 				value = "";
-				if( secs.size() >= 2 ) {
-					try {
+				if( secs.size() >= 2 )
+				{
+					try
+					{
 						value = oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" ));
 					}
-					catch (...) {
+					catch (...)
+					{
 						value = "";
 					}
 				}
-				switch( dfnCat ) {
+				switch( dfnCat )
+				{
 					case advance_def:
 					case hard_items_def:	// as it's the same format as items_def, in essence
 					case npc_def:
-					case items_def: {
+					case items_def:
+					{
 						mTag = FindDFNTagFromStr( tag );
-						if( mTag != DFNTAG_COUNTOFTAGS	&& mTag != DFNTAG_ITEMLIST && mTag != DFNTAG_NPCLIST ){	// we have a validly recognized tag
-							if( dfnDataTypes[mTag] != DFN_NODATA && value.empty() ){	// it's a valid tag, needs data though!
+						if( mTag != DFNTAG_COUNTOFTAGS	&& mTag != DFNTAG_ITEMLIST && mTag != DFNTAG_NPCLIST ) // we have a validly recognized tag
+						{
+							if( dfnDataTypes[mTag] != DFN_NODATA && value.empty() )	// it's a valid tag, needs data though!
+							{
 								break;
 							}
-							toAdd2 = new sectDataV2;
+							toAdd2 = new SectDataV2_st;
 							toAdd2->tag = mTag;
 
-							switch( dfnDataTypes[mTag] ) {
-								case DFN_UPPERSTRING: {
+							switch( dfnDataTypes[mTag] )
+							{
+								case DFN_UPPERSTRING:
+								{
 									value = oldstrutil::upper( value );
-									if( utag == "ADDMENUITEM" ) {
+									if( utag == "ADDMENUITEM" )
+									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
 										// Format: ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
 										ADDMENUITEM amiLocalCopy;
-										memset(&amiLocalCopy,0x00,sizeof(ADDMENUITEM));
+										memset( &amiLocalCopy, 0x00, sizeof( ADDMENUITEM ));
 										amiLocalCopy.itemName = std::string( localName );
 										auto csecs = oldstrutil::sections( value, "," );
-										amiLocalCopy.groupID = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0));
-										if( amiLocalCopy.groupID != groupHolder ) {
-											groupHolder = amiLocalCopy.groupID;
+										amiLocalCopy.groupId = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+										if( amiLocalCopy.groupId != groupHolder )
+										{
+											groupHolder = amiLocalCopy.groupId;
 											itemIndexHolder = 0;
 										}
-										else {
+										else
+										{
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileID = static_cast<UI16>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0));
-										amiLocalCopy.objectFlags = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0));
-										amiLocalCopy.weightPosition = static_cast<UI32>(std::stoul(oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0));
+										amiLocalCopy.tileId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+										amiLocalCopy.objectFlags = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
 
-										//if( amiLocalCopy.tileID == INVALIDSERIAL )
-											//amiLocalCopy.tileID = amiLocalCopy.objectID;
+										//if( amiLocalCopy.tileId == INVALIDSERIAL )
+											//amiLocalCopy.tileId = amiLocalCopy.objectId;
 										// Need to shove it into the multimap
-										g_mmapAddMenuMap.insert(std::make_pair(amiLocalCopy.groupID,amiLocalCopy));
+										g_mmapAddMenuMap.insert( std::make_pair( amiLocalCopy.groupId, amiLocalCopy ));
 									}
 									toAdd2->cdata = value;
 									break;
 								}
 								case DFN_STRING:
-									if( utag == "NAME" ) {
+									if( utag == "NAME" )
+									{
 										localName = value;
 									}
 									toAdd2->cdata = value;
 									break;
 								case DFN_NUMERIC:
-									try {
+									try
+									{
 										toAdd2->ndata = std::stoi( value, nullptr, 0 );
 									}
-									catch (...) {
+									catch (...)
+									{
 										toAdd2->ndata = 0;
-										Console.warning( oldstrutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+										Console.Warning( oldstrutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
 									}
 									break;
 								case DFN_DOUBLENUMERIC:
@@ -882,25 +978,33 @@ auto ScriptSection::createSection( std::ifstream& input ) ->void {
 									// Best I can tell the seperator here is a space
 									value = oldstrutil::simplify( value );
 									auto ssecs = oldstrutil::sections( value, " " );
-									if( ssecs.size() >= 2 ) {
-										try {
+									if( ssecs.size() >= 2 )
+									{
+										try
+										{
 											toAdd2->ndata = std::stoi( ssecs[0], nullptr, 0 );
 										}
-										catch (...) {
+										catch (...)
+										{
 											toAdd2->ndata = 0;
 										}
-										try {
+										try
+										{
 											toAdd2->odata = std::stoi( ssecs[1], nullptr, 0 );
 										}
-										catch (...) {
+										catch (...)
+										{
 											toAdd2->odata = 0;
 										}
 									}
-									else {
-										try {
+									else
+									{
+										try
+										{
 											toAdd2->ndata = std::stoi( value, nullptr, 0 );
 										}
-										catch (...) {
+										catch (...)
+										{
 											toAdd2->ndata = 0;
 										}
 										toAdd2->odata = toAdd2->ndata;
@@ -914,19 +1018,24 @@ auto ScriptSection::createSection( std::ifstream& input ) ->void {
 							}
 							dataV2.push_back( toAdd2 );
 						}
-						else {
-							toAdd		= new sectData;
+						else
+						{
+							toAdd		= new SectData_st;
 							toAdd->tag	= tag;
 							toAdd->data = value;
 							data.push_back( toAdd );
-							if( dfnCat == items_def ) {
-								if( mTag == DFNTAG_ITEMLIST ) {
+							if( dfnCat == items_def )
+							{
+								if( mTag == DFNTAG_ITEMLIST )
+								{
 									itemList = true;
 									itemListData = value;
 								}
 							}
-							else if( dfnCat == npc_def ) {
-								if( mTag == DFNTAG_NPCLIST ) {
+							else if( dfnCat == npc_def )
+							{
+								if( mTag == DFNTAG_NPCLIST )
+								{
 									npcList = true;
 									npcListData = value;
 								}
@@ -940,7 +1049,7 @@ auto ScriptSection::createSection( std::ifstream& input ) ->void {
 						tag = utag;
 						[[fallthrough]]; // Indicate to compiler that fallthrough is intentional
 					default:
-						toAdd = new sectData;
+						toAdd = new SectData_st;
 						toAdd->tag	= tag;
 						toAdd->data	= value;
 						data.push_back( toAdd );
@@ -950,7 +1059,8 @@ auto ScriptSection::createSection( std::ifstream& input ) ->void {
 		}
 	}
 	// Now some cleanup
-	if( data.empty() && dataV2.empty() ){
+	if( data.empty() && dataV2.empty() )
+	{
 		currentPos = data.end();
 	}
 }

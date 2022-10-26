@@ -64,7 +64,7 @@ function onCallback0( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
 	var spinningWheel = pSocket.tempObj;
-	var StrangeByte   = pSocket.GetWord( 1 );
+	var StrangeByte = pSocket.GetWord( 1 );
 
 	// Make sure target is a valid item
 	if( !ValidateObject( myTarget ) || !myTarget.isItem )
@@ -110,7 +110,7 @@ function onCallback1( pSocket, myTarget )
 {
 	var pUser = pSocket.currentChar;
 	var loom = pSocket.tempObj;
-	var StrangeByte   = pSocket.GetWord( 1 );
+	var StrangeByte = pSocket.GetWord( 1 );
 
 	// Make sure target is a valid item
 	if( !ValidateObject( myTarget ) || !myTarget.isItem )

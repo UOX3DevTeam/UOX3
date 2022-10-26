@@ -1,22 +1,25 @@
 // SWORDS
 
-// Cutlass - E/W
-[0x1440]
+// CLASSIC
+// Cutlass - Base item
+[base_cutlass]
 {
 get=base_item
 name=cutlass
 id=0x1440
-weight=800
-value=32 27
-damage=6 28
-layer=1
-hp=31 70
-spd=45
-str=10
-restock=10
-movable=1
 decay=1
 good=21
+layer=1
+movable=1
+restock=10
+}
+
+// Cutlass - E/W
+[0x1440]
+{
+getpub15=0x1440_pub15
+getaos=0x1440_aos
+gettol=0x1440_tol
 }
 
 // Cutlass - N/S
@@ -32,22 +35,24 @@ id=0x1441
 get=0x1440 0x1441
 }
 
-// Katana - E/W
-[0x13fe]
+// Katana - Base item
+[base_katana]
 {
 get=base_item
 name=katana
 id=0x13fe
-weight=600
-value=42 21
-damage=5 26
-layer=1
-hp=31 90
-spd=58
-str=10
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Katana - E/W
+[0x13fe]
+{
+getpub15=0x13fe_pub15
+getaos=0x13fe_aos
+gettol=0x13fe_tol
 }
 
 // Katana - N/S
@@ -63,22 +68,24 @@ id=0x13ff
 get=0x13fe 0x13ff
 }
 
-// Broadsword - N/S
-[0x0f5e]
-{ facing North
+// Broadsword - Base item
+[base_broadsword]
+{
 get=base_item
 name=broadsword
 id=0x0f5e
-weight=600
-value=44 22
-damage=5 29
-layer=1
-hp=31 100
-spd=45
-str=25
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Broadsword - N/S
+[0x0f5e]
+{
+getpub15=0x0f5e_pub15
+getaos=0x0f5e_aos
+gettol=0x0f5e_tol
 }
 
 // Broadsword - E/W
@@ -94,22 +101,24 @@ id=0x0f5f
 get=0x0f5e 0x0f5f
 }
 
-// Longsword - E/W
-[0x0f60]
+// Longsword - Base item
+[base_longsword]
 {
 get=base_item
 name=longsword
 id=0x0f60
-weight=700
-value=60 30
-damage=5 33
-layer=1
-hp=31 90
-spd=35
-str=25
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Longsword - E/W
+[0x0f60]
+{
+getpub15=0x0f60_pub15
+getaos=0x0f60_aos
+gettol=0x0f60_tol
 }
 
 // Longsword - N/S
@@ -125,22 +134,24 @@ id=0x0f61
 get=0x0f60 0x0f61
 }
 
-// Long Sword (thin) - E/W
-[0x13b7]
+// Long Sword (thin) - Base item
+[base_long_sword]
 {
 get=base_item
 name=long sword
 id=0x13b7
-weight=100
-value=33 33
-damage=5 33
-layer=1
-hp=31 90
-spd=35
-str=25
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Long Sword (thin) - E/W
+[0x13b7]
+{
+getpub15=0x13b7_pub15
+getaos=0x13b7_aos
+gettol=0x13b7_tol
 }
 
 // Long Sword (thin) - N/S
@@ -156,22 +167,24 @@ id=0x13b8
 get=0x13b7 0x13b8
 }
 
-// Scimitar - E/W
-[0x13b5]
+// Scimitar - Base item
+[base_scimitar]
 {
 get=base_item
 name=scimitar
 id=0x13b5
-weight=500
-value=43 21
-damage=4 30
-layer=1
-hp=31 90
-spd=43
-str=10
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Scimitar - E/W
+[0x13b5]
+{
+getpub15=0x13b5_pub15
+getaos=0x13b5_aos
+gettol=0x13b5_tol
 }
 
 // Scimitar - N/S
@@ -187,22 +200,24 @@ id=0x13b6
 get=0x13b5 0x13b6
 }
 
-// Viking Sword - N/S
-[0x13b9]
+// Viking Sword - Base item
+[base_viking_sword]
 {
 get=base_item
 name=viking sword
 id=0x13b9
-weight=600
-value=66 33
-damage=6 34
-layer=1
-hp=31 90
-spd=30
-str=40
-restock=10
 decay=1
 good=21
+layer=1
+restock=10
+}
+
+// Viking Sword - N/S
+[0x13b9]
+{
+getpub15=0x13b9_pub15
+getaos=0x13b9_aos
+gettol=0x13b9_tol
 }
 
 // Viking Sword - E/W
@@ -218,25 +233,28 @@ id=0x13ba
 get=0x13b9 0x13ba
 }
 
-// AGE OF SHADOWS - Stats Balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Bone Harvester - E/W
-[0x26bb]
+// AGE OF SHADOWS
+// Bone Harvester - Base item
+[base_bone_harvester]
 {
 get=base_item
 name=bone harvester
 id=0x26bb
-weight=300
-value=44 21
-damage=4 29
-layer=1
-hp=31 70
-spd=39
-str=20
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Bone Harvester - E/W
+[0x26bb]
+{
+getpub15=0x26bb_pub15
+getaos=0x26bb_aos
+gettol=0x26bb_tol
 }
 
 // Bone Harvester - N/S
@@ -252,23 +270,25 @@ id=0x26c5
 get=0x26bb 0x26c5
 }
 
-// Crescent Blade - E/W
-[0x26c1]
+// Crescent Blade - Base item
+[base_crescent_blade]
 {
 get=base_item
 name=crescent blade
 id=0x26c1
-weight=100
-value=49 25
-damage=4 27
-layer=2
-hp=51 85
-spd=43
-str=45
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+restock=10
+}
+
+// Crescent Blade - E/W
+[0x26c1]
+{
+getpub15=0x26c1_pub15
+getaos=0x26c1_aos
+gettol=0x26c1_tol
 }
 
 // Crescent Blade - N/S
@@ -284,44 +304,62 @@ id=0x26cb
 get=0x26c1 0x26cb
 }
 
-// Paladin Sword - E/W
-[0x26ce]
+// Paladin Sword - Base item
+[base_paladin_sword]
 {
 get=base_item
 name=paladin sword
 id=0x26ce
-weight=600
-value=45 23
-damage=6 44
-layer=1
-hp=36 50
-spd=22
-str=70
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
 }
 
-// SAMURAI EMPIRE - Stats Balanced for Pub15
+// Paladin Sword - E/W
+[0x26ce]
+{
+getpub15=0x26ce_pub15
+getaos=0x26ce_aos
+gettol=0x26ce_tol
+}
 
-// No-Dachi - E/W
-[0x27a2]
+// Paladin Sword - N/S
+[0x26cf]
+{
+get=0x26ce
+id=0x26cf
+}
+
+// Paladin Sword - Alias
+[paladinsword]
+{
+get=0x26ce 0x26cf
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// No-Dachi - Base item
+[base_no-dachi]
 {
 get=base_item
 name=no-dachi
 id=0x27a2
-weight=1000
-value=91 50
-damage=5 35
-layer=2
-hp=31 95
-spd=31
-str=35
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+restock=10
+}
+
+// No-Dachi - E/W
+[0x27a2]
+{
+getpub15=0x27a2_pub15
+getaos=0x27a2_aos
+gettol=0x27a2_tol
 }
 
 // No-Dachi - N/S
@@ -337,23 +375,25 @@ id=0x27ed
 get=0x27a2 0x27ed
 }
 
-// Wakizashi - E/W
-[0x27a4]
+// Wakizashi - Base item
+[base_wakizashi]
 {
 get=base_item
 name=wakizashi
 id=0x27a4
-weight=500
-value=48 24
-damage=3 25
-layer=1
-hp=45 50
-spd=47
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Wakizashi - E/W
+[0x27a4]
+{
+getpub15=0x27a4_pub15
+getaos=0x27a4_aos
+gettol=0x27a4_tol
 }
 
 // Wakizashi - N/S
@@ -369,23 +409,25 @@ id=0x27ef
 get=0x27a4 0x27ef
 }
 
-// Bokuto - E/W
-[0x27a8]
+// Bokuto - Base item
+[base_bokuto]
 {
 get=base_item
 name=bokuto
 id=0x27a8
-weight=700
-value=26 13
-damage=3 22
-layer=1
-hp=25 50
-spd=59
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Bokuto - E/W
+[0x27a8]
+{
+getpub15=0x27a8_pub15
+getaos=0x27a8_aos
+gettol=0x27a8_tol
 }
 
 // Bokuto - N/S
@@ -401,23 +443,25 @@ id=0x27f3
 get=0x27a8 0x27f3
 }
 
-// Daisho - E/W
-[0x27a9]
+// Daisho - Base item
+[base_daisho]
 {
 get=base_item
 name=daisho
 id=0x27a9
-weight=800
-value=74 41
-damage=4 29
-layer=2
-hp=45 70
-spd=39
-str=35
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+restock=10
+}
+
+// Daisho - E/W
+[0x27a9]
+{
+getpub15=0x27a9_pub15
+getaos=0x27a9_aos
+gettol=0x27a9_tol
 }
 
 // Daisho - N/S
@@ -433,25 +477,29 @@ id=0x27f4
 get=0x27a9 0x27f4
 }
 
-// MONDAIN'S LEGACY - Stats Balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Elven Machete - N/S
-[0x2d29]
+// MONDAIN'S LEGACY
+
+// Elven Machete - Base item
+[base_elven_machete]
 {
 get=base_item
 name=elven machete
 id=0x2d29
-weight=600
-value=24 12
-damage=4 27
-layer=1
-hp=30 60
-spd=43
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Elven Machete - N/S
+[0x2d29]
+{
+getpub15=0x2d29_pub15
+getaos=0x2d29_aos
+gettol=0x2d29_tol
 }
 
 // Elven Machete - E/W
@@ -467,23 +515,25 @@ id=0x2d35
 get=0x2d29 0x2d35
 }
 
-// Radiant Scimitar - N/S
-[0x2d29]
+// Radiant Scimitar - Base item
+[base_radiant_scimitar]
 {
 get=base_item
 name=radiant scimitar
 id=0x2d29
-weight=900
-value=24 12
-damage=4 25
-layer=1
-hp=30 60
-spd=47
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Radiant Scimitar - N/S
+[0x2d29]
+{
+getpub15=0x2d29_pub15
+getaos=0x2d29_aos
+gettol=0x2d29_tol
 }
 
 // Radiant Scimitar - E/W
@@ -499,23 +549,25 @@ id=0x2d33
 get=0x2d29 0x2d33
 }
 
-// Rune Blade - N/S
-[0x2d26]
+// Rune Blade - Base item
+[base_rune_blade]
 {
 get=base_item
 name=rune blade
 id=0x2d26
-weight=700
-value=49 25
-damage=4 31
-layer=2
-hp=30 65
-spd=36
-str=25
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+restock=10
+}
+
+// Rune Blade - N/S
+[0x2d26]
+{
+getpub15=0x2d26_pub15
+getaos=0x2d26_aos
+gettol=0x2d26_tol
 }
 
 // Rune Blade - E/W
@@ -531,25 +583,28 @@ id=0x2d32
 get=0x2d26 0x2d32
 }
 
-// STYGIAN ABYSS - Stats Balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Dread Sword - N/S
-[0x090b]
+// STYGIAN ABYSS
+// Dread Sword - Base weapon
+[base_dread_sword]
 {
 get=base_item
 name=dread sword
 id=0x090b
-weight=700
-value=24 12
-damage=5 32
-layer=1
-hp=31 110
-spd=34
-str=25
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Dread Sword - N/S
+[0x090b]
+{
+getpub15=0x090b_pub15
+getaos=0x090b_aos
+gettol=0x090b_tol
 }
 
 // Dread Sword - E/W
@@ -565,23 +620,25 @@ id=0x4074
 get=0x090b 0x4074
 }
 
-// Gargish Bone Harvester - N/S
-[0x48c6]
+// Gargish Bone Harvester - Base weapon
+[base_gargish_bone_harvester]
 {
 get=base_item
 name=gargish bone harvester
 id=0x48c6
-weight=300
-value=44 21
-damage=4 29
-layer=1
-hp=31 70
-spd=39
-str=20
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Bone Harvester - N/S
+[0x48c6]
+{
+getpub15=0x48c6_pub15
+getaos=0x48c6_aos
+gettol=0x48c6_tol
 }
 
 // Gargish Bone Harvester - E/W
@@ -597,23 +654,25 @@ id=0x48c7
 get=0x48c6 0x48c7
 }
 
-// Glass Sword - N/S
-[0x090c]
+// Glass Sword - Base weapon
+[base_glass_sword]
 {
 get=base_item
 name=glass sword
 id=0x090c
-weight=600
-value=35 18
-damage=4 27
-layer=1
-hp=31 90
-spd=43
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Glass Sword - N/S
+[0x090c]
+{
+getpub15=0x090c_pub15
+getaos=0x090c_aos
+gettol=0x090c_tol
 }
 
 // Glass Sword - E/W
@@ -629,23 +688,25 @@ id=0x4073
 get=0x090c 0x4073
 }
 
-// Gargish Cleaver - N/S
-[0x48ae]
+// Gargish Cleaver - Base weapon
+[base_gargish_cleaver]
 {
 get=base_item
 name=gargish cleaver
 id=0x48ae
-weight=100
-value=24 12
-damage=2 13
-layer=1
-hp=31 50
-spd=40
-str=10
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Cleaver - N/S
+[0x48ae]
+{
+getpub15=0x48ae_pub15
+getaos=0x48ae_aos
+gettol=0x48ae_tol
 }
 
 // Gargish Cleaver - E/W
@@ -661,23 +722,25 @@ id=0x48af
 get=0x48ae 0x48af
 }
 
-// Gargish Katana - N/S
-[0x48ba]
+// Gargish Katana - Base weapon
+[base_gargish_katana]
 {
 get=base_item
 name=gargish katana
 id=0x48ba
-weight=600
-value=42 21
-damage=5 26
-layer=1
-hp=31 90
-spd=58
-str=10
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Katana - N/S
+[0x48ba]
+{
+getpub15=0x48ba_pub15
+getaos=0x48ba_aos
+gettol=0x48ba_tol
 }
 
 // Gargish Katana - E/W
@@ -693,23 +756,25 @@ id=0x48bb
 get=0x48ba 0x48bb
 }
 
-// Gargish Butcher Knife - N/S
-[0x48b6]
+// Gargish Butcher Knife - Base weapon
+[base_gargish_butcher_knife]
 {
 get=base_item
 name=gargish butcher knife
 id=0x48b6
-weight=100
-value=21 10
-damage=2 14
-layer=1
-hp=31 40
-spd=40
-str=5
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Butcher Knife - N/S
+[0x48b6]
+{
+getpub15=0x48b6_pub15
+getaos=0x48b6_aos
+gettol=0x48b6_tol
 }
 
 // Gargish Butcher Knife - E/W
@@ -725,23 +790,25 @@ id=0x48b7
 get=0x48b6 0x48b7
 }
 
-// Stone War Sword - N/S
-[0x0900]
+// Stone War Sword - Base weapon
+[base_stone_war_sword]
 {
 get=base_item
 name=stone war sword
 id=0x0900
-weight=600
-value=24 12
-damage=5 34
-layer=1
-hp=31 100
-spd=31
-str=30
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Stone War Sword - N/S
+[0x0900]
+{
+getpub15=0x0900_pub15
+getaos=0x0900_aos
+gettol=0x0900_tol
 }
 
 // Stone War Sword - E/W
@@ -757,23 +824,25 @@ id=0x4071
 get=0x0900 0x4071
 }
 
-// Gargish Talwar - N/S
-[0x0908]
+// Gargish Talwar - Base weapon
+[base_gargish_talwar]
 {
 get=base_item
 name=gargish talwar
 id=0x0908
-weight=1600
-value=70 38
-damage=5 35
-layer=1
-hp=31 85
-spd=31
-str=35
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Gargish Talwar - N/S
+[0x0908]
+{
+getpub15=0x0908_pub15
+getaos=0x0908_aos
+gettol=0x0908_tol
 }
 
 // Gargish Talwar - E/W
@@ -789,23 +858,25 @@ id=0x4075
 get=0x0908 0x4075
 }
 
-// Gargish Daisho - N/S
-[0x48d0]
+// Gargish Daisho - Base weapon
+[base_gargish_daisho]
 {
 get=base_item
 name=gargish daisho
 id=0x48d0
-weight=800
-value=74 41
-damage=4 29
-layer=2
-hp=45 70
-spd=39
-str=35
-restock=10
 decay=1
 good=21
+layer=2
 movable=1
+restock=10
+}
+
+// Gargish Daisho - N/S
+[0x48d0]
+{
+getpub15=0x48d0_pub15
+getaos=0x48d0_aos
+gettol=0x48d0_tol
 }
 
 // Gargish Daisho - E/W
@@ -821,25 +892,28 @@ id=0x48d1
 get=0x48d0 0x48d1
 }
 
-// TIME OF LEGENDS - Stats Balanced for Pub15
+//------------------------------------------------------------------------------------------------//
 
-// Bladed Whip - N/S
-[0xa28b]
+// TIME OF LEGENDS
+// Bladed Whip - Base weapon
+[base_bladed_whip]
 {
 get=base_item
 name=bladed whip
 id=0xa28b
-weight=500
-value=24 12
-damage=4 31
-layer=1
-hp=36 50
-spd=36
-str=15
-restock=10
 decay=1
 good=21
+layer=1
 movable=1
+restock=10
+}
+
+// Bladed Whip - N/S
+[0xa28b]
+{
+getpub15=0xa28b_pub15
+getaos=0xa28b_aos
+gettol=0xa28b_tol
 }
 
 // Bladed Whip - E/W

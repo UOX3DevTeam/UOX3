@@ -3,7 +3,9 @@
 // Gargish Leather Arms - N/S
 [0x0302]
 {
-get=base_gargish_leather_arms
+getpub15=0x0302_pub15
+getaos=0x0302_aos
+gettol=0x0302_tol
 }
 
 // Gargish Leather Arms - E/W
@@ -22,7 +24,9 @@ get=0x0302 0x4048
 // Female Gargish Leather Arms - N/S
 [0x0301]
 {
-get=base_gargish_leather_arms
+getpub15=0x0301_pub15
+getaos=0x0301_aos
+gettol=0x0301_tol
 }
 
 // Female Gargish Leather Arms - E/W
@@ -43,7 +47,9 @@ get=0x0301 0x4047
 // Gargish Leather Chest - N/S
 [0x0304]
 {
-get=base_gargish_leather_chest
+getpub15=0x0304_pub15
+getaos=0x0304_aos
+gettol=0x0304_tol
 }
 
 // Gargish Leather Chest - N/S
@@ -62,7 +68,9 @@ get=0x0304 0x404a
 // Female Gargish Leather Chest - N/S
 [0x0303]
 {
-get=base_female_gargish_leather_chest
+getpub15=0x0303_pub15
+getaos=0x0303_aos
+gettol=0x0303_tol
 }
 
 // Female Gargish Leather Chest - E/W
@@ -83,7 +91,9 @@ get=0x0303 0x4049
 // Gargish Leather Leggings - N/S
 [0x0306]
 {
-get=base_gargish_leather_leggings
+getpub15=0x0306_pub15
+getaos=0x0306_aos
+gettol=0x0306_tol
 }
 
 // Gargish Leather Leggings - E/W
@@ -102,7 +112,9 @@ get=0x0306 0x404e
 // Female Gargish Leather Leggings - N/S
 [0x0305]
 {
-get=base_female_gargish_leather_leggings
+getpub15=0x0305_pub15
+getaos=0x0305_aos
+gettol=0x0305_tol
 }
 
 // Female Gargish Leather Leggings - E/W
@@ -121,7 +133,9 @@ get=0x0305 0x404d
 // Gargish Leather Kilt - E/W
 [0x0311]
 {
-get=base_gargish_leather_kilt
+getpub15=0x0311_pub15
+getaos=0x0311_aos
+gettol=0x0311_tol
 }
 
 // Gargish Leather Kilt - N/S
@@ -140,7 +154,9 @@ get=0x0311 0x404c
 // Female Gargish Leather Kilt - E/W
 [0x0310]
 {
-get=base_female_gargish_leather_kilt
+getpub15=0x0310_pub15
+getaos=0x0310_aos
+gettol=0x0310_tol
 }
 
 // Female Gargish Leather Kilt - N/S
@@ -161,7 +177,9 @@ get=0x0310 0x404b
 // Gargish Leather Wing Armor - N/S
 [0x457e]
 {
-get=base_gargish_leather_wing_armor
+getpub15=0x457e_pub15
+getaos=0x457e_aos
+gettol=0x457e_tol
 }
 
 // Gargish Leather Wing Armor - E/W

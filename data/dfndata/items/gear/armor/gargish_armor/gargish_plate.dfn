@@ -3,7 +3,9 @@
 // Gargish Plate Arms - N/S
 [0x0308]
 {
-get=base_gargish_plate_arms
+getpub15=0x0308_pub15
+getaos=0x0308_aos
+gettol=0x0308_tol
 }
 
 // Gargish Plate Arms - E/W
@@ -22,7 +24,9 @@ get=0x0308 0x4050
 // Female Gargish Plate Arms - N/S
 [0x0307]
 {
-get=base_female_gargish_plate_arms
+getpub15=0x0307_pub15
+getaos=0x0307_aos
+gettol=0x0307_tol
 }
 
 // Female Gargish Plate Arms - E/W
@@ -43,7 +47,9 @@ get=0x0307 0x404f
 // Gargish Plate Chest - E/W
 [0x030a]
 {
-get=base_gargish_plate_chest
+getpub15=0x030a_pub15
+getaos=0x030a_aos
+gettol=0x030a_tol
 }
 
 // Gargish Plate Chest - N/S
@@ -62,7 +68,9 @@ get=0x030a 0x4052
 // Female Gargish Plate Chest - E/W
 [0x0309]
 {
-get=base_female_gargish_plate_chest
+getpub15=0x0309_pub15
+getaos=0x0309_aos
+gettol=0x0309_tol
 }
 
 // Female Gargish Plate Chest - N/S
@@ -83,7 +91,9 @@ get=0x0309 0x4051
 // Gargish Plate Leggings - N/S
 [0x030e]
 {
-get=base_gargish_plate_leggings
+getpub15=0x030e_pub15
+getaos=0x030e_aos
+gettol=0x030e_tol
 }
 
 // Gargish Plate Leggings - E/W
@@ -102,7 +112,9 @@ get=0x030e 0x4056
 // Female Gargish Plate Leggings - E/W
 [0x030d]
 {
-get=base_female_gargish_plate_leggings
+getpub15=0x030d_pub15
+getaos=0x030d_aos
+gettol=0x030d_tol
 }
 
 // Female Gargish Plate Leggings - N/S
@@ -121,7 +133,9 @@ get=0x030d 0x4055
 // Gargish Plate Kilt - E/W
 [0x030c]
 {
-get=base_gargish_plate_kilt
+getpub15=0x030c_pub15
+getaos=0x030c_aos
+gettol=0x030c_tol
 }
 
 // Gargish Plate Kilt - N/S
@@ -140,7 +154,9 @@ get=0x030c 0x4054
 // Female Gargish Plate Kilt - E/W
 [0x030b]
 {
-get=base_female_gargish_plate_kilt
+getpub15=0x030b_pub15
+getaos=0x030b_aos
+gettol=0x030b_tol
 }
 
 // Female Gargish Plate Kilt - N/S

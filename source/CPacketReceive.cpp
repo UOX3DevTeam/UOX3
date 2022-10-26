@@ -21,139 +21,143 @@
 #include <chrono>
 #include "IP4Address.hpp"
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	pSplit()
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Split login password into UOX password and UO password (???)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 {
 	auto i = 0;
 	pass1 = "";
 	auto pass0Len = pass0.length();
 	while( i < pass0Len && pass0[i] != '/' )
+	{
 		++i;
+	}
 	pass1 = pass0.substr( 0, i );
 	if( i < pass0Len )
+	{
 		pass2 = pass0.substr( i );
+	}
 }
 
 void PackShort( UI08 *toPack, SI32 offset, UI16 value )
 {
-	toPack[offset+0] = (UI08)((value&0xFF00)>>8);
-	toPack[offset+1] = (UI08)((value&0x00FF)%256);
+	toPack[offset + 0] = static_cast<UI08>(( value & 0xFF00 ) >> 8 );
+	toPack[offset + 1] = static_cast<UI08>(( value & 0x00FF ) % 256 );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	WhichLoginPacket()
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles login packets from client
-//o-----------------------------------------------------------------------------------------------o
-CPInputBuffer *WhichLoginPacket( UI08 packetID, CSocket *s )
+//o------------------------------------------------------------------------------------------------o
+CPInputBuffer *WhichLoginPacket( UI08 packetId, CSocket *s )
 {
-	switch( packetID )
+	switch( packetId )
 	{
-		case 0x00:	return ( new CPICreateCharacter( s )	);	// Character Create
-		case 0x01:	return nullptr;								// Main Menu on the character select screen
-		case 0x04:	return ( new CPIGodModeToggle( s )		);
-		case 0x5D:	return ( new CPIPlayCharacter( s )		);	// Character Select
-		case 0x73:	return ( new CPIKeepAlive( s )			);
-		case 0x80:	return ( new CPIFirstLogin( s )			);
-		case 0x83:	return ( new CPIDeleteCharacter( s )	);	// Character Delete
-		case 0x8D:	return ( new CPICreateCharacter( s )	);	// Character creation for 3D/Enhanced clients
-		case 0x91:	return ( new CPISecondLogin( s )		);
-		case 0xA0:	return ( new CPIServerSelect( s )		);
-		case 0xA4:	return ( new CPISpy( s )				);
-		case 0xBB:	return nullptr;								// Ultima Messenger - old, no longer used
-		case 0xBD:	return ( new CPIClientVersion( s )		);
-		case 0xBF:	return ( new CPISubcommands( s )		);	// general overall packet
-		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
-		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
-		case 0xEF:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients after 6.0.x
-		//case 0xE4:	return ( new CPIKREncryptionVerification( s ) ); // KR Encryption Response verification
-		//case 0xF1:	return nullptr;								// ConnectUO Server Poll Packet - handled in packet hook JS script
-		case 0xF8:	return ( new CPICreateCharacter( s )	);	// New Character Create - minor difference from original
-		case 0xFF:	return nullptr;								// new CPIKRSeed( s ) - KR client request for encryption response
+		case 0x00:	return ( new CPICreateCharacter( s ));	// Character Create
+		case 0x01:	return nullptr;							// Main Menu on the character select screen
+		case 0x04:	return ( new CPIGodModeToggle( s ));
+		case 0x5D:	return ( new CPIPlayCharacter( s ));	// Character Select
+		case 0x73:	return ( new CPIKeepAlive( s ));
+		case 0x80:	return ( new CPIFirstLogin( s ));
+		case 0x83:	return ( new CPIDeleteCharacter( s ));	// Character Delete
+		case 0x8D:	return ( new CPICreateCharacter( s ));	// Character creation for 3D/Enhanced clients
+		case 0x91:	return ( new CPISecondLogin( s ));
+		case 0xA0:	return ( new CPIServerSelect( s ));
+		case 0xA4:	return ( new CPISpy( s ));
+		case 0xBB:	return nullptr;							// Ultima Messenger - old, no longer used
+		case 0xBD:	return ( new CPIClientVersion( s ));
+		case 0xBF:	return ( new CPISubcommands( s ));		// general overall packet
+		case 0xC0:	return ( new CPINewClientVersion( s ));	// LoginSeed/New client-version clients before 6.0.x
+		case 0xD9:	return ( new CPIMetrics( s ));			// Client Hardware / Metrics
+		case 0xEF:	return ( new CPINewClientVersion( s ));	// LoginSeed/New client-version clients after 6.0.x
+		//case 0xE4:	return ( new CPIKREncryptionVerification( s )); // KR Encryption Response verification
+		//case 0xF1:	return nullptr;						// Freeshard Server Poll Packet - handled in packet hook JS script
+		case 0xF8:	return ( new CPICreateCharacter( s ));	// New Character Create - minor difference from original
+		case 0xFF:	return nullptr;							// new CPIKRSeed( s ) - KR client request for encryption response
 		default:	break;
 	}
 	throw socket_error( "Bad packet request" );
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function	-	CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	WhichPacket()
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles packets received from client
-//o-----------------------------------------------------------------------------------------------o
-CPInputBuffer *WhichPacket( UI08 packetID, CSocket *s )
+//o------------------------------------------------------------------------------------------------o
+CPInputBuffer *WhichPacket( UI08 packetId, CSocket *s )
 {
-	switch( packetID )
+	switch( packetId )
 	{
-		case 0x00:	return ( new CPICreateCharacter( s )	);
-		case 0x02:	return ( new CPIMoveRequest( s )		);
-		case 0x03:	return ( new CPITalkRequestAscii( s )	);
-		case 0x04:	return ( new CPIGodModeToggle( s )		);
-		case 0x05:	return ( new CPIAttack( s )				);
-		case 0x06:	return ( new CPIDblClick( s )			);
-		case 0x07:	return ( new CPIGetItem( s )			);
-		case 0x08:	return ( new CPIDropItem( s )			);
-		case 0x09:	return ( new CPISingleClick( s )		);
+		case 0x00:	return ( new CPICreateCharacter( s ));
+		case 0x02:	return ( new CPIMoveRequest( s ));
+		case 0x03:	return ( new CPITalkRequestAscii( s ));
+		case 0x04:	return ( new CPIGodModeToggle( s ));
+		case 0x05:	return ( new CPIAttack( s ));
+		case 0x06:	return ( new CPIDblClick( s ));
+		case 0x07:	return ( new CPIGetItem( s ));
+		case 0x08:	return ( new CPIDropItem( s ));
+		case 0x09:	return ( new CPISingleClick( s ));
 		case 0x12:	return nullptr;								// Request Skill / Action / Magic Usage
-		case 0x13:	return ( new CPIEquipItem( s )			);
-		case 0x22:	return ( new CPIResyncReq( s )			);
-		case 0x2C:	return ( new CPIResMenuChoice( s )		);
-		case 0x34:	return ( new CPIStatusRequest( s )		);
+		case 0x13:	return ( new CPIEquipItem( s ));
+		case 0x22:	return ( new CPIResyncReq( s ));
+		case 0x2C:	return ( new CPIResMenuChoice( s ));
+		case 0x34:	return ( new CPIStatusRequest( s ));
 		case 0x3A:	return nullptr;								// Skills management packet
-		case 0x3B:	return ( new CPIBuyItem( s )			);
+		case 0x3B:	return ( new CPIBuyItem( s ));
 		case 0x56:	return nullptr;								// Map Related
-		case 0x5D:	return ( new CPIPlayCharacter( s )		);
-		case 0x66:	return ( new CPIBookPage( s )			);	// Player Turns the Page (or closes) a Book
+		case 0x5D:	return ( new CPIPlayCharacter( s ));
+		case 0x66:	return ( new CPIBookPage( s ));				// Player Turns the Page (or closes) a Book
 		case 0x69:	return nullptr;								// Client text change
-		case 0x6C:	return ( new CPITargetCursor( s )		);
-		case 0x6F:	return ( new CPITradeMessage( s )		);
-		case 0x71:	return ( new CPIMsgBoardEvent( s )		);	// Message Board Item
+		case 0x6C:	return ( new CPITargetCursor( s ));
+		case 0x6F:	return ( new CPITradeMessage( s ));
+		case 0x71:	return ( new CPIMsgBoardEvent( s ));		// Message Board Item
 		case 0x72:	return nullptr;								// Combat mode
-		case 0x73:	return ( new CPIKeepAlive( s )			);
-		case 0x75:	return ( new CPIRename( s )				);
-		case 0x7D:	return ( new CPIGumpChoice( s )			);
-		case 0x80:	return ( new CPIFirstLogin( s )			);
-		case 0x83:	return ( new CPIDeleteCharacter( s )	);
-		case 0x8D:	return ( new CPICreateCharacter( s )	);	// Character creation for 3D/Enhanced clients
-		case 0x91:	return ( new CPISecondLogin( s )		);
+		case 0x73:	return ( new CPIKeepAlive( s ));
+		case 0x75:	return ( new CPIRename( s ));
+		case 0x7D:	return ( new CPIGumpChoice( s ));
+		case 0x80:	return ( new CPIFirstLogin( s ));
+		case 0x83:	return ( new CPIDeleteCharacter( s ));
+		case 0x8D:	return ( new CPICreateCharacter( s ));		// Character creation for 3D/Enhanced clients
+		case 0x91:	return ( new CPISecondLogin( s ));
 		case 0x93:	return nullptr;								// Books - title page
-		case 0x95:	return ( new CPIDyeWindow( s )			);
-		case 0x98:	return ( new CPIAllNames3D( s )			);
-		case 0x9B:	return ( new CPIHelpRequest( s )		);
-		case 0x9F:	return ( new CPISellItem( s )			);
-		case 0xA0:	return ( new CPIServerSelect( s )		);
-		case 0xA4:	return ( new CPISpy( s )				);
-		case 0xA7:	return ( new CPITips( s )				);
-		case 0xAC:	return ( new CPIGumpInput( s )			);
-		case 0xAD:	return ( new CPITalkRequestUnicode( s ) );
-		case 0xB1:	return ( new CPIGumpMenuSelect( s )		);
+		case 0x95:	return ( new CPIDyeWindow( s ));
+		case 0x98:	return ( new CPIAllNames3D( s ));
+		case 0x9B:	return ( new CPIHelpRequest( s ));
+		case 0x9F:	return ( new CPISellItem( s ));
+		case 0xA0:	return ( new CPIServerSelect( s ));
+		case 0xA4:	return ( new CPISpy( s ));
+		case 0xA7:	return ( new CPITips( s ));
+		case 0xAC:	return ( new CPIGumpInput( s ));
+		case 0xAD:	return ( new CPITalkRequestUnicode( s ));
+		case 0xB1:	return ( new CPIGumpMenuSelect( s ));
 		case 0xB6:	return nullptr;								// T2A Popup Help Request
 		case 0xB8:	return nullptr;								// T2A Profile Request
 		case 0xBB:	return nullptr;								// Ultima Messenger
-		case 0xBD:	return ( new CPIClientVersion( s )		);
-		case 0xBF:	return ( new CPISubcommands( s )		);	// Assorted commands
-		case 0xC8:	return ( new CPIUpdateRangeChange( s )	);
-		case 0xC0:	return ( new CPINewClientVersion( s )	);	// LoginSeed/New client-version clients before 6.0.x
+		case 0xBD:	return ( new CPIClientVersion( s ));
+		case 0xBF:	return ( new CPISubcommands( s ));			// Assorted commands
+		case 0xC8:	return ( new CPIUpdateRangeChange( s ));
+		case 0xC0:	return ( new CPINewClientVersion( s ));		// LoginSeed/New client-version clients before 6.0.x
 		case 0xD0:	return nullptr;								// Configuration File
-		case 0xD1:	return nullptr;								// Logout Status
-		case 0xD4:	return ( new CPINewBookHeader( s )		);	// New Book Header
-		case 0xD6:	return ( new CPIToolTipRequestAoS( s )		);	// AoS Request for tooltip data
-		case 0xD7:	return ( new CPIAOSCommand( s )			);	// AOS Command
-		case 0xD9:	return ( new CPIMetrics( s )			);	// Client Hardware / Metrics
-		case 0xF0:	return ( new CPIKrriosClientSpecial( s )	); // Responses to special client packet also used by assistant tools to negotiate features with server
+		case 0xD1:	return ( new CPILogoutStatus( s ));			// Logout Status
+		case 0xD4:	return ( new CPINewBookHeader( s ));		// New Book Header
+		case 0xD6:	return ( new CPIToolTipRequestAoS( s ));	// AoS Request for tooltip data
+		case 0xD7:	return ( new CPIAOSCommand( s ));			// AOS Command
+		case 0xD9:	return ( new CPIMetrics( s ));				// Client Hardware / Metrics
+		case 0xF0:	return ( new CPIKrriosClientSpecial( s ));	// Responses to special client packet also used by assistant tools to negotiate features with server
 		case 0xF3:	return nullptr;								// TODO - Object Information (SA)
 		case 0xF5:	return nullptr;								// TODO - New Map Message
-		case 0xF8:	return ( new CPICreateCharacter( s )	);  // New Character Create
+		case 0xF8:	return ( new CPICreateCharacter( s ));		// New Character Create
 		default:	return nullptr;
 	}
 	return nullptr;
 }
 
-void CheckBanTimer( CAccountBlock &actbTemp )
+void CheckBanTimer( CAccountBlock_st &actbTemp )
 {
 	// Unban player if bantime is up, but don't do anything if bantime is zero - maybe player is permanently banned!
 	if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) && ( actbTemp.wTimeBan > 0 && actbTemp.wTimeBan <= GetMinutesSinceEpoch() ))
@@ -163,11 +167,11 @@ void CheckBanTimer( CAccountBlock &actbTemp )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIFirstLogin()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for client first login - login server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x80 (Login Request)
 //|					Size: 62 bytes
 //|
@@ -176,14 +180,16 @@ void CheckBanTimer( CAccountBlock &actbTemp )
 //|						BYTE[30] userid
 //|						BYTE[30] password
 //|						BYTE unknown1 (not usually 0x00 - so not nullptr)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIFirstLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIFirstLogin 0x80 --> Length: 62" << TimeStamp() << std::endl;
-	outStream << "UserID         : " << Name() << std::endl;
+	}
+	outStream << "UserId         : " << Name() << std::endl;
 	outStream << "Password       : " << Pass() << std::endl;
-	outStream << "Unknown        : " << (SI16)Unknown() << std::endl;
+	outStream << "Unknown        : " << static_cast<SI16>( Unknown() ) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -195,9 +201,11 @@ bool CPIFirstLogin::Handle( void )
 
 	std::string username = Name();
 
-	CAccountBlock * actbTemp = &Accounts->GetAccountByName( username );
+	CAccountBlock_st * actbTemp = &Accounts->GetAccountByName( username );
 	if( actbTemp->wAccountIndex != AB_INVALID_ID )
-		tSock->SetAccount( (*actbTemp) );
+	{
+		tSock->SetAccount(( *actbTemp ));
+	}
 
 	std::string pass0, pass1, pass2;
 	pass0 = Pass();
@@ -211,7 +219,9 @@ bool CPIFirstLogin::Handle( void )
 			Accounts->AddAccount( username, pass1, "" );
 			actbTemp = &Accounts->GetAccountByName( username );
 			if( actbTemp->wAccountIndex != AB_INVALID_ID )	// grab our account number
-				tSock->SetAccount( (*actbTemp) );
+			{
+				tSock->SetAccount(( *actbTemp ));
+			}
 		}
 	}
 	if( tSock->AcctNo() != AB_INVALID_ID )
@@ -219,10 +229,14 @@ bool CPIFirstLogin::Handle( void )
 		// Check if player's bantime is up, and if so, unban player
 		CheckBanTimer( *actbTemp );
 
-		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ) )
+		if( actbTemp->wFlags.test( AB_FLAGS_BANNED ))
+		{
 			t = LDR_ACCOUNTDISABLED;
+		}
 		else if( actbTemp->sPassword != pass1 )
+		{
 			t = LDR_BADPASSWORD;
+		}
 		else
 		{
 			// Handle client-restrictions, disconnect if client-version isn't supported
@@ -314,9 +328,14 @@ bool CPIFirstLogin::Handle( void )
 		}
 	}
 	else
+	{
 		t = LDR_UNKNOWNUSER;
-	if( t == LDR_NODENY && actbTemp->wFlags.test( AB_FLAGS_ONLINE ) )
+	}
+
+	if( t == LDR_NODENY && actbTemp->wFlags.test( AB_FLAGS_ONLINE ))
+	{
 		t = LDR_ACCOUNTINUSE;
+	}
 	if( t != LDR_NODENY )
 	{
 		CPLoginDeny pckDeny( t );
@@ -327,9 +346,9 @@ bool CPIFirstLogin::Handle( void )
 	}
 	if( tSock->AcctNo() != AB_INVALID_ID )
 	{
-		actbTemp->dwLastIP = calcserial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
-		auto temp = oldstrutil::format("Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
-		Console.log( temp , "server.log" );
+		actbTemp->dwLastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
+		auto temp = oldstrutil::format( "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
+		Console.Log( temp , "server.log" );
 		messageLoop << temp;
 
 		actbTemp->wFlags.set( AB_FLAGS_ONLINE, true );
@@ -345,14 +364,16 @@ bool CPIFirstLogin::Handle( void )
 		// change for IP4Address
 		auto address = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
 		
-		CPGameServerList toSend(1);
-		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.ipaddr(false) );
+		CPGameServerList toSend( 1 );
+		toSend.addEntry( cwmWorldState->ServerData()->ServerName(), address.ipaddr( true ));
 		tSock->Send( &toSend );
 	}
 	// If socket's ClientType is still CV_DEFAULT, it's an old client,
 	// since there was no packet before 0x80 where ClientType changed
 	if( tSock->ClientType() == CV_DEFAULT )
+	{
 		tSock->ClientType( CV_T2A );
+	}
 	//CPEnableClientFeatures ii;
 	//tSock->Send( &ii );
 	return true;
@@ -376,7 +397,7 @@ void CPIFirstLogin::Receive( void )
 	char temp[30];
 	// Grab our username
 	memcpy( temp, &tSock->Buffer()[1], 30 );
-	userID = temp;
+	userId = temp;
 
 	// Grab our password
 	memcpy( temp, &tSock->Buffer()[31], 30 );
@@ -387,14 +408,14 @@ void CPIFirstLogin::Receive( void )
 }
 void CPIFirstLogin::InternalReset( void )
 {
-	userID.reserve( 30 );
+	userId.reserve( 30 );
 	password.reserve( 30 );
 	unknown = 0;
 }
 
 const std::string CPIFirstLogin::Name( void )
 {
-	return userID;
+	return userId;
 }
 const std::string CPIFirstLogin::Pass( void )
 {
@@ -405,11 +426,11 @@ UI08 CPIFirstLogin::Unknown( void )
 	return unknown;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIServerSelect()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for server selection
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA0 (Select Server)
 //|					Size: 3 bytes
 //|
@@ -417,11 +438,13 @@ UI08 CPIFirstLogin::Unknown( void )
 //|						BYTE cmd
 //|						BYTE[2] server # chosen
 //|						0x80 Packet
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIServerSelect::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIServerSelect 0xA0 --> Length: 3" << TimeStamp() << std::endl;
+	}
 	outStream << "Server         : " << ServerNum() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -449,28 +472,32 @@ SI16 CPIServerSelect::ServerNum( void )
 	// Someone said that there was an issue with False logins that request server 0. Default to server 1.
 	SI16 temp = tSock->GetWord( 1 );
 	if( temp == 0 )
+	{
 		return 1;
+	}
 	else
+	{
 		return temp;
+	}
 }
 
 bool CPIServerSelect::Handle( void )
 {
 	auto ip = cwmWorldState->ServerData()->matchIP( tSock->ipaddress );
-	
+
 	auto name = cwmWorldState->ServerData()->ServerName();
 	auto port = cwmWorldState->ServerData()->ServerPort();
-	CPRelay toSend( ip.ipaddr(false), port );
-	tSock->Send(&toSend);
+	CPRelay toSend( ip.ipaddr( false ), port );
+	tSock->Send( &toSend );
 	// Mark packet as sent. No we need to change how we network.
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPISecondLogin()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for client second login - game server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x91 (Game Server Login)
 //|					Size: 65 bytes
 //|
@@ -479,11 +506,13 @@ bool CPIServerSelect::Handle( void )
 //|						BYTE[4] key used
 //|						BYTE[30] sid
 //|						BYTE[30] password
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPISecondLogin::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISecondLogin 0x91 --> Length: 65" << TimeStamp() << std::endl;
+	}
 
 	outStream << "Key Used       : " << Account() << std::endl;
 	outStream << "SID            : " << Name() << std::endl;
@@ -543,14 +572,16 @@ bool CPISecondLogin::Handle( void )
 {
 	LoginDenyReason t = LDR_NODENY;
 	tSock->AcctNo( AB_INVALID_ID );
-	CAccountBlock& actbTemp = Accounts->GetAccountByName( Name() );
+	CAccountBlock_st& actbTemp = Accounts->GetAccountByName( Name() );
 	if( actbTemp.wAccountIndex != AB_INVALID_ID )
+	{
 		tSock->SetAccount( actbTemp );
+	}
 
 	// Add socket version info from first login, stored in account, to new socket!
 	tSock->ClientVersion( actbTemp.dwLastClientVer );
-	tSock->ClientType( (ClientTypes)actbTemp.dwLastClientType );
-	tSock->ClientVerShort( (ClientVersions)actbTemp.dwLastClientVerShort );
+	tSock->ClientType( static_cast<ClientTypes>( actbTemp.dwLastClientType ));
+	tSock->ClientVerShort( static_cast<ClientVersions>( actbTemp.dwLastClientVerShort ));
 
 	std::string pass0, pass1, pass2;
 	pass0 = Pass();
@@ -561,13 +592,20 @@ bool CPISecondLogin::Handle( void )
 		// Check if player's bantime is up, and if so, unban player
 		CheckBanTimer( actbTemp );
 
-		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ) )
+		if( actbTemp.wFlags.test( AB_FLAGS_BANNED ))
+		{
 			t = LDR_ACCOUNTDISABLED;
+		}
 		else if( pass1 != actbTemp.sPassword )
+		{
 			t = LDR_BADPASSWORD;
+		}
 	}
 	else
+	{
 		t = LDR_UNKNOWNUSER;
+	}
+
 	if( t != LDR_NODENY )
 	{
 		tSock->AcctNo( AB_INVALID_ID );
@@ -580,7 +618,9 @@ bool CPISecondLogin::Handle( void )
 	{
 		// If first login timestamp has not been set, set it here
 		if( actbTemp.wFirstLogin == 0 )
+		{
 			actbTemp.wFirstLogin = GetMinutesSinceEpoch();
+		}
 
 		//Send supported client features before character-list stuff
 		CPEnableClientFeatures ii( tSock );
@@ -590,28 +630,34 @@ bool CPISecondLogin::Handle( void )
 		for( UI08 i = 0; i < 7; ++i )
 		{
 			if( actbTemp.dwCharacters[i] != INVALIDSERIAL )
+			{
 				++charCount;
+			}
 		}
 		CServerData *sd		= cwmWorldState->ServerData();
 		size_t serverCount	= sd->NumServerLocations();
-		CPCharAndStartLoc toSend( actbTemp, charCount, static_cast<UI08>(serverCount), tSock );
+		CPCharAndStartLoc toSend( actbTemp, charCount, static_cast<UI08>( serverCount ), tSock );
 		for( size_t j = 0; j < serverCount; ++j )
 		{
 			if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 13 )
-				toSend.NewAddStartLocation( sd->ServerLocation( j ), static_cast<UI08>(j) );
+			{
+				toSend.NewAddStartLocation( sd->ServerLocation( j ), static_cast<UI08>( j ));
+			}
 			else
-				toSend.AddStartLocation( sd->ServerLocation( j ), static_cast<UI08>(j) );
+			{
+				toSend.AddStartLocation( sd->ServerLocation( j ), static_cast<UI08>( j ));
+			}
 		}
 		tSock->Send( &toSend );
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPINewClientVersion()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for client login/seed, with initial client info
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xEF (KR/2D Client Login/Seed)
 //|					Size: 21 bytes
 //|
@@ -626,11 +672,13 @@ bool CPISecondLogin::Handle( void )
 //|					Notes
 //|						Normally older client send a 4 byte seed (local ip).
 //|						Newer clients 2.48.0.3+ (KR) and 6.0.5.0+ (2D) are sending this packet.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPINewClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPINewClientVersion 0xEF --> Length: " << std::dec << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "Version        : " << tSock->ClientVersion() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -670,13 +718,17 @@ void CPINewClientVersion::Receive( void )
 		clientPrototype = tSock->GetDWord( 17 );
 		tSock->ClientVersion( majorVersion, minorVersion, clientRevision, clientPrototype );
 
-		std::string verString = oldstrutil::number( majorVersion ) + std::string(".") + oldstrutil::number( minorVersion ) + std::string(".") + oldstrutil::number( clientRevision ) + std::string(".") + oldstrutil::number( clientPrototype );
+		std::string verString = oldstrutil::number( majorVersion ) + std::string( "." ) + 
+			oldstrutil::number( minorVersion ) + std::string( ". ") + oldstrutil::number( clientRevision ) +
+			std::string( "." ) + oldstrutil::number( clientPrototype );
 		Console << verString << myendl;
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
 		// Needs to be refined in second client-version pass (CPIClientVersion)
 		if( tSock->ClientVersion() <= 100666881 ) // If under or equal to 6.0.14.1, which in reality means between 6.0.5.0 and 6.0.14.1
+		{
 			tSock->ClientType( CV_KR2D );
+		}
 		else if( tSock->ClientVersion() >= 10066881 )
 		{
 			if( tSock->ClientVersion() >= 1000000000 ) // 1124079360 is 4.0.23.1?
@@ -693,35 +745,59 @@ void CPINewClientVersion::Receive( void )
 					//should use same version numbering scheme as classic client internally
 					tSock->ClientType( CV_HS3D );
 					if( clientRevision <= 15 )
+					{
 						tSock->ClientVerShort( CVS_70151 );
+					}
 					else if( clientRevision < 24 )
+					{
 						tSock->ClientVerShort( CVS_70160 );
+					}
 					else
+					{
 						tSock->ClientVerShort( CVS_70240 );
+					}
 				}
 			}
 			else if( tSock->ClientVersion() == 100666882 ) // 6.0.14.2, but technically first SA2D client
-				tSock->ClientType( CV_SA2D ); 
-			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
+			{
 				tSock->ClientType( CV_SA2D );
+			}
+			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
+			{
+				tSock->ClientType( CV_SA2D );
+			}
 			else if( tSock->ClientVersion() >= 117440814 && clientRevision >= 9 )
 			{
 				tSock->ClientType( CV_HS2D );
 				// Set temporary client-versions to be used by client-support option during login
 				if( clientRevision <= 15 )
+				{
 					tSock->ClientVerShort( CVS_70151 );
+				}
 				else if( clientRevision < 24 )
+				{
 					tSock->ClientVerShort( CVS_70160 );
+				}
 				else if( clientRevision < 30 )
+				{
 					tSock->ClientVerShort( CVS_70240 );
+				}
 				else if( clientRevision < 33 )
+				{
 					tSock->ClientVerShort( CVS_70300 );
+				}
 				else if( clientRevision < 45 )
+				{
 					tSock->ClientVerShort( CVS_70331 );
+				}
 				else if( clientRevision < 61 )
+				{
 					tSock->ClientVerShort( CVS_704565 );
+				}
 				else
+				{
 					tSock->ClientVerShort( CVS_70610 );
+				}
 			}
 			// ??? - 7.0.61.0 - Endless Journey
 			// ??? - 7.0.61.0 - Endless Journey
@@ -736,11 +812,11 @@ bool CPINewClientVersion::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIClientVersion()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for client version string
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBD (Client Version Message)
 //|					Size: Variable
 //|
@@ -755,11 +831,13 @@ bool CPINewClientVersion::Handle( void )
 //|						Client version: client sends its version string (e.g “3.0.8j”)
 //|						Server version: 0xbd 0x0 0x3 (client replies with client version of this packet)
 //|						Clients sends a client version of this packet ONCE at login (without server request.)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIClientVersion::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIClientVersion 0xBD --> Length: " << std::dec << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "Version        : " << Offset() << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -784,30 +862,34 @@ void CPIClientVersion::Receive( void )
 	tSock->Receive( len, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra)
 //|	Date		-	21st November, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	If the value is between base and upper (inclusive)
 //|					it shifts the data down by base (if extra) or base - 1 (if not extra)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 UI08 ShiftValue( UI08 toShift, UI08 base, UI08 upper, bool extra )
 {
 	if( extra )
 	{
 		if( toShift >= base && toShift <= upper )
+		{
 			toShift -= base;
+		}
 	}
 	else
 	{
 		if( toShift >= base && toShift <= upper )
+		{
 			toShift = toShift - base + 1;
+		}
 	}
 	return toShift;
 }
 char *CPIClientVersion::Offset( void )
 {
-	return (char *)&(tSock->Buffer()[3]);
+	return ( char * ) & ( tSock->Buffer()[3] );
 }
 bool CPIClientVersion::Handle( void )
 {
@@ -822,7 +904,7 @@ bool CPIClientVersion::Handle( void )
 		std::string s( verString );
 		std::string us = std::string( s );
 		auto dsecs = oldstrutil::sections( s, "." );
-		UI08 secCount = static_cast<UI08>(dsecs.size() - 1);
+		UI08 secCount = static_cast<UI08>( dsecs.size() - 1 );
 
 		std::istringstream ss( s );
 		char period;
@@ -838,8 +920,10 @@ bool CPIClientVersion::Handle( void )
 			UI08 temp;
 			ss >> sub;
 			ss >> temp;
-			if( isalpha( temp ) )
+			if( isalpha( temp ))
+			{
 				letter = temp;
+			}
 			else
 			{
 				std::string tempSubString;
@@ -860,7 +944,9 @@ bool CPIClientVersion::Handle( void )
 		minor	= ShiftValue( minor,  '0', '9', true );
 		sub		= ShiftValue( sub,    '0', '9', true );
 		if( secCount == 3 )
+		{
 			letter	= ShiftValue( letter, '0', '9', true );
+		}
 		else
 		{
 			letter	= ShiftValue( letter, 'a', 'z', false );
@@ -871,12 +957,18 @@ bool CPIClientVersion::Handle( void )
 		Console << verString << myendl;
 	}
 
-	if( strstr( verString, "Dawn" ) )
+	if( strstr( verString, "Dawn" ))
+	{
 		tSock->ClientType( CV_UO3D );
-	else if( strstr( verString, "Krrios" ) )
+	}
+	else if( strstr( verString, "Krrios" ))
+	{
 		tSock->ClientType( CV_KRRIOS );
+	}
 	else
+	{
 		SetClientVersionShortAndType( tSock, verString );
+	}
 	tSock->ReceivedVersion( true );
 	return true;
 }
@@ -895,16 +987,22 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 		{
 			tSock->ClientType( CV_T2A );
 			if( tSock->ClientVersionSub() < 7 )
+			{
 				tSock->ClientVerShort( CVS_400 );
+			}
 			else if( CliVerSub < 11 || ( CliVerSub == 11 && CliVerLetter < 2 ))
+			{
 				tSock->ClientVerShort( CVS_407a );
+			}
 			else if( CliVerSub == 11 && CliVerLetter >= 2 )  // 4.0.11f really belongs in the CV_ML type though...
+			{
 				tSock->ClientVerShort( CVS_4011c );
+			}
 			if( !cwmWorldState->ServerData()->ClientSupport4000() )
 			{
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
-				tSock->sysmessage( 1796, verString );
+				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
 				Console << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
 			}
 		}
@@ -912,16 +1010,22 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 		{
 			tSock->ClientType( CV_ML );
 			if( tSock->ClientVersionSub() < 2 )
+			{
 				tSock->ClientVerShort( CVS_500a );
+			}
 			else if( CliVerSub < 8 || ( CliVerSub == 8 && CliVerLetter < 2 ))
+			{
 				tSock->ClientVerShort( CVS_502a );
+			}
 			else if( CliVerSub > 8 || ( CliVerSub == 8 && CliVerLetter >= 2 ))
+			{
 				tSock->ClientVerShort( CVS_5082 );
+			}
 			if( !cwmWorldState->ServerData()->ClientSupport5000() )
 			{
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
-				tSock->sysmessage( 1796, verString );
+				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
 				Console << "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..." << myendl;
 			}
 		}
@@ -930,18 +1034,24 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 	{
 		tSock->ClientType( CV_KR2D );
 		if( CliVerSub >= 5 && CliVerSub <= 14 )
+		{
 			tSock->ClientVerShort( CVS_6050 );
+		}
 		else
 		{
 			if( CliVerSub < 1 || ( CliVerSub == 1 && CliVerLetter < 7 ))
+			{
 				tSock->ClientVerShort( CVS_6000 );
+			}
 			else if( CliVerSub < 5 )
+			{
 				tSock->ClientVerShort( CVS_6017 );
+			}
 			if( !cwmWorldState->ServerData()->ClientSupport6000() )
 			{
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
-				tSock->sysmessage( 1796, verString );
+				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
 				Console << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
 			}
 		}
@@ -952,31 +1062,53 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 		{
 			tSock->ClientType( CV_SA2D );
 			if( CliVerMajor == 6 && CliVerSub == 14 && CliVerLetter >= 2 )
+			{
 				tSock->ClientVerShort( CVS_60142 );
+			}
 			else if( CliVerMajor == 7 && CliVerSub < 9 )
+			{
 				tSock->ClientVerShort( CVS_7000 );
+			}
 		}
 		else if( CliVer >= 117440814 && tSock->ClientType() == CV_HS2D )
 		{
 			tSock->ClientType( CV_HS2D );
 			if( CliVerSub < 13 )
+			{
 				tSock->ClientVerShort( CVS_7090 );
+			}
 			else if( CliVerSub < 14 )
+			{
 				tSock->ClientVerShort( CVS_70130 );
+			}
 			else if( CliVerSub < 16 )
+			{
 				tSock->ClientVerShort( CVS_70151 );
+			}
 			else if( CliVerSub < 24 )
+			{
 				tSock->ClientVerShort( CVS_70160 );
+			}
 			else if( CliVerSub < 30 )
+			{
 				tSock->ClientVerShort( CVS_70240 );
+			}
 			else if( CliVerSub < 33 )
+			{
 				tSock->ClientVerShort( CVS_70300 );
+			}
 			else if( CliVerSub < 45 )
+			{
 				tSock->ClientVerShort( CVS_70331 );
+			}
 			else if( CliVerSub < 61 )
+			{
 				tSock->ClientVerShort( CVS_704565 );
+			}
 			else
+			{
 				tSock->ClientVerShort( CVS_70610 );
+			}
 		}
 		else if( CliVer >= 1000000000 && tSock->ClientType() == CV_HS3D ) // 1124079360 is 4.0.23.1?
 		{
@@ -984,24 +1116,34 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			//should use same version numbering scheme as classic client internally
 			tSock->ClientType( CV_HS3D );
 			if( CliVerSub < 13 )
+			{
 				tSock->ClientVerShort( CVS_7090 );
+			}
 			else if( CliVerSub <= 15 && CliVerLetter == 0 )
+			{
 				tSock->ClientVerShort( CVS_70130 );
+			}
 			else if( CliVerSub == 15 && CliVerLetter == 1 )
+			{
 				tSock->ClientVerShort( CVS_70151 );
+			}
 			else if( CliVerSub >= 16 && CliVerSub < 24 )
+			{
 				tSock->ClientVerShort( CVS_70160 );
+			}
 			else if( CliVerSub >= 24 )
+			{
 				tSock->ClientVerShort( CVS_70240 );
+			}
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIUpdateRangeChange()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for client view range
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xC8 (Client View Range)
 //|					Size: 2 bytes
 //|
@@ -1018,12 +1160,14 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 //|						range stuff gets activated client side.
 //|						"Greying" has no packet, purely client internal.
 //|						Minimal value:5, maximal: 18
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIUpdateRangeChange::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIUpdateRangeChange 0xC8 --> Length: 2 " << std::endl;
-	outStream << "Range			 : " << (SI32)tSock->GetByte( 1 ) << std::endl;
+	}
+	outStream << "Range			 : " << static_cast<SI32>( tSock->GetByte( 1 )) << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -1060,10 +1204,10 @@ bool CPIUpdateRangeChange::Handle( void )
 		case CV_SA3D:
 		case CV_HS2D:
 		case CV_HS3D:
-			tSock->Range( tSock->GetByte( 1 ) );
+			tSock->Range( tSock->GetByte( 1 ));
 			break;
 		default:
-			tSock->Range( tSock->GetByte( 1 ) );
+			tSock->Range( tSock->GetByte( 1 ));
 			break;
 	}
 	tSock->Send( tSock->Buffer(), 2 );	// we want to echo it back to the client
@@ -1075,11 +1219,64 @@ bool CPIUpdateRangeChange::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CPILogoutStatus()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Handles incoming packet for logout requests
+//o------------------------------------------------------------------------------------------------o
+//|	Notes		-	Packet: 0xD1 (Logout Status)
+//|					Size: 2 bytes
+//|
+//|					Packet Build
+//|						BYTE cmd
+//|						BYTE extra
+//|
+//|					Notes
+//|						Client + Server packet
+//|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
+//|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
+//o------------------------------------------------------------------------------------------------o
+void CPILogoutStatus::Log( std::ofstream &outStream, bool fullHeader )
+{
+	if( fullHeader )
+	{
+		outStream << "[RECV]Packet   : CPILogoutStatus 0xD1 --> Length: 2 " << std::endl;
+	}
+	outStream << "  Raw dump     :" << std::endl;
+	CPInputBuffer::Log( outStream, false );
+}
+void CPILogoutStatus::InternalReset( void )
+{
+}
+CPILogoutStatus::CPILogoutStatus()
+{
+	InternalReset();
+}
+CPILogoutStatus::CPILogoutStatus( CSocket *s ) : CPInputBuffer( s )
+{
+	InternalReset();
+	Receive();
+}
+void CPILogoutStatus::Receive( void )
+{
+	tSock->Receive( 2, false );
+}
+bool CPILogoutStatus::Handle( void )
+{
+	// Byte 0 == 0xD1
+	// Byte 1 == 0x01 in response to logout request sent by server
+
+	// Construct the response, and send it!
+	CPLogoutResponse logoutResponse( 0x01 );
+	tSock->Send( &logoutResponse );
+	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITips()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with client request for tips/notice windows
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA7 (Request Tips/Notice)
 //|					Size: 4 bytes
 //|
@@ -1089,7 +1286,7 @@ bool CPIUpdateRangeChange::Handle( void )
 //|						BYTE flag
 //|							0x00 - tips window
 //|							0x01 - notice window
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPITips::InternalReset( void )
 {
 }
@@ -1106,40 +1303,48 @@ void CPITips::Receive( void )
 {
 	tSock->Receive( 4, false );
 }
-//==========================================================================
-auto CPITips::Handle()->bool {
-	auto Tips = FileLookup->FindEntry( "TIPS", misc_def );
-	if( Tips) {
-		auto i = static_cast<UI16>(tSock->GetWord( 1 ) + 1);
-		if( i == 0 ){
+auto CPITips::Handle() -> bool
+{
+	auto tips = FileLookup->FindEntry( "TIPS", misc_def );
+	if( tips )
+	{
+		auto i = static_cast<UI16>( tSock->GetWord( 1 ) + 1 );
+		if( i == 0 )
+		{
 			i = 1;
 		}
 
 		SI32 x = i;
 		std::string tag, data, sect;
 		
-		for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() ) {
-			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" ){
+		for( tag = tips->First(); !tips->AtEnd(); tag = tips->Next() )
+		{
+			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" )
+			{
 				--x;
 			}
-			if( x <= 0 ){
+			if( x <= 0 )
+			{
 				break;
 			}
 		}
-		if( x > 0 ){
-			tag = Tips->Prev();
+		if( x > 0 )
+		{
+			tag = tips->Prev();
 		}
-		data = Tips->GrabData();
+		data = tips->GrabData();
 
 		sect = "TIP " + oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-		Tips = FileLookup->FindEntry( sect, misc_def );
-		if( Tips ) {
+		tips = FileLookup->FindEntry( sect, misc_def );
+		if( tips )
+		{
 			std::string tipData = "";
-			for( tag = Tips->First(); !Tips->AtEnd(); tag = Tips->Next() ) {
-				tipData += Tips->GrabData() + " ";
+			for( tag = tips->First(); !tips->AtEnd(); tag = tips->Next() )
+			{
+				tipData += tips->GrabData() + " ";
 			}
 
-			CPUpdScroll toSend( 0, (UI08)i );
+			CPUpdScroll toSend( 0, static_cast<UI08>( i ));
 			toSend.AddString( tipData.c_str() );
 			toSend.Finalize();
 			tSock->Send( &toSend );
@@ -1149,11 +1354,11 @@ auto CPITips::Handle()->bool {
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIRename()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to rename character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x75 (Rename Character)
 //|					Size: 35 bytes
 //|
@@ -1161,7 +1366,7 @@ auto CPITips::Handle()->bool {
 //|						BYTE cmd
 //|						BYTE[4] id
 //|						BYTE[30] new name
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIRename::InternalReset( void )
 {
 }
@@ -1183,24 +1388,27 @@ bool CPIRename::Handle( void )
 	SERIAL serial = tSock->GetDWord( 1 );
 	if( serial == INVALIDSERIAL )
 		return true;
-	CChar *c = calcCharObjFromSer( serial );
-	if( ValidateObject( c ) )
-		c->SetName( (char *)&tSock->Buffer()[5] );
+
+	CChar *c = CalcCharObjFromSer( serial );
+	if( ValidateObject( c ))
+	{
+		c->SetName(( char * )&tSock->Buffer()[5] );
+	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKeepAlive()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with ping message request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x73 (Ping Message)
 //|					Size: 2 bytes
 //|
 //|					Packet Build
 //|						BYTE cmd
 //|						BYTE seq
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIKeepAlive::CPIKeepAlive()
 {
 }
@@ -1222,11 +1430,11 @@ bool CPIKeepAlive::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIStatusRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet requesting player status
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x34 (Get Player Status)
 //|					Size: 10 bytes
 //|
@@ -1237,8 +1445,8 @@ bool CPIKeepAlive::Handle( void )
 //|							0x00 - GodClient command
 //|							0x04 - Basic Stats (Packet 0x11 Response)
 //|							0x05 = Request Skills (Packet 0x3A Response)
-//|						BYTE[4] playerID
-//o-----------------------------------------------------------------------------------------------o
+//|						BYTE[4] playerId
+//o------------------------------------------------------------------------------------------------o
 CPIStatusRequest::CPIStatusRequest()
 {
 }
@@ -1252,16 +1460,18 @@ void CPIStatusRequest::Receive( void )
 
 	pattern		= tSock->GetDWord( 1 );
 	getType		= tSock->GetByte(  5 );
-	playerID	= tSock->GetDWord( 6 );
+	playerId	= tSock->GetDWord( 6 );
 }
 
 void CPIStatusRequest::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIStatusRequest 0x34 --> Length: 10" << TimeStamp() << std::endl;
+	}
 	outStream << "Pattern        : " << pattern << std::endl;
-	outStream << "Request Type   : " << (SI32)getType << std::endl;
-	outStream << "PlayerID       : " << std::hex << "0x" << playerID << std::endl;
+	outStream << "Request Type   : " << static_cast<SI32>( getType ) << std::endl;
+	outStream << "PlayerID       : " << std::hex << "0x" << playerId << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -1270,10 +1480,14 @@ bool CPIStatusRequest::Handle( void )
 {
 	if( getType == 4 )
 	{
-		if( playerID >= BASEITEMSERIAL )
-			tSock->statwindow( calcItemObjFromSer( playerID )); // Item
+		if( playerId >= BASEITEMSERIAL )
+		{
+			tSock->StatWindow( CalcItemObjFromSer( playerId )); // Item
+		}
 		else
-			tSock->statwindow( calcCharObjFromSer( playerID )); // Character
+		{
+			tSock->StatWindow( CalcCharObjFromSer( playerId )); // Character
+		}
 	}
 	if( getType == 5 )
 	{
@@ -1293,17 +1507,17 @@ bool CPIStatusRequest::Handle( void )
 
 		CPSkillsValues toSend;
 		toSend.NumSkills( ALLSKILLS );
-		toSend.SetCharacter( *(tSock->CurrcharObj()) );
+		toSend.SetCharacter( *( tSock->CurrcharObj() ));
 		tSock->Send( &toSend );
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPISpy()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with client hardware details
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xA4 (Spy on Client)
 //|					Size: 149 bytes
 //|
@@ -1311,7 +1525,7 @@ bool CPIStatusRequest::Handle( void )
 //|						BYTE cmd
 //|						BYTE[148] Unknown (previously, this has had info such as your graphics card
 //|							name, free HD space, number of processors, etc.)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPISpy::CPISpy()
 {
 }
@@ -1328,12 +1542,12 @@ bool CPISpy::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKRSeed()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet by KR client with client signal, server responds with
 //|					encryption request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xFF (KR Client Signal/Seed)
 //|					Size: 4 bytes
 //|
@@ -1342,7 +1556,7 @@ bool CPISpy::Handle( void )
 //|						Byte 0xff
 //|						Byte 0xff
 //|						Byte 0xff
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIKRSeed::CPIKRSeed()
 {
 }
@@ -1361,11 +1575,11 @@ bool CPIKRSeed::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKREncryptionVerification()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet by KR client response to encryption request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xE4 (KR Encryption Verification/Response)
 //|					Size: 23 bytes
 //|
@@ -1374,7 +1588,7 @@ bool CPIKRSeed::Handle( void )
 //|						BYTE[2] Size
 //|						dword length A
 //|						byte[lengthA] A
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIKREncryptionVerification::CPIKREncryptionVerification()
 {
 }
@@ -1391,18 +1605,18 @@ bool CPIKREncryptionVerification::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGodModeToggle()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to enable God Client features
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x04 (Request God Mode)
 //|					Size: 2 bytes
 //|
 //|					Packet Build
 //|						BYTE cmd
 //|						BYTE mode (0=off, 1=on)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIGodModeToggle::CPIGodModeToggle()
 {
 }
@@ -1424,18 +1638,18 @@ bool CPIGodModeToggle::Handle( void )
 	}
 	else
 	{
-		tSock->sysmessage( 1641 );
+		tSock->SysMessage( 1641 ); // You don't have the privs needed to run the Godclient on this server!
 		Console << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Username[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
 		Network->Disconnect( tSock );
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIDblClick()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with double-click request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x06 (Double Click)
 //|					Size: 5 bytes
 //|
@@ -1444,7 +1658,7 @@ bool CPIGodModeToggle::Handle( void )
 //|						BYTE[4] ID of double clicked object
 //|
 //|					NOTE: bool CPIDblClick::Handle() is implemented in cplayeraction.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIDblClick::CPIDblClick()
 {
 }
@@ -1456,23 +1670,25 @@ void CPIDblClick::Receive( void )
 {
 	tSock->Receive( 5, false );
 
-	objectID	= tSock->GetDWord( 1 );
+	objectId = tSock->GetDWord( 1 );
 }
 
 void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIDblClick 0x06 --> Length: 5" << TimeStamp() << std::endl;
-	outStream << "ClickedID      : " << std::hex << "0x" << objectID << std::endl;
+	}
+	outStream << "ClickedID      : " << std::hex << "0x" << objectId << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPISingleClick()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with single-click (and All-Names macro) request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x09 (Single Click)
 //|					Size: 5 bytes
 //|
@@ -1481,7 +1697,7 @@ void CPIDblClick::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[4] ID of single clicked object
 //|
 //|					NOTE: bool CPISingleClick::Handle() is implemented in cplayeraction.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPISingleClick::CPISingleClick()
 {
 }
@@ -1493,23 +1709,25 @@ void CPISingleClick::Receive( void )
 {
 	tSock->Receive( 5, false );
 
-	objectID	= tSock->GetDWord( 1 );
+	objectId = tSock->GetDWord( 1 );
 }
 
 void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISingleClick 0x09 --> Length: 5" << TimeStamp() << std::endl;
-	outStream << "ClickedID      : " << std::hex << "0x" << objectID << std::endl;
+	}
+	outStream << "ClickedID      : " << std::hex << "0x" << objectId << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIMoveRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request for movement
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x02 (Move Request)
 //|					Size: 7 bytes
 //|
@@ -1531,7 +1749,7 @@ void CPISingleClick::Log( std::ofstream &outStream, bool fullHeader )
 //|					Note that actual key values are irrelevant. (just don’t use 0)
 //|					Of course without perfect 0x02/0x21/0x22 synch (serverside) it’s useless to use fastwalk detection.
 //|					Last but not least: fastwalk detection adds 9 bytes per step and player!
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIMoveRequest::CPIMoveRequest()
 {
 }
@@ -1546,7 +1764,7 @@ void CPIMoveRequest::Receive( void )
 bool CPIMoveRequest::Handle( void )
 {
 	CChar *ourChar = tSock->CurrcharObj();
-	Movement->Walking( tSock, ourChar, tSock->GetByte( 1 ), tSock->GetByte( 2 ) );
+	Movement->Walking( tSock, ourChar, tSock->GetByte( 1 ), tSock->GetByte( 2 ));
 	ourChar->BreakConcentration( tSock );
 	return true;
 }
@@ -1554,7 +1772,9 @@ bool CPIMoveRequest::Handle( void )
 void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIMoveRequest 0x02 --> Length: 7" << TimeStamp() << std::endl;
+	}
 	outStream << "Direction      : " << tSock->GetByte( 1 ) << std::endl;
 	outStream << "Sequence Number: " << tSock->GetByte( 2 ) << std::endl;
 	outStream << "FW Prevent Key : " << tSock->GetDWord( 3 ) << std::endl;
@@ -1562,11 +1782,11 @@ void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIResyncReq()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with character move acknowledgement/resync request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x22 (Character Move Ack/Resync Request)
 //|					Size: 3 bytes
 //|
@@ -1574,7 +1794,7 @@ void CPIMoveRequest::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE cmd
 //|						BYTE sequence (matches sent sequence)
 //|						BYTE (0x00)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIResyncReq::CPIResyncReq()
 {
 }
@@ -1593,11 +1813,11 @@ bool CPIResyncReq::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIResMenuChoice()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with resurrection menu choice (old clients)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x2C (Resurrection Menu Choice)
 //|					Size: 2 bytes
 //|
@@ -1607,7 +1827,7 @@ bool CPIResyncReq::Handle( void )
 //|
 //|					Note: Client and Server Message
 //|					Note: Resurrection menu has been removed from UO [when?]
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIResMenuChoice::CPIResMenuChoice()
 {
 }
@@ -1623,17 +1843,21 @@ bool CPIResMenuChoice::Handle( void )
 {
 	UI08 cmd = tSock->GetByte( 1 );
 	if( cmd == 0x02 )
-		tSock->sysmessage( 766 );
+	{
+		tSock->SysMessage( 766 ); // You are now a ghost.
+	}
 	if( cmd == 0x01 )
-		tSock->sysmessage( 767 );
+	{
+		tSock->SysMessage( 767 ); // The connection between your spirit and the world is too weak.
+	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIAttack()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with attack request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x05 (Attack Request)
 //|					Size: 5 bytes
 //|
@@ -1642,7 +1866,7 @@ bool CPIResMenuChoice::Handle( void )
 //|						BYTE[4] ID to be attacked
 //|
 //|					Note: Client Message
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIAttack::CPIAttack()
 {
 }
@@ -1662,11 +1886,11 @@ bool CPIAttack::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITargetCursor()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with targeting cursor commands
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x6C (Targeting Cursor Commandst)
 //|					Size: 19 bytes
 //|
@@ -1688,7 +1912,7 @@ bool CPIAttack::Handle( void )
 //|
 //|					NOTE: The model # shouldn’t be trusted.
 //|					NOTE: bool CPITargetCursor::Handle() in targeting.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITargetCursor::CPITargetCursor()
 {
 }
@@ -1703,25 +1927,27 @@ void CPITargetCursor::Receive( void )
 void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPITargetCursor 0x6C --> Length: 19" << TimeStamp() << std::endl;
-	outStream << "Type         : " << static_cast<UI16>(tSock->GetByte( 1 )) << std::endl;
+	}
+	outStream << "Type         : " << static_cast<UI16>( tSock->GetByte( 1 )) << std::endl;
 	outStream << "CursorID     : " << tSock->GetDWord( 2 ) << std::endl;
-	outStream << "Cursor Type  : " << static_cast<UI16>(tSock->GetByte( 6 )) << std::endl;
+	outStream << "Cursor Type  : " << static_cast<UI16>( tSock->GetByte( 6 )) << std::endl;
 	outStream << "Target ID    : " << "0x" << std::hex << tSock->GetDWord( 7 ) << std::endl;
 	outStream << "Target X     : " << std::dec << tSock->GetWord( 11 ) << std::endl;
 	outStream << "Target Y     : " << tSock->GetWord( 13 ) << std::endl;
-	outStream << "Unknown      : " << static_cast<UI16>(tSock->GetByte( 15 )) << std::endl;
-	outStream << "Target Z     : " << static_cast<SI16>(tSock->GetByte( 16 )) << std::endl;
+	outStream << "Unknown      : " << static_cast<UI16>( tSock->GetByte( 15 )) << std::endl;
+	outStream << "Target Z     : " << static_cast<SI16>( tSock->GetByte( 16 )) << std::endl;
 	outStream << "Model #      : " << "0x" << std::hex << tSock->GetWord( 17 ) << std::endl;
 	outStream << "  Raw dump     :" << std::dec << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIEquipItem()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with targeting cursor commands
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x13 (Drop->Wear Item)
 //|					Size: 10 bytes
 //|
@@ -1729,11 +1955,11 @@ void CPITargetCursor::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE cmd
 //|						BYTE[4] itemid
 //|						BYTE layer (see layer list at top)
-//|						BYTE[4] playerID
+//|						BYTE[4] playerId
 //|
 //|					NOTE: The layer byte should not be trusted.
 //|					NOTE: bool CPIEquipItem::Handle() implemented in cplayeraction.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIEquipItem::CPIEquipItem()
 {
 }
@@ -1746,11 +1972,11 @@ void CPIEquipItem::Receive( void )
 	tSock->Receive( 10, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGetItem()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to pick up item(s)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x07 (Pick Up Item(s))
 //|					Size: 7 bytes
 //|
@@ -1763,7 +1989,7 @@ void CPIEquipItem::Receive( void )
 //|					NOTE: The layer byte should not be trusted.
 //|
 //|					NOTE: bool CPIGetItem::Handle() implemented in cplayeraction.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIGetItem::CPIGetItem()
 {
 }
@@ -1776,11 +2002,11 @@ void CPIGetItem::Receive( void )
 	tSock->Receive( 7, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIDropItem()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to drop item(s)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x08 (Drop Item(s))
 //|					Size: 14 bytes
 //|
@@ -1798,7 +2024,7 @@ void CPIGetItem::Receive( void )
 //|						odd “bursts” server side, neither always process, nor always skipping is correct.
 //|
 //|					NOTE: bool CPIDropItem::Handle() implemented in cplayeraction.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIDropItem::CPIDropItem()
 {
 }
@@ -1810,9 +2036,11 @@ void CPIDropItem::Receive( void )
 {
 	uokrFlag = false;
 	if( tSock->ClientVerShort() >= CVS_6017 )
+	{
 		uokrFlag = true;
+	}
 
-	tSock->Receive( (uokrFlag ? 15 : 14), false );
+	tSock->Receive(( uokrFlag ? 15 : 14 ), false );
 
 	item	= tSock->GetDWord( 1 );
 	x		= tSock->GetWord( 5 );
@@ -1824,14 +2052,16 @@ void CPIDropItem::Receive( void )
 		dest = tSock->GetDWord( 11 );
 	}
 	else
+	{
 		dest = tSock->GetDWord( 10 );
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGumpMenuSelect()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with gump menu selection data
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xB1 (Gump Menu Selection)
 //|					Size: Variable
 //|
@@ -1852,7 +2082,7 @@ void CPIDropItem::Receive( void )
 //|							BYTE[length*2] Unicode text (not nullterminated)
 //|
 //|					NOTE: bool CPIGumpMenuSelect::Handle() implemented in gumps.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIGumpMenuSelect::CPIGumpMenuSelect()
 {
 }
@@ -1866,13 +2096,13 @@ void CPIGumpMenuSelect::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-SERIAL CPIGumpMenuSelect::ButtonID( void ) const
+SERIAL CPIGumpMenuSelect::ButtonId( void ) const
 {
-	return buttonID;
+	return buttonId;
 }
-SERIAL CPIGumpMenuSelect::GumpID( void ) const
+SERIAL CPIGumpMenuSelect::GumpId( void ) const
 {
-	return gumpID;
+	return gumpId;
 }
 SERIAL CPIGumpMenuSelect::ID( void ) const
 {
@@ -1891,54 +2121,60 @@ UI32 CPIGumpMenuSelect::SwitchValue( UI32 index ) const
 {
 	if( index >= switchCount )
 		return INVALIDSERIAL;
+
 	// we use a 0 based counter, which means that the first switch is at 19, not 15
-	return tSock->GetDWord( 19 + 4 * static_cast<size_t>(index) );
+	return tSock->GetDWord( 19 + 4 * static_cast<size_t>( index ));
 }
 
-UI16 CPIGumpMenuSelect::GetTextID( UI08 number ) const
+UI16 CPIGumpMenuSelect::GetTextId( UI08 number ) const
 {
 	if( number >= textCount )
 		return 0xFFFF;
+
 	return tSock->GetWord( textLocationOffsets[number] );
 }
 UI16 CPIGumpMenuSelect::GetTextLength( UI08 number ) const
 {
 	if( number >= textCount )
 		return 0xFFFF;
-	return tSock->GetWord( static_cast<size_t>(textLocationOffsets[number]) + 2 );
+
+	return tSock->GetWord( static_cast<size_t>( textLocationOffsets[number] ) + 2 );
 }
 
 std::string CPIGumpMenuSelect::GetTextString( UI08 number ) const
 {
 	if( number >= textCount )
 		return "";
+
 	std::string toReturn = "";
 	UI16 offset = textLocationOffsets[number] + 4;
 	for( UI16 counter = 0; counter < GetTextLength( number ); ++counter )
-		toReturn += tSock->GetByte( static_cast<size_t>(offset) + static_cast<size_t>(counter) * 2 + 1 );
+	{
+		toReturn += tSock->GetByte( static_cast<size_t>( offset ) + static_cast<size_t>( counter ) * 2 + 1 );
+	}
 	return toReturn;
 }
 void CPIGumpMenuSelect::BuildTextLocations( void )
 {
 	if( textCount > 0 )
 	{
-		size_t i = static_cast<size_t>(textOffset) + 4;	// first is textOffset + 4, to walk past the number of text strings
+		size_t i = static_cast<size_t>( textOffset ) + 4;	// first is textOffset + 4, to walk past the number of text strings
 		textLocationOffsets.resize( textCount );
 		for( size_t j = 0; j < textCount; ++j )
 		{
-			textLocationOffsets[j] = static_cast<wchar_t>(i);
+			textLocationOffsets[j] = static_cast<wchar_t>( i );
 			i += 2;	// skip the text ID
 			UI16 textLen = tSock->GetWord( i );
-			i += ( 2 * static_cast<size_t>(textLen) + 2 );	// we need to add the + 2 for the text len field
+			i += ( 2 * static_cast<size_t>( textLen ) + 2 );	// we need to add the + 2 for the text len field
 		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITalkRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with talk request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x03 (Talk Request)
 //|					Size: Variable
 //|
@@ -1965,7 +2201,7 @@ void CPIGumpMenuSelect::BuildTextLocations( void )
 //|						0xC0 - Encoded Commands
 //|
 //|					NOTE: bool CPITalkRequest::Handle() is located in speech.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITalkRequest::CPITalkRequest()
 {
 	InternalReset();
@@ -2013,14 +2249,14 @@ std::string CPITalkRequest::TextString( void )	const
 }
 char * CPITalkRequest::Text( void ) const
 {
-	return (char *)&txtSaid[0];
+	return ( char * )&txtSaid[0];
 }
 
 bool CPITalkRequest::HandleCommon( void )
 {
 	CChar *ourChar = tSock->CurrcharObj();
 	ourChar->BreakConcentration( tSock );
-	ourChar->setUnicode( false );
+	ourChar->SetUnicode( false );
 	CItem *speechItem = ourChar->GetSpeechItem();
 
 	UI32 j = 0;
@@ -2028,30 +2264,32 @@ bool CPITalkRequest::HandleCommon( void )
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
-			j = static_cast<UI32>(std::stoul(std::string(Text()), nullptr, 0));
+			j = static_cast<UI32>( std::stoul( std::string( Text() ), nullptr, 0 ));
 			if( j >= 0 )
 			{
 				speechItem->SetBuyValue( j );
-				tSock->sysmessage( 753, j );
+				tSock->SysMessage( 753, j ); // This item's price has been set to %i.
 			}
 			else
-				tSock->sysmessage( 754, speechItem->GetBuyValue() );
-			tSock->sysmessage( 755 );
+			{
+				tSock->SysMessage( 754, speechItem->GetBuyValue() ); // No price entered, this item's price has been set to %i.
+			}
+			tSock->SysMessage( 755 ); // Enter a description for this item.
 			ourChar->SetSpeechMode( 4 );
 			break;
 		case 4: // Player vendor item describing
 			speechItem->SetDesc( Text() );
-			tSock->sysmessage( 756, Text() );
+			tSock->SysMessage( 756, Text() ); // This item is now described as %s,
 			ourChar->SetSpeechMode( 0 );
 			break;
 		case 7: // Rune renaming
 			speechItem->SetName( Text() );
-			tSock->sysmessage( 757, Text() );
+			tSock->SysMessage( 757, Text() ); // Rune renamed to: Rune to %s.
 			ourChar->SetSpeechMode( 0 );
 			break;
 		case 6: // Name deed
 			ourChar->SetName( Text() );
-			tSock->sysmessage( 758, Text() );
+			tSock->SysMessage( 758, Text() ); // Your new name is: %s.
 			ourChar->SetSpeechMode( 0 );
 			speechItem->Delete();
 			ourChar->SetSpeechItem( nullptr );
@@ -2059,23 +2297,25 @@ bool CPITalkRequest::HandleCommon( void )
 		case 5:	// Key renaming
 		case 8: // Sign renaming
 			speechItem->SetName( Text() );
-			tSock->sysmessage( 759, Text() );
+			tSock->SysMessage( 759, Text() ); // Renamed to: %s.
 			ourChar->SetSpeechMode( 0 );
 			break;
 		case 9: // JavaScript speech
 		{
 			cScript *myScript	= ourChar->GetSpeechCallback();
 			if( myScript != nullptr )
+			{
 				myScript->OnSpeechInput( ourChar, speechItem, Text() );
+			}
 
 			ourChar->SetSpeechMode( 0 );
 			break;
 		}
 		case 1: // GM Page
 			UI08 a1, a2, a3, a4;
-			if( GMQueue->GotoPos( GMQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
+			if( GMQueue->GotoPos( GMQueue->FindCallNum( ourChar->GetPlayerCallNum() )))
 			{
-				HelpRequest *tempPage = nullptr;
+				CHelpRequest *tempPage = nullptr;
 				tempPage = GMQueue->Current();
 				a1 = ourChar->GetSerial( 1 );
 				a2 = ourChar->GetSerial( 2 );
@@ -2084,24 +2324,29 @@ bool CPITalkRequest::HandleCommon( void )
 
 				tempPage->Reason( Text() );
 				tempPage->WhoPaging( ourChar->GetSerial() );
-				auto temp = oldstrutil::format("GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
+				auto temp = oldstrutil::format( "GM Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPage->Reason().c_str() );
 				bool x = false;
 				{
-					for (auto &tmpSock : Network->connClients){
+					for( auto &tmpSock : Network->connClients )
+					{
 						CChar *tChar = tmpSock->CurrcharObj();
-						if( ValidateObject( tChar ) ){
-							if( tChar->IsGMPageable() ){
+						if( ValidateObject( tChar ))
+						{
+							if( tChar->IsGMPageable() )
+							{
 								x = true;
-								tmpSock->sysmessage( temp );
+								tmpSock->SysMessage( temp );
 							}
 						}
 					}
 				}
-				if( x ){
-					tSock->sysmessage( 363 );
+				if( x )
+				{
+					tSock->SysMessage( 363 ); // Your request for assistance has been logged, and will be handled by a GM as soon as possible!
 				}
-				else {
-					tSock->sysmessage( 364 );
+				else
+				{
+					tSock->SysMessage( 364 ); // Your request for assistance has been logged, and will be handled by a GM as soon as possible!
 				}
 			}
 			ourChar->SetSpeechMode( 0 );
@@ -2112,30 +2357,35 @@ bool CPITalkRequest::HandleCommon( void )
 			a3 = ourChar->GetSerial( 3 );
 			a4 = ourChar->GetSerial( 4 );
 
-			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( ourChar->GetPlayerCallNum() ) ) )
+			if( CounselorQueue->GotoPos( CounselorQueue->FindCallNum( ourChar->GetPlayerCallNum() )))
 			{
-				HelpRequest *tempPageCns;
+				CHelpRequest *tempPageCns;
 				tempPageCns = CounselorQueue->Current();
 				tempPageCns->Reason( Text() );
 				tempPageCns->WhoPaging( ourChar->GetSerial() );
 				auto temp = oldstrutil::format( "Counselor Page from %s [%x %x %x %x]: %s", ourChar->GetName().c_str(), a1, a2, a3, a4, tempPageCns->Reason().c_str() );
 				bool x = false;
 				{
-					for (auto &tmpSock : Network->connClients){
+					for( auto &tmpSock : Network->connClients )
+					{
 						CChar *tChar = tmpSock->CurrcharObj();
-						if( ValidateObject( tChar ) ){
-							if( tChar->IsGMPageable() ){
+						if( ValidateObject( tChar ))
+						{
+							if( tChar->IsGMPageable() )
+							{
 								x = true;
-								tmpSock->sysmessage( temp );
+								tmpSock->SysMessage( temp );
 							}
 						}
 					}
 				}
-				if( x ){
-					tSock->sysmessage( 360 );
+				if( x )
+				{
+					tSock->SysMessage( 360 ); // Your request for info has been logged, and will be handled by a Counselor as soon as possible!
 				}
-				else {
-					tSock->sysmessage( 361 );
+				else
+				{
+					tSock->SysMessage( 361 ); // Your request for info has been logged, and will be handled by a Counselor as soon as possible!
 				}
 			}
 			ourChar->SetSpeechMode( 0 );
@@ -2143,24 +2393,28 @@ bool CPITalkRequest::HandleCommon( void )
 		case 0: // normal speech
 		default:
 			if( ourChar->GetSquelched() && !ourChar->IsGM() )
-				tSock->sysmessage( 760 );
+			{
+				tSock->SysMessage( 760 ); // You have been squelched.
+			}
 			else
+			{
 				return false;
+			}
 			break;
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITalkRequestAscii()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles ASCII talk request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x03 (Talk Request)
 //|					Size: Variable
 //|
 //|					See CPITalkRequest() for details
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITalkRequestAscii::CPITalkRequestAscii() : CPITalkRequest()
 {
 }
@@ -2175,19 +2429,19 @@ void CPITalkRequestAscii::Receive( void )
 	tSock->Receive( blockLen, false );
 
 	strLen			= blockLen - 8;
-	typeUsed		= (SpeechType)tSock->GetByte( 3 );
+	typeUsed		= static_cast<SpeechType>( tSock->GetByte( 3 ));
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
-	strcopy( txtSaid, 4096,(char *)&(tSock->Buffer()[8]) );
+	strcopy( txtSaid, 4096, ( char * ) & ( tSock->Buffer()[8] ));
 }
 
 UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITalkRequestUnicode()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles Unicode/Ascii speech requests
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xAD (Unicode/Ascii Speech Request)
 //|					Size: Variable
 //|
@@ -2230,7 +2484,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset );
 //|							included right after this, each one is 12 bits also.
 //|						The keywords are padded to the closest byte. For example, if there are 2
 //|							keywords, it will take up 5 bytes. 12bits for the number, and 12 bits for each keyword. 12+12+12=36. Which will be padded 4 bits to 40 bits or 5 bytes.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITalkRequestUnicode::CPITalkRequestUnicode()
 {
 	isUnicode = true;
@@ -2249,74 +2503,86 @@ void CPITalkRequestUnicode::Receive( void )
 	tSock->Receive( blockLen, false );
 	tSock->ClearTrigWords();
 
-	typeUsed		= (SpeechType)tSock->GetByte( 3 );
+	typeUsed		= static_cast<SpeechType>( tSock->GetByte( 3 ));
 	textColour		= tSock->GetWord( 4 );
 	fontUsed		= tSock->GetWord( 6 );
 
 	if( tSock->Language() == ZERO )
-		tSock->Language( FindLanguage( tSock, 8 ) );
+	{
+		tSock->Language( FindLanguage( tSock, 8 ));
+	}
 
 	CChar *mChar	= tSock->CurrcharObj();
-	mChar->setUnicode( true );
+	mChar->SetUnicode( true );
 
 	// Check for command word versions of this packet
 	UI08 *buffer		= tSock->Buffer();
 	UI16 j				= 0;
 
 	for( j = 8; j <= 10; ++j )
+	{
 		langCode[j - 8] = tSock->GetByte( j );
+	}
 
 	langCode[3] = 0;
 
-	if( (typeUsed&0xC0) == 0xC0 )
+	if(( typeUsed & 0xC0 ) == 0xC0 )
 	{
 		SI32 myoffset		= 13;
 		SI32 myj			= 12;
 		size_t numTrigWords	= 0;
 
 		// number of distinct trigger words
-		numTrigWords = (static_cast<size_t>(tSock->GetByte( 12 ))<<4) + (static_cast<size_t>(tSock->GetByte( 13 ))>>4);
+		numTrigWords = ( static_cast<size_t>( tSock->GetByte( 12 )) << 4 ) + ( static_cast<size_t>( tSock->GetByte( 13 )) >> 4 );
 
 		size_t byteNum = 13;
 		for( size_t tWord = 0; tWord < numTrigWords; )
 		{
-			tSock->AddTrigWord( ((tSock->GetByte( byteNum+tWord )%0x10)<<8) + tSock->GetByte( byteNum+tWord+1 ) );
-			if( tWord+2 <= numTrigWords )
-				tSock->AddTrigWord( (tSock->GetByte( byteNum+tWord+2 )<<4) + (tSock->GetByte( byteNum+tWord+3 )>>4));
+			tSock->AddTrigWord((( tSock->GetByte( byteNum+tWord ) % 0x10 ) << 8 ) + tSock->GetByte( byteNum+tWord + 1 ));
+			if( tWord + 2 <= numTrigWords )
+			{
+				tSock->AddTrigWord(( tSock->GetByte( byteNum + tWord + 2 ) << 4 ) + ( tSock->GetByte( byteNum + tWord + 3 ) >> 4 ));
+			}
 			tWord += 2;
 			byteNum++;
 		}
 
 		myoffset = 15;
-		if( (numTrigWords % 2) == 1 )	// odd number ?
-			myoffset += ( static_cast<SI32>(numTrigWords )/ 2 ) * 3;
+		if(( numTrigWords % 2 ) == 1 )	// odd number ?
+		{
+			myoffset += ( static_cast<SI32>( numTrigWords ) / 2 ) * 3;
+		}
 		else
-			myoffset += ( (static_cast<SI32>(numTrigWords) / 2 ) * 3 ) - 1;
+		{
+			myoffset += (( static_cast<SI32>( numTrigWords ) / 2 ) * 3 ) - 1;
+		}
 
 		myj = 12;
 		SI32 mysize = blockLen - myoffset;
 		for( j = 0; j < mysize; ++j )
+		{
 			unicodeTxt[j] = buffer[j + myoffset];
+		}
 		for( j = 0; j < mysize; ++j )
 		{	// we would overwrite our buffer, so we need to catch it before we do that.
 			buffer[myj++] = 0;
 			buffer[myj++] = unicodeTxt[j];
 		}
-		buffer[myj-1] = 0;
-		blockLen = ((blockLen - myoffset) * 2) + 12;
+		buffer[myj - 1] = 0;
+		blockLen = (( blockLen - myoffset ) * 2 ) + 12;
 		PackShort( buffer, 1, blockLen );
 		// update our unicode text
-		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
+		memcpy( unicodeTxt, &( tSock->Buffer()[12] ), blockLen - 12 );
 	}
 	else		// NOT a weird configuration, it is unicode however!
 	{
 		// starts at 12
-		memcpy( unicodeTxt, &(tSock->Buffer()[12]), blockLen - 12 );
+		memcpy( unicodeTxt, &( tSock->Buffer()[12] ), blockLen - 12 );
 	}
 	strLen = 0;
 	for( j = 13; j < blockLen; j += 2 )
 	{
-		txtSaid[(j-13)/2] = buffer[j];
+		txtSaid[( j - 13 ) / 2] = buffer[j];
 		++strLen;
 	}
 }
@@ -2335,11 +2601,11 @@ char * CPITalkRequestUnicode::Language( void ) const
 	return (char *)langCode;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIAllNames3D()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to show names of all nearby characters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x98 (All Names (3D Client Only))
 //|					Size: 7 bytes
 //|
@@ -2356,7 +2622,7 @@ char * CPITalkRequestUnicode::Language( void ) const
 //|							name. Client automatically knows names of items. Hence it only asks only
 //|							for NPC/Player names nearby, but shows bars of items plus NPCs.
 //|						Client request has 7 bytes, server-reply 37. Triggered by Crtl + Shift.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIAllNames3D::CPIAllNames3D() : CPInputBuffer()
 {
 }
@@ -2371,27 +2637,31 @@ void CPIAllNames3D::Receive( void )
 }
 bool CPIAllNames3D::Handle( void )
 {
-	SERIAL objSer		= tSock->GetDWord( 3 );
+	SERIAL objSer = tSock->GetDWord( 3 );
 	CBaseObject *toName = nullptr;
 
 	if( objSer >= BASEITEMSERIAL )
-		toName = calcItemObjFromSer( objSer );
-	else if( objSer != INVALIDSERIAL )
-		toName = calcCharObjFromSer( objSer );
-
-	if( ValidateObject( toName ) )
 	{
-		CPAllNames3D toSend( (*toName) );
+		toName = CalcItemObjFromSer( objSer );
+	}
+	else if( objSer != INVALIDSERIAL )
+	{
+		toName = CalcCharObjFromSer( objSer );
+	}
+
+	if( ValidateObject( toName ))
+	{
+		CPAllNames3D toSend(( *toName ));
 		tSock->Send( &toSend );
 	}
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGumpChoice()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with choice made in a Gump dialog
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x7D (Make a choice in a Gump)
 //|					Size: 13 bytes
 //|
@@ -2404,7 +2674,7 @@ bool CPIAllNames3D::Handle( void )
 //|						BYTE[2] color
 //|
 //|					NOTE: void CPGumpChoice::Handle() implemented in gumps.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIGumpChoice::CPIGumpChoice()
 {
 }
@@ -2417,11 +2687,11 @@ void CPIGumpChoice::Receive( void )
 	tSock->Receive( 13, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIBuyItem()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to buy items from vendor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x3B (Buy Item(s))
 //|					Size: Variable
 //|
@@ -2438,7 +2708,7 @@ void CPIGumpChoice::Receive( void )
 //|							BYTE[2] # bought
 //|
 //|					NOTE: void CPIBuyItem::Handle() implemented in vendor.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIBuyItem::CPIBuyItem()
 {
 }
@@ -2452,11 +2722,11 @@ void CPIBuyItem::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPISellItem()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to sell items to vendor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x9F (Sell Reply)
 //|					Size: Variable
 //|
@@ -2470,7 +2740,7 @@ void CPIBuyItem::Receive( void )
 //|							BYTE[2] quantity
 //|
 //|					void CPISellItem::Handle() implemented in vendor.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPISellItem::CPISellItem()
 {
 }
@@ -2484,11 +2754,11 @@ void CPISellItem::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIDeleteCharacter()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to delete a specific character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x83 (Delete Character)
 //|					Size: 39 bytes
 //|
@@ -2499,7 +2769,7 @@ void CPISellItem::Receive( void )
 //|						BYTE[4]	clientIP
 //|
 //|					void CPIDeleteCharacter::Handle() implemented in pcmanage.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIDeleteCharacter::CPIDeleteCharacter()
 {
 }
@@ -2512,18 +2782,18 @@ void CPIDeleteCharacter::Receive( void )
 	tSock->Receive( 0x27, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPICreateCharacter()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to create a new character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x00 (Create Character)
 //|					Packet: 0xF8 (Create Character, clients 7.0.16+)
 //|						See Create2DCharacter() for details
 //|
 //|					Packet: 0x8D (Create Character, KR + SA 3D clients)
 //|						See Create3DCharacter() for details
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPICreateCharacter::CPICreateCharacter()
 {
 }
@@ -2534,16 +2804,20 @@ CPICreateCharacter::CPICreateCharacter( CSocket *s ) : CPInputBuffer( s )
 void CPICreateCharacter::Receive( void )
 {
 	if( tSock->ClientType() == CV_SA3D || tSock->ClientType() == CV_HS3D )
+	{
 		Create3DCharacter();
+	}
 	else
+	{
 		Create2DCharacter();
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	Create3DCharacter()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to create character in 3D clients
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x8D (Create Character, KR + SA 3D clients)
 //|					Size: 146 bytes
 //|
@@ -2590,7 +2864,7 @@ void CPICreateCharacter::Receive( void )
 //|						BYTE unknown (0x10)
 //|						BYTE[2] beard color  // the last two might be reversed
 //|						BYTE[2] beard style/item id*/
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create3DCharacter( void )
 {
 	tSock->Receive( 146, false );
@@ -2622,31 +2896,31 @@ void CPICreateCharacter::Create3DCharacter( void )
 		skillValue[3]	= tSock->GetByte( 95 ); // Byte[1]
 		byteNum = 96;
 	}
-	unknown4		= tSock->GetByte( static_cast<size_t>(byteNum)+25 ); // Byte[1] // 121
-	hairColour		= tSock->GetWord( static_cast<size_t>(byteNum)+26 ); // Byte[2] // 122
-	hairStyle		= tSock->GetWord( static_cast<size_t>(byteNum)+28 ); // Byte[2] // 124
-	unknown5		= tSock->GetByte( static_cast<size_t>(byteNum)+30 ); // Byte[1]
-	unknown6		= tSock->GetDWord( static_cast<size_t>(byteNum)+31 ); // Byte[4]
-	unknown7		= tSock->GetByte( static_cast<size_t>(byteNum)+35 ); // Byte[1]
-	shirtColour		= tSock->GetWord( static_cast<size_t>(byteNum)+36 ); // Byte[2]
-	shirtID			= tSock->GetWord( static_cast<size_t>(byteNum)+38 ); // Byte[2]
-	unknown8		= tSock->GetByte( static_cast<size_t>(byteNum)+40 ); // Byte[1]
-	faceColour		= tSock->GetWord( static_cast<size_t>(byteNum)+41 ); // Byte[2]
-	faceID			= tSock->GetWord( static_cast<size_t>(byteNum)+43 ); // Byte[2]
-	unknown9		= tSock->GetByte( static_cast<size_t>(byteNum)+45 ); // Byte[1]
-	facialHairColour= tSock->GetWord( static_cast<size_t>(byteNum)+46 ); // Byte[2]
-	facialHair		= tSock->GetWord( static_cast<size_t>(byteNum)+48 ); // Byte[2]
+	unknown4		= tSock->GetByte( static_cast<size_t>( byteNum ) +25 ); // Byte[1] // 121
+	hairColour		= tSock->GetWord( static_cast<size_t>( byteNum ) +26 ); // Byte[2] // 122
+	hairStyle		= tSock->GetWord( static_cast<size_t>( byteNum ) +28 ); // Byte[2] // 124
+	unknown5		= tSock->GetByte( static_cast<size_t>( byteNum ) +30 ); // Byte[1]
+	unknown6		= tSock->GetDWord( static_cast<size_t>( byteNum ) +31 ); // Byte[4]
+	unknown7		= tSock->GetByte( static_cast<size_t>( byteNum ) +35 ); // Byte[1]
+	shirtColour		= tSock->GetWord( static_cast<size_t>( byteNum ) +36 ); // Byte[2]
+	shirtId			= tSock->GetWord( static_cast<size_t>( byteNum ) +38 ); // Byte[2]
+	unknown8		= tSock->GetByte( static_cast<size_t>( byteNum ) +40 ); // Byte[1]
+	faceColour		= tSock->GetWord( static_cast<size_t>( byteNum ) +41 ); // Byte[2]
+	faceId			= tSock->GetWord( static_cast<size_t>( byteNum ) +43 ); // Byte[2]
+	unknown9		= tSock->GetByte( static_cast<size_t>( byteNum ) +45 ); // Byte[1]
+	facialHairColour= tSock->GetWord( static_cast<size_t>( byteNum ) +46 ); // Byte[2]
+	facialHair		= tSock->GetWord( static_cast<size_t>( byteNum ) +48 ); // Byte[2]
 
 	memcpy( charName, &tSock->Buffer()[11], 30 ); // Byte[30]
 	memcpy( password, &tSock->Buffer()[41], 30 ); // Byte[30]
 	memcpy( unknown3, &tSock->Buffer()[96], 25 ); // Byte[25]
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	Create2DCharacter()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to create character in 2D clients
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x00 (Create Character)
 //|					Packet: 0xF8 (Create Character, clients 7.0.16+)
 //|					Size: 104 or 106 Bytes
@@ -2682,13 +2956,17 @@ void CPICreateCharacter::Create3DCharacter( void )
 //|						BYTE[4] clientIP						96/98
 //|						BYTE[2] shirt color						100/102
 //|						BYTE[2] pants color						102/104
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create2DCharacter( void )
 {
 	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
+	{
 		tSock->Receive( 106, true );
+	}
 	else
+	{
 		tSock->Receive( 104, false );
+	}
 	Network->Transfer( tSock );
 
 	pattern1		= tSock->GetDWord( 1 );
@@ -2698,7 +2976,9 @@ void CPICreateCharacter::Create2DCharacter( void )
 
 	// Fix for ClassicUO client
 	if( profession == 255 )
+	{
 		profession = 0;
+	}
 	sex				= tSock->GetByte( 70 );
 	str				= tSock->GetByte( 71 );
 	dex				= tSock->GetByte( 72 );
@@ -2717,17 +2997,17 @@ void CPICreateCharacter::Create2DCharacter( void )
 		byteNum = 82;
 	}
 	skinColour		= tSock->GetWord( byteNum );
-	hairStyle		= tSock->GetWord( static_cast<size_t>(byteNum)+2 );
-	hairColour		= tSock->GetWord( static_cast<size_t>(byteNum)+4 );
-	facialHair		= tSock->GetWord( static_cast<size_t>(byteNum)+6 );
-	facialHairColour= tSock->GetWord( static_cast<size_t>(byteNum)+8 );
+	hairStyle		= tSock->GetWord( static_cast<size_t>( byteNum ) + 2 );
+	hairColour		= tSock->GetWord( static_cast<size_t>( byteNum ) + 4 );
+	facialHair		= tSock->GetWord( static_cast<size_t>( byteNum ) + 6 );
+	facialHairColour= tSock->GetWord( static_cast<size_t>( byteNum ) + 8 );
 
-	unknown			= tSock->GetByte( static_cast<size_t>(byteNum)+10 );
-	locationNumber	= tSock->GetByte( static_cast<size_t>(byteNum)+11 );
-	slot			= tSock->GetDWord( static_cast<size_t>(byteNum)+12 );
-	ipAddress		= tSock->GetDWord( static_cast<size_t>(byteNum)+16 );
-	shirtColour		= tSock->GetWord( static_cast<size_t>(byteNum)+20 );
-	pantsColour		= tSock->GetWord( static_cast<size_t>(byteNum)+22 );
+	unknown			= tSock->GetByte( static_cast<size_t>( byteNum ) + 10 );
+	locationNumber	= tSock->GetByte( static_cast<size_t>( byteNum ) + 11 );
+	slot			= tSock->GetDWord( static_cast<size_t>( byteNum ) + 12 );
+	ipAddress		= tSock->GetDWord( static_cast<size_t>( byteNum ) + 16 );
+	shirtColour		= tSock->GetWord( static_cast<size_t>( byteNum ) + 20 );
+	pantsColour		= tSock->GetWord( static_cast<size_t>( byteNum ) + 22 );
 
 	memcpy( charName, &tSock->Buffer()[10], 30 );
 	memcpy( password, &tSock->Buffer()[40], 30 ); // Does this really have anything to do with passwords?
@@ -2742,38 +3022,38 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 			outStream << "[RECV]Packet   : CPICreateCharacter 0x8D --> Length: 146" << TimeStamp() << std::endl;
 		}
 		outStream << "Pattern1       : " << pattern1 << std::endl;
-		outStream << "Slot           : " << (SI32)slot << std::endl;
+		outStream << "Slot           : " << static_cast<SI32>( slot ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
 		outStream << "Password       : " << password << std::endl;
-		outStream << "Profession     : " << (SI32)profession << std::endl;
-		outStream << "Client Flags   : " << (SI32)clientFlags << std::endl;
-		outStream << "Sex            : " << (SI32)sex << std::endl;
-		outStream << "Race           : " << (SI32)race << std::endl;
-		outStream << "Strength       : " << (SI32)str << std::endl;
-		outStream << "Dexterity      : " << (SI32)dex << std::endl;
-		outStream << "Intelligence   : " << (SI32)intel << std::endl;
+		outStream << "Profession     : " << static_cast<SI32>( profession ) << std::endl;
+		outStream << "Client Flags   : " << static_cast<SI32>( clientFlags ) << std::endl;
+		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
+		outStream << "Race           : " << static_cast<SI32>( race ) << std::endl;
+		outStream << "Strength       : " << static_cast<SI32>( str ) << std::endl;
+		outStream << "Dexterity      : " << static_cast<SI32>( dex ) << std::endl;
+		outStream << "Intelligence   : " << static_cast<SI32>( intel ) << std::endl;
 		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
-		outStream << "Unknown1       : " << (SI32)unknown1 << std::endl;
-		outStream << "Unknown2       : " << (SI32)unknown2 << std::endl;
-		outStream << "Skills         : " << (SI32)skill[0] << " " << (SI32)skill[1] << " " << (SI32)skill[2] << " " << (SI32)skill[3] << std::endl;
-		outStream << "Skills Values  : " << (SI32)skillValue[0] << " " << (SI32)skillValue[1] << " " << (SI32)skillValue[2] << " " << (SI32)skillValue[3] << std::endl;
+		outStream << "Unknown1       : " << static_cast<SI32>( unknown1 ) << std::endl;
+		outStream << "Unknown2       : " << static_cast<SI32>( unknown2 ) << std::endl;
+		outStream << "Skills         : " << static_cast<SI32>( skill[0] ) << " " << static_cast<SI32>( skill[1] ) << " " << static_cast<SI32>( skill[2] ) << " " << static_cast<SI32>( skill[3] ) << std::endl;
+		outStream << "Skills Values  : " << static_cast<SI32>( skillValue[0] ) << " " << static_cast<SI32>( skillValue[1] ) << " " << static_cast<SI32>( skillValue[2] ) << " " << static_cast<SI32>( skillValue[3] ) << std::endl;
 		SI32 temp1;
 		for( temp1 = 0; temp1 < 25; temp1++ )
 		{
-			outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << (UI32)( unknown3[temp1] ) << std::endl;
+			outStream << "Unknown3 index " << temp1 << " is hex value: " << std::hex << static_cast<UI32>( unknown3[temp1] ) << std::endl;
 		}
-		outStream << "Unknown4       : " << (SI32)unknown4 << std::endl;
+		outStream << "Unknown4       : " << static_cast<SI32>( unknown4 ) << std::endl;
 		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
 		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
-		outStream << "Unknown5       : " << (SI32)unknown5 << std::endl;
-		outStream << "Unknown6       : " << (SI32)unknown6 << std::endl;
-		outStream << "Unknown7       : " << (SI32)unknown7 << std::endl;
+		outStream << "Unknown5       : " << static_cast<SI32>( unknown5 ) << std::endl;
+		outStream << "Unknown6       : " << static_cast<SI32>( unknown6 ) << std::endl;
+		outStream << "Unknown7       : " << static_cast<SI32>( unknown7 ) << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
-		outStream << "Shirt ID       : " << std::hex << shirtID << std::dec << std::endl;
-		outStream << "Unknown8       : " << (SI32)unknown8 << std::endl;
+		outStream << "Shirt ID       : " << std::hex << shirtId << std::dec << std::endl;
+		outStream << "Unknown8       : " << static_cast<SI32>( unknown8 ) << std::endl;
 		outStream << "Face Colour    : " << std::hex << faceColour << std::dec << std::endl;
-		outStream << "Face ID		 : " << std::hex << faceID << std::dec << std::endl;
-		outStream << "Unknown9       : " << (SI32)unknown9 << std::endl;
+		outStream << "Face ID		 : " << std::hex << faceId << std::dec << std::endl;
+		outStream << "Unknown9       : " << static_cast<SI32>( unknown9 ) << std::endl;
 		outStream << "Facial Hair    : " << std::hex << facialHair << std::dec << std::endl;
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
 		outStream << "  Raw dump     :" << std::endl;
@@ -2784,21 +3064,25 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		if( fullHeader )
 		{
 			if( tSock->GetByte( 0 ) == 0xF8 )
+			{
 				outStream << "[RECV]Packet   : CPICreateCharacter 0xF8 --> Length: 106" << TimeStamp() << std::endl;
+			}
 			else
+			{
 				outStream << "[RECV]Packet   : CPICreateCharacter 0x00 --> Length: 104" << TimeStamp() << std::endl;
+			}
 		}
 		outStream << "Pattern1       : " << pattern1 << std::endl;
 		outStream << "Pattern2       : " << pattern2 << std::endl;
-		outStream << "Pattern3       : " << (SI32)pattern3 << std::endl;
+		outStream << "Pattern3       : " << static_cast<SI32>( pattern3 ) << std::endl;
 		outStream << "Character Name : " << charName << std::endl;
 		outStream << "Password       : " << password << std::endl;
-		outStream << "Sex            : " << (SI32)sex << std::endl;
-		outStream << "Strength       : " << (SI32)str << std::endl;
-		outStream << "Dexterity      : " << (SI32)dex << std::endl;
-		outStream << "Intelligence   : " << (SI32)intel << std::endl;
-		outStream << "Skills         : " << (SI32)skill[0] << " " << (SI32)skill[1] << " " << (SI32)skill[2] << std::endl;
-		outStream << "Skills Values  : " << (SI32)skillValue[0] << " " << (SI32)skillValue[1] << " " << (SI32)skillValue[2] << std::endl;
+		outStream << "Sex            : " << static_cast<SI32>( sex ) << std::endl;
+		outStream << "Strength       : " << static_cast<SI32>( str ) << std::endl;
+		outStream << "Dexterity      : " << static_cast<SI32>( dex ) << std::endl;
+		outStream << "Intelligence   : " << static_cast<SI32>( intel ) << std::endl;
+		outStream << "Skills         : " << static_cast<SI32>( skill[0] ) << " " << static_cast<SI32>( skill[1] ) << " " << static_cast<SI32>( skill[2] ) << std::endl;
+		outStream << "Skills Values  : " << static_cast<SI32>( skillValue[0] ) << " " << static_cast<SI32>( skillValue[1] ) << " " << static_cast<SI32>( skillValue[2] ) << std::endl;
 		outStream << "Skin Colour    : " << std::hex << skinColour << std::dec << std::endl;
 		outStream << "Hair Style     : " << std::hex << hairStyle << std::dec << std::endl;
 		outStream << "Hair Colour    : " << std::hex << hairColour << std::dec << std::endl;
@@ -2806,7 +3090,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 		outStream << "Facial Hair Colour: " << std::hex << facialHairColour << std::dec << std::endl;
 		outStream << "Location Number: " << locationNumber << std::endl;
 		outStream << "Unknown        : " << unknown << std::endl;
-		outStream << "Slot           : " << (SI32)slot << std::endl;
+		outStream << "Slot           : " << static_cast<SI32>( slot ) << std::endl;
 		outStream << "IP Address     : " << ipAddress << std::endl;
 		outStream << "Shirt Colour   : " << std::hex << shirtColour << std::dec << std::endl;
 		outStream << "Pants Colour   : " << std::hex << pantsColour << std::dec << std::endl;
@@ -2817,11 +3101,11 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 
 // void CPICreateCharacter::Handle() implimented in pcmanage.cpp
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIPlayCharacter()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to login with a specific character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x5D (Login Character)
 //|					Size: 73 bytes
 //|
@@ -2835,7 +3119,7 @@ void CPICreateCharacter::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[4] clientIP
 //|
 //|					void CPIPlayCharacter::Handle() implimented in pcmanage.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIPlayCharacter::CPIPlayCharacter()
 {
 }
@@ -2858,7 +3142,7 @@ void CPIPlayCharacter::Receive( void )
 	//NOTE: We can't do this until after character-selection, in case user
 	//goes back to server-selection instead - in which case the socket's clientversion info is lost!
 	//	tSock->AcctNo( AB_INVALID_ID );
-	CAccountBlock& actbTemp = tSock->GetAccount();
+	CAccountBlock_st& actbTemp = tSock->GetAccount();
 	actbTemp.dwLastClientVer = 0;
 	actbTemp.dwLastClientType = 0;
 	actbTemp.dwLastClientVerShort = 0;
@@ -2870,20 +3154,22 @@ void CPIPlayCharacter::Receive( void )
 void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIPlayCharacter 0x5D --> Length: 73" << TimeStamp() << std::endl;
+	}
 	outStream << "Pattern1       : " << pattern << std::endl;
 	outStream << "Char name      : " << charName << std::endl;
-	outStream << "Slot chosen    : " << (SI32)slotChosen << std::endl;
+	outStream << "Slot chosen    : " << static_cast<SI32>( slotChosen ) << std::endl;
 	outStream << "Client IP      : " << ipAddress << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIGumpInput()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with reply data for gump text entry dialog
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xAC (Gump Text Entry Dialog Reply)
 //|					Size: Variable
 //|
@@ -2897,7 +3183,7 @@ void CPIPlayCharacter::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[?] reply
 //|
 //|					void CPIGumpInput::Handle() implimented in gumps.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIGumpInput::CPIGumpInput()
 {
 }
@@ -2917,11 +3203,13 @@ void CPIGumpInput::Receive( void )
 	unk[0]	= tSock->GetByte( 9 ); // 1 == ok, 0 == cancel
 	unk[1]	= tSock->GetByte( 10 );
 	unk[2]	= tSock->GetByte( 11 ); // Length of reply
-	reply	= (char *)&(tSock->Buffer()[12]);
+	reply	= ( char * ) & ( tSock->Buffer()[12] );
 
 	// If no value was actually returned, treat it as a cancel!
 	if( unk[0] == 1 && reply == "" )
+	{
 		unk[0] = 0;
+	}
 }
 
 UI32 CPIGumpInput::ID( void ) const
@@ -2949,21 +3237,23 @@ const std::string CPIGumpInput::Reply( void ) const
 void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIGumpInput 0xAC --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "ID             : " << id << std::endl;
-	outStream << "Type           : " << (SI32)type << std::endl;
-	outStream << "Index          : " << (SI32)index << std::endl;
-	outStream << "Unknown        : " << (SI32)unk[0] << " " << (SI32)unk[1] << " " << (SI32)unk[2] << std::endl;
+	outStream << "Type           : " << static_cast<SI32>( type ) << std::endl;
+	outStream << "Index          : " << static_cast<SI32>( index ) << std::endl;
+	outStream << "Unknown        : " << static_cast<SI32>( unk[0] ) << " " << static_cast<SI32>( unk[1] ) << " " << static_cast<SI32>( unk[2] ) << std::endl;
 	outStream << "Reply          : " << reply << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIHelpRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with help request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x9B (Request Help)
 //|					Size: 258 bytes
 //|
@@ -2972,7 +3262,7 @@ void CPIGumpInput::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[257] (0x00)
 //|
 //|					void CPIHelpRequest::Handle() implimented in gumps.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIHelpRequest::CPIHelpRequest( CSocket *s, UI16 menuVal ) : CPInputBuffer( s )
 {
 	menuNum = menuVal;
@@ -2987,11 +3277,11 @@ void CPIHelpRequest::Receive( void )
 	menuNum = 1;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITradeMessage()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request for secure trading window
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x6F (Secure Trading)
 //|					Size: Variable
 //|
@@ -3007,7 +3297,7 @@ void CPIHelpRequest::Receive( void )
 //|							BYTE[?] charName
 //|
 //|					void CPITradeMessage::Handle() implimented in gumps.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITradeMessage::CPITradeMessage()
 {
 }
@@ -3021,11 +3311,11 @@ void CPITradeMessage::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIDyeWindow()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to open dye window
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x95 (Dye Window)
 //|					Size: 9 bytes
 //|
@@ -3034,7 +3324,7 @@ void CPITradeMessage::Receive( void )
 //|						BYTE[4] itemID of dye target
 //|						BYTE[2] ignored on send, model on return
 //|						BYTE[2] model on send, color on return  (default on server send is 0x0FAB)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIDyeWindow::CPIDyeWindow()
 {
 }
@@ -3047,16 +3337,18 @@ void CPIDyeWindow::Receive( void )
 	tSock->Receive( 9, false );
 
 	changing	= tSock->GetDWord( 1 );
-	modelID		= tSock->GetWord( 5 );
+	modelId		= tSock->GetWord( 5 );
 	newValue	= tSock->GetWord( 7 );
 }
 
 void CPIDyeWindow::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIDyeWindow 0x95 --> Length: 9" << TimeStamp() << std::endl;
+	}
 	outStream << "ItemID         : " << changing << std::endl;
-	outStream << "Model          : " << modelID << std::endl;
+	outStream << "Model          : " << modelId << std::endl;
 	outStream << "Colour         : " << newValue << std::endl;
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
@@ -3066,13 +3358,15 @@ bool CPIDyeWindow::Handle( void )
 {
 	if( changing >= BASEITEMSERIAL )
 	{
-		CItem *i = calcItemObjFromSer( changing );
-		if( ValidateObject( i ) )
+		CItem *i = CalcItemObjFromSer( changing );
+		if( ValidateObject( i ))
 		{
 			if( !tSock->DyeAll() )
 			{
 				if( newValue < 0x0002 || newValue > 0x03E9 )
+				{
 					newValue = 0x03E9;
+				}
 			}
 			i->SetColour( newValue );
 		}
@@ -3080,22 +3374,24 @@ bool CPIDyeWindow::Handle( void )
 	else
 	{
 		CChar *mChar	= tSock->CurrcharObj();
-		CChar *c		= calcCharObjFromSer( changing );
-		if( ValidateObject( c ) )
+		CChar *c		= CalcCharObjFromSer( changing );
+		if( ValidateObject( c ))
 		{
 			if( !mChar->IsGM() )
 				return true;
 
-			UI16 body = c->GetID();
+			UI16 body = c->GetId();
 			SI32 b = newValue&0x4000;
 
-			if( ( ( newValue>>8 ) < 0x80 ) && ( (body >= 0x0190 && body <= 0x0193) || (body >= 0x025D && body <= 0x0260) ||
-											   (body >= 0x00B7 && body <= 0x00BA) || (body == 0x02EE || body == 0x02EF )))
+			if((( newValue >> 8 ) < 0x80 ) && (( body >= 0x0190 && body <= 0x0193 ) || ( body >= 0x025D && body <= 0x0260 ) ||
+											   ( body >= 0x00B7 && body <= 0x00BA ) || (body == 0x02EE || body == 0x02EF )))
 			{
 				newValue += 0x8000;
 			}
-			if( b == 16384 && (body >= 0x0190 && body <= 0x03e1 ) )
+			if( b == 16384 && ( body >= 0x0190 && body <= 0x03e1 ))
+			{
 				newValue = 0xF000; // but assigning the only "transparent" value that works, namly semi-trasnparency.
+			}
 
 			if( newValue != 0x8000 )
 			{
@@ -3108,11 +3404,11 @@ bool CPIDyeWindow::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIMsgBoardEvent()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for bulletin board interaction
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x71 (Bulletin Board Message)
 //|					Size: Variable
 //|
@@ -3123,7 +3419,7 @@ bool CPIDyeWindow::Handle( void )
 //|						BYTE[len-4] submessage
 //|
 //|					bool CPIMsgBoardEvent::Handle() implemented in msgboard.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIMsgBoardEvent::CPIMsgBoardEvent()
 {
 }
@@ -3141,11 +3437,11 @@ void CPIMsgBoardEvent::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPINewBookHeader()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for book header
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD4 (Book Header (New))
 //|					Size: Variable
 //|
@@ -3162,7 +3458,7 @@ void CPIMsgBoardEvent::Receive( void )
 //|						BYTE[?][2] title (Unicode, 0 terminated)
 //|
 //|					bool CPINewBookHeader::Handle() implemented in books.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPINewBookHeader::CPINewBookHeader()
 {
 }
@@ -3178,11 +3474,11 @@ void CPINewBookHeader::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIToolTipRequestAoS()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to show gump entry tooltip
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD6 (Mega Cliloc)
 //|					Size: Variable
 //|
@@ -3207,7 +3503,7 @@ void CPINewBookHeader::Receive( void )
 //|								BYTE[?] Unicode text to be added into the cliloc. Not sent if Length of text above is 0
 //|
 //|							BYTE[4] 00000000 - Sent as end of packet/loop
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIToolTipRequestAoS::CPIToolTipRequestAoS() : getSer( INVALIDSERIAL )
 {
 }
@@ -3223,6 +3519,7 @@ void CPIToolTipRequestAoS::Receive( void )
 	UI16 blockLen	= tSock->GetWord( 1 );
 	if( blockLen == 0 || ( blockLen - 3 ) % 4 != 0 )
 		return;
+
 	tSock->Receive( blockLen, false );
 
 	UI16 objCount = ( blockLen - 3 ) / 4;
@@ -3231,7 +3528,7 @@ void CPIToolTipRequestAoS::Receive( void )
 	{
 		getSer = tSock->GetDWord( offset + ( i * 4 ));
 		// Only send tooltip if server feature for tooltips is enabled
-		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ))
 		{
 			CPToolTip tSend( getSer, tSock );
 			tSock->Send( &tSend );
@@ -3245,17 +3542,19 @@ bool CPIToolTipRequestAoS::Handle( void )
 void CPIToolTipRequestAoS::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : 0xD6 Tooltip Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, true );
 }
 
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIBookPage()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for book pages
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x66 (Books (Pages))
 //|					Size: Variable
 //|
@@ -3273,7 +3572,7 @@ void CPIToolTipRequestAoS::Log( std::ofstream &outStream, bool fullHeader )
 //|								BYTE[var][2] Unicode Line Text, Null Terminated
 //|
 //|					bool CPIBookPage::Handle() implemented in books.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIBookPage::CPIBookPage()
 {
 }
@@ -3289,11 +3588,11 @@ void CPIBookPage::Receive( void )
 	tSock->Receive( tSock->GetWord( 1 ), false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIMetrics()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with client hardware / metrics
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD9 (Spy on Client)
 //|					Size: Variable
 //|
@@ -3329,7 +3628,7 @@ void CPIBookPage::Receive( void )
 //|
 //|					Older clients, from mid-late 2003 was set at 149 bytes length, whereas newest
 //|					clients 4.01+ are set to 199 ??
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIMetrics::CPIMetrics()
 {
 }
@@ -3353,7 +3652,9 @@ bool CPIMetrics::Handle()
 void CPIMetrics::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIMetrics 0xD9 --> Length: 268" << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -3503,7 +3804,7 @@ void CPISubcommands::Receive( void )
 		case 0x0C: {	subPacket = new CPIClosedStatusGump( tSock );		}	break;	// Closed Status Gump
 		case 0x0F:	skipOver = true;	break;	// Unknown, Sent once at Login
 		case 0x24:	skipOver = true;	break;
-		default:	Console.print( oldstrutil::format("Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
+		default:	Console.Print( oldstrutil::format( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
 		case 0x06:	{	subPacket = new CPIPartyCommand( tSock );		}	break;
 		case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Quest/Tracking Arrow
 		case 0x0B:	{	subPacket = new CPIClientLanguage( tSock );		}	break;	// Client language.  3 bytes.  "ENU" for english
@@ -3530,22 +3831,26 @@ bool CPISubcommands::Handle( void )
 void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( subPacket != nullptr )
+	{
 		subPacket->Log( outStream, fullHeader );
+	}
 	else
 	{
 		if( fullHeader )
+		{
 			outStream << "[RECV]Packet   : CPISubcommands 0xBF --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+		}
 		outStream << "  Raw dump     :" << std::endl;
 		CPInputBuffer::Log( outStream, false );
 	}
 }
 
 // Party Command
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIPartyCommand()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with party command
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x06 (Party Command)
 //|					Size: Variable
@@ -3591,7 +3896,7 @@ void CPISubcommands::Log( std::ofstream &outStream, bool fullHeader )
 //|							Subsubcommand 9 - Reject join party invitation
 //|								Client
 //|									BYTE[4] leaderID
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIPartyCommand::CPIPartyCommand()
 {
 }
@@ -3620,111 +3925,127 @@ bool CPIPartyCommand::Handle( void )
 	{
 		case PARTY_ADD:
 		{
-			SERIAL charToAdd	= tSock->GetDWord( BASE_OFFSET );
+			SERIAL charToAdd = tSock->GetDWord( BASE_OFFSET );
 			if( charToAdd != 0 )
 			{	// it really is a serial
 				tSock->SetDWord( 7, charToAdd );
-				PartyFactory::getSingleton().CreateInvite( tSock );
+				PartyFactory::GetSingleton().CreateInvite( tSock );
 			}
 			else
 			{
-				tSock->target( 0, TARGET_PARTYADD, Dictionary->GetEntry( 9003, tSock->Language() )); // Select the character to add to the party
+				tSock->SendTargetCursor( 0, TARGET_PARTYADD, Dictionary->GetEntry( 9003, tSock->Language() )); // Select the character to add to the party
 			}
-		}
 			break;
+		}
 		case PARTY_REMOVE:
 		{
-			Party *ourParty = PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			Party *ourParty = PartyFactory::GetSingleton().Get( tSock->CurrcharObj() );
 			if( ourParty != nullptr )
 			{
 				SERIAL charToRemove	= tSock->GetDWord( BASE_OFFSET );
-				if( ( ourParty->Leader() == tSock->CurrcharObj() ) || ( tSock->CurrcharObj()->GetSerial() == charToRemove ) )
+				if(( ourParty->Leader() == tSock->CurrcharObj() ) || ( tSock->CurrcharObj()->GetSerial() == charToRemove ))
 				{
 					if( charToRemove != 0 )
 					{	// it really is a serial
 						tSock->SetDWord( 7, charToRemove );
-						PartyFactory::getSingleton().Kick( tSock );
+						PartyFactory::GetSingleton().Kick( tSock );
 					}
 					else
 					{	// Crap crap crap, what do we do here?
-						tSock->target( 0, TARGET_PARTYREMOVE, Dictionary->GetEntry( 9004, tSock->Language() )); // Select the character to remove from the party
+						tSock->SendTargetCursor( 0, TARGET_PARTYREMOVE, Dictionary->GetEntry( 9004, tSock->Language() )); // Select the character to remove from the party
 					}
 				}
 				else
-					tSock->sysmessage( 9005 ); // You have to be the leader to do that
+				{
+					tSock->SysMessage( 9005 ); // You have to be the leader to do that
+				}
 			}
 			else
-				tSock->sysmessage( 9006 ); // You are not in a party
-		}
+			{
+				tSock->SysMessage( 9006 ); // You are not in a party
+			}
 			break;
+		}
 		case PARTY_TELLINDIV:
 		{
-			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			Party *toTellTo	= PartyFactory::GetSingleton().Get( tSock->CurrcharObj() );
 			if( toTellTo != nullptr )
 			{
 				CPPartyTell toTell( this, tSock );
 				SERIAL personToTell	= tSock->GetDWord( BASE_OFFSET );
-				CChar *charToTell	= calcCharObjFromSer( personToTell );
+				CChar *charToTell	= CalcCharObjFromSer( personToTell );
 				CSocket *charTell	= charToTell->GetSocket();
 				if( charTell != nullptr )
+				{
 					toTellTo->SendPacket( &toTell, charTell );
+				}
 			}
 			else
-				tSock->sysmessage( 9006 ); // You are not in a party
+			{
+				tSock->SysMessage( 9006 ); // You are not in a party
+			}
 		}
 			break;
 		case PARTY_TELLALL:
 		{
-			Party *toTellTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			Party *toTellTo	= PartyFactory::GetSingleton().Get( tSock->CurrcharObj() );
 			if( toTellTo != nullptr )
 			{
 				CPPartyTell toTell( this, tSock );
 				toTellTo->SendPacket( &toTell );
 			}
 			else
-				tSock->sysmessage( 9006 ); // You are not in a party
-		}
+			{
+				tSock->SysMessage( 9006 ); // You are not in a party
+			}
 			break;
+		}
 		case PARTY_LOOT:
 		{
-			Party *toAddTo		= PartyFactory::getSingleton().Get( tSock->CurrcharObj() );
+			Party *toAddTo = PartyFactory::GetSingleton().Get( tSock->CurrcharObj() );
 			if( toAddTo != nullptr )
 			{
-				PartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
+				CPartyEntry *mEntry = toAddTo->Find( tSock->CurrcharObj() );
 				if( mEntry != nullptr )
+				{
 					mEntry->IsLootable( tSock->GetByte( BASE_OFFSET ) != 0 );
-				tSock->sysmessage( 9007 ); // You have changed your loot setting
+				}
+				tSock->SysMessage( 9007 ); // You have changed your loot setting
 			}
-		}
 			break;
+		}
 		case PARTY_INVITE:
 		{	// THIS SHOULD NEVER HAPPEN -> Server message!
-		}
 			break;
+		}
 		case PARTY_ACCEPT:
 		{
 			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
-			Party *toAddTo		= PartyFactory::getSingleton().Get( calcCharObjFromSer( leaderSerial ) );
+			Party *toAddTo = PartyFactory::GetSingleton().Get( CalcCharObjFromSer( leaderSerial ));
 			if( toAddTo != nullptr )
+			{
 				toAddTo->AddMember( tSock->CurrcharObj() );
+			}
 			else
-				tSock->sysmessage( 9008 ); // That party does not exist any more
-		}
+			{
+				tSock->SysMessage( 9008 ); // That party does not exist any more
+			}
 			break;
+		}
 		case PARTY_DECLINE:
 		{
 			SERIAL leaderSerial	= tSock->GetDWord( BASE_OFFSET );
-			CChar *leader		= calcCharObjFromSer( leaderSerial );
+			CChar *leader = CalcCharObjFromSer( leaderSerial );
 			if( leader != nullptr )
 			{
 				CSocket *leaderSock = leader->GetSocket();
 				if( leaderSock != nullptr )
 				{	// is it a PC leader?
-					leaderSock->sysmessage( 9009 ); // The player has declined your invitation to party
+					leaderSock->SysMessage( 9009 ); // The player has declined your invitation to party
 				}
 			}
-		}
 			break;
+		}
 	}
 	return true;
 }
@@ -3749,79 +4070,92 @@ void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 			//		Client
 			//			BYTE[4]	id		(if 0, a targeting cursor appears)
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ADD --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+			}
 			outStream << "To add         : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
-		}
 			break;
+		}
 		case PARTY_REMOVE:
 		{
 			//	Subcommand 2		Remove a party member
 			//		Client
 			//			BYTE[4] id		(if 0, a targeting cursor appears)
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_REMOVE --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+			}
 			outStream << "To remove      : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
-		}
 			break;
+		}
 		case PARTY_TELLINDIV:
 		{
 			//	Subcommand 3		Tell a party member a message
 			//		BYTE[4]		id
 			//		BYTE[n][2]	Null terminated Unicode message
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLINDIV --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-		}
+			}
 			break;
+		}
 		case PARTY_TELLALL:
 		{
 			//	Subcommand 4		Tell full party a message
 			//		Client
 			//			BYTE[n][2]	Null terminated unicode message
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_TELLALL --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-		}
+			}
 			break;
+		}
 		case PARTY_LOOT:
 		{
 			//	Subcommand 6		Party can loot me?
 			//		Client
 			//			BYTE	canLoot	( 0 == no, 1 == yes )
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_LOOT --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-			outStream << "Can loot       : " << ( (tSock->GetByte( BASE_OFFSET )==1)?"yes":"no") << std::endl;
-		}
+			}
+			outStream << "Can loot       : " << (( tSock->GetByte( BASE_OFFSET ) == 1 ) ? "yes" : "no" ) << std::endl;
 			break;
+		}
 		case PARTY_ACCEPT:
 		{
 			//	Subcommand 8		Accept join party invitation
 			//		Client
 			//			BYTE[4]	leaderID
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_ACCEPT --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+			}
 			outStream << "Leader         : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
-		}
 			break;
+		}
 		case PARTY_DECLINE:
 		{
 			//	Subcommand 9		Reject join party invitation
 			//		Client
 			//			BYTE[4] leaderID
 			if( fullHeader )
+			{
 				outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Party Command Subcommand PARTY_DECLINE --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
-
+			}
 			outStream << "Character      : 0x" << std::hex << tSock->GetDWord( BASE_OFFSET ) << std::dec << std::endl;
-		}
 			break;
+		}
 	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPITrackingArrow()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to click on Quest/Tracking arrow
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x07 (Quest/Tracking Arrow)
 //|					Size: Variable
@@ -3832,7 +4166,7 @@ void CPIPartyCommand::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Subcommand (0x07)
 //|						Subcommand details
 //|							BYTE Right Click (0x01 = yes, 0x00 = no)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPITrackingArrow::CPITrackingArrow()
 {
 }
@@ -3853,7 +4187,7 @@ bool CPITrackingArrow::Handle( void )
 		CChar *trackingTarg = mChar->GetTrackingTarget();
 		if( ValidateObject( trackingTarg ))
 		{
-			CPTrackingArrow tSend = (*trackingTarg);
+			CPTrackingArrow tSend = ( *trackingTarg );
 			tSend.Active( 0 );
 			if( tSock->ClientVersion() >= CV_HS2D )
 			{
@@ -3877,16 +4211,18 @@ bool CPITrackingArrow::Handle( void )
 void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tracking Arrow --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIClientLanguage()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to set/change client language (?)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x0B (Client Language)
 //|					Size: Variable
@@ -3897,7 +4233,7 @@ void CPITrackingArrow::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Subcommand (0x0B)
 //|						Subcommand details
 //|							BYTE[3] language (ENU, for English)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIClientLanguage::CPIClientLanguage()
 {
 }
@@ -3919,16 +4255,18 @@ bool CPIClientLanguage::Handle( void )
 void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Client Language --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIUOTDActions()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to perform an action in TD/3D client
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x0E (TD/3D Client Action)
 //|					Size: Variable
@@ -3966,7 +4304,7 @@ void CPIClientLanguage::Log( std::ofstream &outStream, bool fullHeader )
 //|								00 00 00 7E - Two Handed Wave
 //|								00 00 00 7F - Long Distance Wave
 //|								00 00 00 80 - What?
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIUOTDActions::CPIUOTDActions()
 {
 }
@@ -3988,16 +4326,18 @@ bool CPIUOTDActions::Handle( void )
 void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket UOTD Actions --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIToolTipRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to show gump entry tooltip
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x10 (Popup Entry Select)
 //|					Size: Variable
@@ -4009,7 +4349,7 @@ void CPIUOTDActions::Log( std::ofstream &outStream, bool fullHeader )
 //|						Subcommand details
 //|							BYTE[4] Item ID
 //|							BYTE[4] Unknown
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIToolTipRequest::CPIToolTipRequest() : getSer( INVALIDSERIAL )
 {
 }
@@ -4027,7 +4367,7 @@ bool CPIToolTipRequest::Handle( void )
 	if( getSer != INVALIDSERIAL )
 	{
 		// Only send tooltip if server feature for tooltips is enabled
-		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ) )
+		if( cwmWorldState->ServerData()->GetServerFeature( SF_BIT_AOS ))
 		{
 			CPToolTip tSend( getSer, tSock );
 			tSock->Send( &tSend );
@@ -4038,16 +4378,18 @@ bool CPIToolTipRequest::Handle( void )
 void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Tooltip Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIPopupMenuRequest()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to show popup/context menu
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x13 (Request Popup Menu)
 //|					Size: Variable
@@ -4058,7 +4400,7 @@ void CPIToolTipRequest::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Subcommand (0x13)
 //|						Subcommand details
 //|							BYTE[4] id (character id)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIPopupMenuRequest::CPIPopupMenuRequest() : mSer( INVALIDSERIAL )
 {
 }
@@ -4079,14 +4421,14 @@ bool CPIPopupMenuRequest::Handle( void )
 
 	if( mSer < BASEITEMSERIAL )
 	{
-		CChar *myChar = calcCharObjFromSer( mSer );
+		CChar *myChar = CalcCharObjFromSer( mSer );
 		if( myChar == nullptr )
 			return true;
 
-		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) )
+		if( !LineOfSight( tSock, tSock->CurrcharObj(), myChar->GetX(), myChar->GetY(), ( myChar->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 			return true;
 
-		CPPopupMenu toSend( (*myChar), (*tSock) );
+		CPPopupMenu toSend(( *myChar ), ( *tSock ));
 		tSock->Send( &toSend );
 	}
 	return true;
@@ -4094,16 +4436,18 @@ bool CPIPopupMenuRequest::Handle( void )
 void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Request --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIPopupMenuSelect()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request select entry from popup/context menu
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x15 (Popup Entry Select)
 //|					Size: Variable
@@ -4115,7 +4459,7 @@ void CPIPopupMenuRequest::Log( std::ofstream &outStream, bool fullHeader )
 //|						Subcommand details
 //|							BYTE[4] Character ID
 //|							BYTE[2] Entry Tag for line selected provided in subcommand 0x14
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIPopupMenuSelect::CPIPopupMenuSelect() : popupEntry( 0 ), targChar( nullptr )
 {
 }
@@ -4127,7 +4471,7 @@ CPIPopupMenuSelect::CPIPopupMenuSelect( CSocket *s ) : CPInputBuffer( s ), popup
 void CPIPopupMenuSelect::Receive( void )
 {
 	popupEntry	= tSock->GetWord( 9 );
-	targChar	= calcCharObjFromSer( tSock->GetDWord( 5 ) );
+	targChar	= CalcCharObjFromSer( tSock->GetDWord( 5 ));
 }
 
 bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar = nullptr );
@@ -4138,100 +4482,116 @@ bool CPIPopupMenuSelect::Handle( void )
 		return true;
 
 	CChar *mChar			= tSock->CurrcharObj();
-	if( !ValidateObject( targChar ) || !ValidateObject( mChar ) )
+	if( !ValidateObject( targChar ) || !ValidateObject( mChar ))
 		return true;
 
 	switch( popupEntry )
 	{
 		case 0x000A:	// Open Paperdoll
-			if( cwmWorldState->creatures[targChar->GetID()].IsHuman() )
+			if( cwmWorldState->creatures[targChar->GetId()].IsHuman() )
+			{
 				PaperDoll( tSock, targChar );
+			}
 			break;
 		case 0x000B:	// Open Backpack
-			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetID()].IsHuman() 
-				|| targChar->GetID() == 0x0123 || targChar->GetID() == 0x0124 || targChar->GetID() == 0x0317 )	// Only Humans and Pack Animals have Packs
+			if( mChar->GetCommandLevel() >= CL_CNS || cwmWorldState->creatures[targChar->GetId()].IsHuman() 
+				|| targChar->GetId() == 0x0123 || targChar->GetId() == 0x0124 || targChar->GetId() == 0x0317 )	// Only Humans and Pack Animals have Packs
 			{
 				if( mChar->IsDead() )
-					tSock->sysmessage( 392 );
-				else if( !objInRange( mChar, targChar, DIST_NEARBY ) )
-					tSock->sysmessage( 382 );
+				{
+					tSock->SysMessage( 392 ); // You are dead and cannot do that.
+				}
+				else if( !ObjInRange( mChar, targChar, DIST_NEARBY ))
+				{
+					tSock->SysMessage( 382 ); // You need to get closer.
+				}
 				else
 				{
 					CItem *pack = targChar->GetPackItem();
-					if( ValidateObject( pack ) )
+					if( ValidateObject( pack ))
 					{
 						if( mChar == targChar || targChar->GetOwnerObj() == mChar || mChar->GetCommandLevel() >= CL_CNS )
 						{
-							if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
+							if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
 							{
-								targChar->TextMessage( tSock, 385, TALK, false );
-								tSock->openPack( pack, true );
+								targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
+								tSock->OpenPack( pack, true );
 							}
 							else
-								tSock->openPack( pack );
+							{
+								tSock->OpenPack( pack );
+							}
 						}
-						else if( targChar->GetNPCAiType() == AI_PLAYERVENDOR )
+						else if( targChar->GetNpcAiType() == AI_PLAYERVENDOR )
 						{
-							targChar->TextMessage( tSock, 385, TALK, false );
-							tSock->openPack( pack, true );
+							targChar->TextMessage( tSock, 385, TALK, false ); // Take a look at my goods.
+							tSock->OpenPack( pack, true );
 						}
 						else
+						{
 							Skills->Snooping( tSock, targChar, pack );
+						}
 					}
 					else
-						Console.warning( oldstrutil::format("Character 0x%X has no backpack!", targChar->GetSerial()) );
+					{
+						Console.Warning( oldstrutil::format( "Character 0x%X has no backpack!", targChar->GetSerial() ));
+					}
 				}
 			}
 			break;
 		case 0x000C:	// Buy Window
 			if( targChar->IsShop() )
 			{
-				if( objInRange( mChar, targChar, 8 ) )
+				if( ObjInRange( mChar, targChar, 8 ))
 				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
+					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
 					BuyShop( tSock, targChar );
 				}
 				else
 				{
-					tSock->sysmessage( 393 ); // That is too far away
+					tSock->SysMessage( 393 ); // That is too far away
 				}
 			}
 			break;
 		case 0x000D:	// Sell Window
 			if( targChar->IsShop() )
 			{
-				if( objInRange( mChar, targChar, 8 ) )
+				if( ObjInRange( mChar, targChar, 8 ))
 				{
-					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ) );
+					targChar->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
 					CPSellList toSend;
-					if( toSend.CanSellItems( (*mChar), (*targChar) ) )
+					if( toSend.CanSellItems(( *mChar ), ( *targChar )))
+					{
 						tSock->Send( &toSend );
+					}
 					else
+					{
 						targChar->TextMessage( tSock, 1341, TALK, false ); // Thou doth posses nothing of interest to me.
+					}
 				}
 				else
 				{
-					tSock->sysmessage( 393 ); // That is too far away
+					tSock->SysMessage( 393 ); // That is too far away
 				}
 			}
 			break;
 		case 0x000E:	// Open Bankbox
-			if( targChar->GetNPCAiType() == AI_BANKER )
+			if( targChar->GetNpcAiType() == AI_BANKER )
 			{
-				if( objInRange( mChar, targChar, 8 ) )
+				if( ObjInRange( mChar, targChar, 8 ))
 				{
-					tSock->openBank( mChar );
+					tSock->OpenBank( mChar );
 				}
 				else
 				{
-					tSock->sysmessage( 393 ); // That is too far away
+					tSock->SysMessage( 393 ); // That is too far away
 				}
 			}
 			break;
 		case 0x000F:	// Tame
-			if( cwmWorldState->creatures[targChar->GetID()].IsAnimal() )
+			if( cwmWorldState->creatures[targChar->GetId()].IsAnimal() )
 			{
-				if( objInRange( mChar, targChar, 8 ) )
+				if( ObjInRange( mChar, targChar, 8 ))
 				{
 					// Set a tag on the player to reference the animal they're about to tame
 					TAGMAPOBJECT targCharSerial;
@@ -4245,13 +4605,13 @@ bool CPIPopupMenuSelect::Handle( void )
 				}
 				else
 				{
-					tSock->sysmessage( 393 ); // That is too far away
+					tSock->SysMessage( 393 ); // That is too far away
 				}
 			}
 			break;
 		case 0x0010:	// Command: Kill (Pet)
 		{
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4263,17 +4623,17 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_KILL );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		}
 		case 0x0011:	// Command: Stop (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4285,16 +4645,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STOP );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0012:	// Command: Follow (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4306,16 +4666,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FOLLOW );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0013:	// Command: Stay (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4327,16 +4687,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STAY );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0014:	// Command: Guard (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4348,16 +4708,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_GUARD );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0015:	// Add Friend (Pet/Hireling)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4369,16 +4729,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FRIEND );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0016:	// Transfer (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4390,16 +4750,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_TRANSFER );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0017:	// Release (Pet)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4411,16 +4771,16 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_RELEASE );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0018:	// Dismiss (Hireling)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Set a tag on the player to reference the pet they are commanding
 				TAGMAPOBJECT targCharSerial;
@@ -4432,64 +4792,64 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_DISMISS );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x0019:	// Claim All Pets (Stablemaster)
-			if( objInRange( mChar, targChar, 8 ) )
+			if( ObjInRange( mChar, targChar, 8 ))
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_CLAIM );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x001a:	// Stable Pet (Stablemaster)
-			if( objInRange( mChar, targChar, 8 ) )
+			if( ObjInRange( mChar, targChar, 8 ))
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STABLE );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x001b:	// Ask Destination (NPC Escort)
-			if( objInRange( mChar, targChar, 3 ) )
+			if( ObjInRange( mChar, targChar, 3 ))
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTDEST );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x001c:	// Accept Escort (NPC Escort)
-			if( objInRange( mChar, targChar, 3 ) )
+			if( ObjInRange( mChar, targChar, 3 ))
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTTAKE );
-				std::string targName = getNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		case 0x001d:	// Abandon Escort (NPC Escort)
@@ -4500,7 +4860,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				targChar->SetQuestType( 0 );			// Reset quest type
 				targChar->SetQuestDestRegion( 0 );		// Reset quest destination region
 				// Set a timer to automatically delete the NPC
-				targChar->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
+				targChar->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
 				targChar->SetOwner( nullptr );
 				targChar->TextMessage( nullptr, 1797, TALK, false ); // Send out the rant about being abandoned
 			}
@@ -4508,34 +4868,34 @@ bool CPIPopupMenuSelect::Handle( void )
 		case 0x001e:	// Hire (Hireling)
 			if( targChar->IsNpc() && targChar->CanBeHired() )
 			{
-				if( objInRange( mChar, targChar, 3 ) )
+				if( ObjInRange( mChar, targChar, 3 ))
 				{
 					tSock->ClearTrigWords();
 					tSock->AddTrigWord( TW_HIRE );
-					std::string targName = getNpcDictName( targChar, tSock );
+					std::string targName = GetNpcDictName( targChar, tSock );
 					WhichResponse( tSock, mChar, targName, targChar );
 				}
 				else
 				{
-					tSock->sysmessage( 393 ); // That is too far away
+					tSock->SysMessage( 393 ); // That is too far away
 				}
 			}
 			break;
 		case 0x001f:	// Remove Friend (Pet/Hireling)
-			if( objInRange( mChar, targChar, 12 ) )
+			if( ObjInRange( mChar, targChar, 12 ))
 			{
 				// Store reference to pet in tempObj
 				tSock->TempObj( targChar );
 
-				tSock->target( 0, TARGET_REMOVEFRIEND, 0, 1852 ); // Select player to remove as friend:
+				tSock->SendTargetCursor( 0, TARGET_REMOVEFRIEND, 0, 1852 ); // Select player to remove as friend:
 			}
 			else
 			{
-				tSock->sysmessage( 393 ); // That is too far away
+				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
 		default:
-			Console.print(oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 ) ));
+			Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
 			break;
 	}
 
@@ -4544,8 +4904,8 @@ bool CPIPopupMenuSelect::Handle( void )
 		|| popupEntry == 0x154 || ( popupEntry >= 0x017c && popupEntry <= 0x017e ))
 	{
 		tSock->ClearTrigWords();
-		tSock->AddTrigWord( static_cast<TriggerWords>(popupEntry) );
-		std::string targName = getNpcDictName( targChar, tSock );
+		tSock->AddTrigWord( static_cast<TriggerWords>( popupEntry ));
+		std::string targName = GetNpcDictName( targChar, tSock );
 		WhichResponse( tSock, mChar, targName, targChar );
 	}
 
@@ -4554,16 +4914,18 @@ bool CPIPopupMenuSelect::Handle( void )
 void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Popup Menu Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIExtendedStats()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with request to lock/unlock extended stats
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x1A (Extended stats)
 //|					Size: Variable
@@ -4575,7 +4937,7 @@ void CPIPopupMenuSelect::Log( std::ofstream &outStream, bool fullHeader )
 //|						Subcommand details
 //|							BYTE stat // 0: str, 1: dex, 2:int
 //|							BYTE status // 0: up, 1:down, 2: locked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIExtendedStats::CPIExtendedStats()
 {
 }
@@ -4586,28 +4948,30 @@ CPIExtendedStats::CPIExtendedStats( CSocket *s ) : CPInputBuffer( s )
 
 void CPIExtendedStats::Receive( void )
 {
-	statToSet	= tSock->GetByte( 5 ) + (ALLSKILLS+1);
+	statToSet	= tSock->GetByte( 5 ) + ( ALLSKILLS + 1 );
 	value		= tSock->GetByte( 6 );
 }
 bool CPIExtendedStats::Handle( void )
 {
 	CChar *ourChar	= tSock->CurrcharObj();
-	ourChar->SetSkillLock( (SkillLock)value, statToSet );
+	ourChar->SetSkillLock( static_cast<SkillLock>( value ), statToSet );
 	return true;
 }
 void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Extended Stats --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIBandageMacro()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with bandage macro request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x1C (Bandage Macro/Use targeted item)
 //|					Size: Variable
@@ -4619,11 +4983,11 @@ void CPIExtendedStats::Log( std::ofstream &outStream, bool fullHeader )
 //|						Subcommand details
 //|							Byte[4] Item Serial
 //|							Byte[4] Target Serial
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIBandageMacro::CPIBandageMacro()
 {
 }
-CPIBandageMacro::CPIBandageMacro( CSocket *s ) : CPInputBuffer(s)
+CPIBandageMacro::CPIBandageMacro( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -4635,7 +4999,7 @@ void CPIBandageMacro::Receive(void)
 bool CPIBandageMacro::Handle(void)
 {
 	CChar *ourChar = tSock->CurrcharObj();
-	if( ValidateObject( ourChar ) )
+	if( ValidateObject( ourChar ))
 	{
 		// Check if onUseBandageMacro event exists
 		std::vector<UI16> scriptTriggers = ourChar->GetScriptTriggers();
@@ -4659,8 +5023,8 @@ bool CPIBandageMacro::Handle(void)
 					return false;
 				}
 
-				CItem *bandageItem = calcItemObjFromSer( bandageSerial );
-				CChar *targetChar = calcCharObjFromSer( targetSerial );
+				CItem *bandageItem = CalcItemObjFromSer( bandageSerial );
+				CChar *targetChar = CalcCharObjFromSer( targetSerial );
 
 				if( !ValidateObject( bandageItem ) || !ValidateObject( targetChar ))
 					return false;
@@ -4678,16 +5042,18 @@ bool CPIBandageMacro::Handle(void)
 void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIClosedStatusGump()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with bandage macro request
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x0C (Closed Status Gump)
 //|					Size: Variable
@@ -4698,7 +5064,7 @@ void CPIBandageMacro::Log( std::ofstream &outStream, bool fullHeader )
 //|						BYTE[2] Subcommand (0x0C)
 //|						Subcommand details
 //|							Byte[4] Character Serial
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIClosedStatusGump::CPIClosedStatusGump()
 {
 }
@@ -4714,13 +5080,13 @@ void CPIClosedStatusGump::Receive( void )
 bool CPIClosedStatusGump::Handle( void )
 {
 	CChar *ourChar = tSock->CurrcharObj();
-	if( ValidateObject( ourChar ) )
+	if( ValidateObject( ourChar ))
 	{
 		SERIAL statusGumpCharSerial = tSock->GetDWord( 5 );
-		CChar *statusGumpChar = calcCharObjFromSer( statusGumpCharSerial );
+		CChar *statusGumpChar = CalcCharObjFromSer( statusGumpCharSerial );
 		if( ValidateObject( statusGumpChar ))
 		{
-			tSock->statwindow( statusGumpChar );
+			tSock->StatWindow( statusGumpChar );
 			return true;
 		}
 	}
@@ -4730,16 +5096,18 @@ bool CPIClosedStatusGump::Handle( void )
 void CPIClosedStatusGump::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Bandage Macro --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIToggleFlying()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Toggles flying on/off for gargoyle characters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x32 (Toggle Gargoyle Flying)
 //|					Size: 11 bytes?
@@ -4751,11 +5119,11 @@ void CPIClosedStatusGump::Log( std::ofstream &outStream, bool fullHeader )
 //|						Subcommand details
 //|							Byte[4] unk1 (always 0x0100)
 //|							Byte[2] unk2(always 0x0)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIToggleFlying::CPIToggleFlying()
 {
 }
-CPIToggleFlying::CPIToggleFlying(CSocket *s) : CPInputBuffer(s)
+CPIToggleFlying::CPIToggleFlying( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
@@ -4777,17 +5145,19 @@ bool CPIToggleFlying::Handle(void)
 void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
 {
 	if( fullHeader )
-		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Toggle Gargoyle Flying --> Length: " << tSock->GetWord(1) << TimeStamp() << std::endl;
+	{
+		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Toggle Gargoyle Flying --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIKrriosClientSpecial()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet for party and guild tracking, assistant feature
 //|					negotiation, and potentially other purposes (like new movement mode)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xF0 (KrriosClientSpecial)
 //|					Size: Variable
 //|
@@ -4806,11 +5176,13 @@ void CPIToggleFlying::Log(std::ofstream &outStream, bool fullHeader)
 //|									If both ASSISTANTNEGOTIATION and KICKONASSISTANTSILENCE uox.ini
 //|									settings are enabled, player will get kicked within 30 seconds
 //|									if this packet is not received by the server.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CPIKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPKrriosClientSpecial 0xF0 --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
@@ -4829,7 +5201,7 @@ CPIKrriosClientSpecial::CPIKrriosClientSpecial( CSocket *s ) : CPInputBuffer( s 
 void CPIKrriosClientSpecial::Receive( void )
 {
 	tSock->Receive( 4, false );
-	blockLen	= tSock->GetWord( 1 );
+	blockLen = tSock->GetWord( 1 );
 	tSock->Receive( blockLen, false );
 
 	if( blockLen > 5 )
@@ -4838,7 +5210,9 @@ void CPIKrriosClientSpecial::Receive( void )
 		type = 0xaa;
 	}
 	else
+	{
 		type = tSock->GetByte( 3 );
+	}
 }
 bool CPIKrriosClientSpecial::Handle( void )
 {
@@ -4852,7 +5226,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 			// If ini-setting for worldmap packets is enabled
 			if( cwmWorldState->ServerData()->GetClassicUOMapTracker() )
 			{
-				CChar * mChar = tSock->CurrcharObj();
+				CChar *mChar = tSock->CurrcharObj();
 
 				if( type == 0x00 )
 				{
@@ -4862,7 +5236,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 				}
 				else if( type == 0x01 )
 				{
-					locations = ( blockLen == 5 ? (bool)tSock->GetByte( 4 ) : false );
+					locations = ( blockLen == 5 ? static_cast<bool>( tSock->GetByte( 4 )) : false );
 
 					// Character is not in a guild - nothing to track
 					if( mChar->GetGuildNumber() == -1 )
@@ -4896,7 +5270,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 			{
 				tSock->NegotiatedWithAssistant( true );
 				tSock->NegotiateTimeout( -1 );
-				tSock->sysmessage( 9010 ); // Features successfully negotiated with assistant tool.
+				tSock->SysMessage( 9010 ); // Features successfully negotiated with assistant tool.
 				return true;
 			}
 			break;
@@ -4908,11 +5282,11 @@ bool CPIKrriosClientSpecial::Handle( void )
 	return locations;
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPISpellbookSelect()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with info on selected spell from spellbook
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xBF (General Information Packet)
 //|					Subcommand: 0x1D (Spell selected)
 //|					Size: Variable
@@ -4924,7 +5298,7 @@ bool CPIKrriosClientSpecial::Handle( void )
 //|						Subcommand details
 //|							BYTE[2] unknown, always 2
 //|							BYTE[2] selected spell(0-indexed)+scroll offset from sub 0x1b
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPISpellbookSelect::CPISpellbookSelect()
 {
 }
@@ -4942,25 +5316,33 @@ bool CPISpellbookSelect::Handle( void )
 	CItem *sBook	= FindItemOfType( ourChar, IT_SPELLBOOK );
 	CItem *p		= ourChar->GetPackItem();
 	UI08 *buffer	= tSock->Buffer();
-	if( ValidateObject( sBook ) )
+	if( ValidateObject( sBook ))
 	{
 		bool validLoc	= false;
 		if( sBook->GetCont() == ourChar )
+		{
 			validLoc = true;
+		}
 		else if( ValidateObject( p ) && sBook->GetCont() == p )
+		{
 			validLoc = true;
+		}
 
 		if( validLoc )
 		{
-			SI32 book = (buffer[7]<<8) + (buffer[8]);
-			if( Magic->CheckBook( ( ( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ) )
+			SI32 book = ( buffer[7] << 8 ) + ( buffer[8] );
+			if( Magic->CheckBook((( book - 1 ) / 8 ) + 1, ( book - 1 ) % 8, sBook ))
 			{
 				if( ourChar->IsFrozen() )
 				{
 					if( ourChar->IsCasting() )
-						tSock->sysmessage( 762 );
+					{
+						tSock->SysMessage( 762 ); // You are already casting a spell.
+					}
 					else
-						tSock->sysmessage( 763 );
+					{
+						tSock->SysMessage( 763 ); // You cannot cast spells while frozen.
+					}
 				}
 				else
 				{
@@ -4969,26 +5351,32 @@ bool CPISpellbookSelect::Handle( void )
 				}
 			}
 			else
-				tSock->sysmessage( 764 );
+			{
+				tSock->SysMessage( 764 ); // You do not have that spell.
+			}
 		}
 		else
-			tSock->sysmessage( 765 );
+		{
+			tSock->SysMessage( 765 ); // =To cast spells, your spellbook must be in your hands or in the first layer of your pack.
+		}
 	}
 	return true;
 }
 void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPISubcommands 0xBF Subpacket Spellbook Select --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "  Raw dump     :" << std::endl;
 	CPInputBuffer::Log( outStream, false );
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CPIAOSCommand()
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Handles incoming packet with requests for various AoS features
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0xD7 (Generic AOS Commands)
 //|					Size: Variable
 //|
@@ -5084,7 +5472,7 @@ void CPISpellbookSelect::Log( std::ofstream &outStream, bool fullHeader )
 //|								BYTE unknown (0x07)
 //|							0x32 - Guild  :: Paperdoll button
 //|								BYTE unknown (0x07)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CPIAOSCommand::CPIAOSCommand()
 {
 }
@@ -5101,7 +5489,7 @@ void CPIAOSCommand::Receive( void )
 }
 bool CPIAOSCommand::Handle( void )
 {
-	switch( tSock->GetWord( 7 ) )	// Which subcommand?
+	switch( tSock->GetWord( 7 ))	// Which subcommand?
 	{
 			/*case 0x0002:	break;	//House Customisation :: Backup
 			 case 0x0003:	break;	//House Customisation :: Restore
@@ -5116,7 +5504,7 @@ bool CPIAOSCommand::Handle( void )
 		case 0x0019: //Special Moves :: Activate / Deactivate
 		{
 			//UI32 unknown = tSock->GetDWord( 9 );
-			UI08 abilityID = tSock->GetByte( 13 );
+			UI08 abilityId = tSock->GetByte( 13 );
 			//UI08 unknown2 = tSock->GetByte( 15 );
 
 			CChar *myChar = tSock->CurrcharObj();
@@ -5126,7 +5514,7 @@ bool CPIAOSCommand::Handle( void )
 				cScript *toExecute = JSMapping->GetScript( i );
 				if( toExecute != nullptr )
 				{
-					if( toExecute->OnSpecialMove( myChar, abilityID ) == 1 )
+					if( toExecute->OnSpecialMove( myChar, abilityId ) == 1 )
 					{
 						return true;
 					}
@@ -5134,10 +5522,10 @@ bool CPIAOSCommand::Handle( void )
 			}
 
 			// No individual scripts handling OnSpecialMove return true - let's check global script!
-			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+			cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
 			if( toExecute != nullptr )
 			{
-				toExecute->OnSpecialMove( myChar, abilityID );
+				toExecute->OnSpecialMove( myChar, abilityId );
 			}
 			return true;
 		}
@@ -5146,9 +5534,13 @@ bool CPIAOSCommand::Handle( void )
 			if( cwmWorldState->ServerData()->PaperdollGuildButton() )
 			{
 				if( tSock->CurrcharObj()->GetGuildNumber() != - 1 )
+				{
 					GuildSys->Menu( tSock, BasePage + 1, static_cast<GUILDID>( tSock->CurrcharObj()->GetGuildNumber() ));
+				}
 				else
-					tSock->sysmessage( 1793 );
+				{
+					tSock->SysMessage( 1793 ); // You are not currently in a guild. Go buy a guildstone!
+				}
 				return true;
 			}
 			break;
@@ -5169,7 +5561,7 @@ bool CPIAOSCommand::Handle( void )
 			}
 
 			// No individual scripts handling OnQuestGump returned true - let's check global script!
-			cScript *toExecute = JSMapping->GetScript( (UI16)0 );
+			cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
 			if( toExecute != nullptr )
 			{
 				toExecute->OnQuestGump( myChar );
@@ -5184,10 +5576,12 @@ bool CPIAOSCommand::Handle( void )
 void CPIAOSCommand::Log( std::ofstream &outStream, bool fullHeader )
 {
 	if( fullHeader )
+	{
 		outStream << "[RECV]Packet   : CPIAOSCommand 0xD7 --> Length: " << tSock->GetWord( 1 ) << TimeStamp() << std::endl;
+	}
 	outStream << "Character      : 0x" << std::hex << tSock->GetDWord( 3 ) << std::dec << std::endl;
 	outStream << "Command        : ";
-	switch( tSock->GetWord( 7 ) )
+	switch( tSock->GetWord( 7 ))
 	{
 		case 0x0002:	outStream << "House Customisation :: Backup";					break;
 		case 0x0003:	outStream << "House Customisation :: Restore";					break;

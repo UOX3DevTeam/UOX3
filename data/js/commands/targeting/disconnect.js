@@ -1,3 +1,5 @@
+// Commands to handle kicking, banning and unbanning players from the server
+
 function CommandRegistration()
 {
 	RegisterCommand( "kick", 2, true );
@@ -25,7 +27,7 @@ function command_BAN( socket, cmdString )
 	{
 		banDuration = parseInt( cmdString );
 
-		if( isNaN(banDuration) )
+		if( isNaN( banDuration ))
 		{
 			// Invalid command syntax! Correct syntax: ban / ban <durationInMinutes> (if no duration is specified, ban defaults to 24 hours)
 			socket.SysMessage( GetDictionaryEntry( 2018, socket.language ));
@@ -35,7 +37,7 @@ function command_BAN( socket, cmdString )
 
 	socket.tempint = banDuration;
 	var targMsg = GetDictionaryEntry( 2015, socket.language ); // Select character to ban for %d minutes.
-	targMsg = targMsg.replace('%d', banDuration );
+	targMsg = targMsg.replace( '%d', banDuration );
 	socket.CustomTarget( 1, targMsg, 1 );
 }
 
@@ -75,7 +77,9 @@ function onCallback1( socket, ourObj )
 			// Ban for 24 hours by default, if nothing else is specified
 			var timebanDuration = 60 * 24;
 			if( socket.tempint != null )
+			{
 				timebanDuration = socket.tempint;
+			}
 			ourAccount.timeban = timebanDuration;
 
 			// Disconnect player, if online

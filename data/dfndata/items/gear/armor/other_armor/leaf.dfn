@@ -2,7 +2,9 @@
 // Leaf Arms - N/S
 [0x2fc8]
 {
-get=base_leaf_arms
+getpub15=0x2fc8_pub15
+getaos=0x2fc8_aos
+gettol=0x2fc8_tol
 }
 
 // Leaf Arms - E/W
@@ -22,7 +24,9 @@ get=0x2fc8 0x317e
 // Leaf Tunic - E/W
 [0x2fc5]
 {
-get=base_leaf_tunic
+getpub15=0x2fc5_pub15
+getaos=0x2fc5_aos
+gettol=0x2fc5_tol
 }
 
 // Leaf Tunic - N/S
@@ -42,7 +46,9 @@ get=0x2fc5 0x317b
 // Leaf Armor (Female) - E/W
 [0x2fcb]
 {
-get=base_leaf_armor
+getpub15=0x2fcb_pub15
+getaos=0x2fcb_aos
+gettol=0x2fcb_tol
 }
 
 // Leaf Armor (Female) - N/S
@@ -62,7 +68,9 @@ get=0x2fcb 0x3181
 // Leaf Gloves - E/W
 [0x2fc6]
 {
-get=base_leaf_gloves
+getpub15=0x2fc6_pub15
+getaos=0x2fc6_aos
+gettol=0x2fc6_tol
 }
 
 // Leaf Gloves - N/S
@@ -82,7 +90,9 @@ get=0x2fc6 0x317c
 // Leaf Gorget - E/W
 [0x2fc7]
 {
-get=base_leaf_gorget
+getpub15=0x2fc7_pub15
+getaos=0x2fc7_aos
+gettol=0x2fc7_tol
 }
 
 // Leaf Gorget - N/S
@@ -102,7 +112,9 @@ get=0x2fc7 0x317d
 // Leaf Leggings - N/S
 [0x2fc9]
 {
-get=base_leaf_leggings
+getpub15=0x2fc9_pub15
+getaos=0x2fc9_aos
+gettol=0x2fc9_tol
 }
 
 // Leaf Leggings - E/W
@@ -122,7 +134,9 @@ get=0x2fc9 0x317f
 // Leaf Tonlet - N/S
 [0x2fca]
 {
-get=base_leaf_tonlet
+getpub15=0x2fca_pub15
+getaos=0x2fca_aos
+gettol=0x2fca_tol
 }
 
 // Leaf Tonlet - E/W

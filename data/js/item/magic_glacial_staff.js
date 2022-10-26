@@ -87,7 +87,7 @@ function onUseChecked( pUser, iUsed )
 		if( iUsed.morez > 0 ) // Still has charges left
 		{
 			var targMsg = GetDictionaryEntry( 443, socket.language ); // What would you like to use that on?
-			pUser.SetTag( "staffSerial", (iUsed.serial).toString() );
+			pUser.SetTag( "staffSerial", ( iUsed.serial ).toString() );
 			socket.CustomTarget( 1, targMsg );
 		}
 
@@ -148,7 +148,7 @@ function onTimer( mChar, timerID )
 		glacialStaff.Delete();
 	}
 
-	var targetChar = CalcCharFromSer( parseInt(mChar.GetTag( "glacialTarg" )));
+	var targetChar = CalcCharFromSer( parseInt( mChar.GetTag( "glacialTarg" )));
 	if( !ValidateObject( targetChar ) || !targetChar.isChar || targetChar.dead || ( !targetChar.npc && !targetChar.online ) || !targetChar.vulnerable )
 	{
 		mChar.TextMessage( "Nope 1" );
@@ -170,9 +170,13 @@ function onTimer( mChar, timerID )
 				targetChar = mChar;
 			}
 			if( CheckResist( 381, targetChar, 3 ))
+			{
 				targetChar.Damage( RandomNumber( 5, 7 ), 4, mChar, true );
+			}
 			else
+			{
 				targetChar.Damage( RandomNumber( 10, 15 ), 4, mChar, true );
+			}
 			break;
 		case 1: // Ice Strike
 			var iceStrikeFX = 0x3709;
@@ -184,9 +188,13 @@ function onTimer( mChar, timerID )
 			}
 			targetChar.SoundEffect( 0x0208, true );
 			if( CheckResist( 881, targetChar, 7 ))
+			{
 				targetChar.Damage( RandomNumber( 20, 30 ), 4, mChar, true );
+			}
 			else
+			{
 				targetChar.Damage( RandomNumber( 10, 15 ), 4, mChar, true );
+			}
 			break;
 		case 2: // Paralyze
 			var effectDuration = 6;
@@ -209,13 +217,13 @@ function CheckResist( resistDifficulty, targetChar, spellCircle )
 	// Check which is higher between user's normal resist chance and a fallback value
 	// To ensure user always has a chance of resisting, however small their resist skill (except at 0)
 	var defaultChance = targetChar.skills.magicresistance / 5;
-	var resistChance = targetChar.skills.magicresistance - (((resistDifficulty - 20) / 5) + ( spellCircle * 5 ));
+	var resistChance = targetChar.skills.magicresistance - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
 	if( defaultChance > resistChance )
 	{
 		resistChance = defaultChance;
 	}
 
-	if( RandomNumber( 1, 100) < resistChance / 10 )
+	if( RandomNumber( 1, 100 ) < resistChance / 10 )
 	{
 		if( targSock )
 		{

@@ -89,20 +89,24 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddPage( 0 );
 	helpGump.AddGump( 50, 25, 5545 );
 	helpGump.AddGump( 530, 25, 5545 );
-	helpGump.AddHTMLGump( 50, 25, 540, 40, false, false,"<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
+	helpGump.AddHTMLGump( 50, 25, 540, 40, false, false, "<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
 
 	// A different button must be shown if connected client is of version 4.x or lower
 	if( pSock.clientMajorVer < 5 )
+	{
 		helpGump.AddButton( 425, 415, 2073, 2072, 1, 0, 0 );// Close Button
+	}
 	else
+	{
 		helpGump.AddButton( 425, 415, 12006, 12007, 1, 0, 0 );// Close Button
+	}
 
 	// Add first page
 	helpGump.AddPage( 1 );
 
 	helpGump.AddButton( 80, 90, 5540, 5541, 1, 0, 1 );
-	helpGump.AddHTMLGump( 110, 90, 450, 74,  false, false, "<BASEFONT color=#ffffff>" + generalTitle + "</BASEFONT>" );
-	helpGump.AddHTMLGump( 110, 110, 450, 45,  true, false, generalText );
+	helpGump.AddHTMLGump( 110, 90, 450, 74, false, false, "<BASEFONT color=#ffffff>" + generalTitle + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 110, 110, 450, 45, true, false, generalText );
 
 	helpGump.AddButton( 80, 170, 5540, 5541, 1, 0, 2 );
 	helpGump.AddHTMLGump( 110, 170, 450, 74, false, false, "<BASEFONT color=#ffffff>" + stuckTitle + "</BASEFONT>" );
@@ -136,7 +140,7 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddHTMLGump( 110, 350, 450, 30, true, false, serverInfoText );
 
 	helpGump.AddPageButton( 150, 390, 5537, 5538, 1 );
-	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false,"<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
 
 	// Add third page
 	helpGump.AddPage( 3 );
@@ -158,7 +162,7 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddHTMLGump( 110, 350, 450, 30, true, false, otherProblemText );
 
 	helpGump.AddPageButton( 150, 390, 5537, 5538, 1 );
-	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false,"<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
 
 	// Add fourth page
 	helpGump.AddPage( 4 );
@@ -170,10 +174,10 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddHTMLGump( 250, 130, 200, 145, false, false, "<BASEFONT color=#abcdef>" + serverVersionString + "</BASEFONT>" );
 
 	// Uptime
-	var uptimeInSeconds = Math.floor(GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
-	var d = Math.floor(uptimeInSeconds / (3600*24));
-	var h = Math.floor(uptimeInSeconds % (3600*24) / 3600);
-	var m = Math.floor(uptimeInSeconds % 3600 / 60);
+	var uptimeInSeconds = Math.floor( GetCurrentClock() / 1000 ) - Math.floor( GetStartTime() / 1000 );
+	var d = Math.floor( uptimeInSeconds / ( 3600 * 24 ));
+	var h = Math.floor( uptimeInSeconds % ( 3600 * 24 ) / 3600 );
+	var m = Math.floor( uptimeInSeconds % 3600 / 60 );
 	var dDisplay = d > 0 ? d + "d : " : "0d : ";
 	var hDisplay = h > 0 ? h + "h : " : "0h : ";
 	var mDisplay = m + "m";
@@ -202,13 +206,13 @@ function DisplayHelpMenu( pUser )
 	helpGump.AddHTMLGump( 250, 250, 200, 145, false, false, "<BASEFONT color=#abcdef>" + GetPlayerCount().toString() + "</BASEFONT>" );
 
 	// Useful websites
-	helpGump.AddHTMLGump( 110, 300, 450, 74,  false, false, "<BASEFONT color=#ffffff>" + ShardWebsite + "</BASEFONT>" );
-	helpGump.AddHTMLGump( 110, 325, 450, 74,  false, false, "<BASEFONT color=#ffffff>" + UOX3Website + "</BASEFONT>" );
-	helpGump.AddHTMLGump( 110, 350, 450, 74,  false, false, "<BASEFONT color=#ffffff>" + UOWebsite + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 110, 300, 450, 74, false, false, "<BASEFONT color=#ffffff>" + ShardWebsite + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 110, 325, 450, 74, false, false, "<BASEFONT color=#ffffff>" + UOX3Website + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 110, 350, 450, 74, false, false, "<BASEFONT color=#ffffff>" + UOWebsite + "</BASEFONT>" );
 
 	// Go back
 	helpGump.AddPageButton( 150, 390, 5537, 5538, 1 );
-	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false,"<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
+	helpGump.AddHTMLGump( 180, 390, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
 
 	helpGump.Send( pSock );
 	helpGump.Free();
@@ -233,16 +237,20 @@ function ChangePasswordGump( pSock )
 	changePassGump.AddPage( 0 );
 	changePassGump.AddGump( 50, 25, 5545 );
 	changePassGump.AddGump( 530, 25, 5545 );
-	changePassGump.AddHTMLGump( 50, 25, 540, 40, false, false,"<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
+	changePassGump.AddHTMLGump( 50, 25, 540, 40, false, false, "<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
 
 	// A different button must be shown if connected client is of version 4.x or lower
 	if( pSock.clientMajorVer < 5 )
+	{
 		changePassGump.AddButton( 425, 415, 2073, 2072, 1, 0, 0 );// Close Button
+	}
 	else
+	{
 		changePassGump.AddButton( 425, 415, 12006, 12007, 1, 0, 0 );// Close Button
+	}
 
 	changePassGump.AddText( 147, 90, 2727, passwordManageTitle ); // Account Management - Password Change
-	changePassGump.AddHTMLGump( 147, 120, 400, 100, false, false,"<BASEFONT color=#abcdef>" + passwordManageText + "</BASEFONT>");
+	changePassGump.AddHTMLGump( 147, 120, 400, 100, false, false, "<BASEFONT color=#abcdef>" + passwordManageText + "</BASEFONT>");
 
 	changePassGump.AddButton( 150, 390, 5537, 5538, 1, 0, 100 );
 	changePassGump.AddHTMLGump( 180, 390, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
@@ -277,16 +285,20 @@ function BugReportGump( pSock )
 	bugreportGump.AddPage( 0 );
 	bugreportGump.AddGump( 50, 25, 5545 );
 	bugreportGump.AddGump( 530, 25, 5545 );
-	bugreportGump.AddHTMLGump( 50, 25, 540, 40, false, false,"<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
+	bugreportGump.AddHTMLGump( 50, 25, 540, 40, false, false, "<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
 
 	// A different button must be shown if connected client is of version 4.x or lower
 	if( pSock.clientMajorVer < 5 )
+	{
 		bugreportGump.AddButton( 425, 415, 2073, 2072, 1, 0, 0 );// Close Button
+	}
 	else
+	{
 		bugreportGump.AddButton( 425, 415, 12006, 12007, 1, 0, 0 );// Close Button
+	}
 
 	bugreportGump.AddText( 147, 90, 2727, reportBugHeader ); // Report Bug
-	bugreportGump.AddHTMLGump( 147, 120, 400, 100, false, false,"<BASEFONT color=#abcdef>" + reportBugMainText + "</BASEFONT>");
+	bugreportGump.AddHTMLGump( 147, 120, 400, 100, false, false, "<BASEFONT color=#abcdef>" + reportBugMainText + "</BASEFONT>");
 
 	bugreportGump.AddButton( 150, 390, 5537, 5538, 1, 0, 100 );
 	bugreportGump.AddHTMLGump( 180, 390, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
@@ -395,10 +407,10 @@ function HandleStuckCharacter( pSock )
 	const gumpTitle = "<BIG><CENTER><U>" + shardName + " " + GetDictionaryEntry( 17000, sLanguage ) + "</U></CENTER></BIG>"; // Help Menu
 	const teleToRndSafeLoc = GetDictionaryEntry( 17040, sLanguage ); // Teleport to Random Safe Location
 	var teleToRndSafeLocText = GetDictionaryEntry( 17042, sLanguage ); // Selecting this option will teleport you to a random safe location (town or shrine) within your current facet. This can only be used a limited amount of times (%i) per day.
-	teleToRndSafeLocText = ( teleToRndSafeLocText.replace(/%i/gi, maxSafeTeleportsPerDay.toString() ));
+	teleToRndSafeLocText = ( teleToRndSafeLocText.replace( /%i/gi, maxSafeTeleportsPerDay.toString() ));
 	const teleToNearestSafeLoc = GetDictionaryEntry( 17041, sLanguage ); // Teleport to Nearest Safe Location
 	var teleToNearestSafeLocText = GetDictionaryEntry( 17043, sLanguage ); //Selecting this option will teleport you to the nearest safe location (town or shrine) within your current facet. This can only be used a limited amount of times (%i) per day.
-	teleToNearestSafeLocText = ( teleToNearestSafeLocText.replace(/%i/gi, maxSafeTeleportsPerDay.toString() ));
+	teleToNearestSafeLocText = ( teleToNearestSafeLocText.replace( /%i/gi, maxSafeTeleportsPerDay.toString() ));
 	const submitStuckPage = GetDictionaryEntry( 17044, sLanguage ); // Submit GM Page about Being Stuck
 	const submitStuckPageText = GetDictionaryEntry( 17045, sLanguage ); // Selecting this option will submit a support ticket about your situation. Please note that response time might vary depending on the number of GMs available.
 	const safeTeleExhausted = GetDictionaryEntry( 17046, sLanguage ); // Automatic teleports exhausted for today. Please rely on GM support system for now.
@@ -413,7 +425,7 @@ function HandleStuckCharacter( pSock )
 			stuckTeleEnabled = true;
 
 			// Check when player's last teleport happened
-			var lastStuckTeleTime = new Date( parseInt(pUser.GetTag( "lastStuckTeleTime" )) * 1000 );
+			var lastStuckTeleTime = new Date( parseInt( pUser.GetTag( "lastStuckTeleTime" )) * 1000 );
 			var today = new Date();
 			if( lastStuckTeleTime.getUTCDate() != today.getUTCDate() )
 			{
@@ -442,16 +454,20 @@ function HandleStuckCharacter( pSock )
 	stuckCharGump.AddPage( 0 );
 	stuckCharGump.AddGump( 50, 25, 5545 );
 	stuckCharGump.AddGump( 530, 25, 5545 );
-	stuckCharGump.AddHTMLGump( 50, 25, 540, 40, false, false,"<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
+	stuckCharGump.AddHTMLGump( 50, 25, 540, 40, false, false, "<center> <BASEFONT color=#ffffff>" + gumpTitle + "</BASEFONT> </center>");
 
 	// A different button must be shown if connected client is of version 4.x or lower
 	if( pSock.clientMajorVer < 5 )
+	{
 		stuckCharGump.AddButton( 425, 230, 2073, 2072, 1, 0, 0 );// Close Button
+	}
 	else
+	{
 		stuckCharGump.AddButton( 425, 230, 12006, 12007, 1, 0, 0 );// Close Button
+	}
 
 	stuckCharGump.AddButton( 150, 220, 5537, 5538, 1, 0, 100 );
-	stuckCharGump.AddHTMLGump( 180, 220, 335, 40, false, false,"<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
+	stuckCharGump.AddHTMLGump( 180, 220, 335, 40, false, false, "<BASEFONT color=#ffffff>" + wrongProblem + "</BASEFONT>" );
 
 	if( stuckTeleEnabled && !stuckTeleExhausted )
 	{
@@ -645,12 +661,12 @@ function PerformTeleportation( pSock, pUser )
 		 if( pUser.murderer )
 		 {
 		 	// Teleport murderers in dungeons to a random chaos shrine/out-of-town-area
-		 	closestLoc = safeChaosShrineLocations[worldNum][RandomNumber(0, safeChaosShrineLocations.length - 1)];
+		 	closestLoc = safeChaosShrineLocations[worldNum][RandomNumber( 0, safeChaosShrineLocations.length - 1 )];
 		 }
 		 else
 		 {
 		 	// Teleport players in dungeons to a random shrine/out-of-town area
-		 	closestLoc = safeShrineLocations[worldNum][RandomNumber(0, safeShrineLocations.length - 1)];
+		 	closestLoc = safeShrineLocations[worldNum][RandomNumber( 0, safeShrineLocations.length - 1 )];
 		 }
 	}
 
@@ -661,7 +677,7 @@ function PerformTeleportation( pSock, pUser )
 		if( pUser.murderer )
 		{
 			// Teleport murderers to a random chaos shrine/out-of-town-area
-			closestLoc = safeChaosShrineLocations[worldNum][RandomNumber(0, safeChaosShrineLocations.length - 1)];
+			closestLoc = safeChaosShrineLocations[worldNum][RandomNumber( 0, safeChaosShrineLocations.length - 1 )];
 		}
 		else
 		{
@@ -683,12 +699,12 @@ function PerformTeleportation( pSock, pUser )
 		if( pUser.murderer )
 		{
 			// Teleport murderers to a random chaos shrine/out-of-town-area
-			closestLoc = safeChaosShrineLocations[worldNum][RandomNumber(0, safeChaosShrineLocations.length - 1)];
+			closestLoc = safeChaosShrineLocations[worldNum][RandomNumber( 0, safeChaosShrineLocations.length - 1 )];
 		}
 		else
 		{
 			// Teleport player to random safe location
-			var safeLoc = validSafeLocations[RandomNumber(0, validSafeLocations.length - 1)];
+			var safeLoc = validSafeLocations[RandomNumber( 0, validSafeLocations.length - 1 )];
 			pUser.Teleport( safeLoc[0], safeLoc[1], safeLoc[2] );
 		}
 	}

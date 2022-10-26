@@ -1,8 +1,8 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	cBaseObject.h
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Defines the property specifications for the base object class
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __CBO_H__
 #define __CBO_H__
 
@@ -22,11 +22,11 @@ typedef struct __TAGMAP_STRUCT__
 	SI32	m_IntValue;
 	bool	m_Destroy;
 	std::string m_StringValue;
-} TAGMAPOBJECT,*LPTAGMAPOBJECT;
+} TAGMAPOBJECT, *LPTAGMAPOBJECT;
 
-typedef std::map< std::string, TAGMAPOBJECT > TAGMAP2;
-typedef std::map< std::string, TAGMAPOBJECT >::iterator TAGMAP2_ITERATOR;
-typedef std::map< std::string, TAGMAPOBJECT >::const_iterator TAGMAP2_CITERATOR;
+typedef std::map<std::string, TAGMAPOBJECT> TAGMAP2;
+typedef std::map<std::string, TAGMAPOBJECT>::iterator TAGMAP2_ITERATOR;
+typedef std::map<std::string, TAGMAPOBJECT>::const_iterator TAGMAP2_CITERATOR;
 
 enum UpdateTypes
 {
@@ -40,16 +40,16 @@ enum UpdateTypes
 	UT_COUNT
 };
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Class		-	class CBaseObject
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	BaseObject class with common, shared properties for all object types
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 class CBaseObject
 {
 protected:
-	TAGMAP2		tags;
-	TAGMAP2		tempTags;
+	TAGMAP2			tags;
+	TAGMAP2			tempTags;
 	std::string 	title;
 	SI16			mana;
 	SI16			stamina;
@@ -62,13 +62,14 @@ protected:
 	UI16			id;
 	UI16			colour;
 	UI08			dir;
-	SERIAL		serial;
-	SERIAL		tempmulti;
+	SERIAL			serial;
+	SERIAL			tempMulti;
 	CMultiObj *		multis;
-	SERIAL		spawnserial;
-	SERIAL		owner;
-	RACEID		race;
+	SERIAL			spawnSerial;
+	SERIAL			owner;
+	RACEID			race;
 	std::string 	name;
+	std::string 	sectionId;
 	SI16			strength;
 	SI16			dexterity;
 	SI16			intelligence;
@@ -77,22 +78,22 @@ protected:
 	SI16			dx2;
 	SI16			in2;
 	VisibleTypes	visible;
-	SI16			hidamage;
-	SI16			lodamage;
+	SI16			hiDamage;
+	SI16			loDamage;
 	UI16			scriptTrig;
 	std::vector<UI16>	scriptTriggers;
 
 	SI16			carve; // Carve.dfn entry
 
 	UI08			worldNumber;
-	UI16			instanceID;
+	UI16			instanceId;
 	UI16			subRegion;
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
 
-	UI08					poisoned;
-	std::bitset< 8 >		objSettings;
+	UI08			poisoned;
+	std::bitset<8>	objSettings;
 
 	UI16			resistances[WEATHNUM];
 
@@ -107,7 +108,7 @@ protected:
 	SI16			karma;
 	SI16			kills;
 	
-	SERIAL			temp_container_serial;
+	SERIAL			tempContainerSerial;
 
 	bool			nameRequestActive;
 
@@ -115,7 +116,7 @@ protected:
 
 public:
 
-	point3					GetOldLocation( void );
+	Point3_st				GetOldLocation( void );
 
 	size_t 					GetNumTags( void ) const;
 
@@ -145,7 +146,7 @@ public:
 	SI16					GetX( void ) const;
 	SI16					GetY( void ) const;
 	SI08					GetZ( void ) const;
-	point3					GetLocation( void ) const;
+	Point3_st				GetLocation( void ) const;
 
 	void					SetOldTargLocX( SI16 newvalue );
 	void					SetOldTargLocY( SI16 newvalue );
@@ -154,18 +155,18 @@ public:
 	void					SetZ( SI08 newValue );
 	void					WalkXY( SI16 newX, SI16 newY );
 	virtual void			SetOldLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
-	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceID ) = 0;
+	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ, UI08 world, UI16 instanceId ) = 0;
 	virtual void			SetLocation( SI16 newX, SI16 newY, SI08 newZ ) = 0;
 	virtual void			SetLocation( const CBaseObject *toSet ) = 0;
 
-	UI16					GetID(     void ) const;
+	UI16					GetId( void ) const;
 	UI16					GetColour( void ) const;
-	UI08					GetID(     UI08 part ) const;
+	UI08					GetId( UI08 part ) const;
 	UI08					GetColour( UI08 part ) const;
 
-	void					SetID(     UI16 newValue );
+	void					SetId( UI16 newValue );
 	void					SetColour( UI16 newValue );
-	void					SetID(     UI08 newValue, UI08 part );
+	void					SetId( UI08 newValue, UI08 part );
 
 	SI32					GetWeight( void ) const;
 	virtual void			SetWeight( SI32 newVal, bool doWeightUpdate = true ) = 0;
@@ -179,13 +180,13 @@ public:
 	CChar *					GetOwnerObj( void ) const;
 
 	UI08					GetSerial( UI08 part ) const;
-	UI08					GetSpawn(  UI08 part ) const;
+	UI08					GetSpawn( UI08 part ) const;
 
-	void					SetMulti(  SERIAL newSerial, bool fireTrigger = true );
-	void					SetMulti(  CMultiObj *newMulti, bool fireTrigger = true );
+	void					SetMulti( SERIAL newSerial, bool fireTrigger = true );
+	void					SetMulti( CMultiObj *newMulti, bool fireTrigger = true );
 	void					SetSerial( SERIAL newSerial );
-	void					SetSpawn(  SERIAL newSpawn );
-	virtual void			SetOwner(  CChar *newOwner );
+	void					SetSpawn( SERIAL newSpawn );
+	virtual void			SetOwner( CChar *newOwner );
 
 	virtual bool			Save( std::ofstream &outStream ) = 0;
 	virtual bool			DumpHeader( std::ofstream &outStream ) const = 0;
@@ -201,6 +202,9 @@ public:
 	std::string				GetNameRequest( CChar *nameRequester );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
+
+	std::string				GetSectionId( void ) const;
+	void					SetSectionId( std::string newSectionID );
 
 	virtual SI16			GetStrength( void ) const;
 	virtual SI16			GetDexterity( void ) const;
@@ -230,6 +234,7 @@ public:
 
 	std::vector<UI16>		GetScriptTriggers( void );
 	void					AddScriptTrigger( UI16 newValue );
+	bool					HasScriptTrigger( UI16 newValue );
 	void					RemoveScriptTrigger( UI16 newValue );
 	void					ClearScriptTriggers( void );
 
@@ -251,8 +256,8 @@ public:
 	UI08					WorldNumber( void ) const;
 	void					WorldNumber( UI08 value );
 
-	UI16					GetInstanceID( void ) const;
-	void					SetInstanceID( UI16 value );
+	UI16					GetInstanceId( void ) const;
+	void					SetInstanceId( UI16 value );
 
 	UI16					GetSubRegion( void ) const;
 	void					SetSubRegion( UI16 value );
@@ -274,14 +279,14 @@ public:
 	virtual void			RemoveSelfFromOwner( void ) = 0;
 	virtual void			AddSelfToOwner( void ) = 0;
 
-	bool					isFree( void ) const;
-	bool					isDeleted( void ) const;
-	bool					isPostLoaded( void ) const;
-	bool					isSpawned( void ) const;
+	bool					IsFree( void ) const;
+	bool					IsDeleted( void ) const;
+	bool					IsPostLoaded( void ) const;
+	bool					IsSpawned( void ) const;
 	bool					ShouldSave( void ) const;
-	bool					isDisabled( void ) const;
-	bool					isWipeable( void ) const;
-	bool					isDamageable( void ) const;
+	bool					IsDisabled( void ) const;
+	bool					IsWipeable( void ) const;
+	bool					IsDamageable( void ) const;
 	bool					NameRequestActive( void ) const;
 
 	void					SetFree( bool newVal );

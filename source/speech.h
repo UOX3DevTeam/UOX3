@@ -31,9 +31,7 @@ const std::string DistinctLanguageNames[DL_COUNT] =
 	"PTG",
 	"ITA",
 	"CSY",
-	"POL",
-	"RUS",
-	"JPN"
+	"POL"
 };
 
 const std::string LanguageCodes[TOTAL_LANGUAGES] =
@@ -253,7 +251,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_DEFAULT,	// Icelandic Iceland
 	DL_ITALIAN,	// Italian Italy
 	DL_ITALIAN,	// Italian Switzerland
-	DL_JAPANESE,	// Japanese Japan
+	DL_DEFAULT,	// Japanese Japan
 	DL_DEFAULT,	// Korean (Extended Wansung) Korea
 	DL_DEFAULT,	// Dutch Netherlands
 	DL_DEFAULT,	// Dutch Belgium
@@ -263,7 +261,7 @@ const DistinctLanguage LanguageCodesLang[TOTAL_LANGUAGES] =
 	DL_PORTUGUESE,	// Portuguese Brazil
 	DL_PORTUGUESE,	// Portuguese Portugal
 	DL_DEFAULT,	// Romanian Romania
-	DL_RUSSIAN,	// Russian Russia
+	DL_DEFAULT,	// Russian Russia
 	DL_DEFAULT,	// Croatian Croatia
 	DL_DEFAULT,	// Serbian Serbia (Latin)
 	DL_DEFAULT,	// Serbian Serbia (Cyrillic)
@@ -379,23 +377,29 @@ public:
 	SpeakerType	SpkrType( void ) const
 	{
 		if( speaker == INVALIDSERIAL )
+		{
 			return SPK_SYSTEM;
+		}
 		else if( speaker < BASEITEMSERIAL )
+		{
 			return SPK_CHARACTER;
+		}
 		else
+		{
 			return SPK_ITEM;
+		}
 	}
 };
 
-typedef std::vector< CSpeechEntry * >	SPEECHLIST;
-typedef std::vector< CSpeechEntry * >::iterator SPEECHLIST_ITERATOR;
-typedef std::vector< CSpeechEntry * >::reverse_iterator SPEECHLIST_RITERATOR;
-typedef std::vector< CSpeechEntry * >::const_iterator SPEECHLIST_CITERATOR;
+typedef std::vector<CSpeechEntry *>	SPEECHLIST;
+typedef std::vector<CSpeechEntry *>::iterator SPEECHLIST_ITERATOR;
+typedef std::vector<CSpeechEntry *>::reverse_iterator SPEECHLIST_RITERATOR;
+typedef std::vector<CSpeechEntry *>::const_iterator SPEECHLIST_CITERATOR;
 
 class CSpeechQueue
 {
 private:
-	SI32				pollTime;		// MILLISECONDS How often to poll the queue
+	SI32			pollTime;		// MILLISECONDS How often to poll the queue
 	SPEECHLIST		speechList;
 	bool			runAsThread;
 
@@ -404,7 +408,7 @@ private:
 public:
 	CSpeechQueue( void );
 	~CSpeechQueue();
-	auto startup() ->void ;
+	auto Startup() -> void;
 	bool			Poll( void );		// Send out any pending speech, returning true if entries were sent
 	CSpeechEntry& 	Add( void );		// Make space in queue, and return pointer to new entry
 	SI32			PollTime( void ) const;

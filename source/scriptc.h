@@ -3,7 +3,7 @@
 
 #include <unordered_map>
 
-typedef std::unordered_map< std::string, ScriptSection * >	SSMAP;
+typedef std::unordered_map<std::string, CScriptSection *>	SSMAP;
 
 class Script
 {
@@ -12,14 +12,14 @@ public:
 	Script( const std::string& _filename, DEFINITIONCATEGORIES d, bool disp = true );
 	~Script();
 
-	ScriptSection * FindEntry( const std::string& section );
-	ScriptSection *	FindEntrySubStr( const std::string& section );
-	ScriptSection *	FirstEntry( );
-	ScriptSection *	NextEntry( );
-	auto collection() const -> const SSMAP & ;
-	auto collection() -> SSMAP& ;
+	CScriptSection * 	FindEntry( const std::string& section );
+	CScriptSection *	FindEntrySubStr( const std::string& section );
+	CScriptSection *	FirstEntry();
+	CScriptSection *	NextEntry();
+	auto collection() const -> const SSMAP &;
+	auto collection() -> SSMAP&;
 
-	bool isin( const std::string& section );
+	bool IsInSection( const std::string& section );
 	std::string EntryName( void );
 	size_t NumEntries( void ) const
 	{
@@ -30,9 +30,9 @@ public:
 		return errorState;
 	}
 private:
-	void deleteMap( void );
-	void reload( bool disp = true );
-	bool createSection( std::string& name );
+	void DeleteMap( void );
+	void Reload( bool disp = true );
+	bool CreateSection( std::string& name );
 
 	SSMAP	defEntries;			// string is the name of section
 	SSMAP::iterator iSearch;

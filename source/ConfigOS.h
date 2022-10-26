@@ -3,8 +3,6 @@
 #define __ConfigOS_H_
 
 
-
-
 // Initial platform/compiler-related stuff to set.
 
 #define WINDOWS		1
@@ -16,12 +14,12 @@
 #define XP_WIN            // JS API Requires we define OS we compile with
 #define XP_PC
 
-//==========================================================================
+//o------------------------------------------------------------------------------------------------o
 // These should be defined on the compilier line, in case windows.h gets defined ahead (resources.h?)
 #define NOMINMAX		// Dont want min/max macros, use <algorithm>
 #define WIN32_LEAN_AND_MEAN  // We NEVER want Winsock1, and the extra windows stuff
-//==========================================================================
-//==========================================================================
+//o------------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 // Ok, windows sets _ITERATOR_DEBUG_LEVEL based on debug/release.
 // Check: https://docs.microsoft.com/en-us/cpp/standard-library/iterator-debug-level?view=msvc-170
 // In theory, we shouldn't need these, if we have issues, we want to fix the iterator problem
@@ -32,7 +30,7 @@
 #else
 #define _HAS_ITERATOR_DEBUGGING 0  // This is the default for non debug, why do we need?
 #endif		// endif to _DEBUG
-//==========================================================================
+//o------------------------------------------------------------------------------------------------o
 
 #ifdef _WIN32 // Includes both 32 bit and 64 bit
 
@@ -84,6 +82,8 @@
 #define OS_STR "Unknown"
 #endif  //__linux__
 
+#define FALSE 0L
+#define TRUE  1L
 #endif    // End to the compiler type/version
 
 #endif //__ConfigOS_H_

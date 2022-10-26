@@ -1668,6 +1668,29 @@
 1663=Mein kleiner Sohn Timmy muss operiert werden. Habt Ihr ein bisschen Gold, um zu helfen?
 1664=Meine Frau ist schwanger mit unserem 7. Kind, habt etwas Mitleid in Form von etwas Gold für einen verzweifelten Mann.
 // End begging text
+1670=Du kannst dich nicht verkleiden, während du Körperfarbe trägst
+1671=Du kannst dich nicht polymorphisieren, während du Körperfarbe trägst
+1672=Du kannst inkognito nicht benutzen, während du Körperfarbe trägst
+1673=Das kannst du nicht tun, während du inkognito bist.
+1674=Das kannst du nicht tun, während du polymorph bist.
+1675=Deine Haut ist versengt, da die Stammesfarbe wegbrennt!
+1676=Deine Körperfarbe ist abgetragen!
+1677=Du kannst dich nicht verkleiden, solange du inkognito bist.
+1678=Du kannst dich nicht verkleiden, wenn du polymorph bist.
+1679=Du bist bereits verkleidet.
+1680=Du trägst jetzt die Zeichen des Wilden Stammes.  Deine Körperbemalung hält etwa eine Woche oder du kannst sie mit einem Öltuch entfernen.
+1681=Du wischst deine gesamte Körperbemalung ab.
+1682=Der Stammesspeer bricht in deinen Händen auseinander, als du ihn aufhebst!
+1683=%s fängt an, eine Bola herumzuschwingen
+1684=Ein neuer Titel für das Gildenmitglied:
+1685=Wählen Sie ein Gildenmitglied aus, für das Sie einen Titel festlegen möchten
+1686=Du hast einen Gildentitel von %s erhalten!
+1687=Du hast %s als neues Gildenmitglied rekrutiert!
+1688=Du wurdest rekrutiert, um der Gilde %s beizutreten!
+1689=Du hast %s aus deiner Gilde entlassen!
+1690=Du wurdest aus deiner Gilde entlassen!
+1691=Du kannst dich nicht selbst aus der Gilde entlassen!
+1692=%s ist jetzt der neue Gildenmeister von %s!
 // Tweak Char Menu Stuff
 1700=Ungültige Taste gedrückt
 1701=Eingabe eines neuen Namens für den Charakter.
@@ -1951,6 +1974,15 @@
 1979=Tokuno-Inseln
 1980=Ter Mur
 1981=Mitglieder der Rasse %s können dies nicht tragen
+1982=Du parierst den Angriff!
+1983=Deine Waffe ist zerstört worden!
+1984=Du bist kein Mitglied dieser Gilde!
+1985=Du hast %s als Anwärter für den Beitritt zur Gilde gesponsert!
+1986=Du wurdest von %s eingeladen, der Gilde beizutreten: %s
+1987=Du hast %s die Treue erklärt!
+1988=%s hat Ihnen die Treue erklärt!
+1989=Deine Gilde hat der Gilde %s den Krieg erklärt!
+1990=Deine Gilde hat die Gilde %s zu ihrem Verbündeten erklärt!
 // JS-Based Tweak Menu
 1991=Ungültiges Objekt anvisiert!
 1992=Unbekanntes Zielobjekt!
@@ -3296,6 +3328,9 @@
 6214=Die Zutaten dieses Trankes sind dir unbekannt.
 6215=Du weißt bereits, was das für ein Trank ist: %s
 6250=Du trittst aus dem Schatten heraus.
+6275=Du kombinierst die Beeren und das Mehl zu der Stammesfarbe, die von den Wilden getragen wird.
+6276=Du hast nicht die Fertigkeit Kochen, um die Körperfarbe herzustellen.
+6277=Ressourcen-ID nicht in der Liste der für die Herstellung des Gegenstands verwendeten Ressourcen gefunden.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -3546,6 +3581,7 @@
 8210=Weiterleitung zum Befehl 'radditem...
 8211=Weiterleitung zum 'raddnpc-Befehl...
 8212=Ungültige Befehlssyntax für wiederholtes Hinzufügen von Objekten: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Schnittstellen-ID aus DFNs, aus denen das Objekt stammt
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ

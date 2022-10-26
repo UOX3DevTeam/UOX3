@@ -2,13 +2,13 @@
 // or combat skill based on equipped weapon type.
 //
 // To get weapon-type of the equipped weapon, use the following in an external script:
-//		var weaponType = TriggerEvent( 2500, "getWeaponType", mChar, null );
+//		var weaponType = TriggerEvent( 2500, "GetWeaponType", mChar, null );
 //
 // To get weapon-type based on a specific ID, use the following in an external script:
-// 		var weaponType = TriggerEvent( 2500, "getWeaponType, null, [item ID]" );
+// 		var weaponType = TriggerEvent( 2500, "GetWeaponType, null, [item ID]" );
 //
 // To get combat skill based on equipped weapon type, use the following in an external script:
-//		var combatSkill = TriggerEvent( 2500, "getCombatSkill", weaponType );
+//		var combatSkill = TriggerEvent( 2500, "GetCombatSkill", weaponType );
 //
 //	List of potential weaponTypes returned (as strings)
 //		Unarmed:
@@ -44,7 +44,7 @@
 //		"WRESTLING"
 //		"THROWING"
 
-function getWeaponType( mChar, itemID )
+function GetWeaponType( mChar, itemID )
 {
 	var weaponType;
 
@@ -54,16 +54,24 @@ function getWeaponType( mChar, itemID )
 		// Check first layer1 then layer2 for equipped weapons on character
 		var tempItem = mChar.FindItemLayer( 1 );
 		if( tempItem == null )
+		{
 			tempItem = mChar.FindItemLayer( 2 );
+		}
 		if( tempItem != null )
+		{
 			itemID = tempItem.id;
+		}
 		else
+		{
 			itemID = null;
+		}
 	}
 
 	// If no equipped item, and no manually provided itemID, weaponType is WRESTLING
 	if( itemID == null || itemID == 0 )
+	{
 		return "WRESTLING";
+	}
 
 	switch( itemID )
 	{
@@ -383,7 +391,7 @@ function getWeaponType( mChar, itemID )
 	return weaponType;
 }
 
-function getCombatSkill( weaponType )
+function GetCombatSkill( weaponType )
 {
 	var combatSkill;
 

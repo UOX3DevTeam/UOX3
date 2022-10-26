@@ -28,23 +28,23 @@ enum QuestTypes
 	QT_ESCORTQUEST	= 0xFF
 };
 
-struct msgBoardPost_st
+struct MsgBoardPost_st
 {
-	UI32 Serial;
-	UI16 Size;
-	UI08 PosterLen;
-	char Poster[MAX_NAME];
-	UI08 SubjectLen;
-	char Subject[256];
-	UI08 DateLen;
-	char Date[256];
-	UI08 Lines;
-	UI32 ParentSerial;
-	UI08 Toggle;
+	UI32 serial;
+	UI16 size;
+	UI08 posterLen;
+	char poster[MAX_NAME];
+	UI08 subjectLen;
+	char subject[256];
+	UI08 dateLen;
+	char date[256];
+	UI08 lines;
+	UI32 parentSerial;
+	UI08 toggle;
 
-	std::vector< std::string > msgBoardLine;
+	std::vector<std::string> msgBoardLine;
 
-	msgBoardPost_st() : Serial( 0 ), Size( 0 ), PosterLen( 0 ), SubjectLen( 0 ), DateLen( 0 ), Lines( 0 ), ParentSerial( 0 ), Toggle( 0 )
+	MsgBoardPost_st() : serial( 0 ), size( 0 ), posterLen( 0 ), subjectLen( 0 ), dateLen( 0 ), lines( 0 ), parentSerial( 0 ), toggle( 0 )
 	{
 		msgBoardLine.resize( 0 );
 	}

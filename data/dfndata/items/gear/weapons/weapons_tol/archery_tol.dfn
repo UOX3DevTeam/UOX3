@@ -1,0 +1,110 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// CLASSIC
+// Crossbow - ToL stats
+[0x0f4f_tol]
+{
+get=base_crossbow
+weight=700
+value=46 23
+damage=18 22
+hp=36 48
+spd=30
+str=35
+}
+
+// Heavy Crossbow - ToL stats
+[0x13fc_tol]
+{
+get=base_heavy_crossbow
+weight=900
+value=55 27
+damage=20 24
+hp=36 48
+spd=27
+str=80
+}
+
+// Bow - ToL stats
+[0x13b1_tol]
+{
+get=base_bow
+weight=600
+value=35 17
+damage=17 21
+hp=36 48
+spd=32
+str=30
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Composite Bow - ToL stats
+[0x26c2_tol]
+{
+get=base_composite_bow
+value=50 25
+damage=16 20
+hp=36 48
+spd=34
+str=45
+weight=500
+}
+
+// Repeating Crossbow - ToL stats
+[0x26c3_tol]
+{
+get=base_repeating_crossbow
+value=57 28
+damage=11 15
+hp=36 48
+spd=50
+str=30
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Yumi - ToL stats
+[0x27a5_tol]
+{
+get=base_yumi
+weight=800
+value=53 26
+damage=13 17
+hp=36 48
+spd=42
+str=35
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Elven Composite Longbow - ToL stats
+[0x2d1e_tol]
+{
+get=base_elven_composite_longbow
+weight=800
+value=52 37
+damage=15 19
+hp=36 48
+spd=36
+str=45
+}
+
+// Magical Shortbow - ToL stats
+[0x2d2b_tol]
+{
+get=base_magical_shortbow
+weight=600
+value=51 39
+damage=12 16
+hp=36 48
+spd=45
+str=45
+}

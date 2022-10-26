@@ -45,7 +45,9 @@ function onSpeech( strSaid, pTalking, npcHealer )
 	if( strSaid == "heal" )
 	{
 		if( pTalking.dead )
+		{
 			Resurrect( pTalking, npcHealer );
+		}
 	}
 	return false;
 }
@@ -80,7 +82,7 @@ function onTimer( srcChar, timerID )
 		var searchCount = srcChar.GetTag( "searchCount" );
 		if( searchCount < searchAmount )
 		{
-			AreaCharacterFunction( "searchForWounded", srcChar, searchRange );
+			AreaCharacterFunction( "SearchForWounded", srcChar, searchRange );
 			srcChar.StartTimer( searchInterval, 1, true );
 			searchCount++;
 		}
@@ -94,12 +96,14 @@ function onTimer( srcChar, timerID )
 
 //This function iterates through all characters within the specified radius in AreaCharacterFunction
 //It then checks to make sure they are valid for receiving healing or resurrection.
-function searchForWounded( srcChar, trgChar, pSock )
+function SearchForWounded( srcChar, trgChar, pSock )
 {
 	if( trgChar.serial != srcChar.serial )
 	{
 		if( !trgChar.npc && ( trgChar.online && trgChar.dead ))
+		{
 			Resurrect( trgChar, srcChar );
+		}
 	}
 }
 
@@ -115,25 +119,37 @@ function onAttack( pAttacker, pDefender )
 		{
 			case 1: // Health
 				if( pDefender.health >= drainAmount )
+				{
 					pAttacker.health += drainAmount;
+				}
 				else
+				{
 					pAttacker.health += pDefender.health;
+				}
 				pDefender.Damage( drainAmount, 1 );
 				pAttacker.TextMessage( GetDictionaryEntry( 9069 ), false, 0, 5, pDefender.serial ); // I can grant life, and I can sap it as easily.
 				break;
 			case 2: // Stamina
 				if( pDefender.stamina >= drainAmount )
+				{
 					pAttacker.stamina += drainAmount;
+				}
 				else
+				{
 					pAttacker.stamina += pDefender.stamina;
+				}
 				pDefender.stamina -= drainAmount;
 				pAttacker.TextMessage( GetDictionaryEntry( 9070 ), false, 0, 5, pDefender.serial ); // You'll go nowhere, unless I deem it should be so.
 				break;
 			case 3: // Mana
 				if( pDefender.mana >= drainAmount )
+				{
 					pAttacker.mana += drainAmount;
+				}
 				else
+				{
 					pAttacker.mana += pDefender.mana;
+				}
 				pDefender.mana -= drainAmount;
 				pAttacker.TextMessage( GetDictionaryEntry( 9071 ), false, 0, 5, pDefender.serial ); // Your power is mine to use as I will.
 				break;

@@ -1,8 +1,8 @@
-//o-----------------------------------------------------------------------------------------------o
+//o-------------------------------------------------------------------------------------------------o
 //|	File		-	cHTMLSystem.h
-//o-----------------------------------------------------------------------------------------------o
+//o-------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Interface for the cHTMLSystem class
-//o-----------------------------------------------------------------------------------------------o
+//o-------------------------------------------------------------------------------------------------o
 
 #ifndef __CHTMLSYSTEM_H__
 #define __CHTMLSYSTEM_H__
@@ -27,23 +27,23 @@ enum ETemplateType
 class cHTMLTemplate
 {
 private:
-	UI32			UpdateTimer;
-	std::string		InputFile;
-	bool			Loaded;
-	ETemplateType	Type;
-	std::string		Content;
-	std::string		OutputFile;
-	std::string		Name;
-	UI32			ScheduledUpdate;
+	UI32			updateTimer;
+	std::string		inputFile;
+	bool			loaded;
+	ETemplateType	type;
+	std::string		content;
+	std::string		outputFile;
+	std::string		name;
+	UI32			scheduledUpdate;
 
 public:
-	cHTMLTemplate() ;
+	cHTMLTemplate();
 	~cHTMLTemplate();
 	void			Process( void );
 	void			Poll( void );
 	void			LoadTemplate( void );
 	void			UnloadTemplate( void );
-	void			Load( ScriptSection *found );
+	void			Load( CScriptSection *found );
 
 	// Some Getters
 	std::string		GetName( void ) const;
@@ -57,7 +57,7 @@ public:
 class cHTMLTemplates
 {
 private:
-	std::vector < cHTMLTemplate* > Templates;
+	std::vector<cHTMLTemplate*> Templates;
 
 public:
 	cHTMLTemplates() = default;
@@ -65,7 +65,7 @@ public:
 
 	void Load( void );
 	void Unload( void );
-	void Poll( ETemplateType nTemplateID = ETT_ALLTEMPLATES );
+	void Poll( ETemplateType nTemplateId = ETT_ALLTEMPLATES );
 	void TemplateInfoGump( CSocket *mySocket );
 };
 

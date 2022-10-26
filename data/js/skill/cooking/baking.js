@@ -21,7 +21,9 @@ function onUseChecked ( pUser, iUsed )
 		}
 	}
 	else
+	{
 		srcSock.SysMessage( GetDictionaryEntry( 6022, srcSock.language )); // This has to be in your backpack before you can use it.
+	}
 	return false;
 }
 
@@ -34,12 +36,12 @@ function Baking( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var StrangeByte = tSock.GetWord( 1 );
-	var tileID = tSock.GetWord(17);
+	var strangeByte = tSock.GetWord( 1 );
+	var tileID = tSock.GetWord( 17 );
 	var foodColor = iUsed.colour;
 	var cookingMsg = "";
 
-	if( tileID == 0 || ( StrangeByte == 0 && ValidateObject( myTarget ) && myTarget.isChar ))
+	if( tileID == 0 || ( strangeByte == 0 && ValidateObject( myTarget ) && myTarget.isChar ))
 	{
 		cookingMsg = GetDictionaryEntry( 6095, tSock.language ); // You cannot cook your %s on that.
 		tSock.SysMessage( cookingMsg.replace( /%s/gi, iUsed.name ));

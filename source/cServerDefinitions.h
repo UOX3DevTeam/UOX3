@@ -3,22 +3,23 @@
 
 #include <stack>
 
-typedef std::vector< Script * > VECSCRIPTLIST;
-typedef std::vector< Script * >::iterator VECSCRIPTLIST_ITERATOR;
-typedef std::vector< Script * >::const_iterator VECSCRIPTLIST_CITERATOR;
-typedef	std::stack< std::string > dirList;
+typedef std::vector<Script *> VECSCRIPTLIST;
+typedef std::vector<Script *>::iterator VECSCRIPTLIST_ITERATOR;
+typedef std::vector<Script *>::const_iterator VECSCRIPTLIST_CITERATOR;
+typedef	std::stack<std::string> dirList;
 
-class cDirectoryListing {
+class CDirectoryListing
+{
 private:
-	typedef std::vector< cDirectoryListing > DIRLIST;
-	typedef std::vector< cDirectoryListing >::iterator DIRLIST_ITERATOR;
+	typedef std::vector<CDirectoryListing> DIRLIST;
+	typedef std::vector<CDirectoryListing>::iterator DIRLIST_ITERATOR;
 
-	auto PushDir(DEFINITIONCATEGORIES toMove) ->bool;
-	auto PushDir(std::string toMove) ->bool;
-	auto PopDir() ->void;
+	auto PushDir( DEFINITIONCATEGORIES toMove ) -> bool;
+	auto PushDir( std::string toMove ) -> bool;
+	auto PopDir() -> void;
 
-	std::vector< std::string > filenameList, shortList;
-	std::vector< std::string > flattenedShort, flattenedFull;
+	std::vector<std::string> filenameList, shortList;
+	std::vector<std::string> flattenedShort, flattenedFull;
 	dirList dirs;
 	std::string extension;
 	std::string currentDir;
@@ -30,57 +31,58 @@ private:
 	void InternalRetrieve();
 
 public:
-	cDirectoryListing( bool recurse = true );
-	cDirectoryListing( const std::string &dir, const std::string &extent, bool recurse = true );
-	cDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true );
-	~cDirectoryListing();
+	CDirectoryListing( bool recurse = true );
+	CDirectoryListing( const std::string &dir, const std::string &extent, bool recurse = true );
+	CDirectoryListing( DEFINITIONCATEGORIES dir, const std::string &extent, bool recurse = true );
+	~CDirectoryListing();
 
-	auto Extension(const std::string &extent) ->void;
-	auto Retrieve(const std::string &dir) ->void;
-	auto Retrieve(DEFINITIONCATEGORIES dir) ->void;
-	auto Flatten(bool isParent) ->void;
-	auto ClearFlatten() ->void;
+	auto Extension( const std::string &extent ) -> void;
+	auto Retrieve( const std::string &dir ) -> void;
+	auto Retrieve( DEFINITIONCATEGORIES dir ) -> void;
+	auto Flatten( bool isParent) -> void;
+	auto ClearFlatten() -> void;
 
-	auto List() ->std::vector< std::string >*;
-	auto ShortList() ->std::vector< std::string >*;
-	auto FlattenedList() ->std::vector< std::string >*;
-	auto FlattenedShortList() ->std::vector< std::string >*;
+	auto List() -> std::vector<std::string>*;
+	auto ShortList() -> std::vector<std::string>*;
+	auto FlattenedList() -> std::vector<std::string>*;
+	auto FlattenedShortList() -> std::vector<std::string>*;
 };
 
-class CServerDefinitions {
+class CServerDefinitions
+{
 private:
 	VECSCRIPTLIST_ITERATOR	 slIter;
 
-	std::map< std::string, SI16 >	 priorityMap;
+	std::map<std::string, SI16>	 priorityMap;
 	SI16	 defaultPriority;
 	
 
-	auto LoadDFNCategory(DEFINITIONCATEGORIES toLoad) ->void;
-	auto ReloadScriptObjects() ->void;
-	auto BuildPriorityMap(DEFINITIONCATEGORIES category, UI08 &wasPrioritized) ->void;
-	auto CleanPriorityMap() ->void;
+	auto LoadDFNCategory( DEFINITIONCATEGORIES toLoad ) -> void;
+	auto ReloadScriptObjects() -> void;
+	auto BuildPriorityMap( DEFINITIONCATEGORIES category, UI08 &wasPrioritized ) -> void;
+	auto CleanPriorityMap() -> void;
 
-	auto GetPriority(const char *file) ->std::int16_t;
+	auto GetPriority( const char *file ) -> SI16;
 
-	auto Cleanup() ->void;
+	auto Cleanup() -> void;
 public:
-	std::vector< VECSCRIPTLIST > ScriptListings;
+	std::vector<VECSCRIPTLIST> ScriptListings;
 
 	CServerDefinitions();
 	~CServerDefinitions();
-	auto startup() ->void ;
-	auto Reload() ->bool;
-	auto Dispose(DEFINITIONCATEGORIES toDispose) ->bool;
+	auto Startup() -> void;
+	auto Reload() -> bool;
+	auto Dispose(DEFINITIONCATEGORIES toDispose ) -> bool;
 
-	auto FindEntry(const std::string &toFind, DEFINITIONCATEGORIES typeToFind) ->ScriptSection* ;
-	auto FindEntrySubStr(const std::string &toFind, DEFINITIONCATEGORIES typeToFind) ->ScriptSection* ;
-	auto CountOfEntries(DEFINITIONCATEGORIES typeToFind) ->size_t ;
-	auto CountOfFiles(DEFINITIONCATEGORIES typeToFind) ->size_t ;
-	auto DisplayPriorityMap() ->void;
+	auto FindEntry( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) -> CScriptSection*;
+	auto FindEntrySubStr( const std::string &toFind, DEFINITIONCATEGORIES typeToFind ) -> CScriptSection*;
+	auto CountOfEntries( DEFINITIONCATEGORIES typeToFind ) -> size_t;
+	auto CountOfFiles( DEFINITIONCATEGORIES typeToFind ) -> size_t;
+	auto DisplayPriorityMap() -> void;
 
-	auto FirstScript(DEFINITIONCATEGORIES typeToFind) ->Script* ;
-	auto NextScript(DEFINITIONCATEGORIES typeToFind) ->Script* ;
-	auto FinishedScripts( DEFINITIONCATEGORIES typeToFind) ->bool;
+	auto FirstScript( DEFINITIONCATEGORIES typeToFind ) -> Script*;
+	auto NextScript( DEFINITIONCATEGORIES typeToFind ) -> Script*;
+	auto FinishedScripts( DEFINITIONCATEGORIES typeToFind ) -> bool;
 };
 
 extern CServerDefinitions *FileLookup;

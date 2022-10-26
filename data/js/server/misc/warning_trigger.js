@@ -29,7 +29,7 @@ function onMoveDetect( iObj, pChar, rangeToChar, oldCharX, oldCharY )
 
 function DisplayWarningText( iObject, trgChar, checkHistory )
 {
-	if( checkHistory && iObject.GetTempTag( "char" + (trgChar.serial).toString() ))
+	if( checkHistory && iObject.GetTempTag( "char" + ( trgChar.serial ).toString() ))
 		return;
 
 	var warningText = "";
@@ -61,6 +61,8 @@ function DisplayWarningText( iObject, trgChar, checkHistory )
 		iObject.TextMessage( warningText, false, 0x3b2, 0, trgChar.serial );
 
 		if( checkHistory )
-			iObject.SetTempTag( "char" + (trgChar.serial).toString(), true );
+		{
+			iObject.SetTempTag( "char" + ( trgChar.serial ).toString(), true );
+		}
 	}
 }
