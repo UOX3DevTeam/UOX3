@@ -1,0 +1,19 @@
+// spawn_felucca_dungeon_delucia_passage.dfn
+// [4150-4199]
+
+[REGIONSPAWN 4150]
+{
+NAME=delucia_passage Level 1
+NPCLIST=deluciapassagelvlone
+MAXNPCS=100
+X1=5890
+Y1=1287
+X2=6032
+Y2=1410
+WORLD=0
+MINTIME=10
+MAXTIME=20
+CALL=5
+}
+
+EOF

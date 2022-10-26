@@ -171,7 +171,7 @@ value=6 3
 restock=15
 decay=1
 dir=2
-script=545
+script=500
 }
 
 [0x0a10]
@@ -197,7 +197,7 @@ weight=100
 value=7 3
 decay=1
 dir=1
-script=545
+script=500
 }
 
 [0x0a13]
@@ -294,7 +294,7 @@ weight=200
 value=7 2
 decay=1
 dir=1
-script=545
+script=500
 }
 
 [0x0a23]
@@ -436,7 +436,7 @@ name=lamp post
 id=0x0b20
 movable=2
 dir=29
-script=545
+script=500
 }
 
 [0x0b21]
@@ -445,7 +445,7 @@ get=base_item
 name=lamp post
 id=0x0b21
 movable=2
-script=545
+script=500
 }
 
 [0x0b22]
@@ -455,7 +455,7 @@ name=lamp post
 id=0x0b22
 movable=2
 dir=29
-script=545
+script=500
 }
 
 [0x0b23]
@@ -464,7 +464,7 @@ get=base_item
 name=lamp post
 id=0x0b23
 movable=2
-script=545
+script=500
 }
 
 [0x0b24]
@@ -474,7 +474,7 @@ name=lamp post
 id=0x0b24
 movable=2
 dir=29
-script=545
+script=500
 }
 
 [0x0b25]
@@ -483,7 +483,7 @@ get=base_item
 name=lamp post
 id=0x0b25
 movable=2
-script=545
+script=500
 }
 
 [0x0e31]

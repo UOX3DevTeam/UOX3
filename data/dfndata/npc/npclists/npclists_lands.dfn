@@ -1,0 +1,697 @@
+//Heavy=spawn every 5 minutes
+//Medium=spawn every 20 minutes
+//Light=spawn every hour
+//Orc Party=Orc Lord, Orc Mage, Ettin 5 Normal Orcs
+
+[NPCLIST OrcParty]
+{
+npclist=weakorc
+orcmage
+orclord
+npclist=allettin
+}
+
+[NPCLIST location_1_medium]
+{
+npclist=OrcParty
+harpy
+corpser
+reaper
+npclist=allratmen
+npclist=alllizardmen
+direwolf
+airele
+waterele
+gazer
+gargoyle
+npclist=tamewoods
+npclist=randomwhealer
+}
+
+[NPCLIST location_2_heavy]
+{
+hind
+hart
+}
+
+[NPCLIST location_2_medium]
+{
+npclist=weakorc
+npclist=allettin
+harpy
+cropser
+reaper
+npclist=allratmen
+npclist=alllizardmen
+direwolf
+}
+
+[NPCLIST location_2_light]
+{
+airele
+gargoyle
+}
+
+[NPCLIST location_3_light]
+{
+zombie
+skeleton
+boneaxeman
+ghoul
+lich
+zombie
+skeleton
+boneaxeman
+ghoul
+lichlord
+zombie
+skeleton
+boneaxeman
+ghoul
+}
+
+[NPCLIST location_4_medium]
+{
+npclist=OrcParty
+npclist=alltroll
+ogre
+npclist=alllizardmen
+giantspider
+zombie
+skeleton
+ghoul
+corpser
+reaper
+wisp
+airele
+gazer
+gargoyle
+}
+
+[NPCLIST location_5_light]
+{
+skeleton
+boneaxeman
+zombie
+}
+
+[NPCLIST location_6_medium]
+{
+hind
+hart
+llama
+pig
+boar
+sheep
+goat
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_7_medium]
+{
+npclist=OrcParty
+npclist=alltroll
+corpser
+reaper
+gazer
+waterele
+airele
+harpy
+gargoyle
+direwolf
+npclist=tamewoods
+}
+
+[NPCLIST location_8_medium]
+{
+npclist=weakorc
+npclist=allettin
+}
+
+[NPCLIST location_9_heavy]
+{
+npclist=OrcParty
+npclist=alltroll
+airele
+waterele
+gargoyle
+gazer
+}
+
+[NPCLIST location_9_medium]
+{
+harpy
+corpser
+reaper
+skeleton
+boneaxeman
+direwolf
+npclist=tamewoods
+}
+
+[NPCLIST location_10_light]
+{
+lich
+npclist=allettin
+npclist=alltroll
+npclist=alllizardmen
+}
+
+[NPCLIST location_11_heavy]
+{
+//orccamps
+//ratmancamps
+goat
+}
+
+[NPCLIST location_11_medium]
+{
+npclist=allettin
+npclist=alltroll
+ogre
+gazer
+headless
+harpy
+}
+
+[NPCLIST location_12_medium]
+{
+npclist=brigand
+npclist=allratmen
+zombie
+specter
+npclist=weakorc
+giantspider
+}
+
+[NPCLIST location_12_light]
+{
+npclist=allettin
+ogre
+}
+
+[NPCLIST location_13_heavy]
+{
+npclist=tamewoods
+npclist=randomwhealer
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_13_medium]
+{
+npclist=weakorc
+ghoul
+headless
+zombie
+npclist=alllizardmen
+npclist=allratmen
+wisp
+giantspider
+}
+
+[NPCLIST location_13_light]
+{
+npclist=allettin
+npclist=alltroll
+ogre
+harpy
+}
+
+[NPCLIST location_14_medium]
+{
+ogre
+npclist=weakorc
+npclist=allettin
+npclist=alltroll
+npclist=alllizardmen
+specter
+harpy
+giantspider
+skeleton
+boneaxeman
+}
+
+[NPCLIST location_15_heavy]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_16_light]
+{
+npclist=weakorc
+npclist=allettin
+npclist=alltroll
+mongbat
+giantspider
+wisp
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_17_light]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_18_light]
+{
+npclist=allratmen
+npclist=alllizardmen
+snake
+alligator
+slime
+giantserpent
+}
+
+[NPCLIST location_19_medium]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_19_light]
+{
+npclist=allratmen
+npclist=alllizardmen
+}
+
+[NPCLIST location_20_light]
+{
+npclist=alllizardmen
+alligator
+wisp
+snake
+silverserpent
+}
+
+[NPCLIST location_20_light_island]
+{
+giantserpent
+giantscoprion
+}
+
+[NPCLIST location_20_heavy]
+{
+gorilla
+rabbit
+}
+
+[NPCLIST location_20_heavy_island]
+{
+panther
+}
+
+[NPCLIST location_21_heavy]
+{
+npclist=allratmen
+npclist=allettin
+ogre
+npclist=weakorc
+zombie
+skeleton
+boneaxeman
+spectre
+}
+
+[NPCLIST location_22_medium]
+{
+npclist=allettin
+ogre
+npclist=weakorc
+ghoul
+wisp
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_23_medium]
+{
+npclist=alllizardmen
+npclist=allratmen
+alligator
+snake
+giantserpent
+slime
+}
+
+[NPCLIST location_24_medium]
+{
+npclist=weakorc
+npclist=allratmen
+npclist=alltroll
+npclist=allettin
+mongbat
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_25_light]
+{
+skeleton
+zombie
+boneaxeman
+ghoul
+zombie
+zombie
+lich
+zombie
+skeleton
+skeleton
+boneaxeman
+ghoul
+}
+
+[NPCLIST location_26_heavy]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_26_medium]
+{
+npclist=alllizardmen
+harpy
+npclist=weakorc
+npclist=allratmen
+npclist=alltroll
+}
+
+[NPCLIST location_27_light]
+{
+npclist=alltroll
+}
+
+[NPCLIST location_28_heavy]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+npclist=weakorc
+mongbat
+}
+
+[NPCLIST location_28_medium]
+{
+npclist=allettin
+npclist=alltroll
+direwolf
+ogre
+reaper
+corpser
+skeleton
+boneaxeman
+}
+
+[NPCLIST location_28_light]
+{
+gargoyle
+gazer
+}
+
+[NPCLIST location_29_heavy]
+{
+gargoyle
+waterele
+npclist=allettin
+npclist=alltroll
+ogre
+npclist=weakorc
+gazer
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_30_heavy]
+{
+npclist=alllizardmen
+alligator
+snake
+}
+
+[NPCLIST location_31_medium]
+{
+scorpion
+giantspider
+}
+
+[NPCLIST location_31_light]
+{
+earthele
+npclist=allratmen
+}
+
+[NPCLIST location_32_light]
+{
+harpy
+npclist=allettin
+npclist=weakorc
+airele
+}
+
+[NPCLIST location_33_medium]
+{
+airele
+waterele
+npclist=alltroll
+skeleton
+direwolf
+npclist=alllizardmen
+harpy
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_34_medium]
+{
+npclist=allettin
+npclist=alltroll
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_35_medium]
+{
+npclist=weakorc
+gazer
+npclist=allettin
+npclist=alltroll
+gargoyle
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_36_medium]
+{
+npclist=weakorc
+npclist=allettin
+airele
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_37_heavy]
+{
+harpy
+npclist=weakorc
+ogre
+npclist=allettin
+npclist=alltroll
+skeleton
+boneaxeman
+zombie
+npclist=alllizardmen
+headless
+wisp
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_38_heavy]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_38_medium]
+{
+npclist=weakorc
+npclist=alltroll
+npclist=alllizardmen
+npclist=allettin
+headless
+waterele
+ogre
+wisp
+}
+
+[NPCLIST location_39_medium]
+{
+npclist=weakorc
+npclist=allettin
+npclist=alltroll
+ogre
+npclist=alllizardmen
+}
+
+[NPCLIST location_40_light]
+{
+airele
+waterele
+npclist=weakorc
+npclist=allettin
+npclist=alltroll
+ogre
+npclist=alllizardmen
+}
+
+[NPCLIST location_41_light]
+{
+skeleton
+ghoul
+boneaxeman
+zombie
+ghoul
+zombie
+lich
+zombie
+skeleton
+boneaxeman
+}
+
+[NPCLIST location_42_medium]
+{
+npclist=alltroll
+npclist=weakorc
+npclist=allettin
+orcmage
+ogre
+headless
+skeleton
+ghoul
+}
+
+[NPCLIST location_43_medium]
+{
+npclist=tamewoods
+npclist=allbirdlist
+npclist=allbearlist
+}
+
+[NPCLIST location_44_medium]
+{
+skeleton
+ghoul
+boneaxeman
+zombie
+ghoul
+zombie
+lich
+zombie
+skeleton
+boneaxeman
+}
+
+[NPCLIST location_45_heavy]
+{
+npclist=weakorc
+npclist=weakorc
+npclist=weakorc
+npclist=weakorc
+npclist=weakorc
+npclist=weakorc
+npclist=allettin
+npclist=weakorc
+}
+
+[NPCLIST location_46_light]
+{
+npclist=weakorc
+npclist=alllizardmen
+npclist=alltroll
+npclist=allratmen
+specter
+orcmage
+m_brigand
+f_brigand
+//orcparties
+harpy
+}
+
+[NPCLIST location_47_medium]
+{
+giantserpent
+silverserpent
+snake
+alligator
+mongbat
+//ratmencamps
+//lizardmancamps
+}
+
+[NPCLIST location_48_light]
+{
+firele
+drake
+dragon
+}
+
+[NPCLIST location_49_light]
+{
+npclist=weakorc
+}
+
+[NPCLIST location_50_light]
+{
+orcmage
+}
+
+[NPCLIST location_51_heavy]
+{
+hind
+}
+
+[NPCLIST location_52_heavy]
+{
+timberwolf
+}
+
+[NPCLIST location_53_medium]
+{
+skeleton
+boneaxeman
+zombie
+ghoul
+}
+
+[NPCLIST location_53_light]
+{
+lich
+}
+
+[NPCLIST location_54_medium]
+{
+polarbear
+whitewolf
+snowleapard
+walruse
+}
+
+EOF
