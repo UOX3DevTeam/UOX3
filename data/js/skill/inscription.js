@@ -15,7 +15,9 @@ function onUseChecked( pUser, iUsed )
 			return false;
 		}
 		else
-			socket.CustomTarget( 0, GetDictionaryEntry( 865, socket.language ) ); // What do you wish to place a spell on?
+		{
+			socket.CustomTarget( 0, GetDictionaryEntry( 865, socket.language )); // What do you wish to place a spell on?
+		}
 	}
 	return false;
 }
@@ -24,7 +26,9 @@ function onSkill( pUser, objType, skillUsed )
 {
 	var pSock = pUser.socket;
 	if( pSock )
-		pSock.CustomTarget( 0, GetDictionaryEntry( 865, pSock.language ) ); // What do you wish to place a spell on?
+	{
+		pSock.CustomTarget( 0, GetDictionaryEntry( 865, pSock.language )); // What do you wish to place a spell on?
+	}
 
 	return true;
 }
@@ -45,23 +49,31 @@ function onCallback0( pSock, ourObj )
 			var pPack = pUser.pack;
 			if( ValidateObject( pPack ) )
 			{
-				if( !ValidateObject( pUser.FindItemType( 9 ) ) )	// Do they have a spellbook?
+				if( !ValidateObject( pUser.FindItemType( 9 ))) // Do they have a spellbook?
 				{
-					pSock.SysMessage( GetDictionaryEntry( 921, pSock.language ) ); // You don't have a spellbook to scribe from!
+					pSock.SysMessage( GetDictionaryEntry( 921, pSock.language )); // You don't have a spellbook to scribe from!
 					return;
 				}
 
 				var ownerObj = GetPackOwner( ourObj, 0 );
 				if( ownerObj && pUser.serial == ownerObj.serial )
+				{
 					pSock.MakeMenu( 99, 23 );
+				}
 				else
-					pSock.SysMessage( GetDictionaryEntry( 778, pSock.language ) ); // You can't use items outside your backpack.
+				{
+					pSock.SysMessage( GetDictionaryEntry( 778, pSock.language )); // You can't use items outside your backpack.
+				}
 			}
 			else
-				pSock.SysMessage( GetDictionaryEntry( 773, pSock.language ) ); // Time to buy a backpack.
+			{
+				pSock.SysMessage( GetDictionaryEntry( 773, pSock.language )); // Time to buy a backpack.
+			}
 		}
 		else
+		{
 			pSock.SysMessage( GetDictionaryEntry( 6001, pSock.language )); // You can't make anything useful from that.
+		}
 	}
 }
 

@@ -660,7 +660,7 @@
 668=Este item não pode ser encurralado!
 669=Não pode prender este item!
 670=Não pode teletransportar-se aqui!
-671=Dê o aspirante a Jesus!
+671=Não se pode teletransportar para lá!
 672=Não se pode teletransportar para lá!
 673=Este item foi protegido com magia divina.  Não se pode desbloquear este item.
 674=Você desbloqueia o item.
@@ -1668,6 +1668,29 @@
 1663=O meu filhinho Timmy precisa de uma operação, tem algum ouro para ajudar a causar?
 1664=A minha mulher está grávida do nosso 7º filho, tem algum poço sob a forma de algum ouro para um homem desesperado.
 // End begging text
+1670=Não se pode disfarçar enquanto se usa tinta corporal
+1671=Não se pode polimorfosear enquanto se usa tinta corporal
+1672=Não se pode usar incógnito enquanto se usa tinta corporal
+1673=Não se pode fazer isso enquanto incógnito.
+1674=Não se pode fazer isso enquanto se polimorfa.
+1675=A tua pele fica queimada enquanto a tinta tribal arde!
+1676=A tua tinta corporal desgastou-se!
+1677=Não se pode disfarçar enquanto incógnito.
+1678=Não te podes disfarçar enquanto estás polimorfo.
+1679=Já está disfarçado.
+1680=Tendes agora as marcas da tribo selvagem.  A sua pintura corporal durará cerca de uma semana ou pode ser removida com um pano a óleo.
+1681=Vocês limpam toda a vossa pintura corporal.
+1682= A Lança Tribal parte-se nas tuas mãos quando a apanhas!
+1683=%s começa a balançar uma bola
+1684=Entrar novo título para membro do grémio:
+1685=Selecionar membro do grémio para definir título para
+1686=Tem-lhe foi concedido um título de guilda de %s!
+1687=Recrutaste %s como novo membro do grémio!
+1688=Você foi recrutado para se juntar à %s da guilda!
+1689= Você demitiu %s do seu grémio!
+1690= Foi demitido do seu grémio!
+1691=Não se pode demitir do grémio!
+1692=%s é agora o novo Mestre do Grémio de %s!
 // Tweak Char Menu Stuff
 1700=Botão Inválido Pressionado
 1701=Digitar um novo nome para o personagem.
@@ -1951,6 +1974,15 @@
 1979=Ilhas de Tokuno
 1980=Ter Mur
 1981=Os membros da %s race não podem usar isto
+1982=Despedes o ataque!
+1983=Sua arma foi destruída!
+1984=Você não é um membro desta guilda!
+1985=Patrocinou %s como candidato para se juntar à guilda!
+1986=Você foi convidado por %s a juntar-se ao grémio: %s
+1987=Tu declarou fidelidade a %s!
+1988=%s declarou fidelidade a si!
+1989=Teu grémio declarou guerra ao grémio %s!
+1990=Seu grémio declarou o grémio %s como aliado!
 // JS-Based Tweak Menu
 1991=Inválido objecto visado!
 1992=Projecto desconhecido visado!
@@ -2159,6 +2191,18 @@
 2204=Lista de amigos
 2205=Os espíritos dos mortos não são a província da sabedoria animal.
 2206=Não se pode pensar em nada que se saiba de improviso.
+2250=Confuso
+2251=Extremamente Insatisfeito
+2252=Rather Unhappy
+2253=Infeliz
+2254=algum conteúdo
+2255=Conteúdo
+2256=Feliz
+2257=Rather Happy
+2258=Muito Feliz
+2259=Extremamente Feliz
+2260=Maravilhosamente Feliz
+2261=Eufórico
 // [2300-2449] Hirelings
 2300=%s foi removido da lista de amigos da %s.
 2301=Você foi removido da lista de amigos da %s.
@@ -2467,6 +2511,15 @@
 2759=Os teus pais nunca te disseram para não correres com uma tesoura na mão?!
 2760=Não se pode desvendar a magia de um objecto abençoado.
 2761=A criatura resistiu à tentativa de a dispersar!
+2762=Número inválido de parâmetros - requer 2 (timerID,scriptID)!
+2763=Vai buscar o tempo restante do temporizador JS para que objecto?
+2764=Temporizador expirará em: %s
+2765=Tempo restante: %d segundos
+2766=Não há temporizador JS com timerID %d e scriptID %u activo no objecto!
+2767=Número inválido de parâmetros - requer 3 (timerID,expiryTime,scriptID)!
+2768=Conjunto do tempo restante do JS timer para que objecto?
+2769=Tempo restante do JS especificado para que objecto?
+2770=Tempo JS especificado foi morto para o objecto seleccionado.
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -3274,6 +3327,10 @@
 6213=Esta poção pode ter sido feita de cinza sulfurosa.
 6214=Os ingredientes desta poção são desconhecidos para si.
 6215=Você já sabe que tipo de poção é esta: %s
+6250=Sai das sombras.
+6275= Combina-se a baga e a farinha com a tinta tribal usada pelos selvagens.
+6276=Não se tem a capacidade de cozinhar para criar a pintura corporal.
+6277=Denominação de recursos não encontrada na lista de recursos utilizados para confeccionar item.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -3521,6 +3578,10 @@
 8207=Base de alcance de arma à distância (SA e mais tarde apenas)
 8208=Funções remanescentes actuais do ITEM (não pode exceder o valor da propriedade maxUses)
 8209=Máxima quantidade de utilizações que o artigo pode ter
+8210=Redireccionar para 'comando radditem...
+8211=Redireccionar para 'comando raddnpc...
+8212=Sintaxe de comando válida para repetir a adição de objectos: 'radd [hexID/decimalID], 'radditem [itemSecção], 'raddnpc [npcSecção]
+8213=Secção ID do objecto do DFN originado de
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA
@@ -3653,6 +3714,11 @@
 8428=X coordenada de carácter no mundo
 8429=Y coordenada de carácter no mundo
 8430=Z coordenada de carácter no mundo
+8431=Top left X coord para limite do tipo de personagem
+8432=Top left Y coord para limite do tipo de personagem
+8433=Bottom right X coord para o limite do tipo de personagem
+8434=Bottom right Y coord para o limite do tipo de personagem
+8435=Z coord para o limite do tipo de personagem deambulação
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Número actual de jogadores banidos da Multi. Controlado por Servidor (Read-Only)
 8501=X coordenada para a proibição-localização da Multi
@@ -3989,6 +4055,12 @@
 9128=Não tem qualquer hipótese de provocar essa criatura.
 9129=Aquele alvo é imune a danos físicos!
 9130=Sua arma não consegue penetrar a barreira mágica da criatura.
+9140=de qualidade excepcional
+9141=Criado por
+9142=Desbloqueia-se a tábua.
+9143=Travas a tábua.
+9144=Abrir a tábua, embora ainda esteja trancada.
+9150=Não se detecta mochila, não se pode adicionar item! Tente o comando 'addpack?
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
@@ -4338,6 +4410,8 @@
 11218=Bow
 11219=Besta cruzada
 11220=Besta Cruzada Pesada
+11221=Arco Compósito
+11222=Besta Recorrente
 // 11401 - 11600 Habilidade de Artesanato à Medida
 11401=MENU DE DECORAÇÃO
 11402=COURO/COURO

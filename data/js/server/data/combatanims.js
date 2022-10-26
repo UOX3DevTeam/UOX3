@@ -1,10 +1,10 @@
 // This is a generic script for determining combat animations based on whether or not a character is mounted
 // You can call this script from an external script by using either of the two following lines after
 // first defining weaponType through weapontypes.js (scriptID 2500)...
-//		var combatAnim = TriggerEvent( 2501, "getFootCombatAnim", pUser, weaponType );
-//		var combatAnim = TriggerEvent( 2501, "getHorseCombatAnim", pUser, weaponType );
+//		var combatAnim = TriggerEvent( 2501, "GetFootCombatAnim", pUser, weaponType );
+//		var combatAnim = TriggerEvent( 2501, "GetHorseCombatAnim", pUser, weaponType );
 
-function getFootCombatAnim( pUser, weaponType )
+function GetFootCombatAnim( pUser, weaponType )
 {
 	switch( weaponType )
 	{
@@ -86,7 +86,7 @@ function getFootCombatAnim( pUser, weaponType )
 	return combatAnim;
 }
 
-function getHorseCombatAnim( pUser, weaponType )
+function GetHorseCombatAnim( pUser, weaponType )
 {
 	var combatAnim = 0x1A;
 	switch( weaponType )

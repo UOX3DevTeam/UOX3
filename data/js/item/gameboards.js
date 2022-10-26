@@ -2,7 +2,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSocket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -46,7 +46,7 @@ function onDropItemOnItem( iDropped, pDropper, iDroppedOn )
 
 function CreateBackgammonPieces( iUsed )
 {
-
+	// TODO
 }
 
 function CreateCheckersPieces( pUser, pSocket, iUsed )
@@ -79,11 +79,17 @@ function CreateBlackCheckersPieces( pUser, pSocket, iUsed )
 		var blackDisc = CreateDFNItem( pSocket, pUser, "0x358b", 1, "ITEM", false );
 		blackDisc.container = iUsed;
 		if( i < 4 )
+		{
 			xOffset = 45;
+		}
 		else if( i < 8 )
+		{
 			xOffset = 70;
+		}
 		else
+		{
 			xOffset = 95;
+		}
 
 		if( i == 0 || i == 8 )
 		{
@@ -112,11 +118,17 @@ function CreateWhiteCheckersPieces( pUser, pSocket, iUsed )
 		var whiteDisc = CreateDFNItem( pSocket, pUser, "0x3584", 1, "ITEM", false );
 		whiteDisc.container = iUsed;
 		if( i < 4 )
+		{
 			xOffset = 170;
+		}
 		else if( i < 8 )
+		{
 			xOffset = 195;
+		}
 		else
+		{
 			xOffset = 220;
+		}
 
 		if( i == 0 || i == 8 )
 		{

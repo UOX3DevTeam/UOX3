@@ -2,14 +2,14 @@
 // additional houses. The actual house-placement part is handled in code.
 
 // Check if tracking of house ownership is done on a per-account (instead of per-char) basis (from uox.ini)
-const trackHousesPerAccount = GetServerSetting( "TRACKHOUSESPERACCOUNT" ); //TrackHousesPerAccount();
+const trackHousesPerAccount = GetServerSetting( "TrackHousesPerAccount" );
 
 // Check if players can own and co-own houses at the same time (from uox.ini)
-const canOwnAndCoOwnHouses = GetServerSetting( "CANOWNANDCOOWNHOUSES" ); //CanOwnAndCoOwnHouses();
+const canOwnAndCoOwnHouses = GetServerSetting( "CanOwnAndCoOwnHouses" );
 
 // Fetch max amount of houses someone can own/co-own (from uox.ini)
-const maxHousesOwnable = GetServerSetting( "MAXHOUSESOWNABLE" ); //MaxHousesOwnable();
-const maxHousesCoOwnable = GetServerSetting( "MAXHOUSESCOOWNABLE" ); //MaxHousesCoOwnable();
+const maxHousesOwnable = GetServerSetting( "MaxHousesOwnable" );
+const maxHousesCoOwnable = GetServerSetting( "MaxHousesCoOwnable" );
 
 function onUseChecked( pUser, iUsed )
 {

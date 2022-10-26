@@ -16,7 +16,7 @@ const Cooking = 4034;
  // coloured weapon variants, they'll just be regular weapons with ore colour applied
 const allowColouredWeapons = GetServerSetting( "CraftColouredWeapons" );
 
-function craftinggump( myGump, socket )
+function CraftingGumpMenu( myGump, socket )
 {
 	var pUser = socket.currentChar;
 
@@ -305,28 +305,28 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 1 );
 					break;
 				case 2:
-					TriggerEvent( Alchemy, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Alchemy, "PageX", pSock, pUser, 1 );
 					break;
 				case 3:
-					TriggerEvent( Bowcraft, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Bowcraft, "PageX", pSock, pUser, 1 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 1 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 1 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 1 );
 					}
 					break;
 				case 6:
-					TriggerEvent( Cooking, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Cooking, "PageX", pSock, pUser, 1 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 1 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 1 );
 					break;
 				default:
 					break;
@@ -336,28 +336,28 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 2 );
 					break;
 				case 2:
-					TriggerEvent( Alchemy, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Alchemy, "PageX", pSock, pUser, 2 );
 					break;
 				case 3:
-					TriggerEvent( Bowcraft, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Bowcraft, "PageX", pSock, pUser, 2 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 2 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 2 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 2 );
 					}
 					break;
 				case 6:
-					TriggerEvent( Cooking, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Cooking, "PageX", pSock, pUser, 2 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 2 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 2 );
 					break;
 				default:
 					break;
@@ -367,28 +367,28 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 3 );
 					break;
 				case 2:
-					TriggerEvent( Alchemy, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Alchemy, "PageX", pSock, pUser, 3 );
 					break;
 				case 3:
-					TriggerEvent( Bowcraft, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Bowcraft, "PageX", pSock, pUser, 3 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 3 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 3 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 3 );
 					}
 					break;
 				case 6:
-					TriggerEvent( Cooking, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Cooking, "PageX", pSock, pUser, 3 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 3 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 3 );
 					break;
 				default:
 					break;
@@ -398,25 +398,25 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 4 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 4 );
 					break;
 				case 2:
-					TriggerEvent( Alchemy, "pageX", pSock, pUser, 4 );
+					TriggerEvent( Alchemy, "PageX", pSock, pUser, 4 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 4 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 4 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 4 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 4 );
 					}
 					break;
 				case 6:
-					TriggerEvent( Cooking, "pageX", pSock, pUser, 4 );
+					TriggerEvent( Cooking, "PageX", pSock, pUser, 4 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 4 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 4 );
 					break;
 				default:
 					break;
@@ -426,19 +426,19 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 5 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 5 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 5 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 5 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 5 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 5 );
 					}
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 5 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 5 );
 					break;
 				default:
 					break;
@@ -448,19 +448,19 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 6 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 6 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 6 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 6 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 6 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 6 );
 					}
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 6 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 6 );
 					break;
 				default:
 					break;
@@ -470,19 +470,19 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 7 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 7 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 7 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 7 );
 					break;
 				case 5:
 					if( pUser.GetTempTag( "ORE" ) >= 0 && pUser.GetTempTag( "ORE" ) <= 8 )
 					{
-						TriggerEvent( blacksmithID, "pageX", pSock, pUser, 7 );
+						TriggerEvent( blacksmithID, "PageX", pSock, pUser, 7 );
 					}
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 7 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 7 );
 					break;
 				default:
 					break;
@@ -492,13 +492,13 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 8 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 8 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 8 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 8 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 8 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 8 );
 					break;
 			}
 			break;
@@ -507,13 +507,13 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 9 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 9 );
 					break;
 				case 4:
-					TriggerEvent( Tailoring, "pageX", pSock, pUser, 9 );
+					TriggerEvent( Tailoring, "PageX", pSock, pUser, 9 );
 					break;
 				case 7:
-					TriggerEvent( Tinkering, "pageX", pSock, pUser, 9 );
+					TriggerEvent( Tinkering, "PageX", pSock, pUser, 9 );
 					break;
 			}
 			break;
@@ -522,7 +522,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( pUser.GetTempTag( "CRAFT" ))
 			{
 				case 1:
-					TriggerEvent( Carpentry, "pageX", pSock, pUser, 10 );
+					TriggerEvent( Carpentry, "PageX", pSock, pUser, 10 );
 					break;
 			}
 			break;

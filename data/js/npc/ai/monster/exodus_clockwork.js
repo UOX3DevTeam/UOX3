@@ -80,14 +80,15 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 	{
 		if( immuneToMelee )
 		{
-
 			// Creature is immune to Physical damage, so return false
 			DoMovingEffect( exodusNPC, exodusNPC, 0x375a, 0, 0x10, false, 0x089F, 0x0 );
 			exodusNPC.SoundEffect( 0x02f4, true );
 
 			var socket = attacker.socket;
 			if( socket != null )
+			{
 				socket.SysMessage( GetDictionaryEntry( 9130, socket.language )); // Your weapon cannot penetrate the creature's magical barrier.
+			}
 			return false;
 		}
 	}
@@ -108,7 +109,9 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 
 			var socket = attacker.socket;
 			if( socket != null )
+			{
 				socket.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+			}
 			return false;
 		}
 		else
@@ -118,7 +121,9 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 				// Reduce the health of the magical shield
 				shieldHP -= damageValue;
 				if( shieldHP < 0 )
+				{
 					shieldHP = 0;
+				}
 				exodusNPC.SetTag( "ShieldHP", shieldHP );
 
 				if( shieldHP == 0 )

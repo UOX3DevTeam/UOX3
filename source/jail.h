@@ -2,61 +2,61 @@
 #ifndef __JAIL_H__
 #define __JAIL_H__
 
-struct JailOccupant
+struct JailOccupant_st
 {
 	SERIAL pSerial;
 	SI16 x;
 	SI16 y;
 	SI08 z;
 	UI08 world;
-	UI16 instanceID;
+	UI16 instanceId;
 	time_t releaseTime;
-	JailOccupant() : pSerial( INVALIDSERIAL ), x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 ), releaseTime( 0 )
+	JailOccupant_st() : pSerial( INVALIDSERIAL ), x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceId( 0 ), releaseTime( 0 )
 	{
 	}
 };
 
-class JailCell
+class CJailCell
 {
 private:
 	SI16 x;
 	SI16 y;
 	SI08 z;
 	UI08 world;
-	UI16 instanceID;
-	std::vector< JailOccupant * > playersInJail;
+	UI16 instanceId;
+	std::vector<JailOccupant_st *> playersInJail;
 public:
-	JailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceID( 0 )
+	CJailCell() : x( 0 ), y( 0 ), z( 0 ), world( 0 ), instanceId( 0 )
 	{
 	}
-	~JailCell();
+	~CJailCell();
 	bool	IsEmpty( void ) const;
 	size_t	JailedPlayers( void ) const;
 	SI16	X( void ) const;
 	SI16	Y( void ) const;
 	SI08	Z( void ) const;
 	UI08	World( void ) const;
-	UI16	InstanceID( void ) const;
+	UI16	InstanceId( void ) const;
 	void	X( SI16 nVal );
 	void	Y( SI16 nVal );
 	void	Z( SI08 nVal );
 	void	World( UI08 nVal );
-	void	InstanceID( UI16 nVal );
-	void	AddOccupant( CChar *pAdd, SI32 secsFromNow ) ;
-	void	EraseOccupant( size_t occupantID );
-	JailOccupant *Occupant( size_t occupantID );
+	void	InstanceId( UI16 nVal );
+	void	AddOccupant( CChar *pAdd, SI32 secsFromNow );
+	void	EraseOccupant( size_t occupantId );
+	JailOccupant_st *Occupant( size_t occupantId );
 	void	PeriodicCheck( void );
-	void	AddOccupant( JailOccupant *toAdd );
+	void	AddOccupant( JailOccupant_st *toAdd );
 	void	WriteData( std::ofstream &outStream, size_t cellNum );
 };
 
-class JailSystem
+class CJailSystem
 {
 private:
-	std::vector< JailCell > jails;
+	std::vector<CJailCell> jails;
 public:
-	JailSystem();
-	~JailSystem();
+	CJailSystem() = default;
+	~CJailSystem() = default;
 	void	ReadSetup( void );
 	void	ReadData( void );
 	void	WriteData( void );
@@ -65,7 +65,7 @@ public:
 	void	ReleasePlayer( CChar *toRelase );
 };
 
-extern JailSystem *JailSys;
+extern CJailSystem *JailSys;
 
 #endif
 

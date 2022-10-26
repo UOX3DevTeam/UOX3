@@ -1,3 +1,6 @@
+// These commands are used for teleporting targeted objects to user's location, or teleport them
+// to a specified location
+
 function CommandRegistration()
 {
 	RegisterCommand( "xteleport", 1, true );
@@ -18,7 +21,9 @@ function command_XTELEPORT( socket, cmdString )
 			var a4 = parseInt( splitString[3] );
 			toTele = CalcCharFromSer( a1, a2, a3, a4 );
 			if( toTele )
+			{
 				toTele.SetLocation( socket );
+			}
 			return;
 		}
 		else if( splitString[0] )
@@ -28,7 +33,9 @@ function command_XTELEPORT( socket, cmdString )
 			{
 				toTele = CalcCharFromSer( ourNum );
 				if( toTele )
+				{
 					toTele.SetLocation( socket );
+				}
 			}
 			else
 			{
@@ -37,21 +44,25 @@ function command_XTELEPORT( socket, cmdString )
 				{
 					toTele = tSock.currentChar;
 					if( toTele )
+					{
 						toTele.SetLocation( socket );
+					}
 				}
 			}
 			return;
 		}
 	}
 
-	var targMsg = GetDictionaryEntry( 21, socket.language );
+	var targMsg = GetDictionaryEntry( 21, socket.language ); // Select char to teleport to your position.
 	socket.CustomTarget( 0, targMsg );
 }
 
 function onCallback0( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
+	{
 		ourObj.SetLocation( socket );
+	}
 }
 
 function command_XGO( socket, cmdString )
@@ -75,14 +86,14 @@ function command_XGO( socket, cmdString )
 				socket.xText += " " + splitString[4];
 			}
 
-			targMsg = GetDictionaryEntry( 198, socket.language );
+			targMsg = GetDictionaryEntry( 198, socket.language ); // Select char to teleport.
 			socket.CustomTarget( 1, targMsg );
 		}
 		else if( splitString[0] )
 		{
 			socket.clickX = parseInt( cmdString );
 
-			targMsg = GetDictionaryEntry( 20, socket.language );
+			targMsg = GetDictionaryEntry( 20, socket.language ); // Select char to teleport
 			socket.CustomTarget( 2, targMsg );
 		}
 	}
@@ -90,7 +101,7 @@ function command_XGO( socket, cmdString )
 
 function onCallback1( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
 	{
 		// Defaults to same world/instance as GM unless anything else is specified
 		var worldNum = socket.currentChar.worldnumber;
@@ -98,9 +109,13 @@ function onCallback1( socket, ourObj )
 
 		var splitString = socket.xText.split( " " );
 		if( splitString[0] )
+		{
 			worldNum = parseInt( splitString[0] );
+		}
 		if( splitString[1] )
+		{
 			instanceID = parseInt( splitString[1] );
+		}
 
 		ourObj.SetLocation( socket.clickX, socket.clickY, socket.clickZ, worldNum, instanceID );
 	}
@@ -113,8 +128,10 @@ function onCallback1( socket, ourObj )
 
 function onCallback2( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
+	{
 		ourObj.SetLocation( socket.clickX );
+	}
 
 	socket.clickX = -1;
 }

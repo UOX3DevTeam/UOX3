@@ -1,8 +1,8 @@
 // If enabled in INI setting, explosion potions get bonus damage from alchemy skill
-// using this formula: ( attacker's alchemy skill / 10 ) / alchemyBonusDamageModifier
+// using this formula: ( attacker's alchemy skill / 10 ) / alchemyBonusModifier
 // Example: (1000 skillpoints / 10 ) / 5 = 20 bonus damage
-const alchemyBonusEnabled = GetServerSetting( "ALCHEMYBONUSENABLED" );
-const alchemyBonusModifier = parseInt(GetServerSetting( "ALCHEMYBONUSMODIFIER" ));
+const alchemyBonusEnabled = GetServerSetting( "AlchemyBonusEnabled" );
+const alchemyBonusModifier = parseInt( GetServerSetting( "AlchemyBonusModifier" ));
 
 // Other settings
 const randomizePotionCountdown = false; // If true, add/remove +1/-1 seconds to explosion potion countdowns
@@ -18,14 +18,14 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( pUser.isUsingPotion )
 		{
-			socket.SysMessage( GetDictionaryEntry( 430, socket.language ) ); //You must wait a while before using another potion.
+			socket.SysMessage( GetDictionaryEntry( 430, socket.language )); //You must wait a while before using another potion.
 			return false;
 		}
 
 		//Check to see if it's locked down
 		if( iUsed.movable == 3 )
 		{
-			socket.SysMessage( GetDictionaryEntry( 774, socket.language ) ); //That is locked down and you cannot use it
+			socket.SysMessage( GetDictionaryEntry( 774, socket.language )); //That is locked down and you cannot use it
 			return false;
 		}
 		switch( iUsed.morey )
@@ -38,11 +38,11 @@ function onUseChecked( pUser, iUsed )
 				{
 					case 1:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 6, 15 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1608, socket.language ) ); //You feel more agile!
+						socket.SysMessage( GetDictionaryEntry( 1608, socket.language )); //You feel more agile!
 						break;
 					case 2:
 						DoTempEffect( 0, pUser, pUser, 6, RandomNumber( 11, 30 ), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1609, socket.language ) ); //You feel much more agile!
+						socket.SysMessage( GetDictionaryEntry( 1609, socket.language )); //You feel much more agile!
 						break;
 					default:
 						break;
@@ -59,34 +59,44 @@ function onUseChecked( pUser, iUsed )
 					{
 						case 1:
 							if( ( pPoison == 1 && chanceToCure < 81 ) || ( pPoison == 2 && chanceToCure < 41 ) ||
-							    ( pPoison == 3 && chanceToCure < 21 ) || ( pPoison == 4 && chanceToCure < 6 ) )
-								pUser.SetPoisoned(0,0);
+							    ( pPoison == 3 && chanceToCure < 21 ) || ( pPoison == 4 && chanceToCure < 6 ))
+							{
+								pUser.SetPoisoned( 0, 0 );
+							}
 							break;
 						case 2:
 							if( pPoison == 1 || ( pPoison == 2 && chanceToCure < 81 ) ||
-							  ( pPoison == 3 && chanceToCure < 41 ) || ( pPoison == 4 && chanceToCure < 21 ) )
-								pUser.SetPoisoned(0,0);
+							  ( pPoison == 3 && chanceToCure < 41 ) || ( pPoison == 4 && chanceToCure < 21 ))
+							{
+								pUser.SetPoisoned( 0, 0 );
+							}
 							break;
 						case 3:
 							if( pPoison == 1 || pPoison == 2  || ( pPoison == 3 && chanceToCure < 81 ) ||
-							  ( pPoison == 4 && chanceToCure < 61 ) )
-								pUser.SetPoisoned(0,0);
+							  ( pPoison == 4 && chanceToCure < 61 ))
+							{
+								pUser.SetPoisoned( 0, 0 );
+							}
 							break;
 						default:
 							break;
 					}
 
 					if( pUser.poison )
-						socket.SysMessage( GetDictionaryEntry( 1345, socket.language ) ); //The potion was not able to cure this poison.
+					{
+						socket.SysMessage( GetDictionaryEntry( 1345, socket.language )); //The potion was not able to cure this poison.
+					}
 					else
 					{
 						pUser.StaticEffect( 0x373A, 0, 15 );
 						pUser.SoundEffect( 0x01E0, true );
-						socket.SysMessage( GetDictionaryEntry( 1346, socket.language ) ); //The poison was cured!
+						socket.SysMessage( GetDictionaryEntry( 1346, socket.language )); //The poison was cured!
 					}
 				}
 				else
-					socket.SysMessage( GetDictionaryEntry( 1344, socket.language ) ); //The potion had no effect.
+				{
+					socket.SysMessage( GetDictionaryEntry( 1344, socket.language )); //The potion had no effect.
+				}
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
@@ -94,12 +104,12 @@ function onUseChecked( pUser, iUsed )
 				var pRegion = pUser.region;
 				if( pRegion.isSafeZone )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
+					socket.SysMessage( GetDictionaryEntry( 1799, socket.language )); // Hostile actions are not permitted in this safe area.
 					return false;
 				}
 				else if( pRegion.isGuarded )
 				{
-					socket.SysMessage( GetDictionaryEntry( 1347, socket.language ) ); //You can't use that in town!
+					socket.SysMessage( GetDictionaryEntry( 1347, socket.language )); //You can't use that in town!
 					return false;
 				}
 				else
@@ -145,7 +155,7 @@ function onUseChecked( pUser, iUsed )
 					// Disallow immediately using other potions
 					pUser.isUsingPotion = true;
 					DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 );
-					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
+					socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language )); //Now would be a good time to throw it!
 				}
 				break;
 			case 4:		// Heal Potion
@@ -193,10 +203,12 @@ function onUseChecked( pUser, iUsed )
 				break;
 			case 6:		// Poison Potion
 				if( pUser.poison < iUsed.morez )
-					pUser.SetPoisoned( iUsed.morez, 180*1000 );
+				{
+					pUser.SetPoisoned( iUsed.morez, 180 * 1000 );
+				}
 
 				pUser.SoundEffect( 0x0246, true );
-				socket.SysMessage( GetDictionaryEntry( 1352, socket.language ) ); //You poisoned yourself! *sigh*
+				socket.SysMessage( GetDictionaryEntry( 1352, socket.language )); //You poisoned yourself! *sigh*
 				pUser.isUsingPotion = true;
 				DoTempEffect( 0, pUser, pUser, 26, 0, 0, 0 ); //Disallow immediately using another potion
 				break;
@@ -205,11 +217,11 @@ function onUseChecked( pUser, iUsed )
 				{
 					case 1:
 						pUser.stamina = (pUser.stamina + 20 + RandomNumber( 1, 10 ));
-						socket.SysMessage( GetDictionaryEntry( 1353, socket.language ) ); //You feel more energetic!
+						socket.SysMessage( GetDictionaryEntry( 1353, socket.language )); //You feel more energetic!
 						break;
 					case 2:
 						pUser.stamina = (pUser.stamina + 40 + RandomNumber( 1, 30 ));
-						socket.SysMessage( GetDictionaryEntry( 1354, socket.language ) ); //You feel much more energetic!
+						socket.SysMessage( GetDictionaryEntry( 1354, socket.language )); //You feel much more energetic!
 						break;
 					default:
 						break;
@@ -223,12 +235,12 @@ function onUseChecked( pUser, iUsed )
 				switch( iUsed.morez )
 				{
 					case 1:
-						DoTempEffect( 0, pUser, pUser, 8, (5 + RandomNumber( 1, 10 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1355, socket.language ) ); //You feel stronger!
+						DoTempEffect( 0, pUser, pUser, 8, ( 5 + RandomNumber( 1, 10 )), 0, 0 );
+						socket.SysMessage( GetDictionaryEntry( 1355, socket.language )); //You feel stronger!
 						break;
 					case 2:
-						DoTempEffect( 0, pUser, pUser, 8, (10 + RandomNumber( 1, 20 )), 0, 0 );
-						socket.SysMessage( GetDictionaryEntry( 1356, socket.language ) ); //You feel much stronger!
+						DoTempEffect( 0, pUser, pUser, 8, ( 10 + RandomNumber( 1, 20 )), 0, 0 );
+						socket.SysMessage( GetDictionaryEntry( 1356, socket.language )); //You feel much stronger!
 						break;
 					default:
 						break;
@@ -242,10 +254,10 @@ function onUseChecked( pUser, iUsed )
 				switch( iUsed.morez )
 				{
 					case 1:
-						pUser.mana = (pUser.mana + 10 + (iUsed.morex / 100));
+						pUser.mana = ( pUser.mana + 10 + ( iUsed.morex / 100 ));
 						break;
 					case 2:
-						pUser.mana = (pUser.mana + 20 + (iUsed.morex / 50));
+						pUser.mana = ( pUser.mana + 20 + ( iUsed.morex / 50 ));
 						break;
 					default:
 						break;
@@ -264,17 +276,25 @@ function onUseChecked( pUser, iUsed )
 		{
 			pUser.SoundEffect( 0x0030, true );
 			if( pUser.id > 0x0189 && !pUser.isonhorse )
+			{
 				pUser.DoAction( 0x22 );
+			}
 
 			if( iUsed.amount > 1 )
+			{
 				iUsed.amount--;
+			}
 			else
+			{
 				iUsed.Delete();
+			}
 
 			// Create empty bottle
 			var eBottle = CreateDFNItem( socket, pUser, "0x0F0E", 1, "ITEM", true );
 			if( eBottle && eBottle.isItem )
+			{
 				eBottle.decay = true;
+			}
 		}
 	}
 	return false;
@@ -300,7 +320,7 @@ function onCallback0( socket, ourObj )
 				socket.SysMessage( GetDictionaryEntry( 1646, socket.language )); // You cannot see that
 
 				// Give player another chance to throw the potion before it blows up in their face
-				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
+				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language )); //Now would be a good time to throw it!
 				return;
 			}
 		}
@@ -312,7 +332,9 @@ function onCallback0( socket, ourObj )
 
 			// If connected with a client lower than v7.0.9, manually add height of targeted tile
 			if( socket.clientMajorVer <= 7 && socket.clientSubVer < 9 )
+			{
 				z += GetTileHeight( socket.GetWord( 17 ));
+			}
 
 			// We need a LineOfSight check
 			if( mChar.CanSee( x, y, z ))
@@ -325,7 +347,7 @@ function onCallback0( socket, ourObj )
 				socket.SysMessage( GetDictionaryEntry( 1646, socket.language )); // You cannot see that
 
 				// Give player another chance to throw the potion before it blows up in their face
-				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language ) ); //Now would be a good time to throw it!
+				socket.CustomTarget( 0, GetDictionaryEntry( 1348, socket.language )); //Now would be a good time to throw it!
 				return;
 			}
 		}
@@ -351,7 +373,7 @@ function onTimer( timerObj, timerID )
 		  	DoStaticEffect( timerObj.x, timerObj.y, timerObj.z, 0x36B0, 0x09, 0x0d, false );
 			timerObj.SoundEffect( 0x0207, true );
 
-		  	AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
+		  	var explosionCounter = AreaCharacterFunction( "ApplyExplosionDamage", timerObj, 4 );
 		}
 		else
 		{
@@ -364,7 +386,9 @@ function onTimer( timerObj, timerID )
 				// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
 				var alchemyBonus = 0;
 				if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
-					alchemyBonus = Math.round(packOwner.skills.alchemy / alchemyBonusModifier);
+				{
+					alchemyBonus = Math.round(( packOwner.skills.alchemy / 10 ) / alchemyBonusModifier );
+				}
 
 				// Deal damage to player holding the potion
 				packOwner.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5 );
@@ -386,7 +410,9 @@ function onTimer( timerObj, timerID )
 		{
 			// Player has not thrown potion yet - show timer above character's head, but only to player
 			if( packOwner != null && packOwner.isChar )
+			{
 				packOwner.TextMessage( countdown.toString(), false, 0x0026, -1, -1, -1, 6 );
+			}
 		}
 	}
 }
@@ -415,7 +441,9 @@ function ApplyExplosionDamage( timerObj, targetChar )
 		// Apply alchemy bonus to explosion damage, if it's enabled and higher than 0 (both set in INI)
 		var alchemyBonus = 0;
 		if( alchemyBonusEnabled && alchemyBonusModifier > 0 )
-			alchemyBonus = Math.round(sourceChar.skills.alchemy / alchemyBonusModifier);
+		{
+			alchemyBonus = Math.round(( sourceChar.skills.alchemy / 10 ) / alchemyBonusModifier );
+		}
 
 		// Deal damage, and do criminal check for source character!
 		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ) + alchemyBonus, 5, sourceChar, true );

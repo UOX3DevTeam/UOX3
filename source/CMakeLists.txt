@@ -44,7 +44,7 @@ add_library(uox
 		vendor.cpp
 		ObjectFactory.cpp
 		cItem.cpp
-		cplayeraction.cpp
+		cPlayerAction.cpp
 		pcmanage.cpp
 		weight.cpp
 		PartySystem.cpp
@@ -53,7 +53,6 @@ add_library(uox
 		quantityfuncs.cpp
 		wholist.cpp
 		SEFunctions.cpp
-		cPlayerAction.cpp
 		effect.cpp
 		queue.cpp
 		worldmain.cpp
@@ -73,14 +72,13 @@ add_library(uox
 		cServerDefinitions.cpp
 		house.cpp
 		sound.cpp
-		UOPInterface.cpp
 		StringUtility.cpp
 		UOPData.cpp
 		MultiMul.cpp
-		IDXMul.cpp
 		IP4Address.cpp
 		TimeUtility.cpp
 		EventTimer.cpp
+		osunique.cpp
 )
 
 target_include_directories(uox

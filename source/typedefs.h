@@ -1,20 +1,27 @@
 #ifndef __UOXTYPES_H
 #define __UOXTYPES_H
 
+//o------------------------------------------------------------------------------------------------o
+// General note on constexpr and how it varies with const
+//	constexpr is compile time evaluation(const is evaluated at run time).
+//	So it can replace defines for static constants.  constexpr can only
+//	be applied to intrinsics (so can not be applied to say, std::string values).
+//
+//o------------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//	A note on "using"
+//	Using-declarations can be used to introduce namespace members into other namespaces and block
+//	scopes, or to introduce base class members into derived class definitions, or to introduce
+//	enumerators into namespaces, block, and class scopes (since C++20).
+//
+//o------------------------------------------------------------------------------------------------o
+
 #include <unordered_map>
-
-#ifdef __NEED_VALIST__
-typedef void *  va_list;
-#endif
-
-#if PLATFORM != WINDOWS
-#define MAX_PATH			268
-#endif
-
+#include <cstdint>
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
-Console.print( oldstrutil::format("Socket failure at %s", __FILE__LINE__) );	\
+Console.Print( oldstrutil::format( "Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
@@ -22,139 +29,102 @@ return;	\
 return;
 #endif
 
-typedef float				R32;
-typedef double				R64;
-typedef unsigned char		UI08; // 0 to 255
-typedef signed char			SI08; // -128 to 127
-typedef unsigned short int	UI16; // 0 to 65535
-typedef signed short int	SI16; // -32768 to 32767
-typedef unsigned int		UI32; // 0 to 4294967295
-typedef signed int			SI32; // -2147483648 to 2147483647
-typedef unsigned long long	UI64; // 0 to 18446744073709551615
-typedef signed long long	SI64; // -9223372036854775808 to 9223372036854775807
-
-typedef UI08		GENDER;
-typedef UI08		LIGHTLEVEL;
-typedef UI08		COLDLEVEL;
-typedef UI08		HEATLEVEL;
-typedef UI08		SECONDS;
-typedef UI08		ARMORCLASS;
-typedef SI08		RACEREL;
-typedef SI08		RANGE;
-typedef UI16		RACEID;
-typedef UI16		COLOUR;
-typedef UI16		SKILLVAL;
-typedef UI16		weathID;
-typedef SI16		GUILDID;
-typedef UI32		TIMERVAL;
-#if defined(_WIN32)
-typedef UI32		UOXSOCKET;
-#else
-typedef SI32		UOXSOCKET;
+#ifdef __NEED_VALIST__
+typedef void *  va_list;
 #endif
-typedef UI32		SERIAL;
 
-const SERIAL		INVALIDSERIAL		= 0xFFFFFFFF;
-const UI16			INVALIDID			= 0xFFFF;
-const UI16			INVALIDCOLOUR		= 0xFFFF;
-const SERIAL		BASEITEMSERIAL		= 0x40000000;
+//o------------------------------------------------------------------------------------------------o
+// Setting up types used
+//o------------------------------------------------------------------------------------------------o
 
-typedef std::vector< CMapRegion * >						REGIONLIST;
-typedef std::vector< CMapRegion * >::iterator			REGIONLIST_ITERATOR;
-typedef std::vector< CMapRegion * >::const_iterator		REGIONLIST_CITERATOR;
+using R32 = float;
+using R64 = double;
+using UI08 = std::uint8_t;	// 0 to 255
+using SI08 = std::int8_t;	// -128 to 127
+using UI16 = std::uint16_t;	// 0 to 65535
+using SI16 = std::int16_t;	// -32768 to 32767
+using UI32 = std::uint32_t;	// 0 to 4294967295
+using SI32 = std::int32_t;	// -2147483648 to 2147483647
+using UI64 = std::uint64_t;	// 0 to 18446744073709551615
+using SI64 = std::int64_t;	// -9223372036854775808 to 9223372036854775807
 
-typedef std::vector< CSocket * >						SOCKLIST;
-typedef std::vector< CSocket * >::iterator				SOCKLIST_ITERATOR;
-typedef std::vector< CSocket * >::const_iterator		SOCKLIST_CITERATOR;
-//
-typedef std::vector< std::string >						STRINGLIST;
-typedef std::vector< std::string >::iterator			STRINGLIST_ITERATOR;
-typedef std::vector< std::string >::const_iterator		STRINGLIST_CITERATOR;
-//
-typedef std::vector< SERIAL >							SERLIST;
-typedef std::vector< SERIAL >::iterator					SERLIST_ITERATOR;
-typedef std::vector< SERIAL >::const_iterator			SERLIST_CITERATOR;
-//
-typedef std::vector< CChar* >							CHARLIST;
-typedef std::vector< CChar* >::iterator					CHARLIST_ITERATOR;
-typedef std::vector< CChar* >::const_iterator			CHARLIST_CITERATOR;
-//
-typedef std::vector< CItem* >							ITEMLIST;
-typedef std::vector< CItem* >::iterator					ITEMLIST_ITERATOR;
-typedef std::vector< CItem* >::const_iterator			ITEMLIST_CITERATOR;
-//
-typedef std::vector< CBaseObject* >						BASEOBJECTLIST;
-typedef std::vector< CBaseObject* >::iterator			BASEOBJECTLIST_ITERATOR;
-typedef std::vector< CBaseObject* >::const_iterator		BASEOBJECTLIST_CITERATOR;
-//
-typedef std::map< CBaseObject *, UI32 >					QUEUEMAP;
-typedef std::map< CBaseObject *, UI32 >::iterator		QUEUEMAP_ITERATOR;
-typedef std::map< CBaseObject *, UI32 >::const_iterator QUEUEMAP_CITERATOR;
-//
-typedef std::unordered_map< UI16, CSpawnRegion * >					SPAWNMAP;
-typedef std::unordered_map< UI16, CSpawnRegion * >::const_iterator	SPAWNMAP_CITERATOR;
-//
-typedef std::map< UI16, CTownRegion * >						TOWNMAP;
-typedef std::map< UI16, CTownRegion * >::const_iterator		TOWNMAP_CITERATOR;
+using SERIAL 		= std::uint32_t;
+using GENDER 		= std::uint8_t;
+using LIGHTLEVEL 	= std::uint8_t;
+using COLDLEVEL		= std::uint8_t;
+using HEATLEVEL		= std::uint8_t;
+using SECONDS		= std::uint8_t;
+using ARMORCLASS	= std::uint8_t;
+using RACEREL		= std::int8_t;
+using RANGE			= std::int8_t;
+using RACEID		= std::uint16_t;
+using COLOUR		= std::uint16_t;
+using SKILLVAL		= std::uint16_t;
+using WEATHID		= std::uint16_t;
+using GUILDID		= std::int16_t;
+using TIMERVAL		= std::uint32_t;
 
-typedef void (TargetFunc)( CSocket *s );
+#if defined(_WIN32)
+using UOXSOCKET = 	std::uint32_t;
+#else
+using UOXSOCKET = 	std::int32_t;
+#endif
 
-// December 27, 2000
-typedef struct __STARTLOCATIONDATA__
-{
-	__STARTLOCATIONDATA__()
-	{
-		memset( this, 0x00, sizeof( __STARTLOCATIONDATA__ ) );
-	}
-	char	oldTown[31];
-	char	oldDescription[31];
-	char	newTown[32];
-	char	newDescription[32];
-	SI16	x;
-	SI16	y;
-	SI16	z;
-	SI16	worldNum;
-	UI16	instanceID;
-	UI32	clilocDesc;
-
-} STARTLOCATION, *LPSTARTLOCATION;
-//	 	-	End
-
-// Max values
-const UI08 MAX_NAME		= 128;	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
-								// Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
-const UI08 MAX_TITLE	= 60;
-const UI16 MAX_STACK	= 0xFFFF;
-const UI08 MAX_VISRANGE	= 18;
-const UI16 MAXBUFFER	= 4096;	// Buffer Size (For socket operations)
-const UI08 MAXPOSTS		= 128;	// Maximum number of posts on a messageboard
-
-const SI08 ILLEGAL_Z	= -128;
-
+//==================================================================================================
+// Setting up constants
+//==================================================================================================
 // Offsets for Gump menu's (Relates to menus.dfn)
-#define ITEMMENUOFFSET		256
-#define TRACKINGMENUOFFSET	4096
-#define POLYMORPHMENUOFFSET 8192
-#define JSGUMPMENUOFFSET	16384
+constexpr auto ITEMMENUOFFSET		= 256;
+constexpr auto TRACKINGMENUOFFSET	= 4096;
+constexpr auto POLYMORPHMENUOFFSET	= 8192;
+constexpr auto JSGUMPMENUOFFSET		= 16384;
 
-const UI08 NORTH		= 0x00;
-const UI08 NORTHEAST	= 0x01;
-const UI08 EAST			= 0x02;
-const UI08 SOUTHEAST	= 0x03;
-const UI08 SOUTH		= 0x04;
-const UI08 SOUTHWEST	= 0x05;
-const UI08 WEST			= 0x06;
-const UI08 NORTHWEST	= 0x07;
-const UI08 UNKNOWNDIR	= 0xFF;
+constexpr auto INVALIDSERIAL	= SERIAL( 0xFFFFFFFF );
+constexpr auto INVALIDID		= std::uint16_t( 0xFFFF );
+constexpr auto INVALIDCOLOUR	= std::uint16_t( 0xFFFF );
+constexpr auto BASEITEMSERIAL	= SERIAL( 0x40000000 );
+#if PLATFORM != WINDOWS
+constexpr auto  MAX_PATH = 268;
+#endif
+
+constexpr auto MAX_NAME 	= std::uint8_t( 128 );	// Several areas where we pass a character name will be restricted by packet size to 30 characters.
+													// Higher MAX_NAME values do, however, work for items - and are in some cases required (magic item names, for instance). 
+													// Seems to still work for regular-length names if I increase it, but we might consider splitting this into character/item-specific somehow?
+constexpr auto MAX_ORIGIN 	= std::uint8_t( 128 );  // To store expansion origin of item
+constexpr auto MAX_TITLE	= std::uint8_t( 60 );
+constexpr auto MAX_STACK	= std::uint16_t( 0xFFFF );
+constexpr auto MAX_VISRANGE	= std::uint8_t( 18 );
+constexpr auto MAXBUFFER	= std::uint16_t( 4096 );	// Buffer Size (For socket operations)
+constexpr auto MAXPOSTS		= std::uint8_t( 128 );		// Maximum number of posts on a messageboard
+
+constexpr auto ILLEGAL_Z	= std::int8_t( -128 );
+
+
+
+constexpr auto NORTH		= std::uint8_t( 0x00 );
+constexpr auto NORTHEAST	= std::uint8_t( 0x01 );
+constexpr auto EAST			= std::uint8_t( 0x02 );
+constexpr auto SOUTHEAST	= std::uint8_t( 0x03 );
+constexpr auto SOUTH		= std::uint8_t( 0x04 );
+constexpr auto SOUTHWEST	= std::uint8_t( 0x05 );
+constexpr auto WEST			= std::uint8_t( 0x06 );
+constexpr auto NORTHWEST	= std::uint8_t( 0x07 );
+constexpr auto UNKNOWNDIR	= std::uint8_t( 0xFF );
 
 // Line Of Sight
-#define ITEM_TYPE_CHOICES		6
-const UI08 TREES_BUSHES			= 1;	// Trees and other large vegetaion in the way
-const UI08 WALLS_CHIMNEYS		= 2;	// Walls, chimineys, ovens, etc... in the way
-const UI08 DOORS				= 4;	// Doors in the way
-const UI08 ROOFING_SLANTED		= 8;	// So can't tele onto slanted roofs, basically
-const UI08 FLOORS_FLAT_ROOFING	= 16;	// For attacking between floors
-const UI08 LAVA_WATER			= 32;	// Don't know what all to use this for yet
+constexpr auto ITEM_TYPE_CHOICES 	= 6;
+constexpr auto TREES_BUSHES			= std::uint8_t( 1 );	// Trees and other large vegetaion in the way
+constexpr auto WALLS_CHIMNEYS		= std::uint8_t( 2 );	// Walls, chimineys, ovens, etc... in the way
+constexpr auto DOORS				= std::uint8_t( 4 );	// Doors in the way
+constexpr auto ROOFING_SLANTED		= std::uint8_t( 8 );	// So can't tele onto slanted roofs, basically
+constexpr auto FLOORS_FLAT_ROOFING	= std::uint8_t( 16 );	// For attacking between floors
+constexpr auto LAVA_WATER			= std::uint8_t( 32 );	// Don't know what all to use this for yet
+
+//==================================================================================================
+// types we will get rid of - keeping for now
+//==================================================================================================
+
+typedef void ( TargetFunc )( CSocket *s );
 
 #endif
 

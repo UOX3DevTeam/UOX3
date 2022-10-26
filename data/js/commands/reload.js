@@ -1,3 +1,6 @@
+// These commands are alternate ways (to UOX3 console commands) for
+// reloading INI, DFNs, JS files, etc.
+
 function CommandRegistration()
 {
 	RegisterCommand( "reloadaccounts", 3, true );	// reload accounts
@@ -23,14 +26,14 @@ function command_RELOADACCOUNTS( socket, cmdString )
 
 function command_RELOADDEFS( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 1748, socket.language );
+	var dictMessage = GetDictionaryEntry( 1748, socket.language ); // Reloading new scripts...
 	socket.SysMessage( dictMessage );
 	Reload( 4 );
 }
 
 function command_RELOADINI( socket, cmdString )
 {
-	var dictMessage = GetDictionaryEntry( 45, socket.language );
+	var dictMessage = GetDictionaryEntry( 45, socket.language ); // INI file reloaded.
 	socket.SysMessage( dictMessage );
 	Reload( 7 );
 }
@@ -39,7 +42,7 @@ function command_RELOADJSFILE( socket, cmdString )
 {
 	var scriptID = parseInt( cmdString );
 	var tempMsg = GetDictionaryEntry( 8003, socket.language ); // Attempting Reload of JavaScript (ScriptID %i)
-	socket.SysMessage( tempMsg.replace(/%i/gi, cmdString ));
+	socket.SysMessage( tempMsg.replace( /%i/gi, cmdString ));
 	ReloadJSFile( scriptID );
 }
 
@@ -63,7 +66,7 @@ function command_RELOADSPAWNREGIONS( socket, cmdString )
 
 function command_RELOADALL( socket, cmdString )
 {
-	BroadcastMessage( GetDictionaryEntry( 1746, socket.language ));
+	BroadcastMessage( GetDictionaryEntry( 1746, socket.language )); // Possible pause... reloading server scripts
 	Reload( 8 );
 }
 

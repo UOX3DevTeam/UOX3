@@ -660,7 +660,7 @@
 668=¡Este artículo no puede ser atrapado!
 669=¡No puede bloquear esto!
 670=¡No puedes teletransportarte aquí!
-671=¡Renuncia al aspirante a Jesús!
+671=¡No puedes teletransportarte allí!
 672=¡No puedes teletransportarte allí!
 673=Este objeto ha sido protegido con magia divina.  No puedes desbloquear este objeto.
 674=Desbloqueas el objeto.
@@ -1668,6 +1668,29 @@
 1663=Mi pequeño hijo Timmy necesita una operación, ¿tenéis algo de oro para ayudar a la causa?
 1664=Mi mujer está embarazada de nuestro séptimo hijo, tenga un poco de piedad en forma de oro para un hombre desesperado.
 // Fin del texto inicial
+1670=No puedes disfrazarte mientras llevas pintura corporal
+1671=No puedes polimorfar mientras llevas pintura corporal
+1672=No puedes usar el incógnito mientras llevas pintura corporal
+1673=No puedes hacer eso mientras estás de incógnito
+1674=No puedes hacer eso mientras estás polimorfo.
+1675=Tu piel se chamusca al quemarse la pintura tribal.
+1676=¡Tu pintura corporal se ha desgastado!
+1677=No puedes disfrazarte mientras estás de incógnito.
+1678=No puedes disfrazarte mientras estás polimorfo.
+1679=Ya estás disfrazado.
+1680=Ahora llevas las marcas de la tribu salvaje.  Tu pintura corporal durará aproximadamente una semana o puedes quitarla con un paño de aceite.
+1681=Limpias toda tu pintura corporal.
+1682=¡La Lanza Tribal se rompe en tus manos al recogerla!
+1683=%s empieza a balancear una bola
+1684=Introduce un nuevo título para el miembro del gremio:
+1685=Selecciona el miembro del gremio para establecer el título
+1686=¡Se te ha concedido el título de gremio de %s!
+1687=¡Has reclutado a %s como nuevo miembro del gremio!
+1688=¡Has reclutado a %s como nuevo miembro del gremio!
+1689=¡Has despedido a %s de tu gremio!
+1690=¡Has sido expulsado de tu gremio!
+1691=¡No puedes darte de baja del gremio!
+1692=¡%s es ahora el nuevo Maestro del Gremio de %s!
 // Ajustar las cosas del menú Char
 1700=Botón no válido pulsado
 1701=Introducir un nuevo nombre para el personaje.
@@ -1951,6 +1974,15 @@
 1979=Islas Tokuno
 1980=Ter Mur
 1981=Los miembros de la raza %s no pueden llevar esto
+1982=¡Paraste el ataque!
+1983=¡Tu arma ha sido destruida!
+1984=¡No eres miembro de este gremio!
+1985=¡Has apadrinado a %s como candidato a unirse al gremio!
+1986=Has sido invitado por %s a unirte al gremio: %s
+1987=¡Has declarado fidelidad a %s!
+1988=¡%s te ha declarado lealtad!
+1989=¡Tu gremio ha declarado la guerra al gremio %s!
+1990=¡Tu gremio ha declarado al gremio %s como aliado!
 // Menú de ajustes basado en JS
 1991=¡Objeto inválido apuntado!
 1992=¡Objetivo desconocido!
@@ -2159,6 +2191,18 @@
 2204=Lista de amigos
 2205=Los espíritus de los muertos no son competencia de la sabiduría animal.
 2206=No se te ocurre nada que conozcas de improviso.
+2250=Confuso
+2251=Extremadamente infeliz
+2252=Más bien infeliz
+2253=Infeliz
+2254=Algo contento
+2255=Contento
+2256=Feliz
+2257=Muy contento
+2258=Muy contento
+2259=Extremadamente feliz
+2260=Maravillosamente feliz
+2261=Eufórico
 // [2300-2449] Contratados
 2300=%s ha sido eliminado de la lista de amigos de %s.
 2301=Has sido eliminado de la lista de amigos de %s.
@@ -2467,6 +2511,15 @@
 2759=¿Tus padres nunca te dijeron que no corrieras con las tijeras en la mano?
 2760=No puedes deshacer la magia de un objeto bendecido.
 2761=¡La criatura ha resistido el intento de disipación!
+2762=Número de parámetros no válido - ¡se necesitan 2 (timerID,scriptID)!
+2763=¿Conseguir el tiempo restante del temporizador JS para qué objeto?
+2764=El temporizador expirará en: %s
+2765=Tiempo restante: %d segundos
+2766=¡No hay ningún temporizador JS con timerID %d y scriptID %u activo en el objeto!
+2767=¡Número de parámetros no válido - requiere 3 (timerID,expiryTime,scriptID)!
+2768=¿Qué tiempo restante del temporizador JS para qué objeto?
+2769=¿Matar el temporizador JS especificado para qué objeto?
+2770=El temporizador JS especificado ha sido eliminado para el objeto seleccionado.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
@@ -3274,6 +3327,10 @@
 6213=Esta poción puede estar hecha de ceniza sulfurosa.
 6214=Los ingredientes de esta poción son desconocidos para usted.
 6215=Ya sabe qué tipo de poción es: %s
+6250=Sales de las sombras.
+6275=Combinas la baya y la harina en la pintura tribal que llevan los salvajes.
+6276=No tienes la habilidad de cocinar para crear la pintura corporal.
+6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3521,6 +3578,10 @@
 8207=Alcance básico del arma a distancia (sólo en SA y posteriores)
 8208=Usos restantes actuales del artículo (no puede superar el valor de la propiedad maxUses)
 8209=Máxima cantidad de usos que puede tener el artículo
+8210=Redirigiendo a 'radditem command...
+8211=Redirigiendo a 'raddnpc comando...
+8212=Sintaxis de comando válida para repetir la adición de objetos: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
+8213=Identificación de la sección de DFNs de la que procede el objeto
 // [8300-8499] Menú de ajustes - Descripciones de las propiedades de los personajes
 8300=Número de cuenta asociado al jugador. Controlado por el servidor (sólo lectura)
 8301=Tipo de IA del PNJ
@@ -3653,6 +3714,11 @@
 8428=coordenada X del personaje en el mundo
 8429=coordenada Y del personaje en el mundo
 8430=coordenada Z del personaje en el mundo
+8431=Coordenada X superior izquierda del límite del wandertype del personaje
+8432=Coordenada Y superior izquierda del límite del wandertype del personaje
+8433=Coordenada X inferior derecha del límite del wandertype del personaje
+8434=Coordenada Y inferior derecha para el límite de wandertype del personaje
+8435=Coordenada Z del límite del wandertype del personaje
 // [8500-8549] Menú de ajustes - Descripciones de propiedades múltiples
 8500=Número actual de jugadores vetados en Multi. Controlado por el servidor (sólo lectura)
 8501=coordenada X para la ubicación de prohibición de Multi
@@ -3990,6 +4056,12 @@
 9128=No tienes ninguna posibilidad de provocar a esa criatura.
 9129=¡Ese objetivo es inmune al daño físico!
 9130=Tu arma no puede penetrar la barrera mágica de la criatura.
+9140=de calidad excepcional
+9141=de fabricación artesanal
+9142=Desbloquea el tablón.
+9143=Cierras el tablón.
+9144=Abres el tablón, aunque sigue bloqueado.
+9150=¡No se ha detectado ninguna mochila, no se puede añadir ningún objeto! Pruebe el 'comando addpack?
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
@@ -4339,6 +4411,8 @@
 11218=Arco
 11219=Ballesta
 11220=Ballesta pesada
+11221=Arco compuesto
+11222=Ballesta de repetición
 // 11401 - 11600 Habilidad de sastrería
 11401=MENÚ DE SASTRERÍA
 11402=CUERO/PIELES

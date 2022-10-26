@@ -1,7 +1,7 @@
 #ifndef __CRESPONSE_H__
 #define __CRESPONSE_H__
 
-enum TargetIDs;
+enum TargetIds;
 
 enum TriggerWords
 {
@@ -173,19 +173,19 @@ public:
 	}
 	virtual void	Handle( CSocket *mSock, CChar *mChar ) override;
 	virtual bool	Handle( CSocket *mSock, CChar *mChar, CChar *Npc ) = 0;
-	//bool			canControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false, bool checkDifficulty = false );
+	//bool			CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted = false, bool checkDifficulty = false );
 };
 
 class CPetMultiResponse : public CBasePetResponse
 {
 protected:
 	SI32			dictEntry;
-	TargetIDs		targID;
+	TargetIds		targId;
 	bool			isRestricted;
 	bool			allSaid;
 	bool			checkDifficulty;
 public:
-	CPetMultiResponse( const std::string &text, bool isRestricted, TargetIDs targVal, SI32 dictVal, bool saidAll, bool checkControlDifficulty );
+	CPetMultiResponse( const std::string &text, bool isRestricted, TargetIds targVal, SI32 dictVal, bool saidAll, bool checkControlDifficulty );
 	virtual			~CPetMultiResponse()
 	{
 	}
@@ -331,9 +331,9 @@ class CHouseMultiResponse : public CBaseResponse
 {
 protected:
 	SI32			dictEntry;
-	TargetIDs		targID;
+	TargetIds		targId;
 public:
-	CHouseMultiResponse( TargetIDs newTarg, SI32 newDict );
+	CHouseMultiResponse( TargetIds newTarg, SI32 newDict );
 	virtual			~CHouseMultiResponse()
 	{
 	}

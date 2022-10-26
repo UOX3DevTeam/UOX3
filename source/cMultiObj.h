@@ -5,20 +5,20 @@
 class CMultiObj : public CItem
 {
 protected:
-	std::string			deed;
+	std::string				deed;
 
-	std::map< CChar *, UI08 >	housePrivList;
+	std::map<CChar *, UI08>	housePrivList;
 
-	ITEMLIST			lockedList;
-	UI16				maxLockdowns;
+	std::vector<CItem *>	lockedList;
+	UI16					maxLockdowns;
 
-	ITEMLIST			secureContainerList;
-	UI16				maxSecureContainers;
+	std::vector<CItem *>	secureContainerList;
+	UI16					maxSecureContainers;
 
-	ITEMLIST			trashContainerList;
-	UI16				maxTrashContainers;
+	std::vector<CItem *>	trashContainerList;
+	UI16					maxTrashContainers;
 
-	CHARLIST			vendorList;
+	std::vector<CChar *>	vendorList;
 	UI16				maxVendors;
 
 	UI16				maxFriends;
@@ -37,12 +37,12 @@ protected:
 
 	virtual bool		LoadRemnants( void ) override;
 
-	GenericList< CItem * >	itemInMulti;
-	GenericList< CChar * >	charInMulti;
-	GenericList< CChar * >	ownersOfMulti;
-	GenericList< CChar * >	friendsOfMulti;
-	GenericList< CChar * >	bannedFromMulti;
-	GenericList< CChar * >	guestsOfMulti;
+	GenericList<CItem *>	itemInMulti;
+	GenericList<CChar *>	charInMulti;
+	GenericList<CChar *>	ownersOfMulti;
+	GenericList<CChar *>	friendsOfMulti;
+	GenericList<CChar *>	bannedFromMulti;
+	GenericList<CChar *>	guestsOfMulti;
 
 public:
 	CMultiObj();
@@ -146,12 +146,12 @@ public:
 
 	virtual bool		CanBeObjType( ObjectType toCompare ) const override;
 
-	GenericList< CChar * > *	GetOwnersOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetFriendsOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetGuestsOfMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetBannedFromMultiList( bool clearList = false );
-	GenericList< CChar * > *	GetCharsInMultiList( void );
-	GenericList< CItem * > *	GetItemsInMultiList( void );
+	GenericList<CChar *> *	GetOwnersOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetFriendsOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetGuestsOfMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetBannedFromMultiList( bool clearList = false );
+	GenericList<CChar *> *	GetCharsInMultiList( void );
+	GenericList<CItem *> *	GetItemsInMultiList( void );
 
 };
 

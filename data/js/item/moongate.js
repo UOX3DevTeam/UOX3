@@ -56,9 +56,13 @@ function onUseChecked( pUser, iUsed )
 
 	//Compare the 2, if the same, then we are allready using this gate
 	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	{
 		return false;
+	}
 	else
+	{
 		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+	}
 
 	// Create and display travel gump
 	DisplayTravelGump( srcSock, pUser );
@@ -82,9 +86,13 @@ function onCollide( srcSock, pUser, iUsed )
 		oldSerial = iCheck.split( ',' );
 	}
 	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	{
 		return;
+	}
 	else
+	{
 		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+	}
 	DisplayTravelGump( srcSock, pUser );
 }
 
@@ -95,10 +103,12 @@ function CanUseGate( srcSock, pUser )
 	{
 		// Disallow moongate travel for players flagged as criminals
 		if( srcSock )
+		{
 			srcSock.SysMessage( GetDictionaryEntry( 9112, srcSock.language )); // Thou'rt a criminal and cannot escape so easily.
+		}
 		return false;
 	}
-	else if( pUser.atWar && pUser.attackFirst)
+	else if( pUser.atWar && pUser.attackFirst )
 	{
 		// Disallow moongate travel for players flagged as aggressors
 		var pTarget = pUser.target;
@@ -107,7 +117,9 @@ function CanUseGate( srcSock, pUser )
 			if( !pTarget.npc && !pTarget.dead && pTarget.online && !pTarget.criminal && !pTarget.murderer )
 			{
 				if( srcSock )
+				{
 					srcSock.SysMessage( GetDictionaryEntry( 9113, srcSock.language )); // Wouldst thou flee during the heat of battle??
+				}
 				return false;
 			}
 		}
@@ -120,7 +132,9 @@ function CanUseGate( srcSock, pUser )
 			if( pUser.isCasting )
 			{
 				if( srcSock )
+				{
 					srcSock.SysMessage( GetDictionaryEntry( 9114, srcSock.language )); // You are too busy to do that at the moment.
+				}
 				return false;
 			}
 		}
@@ -177,9 +191,13 @@ function onGumpPress( srcSock, myButton )
 
 	// Where we going... Fel or tram
 	if( myButton >=5 && myButton <= 12 )
+	{
 		tWorld = 0;  //Going to Fel
+	}
 	if( myButton >= 13 && myButton <= 20 )
+	{
 		tWorld = 1;  //Going to Tram
+	}
 
 	var targetLocation = new Array();
 	switch( myButton )
@@ -345,7 +363,7 @@ function onGumpPress( srcSock, myButton )
 	for( var i = 0; i < petList.length; i++ )
 	{
 		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 12 ))
+		if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 24 ))
 		{
 			tempPet.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
 			tempPet.Follow( srcChar );
@@ -364,8 +382,8 @@ function DisplayTravelGump( srcSock, pUser )
 	var myGump = new Gump;
 
 	// add a background
-	myGump.AddPage(1);  //Page 1 Felucca
-	myGump.AddBackground(20, 20, 260, 245, 0x23f0);
+	myGump.AddPage( 1 );  //Page 1 Felucca
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 	//Cancel Button
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
@@ -375,23 +393,23 @@ function DisplayTravelGump( srcSock, pUser )
 	{
 		myGump.AddText( 70, 70, 12, "Felucca" );
 		myGump.AddButton( 48, 72, 0x4b9, 0, 1, 0 );
-	//Location Buttons
-	myGump.AddText( 170, 70, 0, "Britian" );
-	myGump.AddButton( 150, 75, 0x837, 1, 0, 5 );
-	myGump.AddText( 170, 90, 0, "Magincia" );
-	myGump.AddButton( 150, 95, 0x837, 1, 0, 6 );
-	myGump.AddText( 170, 110, 0, "Moonglow" );
-	myGump.AddButton( 150, 115, 0x837, 1, 0, 7 );
-	myGump.AddText( 170, 130, 0, "Skara Brea" );
-	myGump.AddButton( 150, 135, 0x837, 1, 0, 8 );
-	myGump.AddText( 170, 150, 0, "Trinsic" );
-	myGump.AddButton( 150, 155, 0x837, 1, 0, 9 );
-	myGump.AddText( 170, 170, 0, "Vesper" );
-	myGump.AddButton( 150, 175, 0x837, 1, 0, 10 );
-	myGump.AddText( 170, 190, 0, "Yew" );
-	myGump.AddButton( 150, 195, 0x837, 1, 0, 11 );
-	myGump.AddText( 170, 210, 0, "Jhelom" );
-	myGump.AddButton( 150, 215, 0x837, 1, 0, 12 );
+		//Location Buttons
+		myGump.AddText( 170, 70, 0, "Britian" );
+		myGump.AddButton( 150, 75, 0x837, 1, 0, 5 );
+		myGump.AddText( 170, 90, 0, "Magincia" );
+		myGump.AddButton( 150, 95, 0x837, 1, 0, 6 );
+		myGump.AddText( 170, 110, 0, "Moonglow" );
+		myGump.AddButton( 150, 115, 0x837, 1, 0, 7 );
+		myGump.AddText( 170, 130, 0, "Skara Brea" );
+		myGump.AddButton( 150, 135, 0x837, 1, 0, 8 );
+		myGump.AddText( 170, 150, 0, "Trinsic" );
+		myGump.AddButton( 150, 155, 0x837, 1, 0, 9 );
+		myGump.AddText( 170, 170, 0, "Vesper" );
+		myGump.AddButton( 150, 175, 0x837, 1, 0, 10 );
+		myGump.AddText( 170, 190, 0, "Yew" );
+		myGump.AddButton( 150, 195, 0x837, 1, 0, 11 );
+		myGump.AddText( 170, 210, 0, "Jhelom" );
+		myGump.AddButton( 150, 215, 0x837, 1, 0, 12 );
 	}
 	if( enableTrammel == 1 )
 	{
@@ -415,8 +433,8 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 
 	//PAGE 2
-	myGump.AddPage (2);  //Page 2 Trammel
-	myGump.AddBackground(20, 20, 260, 245, 0x23f0);
+	myGump.AddPage( 2 );  //Page 2 Trammel
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
@@ -465,8 +483,8 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 
 	//PAGE 3
-	myGump.AddPage (3);  //Page 3 IIsh
-	myGump.AddBackground(20, 20, 260, 245, 0x23f0);
+	myGump.AddPage( 3 );  //Page 3 IIsh
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
@@ -518,8 +536,8 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 
 	//PAGE 4
-	myGump.AddPage (4);  //Page 4 Malas
-	myGump.AddBackground(20, 20, 260, 245, 0x23f0);
+	myGump.AddPage( 4 );  //Page 4 Malas
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );
@@ -559,8 +577,8 @@ function DisplayTravelGump( srcSock, pUser )
 	}
 
 	//PAGE 5
-	myGump.AddPage (5);  //Page 4 Tokuno Islands
-	myGump.AddBackground(20, 20, 260, 245, 0x23f0);
+	myGump.AddPage( 5 );  //Page 4 Tokuno Islands
+	myGump.AddBackground( 20, 20, 260, 245, 0x23f0 );
 	myGump.AddText( 40, 40, 0, GetDictionaryEntry( 2750, srcSock.language )); // Pick your destination:
 
 	myGump.AddButton( 47, 207, 0xfa5, 1, 0, 0 );

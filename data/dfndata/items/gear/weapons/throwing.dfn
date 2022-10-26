@@ -1,8 +1,8 @@
 // Throwing Weapons
 
 // STYGIAN ABYSS
-// Soul Glaive - E/W
-[0x090a]
+// Soul Glaive - Base item
+[base_soul_glaive]
 {
 get=base_item
 name=soul glaive
@@ -13,14 +13,14 @@ movable=1
 decay=1
 good=23
 ammofx=0x090a
-weight=900
-value=77 39
-damage=8 39
-hp=27 95
-spd=21
-str=45
-baserange=8
-maxrange=11
+}
+
+// Soul Glaives - E/W
+[0x090a]
+{
+getpub15=0x090a_pub15
+getaos=0x090a_aos
+gettol=0x090a_tol
 }
 
 // Soul Glaives - N/S
@@ -36,8 +36,8 @@ id=0x406b
 get=0x090a 0x406b
 }
 
-// Boomerang - E/W
-[0x08ff]
+// Boomerang - Base item
+[base_boomerang]
 {
 get=base_item
 name=boomerang
@@ -48,14 +48,14 @@ movable=1
 decay=1
 good=23
 ammofx=0x08ff
-baserange=4
-damage=5 29
-hp=27 85
-maxrange=7
-spd=30
-str=20
-value=32 16
-weight=400
+}
+
+// Boomerang - E/W
+[0x08ff]
+{
+getpub15=0x08ff_pub15
+getaos=0x08ff_aos
+gettol=0x08ff_tol
 }
 
 // Boomerang - N/S
@@ -71,8 +71,8 @@ id=0x4067
 get=0x08ff 0x4067
 }
 
-// Cyclone - N/S
-[0x0901]
+// Cyclone - Base item
+[base_cyclone]
 {
 get=base_item
 name=cyclone
@@ -85,12 +85,14 @@ good=23
 ammofx=0x0901
 baserange=6
 maxrange=9
-weight=600
-value=53 26
-damage=6 33
-hp=27 85
-spd=26
-str=30
+}
+
+// Cyclone - N/S
+[0x0901]
+{
+getpub15=0x0901_pub15
+getaos=0x0901_aos
+gettol=0x0901_tol
 }
 
 // Cyclone - E/W

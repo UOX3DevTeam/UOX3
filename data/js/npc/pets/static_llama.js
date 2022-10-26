@@ -35,7 +35,9 @@ function onBuyFromVendor( pSock, vendor, iBought )
 function onBoughtFromVendor( pSock, Vendor, iBought )
 {
 	if( pSock && iBought )
+	{
 		onUseChecked( pSock.currentChar, iBought );
+	}
 }
 
 function onUseChecked( pUser, iUsed )
@@ -62,7 +64,9 @@ function onUseChecked( pUser, iUsed )
 		iUsed.Delete();
 	}
 	else
+	{
 		pUser.SysMessage( "Creature failed to spawn, reason unknown." );
+	}
 
 	return false;
 }

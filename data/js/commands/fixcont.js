@@ -13,7 +13,7 @@ function CommandRegistration()
 function command_FIXCONT( socket, cmdString )
 {
 	var confirmGump = new Gump;
-	confirmGump.AddPage (0);
+	confirmGump.AddPage( 0 );
 	confirmGump.AddBackground( 0, 130, 410, 250, 9550 );
 	confirmGump.AddBackground( 5, 135, 400, 240, 83 );
 	confirmGump.AddText( 30, 140, 1259, "WARNING!" );
@@ -38,18 +38,19 @@ function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
 
-	switch(pButton)
-	{ //Check if any buttons were pressed
-	case 0:	//Closes gump
-	case 1: //Closes gump
-		break;
-	case 2: //Action confirmed, iterate through objects and fix weight
-		pSock.SysMessage( "Iterating over all items, checking for containers..." );
-		var count = IterateOver( "ITEM" );
-		pSock.SysMessage( "A total of "+count+" containers were updated." );
-		break;
-	default:
-		break;
+	//Check if any buttons were pressed
+	switch( pButton )
+	{
+		case 0:	//Closes gump
+		case 1: //Closes gump
+			break;
+		case 2: //Action confirmed, iterate through objects and fix weight
+			pSock.SysMessage( "Iterating over all items, checking for containers..." );
+			var count = IterateOver( "ITEM" );
+			pSock.SysMessage( "A total of " + count + " containers were updated." );
+			break;
+		default:
+			break;
 	}
 }
 
@@ -91,41 +92,65 @@ function onIterate( toCheck )
 				case 0x46A4:	// SA giftbox
 				case 0x46A7:	// SA giftbox
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 100
+					}
 					toCheck.baseWeight = 100;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0990:	// round basket
 				case 0x09AC:	// round bushel
 				case 0x09B1:	// round basket
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 200
+					}
 					toCheck.baseWeight = 200;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E83:	// empty tub
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 300
+					}
 					toCheck.baseWeight = 300;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E7F:	// keg
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 400
+					}
 					toCheck.baseWeight = 400;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E77:	// barrel
 				case 0x0FAE:	// barrel with lids
@@ -134,32 +159,50 @@ function onIterate( toCheck )
 				case 0x0E7E:	// wooden crate
 				case 0x09A9:	// small wooden crate
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 500
+					}
 					toCheck.baseWeight = 500;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E3C:	// large wooden crate
 				case 0x0E3D:	// large wooden crate
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 600
+					}
 					toCheck.baseWeight = 600;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E7D:	// wooden box
 				case 0x09AA:	// wooden box
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 700
+					}
 					toCheck.baseWeight = 700;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x1AD7:	// potion keg
 				case 0x1940:	// potion keg
@@ -176,12 +219,18 @@ function onIterate( toCheck )
 				case 0x2817:	// SE cabinet
 				case 0x2818:	// SE cabinet
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 1000
+					}
 					toCheck.baseWeight = 1000;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x280B:	// SE chest
 				case 0x280C:	// SE chest
@@ -194,12 +243,18 @@ function onIterate( toCheck )
 				case 0x2813:	// SE chest
 				case 0x2814:	// SE chest
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 1500
+					}
 					toCheck.baseWeight = 1500;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0A30:   	// chest of drawers (fancy)
 				case 0x0A38:   	// chest of drawers (fancy)
@@ -226,34 +281,52 @@ function onIterate( toCheck )
 				case 0x0A2C:	// chest of drawers (wood)
 				case 0x0A34:	// chest of drawers (wood)
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 2000
+					}
 					toCheck.baseWeight = 2000;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0E40:	// gold chest
 				case 0x0E41:	// gold chest
 				case 0x0E42:	// wooden chest
 				case 0x0E43:	// wooden chest
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 3000
+					}
 					toCheck.baseWeight = 3000;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0A3C:	// dresser
 				case 0x0A44:	// dresser
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 5000
+					}
 					toCheck.baseWeight = 5000;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				case 0x0ECA:	// bones
 				case 0x0ECB:	// bones
@@ -265,17 +338,23 @@ function onIterate( toCheck )
 				case 0x0ED1:	// bones
 				case 0x0ED2:	// bones
 					if( toCheck.weightMax == 0 )
+					{
 						toCheck.weightMax = 40000;
+					}
 					if( toCheck.itemsinside == 0 && toCheck.weight == 0 )
+					{
 						toCheck.weight = 2500
+					}
 					toCheck.baseWeight = 2500;
 					if( toCheck.maxItems == 0 )
+					{
 						toCheck.maxItems = 125;
+					}
 					break;
 				default:
 					countThis = false; // The id didn't match any of the entries
 			}
-			if( countThis == true ) // A matching entry was found and updated
+			if( countThis ) // A matching entry was found and updated
 			{
 				return true;
 			}

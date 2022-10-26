@@ -18,7 +18,7 @@ function onUseChecked( pUser, iUsed )
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
+				pUser.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 			}
 		}
 	}
@@ -46,7 +46,7 @@ function onGumpPress( socket, pButton, gumpData )
 	var pUser = socket.currentChar;
 	var iMulti = pUser.multi;
 	if( ValidateObject( iMulti ) && ( iMulti.IsOnOwnerList( pUser )
-		|| ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum == pUser.accountNum )))
+		|| ( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ValidateObject( iMulti.owner ) && iMulti.owner.accountNum == pUser.accountNum )))
 	{
 		switch( pButton )
 		{
@@ -72,7 +72,7 @@ function onGumpPress( socket, pButton, gumpData )
 		}
 	}
     else
-        pUser.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
+        pUser.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 }
 
 function onCallback1( socket, ourObj )
@@ -80,17 +80,17 @@ function onCallback1( socket, ourObj )
 	var tChar = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
 		return;
 	}
 
 	var iMulti = tChar.multi;
 	if( !ValidateObject( iMulti )
 		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
@@ -99,19 +99,21 @@ function onCallback1( socket, ourObj )
 	if( ourObj.z == -128 || ourObj.z == ( iMultiZ + 7 ) || ourObj.z == ( iMultiZ + 27 ) || ourObj.z == ( iMultiZ + 47 ) || ourObj.z == ( iMultiZ + 67 )
 		|| objHeight == -128 || objHeight == ( iMultiZ + 7 ) || objHeight == ( iMultiZ + 27 ) || objHeight == ( iMultiZ + 47 ) || objHeight == ( iMultiZ + 67 ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 2073, socket.language ) ); // You cannot lower it down any further.
+		socket.SysMessage( GetDictionaryEntry( 2073, socket.language )); // You cannot lower it down any further.
 		return;
 	}
 
 	if( ourObj.weight >= 10000 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1551, socket.language ) ); // That is too heavy.
+		socket.SysMessage( GetDictionaryEntry( 1551, socket.language )); // That is too heavy.
 		return;
 	}
 
 	socket.CustomTarget( 1 );
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
+	{
 		ourObj.z -= 1;
+	}
 }
 
 function onCallback2( socket, ourObj )
@@ -119,17 +121,17 @@ function onCallback2( socket, ourObj )
 	var tChar = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
 		return;
 	}
 
 	var iMulti = ourObj.multi;
 	if( !ValidateObject( iMulti )
 		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
@@ -138,19 +140,21 @@ function onCallback2( socket, ourObj )
 	if( ourObj.z == 127 || ourObj.z == ( iMultiZ + 22 ) || ourObj.z == ( iMultiZ + 44 ) || ourObj.z == ( iMultiZ + 66 ) || ourObj.z == ( iMultiZ + 88 )
 		|| objHeight == 127 || objHeight == ( iMultiZ + 22 ) || objHeight == ( iMultiZ + 44 ) || objHeight == ( iMultiZ + 66 ) || objHeight == ( iMultiZ + 88 ))
 	{
-		socket.SysMessage( GetDictionaryEntry( 2074, socket.language ) ); // You cannot raise it up any higher.
+		socket.SysMessage( GetDictionaryEntry( 2074, socket.language )); // You cannot raise it up any higher.
 		return;
 	}
 
 	if( ourObj.weight >= 10000 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1551, socket.language ) ); // That is too heavy.
+		socket.SysMessage( GetDictionaryEntry( 1551, socket.language )); // That is too heavy.
 		return;
 	}
 
 	socket.CustomTarget( 2 );
-	if( !socket.GetWord( 1)  )
+	if( !socket.GetWord( 1 ))
+	{
 		ourObj.z += 1;
+	}
 }
 
 function onCallback3( socket, ourObj )
@@ -158,23 +162,23 @@ function onCallback3( socket, ourObj )
 	var tChar = socket.currentChar;
 	if( !ValidateObject( ourObj ) || !ourObj.isItem || ourObj.movable != 3 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 2072, socket.language ) ); // You can only use the interior decorator on locked down items.
+		socket.SysMessage( GetDictionaryEntry( 2072, socket.language )); // You can only use the interior decorator on locked down items.
 		return;
 	}
 
 	var iMulti = ourObj.multi;
 	if( !ValidateObject( iMulti )
 		|| ( !iMulti.IsOnOwnerList( tChar )
-			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && iMulti.owner.accountNum != tChar.accountNum )
+			&& (( GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" ) && ( !ValidateObject( iMulti.owner ) || iMulti.owner.accountNum != tChar.accountNum ))
 				|| ( !GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" )))))
 	{
-		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language ) ); // You must be in your house to do this.
+		tChar.SysMessage( GetDictionaryEntry( 2067, socket.language )); // You must be in your house to do this.
 		return;
 	}
 
 	if( ourObj.weight >= 10000 )
 	{
-		socket.SysMessage( GetDictionaryEntry( 1551, socket.language ) ); // That is too heavy.
+		socket.SysMessage( GetDictionaryEntry( 1551, socket.language )); // That is too heavy.
 		return;
 	}
 

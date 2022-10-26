@@ -29,9 +29,13 @@ function onDefense( pAttacker, pDefender )
 
 				// Give the new NPC a chance to split again in the future?
 				if( RandomNumber( 0, 34 ) == 5 )
+				{
 					dupeChar.split = 1;
+				}
 				else
+				{
 					dupeChar.split = 0;
+				}
 			}
 		}
 	}

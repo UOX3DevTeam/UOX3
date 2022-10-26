@@ -1,3 +1,5 @@
+// These commands are used to remove/delete objects
+
 function CommandRegistration()
 {
 	RegisterCommand( "remove", 2, true );
@@ -13,7 +15,7 @@ function command_REMOVE( socket, cmdString )
 	{
 		socket.tempint = parseInt( cmdString );
 		var tempMsg = GetDictionaryEntry( 8095, socket.language ); // Select container to remove item (%s) from:
-		socket.CustomTarget( 0, tempMsg.replace(/%s/gi, cmdString ) );
+		socket.CustomTarget( 0, tempMsg.replace( /%s/gi, cmdString ) );
 	}
 	else
 	{
@@ -30,7 +32,7 @@ function command_DELETE( socket, cmdString )
 
 function onCallback0( socket, ourObj )
 {
-	if( !socket.GetWord( 1 ) )
+	if( !socket.GetWord( 1 ))
 	{
 		if( ourObj )
 		{
@@ -82,7 +84,9 @@ function onCallback0( socket, ourObj )
 			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 2353, socket.language )); // Invalid target
+		}
 	}
 }
 
@@ -118,7 +122,7 @@ function command_REMOVEMULTI( socket, cmdString )
 
 function onCallback2( socket, ourObj )
 {
-	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ) )
+	if( !ValidateObject( ourObj ) && socket.GetWord( 1 ))
 	{
 		// Find multi at target location
 		var targX = socket.GetWord( 11 );

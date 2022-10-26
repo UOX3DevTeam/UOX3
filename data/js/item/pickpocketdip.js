@@ -1,6 +1,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var pSock = pUser.socket;
+
 	//Check if user is in range of pickpocket dip
 	if( !iUsed.InRange( pUser, 1 ) )
 	{
@@ -35,7 +36,9 @@ function onUseChecked( pUser, iUsed )
 
 		//Check the player's tactics skill to see if he gets chance to gain more skill
 		if( pUser.skills.stealing > 250 )
+		{
 			pUser.SysMessage( GetDictionaryEntry( 1758, pSock.language )); //Your ability to steal cannot improve any further by simply practicing on a dummy.
+		}
 		else
 		{
 			if( pUser.CheckSkill( 33, 0, 250 ))
@@ -58,19 +61,21 @@ function onUseChecked( pUser, iUsed )
 	else
 	{
 		//Safety measure in case timer ever breaks.
-		safetyMeasure( iUsed );
+		SafetyMeasure( iUsed );
 		pUser.SysMessage( GetDictionaryEntry( 483, pSock.language )); //You must wait for it to stop swinging!
 	}
 	return false;
 }
 
-function safetyMeasure( iUsed )
+function SafetyMeasure( iUsed )
 {
 	var failedToUse = iUsed.GetTag( "failedToUse" );
 
 	//Check if 4 or more failed attempts have been made
 	if( failedToUse > 3 )
-		stopDummy( iUsed );
+	{
+		StopDummy( iUsed );
+	}
 	else
 	{
 		// Else, add to failed attempts
@@ -95,14 +100,18 @@ function onTimer( iUsed, timerID )
 	}
 }
 
-function stopDummy( iUsed )
+function StopDummy( iUsed )
 {
 	if( iUsed )
 	{
 		if( iUsed.id == 0x1ec1 || iUsed.id == 0x1ec2 )
+		{
 			iUsed.id = 0x1ec0; //stop dummy from moving
+		}
 		else if( iUsed.id == 0x1ec4 || iUsed.id == 0x1ec5 )
+		{
 			iUsed.id = 0x1ec3; //stop dummy from moving
+		}
 		iUsed.SetTag( "failedToUse", 0 ); 	//reset values on dummy
 		iUsed.SetTag( "inUse", null ); 		//reset values on dummy
 	}

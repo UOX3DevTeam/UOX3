@@ -1,0 +1,17 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// Wand - AoS stats
+[0x0df2_aos]
+{
+get=base_wand
+weight=100
+value=30 15
+damage=9 11
+hp=31 110
+spd=40
+str=5
+}

@@ -40,7 +40,7 @@ function onUseChecked( pUser, iUsed )
 	}
 	iUsed.SoundEffect( 0x04a, true );
 
-	var searchRange = parseInt(iUsed.GetMoreVar( "morex", 1 ));
+	var searchRange = parseInt( iUsed.GetMoreVar( "morex", 1 ));
 	var iCount = AreaItemFunction( "SearchForGate", iUsed, searchRange );
 	if( iCount > 0 && socket )
 	{
@@ -59,7 +59,7 @@ function SearchForGate( iUsed, trgItem )
 	{
 		iUsed.TextMessage( trgItem.type );
 		iUsed.TextMessage( trgItem.more );
-		if( parseInt(trgItem.GetMoreVar( "morex", 1 )) == 0 )
+		if( parseInt( trgItem.GetMoreVar( "morex", 1 )) == 0 )
 		{
 			trgItem.SetTempTag( "isBusy", true );
 			trgItem.SetMoreVar( "morex", 1, 1 );
@@ -84,8 +84,8 @@ function onTimer( timerObj, timerID )
 	if( !ValidateObject( timerObj ))
 		return;
 
-	var minHeight = parseInt(timerObj.GetMoreVar( "morex", 2 ));
-	var maxHeight = parseInt(timerObj.GetMoreVar( "morex", 3 ));
+	var minHeight = parseInt( timerObj.GetMoreVar( "morex", 2 ));
+	var maxHeight = parseInt( timerObj.GetMoreVar( "morex", 3 ));
 	if( timerID == 1 && timerObj.z < maxHeight )
 	{
 		timerObj.z++

@@ -1,8 +1,8 @@
 // List of valid map water tiles, used to determine location of shipwreck
-const mapWaterTiles = [ 0x00a8,0x00a9,0x00aa,0x00ab ];
+const mapWaterTiles = [ 0x00a8, 0x00a9, 0x00aa, 0x00ab ];
 
 // List of SOS messages (dictionary IDs) that can potentially show up when player uses a waterstained SOS
-const sosMessageEntries = [ 9321,9322,9323,9324,9325,9326,9327,9328,9329,9330,9331,9332,9333,9334 ];
+const sosMessageEntries = [ 9321, 9322, 9323, 9324, 9325, 9326, 9327, 9328, 9329, 9330, 9331, 9332, 9333, 9334 ];
 
 // Script ID assigned to this script in jse_fileassociations.scp
 const scriptID = 5032;
@@ -10,14 +10,12 @@ const scriptID = 5032;
 // Enable ancient SOS feature? Normally available with AoS expansion and beyond
 const enableAncientSOS = false;
 const ancientSOSHue = 0x481;
-const ancientSOSDropRate = 3/20; // 4/55 for ToL+? or 1/20
+const ancientSOSDropRate = 3 / 20; // 4/55 for ToL+? or 1/20
 
 function onCreateDFN( objMade, objType )
 {
 	if( objType == 0 && ValidateObject( objMade ))
 	{
-		Console.Print( "SOS created\n" );
-
 		// Calculate shipwreck location
 		FindShipwreckLocation( objMade );
 
@@ -42,7 +40,6 @@ function onCreateDFN( objMade, objType )
 		// Randomize the message displayed to user when using the SOS
 		var sosMsgID = sosMessageEntries[RandomNumber( 0, sosMessageEntries.length - 1 )];
 		objMade.SetTag( "sosMsgID", sosMsgID );
-		Console.Print( "SOS Msg ID: " + sosMsgID + "\n" );
 	}
 }
 
@@ -131,10 +128,11 @@ function DisplaySOSGump( socket, pUser, iUsed, sosMsgID )
 {
 	// Prepare SOS Message
 	var mapCoords = TriggerEvent( 2503, "GetMapCoordinates", iUsed.morex, iUsed.morey, iUsed.morez );
+
 	// var sosCoords = (iUsed.morex).toString() + ", " + (iUsed.morey).toString();
 	var sosCoords = mapCoords[3] + "o " + mapCoords[4] + "'" + ( mapCoords[5] ? "S" : "N" ) + " " + mapCoords[0] + "o " + mapCoords[1] + "'" + ( mapCoords[2] ? "E" : "W" );
 	var sosMsg = GetDictionaryEntry( sosMsgID, socket.language );
-	sosMsg = ( sosMsg.replace(/%s/gi, sosCoords ));
+	sosMsg = ( sosMsg.replace( /%s/gi, sosCoords ));
 
 	// Close existing gump, if any
 	socket.CloseGump( scriptID + 0xffff, 0 );

@@ -2,7 +2,7 @@
 // 24/07/2021 Xuri; xuri@uox3.org
 // This script contains all the default functions of the scissors,
 // from sheep-shearing to cloth cutting.
-var AOSEnabled = 0;
+var aosEnabled = 0;
 
 function onUseChecked( pUser, iUsed )
 {
@@ -12,14 +12,15 @@ function onUseChecked( pUser, iUsed )
 		var isInRange = pUser.InRange( iUsed, 3 );
 		if( !isInRange )
 	 	{
-			socket.SysMessage( GetDictionaryEntry( 389, socket.language ) ); // That is too far away and you cannot reach it.
-		}
-		else if( pUser.isRunning ) // Prevent player from using scissors while running
-		{
-			socket.SysMessage( GetDictionaryEntry( 2759, socket.language ) ); // Didn't your parents ever tell you not to run with scissors in your hand?!
+			socket.SysMessage( GetDictionaryEntry( 389, socket.language )); // That is too far away and you cannot reach it.
 		}
 		else
 		{
+			if( pUser.isRunning ) // Taunt player about using scissors while running
+			{
+				socket.SysMessage( GetDictionaryEntry( 2759, socket.language )); // Didn't your parents ever tell you not to run with scissors in your hand?!
+			}
+
 			socket.tempObj = iUsed;
 			socket.CustomTarget( 0, GetDictionaryEntry( 6029, socket.language )); // What do you want to use these scissors on?
 		}
@@ -29,13 +30,14 @@ function onUseChecked( pUser, iUsed )
 
 function onCallback0( pSock, myTarget )
 {
-	var pUser 	= pSock.currentChar;
+	var pUser = pSock.currentChar;
 	var StrangeByte	= pSock.GetWord( 1 );
 	var tileID = pSock.GetWord( 17 );
 
 	if( !ValidateObject( myTarget ) || tileID == 0 )
-	{ //Target is invalid or a Maptile
-		pSock.SysMessage( GetDictionaryEntry( 6030, pSock.language ) ); // You can't use the scissors on that.
+	{
+		//Target is invalid or a Maptile
+		pSock.SysMessage( GetDictionaryEntry( 6030, pSock.language )); // You can't use the scissors on that.
 		return;
 	}
 
@@ -43,60 +45,64 @@ function onCallback0( pSock, myTarget )
 	var myScissors = pSock.tempObj;
 	if( !ValidateObject( myScissors ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 8803, pSock.language ) ); // Object no longer exists.
+		pSock.SysMessage( GetDictionaryEntry( 8803, pSock.language )); // Object no longer exists.
 		return;
 	}
 
 	// Verify that user is still within range of the scissors
 	if( !pUser.InRange( myScissors, 3 ))
 	{
-		pSock.SysMessage( GetDictionaryEntry( 2749, pSock.language ) ); // You have moved too far away to use this.
+		pSock.SysMessage( GetDictionaryEntry( 2749, pSock.language )); // You have moved too far away to use this.
 		return;
 	}
 
 	if( StrangeByte == 0 )
 	{
 		if( myTarget.isChar )
-		{ //Target is a Character
+		{
+			//Target is a Character
 			var isInRange = pUser.InRange( myTarget, 3 );
 			if( !isInRange )
 		 	{
-				pSock.SysMessage( GetDictionaryEntry( 461, pSock.language ) ); // You are too far away.
+				pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
 				return;
 			}
 			else if( myTarget.id == 0x00df || myTarget.id == 0x00cf )
 			{
-				TriggerEvent( 2012, "shearSheep", pUser, myTarget );
+				TriggerEvent( 2012, "ShearSheep", pUser, myTarget );
 			}
 			else
-				pSock.SysMessage( GetDictionaryEntry( 6030, pSock.language ) ); // You can't use the scissors on that.
+			{
+				pSock.SysMessage( GetDictionaryEntry( 6030, pSock.language )); // You can't use the scissors on that.
+			}
 			return;
 		}
 		else
-		{ //Target is a Dynamic Item
-			if( !pUser.InRange( myTarget, 3 ) )
+		{
+			//Target is a Dynamic Item
+			if( !pUser.InRange( myTarget, 3 ))
 		 	{
-				pSock.SysMessage( GetDictionaryEntry( 461, pSock.language ) ); // You are too far away.
+				pSock.SysMessage( GetDictionaryEntry( 461, pSock.language )); // You are too far away.
 				return;
 			}
 			if( myTarget.movable == 3 )
 			{
-				pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language ) ); // Locked down resources cannot be used!
+				pSock.SysMessage( GetDictionaryEntry( 6031, pSock.language )); // Locked down resources cannot be used!
 				return;
 			}
 
 			var iPackOwner = GetPackOwner( myTarget, 0 );
-			if( ValidateObject( iPackOwner ) ) // Is the target item in a backpack?
+			if( ValidateObject( iPackOwner )) // Is the target item in a backpack?
 			{
 				if( iPackOwner.serial != pUser.serial ) //And if so does the pack belong to the user?
 				{
-					pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language ) ); // That resource is in someone else's backpack!
+					pSock.SysMessage( GetDictionaryEntry( 6032, pSock.language )); // That resource is in someone else's backpack!
 					return;
 				}
 			}
 			else
 			{
-				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language ) ); // This has to be in your backpack before you can use it.
+				pSock.SysMessage( GetDictionaryEntry( 6022, pSock.language )); // This has to be in your backpack before you can use it.
 				return;
 			}
 
@@ -110,31 +116,35 @@ function onCallback0( pSock, myTarget )
 			var resourceColor = myTarget.colour;
 
 			if( CutBolts( tileID ))
-			{ //Cut bolts of cloth into cut cloth
+			{
+				//Cut bolts of cloth into cut cloth
 				pUser.SoundEffect( 0x248, true );
-				pSock.SysMessage( GetDictionaryEntry( 6033, pSock.language ) ); // You cut the material and place it into your backpack.
-				CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount*50, "ITEM", true, resourceColor );  //give the player some cut cloth
+				pSock.SysMessage( GetDictionaryEntry( 6033, pSock.language )); // You cut the material and place it into your backpack.
+				CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount * 50, "ITEM", true, resourceColor );  //give the player some cut cloth
 				myTarget.Delete();
 				return;
 			}
 			else if( CutCloth( tileID ))
-			{ //Cut folded cloth and cut cloth into bandages
+			{
+				//Cut folded cloth and cut cloth into bandages
 				pUser.SoundEffect( 0x248, true );
-				pSock.SysMessage( GetDictionaryEntry( 6034, pSock.language ) ); // You cut the material into bandage and place it in your backpack.
+				pSock.SysMessage( GetDictionaryEntry( 6034, pSock.language )); // You cut the material into bandage and place it in your backpack.
 				CreateDFNItem( pSock, pUser, "0x0e21", myTarget.amount, "ITEM", true, resourceColor );  //give the player some bandages
 				myTarget.Delete();
 				return;
 			}
 			else if( CutLeather( tileID ))
-			{ //Cut up hides into leather
+			{
+				//Cut up hides into leather
 				pUser.SoundEffect( 0x248, true );
-				pSock.SysMessage( GetDictionaryEntry( 6035, pSock.language ) ); // You cut the material into leather and place it in your backpack.
+				pSock.SysMessage( GetDictionaryEntry( 6035, pSock.language )); // You cut the material into leather and place it in your backpack.
 				CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount, "ITEM", true, resourceColor );
 				myTarget.Delete();
 				return;
 			}
 			else if( CutClothing( tileID ))
-			{//Cut Clothing into cut cloth
+			{
+				//Cut Clothing into cut cloth
 				pUser.SoundEffect( 0x248, true );
 				var resourceAmount = GetResourcesReturned( pUser, myTarget, 0x1081, 0x0, 34 ); // Skill 34 = Tailoring, 0x1081 == cut leather
 				CreateDFNItem( pSock, pUser, "0x1766", myTarget.amount * resourceAmount, "ITEM", true, resourceColor );
@@ -142,7 +152,8 @@ function onCallback0( pSock, myTarget )
 				return;
 			}
 			else if( CutLeatherArmor( tileID ))
-			{//Cut Leather Armor into leather
+			{
+				//Cut Leather Armor into leather
 				pUser.SoundEffect( 0x248, true );
 				var resourceAmount = GetResourcesReturned( pUser, myTarget, 0x1081, 0x0, 34 ); // Skill 34 = Tailoring, 0x1081 == cut leather
 				CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount * resourceAmount, "ITEM", true, resourceColor );
@@ -150,22 +161,24 @@ function onCallback0( pSock, myTarget )
 				return;
 			}
 			else if( CutStuddedLeatherArmor( tileID ))
-			{//Cut Studded Leather Armor into leather
+			{
+				//Cut Studded Leather Armor into leather
 				pUser.SoundEffect( 0x248, true );
 				var resourceAmount = GetResourcesReturned( pUser, myTarget, 0x1081, 0x0, 34 ); // Skill 34 = Tailoring, 0x1081 == cut leather
 				CreateDFNItem( pSock, pUser, "0x1081", myTarget.amount * resourceAmount, "ITEM", true, resourceColor );
 				myTarget.Delete();
 				return;
 			}
-			else if( AOSEnabled == 1  && CutBones( tileID ))
-			{//Cut Bones Parts into Bone
+			else if( aosEnabled == 1  && CutBones( tileID ))
+			{
+				//Cut Bones Parts into Bone
 				pUser.SoundEffect( 0x248, true );
 				CreateDFNItem( pSock, pUser, "0x0f7e", myTarget.amount * 10, "ITEM", true, resourceColor );
 				myTarget.Delete();
 				return;
 			}
 		}
-		pSock.SysMessage( GetDictionaryEntry( 6036, pSock.language ) ); // Scissors cannot be used on that to produce anything.
+		pSock.SysMessage( GetDictionaryEntry( 6036, pSock.language )); // Scissors cannot be used on that to produce anything.
 	}
 }
 
@@ -218,7 +231,7 @@ function CutBolts( tileID )
 
 function CutBones( tileID )
 {
-	return ( tileID >= 6921 && tileID <= 6929 || ( tileID >= 6935 && tileID <= 6937 ) );
+	return ( tileID >= 6921 && tileID <= 6929 || ( tileID >= 6935 && tileID <= 6937 ));
 }
 
 function GetResourcesReturned( pUser, myTarget, resourceID, resourceColor, skillID )
@@ -263,7 +276,7 @@ function GetResourcesReturned( pUser, myTarget, resourceID, resourceColor, skill
 
 	if( resourceAmount == -1 )
 	{
-		pUser.TextMessage( "Resource ID not found in list of resources used to craft item." );
+		pUser.socket.SysMessage( GetDictionaryEntry( 6277, pUser.socket.language )); // Resource ID not found in list of resources used to craft item.
 		return 1;
 	}
 
@@ -274,6 +287,6 @@ function GetResourcesReturned( pUser, myTarget, resourceID, resourceColor, skill
 	var playerSkill = pUser.skills[skillID];
 
 	// Based on player's skill, return between 1 to maxResourceAmount
-	var amountReturned = Math.min(Math.max(Math.floor( maxResourceAmount * ( playerSkill / 1000 )), 1), maxResourceAmount);
+	var amountReturned = Math.min( Math.max( Math.floor( maxResourceAmount * ( playerSkill / 1000 )), 1 ), maxResourceAmount );
 	return amountReturned;
 }

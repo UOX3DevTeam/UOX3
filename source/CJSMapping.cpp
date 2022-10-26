@@ -4,14 +4,17 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include <memory>
+
+using namespace std::string_literals;
 
 CJSMapping *JSMapping = nullptr;
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	CJSMapping.cpp
 //|	Date		-	Feb 7, 2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	JavaScript File Mapping
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|					1.0			 		Feb 7, 2005
 //|					Initial Implementation
@@ -21,48 +24,49 @@ CJSMapping *JSMapping = nullptr;
 //|
 //|					1.2			 		Feb 28, 2005
 //|					Added the ability to reload JS files on a per-section basis
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Class		-	CJSMapping
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Base global class that holds within it an array of JS Mapping Sections
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+/*
 CJSMapping::CJSMapping()
 {
-	Console.print( "Loading JS Scripts\n" );
 }
+ */
 CJSMapping::~CJSMapping()
 {
-	Cleanup();
+	//Cleanup();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void ResetDefaults( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::ResetDefaults()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets all parameters of the CJSMapping class to default
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CJSMapping::ResetDefaults( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		mapSection[i] = new CJSMappingSection( static_cast<SCRIPTTYPE>(i) );
+		mapSection[i] = new CJSMappingSection( static_cast<SCRIPTTYPE>( i ));
 	}
 
-	envokeByID		= new CEnvoke( "object" );
+	envokeById		= new CEnvoke( "object" );
 	envokeByType	= new CEnvoke( "type" );
 
 	Parse();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Cleanup( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::Cleanup()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Frees all memory used by CJSMapping
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CJSMapping::Cleanup( void )
 {
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
@@ -74,10 +78,10 @@ void CJSMapping::Cleanup( void )
 		}
 	}
 
-	if( envokeByID != nullptr )
+	if( envokeById != nullptr )
 	{
-		delete envokeByID;
-		envokeByID = nullptr;
+		delete envokeById;
+		envokeById = nullptr;
 	}
 	if( envokeByType != nullptr )
 	{
@@ -86,85 +90,91 @@ void CJSMapping::Cleanup( void )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Reload( UI16 scriptID )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::Reload()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads the JS Scripts
-//o-----------------------------------------------------------------------------------------------o
-void CJSMapping::Reload( UI16 scriptID )
+//o------------------------------------------------------------------------------------------------o
+void CJSMapping::Reload( UI16 scriptId )
 {
-	if( scriptID != 0xFFFF )
+	if( scriptId != 0xFFFF )
 	{
-		Console.print( oldstrutil::format("CMD: Attempting Reload of JavaScript (ScriptID %u)\n", scriptID) );
+		Console.Print( oldstrutil::format( "CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId ));
 		for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 		{
-			if( mapSection[i]->IsInMap( scriptID ) )
+			if( mapSection[i]->IsInMap( scriptId ))
 			{
-				mapSection[i]->Reload( scriptID );
+				mapSection[i]->Reload( scriptId );
 				return;
 			}
 		}
-		Console.warning( oldstrutil::format("Unable to locate specified JavaScript in the map (ScriptID %u)", scriptID) );
+		Console.Warning( oldstrutil::format( "Unable to locate specified JavaScript in the map (ScriptId %u)", scriptId ));
 	}
 	else
 	{
-		Console.print( oldstrutil::format("CMD: Loading JSE Scripts... \n") );
+		Console.Print( oldstrutil::format( "CMD: Loading JSE Scripts... \n" ));
 		Cleanup();
 		ResetDefaults();
-		envokeByID->Parse();
+		envokeById->Parse();
 		envokeByType->Parse();
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Reload( SCRIPTTYPE sectionID )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::Reload()
 //|	Date		-	2/28/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reloads a specific section of the JS Scripts
-//o-----------------------------------------------------------------------------------------------o
-void CJSMapping::Reload( SCRIPTTYPE sectionID )
+//o------------------------------------------------------------------------------------------------o
+void CJSMapping::Reload( SCRIPTTYPE sectionId )
 {
-	Console.print( oldstrutil::format("CMD: Attempting Reload of JavaScript (SectionID %u)\n", static_cast<SI32>(sectionID) ));
-	if( mapSection[sectionID] != nullptr )
+	Console.Print( oldstrutil::format( "CMD: Attempting Reload of JavaScript (SectionId %u)\n", static_cast<SI32>( sectionId )));
+	if( mapSection[sectionId] != nullptr )
 	{
-		delete mapSection[sectionID];
-		mapSection[sectionID] =  new CJSMappingSection( sectionID );
+		delete mapSection[sectionId];
+		mapSection[sectionId] =  new CJSMappingSection( sectionId );
 
-		Parse( sectionID );
+		Parse( sectionId );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Parse( SCRIPTTYPE toParse )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::Parse()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parses through jse_fileassociations.scp doling out the work
 //|						to each CJSMappingSection Parse() routine.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void CJSMapping::Parse( SCRIPTTYPE toParse )
 {
+	Console.Print( "Loading JS Scripts\n" );
+
 	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
-	if( !FileExists( scpFileName ) )
+	if( !FileExists( scpFileName ))
 	{
-		Console.error( oldstrutil::format("Failed to open %s", scpFileName.c_str() ));
+		Console.Error( oldstrutil::format( "Failed to open %s", scpFileName.c_str() ));
 		return;
 	}
 
-	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
+	Script *fileAssocData = new Script( scpFileName, NUM_DEFS, false );
 	if( fileAssocData != nullptr )
 	{
 		if( toParse != SCPT_COUNT )
 		{
 			if( mapSection[toParse] != nullptr )
+			{
 				mapSection[toParse]->Parse( fileAssocData );
+			}
 		}
 		else
 		{
 			for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 			{
 				if( mapSection[i] != nullptr )
+				{
 					mapSection[i]->Parse( fileAssocData );
+				}
 			}
 		}
 
@@ -172,12 +182,12 @@ void CJSMapping::Parse( SCRIPTTYPE toParse )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CJSMappingSection * GetSection( SCRIPTTYPE toGet )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetSection()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the specified JSMappingSection
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 {
 	if( mapSection[toGet] != nullptr )
@@ -186,31 +196,31 @@ CJSMappingSection * CJSMapping::GetSection( SCRIPTTYPE toGet )
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScriptID( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetScriptId()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the scriptID relating to the specified JSObject
-//o-----------------------------------------------------------------------------------------------o
-UI16 CJSMapping::GetScriptID( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the scriptId relating to the specified JSObject
+//o------------------------------------------------------------------------------------------------o
+UI16 CJSMapping::GetScriptId( JSObject *toFind )
 {
-	UI16 retVal		= 0xFFFF;
+	UI16 retVal	= 0xFFFF;
 
 	for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 	{
-		retVal = mapSection[i]->GetScriptID( toFind );
+		retVal = mapSection[i]->GetScriptId( toFind );
 		if( retVal != 0xFFFF )
 			break;
 	}
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * GetScript( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetScript()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the cScript relating to the specified JSObject
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMapping::GetScript( JSObject *toFind )
 {
 	cScript *retVal		= nullptr;
@@ -228,12 +238,12 @@ cScript * CJSMapping::GetScript( JSObject *toFind )
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * GetScript( UI16 toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetScript()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the cScript relating to the specified scriptID
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the cScript relating to the specified scriptId
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMapping::GetScript( UI16 toFind )
 {
 	cScript *retVal		= nullptr;
@@ -251,308 +261,330 @@ cScript * CJSMapping::GetScript( UI16 toFind )
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CEnvoke * GetEnvokeByID( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetEnvokeById()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the CEnvoke class handling EnvokeByID
-//o-----------------------------------------------------------------------------------------------o
-CEnvoke * CJSMapping::GetEnvokeByID( void )
+//o------------------------------------------------------------------------------------------------o
+CEnvoke * CJSMapping::GetEnvokeById( void )
 {
-	return envokeByID;
+	return envokeById;
 }
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	CEnvoke * GetEnvokeByType( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMapping::GetEnvokeByType()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a pointer to the CEnvoke class handling EnvokeByType
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CEnvoke * CJSMapping::GetEnvokeByType( void )
 {
 	return envokeByType;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Class		-	CJSMappingSection( SCRIPTTYPE sT )
+//o------------------------------------------------------------------------------------------------o
+//|	Class		-	CJSMappingSection::CJSMappingSection()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Class containing the specified section of jse_fileassociations.scp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CJSMappingSection::CJSMappingSection( SCRIPTTYPE sT )
 {
 	scriptType = sT;
 
-	scriptIDMap.clear();
+	scriptIdMap.clear();
 	scriptJSMap.clear();
 
-	scriptIDIter = scriptIDMap.end();
+	scriptIdIter = scriptIdMap.end();
 }
 CJSMappingSection::~CJSMappingSection()
 {
 
-	for( std::map< UI16, cScript * >::const_iterator sIter = scriptIDMap.begin(); sIter != scriptIDMap.end(); ++sIter )
+	for( std::map<UI16, cScript *>::const_iterator sIter = scriptIdMap.begin(); sIter != scriptIdMap.end(); ++sIter )
 	{
 		cScript *toDelete = sIter->second;
 		if( toDelete != nullptr )
+		{
 			delete toDelete;
+		}
 	}
 
-	scriptIDMap.clear();
+	scriptIdMap.clear();
 	scriptJSMap.clear();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Parse( Script *fileAssocData )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::Parse()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Parses through specified section of jse_fileassociations.scp
 //|						populating the map with each entry.
-//o-----------------------------------------------------------------------------------------------o
-void CJSMappingSection::Parse( Script *fileAssocData )
+//o------------------------------------------------------------------------------------------------o
+auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 {
-	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
-	ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
-	UI08 runTime			= 0;
+	auto basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+	auto mSection	= fileAssocData->FindEntry( ScriptNames[scriptType] );
+	UI08 runTime	= 0;
 
 	if( scriptType == SCPT_CONSOLE )
-		runTime = 1;
-
-	if( mSection != nullptr )
 	{
-		UI16 scriptID = 0xFFFF;
-		size_t i = 0;
-		std::string data, fullPath;
-		for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
-		{
-			scriptID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-			data		= mSection->GrabData();
-			fullPath	= basePath + data;
+		runTime = 1;
+	}
 
-			if( !FileExists( fullPath ) )
-				Console.error( oldstrutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
+	if( mSection )
+	{
+		UI16 scriptId = 0xFFFF;
+		size_t i = 0;
+		for( const auto &sec :mSection->collection() )
+		{
+			auto tag = sec->tag;
+			auto data = sec->data;
+
+			scriptId		= static_cast<UI16>( std::stoul( tag, nullptr, 0 ));
+			auto fullPath	= basePath + data;
+
+			if( !FileExists( fullPath ))
+			{
+				Console.Error( oldstrutil::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
+			}
 			else
 			{
 				try
 				{
-					cScript *toAdd = new cScript( fullPath, runTime );
-					if( toAdd != nullptr )
+					auto toAdd = new cScript( fullPath, runTime );
+					if( toAdd )
 					{
-						scriptIDMap[scriptID]			= toAdd;
-						scriptJSMap[toAdd->Object()]	= scriptID;
+						scriptIdMap[scriptId]			= toAdd;
+						scriptJSMap[toAdd->Object()]	= scriptId;
 						++i;
 					}
 				}
 				catch( std::runtime_error &e )
 				{
-					Console.error( oldstrutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
+					Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
 				}
 			}
 		}
-		Console.print( "  o Loaded " );
+		Console.Print( "  o Loaded " );
 		Console.TurnYellow();
-		Console.print( oldstrutil::format("%4u ", i) );
+		Console.Print( oldstrutil::format( "%4u ", i ));
 		Console.TurnNormal();
-		Console.print( "scripts from section " );
+		Console.Print( "scripts from section " );
 		Console.TurnYellow();
-		Console.print( oldstrutil::format("%s\n", ScriptNames[scriptType].c_str()) );
+		Console.Print( oldstrutil::format( "%s\n", ScriptNames[scriptType].c_str() ));
 		Console.TurnNormal();
 	}
 	else
-		Console.warning( oldstrutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
+	{
+		Console.Warning( oldstrutil::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
+	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Reload( UI16 toLoad )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::Reload()
 //|	Date		-	2/8/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Reloads the specified JS file (by its scriptID)
-//o-----------------------------------------------------------------------------------------------o
-void CJSMappingSection::Reload( UI16 toLoad )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Reloads the specified JS file (by its scriptId)
+//o------------------------------------------------------------------------------------------------o
+auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 {
-	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
-	if( !FileExists( scpFileName ) )
+	auto scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp"s;
+	if( !FileExists( scpFileName ))
 	{
-		Console.error( oldstrutil::format("Failed to open %s", scpFileName.c_str()) );
+		Console.Error( oldstrutil::format( "Failed to open %s", scpFileName.c_str() ));
 		return;
 	}
 
-	Script *fileAssocData	= new Script( scpFileName, NUM_DEFS, false );
-	if( fileAssocData != nullptr )
+	auto fileAssocData = std::make_unique<Script>( scpFileName, NUM_DEFS, false );
+	if( fileAssocData )
 	{
-		ScriptSection *mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
-		if( mSection != nullptr )
+		auto mSection = fileAssocData->FindEntry( ScriptNames[scriptType] );
+		if( mSection )
 		{
-			UI16 scriptID = 0xFFFF;
-			std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
+			UI16 scriptId = 0xFFFF;
+			auto basePath = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS );
 			std::string data, fullPath;
 			UI08 runTime = 0;
 			if( scriptType == SCPT_CONSOLE )
-				runTime = 1;
-			for( std::string tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
 			{
-				scriptID		= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-				if( scriptID == toLoad )
+				runTime = 1;
+			}
+			for( const auto &sec : mSection->collection() )
+			{
+				auto tag = sec->tag;
+				scriptId		= static_cast<UI16>( std::stoul( tag, nullptr, 0 ));
+				if( scriptId == toLoad )
 				{
-					data		= mSection->GrabData();
+					data		= sec->data;
 					fullPath	= basePath + data;
 
-					if( !FileExists( fullPath ) )
-						Console.error( oldstrutil::format("SE mapping of %i to %s failed, file does not exist!", scriptID, data.c_str() ));
+					if( !FileExists( fullPath ))
+					{
+						Console.Error( oldstrutil::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
+					}
 					else
 					{
 						try
 						{
-							std::map< UI16, cScript * >::const_iterator iFind = scriptIDMap.find( toLoad );
-							if( iFind != scriptIDMap.end() )
+							std::map<UI16, cScript *>::const_iterator iFind = scriptIdMap.find( toLoad );
+							if( iFind != scriptIdMap.end() )
 							{
-								if( scriptIDMap[toLoad] != nullptr )
+								if( scriptIdMap[toLoad] )
 								{
-									JSObject *jsObj = scriptIDMap[toLoad]->Object();
-									std::map< JSObject *, UI16 >::iterator jFind = scriptJSMap.find( jsObj );
+									JSObject *jsObj = scriptIdMap[toLoad]->Object();
+									std::map<JSObject *, UI16>::iterator jFind = scriptJSMap.find( jsObj );
 									if( jFind != scriptJSMap.end() )
+									{
 										scriptJSMap.erase( jFind );
+									}
 
-									delete scriptIDMap[toLoad];
-									scriptIDMap[toLoad] = nullptr;
+									delete scriptIdMap[toLoad];
+									scriptIdMap[toLoad] = nullptr;
 								}
 							}
-							cScript *toAdd = new cScript( fullPath, runTime );
-							if( toAdd != nullptr )
+							auto toAdd = new cScript( fullPath, runTime );
+							if( toAdd )
 							{
-								scriptIDMap[scriptID]			= toAdd;
-								scriptJSMap[toAdd->Object()]	= scriptID;
-								Console.print( oldstrutil::format("Reload of JavaScript (ScriptID %u) Successful\n", toLoad) );
+								scriptIdMap[scriptId]			= toAdd;
+								scriptJSMap[toAdd->Object()]	= scriptId;
+								Console.Print( oldstrutil::format( "Reload of JavaScript (ScriptId %u) Successful\n", toLoad ));
 							}
 						}
 						catch( std::runtime_error &e )
 						{
-							Console.error( oldstrutil::format("Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what()) );
+							Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
 						}
 					}
-					delete fileAssocData;
 					return;
 				}
 			}
-			Console.warning(oldstrutil::format( "Unable to locate the specified JavaScript in the file (ScriptID %u)", toLoad) );
+			Console.Warning( oldstrutil::format( "Unable to locate the specified JavaScript in the file (ScriptId %u)", toLoad ));
 		}
 		else
-			Console.warning( oldstrutil::format("No JS file mappings found in section %s", ScriptNames[scriptType].c_str()) );
-		delete fileAssocData;
+		{
+			Console.Warning( oldstrutil::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
+		}
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool IsInMap( UI16 scriptID )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::IsInMap()
 //|	Date		-	2/8/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Checks if the specified scriptID exists in the map
-//o-----------------------------------------------------------------------------------------------o
-bool CJSMappingSection::IsInMap( UI16 scriptID )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if the specified scriptId exists in the map
+//o------------------------------------------------------------------------------------------------o
+bool CJSMappingSection::IsInMap( UI16 scriptId )
 {
 	bool retVal = false;
 
-	std::map< UI16, cScript * >::const_iterator sIter = scriptIDMap.find( scriptID );
-	if( sIter != scriptIDMap.end() )
+	std::map<UI16, cScript *>::const_iterator sIter = scriptIdMap.find( scriptId );
+	if( sIter != scriptIdMap.end() )
+	{
 		retVal = true;
+	}
 
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScriptID( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::GetScriptId()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Finds the scriptID associated with the specified JSObject
-//o-----------------------------------------------------------------------------------------------o
-UI16 CJSMappingSection::GetScriptID( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Finds the scriptId associated with the specified JSObject
+//o------------------------------------------------------------------------------------------------o
+UI16 CJSMappingSection::GetScriptId( JSObject *toFind )
 {
 	UI16 retVal = 0xFFFF;
 
-	std::map< JSObject *, UI16 >::const_iterator sIter = scriptJSMap.find( toFind );
+	std::map<JSObject *, UI16>::const_iterator sIter = scriptJSMap.find( toFind );
 	if( sIter != scriptJSMap.end() )
+	{
 		retVal = sIter->second;
+	}
 
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * GetScript( UI16 toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::GetScript()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Finds the cScript associated with the specified scriptID
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Finds the cScript associated with the specified scriptId
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::GetScript( UI16 toFind )
 {
 	cScript *retVal = nullptr;
 
-	std::map< UI16, cScript * >::const_iterator idIter = scriptIDMap.find( toFind );
-	if( idIter != scriptIDMap.end() )
+	std::map<UI16, cScript *>::const_iterator idIter = scriptIdMap.find( toFind );
+	if( idIter != scriptIdMap.end() )
+	{
 		retVal = idIter->second;
+	}
 
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * GetScript( JSObject *toFind )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::GetScript()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds the cScript associated with the specified JSObject
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::GetScript( JSObject *toFind )
 {
-	UI16 scriptID = GetScriptID( toFind );
-	return GetScript( scriptID );
+	UI16 scriptId = GetScriptId( toFind );
+	return GetScript( scriptId );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * First( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::First()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the first cScript in the scriptIDMap
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the first cScript in the scriptIdMap
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::First( void )
 {
-	scriptIDIter = scriptIDMap.begin();
+	scriptIdIter = scriptIdMap.begin();
 	if( !Finished() )
-		return scriptIDIter->second;
+		return scriptIdIter->second;
 
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	cScript * Next( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::Next()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns the next cScript in the scriptIDMap
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns the next cScript in the scriptIdMap
+//o------------------------------------------------------------------------------------------------o
 cScript * CJSMappingSection::Next( void )
 {
 	if( !Finished() )
 	{
-		++scriptIDIter;
+		++scriptIdIter;
 		if( !Finished() )
-			return scriptIDIter->second;
+			return scriptIdIter->second;
 	}
 	return nullptr;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool Finished( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CJSMappingSection::Finished()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Tells us when we have reached the end of the scriptIDMap
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Tells us when we have reached the end of the scriptIdMap
+//o------------------------------------------------------------------------------------------------o
 bool CJSMappingSection::Finished( void )
 {
-	return (scriptIDIter == scriptIDMap.end());
+	return ( scriptIdIter == scriptIdMap.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Class		-	CEnvoke( const std::string &eT )
+//o------------------------------------------------------------------------------------------------o
+//|	Class		-	CEnvoke::CEnvoke()
 //|	Date		-	2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Class containing the specified envoke file
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 CEnvoke::CEnvoke( const std::string &eT )
 {
 	envokeType = eT;
@@ -563,73 +595,80 @@ CEnvoke::~CEnvoke()
 	envokeList.clear();
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool Check( UI16 envokeID ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CEnvoke::Check()
 //|	Date		-	2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Checks if specified envokeID is in the map
-//o-----------------------------------------------------------------------------------------------o
-bool CEnvoke::Check( UI16 envokeID ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if specified envokeId is in the map
+//o------------------------------------------------------------------------------------------------o
+bool CEnvoke::Check( UI16 envokeId ) const
 {
-	std::map< UI16, UI16 >::const_iterator p = envokeList.find( envokeID );
+	std::map<UI16, UI16>::const_iterator p = envokeList.find( envokeId );
 	return ( p != envokeList.end() );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	UI16 GetScript( UI16 envokeID ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CEnvoke::GetScript()
 //|	Date		-	2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Returns specified envokeID
-//o-----------------------------------------------------------------------------------------------o
-UI16 CEnvoke::GetScript( UI16 envokeID ) const
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns specified envokeId
+//o------------------------------------------------------------------------------------------------o
+UI16 CEnvoke::GetScript( UI16 envokeId ) const
 {
-	std::map< UI16, UI16 >::const_iterator p = envokeList.find( envokeID );
+	std::map<UI16, UI16>::const_iterator p = envokeList.find( envokeId );
 	if( p != envokeList.end() )
 		return p->second;
+
 	return 0xFFFF;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void Parse( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CEnvoke::Parse()
 //|	Date		-	2/7/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Parses through specific envoke file mapping the scriptID to the envoke type
-//o-----------------------------------------------------------------------------------------------o
-void CEnvoke::Parse( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Parses through specific envoke file mapping the scriptId to the envoke type
+//o------------------------------------------------------------------------------------------------o
+auto CEnvoke::Parse() -> void
 {
 	envokeList.clear();
 
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
-	if( !FileExists( filename ) )
+	auto filename = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_" + envokeType + "associations.scp";
+	if( !FileExists( filename ))
 	{
 		Console << "Unable to open " << filename << " for parsing" << myendl;
 		return;
 	}
 
-	Script *fileAssocData	= new Script( filename, NUM_DEFS, false );
-	if( fileAssocData != nullptr )
+	auto fileAssocData	= new Script( filename, NUM_DEFS, false );
+	if( fileAssocData )
 	{
-		ScriptSection *mSection = fileAssocData->FindEntry( "ENVOKE" );
-		if( mSection != nullptr )
+		auto mSection = fileAssocData->FindEntry( "ENVOKE" );
+		if( mSection )
 		{
-			std::string tag, data;
-			for( tag = mSection->First(); !mSection->AtEnd(); tag = mSection->Next() )
+			for( const auto &sec:mSection->collection() )
 			{
+				auto tag = sec->tag;
 				if( !tag.empty() && tag != "\n" && tag != "\r" )
 				{
-					data			= mSection->GrabData();
-					UI16 envokeID	= static_cast<UI16>(std::stoul(tag, nullptr, 0));
-					UI16 scriptID	= static_cast<UI16>(std::stoul(data, nullptr, 0));
-					cScript *verify	= JSMapping->GetScript( scriptID );
-					if( verify != nullptr )
-						envokeList[envokeID] = scriptID;
+					auto data = sec->data;
+					auto envokeId	= static_cast<UI16>( std::stoul( tag, nullptr, 0 ));
+					auto scriptId	= static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+					auto verify	= JSMapping->GetScript( scriptId );
+					if( verify )
+					{
+						envokeList[envokeId] = scriptId;
+					}
 					else
-						Console.error(oldstrutil::format( "(ENVOKE) Item %s refers to scriptID %u which does not exist.", tag.c_str(), scriptID) );
+					{
+						Console.Error( oldstrutil::format( "(ENVOKE) Item %s refers to scriptId %u which does not exist.", tag.c_str(), scriptId ));
+					}
 				}
 			}
 		}
 		else
-			Console.warning( "Envoke section not found, no hard id->script matching being done" );
+		{
+			Console.Warning( "Envoke section not found, no hard id->script matching being done" );
+		}
 		delete fileAssocData;
 	}
 }

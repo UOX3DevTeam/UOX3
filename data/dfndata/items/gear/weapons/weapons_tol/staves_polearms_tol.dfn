@@ -1,0 +1,207 @@
+// Weapon Stats matching up with Time of Legends expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// CLASSIC
+// Crook - ToL stats
+[0x13f4_tol]
+{
+get=base_crook
+weight=400
+value=20 10
+damage=16 19
+hp=31 50
+spd=50
+str=20
+}
+
+// Shepherd's Crook - ToL stats
+[0x0e81_tol]
+{
+get=base_shepherds_crook
+weight=400
+value=20 10
+damage=16 19
+hp=31 50
+spd=50
+str=20
+}
+
+// Gnarled Staff - ToL stats
+[0x13f8_tol]
+{
+get=base_gnarled_staff
+weight=300
+value=16 8
+damage=15 18
+hp=31 50
+spd=42
+str=20
+}
+
+// Black Staff - ToL stats
+[0x0df0_tol]
+{
+get=base_black_staff
+weight=600
+value=22 11
+damage=13 16
+hp=31 70
+spd=50
+str=35
+}
+
+// Quarter Staff - ToL stats
+[0x0e89_tol]
+{
+get=base_quarter_staff
+weight=400
+value=19 9
+damage=11 14
+hp=31 60
+spd=61
+str=30
+}
+
+// Halberd - ToL stats
+[0x143e_tol]
+{
+get=base_halberd
+weight=1600
+value=42 21
+damage=18 21
+hp=31 80
+spd=34
+str=95
+}
+
+// Bardiche - ToL stats
+[0x0f4d_tol]
+{
+get=base_bardiche
+weight=700
+value=60 30
+damage=17 20
+hp=31 100
+spd=37
+str=45
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Scythe - ToL stats
+[0x26ba_tol]
+{
+get=base_scythe
+weight=500
+value=39 19
+damage=16 19
+hp=31 100
+spd=39
+str=45
+}
+
+// Bladed Staff - ToL stats
+[0x26bd_tol]
+{
+get=base_bladed_staff
+weight=400
+value=40 20
+damage=14 17
+hp=21 110
+spd=45
+str=40
+}
+
+// Double Bladed Staff - ToL stats
+[0x26bf_tol]
+{
+get=base_double_bladed_staff
+weight=200
+value=35 17
+damage=11 14
+hp=31 80
+spd=61
+str=50
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Wild Staff - ToL stats
+[0x2d25_tol]
+{
+get=base_wild_staff
+damage=10 13
+hp=30 60
+spd=61
+str=15
+value=30 15
+weight=800
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Bardiche - ToL stats
+[0x48b4_tol]
+{
+get=base_gargish_bardiche
+damage=17 20
+hp=31 100
+spd=36
+str=45
+value=47 23
+weight=700
+}
+
+// Gargish Scythe - ToL stats
+[0x48c4_tol]
+{
+get=base_gargish_scythe
+damage=16 19
+hp=31 100
+spd=39
+str=45
+value=31 15
+weight=500
+}
+
+// Serpentstone Staff - ToL stats
+[0x0906_tol]
+{
+get=base_serpentstone_staff
+damage=16 19
+hp=31 50
+spd=39
+str=35
+value=30 15
+weight=300
+}
+
+// Gargish Gnarled Staff - ToL stats
+[0x48b80x48b8_tol]
+{
+get=base_gargish_gnarled_staff
+damage=15 18
+hp=31 50
+spd=42
+str=20
+value=11 5
+weight=300
+}
+
+// Glass Staff - ToL stats
+[0x0905_tol]
+{
+get=base_glass_staff
+damage=11 14
+hp=31 70
+spd=61
+str=20
+value=11 5
+weight=400
+}
