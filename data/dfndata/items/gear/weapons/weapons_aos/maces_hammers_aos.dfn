@@ -1,0 +1,248 @@
+// Weapon Stats matching up with Age of Shadows expansion
+//
+// Items in this file are generally not added or referenced directly.
+// Reference instead, the corresponding entries in the root weapons folder, which then
+// picks the correct sub-entry based on the active NPC ruleset on the server
+
+// War Axe - AoS stats
+[0x13af_aos]
+{
+get=base_war_axe
+weight=800
+value=38 19
+damage=14 15
+hp=31 80
+spd=33
+str=35
+}
+
+// Smith's Hammer - AoS stats
+[0x13e3_aos]
+{
+get=base_smiths_hammer
+weight=800
+value=36 18
+damage=13 15
+hp=31 70
+spd=33
+str=40
+}
+
+// Club - AoS stats
+[0x13b3_aos]
+{
+get=base_club
+weight=900
+value=27 13
+damage=11 13
+hp=31 40
+spd=44
+str=40
+}
+
+// Sledge Hammer - AoS stats
+[0x0fb4_aos]
+{
+get=base_sledge_hammer
+weight=900
+value=32 16
+damage=13 15
+hp=31 70
+spd=33
+str=40
+}
+
+// Mace - AoS stats
+[0x0f5c_aos]
+{
+get=base_mace
+weight=1400
+value=38 30
+damage=12 14
+hp=31 70
+spd=40
+str=45
+}
+
+// War Mace - AoS stats
+[0x1406_aos]
+{
+get=base_war_mace
+weight=1700
+value=37 18
+damage=16 17
+hp=31 110
+spd=26
+str=80
+}
+
+// War Hammer - AoS stats
+[0x1438_aos]
+{
+get=base_war_hammer
+weight=1000
+value=27 13
+damage=17 18
+hp=31 110
+spd=28
+str=95
+}
+
+// Maul - AoS stats
+[0x143a_aos]
+{
+get=base_maul
+weight=1400
+value=31 15
+damage=14 16
+hp=31 70
+spd=32
+str=45
+}
+
+// Hammer Pick - AoS stats
+[0x143c_aos]
+{
+get=base_hammer_pick
+weight=900
+value=31 15
+damage=15 17
+hp=31 70
+spd=28
+str=45
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// AGE OF SHADOWS
+// Scepter - AoS stats
+[0x26bc_aos]
+{
+get=base_scepter
+weight=800
+value=34 17
+damage=14 17
+hp=31 110
+spd=30
+str=40
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// SAMURAI EMPIRE
+// Tessen - AoS stats
+[0x27a3_aos]
+{
+get=base_tessen
+weight=600
+value=80 40
+damage=10 13
+hp=55 60
+spd=51
+str=35
+}
+
+// Tetsubo - AoS stats
+[0x27a6_aos]
+{
+get=base_tetsubo
+weight=800
+value=42 21
+damage=12 15
+hp=60 65
+spd=45
+str=35
+}
+
+// Nunchaku - AoS stats
+[0x27ae_aos]
+{
+get=base_nunchaku
+weight=500
+value=34 17
+damage=12 15
+hp=40 55
+spd=45
+str=15
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// MONDAIN'S LEGACY
+// Diamond Mace - AoS stats
+[0x2d24_aos]
+{
+get=base_diamond_mace
+damage=13 15
+hp=30 60
+spd=33
+str=35
+value=28 14
+weight=1000
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// STYGIAN ABYSS
+// Gargish Maul - AoS stats
+[0x48c2_aos]
+{
+get=base_gargish_maul
+damage=14 16
+hp=31 70
+spd=32
+str=45
+value=31 15
+weight=1400
+}
+
+// Disc Mace - AoS stats
+[0x0903_aos]
+{
+get=base_disc_mace
+damage=11 13
+hp=31 110
+spd=40
+str=45
+value=54 27
+weight=1400
+}
+
+// Gargish War Hammer - AoS stats
+[0x48c0_aos]
+{
+get=base_gargish_war_hammer
+damage=17 18
+hp=31 110
+spd=28
+str=95
+value=27 13
+weight=1000
+}
+
+// Gargish Tessen - AoS stats
+[0x48cc_aos]
+{
+get=base_gargish_tessen
+damage=10 13
+hp=55 60
+spd=51
+str=35
+value=80 40
+weight=600
+}
+
+//------------------------------------------------------------------------------------------------//
+
+// TIME OF LEGENDS
+// Barbed Whip - AoS stats
+[0xa289_aos]
+{
+get=base_barbed_whip
+damage=13 15
+hp=36 48
+spd=33
+str=20
+value=28 14
+weight=500
+}

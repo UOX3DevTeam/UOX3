@@ -24,6 +24,8 @@ function onCharDoubleClick( pUser, targChar )
 			}
 			break;
 		default:
-			return true;
+			break;
 	}
+
+	return true;
 }

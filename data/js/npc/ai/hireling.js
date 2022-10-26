@@ -1,6 +1,6 @@
 // Hirelings, by Xuri (xuri@uox3.org)
-// Version: 1.0
-// Last Updated: July 15th 2021
+// Version: 1.1
+// Last Updated: September 10th 2022
 //
 // For context menu support, hireling needs to be setup with a HIRELING tag in the DFNs
 //
@@ -94,7 +94,9 @@ function onSpeech( pSpeech, pChar, hireling )
 		for( var trigWord = pSock.FirstTriggerWord(); !pSock.FinishedTriggerWords(); trigWord = pSock.NextTriggerWord() )
 		{
 			if(( trigWord >= 356 && trigWord <= 359 ) || trigWord == 363 || trigWord == 364 || trigWord == 368 || trigWord == 360 || trigWord == 361 )
+			{
 				allCmdFound = true;
+			}
 		}
 
 		if( !allCmdFound )
@@ -105,7 +107,9 @@ function onSpeech( pSpeech, pChar, hireling )
 	if( !ValidateObject( hirelingOwner ) && hireling.GetTag( "hired" ))
 	{
 		if( hireling.isHuman )
-			hireling.TextMessage( GetDictionaryEntry( 2328, cliLang) ); // Hmmm. I seem to have lost my master.
+		{
+			hireling.TextMessage( GetDictionaryEntry( 2328, cliLang )); // Hmmm. I seem to have lost my master.
+		}
 		ResetHireling( hireling );
 	}
 
@@ -116,10 +120,12 @@ function onSpeech( pSpeech, pChar, hireling )
 		if( ValidateObject( hirelingOwner ) && hirelingOwner.online )
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2329, cliLang )); // Hmmm. Looks like our time together has come to an end!
+			}
 
 			var tempMsg = GetDictionaryEntry( 2330, cliLang ); // Your hireling - %s - has ceased working for you due to lack of pay!
-			hirelingOwner.SysMessage( tempMsg.replace(/%s/gi, hireling.name ));
+			hirelingOwner.SysMessage( tempMsg.replace( /%s/gi, hireling.name ));
 		}
 		ResetHireling( hireling );
 	}
@@ -146,7 +152,9 @@ function onSpeech( pSpeech, pChar, hireling )
 					// Hireling follows owner
 					hireling.Follow( pChar );
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( pSock, accepted_messages ));
+					{
+						hireling.TextMessage( GetRandomString( pSock, accepted_messages ));
+					}
 					return 1;
 				}
 				break;
@@ -162,7 +170,9 @@ function onSpeech( pSpeech, pChar, hireling )
 						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
 						{
 							if( tempPet.isHuman )
-								tempPet.TextMessage( getRandomString( pSock, accepted_messages ));
+							{
+								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+							}
 							tempPet.Follow( pChar );
 						}
 						/*else if( ValidateObject( tempPet ))
@@ -181,7 +191,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling follows specified target
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2331, cliLang )); // Who shall I follow?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 1;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 228, cliLang )); // Select player for the NPC to follow.
@@ -195,7 +207,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling tries to fetch an object
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2332, cliLang )); // What shall I get for you?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 2;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 1316, cliLang )); // Click on the object to fetch.
@@ -215,7 +229,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling treats targeted player as another owner.
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2333, cliLang )); // Who do you want to add as a friend?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 3;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 1620, cliLang )); // Who do you wish to befriend this creature to?
@@ -228,7 +244,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling guards specified object
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2334, cliLang )); // Tell me what to guard.
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 4;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 2302, cliLang ), 2 ); // Select target for your follower to guard:
@@ -240,12 +258,14 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling guards owner
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( pSock, accepted_messages ));
+					{
+						hireling.TextMessage( GetRandomString( pSock, accepted_messages ));
+					}
 					hireling.Follow( hirelingOwner );
 					hireling.guarding = hirelingOwner;
 					hirelingOwner.isGuarded = true;
 					var tempMsg = GetDictionaryEntry( 2374, cliLang ); // %s is now guarding you.
-					pSock.SysMessage( tempMsg.replace(/%s/gi, hireling.name ) );
+					pSock.SysMessage( tempMsg.replace( /%s/gi, hireling.name ));
 					return 1;
 				}
 				break;
@@ -261,13 +281,15 @@ function onSpeech( pSpeech, pChar, hireling )
 						if( ValidateObject( tempPet ) && tempPet.InRange( pChar, 12 ))
 						{
 							if( tempPet.isHuman )
-								tempPet.TextMessage( getRandomString( pSock, accepted_messages ));
+							{
+								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+							}
 
 							tempPet.Follow( hirelingOwner );
 							tempPet.guarding = hirelingOwner;
 							hirelingOwner.isGuarded = true;
 							var tempMsg = GetDictionaryEntry( 2374, cliLang ); // %s is now guarding you.
-							pSock.SysMessage( tempMsg.replace(/%s/gi, tempPet.name ) );
+							pSock.SysMessage( tempMsg.replace( /%s/gi, tempPet.name ));
 						}
 					}
 					return 1;
@@ -281,16 +303,18 @@ function onSpeech( pSpeech, pChar, hireling )
 					var pRegion = pChar.region;
 					if( pRegion && pRegion.isSafeZone )
 					{
-						pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) ); // Hostile actions are not permitted in this safe area.
+						pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language )); // Hostile actions are not permitted in this safe area.
 						return 0;
 					}
 
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2335, cliLang )); // Who should I attack?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 5;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang ), 1 ); // Select the target to attack.
-					return (pSpeech != "" ? 1 : 2 );
+					return ( pSpeech != "" ? 1 : 2 );
 				}
 				break;
 			case 360: // all kill
@@ -301,14 +325,14 @@ function onSpeech( pSpeech, pChar, hireling )
 					var pRegion = pChar.region;
 					if( pRegion && pRegion.isSafeZone )
 					{
-						pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language ) ); // Hostile actions are not permitted in this safe area.
+						pSock.SysMessage( GetDictionaryEntry( 1799, pSock.language )); // Hostile actions are not permitted in this safe area.
 						return 0;
 					}
 
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 9;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 1313, cliLang ), 1 ); // Select the target to attack.
-					return (pSpeech != "" ? 1 : 2 );
+					return ( pSpeech != "" ? 1 : 2 );
 				}
 				break;
 			case 351: // <Name> patrol
@@ -316,7 +340,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling patrols specified area
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2336, cliLang )); // Where should I patrol?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 6;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 2303, cliLang )); // Select location for your follower to patrol:
@@ -335,14 +361,16 @@ function onSpeech( pSpeech, pChar, hireling )
 							if( hireling.isHuman )
 							{
 								var tempMsg = GetDictionaryEntry( 2337, cliLang ); // I will continue working for thee for an additional %i hours.
-								hireling.TextMessage( tempMsg.replace(/%i/gi, Math.round((hireExpire - GetCurrentClock()) / 60 / 1000) ));
+								hireling.TextMessage( tempMsg.replace( /%i/gi, Math.round(( hireExpire - GetCurrentClock() ) / 60 / 1000 )));
 								pSock.SysMessage( GetDictionaryEntry( 2338, cliLang )); // Extra gold in a hireling's pack will be used to extend the contract once it expires.
 							}
 						}
 						else
 						{
 							if( hireling.isHuman )
-								hireling.TextMessage( getRandomString( pSock, grace_messages ));
+							{
+								hireling.TextMessage( GetRandomString( pSock, grace_messages ));
+							}
 						}
 					}
 				}
@@ -377,7 +405,9 @@ function onSpeech( pSpeech, pChar, hireling )
 					}
 					hireling.Follow( pChar );
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( pSock, accepted_messages ));
+					{
+						hireling.TextMessage( GetRandomString( pSock, accepted_messages ));
+					}
 					return 1;
 				}
 				break;
@@ -416,7 +446,9 @@ function onSpeech( pSpeech, pChar, hireling )
 							}
 							tempPet.Follow( pChar );
 							if( tempPet.isHuman )
-								tempPet.TextMessage( getRandomString( pSock, accepted_messages ));
+							{
+								tempPet.TextMessage( GetRandomString( pSock, accepted_messages ));
+							}
 						}
 					}
 					return 1;
@@ -436,7 +468,7 @@ function onSpeech( pSpeech, pChar, hireling )
 					if( hireling.isHuman )
 					{
 						var tempMsg = GetDictionaryEntry( 2339, cliLang ); // I am available for hire for %i gold coins a day. If thou dost give me gold, I will work for thee.
-						hireling.TextMessage( tempMsg.replace(/%i/gi, payRequired ));
+						hireling.TextMessage( tempMsg.replace( /%i/gi, payRequired ));
 					}
 
 					// Turn the hireling towards the one talking
@@ -451,12 +483,16 @@ function onSpeech( pSpeech, pChar, hireling )
 					if( hireling.owner = pChar )
 					{
 						if( hireling.isHuman )
+						{
 							hireling.TextMessage( GetDictionaryEntry( 2340, cliLang )); // Thou'rt already paying my wages, boss!
+						}
 					}
 					else
 					{
 						if( hireling.isHuman )
-							hireling.TextMessage( getRandomString( pSock, occupied_messages ));
+						{
+							hireling.TextMessage( GetRandomString( pSock, occupied_messages ));
+						}
 					}
 				}
 				break;
@@ -471,7 +507,9 @@ function onSpeech( pSpeech, pChar, hireling )
 						return false; // Wrong hireling!
 
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( pSock, finished_messages ));
+					{
+						hireling.TextMessage( GetRandomString( pSock, finished_messages ));
+					}
 					ResetHireling( hireling );
 					return 1;
 				}
@@ -481,7 +519,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Ownership of hireling is transferred to another player
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2341, cliLang )); // Whom do you wish me to work for?
+					}
 					pSock.tempObj2 = hireling;
 					pSock.tempInt2 = 7;
 					pChar.CustomTarget( 0, GetDictionaryEntry( 2304, cliLang )); // Click on the person to transfer ownership to.
@@ -493,7 +533,9 @@ function onSpeech( pSpeech, pChar, hireling )
 				{
 					// Hireling stays put
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( pSock, accepted_messages ));
+					{
+						hireling.TextMessage( GetRandomString( pSock, accepted_messages ));
+					}
 					hireling.oldwandertype = 0;
 					hireling.wandertype = 0;
 					return 1;
@@ -521,7 +563,9 @@ function onSpeech( pSpeech, pChar, hireling )
 					if( hireling.atWar )
 					{
 						if( hireling.isHuman )
+						{
 							hireling.TextMessage( GetDictionaryEntry( 2373, cliLang )); // I am too busy fighting to deal with thee!
+						}
 						return 1;
 					}
 
@@ -555,7 +599,7 @@ function ResetHireling( hireling )
 	if( ValidateObject( hirelingOwner ))
 	{
 		// If owner still exists, reduce their controlSlotsUsed value by amount of slots hireling takes up
-		hirelingOwner.controlSlotsUsed = Math.max(0, hirelingOwner.controlSlotsUsed - hireling.controlSlots);
+		hirelingOwner.controlSlotsUsed = Math.max( 0, hirelingOwner.controlSlotsUsed - hireling.controlSlots );
 	}
 
 	// Remove owner
@@ -587,7 +631,9 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		if( pChar.socket != null )
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2342, pChar.socket.language) ); // I have no space to carry any items!
+			}
 		}
 		return false;
 	}
@@ -599,7 +645,9 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		if( iDropped.id != 0x0eed ) // gold
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2343, pChar.socket.language )); // Not interested, sorry.
+			}
 			return false;
 		}
 
@@ -615,7 +663,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			if( hireling.isHuman )
 			{
 				var tempMsg = GetDictionaryEntry( 2339, pChar.socket.language ); // I am available for hire for %i gold coins a day. If thou dost give me gold, I will work for thee.
-				hireling.TextMessage( tempMsg.replace(/%i/gi, payRequired ));
+				hireling.TextMessage( tempMsg.replace( /%i/gi, payRequired ));
 			}
 			return false;
 		}
@@ -629,7 +677,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			}
 
 			var tempMsg = GetDictionaryEntry( 2346, pChar.socket.language ); // You can maximum have %i pets/followers active at the same time.
-			pChar.socket.SysMessage( tempMsg.replace(/%i/gi, maxFollowers ));
+			pChar.socket.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 			return false;
 		}
 
@@ -637,7 +685,9 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2347, pChar.socket.language )); // I cannot carry any more!
+			}
 			return false;
 		}
 
@@ -645,16 +695,18 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		iDropped.container = hireling.pack;
 
 		// Calculate how many days to hire the hireling for
-		var daysToHire = Math.floor(iDropped.amount / payRequired);
+		var daysToHire = Math.floor( iDropped.amount / payRequired );
 		if( daysToHire > maxHireUODays )
+		{
 			daysToHire = maxHireUODays;
+		}
 
-		var totalTimeHired = Math.round(secPerUODay * daysToHire * 1000);
+		var totalTimeHired = Math.round( secPerUODay * daysToHire * 1000 );
 		var hireExpire = GetCurrentClock() + totalTimeHired;
 		if( hireling.isHuman )
 		{
 			var tempMsg = GetDictionaryEntry( 2348, pChar.socket.language ); // I thank thee for paying me. I will work for thee for %i days.
-			hireling.TextMessage( tempMsg.replace(/%i/gi, daysToHire ));
+			hireling.TextMessage( tempMsg.replace( /%i/gi, daysToHire ));
 
 			pChar.socket.SysMessage( GetDictionaryEntry( 2338, pChar.socket.language )); // Extra gold in a hireling's pack will be used to extend the contract once it expires.
 		}
@@ -678,7 +730,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		if( hireling.isHuman )
 		{
 			var tempMsg = GetDictionaryEntry( 2349, pChar.socket.language ); // I am following %s.
-			hireling.TextMessage( tempMsg.replace(/%s/gi, pChar.name ));
+			hireling.TextMessage( tempMsg.replace( /%s/gi, pChar.name ));
 		}
 
 		hireling.Follow( pChar );
@@ -700,20 +752,24 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
 			{
 				if( hireling.isHuman )
-					hireling.TextMessage( GetDictionaryEntry( 2347, pChar.socket.language ) ); // I cannot carry any more!
+				{
+					hireling.TextMessage( GetDictionaryEntry( 2347, pChar.socket.language )); // I cannot carry any more!
+				}
 				return false;
 			}
 
 			iDropped.container = hireling.pack;
 			var totalGold = hireling.ResourceCount( 0x0eed, 0 );
-			var daysToHire = Math.floor(totalGold / payRequired);
+			var daysToHire = Math.floor( totalGold / payRequired );
 			if( daysToHire > maxHireUODays )
+			{
 				daysToHire = maxHireUODays;
+			}
 
 			if( hireling.isHuman )
 			{
 				var tempMsg = GetDictionaryEntry( 2344, pChar.socket.language ); // 2344=That's enough total gold to secure my services for another %i days!
-				hireling.TextMessage( tempMsg.replace(/%i/gi, daysToHire ));
+				hireling.TextMessage( tempMsg.replace( /%i/gi, daysToHire ));
 				pChar.socket.SysMessage( GetDictionaryEntry( 2338, pChar.socket.language )); // Extra gold in a hireling's pack will be used to extend the contract once it expires.
 			}
 		}
@@ -734,7 +790,9 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 			else
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 2352, pChar.socket.language )); // I have no need for that.
+				}
 				return false;
 			}
 		}
@@ -752,7 +810,9 @@ function onTimer( hireling, timerID )
 	if( !ValidateObject( hirelingOwner ))
 	{
 		if( hireling.isHuman )
+		{
 			hireling.TextMessage( GetDictionaryEntry( 2328, 0 )); // Hmmm. I seem to have lost my master.
+		}
 		ResetHireling( hireling );
 		return;
 	}
@@ -766,11 +826,13 @@ function onTimer( hireling, timerID )
 		if( totalGold >= payRequired )
 		{
 			// Calculate new duration of the hire
-			var daysToHire = Math.floor(totalGold / payRequired);
+			var daysToHire = Math.floor( totalGold / payRequired );
 			if( daysToHire > maxHireUODays )
+			{
 				daysToHire = maxHireUODays;
+			}
 
-			var totalTimeHired = Math.round(secPerUODay * daysToHire * 1000);
+			var totalTimeHired = Math.round( secPerUODay * daysToHire * 1000 );
 			var hireExpire = GetCurrentClock() + totalTimeHired;
 			hireling.SetTag( "hireExpire", hireExpire );
 			hireling.StartTimer( secPerUODay, 1, true );
@@ -781,9 +843,9 @@ function onTimer( hireling, timerID )
 			{
 				if( hireling.isHuman )
 				{
-					hireling.TextMessage( getRandomString( hirelingOwner.socket, payday_messages ));
+					hireling.TextMessage( GetRandomString( hirelingOwner.socket, payday_messages ));
 					var tempMsg = GetDictionaryEntry( 2348, hirelingOwner.socket.language ); // I thank thee for paying me. I will work for thee for %i days.
-					hireling.TextMessage( tempMsg.replace(/%i/gi, daysToHire ));
+					hireling.TextMessage( tempMsg.replace( /%i/gi, daysToHire ));
 				}
 			}
 		}
@@ -795,7 +857,9 @@ function onTimer( hireling, timerID )
 				if( hirelingOwner.socket != null )
 				{
 					if( hireling.isHuman )
-						hireling.TextMessage( getRandomString( hirelingOwner.socket, grace_messages ));
+					{
+						hireling.TextMessage( GetRandomString( hirelingOwner.socket, grace_messages ));
+					}
 				}
 				hireling.SetTag( "gracePeriodActive", true );
 				hireling.StartTimer( 60000, 2, true ); // 60 second grace period
@@ -811,7 +875,9 @@ function onTimer( hireling, timerID )
 			if( hirelingOwner.socket != null )
 			{
 				if( hireling.isHuman )
-					hireling.TextMessage( getRandomString( hirelingOwner.socket, finished_messages ));
+				{
+					hireling.TextMessage( GetRandomString( hirelingOwner.socket, finished_messages ));
+				}
 			}
 			ResetHireling( hireling );
 		}
@@ -838,9 +904,9 @@ function CalculateHirelingPay( hireling )
 	payPerDay += hSkills.fencing + hSkills.archery;
 	payPerDay += hSkills.magicresistance + hSkills.healing;
 	payPerDay += hSkills.magery + hSkills.parry;
-	payPerDay += (hireling.strength * 10);
-	payPerDay += (hireling.dexterity * 10);
-	payPerDay += (hireling.intelligence * 10);
+	payPerDay += ( hireling.strength * 10 );
+	payPerDay += ( hireling.dexterity * 10 );
+	payPerDay += ( hireling.intelligence * 10 );
 	payPerDay /= 35;
 	payPerDay += 1;
 	return Math.round( payPerDay );
@@ -923,7 +989,9 @@ function FollowTarget( socket, pChar, myTarget, allFollow )
 						if( pChar.socket != null )
 						{
 							if( tempPet.isHuman )
-								tempPet.TextMessage( getRandomString( pChar.socket, accepted_messages ));
+							{
+								tempPet.TextMessage( GetRandomString( pChar.socket, accepted_messages ));
+							}
 						}
 
 						// Start a timer to check if tempPet is too far away from owner
@@ -944,7 +1012,9 @@ function FollowTarget( socket, pChar, myTarget, allFollow )
 			if( pChar.socket != null )
 			{
 				if( hireling.isHuman )
-					hireling.TextMessage( getRandomString( pChar.socket, accepted_messages ));
+				{
+					hireling.TextMessage( GetRandomString( pChar.socket, accepted_messages ));
+				}
 			}
 
 			// Start a timer to check if hireling is too far away from owner
@@ -963,27 +1033,35 @@ function FetchItem( socket, pChar, myTarget )
 			if( myTarget.worldnumber != hireling.worldnumber || myTarget.instanceID != hireling.instanceID )
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 2354, socket.language )); // Impossible. That is out of this world!
+				}
 			}
 			else if( myTarget.container != null )
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 2355, socket.language )); // I cannot fetch items from inside a container.
+				}
 			}
 			else if( myTarget.visible > 1 )
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 2356, socket.language )); // 2356=I cannot see that item!
+				}
 			}
 			else if( !hireling.InRange( myTarget, 12 ))
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away!
+				}
 			}
 			else
 			{
 				hireling.SetTag( "pathMode", "fetchItem" );
-				hireling.SetTag( "itemToFetch", (myTarget.serial).toString() );
+				hireling.SetTag( "itemToFetch", ( myTarget.serial ).toString() );
 				hireling.RunTo( myTarget, 30 );
 			}
 		}
@@ -996,7 +1074,9 @@ function DropLootOnGround( hireling, pSock )
 	if( pack.itemsinside > 0 )
 	{
 		if( hireling.isHuman )
+		{
 			hireling.TextMessage( GetDictionaryEntry( 2357, pSock.language )); // Alright, this is all the loot I collected so far!
+		}
 		var lootItem;
 		for( lootItem = pack.FirstItem(); !pack.FinishedItems(); lootItem = pack.NextItem() )
 		{
@@ -1011,7 +1091,9 @@ function DropLootOnGround( hireling, pSock )
 	else
 	{
 		if( hireling.isHuman )
+		{
 			hireling.TextMessage( GetDictionaryEntry( 2358, pSock.language )); // I have not collected any loot!
+		}
 	}
 }
 
@@ -1045,16 +1127,16 @@ function AddFriend( socket, pChar, myTarget )
 				if( hireling.isHuman )
 				{
 					var tempMsg = GetDictionaryEntry( 2360, socket.language ); // I shall obey the orders given to me by %s and treat them as a friend.
-					hireling.TextMessage( tempMsg.replace(/%s/gi, myTarget.name ));
+					hireling.TextMessage( tempMsg.replace( /%s/gi, myTarget.name ));
 				}
 
 				tempMsg = GetDictionaryEntry( 2361, socket.language ); // %s will now accept commands from %t and will allow them to approach guarded locations.
-				tempMsg = tempMsg.replace(/%s/gi, hireling.name );
-				socket.SysMessage( tempMsg.replace(/%t/gi, myTarget.name ));
+				tempMsg = tempMsg.replace( /%s/gi, hireling.name );
+				socket.SysMessage( tempMsg.replace( /%t/gi, myTarget.name ));
 
 				tempMsg = GetDictionaryEntry( 2362, socket.language ); // %s has granted you the ability to give orders to their follower %t. They will now consider you as a friend.
-				tempMsg = tempMsg.replace(/%s/gi, pChar.name );
-				myTarget.socket.SysMessage( tempMsg.replace(/%t/gi, hireling.name ));
+				tempMsg = tempMsg.replace( /%s/gi, pChar.name );
+				myTarget.socket.SysMessage( tempMsg.replace( /%t/gi, hireling.name ));
 			}
 			else
 			{
@@ -1062,7 +1144,7 @@ function AddFriend( socket, pChar, myTarget )
 				if( friendList.length >= 10 )
 				{
 					var tempMsg = GetDictionaryEntry( 2363, socket.language ); // Unable to add targeted player as friend of %s. Too many players on friend list already!
-					socket.SysMessage( tempMsg.replace(/%s/gi, hireling.name ));
+					socket.SysMessage( tempMsg.replace( /%s/gi, hireling.name ));
 				}
 			}
 		}
@@ -1079,7 +1161,9 @@ function GuardObject( socket, pChar, myTarget )
 			if( !hireling.InRange( myTarget, 12 ))
 			{
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 393, socket.language )); // That is too far away.
+				}
 				return;
 			}
 
@@ -1121,16 +1205,22 @@ function GuardObject( socket, pChar, myTarget )
 				myTarget.isGuarded = true;
 				hireling.guarding = myTarget;
 				if( hireling.isHuman )
+				{
 					hireling.TextMessage( GetDictionaryEntry( 2364, socket.language )); // I will guard that with my life!
+				}
 
 				// Refresh if item
 				myTarget.Refresh();
 
 				hireling.SetTag( "pathMode", "guarding" );
 				if( myTarget.isChar )
+				{
 					hireling.Follow( myTarget );
+				}
 				else
+				{
 					hireling.WalkTo( myTarget, 30 );
+				}
 			}
 		}
 	}
@@ -1154,7 +1244,7 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 			if(( hRegion && hRegion.isSafeZone ) || ( tRegion && tRegion.isSafeZone ))
 			{
 				// Hireling and/or target is in a safe zone where no aggressive actions can be taken, disallow
-				socket.SysMessage( GetDictionaryEntry( 1799, socket.language ) ); // Hostile actions are not permitted in this safe area.
+				socket.SysMessage( GetDictionaryEntry( 1799, socket.language )); // Hostile actions are not permitted in this safe area.
 				return;
 			}
 
@@ -1175,13 +1265,17 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 						if( !pChar.criminal && myTarget != pChar && myTarget.innocent )
 						{
 							if( WillResultInCriminal( pChar, myTarget ))
+							{
 								pChar.criminal = true;
+							}
 						}
 
 						if( tempPet.InitiateCombat( myTarget ))
 						{
 							if( WillResultInCriminal( pChar, myTarget ))
+							{
 								tempPet.criminal = true;
+							}
 						}
 					}
 				}
@@ -1197,7 +1291,9 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 			if( hireling.InitiateCombat( myTarget ))
 			{
 				if( WillResultInCriminal( pChar, myTarget ))
+				{
 					hireling.criminal = true;
+				}
 			}
 		}
 	}
@@ -1243,7 +1339,9 @@ function onPathfindEnd( hireling, pathfindResult )
 				{
 					hireling.Follow( hirelingOwner );
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2365, hirelingOwner.socket.language )); // I'm unable to reach that, sorry!
+					}
 				}
 				break;
 			case 0: // Pathfinding partially succeeded, but didn't make it all the way to target destination
@@ -1252,7 +1350,9 @@ function onPathfindEnd( hireling, pathfindResult )
 				{
 					hireling.Follow( hirelingOwner );
 					if( hireling.isHuman )
+					{
 						hireling.TextMessage( GetDictionaryEntry( 2366, hirelingOwner.socket.language )); // Argh, something is blocking my way!
+					}
 				}
 				break;
 			case 1: // Reached end of the path
@@ -1265,17 +1365,23 @@ function onPathfindEnd( hireling, pathfindResult )
 						if( itemToFetch.weight >= 100 )
 						{
 							if( hireling.isHuman )
+							{
 								hireling.TextMessage( GetDictionaryEntry( 2367, hirelingOwner.socket.language )); // Nnngh! The item is too heavy!
+							}
 						}
 						else if( itemToFetch.movable >= 2 )
 						{
 							if( hireling.isHuman )
+							{
 								hireling.TextMessage( GetDictionaryEntry( 2368, hirelingOwner.socket.language )); // Gggnn... It won't budge!
+							}
 						}
 						else if( !hireling.InRange( itemToFetch, 12 ))
 						{
 							if( hireling.isHuman )
+							{
 								hireling.TextMessage( GetDictionaryEntry( 393, hirelingOwner.socket.language )); // That is too far away.
+							}
 						}
 						else if( ValidateObject( hireling.pack ))
 						{
@@ -1285,7 +1391,9 @@ function onPathfindEnd( hireling, pathfindResult )
 						}
 
 						if( ValidateObject( hirelingOwner ))
+						{
 							hireling.Follow( hirelingOwner );
+						}
 						hireling.SetTag( "pathMode", null );
 						hireling.SetTag( "itemToFetch", null );
 					}
@@ -1332,12 +1440,16 @@ function inRange( hireling, objInRange )
 		if( objInRange.murderer )
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2369, hireling.owner.socket.language ), false, 0, 0, hireling.owner.serial ); // Look out, there's evil afoot!
+			}
 		}
 		else if( objInRange.criminal )
 		{
 			if( hireling.isHuman )
+			{
 				hireling.TextMessage( GetDictionaryEntry( 2370, hireling.owner.socket.language ), false, 0, 0, hireling.owner.serial ); // Beware, unsavory figures are skulking about!
+			}
 		}
 	}
 }
@@ -1379,7 +1491,7 @@ function TransferOwnership( socket, pChar, myTarget )
 				if( myTarget.online && myTarget.socket != null )
 				{
 					var tempMsg = GetDictionaryEntry( 2378, myTarget.socket.language ); // The pet will not accept you as a master because it does not trust %s.
-					myTarget.socket.SysMessage( tempMsg.replace(/%s/gi, pChar.name ));
+					myTarget.socket.SysMessage( tempMsg.replace( /%s/gi, pChar.name ));
 				}
 				return;
 			}
@@ -1387,9 +1499,11 @@ function TransferOwnership( socket, pChar, myTarget )
 			if( myTarget.criminal )
 			{
 				var tempMsg = GetDictionaryEntry( 2376, socket.language ); // The pet refuses to be transferred because it will not obey %s.
-				socket.SysMessage( tempMsg.replace(/%s/gi, myTarget.name ));
+				socket.SysMessage( tempMsg.replace( /%s/gi, myTarget.name ));
 				if( myTarget.online && myTarget.socket != null )
+				{
 					myTarget.SysMessage( GetDictionaryEntry( 2377, myTarget.socket.language )); // The pet will not accept you as a master because it does not trust you.
+				}
 				return;
 			}
 
@@ -1397,7 +1511,9 @@ function TransferOwnership( socket, pChar, myTarget )
 			{
 				pChar.socket.SysMessage( GetDictionaryEntry( 2391, pChar.socket.language )); // That would exceed the other player's maximum pet control slots.
 				if( myTarget.online && myTarget.socket != null )
+				{
 					myTarget.socket.SysMessage( GetDictionaryEntry( 2390, myTarget.socket.language )); // That would exceed your maximum pet control slots.
+				}
 				return false;
 			}
 
@@ -1406,7 +1522,9 @@ function TransferOwnership( socket, pChar, myTarget )
 			{
 				pChar.socket.SysMessage( GetDictionaryEntry( 2401, pChar.socket.language )); // The hireling has had too many masters and is not willing to do the bidding of another one!
 				if( myTarget.online && myTarget.socket != null )
+				{
 					myTarget.socket.SysMessage( GetDictionaryEntry( 2401, myTarget.socket.language )); // The hireling has had too many masters and is not willing to do the bidding of another one!
+				}
 				return false;
 			}
 
@@ -1424,26 +1542,28 @@ function TransferOwnership( socket, pChar, myTarget )
 			// Transfer the hireling!
 			hireling.owner = myTarget;
 			if( hireling.isHuman )
-				hireling.TextMessage( GetDictionaryEntry( 2372, socket.language ) ); // Very well, I transfer my allegiance.
+			{
+				hireling.TextMessage( GetDictionaryEntry( 2372, socket.language )); // Very well, I transfer my allegiance.
+			}
 			hireling.Follow( myTarget );
 
 			// Update control slot tracking for both characters involved
-			pChar.controlSlotsUsed = Math.max(0, pChar.controlSlotsUsed - hireling.controlSlots);
+			pChar.controlSlotsUsed = Math.max( 0, pChar.controlSlotsUsed - hireling.controlSlots );
 			myTarget.controlSlotsUsed = pChar.controlSlotsUsed + hireling.controlSlots;
 		}
 	}
 }
 
-function getRandomString( socket, string_array )
+function GetRandomString( socket, string_array )
 {
 	//returns random string from given array
-	return GetDictionaryEntry( string_array[randomInt(string_array.length - 1)], socket.language );
-	//return string_array[randomInt(string_array.length - 1)];
+	return GetDictionaryEntry( string_array[RandomInt( string_array.length - 1 )], socket.language );
+	//return string_array[RandomInt(string_array.length - 1)];
 }
 
-function randomInt( rvalue )
+function RandomInt( rvalue )
 {
 	//returns random integer with maximum given
-	return Math.floor(Math.random() * rvalue);
+	return Math.floor( Math.random() * rvalue );
 }
 

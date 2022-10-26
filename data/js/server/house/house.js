@@ -4,11 +4,9 @@
 // Uses script trigger 15000, applied to any new houses built via SCRIPT tag in houses.dfn,
 // or first time house sign is used if the house existed before this change was made
 
-// const coOwnHousesOnSameAccount = CoOwnHousesOnSameAccount();
 const coOwnHousesOnSameAccount = GetServerSetting( "COOWNHOUSESONSAMEACCOUNT" );
-// const protectPrivateHouses = ProtectPrivateHouses();
 const protectPrivateHouses = GetServerSetting( "PROTECTPRIVATEHOUSES" );
-const visitorPurgeTimer = 86400000; // visitor list for house purged every 24 hours
+const visitorPurgeTimer = 86400; // visitor list for house purged every 24 hours
 
 function onHouseCommand( pSocket, iMulti, cmdID )
 {
@@ -63,8 +61,10 @@ function onEntrance( iMulti, charEntering, objType )
 	// and visiting character are actually valid objects
 	if( !ValidateObject( iMulti ))
 		return false;
+
 	if( !ValidateObject( charEntering ))
 		return false;
+
 	if( objType != 0 ) // We only care about characters entering, not items
 		return false;
 
@@ -80,11 +80,11 @@ function onEntrance( iMulti, charEntering, objType )
 		}
 
 		// Prevent unauthorized visitors from entering private buildings
-		if( !ValidateObject( charEntering.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
+		if( !ValidateObject( charEntering.owner ) || !ValidateObject( iMulti.owner ) || ( ValidateObject( charEntering.owner ) && charEntering.owner != iMulti.owner ))
 		{
 			if( !iMulti.isPublic && protectPrivateHouses
 				&& ( !iMulti.IsOnOwnerList( charEntering ) && !iMulti.IsOnFriendList( charEntering ) && !iMulti.IsOnGuestList( charEntering )
-					&& ( !coOwnHousesOnSameAccount || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
+					&& ( !coOwnHousesOnSameAccount || !ValidateObject( iMulti.owner ) || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum != charEntering.accountNum ))))
 			{
 				// Prevent unauthorized visitors from entering private buildings
 				PreventMultiAccess( iMulti, charEntering, 1, 1817 ); // This is a private home
@@ -97,12 +97,12 @@ function onEntrance( iMulti, charEntering, objType )
 		{
 			// Has more than 24 hours passed since the visitorTracker was last cleared? If so, clear it now
 			var lastPurgeTime = iMulti.GetTag( "lastPurge" );
-			if( lastPurgeTime != "" )
+			if( lastPurgeTime != 0 )
 			{
-				if( GetCurrentClock() - parseInt(lastPurgeTime) > visitorPurgeTimer )
+				if(( GetCurrentClock() - parseInt( lastPurgeTime )) / 1000 > visitorPurgeTimer )
 				{
 					PurgeVisitTracker( iMulti );
-					iMulti.SetTag( "lastPurge", GetCurrentClock() );
+					iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
 				}
 
 				// Count visitor if they haven't entered the building for the past 24 hours
@@ -116,7 +116,7 @@ function onEntrance( iMulti, charEntering, objType )
 			else
 			{
 				// Tag didn't exist! This is the first visit, ever
-				iMulti.SetTag( "lastPurge", GetCurrentClock() );
+				iMulti.SetTag( "lastPurge", GetCurrentClock().toString() );
 
 				// Assume no file exists already, and just add visitor directly!
 				if( AddVisitor( iMulti, charEntering ))
@@ -126,7 +126,9 @@ function onEntrance( iMulti, charEntering, objType )
 					iMulti.SetTag( "visitCount", ++visitCount );
 				}
 				else
-					Console.Warning( "Unable to update visitor tracker for house with serial " + (iMulti.serial).toString() + " !" );
+				{
+					Console.Warning( "Unable to update visitor tracker for house with serial " + ( iMulti.serial ).toString() + " !" );
+				}
 			}
 		}
 	}
@@ -146,27 +148,35 @@ function PreventMultiAccess( iMulti, charEntering, ejectReason, dictEntry )
 		if( banX == 0 && banY == 0 )
 		{
 			// Fetch coordinates for corner 3 (SE) of multi and use that as ban location
-			var multiCornerCoords = (iMulti.GetMultiCorner( 3 )).split( "," );
-			banX = parseInt(multiCornerCoords[0]);
-			banY = parseInt(multiCornerCoords[1]);
+			var multiCornerCoords = ( iMulti.GetMultiCorner( 3 )).split( "," );
+			banX = parseInt( multiCornerCoords[0] );
+			banY = parseInt( multiCornerCoords[1] );
 		}
 
 		multiCornerZ = GetMapElevation( banX, banY, iMulti.worldnumber );
 		if( multiCornerZ < iMulti.z )
+		{
 			multiCornerZ = iMulti.z;
+		}
 
 		charEntering.Teleport( banX, banY, multiCornerZ );
 		if( charEntering.online )
+		{
 			charEntering.socket.walkSequence = -1;
+		}
 	}
 
 	// Inform player why they were ejected from the house
 	if( charEntering.online )
 	{
 		if( ejectReason == 0 )
+		{
 			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.language )); // You are banned from that location
+		}
 		else if( ejectReason == 1 )
+		{
 			charEntering.SysMessage( GetDictionaryEntry( dictEntry, charEntering.socket.language )); // This is a private home
+		}
 	}
 }
 
@@ -175,7 +185,7 @@ function PurgeVisitTracker( iMulti )
 {
 	// Create a new file object
 	var mFile = new UOXCFile();
-	var fileName = "house"+(iMulti.serial).toString()+".jsdata";
+	var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
 
 	// Open file for writing (which will overwrite any existing file with a new file) then close it again
 	mFile.Open( fileName, "w", "houseVisits" );
@@ -191,7 +201,7 @@ function CheckVisitTracker( iMulti, charEntering )
 
 	// Create a new file object
 	var mFile = new UOXCFile();
-	var fileName = "house"+(iMulti.serial).toString()+".jsdata";
+	var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
 
 	// Open file for reading in "/shared/houseVisits/" subfolder
 	mFile.Open( fileName, "r", "houseVisits" );
@@ -234,15 +244,15 @@ function AddVisitor( iMulti, charEntering )
 {
 	// Create a new file object
 	var mFile = new UOXCFile();
-	var fileName = "house"+(iMulti.serial).toString()+".jsdata";
+	var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
 
 	mFile.Open( fileName, "a", "houseVisits" ); // Open file for Appending
 	if( mFile != null )
 	{
 		// Append a new line to the file with the visitor's serial and timestamp
 		var visitTime = GetCurrentClock();
-		var newLine = (charEntering.serial).toString() + "," + visitTime.toString();
-		mFile.Write( newLine + "\n");
+		var newLine = ( charEntering.serial ).toString() + "," + visitTime.toString();
+		mFile.Write( newLine + "\n" );
 		mFile.Close()
 		mFile.Free();
 		return true;
@@ -254,7 +264,7 @@ function AddVisitor( iMulti, charEntering )
 // Remove the tracking file for house - primarily used when demolishing houses!
 function RemoveTrackingFile( iMulti )
 {
-	var fileName = "house"+(iMulti.serial).toString()+".jsdata";
+	var fileName = "house" + ( iMulti.serial ).toString() + ".jsdata";
 	var folderName = "houseVisits";
 	DeleteFile( fileName, folderName );
 }

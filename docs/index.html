@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 02. March, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
+	<p style="margin:0"><small>Last Updated: 22. November, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -60,6 +60,10 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>August 24th, 2022</h4>
+						<ul>
+							<li>Made it easier to find the Frequently Asked Questions section of the document</li>
+						</ul>
 						<h4>February 12th, 2022</h4>
 						<ul>
 							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on new settings: TOOLUSELIMIT, TOOLUSEBREAk, ITEMREPAIRDURABILITYLOSS and CRAFTCOLOUREDWEAPONS</li>
@@ -187,6 +191,8 @@
 					<p>UOX3 - or <strong>Ultima Offline eXperiment 3</strong> - is an open-source server emulator for Ultima Online that allows you to run your own private (or public) UO server where <em>you</em> are in control of what rules apply, what features are available and what type of players will inhibit Britannia.</p>
 					<h3>Getting Started</h3>
 					<p>If you want to dive right in and get started with UOX3, hop on over to the <a href="#installation">Installation and Setup</a> section.</p>
+					<h3>Got Questions?</h3>
+					<p>If you're curious, but have some questions, try your luck by reading the <a href="#uox3FAQ">Frequently Asked Questions</a> section, or join the <a href="#uox3Support">UOX3 Community</a> on Discord for a quick chat!</p>
 					<h3>UOX3 History and Changelog</h3>
 					<p>To see what's new in the latest stable release of UOX3, or to do an in-depth dive into the history of the UOX3 project itself, check out the <a href="#history">History and Credits</a> section of this document.</p>
 				  </div>
@@ -260,10 +266,10 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_customization_options"/>
 					<label for="spoiler_customization_options">Customization Options <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>UOX3 has many settings and options that can be tweaked via the main configuration file, uox.ini, as well as in individual regions of the world. More in-depth tweaks are also possible by editing various JS files for skills and items:</p>
+						<p>UOX3 has many settings and options that can be tweaked via the main configuration file, uox.ini, as well as in individual regions of the world. More in-depth tweaks are also possible by editing the included JS files for skills and items:</p>
 						<ul>
 							<li><strong>Client Blocking</strong> - Mix and match which client versions to allow on your shard. Players using unsupported clients will be blocked and/or disconnected shortly after joining the shard.</li>
-							<li><strong>Feature Negotiation</strong> - UOX3 supports negotiating features with assistant tools that support this, like Razor. Enable or disable various assistant functions like auto-remounting, weather filter and more.</li>
+							<li><strong>Feature Negotiation</strong> - UOX3 supports negotiating features with assistant tools that support this, like Razor. Enable or disable assistant functions like auto-remounting, weather filter and more.</li>
 							<li><strong>ClassicUO Map Tracker</strong> - If using the ClassicUO client's World Map, guild and party members will show up on the map if this option is enabled.</li>
 							<li><strong>Skill and Stat-caps</strong> - Choose skill and stat-caps for all players via two simple settings.</li>
 							<li><strong>Rogue Skills</strong> - Adjust the amount of steps players can take while stealthing, make snooping a crime - or legalize it, disable hostile skills in protected regions, or disable rogue skills altogether.</li>
@@ -290,7 +296,7 @@ packitem=0x0f8d,30
 							<li><strong>Advanced Trade System</strong> - The advanced trade system in UOX3 can be used to setup dynamic prices for goods with NPC vendors across the game world, with prices fluctuating based on the amount of items sold to or bought from players in each region.</li>
 							<li><strong>Customizable Ore System</strong> - Customize the types of ore available in your world, where to find them and how hard they are to dig out of the ground.</li>
 							<li><strong>Rank and Quality Crafting System</strong> - Custom rank system for crafting skills allow for variable stats and quality of crafted items.</li>
-							<li><strong>Race System</strong> - The race system in UOX3 is an extensive and customizable system that can be applied to both players and NPCs. Through this system, races can be setup as allies or enemies, can be given skill bonuses or penalties, have different skill and stat caps, can take extra damage from specific weapons (undead race vs silver weapons, for instance), and more.</li>
+							<li><strong>Race System</strong> - The race system in UOX3 is an extensive and customizable system that can be applied to both players and NPCs. Through this system, races can be setup as allies or enemies, can be given skill bonuses or penalties, have distinct skill and stat caps, can take extra damage from specific weapons (undead race vs silver weapons, for instance), and more.</li>
 							<li><strong>Advancement Gates</strong> - Shard admins can setup "advancement gates" which sets up players who step through them with specific skills, stats and equipment, and can be used to give players a head start or to setup predefined "classes" beyond what the UO client's character creation options allow for.</li>
 							<li><strong>Persecution</strong> - Getting killed on an UOX3 shard is not the end. Ghosts can fight back! By entering combat mode, ghosts can cause trouble for their killers by draining their mana at opportune moments!</li>
 							<li><strong>Ambient Footstep Sounds</strong> - Ever noticed how in regular UO, the footsteps of your character always sound the same, no matter what kind of surface you walk on? Enable ambient footstep sounds in UOX3, and you'll be walking on wood, gravel, stone and swamp in no time!</li>
@@ -300,7 +306,7 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler3"/>
 					<label for="spoiler3">UO-Specific Gameplay Features <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>UOX3 also supports various features from regular UO:</p>
+						<p>UOX3 also supports features from regular UO:</p>
 						<ul>
 							<li><strong>Combat</strong> - Combat system with rules that align closely with official UO around the time of Publish 15, just before the release of the Age of Shadows expansion. Ruleset can be modified and/or extended to support specific preferences.</li>
 							<li><strong>Crafting</strong> - Prefer baking bread over hacking and slashing? Try your hand at Alchemy, Bowcraft, Carpentry, Cartography, Inscription, Smithing, Tailoring or Tinkering!</li>
@@ -319,6 +325,113 @@ packitem=0x0f8d,30
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>If at any point during your adventures with UOX3 you feel you could use someone to talk to, whether to help you resolve an issue you've encountered or just to have someone to share your journey with, feel free to join and post at the <a href="https://www.uox3.org/forums" target="_blank" title="UOX3 Community Forums">community forums</a> at UOX3.org, or hop onto the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord server</a> if you'd rather have a more direct line of communication with fellow UOX3 users and developers. Or do both!</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+						<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#uox3FAQ" id="uox3FAQ"><span>Frequently Asked Questions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Why? Where? Who? When? What?</p>
+					<input type="checkbox" id="spoiler_faq_whatisuox3"/>
+					<label for="spoiler_faq_whatisuox3">What is UOX3, and why does it exist? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>UOX3 - or Ultima Offline eXperiment 3 - is an open-source server emulator for Ultima Online that allows you to run your own private (or public) UO server where you are in control of what rules apply, what features are available and what type of players will inhibit Britannia.</p>
+						<p>While one of UOX3's goals is to emulate the functionality and features of the official Ultima Online servers and allow anyone to run a server of their own, another is to allow its users to tweak all aspects those features, and even to create new ones altogether - either through UOX3's JavaScript scripting engine (based on a SpiderMonkey-implementation of JavaScript) or by modifying the source-code for UOX3 directly.</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_spidermonkey"/>
+					<label for="spoiler_faq_spidermonkey">What is a SpiderMonkey, and where do I get one? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>SpiderMonkey is the name of the JavaScript scripting engine that comes pre-baked into UOX3. It parses and interprets special JavaScript files written for UOX3 to extend the functionality of the server. All those scripts can be modified by shard admins during runtime without needing to restart the server, and entirely new scripts can be added on the fly, while the server is kept running.</p>
+						<p>For an in-depth dive into this topic, go to the <a href="#jsIntro">Introduction to JS Engine in UOX3</a> section!</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_jsanddfn"/>
+					<label for="spoiler_faq_jsanddfn">What are JS and/or DFN files? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>JS files are scripts written in JavaScript, which are read and interpreted by UOX3's embedded SpiderMonkey scripting engine. They are used to add specific behaviours to items, NPCs, skills, spells, and more. For a basic example and a more in-depth dive into this topic, go to the <a href="#jsIntro">Introduction to JS Engine in UOX3</a> section!</p>
+						<p>DFN (or "Definition") files are essentially blueprints that define which properties and flags should be applied to objects like items and NPCs upon creation, or to persistent systems like Weather and Races. Check out the <a href="#dfnSystem">Introduction to DFN System in UOX3</a> section for more details!</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_uox3free"/>
+					<label for="spoiler_faq_uox3free">How much does UOX3 cost? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Nothing. Anyone who wants can download and use UOX3 for free!</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_license"/>
+					<label for="spoiler_faq_license">What license is UOX3's source code released under? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>UOX3 is licensed under v2 of the GNU General Public License (GPL), with the following addendum:</p>
+						<p>"In addition to that license, if you are running this program or modified versions of it on a public system you HAVE TO make the complete source of the version used by you available or provide people with a location to download it."</p>
+						<input type="checkbox" id="spoiler_gpl_license"/>
+						<label for="spoiler_gpl_license">Full GNU General Public License Text <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<embed src="gpl-license.txt" style="width: 100%; min-height: 500px">
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_uox1and2"/>
+					<label for="spoiler_faq_uox1and2">What happened to UOX1 and UOX2? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>UOX was the first incarnation of the UO Server emulator, and was created by a fellow nicknamed Jaegermeister. It was short-lived, however, and Cironian aka Marcus Rating rewrote it and released it as UOX2.</p>
+						<p>Later on he rewrote UOX2 completely and released UOX3 - which he eventually also open-sourced - which is still the same version we're using now, though quite a lot has changed since then, and a lot of people have contributed to what we're using right now.</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_connectionerror"/>
+					<label for="spoiler_faq_connectionerror">Why am I getting connection-errors when trying to log in? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>There can be a number of reasons for why you are unable to connect to a UOX3 shard. Here are some of the most common ones:</p>
+						<p><strong>You're trying to connect to UOX3 using an encrypted UO client</strong><br>
+						Make sure you remove/patch away the UO client encryption through the use of <a href="http://www.razorce.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
+						<p><strong>You set the IP and/or Port incorrectly in UOX.INI</strong><br>
+						Having the wrong IP or Port in UOX.INI will give you a connection-error when you try to select the UOX3 shard in your client's server-list. The initial connection that checks for user-name/password might still go through, but not the server-selection part.</p>
+						<p><strong>You set the IP and/or Port incorrectly in Razor/other tool used to start the client</strong><br>
+						If you set the wrong IP to connect to in Razor/other tool you use to start the client, you will not be able to connect to the UOX3 shard at all, it will just give a connection-error immediately. If you set the correct IP but the wrong Port, you will be able to connect and verify your user-name/password, but will not be able to connect to the chosen server in the client's server-list.</p>
+						<p><strong>The UO client computer's firewall is blocking outgoing connections</strong><br>
+						The computer you're running the UO client on might be blocking outgoing connections, either through firewalls (like the built-in Windows firewall) or through 3rd-party security/antivirus-software. Try to disable whichever software might be blocking the outgoing connection temporarily to see if the connection is then allowed to go through, and/or include the UO client-executable and/or outgoing IP/Port in the exclusion-rules for these softwares.</p>
+						<p><strong>The UOX3 shard computer's firewall is blocking incoming connections</strong><br>
+						The computer that's running the UOX3 software might be blocking incoming connections, either through software firewalls (like the built-in Windows firewall) or through 3rd-party security/antivirus-software. Try to disable whichever software might be blocking the incoming connection temporarily to see if the connection is then allowed to go through, and/or include the UOX3 software and/or incoming IP/Port in the exclusion-rules for these softwares.</p>
+						<p><strong>The UOX3 shard computer's router is not setup to forward incoming connections properly</strong><br>
+						If you're trying to connect to the UOX3 shard from an external computer through the Internet, you might have to setup the UOX3 shard computer's Internet-router (if one is present) to forward incoming connections on the specified UOX3 port (2593 by default), to the internal LAN/local-IP of the UOX3 shard computer.</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_portforward"/>
+					<label for="spoiler_faq_portforward">How do I setup Port Forwarding on my router? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If the server you intend to run your UOX3 shard on is behind a NAT router, then you might have to forward any incoming connections on port 2593 (or whichever other port you decided to use for UOX3) to the internal LAN-IP given to your server by the router. This is called <a href="https://en.wikipedia.org/wiki/Port_forwarding" target="_blank" title="Wikipedia - Port Forwarding">Port Forwarding (Wikipedia)</a>, and whether or not it is required depends on the router and how it is setup. The easiest way to find out is to have someone try to connect to your UOX3 server over the Internet. If they are unable to connect, and you've ruled out all other options (mis-configuration of UOX3/UO Client, firewalls running on host/client computers, etc), then you might have to setup port-forwarding on your router.</p>
+						<p>How do I do Port Forwarding?</p>
+						<p>The exact procedure varies from router to router, but in general it involves connecting to the router's IP through your browser/Windows Explorer/Linux equivalent, entering the user-name and password required to log on to the router (these can either be default to the router-brand, or custom depending on your Internet-provider), and then adding the UOX3 port to whatever port-forwarding configuration exists for your router.</p>
+						<p>The World Wide Web contains many sites with step-by-step instructions for how to setup port-forwarding on different types of routers. One such site is <a href="https://www.portforward.com/" target="_blank" title="PortForward.com - Guides on port forwarding">PortForward.com</a>. If the default username/password specific to your router (usually mentioned on these sites) is not working, you might have to consult the documentation that came along with the router, or contact your ISP to get them to provide the username and password.</p>
+						<p>How can I check if I set it up correctly?</p>
+						<p>To quickly check if you setup your port-forwarding correctly, you can visit <a href="https://canyouseeme.org/" target="_blank" title="CanYouSeeMee.org - tools for testing port-forwarding setup">CanYouSeeMe.org</a> (Open Port Check Tool) and just enter the port you're trying to forward. Click the 'check' button, and the tool should tell you whether or not it can see a service running on your server through said port.</p>
+						<p>The other option is of course to have someone actually try to connect to your shard! :)</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_uox3era"/>
+					<label for="spoiler_faq_uox3era">What era of UO is UOX3 based on? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Some parts of UOX3 such as combat calculations, weapon/armor values, NPC stats etc. are <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml" target="_blank" title="UO Stratics Arms info from archive.org">based around Publish 15 of UO, from the time just before</a> (archive.org) the Age of Shadows expansion was released. Not all features are exact replicas of this era, though, and usually options are provided to allow shard admins to put their own twist on a feature.</p>
+						<p>Note that the combat calculations are hardcoded, but can be overridden through the JavaScript system (or changed in code, of course). The stats of gear and NPCs can be easily tweaked with any text editor, and there are UOX.INI settings that can globally increase/decrease combat difficulty and/or speed.</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_npcfight"/>
+					<label for="spoiler_faq_npcfight">Why aren't NPCs fighting back? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If NPCs aren't fighting back when you attack them, chances are that you are playing on either a GM character, or a character on the admin-account (which all have GM privileges by default). One of the privileges of being a GM (or an admin-character) is that you are flagged as "invulnerable" by default. Since NPCs (and players) can't attack invulnerable characters, this means they will never fight back when you try to attack them. In fact, UOX3 might not allow you to attack them at all.</p>
+						<p>Try turning off your invulnerability by using either of these commands:</p>
+						<p><strong>'invul false</strong><br><strong>'set vulnerable 1</strong></p>
+					</div>
+
+					<input type="checkbox" id="spoiler_faq_additems"/>
+					<label for="spoiler_faq_additems">How do I add items? <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>The quick answer: Try the <span class="hl">'add</span> command while logged in with a character on your admin account (account 0). This will bring up a menu from which you can select to add items, NPCs and even some basic spawners (Tip: If you end up with some items in your backpack that you cannot move, try the <span class="hl">'allmove on</span> command. This will let you pick up and move items normal players cannot.)</p>
+						<p>For a more in-depth guide on adding items to your shard, try the <a href="#addingItemsAndNPCs">Adding Items and NPCs</a> section of the <a href="#firstFiveMinutes">First Five Minutes</a> portion of these docs!</p>
+					</div>
+
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -431,7 +544,7 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<p>Clients after v7.0.24.2 started using new file format for map files - uop - that previously required conversion to mul format in order to be loaded by UOX3, leading to a recommendation of using a client version earlier than this. However, starting with v0.99.3, UOX3 <strong>can</strong> now load these uop files directly. <strong>No need to convert!</strong> If for whatever reason you still want to convert files between the .mul and .uop formats, check out the <a href="#convertUOP">Additional UOX3 Info > Converting UOP to MUL</a> section!</p>
 					</div>
-					<p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with various UO Client versions.</p>
+					<p><strong>It is strongly recommended</strong> that you download and install a version of Ultima Online <strong>before</strong> continuing with the download and setup of UOX3 itself. You can either download the latest available <strong>Classic Client</strong> from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a>, or you can head on over to <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">the community forums</a> to read more about UOX3's compatibility with specific UO Client versions.</p>
 					<p>While you're at it, go grab <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source implementation of the UO client with many bells and whistles, which is the de-facto standard for connecting to private UO shards these days. It supports both Windows, Linux and macOS - though it still relies on the data files from the original UO client. You can also grab <a href="http://www.razorce.com/" target="_blank">Razor Community Edition</a>, which on its own can be used to run the original UO client and provides many quality of life options, though it can also be used in tandem with ClassicUO for the best of both worlds.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -441,7 +554,7 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#downloadUOX3" id="downloadUOX3"><span>Downloading UOX3</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>To get started with UOX3, you have a couple of different options:</p>
+					<p>To get started with UOX3, you have a couple of options:</p>
 					<h3>1) Stable All-in-One</h3>
 					<p>The first, and most straight-forward option is to download the latest stable <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
 					<h3>2) Experimental Build</h3>
@@ -466,9 +579,9 @@ packitem=0x0f8d,30
 					<h3>Step 3) Set the IP Address and Port</h3>
 					<p>By default, UOX3 will work for <strong>local connections</strong> with <strong>no further changes required</strong> in this step, i.e. when connecting with UO client on same computer as UOX3, or connecting across a home LAN/WiFi.</p>
 					<p>However, if you intend to have your UOX3 shard <strong>accessible to other people</strong> over the Internet, you need to replace <span class="hl">127.0.0.1</span> in the line <span class="hl">EXTERNALIP=127.0.0.1</span> with your public Internet IP. An additional step that might be required here, is to configure your Internet router to forward incoming connections to your local computer via a concept called <a href="https://www.uox3.org/forums/viewtopic.php?f=19&t=2348" target="_blank" title="UOX3 Forum - Frequently Asked Questions - Port Forwarding">port forwarding</a> (check linked FAQ answer on UOX3 forums for more info).</p>
-					<p>Speaking of ports - the ini setting <span class="hl">PORT=2593</span> determines the port UOX3 will be listening for incoming connections on. Usually this can be left as the default value, unless you have specific reasons to use a different port.</p>
+					<p>Speaking of ports - the ini setting <span class="hl">PORT=2593</span> determines the port UOX3 will be listening for incoming connections on. Usually this can be left as the default value, unless you have specific reasons to use another port.</p>
 					<h3>Step 4) Limit Allowed Client Versions</h3>
-					<p>Under the <span class="hl">[clientsupport]</span> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid potential issues with different client versions behaving differently. Any client version you enable here also enable a range of versions up to the version in the next available setting.</p>
+					<p>Under the <span class="hl">[clientsupport]</span> section, enable or disable specific UO client version ranges to determine which versions of the UO client are allowed to connect to your UOX3 shard. As a general rule, try to keep the allowed ranges as narrow as possible to avoid issues with multiple client versions behaving differently. Any client version you enable here also enable a range of versions up to the version in the next available setting.</p>
 					<p>If you're using the latest available version of the UO client, no need to make any changes here - the latest versions are allowed by default.</p>
 					<h3>Step 5) Set the path to UO files</h3>
 					<p>Scroll down to the <strong>[directories]</strong> section of the ini file, and locate this line:</p>
@@ -489,7 +602,7 @@ packitem=0x0f8d,30
 							<li><span class="hl">tiledata.mul</span></li>
 						</ul>
 						<div class="note">
-							<p style="color: black; font-style: italic">NOTE: The * in the above filenames indicate that there's more than one similarly named files, and the different numbers in each filename represents a different world/facet. If you want your shard to support all the available worlds/facets in the client, make sure to copy all of these files. Alternatively, just copy the files with a 0 in the name, if you just want the original UO map and nothing else - although be aware that in this case players will be unable to go to those additional worlds!</p>
+							<p style="color: black; font-style: italic">NOTE: The * in the above filenames indicate that there's more than one similarly named files, and the numbers in each filename represents a different world/facet. If you want your shard to support all the available worlds/facets in the client, make sure to copy all of these files. Alternatively, just copy the files with a 0 in the name, if you just want the original UO map and nothing else - although be aware that in this case players will be unable to go to those additional worlds!</p>
 						</div>
 					</div>
 					<h3>Step 6) Setting up the Admin Account</h3>
@@ -557,7 +670,7 @@ packitem=0x0f8d,30
 						  |		<em>Dictionaries with script-and system messages translated into languages supported by the UO client.</em><br>
 						  |<br>
 						  |--<strong>/docs/</strong><br>
-						  |		<em>Various documentation related to running an UOX3 shard</em><br>
+						  |		<em>Documentation related to running an UOX3 shard</em><br>
 						  |<br>
 						  |--<strong>/help/</strong><br>
 						  |		<em>Help files accessible via in-game 'help command</em><br>
@@ -569,7 +682,7 @@ packitem=0x0f8d,30
 						  |		<em>The home of all scripts read by UOX3's JavaScript Engine</em><br>
 						  |<br>
 						  |--<strong>/logs/</strong><br>
-						  |		<em>Output folder for various shard log files; error log, combat log, network log, etc</em><br>
+						  |		<em>Output folder for shard log files; error log, combat log, network log, etc</em><br>
 						  |<br>
 						  |--<strong>/msgboards/</strong><br>
 						  |		<em>This is where data for posts on in-game bulletin boards is stored</em><br>
@@ -595,7 +708,7 @@ packitem=0x0f8d,30
 					<h3>Linux/macOS</h3>
 					<p>Open a new terminal window, navigate to the root of your UOX3 directory, and start UOX3 by entering the following command: <strong>./uox3</strong></p>
 					<h3>Common</h3>
-					<p>UOX3 should now start up, and a barrage of text should scroll off your screen as UOX3 loads the various UO data files, DFNs and scripts. Barring any errors during this process, the scrolling should come to a halt with the following lines displayed at the bottom:</p>
+					<p>UOX3 should now start up, and a barrage of text should scroll off your screen as UOX3 loads the UO data files, DFNs and scripts. Barring any errors during this process, the scrolling should come to a halt with the following lines displayed at the bottom:</p>
 					<p style="margin-left: 20px"><em>| UOX: Startup Complete<br>
 					o------------------------------------------------------------------------------o<br>
 					| Thread: CheckConsoleThread has started</em></p>
@@ -616,7 +729,7 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 					<p>A couple of things are required to connect and login to your UOX3 shard; an <strong>Ultima Online</strong> client, and a <strong>tool that can remove encryption</strong> from said client. Such a tool is needed since UOX3 does not accept connections from encrypted clients.</p>
 					<h3>Ultima Online</h3>
-					<p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a> and install it, or visit the UOX3 community forums to read more about different <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">UO client versions/expansions and compatibility with UOX3</a>.</p>
+					<p>If you followed the recommendations in the Requirements section up above, you will already have an Ultima Online client installed, and can skip to the next step. If not - don't panic! Go grab the latest client download - titled <em>Classic Client</em> - from <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">the official UO website</a> and install it, or visit the UOX3 community forums to read more about <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=2289" target="_blank" title="UOX3 Community Forums - UO Client Compatibility">UO client versions/expansions and compatibility with UOX3</a>.</p>
 
 					<h3>Option 1) Launch UO using ClassicUO</h3>
 					<p>The de-facto standard way of connecting to private UO shards these days is using <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO</a>, an open-source, cross-platform implementation of the UO client that also works on both <span class="hl">Windows</span>, <span class="hl">Linux</span> and <span class="hl">macOS</span> (data from original UO client still required).</p>
@@ -635,7 +748,7 @@ packitem=0x0f8d,30
 							<li>Show lightsources even at max light level</li>
 							<li>Show custom aura colors under feet of all characters</li>
 							<li>Show network stats</li>
-							<li>Various quality of life features that have been available in various assist tools for decades... like showing stumps instead of trees, hiding roofs (a bit dubious...), etc.</li>
+							<li>Quality of life features that have been available in various assist tools for decades... like showing stumps instead of trees, hiding roofs (a bit dubious...), etc.</li>
 						</ul>
 						<p>Check it out at the <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - open source UO client">ClassicUO Website</a> or <a href="https://github.com/ClassicUO/ClassicUO" target="_blank" rel="noopener" title="ClassicUO @ GitHub">@ GitHub</a>!</p>
 					</div>
@@ -653,7 +766,7 @@ packitem=0x0f8d,30
 						<p><a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO assistant">Razor Community Edition</a> is an open-source assistant tool for Ultima Online, which also supports integration with the open-source client ClassicUO. Not only can it disable encryption in the original UO client if needed, it also provides a number of different features:</p>
 						<ul>
 							<li>Encryption removal and handling of what IP client should connect to</li>
-							<li>Management of different shard profiles/client versions via profile system</li>
+							<li>Management of shard profiles/client versions via profile system</li>
 							<li>Show incoming objects, container labels, health above characters, damage dealt/damage taken</li>
 							<li>Smart targeting, action-queue, auto-opening of nearby corpses, block trade requests, block party invites, auto-open doors</li>
 							<li>Timer display, damage tracker, resource counter, dress/undress macros</li>
@@ -689,11 +802,11 @@ packitem=0x0f8d,30
 				  <h3>Decorating Your Shard with Items</h3>
 				  <p>By default, UOX3 comes as a blank slate - <strong>a tabula rasa</strong> - on which you can build and craft your own unique UO shard. However, should you wish to get a head-start, you will - on first login with a character on the admin account - <strong>get the option</strong> to <span class="hl">automatically decorate your shard</span> based on some default <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world templates</a> (which themselves were based on the older "<em>default UOX3 worldfiles</em>") provided with UOX3, which generates items such as doors, signs, lights and more. For now, these templates cover all the UO towns on the Felucca facet (world 0).</p>
 				  <h3>Populating Your Shard with NPCs</h3>
-				  <p>Similarly, you'll get the option to supplement the world decorations with <span class="hl">all kinds of NPCs</span>, from animals and monsters to shopkeepers and townfolk. By default, UOX3 comes bundled with <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Region</a> files (based on the old "<em>community-based spawn.dfn file</em>") that cover Britannia on the Felucca facet, as well as dungeons, forests and various monster camps on that map.</p>
+				  <p>Similarly, you'll get the option to supplement the world decorations with <span class="hl">all kinds of NPCs</span>, from animals and monsters to shopkeepers and townfolk. By default, UOX3 comes bundled with <a href="#uox3SpawnRegions" title="UOX3 Documentation - Spawn Regions">Spawn Region</a> files (based on the old "<em>community-based spawn.dfn file</em>") that cover Britannia on the Felucca facet, as well as dungeons, forests and monster camps on that map.</p>
 				  <h3>Admin Welcome Gump</h3>
 				  <p>These options are presented in a <strong>gump</strong> (UO term for menu) that pops up on login, where you can choose between <strong>starting with a blank shard</strong> and do your own thing, or to utilize the <strong>default UOX3 world</strong> to get a pre-defined starting point for your shard.</p>
 				  <p style="padding-left: 10%; padding-right: 10%"><img src="assets/images/uox3_welcome_1.jpg" style="padding: 20px;max-width: 50%; max-height: 316px;float: left"/><img src="assets/images/uox3_welcome_2.jpg" style="padding: 20px;max-width: 50%;max-height: 316px;float: right"/></p>
-				  <p style="clear:both">If you don't want to make this choice on your first login, you can always return to the welcome screen using the <span class="hl">'welcome</span> command, or alternatively skip that altogether and rely on the <span class="hl">'decorate load</span> command to get the job done for items, or the <span class="hl">'enablespawns [facetNum/facetName]</span> and <span class="hl">'disablespawns [facetNum/facetName]</span> commands to manually enable/disable Spawn Regions for different facets. Either way, any custom content you have added or changes you have made to your shard will not be overwritten!</p>
+				  <p style="clear:both">If you don't want to make this choice on your first login, you can always return to the welcome screen using the <span class="hl">'welcome</span> command, or alternatively skip that altogether and rely on the <span class="hl">'decorate load</span> command to get the job done for items, or the <span class="hl">'enablespawns [facetNum/facetName]</span> and <span class="hl">'disablespawns [facetNum/facetName]</span> commands to manually enable/disable Spawn Regions for each facet. Either way, any custom content you have added or changes you have made to your shard will not be overwritten!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -753,7 +866,7 @@ packitem=0x0f8d,30
 					<span class="hl">'goplace 20</span></p>
 					<p>Now that you have travelled the world, been places, maybe seen things you can never forget... it's time to return to your roots. Let's go back to the starting point, the location you were at when you used the <strong>where</strong> command earlier:<br>
 					<span class="hl">'go x y z</span> (replace x y and z with the values you got from the 'where command)</p>
-					<p>UOX3 has <a href="#commandlist">many other commands</a> that allow you to manipulate the coordinates of both characters and items in various ways, but these basic few are your bread and butter, the ones you'll keep coming back to in order to get things done.</p>
+					<p>UOX3 has <a href="#commandlist">many other commands</a> that allow you to manipulate the coordinates of both characters and items, but these basic few are your bread and butter, the ones you'll keep coming back to in order to get things done.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -816,9 +929,9 @@ packitem=0x0f8d,30
 					<h3>The UOX3 Command List</h3>
 					<p>The <a href="#commandList">command list</a> contains detailed information on each and every command available in UOX3. If you're unsure about the specifics of a certain command, this is where you go. It can be found in the next section below, titled <a href="#additionalInfo">Additional UOX3 Info</a>.</p>
 					<h3>The Feature Documentation</h3>
-					<p>Extensive documentation is also available for each major feature supported by UOX3. Go to the <a href="#featureDocs">Feature Documentation</a> section of this document if you want to dig into the various systems.</p>
+					<p>Extensive documentation is also available for each major feature supported by UOX3. Go to the <a href="#featureDocs">Feature Documentation</a> section of this document if you want to dig into available systems.</p>
 					<h3>The JS Engine</h3>
-					<p>The <a href="#scriptingJS" title="UOX3 Documentation - Scripting - JavaScript Engine">JavaScript Engine</a> section of this documentation provides information about the scripting engine used in UOX3, along with details of all the various events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
+					<p>The <a href="#scriptingJS" title="UOX3 Documentation - Scripting - JavaScript Engine">JavaScript Engine</a> section of this documentation provides information about the scripting engine used in UOX3, along with details of all the events/triggers, methods, functions and properties that you can make use of in your JS scripts to make your shard come to life.</p>
 					<h3>The Community Forums</h3>
 					<p>The <a href="https://www.uox3.org/forums" target="_blank" title="UOX3 Community Forums">community forums</a> at UOX3.org contains many resources for both coding, scripting and managing your UOX3 shard. It can also be a great place to have a discussion on topics that don't require an immediate and instant response.</p>
 					<h3>The Community Discord</h3>
@@ -933,7 +1046,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">JSENGINESIZE</span><strong>=256</strong><br>
-							gcMaxBytes limited in MB per JS Runtime. Must be between 16 and 4095! Essentially defines how much memory JS engine should be allowed to allocate before last-ditch GC kicks in.</p>
+							gcMaxBytes limited in MB per JS Runtime. Must be between 16 and 4095! Essentially defines how much memory JS engine should be allowed to allocate before last-ditch GC kicks in. It's recommended to leave this setting alone unless there are specific reasons to change it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">USEUNICODEMESSAGES</span><strong>=1</strong><br>
@@ -1079,8 +1192,8 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_skillsandstats">[skill & stats] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">SKILLLEVEL</span><strong>=5</strong><br>
-							Global difficulty level for crafting items. 1=Easiest, 5=Default, 10=Difficult.</p>
+							<p><span class="hl">SKILLLEVEL</span><strong>=7</strong><br>
+							Global difficulty level for crafting exceptional quality items. 1=Easiest, 7=Default, 10=Difficult (estimated to around same difficulty as official UO shards in LBR era).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SKILLCAP</span><strong>=7000</strong><br>
@@ -1129,67 +1242,67 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<div class="settingsDiv">
 							<p><span class="hl">CORPSEDECAYTIMER</span><strong>=900</strong><br>
-							Amount of time for a corpse to decay.</p>
+							Amount of time in seconds for a corpse to decay.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">WEATHERTIMER</span><strong>=60</strong><br>
-							Amount of time between changing light levels (day cycles).</p>
+							Amount of time in seconds between changing light levels (day cycles).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SHOPSPAWNTIMER</span><strong>=300</strong><br>
-							Amount of time between shopkeeper restocks.</p>
+							Amount of time in seconds between shopkeeper restocks.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">DECAYTIMER</span><strong>=300</strong><br>
-							Amount of time a decayable item will remain on the ground before disappearing.</p>
+							Amount of time in seconds a decayable item will remain on the ground before disappearing.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">DECAYTIMERINHOUSE</span><strong>=3600</strong><br>
-							Amount of time a decayable item will remain on the floor of a house before disappearing, if not locked down.</p>
+							Amount of time in seconds a decayable item will remain on the floor of a house before disappearing, if not locked down.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">INVISIBILITYTIMER</span><strong>=60</strong><br>
-							Duration of the invisibility spell.</p>
+							Duration of the invisibility spell, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">OBJECTUSETIMER</span><strong>=1</strong><br>
-							Amount of time a player must wait between using objects.</p>
+							Amount of time in seconds a player must wait between using objects.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GATETIMER</span><strong>=30</strong><br>
-							Duration of a summoned moongate.</p>
+							Duration of a summoned moongate, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">POISONTIMER</span><strong>=180</strong><br>
-							Duration of the poison effect on a character.</p>
+							Duration of the poison effect on a character, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">LOGINTIMEOUT</span><strong>=300</strong><br>
-							Amount of time for an idle connection to time out.</p>
+							Amount of time for an idle connection to time out, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HITPOINTREGENTIMER</span><strong>=8</strong><br>
-							Amount of time required to regenerate a single point of health.</p>
+							Amount of time in seconds required to regenerate a single point of health.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">STAMINAREGENTIMER</span><strong>=3</strong><br>
-							Amount of time required to regenerate a single point of stamina.</p>
+							Amount of time in seconds required to regenerate a single point of stamina.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MANAREGENTIMER</span><strong>=5</strong><br>
-							Amount of time required to regenerate a single point of mana.</p>
+							Amount of time in seconds required to regenerate a single point of mana.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BASEFISHINGTIMER</span><strong>=10</strong><br>
-							Base time for fishing skill to complete an attempt at fishing.</p>
+							Base time in seconds for fishing skill to complete an attempt at fishing.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">RANDOMFISHINGTIMER</span><strong>=5</strong><br>
-							Max random time for fishing skill to complete.</p>
+							Max random time in seconds for fishing skill to complete.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SPIRITSPEAKTIMER</span><strong>=30</strong><br>
-							Duration of the spirit speak skill.</p>
+							Duration of the spirit speak skill, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">PETOFFLINECHECKTIMER</span><strong>=600</strong><br>
@@ -1222,7 +1335,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">AMBIENTFOOTSTEPS</span><strong>=0</strong><br>
-							Determines if the footstep-sounds hardcoded in UOX3 are used or not (different sounds on different tiles).</p>
+							Determines if the footstep-sounds hardcoded in UOX3 are used or not (sounds based on tile types).</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">INTERNALACCOUNTCREATION</span><strong>=0</strong><br>
@@ -1286,7 +1399,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">POLYDURATION</span><strong>=90</strong><br>
-							Duration of the polymorph spell.</p>
+							Duration of the polymorph spell, in seconds.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CLIENTFEATURES</span><strong>=1021183</strong><br>
@@ -1421,7 +1534,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">TOOLUSEBREAK</span><strong>=1</strong><br>
-							If enabled, various tools for harvesting and crafting will break if they reach zero HP. Enabled by default.</p>
+							If enabled, tools for harvesting and crafting will break if they reach zero HP. Enabled by default.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ITEMREPAIRDURABILITYLOSS</span><strong>=1</strong><br>
@@ -1458,7 +1571,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MAXPETOWNERS</span><strong>=10</strong><br>
-							Maximum number of different owners a pet can have over its lifetime before it becomes impossible to retame</p>
+							Maximum number of unique owners a pet can have over its lifetime before it becomes impossible to retame</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CHECKPETCONTROLDIFFICULTY</span><strong>=1</strong><br>
@@ -1553,15 +1666,15 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ESCORTINITEXPIRE</span><strong>=900</strong><br>
-							Amount of time until an escort-NPC will vanish while waiting for someone to start escorting it.</p>
+							Amount of time in seconds until an escort-NPC will vanish while waiting for someone to start escorting it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ESCORTACTIVEEXPIRE</span><strong>=600</strong><br>
-							Amount of time until an escort NPC will vanish while a player is escorting it.</p>
+							Amount of time in seconds until an escort NPC will vanish while a player is escorting it.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ESCORTDONEEXPIRE</span><strong>=600</strong><br>
-							Amount of time until an escort NPC will vanish when it has reached it's destination.</p>
+							Amount of time in seconds until an escort NPC will vanish when it has reached it's destination.</p>
 						</div>
 					</div>
 
@@ -1595,7 +1708,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BASETIMER</span><strong>=30</strong><br>
-							Tracking timer - maximum time a GrandMaster can track someone.</p>
+							Tracking timer - maximum time in seconds a GrandMaster can track someone.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MAXTARGETS</span><strong>=20</strong><br>
@@ -1611,8 +1724,8 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_reputation">[reputation] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">MURDERDECAYTIMER</span><strong>=60</strong><br>
-							Amount of time before a permanent murder count will decay.</p>
+							<p><span class="hl">MURDERDECAYTIMER</span><strong>=28800</strong><br>
+							Amount of time in seconds before a permanent murder count will decay. Defaults to 8 hours (28800 seconds)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MAXKILLS</span><strong>=4</strong><br>
@@ -1620,7 +1733,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">CRIMINALTIMER</span><strong>=120</strong><br>
-							Amount of time a character remains criminal after committing a criminal act.</p>
+							Amount of time in seconds a character remains criminal after committing a criminal act.</p>
 						</div>
 					</div>
 
@@ -1641,7 +1754,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ORERESPAWNTIMER</span><strong>=600</strong><br>
-							Amount of time it takes for 1 single ore to respawn in a resource area.</p>
+							Amount of time in seconds it takes for 1 single ore to respawn in a resource area.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">LOGSPERAREA</span><strong>=3</strong><br>
@@ -1649,7 +1762,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">LOGSRESPAWNTIMER</span><strong>=600</strong><br>
-							Amount of time it takes for 1 single log to respawn in a resource area.</p>
+							Amount of time in seconds it takes for 1 single log to respawn in a resource area.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">FISHPERAREA</span><strong>=3</strong><br>
@@ -1657,7 +1770,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">FISHRESPAWNTIMER</span><strong>=600</strong><br>
-							Amount of time it takes for 1 single fish to respawn in a resource area.</p>
+							Amount of time in seconds it takes for 1 single fish to respawn in a resource area.</p>
 						</div>
 					</div>
 
@@ -1666,7 +1779,7 @@ packitem=0x0f8d,30
 					<div class="spoiler">
 						<div class="settingsDiv">
 							<p><span class="hl">HUNGERRATE</span><strong>=6000</strong><br>
-							Amount of time a player has before his hunger level decreases.</p>
+							Amount of time in seconds a player has before his hunger level decreases.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">HUNGERDMGVAL</span><strong>=2</strong><br>
@@ -1739,7 +1852,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">ARCHERYSHOOTDELAY</span><strong>=0.5</strong><br>
-							If 1, adds an extra delay between moving and being able to shoot with ranged weapons in combat (in addition to whatever delay is there due to speed of the ranged weapon)</p>
+							Attack delay for archers; after coming to a full stop, they need to wait this amount of time in seconds before they can fire an arrow.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SHOOTONANIMALBACK</span><strong>=0</strong><br>
@@ -1747,7 +1860,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">COMBATEXPLODEDELAY</span><strong>=2</strong><br>
-							The amount of time it takes for the damage from the Explosion spell to be inflicted on the target.</p>
+							The amount of time in seconds it takes for the damage from the Explosion spell to be inflicted on the target.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">WEAPONDAMAGECHANCE</span><strong>=17</strong><br>
@@ -2274,7 +2387,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_cq">
 						<label for="spoiler_cmd_cq">cq <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Perform various tasks relating to the Counselor Queue; Go to next call in the queue, clear the current call, go to current call, transfer current call to GM queue.</p>
+							<p>Perform tasks relating to the Counselor Queue; Go to next call in the queue, clear the current call, go to current call, transfer current call to GM queue.</p>
 							<p>If nothing is specified, the Counselor Queue will be displayed.</p>
 							<p>Command: <span class="hl">'cq</span><br>
 							Parameters: <span class="hl"><em>(nothing)</em></span> / <span class="hl">next</span> / <span class="hl">clear</span> / <span class="hl">curr</span> / <span class="hl">transfer</span></p>
@@ -2311,7 +2424,7 @@ packitem=0x0f8d,30
 						<input type="checkbox" id="spoiler_cmd_decorate">
 						<label for="spoiler_cmd_decorate">decorate <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Can be used to save/load <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world template files</a>, which can be used to quickly decorate a shard with objects of various types across one or more facets. Supported sub-commands: <strong>save</strong> (save items to templates), <strong>load</strong> (load items from templates), <strong>clean</strong> (remove duplicate items) and <strong>copy</strong> (copy items from one facet to another).</p>
+							<p>Can be used to save/load <a href="#worldTemplates" title="UOX3 Documentation - World Templates">world template files</a>, which can be used to quickly decorate a shard with objects of different types across one or more facets. Supported sub-commands: <strong>save</strong> (save items to templates), <strong>load</strong> (load items from templates), <strong>clean</strong> (remove duplicate items) and <strong>copy</strong> (copy items from one facet to another).</p>
 							<p>World templates are saved to/loaded from a subfolder of <em>SCRIPTDATADIRECTORY</em> (set in uox.ini) titled "worldtemplates", which by default can be found at <strong>uox3/js/jsdata/worldtemplates</strong>.</p>
 							<p>Command: <span class="hl">'decorate</span><br>
 							Sub-Commands: <span class="hl"><em>save</em></span> <strong>(params)</strong> / <span class="hl"><em>load</em></span> <strong>(params)</strong> / <span class="hl"><em>clean</em></span> / <span class="hl"><em>copy</em></span> <strong>(params)</strong><br>
@@ -3730,7 +3843,7 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_item_types">
 					<label for="spoiler_item_types">List of Item Types <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>The IT_[NAME] descriptions below are used in the source code to reference the various item types, and is included here for visibility. Use the numeric values when setting item types via command, DFN or script.</p>
+						<p>The IT_[NAME] descriptions below are used in the source code to reference the item types, and is included here for visibility. Use the numeric values when setting item types via command, DFN or script.</p>
 						<div class="itemTypesDiv">
 							<p><span class="hl">0</span><strong> - IT_NOTYPE</strong><br>
 							No item type specified.</p>
@@ -3892,7 +4005,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">90</span><strong> - IT_WORLDCHANGEGATE</strong><br>
-							World Change Gates can display the world with different season visuals for players, based on the value of the MOREX property set on the gate object. Available MOREX values: 0 - Spring, 1 - Summer, 2 - Fall, 3 - Winter, 4 - Desolation</p>
+							World Change Gates can display the world with season visuals for players, based on the value of the MOREX property set on the gate object. Available MOREX values: 0 - Spring, 1 - Summer, 2 - Fall, 3 - Winter, 4 - Desolation</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">101</span><strong> - IT_MORPHOBJECT</strong><br>
@@ -4058,7 +4171,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">230</span><strong> - IT_SEWINGKIT</strong><br>
-							Sewing kit. Can be used by the Tailoring profession to craft various types of clothes.</p>
+							Sewing kit. Can be used by the Tailoring profession to craft clothes.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">231</span><strong> - IT_ORE</strong><br>
@@ -4086,11 +4199,11 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">238</span><strong> - IT_FLOURSACK</strong><br>
-							Sack of flour. Used by Cooking profession to create various baked goods. Turns into open sack of flour when used.</p>
+							Sack of flour. Used by Cooking profession to create baked goods. Turns into open sack of flour when used.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">239</span><strong> - IT_OPENFLOURSACK</strong><br>
-							Open Sack of flour. Used by Cooking profession to create various baked goods.</p>
+							Open Sack of flour. Used by Cooking profession to create baked goods.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">240</span><strong> - IT_FISHINGPOLE</strong><br>
@@ -4118,7 +4231,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">246</span><strong> - IT_HAIRDYE</strong><br>
-							Hair dye. When used, will bring up a gump menu with various colour choices, which the player can apply to their hair.</p>
+							Hair dye. When used, will bring up a gump menu with multiple colour choices, which the player can apply to their hair.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">247</span><strong> - IT_LOCKPICK</strong><br>
@@ -4134,7 +4247,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">250</span><strong> - IT_TINKERAWG</strong><br>
-							Various springs, bolts and misc items used by the Tinkerer profession to craft parts needed for more advanced Tinkering. Consumed on use.</p>
+							Springs, bolts and misc items used by the Tinkerer profession to craft parts needed for more advanced Tinkering. Consumed on use.</p>
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">251</span><strong> - IT_TINKERCLOCK</strong><br>
@@ -4150,7 +4263,7 @@ packitem=0x0f8d,30
 						</div>
 						<div class="itemTypesDiv">
 							<p><span class="hl">255</span><strong> - IT_COUNT</strong><br>
-							The final item type in the list, and the one type that serves no gameplay function. However, it is used by various tools to identify items to "freeze" into the statics files.</p>
+							The final item type in the list, and the one type that serves no gameplay function. However, it is used by some tools to identify items to "freeze" into the statics files.</p>
 						</div>
 					</div>
 				  </div>
@@ -4338,7 +4451,7 @@ packitem=0x0f8d,30
 					<p>Upon startup, UOX3 will attempt to load map and statics files based on the parameters provided in <strong>UOX3/dfndata/maps/maps.dfn</strong>. It is important that the map sizes (in height and width) defined in this file match up to the actual files being loaded. Note that the default sizes match up with map files present in v5.0.0a and newer.</p>
 					<p>To make UOX3 load maps of a different size, make sure to update the X and Y sizes in this file accordingly!</p>
 					<h3>Tiledata</h3>
-					<p><strong>UOX3/dfndata/maps/tiles.dfn</strong> allows overriding flags/properties stored in <strong>tiledata.mul</strong> for different tiles in UO, which UOX3 uses for various purposes such as determining whether a surface is walkable, climbable (ladders) or blocks line of sight. It is most commonly used to address various issues with tiles, such as missing or incorrect flags, without having to modify the tiledata.mul file itself.</p>
+					<p><strong>UOX3/dfndata/maps/tiles.dfn</strong> allows overriding flags/properties stored in <strong>tiledata.mul</strong> for different tiles in UO, which UOX3 uses for purposes such as determining whether a surface is walkable, climbable (ladders) or blocks line of sight. It is most commonly used to address issues with tiles, such as missing or incorrect flags, without having to modify the tiledata.mul file itself.</p>
 					<p>Example of syntax:<br>
 					<span class="hl">[TILE 0x0AA4]</span> // Tile ID<br>
 					<span class="hl">{</span><br>
@@ -4411,7 +4524,7 @@ packitem=0x0f8d,30
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<h3>Brief History of UOP Format</h3>
-					<p>In UO Client v7.0.24.2, a new fileformat was introduced - UOP, that would eventually replace some of the files using the old MUL format. Amongst the files converted were the various <em>map*.mul</em> files, which became <em>map*LegacyMUL.uop</em> files. At the time, and before the different UO emulators (including UOX3) added support to load this new fileformat, prospective shard admins had to convert those .uop files <em>back</em> to .mul files before they could be used.</p>
+					<p>In UO Client v7.0.24.2, a new fileformat was introduced - UOP, that would eventually replace some of the files using the old MUL format. Amongst the files converted were the <em>map*.mul</em> files, which became <em>map*LegacyMUL.uop</em> files. At the time, and before the different UO emulators (including UOX3) added support to load this new fileformat, prospective shard admins had to convert those .uop files <em>back</em> to .mul files before they could be used.</p>
 					<p>Thankfully, creative souls came up with several tools that could be used to convert UO data files between these two file formats, for instance <a href="https://github.com/polserver/UOFiddler/releases" target="_blank" title="UOFiddler - viewer and editor of UO data files">UOFiddler</a> and <a href="https://github.com/cbnolok/LegacyMULConverter-N" target="_blank" title="LegacyMULConverter-N - a tool to convert MUL files to UOP">LegacyMULConverter-N</a>.</p>
 					<h4>Conversion not Needed for UOX3 v0.99.3 and Above</h4>
 					<p><strong>Do take note</strong>, that starting with <strong>UOX3 v0.99.3</strong>, these .uop files can be read by UOX3 directly <strong>without a need</strong> to convert them to back to the original format first. <strong>No need to convert!</strong> Should you for whatever reason still want to convert the map files back to .mul files, for instance to use them with an older version of UOX3, or to load them in a map-editing tool that doesn't support the newer format, here follows a quick guide on how you can do just that, using UOFiddler:</p>
@@ -4638,88 +4751,6 @@ packitem=0x0f8d,30
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
-
-			<li class="cd-faq__item">
-				<a class="cd-faq__trigger" href="#uox3FAQ" id="uox3FAQ"><span>Frequently Asked Questions</span></a>
-				<div class="cd-faq__content">
-				  <div class="text-component">
-					<p>Why? Where? Who? When? What?</p>
-					<input type="checkbox" id="spoiler_faq_uox3purpose"/>
-					<label for="spoiler_faq_uox3purpose">What is the purpose of UOX3? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>While one of UOX3's goals is to emulate the functionality and features of the official Ultima Online servers and allow anyone to run a server of their own, another is to allow its users to tweak all aspects those features, and even to create new ones altogether - either through UOX3's JavaScript scripting engine (based on a SpiderMonkey-implementation of JavaScript) or by modifying the source-code for UOX3 directly.</p>
-					</div>
-					<input type="checkbox" id="spoiler_faq_uox3free"/>
-					<label for="spoiler_faq_uox3free">How much does UOX3 cost? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>Nothing. Anyone who wants can download and use UOX3 for free!</p>
-					</div>
-					<input type="checkbox" id="spoiler_faq_license"/>
-					<label for="spoiler_faq_license">What license is UOX3's source code released under? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>UOX3 is licensed under v2 of the GNU General Public License (GPL), with the following addendum:</p>
-						<p>"In addition to that license, if you are running this program or modified versions of it on a public system you HAVE TO make the complete source of the version used by you available or provide people with a location to download it."</p>
-						<input type="checkbox" id="spoiler_gpl_license"/>
-						<label for="spoiler_gpl_license">Full GNU General Public License Text <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<embed src="gpl-license.txt" style="width: 100%; min-height: 500px">
-						</div>
-					</div>
-
-					<input type="checkbox" id="spoiler_faq_uox1and2"/>
-					<label for="spoiler_faq_uox1and2">What happened to UOX1 and UOX2? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>UOX was the first incarnation of the UO Server emulator, and was created by a fellow nicknamed Jaegermeister. It was short-lived, however, and Cironian aka Marcus Rating rewrote it and released it as UOX2.</p>
-						<p>Later on he rewrote UOX2 completely and released UOX3 - which he eventually also open-sourced - which is still the same version we're using now, though quite a lot has changed since then, and a lot of people have contributed to what we're using right now.</p>
-					</div>
-
-					<input type="checkbox" id="spoiler_faq_connectionerror"/>
-					<label for="spoiler_faq_connectionerror">Why am I getting connection-errors when trying to log in? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>There can be a number of different reasons for why you are unable to connect to a UOX3 shard. Here are some of the most common ones:</p>
-						<p><strong>You're trying to connect to UOX3 using an encrypted UO client</strong><br>
-						Make sure you remove/patch away the UO client encryption through the use of <a href=http://www.razorce.com/" target="_blank" title="UO:R Community Edition of Razor">Razor</a> or a similar programs before trying to connect to a UOX3 shard. UOX3 will only accept clients with no encryption.</p>
-						<p><strong>You set the IP and/or Port incorrectly in UOX.INI</strong><br>
-						Having the wrong IP or Port in UOX.INI will give you a connection-error when you try to select the UOX3 shard in your client's server-list. The initial connection that checks for user-name/password might still go through, but not the server-selection part.</p>
-						<p><strong>You set the IP and/or Port incorrectly in Razor/other tool used to start the client</strong><br>
-						If you set the wrong IP to connect to in Razor/other tool you use to start the client, you will not be able to connect to the UOX3 shard at all, it will just give a connection-error immediately. If you set the correct IP but the wrong Port, you will be able to connect and verify your user-name/password, but will not be able to connect to the chosen server in the client's server-list.</p>
-						<p><strong>The UO client computer's firewall is blocking outgoing connections</strong><br>
-						The computer you're running the UO client on might be blocking outgoing connections, either through firewalls (like the built-in Windows firewall) or through 3rd-party security/antivirus-software. Try to disable whichever software might be blocking the outgoing connection temporarily to see if the connection is then allowed to go through, and/or include the UO client-executable and/or outgoing IP/Port in the exclusion-rules for these softwares.</p>
-						<p><strong>The UOX3 shard computer's firewall is blocking incoming connections</strong><br>
-						The computer that's running the UOX3 software might be blocking incoming connections, either through software firewalls (like the built-in Windows firewall) or through 3rd-party security/antivirus-software. Try to disable whichever software might be blocking the incoming connection temporarily to see if the connection is then allowed to go through, and/or include the UOX3 software and/or incoming IP/Port in the exclusion-rules for these softwares.</p>
-						<p><strong>The UOX3 shard computer's router is not setup to forward incoming connections properly</strong><br>
-						If you're trying to connect to the UOX3 shard from an external computer through the Internet, you might have to setup the UOX3 shard computer's Internet-router (if one is present) to forward incoming connections on the specified UOX3 port (2593 by default), to the internal LAN/local-IP of the UOX3 shard computer.</p>
-					</div>
-
-					<input type="checkbox" id="spoiler_faq_uox3era"/>
-					<label for="spoiler_faq_uox3era">What era of UO is UOX3 based on? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>Various parts of UOX3 such as combat calculations, weapon/armor values, NPC stats etc. are <a href="http://web.archive.org/web/20020806221331/http://uo.stratics.com:80/content/arms-armor/arms.shtml" target="_blank" title="UO Stratics Arms info from archive.org">based around Publish 15 of UO, from the time just before</a> (archive.org) the Age of Shadows expansion was released. Not all features are exact replicas of this era, though, and usually options are provided to allow shard admins to put their own twist on a feature.</p>
-						<p>Note that the combat calculations are hardcoded, but can be overridden through the JavaScript system (or changed in code, of course). The stats of gear and NPCs can be easily tweaked with any text editor, and there are UOX.INI settings that can globally increase/decrease combat difficulty and/or speed.</p>
-					</div>
-
-					<input type="checkbox" id="spoiler_faq_npcfight"/>
-					<label for="spoiler_faq_npcfight">Why aren't NPCs fighting back? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>If NPCs aren't fighting back when you attack them, chances are that you are playing on either a GM character, or a character on the admin-account (which all have GM privileges by default). One of the privileges of being a GM (or an admin-character) is that you are flagged as "invulnerable" by default. Since NPCs (and players) can't attack invulnerable characters, this means they will never fight back when you try to attack them. In fact, UOX3 might not allow you to attack them at all.</p>
-						<p>Try turning off your invulnerability by using either of these commands:</p>
-						<p><strong>'invul false</strong><br><strong>'set vulnerable 1</strong></p>
-					</div>
-
-					<input type="checkbox" id="spoiler_faq_portforward"/>
-					<label for="spoiler_faq_portforward">How do I setup Port Forwarding on my router? <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>If the server you intend to run your UOX3 shard on is behind a NAT router, then you might have to forward any incoming connections on port 2593 (or whichever other port you decided to use for UOX3) to the internal LAN-IP given to your server by the router. This is called <a href="https://en.wikipedia.org/wiki/Port_forwarding" target="_blank" title="Wikipedia - Port Forwarding">Port Forwarding (Wikipedia)</a>, and whether or not it is required depends on the router and how it is setup. The easiest way to find out is to have someone try to connect to your UOX3 server over the Internet. If they are unable to connect, and you've ruled out all other options (mis-configuration of UOX3/UO Client, firewalls running on host/client computers, etc), then you might have to setup port-forwarding on your router.</p>
-						<p>How do I do Port Forwarding?</p>
-						<p>The exact procedure varies from router to router, but in general it involves connecting to the router's IP through your browser/Windows Explorer/Linux equivalent, entering the user-name and password required to log on to the router (these can either be default to the router-brand, or custom depending on your Internet-provider), and then adding the UOX3 port to whatever port-forwarding configuration exists for your router.</p>
-						<p>Various sites on the World Wide Web include step-by-step instructions for how to setup port-forwarding on different types of routers. One such site is <a href="https://www.portforward.com/" target="_blank" title="PortForward.com - Guides on port forwarding">PortForward.com</a>. If the default username/password specific to your router (usually mentioned on these sites) is not working, you might have to consult the documentation that came along with the router, or contact your ISP to get them to provide the username and password.</p>
-						<p>How can I check if I set it up correctly?</p>
-						<p>To quickly check if you setup your port-forwarding correctly, you can visit <a href="https://canyouseeme.org/" target="_blank" title="CanYouSeeMee.org - tools for testing port-forwarding setup">CanYouSeeMe.org</a> (Open Port Check Tool) and just enter the port you're trying to forward. Click the 'check' button, and the tool should tell you whether or not it can see a service running on your server through said port.</p>
-						<p>The other option is of course to have someone actually try to connect to your shard! :)</p>
-					</div>
-				  </div>
-				</div> <!-- cd-faq__content -->
-			</li>
 		</ul> <!-- cd-faq__group -->
 
 		<ul id="featureDocs" class="cd-faq__group">
@@ -4799,7 +4830,7 @@ packitem=0x0f8d,30
 					<p><span class="hl">value=buyPrice sellPrice</span> - base price of item when buying or selling from/to NPC vendors. Required for trade system to be able to make any adjustments to value of item!<br>
 					<span class="hl">good=goodCategory</span> - the category of goods to associated a given item with (see list above)</p>
 					<h4>Region Setup</h4>
-					<p>Once those tags have been added in the Item DFNs, the next step is to setup the various "regions" in regions.dfn. This is done by adding the following tags to the regions that should impact the trade system:</p>
+					<p>Once those tags have been added in the Item DFNs, the next step is to setup the "regions" in regions.dfn. This is done by adding the following tags to the regions that should impact the trade system:</p>
 					<p>
 					<span class="hl">good=goodCategory</span> - a category of goods (see list above) that the region should have an impact on the prices for. A region can affect multiple goods, and each such tag should be immediately followed by the following two tags:<br>
 					<span class="hl">buyable=#</span> / <span class="hl"># #</span> - Fixed or random % modifier (accepts negative numbers) by which the baseValue of items belonging to the associated category of goods will be modified <strong>when bought</strong> from NPC vendors in the region.<br>
@@ -4967,7 +4998,7 @@ packitem=0x0f8d,30
 						}</span></p>
 					</div>
 					<h3>Item Entry:</h3>
-					<p>These entries refer directly to <span class="hl">[ITEM #]</span> sections defined further down in the same file, which contain all the requirements needed to craft an item, as well as various item properties that will be assigned to the crafted item after it has been made, such as colour, rank, etc. An example, let's look at the item referenced by the ITEM=2 entry:</p>
+					<p>These entries refer directly to <span class="hl">[ITEM #]</span> sections defined further down in the same file, which contain all the requirements needed to craft an item, as well as the item properties that will be assigned to the crafted item after it has been made, such as colour, rank, etc. An example, let's look at the item referenced by the ITEM=2 entry:</p>
 					<input type="checkbox" id="spoiler_item_section">
 					<label for="spoiler_item_section">[ITEM 2] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5042,7 +5073,7 @@ packitem=0x0f8d,30
 						<p>These properties are modified according to the following formula:<br>
 						<span class="hl">newPropertyVal = (( rank * propertyVal ) / 10 )</span></p>
 						<p>Thus, an item with a calculated final rank of 10 will not be modified, while any rank below 10 will reduce the values of the above properties for the item by -10% per rank below 10.</p>
-						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="hl">SKILLLEVEL=5</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items.</p>
+						<p>Calculation of rank takes place as part of the crafting process. First, a <strong>range of potential ranks</strong> is determined based on the values of the MINRANK and MAXRANK tags for an item in the create DFNs. Then, <strong>for each skill</strong> required to craft the item, the system <strong>calculates a temporary rank</strong> based on the player's skill, random chance, and a UOX.INI setting (<span class="hl">SKILLLEVEL=7</span>) which acts as a global modifier to the system to make it <strong>easier</strong> (low SKILLLEVEL value) to get high rank items, or <strong>harder</strong> (high SKILLLEVEL value) to get high rank items. A value of 10 makes the difficulty roughly similar to the difficulty of the official UO shards around the LBR era.</p>
 						<p>When a temporary rank has been calculated for all skills required to craft the item, the average of all these is chosen as the item's final rank, and the modifiers are permanently applied to the item's properties.</p>
 					</div>
 				  </div>
@@ -5108,7 +5139,7 @@ packitem=0x0f8d,30
 						<strong>}</strong></p>
 					</div>
 					<h3>Customizable Ore Types</h3>
-					<p>The different types of ore a player can mine are defined at the bottom of skills.dfn, in a section called <span class="hl">[ORE_LIST]</span>. Shard admins can easily add or remove ore types to/from this list.</p>
+					<p>The types of ore a player can mine are defined at the bottom of skills.dfn, in a section called <span class="hl">[ORE_LIST]</span>. Shard admins can easily add or remove ore types to/from this list.</p>
 					<input type="checkbox" id="spoiler_mining_orelist">
 					<label for="spoiler_mining_orelist">Ore List in skills.dfn <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5139,7 +5170,7 @@ packitem=0x0f8d,30
 						<span class="hl">ORECHANCE=500</span> // Default chance (50.0%) of finding ore type while mining, if no OREPREF tags are present in region.<br>
 						<span class="hl">}</span><br><br>
 
-						<span class="hl">[DullCopper]</span> // A second ore type, with a different section ID<br>
+						<span class="hl">[DullCopper]</span> // A second ore type, with a unique section ID<br>
 						<span class="hl">{</span><br>
 						<span class="hl">COLOUR=0x0973</span><br>
 						<span class="hl">MAKEMENU=200</span><br>
@@ -5151,7 +5182,7 @@ packitem=0x0f8d,30
 					</div>
 					<h3>Region-based Ore Preferences</h3>
 					<p>By default, the <strong>MINECHECK=1</strong> setting in uox.ini allows players to mine any ore from any mountain anywhere, as long as they meet the minimum skill requirement for mining a given type of ore. This means, however, that skilled miners can mine the most valuable ores from any old mountain/cave, even if it's just outside the safe zone of a major city.</p>
-					<p>However, the <span class="hl">OREPREF</span> tag supported by the Region system gives shard admins some extra control over where players can find the various ore types.
+					<p>However, the <span class="hl">OREPREF</span> tag supported by the Region system gives shard admins some extra control over where players can find the defined ore types.
 					<p>For instance, the types of ore a player will find in a given region (UOX3/dfndata/regions/regions.dfn) can be regulated by attaching to those regions one or more <span class="hl">OREPREF=[oreType,oreChanceWeight]</span> tags - one per ore type to be found in the region, where <strong>oreType</strong> is one of the ores listed in [ORE_LIST] section, and <strong>oreChanceWeight</strong> is a weighted value from 0 to ~1000 indicating the chance to find that ore type in the region relative to other available ore types.</p>
 					<input type="checkbox" id="spoiler_mining_region">
 					<label for="spoiler_mining_region">Example Setup in regions.dfn<i class="fas fa-angle-down"></i></label>
@@ -5436,7 +5467,7 @@ packitem=0x0f8d,30
 					<p>By default, UOX3 is setup to work with the default player races that can be selected in the UO client's character creation (depending on client version) - i.e. humans, elves and gargoyles - and will automatically assign players to the associated race in the race system, but there's nothing preventing a shard admin from creating multiple other player races, and to provide players with other means of selecting a race for their character.</p>
 					<p>Some default races have also been setup for monsters, like Orcs, Ratmen, Undead and Daemons (and more), while animals are generally divided into some predefined Predator and Animal races (with a few other special cases for Birds, Arachnids, etc).</p>
 						<h4>How does it work?</h4>
-					<p>Each race in UOX3 is setup in its own <span class="hl">[RACE #]</span> section of <strong>UOX3/dfndata/race/races.dfn</strong>, which contain the various properties, bonuses and penalties associated with the race. For a full list of properties available in the race system, check the Race DFN Tags portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
+					<p>Each race in UOX3 is setup in its own <span class="hl">[RACE #]</span> section of <strong>UOX3/dfndata/race/races.dfn</strong>, which contain the properties, bonuses and penalties associated with the race. For a full list of properties available in the race system, check the Race DFN Tags portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
 					<input type="checkbox" id="spoiler_race_examples">
 					<label for="spoiler_race_examples">A few example race sections <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5642,11 +5673,11 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<p>Each region can be setup with its own rules; one region might allow hostile spells being cast, while another disallows such spells, but at the same time bans the usage of magical travel spells such as Mark, Gate and Recall. For a full list of which DFN tags can be added to a region to customize its ruleset, check the <strong>Region DFN Tags</strong> portion of the <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview</a> section of this document.</p>
 						<p>You can also check out existing regions that come with UOX3 by default (see above) for additional examples</p>
 						<h4>Relationship with Spawn Regions</h4>
-						<p>Normally Regions and Spawn Regions are two completely separate systems that don't rely on or interact with one another, but check the Predefined Spawns portion of the <a href="#uox3SpawnRegions">Spawn Regions</a> feature to see how some spawn sections can be applied in multiple different regular regions!</p>
+						<p>Normally Regions and Spawn Regions are two completely separate systems that don't rely on or interact with one another, but check the Predefined Spawns portion of the <a href="#uox3SpawnRegions">Spawn Regions</a> feature to see how some spawn sections can be applied/added to multiple regular regions at the same time!</p>
 						<h4>Relationship with Mining System</h4>
-						<p>Check the Region-based Ore Preferences portion of the <a href="#uox3mining">Mining and Ore System</a> to see how different regions can be setup with preferences for different types of ore and chances of finding such ore in these regions.</p>
+						<p>Check the Region-based Ore Preferences portion of the <a href="#uox3mining">Mining and Ore System</a> to see how regions can be setup with preferences for different types of ore and chances of finding such ore in these regions.</p>
 						<h4>Relationship with Townstones</h4>
-						<p>Each region supports the placement of a Townstone, which can be used to set up player-run local governments in the different regions around the game world. See the <a href="#uox3Townstones">Townstones</a> section for more details on how that system works!</p>
+						<p>Each region supports the placement of a Townstone, which can be used to set up player-run local governments in the regions around the game world. See the <a href="#uox3Townstones">Townstones</a> section for more details on how that system works!</p>
 						<h4>Relationship with Weather System</h4>
 						<p>Regions can be assigned weather systems that increase or lower the chance of rain, snow, thunder for players who enter those regions. The weather systems can also control the light levels and/or temperature in those regions, which can have effects like cause damage to character races that are weak to certain elements like light, heat, cold, etc. See the <a href="#weatherSystem">Weather System</a> feature for more details on how that system works!</p>
 						<h4>Music Lists</h4>
@@ -5902,7 +5933,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 						<p>For a full list of DFN tags supported in Spawn Regions, take a look at <a href="#dfnTagSystem" title="UOX3 Documentation - DFN Tag Overview">DFN Tag Overview > SpawnRegion DFN Tags</a>!</p>
 					</div>
 					<h4>Predefined Spawns</h4>
-					<p>In addition to dedicated spawn regions, this system also supports setting up generic, <strong>predefined spawns</strong> that can be applied directly in regions in <strong>UOX3/dfndata/regions/regions.dfn</strong>. The benefit of such predefined spawns is that they can be re-used in different regions, and can piggy-back on the regions that already exist instead of having to create new dedicated spawn regions with coordinates etc.</p>
+					<p>In addition to dedicated spawn regions, this system also supports setting up generic, <strong>predefined spawns</strong> that can be applied directly in regions in <strong>UOX3/dfndata/regions/regions.dfn</strong>. The benefit of such predefined spawns is that they can be re-used across multiple regions, and can piggy-back on the regions that already exist instead of having to create new dedicated spawn regions with coordinates etc.</p>
 					<input type="checkbox" id="spoiler_dfnsystem_predefinedspawn">
 					<label for="spoiler_dfnsystem_predefinedspawn">Example Setup for a Predefined Spawn <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -6046,7 +6077,7 @@ FENCINGL=1 // Uses MOD1, i.e. 5.0% penalty to fencing
 				<a class="cd-faq__trigger" href="#weatherSystem" id="weatherSystem"><span>Weather System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-				  	<p>Weather systems are setup in <strong>UOX3/dfndata/weather/weatherab.dfn</strong>, and can be referenced per <a href="#regionSystem">Region</a> in <strong>UOX3/dfndata/region/regions.dfn</strong>. This system allows individual regions to have their own setup for weather, temperature, light levels and more, which in turn can also have effects on members of specific character <a href="#raceSystem">Races</a>, if setup with appropriate strengths/weaknesses towards different weather elements like rain, snow, cold and heat.</p>
+				  	<p>Weather systems are setup in <strong>UOX3/dfndata/weather/weatherab.dfn</strong>, and can be referenced per <a href="#regionSystem">Region</a> in <strong>UOX3/dfndata/region/regions.dfn</strong>. This system allows individual regions to have their own setup for weather, temperature, light levels and more, which in turn can also have effects on members of specific character <a href="#raceSystem">Races</a>, if setup with appropriate strengths/weaknesses towards weather elements like rain, snow, cold and heat.</p>
 				  	<input type="checkbox" id="spoiler_weathersystem_example">
 						<label for="spoiler_weathersystem_example">Weather System Example <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -6142,7 +6173,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 				<a class="cd-faq__trigger" href="#dfnSystem" id="dfnSystem"><span>Introduction to DFN System in UOX3</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>DFNs - or "definition files" are essentially "templates" or "blueprints" that define the properties of various objects and systems in UOX3, which can be customized by shard admins with any text editor and be reloaded by UOX3 on the fly (only applies to select types of DFNs).</p>
+					<p>DFNs - or "definition files" are essentially "templates" or "blueprints" that define the properties of objects and systems in UOX3, which can be customized by shard admins with any text editor and be reloaded by UOX3 on the fly (only applies to select types of DFNs).</p>
 					<p>List of DFN types available in UOX3, and what they are used for:</p>
 					<input type="checkbox" id="spoiler_dfnsystem_advance">
 					<label for="spoiler_dfnsystem_advance">advance <i class="fas fa-angle-down"></i></label>
@@ -6160,7 +6191,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<label for="spoiler_dfnsystem_colors">colors <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\colors\colors.dfn</span><br>
-						Contains random colorlists that can be used with color tags in various other DFNs to provide random colors for items and NPCs.</p>
+						Contains random colorlists that can be used with color tags in other DFNs to provide random colors for items and NPCs.</p>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_command">
 					<label for="spoiler_dfnsystem_command">command <i class="fas fa-angle-down"></i></label>
@@ -6220,7 +6251,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<label for="spoiler_dfnsystem_menus">menus <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\menus\menus.dfn / polymorph.dfn / tracking.dfn</span><br>
-						Contains various gump menus used in the game, such as menu used by polymorph spell, tracking skill and basic server info gumps.</p>
+						Contains gump menus used in the game, such as menu used by polymorph spell, tracking skill and basic server info gumps.</p>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_misc">
 					<label for="spoiler_dfnsystem_misc">misc <i class="fas fa-angle-down"></i></label>
@@ -6256,7 +6287,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<label for="spoiler_dfnsystem_regions">regions <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\regions\regions.dfn</span><br>
-						Used to define the various regions of the game world and their properties, like whether they are considered safe zones where no harm can befall the players, whether travel spells are enabled or not, whether the guard system is enabled or not. See <a href="#regionSystem" title="UOX3 Documentation - Region System">separate feature documentation</a> for more info.</p>
+						Used to define the regions of the game world and their properties, like whether they are considered safe zones where no harm can befall the players, whether travel spells are enabled or not, whether the guard system is enabled or not. See <a href="#regionSystem" title="UOX3 Documentation - Region System">separate feature documentation</a> for more info.</p>
 					</div>
 					<input type="checkbox" id="spoiler_dfnsystem_skills">
 					<label for="spoiler_dfnsystem_skills">skills <i class="fas fa-angle-down"></i></label>
@@ -6286,7 +6317,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 					<label for="spoiler_dfnsystem_weather">weather <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p><strong>Location:</strong> <span class="hl">UOX3\dfndata\weather\weather.dfn</span><br>
-						Contains definitions of weather systems, used by the region system to setup different weather across different regions in the game world. See <a href="#weatherSystem" title="UOX3 Documentation - Weather System">separate feature documentation</a> for more info.</p>
+						Contains definitions of weather systems, used by the region system to setup variable weather across the regions in the game world. See <a href="#weatherSystem" title="UOX3 Documentation - Weather System">separate feature documentation</a> for more info.</p>
 					</div>
 					</p>
 				  </div>
@@ -7941,7 +7972,7 @@ function commandTitle()
 					<h4><a href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a></h4>
 					<p>Main community site for UOX3 can be found at UOX3.org. There you'll find downloads, support forums, useful tools and guides beyond what is covered by these docs.</p>
 					<h4><a href="https://guide.uox3.org/" target="_blank" title="Xuri's UOX3 Guide">Xuri's UOX3 Guide</a></h4>
-					<p>Xuri's UOX3 Guide, while originally written for a different era of UOX3, still offers a myriad of tips, tricks and advice for shard admins and GMs, as well as lists of various data such as IDs, light-settings, etc. Recommended read for both novices and veterans - though be mindful that some of the details in this document might be out of date.</p>
+					<p>Xuri's UOX3 Guide, while originally written for an older era of UOX3, still offers a myriad of tips, tricks and advice for shard admins and GMs, as well as lists of data such as IDs, light-settings, etc. Recommended read for both novices and veterans - though be mindful that some of the details in this document might be out of date.</p>
 					<h4>Legacy SourceForge Repositories</h4>
 					<p>Legacy, ready-only CVS repositories for older versions of UOX3 can be found at <a href="https://www.sf.net/projects/openuo" target="_blank" title="OpenUO @ SourceForge">OpenUO @ SourceForge</a> and <a href="https://www.sf.net/projects/uox3" target="_blank" title="UOX3 @ SourceForge">UOX3 @ SourceForge</a>.</p>
 				  </div>
@@ -10670,7 +10701,7 @@ function commandTitle()
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>The UOX3 Hall of Fame is simply a list of people (or their nicknames) known to have contributed to UOX3, in what capacity they (primarily) contributed, sorted in chronological order based on the estimated time of their first contribution.</p>
-					<p>This list was written and is updated with the help of various UOX3 documents such as changelogs, news updates, code comments and some educated guesses, and errors might occur. If you spot a mistake, or a missing name, let us know and we'll do our best to correct the issue.</p>
+					<p>This list was written and is updated with the help of UOX3 documents such as changelogs, news updates, code comments and some educated guesses, and errors might occur. If you spot a mistake, or a missing name, let us know and we'll do our best to correct the issue.</p>
 					<div id="hallOfFame">
 						<input type="checkbox" id="spoiler_history_halloffame_1997"/>
 						<label for="spoiler_history_halloffame_1997"><h3>1997</h3> <i class="fas fa-angle-down"></i></label>
@@ -10936,6 +10967,13 @@ function commandTitle()
 							<p><span class="hl">tuanhtrng</span><br> Tuan H. Truong, Programmer, 17/04/2020</p>
 						</div>
 
+						<input type="checkbox" id="spoiler_history_halloffame_2022"/>
+						<label for="spoiler_history_halloffame_2022"><h3>2022</h3> <i class="fas fa-angle-down"></i></label>
+						<div class="spoiler">
+							<p><span class="hl">Azzerhoden Razeri</span><br> Scripter, 24/10/2022</p>
+							<p><span class="hl">ldilley</span><br> Lloyd Dilley, Programmer, 24/10/2022</p>
+						</div>
+
 						<input type="checkbox" id="spoiler_history_halloffame_tools"/>
 						<label for="spoiler_history_halloffame_tools"><h3>Additional Tool Programmers</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
@@ -10968,8 +11006,8 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of June 2021):</p>
-							<p><span class="hl">Xuri, punt, giwo, tuanhtrng, Dragon Slayer</span><br></p>
+							<p>Contributors active within last year (as of November 2022):</p>
+							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
 						</div>
 					</div>
 				  </div>
@@ -10984,7 +11022,7 @@ function commandTitle()
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2021</small></p>
+	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2022</small></p>
 	<p><small>Built on <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framework by CodyHouse</a>.</small></p>
 </div>
 <script defer>

@@ -1,9 +1,9 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	msgboard.cpp
 //|	Date		-	16/04/1999
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Message Board Handling
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|
 //|						1.0			16th April 1999 - 0.69.03
@@ -21,7 +21,7 @@
 //|						Added a maintenance function that will automatically clean up the message board files.
 //|						Added support for message board file deletion upon deleting the associated world object.
 //|
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
 #include "msgboard.h"
 #include "townregion.h"
@@ -32,45 +32,53 @@
 #include "classes.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "osunique.hpp"
 #include <filesystem>
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
+using namespace std::string_literals;
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	GetMsgBoardFile()
 //|	Date		-	8/6/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates the proper MessageBoard filename based on the messageType and board Serial
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 {
 	std::string fileName;
 	switch( msgType )
 	{
-		case PT_GLOBAL:			fileName = "global.bbf";												break;
-		case PT_REGIONAL:		CItem *msgBoard;
-			CTownRegion *mbRegion;
-			msgBoard = calcItemObjFromSer( msgBoardSer );
-			mbRegion = calcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(), msgBoard->GetInstanceID() );
-			fileName = std::string("region") + oldstrutil::number( mbRegion->GetRegionNum() ) + std::string(".bbf");
+		case PT_GLOBAL:
+			fileName = "global.bbf";
 			break;
-		case PT_LOCAL:			fileName = oldstrutil::number( msgBoardSer, 16 ) + std::string(".bbf");					break;
-		default:				Console.error( "GetMsgBoardFile() Invalid post type, aborting" );
+		case PT_REGIONAL:
+			CItem *msgBoard;
+			CTownRegion *mbRegion;
+			msgBoard = CalcItemObjFromSer( msgBoardSer );
+			mbRegion = CalcRegionFromXY( msgBoard->GetX(), msgBoard->GetY(), msgBoard->WorldNumber(), msgBoard->GetInstanceId() );
+			fileName = std::string( "region" ) + oldstrutil::number( mbRegion->GetRegionNum() ) + std::string( ".bbf" );
+			break;
+		case PT_LOCAL:
+			fileName = oldstrutil::number( msgBoardSer, 16 ) + std::string( ".bbf" );
+			break;
+		default:
+			Console.Error( "GetMsgBoardFile() Invalid post type, aborting" );
 			break;
 	}
 	return fileName;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardOpen( CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardOpen()
 //|	Date		-	7/16/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens the Messageboard and Advises the client of the messages
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardOpen( CSocket *mSock )
 {
 	const SERIAL boardSer = mSock->GetDWord( 1 );
 
-	CItem *msgBoard = calcItemObjFromSer( boardSer );
-	if( !ValidateObject( msgBoard ) )
+	CItem *msgBoard = CalcItemObjFromSer( boardSer );
+	if( !ValidateObject( msgBoard ))
 	{
 		return;
 	}
@@ -97,7 +105,7 @@ void MsgBoardOpen( CSocket *mSock )
 		std::ifstream file ( fileName.c_str(), std::ios::in | std::ios::binary );
 		if( file.is_open() )
 		{
-			msgBoardPost_st msgBoardPost;
+			MsgBoardPost_st msgBoardPost;
 
 			file.seekg( 0, std::ios::beg );
 			while( file && mSock->PostCount() < MAXPOSTS )
@@ -108,18 +116,18 @@ void MsgBoardOpen( CSocket *mSock )
 				SERIAL repliedTo	= 0;
 
 				file.read( buffer, 2 );
-				tmpSize = static_cast<UI16>((buffer[0]<<8) + buffer[1]);
+				tmpSize = static_cast<UI16>(( buffer[0] << 8 ) + buffer[1] );
 
 				file.read( buffer, 1 );
 				tmpToggle = buffer[0];
 
 				file.read( buffer, 4 );
-				repliedTo = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+				repliedTo = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
 
-				file.seekg( tmpSize-11, std::ios::cur );
+				file.seekg( tmpSize - 11, std::ios::cur );
 
 				file.read( buffer, 4 );
-				tmpSerial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+				tmpSerial = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
 
 				if( !file.fail() )
 				{
@@ -141,19 +149,19 @@ void MsgBoardOpen( CSocket *mSock )
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardList( CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardList()
 //|	Date		-	7/16/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends the summary of each message to the client
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardList( CSocket *mSock )
 {
 	char buffer[4];
 	std::string fileName, dirPath;
 
-	CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 4 ) );
-	if( !ValidateObject( msgBoard ) )
+	CItem *msgBoard = CalcItemObjFromSer( mSock->GetDWord( 4 ));
+	if( !ValidateObject( msgBoard ))
 	{
 		return;
 	}
@@ -171,31 +179,31 @@ void MsgBoardList( CSocket *mSock )
 		if( file.is_open() )
 		{
 			size_t totalSize = 0;
-			msgBoardPost_st msgBoardPost;
+			MsgBoardPost_st msgBoardPost;
 
 			file.seekg( 0, std::ios::beg );
 			while( file )
 			{
 				file.read( buffer, 2 );
-				msgBoardPost.Size = static_cast<UI16>((buffer[0]<<8) + buffer[1]);
+				msgBoardPost.size = static_cast<UI16>(( buffer[0] << 8 ) + buffer[1] );
 
-				file.seekg( msgBoardPost.Size-6, std::ios::cur );
+				file.seekg( msgBoardPost.size - 6, std::ios::cur );
 
 				file.read( buffer, 4 );
-				msgBoardPost.Serial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+				msgBoardPost.serial = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
 				for( SERIAL postAck = mSock->FirstPostAck(); !mSock->FinishedPostAck(); )
 				{
-					if( msgBoardPost.Serial == postAck )
+					if( msgBoardPost.serial == postAck )
 					{
 						postAck = mSock->RemovePostAck();
 
-						file.seekg( totalSize+2, std::ios::beg );
+						file.seekg( totalSize + 2, std::ios::beg );
 
 						file.read( buffer, 1 );
 						if( buffer[0] == 0x05 )
 						{
 							file.read( buffer, 4 );
-							msgBoardPost.ParentSerial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+							msgBoardPost.parentSerial = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
 						}
 						else
 						{
@@ -203,20 +211,20 @@ void MsgBoardList( CSocket *mSock )
 						}
 
 						file.read( buffer, 1 );
-						file.read( msgBoardPost.Poster, buffer[0] );
-						msgBoardPost.PosterLen = buffer[0];
+						file.read( msgBoardPost.poster, buffer[0] );
+						msgBoardPost.posterLen = buffer[0];
 
 						file.read( buffer, 1 );
-						file.read( msgBoardPost.Subject, buffer[0] );
-						msgBoardPost.SubjectLen = buffer[0];
+						file.read( msgBoardPost.subject, buffer[0] );
+						msgBoardPost.subjectLen = buffer[0];
 
 						file.read( buffer, 1 );
-						file.read( msgBoardPost.Date, buffer[0] );
-						msgBoardPost.DateLen = buffer[0];
+						file.read( msgBoardPost.date, buffer[0] );
+						msgBoardPost.dateLen = buffer[0];
 
 						if( file.fail() )
 						{
-							Console.warning( oldstrutil::format("Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.Serial ));
+							Console.Warning( oldstrutil::format( "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.serial ));
 							file.close();
 						}
 						else
@@ -231,9 +239,9 @@ void MsgBoardList( CSocket *mSock )
 						postAck = mSock->NextPostAck();
 					}
 				}
-				totalSize += msgBoardPost.Size;
+				totalSize += msgBoardPost.size;
 				file.seekg( totalSize, std::ios::beg );
-				if( totalSize > 3000 || msgBoardPost.Serial == 0 ) //HACCKKKK!!!1one. Without this in place, it will loop for ever :(
+				if( totalSize > 3000 || msgBoardPost.serial == 0 ) //HACCKKKK!!!1one. Without this in place, it will loop for ever :(
 				{
 					file.close();
 				}
@@ -245,117 +253,116 @@ void MsgBoardList( CSocket *mSock )
 	if( !mSock->FinishedPostAck() )
 	{
 		mSock->PostClear();
-		Console.error( oldstrutil::format("Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )) );
+		Console.Error( oldstrutil::format( "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )));
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes msgType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	GetMaxSerial()
 //|	Date		-	7/22/2005
-//o-----------------------------------------------------------------------------------------------o
-//|	Purpose		-	Updates nextMsgID with the next available message serial.
-//o-----------------------------------------------------------------------------------------------o
-bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgID, const PostTypes msgType )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates nextMsgId with the next available message serial.
+//o------------------------------------------------------------------------------------------------o
+bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgId, const PostTypes msgType )
 {
-	SERIAL msgIDSer = ( calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] ) );
-	if( msgIDSer == INVALIDSERIAL )
+	SERIAL msgIdSer = ( CalcSerial( nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3] ));
+	if( msgIdSer == INVALIDSERIAL )
 	{
 		switch( msgType )
 		{
-			case PT_GLOBAL:		msgIDSer = BASEGLOBALPOST;		break;
-			case PT_REGIONAL:	msgIDSer = BASEREGIONPOST;		break;
-			case PT_LOCAL:		msgIDSer = BASELOCALPOST;		break;
+			case PT_GLOBAL:		msgIdSer = BASEGLOBALPOST;		break;
+			case PT_REGIONAL:	msgIdSer = BASEREGIONPOST;		break;
+			case PT_LOCAL:		msgIdSer = BASELOCALPOST;		break;
 		}
 	}
 	else
 	{
-		++msgIDSer;
+		++msgIdSer;
 	}
 
-	nextMsgID[0] = static_cast<UI08>(msgIDSer>>24);
-	nextMsgID[1] = static_cast<UI08>(msgIDSer>>16);
-	nextMsgID[2] = static_cast<UI08>(msgIDSer>>8);
-	nextMsgID[3] = static_cast<UI08>(msgIDSer%256);
+	nextMsgId[0] = static_cast<UI08>( msgIdSer >> 24 );
+	nextMsgId[1] = static_cast<UI08>( msgIdSer >> 16 );
+	nextMsgId[2] = static_cast<UI08>( msgIdSer >> 8 );
+	nextMsgId[3] = static_cast<UI08>( msgIdSer % 256 );
 
-	if( nextMsgID[1] == 0xFF && nextMsgID[2] == 0xFF && nextMsgID[3] == 0xFF )
+	if( nextMsgId[1] == 0xFF && nextMsgId[2] == 0xFF && nextMsgId[3] == 0xFF )
 	{
-		Console.warning(oldstrutil::format("Maximum Posts reached for board %s, no further posts can be created", fileName.c_str()) );
+		Console.Warning( oldstrutil::format( "Maximum Posts reached for board %s, no further posts can be created", fileName.c_str() ));
 		return false;
 	}
 
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPost )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardWritePost()
 //|	Date		-	8/10/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file
-//o-----------------------------------------------------------------------------------------------o
-void MsgBoardWritePost( std::ofstream& mFile, const msgBoardPost_st& msgBoardPost )
+//o------------------------------------------------------------------------------------------------o
+void MsgBoardWritePost( std::ofstream& mFile, const MsgBoardPost_st& msgBoardPost )
 {
 	char wBuffer[4];
 
 	// Add post size to 2 bytes of buffer, and write buffer to file
-	wBuffer[0] = static_cast<SI08>(msgBoardPost.Size>>8);
-	wBuffer[1] = static_cast<SI08>(msgBoardPost.Size%256);
-	mFile.write( (const char *)&wBuffer, 2 );
+	wBuffer[0] = static_cast<SI08>( msgBoardPost.size >> 8 );
+	wBuffer[1] = static_cast<SI08>( msgBoardPost.size % 256 );
+	mFile.write(( const char * )&wBuffer, 2 );
 
 	// Write the value of Toggle as the next byte
-	mFile.write( (const char *)&msgBoardPost.Toggle, 1 );
+	mFile.write(( const char * )&msgBoardPost.toggle, 1 );
 
 	// Add parent serial to 4 bytes of buffer, and write buffer to file
-	wBuffer[0] = static_cast<SI08>(msgBoardPost.ParentSerial>>24);
-	wBuffer[1] = static_cast<SI08>(msgBoardPost.ParentSerial>>16);
-	wBuffer[2] = static_cast<SI08>(msgBoardPost.ParentSerial>>8);
-	wBuffer[3] = static_cast<SI08>(msgBoardPost.ParentSerial%256);
-	mFile.write( (const char *)&wBuffer, 4 );
+	wBuffer[0] = static_cast<SI08>( msgBoardPost.parentSerial >> 24 );
+	wBuffer[1] = static_cast<SI08>( msgBoardPost.parentSerial >> 16 );
+	wBuffer[2] = static_cast<SI08>( msgBoardPost.parentSerial >> 8 );
+	wBuffer[3] = static_cast<SI08>( msgBoardPost.parentSerial % 256 );
+	mFile.write(( const char * )&wBuffer, 4 );
 
 	// Write length of poster's name as next byte, and
 	// then write poster's name as next X bytes
-	mFile.write( (const char *)&msgBoardPost.PosterLen, 1 );
-	mFile.write( (const char *)&msgBoardPost.Poster, msgBoardPost.PosterLen );
+	mFile.write(( const char * )&msgBoardPost.posterLen, 1 );
+	mFile.write(( const char * )&msgBoardPost.poster, msgBoardPost.posterLen );
 
 	// Write length of post's subject in next byte, and
 	// then write post subject as next X bytes
-	mFile.write( (const char *)&msgBoardPost.SubjectLen, 1 );
-	mFile.write( (const char *)&msgBoardPost.Subject, msgBoardPost.SubjectLen );
+	mFile.write(( const char * )&msgBoardPost.subjectLen, 1 );
+	mFile.write(( const char * )&msgBoardPost.subject, msgBoardPost.subjectLen );
 
 	// Write length of post's date string in next byte, and
 	// then write date string as next X bytes
-	mFile.write( (const char *)&msgBoardPost.DateLen, 1 );
-	mFile.write( (const char *)&msgBoardPost.Date, msgBoardPost.DateLen );
+	mFile.write(( const char * )&msgBoardPost.dateLen, 1 );
+	mFile.write(( const char * )&msgBoardPost.date, msgBoardPost.dateLen );
 
 	// Write number of lines in post as next byte, and
 	// then loop through each line
-	mFile.write( (const char *)&msgBoardPost.Lines, 1 );
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
+	mFile.write(( const char * )&msgBoardPost.lines, 1 );
+	std::for_each( msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(), [&mFile]( const std::string &entry )
 	{
 		// Write length of line as next byte, and
 		// then write the line as next X bytes
-		const UI08 lineSize = static_cast<UI08>((*lIter).size());
-		mFile.write( (const char *)&lineSize, 1 );
-		mFile.write( (*lIter).c_str(), lineSize );
-	}
+		auto lineSize = static_cast<UI08>( entry.size() );
+		mFile.write(( const char * )&lineSize, 1 );
+		mFile.write( entry.c_str(), lineSize );
+	});
 
 	// Finally, add actual post serial to 4 bytes of buffer, and write buffer to file
-	wBuffer[0] = static_cast<SI08>(msgBoardPost.Serial>>24);
-	wBuffer[1] = static_cast<SI08>(msgBoardPost.Serial>>16);
-	wBuffer[2] = static_cast<SI08>(msgBoardPost.Serial>>8);
-	wBuffer[3] = static_cast<SI08>(msgBoardPost.Serial%256);
-	mFile.write( (const char *)&wBuffer, 4 );
+	wBuffer[0] = static_cast<SI08>( msgBoardPost.serial >> 24 );
+	wBuffer[1] = static_cast<SI08>( msgBoardPost.serial >> 16 );
+	wBuffer[2] = static_cast<SI08>( msgBoardPost.serial >> 8 );
+	wBuffer[3] = static_cast<SI08>( msgBoardPost.serial % 256 );
+	mFile.write(( const char * )&wBuffer, 4 );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardWritePost()
 //|	Date		-	7/22/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file, returning the messages SERIAL
-//o-----------------------------------------------------------------------------------------------o
-SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
+//o------------------------------------------------------------------------------------------------o
+SERIAL MsgBoardWritePost( MsgBoardPost_st& msgBoardPost, const std::string& fileName, const PostTypes msgType )
 {
-	SERIAL msgID = INVALIDSERIAL;
+	SERIAL msgId = INVALIDSERIAL;
 
 	std::string fullFile;
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
@@ -365,164 +372,161 @@ SERIAL MsgBoardWritePost( msgBoardPost_st& msgBoardPost, const std::string& file
 
 	std::ifstream file ( fullFile.c_str(), std::ios::in | std::ios::ate | std::ios::binary );
 
-	UI08 nextMsgID[4];
-	memset( nextMsgID, 0xFF, 4 );
+	UI08 nextMsgId[4];
+	memset( nextMsgId, 0xFF, 4 );
 	if( file.is_open() )
 	{
 		file.seekg( -4, std::ios::cur );
-		file.read( (char *)&nextMsgID, 4 );
+		file.read(( char * )&nextMsgId, 4 );
 		file.close();
 	}
 
-	if( !GetMaxSerial( fileName, &nextMsgID[0], msgType ) )
+	if( !GetMaxSerial( fileName, &nextMsgId[0], msgType ))
 	{
-		return msgID;
+		return msgId;
 	}
 	else
 	{
-		msgID = calcserial( nextMsgID[0], nextMsgID[1], nextMsgID[2], nextMsgID[3] );
+		msgId = CalcSerial( nextMsgId[0], nextMsgId[1], nextMsgId[2], nextMsgId[3] );
 	}
 
-	auto timet = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-	auto timeOfPost = *std::localtime(&timet);
-	auto time			= oldstrutil::format( "Day %i @ %i:%02i\0", (timeOfPost.tm_yday+1), timeOfPost.tm_hour, timeOfPost.tm_min );
-	time.resize( time.size()+1 );
-	const UI08 timeSize		= static_cast<UI08>(time.size());
-	const UI08 posterSize	= static_cast<UI08>(msgBoardPost.PosterLen);
-	const UI08 subjSize		= static_cast<UI08>(msgBoardPost.SubjectLen);
-	UI16 totalSize			= static_cast<UI16>(15 + posterSize + subjSize + timeSize);
-	STRINGLIST_CITERATOR lIter;
-	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
+	auto timet = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
+	struct tm timeOfPost;
+	lcltime( timet, timeOfPost );
+
+	lcltime( timet, timeOfPost );
+	auto time = oldstrutil::format( "Day %i @ %i:%02i\0", ( timeOfPost.tm_yday + 1 ), timeOfPost.tm_hour, timeOfPost.tm_min );
+	time.resize( time.size() + 1 );
+	const UI08 timeSize		= static_cast<UI08>( time.size() );
+	const UI08 posterSize	= static_cast<UI08>( msgBoardPost.posterLen );
+	const UI08 subjSize		= static_cast<UI08>( msgBoardPost.subjectLen );
+	auto totalSize			= static_cast<UI16>( 15 + posterSize + subjSize + timeSize );
+	std::for_each( msgBoardPost.msgBoardLine.begin(), msgBoardPost.msgBoardLine.end(), [&totalSize]( const std::string &entry )
 	{
-		totalSize += 1 + static_cast<UI16>( ( *lIter ).size() );
-	}
+		totalSize += 1 + static_cast<UI16>( entry.size() );
+	});
 
-	msgBoardPost.Size			= totalSize;
-	msgBoardPost.DateLen		= timeSize;
-	strncpy( msgBoardPost.Date, time.c_str(), timeSize );
-	msgBoardPost.Serial			= msgID;
+	msgBoardPost.size			= totalSize;
+	msgBoardPost.dateLen		= timeSize;
+	strncopy( msgBoardPost.date, 256, time.c_str(), timeSize );
+	msgBoardPost.serial			= msgId;
 
 	std::ofstream mFile ( fullFile.c_str(), std::ios::out | std::ios::app | std::ios::binary );
-
 	MsgBoardWritePost( mFile, msgBoardPost );
-
 	mFile.close();
 
-	return msgID;
+	return msgId;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardPost( CSocket *tSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardPost()
 //|	Date		-	7/22/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles the client requesting to post a new message
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardPost( CSocket *tSock )
 {
 	CChar *tChar = tSock->CurrcharObj();
-	if( !ValidateObject( tChar ) )
+	if( !ValidateObject( tChar ))
 	{
 		return;
 	}
 
-	const PostTypes msgType = static_cast<PostTypes>(tChar->GetPostType());
-
+	const PostTypes msgType = static_cast<PostTypes>( tChar->GetPostType() );
 	if( msgType != PT_LOCAL && tChar->GetCommandLevel() < CL_GM )
 	{
-		tSock->sysmessage( 9036 ); // Only GM's may post Global or Regional messages
+		tSock->SysMessage( 9036 ); // Only GM's may post Global or Regional messages
 		return;
 	}
 
 	SERIAL repliedTo = tSock->GetDWord( 8 );
-	if( (repliedTo&BASEITEMSERIAL) == BASEITEMSERIAL )
+	if(( repliedTo & BASEITEMSERIAL ) == BASEITEMSERIAL )
 	{
 		repliedTo -= BASEITEMSERIAL;
 	}
 
 	if( repliedTo != 0 && repliedTo < BASELOCALPOST )
 	{
-		tSock->sysmessage( 729 );
+		tSock->SysMessage( 729 ); // You can not reply to global or regional posts.
 		return;
 	}
 
 	std::string fileName = GetMsgBoardFile( tSock->GetDWord( 4 ), msgType );
 	if( fileName.empty() )
 	{
-		tSock->sysmessage( 725 );
+		tSock->SysMessage( 725 ); // Invalid post type.
 		return;
 	}
 
-	std::vector< UI08 > internalBuffer;
+	std::vector<UI08> internalBuffer;
 
 	const UI16 length = tSock->GetWord( 1 );
 	internalBuffer.resize( length );
 	memcpy( &internalBuffer[0], tSock->Buffer(), length );
 
-	msgBoardPost_st msgBoardPost;
-
-	msgBoardPost.Toggle = 0x05;
-
-	msgBoardPost.ParentSerial = repliedTo;
+	MsgBoardPost_st msgBoardPost;
+	msgBoardPost.toggle = 0x05;
+	msgBoardPost.parentSerial = repliedTo;
 
 	UI08 i		= 0;
 	UI16 offset = 11;
 
-	msgBoardPost.PosterLen = static_cast<UI08>(tChar->GetName().size()) + 1;
-	strncpy( msgBoardPost.Poster, tChar->GetName().c_str(), msgBoardPost.PosterLen );
+	msgBoardPost.posterLen = static_cast<UI08>( tChar->GetName().size() ) + 1;
+	strncopy( msgBoardPost.poster, 128, tChar->GetName().c_str(), msgBoardPost.posterLen );
 
-	msgBoardPost.SubjectLen = internalBuffer[++offset];
-	strncpy( msgBoardPost.Subject, (const char*)&internalBuffer[++offset], msgBoardPost.SubjectLen );
+	msgBoardPost.subjectLen = internalBuffer[++offset];
+	strncopy( msgBoardPost.subject, 256, ( const char* )&internalBuffer[++offset], msgBoardPost.subjectLen );
 
-	offset += msgBoardPost.SubjectLen;
+	offset += msgBoardPost.subjectLen;
 
 	msgBoardPost.msgBoardLine.resize( internalBuffer[offset] );
-	msgBoardPost.Lines = internalBuffer[offset];
-	std::vector< std::string >::iterator lIter;
+	msgBoardPost.lines = internalBuffer[offset];
+	std::vector<std::string>::iterator lIter;
 	UI08 j = 0;
 	for( lIter = msgBoardPost.msgBoardLine.begin(); lIter != msgBoardPost.msgBoardLine.end(); ++lIter )
 	{
-		(*lIter).resize( internalBuffer[++offset] );
-		for( i = 0; i < (*lIter).size(); ++i )
+		( *lIter ).resize( internalBuffer[++offset] );
+		for( i = 0; i < ( *lIter ).size(); ++i )
 		{
-			(*lIter)[i] = internalBuffer[++offset];
+			( *lIter )[i] = internalBuffer[++offset];
 		}
 
 		// Check if line is null-terminated, and null-terminate it if not
 		if( msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()] > 0 )
 		{
-			auto checkForNullTerminator = msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()-1];
+			auto checkForNullTerminator = msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size() - 1];
 			if( checkForNullTerminator != '\0' )
 			{
-				msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size()-1] = '\0';
+				msgBoardPost.msgBoardLine[j][msgBoardPost.msgBoardLine[j].size() - 1] = '\0';
 			}
 		}
 		j++;
 	}
 
-	const SERIAL msgID = MsgBoardWritePost( msgBoardPost, fileName, msgType );
-	if( msgID != INVALIDSERIAL )
+	const SERIAL msgId = MsgBoardWritePost( msgBoardPost, fileName, msgType );
+	if( msgId != INVALIDSERIAL )
 	{
 		CPAddItemToCont toAdd;
 		if( tSock->ClientVerShort() >= CVS_6017 )
 		{
 			toAdd.UOKRFlag( true );
 		}
-		toAdd.Serial( (msgID | BASEITEMSERIAL) );
-		toAdd.Container( tSock->GetDWord( 4 ) );
+		toAdd.Serial(( msgId | BASEITEMSERIAL ));
+		toAdd.Container( tSock->GetDWord( 4 ));
 		tSock->Send( &toAdd );
 
 		// Setup buffer to expect to receive an ACK from the client for this posting
-		tSock->PostAcked( msgID );
+		tSock->PostAcked( msgId );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardReadPost()
 //|	Date		-	8/10/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads in a post from its specified file.
-//o-----------------------------------------------------------------------------------------------o
-bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
+//o------------------------------------------------------------------------------------------------o
+bool MsgBoardReadPost( std::ifstream& file, MsgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
 {
 	char buffer[4];
 
@@ -535,58 +539,58 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 		return false;
 	}
 
-	msgBoardPost.Size = ( (buffer[0]<<8) + buffer[1] );
+	msgBoardPost.size = (( buffer[0] << 8 ) + buffer[1] );
 
 	// Seek to position of msgboardpost serial stored at end of the post, and read it into buffer
-	file.seekg( msgBoardPost.Size-6, std::ios::cur );
+	file.seekg( msgBoardPost.size - 6, std::ios::cur );
 	file.read( buffer, 4 );
-	msgBoardPost.Serial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
-	if( !file.fail() && ( msgBoardPost.Serial == msgSerial || msgSerial == INVALIDSERIAL ) )
+	msgBoardPost.serial = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
+	if( !file.fail() && ( msgBoardPost.serial == msgSerial || msgSerial == INVALIDSERIAL ))
 	{
 		char tmpLine[256];
 		// Seek to start of post, right after 2 bytes containing size
-		file.seekg( -(msgBoardPost.Size-2), std::ios::cur );
+		file.seekg( -( msgBoardPost.size - 2 ), std::ios::cur );
 
 		// Get toggle value from next byte
 		file.read( buffer, 1 );
-		msgBoardPost.Toggle = buffer[0];
+		msgBoardPost.toggle = buffer[0];
 
 		// Get parent serial from next 4 bytes
 		file.read( buffer, 4 );
-		msgBoardPost.ParentSerial = calcserial( buffer[0], buffer[1], buffer[2], buffer[3] );
+		msgBoardPost.parentSerial = CalcSerial( buffer[0], buffer[1], buffer[2], buffer[3] );
 
 		// Get size of poster's name from next byte, and then get poster's name
 		file.read( buffer, 1 );
-		file.read( msgBoardPost.Poster, buffer[0] );
-		msgBoardPost.PosterLen = buffer[0];
+		file.read( msgBoardPost.poster, buffer[0] );
+		msgBoardPost.posterLen = buffer[0];
 
 		// Get size of post's subject from next byte, and then get subject string
 		file.read( buffer, 1 );
-		file.read( msgBoardPost.Subject, buffer[0] );
-		msgBoardPost.SubjectLen = buffer[0];
+		file.read( msgBoardPost.subject, buffer[0] );
+		msgBoardPost.subjectLen = buffer[0];
 
 		// Get size of post's date string from next byte, and then get date string
 		file.read( buffer, 1 );
-		file.read( msgBoardPost.Date, buffer[0] );
-		msgBoardPost.DateLen = buffer[0];
+		file.read( msgBoardPost.date, buffer[0] );
+		msgBoardPost.dateLen = buffer[0];
 
 		// Get number of lines from next byte, then read each line from post
 		file.read( buffer, 1 );
-		msgBoardPost.Lines = buffer[0];
-		for( UI08 i = 0; i < msgBoardPost.Lines; ++i )
+		msgBoardPost.lines = buffer[0];
+		for( UI08 i = 0; i < msgBoardPost.lines; ++i )
 		{
 			// Get line length from next byte, then read line string into tmpLine
 			file.read( buffer, 1 );
 			file.read( tmpLine, buffer[0]);
 
-			// Stuff contents of tmpLine into msgBoardLine STRINGLIST in msgBoardPost struct, then add null terminator
+			// Stuff contents of tmpLine into msgBoardLine std::vector<std::string> in msgBoardPost struct, then add null terminator
 			msgBoardPost.msgBoardLine.push_back( tmpLine );
-			msgBoardPost.msgBoardLine[msgBoardPost.msgBoardLine.size()-1] += '\0';
+			msgBoardPost.msgBoardLine[msgBoardPost.msgBoardLine.size() - 1] += '\0';
 		}
 
 		file.seekg( 4, std::ios::cur );
 
-		if( msgBoardPost.Toggle != 0x00 )
+		if( msgBoardPost.toggle != 0x00 )
 		{
 			return true;
 		}
@@ -596,18 +600,18 @@ bool MsgBoardReadPost( std::ifstream& file, msgBoardPost_st& msgBoardPost, SERIA
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardOpenPost( CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardOpenPost()
 //|	Date		-	7/16/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a post on a message board when double clicked.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardOpenPost( CSocket *mSock )
 {
-	std::string fileName = GetMsgBoardFile( mSock->GetDWord( 4 ), (mSock->GetByte( 8 ) - 0x40) );
+	std::string fileName = GetMsgBoardFile( mSock->GetDWord( 4 ), ( mSock->GetByte( 8 ) - 0x40 ));
 	if( fileName.empty() )
 	{
-		mSock->sysmessage( 732 );
+		mSock->SysMessage( 732 ); // Post not valid, please notify GM!
 		return;
 	}
 
@@ -616,17 +620,17 @@ void MsgBoardOpenPost( CSocket *mSock )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) + fileName;
 	}
 
-	msgBoardPost_st msgBoardPost;
+	MsgBoardPost_st msgBoardPost;
 	bool foundEntry		= false;
 
 	const SERIAL msgSerial = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
-	std::ifstream file ( fileName.c_str(), std::ios::in | std::ios::binary );
+	std::ifstream file( fileName.c_str(), std::ios::in | std::ios::binary );
 	if( file.is_open() )
 	{
 		file.seekg( 0, std::ios::beg );
 		while( file && !foundEntry )
 		{
-			if( MsgBoardReadPost( file, msgBoardPost, msgSerial ) )
+			if( MsgBoardReadPost( file, msgBoardPost, msgSerial ))
 			{
 				foundEntry = true;
 			}
@@ -635,7 +639,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.error( oldstrutil::format("Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
+		Console.Error( oldstrutil::format( "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
 	}
 
 	if( foundEntry )
@@ -645,38 +649,38 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.warning(oldstrutil::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
+		Console.Warning( oldstrutil::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardRemovePost( CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardRemovePost()
 //|	Date		-	7/17/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a post from a message board
 //|
 //|						Note: The client should trigger this function, but I have
 //|						been unable to find a way through the client to send the
 //|						remove post packet.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardRemovePost( CSocket *mSock )
 {
 	CChar *mChar = mSock->CurrcharObj();
 	if( !ValidateObject( mChar ) || ( ValidateObject( mChar ) && !mChar->IsGM() ))
 	{
-		mSock->sysmessage( 9037 ); // Only GMs may delete posts!
+		mSock->SysMessage( 9037 ); // Only GMs may delete posts!
 		return;
 	}
 
 	// If the messageboard is not found, do nothing
-	CItem *msgBoard = calcItemObjFromSer( mSock->GetDWord( 4 ) );
-	if( !ValidateObject( msgBoard ) )
+	CItem *msgBoard = CalcItemObjFromSer( mSock->GetDWord( 4 ));
+	if( !ValidateObject( msgBoard ))
 	{
 		return;
 	}
 
 	// If the messageboard filename is not returned properly, do nothing
-	std::string fileName = GetMsgBoardFile( msgBoard->GetSerial(), (mSock->GetByte( 8 ) - 0x40 ) );
+	std::string fileName = GetMsgBoardFile( msgBoard->GetSerial(), ( mSock->GetByte( 8 ) - 0x40 ));
 	if( fileName.empty() )
 	{
 		return;
@@ -688,16 +692,19 @@ void MsgBoardRemovePost( CSocket *mSock )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ) + fileName;
 	}
 
-	bool foundPost		= false;
+	bool foundPost = false;
 
 	// Fetch the serial of the messageboard post in need of removal
-	const SERIAL msgSer = (mSock->GetDWord( 8 ) - BASEITEMSERIAL );
+	const SERIAL msgSer = ( mSock->GetDWord( 8 ) - BASEITEMSERIAL );
 
 	// Let's grab the size of the file so we can use it later
 	std::size_t fileSize = 0;
-	try {
+	try
+	{
 		fileSize = std::filesystem::file_size( fileName );
-	} catch( ... ) {
+	}
+	catch( ... )
+	{
 		fileSize = 0;
 	} 
 
@@ -706,9 +713,9 @@ void MsgBoardRemovePost( CSocket *mSock )
 	{
 		if( ValidateObject( mChar ))
 		{
-			mSock->sysmessage( 9038 ); // Failed to remove post; file size not found! Check server log for more details.
+			mSock->SysMessage( 9038 ); // Failed to remove post; file size not found! Check server log for more details.
 		}
-		Console.error( oldstrutil::format("Could not fetch file size for file %s", fileName.c_str()) );
+		Console.Error( oldstrutil::format( "Could not fetch file size for file %s", fileName.c_str() ));
 		return;
 	}
 
@@ -730,14 +737,14 @@ void MsgBoardRemovePost( CSocket *mSock )
 			file.read( rBuffer, 2 );
 
 			// Shift first byte up eight bytes, add to second byte
-			tmpSize = ( (rBuffer[0]<<8) + rBuffer[1] );
+			tmpSize = (( rBuffer[0] << 8 ) + rBuffer[1] );
 
 			// Move stream's "get" position relative to current position
 			file.seekg( 1, std::ios::cur );
 
 			// Read the next 4 characters from filestream into rBuffer, and use this to attempt calculating post serial
 			file.read( rBuffer, 4 );
-			tmpSerial = calcserial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
+			tmpSerial = CalcSerial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
 
 			// If the serial matches the serial of post to be removed, prepare to check for
 			// any replies to the post/thread as well, which will also need to be removed
@@ -747,7 +754,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 
 				// Move stream's "set" position to the start of the post in question, and overwrite first 2 bytes with 0x00 to mark it for deletion
 				// This will hide it from view, but not actually delete it from the file itself; that's handled by message board maintenance
-				file.seekp( totalSize+2, std::ios::beg );
+				file.seekp( totalSize + 2, std::ios::beg );
 				file.put( 0x00 );
 			}
 
@@ -755,17 +762,17 @@ void MsgBoardRemovePost( CSocket *mSock )
 			if( removeReply || !foundPost )
 			{
 				// Move stream's "get" position relative to current position, to... what? Look for a reply?
-				file.seekg( tmpSize-11, std::ios::cur );
+				file.seekg( tmpSize - 11, std::ios::cur );
 				
 				// Read another serial candidate into the buffer, and try to calculate post serial from buffer
 				file.read( rBuffer, 4 );
-				tmpSerial = calcserial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
+				tmpSerial = CalcSerial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
 
 				if( removeReply )
 				{
 					// Send packet to remove item (each post is an item in a container - the container being the message board) visually from message board
 					CPRemoveItem toRemove;
-					toRemove.Serial( (tmpSerial + BASEITEMSERIAL) );
+					toRemove.Serial(( tmpSerial + BASEITEMSERIAL ));
 					mSock->Send( &toRemove );
 				}
 				else if( tmpSerial == msgSer )
@@ -775,10 +782,10 @@ void MsgBoardRemovePost( CSocket *mSock )
 
 					// Move stream's "set" position to the start of the post in question, and overwrite first 2 bytes with 0x00 to mark it for deletion
 					// This will hide it from view, but not actually delete it from the file itself; that's handled by message board maintenance
-					file.seekp( totalSize+2, std::ios::beg );
+					file.seekp( totalSize + 2, std::ios::beg );
 					file.put( 0x00 );
 
-					mSock->sysmessage( 734 );
+					mSock->SysMessage( 734 ); // Post removed.
 				}
 			}
 
@@ -797,30 +804,32 @@ void MsgBoardRemovePost( CSocket *mSock )
 	}
 	else
 	{
-		Console.error( oldstrutil::format("Could not open file %s for reading", fileName.c_str()) );
+		Console.Error( oldstrutil::format( "Could not open file %s for reading", fileName.c_str() ));
 	}
 
 	// If we found the post to remove previously, remove it at this point, since all potential replies to it have been removed already
 	if( foundPost )
 	{
 		CPRemoveItem toRemove;
-		toRemove.Serial( mSock->GetDWord( 8 ) );
+		toRemove.Serial( mSock->GetDWord( 8 ));
 		mSock->Send( &toRemove );
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CPIMsgBoardEvent::Handle( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CPIMsgBoardEvent::Handle()
 //|	Date		-	7/22/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles a mesage board event from the client.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool CPIMsgBoardEvent::Handle( void )
 {
 	UI08 msgType = tSock->GetByte( 3 );
 
 	if( tSock->GetByte( 0 ) == 0x06 )
+	{
 		msgType = 0;
+	}
 
 	switch( msgType )
 	{
@@ -841,26 +850,26 @@ bool CPIMsgBoardEvent::Handle( void )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardPostQuest()
 //|	Date		-	7/23/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an escort quest post on regional messageboards
-//o-----------------------------------------------------------------------------------------------o
-bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
+//o------------------------------------------------------------------------------------------------o
+auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType ) -> bool
 {
-	msgBoardPost_st msgBoardPost;
+	MsgBoardPost_st msgBoardPost;
 	std::string sect, tag, data;
-	std::string fileName		= std::string("region") + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
-	ScriptSection *EscortData	= nullptr, *Escort = nullptr;
-	size_t totalEntries			= 0;
-	std::string tmpSubject		= "";
+	auto fileName = "region"s + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + ".bbf"s;
+	CScriptSection *EscortData = nullptr, *Escort = nullptr;
+	size_t totalEntries = 0;
+	std::string tmpSubject = "";
 
 	switch( questType )
 	{
 		case QT_ESCORTQUEST:
-			msgBoardPost.Toggle		= QT_ESCORTQUEST;
-			tmpSubject				= Dictionary->GetEntry( 735 );
+			msgBoardPost.toggle		= QT_ESCORTQUEST;
+			tmpSubject				= Dictionary->GetEntry( 735 ); // Escort: Needed!
 			Escort					= FileLookup->FindEntry( "ESCORTS", msgboard_def );
 			if( Escort == nullptr )
 			{
@@ -870,20 +879,21 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			totalEntries = Escort->NumEntries();
 			if( totalEntries == 0 )
 			{
-				Console.error( "MsgBoardPostQuest() No msgboard dfn entries found" );
+				Console.Error( "MsgBoardPostQuest() No msgboard dfn entries found" );
 				return false;
 			}
 
-			Escort->MoveTo( RandomNum( static_cast<size_t>(0), totalEntries-1 ) );
-			sect		= "ESCORT " + Escort->GrabData();
+			Escort->MoveTo( RandomNum( static_cast<size_t>( 0 ), totalEntries - 1 ));
+			sect = "ESCORT "s + Escort->GrabData();
 			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
 			if( EscortData == nullptr )
 			{
-				Console.error( oldstrutil::format("MsgBoardPostQuest() Couldn't find entry %s", sect.c_str()) );
+				Console.Error( oldstrutil::format( "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() ));
 				return false;
 			}
-			for( tag = EscortData->First(); !EscortData->AtEnd(); tag = EscortData->Next() )
+			for( const auto &sec : EscortData->collection() )
 			{
+				tag = sec->tag;
 				std::string fullLine = tag;
 
 				size_t position = fullLine.find( "%n" );
@@ -896,14 +906,14 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 				position = fullLine.find( "%l" );
 				while( position != std::string::npos )
 				{
-					fullLine.replace( position, 2, oldstrutil::format( "%d %d", mNPC->GetX(), mNPC->GetY() ) );
+					fullLine.replace( position, 2, oldstrutil::format( "%d %d", mNPC->GetX(), mNPC->GetY() ));
 					position = fullLine.find( "%l" );
 				}
 
 				position = fullLine.find( "%t" );
 				while( position != std::string::npos )
 				{
-					std::string mNPCTitle = getNpcDictTitle( mNPC );
+					std::string mNPCTitle = GetNpcDictTitle( mNPC );
 					fullLine.replace( position, 2, mNPCTitle );
 					position = fullLine.find( "%t" );
 				}
@@ -927,27 +937,27 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 			}
 			break;
 		case QT_BOUNTYQUEST:
-			tmpSubject				= Dictionary->GetEntry( 736 );
-			msgBoardPost.Toggle		= QT_BOUNTYQUEST;
+			tmpSubject				= Dictionary->GetEntry( 736 ); //  Bounty: Reward!
+			msgBoardPost.toggle		= QT_BOUNTYQUEST;
 			break;
 		case QT_ITEMQUEST:
-			tmpSubject				= Dictionary->GetEntry( 737 );
-			msgBoardPost.Toggle		= QT_ITEMQUEST;
+			tmpSubject				= Dictionary->GetEntry( 737 ); //  Lost valuable item.
+			msgBoardPost.toggle		= QT_ITEMQUEST;
 			break;
 		default:
-			Console.error( oldstrutil::format("MsgBoardPostQuest() Invalid questType %d", questType) );
+			Console.Error( oldstrutil::format( "MsgBoardPostQuest() Invalid questType %d", questType ));
 			return false;
 	}
 
-	msgBoardPost.Lines = static_cast<UI08>(msgBoardPost.msgBoardLine.size());
+	msgBoardPost.lines = static_cast<UI08>( msgBoardPost.msgBoardLine.size() );
 
-	msgBoardPost.SubjectLen = static_cast<UI08>(tmpSubject.size() + 1);
-	strncpy( msgBoardPost.Subject, tmpSubject.c_str(), tmpSubject.size() );
+	msgBoardPost.subjectLen = static_cast<UI08>( tmpSubject.size() + 1 );
+	strncopy( msgBoardPost.subject, 256, tmpSubject.c_str(), tmpSubject.size() );
 
-	msgBoardPost.PosterLen = static_cast<UI08>(mNPC->GetName().size() + 1);
-	strncpy( msgBoardPost.Poster, mNPC->GetName().c_str(), mNPC->GetName().size() );
+	msgBoardPost.posterLen = static_cast<UI08>( mNPC->GetName().size() + 1 );
+	strncopy( msgBoardPost.poster, 128, mNPC->GetName().c_str(), mNPC->GetName().size() );
 
-	msgBoardPost.ParentSerial = mNPC->GetSerial();
+	msgBoardPost.parentSerial = mNPC->GetSerial();
 
 	if( MsgBoardWritePost( msgBoardPost, fileName, PT_REGIONAL ) != INVALIDSERIAL )
 	{
@@ -957,12 +967,12 @@ bool MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType )
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardQuestEscortCreate( CChar *mNPC )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardQuestEscortCreate()
 //|	Date		-	7/23/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates an escort quest assigning it a valid escort region
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortCreate( CChar *mNPC )
 {
 	const UI16 npcRegion		= mNPC->GetRegionNum();
@@ -972,12 +982,14 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 	if( !cwmWorldState->escortRegions.empty() && ( escortSize > 1 || cwmWorldState->escortRegions[0] != npcRegion )  )
 	{
 		for( UI16 i = 0; i < 50 && npcRegion == destRegion; ++i )
-			destRegion = cwmWorldState->escortRegions[RandomNum( static_cast<size_t>(0), (escortSize-1) )];
+		{
+			destRegion = cwmWorldState->escortRegions[RandomNum( static_cast<size_t>( 0 ), ( escortSize - 1 ))];
+		}
 	}
 
 	if( destRegion == 0 || destRegion == npcRegion )
 	{
-		Console.error( oldstrutil::format("MsgBoardQuestEscortCreate() No valid regions defined for escort quests") );
+		Console.Error( oldstrutil::format( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" ));
 		mNPC->Delete();
 		return;
 	}
@@ -992,28 +1004,28 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 	mNPC->SetNPCAiType( AI_NONE );
 	mNPC->SetQuestOrigRegion( npcRegion );
 
-	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ) )
+	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_ESCORTWAIT ))
 	{
-		mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTWAIT ) );
+		mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTWAIT ));
 	}
 
-	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ) )
+	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ))
 	{
-		Console.error(oldstrutil::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
+		Console.Error( oldstrutil::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
 		mNPC->Delete();
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardQuestEscortArrive()
 //|	Date		-	7/23/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles payment and release upon arrival of the escort
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 {
 	CChar *mChar = mSock->CurrcharObj();
-	if( !ValidateObject( mChar ) )
+	if( !ValidateObject( mChar ))
 	{
 		return;
 	}
@@ -1032,15 +1044,15 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	else // Otherwise pay the poor sod for his time
 	{
 		Items->CreateScriptItem( mSock, mChar, "0x0EED", questReward, OT_ITEM, true );
-		Effects->goldSound( mSock, questReward );
+		Effects->GoldSound( mSock, questReward );
 
 		// Thank you %s for thy service. We have made it safely to %s. Here is thy pay as promised.
 		mNPC->TextMessage( mSock, 739, TALK, 0, mChar->GetName().c_str(), destReg->GetName().c_str() );
 	}
 
 	// Inform the PC of what he has just been given as payment
-	std::string mNPCTitle = getNpcDictTitle( mNPC, mSock );
-	mSock->sysmessage( 740, questReward, mNPC->GetName().c_str(), mNPCTitle.c_str() ); // You have just received %d gold coins from %s %s.
+	std::string mNPCTitle = GetNpcDictTitle( mNPC, mSock );
+	mSock->SysMessage( 740, questReward, mNPC->GetName().c_str(), mNPCTitle.c_str() ); // You have just received %d gold coins from %s %s.
 
 	// Take the NPC out of quest mode
 	mNPC->SetNpcWander( WT_FREE );         // Wander freely
@@ -1049,16 +1061,16 @@ void MsgBoardQuestEscortArrive( CSocket *mSock, CChar *mNPC )
 	mNPC->SetQuestDestRegion( 0 );   // Reset quest destination region
 
 	// Set a timer to automatically delete the NPC
-	mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ) );
+	mNPC->SetTimer( tNPC_SUMMONTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_ESCORTDONE ));
 	mNPC->SetOwner( nullptr );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardQuestEscortRemovePost( CChar *mNPC )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardQuestEscortRemovePost()
 //|	Date		-	7/23/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes an escort quest post on regional messageboards
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 {
 	std::string fileName;
@@ -1067,11 +1079,14 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 	}
 
-	fileName += std::string("region") + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string(".bbf");
+	fileName += std::string( "region" ) + oldstrutil::number( mNPC->GetQuestOrigRegion() ) + std::string( ".bbf" );
 	std::size_t fileSize = 0;
-	try {
+	try
+	{
 		fileSize = std::filesystem::file_size( fileName );
-	} catch( ... ) {
+	}
+	catch( ... )
+	{
 		fileSize = 0;
 	} 
 
@@ -1093,12 +1108,12 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 		while( !file.eof() )
 		{
 			file.read( rBuffer, 2 );
-			tmpSize = ( (rBuffer[0]<<8) + rBuffer[1] );
+			tmpSize = (( rBuffer[0] << 8 ) + rBuffer[1] );
 
 			file.seekg( 1, std::ios::cur );
 
 			file.read( rBuffer, 4 );
-			tmpSerial = calcserial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
+			tmpSerial = CalcSerial( rBuffer[0], rBuffer[1], rBuffer[2], rBuffer[3] );
 			if( tmpSerial == mNPC->GetSerial() )
 			{
 				file.seekp( totalSize + 2, std::ios::beg );
@@ -1114,7 +1129,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 				}
 				else
 				{
-					Console.error( oldstrutil::format("Attempting to seek past end of file in %s", fileName.c_str()) );
+					Console.Error( oldstrutil::format( "Attempting to seek past end of file in %s", fileName.c_str() ));
 					break;
 				}
 			}
@@ -1123,16 +1138,16 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 	}
 	else
 	{
-		Console.error( oldstrutil::format("Could not open file %s for reading", fileName.c_str()) );
+		Console.Error( oldstrutil::format( "Could not open file %s for reading", fileName.c_str() ));
 	}
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardRemoveFile( const SERIAL msgBoardSer )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardRemoveFile()
 //|	Date		-	8/10/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes the MessageBoard .bbf file attached to the specified serial
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 {
 	std::string fileName;
@@ -1142,24 +1157,24 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 		fileName = cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD );
 	}
 
-	fileName += oldstrutil::number( msgBoardSer, 16 ) + std::string(".bbf");
+	fileName += oldstrutil::number( msgBoardSer, 16 ) + std::string( ".bbf" );
 
 	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 
-	Console.print( oldstrutil::format("Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer) );
+	Console.Print( oldstrutil::format( "Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void MsgBoardMaintenance( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	MsgBoardMaintenance()
 //|	Date		-	8/10/2005
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Finds all .bbf files and cleans any deleted posts from them
 //|							It will also remove any empty .bbf files if necessary.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void MsgBoardMaintenance( void )
 {
-	std::vector< msgBoardPost_st > mbMessages;
-	std::vector< msgBoardPost_st >::const_iterator mbIter;
+	std::vector<MsgBoardPost_st> mbMessages;
+	std::vector<MsgBoardPost_st>::const_iterator mbIter;
 
 	std::string dirName = "./msgboards/";
 	if( !cwmWorldState->ServerData()->Directory( CSDDP_MSGBOARD ).empty() )
@@ -1168,15 +1183,15 @@ void MsgBoardMaintenance( void )
 	}
 
 	// Fetch file listing from msgboards directory
-	for( auto &entry : std::filesystem::directory_iterator(dirName) )
+	for( auto &entry : std::filesystem::directory_iterator( dirName ))
 	{
-		if( std::filesystem::is_regular_file(entry.path()) )
+		if( std::filesystem::is_regular_file( entry.path() ))
 		{
 			// It is a regular file
 			if( entry.path().extension() == ".bbf" )
 			{
 				// Open file stream for reading in binary mode
-				std::ifstream file ( entry.path().string(), std::ios::in | std::ios::binary );
+				std::ifstream file( entry.path().string(), std::ios::in | std::ios::binary );
 				if( file.is_open() )
 				{
 					// Seek start of file
@@ -1185,10 +1200,10 @@ void MsgBoardMaintenance( void )
 					// As long as end of file hasn't been reached, continue reading in more posts
 					while( !file.eof() )
 					{
-						msgBoardPost_st toAdd;
+						MsgBoardPost_st toAdd;
 						
 						// If post had Toggle value other than 0x00, add it to the list of posts to write back out to file later
-						if( MsgBoardReadPost( file, toAdd ) )
+						if( MsgBoardReadPost( file, toAdd ))
 						{
 							mbMessages.push_back( toAdd );
 						}
@@ -1209,7 +1224,7 @@ void MsgBoardMaintenance( void )
 						mFile.seekp( 0, std::ios::beg );
 						for( mbIter = mbMessages.begin(); mbIter != mbMessages.end(); ++mbIter )
 						{
-							MsgBoardWritePost( mFile, (*mbIter) );
+							MsgBoardWritePost( mFile, ( *mbIter ));
 						}
 						mFile.close();
 					}
@@ -1219,9 +1234,8 @@ void MsgBoardMaintenance( void )
 				}
 				else
 				{
-					Console.error( oldstrutil::format("Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
+					Console.Error( oldstrutil::format( "Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
 				}
-
 			}
 		}
 	}

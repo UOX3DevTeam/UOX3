@@ -14,26 +14,33 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 	// Keep track of whose turn it is
 	var turnCount = iDropped.container.GetTag( "turnCount" );
 	if( turnCount % 2 == 0 )
+	{
 		whiteMove = false;
+	}
 	else
+	{
 		whiteMove = true;
+	}
 
 	var team = iDropped.GetTag( "team" );
 	// Prevent opponent from making a move out of turn
 	if( whiteMove && team != 1 )
+	{
 		return 0;
+	}
 	else if( !whiteMove && team != 2 )
+	{
 		return 0;
+	}
 
 	// Fetch location where piece was dropped inside board
-	var x       = pDropper.socket.GetWord( 5 );
-	var y       = pDropper.socket.GetWord( 7 );
+	var x = pDropper.socket.GetWord( 5 );
+	var y = pDropper.socket.GetWord( 7 );
 	iDropped.morex = 0;
 	iDropped.morey = 0;
 
 	// Check for surrender
-	if(( whiteMove && x < 25 )
-		|| ( !whiteMove && x > 235 ))
+	if(( whiteMove && x < 25 ) || ( !whiteMove && x > 235 ))
 	{
 		ConfirmSurrender( pDropper, iDropped, gameBoard );
 		return 0;
@@ -51,7 +58,9 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 		{
 			// If source location was off the board, disable path checks
 			if( iDropped.x < 25 || iDropped.x > 235 )
+			{
 				disablePathChecks = true;
+			}
 
 			// X coordinates
 			if( x > 25 && x <= 55 )
@@ -103,8 +112,8 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 			// to/within areas on extreme left or extreme right side of board
 			if( iDropped.morex > 25 && iDropped.morex <= 235 && iDropped.x > 25 && iDropped.x <= 235 )
 			{
-				var deltaX = Math.abs(iDropped.morex - iDropped.x );
-				var deltaY = Math.abs(iDropped.morey - iDropped.y );
+				var deltaX = Math.abs( iDropped.morex - iDropped.x );
+				var deltaY = Math.abs( iDropped.morey - iDropped.y );
 
 				if( Math.abs( deltaX - deltaY ) > 15 )
 				{
@@ -138,15 +147,21 @@ function onDropItemOnItem( iDropped, pDropper, gameBoard )
 		{
 			retVal = CheckPath( iDropped, 0 );
 			if( retVal == 0 )
+			{
 				return 0;
+			}
 		}
 
 		// Check for existing pieces in target square
 		retVal = 0;
 		if( !disableChecks && !disablePathChecks )
+		{
 			retVal = CheckForExistingPieces( iDropped );
+		}
 		if( retVal == 0 )
+		{
 			return 0;
+		}
 	}
 
 	// Safekeep old Y position for later
@@ -185,8 +200,8 @@ function CheckPath( iDropped, targetY )
 			var boardItemY = boardItem.y;
 
 			// Check - in absolute values - how far boardItem is from the iDropped on one axis or the other
-			var yDiff = Math.abs(boardItemY - iOldY);
-			var xDiff = Math.abs(boardItemX - iOldX);
+			var yDiff = Math.abs( boardItemY - iOldY );
+			var xDiff = Math.abs( boardItemX - iOldX );
 
 			// Check how far iDrops moves in one axis or the other
 			var iDiffX = Math.abs( iOldX - iNewX );
@@ -237,7 +252,7 @@ function CheckForExistingPieces( iDropped, simulateCapture, allowCapture )
 	{
 		if( ValidateObject( mItem ))
 		{
-			if( Math.abs(mItem.x - iDropped.morex) < 11 && Math.abs(mItem.y - iDropped.morey) < 11 )
+			if( Math.abs( mItem.x - iDropped.morex ) < 11 && Math.abs( mItem.y - iDropped.morey ) < 11 )
 			{
 				// Disallow move, square occupied by another piece!
 				iDropped.morex = 0;
@@ -317,10 +332,12 @@ function ConfirmSurrender( pDropper, iDropped, gameBoard )
 	}
 
 	if( ValidateObject( iDropped ))
+	{
 		iDropped.Delete();
+	}
 
 	var tempMsg = GetDictionaryEntry( 2721 ) // %s Surrenders! Resetting game board.
-	gameBoard.TextMessage( tempMsg.replace(/%s/gi, team ) );
+	gameBoard.TextMessage( tempMsg.replace( /%s/gi, team ));
 	TriggerEvent( 5024, "onUseChecked", pDropper, gameBoard );
 }
 

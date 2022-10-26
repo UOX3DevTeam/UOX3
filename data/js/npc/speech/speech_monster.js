@@ -113,17 +113,17 @@ function inRange( myNPC, objInRange )
 	// This also ensures that the script stays working even if the server saves in the middle of a
 	// search, but crashes before the next save.
 	var iTime = GetCurrentClock();
-	var initSearchTime = myNPC.GetTempTag( "initSearchTime" );
+	var initSearchTime = parseInt( myNPC.GetTempTag( "initSearchTime" ));
 
 	// If search has already been initiated, don't start a new search, unless an abnormal amount of time has passed
-	if(( initSearchTime != null && initSearchTime != 0 ) && ((( iTime - initSearchTime ) < searchTimer ) && !( initSearchTime > iTime )))
+	if(( initSearchTime != null && initSearchTime != 0 ) && (((( iTime - initSearchTime ) / 1000 ) < searchTimer ) && !( initSearchTime > iTime )))
 	{
 		return;
 	}
 
-	if((( iTime - initSearchTime ) > searchTimer ) || initSearchTime > iTime )
+	if(((( iTime - initSearchTime ) / 1000 ) > searchTimer ) || initSearchTime > iTime )
 	{
-		myNPC.SetTempTag( "initSearchTime", iTime );
+		myNPC.SetTempTag( "initSearchTime", iTime.toString() );
 		myNPC.StartTimer( searchInterval, 1, true );
 	}
 }
@@ -247,27 +247,27 @@ function Speech( myNPC, myString )
 					break;
 				case 1: // [word] thee!
 					responseString = keywordEntry + " thee!";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 2: // [word]?
 					responseString = keywordEntry + "?";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 3: // [word]! [word].
 					responseWord = responses[RandomNumber( 0, responses.length - 1 )];
-					responseWord = responseWord[0].toUpperCase() + responseWord.slice(1); // Capitalize 1st letter
+					responseWord = responseWord[0].toUpperCase() + responseWord.slice( 1 ); // Capitalize 1st letter
 					responseString = keywordEntry + "! " + responseWord + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 4: // [word].
 					responseString = keywordEntry + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				case 5: // [word]? [word].
 					responseWord = responses[RandomNumber( 0, responses.length - 1 )];
-					responseWord = responseWord[0].toUpperCase() + responseWord.slice(1); // Capitalize 1st letter
+					responseWord = responseWord[0].toUpperCase() + responseWord.slice( 1 ); // Capitalize 1st letter
 					responseString = keywordEntry + "? " + responseWord + ".";
-					responseString = responseString[0].toUpperCase() + responseString.slice(1); // Capitalize 1st letter
+					responseString = responseString[0].toUpperCase() + responseString.slice( 1 ); // Capitalize 1st letter
 					break;
 				default:
 					break;

@@ -150,7 +150,7 @@ function onCallback1( tSock, myTarget )
 {
 	var pUser = tSock.currentChar;
 	var iUsed = tSock.tempObj;
-	var tileID = tSock.GetWord(17);
+	var tileID = tSock.GetWord( 17 );
 
 	if(( tSock.GetWord( 1 ) && tileID == 0 ) || ( tileID == 0 && ( !ValidateObject( myTarget ) || myTarget.isChar )))
 	{

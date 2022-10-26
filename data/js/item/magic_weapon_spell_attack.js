@@ -12,7 +12,9 @@ function onAttack( mAttacker, mDefender )
 	// Fetch weapon in main hand
 	var iWeapon = mAttacker.FindItemLayer( 0x01 );
 	if( !ValidateObject( iWeapon ))
+	{
 		iWeapon = mAttacker.FindItemLayer( 0x02 );
+	}
 	if( !ValidateObject( iWeapon ))
 	{
 		// There's no weapon equipped! Why is this script running?
@@ -60,7 +62,9 @@ function onAttack( mAttacker, mDefender )
 			var effectDuration = 25; // Duration of effect - if cast by someone with Magery skill of 100.0 the duration would be 50 seconds
 			var resistDifficulty = 206; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			DoTempEffect( 0, mAttacker, mDefender, 3, effectStrength, effectDuration, resistDifficulty );
 			break;
 		case 3: // Feeblemindedness
@@ -68,7 +72,9 @@ function onAttack( mAttacker, mDefender )
 			var effectDuration = 25; // Duration of effect - if cast by someone with Magery skill of 100.0 the duration would be 50 seconds
 			var resistDifficulty = 206; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			DoTempEffect( 0, mAttacker, mDefender, 4, effectStrength, effectDuration, resistDifficulty );
 			break;
 		case 5: // Burning (Magic Arrow)
@@ -76,17 +82,23 @@ function onAttack( mAttacker, mDefender )
 
 			// Should we use the magery skill of weapon wielder when calculating resist?
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 
 			// Should we use magery skill of weapon wielder when calculating final spell damage?
 			if( useAttackerMagerySkill )
+			{
 				spellDamage = CalcSpellDamageMod( mAttacker, mDefender, spellDamage, spellResisted );
+			}
 			else
 			{
 				spellDamage = RandomNumber( spellDamage/2, spellDamage );
 				if( spellResisted )
+				{
 					spellDamage /= 2;
+				}
 			}
 
 			DoTempEffect( 0, mAttacker, mDefender, 28, spellDamage, 0, resistDifficulty );
@@ -96,7 +108,9 @@ function onAttack( mAttacker, mDefender )
 			var effectDuration = 50;
 			var resistDifficulty = 206; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			DoTempEffect( 0, mAttacker, mDefender, 5, effectStrength, effectDuration, resistDifficulty );
 			break;0
 		case 12: // Wounding (Harm)
@@ -104,17 +118,23 @@ function onAttack( mAttacker, mDefender )
 
 			// Should we use the magery skill of weapon wielder when calculating resist?
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 
 			// Should we use magery skill of weapon wielder when calculating final spell damage?
 			if( useAttackerMagerySkill )
+			{
 				spellDamage = CalcSpellDamageMod( mAttacker, mDefender, spellDamage, spellResisted );
+			}
 			else
 			{
 				spellDamage = RandomNumber( spellDamage/2, spellDamage );
 				if( spellResisted )
+				{
 					spellDamage /= 2;
+				}
 			}
 
 			DoTempEffect( 0, mAttacker, mDefender, 29, spellDamage, 0, resistDifficulty );
@@ -124,17 +144,23 @@ function onAttack( mAttacker, mDefender )
 
 			// Should we use the magery skill of weapon wielder when calculating resist?
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 
 			// Should we use magery skill of weapon wielder when calculating final spell damage?
 			if( useAttackerMagerySkill )
+			{
 				spellDamage = CalcSpellDamageMod( mAttacker, mDefender, spellDamage, spellResisted );
+			}
 			else
 			{
 				spellDamage = RandomNumber( spellDamage/2, spellDamage );
 				if( spellResisted )
+				{
 					spellDamage /= 2;
+				}
 			}
 
 			DoTempEffect( 0, mAttacker, mDefender, 30, spellDamage, 0, resistDifficulty );
@@ -144,7 +170,9 @@ function onAttack( mAttacker, mDefender )
 			var effectDuration = 50;
 			var resistDifficulty = 481; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			DoTempEffect( 0, mAttacker, mDefender, 12, effectStrength, effectDuration, resistDifficulty );
 			break;
 		case 30: // Thunder (Lightning)
@@ -152,17 +180,23 @@ function onAttack( mAttacker, mDefender )
 
 			// Should we use the magery skill of weapon wielder when calculating resist?
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 
 			// Should we use magery skill of weapon wielder when calculating final spell damage?
 			if( useAttackerMagerySkill )
+			{
 				spellDamage = CalcSpellDamageMod( mAttacker, mDefender, spellDamage, spellResisted );
+			}
 			else
 			{
 				spellDamage = RandomNumber( spellDamage/2, spellDamage );
 				if( spellResisted )
+				{
 					spellDamage /= 2;
+				}
 			}
 
 			DoTempEffect( 0, mAttacker, mDefender, 31, spellDamage, 0, 0 );
@@ -170,13 +204,17 @@ function onAttack( mAttacker, mDefender )
 		case 31: // Mage's Bane (Mana Drain)
 			var resistDifficulty = 481; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 			if( !spellResisted )
 			{
-				var manaToDrain = Math.round( 600/35 );
+				var manaToDrain = Math.round( 600 / 35 );
 				if( mDefender.mana < manaToDrain )
+				{
 					manaToDrain = mDefender.mana;
+				}
 
 				mDefender.mana -= manaToDrain;
 			}
@@ -185,10 +223,14 @@ function onAttack( mAttacker, mDefender )
 			var effectDuration = 10;
 			var resistDifficulty = 581; // Half-ways point between minimum and "max" skill required to cast spell
 			if( useAttackerMagerySkill )
+			{
 				resistDifficulty = mAttacker.skills.magery;
+			}
 			var spellResisted = CheckTargetResist( resistDifficulty, mDefender, spellCircle );
 			if( !spellResisted )
+			{
 				DoTempEffect( 0, mAttacker, mDefender, 1, 0, effectDuration, 0 );
+			}
 			break;
 	}
 }
@@ -197,20 +239,26 @@ function CheckTargetResist( resistDifficulty, mDefender, spellCircle )
 {
 	if( ValidateObject( mDefender ) )
 	{
-		var resistResult = mDefender.CheckSkill( 26, 80*spellCircle, 800+(80*spellCircle) );
+		var resistResult = mDefender.CheckSkill( 26, 80 * spellCircle, 800 + ( 80 * spellCircle ));
 		var defaultChance = mDefender.skills.magicresistance / 5;
 		var resistChance = mDefender.skills.magicresistance - ((( resistDifficulty - 20 ) / 5 ) + ( spellCircle * 5 ));
 		if( defaultChance > resistChance )
+		{
 			resistChance = defaultChance;
+		}
 		if( RandomNumber( 1, 100 ) < resistChance / 10 )
 		{
 			var tSock = mDefender.socket;
 			if( tSock != null )
+			{
 				tSock.SysMessage( GetDictionaryEntry( 699, tSock.language ) );
+			}
 			resistResult = true;
 		}
 		else
+		{
 			resistResult = false;
+		}
 	}
 	return resistResult;
 }
@@ -222,15 +270,21 @@ function CalcSpellDamageMod( mAttacker, mDefender, spellDamage, spellResisted )
 
 	// If spell was resisted, halve damage
 	if( spellResisted )
+	{
 		spellDamage = spellDamage / 2;
+	}
 
 	// Add damage bonus/penalty based on attacker's EVALINT vs defender's MAGICRESISTANCE
 	var casterEval = mAttacker.skills.evaluatingintel / 10;
 	var targetResist = mDefender.skills.magicresistance / 10;
 	if( targetResist > casterEval )
+	{
 		spellDamage *= ((( casterEval - targetResist ) / 200.0 ) + 1 );
+	}
 	else
+	{
 		spellDamage *= ((( casterEval - targetResist ) / 500.0 ) + 1 );
+	}
 
 	return Math.round( spellDamage );
 }

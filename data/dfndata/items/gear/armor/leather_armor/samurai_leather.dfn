@@ -1,7 +1,9 @@
 // Leather Jingasa - N/S
 [0x2776]
 {
-get=base_leather_jingasa
+getpub15=0x2776_pub15
+getaos=0x2776_aos
+gettol=0x2776_tol
 }
 
 // Leather Jingasa - E/W
@@ -20,7 +22,9 @@ get=0x2776 0x27c1
 // Leather Mempo - N/S
 [0x277a]
 {
-get=base_leather_mempo
+getpub15=0x277a_pub15
+getaos=0x277a_aos
+gettol=0x277a_tol
 }
 
 // Leather Mempo - E/W
@@ -39,7 +43,9 @@ get=0x277a 0x27c5
 // Leather Do - N/S
 [0x277b]
 {
-get=base_leather_do
+getpub15=0x277b_pub15
+getaos=0x277b_aos
+gettol=0x277b_tol
 }
 
 // Leather Do - E/W
@@ -58,7 +64,9 @@ get=0x277b 0x27c6
 // Leather Hiro Sode - E/W
 [0x277e]
 {
-get=base_leather_hiro_sode
+getpub15=0x277e_pub15
+getaos=0x277e_aos
+gettol=0x277e_tol
 }
 
 // Leather Hiro Sode - N/S
@@ -77,7 +85,9 @@ get=0x277e 0x27c9
 // Leather Suneate - E/W
 [0x2786]
 {
-get=base_leather_suneate
+getpub15=0x2786_pub15
+getaos=0x2786_aos
+gettol=0x2786_tol
 }
 
 // Leather Suneate - N/S
@@ -96,7 +106,9 @@ get=0x2786 0x27d1
 // Leather Haidate - N/S
 [0x278a]
 {
-get=base_leather_haidate
+getpub15=0x278a_pub15
+getaos=0x278a_aos
+gettol=0x278a_tol
 }
 
 // Leather Haidate - E/W

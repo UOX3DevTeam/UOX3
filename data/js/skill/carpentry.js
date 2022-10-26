@@ -21,7 +21,7 @@ function onCallback1( socket, ourObj )
 	{
 		if( !ourObj || !ourObj.isItem )
 		{
-			socket.SysMessage( GetDictionaryEntry( 783, socket.language ) ); // You cannot use that material for carpentry.
+			socket.SysMessage( GetDictionaryEntry( 783, socket.language )); // You cannot use that material for carpentry.
 			return;
 		}
 
@@ -30,12 +30,18 @@ function onCallback1( socket, ourObj )
 		{
 			var ownerObj = GetPackOwner( ourObj, 0 );
 			if( ownerObj && mChar.serial == ownerObj.serial )
+			{
 				socket.MakeMenu( 19, 11 );
+			}
 			else
-				socket.SysMessage( GetDictionaryEntry( 781, socket.language ) ); // You can't use lumber outside your backpack.
+			{
+				socket.SysMessage( GetDictionaryEntry( 781, socket.language )); // You can't use lumber outside your backpack.
+			}
 		}
 		else
+		{
 			socket.SysMessage( GetDictionaryEntry( 6006, socket.language )); // You can't make anything from that material.
+		}
 	}
 }
 

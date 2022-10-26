@@ -5,9 +5,6 @@
       <UniqueIdentifier>{46478ac4-f349-4dc4-9db5-938cb6f14841}</UniqueIdentifier>
       <Extensions>*.cpp</Extensions>
     </Filter>
-    <Filter Include="Source Files\Scripts">
-      <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Base Objects">
       <UniqueIdentifier>{cd40ad04-825d-48bb-9a86-ff3ee1b2925e}</UniqueIdentifier>
     </Filter>
@@ -57,28 +54,28 @@
     <Filter Include="Header Files\Subsystem">
       <UniqueIdentifier>{4e9f44ee-ffe6-4241-9ba9-faa06b8bcd9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{d5c774e7-3238-46bf-bb3a-5e16a36b5b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Script">
+      <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ObjectFactory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PartySystem.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cServerDefinitions.cpp">
-      <Filter>Source Files\Scripts</Filter>
+      <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="Dictionary.cpp">
-      <Filter>Source Files\Scripts</Filter>
+      <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="scriptc.cpp">
-      <Filter>Source Files\Scripts</Filter>
+      <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="ssection.cpp">
-      <Filter>Source Files\Scripts</Filter>
+      <Filter>Source Files\Script</Filter>
     </ClCompile>
     <ClCompile Include="cBaseobject.cpp">
       <Filter>Source Files\Base Objects</Filter>
@@ -275,9 +272,6 @@
     <ClCompile Include="UOPData.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
-    <ClCompile Include="IDXMul.cpp">
-      <Filter>Source Files\UOData</Filter>
-    </ClCompile>
     <ClCompile Include="MultiMul.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
@@ -287,9 +281,6 @@
     <ClCompile Include="IP4Address.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-    <ClCompile Include="UOPInterface.cpp">
-      <Filter>Source Files\UOData</Filter>
-    </ClCompile>
     <ClCompile Include="StringUtility.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -297,23 +288,23 @@
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
     <ClCompile Include="EventTimer.cpp">
-      <Filter>Source Files\Other</Filter>
+      <Filter>Source Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="PartySystem.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="osunique.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PartySystem.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConfigOS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectFactory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Prerequisites.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UOXStdHeaders.h">
@@ -335,9 +326,6 @@
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="cMultiObj.h">
-      <Filter>Header Files\Base Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="cSocket.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
     <ClInclude Include="cThreadQueue.h">
@@ -457,9 +445,6 @@
     <ClInclude Include="enums.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="fileio.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
     <ClInclude Include="mapclasses.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -467,9 +452,6 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>Header Files\Other</Filter>
-    </ClInclude>
-    <ClInclude Include="stream.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="townregion.h">
@@ -526,9 +508,6 @@
     <ClInclude Include="UOPData.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
-    <ClInclude Include="IDXMul.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
     <ClInclude Include="MultiMul.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
@@ -538,23 +517,36 @@
     <ClInclude Include="IP4Address.hpp">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="UOPInterface.hpp">
-      <Filter>Header Files\UOData</Filter>
-    </ClInclude>
     <ClInclude Include="StringUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="TimeUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="cSocket.h">
+      <Filter>Header Files\Base Objects</Filter>
+    </ClInclude>
     <ClInclude Include="EventTimer.hpp">
-      <Filter>Header Files\Other</Filter>
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="PartySystem.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="osunique.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectFactory.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="uox3.ico" />
+    <ResourceCompile Include="uox3.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="uox3.rc" />
+    <Image Include="uox3.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -4,43 +4,52 @@
 
 #ifndef __DICTIONARY_H__
 #define __DICTIONARY_H__
+#include <array>
 
+
+//o------------------------------------------------------------------------------------------------o
+// CDictionary
+//o------------------------------------------------------------------------------------------------o
 class CDictionary
 {
 public:
-	CDictionary();
-	CDictionary( const std::string& filepath, const std::string& language );
-	~CDictionary();
-	std::string 	operator[]( const SI32 Num );
-	std::string 	GetEntry( const SI32 Num );
+	~CDictionary() = default;
+	CDictionary( const std::string& filepath = "./dictionary/dictionary.ZRO", const std::string& language = "ZRO" );
+	auto SetLocationLanguage( const std::string &filepath, const std::string &language ) -> void;
 
-public:
-	void			ShowList( void );
-	SI32			LoadDictionary( void );
-	size_t			NumberOfEntries( void ) const;
-	void			SetValid( const bool newVal );
-	bool			GetValid( void ) const;
+	auto operator[]( int message_number ) const -> const std::string&;
+	auto operator[]( int message_number ) -> std::string&;
+	auto GetEntry( int message_number ) const -> const std::string&;
+	auto GetEntry( int message_number ) -> std::string&;
 
+	auto ShowList() -> void;
+	auto LoadDictionary( const std::string filepath = "", const std::string &language = "" ) -> SI32;
+	auto NumberOfEntries() const -> size_t;
+	auto GetValid() const -> bool;
 private:
-	bool IsValid;
-	std::string PathToDictionary;
-	std::string Language;
-	std::map< UI32, std::string > Text2;
+	auto ParseFile( const std::string &dictionaryfile ) -> bool;
+	std::string pathToDictionary;
+	std::string dictLanguage;
+	std::map<int, std::string> msgdata;   // The key here really needs to match the index in operator[]
 };
 
-class CDictionaryContainer
-{
+//===================================================================================================
+// CDictionaryContainer
+//===================================================================================================
+class CDictionaryContainer {
 private:
-	CDictionary			*dictList[DL_COUNT];
-	UnicodeTypes		defaultLang;
+	std::array<CDictionary, static_cast<int>( DL_COUNT )> dictList;
+	UnicodeTypes defaultLang;
 public:
 	CDictionaryContainer();
-	CDictionaryContainer( const std::string& filepath );
-	~CDictionaryContainer();
-	SI32			LoadDictionary( void );
-	std::string 	operator[]( const SI32 Num );	// only default lang
-	std::string 	GetEntry( const SI32 Num, const UnicodeTypes toDisp = ZERO );
-	void			SetDefaultLang( const UnicodeTypes newType );
+	~CDictionaryContainer() = default;
+	auto LoadDictionaries( const std::string& filepath = "" ) -> int;
+	auto SetDefaultLang( UnicodeTypes newType ) -> void;
+
+	auto operator[]( int message_number ) const -> const std::string&; // only default lang
+	auto operator[]( int message_number ) -> std::string&; // only default lang
+	auto GetEntry( int message_number, const UnicodeTypes toDisp = ZERO ) const -> const std::string&;
+	auto GetEntry( int message_number, const UnicodeTypes toDisp = ZERO )  -> std::string&;
 };
 
 extern CDictionaryContainer *Dictionary;

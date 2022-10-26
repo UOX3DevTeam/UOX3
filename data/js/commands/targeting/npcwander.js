@@ -1,3 +1,5 @@
+// These commands can be used to handle changes to NPC wandermodes
+
 function CommandRegistration()
 {
 	RegisterCommand( "follow", 1, true );
@@ -7,7 +9,7 @@ function CommandRegistration()
 
 function command_FOLLOW( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 228, socket.language );
+	var targMsg = GetDictionaryEntry( 228, socket.language ); // Select player for the NPC to follow.
 	socket.CustomTarget( 0, targMsg );
 }
 
@@ -15,7 +17,7 @@ function onCallback0( socket, ourObj )
 {
 	if( !socket.GetWord( 1 ) && ourObj.isChar )
 	{
-		var targMsg = GetDictionaryEntry( 1742, socket.language );
+		var targMsg = GetDictionaryEntry( 1742, socket.language ); // Select NPC to follow this player.
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, targMsg );
 	}
@@ -27,7 +29,9 @@ function onCallback1( socket, ourObj )
 	{
 		var toFollow = socket.tempObj;
 		if( ourObj.npc && toFollow )
+		{
 			ourObj.Follow( toFollow );
+		}
 	}
 	socket.tempObj = null;
 }
@@ -43,7 +47,7 @@ function command_NPCRECT( socket, cmdString )
 			y1 = parseInt( splitSection[1] );
 			x2 = parseInt( splitSection[2] );
 			y2 = parseInt( splitSection[3] );
-			var targMsg = GetDictionaryEntry( 46 );
+			var targMsg = GetDictionaryEntry( 46 ); // Select the NPC to set the bounding rectangle for.
 			socket.CustomTarget( 2, targMsg );
 		}
 	}
@@ -67,7 +71,7 @@ function command_NPCCIRCLE( socket, cmdString )
 			x1 = parseInt( splitSection[0] );
 			y1 = parseInt( splitSection[1] );
 			x2 = parseInt( splitSection[2] );
-			var targMsg = GetDictionaryEntry( 47 );
+			var targMsg = GetDictionaryEntry( 47 ); // Select the NPC to set the bounding circle for.
 			socket.CustomTarget( 3, targMsg );
 		}
 	}

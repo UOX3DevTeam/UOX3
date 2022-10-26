@@ -924,7 +924,6 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="IDXMul.cpp" />
     <ClCompile Include="IP4Address.cpp" />
     <ClCompile Include="items.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1222,6 +1221,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="osunique.cpp" />
     <ClCompile Include="StringUtility.cpp" />
     <ClCompile Include="targeting.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1266,8 +1266,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="UOPData.cpp" />
-    <ClCompile Include="UOPInterface.cpp" />
-    <ClCompile Include="uox3.cpp">
+     <ClCompile Include="uox3.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1381,6 +1380,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="osunique.hpp" />
     <ClInclude Include="books.h" />
     <ClInclude Include="cAccountClass.h" />
     <ClInclude Include="cBaseObject.h" />
@@ -1416,11 +1416,9 @@
     <ClInclude Include="Dictionary.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="EventTimer.hpp" />
-    <ClInclude Include="fileio.h" />
     <ClInclude Include="funcdecl.h" />
     <ClInclude Include="GenericList.h" />
     <ClInclude Include="gump.h" />
-    <ClInclude Include="IDXMul.hpp" />
     <ClInclude Include="IP4Address.hpp" />
     <ClInclude Include="jail.h" />
     <ClInclude Include="JSEncapsulate.h" />
@@ -1440,17 +1438,14 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="scriptc.h" />
     <ClInclude Include="SEFunctions.h" />
-    <ClInclude Include="Singleton.h" />
     <ClInclude Include="skills.h" />
     <ClInclude Include="speech.h" />
     <ClInclude Include="ssection.h" />
-    <ClInclude Include="stream.h" />
     <ClInclude Include="StringUtility.hpp" />
     <ClInclude Include="teffect.h" />
     <ClInclude Include="townregion.h" />
     <ClInclude Include="typedefs.h" />
     <ClInclude Include="UOPData.hpp" />
-    <ClInclude Include="UOPInterface.hpp" />
     <ClInclude Include="uox3.h" />
     <ClInclude Include="UOXJSClasses.h" />
     <ClInclude Include="UOXJSMethods.h" />

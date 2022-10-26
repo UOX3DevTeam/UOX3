@@ -1,3 +1,5 @@
+// These commands are shortcuts for casting gate, recall and mark spells with no mana/reagent costs
+
 function CommandRegistration()
 {
 	RegisterCommand( "gate", 1, true );
@@ -18,23 +20,25 @@ function onCallback0( socket, ourObj )
 	{
 		if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
-			var txtMessage = GetDictionaryEntry( 679, socket.language );
+			var txtMessage = GetDictionaryEntry( 679, socket.language ); // That rune has not been marked yet!
 			socket.SysMessage( txtMessage );
 		}
 		else
+		{
 			mChar.Gate( ourObj );
+		}
 	}
 }
 
 function command_RECALL( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 224, socket.language );
+	var targMsg = GetDictionaryEntry( 224, socket.language ); // Select rune from which to recall.
 	socket.CustomTarget( 1, targMsg );
 }
 
 function onCallback1( socket, ourObj )
 {
-	var mChar 	= socket.currentChar;
+	var mChar = socket.currentChar;
 	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		var txtMessage;
@@ -55,10 +59,14 @@ function onCallback1( socket, ourObj )
 					socket.currentChar.SetLocation( shipMulti.x + 1, shipMulti.y, shipMulti.z + 3 );
 				}
 				else
+				{
 					socket.SysMessage( GetDictionaryEntry( 8093, socket.language )); // You are unable to recall to your ship - it might be in another world!
+				}
 			}
 			else
+			{
 				socket.SysMessage( GetDictionaryEntry( 8094, socket.language )); // You can only recall off of valid ship keys.
+			}
 		}
 		else if( ourObj.morex <= 200 && ourObj.morey <= 200 )
 		{
@@ -76,13 +84,13 @@ function onCallback1( socket, ourObj )
 
 function command_MARK( socket, cmdString )
 {
-	var targMsg = GetDictionaryEntry( 225 );
+	var targMsg = GetDictionaryEntry( 225 ); // Select rune to mark.
 	socket.CustomTarget( 2, targMsg );
 }
 
 function onCallback2( socket, ourObj )
 {
-	var mChar 	= socket.currentChar;
+	var mChar = socket.currentChar;
 	if( !socket.GetWord( 1 ) && ourObj.isItem && mChar )
 	{
 		if( ourObj.type != 50 ) // Is it a recall rune?

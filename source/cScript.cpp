@@ -11,14 +11,14 @@
 #include "JSEncapsulate.h"
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
+#include "osunique.hpp"
 
-
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
 //|	Date		-	August 26th, 2000
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles JS events
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	Version History
 //|					1.0		26th August, 2000
 //|					Initial implementation
@@ -41,7 +41,7 @@
 //|					1.4		1st July, 2004
 //|					Added private property of SCRIPTTYPE to store which type of script we've got
 //|					Preparation for JS scriptable spells
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 
 static JSFunctionSpec my_functions[] =
 { 	// ScriptName, Func Ptr, num args, ?, ?
@@ -60,6 +60,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetDay",						SE_GetDay,					0, 0, 0 },
 	{ "SecondsPerUOMinute",			SE_SecondsPerUOMinute,		0, 0, 0 },
 	{ "GetCurrentClock",			SE_GetCurrentClock,			0, 0, 0 },
+	{ "GetStartTime",				SE_GetStartTime,			0, 0, 0 },
 	{ "GetMurderThreshold",			SE_GetMurderThreshold,		0, 0, 0 },
 	{ "RollDice",					SE_RollDice,				3, 0, 0 },
 	{ "RaceCompareByRace",			SE_RaceCompareByRace,		2, 0, 0 },
@@ -82,12 +83,14 @@ static JSFunctionSpec my_functions[] =
 	{ "FinishedCommandList",		SE_FinishedCommandList,		0, 0, 0 },
 	{ "CreateDFNItem",				SE_CreateDFNItem,			3, 0, 0 },
 	{ "CreateBlankItem",			SE_CreateBlankItem,			8, 0, 0 },
+	{ "CreateHouse",				SE_CreateHouse,				8, 0, 0 },
+	{ "CreateBaseMulti",			SE_CreateBaseMulti,			8, 0, 0 },
 	{ "SpawnNPC",					SE_SpawnNPC,				6, 0, 0 },
 	{ "GetPackOwner",				SE_GetPackOwner,			2, 0, 0 },
 	{ "FindRootContainer",			SE_FindRootContainer,		2, 0, 0 },
 	{ "CalcTargetedItem",			SE_CalcTargetedItem,		1, 0, 0 },
 	{ "CalcTargetedChar",			SE_CalcTargetedChar,		1, 0, 0 },
-	{ "GetTileIDAtMapCoord",		SE_GetTileIDAtMapCoord,		3, 0, 0 },
+	{ "GetTileIDAtMapCoord",		SE_GetTileIdAtMapCoord,		3, 0, 0 },
 	{ "GetDictionaryEntry",			SE_GetDictionaryEntry,		2, 0, 0 },
 	{ "Yell",						SE_Yell,					3, 0, 0 },
 	{ "GetRaceCount",				SE_GetRaceCount,			0, 0, 0 },
@@ -180,34 +183,34 @@ static JSFunctionSpec my_functions[] =
 
 void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *report )
 {
-	UI16 scriptNum = JSMapping->GetScriptID( JS_GetGlobalObject( cx ) );
+	UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 	// If we're loading the world then do NOT print out anything!
-	Console.error( oldstrutil::format("JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+	Console.Error( oldstrutil::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
 	if( report == nullptr || report->filename == nullptr )
 	{
-		Console.error( "No detailed data" );
+		Console.Error( "No detailed data" );
 		return;
 	}
-	Console.error( oldstrutil::format("Filename: %s\n| Line Number: %i", report->filename, report->lineno) );
-	Console.error( oldstrutil::format("Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
+	Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SI32 TryParseJSVal( jsval toParse )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Helper function to parse jsval returned from script
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI32 TryParseJSVal( jsval toParse )
 {
-	if( JSVAL_IS_NULL( toParse ) || ( !JSVAL_IS_BOOLEAN( toParse ) && !JSVAL_IS_INT( toParse ) ))
+	if( JSVAL_IS_NULL( toParse ) || ( !JSVAL_IS_BOOLEAN( toParse ) && !JSVAL_IS_INT( toParse )))
 	{
 		// jsval is neither a bool nor an int - possibly an object!
 		return 0;
 	}
-	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_FALSE && JSVAL_IS_INT( toParse ) )
+	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_FALSE && JSVAL_IS_INT( toParse ))
 	{
 		// jsval is an int!
-		return static_cast<SI32>(JSVAL_TO_INT( toParse ));
+		return static_cast<SI32>( JSVAL_TO_INT( toParse ));
 	}
 	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_TRUE )
 	{
@@ -241,9 +244,8 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	targObject = JS_NewObject( targContext, &uox_class, nullptr, nullptr );
 	if( targObject == nullptr )
-	{
 		return;
-	}
+
 	JS_LockGCThing( targContext, targObject );
 	//JS_AddRoot( targContext, &targObject );
 
@@ -272,7 +274,9 @@ void cScript::Cleanup( void )
 {
 	size_t i = 0;
 	for( i = 0; i < gumpDisplays.size(); ++i )
+	{
 		delete gumpDisplays[i];
+	}
 	gumpDisplays.resize( 0 );
 
 	JS_UnlockGCThing( targContext, targObject );
@@ -291,7 +295,9 @@ cScript::~cScript()
 {
 	JS_GC( targContext );
 	if( targScript != nullptr )
+	{
 		JS_DestroyScript( targContext, targScript );
+	}
 	Cleanup();
 	JS_GC( targContext );
 	//	if( targContext != nullptr )
@@ -311,58 +317,60 @@ void cScript::Stop( void )
 	isFiring = false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool cScript::OnStart( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStart()
 //|	Date		-	8/16/2003 3:44:50 AM
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	The OnStart event is provided to allow a script to process
 //|					and read in any state information that has been saved from
 //|					a previous server shut down. If a a script come with an
 //|					OnStart event the code that is provided will be executed
 //|					just following the loading of the script.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnStart( void )
 {
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool cScript::OnStop( void )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStop()
 //|	Date		-	8/16/2003 3:44:44 AM
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	The OnStop event is provided to allow a script to perform
 //|					any special cleanup, or state saving as a server shuts
 //|					down. If a script has an OnStop event then any code that
 //|					is provided will be executed just prior to the JSE shut
 //|					down.
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnStop( void )
 {
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnCreate( CBaseObject *thingCreated, bool dfnCreated )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCreate()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is added/created
 //|	Notes		-	Checks for the presence of onCreateDFN by default, but onCreateTile can also
 //|					be used to intercept creation of items directly from tiles/harditems.dfn
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 {
-	if( !ValidateObject( thingCreated ) )
+	if( !ValidateObject( thingCreated ))
 		return false;
 
 	std::string functionName = "onCreateDFN";
 	if( !dfnCreated )
 	{
 		functionName = "onCreateTile";
-		if( !ExistAndVerify( seOnCreateTile, functionName ) )
+		if( !ExistAndVerify( seOnCreateTile, functionName ))
 			return false;
 	}
 	else
-		if( !ExistAndVerify( seOnCreateDFN, functionName ) )
+	{
+		if( !ExistAndVerify( seOnCreateDFN, functionName ))
 			return false;
+	}
 
 	jsval rval, params[2];
 	UI08 paramType = 0;
@@ -372,14 +380,16 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 		myObj = JSEngine->AcquireObject( IUE_CHAR, thingCreated, runTime );
 		paramType = 1;
 	}
-	else {
+	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingCreated, runTime );
 	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( paramType );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, functionName.c_str(), 2, params, &rval );
-	if( retVal == JS_FALSE ){
+	if( retVal == JS_FALSE )
+	{
 		if( !dfnCreated )
 		{
 			SetEventExists( seOnCreateTile, false );
@@ -393,23 +403,26 @@ bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnDelete( CBaseObject *thingDestroyed )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDelete()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs when an object is deleted
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnDelete( CBaseObject *thingDestroyed )
 {
-	if( !ValidateObject( thingDestroyed ) )
+	if( !ValidateObject( thingDestroyed ))
 		return false;
-	if( !ExistAndVerify( seOnDelete, "onDelete" ) )
+
+	if( !ExistAndVerify( seOnDelete, "onDelete" ))
 		return false;
 
 	jsval rval, params[2];
 	UI08 paramType = 0;
 	JSObject *myObj;
 	if( thingDestroyed->GetObjType() != OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, thingDestroyed, runTime );
+	}
 	else
 	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, thingDestroyed, runTime );
@@ -419,16 +432,18 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 	params[1] = INT_TO_JSVAL( paramType );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDelete", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnDelete, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSpeech( const char *speech, CChar *personTalking, CChar *talkingTo )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpeech()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when a character talks in range of the character with event attached
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 4 possible values
 //|					-1	=> No such function or bad call
 //|					0	=> Let other NPCs and PCs see it
@@ -436,16 +451,17 @@ bool cScript::OnDelete( CBaseObject *thingDestroyed )
 //|					2	=> Let no one else see it
 //|					If JS returns non-int and non-bool, default to 0
 //|					If JS returns bool, true == 2, false == 0
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	22 June, 2003 17:30 (making it version 3)
 //|						Changed return values from bool to SI08
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( speech == nullptr || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ) )
+	if( speech == nullptr || !ValidateObject( personTalking ) || !ValidateObject( talkingTo ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSpeech, "onSpeech" ) )
+
+	if( !ExistAndVerify( seOnSpeech, "onSpeech" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -456,11 +472,11 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 
 	JSObject *ptObj = JSEngine->AcquireObject( IUE_CHAR, personTalking, runTime );
 	JSObject *ttObj = nullptr;
-	if( talkingTo->CanBeObjType( OT_CHAR ) )
+	if( talkingTo->CanBeObjType( OT_CHAR ))
 	{
 		ttObj = JSEngine->AcquireObject( IUE_CHAR, talkingTo, runTime );
 	}
-	else if( talkingTo->CanBeObjType( OT_ITEM ) )
+	else if( talkingTo->CanBeObjType( OT_ITEM ))
 	{
 		ttObj = JSEngine->AcquireObject( IUE_ITEM, talkingTo, runTime );
 	}
@@ -476,11 +492,13 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 		return RV_NOFUNC;
 	}
 
-	if( !( JSVAL_IS_NULL( rval ) ) )	// They returned some sort of value
+	if( !( JSVAL_IS_NULL( rval )))	// They returned some sort of value
 	{
-		if( JSVAL_IS_INT( rval ) )
-			return static_cast< SI08 >(JSVAL_TO_INT( rval ));
-		else if( JSVAL_IS_BOOLEAN( rval ) )
+		if( JSVAL_IS_INT( rval ))
+		{
+			return static_cast<SI08>(JSVAL_TO_INT( rval ));
+		}
+		else if( JSVAL_IS_BOOLEAN( rval ))
 		{
 			if( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE )
 				return 2;
@@ -490,33 +508,42 @@ SI08 cScript::OnSpeech( const char *speech, CChar *personTalking, CBaseObject *t
 	return 0;	// return default
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool InRange( CBaseObject *srcObj, CBaseObject *objInRange )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::InRange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when an object comes in range of a character with the event attached
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	A third parameter is provided to let script know whether object that comes into
 //|					range is a character or an item (Multi not supported yet)
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 {
-	if( !ValidateObject( srcObj ) || !ValidateObject( objInRange ) )
+	if( !ValidateObject( srcObj ) || !ValidateObject( objInRange ))
 		return false;
-	if( !ExistAndVerify( seInRange, "inRange" ) )
+
+	if( !ExistAndVerify( seInRange, "inRange" ))
 		return false;
 
 	jsval params[3], rval;
 	JSObject *myObj;
 	if( srcObj->CanBeObjType( OT_CHAR ))
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, srcObj, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, srcObj, runTime );
+	}
 
 	JSObject *myObj2;
-	if( objInRange->CanBeObjType( OT_CHAR ) )
+	if( objInRange->CanBeObjType( OT_CHAR ))
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objInRange, runTime );
+	}
 	else
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objInRange, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( myObj2 );
@@ -524,22 +551,25 @@ bool cScript::InRange( CBaseObject *srcObj, CBaseObject *objInRange )
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "inRange", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seInRange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCollide()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object event is attached to when a character collides with it
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCollideWith )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objColliding ) || !ValidateObject( objCollideWith ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCollide, "onCollide" ) )
+
+	if( !ExistAndVerify( seOnCollide, "onCollide" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -547,9 +577,13 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objColliding, runTime );
 	JSObject *myObj2	= nullptr;
 	if( objCollideWith->GetObjType() == OT_CHAR )
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_CHAR, objCollideWith, runTime );
+	}
 	else
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objCollideWith, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
@@ -564,25 +598,30 @@ SI08 cScript::OnCollide( CSocket *tSock, CChar *objColliding, CBaseObject *objCo
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY );
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnMoveDetect()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object event is attached to when movement is detected within 5 tiles
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 rangeToChar, UI16 oldCharX, UI16 oldCharY )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( sourceObj ) || !ValidateObject( charInRange ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnMoveDetect, "onMoveDetect" ) )
+
+	if( !ExistAndVerify( seOnMoveDetect, "onMoveDetect" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[5];
 	JSObject *myObj	= nullptr;
 	if( sourceObj->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, sourceObj, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, sourceObj, runTime );
+	}
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, charInRange, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
@@ -600,17 +639,18 @@ SI08 cScript::OnMoveDetect( CBaseObject *sourceObj, CChar *charInRange, UI08 ran
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSteal( CChar *thief, CItem *theft )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSteal()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when stolen
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( thief ) || !ValidateObject( theft ) || !ValidateObject( victim ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSteal, "onSteal" ) )
+
+	if( !ExistAndVerify( seOnSteal, "onSteal" ))
 		return RV_NOFUNC;
 
 	JSObject *thiefCharObj = JSEngine->AcquireObject( IUE_CHAR, thief, runTime );
@@ -632,17 +672,18 @@ SI08 cScript::OnSteal( CChar *thief, CItem *theft, CChar *victim )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDispel( CBaseObject *dispelled )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDispel()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when dispelled
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDispel( CBaseObject *dispelled )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( dispelled ) )
+	if( !ValidateObject( dispelled ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDispel, "onDispel" ) )
+
+	if( !ExistAndVerify( seOnDispel, "onDispel" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -670,21 +711,22 @@ SI08 cScript::OnDispel( CBaseObject *dispelled )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSkill( CBaseObject *skillUse, SI08 skillUsed )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkill()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when using a skill
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	If used WITH RegisterSkill() in a script listed under SKILLUSE_SCRIPTS in
 //|					JSE_FILEASSOCIATIONS.SCP, event will trigger for only the specified skill.
 //|					If used WITHOUT RegisterSkill() in a general purpose script listed under
 //|					SCRIPT_LIST instead, event will be a global listener for ALL skills used
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 {
-	if( !ValidateObject( skillUse ) )
+	if( !ValidateObject( skillUse ))
 		return false;
-	if( !ExistAndVerify( seOnSkill, "onSkill" ) )
+
+	if( !ExistAndVerify( seOnSkill, "onSkill" ))
 		return false;
 
 	jsval rval, params[3];
@@ -703,34 +745,43 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 	params[1] = INT_TO_JSVAL( skillUsed );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkill", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnSkill, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	std::string OnTooltip( CBaseObject *myObj )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnTooltip()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which server is about to send tooltip to client for
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 std::string cScript::OnTooltip( CBaseObject *myObj )
 {
 	if( !ValidateObject( myObj ))
 		return "";
-	if( !ExistAndVerify( seOnTooltip, "onTooltip" ) )
+
+	if( !ExistAndVerify( seOnTooltip, "onTooltip" ))
 		return "";
 
 	jsval rval, params[1];
 	JSObject *tooltipObj = nullptr;
 	if( myObj->CanBeObjType( OT_CHAR ))
+	{
 		tooltipObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+	}
 	else if( myObj->CanBeObjType( OT_ITEM ))
+	{
 		tooltipObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( tooltipObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTooltip", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnTooltip, false );
+	}
 
 	JSString *str = JS_ValueToString( targContext, rval );
 	std::string returnString = JS_GetStringBytes( str );
@@ -738,16 +789,17 @@ std::string cScript::OnTooltip( CBaseObject *myObj )
 	return returnString;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	std::string OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnNameRequest()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which client has requested the name for
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 {
 	if( !ValidateObject( myObj ))
 		return "";
-	if( !ExistAndVerify( seOnNameRequest, "onNameRequest" ) )
+
+	if( !ExistAndVerify( seOnNameRequest, "onNameRequest" ))
 		return "";
 
 	// Prevent infinite loop
@@ -762,27 +814,37 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 	// Create JS object reference for myObj, based on whether it's an item or character
 	JSObject *nameRequestObj = nullptr;
 	if( myObj->CanBeObjType( OT_CHAR ))
+	{
 		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+	}
 	else if( myObj->CanBeObjType( OT_ITEM ))
+	{
 		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+	}
 
 	// Create JS object reference for the name requester (which might be nullptr!)
 	JSObject *nameRequesterObj = nullptr;
 	if( nameRequester != nullptr )
+	{
 		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
 	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnNameRequest, false );
+	}
 
 	JSString *str = JS_ValueToString( targContext, rval );
 	std::string returnString = JS_GetStringBytes( str );
 
 	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
 	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+	{
 		returnString = "";
+	}
 
 	// Clear flag that marks object as having an active name lookup via onNameRequest
 	myObj->NameRequestActive( false );
@@ -790,17 +852,18 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 	return returnString;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnAttack( CChar *attacker, CChar *defender )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnAttack()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when attacking someone
 //|					Will also trigger the onDefense event for the character being attacked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnAttack( CChar *attacker, CChar *defender )
 {
-	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return false;
-	if( !ExistAndVerify( seOnAttack, "onAttack" ) )
+
+	if( !ExistAndVerify( seOnAttack, "onAttack" ))
 		return false;
 
 	jsval rval, params[2];
@@ -811,21 +874,24 @@ bool cScript::OnAttack( CChar *attacker, CChar *defender )
 	params[1] = OBJECT_TO_JSVAL( defObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onAttack", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnAttack, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnDefense( CChar *attacker, CChar *defender )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDefense()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when being attacked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnDefense( CChar *attacker, CChar *defender )
 {
-	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return false;
-	if( !ExistAndVerify( seOnDefense, "onDefense" ) )
+
+	if( !ExistAndVerify( seOnDefense, "onDefense" ))
 		return false;
 
 	jsval rval, params[2];
@@ -836,22 +902,25 @@ bool cScript::OnDefense( CChar *attacker, CChar *defender )
 	params[1] = OBJECT_TO_JSVAL( defObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDefense", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnDefense, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkillGain()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining skillpoints
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSkillGain, "onSkillGain" ) )
+
+	if( !ExistAndVerify( seOnSkillGain, "onSkillGain" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -870,17 +939,18 @@ SI08 cScript::OnSkillGain( CChar *player, SI08 skill, UI32 skillGainAmount )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStatGained()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when gaining stats
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGainedAmount )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( player ) )
+	if( !ValidateObject( player ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnStatGained, "onStatGained" ) )
+
+	if( !ExistAndVerify( seOnStatGained, "onStatGained" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[4];
@@ -900,16 +970,17 @@ SI08 cScript::OnStatGained( CChar *player, UI32 stat, SI08 skill, UI32 statGaine
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStatGain()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmount )
 {
-	if( !ValidateObject( player ) )
+	if( !ValidateObject( player ))
 		return false;
-	if( !ExistAndVerify( seOnStatGain, "onStatGain" ) )
+
+	if( !ExistAndVerify( seOnStatGain, "onStatGain" ))
 		return false;
 
 	jsval rval, params[4];
@@ -921,23 +992,26 @@ bool cScript::OnStatGain( CChar *player, UI32 stat, SI08 skill, UI32 statGainAmo
 	params[3] = INT_TO_JSVAL( statGainAmount );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatGain", 4, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnStatGain, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnVirtueGumpPress()
 //|	Date		-	19/01/2020
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when activating Virtue Gump icon
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonId )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( mChar ) || !ValidateObject( tChar ) )
+	if( !ValidateObject( mChar ) || !ValidateObject( tChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnVirtueGumpPress, "onVirtueGumpPress" ) )
+
+	if( !ExistAndVerify( seOnVirtueGumpPress, "onVirtueGumpPress" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -946,7 +1020,7 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
 	params[1] = OBJECT_TO_JSVAL( targObj );
-	params[2] = INT_TO_JSVAL( buttonID );
+	params[2] = INT_TO_JSVAL( buttonId );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onVirtueGumpPress", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
@@ -957,18 +1031,19 @@ SI08 cScript::OnVirtueGumpPress( CChar *mChar, CChar *tChar, UI16 buttonID )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnQuestGump( CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnQuestGump()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Quest button in paperdoll
 //|					Return true to prevent additional onQuestGump events from triggering
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnQuestGump( CChar *mChar )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnQuestGump, "onQuestGump" ) )
+
+	if( !ExistAndVerify( seOnQuestGump, "onQuestGump" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[1];
@@ -986,18 +1061,19 @@ SI08 cScript::OnQuestGump( CChar *mChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnHelpButton( CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnHelpButton()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate Help button in paperdoll
 //|					Return false to prevent additional onHelpButton events from triggering
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHelpButton( CChar *mChar )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnHelpButton, "onHelpButton" ) )
+
+	if( !ExistAndVerify( seOnHelpButton, "onHelpButton" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[1];
@@ -1015,18 +1091,19 @@ SI08 cScript::OnHelpButton( CChar *mChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnWarModeToggle( CChar *mChar )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnWarModeToggle()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who toggle War Mode
 //|					Return false to prevent character from entering War Mode
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnWarModeToggle( CChar *mChar )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnWarModeToggle, "onWarModeToggle" ) )
+
+	if( !ExistAndVerify( seOnWarModeToggle, "onWarModeToggle" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[1];
@@ -1044,24 +1121,25 @@ SI08 cScript::OnWarModeToggle( CChar *mChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool SI08( CChar *mChar, UI08 abilityID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::SI08()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character who activate special abilities in combat books etc
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityId )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( mChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSpecialMove, "onSpecialMove" ) )
+
+	if( !ExistAndVerify( seOnSpecialMove, "onSpecialMove" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	params[1] = INT_TO_JSVAL( abilityID );
+	params[1] = INT_TO_JSVAL( abilityId );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpecialMove", 2, params, &rval );
 
 	if( retVal == JS_FALSE )
@@ -1073,18 +1151,19 @@ SI08 cScript::OnSpecialMove( CChar *mChar, UI08 abilityID )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDrop( CItem *item, CChar *dropper )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDrop()
 //|	Date		-	02/07/2004
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropped by character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( item ) || !ValidateObject( dropper ) )
+	if( !ValidateObject( item ) || !ValidateObject( dropper ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDrop, "onDrop" ) )
+
+	if( !ExistAndVerify( seOnDrop, "onDrop" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -1103,18 +1182,19 @@ SI08 cScript::OnDrop( CItem *item, CChar *dropper )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDropItemOnItem()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropping it on another item, or when
 //|					another item is dropped on said item
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( item ) || !ValidateObject( dropper ) || !ValidateObject( dest ) )
+	if( !ValidateObject( item ) || !ValidateObject( dropper ) || !ValidateObject( dest ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDropItemOnItem, "onDropItemOnItem" ) )
+
+	if( !ExistAndVerify( seOnDropItemOnItem, "onDropItemOnItem" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -1135,21 +1215,22 @@ SI08 cScript::OnDropItemOnItem( CItem *item, CChar *dropper, CItem *dest )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnPickup( CItem *item, CChar *pickerUpper )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnPickup()
 //|	Date		-	25/01/2007
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when picked up by character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Changes		-	16/07/2008
 //|						Adjustments made to fix event, which didn't trigger
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ) )
+	if( !ValidateObject( item ) || !ValidateObject( pickerUpper ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnPickup, "onPickup" ) )
+
+	if( !ExistAndVerify( seOnPickup, "onPickup" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -1169,16 +1250,17 @@ SI08 cScript::OnPickup( CItem *item, CChar *pickerUpper )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnContRemoveItem()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers on containers after an item has been removed from it
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover )
 {
-	if( !ValidateObject( contItem ) || !ValidateObject( item ) )
+	if( !ValidateObject( contItem ) || !ValidateObject( item ))
 		return false;
-	if( !ExistAndVerify( seOnContRemoveItem, "onContRemoveItem" ) )
+
+	if( !ExistAndVerify( seOnContRemoveItem, "onContRemoveItem" ))
 		return false;
 
 	jsval params[3], rval;
@@ -1192,22 +1274,25 @@ bool cScript::OnContRemoveItem( CItem *contItem, CItem *item, CChar *itemRemover
 	params[2] = OBJECT_TO_JSVAL( charObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onContRemoveItem", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnContRemoveItem, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSwing()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item event is attached to when swung in combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( swinger ) || !ValidateObject( swingTarg ) )
+	if( !ValidateObject( swinger ) || !ValidateObject( swingTarg ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSwing, "onSwing" ) )
+
+	if( !ExistAndVerify( seOnSwing, "onSwing" ))
 		return RV_NOFUNC;
 
 	JSObject *itemObj	= ( ValidateObject( swinging ) ? JSEngine->AcquireObject( IUE_ITEM, swinging, runTime ) : nullptr );
@@ -1228,17 +1313,18 @@ SI08 cScript::OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDecay( CItem *decaying )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDecay()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item event is attached to when about to decay
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDecay( CItem *decaying )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( decaying ) )
+	if( !ValidateObject( decaying ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDecay, "onDecay" ) )
+
+	if( !ExistAndVerify( seOnDecay, "onDecay" ))
 		return RV_NOFUNC;
 
 	jsval params[1], rval;
@@ -1254,17 +1340,18 @@ SI08 cScript::OnDecay( CItem *decaying )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnLeaving( CMultiObj *left, CBaseObject *leaving )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLeaving()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a multi
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( left ) || !ValidateObject( leaving ) )
+	if( !ValidateObject( left ) || !ValidateObject( leaving ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnLeaving, "onLeaving" ) )
+
+	if( !ExistAndVerify( seOnLeaving, "onLeaving" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -1293,18 +1380,18 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnEquipAttempt( CChar *equipper, CItem *equipping )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnEquipAttempt()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when character tries to equip it
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( equipper ) || !ValidateObject( equipping ) )
+	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
-	if( !ExistAndVerify( seOnEquipAttempt, "onEquipAttempt" ) )
+	if( !ExistAndVerify( seOnEquipAttempt, "onEquipAttempt" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1323,18 +1410,18 @@ SI08 cScript::OnEquipAttempt( CChar *equipper, CItem *equipping )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnEquip( CChar *equipper, CItem *equipping )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnEquip()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when equipped by a character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( equipper ) || !ValidateObject( equipping ) )
+	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
 
-	if( !ExistAndVerify( seOnEquip, "onEquip" ) )
+	if( !ExistAndVerify( seOnEquip, "onEquip" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1353,17 +1440,18 @@ SI08 cScript::OnEquip( CChar *equipper, CItem *equipping )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnUnequipAttempt( CChar *equipper, CItem *equipping )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnUnequipAttempt()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when unequipped by a character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( equipper ) || !ValidateObject( equipping ) )
+	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnUnequipAttempt, "onUnequipAttempt" ) )
+
+	if( !ExistAndVerify( seOnUnequipAttempt, "onUnequipAttempt" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1382,17 +1470,18 @@ SI08 cScript::OnUnequipAttempt( CChar *equipper, CItem *equipping )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnUnequip( CChar *equipper, CItem *equipping )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnUnequip()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when unequipped by a character
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( equipper ) || !ValidateObject( equipping ) )
+	if( !ValidateObject( equipper ) || !ValidateObject( equipping ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnUnequip, "onUnequip" ) )
+
+	if( !ExistAndVerify( seOnUnequip, "onUnequip" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1411,27 +1500,28 @@ SI08 cScript::OnUnequip( CChar *equipper, CItem *equipping )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnUseChecked( CChar *user, CItem *iUsing )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnUseChecked()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers (after hardcoded checks) for item with event attached, when used
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 3 possible values
 //|					-1	=> No such function or bad call
 //|					0	=> Don't execute hard coded implementation
 //|					1	=> Execute hard coded implementations as well
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	31 July, 2003 15:39 ( making it version 3)
 //|						Changed return values from bool to SI08
 //|					27 October, 2007
 //|						Split onUse into onUseChecked and onUseUnChecked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( user ) || !ValidateObject( iUsing ) )
+	if( !ValidateObject( user ) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnUseChecked, "onUseChecked" ) )
+
+	if( !ExistAndVerify( seOnUseChecked, "onUseChecked" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1451,27 +1541,28 @@ SI08 cScript::OnUseChecked( CChar *user, CItem *iUsing )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnUseUnChecked( CChar *user, CItem *iUsing )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnUseUnChecked()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers (before hardcoded checks) for item with event attached, when used
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	The function returns 3 possible values
 //|					-1	=> No such function or bad call
 //|					0	=> Don't execute hard coded implementation
 //|					1	=> Execute hard coded implementations as well
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //| Changes		-	31 July, 2003 15:39 ( making it version 3)
 //|						Changed return values from bool to SI08
 //|					27 October, 2007
 //|						Split onUse into onUseChecked and onUseUnChecked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( user ) || !ValidateObject( iUsing ) )
+	if( !ValidateObject( user ) || !ValidateObject( iUsing ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnUseUnChecked, "onUseUnChecked" ) )
+
+	if( !ExistAndVerify( seOnUseUnChecked, "onUseUnChecked" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -1491,25 +1582,26 @@ SI08 cScript::OnUseUnChecked( CChar *user, CItem *iUsing )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDropItemOnNpc()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when dropped on an NPC, and for NPC with
 //|					event attached if item is dropped on it and doesn't bounce in item's script
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Changes		-	V2 -
 //|						Returns
 //|							-1 if no function exists
 //|							0 if should bounce
 //|							1 if should not bounce and use code
 //|							2 if should not bounce and not use code
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( srcChar ) || !ValidateObject( dstChar ) || !ValidateObject( item ) )
+	if( !ValidateObject( srcChar ) || !ValidateObject( dstChar ) || !ValidateObject( item ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDropItemOnNpc, "onDropItemOnNpc" ) )
+
+	if( !ExistAndVerify( seOnDropItemOnNpc, "onDropItemOnNpc" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -1531,17 +1623,18 @@ SI08 cScript::OnDropItemOnNpc( CChar *srcChar, CChar *dstChar, CItem *item )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnEntrance( CMultiObj *left, CBaseObject *leaving )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnEntrance()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when entering a multi
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( left ) || !ValidateObject( leaving ) )
+	if( !ValidateObject( left ) || !ValidateObject( leaving ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnEntrance, "onEntrance" ) )
+
+	if( !ExistAndVerify( seOnEntrance, "onEntrance" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -1570,18 +1663,19 @@ SI08 cScript::OnEntrance( CMultiObj *left, CBaseObject *leaving )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OutOfRange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when objects go out of range
 //|	Notes		-	A third parameter in the event can be used to determine whether the object
 //|					going out of range is an ITEM or a CHARACTER
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 {
-	if( !ValidateObject( srcObj ) || !ValidateObject( objVanish ) )
+	if( !ValidateObject( srcObj ) || !ValidateObject( objVanish ))
 		return false;
-	if( !ExistAndVerify( seOutOfRange, "outOfRange" ) )
+
+	if( !ExistAndVerify( seOutOfRange, "outOfRange" ))
 		return false;
 
 	jsval params[2], rval;
@@ -1610,21 +1704,24 @@ bool cScript::OutOfRange( CBaseObject *srcObj, CBaseObject *objVanish )
 	params[1] = OBJECT_TO_JSVAL( myObj2 );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "outOfRange", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOutOfRange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnLogin( CSocket *sockPlayer, CChar *pPlayer )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLogin()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when logging on to server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnLogin( CSocket *sockPlayer, CChar *pPlayer )
 {
-	if( !ValidateObject( pPlayer ) )
+	if( !ValidateObject( pPlayer ))
 		return false;
-	if( !ExistAndVerify( seOnLogin, "onLogin" ) )
+
+	if( !ExistAndVerify( seOnLogin, "onLogin" ))
 		return false;
 
 	jsval params[2], rval;
@@ -1635,22 +1732,25 @@ bool cScript::OnLogin( CSocket *sockPlayer, CChar *pPlayer )
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLogin", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnLogin, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnLogout( CSocket *sockPlayer, CChar *pPlayer )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLogout()
 //|	Date		-	10/06/2002
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when logging out of server
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 {
-	if( !ValidateObject( pPlayer ) )
+	if( !ValidateObject( pPlayer ))
 		return false;
-	if( !ExistAndVerify( seOnLogout, "onLogout" ) )
+
+	if( !ExistAndVerify( seOnLogout, "onLogout" ))
 		return false;
 
 	jsval params[2], rval;
@@ -1662,23 +1762,26 @@ bool cScript::OnLogout( CSocket *sockPlayer, CChar *pPlayer )
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLogout", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnLogout, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnClick()
 //|	Date		-	10/06/2002
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for item with event attached when a player single-clicks on it
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objClicked ) )
+	if( !ValidateObject( objClicked ))
 		return false;
-	if( !ExistAndVerify( seOnClick, "onClick" ) )
+
+	if( !ExistAndVerify( seOnClick, "onClick" ))
 		return RV_NOFUNC;
 
 	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, sockPlayer, runTime );
@@ -1705,16 +1808,17 @@ SI08 cScript::OnClick( CSocket *sockPlayer, CBaseObject *objClicked )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnFall( CChar *pFall, SI08 fallDistance )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnFall()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when fallDistance is over 20
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 {
-	if( !ValidateObject( pFall ) )
+	if( !ValidateObject( pFall ))
 		return false;
-	if( !ExistAndVerify( seOnFall, "onFall" ) )
+
+	if( !ExistAndVerify( seOnFall, "onFall" ))
 		return false;
 
 	jsval params[2], rval;
@@ -1723,22 +1827,25 @@ bool cScript::OnFall( CChar *pFall, SI08 fallDistance )
 	params[1] = INT_TO_JSVAL( fallDistance );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFall", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnFall, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnAISliver( CChar *pSliver )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnAISliver()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers on every AI loop for character with event attached
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnAISliver( CChar *pSliver )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( pSliver ) )
+	if( !ValidateObject( pSliver ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnAISliver, "onAISliver" ) )
+
+	if( !ExistAndVerify( seOnAISliver, "onAISliver" ))
 		return RV_NOFUNC;
 
 	jsval params[1], rval;
@@ -1754,43 +1861,50 @@ SI08 cScript::OnAISliver( CChar *pSliver )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSystemSlice( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSystemSlice()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnSystemSlice( void )
 {
-	if( !ExistAndVerify( seOnSystemSlice, "onSystemSlice" ) )
+	if( !ExistAndVerify( seOnSystemSlice, "onSystemSlice" ))
 		return false;
 
 	jsval rval;
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSystemSlice", 0, nullptr, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnSystemSlice, false );
+	}
 	return false;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnLightChange( CBaseObject *tObject, UI08 lightLevel )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLightChange()
 //|	Date		-	17/02/2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when lightlevel changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( tObject ) )
+	if( !ValidateObject( tObject ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnLightChange, "onLightChange" ) )
+
+	if( !ExistAndVerify( seOnLightChange, "onLightChange" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
 	JSObject *myObj;
 	if( tObject->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( lightLevel );
@@ -1804,104 +1918,126 @@ SI08 cScript::OnLightChange( CBaseObject *tObject, UI08 lightLevel )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnWeatherChange( CBaseObject *tObject, WeatherType element )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnWeatherChange()
 //|	Date		-	17/02/2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when weather changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnWeatherChange( CBaseObject *tObject, WeatherType element )
 {
-	if( !ValidateObject( tObject ) )
+	if( !ValidateObject( tObject ))
 		return false;
-	if( !ExistAndVerify( seOnWeatherChange, "onWeatherChange" ) )
+
+	if( !ExistAndVerify( seOnWeatherChange, "onWeatherChange" ))
 		return false;
 
 	jsval rval, params[2];
 	JSObject *myObj;
 	if( tObject->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( element );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onWeatherChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnWeatherChange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::cScript::OnTempChange()
 //|	Date		-	17/02/2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached when temperature changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnTempChange( CBaseObject *tObject, SI08 temp )
 {
-	if( !ValidateObject( tObject ) )
+	if( !ValidateObject( tObject ))
 		return false;
-	if( !ExistAndVerify( seOnTempChange, "onTempChange" ) )
+
+	if( !ExistAndVerify( seOnTempChange, "onTempChange" ))
 		return false;
 
 	jsval rval, params[2];
 	JSObject *myObj;
 	if( tObject->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = INT_TO_JSVAL( temp );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTempChange", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnTempChange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnTimer( CBaseObject *tObject, UI08 timerID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnTimer()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for object with event attached, when custom timers started on said
 //|					object using StartTimer function update
-//o-----------------------------------------------------------------------------------------------o
-bool cScript::OnTimer( CBaseObject *tObject, UI08 timerID )
+//o------------------------------------------------------------------------------------------------o
+bool cScript::OnTimer( CBaseObject *tObject, UI16 timerId )
 {
-	if( !ValidateObject( tObject ) )
+	if( !ValidateObject( tObject ))
 		return false;
-	if( !ExistAndVerify( seOnTimer, "onTimer" ) )
+
+	if( !ExistAndVerify( seOnTimer, "onTimer" ))
 		return false;
 
 	jsval rval, params[2];
 	JSObject *myObj;
 	if( tObject->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, tObject, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, tObject, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
-	params[1] = INT_TO_JSVAL( timerID );
+	params[1] = INT_TO_JSVAL( timerId );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTimer", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnTimer, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStatLoss()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing stats
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( player ) )
+	if( !ValidateObject( player ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnStatLoss, "onStatLoss" ) )
+
+	if( !ExistAndVerify( seOnStatLoss, "onStatLoss" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -1919,16 +2055,17 @@ SI08 cScript::OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnStatChange( CChar *player, UI32 stat )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStatChange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when stats change
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 {
-	if( !ValidateObject( player ) )
+	if( !ValidateObject( player ))
 		return false;
-	if( !ExistAndVerify( seOnStatChange, "onStatChange" ) )
+
+	if( !ExistAndVerify( seOnStatChange, "onStatChange" ))
 		return false;
 
 	jsval rval, params[3];
@@ -1938,23 +2075,26 @@ bool cScript::OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount )
 	params[2] = INT_TO_JSVAL( statChangeAmount );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onStatChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnStatChange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkillLoss()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when losing skillpoints
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( player ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSkillLoss, "onSkillLoss" ) )
-		return RV_NOFUNC;	
+
+	if( !ExistAndVerify( seOnSkillLoss, "onSkillLoss" ))
+		return RV_NOFUNC;
 
 	jsval params[3], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
@@ -1971,16 +2111,17 @@ SI08 cScript::OnSkillLoss( CChar *player, SI08 skill, UI32 skillLossAmount )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkillChange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when skillpoints change
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 {
-	if( !ValidateObject( player ) )
+	if( !ValidateObject( player ))
 		return false;
-	if( !ExistAndVerify( seOnSkillChange, "onSkillChange" ) )
+
+	if( !ExistAndVerify( seOnSkillChange, "onSkillChange" ))
 		return false;
 
 	jsval params[3], rval;
@@ -1990,22 +2131,25 @@ bool cScript::OnSkillChange( CChar *player, SI08 skill, SI32 skillChangeAmount )
 	params[2] = INT_TO_JSVAL( skillChangeAmount );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSkillChange", 3, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnSkillChange, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDeath( CChar *pDead, CItem *iCorpse )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDeath()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached after dying
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pDead ) || !ValidateObject( iCorpse ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDeath, "onDeath" ) )
+
+	if( !ExistAndVerify( seOnDeath, "onDeath" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2023,18 +2167,19 @@ SI08 cScript::OnDeath( CChar *pDead, CItem *iCorpse )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnResurrect( CChar *pAlive )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnResurrect()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when being resurrected
 //|	Notes		-	If script returns false when event triggers, resurrection is blocked
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnResurrect( CChar *pAlive )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( pAlive ) )
+	if( !ValidateObject( pAlive ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnResurrect, "onResurrect" ) )
+
+	if( !ExistAndVerify( seOnResurrect, "onResurrect" ))
 		return RV_NOFUNC;
 
 	jsval params[1], rval;
@@ -2050,17 +2195,18 @@ SI08 cScript::OnResurrect( CChar *pAlive )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnFlagChange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when the flag status changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( pChanging ) )
+	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnFlagChange, "onFlagChange" ) )
+
+	if( !ExistAndVerify( seOnFlagChange, "onFlagChange" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -2078,36 +2224,38 @@ SI08 cScript::OnFlagChange( CChar *pChanging, UI08 newStatus, UI08 oldStatus )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::DoCallback()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles callbacks for custom target cursors triggered from scripts
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 {
 	if( tSock == nullptr )
 		return false;
+
 	jsval params[2], rval;
-	SI32 objType			= 2;	// 2 == null, 1 == char, 0 == item
+	SI32 objType		= 2;	// 2 == null, 1 == char, 0 == item
 	CBaseObject *mObj	= nullptr;
 	JSObject *myObj2	= nullptr;
 	try
 	{
-		JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
-		if(myObj == nullptr)
+		JSObject *myObj	= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
+		if( myObj == nullptr )
 			return false;
+
 		params[0] = OBJECT_TO_JSVAL( myObj );
 		if( targeted >= BASEITEMSERIAL )
 		{
-			mObj	= calcItemObjFromSer( targeted );
+			mObj	= CalcItemObjFromSer( targeted );
 			objType = 0;
 		}
 		else
 		{
-			mObj	= calcCharObjFromSer( targeted );
+			mObj	= CalcCharObjFromSer( targeted );
 			objType	= 1;
 		}
-		if( !ValidateObject( mObj ) )
+		if( !ValidateObject( mObj ))
 		{
 			objType		= 2;
 			params[1]	= JSVAL_NULL;
@@ -2115,9 +2263,13 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 		else
 		{
 			if( objType == 0 )
+			{
 				myObj2 = JSEngine->AcquireObject( IUE_ITEM, mObj, runTime );
+			}
 			else
+			{
 				myObj2 = JSEngine->AcquireObject( IUE_CHAR, mObj, runTime );
+			}
 			params[1] = OBJECT_TO_JSVAL( myObj2 );
 		}
 		// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
@@ -2129,7 +2281,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 	}
 	catch( ... )
 	{
-		Console.error( "Handled exception in cScript.cpp DoCallback()");
+		Console.Error( "Handled exception in cScript.cpp DoCallback()" );
 	}
 	return false;
 }
@@ -2139,17 +2291,18 @@ JSObject *cScript::Object( void ) const
 	return targObject;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLoyaltyChange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPC character with event attached when loyalty level changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( pChanging ) )
+	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnLoyaltyChange, "onLoyaltyChange" ) )
+
+	if( !ExistAndVerify( seOnLoyaltyChange, "onLoyaltyChange" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2166,17 +2319,18 @@ SI08 cScript::OnLoyaltyChange( CChar *pChanging, SI08 newStatus )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnHungerChange( CChar *pChanging, SI08 newStatus )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnHungerChange()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when hunger level changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( pChanging ) )
+	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnHungerChange, "onHungerChange" ) )
+
+	if( !ExistAndVerify( seOnHungerChange, "onHungerChange" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2193,17 +2347,18 @@ SI08 cScript::OnHungerChange( CChar *pChanging, SI08 newStatus )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//| Function    -   bool OnThirstChange( CChar *pChanging, SI08 newStatus )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//| Function    -   cScript::OnThirstChange()
+//o------------------------------------------------------------------------------------------------o
 //| Purpose     -   Triggers for character with event attached when thirst level changes
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( pChanging ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnThirstChange, "onThirstChange") )
+
+	if( !ExistAndVerify( seOnThirstChange, "onThirstChange" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2220,17 +2375,18 @@ bool cScript::OnThirstChange( CChar* pChanging, SI08 newStatus )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnStolenFrom()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when being stolen from
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( stealing ) || !ValidateObject( stolenFrom ) || !ValidateObject( stolen ) )
+	if( !ValidateObject( stealing ) || !ValidateObject( stolenFrom ) || !ValidateObject( stolen ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnStolenFrom, "onStolenFrom" ) )
+
+	if( !ExistAndVerify( seOnStolenFrom, "onStolenFrom" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -2252,17 +2408,18 @@ SI08 cScript::OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSnooped( CChar *snooped, CChar *snooper, bool success )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSnooped()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when someone snoops their backpack
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( snooped ) || !ValidateObject( snooper ) )
+	if( !ValidateObject( snooped ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSnooped, "onSnooped" ) )
+
+	if( !ExistAndVerify( seOnSnooped, "onSnooped" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -2283,17 +2440,18 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSnoopAttempt( CChar *snooped, CChar *snooper )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSnoopAttempt()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached if they attempt to snoop someone's backpack
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( snooped ) || !ValidateObject( snooper ) )
+	if( !ValidateObject( snooped ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSnoopAttempt, "onSnoopAttempt" ) )
+
+	if( !ExistAndVerify( seOnSnoopAttempt, "onSnoopAttempt" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -2313,42 +2471,43 @@ SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	size_t NewGumpList( void )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::NewGumpList()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 size_t cScript::NewGumpList( void )
 {
 	size_t retVal	= gumpDisplays.size();
-	SEGump *toAdd	= new SEGump;
-	toAdd->one		= new STRINGLIST;
-	toAdd->two		= new STRINGLIST;
+	SEGump_st *toAdd	= new SEGump_st;
+	toAdd->one		= new std::vector<std::string>();
+	toAdd->two		= new std::vector<std::string>();
 
 	gumpDisplays.push_back( toAdd );
 	return retVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SEGump * GetGumpList( SI32 index )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::GetGumpList()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
-SEGump * cScript::GetGumpList( SI32 index )
+//o------------------------------------------------------------------------------------------------o
+SEGump_st * cScript::GetGumpList( SI32 index )
 {
-	if( index < 0 || (size_t)index >= gumpDisplays.size() )
+	if( index < 0 || static_cast<size_t>( index ) >= gumpDisplays.size() )
 		return nullptr;
+
 	return gumpDisplays[index];
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void RemoveGumpList( SI32 index )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::RemoveGumpList()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void cScript::RemoveGumpList( SI32 index )
 {
-	if( index < 0 || (size_t)index >= gumpDisplays.size() )
+	if( index < 0 || static_cast<size_t>( index ) >= gumpDisplays.size() )
 		return;
 
 	delete gumpDisplays[index]->one;
@@ -2358,44 +2517,45 @@ void cScript::RemoveGumpList( SI32 index )
 	gumpDisplays.erase( gumpDisplays.begin() + index );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void SendGumpList( SI32 index, CSocket *toSendTo )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::SendGumpList()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void cScript::SendGumpList( SI32 index, CSocket *toSendTo )
 {
-	if( index < 0 || (size_t)index >= gumpDisplays.size() )
+	if( index < 0 || static_cast<size_t>( index ) >= gumpDisplays.size() )
 		return;
 
-	UI32 gumpID = (0xFFFF + JSMapping->GetScriptID( targObject ));
-	SendVecsAsGump( toSendTo, *(gumpDisplays[index]->one), *(gumpDisplays[index]->two), gumpID, INVALIDSERIAL );
+	UI32 gumpId = (0xFFFF + JSMapping->GetScriptId( targObject ));
+	SendVecsAsGump( toSendTo, *( gumpDisplays[index]->one ), *( gumpDisplays[index]->two ), gumpId, INVALIDSERIAL );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleGumpPress( CPIGumpMenuSelect *packet )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::HandleGumpPress()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process a gump button press
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Changes		-	1/21/2003 - Implemented the code needed to support enhanced
 //|									gump response processing
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 {
-	if( !ExistAndVerify( seOnGumpPress, "onGumpPress" ) )
+	if( !ExistAndVerify( seOnGumpPress, "onGumpPress" ))
 		return;
 
 	if( packet == nullptr )
 		return;
+
 	CSocket *pressing = packet->GetSocket();
 	if( pressing == nullptr )
 		return;
 
-	UI32 button		= packet->ButtonID();
-	UI16 nButtons	= static_cast<UI16>(packet->SwitchCount());
-	UI16 nText		= static_cast<UI16>(packet->TextCount());
+	UI32 button		= packet->ButtonId();
+	UI16 nButtons	= static_cast<UI16>( packet->SwitchCount() );
+	UI16 nText		= static_cast<UI16>( packet->TextCount() );
 
-	SEGumpData *segdGumpData	= new SEGumpData;
+	SEGumpData_st *segdGumpData	= new SEGumpData_st;
 	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, nullptr, nullptr );
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
 	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
@@ -2406,13 +2566,15 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	UI16 i;
 	// Loop through Buttons
 	for( i = 0; i < nButtons; ++i )
-		segdGumpData->nButtons.push_back( packet->SwitchValue( i ) );
+	{
+		segdGumpData->nButtons.push_back( packet->SwitchValue( i ));
+	}
 	// Process text for the buttons?
 	// Loop grabbing text
 	for( i = 0; i < nText; ++i )
 	{
-		segdGumpData->nIDs.push_back( packet->GetTextID( i ) );
-		segdGumpData->sEdits.push_back( packet->GetTextString( i ) );
+		segdGumpData->nIDs.push_back( packet->GetTextId( i ));
+		segdGumpData->sEdits.push_back( packet->GetTextString( i ));
 	}
 	jsval jsvParams[3], jsvRVal;
 
@@ -2423,16 +2585,17 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpPress", 3, jsvParams, &jsvRVal );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	void HandleGumpInput( CPIGumpInput *pressing )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::HandleGumpInput()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle gump inputs?
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 void cScript::HandleGumpInput( CPIGumpInput *pressing )
 {
 	if( pressing == nullptr )
 		return;
-	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ) )
+
+	if( !ExistAndVerify( seOnGumpInput, "onGumpInput" ))
 		return;
 
 	jsval params[3], rval;
@@ -2445,25 +2608,26 @@ void cScript::HandleGumpInput( CPIGumpInput *pressing )
 	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, "onGumpInput", 3, params, &rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnScrollingGumpPress()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when clicking the old school horizontally scrolling gump
 //|					if ID of this gump is 0
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpId, UI16 buttonId )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnScrollingGumpPress, "onScrollingGumpPress" ) )
+
+	if( !ExistAndVerify( seOnScrollingGumpPress, "onScrollingGumpPress" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	params[0] = OBJECT_TO_JSVAL( myObj );
-	params[1] = INT_TO_JSVAL( gumpID );
-	params[2] = INT_TO_JSVAL( buttonID );
+	params[1] = INT_TO_JSVAL( gumpId );
+	params[2] = INT_TO_JSVAL( buttonId );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollingGumpPress", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
@@ -2474,16 +2638,17 @@ SI08 cScript::OnScrollingGumpPress( CSocket *tSock, UI16 gumpID, UI16 buttonID )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnEnterRegion( CChar *entering, UI16 region )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnEnterRegion()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when entering a region
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 {
-	if( !ValidateObject( entering ) )
+	if( !ValidateObject( entering ))
 		return false;
-	if( !ExistAndVerify( seOnEnterRegion, "onEnterRegion" ) )
+
+	if( !ExistAndVerify( seOnEnterRegion, "onEnterRegion" ))
 		return false;
 
 	jsval params[2], rval;
@@ -2493,20 +2658,23 @@ bool cScript::OnEnterRegion( CChar *entering, UI16 region )
 	params[1] = INT_TO_JSVAL( region );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onEnterRegion", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnEnterRegion, false );
+	}
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnLeaveRegion( CChar *leaving, UI16 region )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnLeaveRegion()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when leaving a region
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 {
-	if( !ValidateObject( leaving ) )
+	if( !ValidateObject( leaving ))
 		return false;
-	if( !ExistAndVerify( seOnLeaveRegion, "onLeaveRegion" ) )
+
+	if( !ExistAndVerify( seOnLeaveRegion, "onLeaveRegion" ))
 		return false;
 
 	jsval params[2], rval;
@@ -2515,28 +2683,62 @@ bool cScript::OnLeaveRegion( CChar *leaving, UI16 region )
 	params[1] = INT_TO_JSVAL( region );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onLeaveRegion", 2, params, &rval );
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnLeaveRegion, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnFacetChange()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for characters with event attached when switching to a different facet
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( mChar ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnFacetChange, "onFacetChange" ))
+		return RV_NOFUNC;
+
+	jsval params[3], rval;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, mChar, runTime );
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = INT_TO_JSVAL( oldFacet );
+	params[2] = INT_TO_JSVAL( newFacet );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onFacetChange", 3, params, &rval );
+
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnFacetChange, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellTarget()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when targeting something with a spell
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( target ) || !ValidateObject( caster ) )
+	if( !ValidateObject( target ) || !ValidateObject( caster ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSpellTarget, "onSpellTarget" ) )
+
+	if( !ExistAndVerify( seOnSpellTarget, "onSpellTarget" ))
 		return RV_NOFUNC;
 
 	jsval params[4], rval;
 	JSObject *castObj = JSEngine->AcquireObject( IUE_CHAR, caster, runTime );
 	JSObject *targObj;
-	if( target->CanBeObjType( OT_CHAR ) )
+	if( target->CanBeObjType( OT_CHAR ))
 	{
 		targObj = JSEngine->AcquireObject( IUE_CHAR, target, runTime );
 		params[1] = INT_TO_JSVAL( 0 );
@@ -2559,12 +2761,12 @@ SI08 cScript::OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::CallParticularEvent()
 //|	Date		-	20th December, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls a particular script event, passing parameters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal )
 {
 	if( eventToCall == nullptr )
@@ -2583,28 +2785,28 @@ bool cScript::CallParticularEvent( const char *eventToCall, jsval *params, SI32 
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 OnSpellCast( CChar *tChar, UI08 SpellID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellCast()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached casts a spell
 //|	Notes		-	Return value table
 //|						-2: use NORMAL non-JS casting
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
-//o-----------------------------------------------------------------------------------------------o
-SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellID )
+//o------------------------------------------------------------------------------------------------o
+SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellId )
 {
-	if( !ValidateObject( tChar ) )
+	if( !ValidateObject( tChar ))
 		return -2;
 
-	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ) )
+	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ))
 		return -2;
 
 	jsval params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	params[1] = INT_TO_JSVAL( SpellID );
+	params[1] = INT_TO_JSVAL( SpellId );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellCast", 2, params, &rval );
 
@@ -2614,31 +2816,31 @@ SI16 cScript::OnSpellCast( CChar *tChar, UI08 SpellID )
 		return -2;
 	}
 
-	return (SI16)JSVAL_TO_INT( rval );
+	return static_cast<SI16>( JSVAL_TO_INT( rval ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 OnScrollCast( CChar *tChar, UI08 SpellID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnScrollCast()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached casts a spell through a scroll
 //|	Notes		-	Return value table
 //|						-2: use NORMAL non-JS casting
 //|						-1: CANCEL spellcasting
 //|						0->inf: Spell delay in ms
-//o-----------------------------------------------------------------------------------------------o
-SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellID )
+//o------------------------------------------------------------------------------------------------o
+SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellId )
 {
-	if( !ValidateObject( tChar ) )
+	if( !ValidateObject( tChar ))
 		return -2;
 
-	if( !ExistAndVerify( seOnScrollCast, "onScrollCast" ) )
+	if( !ExistAndVerify( seOnScrollCast, "onScrollCast" ))
 		return -2;
 
 	jsval params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	params[1] = INT_TO_JSVAL( SpellID );
+	params[1] = INT_TO_JSVAL( SpellId );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onScrollCast", 2, params, &rval );
 
@@ -2648,28 +2850,28 @@ SI16 cScript::OnScrollCast( CChar *tChar, UI08 SpellID )
 		return -2;
 	}
 
-	return (SI16)JSVAL_TO_INT( rval );
+	return static_cast<SI16>( JSVAL_TO_INT( rval ));
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSpellSuccess( CChar *tChar, UI08 SpellID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellSuccess()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after character with event attached successfully casts a spell
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellId )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( tChar ) )
+	if( !ValidateObject( tChar ))
 		return RV_NOFUNC;
 
-	if( !ExistAndVerify( seOnSpellSuccess, "onSpellSuccess" ) )
+	if( !ExistAndVerify( seOnSpellSuccess, "onSpellSuccess" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, tChar, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( charObj );
-	params[1] = INT_TO_JSVAL( SpellID );
+	params[1] = INT_TO_JSVAL( SpellId );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpellSuccess", 2, params, &rval );
 
@@ -2682,18 +2884,18 @@ SI08 cScript::OnSpellSuccess( CChar *tChar, UI08 SpellID )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnTalk( CChar *myChar, const char *mySpeech )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnTalk()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached says something
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( myChar ) )
+	if( !ValidateObject( myChar ))
 		return RV_NOFUNC;
 
-	if( !ExistAndVerify( seOnTalk, "onTalk" ) )
+	if( !ExistAndVerify( seOnTalk, "onTalk" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2719,34 +2921,36 @@ SI08 cScript::OnTalk( CChar *myChar, const char *mySpeech )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpeechInput()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers after player with event attached inputs speech after a request for
 //|					speech input has been made.
 //|	Notes		-	This function is called out of network.cpp if a speechmode(9) was previously set
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech )
 {
-	if( !ValidateObject( myChar ) )
+	if( !ValidateObject( myChar ))
 		return true;
 
-	if( !ExistAndVerify( seOnSpeechInput, "onSpeechInput" ) )
+	if( !ExistAndVerify( seOnSpeechInput, "onSpeechInput" ))
 		return true;
 
 	jsval params[4], rval;
 	JSString *strSpeech = nullptr;
 
-	char *lwrSpeech = new char[strlen(mySpeech)+1];
-	strcpy( lwrSpeech, mySpeech );
+	char *lwrSpeech = new char[strlen( mySpeech ) + 1];
+	strcopy( lwrSpeech, strlen( mySpeech ) + 1, mySpeech );
 	strSpeech = JS_NewStringCopyZ( targContext, lwrSpeech );
 	delete[] lwrSpeech;
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, myChar, runTime );
 	params[0] = OBJECT_TO_JSVAL( charObj );
 
-	if( !ValidateObject( myItem ) )
+	if( !ValidateObject( myItem ))
+	{
 		params[1] = JSVAL_NULL;
+	}
 	else
 	{
 		JSObject *itemObj = JSEngine->AcquireObject( IUE_ITEM, myItem, runTime );
@@ -2754,7 +2958,7 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	}
 
 	params[2] = STRING_TO_JSVAL( strSpeech );
-	params[3] = INT_TO_JSVAL( myChar->GetSpeechID() );
+	params[3] = INT_TO_JSVAL( myChar->GetSpeechId() );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSpeechInput", 4, params, &rval );
 
@@ -2767,17 +2971,18 @@ bool cScript::OnSpeechInput( CChar *myChar, CItem *myItem, const char *mySpeech 
 	return ( rval == JSVAL_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSpellGain( CItem *book, const UI08 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellGain()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are added to them
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( book ) )
+	if( !ValidateObject( book ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSpellGain, "onSpellGain" ) )
+
+	if( !ExistAndVerify( seOnSpellGain, "onSpellGain" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2794,17 +2999,18 @@ SI08 cScript::OnSpellGain( CItem *book, const UI08 spellNum )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSpellLoss( CItem *book, const UI08 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSpellLoss()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for spellbooks with event attached when spells are removed from them
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( book ) )
+	if( !ValidateObject( book ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSpellLoss, "onSpellLoss" ) )
+
+	if( !ExistAndVerify( seOnSpellLoss, "onSpellLoss" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2821,17 +3027,18 @@ SI08 cScript::OnSpellLoss( CItem *book, const UI08 spellNum )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkillCheck()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached when a skillcheck is performed
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill, const UI16 highSkill, bool isCraftSkill )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( myChar ) || skill > ALLSKILLS )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ) )
+
+	if( !ExistAndVerify( seOnSkillCheck, "onSkillCheck" ))
 		return RV_NOFUNC;
 
 	jsval params[5], rval;
@@ -2851,16 +3058,16 @@ SI08 cScript::OnSkillCheck( CChar *myChar, const UI08 skill, const UI16 lowSkill
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::AreaObjFunc()
 //|	Date		-	January 27, 2003
 //|	Changes		-	August 17 2005
 //|						Renamed to AreaObjFunc from AreaCharFunc
 //|						Added support for other object types
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls the function represented in funcName for the script
 //|				-	passing in two character parameters
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s )
 {
 	if( !ValidateObject( srcObject ) || !ValidateObject( tmpObject ) || funcName == nullptr )
@@ -2872,24 +3079,22 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	JSObject *tmpObj = nullptr;
 
 	if( srcObject == nullptr || tmpObject == nullptr )
-	{
 		return false;
-	}
 
-	if( srcObject->CanBeObjType( OT_ITEM ) )
+	if( srcObject->CanBeObjType( OT_ITEM ))
 	{
 		srcObj = JSEngine->AcquireObject( IUE_ITEM, srcObject, runTime );
 	}
-	else if( srcObject->CanBeObjType( OT_CHAR ) )
+	else if( srcObject->CanBeObjType( OT_CHAR ))
 	{
 		srcObj = JSEngine->AcquireObject( IUE_CHAR, srcObject, runTime );
 	}
 
-	if( tmpObject->CanBeObjType( OT_ITEM ) )
+	if( tmpObject->CanBeObjType( OT_ITEM ))
 	{
 		tmpObj = JSEngine->AcquireObject( IUE_ITEM, tmpObject, runTime );
 	}
-	else if( tmpObject->CanBeObjType( OT_CHAR ) )
+	else if( tmpObject->CanBeObjType( OT_CHAR ))
 	{
 		tmpObj = JSEngine->AcquireObject( IUE_CHAR, tmpObject, runTime );
 	}
@@ -2909,7 +3114,9 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 		params[2]	= OBJECT_TO_JSVAL( sockObj );
 	}
 	else
+	{
 		params[2]	= JSVAL_NULL;
+	}
 	// ExistAndVerify() normally sets our Global Object, but not on custom named functions.
 	JS_SetGlobalObject( targContext, targObject );
 
@@ -2920,17 +3127,18 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnCommand( CSocket *mSock, std::string command )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCommand()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Quick and dirty way to setup custom commands
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( mSock  == nullptr || command == "" )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCommand, "onCommand" ) )
+
+	if( !ExistAndVerify( seOnCommand, "onCommand" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -2949,17 +3157,17 @@ SI08 cScript::OnCommand( CSocket *mSock, std::string command )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ExistAndVerify( ScriptEvent eventNum, std::string functionName )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::ExistAndVerify()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 {
-	if( !EventExists( eventNum ) )
+	if( !EventExists( eventNum ))
 		return false;
 
-	if( NeedsChecking( eventNum ) )
+	if( NeedsChecking( eventNum ))
 	{
 		SetNeedsChecking( eventNum, false );
 		jsval Func = JSVAL_NULL;
@@ -2975,14 +3183,14 @@ bool cScript::ExistAndVerify( ScriptEvent eventNum, std::string functionName )
 	return true;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool ScriptRegistration( std::string scriptType )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::ScriptRegistration()
 //|	Date		-	20th December, 2001
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers a script with the JS engine
 //|	Notes		-	Also requires a <scriptType>Registration() event with a Register<scriptType>()
 //|					function, and an onSkill() event, both in the same script
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::ScriptRegistration( std::string scriptType )
 {
 	scriptType += "Registration";
@@ -2994,7 +3202,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JSVAL_VOID )
 	{
-		Console.warning( oldstrutil::format("Script Number (%u) does not have a %s function", JSMapping->GetScriptID( targObject ), scriptType.c_str() ));
+		Console.Warning( oldstrutil::format( "Script Number (%u) does not have a %s function", JSMapping->GetScriptId( targObject ), scriptType.c_str() ));
 		return false;
 	}
 
@@ -3002,11 +3210,11 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool executeCommand( CSocket *s, std::string funcName, std::string executedString )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::executeCommand()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Execute a player-initiated JS-based command
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::executeCommand( CSocket *s, std::string funcName, std::string executedString )
 {
 	jsval params[2], rval;
@@ -3021,17 +3229,17 @@ bool cScript::executeCommand( CSocket *s, std::string funcName, std::string exec
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::MagicSpellCast()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers before a spellcast attempt for characters with onSpellCast event attached
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI32 spellNum )
 {
-	if( !ValidateObject( tChar ) )
+	if( !ValidateObject( tChar ))
 		return false;
 
-	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ) )
+	if( !ExistAndVerify( seOnSpellCast, "onSpellCast" ))
 		return false;
 
 	jsval params[4], rval;
@@ -3054,58 +3262,72 @@ bool cScript::MagicSpellCast( CSocket *mSock, CChar *tChar, bool directCast, SI3
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnIterate( CBaseObject *a, UI32 &b )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnIterate()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called after IterateOver JS function is used, and iterates over all items or
 //|					characters (as specified) in the game
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnIterate( CBaseObject *a, UI32 &b )
 {
-	if( !ValidateObject( a ) )
+	if( !ValidateObject( a ))
 		return true;
-	if( !ExistAndVerify( seOnIterate, "onIterate" ) )
+
+	if( !ExistAndVerify( seOnIterate, "onIterate" ))
 		return false;
 
 	jsval params[1], rval;
 
 	JSObject *myObj = nullptr;
 	if( a->GetObjType() == OT_CHAR )
+	{
 		myObj = JSEngine->AcquireObject( IUE_CHAR, a, runTime );
+	}
 	else
+	{
 		myObj = JSEngine->AcquireObject( IUE_ITEM, a, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onIterate", 1, params, &rval );
 
-	/*	if( ValidateObject( a ) )
+	/*	if( ValidateObject( a ))
 	{
 		if( a->GetObjType() == OT_CHAR )
+		{
 			JSEngine->ReleaseObject( IUE_CHAR, a );
+		}
 		else
+		{
 			JSEngine->ReleaseObject( IUE_ITEM, a );
+		}
 	}
 */
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnIterate, false );
-	else if( JSVAL_TO_BOOLEAN( rval ) )
+	}
+	else if( JSVAL_TO_BOOLEAN( rval ))
+	{
 		++b;
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnIterateSpawnRegions()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called after IterateOverSpawnRegions JS function is used, and iterates over
 //|					all spawn regions in game
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 {
 	if( a == nullptr )
 		return true;
-	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ) )
+
+	if( !ExistAndVerify( seOnIterateSpawnRegions, "onIterateSpawnRegions" ))
 		return false;
 
 	jsval params[1], rval;
@@ -3118,53 +3340,61 @@ bool cScript::OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b )
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onIterateSpawnRegions", 1, params, &rval );
 
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnIterateSpawnRegions, false );
-	else if( JSVAL_TO_BOOLEAN( rval ) )
+	}
+	else if( JSVAL_TO_BOOLEAN( rval ))
+	{
 		++b;
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	bool OnPacketReceive( CSocket *mSock, UI16 packetNum )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnPacketReceive()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	"Packet hook" event that allows interception of incoming network packets
 //|	Notes		-	Requires OVERLOADPACKETS ini setting to be enabled, and incoming packet must
 //|					be registered in JSE_FILEASSOCIATIONS.SCP under the [PACKET_SCRIPTS] section
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 bool cScript::OnPacketReceive( CSocket *mSock, UI16 packetNum )
 {
 	if( mSock == nullptr )
 		return false;
-	if( !ExistAndVerify( seOnPacketReceive, "onPacketReceive" ) )
+
+	if( !ExistAndVerify( seOnPacketReceive, "onPacketReceive" ))
 		return false;
 
 	jsval rval, params[3];
 	JSObject *myObj = JSEngine->AcquireObject( IUE_SOCK, mSock, runTime );
 	params[0]		= OBJECT_TO_JSVAL( myObj );
-	params[1]		= INT_TO_JSVAL( (UI08)(packetNum%256) );
-	params[2]		= INT_TO_JSVAL( (UI08)(packetNum>>8) );
+	params[1]		= INT_TO_JSVAL( static_cast<UI08>( packetNum % 256 ));
+	params[2]		= INT_TO_JSVAL( static_cast<UI08>( packetNum >> 8 ));
 	JSBool retVal	= JS_CallFunctionName( targContext, targObject, "onPacketReceive", 3, params, &rval );
 
 	if( retVal == JS_FALSE )
+	{
 		SetEventExists( seOnPacketReceive, false );
+	}
 
 	return ( retVal == JS_TRUE );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnCharDoubleClick( CChar *currChar, CChar *targChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCharDoubleClick()
 //|	Date		-	23rd January, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding events that happen when doubleclicking characters, such as
 //|					open paperdoll, mounting horses, etc
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( currChar ) || !ValidateObject( targChar ) )
+	if( !ValidateObject( currChar ) || !ValidateObject( targChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ) )
+
+	if( !ExistAndVerify( seOnCharDoubleClick, "onCharDoubleClick" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -3184,19 +3414,20 @@ SI08 cScript::OnCharDoubleClick( CChar *currChar, CChar *targChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSkillGump( CSocket *mSock )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSkillGump()
 //|	Date		-	23rd January, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding the client's request to open the default skillgump, and
 //|					instead do something else (like opening a custom skillgump instead).
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSkillGump( CChar *currChar )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( currChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSkillGump, "onSkillGump" ) )
+
+	if( !ExistAndVerify( seOnSkillGump, "onSkillGump" ))
 		return RV_NOFUNC;
 
 	jsval params[1], rval;
@@ -3214,18 +3445,19 @@ SI08 cScript::OnSkillGump( CChar *currChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnUseBandageMacro()
 //|	Date		-	12th May, 2020
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Expose bandage macro usage to JS engine so server admins can override the effects
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandageItem )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( targChar ) || mSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnUseBandageMacro, "onUseBandageMacro" ) )
+
+	if( !ExistAndVerify( seOnUseBandageMacro, "onUseBandageMacro" ))
 		return RV_NOFUNC;
 
 	jsval params[3], rval;
@@ -3247,20 +3479,21 @@ SI08 cScript::OnUseBandageMacro( CSocket *mSock, CChar *targChar, CItem *bandage
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnAICombatTarget( CChar *attacker, CChar *target )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnAICombatTarget()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when selecting a target as part of
 //|					default AI behaviour
 //|	Notes		-	Returning FALSE will deem a target invalid, and it will be skipped
 //|					Returning TRUE will deem a target valid, and it will be selected
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( attacker ) || !ValidateObject( target ) )
+	if( !ValidateObject( attacker ) || !ValidateObject( target ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnAICombatTarget, "onAICombatTarget" ) )
+
+	if( !ExistAndVerify( seOnAICombatTarget, "onAICombatTarget" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -3280,20 +3513,21 @@ SI08 cScript::OnAICombatTarget( CChar *attacker, CChar *target )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnCombatStart( CChar *attacker, CChar *defender )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCombatStart()
 //|	Date		-	23rd January, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when initiating combat
 //|	Notes		-	Returning FALSE will also run hard code for this scenario
 //|					Returning TRUE will override code's default handling of this scenario
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCombatStart, "onCombatStart" ) )
+
+	if( !ExistAndVerify( seOnCombatStart, "onCombatStart" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -3313,20 +3547,21 @@ SI08 cScript::OnCombatStart( CChar *attacker, CChar *defender )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnCombatEnd( CChar *currChar, CChar *targChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCombatEnd()
 //|	Date		-	23rd January, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when combat ends
 //|	Notes		-	Returning FALSE will also run hard code for this scenario
 //|					Returning TRUE will override code's default handling of this scenario
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( currChar ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCombatEnd, "onCombatEnd" ) )
+
+	if( !ExistAndVerify( seOnCombatEnd, "onCombatEnd" ))
 		return RV_NOFUNC;
 
 	jsval params[2], rval;
@@ -3347,20 +3582,21 @@ SI08 cScript::OnCombatEnd( CChar *currChar, CChar *targChar )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDeathBlow( CChar *mKilled, CChar *mKiller )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDeathBlow()
 //|	Date		-	8th February, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached when performing a death blow in combat
 //|	Notes		-	Returning FALSE will also run hard code for this scenario
 //|					Returning TRUE will override code's default handling of this scenario
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( mKilled ) ) // || !ValidateObject( mKiller ) )
+	if( !ValidateObject( mKilled )) // || !ValidateObject( mKiller ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ) )
+
+	if( !ExistAndVerify( seOnDeathBlow, "onDeathBlow" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[2];
@@ -3379,20 +3615,21 @@ SI08 cScript::OnDeathBlow( CChar *mKilled, CChar *mKiller )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI16 OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCombatDamageCalc()
 //|	Date		-	21st March, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for characters with event attached every time combat damage is calculated
 //|	Notes		-	Returning -1 will default to hard code handling of event
 //|					Returning another value will override code's default handling of event
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc )
 {
 	const SI16 RV_NOFUNC = -1;
-	if( !ValidateObject( attacker ) || !ValidateObject( defender ) )
+	if( !ValidateObject( attacker ) || !ValidateObject( defender ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnCombatDamageCalc, "onCombatDamageCalc" ) )
+
+	if( !ExistAndVerify( seOnCombatDamageCalc, "onCombatDamageCalc" ))
 		return RV_NOFUNC;
 
 	SI16 funcRetVal	= -1;
@@ -3414,41 +3651,46 @@ SI16 cScript::OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFigh
 	}
 	JSEncapsulate damage( targContext, &rval );
 
-	if( damage.isType( JSOT_INT ) || damage.isType( JSOT_DOUBLE ) )	// They returned some sort of value
+	if( damage.isType( JSOT_INT ) || damage.isType( JSOT_DOUBLE ))	// They returned some sort of value
 	{
-		return (SI16)damage.toInt();
+		return static_cast<SI16>( damage.toInt() );
 	}
 	else
+	{
 		funcRetVal = -1;	// default to hard code
+	}
 
 	return funcRetVal;
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDamage()
 //|	Date		-	22nd March, 2006
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers when character with event attached takes damage
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( damaged ) )
+	if( !ValidateObject( damaged ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnDamage, "onDamage" ) )
+
+	if( !ExistAndVerify( seOnDamage, "onDamage" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[4];
 	JSObject *damagedObj = JSEngine->AcquireObject( IUE_CHAR, damaged, runTime );
 	params[0] = OBJECT_TO_JSVAL( damagedObj );
 
-	if( ValidateObject( attacker ) )
+	if( ValidateObject( attacker ))
 	{
 		JSObject *attackerObj = JSEngine->AcquireObject( IUE_CHAR, attacker, runTime );
 		params[1] = OBJECT_TO_JSVAL( attackerObj );
 	}
 	else
+	{
 		params[1] = JSVAL_NULL;
+	}
 
 	params[2] = INT_TO_JSVAL( damageValue );
 	params[3] = INT_TO_JSVAL( damageType );
@@ -3463,18 +3705,19 @@ SI08 cScript::OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, Weath
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnBuy( CSocket *tSock, CChar *objVendor )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnBuy()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnBuy, "onBuy" ) )
+
+	if( !ExistAndVerify( seOnBuy, "onBuy" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3495,18 +3738,19 @@ SI08 cScript::OnBuy( CSocket *tSock, CChar *objVendor )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSell( CSocket *tSock, CChar *objVendor )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSell()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Runs on vendors, triggered before vendor trade-gump is opened
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSell, "onSell" ) )
+
+	if( !ExistAndVerify( seOnSell, "onSell" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3527,19 +3771,20 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnBuyFromVendor()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens when an item is in the process of being bought 
 //|					from an NPC vendor. Returning false/0 from the script will halt the purchase
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ) )
+
+	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3547,7 +3792,9 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
 	if( objItemBought->GetObjType() == OT_ITEM )
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
@@ -3564,19 +3811,20 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSellToVendor()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens when an item is in the process of being sold to
 //|					an NPC vendor. Returning false/0 from script will halt the sale
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ) )
+
+	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3584,7 +3832,9 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
 	if( objItemSold->GetObjType() == OT_ITEM )
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
@@ -3601,19 +3851,20 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnBoughtFromVendor()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					bought from an NPC vendor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ) )
+
+	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3621,7 +3872,9 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
 	if( objItemBought->GetObjType() == OT_ITEM )
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemBought, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
@@ -3638,19 +3891,20 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnSoldToVendor()
 //|	Date		-	26th November, 2011
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					sold to an NPC vendor
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ) )
+
+	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3658,7 +3912,9 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
 	if( objItemSold->GetObjType() == OT_ITEM )
+	{
 		myObj2 = JSEngine->AcquireObject( IUE_ITEM, objItemSold, runTime );
+	}
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
@@ -3675,17 +3931,18 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnHouseCommand( CSocket *tSock, CMultiObj *objMulti )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnHouseCommand()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows overriding house commands via JS script attached to multi
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdId )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objMulti ) || tSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnHouseCommand, "onHouseCommand" ) )
+
+	if( !ExistAndVerify( seOnHouseCommand, "onHouseCommand" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[3];
@@ -3694,7 +3951,7 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( multiObj );
-	params[2] = INT_TO_JSVAL( cmdID );
+	params[2] = INT_TO_JSVAL( cmdId );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onHouseCommand", 3, params, &rval );
 
@@ -3707,17 +3964,18 @@ SI08 cScript::OnHouseCommand( CSocket *tSock, CMultiObj *objMulti, UI08 cmdID )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnMakeItem( CSocket *tSock, CChar *objChar, CItem *objItem, UI16 createEntryID )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnMakeItem()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Allows doing additional stuff with newly crafted items
-//o-----------------------------------------------------------------------------------------------o
-SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryID )
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objChar ) || mSock == nullptr )
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnMakeItem, "onMakeItem" ) )
+
+	if( !ExistAndVerify( seOnMakeItem, "onMakeItem" ))
 		return RV_NOFUNC;
 
 	jsval rval, params[4];
@@ -3728,7 +3986,7 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 	params[0] = OBJECT_TO_JSVAL( mySock );
 	params[1] = OBJECT_TO_JSVAL( myChar );
 	params[2] = OBJECT_TO_JSVAL( myItem );
-	params[3] = INT_TO_JSVAL( createEntryID );
+	params[3] = INT_TO_JSVAL( createEntryId );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMakeItem", 4, params, &rval );
 
@@ -3741,18 +3999,19 @@ SI08 cScript::OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 c
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnPathfindEnd( CChar *ncp, SI08 pathfindResult )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnPathfindEnd()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs after their pathfinding efforts come to and end
 //|	Notes		-	pathfindResult gives a value that represents how the pathfinding ended				
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( npc ) )
+	if( !ValidateObject( npc ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnPathfindEnd, "onPathfindEnd" ) )
+
+	if( !ExistAndVerify( seOnPathfindEnd, "onPathfindEnd" ))
 		return RV_NOFUNC;
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
@@ -3771,18 +4030,19 @@ SI08 cScript::OnPathfindEnd( CChar *npc, SI08 pathfindResult )
 	return TryParseJSVal( rval );
 }
 
-//o-----------------------------------------------------------------------------------------------o
-//|	Function	-	SI08 OnEnterEvadeState( CChar *npc )
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnEnterEvadeState()
+//o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for NPCs when they enter the evade state after failing to pathfind to
 //|					a target in combat
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( npc ) || !ValidateObject( enemy ))
 		return RV_NOFUNC;
-	if( !ExistAndVerify( seOnEnterEvadeState, "onEnterEvadeState" ) )
+
+	if( !ExistAndVerify( seOnEnterEvadeState, "onEnterEvadeState" ))
 		return RV_NOFUNC;
 
 	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, npc, runTime );
@@ -3802,19 +4062,85 @@ SI08 cScript::OnEnterEvadeState( CChar *npc, CChar *enemy )
 	return TryParseJSVal( rval );
 }
 
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnCarveCorpse()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for corpse of character when player attempts to carve said corpse
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnCarveCorpse( CChar *player, CItem *corpse )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ) || !ValidateObject( corpse ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnCarveCorpse, "onCarveCorpse" ))
+		return RV_NOFUNC;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+	JSObject *corpseObj = JSEngine->AcquireObject( IUE_ITEM, corpse, runTime );
+
+	jsval params[2], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( corpseObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onCarveCorpse", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnCarveCorpse, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnDyeTarget()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for dye tub when player attempts to dye something with it
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnDyeTarget( CChar *player, CItem *dyeTub, CItem *target )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( player ) || !ValidateObject( dyeTub ) || !ValidateObject( target ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnDyeTarget, "onDyeTarget" ))
+		return RV_NOFUNC;
+
+	JSObject *charObj = JSEngine->AcquireObject( IUE_CHAR, player, runTime );
+	JSObject *dyeTubObj = JSEngine->AcquireObject( IUE_ITEM, dyeTub, runTime );
+	JSObject *targObj = JSEngine->AcquireObject( IUE_ITEM, target, runTime );
+
+	jsval params[3], rval;
+	params[0] = OBJECT_TO_JSVAL( charObj );
+	params[1] = OBJECT_TO_JSVAL( dyeTubObj );
+	params[2] = OBJECT_TO_JSVAL( targObj );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onDyeTarget", 3, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnDyeTarget, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
 bool cScript::EventExists( ScriptEvent eventNum ) const
 {
 	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return false;
-	return eventPresence[index].test( (eventNum % 64) );
+
+	return eventPresence[index].test(( eventNum % 64 ));
 }
 void cScript::SetEventExists( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return;
-	eventPresence[index].set( (eventNum % 64), status );
+
+	eventPresence[index].set(( eventNum % 64 ), status );
 }
 
 bool cScript::NeedsChecking( ScriptEvent eventNum ) const
@@ -3822,12 +4148,14 @@ bool cScript::NeedsChecking( ScriptEvent eventNum ) const
 	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return false;
-	return needsChecking[index].test( (eventNum % 64) );
+
+	return needsChecking[index].test(( eventNum % 64 ));
 }
 void cScript::SetNeedsChecking( ScriptEvent eventNum, bool status )
 {
 	UI32 index = eventNum / 64;
 	if( index > 2 )
 		return;
-	needsChecking[index].set( (eventNum % 64), status );
+
+	needsChecking[index].set(( eventNum % 64 ), status );
 }

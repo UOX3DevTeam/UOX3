@@ -25,22 +25,24 @@ function onUseChecked( pUser, iUsed )
 			pUser.SysMessage( GetDictionaryEntry( 2713, socket.language )); // You cannot use this while riding a mount.
 			return false;
 		}
-		if(pUser.GetTag("bola") == null || pUser.GetTag("bola") == 0)
+		if( pUser.GetTag( "bola" ) == null || pUser.GetTag( "bola" ) == 0)
 		{
 			socket.tempObj = iUsed;
-			pUser.SetTag("bola", 1);
+			pUser.SetTag( "bola", 1 );
 
 			//the addition of the false-flag in the EmoteMessage below tells the server to only
 			//send the message to this character
 			pUser.EmoteMessage( GetDictionaryEntry( 2714, socket.language ), false ); // * You begin to swing the bola...*
-			pUser.StartTimer(3000, 0, true);
+			pUser.StartTimer( 3000, 0, true );
 		}
 		else if( pUser.GetTag( "bola" ) == 1 )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 2715, socket.language )); // You have to wait a few moments before you can use another bola!
 		}
 		else
+		{
 			return true;
+		}
 	}
 	return false;
 }
@@ -49,7 +51,7 @@ function onCallback0( socket, myTarget)
 {
 	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -64,23 +66,31 @@ function onCallback0( socket, myTarget)
 				pUser.DoAction( 0x9 );
 				DoMovingEffect( pUser, myTarget, 0x26AC, 0x10, 0x00, false );
 				if( myTarget.socket != null )
+				{
 					myTarget.SysMessage( GetDictionaryEntry( 2716, myTarget.socket.language )); // You have been knocked off your mount!
+				}
 				iUsed.Delete();
 			}
 			else
+			{
 				pUser.SysMessage( GetDictionaryEntry( 2717, socket.language )); // Your target isn't mounted.
+			}
 		}
 		else
+		{
 			pUser.SysMessage( GetDictionaryEntry( 2718, socket.language )); // Your target is out of range.
+		}
 	}
 	else
+	{
 		pUser.SysMessage( GetDictionaryEntry( 2719, socket.language )); // You cannot throw a bola at that.
+	}
 }
 
 function onTimer( pUser, timerID )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -88,13 +98,13 @@ function onTimer( pUser, timerID )
 	if( timerID == 0 )
 	{
 		var tempMsg = GetDictionaryEntry( 2720, socket.language ); // %s begins to menacingly swing a bola...
-		pUser.EmoteMessage( tempMsg.replace(/%s/gi, pUser.name ) );
-		pUser.StartTimer(1000, 1, true);
+		pUser.EmoteMessage( tempMsg.replace( /%s/gi, pUser.name ));
+		pUser.StartTimer( 1000, 1, true );
 	}
 
 	if( timerID == 1 )
 	{
-		pUser.SetTag("bola", null);
-		socket.CustomTarget(0);
+		pUser.SetTag( "bola", null );
+		socket.CustomTarget( 0 );
 	}
 }

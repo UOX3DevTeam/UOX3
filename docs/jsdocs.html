@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 12. February, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.5b</small></p>
+	<p style="margin:0"><small>Last Updated: 24. November, 2022</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,24 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>November 24th, 2022</h4>
+						<ul>
+							<li>Added details for new JS Event: onCarveCorpse</li>
+							<li>Added details for new JS Functions: CreateHouse, CreateBaseMulti</li>
+							<li>Added details for new JS Method: HasScriptTrigger</li>
+						</ul>
+						<h4>October 1st, 2022</h4>
+						<ul>
+							<li>Added details for new JS Events: onFacetChange, onDyeTarget</li>
+						</ul>
+						<h4>August 25th, 2022</h4>
+						<ul>
+							<li>Added details for new JS Function: GetStartTime</li>
+						</ul>
+						<h4>July 15th, 2022</h4>
+						<ul>
+							<li>Added details about new JS Methods: GetJSTimer, SetJSTimer, KillJSTimer</li>
+						</ul>
 						<h4>February 12th, 2022</h4>
 						<ul>
 							<li>Added details about new JS Events: onNameRequest, onScrollingGumpPress</li>
@@ -150,6 +168,14 @@
 									<li>All other scripts - <strong>[SCRIPT_LIST]</strong></li>
 								</ul>
 							</p>
+							<p>Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
+								<ul>
+									<li>Admin - <strong>5</strong></li>
+									<li>GM - <strong>2</strong></li>
+									<li>CNS - <strong>1</strong></li>
+									<li>Player - <strong>0</strong></li>
+								</ul>
+							</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
@@ -236,6 +262,7 @@ function onSpellCast( socket, character, directCast, spellNum )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>objInRange comes into visible range of pChar. pChar's script is activated</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -581,6 +608,42 @@ function onCallback0( socket, ourObj )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnCarveCorpse" id="eventOnCarveCorpse"><span>onCarveCorpse</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onCarveCorpse( pChar, iCorpse )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom behaviour when players carves corpses</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>Triggered for corpse object when player tries to carve it</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to prevent hardcoded carving of corpse, and prevent other scripts with same event from running</li>
+								<li><strong>return true</strong> to proceed with hardcoded carving of corpse and/or allow other scripts with same event to run</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onCarveCorpse( pChar, iCorpse )
+{
+	pChar.TextMessage( "I'll just carve this corpse..." );
+	iCorpse.TextMessage( "But I'm not dead yet!" );
+	return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnCharDoubleClick" id="eventOnCharDoubleClick"><span>onCharDoubleClick</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -670,6 +733,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pColliding collides with objCollidedWith (stepped on basically)</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -710,6 +774,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pAttacker loops through nearby characters as part of their AI behaviour, this event triggers once for every character found (pTarget) - or until event returns true</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -750,6 +815,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When pAttacker attacks someone, pAttacker's script is triggered.</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -786,6 +852,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When either currChar or targChar dies or goes out of range, the script is fired for currChar</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -824,6 +891,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>Every time combat damage calculation occurs this event is fired for attacker</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -884,6 +952,7 @@ function onCallback0( socket, ourObj )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When player executes a command that's not otherwise handled by code or dedicated command scripts</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -927,6 +996,7 @@ function onCommand( mySock, cmdString )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When an item has already been removed from a container, script activates on container</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -963,8 +1033,8 @@ function onCommand( mySock, cmdString )
 							<ul>
 								<li>When an object is created, event will trigger in script for the created object</li>
 								<li>For player characters, this is triggered when they first enter the world</li>
-								<li>Event can also be included in global script (scriptID 0) to trigger for all objects created</li>
 							</ul>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>. For Players, <span style="color:green">Yes</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -1002,6 +1072,7 @@ function onCreateDFN( objMade, objType )
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When a non-DFN based item is created.</p>
+							<p>Usable in Global script (scriptID 0)? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -1037,6 +1108,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When the char "damaged" gets damaged</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -1104,6 +1176,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>After the player or NPC pDead dies</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -1147,6 +1220,7 @@ function onCreate( objMade, objType )/
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<p>When a killing blow has been made, this event triggers for pKilled</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -1500,6 +1574,45 @@ function onDispel( objDispelled, objType )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnDyeTarget" id="eventOnDyeTarget"><span>onDyeTarget</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onDyeTarget( pUser, dyeTub, targItem )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allowing custom behaviour when targeting items to dye with a dye tub</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When pUser attempts to use dyeTub to dye targItem, the event is triggered from dyeTub's script</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> (or nothing) to override hard coded dye behaviour</li>
+								<li><strong>return true/1</strong> to allow hard coded dye behaviour to proceed as normal</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onDyeTarget( pUser, dyeTub, targItem )
+{
+	if( targItem.type == 11 )
+	{
+		pUser.TextMessage( "I can't dye doors!" );
+		return false;
+	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnEnterEvadeState" id="eventOnEnterEvadeState"><span>onEnterEvadeState</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -1693,6 +1806,58 @@ function onEnterRegion( pEntering, regionEntered )
 		pEquipper.TextMessage( "This item cannot be equipped by humans!" );
 		return false;
 	}
+	return true;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnFacetChange" id="eventOnFacetChange"><span>onFacetChange</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onFacetChange( mChar, oldFacet, newFacet )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Allows custom behaviour to be added for characters that moves from one facet to another, or to deny this change altogether</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When character with event attached in a script moves from one facet to another</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> (or nothing) to disallow facet change</li>
+								<li><strong>return true</strong> to allow facet change</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>This event only runs for characters, and using the event in the global script is not supported.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onFacetChange( mChar, oldFacet, newFacet )
+{
+	// Add a specific script to all characters that switch to the Trammel facet,
+	// but remove said script if character moves to any other facet
+	switch( newFacet )
+	{
+		case 1: // Trammel
+			mChar.AddScriptTrigger( X ); // X is a scriptID
+			break;
+		default:
+			mChar.RemoveScriptTrigger( X ); // X is a scriptID
+			break;
+
+	}
+
+	// Return true allows the facet change to happen like normal
 	return true;
 }</code></pre></p>
 						</div>
@@ -4507,6 +4672,14 @@ function myAreaFunc( srcChar, trgChar, pSock )
 							<div class="settingsDiv">
 								<p><span class="hl">Notes</span></p>
 								<p>Each command registered using <strong>RegisterCommand( commandName, accessLevel, isEnabled )</strong> within the CommandRegistration function will look for a function within the same script, the name of which is based on the command in question, using the syntax <strong>function command_[COMMANDNAME]( socket, cmdString )</strong></p>
+								<p>Access levels (or command levels) are specified in <strong>dfndata/command/commands.dfn</strong>, and the default setup goes like this:
+									<ul>
+										<li>Admin - <strong>5</strong></li>
+										<li>GM - <strong>2</strong></li>
+										<li>CNS - <strong>1</strong></li>
+										<li>Player - <strong>0</strong></li>
+									</ul>
+								</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -4995,6 +5168,42 @@ function myAreaFunc( srcChar, trgItem, pSock )
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_CreateBaseMulti"/>
+							<label for="spoiler_function_item_CreateBaseMulti">CreateBaseMulti <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>MULTI CreateBaseMulti( multiID, x, y, z, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Creates a base multi based on ID from client's multi files, at specified location</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
+										<ul>
+											<li>multiID - ID from client's multi files</li>
+											<li>x, y, z - coordinates to create house at</li>
+											<li>worldNum - world to create house in</li>
+											<li>instanceID - instance to create house in</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Create a base multi exactly at pUser's location:
+function onUseChecked( pUser, iUsed )
+{
+	var multiID = 0x13ed; // Multi ID for a 7x8 house foundation
+	var myMulti = CreateBaseMulti( multiID, pUser.x, pUser.y, pUser.z, pUser.worldNum, pUser.instanceID );
+	return false;
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_item_CreateBlankItem"/>
 							<label for="spoiler_function_item_CreateBlankItem">CreateBlankItem <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -5040,7 +5249,7 @@ function myAreaFunc( srcChar, trgItem, pSock )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>ITEM CreateDFNItem( socket, character, sectionToMake[, [int Amount], [objectType], [bool inPack] );</em></p>
-									<p><em>ITEM CreateDFNItem( null, null, sectionToMake, [int Amount], [objectType], false, [int Color], [worldNumber], [instanceID] );</em></p>
+									<p><em>ITEM CreateDFNItem( null, null, sectionToMake, [int Amount], [objectType], [bool inPack], [int Color], [worldNumber], [instanceID] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
@@ -5048,15 +5257,15 @@ function myAreaFunc( srcChar, trgItem, pSock )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>Parameters:
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
 										<ul>
 											<li>socket - socket to refresh to (and ensure weight is added)</li>
 											<li>character - required to know the pack/character to spawn it to</li>
 											<li>sectionToMake - section # to spawn from</li>
 											<li>int Amount - Amount of items to spawn (Optional)</li>
-											<li>int Color - Color of item to spawn (Optional)</li>
 											<li>objectType - specify the type of object being added: "ITEM", "SPAWNER"</li>
 											<li>bool inPack - True/false whether to spawn in pack or not (Optional - default is FALSE).</li>
+											<li>int Color - Color of item to spawn (Optional)</li>
 											<li>Function can also be used to add items without relying on a character. In this case, the socket and character parameters are null, the inPack parameter is false, and two additional parameters are provided - worldNumber and instanceID. This relies on optional parameter Color also being specified.</li>
 										</ul>
 									</p>
@@ -5079,6 +5288,42 @@ function onUseChecked( pUser, iUsed )
 {
 	var myItem = CreateDFNItem( null, null, "0x09d0", 10, "ITEM", false, 0, iUsed.worldnumber, iUsed.instanceID );
 	iUsed.TextMessage( "Oh my, 10 apples just spawned on top of me! Magic!" );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_item_CreateHouse"/>
+							<label for="spoiler_function_item_CreateHouse">CreateHouse <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>MULTI CreateHouse( houseID, x, y, z, worldNum, instanceID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Creates a house based on houseID from house.dfn, at specified location</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters (<strong>check Prototype for correct order</strong>):
+										<ul>
+											<li>houseID - from house.dfn</li>
+											<li>x, y, z - coordinates to create house at</li>
+											<li>worldNum - world to create house in</li>
+											<li>instanceID - instance to create house in</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Create a house exactly at pUser's location:
+function onUseChecked( pUser, iUsed )
+{
+	var houseID = 1; // Small Brick house from house.dfn
+	var myHouse = CreateHouse( houseID, pUser.x, pUser.y, pUser.z, pUser.worldNum, pUser.instanceID );
+	return false;
 }</code></pre>
 								</div>
 							</div>
@@ -6976,7 +7221,7 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns server's uiCurrentTime, or number of clock ticks elapsed since startup</p>
+									<p>Returns a timestamp for current time</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -7038,6 +7283,25 @@ SetSpawnRegionFacetStatus( 13 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">var iMin = GetMinute();</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_time_GetStartTime"/>
+							<label for="spoiler_function_time_GetStartTime">GetStartTime <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetStartTime();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Returns a timestamp from when server was initially started up</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var startupTime = GetStartTime();</code></pre>
 								</div>
 							</div>
 						</div>
@@ -7290,6 +7554,46 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_GetJSTimer"/>
+							<label for="spoiler_method_baseObj_GetJSTimer">GetJSTimer/SetJSTimer/KillJSTimer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>int GetJSTimer( timerID, scriptID );</em></p>
+									<p><em>bool SetJSTimer( timerID, timeInMilliseconds, scriptID );</em></p>
+									<p><em>bool KillJSTimer( timerID, scriptID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Gets or sets expiry timestamp for JS timer with specified timerID associated with specified scriptID, or kills timer completely</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>
+										<ul>
+											<li>If GetJSTimer method returns 0, no JS timer with specified ID/script association was found on the object. Otherwise, it returns a timestamp for when timer will expire.</li>
+											<li>If SetJSTimer/KillJSTimer methods return 0, no JS timer with specified ID/script association was found on the object. Otherwise, it returns 1 to indicate that timer was successfully updated/killed.</li>
+										</ul>
+									</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// (GetJSTimer) Fetches expiry timestamp for timer (ID 0) associated with a script (ID 4500, doors.js) on an object (an open door, in this example)
+var expiryTimestamp = myDoor.GetJSTimer( 0, 4500 );
+var currentTimestamp = GetCurrentClock();
+pSock.SysMessage( "Timer expires in " + ((expiryTime - currentTime)/1000).toString() + " seconds." );
+
+// (SetJSTimer) Sets expiry time (15 seconds from now) for an active timer (ID 0) associated with a script (ID 4500, doors.js) on object (an open door, in this example)
+myDoor.SetJSTimer( 0, 15000, 4500 );
+
+// (KillJSTimer) Kills a specific timer (ID 0) associated with a script (ID 4500, doors.js) on an object (an open door, in this example)
+myDoor.KillJSTimer( 0, 4500 );
+</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseObj_getNumTags"/>
 							<label for="spoiler_method_baseObj_getNumTags">GetNumTags <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7384,6 +7688,26 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_baseObj_HasScriptTrigger"/>
+							<label for="spoiler_method_baseObj_HasScriptTrigger">HasScriptTrigger <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void HasScriptTrigger( scriptID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Checks if object has script with specified ID attached</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// hasScript is true if script 8000 is present on object
+var hasScript = myObject.HasScriptTrigger( 8000 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_baseobj_hasSpell"/>
 							<label for="spoiler_method_baseobj_hasSpell">HasSpell <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7444,7 +7768,7 @@ PossessTown( targetTownRegion, sourceTownRegion );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>If no timerID is specified, kills all JS timers on the object. If timerID is specified, kills only specified JS timer on object.</p>
+									<p>If no timerID is specified, kills all JS timers on the object. If timerID is specified, kills only specified JS timer on object <strong>regardless of script</strong>(!)</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -8443,6 +8767,7 @@ Timer.SPATIMER		// Time until next time NPC can cast a spell
 Timer.SUMMONTIME	// Time until a summoned NPC will vanish
 Timer.EVADETIME		// Time until an NPC will exit evade state
 Timer.LOYALTYTIME 	// Time until next time pet loyalty drops
+Timer.IDLEANIMTIME 	// Time until next time character plays idle animation
 Timer.LOGOUT 		// Time it takes for a player char to vanish after logout</code></pre></p>
 										<p>See also: GetTimer()/SetTimer() Socket Methods.</p>
 								</div>
@@ -13515,8 +13840,32 @@ myObject.propertyName = newValue;
 							Get/Set the character's fame level</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.fleeAt</span> <strong>(int, <em>0 - 100</em>)</strong><br>
+							Get/Set percentage health threshold the NPC will flee at in combat</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.fontType</span> <strong>(int, <em>0 - 12</em>)</strong><br>
 							Get/Set font type used by character's speech (0-9 ASCII, 0-12 Unicode)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.fx1</span> <strong>(int)</strong><br>
+							Get/Set FX1 coordinate of a character's wander area. See <a href="index.html#npcMovement" title="UOX3 Docs - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> in UOX3 Docs for details on how these are setup for different NPC wander types.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.fy1</span> <strong>(int)</strong><br>
+							Get/Set FY1 coordinate of a character's wander area. See <a href="index.html#npcMovement" title="UOX3 Docs - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> in UOX3 Docs for details on how these are setup for different NPC wander types.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.fx2</span> <strong>(int)</strong><br>
+							Get/Set FX2 coordinate of a character's wander area. See <a href="index.html#npcMovement" title="UOX3 Docs - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> in UOX3 Docs for details on how these are setup for different NPC wander types.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.fy2</span> <strong>(int)</strong><br>
+							Get/Set FY2 coordinate of a character's wander area. See <a href="index.html#npcMovement" title="UOX3 Docs - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> in UOX3 Docs for details on how these are setup for different NPC wander types.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.fz</span> <strong>(int)</strong><br>
+							Get/Set FZ coordinate of a character's wander area. See <a href="index.html#npcMovement" title="UOX3 Docs - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> in UOX3 Docs for details on how these are setup for different NPC wander types.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.gender</span> <strong>(int, <em>0 - 1</em>)</strong><br>
@@ -13649,6 +13998,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.raceGate</span> <strong>(int, <em>0 - 65535</em>)</strong><br>
 							Get/Set ID of Race for which character has used a Race Gate, if any</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.reAttackAt</span> <strong>(int, <em>0 - 100</em>)</strong><br>
+							Get/Set percentage health threshold the NPC will re-attack current target in combat at</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.serial</span> <strong>(int, <em>0 - 4294967295</em>)</strong><br>
@@ -13853,6 +14206,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.name</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set name of character</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Section ID from DFNs that object originated from</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.title</span> <strong>(text, <em>max 60 characters</em>)</strong><br>
@@ -14509,6 +14866,10 @@ myObject.propertyName = newValue;
 							Get/Set secondary name of item - used in relation to magical items whose names get revealed upon successful use of Item Identification</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Section ID from DFNs that object originated from</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.title</span> <strong>(text, <em>max 59 characters</em>)</strong><br>
 							Get/Set title of item. Currently not used for anything</p>
 						</div>
@@ -15050,7 +15411,7 @@ myObject.propertyName = newValue;
 									<li>76 (UT_ITS) - Italian (Switzerland)</li>
 									<li>83 (UT_PLK) - Polish (Poland)</li>
 									<li>84 (UT_PTB) - Portuguese (Brazil)</li>
-									<li>84 (UT_PTG) - Portuguese (Portugal)</li>
+									<li>85 (UT_PTG) - Portuguese (Portugal)</li>
 								</ul>
 							</div>
 						</div>
@@ -15776,7 +16137,9 @@ function onUseChecked( pUser, iUsed )
 							<p>For full lists of JS Events, check the <a href="#events" title="JS Events">JS Events</a> section.</p>
 							<h3>JS Functions</h3>
 							<p>JS Functions are uniquely named script functions that can be called upon to <span class="hl">make UOX3 run hard-coded pieces of code</span> and potentially return some data to the script. This could be calculating the height of the map at a given set of coordinates, playing some visual effects at an object's location, broadcasting a message to all connected players, etc.</p>
-							<pre><code class="language-javascript">myNPC.Follow( myTarget );</code></pre>
+							<p>Here's an example of a function that simulates the rolling of a dice, and stores the result of that die roll in a variable named mDie for use later in the script:
+							<pre><code class="language-javascript">// Roll a DnD style dice of type 2d3+1 (2 dice with 3 faces, add 1 to result)
+var mDie = RollDice( 2, 3, 1 );</code></pre>
 							<p>It's also possible to make custom JS functions and call upon those from other functions or scripts. This can be helpful for instance to avoid having to repeat some specific code in a script over and over in multiple locations; just call the custom function which contains the shared code to run!</p>
 							<p>For full lists of JS Functions, check the <a href="#functions" title="JS Functions">JS Functions</a> section.</p>
 							<h3>JS Object Methods</h3>
@@ -16007,7 +16370,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2021</small></p>
+	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>

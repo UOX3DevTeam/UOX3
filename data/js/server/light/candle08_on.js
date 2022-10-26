@@ -16,7 +16,9 @@ function onUseChecked( pUser, iUsed )
 		iUsed.morex = 0;
 	}
 	else if( iUsed.dir == 0 && iUsed.morex == 0 )
+	{
 		iUsed.dir = 2;
+	}
 
 	return false;
 }

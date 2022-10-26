@@ -45,12 +45,12 @@ enum JSPrototypes
 class CJSRuntime
 {
 private:
-	typedef std::map< void *, JSObject * >					JSOBJECTMAP;
-	typedef std::map< void *, JSObject * >::iterator		JSOBJECTMAP_ITERATOR;
-	typedef std::map< void *, JSObject * >::const_iterator	JSOBJECTMAP_CITERATOR;
+	typedef std::map<void *, JSObject *>					JSOBJECTMAP;
+	typedef std::map<void *, JSObject *>::iterator			JSOBJECTMAP_ITERATOR;
+	typedef std::map<void *, JSObject *>::const_iterator	JSOBJECTMAP_CITERATOR;
 
-	std::vector< JSOBJECTMAP >								objectList;
-	std::vector< JSObject * >								protoList;
+	std::vector<JSOBJECTMAP>								objectList;
+	std::vector<JSObject *>									protoList;
 
 	JSObject * spellsObj;
 	JSObject * skillsObj;
@@ -72,12 +72,12 @@ public:
 	CJSRuntime( UI32 engineSize );
 	~CJSRuntime();
 
-	void		Reload( void );
-	void		CollectGarbage( void );
+	void		Reload();
+	void		CollectGarbage();
 
-	JSRuntime *	GetRuntime( void ) const;
-	JSContext * GetContext( void ) const;
-	JSObject *	GetObject( void ) const;
+	JSRuntime *	GetRuntime() const;
+	JSContext * GetContext() const;
+	JSObject *	GetObject() const;
 
 	JSObject *	GetPrototype( JSPrototypes protoNum ) const;
 
@@ -88,17 +88,19 @@ public:
 class CJSEngine
 {
 private:
-	typedef std::vector< CJSRuntime * >					RUNTIMELIST;
-	typedef std::vector< CJSRuntime * >::iterator		RUNTIMELIST_ITERATOR;
-	typedef std::vector< CJSRuntime * >::const_iterator	RUNTIMELIST_CITERATOR;
+	typedef std::vector<CJSRuntime *>					RUNTIMELIST;
+	typedef std::vector<CJSRuntime *>::iterator			RUNTIMELIST_ITERATOR;
+	typedef std::vector<CJSRuntime *>::const_iterator	RUNTIMELIST_CITERATOR;
 
 	RUNTIMELIST											runtimeList;
 
 public:
 
-	CJSEngine();
+	CJSEngine() = default;
 	~CJSEngine();
 
+	auto Startup() -> void;
+	
 	JSRuntime *	GetRuntime( UI08 runTime ) const;
 	JSContext * GetContext( UI08 runTime ) const;
 	JSObject *	GetObject( UI08 runTime ) const;

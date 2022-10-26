@@ -1,5 +1,6 @@
 // Throws orc lord at attackers who cast magic at him
 // Dispells summoned creatures
+
 const dispelSummonsDelay = 10;
 
 function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
@@ -14,7 +15,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 		{
 			// Someone dares use magic against the orcish brute? Throw an Orc Lord!
 			myTarget.SetTempTag( "spawningOrcLord", true );
-			myTarget.SetTempTag( "orcLordTargSerial", (pCaster.serial).toString() );
+			myTarget.SetTempTag( "orcLordTargSerial", ( pCaster.serial ).toString() );
 			myTarget.StartTimer( 1000, 0, true );
 		}
 	}
@@ -26,7 +27,7 @@ function onTimer( timerObj, timerID )
 	if( !ValidateObject( timerObj ))
 		return;
 
-	var targChar = CalcCharFromSer( parseInt(timerObj.GetTempTag( "orcLordTargSerial" )));
+	var targChar = CalcCharFromSer( parseInt( timerObj.GetTempTag( "orcLordTargSerial" )));
 	if( timerID == 0 )
 	{
 		if( ValidateObject( targChar ) && !targChar.dead && timerObj.InRange( targChar, 10 ))
@@ -42,7 +43,7 @@ function onTimer( timerObj, timerID )
 			var nSpawned = SpawnNPC( "orclord", targChar.x, targChar.y, targChar.z, targChar.worldnumber, targChar.instanceID );
 			if( ValidateObject( nSpawned ))
 			{
-				nSpawned.SetTempTag( "masterBruteSerial", (timerObj.serial).toString() );
+				nSpawned.SetTempTag( "masterBruteSerial", ( timerObj.serial ).toString() );
 				nSpawned.AddScriptTrigger( 3209 );
 			}
 			var orcLordsThrown = timerObj.GetTempTag( "orcLordsThrown" );

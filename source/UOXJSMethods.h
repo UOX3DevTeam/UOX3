@@ -1,6 +1,6 @@
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	File		-	UOXJSMethods.cpp
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Version History
 //|					1.0		Dark-Storm	20th December, 2001 Initial implementation
 //|							Methods for the javascript objects
@@ -10,12 +10,12 @@
 //|								- Char
 //|								- Item
 //|								- Socket
-//o-----------------------------------------------------------------------------------------------o
+//o------------------------------------------------------------------------------------------------o
 #ifndef __UOXJSMethods__
 #define __UOXJSMethods__
 
 
-typedef JSBool (JSMethodFunc)( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+typedef JSBool ( JSMethodFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Object Constructors
 JSMethodFunc Gump;
@@ -68,9 +68,9 @@ JSMethodFunc CGump_Send;
 
 // GumpData Methods
 JSMethodFunc CGumpData_Free;
-JSMethodFunc CGumpData_getID;
-JSMethodFunc CGumpData_getEdit;
-JSMethodFunc CGumpData_getButton;
+JSMethodFunc CGumpData_GetId;
+JSMethodFunc CGumpData_GetEdit;
+JSMethodFunc CGumpData_GetButton;
 
 // Character Methods
 JSMethodFunc CChar_DoAction;
@@ -156,6 +156,9 @@ JSMethodFunc CBase_GetNumTags;
 JSMethodFunc CBase_InRange;
 JSMethodFunc CBase_StartTimer;
 JSMethodFunc CBase_KillTimers;
+JSMethodFunc CBase_GetJSTimer;
+JSMethodFunc CBase_SetJSTimer;
+JSMethodFunc CBase_KillJSTimer;
 JSMethodFunc CBase_ApplySection;
 JSMethodFunc CBase_FirstItem;
 JSMethodFunc CBase_NextItem;
@@ -168,6 +171,7 @@ JSMethodFunc CBase_IsBoat;
 JSMethodFunc CBase_CanSee;
 JSMethodFunc CBase_UseResource;
 JSMethodFunc CBase_AddScriptTrigger;
+JSMethodFunc CBase_HasScriptTrigger;
 JSMethodFunc CBase_RemoveScriptTrigger;
 JSMethodFunc CBase_Refresh;
 
@@ -340,6 +344,9 @@ static JSFunctionSpec CGump_Methods[] =
 static JSFunctionSpec CChar_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,		1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,		3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,		2, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,		1, 0, 0 },
 	{ "YellMessage",		CChar_YellMessage,		1, 0, 0 },
 	{ "WhisperMessage",		CChar_WhisperMessage,	1, 0, 0 },
@@ -421,6 +428,7 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "AddFriend",			CChar_AddFriend,			1, 0, 0 },
 	{ "RemoveFriend",		CChar_RemoveFriend,			1, 0, 0 },
@@ -436,6 +444,9 @@ static JSFunctionSpec CChar_Methods[] =
 static JSFunctionSpec CItem_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
+	{ "GetJSTimer",			CBase_GetJSTimer,			2, 0, 0 },
+	{ "SetJSTimer",			CBase_SetJSTimer,			3, 0, 0 },
+	{ "KillJSTimer",		CBase_KillJSTimer,			2, 0, 0 },
 	{ "Delete",				CBase_Delete,				0, 0, 0 },
 	{ "TextMessage",		CBase_TextMessage,			1, 0, 0 },
 	{ "Teleport",			CBase_Teleport,				5, 0, 0 },
@@ -495,6 +506,7 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "Resist",				CBase_Resist,				1, 0, 0 },
 	{ "UseResource",		CBase_UseResource,			3, 0, 0 },
 	{ "AddScriptTrigger",	CBase_AddScriptTrigger,		1, 0, 0 },
+	{ "HasScriptTrigger",	CBase_HasScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",CBase_RemoveScriptTrigger,	1, 0, 0 },
 	{ "GetMultiCorner",		CMulti_GetMultiCorner,		1, 0, 0 },
 	{ "SecureContainer",	CMulti_SecureContainer,		1, 0, 0 },
@@ -580,9 +592,9 @@ static JSFunctionSpec CRace_Methods[] =
 static JSFunctionSpec CGumpData_Methods[] =
 {
 	{ "Free",		CGumpData_Free,			0, 0, 0 },
-	{ "getButton",	CGumpData_getButton,	1, 0, 0 },
-	{ "getID",		CGumpData_getID,		1, 0, 0 },
-	{ "getEdit",	CGumpData_getEdit,		1, 0, 0 },
+	{ "getButton",	CGumpData_GetButton,	1, 0, 0 },
+	{ "getID",		CGumpData_GetId,		1, 0, 0 },
+	{ "getEdit",	CGumpData_GetEdit,		1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 

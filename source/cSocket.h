@@ -65,16 +65,15 @@ class CSocket
 {
 public:
 	// Account Related Member(s)
-	CAccountBlock&	GetAccount( void );
-	void			SetAccount( CAccountBlock& actbBlock );
-	//
+	CAccountBlock_st&	GetAccount( void );
+	void			SetAccount( CAccountBlock_st& actbBlock );
 
 	void			InternalReset( void );
-	IP4Address		ipaddress;
+	Ip4Addr_st		ipaddress;
 
 private:
-	std::vector< UI16 >				trigWords;
-	std::vector< UI16 >::iterator	twIter;
+	std::vector<UI16>				trigWords;
+	std::vector<UI16>::iterator		twIter;
 	UI16			accountNum;
 
 	CChar *			currCharObj;
@@ -91,8 +90,8 @@ private:
 	// While admittedly not thread friendly, the number of times these buffers are used
 	// should be very small and right now, is an implementation that will increase clieht
 	// compatability
-	std::vector< UI08 >	largeBuffer;
-	std::vector< UI08 >	largePackBuffer;
+	std::vector<UI08>	largeBuffer;
+	std::vector<UI08>	largePackBuffer;
 
 	std::string		xtext;
 
@@ -128,8 +127,8 @@ private:
 
 	bool			targetok;
 
-	std::vector< SERIAL >				postAcked;
-	std::vector< SERIAL >::iterator		ackIter;
+	std::vector<SERIAL>					postAcked;
+	std::vector<SERIAL>::iterator		ackIter;
 	size_t			postAckCount;
 
 	SI16			clickx;
@@ -229,11 +228,11 @@ public:
 	CBaseObject *	TempObj2( void ) const;
 	SI32			TempInt( void ) const;
 	SI32			TempInt2( void ) const;
-	UI32			AddID( void ) const;
-	UI08			AddID1( void ) const;
-	UI08			AddID2( void ) const;
-	UI08			AddID3( void ) const;
-	UI08			AddID4( void ) const;
+	UI32			AddId( void ) const;
+	UI08			AddId1( void ) const;
+	UI08			AddId2( void ) const;
+	UI08			AddId3( void ) const;
+	UI08			AddId4( void ) const;
 	UI08			DyeAll( void ) const;
 	SI08			ClickZ( void ) const;
 
@@ -288,18 +287,18 @@ public:
 	//	Temporary Variables
 
 	// Under protest I add, NEVER NEVER Do this
-	cScript 		*scriptForCallBack ;
+	cScript 		*scriptForCallBack;
 	// Get rid of above as soon as possible, horible.
 
 	void			TempObj( CBaseObject *newValue );
 	void			TempObj2( CBaseObject *newValue );
 	void			TempInt( SI32 newValue );
 	void			TempInt2( SI32 newValue );
-	void			AddID( UI32 newValue );
-	void			AddID1( UI08 newValue );
-	void			AddID2( UI08 newValue );
-	void			AddID3( UI08 newValue );
-	void			AddID4( UI08 newValue );
+	void			AddId( UI32 newValue );
+	void			AddId1( UI08 newValue );
+	void			AddId2( UI08 newValue );
+	void			AddId3( UI08 newValue );
+	void			AddId4( UI08 newValue );
 	void			DyeAll( UI08 newValue );
 	void			ClickZ( SI08 newValue );
 
@@ -331,22 +330,22 @@ public:
 	UnicodeTypes	Language( void ) const;
 	void			Language( UnicodeTypes newVal );
 
-	void			sysmessage( const std::string txt, ... );
-	void			sysmessageJS( const std::string& uformat, UI16 txtColor, const std::string& data );
-	void			sysmessage( SI32 dictEntry, ... );
-	void			objMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
-	void			objMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );
+	void			SysMessage( const std::string txt, ... );
+	void			SysMessageJS( const std::string& uformat, UI16 txtColor, const std::string& data );
+	void			SysMessage( SI32 dictEntry, ... );
+	void			ObjMessage( const std::string& txt, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI16 Color = 0x03B2 );
+	void			ObjMessage( SI32 dictEntry, CBaseObject *getObj, R32 secsFromNow = 0.0f, UI32 Color = 0x03B2, ... );
 
 	void			ShowCharName( CChar *i, bool showSer  );
 
-	void			target( UI08 targType, UI08 targID, const std::string& txt, UI08 cursorType = 0 );
-	void			target( UI08 targType, UI08 targID, UI08 cursorType, SI32 dictEntry, ... );
-	void			mtarget( UI16 itemID, SI32 dictEntry );
+	void			SendTargetCursor( UI08 targType, UI08 targId, const std::string& txt, UI08 cursorType = 0 );
+	void			SendTargetCursor( UI08 targType, UI08 targId, UI08 cursorType, SI32 dictEntry, ... );
+	void			mtarget( UI16 itemId, SI32 dictEntry );
 
-	void			statwindow( CBaseObject *i, bool updateParty = true );
-	void			updateskill( UI08 skillnum );
-	void			openPack( CItem *i, bool isPlayerVendor = false );
-	void			openBank( CChar *i );
+	void			StatWindow( CBaseObject *i, bool updateParty = true );
+	void			UpdateSkill( UI08 skillnum );
+	void			OpenPack( CItem *i, bool isPlayerVendor = false );
+	void			OpenBank( CChar *i );
 	void			OpenURL( const std::string& txt );
 
 	bool			ReceivedVersion( void ) const;
@@ -361,8 +360,8 @@ public:
 	UI16			BytesSentWarning( void ) const;
 	void			BytesSentWarning( UI16 newValue );
 
-	TIMERVAL		GetTimer( cS_TID timerID ) const;
-	void			SetTimer( cS_TID timerID, TIMERVAL value );
+	TIMERVAL		GetTimer( cS_TID timerId ) const;
+	void			SetTimer( cS_TID timerId, TIMERVAL value );
 	void			ClearTimers( void );
 	COLOUR			GetFlagColour( CChar *src, CChar *trg );
 
