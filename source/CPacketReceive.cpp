@@ -2264,24 +2264,46 @@ bool CPITalkRequest::HandleCommon( void )
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
-			j = static_cast<UI32>( std::stoul( std::string( Text() ), nullptr, 0 ));
-			if( j >= 0 )
+			// Set default value
+			j = speechItem->GetBuyValue();
+
+			try
 			{
-				speechItem->SetBuyValue( j );
-				tSock->SysMessage( 753, j ); // This item's price has been set to %i.
+				j = static_cast<UI32>( std::stoul( std::string( Text() ), nullptr, 0 ));
+				if( j >= 0 )
+				{
+					speechItem->SetBuyValue( j );
+					tSock->SysMessage( 753, j ); // This item's price has been set to %i.
+				}
+				else
+				{
+					tSock->SysMessage( 754, speechItem->GetBuyValue() ); // No price entered, this item's price has been set to %i.
+				}
 			}
-			else
+			catch( ... )
 			{
-				tSock->SysMessage( 754, speechItem->GetBuyValue() ); // No price entered, this item's price has been set to %i.
+				tSock->SysMessage( 754, speechItem->GetBuyValue() ); // Invalid price entered, using default item value of %i
 			}
+
 			tSock->SysMessage( 755 ); // Enter a description for this item.
 			ourChar->SetSpeechMode( 4 );
 			break;
 		case 4: // Player vendor item describing
-			speechItem->SetDesc( Text() );
-			tSock->SysMessage( 756, Text() ); // This item is now described as %s,
+		{
+			std::string speechItemDesc = Text();
+			if( !speechItemDesc.empty() )
+			{
+				speechItem->SetDesc( Text() );
+			}
+			else
+			{
+				speechItem->SetDesc( speechItem->GetName() );
+			}
+			speechItem->Dirty( UT_UPDATE );
+			tSock->SysMessage( 756, speechItem->GetDesc().c_str() ); // This item is now described as %s,
 			ourChar->SetSpeechMode( 0 );
 			break;
+		}
 		case 7: // Rune renaming
 			speechItem->SetName( Text() );
 			tSock->SysMessage( 757, Text() ); // Rune renamed to: Rune to %s.

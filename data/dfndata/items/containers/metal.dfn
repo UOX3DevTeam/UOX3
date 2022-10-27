@@ -44,11 +44,6 @@ maxitems=25
 script=15005
 }
 
-[strongbox]
-{
-get=0x0e80
-}
-
 [ballotbox-east]
 {
 get=0x0e80

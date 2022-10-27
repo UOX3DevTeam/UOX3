@@ -1327,6 +1327,12 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 			});
 		}
 	}
+
+	if( toDecay.CanBeObjType( OT_MULTI ))
+	{
+		toDecay.SetDecayTime( nextDecayItems );
+		Console.Warning( oldstrutil::format( "Warning: Prevented multi (serial: 0x%X) from decaying!", toDecay.GetSerial() ));
+	}
 	toDecay.Delete();  // This is a problem, if done in a ierator loop
 	return true;
 }

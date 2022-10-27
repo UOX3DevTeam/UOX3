@@ -1,3 +1,11 @@
+27/10/2022 - Xuri
+	Added some code to assist with preventing/debugging houses potentially decaying
+	Fixed an issue with freeshard server poll script, which attempted to fetch wrong ini setting
+	Fixed a server crash related to applying invalid prices for player vendor items
+	Neglecting to give item in player vendor pack a description now defaults to item name
+	Items in player vendor packs are now refreshed properly when players update price and name
+	Players can no longer issue pet control commands to player vendors via context menus
+
 27/10/2022 - DragonSlayer
 	Added aliases in item definitions for containers
 	Consolidated all light item scripts into one, with options for auto-lights (lampposts) based on environment brightness level and more

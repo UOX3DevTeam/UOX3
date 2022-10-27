@@ -20,7 +20,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 	switch( subCmd )
 	{
 		case 0xFE: // Freeshard Server Poll Packet request
-			if( !GetServerSetting( "FREESHARDPOLL" ))
+			if( !GetServerSetting( "FREESHARDSERVERPOLL" ))
 			{
 				Console.Print( "Freeshard Server Poll Packet detected; response disabled via FREESHARDPOLL ini-setting.\n" );
 			}

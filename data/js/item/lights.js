@@ -1,4 +1,3 @@
-//Notes: in Custom UO Client You do not have to set a direction. direction is only used for OSI Clients.
 const dblClck = true; // If true enables lampposts to be double clicked on and off.
 const lightEnabled = true; // This enables and disables lamp post to change from on and off with light settings.
 const brightLvl = 10; // This Setting is for how bright or dark it has to be for lamps to turn on and off. the Higher the number the Darker the Lower the Number the lighter.
