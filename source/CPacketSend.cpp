@@ -7603,6 +7603,20 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		}
 	}
 
+	// Address refresh issue when items in player vendor packs received updated pricing and name
+	if( cItem.GetCont() != nullptr && cItem.GetCont()->CanBeObjType( OT_ITEM ))
+	{
+		ObjectType oType = OT_CBO;
+		CBaseObject *iOwner	= FindItemOwner( &cItem, oType );
+		if( ValidateObject( iOwner ) && iOwner->CanBeObjType( OT_CHAR ))
+		{
+			if( static_cast<CChar *>( iOwner )->GetNpcAiType() == AI_PLAYERVENDOR )
+			{
+				playerVendor = true;
+			}
+		}
+	}
+
 	if( playerVendor )
 	{
 		if( cItem.GetBuyValue() > 0 )
@@ -8915,7 +8929,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 	// Pet commands
 	bool playerIsOwner = ( ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar );
 	bool playerIsFriend = Npcs->CheckPetFriend( mChar, &toCopy );
-	if( toCopy.IsNpc() && toCopy.GetQuestType() != QT_ESCORTQUEST && ( toCopy.IsTamed() || toCopy.CanBeHired() )
+	if( toCopy.IsNpc() && toCopy.GetNpcAiType() != AI_PLAYERVENDOR && toCopy.GetQuestType() != QT_ESCORTQUEST && ( toCopy.IsTamed() || toCopy.CanBeHired() )
 		&& ( playerIsOwner || playerIsFriend ))
 	{
 		if( numEntries > 0 )
