@@ -4062,6 +4062,14 @@
 9143=Du verriegelst das Brett.
 9144=Du öffnest die Planke, obwohl sie noch verschlossen ist.
 9150=Kein Rucksack gefunden, kann keinen Gegenstand hinzufügen! Versuchen Sie den Befehl 'addpack?
+9175=Wenn Sie einen Gegenstand kaufen möchten, sagen Sie es einfach.
+9176=Ich kann nur Artikel vom Ladenbesitzer annehmen.
+9177=Ungültiger Preis eingegeben, Standard-Artikelwert von %i verwendet
+9178=Der Artikel kann nicht als 'unverkäuflich' markiert werden! Standardpreis wird verwendet.
+9179=Nur die folgenden Artikel können als "unverkäuflich" gekennzeichnet werden: Bücher, Behälter, Schlüsselanhänger und Artikel in einem Behälter für den Verkauf.
+9180=Nur Container können im Hauptpaket des Verkäufers auf 'unverkäuflich' gesetzt werden.
+9181=Der Artikel wurde als 'nicht zum Verkauf' gekennzeichnet.
+9182=Dieser Gegenstand ist nicht zum Verkauf bestimmt.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!

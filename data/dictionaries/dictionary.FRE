@@ -4226,6 +4226,14 @@
 9143=Vous verrouillez la planche.
 9144=Vous ouvrez la planche, mais elle est toujours verrouillée.
 9150=Aucun sac à dos détecté, impossible d'ajouter un élément ! Essayez la commande 'addpack'.
+9175=Si vous souhaitez acheter un article, il suffit de le dire.
+9176=Je ne peux accepter que les articles du propriétaire de la boutique.
+9177=Prix invalide, la valeur par défaut de l'article est %i.
+9178=L'article ne peut pas être marqué comme "non disponible à la vente" ! Le prix par défaut est appliqué.
+9179=Seuls les articles suivants peuvent être mis "hors vente" : livres, conteneurs, porte-clés et articles dans un conteneur à vendre.
+9180=Seuls les conteneurs peuvent être mis en 'pas à vendre' dans le pack principal du vendeur.
+9181=L'article a été marqué comme 'pas à vendre'.
+9182=Cet article n'est pas à vendre.
 // [9250-9300] Runebooks
 9250=Ce livre a besoin de temps pour se recharger.
 9251=Tu ne peux pas utiliser un Runebook du sac à dos d'un autre !

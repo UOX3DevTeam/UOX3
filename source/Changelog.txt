@@ -1,3 +1,17 @@
+
+30/10/2022 - Xuri
+	Player vendors in existing houses no longer teleport to new houses placed by owner nearby
+	Fixed script issue with demolishing house with player vendors in them
+	Fixed an issue where setting prices for items on player vendors would permanently overwrite the buy-value of the item. Player vendor prices are now stored as a separate property (but saved as part of the VALUE tag), also accessible by the following JS Item property:
+		.vendorPrice
+	Item description and vendor price are now cleared from items bought from player vendors
+	Tooltips for items with new descriptions or vendor prices in player vendor backpacks are now correctly updated
+	Only books, keyrings and unlocked containers can now be marked 'Not for Sale' in a player vendor's main/root backpack
+	Any items on player vendors can now be marked as 'Not for Sale' if placed within a container that has a price tag
+	Added additional feedback messages to players for various interactions with player vendors
+	Fixed a bug where player vendors would lose loyalty and 'go wild' like pets when not fed regularly
+	Split up some of the longer item lists in the 'add menu to prevent freezes on original 2D client
+
 27/10/2022 - Xuri
 	Added some code to assist with preventing/debugging houses potentially decaying
 	Fixed an issue with freeshard server poll script, which attempted to fetch wrong ini setting

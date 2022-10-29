@@ -4062,6 +4062,14 @@
 9143=Si blocca l'asse.
 9144=Apri l'asse, ma è ancora bloccato.
 9150=Nessuno zaino rilevato, impossibile aggiungere un oggetto! Provare con il comando 'addpack?
+9175=Se vuoi acquistare un oggetto, dillo e basta.
+9176=Posso accettare solo oggetti dal proprietario del negozio.
+9177=Prezzo non valido inserito, usa il valore predefinito dell'articolo di %i
+9178=L'articolo non può essere contrassegnato come "non in vendita"! Viene applicato il prezzo predefinito.
+9179=Solo i seguenti articoli possono essere resi "non in vendita": libri, contenitori, portachiavi e articoli in un contenitore per la vendita.
+9180=Solo i contenitori possono essere impostati come "non in vendita" nel pacchetto principale del venditore.
+9181=L'oggetto è stato contrassegnato come "non in vendita".
+9182=Questo articolo non è in vendita.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!

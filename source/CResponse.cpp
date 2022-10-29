@@ -1021,7 +1021,7 @@ bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CItem *pack	= nullptr;
-		vendorNpc->TextMessage( mSock, 385, TALK, false );
+		vendorNpc->TextMessage( mSock, 385, TALK, false ); // Take a look at my goods.
 		pack = vendorNpc->GetPackItem();
 		if( ValidateObject( pack ))
 		{

@@ -4061,6 +4061,14 @@
 9143=Travas a tábua.
 9144=Abrir a tábua, embora ainda esteja trancada.
 9150=Não se detecta mochila, não se pode adicionar item! Tente o comando 'addpack?
+9175= Se quiser comprar um artigo, basta dizer.
+9176=Só posso aceitar artigos do proprietário da loja.
+9177=Preço inválido introduzido, utilizando o valor por defeito do artigo de %i
+9178=O artigo não pode ser marcado como "não está à venda"! Preço por defeito aplicado.
+9179=Apenas os seguintes artigos podem ser marcados como "não destinados à venda": livros, contentores, chaveiros e artigos num contentor destinado à venda.
+9180=Apenas os contentores podem ser marcados como 'não destinados à venda' na embalagem principal do vendedor.
+9181=O artigo foi marcado como 'não à venda'.
+9182=Este artigo não se encontra à venda.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!

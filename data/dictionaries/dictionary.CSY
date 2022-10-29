@@ -4069,6 +4069,14 @@
 9143=Zamknete prkno.
 9144=Otevřeš prkno, i když je stále zamčené.
 9150=Nezjištěn žádný batoh, nelze přidat předmět! Zkus příkaz 'addpack?
+9175=Pokud si chcete zakoupit nějakou položku, stačí říct.
+9176=Přijímám pouze předměty od majitele obchodu.
+9177=Zadána nesprávná cena, použijte výchozí hodnotu položky %i
+9178=Předmět nelze označit jako "neprodejný"! Použita výchozí cena.
+9179=Jedině následující položky mohou být označeny jako "neprodejné": knihy, kontejnery, klíčenky a položky v kontejneru určeném k prodeji.
+9180=V hlavním balení prodejce lze nastavit jako "neprodejné" pouze kontejnery.
+9181=Předmět byl označen jako "neprodejný".
+9182=Tento předmět není určen k prodeji.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!

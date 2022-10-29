@@ -992,7 +992,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		auto myPets = mChar->GetPetList();
 		for( const auto &pet : myPets->collection() )
 		{
-			if( ValidateObject( pet ))
+			if( ValidateObject( pet ) && pet->GetNpcAiType() != AI_PLAYERVENDOR )
 			{
 				if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
 				{

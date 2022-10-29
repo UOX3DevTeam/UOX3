@@ -4062,6 +4062,14 @@
 9143=Cierras el tablón.
 9144=Abres el tablón, aunque sigue bloqueado.
 9150=¡No se ha detectado ninguna mochila, no se puede añadir ningún objeto! Pruebe el 'comando addpack?
+9175=Si desea comprar un artículo, sólo tiene que decirlo.
+9176=Sólo puedo aceptar artículos del propietario de la tienda.
+9177=Precio no válido introducido, utilizando el valor por defecto del artículo %i
+9178=¡El artículo no puede ser marcado como 'no para la venta'! Se ha aplicado el precio por defecto.
+9179=Sólo los siguientes artículos pueden ser marcados como 'no para la venta': libros, contenedores, llaveros y artículos en un contenedor para la venta.
+9180=Sólo los contenedores pueden ponerse como "no en venta" en el paquete principal del vendedor.
+9181=El artículo ha sido marcado como 'no en venta'
+9182=Este artículo no está a la venta.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!

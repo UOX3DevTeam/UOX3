@@ -107,7 +107,7 @@ creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGH
 maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
-	value[0]	= value[1] = 0;
+	value[0]	= value[1] = value[2] = 0;
 	ammo[0]		= ammo[1] = 0;
 	ammoFX[0]	= ammoFX[1] = ammoFX[2] = 0;
 	objType		= OT_ITEM;
@@ -1068,6 +1068,22 @@ auto CItem::SetBuyValue( UI32 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetVendorPrice()
+//|					CItem::SetVendorPrice()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets item's buy value - determines how much player must pay for it
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetVendorPrice() const -> UI32
+{
+	return value[2];
+}
+auto CItem::SetVendorPrice( UI32 newValue ) -> void
+{
+	value[2] = newValue;
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetRestock()
 //|					CItem::SetRestock()
 //o------------------------------------------------------------------------------------------------o
@@ -1616,6 +1632,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetType( GetType() );
 	target->SetBuyValue( GetBuyValue() );
 	target->SetSellValue( GetSellValue() );
+	target->SetVendorPrice( GetVendorPrice() );
 	target->SetVisible( GetVisible() );
 	target->SetWeight( GetWeight() );
 	target->SetWeightMax( GetWeightMax() );
@@ -1704,7 +1721,7 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "Speed=" + std::to_string( GetSpeed() ) + newLine;
 	outStream << "Movable=" + std::to_string( GetMovable() ) + newLine;
 	outStream << "Priv=" + std::to_string( GetPriv() ) + newLine;
-	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + newLine;
+	outStream << "Value=" + std::to_string( GetBuyValue() ) + "," + std::to_string( GetSellValue() ) + "," + std::to_string( GetVendorPrice() ) + newLine;
 	outStream << "Restock=" + std::to_string( GetRestock() ) + newLine;
 	outStream << "AC=" + std::to_string( GetArmourClass() ) + newLine;
 	outStream << "Rank=" + std::to_string( GetRank() ) + newLine;
@@ -2107,7 +2124,13 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 			case 'V':
 				if( UTag == "VALUE" )
 				{
-					if( csecs.size() > 1 )
+					if( csecs.size() > 2 )
+					{
+						SetBuyValue( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+						SetSellValue( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+						SetVendorPrice( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					}
+					else if( csecs.size() > 1 )
 					{
 						SetBuyValue( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 						SetSellValue( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));

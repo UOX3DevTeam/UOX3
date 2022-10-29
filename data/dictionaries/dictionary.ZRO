@@ -4062,6 +4062,14 @@
 9143=You lock the plank.
 9144=You open the plank, though it's still locked.
 9150=No backpack detected, unable to add item! Try the 'addpack command?
+9175=If you'd like to purchase an item, just say so.
+9176=I can only accept items from the shop owner.
+9177=Invalid price entered, using default item value of %i
+9178=The item cannot be marked as 'not for sale'! Default price applied.
+9179=Only the following items may be made 'not for sale': books, containers, key rings and items in a for-sale container.
+9180=Only containers can be set to 'not for sale' in the vendor's main pack.
+9181=The item has been marked as 'not for sale'
+9182=This item is not for sale.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!

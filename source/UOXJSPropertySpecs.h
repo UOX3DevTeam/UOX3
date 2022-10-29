@@ -480,6 +480,7 @@ static JSPropertySpec CItemProps[] =
 	{ "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM },
 	{ "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM },
 	{ "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM },
+	{ "vendorPrice",	CIP_VENDORPRICE,	JSPROP_ENUMANDPERM },
 	{ "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM },
 	{ "divinelock",		CIP_DIVINELOCK,		JSPROP_ENUMANDPERM },
 	{ "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM },
