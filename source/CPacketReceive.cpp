@@ -2264,30 +2264,141 @@ bool CPITalkRequest::HandleCommon( void )
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
+		{
 			// Set default value
 			j = speechItem->GetBuyValue();
+
+			// Grab some references to container speechItem is in, and the root container as well
+			auto iCont = static_cast<CItem *>( speechItem->GetCont() );
+			auto rootCont = FindRootContainer( speechItem );
+			if( !ValidateObject( iCont ) || !ValidateObject( rootCont ))
+				return false;
 
 			try
 			{
 				j = static_cast<UI32>( std::stoul( std::string( Text() ), nullptr, 0 ));
-				if( j >= 0 )
+				if( j > 0 )
 				{
-					speechItem->SetBuyValue( j );
+					// If the price set is higher than 0, allow it
+					speechItem->SetVendorPrice( j );
 					tSock->SysMessage( 753, j ); // This item's price has been set to %i.
 				}
 				else
 				{
-					tSock->SysMessage( 754, speechItem->GetBuyValue() ); // No price entered, this item's price has been set to %i.
+					// Price is 0, so user is trying to mark item as 'Not for Sale'
+					// Only books, keyrings and unlocked containers can be marked as 'Not for Sale' in root vendor pack
+					// While any item can be marked as such within another container - if that container is for sale
+					bool isInRoot = ( iCont == rootCont );
+					auto itemId = speechItem->GetId();
+					bool canBeNotForSale = true;
+
+					if( isInRoot && (( itemId != 0x1769 && itemId != 0x176a && itemId != 0x176b ) 
+						&& speechItem->GetType() != IT_BOOK && speechItem->GetType() != IT_CONTAINER ))
+					{
+						// In root, not a book, keyring or container. Disallow 'Not for Sale'
+						canBeNotForSale = false;
+					}
+					else if( !isInRoot
+						|| ( isInRoot && (( itemId == 0x1769 || itemId == 0x176a || itemId == 0x176b ) 
+							|| speechItem->GetType() == IT_BOOK || speechItem->GetType() == IT_CONTAINER )))
+					{
+						if( speechItem->GetType() == IT_CONTAINER )
+						{
+							// Iterate through all items in container and ensure that there are no items marked 'not for sale'
+							std::vector<CItem *> contItems;
+							auto iContList = speechItem->GetContainsList();
+							for( const auto &contItem : iContList->collection() )
+							{
+								if( !ValidateObject( contItem ))
+									continue;
+
+								if( contItem->GetVendorPrice() == 0 )
+								{
+									// If item is a container, check if _that_ container contains any items with items marked not for sale
+									if( contItem->GetType() == IT_CONTAINER )
+									{
+										std::vector<CItem *> subContItems;
+										auto iSubContList = contItem->GetContainsList();
+										for( const auto &subContItem : iSubContList->collection() )
+										{
+											if( !ValidateObject( subContItem ))
+												continue;
+
+											if( subContItem->GetVendorPrice() == 0 )
+											{
+												// Found an item inside sub-container marked not for sale
+												canBeNotForSale = false;
+												break;
+											}
+										}
+									}
+									else
+									{
+										if( contItem->GetVendorPrice() == 0 )
+										{
+											// Found item inside container marked not for sale
+											canBeNotForSale = false;
+											break;
+										}
+									}
+								}
+
+								// Break out of outer for loop as well, if necessary
+								if( !canBeNotForSale )
+								{
+									break;
+								}
+							}
+						}
+						else if( iCont->GetVendorPrice() == 0 )
+						{
+							// Not in root, but parent container is not for sale - disallow 'Not for Sale'
+							canBeNotForSale = false;
+						}
+					}
+
+					if( canBeNotForSale )
+					{
+						// Item marked as 'Not for Sale'
+						tSock->SysMessage( 9181, speechItem->GetBuyValue() ); // The item has been marked as 'not for sale'
+						speechItem->SetVendorPrice( static_cast<UI32>( 0 ));
+					}
+					else
+					{
+						// Item cannot be marked as 'Not for Sale' - default buy price set instead
+						tSock->SysMessage( 9178, speechItem->GetBuyValue() ); // The item cannot be marked as 'not for sale'! Default price applied.
+						if( speechItem->GetBuyValue() > 0 )
+						{
+							// Set default buy value as vendor price
+							speechItem->SetVendorPrice( speechItem->GetBuyValue() );
+						}
+						else
+						{
+							// No default buy value set on item, setting vendor price to 500 instead
+							speechItem->SetVendorPrice( static_cast<UI32>( 500 ));
+						}
+					}
 				}
 			}
 			catch( ... )
 			{
-				tSock->SysMessage( 754, speechItem->GetBuyValue() ); // Invalid price entered, using default item value of %i
+				tSock->SysMessage( 9177, speechItem->GetBuyValue() ); // Invalid price entered, using default item value of %i
+				if( speechItem->GetBuyValue() > 0 )
+				{
+					// Set default buy value as vendor price
+					speechItem->SetVendorPrice( speechItem->GetBuyValue() );
+				}
+				else
+				{
+					// No default buy value set on item, setting vendor price to 500 instead
+					speechItem->SetVendorPrice( static_cast<UI32>( 500 ));
+				}
 			}
 
 			tSock->SysMessage( 755 ); // Enter a description for this item.
 			ourChar->SetSpeechMode( 4 );
 			break;
+		}
 		case 4: // Player vendor item describing
 		{
 			std::string speechItemDesc = Text();

@@ -4062,6 +4062,14 @@
 9143=Zablokujesz deskę.
 9144=Otworzysz deskę, ale nadal jest ona zablokowana.
 9150=Nie wykryto plecaka, nie można dodać przedmiotu! Spróbuj komendy 'addpack?
+9175=Jeśli chciałbyś kupić jakiś przedmiot, po prostu powiedz.
+9176=Mogę przyjmować przedmioty tylko od właściciela sklepu.
+9177=Wprowadzono nieprawidłową cenę, użyto domyślnej wartości przedmiotu %i
+9178=Ten przedmiot nie może być oznaczony jako 'nie do sprzedaży'! Zastosowano cenę domyślną.
+9179=Tylko następujące przedmioty mogą być oznaczone jako 'nie do sprzedaży': książki, pojemniki, breloki i przedmioty w pojemniku do sprzedaży.
+9180=Tylko pojemniki mogą być ustawione jako 'nie do sprzedaży' w głównym pakiecie sprzedawcy.
+9181=Ten przedmiot został oznaczony jako 'nie do sprzedaży'.
+9182=Ten przedmiot nie jest na sprzedaż.
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

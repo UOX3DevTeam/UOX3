@@ -272,7 +272,14 @@ bool CPIGetItem::Handle( void )
 			}
 			if( otherPackCheck || !ObjInRange( ourChar, iOwner, DIST_NEARBY ))
 			{
-				tSock->SysMessage( 9065 ); // That item does not belong to you. You'll have to steal it.
+				if( iOwner->CanBeObjType( OT_CHAR ) && static_cast<CChar *>( iOwner )->GetNpcAiType() == AI_PLAYERVENDOR )
+				{
+					tSock->SysMessage( 9175 ); // If you'd like to purchase an item, just say so.
+				}
+				else
+				{
+					tSock->SysMessage( 9065 ); // That item does not belong to you. You'll have to steal it.
+				}
 				Bounce( tSock, i );
 				return true;
 			}
@@ -516,16 +523,19 @@ bool CPIGetItem::Handle( void )
 		Weight->AddItemWeight( ourChar, i );
 	}
 
-	if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_ITEM ))
+	if( iCont != nullptr )
 	{
-		std::vector<UI16> contScriptTriggers = iCont->GetScriptTriggers();
-		for( auto scriptTrig : contScriptTriggers )
+		if( ValidateObject( iCont ) && iCont->CanBeObjType( OT_ITEM ))
 		{
-			cScript *toExecute = JSMapping->GetScript( scriptTrig );
-			if( toExecute != nullptr )
+			std::vector<UI16> contScriptTriggers = iCont->GetScriptTriggers();
+			for( auto scriptTrig : contScriptTriggers )
 			{
-				CItem *contItem = static_cast<CItem *>( iCont );
-				toExecute->OnContRemoveItem( contItem, i, ourChar );
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					CItem *contItem = static_cast<CItem *>( iCont );
+					toExecute->OnContRemoveItem( contItem, i, ourChar );
+				}
 			}
 		}
 	}
@@ -1628,6 +1638,11 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 		{
 			if( contOwner->GetOwnerObj() == &mChar || mChar.GetCommandLevel() > CL_PLAYER )
 			{
+				// Clear old values, if item have 'em
+				iDropped.SetDesc( "" );
+				iDropped.SetVendorPrice( 0 );
+
+				// Ask player to enter price for item, or 0 to mark it as 'Not for Sale'
 				mChar.SetSpeechMode( 3 );
 				mChar.SetSpeechItem( &iDropped );
 				mSock.SysMessage( 1207 ); // Set a price for this item.
@@ -1638,7 +1653,8 @@ bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDr
 				{
 					Weight->SubtractItemWeight( &mChar, &iDropped );
 				}
-				mSock.SysMessage( 1630 ); // You cannot put items in other players packs!
+				contOwner->TextMessage( &mSock, 9176, TALK, false ); // I can only accept items from the shop owner.
+
 				Bounce( &mSock, &iDropped );
 				return false;
 			}

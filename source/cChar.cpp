@@ -6417,7 +6417,8 @@ void CChar::DoLoyaltyUpdate( void )
 	if( !cwmWorldState->ServerData()->CheckPetControlDifficulty() )
 		return;
 
-	if( !IsNpc() || IsDead() || !IsTamed() ) // No need to do anything for dead or non-tame NPCs
+	// No need to do anything for dead or non-tame NPCs, or player vendors
+	if( !IsNpc() || IsDead() || !IsTamed() || GetNpcAiType() == AI_PLAYERVENDOR )
 		return;
 
 	if( !ValidateObject( GetOwnerObj() ))

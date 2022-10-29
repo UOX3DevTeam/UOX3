@@ -7619,15 +7619,11 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 
 	if( playerVendor )
 	{
-		if( cItem.GetBuyValue() > 0 )
+		if( cItem.GetVendorPrice() > 0 )
 		{
 			// First the price
 			tempEntry.stringNum = 1043304; // Price: ~1_COST~
-			tempEntry.ourText = oldstrutil::number( cItem.GetBuyValue() );
-			FinalizeData( tempEntry, totalStringLen );
-			// Then the description
-			tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
-			tempEntry.ourText = cItem.GetDesc();
+			tempEntry.ourText = oldstrutil::number( cItem.GetVendorPrice() );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 		else
@@ -7635,12 +7631,21 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			// Item is not for sale
 			tempEntry.stringNum = 1043307; // Price: Not for sale.
 			FinalizeData( tempEntry, totalStringLen );
-			// The description
-			tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
-			tempEntry.ourText = cItem.GetDesc();
-			FinalizeData( tempEntry, totalStringLen );
-
 		}
+
+		// Then the description
+		tempEntry.stringNum = 1043305; // <br>Seller's Description:<br>"~1_DESC~"
+		if( !cItem.GetDesc().empty() )
+		{
+			// A description has been set for item, use it
+			tempEntry.ourText = cItem.GetDesc();
+		}
+		else
+		{
+			// No description is set, use default item name
+			tempEntry.ourText = cItem.GetName();
+		}
+		FinalizeData( tempEntry, totalStringLen );
 	}
 }
 

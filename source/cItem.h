@@ -42,7 +42,7 @@ protected:
 	TIMERVAL		tempTimer;
 	TIMERVAL		decayTime;
 
-	UI32			value[2];	// Price a shopkeep buys and sells items for
+	UI32			value[3];	// Price a shopkeep buys and sells items for, with price on player vendor as optional third value
 	UI16			restock; // Number up to which shopkeeper should restock this item
 	ARMORCLASS		armorClass;
 	SI08			rank;	// for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
@@ -203,6 +203,8 @@ public:
 	auto			SetBuyValue( UI32 newValue ) -> void;
 	auto			GetSellValue() const -> UI32;
 	auto			SetSellValue( UI32 newValue ) -> void;
+	auto			GetVendorPrice() const -> UI32;
+	auto			SetVendorPrice( UI32 newValue ) -> void;
 
 	auto			GetRestock() const -> UI16;
 	auto			SetRestock( UI16 newValue ) -> void;

@@ -67,25 +67,29 @@ void PlayerVendorBuy( CSocket *s )
 		return;
 	}
 
-	if( i->GetBuyValue() <= 0 )
+	if( i->GetVendorPrice() <= 0 )
+	{
+		vChar->TextMessage( s, 9182, TALK, false ); // This item is not for sale.
 		return;
+	}
 
-	if( goldLeft < i->GetBuyValue() )
+	if( goldLeft < i->GetVendorPrice() )
 	{
 		vChar->TextMessage( s, 1000, TALK, false ); // You cannot afford that.
 		return;
 	}
 	else
 	{
-		DeleteItemAmount( mChar, i->GetBuyValue(), 0x0EED );
+		[[maybe_unused]] auto amountDeleted = DeleteItemAmount( mChar, i->GetVendorPrice(), 0x0EED );
 		// tAmount > 0 indicates there wasn't enough money...
 		// could be expanded to take money from bank too...
 	}
 
 	vChar->TextMessage( s, 1001, TALK, false ); // Thank you.
-	vChar->SetHoldG( vChar->GetHoldG() + i->GetBuyValue() );
+	vChar->SetHoldG( vChar->GetHoldG() + i->GetVendorPrice() );
 
-	i->SetCont( p );	// move containers
+	// Move the bought item to player's backpack
+	i->SetCont( p );
 }
 
 void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlength, SI32 dictEntry );

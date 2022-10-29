@@ -65,6 +65,13 @@ ADDITEM=0x0b1a
 ADDITEM=0x0b1d
 0x0b26=candlabra
 ADDITEM=0x0b26
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 223]
+{
+lighting.dfn 2
 0x0b20=lamp post
 ADDITEM=0x0b20
 0x0b21=lamp post
@@ -276,6 +283,13 @@ ADDITEM=0x0bca
 ADDITEM=0x0bcb
 0x0bcc=Provisioner
 ADDITEM=0x0bcc
+<=Previous Menu
+ITEMMENU=2
+}
+
+[ITEMMENU 224]
+{
+signs.dfn 2
 0x0bcd=Bowyer
 ADDITEM=0x0bcd
 0x0bce=Bowyer
@@ -1021,6 +1035,13 @@ ADDITEM=0x0a80
 ADDITEM=0x0a81
 0x0a82=bed
 ADDITEM=0x0a82
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 217]
+{
+beds.dfn 2
 0x0a83=bed
 ADDITEM=0x0a83
 0x0a84=bed
@@ -1174,6 +1195,13 @@ ADDITEM=0x0b65
 ADDITEM=0x0b66
 0x0b67=bench
 ADDITEM=0x0b67
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 218]
+{
+chairs.dfn 2
 0x0b68=bench
 ADDITEM=0x0b68
 0x0b69=bench
@@ -1445,6 +1473,13 @@ ADDITEM=0x1d4e
 ADDITEM=0x1d4f
 0x1d50=body
 ADDITEM=0x1d50
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 219]
+{
+coffins.dfn
 0x1d51=body
 ADDITEM=0x1d51
 0x1d52=body
@@ -1720,6 +1755,13 @@ ADDITEM=0x0a2e
 ADDITEM=0x0a2f
 0x0a31=drawer
 ADDITEM=0x0a31
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 220]
+{
+garbled_furniture.dfn 2
 0x0a32=drawer
 ADDITEM=0x0a32
 0x0a33=drawer
@@ -1981,6 +2023,13 @@ ADDITEM=0x0b82
 ADDITEM=0x0b83
 0x0b84=table
 ADDITEM=0x0b84
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 222]
+{
+tables.dfn 2
 0x0b85=table
 ADDITEM=0x0b85
 0x0b86=table
@@ -2289,6 +2338,13 @@ ADDITEM=0x1c8e
 ADDITEM=0x1c8f
 0x1c90=sarcophagus
 ADDITEM=0x1c90
+<=Previous Menu
+ITEMMENU=16
+}
+
+[ITEMMENU 221]
+{
+sarcophaguses.dfn 2
 0x1c91=sarcophagus
 ADDITEM=0x1c91
 0x1c92=sarcophagus
@@ -2550,6 +2606,13 @@ ADDITEM=0x15cc
 ADDITEM=0x15cd
 0x15ce=banner
 ADDITEM=0x15ce
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 204]
+{
+banners.dfn 2
 0x15cf=banner
 ADDITEM=0x15cf
 0x15d0=banner
@@ -2980,6 +3043,13 @@ ADDITEM=0x0adf
 ADDITEM=0x0ae0
 0x0ae1=carpet
 ADDITEM=0x0ae1
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 235]
+{
+rugs_carpets.dfn 2
 0x0ae2=carpet
 ADDITEM=0x0ae2
 0x0ae3=carpet
@@ -3221,6 +3291,13 @@ ADDITEM=0x1cdc
 ADDITEM=0x1cf1
 0x1cf2=blood patch
 ADDITEM=0x1cf2
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 205]
+{
+blood.dfn 2
 0x1cf3=blood patch
 ADDITEM=0x1cf3
 0x1cf4=blood patch
@@ -3558,6 +3635,13 @@ ADDITEM=0x10d4
 ADDITEM=0x10d5
 0x10d6=small web
 ADDITEM=0x10d6
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 206]
+{
+dungeon_gear.dfn 2
 0x10d7=small web
 ADDITEM=0x10d7
 0x10d8=egg case web
@@ -3796,6 +3880,13 @@ ADDITEM=0x1689
 ADDITEM=0x168A
 0x168b=catapult
 ADDITEM=0x168b
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 213]
+{
+siege.dfn 1.5
 0x168c=catapult
 ADDITEM=0x168c
 0x168D=catapult
@@ -4230,6 +4321,13 @@ ADDITEM=0x1511
 ADDITEM=0x1731
 0x1732=fountain
 ADDITEM=0x1732
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 216]
+{
+stoneart.dfn 1.5
 0x1733=fountain
 ADDITEM=0x1733
 0x1734=fountain
@@ -4428,7 +4526,7 @@ ITEMMENU=17
 
 [ITEMMENU 161]
 {
-stoneart.dfn
+stoneart.dfn 2
 0x1d97=ankh of sacrifice
 ADDITEM=0x1d97
 0x1d98=ankh of sacrifice
@@ -4642,6 +4740,13 @@ ADDITEM=0x0e78
 ADDITEM=0x0ff6
 0x0ff7=glass pitcher
 ADDITEM=0x0ff7
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 207]
+{
+kitchen.dfn
 0x0ffa=bucket of water
 ADDITEM=0x0ffa
 0x0ffb=skull mug
@@ -4905,6 +5010,13 @@ ADDITEM=0x14e0
 ADDITEM=0x14e7
 0x14e8=hitching post
 ADDITEM=0x14e8
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 208]
+{
+misc.dfn 2
 0x14f3=ship model
 ADDITEM=0x14f3
 0x14f4=ship model
@@ -5049,7 +5161,7 @@ ADDITEM=0x1038
 ADDITEM=0x0377
 0x0379=dagges
 ADDITEM=0x0379
-<=Previous Menu
+<=PREVIOUS MENU
 ITEMMENU=17
 }
 
@@ -5209,6 +5321,13 @@ ADDITEM=0x18b1
 ADDITEM=0x18b2
 0x18b3=ballista
 ADDITEM=0x18b3
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 214]
+{
+siege2.dfn 2.5
 0x18b4=ballista
 ADDITEM=0x18b4
 0x18b5=ballista
@@ -5454,6 +5573,13 @@ ADDITEM=0x3F8E
 ADDITEM=0x3F90
 0x3F91=ballista
 ADDITEM=0x3F91
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 215]
+{
+siege2.dfn 3.5
 0x3F92=ballista
 ADDITEM=0x3F92
 0x3F93=ballista
@@ -5800,6 +5926,13 @@ ADDITEM=0x1bab
 ADDITEM=0x1bac
 0x1bad=refuse
 ADDITEM=0x1bad
+<=Previous Menu
+ITEMMENU=17
+}
+
+[ITEMMENU 209]
+{
+multi-objects.dfn
 0x1bae=refuse
 ADDITEM=0x1bae
 0x1baf=refuse
@@ -6132,6 +6265,13 @@ ADDITEM=0xd05
 ADDITEM=0xd06
 0x0d07=lilypad
 ADDITEM=0xd07
+<=Previous Menu
+ITEMMENU=51
+}
+
+[ITEMMENU 210]
+{
+plants.dfn 2
 0x0d08=lilypad
 ADDITEM=0xd08
 0x0d09=lilypad
@@ -6582,6 +6722,13 @@ ADDITEM=0xd67
 ADDITEM=0xd68
 0x0d69=leaves
 ADDITEM=0xd69
+<=Previous Menu
+ITEMMENU=51
+}
+
+[ITEMMENU 211]
+{
+trees.dfn 2
 0x0d6e=tree
 ADDITEM=0xd6e
 0x0d6f=tree
@@ -6865,6 +7012,13 @@ ADDITEM=0x00A3
 ADDITEM=0x00A4
 0x00A5=log wall
 ADDITEM=0x00A5
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 229]
+{
+wooden_walls.dfn 2
 0x00A6=wooden wall
 ADDITEM=0x00A6
 0x00A7=wooden wall
@@ -7746,6 +7900,13 @@ ADDITEM=0x0142
 ADDITEM=0x0143
 0x0144=wooden beam
 ADDITEM=0x0144
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 226]
+{
+plaster_walls.dfn 2
 0x01FF=plaster wall
 ADDITEM=0x01FF
 0x0200=plaster wall
@@ -7949,6 +8110,13 @@ ADDITEM=0x01CC
 ADDITEM=0x01CD
 0x01CE=dock pole
 ADDITEM=0x01CE
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 227]
+{
+rattan_hide_walls.dfn 2
 0x020F=bamboo wall
 ADDITEM=0x020F
 0x0210=bamboo wall
@@ -8116,6 +8284,13 @@ ADDITEM=0x02E6
 ADDITEM=0x02E7
 0x02E8=tent wall
 ADDITEM=0x02E8
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 228]
+{
+tent_walls.dfn 2
 0x02E9=tent wall
 ADDITEM=0x02E9
 0x02EA=tent wall
@@ -8263,6 +8438,13 @@ ADDITEM=0x3F04
 ADDITEM=0x3F05
 0x3F06=window
 ADDITEM=0x3F06
+<=Previous Menu
+ITEMMENU=18
+}
+
+[ITEMMENU 225]
+{
+other_walls.dfn 2
 0x121D=wall carving
 ADDITEM=0x121D
 0x121E=wall carving
@@ -8458,6 +8640,13 @@ ADDITEM=0x04FF
 ADDITEM=0x0500
 0x0501=flagstones
 ADDITEM=0x0501
+<=Previous Menu
+ITEMMENU=19
+}
+
+[ITEMMENU 212]
+{
+stone_tiles.dfn 2
 0x0502=flagstones
 ADDITEM=0x0502
 0x0503=flagstones
@@ -8722,6 +8911,13 @@ ADDITEM=0x04C3
 ADDITEM=0x04C4
 0x04C5=wooden logs
 ADDITEM=0x04C5
+<=Previous Menu
+ITEMMENU=19
+}
+
+[ITEMMENU 213]
+{
+wooden_tiles.dfn 2
 0x04C6=wooden planks
 ADDITEM=0x04C6
 0x04C7=wooden planks
@@ -11352,6 +11548,13 @@ ADDITEM=0x258E
 ADDITEM=0x258F
 0x2590=Efreet Statue
 ADDITEM=0x2590
+<=Previous Menu
+ITEMMENU=111
+}
+
+[ITEMMENU 230]
+{
+monsterstatues.dfn 2
 0x2591=Ghoul Statue
 ADDITEM=0x2591
 0x2593=Great Worm Statue
@@ -11551,6 +11754,13 @@ ADDITEM=0x2131
 ADDITEM=0x2592
 0x25BA=Sea Horse Statue
 ADDITEM=0x25BA
+<=Previous Menu
+ITEMMENU=111
+}
+
+[ITEMMENU 231]
+{
+monsterstatues.dfn
 0x2118=Black Bear Statue
 ADDITEM=0x2118
 0x2119=Big Cat Statue
@@ -11894,6 +12104,13 @@ ADDITEM=0x1F49
 ADDITEM=0x1F4A
 0x1F4B=mana drain scroll
 ADDITEM=0x1F4B
+<=Previous Menu
+ITEMMENU=8
+}
+
+[ITEMMENU 232]
+{
+scrolls.dfn 2
 0x1F4C=recall scroll
 ADDITEM=0x1F4C
 0x1F4D=blade spirits scroll
@@ -13191,6 +13408,13 @@ ADDITEM=0x182b
 ADDITEM=0x182c
 0x182d=flask
 ADDITEM=0x182d
+<=Previous Menu
+ITEMMENU=127
+}
+
+[ITEMMENU 233]
+{
+alchemy.dfn
 0x182e=flask
 ADDITEM=0x182e
 0x182f=flask
@@ -13261,7 +13485,7 @@ ITEMMENU=127
 
 [ITEMMENU 144]
 {
-carpenty.dfn
+carpentry.dfn
 0x1026=chisels
 ADDITEM=0x1026
 0x1027=chisels
