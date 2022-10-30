@@ -1336,6 +1336,97 @@ HOUSE_DEED=ballotboxdeedsouth
 HOUSE_ITEM=505
 }
 
+//brown bear trophy deed
+[HOUSE 200]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=brownbeartrophydeed
+HOUSE_ITEM=800
+}
+
+//polar bear trophy deed
+[HOUSE 201]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=polarbeartrophydeed
+HOUSE_ITEM=801
+}
+
+//stag trophy deed
+[HOUSE 202]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=stagtrophydeed
+HOUSE_ITEM=802
+}
+
+//large fish trophy deed
+[HOUSE 203]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=largefishtrophydeed
+HOUSE_ITEM=803
+}
+
+//orc trophy deed
+[HOUSE 204]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=orctrophydeed
+HOUSE_ITEM=804
+}
+
+//gorilla trophy deed
+[HOUSE 205]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=gorillatrophydeed
+HOUSE_ITEM=805
+}
+
+//troll trophy deed
+[HOUSE 206]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=trolltrophydeed
+HOUSE_ITEM=806
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -3105,6 +3196,62 @@ Z=0
 [HOUSE ITEM 505]
 {
 ITEM=0x09a8
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 800]
+{ 
+ITEM=brownbeartrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 801]
+{ 
+ITEM=polarbeartrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 802]
+{ 
+ITEM=stagtrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 803]
+{ 
+ITEM=largefishtrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 804]
+{ 
+ITEM=orctrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 805]
+{ 
+ITEM=gorillatrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 806]
+{ 
+ITEM=trolltrophy
 X=0
 Y=0
 Z=0
