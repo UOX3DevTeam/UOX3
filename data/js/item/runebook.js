@@ -591,7 +591,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				runeBook.SetTag( "userSerial", null );
 				runeBook.SetTag( "useDelayed", true );
 				runeBook.StartTimer( useDelay, 100, true );
-				CastSpell( pSocket, pUser, 32 );
+				CastSpell( pSocket, pUser, 32, true );
 			}
 			else
 			{
@@ -623,7 +623,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 				runeBook.SetTag( "userSerial", null );
 				runeBook.SetTag( "useDelayed", true );
 				runeBook.StartTimer( useDelay, 100, true );
-				CastSpell( pSocket, pUser, 52 );
+				CastSpell( pSocket, pUser, 52, true );
 			}
 			else
 			{
