@@ -2584,6 +2584,13 @@
 2860=Player vendors can only be placed in public houses!
 2861=You cannot place a player vendor adjacent to a door!
 2862=Your hands must be free to cast spells or meditate.
+2863=You do not understand how to use this.
+2864=Target the corpse to make a trophy out of.
+2865=That corpse seems to have been visited by a taxidermist already.
+2866=You review the corpse and find it worthy of a trophy.
+2867=You use your kit up making the trophy.
+2868=That does not look like something you want hanging on a wall.
+2869=You do not have enough boards.
 // [3000-4999] Animal and Monster names
 3001=an ogre
 3002=an ettin

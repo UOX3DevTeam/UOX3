@@ -18,4 +18,5 @@ id=0x1EBA
 weight=100
 decay=1
 script=5039
+value=90000 45000
 }

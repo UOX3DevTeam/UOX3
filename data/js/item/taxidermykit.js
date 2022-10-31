@@ -12,71 +12,102 @@ function onUseChecked(pUser, iUsed)
 		}
 		else if( pUser.skills.carpentry < 900 )
 		{
-			pUser.SysMessage( "You do not understand how to use this." ); // You do not understand how to use this.
+			pUser.SysMessage( GetDictionaryEntry( 2863, socket.language )); // You do not understand how to use this.
 			return;
 		}
 		else
 		{
-			var targMsg = "Target the corpse to make a trophy out of."; // Target the corpse to make a trophy out of.
+			var targMsg = GetDictionaryEntry( 2864, socket.language ); // Target the corpse to make a trophy out of.
 			socket.CustomTarget( 1, targMsg );
 		}
 	}
 	return false;
 }
 
-function onCallback1(socket, ourObj)
+function onCallback1(socket, myTarget)
 {
 	var tileID = 0;
+	var pUser = socket.currentChar;
 	var iUsed = socket.tempObj;
+	var woodID = 0x1bd7;
+	var resourceCount = pUser.ResourceCount( woodID );
+	var amountNeeded = 10;
+	tileID = myTarget.id;
 
-	tileID = ourObj.id;
 	if( tileID != 0x2006 )
 	{
-		socket.SysMessage( "That is not a corpse!" ); // That is not a corpse!
+		socket.SysMessage( GetDictionaryEntry( 749, socket.language )); // That is not a corpse!
 		return;
 	}
-	else if( ourObj.GetTag( "VisitedByTaxidermist" ) == true)
+	else if( myTarget.GetTag( "VisitedByTaxidermist" ) == true )
 	{
-		socket.SysMessage( "That corpse seems to have been visited by a taxidermist already." ); // That corpse seems to have been visited by a taxidermist already.
+		socket.SysMessage( GetDictionaryEntry( 2865, socket.language )); // That corpse seems to have been visited by a taxidermist already.
 		return;
 	}
 	else 
 	{
-		switch( ourObj.name )
+		if( resourceCount >= amountNeeded )
 		{
-			case "corpse of a brown bear"://amount 167
-				CreateDFNItem( socket, socket.currentChar, "brownbeartrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			case "corpse of a great hart"://amount 234
-				CreateDFNItem( socket, socket.currentChar, "stagtrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			case "corpse of a gorilla"://amount 29
-				CreateDFNItem( socket, socket.currentChar, "gorillatrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			case "corpse of a orc"://amount 17
-				CreateDFNItem( socket, socket.currentChar, "orctrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			case "corpse of a polar bear"://amount 213
-				CreateDFNItem( socket, socket.currentChar, "polarbeartrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			case "corpse of a troll"://amount 54
-				CreateDFNItem( socket, socket.currentChar, "trolltrophydeed", 1, "ITEM", true );
-				ourObj.SetTag( "VisitedByTaxidermist", true );
-				iUsed.Delete();
-				break;
-			default:
-				socket.SysMessage( "That does not look like something you want hanging on a wall." );
-				break;
+			switch( myTarget.sectionID ) 
+			{
+				case "brownbear":
+					CreateDFNItem( socket, socket.currentChar, "brownbeartrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete();
+					break;
+				case "hart":
+					CreateDFNItem( socket, socket.currentChar, "stagtrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete();
+					break;
+				case "gorilla":
+					CreateDFNItem( socket, socket.currentChar, "gorillatrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete();
+					break;
+				case "orc":
+				case "cluborc":
+					CreateDFNItem( socket, socket.currentChar, "orctrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete();
+					break;
+				case "polarbear":
+					CreateDFNItem( socket, socket.currentChar, "polarbeartrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete();
+					break;
+				case "troll":
+					CreateDFNItem( socket, socket.currentChar, "trolltrophydeed", 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+					myTarget.SetTag( "VisitedByTaxidermist", true );
+					pUser.UseResource( amountNeeded,  woodID );
+					iUsed.Delete(); 
+					break;
+				default:
+					socket.SysMessage( GetDictionaryEntry( 2868, socket.language )); // That does not look like something you want hanging on a wall.
+					break;
+			}
+		}
+		else 
+		{
+			socket.SysMessage( GetDictionaryEntry( 2869, socket.language )); // You do not have enough boards.
+			return;
 		}
 	}
 }
