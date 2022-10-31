@@ -1518,7 +1518,10 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY )));
 	}
 	else
+	{
+		iCorpse->SetSectionId( mChar.GetSectionId() ); // Store NPC section ID on corpse
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_NPCCORPSEDECAY )));
+	}
 
 	if( !ValidateObject( killer ))
 	{
