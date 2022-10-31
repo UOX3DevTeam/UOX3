@@ -2855,7 +2855,7 @@ bool CChar::WearItem( CItem *toWear )
 		{
 #if defined( UOX_DEBUG_MODE )
 			std::string charName = GetNpcDictName( this );
-			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial ));
+			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str() ));
 #endif
 			rValue = false;
 		}
