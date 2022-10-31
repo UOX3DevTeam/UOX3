@@ -30,6 +30,7 @@ private:
 	SI16		y2;					// Bottom right y
 
 	SI08		prefZ;				// Maximum Z influence static and dynamic items can have on spawning.
+	SI08		defZ;				// Definite Z to attempt to spawn object at
 
 	bool		onlyOutside;		// Should Chars, Items only spawn outside of buildings
 	bool		isSpawner;			// Whether the items spawned are spawner objects or not
@@ -67,6 +68,7 @@ public:
 	SI16		GetY1( void ) const;
 	SI16		GetX2( void ) const;
 	SI16		GetY2( void ) const;
+	SI08		GetDefZ( void ) const;
 	SI08		GetPrefZ( void ) const;
 	UI16		GetCall( void ) const;
 	bool		GetOnlyOutside( void ) const;
@@ -87,6 +89,7 @@ public:
 	void		SetY1( SI16 newVal );
 	void		SetX2( SI16 newVal );
 	void		SetY2( SI16 newVal );
+	void		SetDefZ( SI08 newVal );
 	void		SetPrefZ( SI08 newVal );
 	void		SetCall( UI16 newVal );
 	void		SetOnlyOutside( bool newVal );

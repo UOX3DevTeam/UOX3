@@ -24,6 +24,7 @@ const SI32		DEFSPAWN_CURCSPAWN		= 0;
 const SI32		DEFSPAWN_CURISPAWN		= 0;
 const UI08		DEFSPAWN_WORLDNUM		= 0;
 const SI08		DEFSPAWN_PREFZ			= 18;
+const SI08		DEFSPAWN_DEFZ			= ILLEGAL_Z;
 const bool		DEFSPAWN_ONLYOUTSIDE	= false;
 const bool		DEFSPAWN_ISSPAWNER		= false;
 
@@ -35,7 +36,8 @@ const bool		DEFSPAWN_ISSPAWNER		= false;
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionNum( spawnregion ), maxCharSpawn( DEFSPAWN_MAXCSPAWN ), maxItemSpawn( DEFSPAWN_MAXISPAWN ),
 curCharSpawn( DEFSPAWN_CURCSPAWN ), curItemSpawn( DEFSPAWN_CURISPAWN ), minTime( DEFSPAWN_MINTIME ), maxTime( DEFSPAWN_MAXTIME ),
 nextTime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ),
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER )
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER ),
+defZ( DEFSPAWN_DEFZ )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );
@@ -227,6 +229,22 @@ void CSpawnRegion::SetPrefZ( SI08 newVal )
 SI08 CSpawnRegion::GetPrefZ( void ) const
 {
 	return prefZ;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSpawnRegion::SetDefZ()
+//|					CSpawnRegion::GetDefZ()
+//|	Date		-	04/22/2002
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets definitive Z Level of the Spawn Region at which to attempt spawning objects
+//o------------------------------------------------------------------------------------------------o
+void CSpawnRegion::SetDefZ( SI08 newVal )
+{
+	defZ = newVal;
+}
+SI08 CSpawnRegion::GetDefZ( void ) const
+{
+	return defZ;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -611,6 +629,10 @@ void CSpawnRegion::Load( CScriptSection *toScan )
 			{
 				instanceId = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 			}
+			else if( UTag == "DEFZ" )
+			{
+				defZ = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
+			}
 			else if( UTag == "PREFZ" )
 			{
 				prefZ = static_cast<SI08>( std::stoi( data, nullptr, 0 ));
@@ -840,17 +862,26 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
 
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ, instanceId );
-		if( ILLEGAL_Z != dynz )
+		if( defZ != ILLEGAL_Z )
 		{
-			z = dynz;
+			// Use the definite Z level defined in the spawn region
+			// Trust that the spawnregion scripter knows what they are doing...
+			z = defZ;
 		}
 		else
 		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
-			if( ILLEGAL_Z != staticz )
+			// No definite Z has been defined, look for valid dynamic Z based on prefZ
+			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
+			if( ILLEGAL_Z != dynZ )
 			{
-				z = staticz;
+				z = dynZ;
+			}
+
+			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ
+			const SI08 staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticZ && staticZ > z )
+			{
+				z = staticZ;
 			}
 		}
 
@@ -934,7 +965,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 		z = static_cast<SI08>( currLoc.z );
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ, instanceId );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
 		if( ILLEGAL_Z != dynz )
 		{
 			z2 = dynz;
@@ -961,7 +992,7 @@ bool CSpawnRegion::FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCr
 		z = static_cast<SI08>( currLoc.z );
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ, instanceId );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
 		if( ILLEGAL_Z != dynz )
 		{
 			z2 = dynz;
@@ -1012,16 +1043,27 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		y = RandomNum( y1, y2 );
 		z = Map->MapElevation( x, y, worldNumber );
 
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ, instanceId );
-		if( ILLEGAL_Z != dynz )
+		if( defZ != ILLEGAL_Z )
 		{
-			z = dynz;
+			// Use the definite Z level defined in the spawn region
+			// Trust that the spawnregion scripter knows what they are doing...
+			z = defZ;
 		}
 		else
 		{
-			const SI08 staticz = Map->StaticTop( x, y, z, worldNumber, prefZ );
-			if( ILLEGAL_Z != staticz )
-				z = staticz;
+			// No definite Z has been defined, look for valid dynamic Z based on prefZ
+			const SI08 dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
+			if( ILLEGAL_Z != dynZ )
+			{
+				z = dynZ;
+			}
+
+			// Even if we got a valid dynamic Z, there might be a better match with statics, based on prefZ
+			const SI08 staticZ = Map->StaticTop( x, y, z, worldNumber, prefZ );
+			if( ILLEGAL_Z != staticZ && staticZ > z )
+			{
+				z = staticZ;
+			}
 		}
 
 		// First go through the lists of already stored good locations
@@ -1061,7 +1103,7 @@ bool CSpawnRegion::FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z )
 		z = static_cast<SI08>( currLoc.z );
 		// Recalculate the z coordinate to see whether something has changed
 		z2 = Map->MapElevation( x, y, worldNumber );
-		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, prefZ, instanceId );
+		const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, prefZ );
 		if( ILLEGAL_Z != dynz )
 		{
 			z2 = dynz;
