@@ -1376,7 +1376,7 @@ JSBool SE_CreateHouse( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	return JS_TRUE;
 }
 
-CMultiObj * BuildBaseMulti( UI16 multiId, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
+CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 );
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_CreateBaseMulti()
 //o------------------------------------------------------------------------------------------------o
@@ -1420,7 +1420,7 @@ JSBool SE_CreateBaseMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	auto origContext = cx;
 	auto origObject = obj;
 
-	CMultiObj *newMulti = BuildBaseMulti( multiId, checkLocation, xLoc, yLoc, zLoc, worldNumber, instanceId );
+	CMultiObj *newMulti = BuildBaseMulti( multiId, xLoc, yLoc, zLoc, worldNumber, instanceId );
 	if( newMulti != nullptr )
 	{
 		// Apply color to house, if it was provided

@@ -1010,7 +1010,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when a script attempts to create a base multi from raw multi ID
 //o------------------------------------------------------------------------------------------------o
-CMultiObj * BuildBaseMulti( UI16 multiId, bool checkLocation = true, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 )
+CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 zLoc = 127, UI08 worldNumber = 0, UI16 instanceId = 0 )
 {
 	if( !multiId )
 		return nullptr;
@@ -1026,11 +1026,6 @@ CMultiObj * BuildBaseMulti( UI16 multiId, bool checkLocation = true, SI16 xLoc =
 	if( multiId < 0x4000 )
 	{
 		multiId += 0x4000;
-	}
-
-	if( checkLocation && !CheckForValidHouseLocation( nullptr, nullptr, xLoc, yLoc, zLoc, sx, sy, worldNumber, instanceId, false, true ))
-	{
-		return nullptr;
 	}
 
 	CMultiObj *iMulti = nullptr;
