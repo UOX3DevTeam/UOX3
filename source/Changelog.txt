@@ -1,3 +1,6 @@
+1/11/2022 - Dragon Slayer
+	Updated spawn regions in Yew with NPCs for Empath Abbey
+
 1/11/2022 - Xuri
 	Base multis created with CreateBaseMulti() JS function or BuildBaseMulti() C++ function no longer require valid 'house/boat' locations to spawn
 	Fixed an issue where no reagents were consumed when casting recall/gate spells via spell icons in runebooks (js/item/runebook.js)
@@ -5,6 +8,7 @@
 	Added a new DFN tag usable in Spawn Regions to define a definite Z level at which to attempt to spawn objects (skips some steps in the process and assumes the defined Z is a valid Z):
 		DEFZ=# 	// Defines a definite Z level to attempt to spawn an object at
 	Updated banker AI script (js/npc/ai/banker.js) with some extra validation checks, system messages and to take max weight capacity of bankbox into account
+	The sectionID property of NPCs are now transferred to their corpses upon death, to make it easier to identify in scripts from which NPC a corpse really originated
 
 30/10/2022 - Xuri
 	Player vendors in existing houses no longer teleport to new houses placed by owner nearby
