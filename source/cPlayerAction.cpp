@@ -1255,7 +1255,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 16 )
 		{
 			// No valid static elevation found, use dynamic elevation instead
-			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), 16, nChar->GetInstanceId() );
+			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
 			if( newZ < z || newZ > z + 16 )
 			{
 				// No valid dynamic elevation found. Use map elevation instead (don't implicitly trust Z from client)
@@ -1264,7 +1264,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 		else
 		{
-			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), 16, nChar->GetInstanceId() );
+			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
 			newZ = (( dynZ >= z && dynZ <= z + 16 ) ? dynZ : newZ );
 		}
 

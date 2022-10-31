@@ -23,6 +23,13 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		}
 
 		var bankBox = pTalking.FindItemLayer( 29 );
+		if( !ValidateObject( bankBox ))
+		{
+			pSock.SysMessage( "Error: No valid bankbox found! Please contact a GM for assistance." );
+			Console.Error( "No valid bankbox found for character " + pTalking.name + " with serial " + ( pTalking.serial ).toString() + "!" );
+			return false;
+		}
+
 		var trigWordHandled = false;
 		for( var trigWord = pSock.FirstTriggerWord(); !pSock.FinishedTriggerWords(); trigWord = pSock.NextTriggerWord() )
 		{
@@ -63,6 +70,12 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 					return false;
 				}
 
+				if( bankBox.weight > bankBox.weightMax )
+				{
+					pSock.SysMessage( GetDictionaryEntry( 9183, pSock.language )); // Your bank box is overloaded and cannot hold any more weight.
+					return false;
+				}
+
 				if( !splitString[1])
 				{
 					pTalking.tempObj = pTalkingTo;
@@ -75,25 +88,22 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 					var goldInPack = pTalking.ResourceCount( 0x0EED, 0 );
 					if( !isNaN( depositAmt ) && depositAmt > 0)
 					{
-						if( bankBox )
+						if( goldInPack < depositAmt )
 						{
-							if( goldInPack < depositAmt )
+							pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+						}
+						else
+						{
+							var bankContents = CountBankContents( pTalking, bankBox );
+							if( parseInt( bankContents[0] ) < maxBankItemAmt )
 							{
-								pTalkingTo.TextMessage( GetDictionaryEntry( 7002, pSock.language ), true, 0x03b2 ); // Ah, art thou trying to fool me? Thou hast not so much gold!
+								pTalking.UseResource( depositAmt, 0x0EED, 0 );
+								DivideDepositedGold( pTalking, bankBox, depositAmt );
+								pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
 							}
 							else
 							{
-								var bankContents = countBankContents( pTalking, bankBox );
-								if( parseInt( bankContents[0] ) < maxBankItemAmt )
-								{
-									pTalking.UseResource( depositAmt, 0x0EED, 0 );
-									DivideDepositedGold( pTalking, bankBox, depositAmt );
-									pTalkingTo.TextMessage( GetDictionaryEntry( 7003, pSock.language ), true, 0x03b2 ); // Thou hast deposited gold to thy account.
-								}
-								else
-								{
-									pSock.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items!
-								}
+								pSock.SysMessage( GetDictionaryEntry( 1935, pSock.language )); // That container cannot hold any more items!
 							}
 						}
 					}
@@ -116,7 +126,7 @@ function WithdrawFromBank( pSock, pTalking, pTalkingTo, bankBox, strSaid )
 	var playerPack = pTalking.pack;
 	if( playerPack.totalItemCount >= playerPack.maxItems )
 	{
-		pSock.SysMessage( 1819 ); // Your backpack cannot hold any more items!
+		pSock.SysMessage( GetDictionaryEntry( 1819, pSock.language )); // Your backpack cannot hold any more items!
 		return;
 	}
 
@@ -184,7 +194,7 @@ function OpenBank( pSock, pTalking, pTalkingTo, bankBox )
 	}
 
 	pTalking.OpenBank( pSock );
-	var bankContents = countBankContents( pTalking, bankBox );
+	var bankContents = CountBankContents( pTalking, bankBox );
 	if( bankContents )
 	{
 		var itemAmount = parseInt( bankContents[0], 10 );
@@ -252,6 +262,7 @@ function CreateNewBankBox( pTalking )
 	newBankBox.owner = pTalking;
 	newBankBox.container = pTalking;
 	newBankBox.maxItems = parseInt( GetServerSetting( "MAXPLAYERBANKITEMS" ));
+	newBankBox.weightMax = parseInt( GetServerSetting( "MAXPLAYERBANKWEIGHT" ));
 	newBankBox.type = 1;
 	newBankBox.morex = 1;
 	if( newBankBox )
@@ -265,7 +276,7 @@ function CreateNewBankBox( pTalking )
 }
 
 // Counts the amount of items in the bank box and registers their total weight
-function countBankContents( pTalking, bankBox )
+function CountBankContents( pTalking, bankBox )
 {
 	var mItem;
 	var bankContents = new Array();
@@ -319,7 +330,7 @@ function onCallback0( pSock, ourObj )
 		{
 			if( bankBox && ourObj.container && (( ourObj.container == pTalking ) || ( ourObj.container == pTalking.pack )))
 			{
-				var bankContents = countBankContents( pTalking, bankBox );
+				var bankContents = CountBankContents( pTalking, bankBox );
 				if( parseInt( bankContents[0] ) < maxBankItemAmt )
 				{
 					ourObj.container = bankBox;

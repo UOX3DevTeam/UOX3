@@ -896,7 +896,7 @@ auto CMulHandler::StaticTop( std::int16_t x, std::int16_t y, std::int8_t z, std:
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This was fixed to actually return the *elevation* of dynamic items at/above given coordinates
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::int8_t maxZ, std::uint16_t instanceId ) -> std::int8_t
+auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, std::int8_t maxZ ) -> std::int8_t
 {
 	auto dynZ = ILLEGAL_Z;
 
@@ -914,7 +914,7 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 				}
 				else if( tempItem->GetX() == x && tempItem->GetY() == y )
 				{
-					SI08 zTemp = static_cast<SI08> (tempItem->GetZ() + TileHeight( tempItem->GetId() ));
+					SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
 					if(( zTemp <= z + maxZ ) && zTemp > dynZ )
 					{
 						dynZ = zTemp;
@@ -961,7 +961,7 @@ auto CMulHandler::TileHeight( std::uint16_t tilenum ) -> std::int8_t
 auto CMulHandler::Height( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber,  std::uint16_t instanceId ) -> std::int8_t
 {
 	// let's check in this order.. dynamic, static, then the map
-	auto dynZ = DynamicElevation( x, y, z, worldNumber, MAX_Z_STEP, instanceId );
+	auto dynZ = DynamicElevation( x, y, z, worldNumber, instanceId, MAX_Z_STEP );
 	if( ILLEGAL_Z != dynZ )
 		return dynZ;
 
@@ -980,7 +980,7 @@ auto CMulHandler::Height( std::int16_t x, std::int16_t y, std::int8_t z, std::ui
 //o------------------------------------------------------------------------------------------------o
 auto CMulHandler::InBuilding( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId) -> bool
 {
-	auto dynZ = Map->DynamicElevation( x, y, z, worldNumber, static_cast<std::int8_t>( 127 ), instanceId );
+	auto dynZ = Map->DynamicElevation( x, y, z, worldNumber, instanceId, static_cast<std::int8_t>( 127 ) );
 	if( dynZ > ( z + 10 ))
 	{
 		return true;
