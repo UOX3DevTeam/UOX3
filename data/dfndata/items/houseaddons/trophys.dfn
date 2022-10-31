@@ -1,0 +1,76 @@
+[brownbeartrophy]
+{
+get=base_item
+name=a brown bear trophy
+id=0x1E60
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[polarbeartrophy]
+{
+get=base_item
+name=a polar bear trophy
+id=0x1E65
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[stagtrophy]
+{
+get=base_item
+name=a stag trophy
+id=0x1E61
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[largefishtrophy]
+{
+get=base_item
+name=a large fish trophy
+id=0x1E62
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[orctrophy]
+{
+get=base_item
+name=an orc trophy
+id=0x1E64
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[gorillatrophy]
+{
+get=base_item
+name=a gorilla trophy
+id=0x1E63
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
+
+[trolltrophy]
+{
+get=base_item
+name=a troll trophy
+id=0x1E66
+movable=2
+pileable=0
+dyeable=0
+decay=0
+}
