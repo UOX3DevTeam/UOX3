@@ -463,7 +463,7 @@ bool CreateBoat( CSocket *s, CBoatObj *b, UI08 id2, UI08 boattype )
 	const SI16 x = b->GetX(), y = b->GetY();
 	SI08 z = Map->MapElevation( x, y, worldNumber );
 
-	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, 20, instanceId );
+	const SI08 dynz = Map->DynamicElevation( x, y, z, worldNumber, instanceId, 20 );
 	if( ILLEGAL_Z != dynz )
 	{
 		z = dynz;
