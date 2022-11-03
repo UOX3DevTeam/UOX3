@@ -11,13 +11,17 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( mChar.isCasting )
 		{
 			if( mSock != null )
-				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 762, mSock.language )); // You are already casting a spell.
+			}
 			return true;
 		}
 		else if( mChar.GetTimer( Timer.SPELLTIME ) > GetCurrentClock() )
 		{
 			if( mSock != null )
-				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1638, mSock.language )); // You must wait a little while before casting
+			}
 			return true;
 		}
 	}
@@ -27,14 +31,18 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 	// Fetch spelltype; 0 = normal spell, 1 = scroll, 2 = wand
 	if( mSock != null )
+	{
 		spellType = mSock.currentSpellType;
+	}
 
 	mChar.spellCast = spellNum;
 
 	if( mChar.isJailed && mChar.commandlevel < 2 )
 	{
 		if( mSock != null )
-			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language ) );
+		{
+			mSock.SysMessage( GetDictionaryEntry( 704, mSock.language )); // You are in jail and cannot cast spells!
+		}
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -48,17 +56,21 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		if( ourRegion.isSafeZone )
 		{
 			if( mSock != null )
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
+			}
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
-				return true;
+			return true;
 		}
 
 		if( !ourRegion.canCastAggressive )
 		{
 			if( mSock != null )
-				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 706, mSock.language )); // This is not allowed in town.
+			}
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
 			mChar.spellCast = -1;
@@ -69,7 +81,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( !mSpell.enabled )
 	{
 		if( mSock != null )
-			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language ) );
+		{
+			mSock.SysMessage( GetDictionaryEntry( 707, mSock.language )); // That spell is currently not enabled.
+		}
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
 		mChar.isCasting = false;
 		mChar.spellCast = -1;
@@ -96,10 +110,12 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		{
 			var itemRHand = mChar.FindItemLayer( 0x01 );
 			var itemLHand = mChar.FindItemLayer( 0x02 );
-			if( itemLHand || ( itemRHand && itemRHand.type != 9 ) )	// Spellbook
+			if( itemLHand || ( itemRHand && itemRHand.type != 9 ))	// Spellbook
 			{
 				if( mSock != null )
-					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language ) );
+				{
+					mSock.SysMessage( GetDictionaryEntry( 708, mSock.language )); // You cannot cast with a weapon equipped.
+				}
 				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -109,16 +125,20 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	}
 
 	if( mChar.visible == 1 || mChar.visible == 2 )
+	{
 		mChar.visible = 0;
+	}
 
 	if( mSock != null )
+	{
 		mChar.BreakConcentration( mSock );
+	}
 
 	if( mChar.commandlevel < 2  )
 	{
 		//Check for enough reagents
 		// type == 0 -> SpellBook
-		if( spellType == 0 && !checkReagents( mChar, mSpell ) )
+		if( spellType == 0 && !CheckReagents( mChar, mSpell ))
 		{
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -132,7 +152,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.mana > mChar.mana )
 			{
 				if( mSock != null )
-					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language ) );
+				{
+					mSock.SysMessage( GetDictionaryEntry( 696, mSock.Language )); // You have insufficient mana to cast that spell.
+				}
 				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -141,7 +163,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.stamina > mChar.stamina )
 			{
 				if( mSock != null )
-					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language ) );
+				{
+					mSock.SysMessage( GetDictionaryEntry( 697, mSock.language )); // You have insufficient stamina to cast that spell.
+				}
 				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -150,7 +174,9 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 			if( mSpell.health >= mChar.health )
 			{
 				if( mSock != null )
-					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language ) );
+				{
+					mSock.SysMessage( GetDictionaryEntry( 698, mSock.language )); // You have insufficient health to cast that spell.
+				}
 				mChar.SetTimer( Timer.SPELLTIME, 0 );
 				mChar.isCasting = false;
 				mChar.spellCast = -1;
@@ -159,7 +185,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 		}
 	}
 
-	if( ( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill ) ) )
+	if(( mChar.commandlevel < 2 ) && ( !mChar.CheckSkill( 25, lowSkill, highSkill )))
 	{
 		if( mChar.isHuman )
 		{
@@ -168,7 +194,7 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 
 		if( spellType == 0 )
 		{
-			deleteReagents( mChar, mSpell );
+			DeleteReagents( mChar, mSpell );
 			mChar.SpellFail();
 			mChar.SetTimer( Timer.SPELLTIME, 0 );
 			mChar.isCasting = false;
@@ -183,23 +209,34 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	if( spellType == 0 && mChar.commandlevel < 2 ) // if they are a gm they don't have a delay :-)
 	{
 		mChar.SetTimer( Timer.SPELLTIME, delay * 1000 );
-		mChar.frozen = true;
+		if( !GetServerSetting( "CastSpellsWhileMOving" ))
+		{
+			mChar.frozen = true;
+		}
 	}
 	else
+	{
 		mChar.SetTimer( Timer.SPELLTIME, 0 );
+	}
 
 	if( !mChar.isonhorse )
 	{
 		var actionID = mSpell.action;
 		if( mChar.isHuman || actionID != 0x22 )
+		{
 			mChar.DoAction( actionID );
+		}
 	}
 
 	var tempString;
 	if( mSpell.fieldSpell && mChar.skills.magery > 600 )
+	{
 		tempString = "Vas " + mSpell.mantra;
+	}
 	else
+	{
 		tempString = mSpell.mantra;
+	}
 
 	mChar.TextMessage( tempString );
 	mChar.isCasting = true;
@@ -209,35 +246,53 @@ function onSpellCast( mSock, mChar, directCast, spellNum )
 	return true;
 }
 
-function checkReagents( mChar, mSpell )
+function CheckReagents( mChar, mSpell )
 {
 	var failedCheck = 0;
 	if( mSpell.ash > 0 && mChar.ResourceCount( 0x0F8C ) < mSpell.ash )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.drake > 0 && mChar.ResourceCount( 0x0F86 ) < mSpell.drake )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.garlic > 0 && mChar.ResourceCount( 0x0F84 ) < mSpell.garlic )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.ginseng > 0 && mChar.ResourceCount( 0x0F85 ) < mSpell.ginseng )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.moss > 0 && mChar.ResourceCount( 0x0F7B ) < mSpell.moss )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.pearl > 0 && mChar.ResourceCount( 0x0F7A ) < mSpell.pearl )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.shade > 0 && mChar.ResourceCount( 0x0F88 ) < mSpell.shade )
+	{
 		failedCheck = 1;
+	}
 	if( mSpell.silk > 0 && mChar.ResourceCount( 0x0F8D ) < mSpell.silk )
+	{
 		failedCheck = 1;
+	}
 	if( failedCheck == 1 )
 	{
 		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
 		return false;
 	}
 	else
+	{
 		return true;
+	}
 }
 
-function deleteReagents( mChar, mSpell )
+function DeleteReagents( mChar, mSpell )
 {
 	mChar.UseResource( mSpell.pearl, 0x0F7A );
 	mChar.UseResource( mSpell.moss, 0x0F7B );
@@ -258,13 +313,17 @@ function onTimer( mChar, timerID )
 	{
 		var ourTarg = mChar.target;
 		if( ourTarg && ourTarg.isChar )
+		{
 			onSpellSuccess( null, mChar, ourTarg );
+		}
 	}
 	else
 	{
 		var mSock = mChar.socket;
 		if( mSock != null )
+		{
 			mSock.CustomTarget( 0, Spells[timerID].strToSay, 1 ); // hostile cursor type
+		}
 	}
 }
 
@@ -274,7 +333,9 @@ function onCallback0( mSock, ourTarg )
 	{
 		var mChar = mSock.currentChar;
 		if( mChar )
+		{
 			onSpellSuccess( mSock, mChar, ourTarg );
+		}
 	}
 }
 
@@ -284,35 +345,39 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		return;
 
 	var spellNum	= mChar.spellCast;
-	var mSpell	= Spells[spellNum];
+	var mSpell		= Spells[spellNum];
 	var spellType	= 0;
 	var sourceChar	= mChar;
 
 	if( mSock != null )
+	{
 		spellType = mSock.currentSpellType;
+	}
 
 	mChar.SetTimer( Timer.SPELLTIME, 0 );
 	mChar.spellCast = -1;
 
 	if( mChar.npc || spellType != 2 )
 	{
-		mChar.mana 	= mChar.mana - mSpell.mana;
+		mChar.mana 		= mChar.mana - mSpell.mana;
 		mChar.health 	= mChar.health - mSpell.health;
 		mChar.stamina	= mChar.stamina - mSpell.stamina;
 	}
 	if( !mChar.npc && spellType == 0 )
 	{
-		deleteReagents( mChar, mSpell );
+		DeleteReagents( mChar, mSpell );
 	}
 
-	if( !mChar.InRange( ourTarg, 10 ) )
+	if( !mChar.InRange( ourTarg, 10 ))
 	{
 		if( mSock != null )
-			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language ) );
+		{
+			mSock.SysMessage( GetDictionaryEntry( 712, mSock.language )); // You can't cast on someone that far away!
+		}
 		return;
 	}
 
-	if( !mChar.CanSee( ourTarg ) )
+	if( !mChar.CanSee( ourTarg ))
 	{
 		return;
 	}
@@ -323,22 +388,28 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		if( targRegion.isSafeZone )
 		{
 			if( mSock != null )
-				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 1799, mSock.language )); // Hostile actions are not permitted in this safe area.
+			}
 			return;
 		}
 		if( !targRegion.canCastAggressive )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 709, mSock.language )); // You can't cast in town!
+			}
 			return;
 		}
 		if( !ourTarg.vulnerable || ourTarg.aiType == 17 )
 		{
 			if( mSock )
-				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language ) );
+			{
+				mSock.SysMessage( GetDictionaryEntry( 713, mSock.language )); // They are invulnerable merchants!
+			}
 			return;
 		}
-//		mChar.AttackTarget( ourTarg );
+
 		if( mSpell.reflectable )
 		{
 			if( ourTarg.magicReflect )
@@ -352,11 +423,15 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 	}
 
 	if( sourceChar.npc )
+	{
 		ourTarg.SoundEffect( mSpell.soundEffect, true );
+	}
 	else
+	{
 		sourceChar.SoundEffect( mSpell.soundEffect, true );
+	}
 	sourceChar.SpellMoveEffect( ourTarg, mSpell );
 	ourTarg.SpellStaticEffect( mSpell );
 
-	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round(mChar.skills.magery / 100 ), 0, 0 );
+	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round( mChar.skills.magery / 100 ), 0, 0 );
 }
