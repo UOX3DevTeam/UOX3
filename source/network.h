@@ -141,15 +141,15 @@ public:
 	{
 		return this->raw();
 	}
-	
+
 	auto GetSize() const -> size_t
 	{
 		return this->size();
 	}
-	
+
 	// End compatability of original CPacketStream
 	//o------------------------------------------------------------------------------------------------o
-	
+
 	//o------------------------------------------------------------------------------------------------o
 	// Normally part of strutil, but included here for stand alone
 public:
@@ -159,14 +159,14 @@ public:
 
 	// Dumps a byte buffer, formatted to a provided stream.
 	// The entries_line indicate how many bytes to display per line.
-	static auto DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix = radix_t::hex, int entries_line = 8 ) -> void;
-	
+	static auto DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix = radix_t::hex, std::size_t entries_line = 8 ) -> void;
+
 private:
 
 	// Convert a bool to a string
 	// the true_value/false_value are returned based on the bool
 	static auto ntos( bool value, const std::string &true_value = "true", const std::string &false_value = "false" ) -> std::string;
-	
+
 
 	// Convert a number to a string, with options on radix, prefix, size, pad
 	// Radix indicates the radix the string will represent

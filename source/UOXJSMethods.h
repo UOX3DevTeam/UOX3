@@ -302,8 +302,7 @@ JSMethodFunc CSocket_FinishedTriggerWords;
 JSMethodFunc CRegion_AddScriptTrigger;
 JSMethodFunc CRegion_RemoveScriptTrigger;
 
-/* Unused
-static JSFunctionSpec CGump_Methods[] =
+inline JSFunctionSpec CGump_Methods[] =
 {
 	{ "Free",						CGump_Free,							0, 0, 0 },
 	{ "AddBackground",				CGump_AddBackground,				5, 0, 0 },
@@ -340,7 +339,6 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "Send",						CGump_Send,							1, 0, 0 },
 	{ nullptr,						nullptr,							0, 0, 0 }
 };
-*/
 
 inline JSFunctionSpec CChar_Methods[] =
 {
@@ -589,7 +587,7 @@ inline JSFunctionSpec CRace_Methods[] =
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CGumpData_Methods[] =
+inline JSFunctionSpec CGumpData_Methods[] =
 {
 	{ "Free",		CGumpData_Free,			0, 0, 0 },
 	{ "getButton",	CGumpData_GetButton,	1, 0, 0 },
@@ -598,8 +596,7 @@ static JSFunctionSpec CGumpData_Methods[] =
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
-/* Unused
-static JSFunctionSpec CFile_Methods[] =
+inline JSFunctionSpec CFile_Methods[] =
 {
 	{ "Free",		CFile_Free,				0, 0, 0 },
 	{ "Open",		CFile_Open,				2, 0, 0 },
@@ -612,7 +609,6 @@ static JSFunctionSpec CFile_Methods[] =
 	{ "Pos",		CFile_Pos,				1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
-*/
 
 inline JSFunctionSpec CAccount_Methods[] =
 {
@@ -646,8 +642,7 @@ inline JSFunctionSpec CConsole_Methods[] =
 	{ nullptr,				nullptr,								0, 0, 0 }
 };
 
-/* Unused
-static JSFunctionSpec CPacket_Methods[] =
+inline JSFunctionSpec CPacket_Methods[] =
 {
 	{ "Free",			CPacket_Free,				0, 0, 0 },
 	{ "WriteByte",		CPacket_WriteByte,			2, 0, 0 },
@@ -657,7 +652,6 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
 	{ nullptr,			nullptr,						0, 0, 0 }
 };
-*/
 
 inline JSFunctionSpec CParty_Methods[] =
 {
@@ -668,4 +662,3 @@ inline JSFunctionSpec CParty_Methods[] =
 };
 
 #endif
-

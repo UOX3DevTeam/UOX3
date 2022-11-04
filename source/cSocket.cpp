@@ -621,13 +621,13 @@ const bool				DEFSOCK_LOGINCOMPLETE			= false;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This function basically does what the name implies
 //o------------------------------------------------------------------------------------------------o
-CSocket::CSocket( size_t sockNum ) : currCharObj( nullptr ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
-tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), range( DEFSOCK_RANGE ), clickx( DEFSOCK_CLICKX ), clicky( DEFSOCK_CLICKY ),
-newClient( DEFSOCK_NEWCLIENT ), currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ),
-logging( DEFSOCK_LOGGING ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ), postAckCount( DEFSOCK_POSTACKCOUNT ),
-pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), firstPacket( DEFSOCK_FIRSTPACKET ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
-pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
-bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr ), 
+CSocket::CSocket( size_t sockNum ) : currCharObj( nullptr ), idleTimeout( DEFSOCK_IDLETIMEOUT ), clickx( DEFSOCK_CLICKX ), clicky( DEFSOCK_CLICKY ),
+clickz( DEFSOCK_CLICKZ ), currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ),
+range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ), postAckCount( DEFSOCK_POSTACKCOUNT ),
+pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ), pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ),
+cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ), bytesSent( DEFSOCK_BYTESSENT ),
+receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ),
+newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr ),
 bytesRecvWarningCount( DEFSOCK_BYTESRECEIVEDWARNINGCOUNT ), bytesSentWarningCount( DEFSOCK_BYTESSENTWARNINGCOUNT )
 {
 	InternalReset();

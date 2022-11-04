@@ -7722,7 +7722,7 @@ JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates blue text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnBlue( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7739,7 +7739,7 @@ JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates normal text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnNormal( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7756,7 +7756,7 @@ JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates bright white text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnBrightWhite( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7774,7 +7774,7 @@ JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [done] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintDone( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -7805,7 +7805,7 @@ JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [failed] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintFailed( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -7835,7 +7835,7 @@ JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [skipped] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintPassed( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7852,7 +7852,7 @@ JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_ClearScreen( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7869,7 +7869,7 @@ JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints [done] or [failed] based on provided boolean
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -7888,7 +7888,7 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval
 //|	Purpose		-	Moves console cursor position to specified x, y location
 //|	Notes		-	If you want the same line,  y == -1
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_MoveTo( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 2 )
 	{
@@ -7915,7 +7915,7 @@ JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|					4 - Yellow
 //|					5 - Bright White
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintSpecial( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 2 )
 	{
@@ -7934,7 +7934,7 @@ JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start the UOX3 shutdown sequence
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_BeginShutdown( JSContext * /* *cx*/, JSObject * /* *obj*/, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -7960,7 +7960,7 @@ JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //|						7 Reload JS
 //|						8 Reload HTML
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Reload( JSContext *cx, JSObject * /* *obj*/, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -7985,7 +7985,7 @@ JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Purpose		-	Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going from the
 //|					character to the target
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 2 )
 	{
@@ -8024,7 +8024,7 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the STATFX effect of the specified spell in SPELLS.DFN, on the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -8063,7 +8063,7 @@ JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Break a caster's concentration. Provide socket as extra argument for player chars
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc > 1 )
 	{
@@ -8100,7 +8100,7 @@ JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the Add-menu to the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -8128,7 +8128,7 @@ JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks item down (sets movable value to 3)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -8154,7 +8154,7 @@ JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //|	Purpose		-	Initializes a WanderArea (10x10 box, or 10 radius circle) for the NPC.
 //|					Will only work if they already have a wandermode set to box or circle.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, uintN /*argc*/, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
@@ -8173,7 +8173,7 @@ void NewCarveTarget( CSocket *s, CItem *i );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes the character belonging to socket carve up a corpse
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc > 1 )
 	{
@@ -8205,7 +8205,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile name of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -8955,7 +8955,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified damage value over character's head
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 2 )
 	{
@@ -8994,7 +8994,7 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Lets character react to damage taken
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -9048,7 +9048,7 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Deals damage of a specified damageType to a character, with optional parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc < 1 || argc > 4 )
 	{
@@ -9141,7 +9141,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval * /* *rval*/ )
 {
 	if( argc != 0 )
 	{
@@ -9167,7 +9167,7 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Heals a character, with optional argument to provide character who healed
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -9426,7 +9426,7 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //|					Valid moreVarValue values: 0 - 255
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 3 )
 	{
@@ -9491,7 +9491,7 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -9535,7 +9535,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -9609,7 +9609,7 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -9654,7 +9654,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval * /* *rval*/ )
 {
 	if( argc != 1 )
 	{
@@ -9781,7 +9781,7 @@ JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -9841,7 +9841,7 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -9881,7 +9881,7 @@ JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's pets/followers
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10189,7 +10189,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 		JSEncapsulate toGetMember( cx, &( argv[0] ));
 		size_t memberOffset = toGetMember.toInt();
-		if( memberOffset < 0 || memberOffset >= ourParty->MemberList()->size() )
+		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			MethodError( "GetMember: Invalid character to get, index out of bounds" );
 			*rval = JSVAL_NULL;
@@ -10218,7 +10218,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10243,7 +10243,7 @@ JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10268,7 +10268,7 @@ JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all trigger words in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, jsval * /* *argv*/, jsval *rval )
 {
 	if( argc != 0 )
 	{

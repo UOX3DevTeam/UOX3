@@ -33,7 +33,7 @@ using namespace std::string_literals;
 //o------------------------------------------------------------------------------------------------o
 //o------------------------------------------------------------------------------------------------o
 
-ByteBufferBounds_st::ByteBufferBounds_st( int offset, int amount, int size ): offset( offset ), amount( amount ), buffersize( size ), std::out_of_range( "" )
+ByteBufferBounds_st::ByteBufferBounds_st( int offset, int amount, int size ): std::out_of_range( "" ), offset( offset ), amount( amount ), buffersize( size )
 {
 	_msg = "Offset : "s + std::to_string( offset ) + " Amount: "s + std::to_string( amount ) + " exceeds buffer size of: "s + std::to_string( size );
 }
@@ -65,7 +65,7 @@ auto ByteBuffer_t::ntos( bool value, const std::string &true_value, const std::s
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Formatted dump of a byte buffer
 //o------------------------------------------------------------------------------------------------o
-auto ByteBuffer_t::DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix, int entries_line ) -> void
+auto ByteBuffer_t::DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix, std::size_t entries_line ) -> void
 {
 	// number of characters for entry
 	auto entry_size = 3;  // decimal and octal
@@ -83,18 +83,18 @@ auto ByteBuffer_t::DumpByteBuffer( std::ostream &output, const std::uint8_t *buf
 	auto num_rows = ( length / entries_line ) + ((( length % entries_line ) == 0 ) ? 0 : 1 );
 	// what is the largest number for the address ?
 	auto max_address_chars = static_cast<int>(( ntos( num_rows * entries_line )).size() );
-	
+
 	// first write out the header
 	output << std::setw( max_address_chars + 2 ) << "" << std::setw( 1 );
-	for( auto i=0; i < entries_line; ++i )
+	for( std::size_t i=0; i < entries_line; ++i )
 	{
 		output << ntos( i, radix_t::dec, false, entry_size, ' ' ) << " ";
 	}
 	output << "\n";
-	
+
 	// now we write out the values for each line
 	std::string text( entries_line, ' ' );
-	
+
 	for( std::size_t i = 0; i < length; ++i )
 	{
 		auto row = i / entries_line;
@@ -114,7 +114,7 @@ auto ByteBuffer_t::DumpByteBuffer( std::ostream &output, const std::uint8_t *buf
 		else
 		{
 			text[( i % entries_line )] = '.';
-			
+
 		}
 		if( i % entries_line == entries_line - 1 )
 		{
@@ -277,7 +277,7 @@ void CNetworkStuff::SetLastOn( CSocket *s )
 
 	// some ctime()s like to stick \r\n on the end, we don't want that
 	size_t mLen = strlen( t );
-	for( size_t end = mLen - 1; end >= 0 && isspace( t[end] ) && end < mLen; --end )
+	for( size_t end = mLen - 1; end > 0 && isspace( t[end] ) && end < mLen; --end )
 	{
 		t[end] = '\0';
 	}
@@ -569,7 +569,7 @@ void CNetworkStuff::CheckConn( void )
 	if( s > 0 )
 	{
 		SI32 len = sizeof( struct sockaddr_in );
-		size_t newClient;
+		SI32 newClient;
 #if PLATFORM == WINDOWS
 		newClient = accept( a_socket, ( struct sockaddr * )&client_addr, &len );
 #else
@@ -584,7 +584,7 @@ void CNetworkStuff::CheckConn( void )
 		CSocket *toMake = new CSocket( newClient );
 		// set the ip address of the client;
 		toMake->ipaddress = Ip4Addr_st( client_addr.sin_addr.s_addr );
-		
+
 		if( newClient < 0 )
 		{
 #if PLATFORM == WINDOWS
@@ -763,7 +763,7 @@ auto CNetworkStuff::Startup() -> void
 }
 CSocket *CNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
-	if( s >= connClients.size() )
+	if( (unsigned)s >= connClients.size() )
 		return nullptr;
 
 	return connClients[s];
@@ -778,7 +778,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetId, CSocket *s );
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::GetMsg( UOXSOCKET s )
 {
-	if( s >= connClients.size() )
+	if( (unsigned)s >= connClients.size() )
 		return;
 
 	CSocket *mSock = connClients[s];
@@ -1319,7 +1319,7 @@ void CNetworkStuff::Disconnect( CSocket *s ) // Force disconnection of player //
 
 UOXSOCKET CNetworkStuff::FindLoginPtr( CSocket *s )
 {
-	for( UOXSOCKET i = 0; i < loggedInClients.size(); ++i )
+	for( UOXSOCKET i = 0; (unsigned)i < loggedInClients.size(); ++i )
 	{
 		if( loggedInClients[i] == s )
 			return i;
@@ -1338,7 +1338,7 @@ UOXSOCKET CNetworkStuff::FindLoginPtr( CSocket *s )
 void CNetworkStuff::Transfer( CSocket *mSock )
 {
 	UOXSOCKET s = FindLoginPtr( mSock );
-	if( s >= loggedInClients.size() )
+	if( (unsigned)s >= loggedInClients.size() )
 		return;
 
 	//std::scoped_lock lock(internallock);
@@ -1366,6 +1366,7 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 	if( mSock->NewClient() )
 	{
 		SI32 count;
+    (void)count;
 		count = mSock->Receive( 4 );
 		auto packetId = mSock->Buffer()[0];
 
@@ -1512,7 +1513,7 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 
 UOXSOCKET CNetworkStuff::FindNetworkPtr( CSocket *toFind )
 {
-	for( UOXSOCKET i = 0; i < connClients.size(); ++i )
+	for( UOXSOCKET i = 0; (unsigned)i < connClients.size(); ++i )
 	{
 		if( connClients[i] == toFind )
 			return i;
@@ -1637,7 +1638,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void
 	}
 }
 
-void CNetworkStuff::RegisterPacket( UI08 packet, UI08 subCmd, UI16 scriptId )
+void CNetworkStuff::RegisterPacket( UI08 packet, UI08 /*subCmd*/, UI16 scriptId )
 {
 	//UI16 packetId = static_cast<UI16>(( subCmd << 8 ) + packet ); // Registration of subCmd disabled until it can be fully implemented
 	UI16 packetId = static_cast<UI16>( packet );

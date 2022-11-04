@@ -24,7 +24,7 @@ inline JSClass global_class =
   JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
-static JSClass uox_class =
+inline JSClass uox_class =
 {
 	"uoxscript",
 	0,
@@ -392,7 +392,7 @@ inline JSClass UOXGump_class =
 //|	Class		-	static JSClass UOXGumpData_class =
 //|	Date		-	1/21/2003 7:35:37 AM
 //o------------------------------------------------------------------------------------------------o
-static JSClass UOXGumpData_class =
+inline JSClass UOXGumpData_class =
 {
 	"GumpData",
 	JSCLASS_HAS_PRIVATE,

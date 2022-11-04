@@ -79,7 +79,7 @@ auto ObjectFactory::SerialGen_st::operator = ( SI32 value ) ->SerialGen_st&
 //| Notes		-	Starting Characters with a serial of 1, rather than 0. 
 //|					The UO Client doesn't always respond well to a serial of 0
 //o------------------------------------------------------------------------------------------------o
-ObjectFactory::ObjectFactory():character_serials( 1 ), item_serials( BASEITEMSERIAL )
+ObjectFactory::ObjectFactory():item_serials( BASEITEMSERIAL ), character_serials( 1 )
 {	
 }
 

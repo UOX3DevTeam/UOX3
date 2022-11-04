@@ -344,8 +344,8 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		return false;
 
 	const UI16 multiId = static_cast<UI16>( m->GetId() - 0x4000 );
-	SI32 length = 0;
-	
+	/*SI32 length = 0;*/ // unused variable
+
 	if( !Map->MultiExists( multiId ))
 	{
 		// the length associated with the multi means one thing
@@ -353,8 +353,8 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		// so as a measure... if it's wet, we'll make it a boat
 		// if it's dry, we'll make it a house
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
-		length = 0;
-		
+		//length = 0; // unused variable
+
 		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
 		if( map1.CheckFlag( TF_WET )) // is it water?
 		{
@@ -374,13 +374,13 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		const SI16 baseX = m->GetX();
 		const SI16 baseY = m->GetY();
 		const SI08 baseZ = m->GetZ();
-		
+
 		for( auto &multi : Map->SeekMulti( multiId ).items )
 		{
 			// Ignore signs and signposts sticking out of buildings
 			if((( multi.tileId >= 0x0b95 ) && ( multi.tileId <= 0x0c0e )) || (( multi.tileId == 0x1f28 ) || ( multi.tileId == 0x1f29 )))
 				continue;
-			
+
 			if(( baseX + multi.offsetX ) == x && ( baseY + multi.offsetY ) == y )
 			{
 				// Find the top Z level of the multi section being examined
@@ -528,7 +528,6 @@ CItem *FindItemNearXYZ( SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 id, UI16 
 				}
 			}
 		}
-			
 	}
 	return currItem;
 }

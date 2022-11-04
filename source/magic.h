@@ -338,7 +338,6 @@ public:
 	}
 };
 
-
 #define MAGIC_CHARTARG_LIST CChar *, CChar *, CChar *, SI08
 #define MAGIC_ITEMTARG_LIST CSocket *, CChar *, CItem *, SI08
 #define MAGIC_LOCATION_LIST CSocket *, CChar *, SI16, SI16, SI08, SI08
@@ -365,12 +364,12 @@ public:
 #define MAG_NOHANDLER( name ) extern bool name ( MAGIC_NOTARG_LIST )
 #define MAG_AREASTUB( name ) extern void name ( MAGIC_AREA_STUB_LIST )
 
-#define MAGIC_DEFN bool (*) ()
+#define MAGIC_DEFN bool (*) (...)
 
 struct MagicTable_st
 {
 	SI32			spell_name;
-	bool			( *mag_extra ) ();	// extra data - see above
+	bool			( *mag_extra ) (...);	// extra data - see above
 };
 
 bool AreaAffectSpell( CSocket *sock, CChar *caster, void ( *trgFunc )( MAGIC_AREA_STUB_LIST ), SI08 curSpell );

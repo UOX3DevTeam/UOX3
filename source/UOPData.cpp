@@ -25,12 +25,12 @@ auto UopIndex_st::HashLittle2( const std::string& s ) -> std::uint64_t
 	std::uint32_t a;
 	std::uint32_t b;
 	std::uint32_t c;
-	
+
 	c = 0xDEADBEEF + static_cast<std::uint32_t>( length );
 	a = c;
 	b = c;
 	int k = 0;
-	
+
 	while( length > 12 )
 	{
 		a += ( s[k] );
@@ -45,18 +45,18 @@ auto UopIndex_st::HashLittle2( const std::string& s ) -> std::uint64_t
 		c += ( s[k + 9] << 8 );
 		c += ( s[k + 10] << 16 );
 		c += ( s[k + 11] << 24 );
-		
+
 		a -= c; a ^= c << 4 | c >> 28; c += b;
 		b -= a; b ^= a << 6 | a >> 26; a += c;
 		c -= b; c ^= b << 8 | b >> 24; b += a;
 		a -= c; a ^= c << 16 | c >> 16; c += b;
 		b -= a; b ^= a << 19 | a >> 13; a += c;
 		c -= b; c ^= b << 4 | b >> 28; b += a;
-		
+
 		length -= 12;
 		k += 12;
 	}
-	
+
 	if( length != 0 )
 	{
 		// Notice the lack of breaks!  we actually want it to fall through
@@ -114,13 +114,10 @@ auto UopIndex_st::HashLittle2( const std::string& s ) -> std::uint64_t
 				c -= ( b << 24 ) | ( b >> 8 );
 				break;
 			}
-				
 			default:
 				break;
 		}
-		
 	}
-	
 	return ( static_cast<std::uint64_t>( b ) << 32 ) | static_cast<std::uint64_t>( c );
 }
 //===========================================================
@@ -273,8 +270,9 @@ auto UopFile::IsUop( const std::string &filepath ) const -> bool
 //===============================================================
 auto UopFile::NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool
 {
+  (void)data; // unused variable
 	auto fill = std::cerr.fill();
-	
+
 	std::cerr << "Hashlookup failed for entry "s << entry << " with a hash of " << std::showbase 
 		<< std::hex << std::setfill( '0' ) << std::setw( 16 ) << hash << std::dec << std::noshowbase 
 		<< std::setfill( fill ) << std::setw( 0 ) << std::endl;
@@ -302,14 +300,14 @@ auto UopFile::LoadUop( const std::string &filepath, std::size_t max_hashindex, c
 	}
 	auto hashstorage1 = UopIndex_st( hashformat1, max_hashindex );
 	auto hashstorage2 = UopIndex_st( hashformat2, max_hashindex );
-	
+
 	std::uint64_t table_offset = 0;
 	std::uint32_t tablesize = 0;
 	std::uint32_t maxentry = 0;
 	input.read( reinterpret_cast<char*>( &table_offset ), sizeof( table_offset ));
 	input.read( reinterpret_cast<char*>( &tablesize ), sizeof( tablesize ));
 	input.read( reinterpret_cast<char*>( &maxentry ), sizeof( maxentry ));
-	
+
 	// Read the table entries
 	input.seekg( table_offset, std::ios::beg );
 	std::vector<TableEntry_st> entries;
@@ -344,7 +342,7 @@ auto UopFile::LoadUop( const std::string &filepath, std::size_t max_hashindex, c
 			{
 				uopdata = zdecompress( uopdata, entry.decompressedLength );
 			}
-			
+
 			// First see if we should even do anything with this hash
 			if( ProcessHash( entry.identifer, current_entry, uopdata ))
 			{
@@ -362,7 +360,6 @@ auto UopFile::LoadUop( const std::string &filepath, std::size_t max_hashindex, c
 						return false;
 					}
 				}
-				
 				ProcessEntry( current_entry, index, uopdata );
 			}
 		}
@@ -384,7 +381,7 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 	auto compress = static_cast<std::uint16_t>( WriteCompress() );
 	std::vector<unsigned char> emptyTableEntry( TableEntry_st::_entry_size, 0 );
 	auto numberOfEntries = EntriesToWrite();
-	
+
 	// First can we even open the file
 	auto output = std::ofstream( filepath, std::ios::binary );
 	if( !output.is_open() )
@@ -395,7 +392,6 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 	output.write( reinterpret_cast<const char*>( &_uop_identifer ), sizeof( _uop_identifer ));
 	output.write( reinterpret_cast<const char*>( &_uop_version ), sizeof( _uop_version ));
 	output.write( reinterpret_cast<const char*>( &timeStamp ), sizeof( timeStamp ));
-	
 	output.write( reinterpret_cast<const char*>( &firstTable ), sizeof( firstTable ));
 	output.write( reinterpret_cast<const char*>( &tableSize ), sizeof( tableSize ));
 	output.write( reinterpret_cast<char*>( &numberOfEntries), sizeof( numberOfEntries ));
@@ -407,7 +403,6 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 		output.write( &pad, sizeof( pad ));
 	}
 	auto numerTables = numberOfEntries / tableSize + ((( numberOfEntries % tableSize ) > 0 ) ? 1 : 0 );
-	
 	auto tables = std::vector<TableEntry_st>( tableSize );
 	// We are going to write place holders for our table,
 	// and then the data
@@ -427,12 +422,10 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 		for( int j = idxStart; j < idxEnd; ++j, ++data_entry )
 		{
 			auto rawdata = EntryForWrite( j );
-			
 			unsigned int sizeDecompressed = static_cast<unsigned int>( rawdata.size() );
 			unsigned int sizeOut = sizeDecompressed;
 			if(( compress != 0 ) && ( sizeDecompressed > 0 ))
 			{
-				
 				auto dataout = this->zcompress( rawdata );
 				sizeOut = static_cast<unsigned int>( dataout.size() );
 				rawdata = dataout;
@@ -443,7 +436,7 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 			tables[data_entry].decompressedLength = sizeDecompressed;
 			auto hashkey = WriteHash(data_entry + i*tableSize);
 			tables[data_entry].identifer =  UopIndex_st::HashLittle2( hashkey );
-			
+
 			if( sizeDecompressed > 0 )
 			{
 				tables[data_entry].dataBlockHash = UopIndex_st::HashAdler32( rawdata );
@@ -472,7 +465,6 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 			output.write( reinterpret_cast<char*>( &tables[tableEntry].identifer ), sizeof( tables[tableEntry].identifer ));
 			output.write( reinterpret_cast<char*>( &tables[tableEntry].dataBlockHash ), sizeof( tables[tableEntry].dataBlockHash ));
 			output.write( reinterpret_cast<char*>( &tables[tableEntry].compression ), sizeof( tables[tableEntry].compression ));
-			
 		}
 		// Fill the remainder with entry entries
 		for( ; tableEntry < tableSize; ++tableEntry )
@@ -483,4 +475,3 @@ auto UopFile::WriteUop( const std::string &filepath ) -> bool
 	}
 	return true;
 }
-

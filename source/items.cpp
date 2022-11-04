@@ -921,7 +921,7 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 			//	weight|LOOTLIST=sectionName,amountMin amountMax
 			//	weight|ITEMLIST=sectionName,amount
 			//	weight|ITEMLIST=sectionName,amountMin amountMax
-			for( int j = 0; j < itemListSize; j++ )
+			for( size_t j = 0; j < itemListSize; j++ )
 			{
 				// Split string for entry into a stringlist, based on | as a separator
 				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
@@ -946,7 +946,7 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 
 			// Loop through the items in the itemlist/lootlist
 			int weightOfChosenItem = 0;
-			for( int j = 0; j < itemListSize; j++ )
+			for( size_t j = 0; j < itemListSize; j++ )
 			{
 				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
 				if( csecs.size() == 2 )

@@ -45,7 +45,7 @@ auto CollectionItem_st::ItemsAt( int offsetX, int offsetY ) -> std::vector<Multi
 }
 
 //o------------------------------------------------------------------------------------------------o
-CollectionItem_st::CollectionItem_st() :minY( 0 ), minX( 0 ), maxX( 0 ), maxY( 0 ), minAlt( 0 ), maxAlt( 0 )
+CollectionItem_st::CollectionItem_st() :minX( 0 ),  minY( 0 ), maxX( 0 ), maxY( 0 ), minAlt( 0 ), maxAlt( 0 )
 {
 }
 
@@ -326,7 +326,7 @@ auto MultiCollection::LoadMultiCollection( const std::filesystem::path &uodir, T
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-auto MultiCollection::ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool
+auto MultiCollection::ProcessHash( std::uint64_t hash, std::size_t /*entry*/, std::vector<std::uint8_t> &data ) -> bool
 {
 	if( hash == 0x126D1E99DDEDEE0ALL )
 	{
@@ -341,21 +341,20 @@ auto MultiCollection::ProcessHash( std::uint64_t hash, std::size_t entry, std::v
 		return false;  // This is the hash for the housing.bin file
 	}
 	return true;
-	
 }
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	MultiCollection::ProcessEntry()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	???
 //o------------------------------------------------------------------------------------------------o
-auto MultiCollection::ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
+auto MultiCollection::ProcessEntry( std::size_t /*entry*/, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
 {
 	if( data.size() > 8 )
 	{
 		auto offset = std::uint32_t( 4 );
 		// We skip the first 32 bit word (why offset is 4).
 		// The next 32 bit word is the number of entries in this data;
-		
+
 		auto count = std::int32_t( 0 );
 		std::copy( data.data() + offset, data.data() + offset + 4, reinterpret_cast<std::uint8_t*>( &count ));
 		offset += 4;;

@@ -51,8 +51,8 @@ auto mfopen( FILE** stream, const char* filename, const char* mode ) -> FILE*
 	fopen_s( stream, filename, mode );
 	return *stream;
 }
-#else 
-auto asciitime( char* buffer, size_t count, const struct tm& tmsource ) -> char*
+#else
+auto asciitime( char* buffer, size_t /*count*/, const struct tm& tmsource ) -> char*
 {
 	return asctime_r( &tmsource, buffer );
 
@@ -62,34 +62,29 @@ auto lcltime( const time_t& source, struct tm& dest ) -> struct tm*
 	localtime_r( &source, &dest );
 	return &dest;
 }
-auto strcopy( char* dest, size_t size, const char* src ) -> void
+auto strcopy( char* dest, size_t /*size*/, const char* src ) -> void
 {
 	strcpy( dest, src );
 }
-auto strncopy( char* dest, size_t size, const char* src, size_t count ) -> void
+auto strncopy( char* dest, size_t /*size*/, const char* src, size_t count ) -> void
 {
 	strncpy( dest, src, count );
-
 }
-auto mstrcat( char* dest, size_t size, const char* src ) -> char*
+auto mstrcat( char* dest, size_t /*size*/, const char* src ) -> char*
 {
 	return strcat( dest, src );
-	
 }
 auto mgmtime( struct tm* dest, const time_t* timer ) -> struct tm*
 {
 	return gmtime_r( timer, dest );
-	
 }
-auto mctime( char* buffer, size_t size, const time_t* timer ) -> char*
+auto mctime( char* buffer, size_t /*size*/, const time_t* timer ) -> char*
 {
 	return ctime_r( timer, buffer );
-	
 }
-auto mstrerror( char* buffer, size_t size, int errornum ) -> char*
+auto mstrerror( char* /*buffer*/, size_t /*size*/, int errornum ) -> char*
 {
 	return strerror( errornum );
-	
 }
 auto mfopen( FILE** stream, const char* filename, const char* mode ) -> FILE*
 {

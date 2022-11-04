@@ -43,6 +43,7 @@ private:
 	};
 
 	UI16				regionNum;
+  UI16        numGuards;
 	UI16				parentRegion; // reference to parent region
 	std::string			name;
 	UI16				musicList;
@@ -59,12 +60,12 @@ private:
 	std::vector<RegLocs_st>		locations;
 	std::map<SI32, GoodData_st> goodList;
 	std::string			guardList;
-	UI16				numGuards;
 	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always
 	RACEID				race;					// town's race property, guards will be racially based
 	WEATHID				weather;				// weather system the region belongs to
 	SI32				goldReserved;			// amount of gold belonging to the town's treasury
 
+  WorldType   visualAppearance;   // seasonal choice, basically.  Each of the 4 seasons, or "dead"
 	SI32				timeSinceGuardsPaid;	// time since the guards were last paid
 	SI32				timeSinceTaxedMembers;	// time since we last taxed our own members
 	SI32				timeToElectionClose;	// time since the last election was completed
@@ -73,7 +74,6 @@ private:
 	SI32				resourceCollected;		// how much we have gotten from taxes
 	UI16				taxedResource;			// item # of the taxed resource
 	UI16				taxedAmount;			// how much to tax
-	WorldType			visualAppearance;		// seasonal choice, basically.  Each of the 4 seasons, or "dead"
 
 	SI16				health;					// health of the town
 	UI08				chanceFindBigOre;		// chance of finding big ore
