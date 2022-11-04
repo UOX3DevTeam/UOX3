@@ -38,13 +38,13 @@
 
 void MakeShop( CChar *c );
 
-JSBool CGuildsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGuildsProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval *vp )
 {
 	*vp = INT_TO_JSVAL( 0 );
 	return JS_TRUE;
 }
 
-JSBool CGuildsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGuildsProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
 {
 	return JS_TRUE;
 }
@@ -76,7 +76,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CSpellProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
 {
 	return JS_TRUE;
 }
@@ -190,7 +190,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CGlobalSkillProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
 {
 	return JS_TRUE;
 }
@@ -227,7 +227,7 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CTimerProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CTimerProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -295,7 +295,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CCreateEntryProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
 {
 	return JS_TRUE;
 }
@@ -343,7 +343,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval amountNeeded = 0;
 			jsval targColour = 0;
 			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
-			for( int i = 0; i < resourcesNeeded.size(); i++ )
+			for( size_t i = 0; i < resourcesNeeded.size(); i++ )
 			{
 				resEntry = resourcesNeeded[i];
 				amountNeeded = INT_TO_JSVAL( resEntry.amountNeeded );
@@ -356,7 +356,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 				// Make a child object with all the supported resource IDs
 				JSObject *idList = JS_NewArrayObject( cx, 0, nullptr );
-				for( int j = 0; j < resEntry.idList.size(); j++ )
+				for( size_t j = 0; j < resEntry.idList.size(); j++ )
 				{
 					jsval targId = INT_TO_JSVAL( resEntry.idList[j] );
 					JS_SetElement( cx, idList, j, &targId );
@@ -382,7 +382,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval minSkill = 0;
 			jsval maxSkill = 0;
 			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
-			for( int i = 0; i < skillReqs.size(); i++ )
+			for( size_t i = 0; i < skillReqs.size(); i++ )
 			{
 				resEntry = skillReqs[i];
 				skillNumber = INT_TO_JSVAL( resEntry.skillNumber );
@@ -508,7 +508,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( int i = 0; i < scriptTriggers.size(); i++ )
+				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
@@ -1519,7 +1519,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( int i = 0; i < scriptTriggers.size(); i++ )
+				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
@@ -2482,7 +2482,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( int i = 0; i < scriptTriggers.size(); i++ )
+				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
@@ -2950,6 +2950,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				{
 					gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));				break;
 				}
+        [[fallthrough]];
 			case CSOCKP_TEMPOBJ2: // Reserved for JS usage
 				if( *vp == JSVAL_NULL )
 				{
@@ -3630,7 +3631,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CConsoleProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3645,7 +3646,7 @@ JSBool CConsoleProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CConsoleProps_setProperty( JSContext *cx, JSObject * /* *obj*/, jsval id, jsval *vp )
 {
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -3681,7 +3682,7 @@ JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CScriptSectionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
+JSBool CScriptSectionProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
 {
 	/*		JSEncapsulate encaps( cx, vp );
 		if( JSVAL_IS_INT( id ))

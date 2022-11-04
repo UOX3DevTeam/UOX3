@@ -191,8 +191,7 @@ inline JSExtendedClass UOXItem_class =
 // Returns the skill-values for a character
 // and is able to set them too
 //
-/* Unused
-static JSClass UOXSkills_class =
+inline JSClass UOXSkills_class =
 {
 	"UOXSkills",
 	JSCLASS_HAS_PRIVATE,
@@ -206,10 +205,8 @@ static JSClass UOXSkills_class =
 	JS_FinalizeStub,
   JSCLASS_NO_OPTIONAL_MEMBERS
 };
-*/
 
-/* Unused
-static JSClass UOXBaseSkills_class =
+inline JSClass UOXBaseSkills_class =
 {
 	"UOXBaseSkills",
 	JSCLASS_HAS_PRIVATE,
@@ -223,10 +220,8 @@ static JSClass UOXBaseSkills_class =
 	JS_FinalizeStub,
   JSCLASS_NO_OPTIONAL_MEMBERS
 };
-*/
 
-/* Unused
-static JSClass UOXSkillsUsed_class =
+inline JSClass UOXSkillsUsed_class =
 {
 	"UOXSkillsUsed",
 	JSCLASS_HAS_PRIVATE,
@@ -240,10 +235,8 @@ static JSClass UOXSkillsUsed_class =
 	JS_FinalizeStub,
   JSCLASS_NO_OPTIONAL_MEMBERS
 };
-*/
 
-/* Unused
-static JSClass UOXSkillsLock_class =
+inline JSClass UOXSkillsLock_class =
 {
 	"UOXSkillsLock",
 	JSCLASS_HAS_PRIVATE,
@@ -257,7 +250,6 @@ static JSClass UOXSkillsLock_class =
 	JS_FinalizeStub,
   JSCLASS_NO_OPTIONAL_MEMBERS
 };
-*/
 
 inline JSClass UOXRace_class =
 {
