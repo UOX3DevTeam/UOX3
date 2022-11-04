@@ -9,7 +9,7 @@ else
 CXX     	:= g++
 endif
 
-CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value -Wall -Wextra -Werror
+CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value -Wall -Wextra #-Werror
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)
