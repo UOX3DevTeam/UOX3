@@ -136,9 +136,9 @@ private:
 	JSContext *			targContext;
 	JSObject *			targObject;
 
+  bool        isFiring;
 	UI08				runTime;
 
-	bool				isFiring;
 	std::bitset<64>		eventPresence[3];
 	std::bitset<64>		needsChecking[3];
 	bool				EventExists( ScriptEvent eventNum ) const;

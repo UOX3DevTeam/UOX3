@@ -53,7 +53,7 @@ public:
 	CCreatures() : creatureId( 0 ), icon( 0 ), mountId( 0 )
 	{
 		who_am_i.reset();
-		memset( soundList, 0x00, SND_COUNT );
+		memset( soundList, 0x00, SND_COUNT * sizeof( soundList[0] ));
 	}
 	UI16 GetSound( monsterSound soundType ) const
 	{

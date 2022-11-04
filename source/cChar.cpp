@@ -5969,10 +5969,10 @@ void CChar::SetCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != DEFPLAYER_CALLNUM )
-		{
-			CreatePlayer();
-		}
+  	if( DEFPLAYER_CALLNUM < 0 || (DEFPLAYER_CALLNUM >= 0 && newValue != (unsigned)DEFPLAYER_CALLNUM) )
+	  {
+		 	CreatePlayer();
+    }
 	}
 	if( IsValidPlayer() )
 	{
@@ -5999,10 +5999,10 @@ void CChar::SetPlayerCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != DEFPLAYER_PLAYERCALLNUM )
-		{
-			CreatePlayer();
-		}
+		if( DEFPLAYER_PLAYERCALLNUM < 0 || (DEFPLAYER_PLAYERCALLNUM >= 0 && newValue != (unsigned)DEFPLAYER_PLAYERCALLNUM) )
+  	{
+  		CreatePlayer();
+  	}
 	}
 	if( IsValidPlayer() )
 	{
@@ -8001,7 +8001,7 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Lets character react to damage dealt to them
 //o------------------------------------------------------------------------------------------------o
-void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
+void CChar::ReactOnDamage( WeatherType /*damageType*/, CChar *attacker )
 {
 	CSocket *mSock = GetSocket();
 
@@ -8312,7 +8312,7 @@ void CChar::UpdateDamageTrack( void )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets weight of character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetWeight( SI32 newVal, bool doWeightUpdate )
+void CChar::SetWeight( SI32 newVal, bool /*doWeightUpdate*/ )
 {
 	Dirty( UT_STATWINDOW );
 	weight = newVal;

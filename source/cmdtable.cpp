@@ -149,8 +149,9 @@ void NextCall( CSocket *s, bool isGM )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Replaces legacy spawner objects that have incorrect item type
 //o------------------------------------------------------------------------------------------------o
-bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool FixSpawnFunctor( CBaseObject *a, UI32 /*&b*/, void *extraData )
 {
+  (void)extraData; // unused variable
 	bool retVal = true;
 	if( ValidateObject( a ))
 	{
@@ -718,8 +719,9 @@ void Command_SetShopRestockRate( CSocket *s )
 		s->SysMessage( 57 ); // Invalid number of parameters.
 }
 
-bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool RespawnFunctor( CBaseObject *a, UI32 /*&b*/, void *extraData )
 {
+  (void)extraData; // unused variable
 	bool retVal = true;
 	if( ValidateObject( a ))
 	{
@@ -1510,6 +1512,7 @@ void CCommands::CommandReset()
 //o------------------------------------------------------------------------------------------------o
 void CCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
 {
+  (void)toRegister; // unused variable
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( oldstrutil::format( "   UnRegistering command %s\n", cmdName.c_str() ));
 #endif

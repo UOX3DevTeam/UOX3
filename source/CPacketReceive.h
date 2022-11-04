@@ -749,8 +749,8 @@ class CPISubcommands : public CPInputBuffer
 protected:
 	UI16			subCmd;
 	UI08			subSubCmd;
+  bool      skipOver;
 	CPInputBuffer *	subPacket;
-	bool			skipOver;
 public:
 	virtual			~CPISubcommands()
 	{

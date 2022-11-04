@@ -65,39 +65,44 @@ private:
 		NPCValues_st();
 		void				DumpBody( std::ofstream& outStream );
 
+    SI08        wanderMode; // NPC Wander Mode
+    SI08        oldWanderMode; // Used for fleeing npcs
+    SERIAL      fTarg; // NPC Follow Target
+    SI16        fx[2]; //NPC Wander Point x
+    SI16        fy[2]; //NPC Wander Point y
+    SI08        fz;    //NPC Wander Point z
 		SI16				aiType;
+    SI16        spellAttack;
+    SI08        spellDelay; // won't time out for more than 255 seconds!
+    SI16        taming;
+    SI16        fleeAt;     // HP Level to flee at
+    SI16        reAttackAt; // HP Level to re-Attack at
+    UI08        splitNum;
+    UI08        splitChance;
+    UI08        trainingPlayerIn;
+    UI32        goldOnHand;
+    UI08        questType;
+    UI08        questDestRegion;
+    UI08        questOrigRegion;
 		CBaseObject *		petGuarding;
-		SI16				taming;
+    cNPC_FLAG   npcFlag;
+    std::bitset<8>    boolFlags;
 		SI16				peaceing;
 		SI16				provoing;
-		UI08				trainingPlayerIn;
-		UI32				goldOnHand;
 
-		UI08				splitNum;
-		UI08				splitChance;
-
+    UI16        tamedHungerRate;  // The rate at which hunger decreases when char is tamed
+    UI16        tamedThirstRate;  // The rate at which thirst decreases when char is tamed
+    UI08        hungerWildChance; // The chance that the char goes wild when hungry
+    UI08        thirstWildChance; // The chance that the char goes wild when thirsty
+    R32         walkingSpeed;
+    R32         runningSpeed;
+    R32         fleeingSpeed;
 		SI08				pathFail;
 		SI08				pathResult;
 		UI16				pathTargX;
 		UI16				pathTargY;
 
-		SI16				fx[2]; //NPC Wander Point x
-		SI16				fy[2]; //NPC Wander Point y
-		SI08				fz; //NPC Wander Point z
-
-		SI08				wanderMode; // NPC Wander Mode
-		SI08				oldWanderMode; // Used for fleeing npcs
 		std::deque<UI08>	pathToFollow;	// let's use a queue of directions to follow
-
-		SI16				spellAttack;
-		SI08				spellDelay;	// won't time out for more than 255 seconds!
-
-		UI08				questType;
-		UI08				questDestRegion;
-		UI08				questOrigRegion;
-
-		SI16				fleeAt;		// HP Level to flee at
-		SI16				reAttackAt;	// HP Level to re-Attack at
 
 		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
 		std::vector<CChar *>	petFriends;		// Temporary list of friends a pet has
@@ -106,21 +111,8 @@ private:
 		UI16				loyalty;			// Pet's current loyalty to its master
 		UI16				orneriness;			// Difficulty to control pet
 
-		UI16				tamedHungerRate;	// The rate at which hunger decreases when char is tamed
-		UI16				tamedThirstRate;    // The rate at which thirst decreases when char is tamed
-		UI08				hungerWildChance;	// The chance that the char goes wild when hungry
-		UI08				thirstWildChance;   // The chance that the char goes wild when thirsty
 		std::string			foodList;
 
-		SERIAL				fTarg; // NPC Follow Target
-
-		cNPC_FLAG			npcFlag;
-
-		std::bitset<8>		boolFlags;
-
-		R32					walkingSpeed;
-		R32					runningSpeed;
-		R32					fleeingSpeed;
 		R32					mountedWalkingSpeed;
 		R32					mountedRunningSpeed;
 		R32					mountedFleeingSpeed;
@@ -131,48 +123,43 @@ private:
 		PlayerValues_st();
 		void		DumpBody( std::ofstream& outStream );
 
+    SERIAL    callNum;        // Callnum GM or Counsellor is on
+    SERIAL    playerCallNum;  // Players call number in GM or Counsellor requestQueue
+    SERIAL    trackingTarget; // Tracking target ID
+    UI08      squelched;      // Squelching
+    UI08      commandLevel;   // 0 = player, 1 = counselor, 2 = GM
+    UI08      postType;
+    UI16      hairStyle;
+    UI16      beardStyle;
+    COLOUR    hairColour;
+    COLOUR    beardColour;
+    CItem *   speechItem;
+    UI08      speechMode;
+    UI08      speechId;
+    cScript * speechCallback;
+    SERIAL    robe;
+    UI16      accountNum;
+    UI16      origSkin;
+    UI16      origId;     // Backup of body type for polymorph
+    UI08      fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
+    UI16      deaths;
 		CSocket *	socket;
 
-		SERIAL		robe;
-
-		SERIAL		trackingTarget; // Tracking target ID
 		std::vector<CChar*>	trackingTargets;
 
-		UI16		accountNum;
-
-		UI16		origId; // Backup of body type for polymorph
-		UI16		origSkin;
 		std::string	origName; // original name - for Incognito
-
-		UI16		hairStyle;
-		UI16		beardStyle;
-		COLOUR		hairColour;
-		COLOUR		beardColour;
 
 		std::string	lastOn; //Last time a character was on
 		UI32		lastOnSecs; //Last time a character was on in seconds.
 
-		UI08		commandLevel;		// 0 = player, 1 = counselor, 2 = GM
-		UI08		postType;
-		SERIAL		callNum;		// Callnum GM or Counsellor is on
-		SERIAL		playerCallNum;	// Players call number in GM or Counsellor requestQueue
-
-		UI08		squelched; // Squelching
-		UI08		fixedLight; // Fixed lighting level (For chars in dungeons, where they dont see the night)
-		UI16		deaths;
+    SERIAL  townVote;
+    SI08    townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
-
-		SERIAL		townVote;
-		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
 
-		CItem *		speechItem;
-		UI08		speechMode;
-		UI08		speechId;
-		cScript *	speechCallback;
 		// speechMode valid values
 		// 0 normal speech
 		// 1 GM page
@@ -190,49 +177,54 @@ protected:
 	NPCValues_st	*	mNPC;
 	PlayerValues_st	*	mPlayer;
 
+  std::bitset<64>   bools; // lots of flags
+  SI08    fontType; // Speech font to use
+  UI16    maxHP;
+  UI16    maxHP_oldstr;
+  RACEID  oldRace;
+  SI16    maxMana;
+  UI16    maxMana_oldint;
+  SI16    maxStam;
+  UI16    maxStam_olddex;
+  COLOUR  sayColor;
+  COLOUR  emoteColor;
+  SI08    cell;     // Reserved for jailing players
+  CItem * packItem; // Characters backpack
+  SERIAL  targ;     // Current combat target
+  SERIAL  attacker; // Character who attacked this character
 	SI08		hunger;		// Level of hungerness, 6 = full, 0 = "empty"
 	SI08		thirst;		// Level of thirstiness, 6 = full, 0 = "empty"
-	UI16		town;       // Matches Region number in regions.dfn
-	UI16		regionNum;
+  UI16    regionNum;
+	UI16		town;     // Matches Region number in regions.dfn
 
 	UI08		brkPeaceChanceGain;
 	UI08		brkPeaceChance;
+  UI16    advObj;      //Has used advance gate?
+  SERIAL  guildFealty; // Serial of player you are loyal to (default=yourself) (DasRaetsel)
+  SI16    guildNumber; // Number of guild player is in (0=no guild)     (DasRaetsel)
+  UI08    flag;        //1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
+  SI08    spellCast;
+  UI08    nextAct;  //time to next spell action..
+  SI08    stealth;  // stealth ( steps already done, -1=not using )
+  UI08    running;  // Stamina Loose while running
+  RACEID  raceGate; // Race gate that has been used
+  UI08    step;     // 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
 
-	std::bitset<64>		bools;	// lots of flags
 	std::bitset<16>		priv;
 
-	SI16		guildNumber;		// Number of guild player is in (0=no guild)			(DasRaetsel)
-	SERIAL		guildFealty;	// Serial of player you are loyal to (default=yourself)	(DasRaetsel)
-	std::string	guildTitle;	// Title Guildmaster granted player						(DasRaetsel)
+	std::string	guildTitle;	 // Title Guildmaster granted player						(DasRaetsel)
 
 	TIMERVAL	charTimers[tCHAR_COUNT];
 
 	TIMERVAL	regen[3];
 	TIMERVAL	weathDamage[WEATHNUM];			// Light Damage timer
-	UI08		nextAct;						//time to next spell action..
 
-	SI08		fontType; // Speech font to use
-	COLOUR		sayColor;
-	COLOUR		emoteColor;
-
-	SI08		stealth; // stealth ( steps already done, -1=not using )
-	SI08		cell; // Reserved for jailing players
-	UI08		running; // Stamina Loose while running
-	UI08		step;						// 1 if step 1 0 if step 2 3 if step 1 skip 2 if step 2 skip
-	UI32		lastMoveTime; // Timestamp for when character moved last
-
-	CItem *		packItem; // Characters backpack
-	SERIAL		targ; // Current combat target
-	SERIAL		attacker; // Character who attacked this character
-	UI16		advObj; //Has used advance gate?
-	RACEID		raceGate;						// Race gate that has been used
-
-	SI08		spellCast;
+  UI08      PoisonStrength;
+  BodyType  bodyType;
+	UI32		  lastMoveTime; // Timestamp for when character moved last
 
 	SKILLVAL	baseskill[ALLSKILLS]; // Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; // List of skills (with stat modifiers)
-
-	UI08		flag; //1=red 2=grey 4=Blue 8=green 10=Orange	// should it not be 0x10??? sounds like we're trying to do
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
@@ -240,18 +232,6 @@ protected:
 	std::vector<CItem *>	ownedItems;
 	std::bitset<32>			skillUsed[2];	// no more than 64 skills
 	std::bitset<UT_COUNT>	updateTypes;
-
-	UI16		maxHP;
-	UI16		maxHP_oldstr;
-	SI16		maxMana;
-	UI16		maxMana_oldint;
-	SI16		maxStam;
-	UI16		maxStam_olddex;
-	RACEID		oldRace;
-
-	BodyType	bodyType;
-
-	UI08		PoisonStrength;
 
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;
