@@ -126,15 +126,15 @@ const char *socket_error::what( void ) const throw()
 	return runtime_error::what();
 }
 
-socket_error::socket_error( void ) : errorNum( -1 ), runtime_error( "" )
+socket_error::socket_error( void ) : runtime_error( "" ), errorNum( -1 )
 {
 }
 
-socket_error::socket_error( const std::string& what_arg ) : errorNum( -1 ), runtime_error( what_arg )
+socket_error::socket_error( const std::string& what_arg ) : runtime_error( what_arg ), errorNum( -1 )
 {
 }
 
-socket_error::socket_error( const UI32 errorNumber ) : errorNum( errorNumber ), runtime_error( "" )
+socket_error::socket_error( const UI32 errorNumber ) : runtime_error( "" ), errorNum( errorNumber )
 {
 }
 
@@ -622,10 +622,10 @@ const bool				DEFSOCK_LOGINCOMPLETE			= false;
 //|	Purpose		-	This function basically does what the name implies
 //o------------------------------------------------------------------------------------------------o
 CSocket::CSocket( size_t sockNum ) : currCharObj( nullptr ), idleTimeout( DEFSOCK_IDLETIMEOUT ),
-tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), newClient( DEFSOCK_NEWCLIENT ), firstPacket( DEFSOCK_FIRSTPACKET ),
-range( DEFSOCK_RANGE ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ),  clickx( DEFSOCK_CLICKX ),
-currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ), logging( DEFSOCK_LOGGING ), clicky( DEFSOCK_CLICKY ),
-postAckCount( DEFSOCK_POSTACKCOUNT ), pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
+tempint( DEFSOCK_TEMPINT ), dyeall( DEFSOCK_DYEALL ), clickz( DEFSOCK_CLICKZ ), range( DEFSOCK_RANGE ), clickx( DEFSOCK_CLICKX ), clicky( DEFSOCK_CLICKY ),
+newClient( DEFSOCK_NEWCLIENT ), currentSpellType( DEFSOCK_CURSPELLTYPE ), outlength( DEFSOCK_OUTLENGTH ), inlength( DEFSOCK_INLENGTH ),
+logging( DEFSOCK_LOGGING ), cryptclient( DEFSOCK_CRYPTCLIENT ), cliSocket( sockNum ), walkSequence( DEFSOCK_WALKSEQUENCE ), postAckCount( DEFSOCK_POSTACKCOUNT ),
+pSpot( DEFSOCK_PSPOT ), pFrom( DEFSOCK_PFROM ), firstPacket( DEFSOCK_FIRSTPACKET ), pX( DEFSOCK_PX ), pY( DEFSOCK_PY ),
 pZ( DEFSOCK_PZ ), lang( DEFSOCK_LANG ), cliType( DEFSOCK_CLITYPE ), cliVerShort( DEFSOCK_CLIVERSHORT), clientVersion( DEFSOCK_CLIENTVERSION ), bytesReceived( DEFSOCK_BYTESRECEIVED ),
 bytesSent( DEFSOCK_BYTESSENT ), receivedVersion( DEFSOCK_RECEIVEDVERSION ), tmpObj( nullptr ), tmpObj2( nullptr ), loginComplete( DEFSOCK_LOGINCOMPLETE ), cursorItem( nullptr ), 
 bytesRecvWarningCount( DEFSOCK_BYTESRECEIVEDWARNINGCOUNT ), bytesSentWarningCount( DEFSOCK_BYTESSENTWARNINGCOUNT )
@@ -1067,8 +1067,8 @@ SI32 CSocket::Receive( SI32 x, bool doLog )
 		}
 		++recvAttempts;
 		nexTime = GetClock();
-		// You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and NETRETRYCOUNT respectivly
-		if( recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() || (nexTime - curTime) > static_cast<SI32>( cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000 ))
+		// You will find the values for the following in the uox.ini file as NETRCVTIMEOUT, and NETRETRYCOUNT respectively
+		if( recvAttempts == cwmWorldState->ServerData()->ServerNetRetryCount() || (nexTime - curTime) > static_cast<UI32>( cwmWorldState->ServerData()->ServerNetRcvTimeout() * 1000 ))
 		{ // looks like we're not going to get it!
 			// April 3, 2004 - If we have some data, then we need to return it. Some of the network logic is looking at count size. this way we can also validate on the calling side so we ask for 4 bytes, but only 3 were sent back, adn let the calling routing handle it, if we call for 4 and get get NOTHING then throw... Just my thoughts -
 			if( count <= 0 )
@@ -2842,6 +2842,7 @@ const UI08 *CPUOXBuffer::PackedPointer( void ) const
 
 bool CPUOXBuffer::ClientCanReceive( CSocket *mSock )
 {
+  (void)mSock; // unused variable
 	// Default implementation, all clients can receive all packets
 	return true;
 }

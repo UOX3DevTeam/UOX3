@@ -28,7 +28,7 @@
 //o------------------------------------------------------------------------------------------------o
 void pSplit( const std::string pass0, std::string &pass1, std::string &pass2 )
 {
-	auto i = 0;
+	size_t i = 0;
 	pass1 = "";
 	auto pass0Len = pass0.length();
 	while( i < pass0Len && pass0[i] != '/' )
@@ -762,7 +762,7 @@ void CPINewClientVersion::Receive( void )
 			{
 				tSock->ClientType( CV_SA2D );
 			}
-			else if( tSock->ClientVersion() <= 117442562 && clientRevision >= 0 && clientRevision < 9 )
+			else if( tSock->ClientVersion() <= 117442562 && clientRevision < 9 )
 			{
 				tSock->ClientType( CV_SA2D );
 			}
@@ -3560,7 +3560,7 @@ CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
-CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool receive ) : CPInputBuffer( s )
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool /*receive*/ ) : CPInputBuffer( s )
 {
 }
 

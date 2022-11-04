@@ -302,7 +302,7 @@ JSMethodFunc CSocket_FinishedTriggerWords;
 JSMethodFunc CRegion_AddScriptTrigger;
 JSMethodFunc CRegion_RemoveScriptTrigger;
 
-
+/* Unused
 static JSFunctionSpec CGump_Methods[] =
 {
 	{ "Free",						CGump_Free,							0, 0, 0 },
@@ -340,8 +340,9 @@ static JSFunctionSpec CGump_Methods[] =
 	{ "Send",						CGump_Send,							1, 0, 0 },
 	{ nullptr,						nullptr,							0, 0, 0 }
 };
+*/
 
-static JSFunctionSpec CChar_Methods[] =
+inline JSFunctionSpec CChar_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,		1, 0, 0 },
 	{ "GetJSTimer",			CBase_GetJSTimer,		2, 0, 0 },
@@ -437,11 +438,10 @@ static JSFunctionSpec CChar_Methods[] =
 	{ "GetPetList",			CChar_GetPetList,			0, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
-	
 	{ nullptr,				nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CItem_Methods[] =
+inline JSFunctionSpec CItem_Methods[] =
 {
 	{ "KillTimers",			CBase_KillTimers,			1, 0, 0 },
 	{ "GetJSTimer",			CBase_GetJSTimer,			2, 0, 0 },
@@ -522,19 +522,19 @@ static JSFunctionSpec CItem_Methods[] =
 	{ "FirstChar",			CMulti_FirstChar,			1, 0, 0 },
 	{ "NextChar",			CMulti_NextChar,			1, 0, 0 },
 	{ "FinishedChars",		CMulti_FinishedChars,		1, 0, 0 },
-	
+
 	//{ "SetMoreSerial",		CBase_SetMoreSerial,		1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CRegion_Methods[] =
+inline JSFunctionSpec CRegion_Methods[] =
 {
 	{ "AddScriptTrigger",		CRegion_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0, 0 },
 	{ nullptr,					nullptr,						0, 0, 0 }
 };
 
-static JSFunctionSpec CSocket_Methods[] =
+inline JSFunctionSpec CSocket_Methods[] =
 {
 	{ "SysMessage",			CMisc_SysMessage,	10, 0, 0 },
 	{ "Disconnect",			CSocket_Disconnect,	0, 0, 0 },
@@ -574,13 +574,13 @@ static JSFunctionSpec CSocket_Methods[] =
 	{ nullptr,				nullptr,			0, 0, 0 }
 };
 
-static JSFunctionSpec CGuild_Methods[] =
+inline JSFunctionSpec CGuild_Methods[] =
 {
 	{ "AcceptRecruit",		CGuild_AcceptRecruit,	1, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 
-static JSFunctionSpec CRace_Methods[] =
+inline JSFunctionSpec CRace_Methods[] =
 {
 	{ "CanWearArmour",		CRace_CanWearArmour,		1, 0, 0 },
 	{ "IsValidHairColour",	CRace_IsValidHairColour,	1, 0, 0 },
@@ -598,6 +598,7 @@ static JSFunctionSpec CGumpData_Methods[] =
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
+/* Unused
 static JSFunctionSpec CFile_Methods[] =
 {
 	{ "Free",		CFile_Free,				0, 0, 0 },
@@ -611,15 +612,16 @@ static JSFunctionSpec CFile_Methods[] =
 	{ "Pos",		CFile_Pos,				1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
+*/
 
-static JSFunctionSpec CAccount_Methods[] =
+inline JSFunctionSpec CAccount_Methods[] =
 {
 	{ "AddAccount",		CAccount_AddAccount,		4, 0, 0 },
 	{ "DelAccount",		CAccount_DelAccount,		1, 0, 0 },
 	{ nullptr,		nullptr,				0, 0, 0 }
 };
 
-static JSFunctionSpec CConsole_Methods[] =
+inline JSFunctionSpec CConsole_Methods[] =
 {
 	{ "Print",				CConsole_Print,				1, 0, 0 },
 	{ "Log",				CConsole_Log,				1, 0, 0 },
@@ -644,6 +646,7 @@ static JSFunctionSpec CConsole_Methods[] =
 	{ nullptr,				nullptr,								0, 0, 0 }
 };
 
+/* Unused
 static JSFunctionSpec CPacket_Methods[] =
 {
 	{ "Free",			CPacket_Free,				0, 0, 0 },
@@ -654,8 +657,9 @@ static JSFunctionSpec CPacket_Methods[] =
 	{ "ReserveSize",	CPacket_ReserveSize,		1, 0, 0 },
 	{ nullptr,			nullptr,						0, 0, 0 }
 };
+*/
 
-static JSFunctionSpec CParty_Methods[] =
+inline JSFunctionSpec CParty_Methods[] =
 {
 	{ "GetMember",		CParty_GetMember,			1, 0, 0 },
 	{ "Add",			CParty_Add,					1, 0, 0 },

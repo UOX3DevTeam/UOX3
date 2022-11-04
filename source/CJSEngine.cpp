@@ -248,6 +248,12 @@ void CJSRuntime::InitializePrototypes()
 {
 	protoList.resize( JSP_COUNT );
 
+  // Use the below in a void context since they are used in cScript.cpp
+  (void)uox_class;
+  (void)UOXGumpData_class;
+  (void)CGumpData_Methods;
+  (void)CGumpDataProperties;
+
 	JSContext *cx			= jsContext;
 	JSObject *obj			= jsGlobal;
 

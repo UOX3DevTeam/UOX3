@@ -260,7 +260,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			}
 			break;
 		case SPK_NULL:
-			
+
 			break;
 	}
 	if( toCopy.SpeakerName().length() != 0 )
@@ -269,7 +269,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 	}
 }
 
-void CPacketSpeech::GhostIt( UI08 method )
+void CPacketSpeech::GhostIt( UI08 /*method*/ )
 {
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
@@ -330,7 +330,7 @@ void CPacketSpeech::Font( FontType toPut )
 #if defined( _MSC_VER )
 #pragma note( "Function Warning: CPacketSpeech::Language(), does nothing" )
 #endif
-void CPacketSpeech::Language( UnicodeTypes toPut )
+void CPacketSpeech::Language( UnicodeTypes /*toPut*/ )
 {
 
 }
@@ -861,7 +861,7 @@ void CPRelay::InternalReset( void )
 //|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
 //|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 //o------------------------------------------------------------------------------------------------o
-CPLogoutResponse::CPLogoutResponse( UI08 extraByte )
+CPLogoutResponse::CPLogoutResponse( UI08 /*extraByte*/ )
 {
 	InternalReset();
 }
@@ -1465,10 +1465,11 @@ void CPWeather::Particles( UI08 nParts )
 	{
 		nParts = 70;
 	}
-	if( nParts < 0 )
+  // nParts is unsigned and can never be negative
+	/*if( nParts < 0 )
 	{
 		nParts = 0;
-	}
+	}*/
 
 	pStream.WriteByte( 2, nParts );
 }
@@ -3254,6 +3255,7 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 //o------------------------------------------------------------------------------------------------o
 CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( CSocket *mSock )
 {
+  (void)mSock; // unused variable
 	pStream.ReserveSize( 12 );
 	pStream.WriteByte(  0, 0xF0 );
 	pStream.WriteShort( 1, 0x000C );
@@ -4068,6 +4070,7 @@ void CharacterListUpdate::AddCharName( UI08 charNum, std::string charName )
 //o------------------------------------------------------------------------------------------------o
 CPKREncryptionRequest::CPKREncryptionRequest( CSocket* s)
 {
+  (void)s; // unused variable
 	pStream.ReserveSize( 77 );
 	pStream.WriteByte( 0, 0xE3 );
 
@@ -4249,7 +4252,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				size_t numMembers = mGuild->NumMembers();
 
 				// First, look up the recruits to see who's online
-				for( auto i = 0; i < numRecruits; i++ )
+				for( size_t i = 0; i < numRecruits; i++ )
 				{
 					SERIAL recruitSerial = mGuild->RecruitNumber( i );
 					CChar *guildRecruit = CalcCharObjFromSer( recruitSerial );
@@ -4283,7 +4286,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 				}
 
 				// Then, look up the guild members to see who's online
-				for( auto i = 0; i < numMembers; i++ )
+				for( size_t i = 0; i < numMembers; i++ )
 				{
 					SERIAL memberSerial = mGuild->MemberNumber( i );
 					CChar *guildMember = CalcCharObjFromSer( memberSerial );
@@ -5045,7 +5048,7 @@ CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, UI08 numCharacters, UI08 numLocations, CSocket *mSock )
+CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, UI08 /*numCharacters*/, UI08 numLocations, CSocket *mSock )
 {
 	InternalReset();
 
@@ -5124,6 +5127,7 @@ void CPCharAndStartLoc::AddCharacter( CChar *toAdd, UI08 charOffset )
 
 void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
 {
+  (void)mSock; // unused variable
 	UI16 byteOffset = 0;
 	byteOffset = static_cast<UI16>( 4 + ( pStream.GetByte( 3 ) * 60 ));
 	pStream.WriteByte( byteOffset, numLocations );
@@ -6234,7 +6238,7 @@ void CPUnicodeSpeech::ID( UI16 toSet )
 	pStream.WriteShort( 7, toSet );
 }
 
-void CPUnicodeSpeech::GhostIt( UI08 method )
+void CPUnicodeSpeech::GhostIt( UI08 /*method*/ )
 {
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
@@ -8212,6 +8216,7 @@ void CPSendMsgBoardPosts::InternalReset( void )
 
 void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
 {
+  (void)pToggle; // unused variable
 	size_t byteOffset = pStream.GetSize();
 	if( mSock->ClientVerShort() >= CVS_6017 )
 	{

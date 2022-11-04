@@ -85,6 +85,7 @@ auto FindNearbyItems( CBaseObject *mObj, distLocs distance ) -> std::vector<CIte
 //o------------------------------------------------------------------------------------------------o
 UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
 {
+  (void)mSock; // unused variable
 	for( auto &nearbyNpc : FindNearbyNPCs( mChar, DIST_CMDRANGE ))
 	{
 		if( !ValidateObject( nearbyNpc ))
@@ -345,6 +346,7 @@ CEscortResponse::CEscortResponse( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
 {
+  (void)mSock; // unused variable
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() )
 		return;
@@ -953,6 +955,7 @@ CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
 {
+  (void)mChar; // unused variable
 	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
@@ -1018,6 +1021,7 @@ CVendorViewResponse::CVendorViewResponse( bool vendVal, const std::string &text 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
 {
+  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CItem *pack	= nullptr;
@@ -1044,6 +1048,7 @@ CVendorGoldResponse::CVendorGoldResponse( bool vendVal, const std::string &text 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
 {
+  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -1112,6 +1117,7 @@ CVendorStatusResponse::CVendorStatusResponse( bool vendVal, const std::string &t
 //o------------------------------------------------------------------------------------------------o
 bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
 {
+  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -1156,6 +1162,7 @@ CVendorDismissResponse::CVendorDismissResponse( bool vendVal, const std::string 
 //o------------------------------------------------------------------------------------------------o
 bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
 {
+  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();

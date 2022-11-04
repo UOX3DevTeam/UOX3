@@ -2492,6 +2492,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 	if( s != nullptr && cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
 		bool sendAll = true;
+    (void)sendAll; // unused variable
 		if( target == SPTRG_INDIVIDUAL )
 		{
 			sendAll = false;
@@ -2542,11 +2543,14 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 //o------------------------------------------------------------------------------------------------o
 void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 {
+  (void)mSock;          // unused variable
+  (void)drawGamePlayer; // unused variable
+  (void)sendToSelf;     // unused variable
 	if( GetType() == IT_TRADEWINDOW )
 		return;
 
 	//RemoveFromSight( mSock );
-#pragma note( "To monitor: Commented out RemoveFromSight() in CItem::Update() to potentially fix a lot of flickering issues with animated items, boats, etc." )
+  // Note: To monitor: Commented out RemoveFromSight() in CItem::Update() to potentially fix a lot of flickering issues with animated items, boats, etc.
 
 	if( GetCont() == this )
 	{
@@ -2621,7 +2625,7 @@ void CItem::Update( CSocket *mSock, bool drawGamePlayer, bool sendToSelf )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates an item on the ground to specified socket
 //o------------------------------------------------------------------------------------------------o
-void CItem::SendToSocket( CSocket *mSock, bool drawGamePlayer )
+void CItem::SendToSocket( CSocket *mSock, bool /*drawGamePlayer*/ )
 {
 	if( !mSock->LoginComplete() )
 		return;
@@ -3377,7 +3381,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool
 				{
 					// Spawn one instance of EACH entry in the list
 					std::string listEntry = "";
-					for( int i = 0; i < itemListSize; i++ )
+					for( size_t i = 0; i < itemListSize; i++ )
 					{
 						// listObj will either contain an itemID and amount, or an itemlist/lootlist tag
 						auto listObj = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( itemList->MoveTo( i ), "//" )), "," );

@@ -214,15 +214,15 @@ protected:
 	//==============================================================================
 	// Virtual routines, modify based on uop file processing
 	//==============================================================================
-	virtual auto ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool { return true; }
-	virtual auto ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool { return true; }
+	virtual auto ProcessEntry( std::size_t /*entry*/, std::size_t /*index*/, std::vector<std::uint8_t> /*&data*/ ) -> bool { return true; }
+	virtual auto ProcessHash( std::uint64_t /*hash*/, std::size_t /*entry*/, std::vector<std::uint8_t> /*&data*/ ) -> bool { return true; }
 	virtual auto NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool;
 	virtual auto EndUopProcessing() -> bool { return true; };
 	
 	virtual auto EntriesToWrite() const -> int { return 0; }
 	virtual auto WriteCompress() const -> bool { return false; }
-	virtual auto EntryForWrite( int entry ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
-	virtual auto WriteHash( int entry ) -> std::string{ return std::string(); };
+	virtual auto EntryForWrite( int /*entry*/ ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
+	virtual auto WriteHash( int /*entry*/ ) -> std::string{ return std::string(); };
 	//========================================================================
 	auto IsUop( const std::string &filepath ) const -> bool;
 	

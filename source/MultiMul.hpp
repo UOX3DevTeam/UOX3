@@ -60,8 +60,8 @@ class MultiCollection : public UopFile
 	std::unordered_map<int, CollectionItem_st> _multis;
 	
 	std::string _housingBin;
-	auto ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
-	auto ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool final;
+	auto virtual ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
+	auto virtual ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool final;
 	auto ProcessData( bool isHS, int index, std::vector<std::uint8_t> &data ) -> void;
 	
 public:

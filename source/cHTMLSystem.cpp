@@ -58,6 +58,7 @@ std::string GetUptime( void )
 
 bool CountNPCFunctor( CBaseObject *a, UI32 &b, void *extraData )
 {
+  (void)extraData;
 	bool retVal = true;
 	if( ValidateObject( a ))
 	{
