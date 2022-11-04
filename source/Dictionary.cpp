@@ -199,6 +199,7 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 								rValue = true;
 							}
 						}
+            [[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
 							if( line != "}" )
@@ -220,7 +221,6 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 								break;
 							}
 						}
-
 					}
 				}
 			}

@@ -352,7 +352,7 @@ auto ip4list_t::bestmatch( std::uint32_t value, bool bigendian ) const -> std::p
 		return lhs.second < rhs.second;
 	});
 	return *matches.rbegin();
-	
+
 }
 //==================================================================================================
 auto ip4list_t::add( const Ip4Addr_st &value ) -> void
@@ -414,7 +414,7 @@ auto ip4list_t::load( const std::string &filename ) -> bool
 							}
 							break;
 						}
-							
+
 						case static_cast<int>( state_t::startsection ):
 						{
 							if( line[0] == '{' )
@@ -464,41 +464,39 @@ auto ip4list_t::ips() -> std::vector<Ip4Addr_st>&
 auto ip4list_t::available() -> ip4list_t
 {
 	/* Note: could also use malloc() and free() */
-	
+
 	ip4list_t rValue;
 	std::string device;
 	Ip4Addr_st device_address;
-	
-	
+
 	/* Declare and initialize variables */
-	
 	DWORD dwSize = 0;
 	DWORD dwRetVal = 0;
-	
+
 	unsigned int i = 0;
-	
+
 	// Set the flags to pass to GetAdaptersAddresses
 	ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
-	
+
 	// default to unspecified address family (both)
 	ULONG family = AF_INET;
-	
+
 	LPVOID lpMsgBuf = NULL;
-	
+
 	PIP_ADAPTER_ADDRESSES pAddresses = NULL;
 	ULONG outBufLen = 0;
 	ULONG Iterations = 0;
-	
+
 	PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
 	PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
 	PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
 	PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
 	IP_ADAPTER_DNS_SERVER_ADDRESS* pDnServer = NULL;
 	IP_ADAPTER_PREFIX* pPrefix = NULL;
-	
+
 	// Allocate a 15 KB buffer to start with.
 	outBufLen = WORKING_BUFFER_SIZE;
-	
+
 	do
 	{
 		pAddresses = ( IP_ADAPTER_ADDRESSES* )MALLOC( outBufLen );
@@ -506,9 +504,9 @@ auto ip4list_t::available() -> ip4list_t
 		{
 			throw std::runtime_error( "Memory allocation files for IP_ADAPTER_ADDRESSES" );
 		}
-		
+
 		dwRetVal = GetAdaptersAddresses( family, flags, NULL, pAddresses, &outBufLen );
-		
+
 		if( dwRetVal == ERROR_BUFFER_OVERFLOW )
 		{
 			FREE( pAddresses );
@@ -518,11 +516,11 @@ auto ip4list_t::available() -> ip4list_t
 		{
 			break;
 		}
-		
+
 		Iterations++;
-		
+
 	} while(( dwRetVal == ERROR_BUFFER_OVERFLOW ) && ( Iterations < MAX_TRIES ));
-	
+
 	if( dwRetVal == NO_ERROR )
 	{
 		// If successful, output some information from the data we received
@@ -537,12 +535,12 @@ auto ip4list_t::available() -> ip4list_t
 					for( i = 0; pUnicast != nullptr; i++ )
 					{
 						const int friendlen = 200;
-						
+
 						char friendly[friendlen];
 						std::memset( friendly, 0, friendlen );
 						sockaddr_in* sa_in = ( sockaddr_in* )pUnicast->Address.lpSockaddr;
 						device_address = Ip4Addr_st( sa_in->sin_addr.S_un.S_addr );
-						
+
 						if( device_address.type() != Ip4Addr_st::ip4type_t::apipa )
 						{
 							//ourdevice.address = inet_ntop( AF_INET, &( sa_in->sin_addr ), buff, bufflen );
@@ -566,7 +564,7 @@ auto ip4list_t::available() -> ip4list_t
 					}
 				}
 			}
-			
+
 			pCurrAddresses = pCurrAddresses->Next;
 		}
 	}
@@ -578,11 +576,11 @@ auto ip4list_t::available() -> ip4list_t
 			{
 				FREE( pAddresses );
 			}
-			
+
 			throw std::runtime_error( "Unable to get address info" );
 		}
 	}
-	
+
 	if( pAddresses )
 	{
 		FREE( pAddresses );
@@ -596,10 +594,11 @@ auto ip4list_t::available() -> ip4list_t
 	struct ifaddrs * ifAddrStruct = NULL;
 	struct ifaddrs * ifa = NULL;
 	void * tmpAddrPtr = NULL;
+  (void)tmpAddrPtr;
 	Ip4Addr_st device_address;
-	
+
 	getifaddrs( &ifAddrStruct );
-	
+
 	for( ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next )
 	{
 		if( !ifa->ifa_addr )
@@ -704,7 +703,7 @@ std::vector<std::string> IP4Address::parseIP( const std::string &ip )
 	// Examples:  	192.168.1.0
 	//			192..1.0
 	//			192.*.1.0
-	
+
 	std::vector<std::string> rValue;
 	std::string::size_type startloc = 0;
 	std::string::size_type endloc = ip.size();
@@ -860,7 +859,6 @@ bool IP4Address::match( const IP4Address &address, int level ) const
 		}
 	}
 	return true;
-	
 }
 //==================================================================================================
 IP4Address::typeIP IP4Address::type( bool notmine ) const
@@ -884,7 +882,7 @@ IP4Address::typeIP IP4Address::type( bool notmine ) const
 	{
 		return local;
 	}
-	
+
 	if( *this == _APIPA )
 	{
 		return apipa;
@@ -1030,7 +1028,6 @@ IP4Address IP4Address::lookup( const std::string& address )
 #if PLATFORM == WINDOWS
 		WSACleanup();
 #endif
-		
 		return IP4Address( address );
 		/*
 #if PLATFORM == WINDOWS
@@ -1073,37 +1070,35 @@ std::vector<IP4Address> IP4Address::available()
 	std::vector<IP4Address> rValue;
 	std::string device;
 	IP4Address device_address;
-	
-	
+
 		/* Declare and initialize variables */
-		
 		DWORD dwSize = 0;
 		DWORD dwRetVal = 0;
-		
+
 		unsigned int i = 0;
-		
+
 		// Set the flags to pass to GetAdaptersAddresses
 		ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
-		
+
 		// default to unspecified address family (both)
 		ULONG family = AF_INET;
-		
+
 		LPVOID lpMsgBuf = NULL;
-		
+
 		PIP_ADAPTER_ADDRESSES pAddresses = NULL;
 		ULONG outBufLen = 0;
 		ULONG Iterations = 0;
-		
+
 		PIP_ADAPTER_ADDRESSES pCurrAddresses = NULL;
 		PIP_ADAPTER_UNICAST_ADDRESS pUnicast = NULL;
 		PIP_ADAPTER_ANYCAST_ADDRESS pAnycast = NULL;
 		PIP_ADAPTER_MULTICAST_ADDRESS pMulticast = NULL;
 		IP_ADAPTER_DNS_SERVER_ADDRESS* pDnServer = NULL;
 		IP_ADAPTER_PREFIX* pPrefix = NULL;
-		
+
 		// Allocate a 15 KB buffer to start with.
 		outBufLen = WORKING_BUFFER_SIZE;
-		
+
 		do
 		{
 			pAddresses = ( IP_ADAPTER_ADDRESSES* )MALLOC( outBufLen );
@@ -1111,9 +1106,9 @@ std::vector<IP4Address> IP4Address::available()
 			{
 				throw std::runtime_error( "Memory allocation files for IP_ADAPTER_ADDRESSES" );
 			}
-			
+
 			dwRetVal = GetAdaptersAddresses( family, flags, NULL, pAddresses, &outBufLen );
-			
+
 			if( dwRetVal == ERROR_BUFFER_OVERFLOW )
 			{
 				FREE( pAddresses );
@@ -1123,11 +1118,11 @@ std::vector<IP4Address> IP4Address::available()
 			{
 				break;
 			}
-			
-			Iterations++;
-			
+
+  		Iterations++;
+
 		} while(( dwRetVal == ERROR_BUFFER_OVERFLOW ) && ( Iterations < MAX_TRIES ));
-		
+
 		if( dwRetVal == NO_ERROR )
 		{
 			// If successful, output some information from the data we received
@@ -1142,12 +1137,12 @@ std::vector<IP4Address> IP4Address::available()
 						for( i = 0; pUnicast != nullptr; i++ )
 						{
 							const int friendlen = 200;
-							
+
 							char friendly[friendlen];
 							std::memset( friendly, 0, friendlen );
 							sockaddr_in* sa_in = ( sockaddr_in* )pUnicast->Address.lpSockaddr;
 							device_address = IP4Address( ntohl( sa_in->sin_addr.S_un.S_addr ));
-						
+
 							if( device_address != _APIPA )
 							{
 								//ourdevice.address = inet_ntop(AF_INET, &(sa_in->sin_addr), buff, bufflen);
@@ -1182,11 +1177,11 @@ std::vector<IP4Address> IP4Address::available()
 				{
 					FREE( pAddresses );
 				}
-				
+
 				throw std::runtime_error( "Unable to get address info" );
 			}
 		}
-		
+
 		if( pAddresses )
 		{
 			FREE( pAddresses );
@@ -1201,9 +1196,9 @@ std::vector<IP4Address> IP4Address::available()
 	struct ifaddrs * ifa = NULL;
 	void * tmpAddrPtr = NULL;
 	IP4Address device_address;
-	
+
 	getifaddrs( &ifAddrStruct );
-	
+
 	for( ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next )
 	{
 		if( !ifa->ifa_addr )

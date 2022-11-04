@@ -917,8 +917,9 @@ void CMapHandler::Save( void )
 	}
 }
 
-bool PostLoadFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool PostLoadFunctor( CBaseObject *a, UI32 &b, void * /* *extraData*/ )
 {
+  (void)b; // unused variable
 	if( ValidateObject( a ))
 	{
 		if( !a->IsFree() )

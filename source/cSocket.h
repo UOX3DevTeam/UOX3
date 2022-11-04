@@ -96,6 +96,7 @@ private:
 	std::string		xtext;
   SI16      clickx;
   SI16      clicky;
+  SI08      clickz;
   UI08      currentSpellType;
   SI32      outlength;
   SI32      inlength;
@@ -126,7 +127,6 @@ private:
   SI32      tempint;
   SI32      tempint2;
   UI08      dyeall;
-	SI08			clickz;
 	UI08			addid[4];
 
   bool      newClient;

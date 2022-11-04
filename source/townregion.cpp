@@ -60,13 +60,13 @@ const UI16		DEFTOWN_PARENTREGION		= 0;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for CTownRegion class
 //o------------------------------------------------------------------------------------------------o
-CTownRegion::CTownRegion( UI16 region ) : race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ),
-regionNum( region ), musicList( DEFTOWN_MUSICLIST ), mayorSerial( DEFTOWN_MAYOR ), taxedResource( DEFTOWN_TAXEDRESOURCE ),
-taxedAmount( DEFTOWN_TAXEDAMOUNT ), goldReserved( DEFTOWN_GOLDRESERVED ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
-resourceCollected( DEFTOWN_RESOURCECOLLECTED ), visualAppearance( DEFTOWN_VISUALAPPEARANCE ), health( DEFTOWN_HEALTH ),
-timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ),
-timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ), worldNumber( DEFTOWN_WORLDNUMBER ), instanceId( DEFTOWN_INSTANCEID ), jsScript( DEFTOWN_JSSCRIPT ),
-chanceFindBigOre( DEFTOWN_FINDBIGORE ), numGuards( DEFTOWN_NUMGUARDS ), parentRegion( DEFTOWN_PARENTREGION )
+CTownRegion::CTownRegion( UI16 region ) : regionNum( region ), numGuards( DEFTOWN_NUMGUARDS ), parentRegion( DEFTOWN_PARENTREGION ),
+musicList( DEFTOWN_MUSICLIST ), worldNumber( DEFTOWN_WORLDNUMBER ), instanceId( DEFTOWN_INSTANCEID ),
+mayorSerial( DEFTOWN_MAYOR ), race( DEFTOWN_RACE ), weather( DEFTOWN_WEATHER ), goldReserved( DEFTOWN_GOLDRESERVED ),
+visualAppearance( DEFTOWN_VISUALAPPEARANCE ), timeSinceGuardsPaid( DEFTOWN_GUARDSPAID ), timeSinceTaxedMembers( DEFTOWN_TAXEDMEMBERS ),
+timeToElectionClose( DEFTOWN_ELECTIONCLOSE ), timeToNextPoll( DEFTOWN_NEXTPOLL ), guardsPurchased( DEFTOWN_GUARDSPURCHASED ),
+resourceCollected( DEFTOWN_RESOURCECOLLECTED ), taxedResource( DEFTOWN_TAXEDRESOURCE ), taxedAmount( DEFTOWN_TAXEDAMOUNT ),
+health( DEFTOWN_HEALTH ), chanceFindBigOre( DEFTOWN_FINDBIGORE ), jsScript( DEFTOWN_JSSCRIPT )
 {
 	priv.reset();
 	townMember.resize( 0 );
@@ -1925,7 +1925,7 @@ void CTownRegion::Possess( CTownRegion *possessorTown )
 
 	// remove the old members, preparing the way for the new ones
 	CChar *targChar;
-	for( size_t counter = townMember.size() - 1; counter >= 0 && counter < townMember.size(); ++counter )
+	for( size_t counter = townMember.size() - 1; counter > 0 && counter < townMember.size(); ++counter )
 	{
 		targChar = CalcCharObjFromSer( townMember[counter].townMember );
 		RemoveCharacter( counter );

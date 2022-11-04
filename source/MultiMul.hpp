@@ -37,12 +37,12 @@ struct MultiItem_st
 // So a multi is a colleciton (thus collection_item) of MultiItem_st.
 struct CollectionItem_st
 {
+  int minX;
 	int minY;
+  int maxX;
 	int maxY;
 	int minAlt;
 	int maxAlt;
-	int minX;
-	int maxX;
 	std::vector<MultiItem_st> items;
 	CollectionItem_st();
 	static const std::unordered_map<int, std::string> collectionNames;

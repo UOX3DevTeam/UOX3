@@ -591,11 +591,11 @@ auto illinst( SI32 x = 0 ) -> void
 	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
 	EndMessage( x );
 }
-auto aus( SI32 signal ) -> void
+auto aus( SI32 /*signal*/ ) -> void
 {
 	Console.Error( "Server crash averted! Floating point exception caught." );
 }
-void app_stopped( int sig )
+void app_stopped( int /*sig*/ )
 {
 	// function called when signal is received.
 	if( isWorldSaving == false )
@@ -1017,6 +1017,7 @@ auto DismountCreature( CChar *s ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto EndMessage( SI32 x ) -> void
 {
+  (void)x; // unused variable
 	x = 0; // Really, then why take a parameter?
 	const UI32 iGetClock = cwmWorldState->GetUICurrentTime();
 	if( cwmWorldState->GetEndTime() < iGetClock )
@@ -2615,8 +2616,9 @@ auto InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for a multi at object's location and assigns any multi found to object
 //o------------------------------------------------------------------------------------------------o
-auto FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData ) -> bool
+auto FindMultiFunctor( CBaseObject *a, UI32 &b, void * /* *extraData*/ ) -> bool
 {
+  (void)b; // unused variable
 	if( ValidateObject( a ))
 	{
 		if( a->CanBeObjType( OT_MULTI ))
@@ -3794,7 +3796,7 @@ auto UpdateFlag( CChar *mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send mapchange packet to client to teleport player to new world/map
 //o------------------------------------------------------------------------------------------------o
-void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
+void SendMapChange( UI08 worldNumber, CSocket *sock, bool /*initialLogin*/ )
 {
 	if( sock )
 	{

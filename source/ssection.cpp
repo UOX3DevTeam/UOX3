@@ -525,7 +525,7 @@ auto FindDFNTagFromStr( const std::string &strToFind ) ->DFNTAGS
 //|	Purpose		-	Default constructor, initializing all variables
 //o------------------------------------------------------------------------------------------------o
 CScriptSection::CScriptSection() : dfnCat( NUM_DEFS ),
-npcListData( "" ), itemListData( "" ), npcList( false ), itemList( false )
+npcList( false ), itemList( false ), npcListData( "" ), itemListData( "" )
 {
 	data.resize( 0 );
 	dataV2.resize( 0 );
@@ -927,8 +927,8 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
 										// Format: ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
-										ADDMENUITEM amiLocalCopy;
-										memset( &amiLocalCopy, 0x00, sizeof( ADDMENUITEM ));
+										ADDMENUITEM amiLocalCopy = {};
+										/*memset( &amiLocalCopy, 0x00, sizeof( ADDMENUITEM ));*/ // Use default initialization above instead of memset() on non-trivial object
 										amiLocalCopy.itemName = std::string( localName );
 										auto csecs = oldstrutil::sections( value, "," );
 										amiLocalCopy.groupId = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
