@@ -1091,7 +1091,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //|	Notes		-	This function is rather CPU-expensive, but AFAIK there is no
 //|					better way to find all keys than to do it this way.. :/
 //o------------------------------------------------------------------------------------------------o
-bool KillKeysFunctor( CBaseObject *a, UI32 /*&b*/, void *extraData )
+bool KillKeysFunctor( CBaseObject *a, UI32 & /*&b*/, void *extraData )
 {
 	UI32 *ourData		= (UI32 *)extraData;
 	SERIAL targSerial	= ourData[0];

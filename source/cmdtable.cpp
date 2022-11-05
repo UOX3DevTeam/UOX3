@@ -149,7 +149,7 @@ void NextCall( CSocket *s, bool isGM )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Replaces legacy spawner objects that have incorrect item type
 //o------------------------------------------------------------------------------------------------o
-bool FixSpawnFunctor( CBaseObject *a, UI32 /*&b*/, void *extraData )
+bool FixSpawnFunctor( CBaseObject *a, UI32 & /*&b*/, void *extraData )
 {
   (void)extraData; // unused variable
 	bool retVal = true;
@@ -719,7 +719,7 @@ void Command_SetShopRestockRate( CSocket *s )
 		s->SysMessage( 57 ); // Invalid number of parameters.
 }
 
-bool RespawnFunctor( CBaseObject *a, UI32 /*&b*/, void *extraData )
+bool RespawnFunctor( CBaseObject *a, UI32 & /*&b*/, void *extraData )
 {
   (void)extraData; // unused variable
 	bool retVal = true;
