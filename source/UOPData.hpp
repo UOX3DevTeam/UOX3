@@ -151,7 +151,7 @@ struct UopIndex_st
 	std::vector<std::uint64_t> hashes;
 	static auto HashLittle2( const std::string& s ) -> std::uint64_t;
 	static auto HashAdler32( const std::vector<std::uint8_t> &data ) -> std::uint32_t;
-	
+
 	auto LoadHashes( const std::string &hashstring, size_t max_index ) -> void;
 	UopIndex_st( const std::string &hashstring = "", size_t max_index = 0 );
 	auto operator[]( std::uint64_t hash ) const -> size_t;
@@ -185,7 +185,7 @@ class UopFile
 private:
 	static constexpr 	std::uint32_t _uop_identifer = 0x50594D;
 	static constexpr	std::uint32_t _uop_version = 5;
-	
+
 	struct TableEntry_st
 	{
 		std::int64_t	offset;
@@ -202,10 +202,10 @@ private:
 		/*********************** Constants used ******************/
 		static constexpr unsigned int _entry_size = 34;
 	};
-	
+
 	std::vector<std::uint64_t> _hash1;
 	std::vector<std::uint64_t> _hash2;
-	
+
 	/****************** zlib compression wrappers *********************/
 	auto zcompress( const std::vector<std::uint8_t> &data ) const -> std::vector<unsigned char>;
 	auto zdecompress( const std::vector<std::uint8_t> &source, std::size_t decompressed_size ) const -> std::vector<unsigned char>;
@@ -214,20 +214,20 @@ protected:
 	//==============================================================================
 	// Virtual routines, modify based on uop file processing
 	//==============================================================================
-	virtual auto ProcessEntry( std::size_t /*entry*/, std::size_t /*index*/, std::vector<std::uint8_t> /*&data*/ ) -> bool { return true; }
-	virtual auto ProcessHash( std::uint64_t /*hash*/, std::size_t /*entry*/, std::vector<std::uint8_t> /*&data*/ ) -> bool { return true; }
+	virtual auto ProcessEntry( std::size_t /*entry*/, std::size_t /*index*/, std::vector<std::uint8_t> & /*&data*/ ) -> bool { return true; }
+	virtual auto ProcessHash( std::uint64_t /*hash*/, std::size_t /*entry*/, std::vector<std::uint8_t> & /*&data*/ ) -> bool { return true; }
 	virtual auto NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool;
 	virtual auto EndUopProcessing() -> bool { return true; };
-	
+
 	virtual auto EntriesToWrite() const -> int { return 0; }
 	virtual auto WriteCompress() const -> bool { return false; }
 	virtual auto EntryForWrite( int /*entry*/ ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
 	virtual auto WriteHash( int /*entry*/ ) -> std::string{ return std::string(); };
 	//========================================================================
 	auto IsUop( const std::string &filepath ) const -> bool;
-	
+
 	auto LoadUop( const std::string &filepath, std::size_t max_hashindex, const std::string &hashformat1, const std::string &hashformat2 = "" ) -> bool;
-	
+
 	auto WriteUop( const std::string &filepath ) -> bool;
 	//==========================================================
 	// The source for this was found on StackOverflow at:
@@ -243,15 +243,13 @@ protected:
 			auto buf = std::make_unique<char[]>( size );
 			std::snprintf( buf.get(), size, format_str.c_str(), args ... );
 			return std::string( buf.get(), buf.get() + size - 1 ); // We don't want the '\0' inside
-			
 		}
 		return format_str; // We take the same approach as std library, and just fail silently with
 		// best answer
 	}
-	
+
 public:
 	virtual ~UopFile() = default;
-	
 };
 
 #endif /* UOPData_hpp */
