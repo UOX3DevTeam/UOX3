@@ -4920,6 +4920,7 @@ void CChar::Cleanup( void )
 		}
 		std::for_each( removedEffect.begin(), removedEffect.end(), [this]( CTEffect *effect )
 		{
+                        (void)this; // unused
 			cwmWorldState->tempEffects.Remove( effect, true );
 		});
 
@@ -7502,6 +7503,7 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 	{
 		auto iter = std::find_if( GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(), [&toCheck, this]( CChar *petChar )
 		{
+                        (void)this; // unused
 			return ValidateObject( petChar ) && ( petChar == toCheck );
 		});
 		if( iter != GetPetOwnerList()->collection().end() )
