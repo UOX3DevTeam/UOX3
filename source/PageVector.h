@@ -50,7 +50,7 @@ private:
 	std::vector<CHelpRequest *>::iterator	currentPos;
 	std::string								title;	// GM/Counselor Queue
 
-	R32						avgEntryTime, maxEntryTime, minEntryTime;
+	/*R32						avgEntryTime, maxEntryTime, minEntryTime;*/ // unused variables
 	SERIAL					maxId;
 
 	void					KillQueue( void );

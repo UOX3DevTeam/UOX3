@@ -1093,6 +1093,7 @@ auto cEffects::CheckTempeffects() -> void
 	}
 	std::for_each( removeEffects.begin(), removeEffects.end(), [this]( CTEffect *effect )
 	{
+                (void)this; // unused
 		cwmWorldState->tempEffects.Remove( effect, true );
 	});
 }
@@ -1235,6 +1236,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 	}
 	std::for_each( removeEffect.begin(), removeEffect.end(), [this]( CTEffect *effect )
 	{
+                (void)this; // unused
 		cwmWorldState->tempEffects.Remove( effect, true );
 	});
 	CSocket *tSock = dest->GetSocket();

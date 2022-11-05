@@ -355,6 +355,7 @@ void CCommands::Load( void )
 		Console << myendl;
 		std::for_each( badCommands.begin(), badCommands.end(), [this]( const std::string &entry )
 		{
+                        (void)this; // unused
 			Console << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
 		});
 	}
