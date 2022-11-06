@@ -13,3 +13,12 @@ script=5037//tribal_paint.js
 {
 get=tribalpaint
 }
+
+[bearddye]
+{
+get=base_item
+name=a beard dye
+id=0xEFF
+WEIGHT=100
+SCRIPT=5041
+}
