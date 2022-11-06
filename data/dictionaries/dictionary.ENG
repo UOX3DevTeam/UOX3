@@ -2584,7 +2584,7 @@
 2860=Player vendors can only be placed in public houses!
 2861=You cannot place a player vendor adjacent to a door!
 2862=Your hands must be free to cast spells or meditate.
-2863=You do not understand how to use this.
+2863=You are not skilled enough as a carpenter to use this.
 2864=Target the corpse to make a trophy out of.
 2865=That corpse seems to have been visited by a taxidermist already.
 2866=You review the corpse and find it worthy of a trophy.
@@ -3960,7 +3960,7 @@
 9025=Invalid SpawnRegion %u
 9026=This command requires more arguments!
 9027=This object must be placed in your house
-9028=You cannot place a house-addon adjacent to a door.
+9028=You cannot place a house addon adjacent to a door.
 9029=You cannot build your house on the selected terrain!
 9030=You cannot build your house there - location is blocked by one or more items!
 9031=You cannot build your house there - houses not allowed in this region!
@@ -4029,7 +4029,7 @@
 9094=Unloading Event
 9095=%i event decorations removed for event %s.
 9096=No event decorations found.
-9097=You cannot place this house-addon there, location is blocked!
+9097=You cannot place this house addon there, location is blocked!
 9098=Item immovable to normal players, but can be dragged out of backpack by GM characters.
 9099=Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
 9100=*avoids trap*
@@ -4077,6 +4077,9 @@
 9180=Only containers can be set to 'not for sale' in the vendor's main pack.
 9181=The item has been marked as 'not for sale'
 9182=This item is not for sale.
+9183=Your bank box is overloaded and cannot hold any more weight.
+9184=Select a location for the house addon.
+9185=You can use an axe to dismantle house addons and get their deeds back.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
