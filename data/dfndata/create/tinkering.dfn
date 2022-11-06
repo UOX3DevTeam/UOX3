@@ -97,6 +97,7 @@ ITEM=210
 ITEM=211
 ITEM=212
 ITEM=213
+ITEM=284
 ITEM=214
 ITEM=215
 ITEM=216
@@ -948,7 +949,16 @@ ADDITEM=0x1059
 MINRANK=1
 MAXRANK=10
 }
-
+[ITEM 284]
+{
+NAME=Fletcher's Tools
+ID=0x1022
+RESOURCE=METAL 3
+SKILL=37 350 830
+ADDITEM=0x1022
+MINRANK=1
+MAXRANK=10
+}
 
 // end of tinkering section
 //*****************************************
