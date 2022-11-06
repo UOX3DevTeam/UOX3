@@ -126,7 +126,7 @@ function onGumpPress( pSock, pButton, gumpData )
 {
 	var iUsed = pSock.tempObj;
 	var pUser = pSock.currentChar;
-	var scriptID = 22002;
+	var scriptID = 5040;
 	var gumpID = scriptID + 0xffff;
 	var colour = 0;
 	FindItemLayer = pUser.FindItemLayer( 0x0B );
