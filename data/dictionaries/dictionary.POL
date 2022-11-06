@@ -2584,6 +2584,13 @@
 2860=Sprzedawcy graczy mogą być umieszczani tylko w domach publicznych!
 2861=Nie możesz umieścić sprzedawcy gracza w pobliżu drzwi!
 2862=Twoje ręce muszą być wolne, abyś mógł rzucać zaklęcia lub medytować.
+2863=Nie jesteś wystarczająco wykwalifikowany jako stolarz, aby tego użyć.
+2864=Celuj w zwłoki, aby zrobić z nich trofeum.
+2865=Ten trup wydaje się być już odwiedzony przez taksydermistę.
+2866=Przeglądasz zwłoki i stwierdzasz, że są godne trofeum.
+2867=Używasz swojego zestawu do wykonania trofeum.
+2868=To nie wygląda jak coś, co chciałbyś powiesić na ścianie.
+2869=Nie masz wystarczającej ilości desek.
 // [3000-4999] Nazwy zwierząt i potworów
 3001=ogr
 3002=etin
@@ -4070,6 +4077,9 @@
 9180=Tylko pojemniki mogą być ustawione jako 'nie do sprzedaży' w głównym pakiecie sprzedawcy.
 9181=Ten przedmiot został oznaczony jako 'nie do sprzedaży'.
 9182=Ten przedmiot nie jest na sprzedaż.
+9183=Twoja skrzynka bankowa jest przeciążona i nie może utrzymać więcej ciężaru.
+9184=Wybierz lokalizację dla dodatku dom.
+9185=Możesz użyć siekiery, aby rozebrać dodatki do domu i odzyskać ich czyny.
 // [9250-9300] Księgi runiczne
 9250=Ta księga potrzebuje czasu na naładowanie.
 9251=Nie możesz użyć Runebooka z czyjegoś plecaka!

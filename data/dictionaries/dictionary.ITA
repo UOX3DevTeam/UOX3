@@ -2584,6 +2584,13 @@
 2860=I venditori di giocatori possono essere messi solo nelle case pubbliche!
 2861=Non puoi piazzare un venditore di giocatori adiacente a una porta!
 2862=Le tue mani devono essere libere per lanciare incantesimi o meditare.
+2863=Non sei abbastanza abile come falegname per usare questo.
+2864=Prendi di mira il cadavere per farne un trofeo.
+2865=Questo cadavere sembra essere già stato visitato da un tassidermista.
+2866=Esaminate il cadavere e lo ritenete degno di un trofeo.
+2867=Usa il tuo kit per realizzare il trofeo.
+2868=Non sembra qualcosa da appendere al muro.
+2869=Non hai abbastanza tavole.
 // [3000-4999] Animal and Monster names
 3001=un orco
 3002=un ettin
@@ -4070,6 +4077,9 @@
 9180=Solo i contenitori possono essere impostati come "non in vendita" nel pacchetto principale del venditore.
 9181=L'oggetto è stato contrassegnato come "non in vendita".
 9182=Questo articolo non è in vendita.
+9183=La cassa è sovraccarica e non può più reggere il peso.
+9184=Seleziona una posizione per l'addon della casa.
+9185=Puoi usare un'ascia per smantellare gli addendi delle case e recuperare i loro atti.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
