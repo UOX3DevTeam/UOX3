@@ -60,3 +60,12 @@ morex=206
 value=1500 750
 restock=15
 }
+
+[bigfishdeed]
+{
+name=a big fish trophy deed
+id=0x14F0
+morex=207
+value=1500 750
+restock=15
+}

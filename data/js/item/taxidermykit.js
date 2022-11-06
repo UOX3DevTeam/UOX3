@@ -1,4 +1,4 @@
-function onUseChecked(pUser, iUsed)
+function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
 	socket.tempObj = iUsed;
@@ -8,12 +8,10 @@ function onUseChecked(pUser, iUsed)
 		if( itemOwner == null || itemOwner.serial != pUser.serial )
 		{
 			pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
-			return;
 		}
 		else if( pUser.skills.carpentry < 900 )
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2863, socket.language )); // You do not understand how to use this.
-			return;
+			pUser.SysMessage( GetDictionaryEntry( 2863, socket.language )); // You are not skilled enough as a carpenter to use this.
 		}
 		else
 		{
@@ -24,84 +22,92 @@ function onUseChecked(pUser, iUsed)
 	return false;
 }
 
-function onCallback1(socket, myTarget)
+function onCallback1( socket, myTarget )
 {
-	var tileID = 0;
 	var pUser = socket.currentChar;
-	var iUsed = socket.tempObj;
-	var woodID = 0x1bd7;
-	var resourceCount = pUser.ResourceCount( woodID );
-	var amountNeeded = 10;
-	tileID = myTarget.id;
 
-	if( tileID != 0x2006 )
+	if( socket.GetWord( 1 ) || !ValidateObject( myTarget ))
+	{
+		// No valid dynamic item was targeted
+		socket.SysMessage( GetDictionaryEntry( 749, socket.language )); // That is not a corpse!
+		return;
+	}
+
+	var iUsed = socket.tempObj;
+	if( myTarget.id != 0x2006 && myTarget.sectionID != "big_fish" )
 	{
 		socket.SysMessage( GetDictionaryEntry( 749, socket.language )); // That is not a corpse!
 		return;
 	}
-	else if( myTarget.GetTag( "VisitedByTaxidermist" ) == true )
+	else if( myTarget.GetTag( "usedForTrophy" ) == true )
 	{
 		socket.SysMessage( GetDictionaryEntry( 2865, socket.language )); // That corpse seems to have been visited by a taxidermist already.
 		return;
 	}
 	else 
 	{
+		var woodID = 0x1bd7;
+		var resourceCount = pUser.ResourceCount( woodID );
+		var amountNeeded = 10;
+
 		if( resourceCount >= amountNeeded )
 		{
+			var deedName = "";
 			switch( myTarget.sectionID ) 
 			{
 				case "brownbear":
-					CreateDFNItem( socket, socket.currentChar, "brownbeartrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete();
+					deedName = "brownbeartrophydeed";
 					break;
 				case "hart":
-					CreateDFNItem( socket, socket.currentChar, "stagtrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete();
+					deedName = "stagtrophydeed";
 					break;
 				case "gorilla":
-					CreateDFNItem( socket, socket.currentChar, "gorillatrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete();
+					deedName = "gorillatrophydeed";
 					break;
 				case "orc":
 				case "cluborc":
-					CreateDFNItem( socket, socket.currentChar, "orctrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete();
+					deedName = "orctrophydeed";
 					break;
 				case "polarbear":
-					CreateDFNItem( socket, socket.currentChar, "polarbeartrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete();
+					deedName = "polarbeartrophydeed";
 					break;
 				case "troll":
-					CreateDFNItem( socket, socket.currentChar, "trolltrophydeed", 1, "ITEM", true );
-					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
-					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
-					myTarget.SetTag( "VisitedByTaxidermist", true );
-					pUser.UseResource( amountNeeded,  woodID );
-					iUsed.Delete(); 
+					deedName = "trolltrophydeed";
+					break;
+				case "bigfish":
+					deedName = "bigfishdeed";
 					break;
 				default:
 					socket.SysMessage( GetDictionaryEntry( 2868, socket.language )); // That does not look like something you want hanging on a wall.
 					break;
+			}
+
+			if( deedName != "" )
+			{
+				// Create the trophy!
+				if(	pUser.UseResource( amountNeeded, woodID ) == amountNeeded )
+				{
+					var trophyItem = CreateDFNItem( socket, socket.currentChar, deedName, 1, "ITEM", true );
+					socket.SysMessage( GetDictionaryEntry( 2866, socket.language )); // You review the corpse and find it worthy of a trophy.
+					socket.SysMessage( GetDictionaryEntry( 2867, socket.language )); // You use your kit up making the trophy.
+
+					if( ValidateObject( trophyItem ))
+					{
+						// Delete target if it was a big fish
+						if( myTarget.sectionID == "big_fish" )
+						{
+							myTarget.Delete();
+						}
+						else
+						{
+							// Otherwise, mark corpse as "used"
+							myTarget.SetTag( "usedForTrophy", true );
+						}
+
+						// Finally, delete the taxidermy kit
+						iUsed.Delete();
+					}
+				}
 			}
 		}
 		else 

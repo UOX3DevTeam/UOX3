@@ -1,3 +1,8 @@
+06/11/2022 - Dragon Slayer/Xuri
+	Implemented Taxidermy Kits for creating trophy house addons (Dragon Slayer)
+	Fixed an issue related to open doors in houses that would prevent the placement of house-addons because of an incorrect distance check (Xuri)
+	Fixed an issue with placement of house addons that would allow them to be placed in locations blocked either by other items or by parts of the multi itself (such as walls) (Xuri)
+
 1/11/2022 - Dragon Slayer
 	Updated spawn regions in Yew with NPCs for Empath Abbey
 

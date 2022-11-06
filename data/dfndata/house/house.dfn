@@ -1427,6 +1427,19 @@ HOUSE_DEED=trolltrophydeed
 HOUSE_ITEM=806
 }
 
+//big fish trophy deed
+[HOUSE 207]
+{
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=bigfishtrophydeed
+HOUSE_ITEM=807
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -3252,6 +3265,14 @@ Z=0
 [HOUSE ITEM 806]
 { 
 ITEM=trolltrophy
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 807]
+{
+ITEM=bigfishtrophy
 X=0
 Y=0
 Z=0
