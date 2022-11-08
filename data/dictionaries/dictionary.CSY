@@ -4791,5 +4791,21 @@
 17053=Již jste aktivovali bezpečný teleport! Počkejte prosím...
 17054=[Teleportuji se do bezpečí asi za půl minuty...]
 17055=[Teleportace do bezpečí asi za 15 sekund...]
+//Hair/Beard Dye Menus
+17100=Nemáš žádné vlasy k barvení.
+17101=Nabídka výběru barvy vlasů
+17102=Barvi mi vlasy touto barvou!
+17103=Hnědá
+17104=Kaštanové vlasy
+17105=Karounské vlasy
+17106=Modrá
+17107=Zelená
+17108=Červená
+17109=Světlá
+17110=Blondýnka
+17111=Černá
+17112=Béžová
+17113=Zlatá
+17114=DK hnědá
 }
 EOF

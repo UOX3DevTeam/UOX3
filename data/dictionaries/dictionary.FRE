@@ -4948,5 +4948,21 @@
 17053=Vous avez déjà activé la téléportation sécurisée ! Veuillez patienter...
 17054=[Téléportation sécurisée dans environ une demi-minute...]
 17055=[Téléportation en lieu sûr dans environ 15 secondes...]
+//Hair/Beard Dye Menus
+17100=Vous n'avez pas de cheveux à colorer.
+17101=Menu de sélection de la couleur des cheveux
+17102=Transformez mes cheveux en cette couleur !
+17103=Brun
+17104=Châtaigne
+17105=Auburn
+17106=Bleu
+17107=Vert
+17108=Rouge
+17109=clair
+17110=Blonde
+17111=Noir
+17112=Beige
+17113=Doré
+17114=Brun foncé
 }
 EOF
