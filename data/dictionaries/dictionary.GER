@@ -4585,6 +4585,7 @@
 11835=Schmiedehammer
 11836=Zange
 11837=Werkzeugsatz (Bastelwerkzeug)
+11838=Fletcher's Werkzeuge
 // Seite 3 - Teile
 11860=Laufbügel
 11861=Fassgewindebohrer
@@ -4800,5 +4801,8 @@
 17112=Beige
 17113=Gold
 17114=DK Braun
+17116=Sie haben keinen Bart zum Färben.
+17117=Menü zur Auswahl der Bartfarbe
+17118=Färbe meinen Bart in dieser Farbe!
 }
 EOF

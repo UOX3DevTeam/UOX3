@@ -4585,6 +4585,7 @@
 11835=Martello da fabbro
 11836=Tonghe
 11837=Kit di attrezzi (attrezzi da scultore)
+11838=Strumenti di Fletcher
 // Pagina 3 - Parti
 11860=Cerchi per canne
 11861=Barile Tap
@@ -4800,5 +4801,8 @@
 17112=Beige
 17113=Dorato
 17114=Marrone chiaro
+17116=Non hai barba da tingere.
+17117=Menu di selezione del colore della barba
+17118=Tingi la mia barba di questo colore!
 }
 EOF
