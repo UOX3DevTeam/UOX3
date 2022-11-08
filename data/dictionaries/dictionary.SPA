@@ -4585,6 +4585,7 @@
 11835=Martillo de herrero
 11836=Pinzas
 11837=Juego de herramientas (herramientas de calderero)
+11838=Herramientas de Carpintero
 // Página 3 - Piezas
 11860=Aros de barril
 11861=Grifo de barril
@@ -4800,5 +4801,8 @@
 17112=Beige
 17113=Dorado
 17114=Marrón Rojo
+17116=No tiene barba para teñir.
+17117=Menú de selección del color de la barba
+17118=¡Tiña mi barba de este color!
 }
 EOF

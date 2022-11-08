@@ -4584,6 +4584,7 @@
 11835=Martelo de martelo de Smith
 11836=Tenazes
 11837=Kit de ferramentas (Tinker's tools)
+11838=Ferramentas de Fletcher
 // Página 3 - Peças
 11860=Anéis de Barril
 11861=Torneira de barril
@@ -4799,5 +4800,8 @@
 17112=Bege
 17113=Golden
 17114=DK Brown
+17116=Não se tem barba para tingir.
+17117= Menu de selecção de cor de barba
+17118=Tinja a minha barba desta cor!
 }
 EOF
