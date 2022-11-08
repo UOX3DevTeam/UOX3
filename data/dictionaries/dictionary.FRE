@@ -4749,6 +4749,7 @@
 11835=Marteau de forgeron
 11836=Tongs
 11837=Kit d'outils (outils de bricolage)
+11838=Outils du plieur
 // Page 3 - Pièces détachées
 11860=Cerceaux de canon
 11861=Taraud de canon
@@ -4964,5 +4965,8 @@
 17112=Beige
 17113=Doré
 17114=Brun foncé
+17116=Vous n'avez pas de barbe à teindre.
+17117=Menu de sélection de la couleur de la barbe
+17118=Toignez ma barbe de cette couleur !
 }
 EOF
