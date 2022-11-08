@@ -2584,6 +2584,13 @@
 2860=Spielerverkäufer können nur in öffentlichen Häusern platziert werden!
 2861=Sie können keinen Spielerverkäufer neben einer Tür platzieren!
 2862=Deine Hände müssen frei sein, um zu zaubern oder zu meditieren.
+2863=Du bist als Tischler nicht geschickt genug, um das zu benutzen.
+2864=Zielt auf die Leiche, um eine Trophäe daraus zu machen.
+2865=Diese Leiche scheint bereits von einem Tierpräparator besucht worden zu sein.
+2866=Du begutachtest die Leiche und findest sie würdig für eine Trophäe.
+2867=Du verwendest deine Ausrüstung, um die Trophäe herzustellen.
+2868=Das sieht nicht nach etwas aus, das man sich an die Wand hängen möchte.
+2869=Du hast nicht genug Bretter.
 // [3000-4999] Animal and Monster names
 3001=ein Oger
 3002=ein Ettin
@@ -4070,6 +4077,9 @@
 9180=Nur Container können im Hauptpaket des Verkäufers auf 'unverkäuflich' gesetzt werden.
 9181=Der Artikel wurde als 'nicht zum Verkauf' gekennzeichnet.
 9182=Dieser Gegenstand ist nicht zum Verkauf bestimmt.
+9183=Ihr Bankschließfach ist überladen und kann kein weiteres Gewicht mehr tragen.
+9184=Wählen Sie einen Standort für das Haus-Addon.
+9185=Mit einer Axt können Sie Hausanbauten zerlegen und ihre Taten zurückerhalten.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!

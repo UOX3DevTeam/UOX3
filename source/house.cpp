@@ -53,11 +53,11 @@ auto DoHouseTarget( CSocket *mSock, UI16 houseEntry ) -> void
 			mSock->AddId( houseEntry );
 			if( houseId >= 0x4000 )
 			{
-				mSock->mtarget( static_cast<UI16>( houseId - 0x4000 ), 576 );
+				mSock->mtarget( static_cast<UI16>( houseId - 0x4000 ), 576 ); // Select a location for the building.
 			}
 			else
 			{
-				mSock->SendTargetCursor( 0, TARGET_BUILDHOUSE, 0, 576 );
+				mSock->SendTargetCursor( 0, TARGET_BUILDHOUSE, 0, 9184 ); // Select a location for the house addon.
 			}
 		}
 	}
@@ -164,6 +164,32 @@ auto CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 							if( ValidateObject( mMulti ))
 							{
 								mMulti->AddToMulti( hItem );
+							}
+
+							// Do we need to rotate the addon?
+							if( hItem->GetTempVar( CITV_MOREZ ) != 0 )
+							{
+								// An alternate rotation for item exists, stored in CITV_MOREZ
+								// Let's assume default rotation is North/South oriented, and check for walls to the left of the addon:
+								bool wallFound = ( Map->CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+								if( wallFound )
+								{
+									// What if it's placed in a corner? Look for north wall too:
+									bool northWallFound = ( Map->CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+									if( northWallFound )
+									{
+										// Randomize between the two directions
+										if( RandomNum( 0, 1 ))
+										{
+											hItem->SetId( hItem->GetTempVar( CITV_MOREZ ));
+										}
+									}
+									else
+									{
+										// Found a wall west of addon, but none north! Let's rotate addon to face east:
+										hItem->SetId( hItem->GetTempVar( CITV_MOREZ ));
+									}
+								}
 							}
 						}
 					}
@@ -345,7 +371,9 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 								auto doorY = mItem->GetTag( "DOOR_Y" );
 								UI16 origX = mItem->GetX() - doorX.m_IntValue;
 								UI16 origY = mItem->GetY() - doorY.m_IntValue;
-								if( x - origX < 2 || origX - x < 2 || y - origY < 2 || origY - y < 2 )
+								
+								// Make sure to check absolute values for the distance, since values could be negative
+								if( abs( x - origX ) < 2 && abs( y - origY ) < 2 )
 								{
 									if( mSock )
 									{
@@ -364,17 +392,19 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 								return false;
 							}
 
-							// Don't allow placing addon if it collides with a blocking tile at same height
-							bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING ));
-							if( locationBlocked )
-							{
-								if( mSock )
-								{
-									mSock->SysMessage( 9097 ); // You cannot place this house-addon there, location is blocked!
-								}
-								return false;
-							}
 						}
+
+					}
+
+					// Don't allow placing addon if it collides with a blocking tile at same height
+					bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING ));
+					if( locationBlocked )
+					{
+						if( mSock )
+						{
+							mSock->SysMessage( 9097 ); // You cannot place this house-addon there, location is blocked!
+						}
+						return false;
 					}
 				}
 			}
@@ -520,12 +550,11 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	// Use coordinates if provided in arguments, otherwise rely on values stored on socket
 	const SI16 x = xLoc > -1 ? xLoc : mSock->GetWord( 11 );
 	const SI16 y = yLoc > -1 ? yLoc : mSock->GetWord( 13 );
-	SI08 z = zLoc != 127 ? zLoc : static_cast<SI08>( mSock->GetByte( 16 ) + Map->TileHeight( mSock->GetWord( 17 )));
+	SI08 tileHeight = zLoc != 127 ? 0 : Map->TileHeight( mSock->GetWord( 17 ));
+	SI08 z = zLoc != 127 ? zLoc : static_cast<SI08>( mSock->GetByte( 16 ) + tileHeight );
 
-	//UI32 targetSerial = mSock->GetDWord( 7 );
 	if( mSock )
 	{
-		//mSock->GetDWord( 7 );
 		if( mSock->GetDWord( 7 ) != INVALIDSERIAL || GetDist( mChar->GetLocation(), Point3_st( x, y, z )) >= DIST_BUILDRANGE )
 		{
 			mSock->SysMessage( 577 ); // You cannot build your house there!
@@ -766,6 +795,12 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	}
 
 	const bool isMulti = ( houseId >= 0x4000 );
+	if( !isMulti )
+	{
+		// Trying to place a house addon, let's subtract the tileHeight of the targeted tile so it doesn't mess with placement rules
+		z -= tileHeight;
+	}
+
 	if( checkLocation && !CheckForValidHouseLocation( mSock, mChar, x, y, z, sx, sy, worldNumber, instanceId, isBoat, isMulti ))
 	{
 		return nullptr;

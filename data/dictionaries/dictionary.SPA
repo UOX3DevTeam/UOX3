@@ -2584,6 +2584,13 @@
 2860=¡Los vendedores de jugadores sólo pueden colocarse en casas públicas!
 2861=¡No puedes colocar un vendedor de jugadores junto a una puerta!
 2862=Tus manos deben estar libres para lanzar hechizos o meditar.
+2863=No tienes la suficiente habilidad como carpintero para usar esto.
+2864=Apunta al cadáver para hacer un trofeo con él.
+2865=Ese cadáver parece haber sido visitado ya por un taxidermista.
+2866=Revisas el cadáver y lo encuentras digno de un trofeo.
+2867=Usa su equipo para hacer el trofeo.
+2868=Eso no parece algo que quieras colgar en la pared.
+2869=No tienes suficientes tablas.
 // [3000-4999] Nombres de animales y monstruos
 3001=un ogro
 3002=un ettin
@@ -4070,6 +4077,9 @@
 9180=Sólo los contenedores pueden ponerse como "no en venta" en el paquete principal del vendedor.
 9181=El artículo ha sido marcado como 'no en venta'
 9182=Este artículo no está a la venta.
+9183=Su caja bancaria está sobrecargada y no puede soportar más peso.
+9184=Seleccione una ubicación para el complemento de la casa.
+9185=Puedes usar un hacha para desmantelar los complementos de la casa y recuperar sus escrituras.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!

@@ -232,7 +232,7 @@
       <AdditionalOptions> /J</AdditionalOptions>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;EXPORT_JS_API;_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION;_WARNING_CRT_NO_VA_START_VALIDATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>

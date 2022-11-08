@@ -2584,6 +2584,13 @@
 2860=Hráčské prodejce lze umístit pouze do veřejných domů!
 2861=Prodejce hráčů nelze umístit do sousedství dveří!
 2862=Pro sesílání kouzel nebo meditaci musíš mít volné ruce.
+2863=Nejsi dostatečně zručný tesař, abys to mohl použít.
+2864=Zaměřte se na mrtvolu, ze které chcete vyrobit trofej.
+2865=Tuto mrtvolu již zřejmě navštívil taxidermista.
+2866=Prohlížíš si mrtvolu a shledáváš ji hodnou trofeje.
+2867=Použiješ svou výbavu na výrobu trofeje.
+2868=Tohle nevypadá jako něco, co bys chtěl mít pověšené na zdi.
+2869=Nemáš dostatek desek.
 // [3000-4999] Animal and Monster names
 3001=zlobr
 3002=ettin
@@ -4077,6 +4084,9 @@
 9180=V hlavním balení prodejce lze nastavit jako "neprodejné" pouze kontejnery.
 9181=Předmět byl označen jako "neprodejný".
 9182=Tento předmět není určen k prodeji.
+9183=Bankovní schránka je přetížená a neunese další hmotnost.
+9184=Vyberte umístění doplňku domu.
+9185=Sekerou můžete rozebrat doplňky domu a získat zpět jejich listiny.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
