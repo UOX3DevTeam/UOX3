@@ -1,27 +1,49 @@
+// This script handles dying of hairs and beards
 function onUseChecked( pUser, iUsed )
 {
 	// Store iUsed as a custom property on pUser
-	pUser.hairDyeItem = iUsed;
+	pUser.dyeItem = iUsed;
 	var socket = pUser.socket;
 
 	// Make sure item is in player's backpack, or disallow use
 	var itemOwner = GetPackOwner( iUsed, 0 );
 	if( itemOwner == null || itemOwner != pUser )
 	{
-		pUser.SysMessage( GetDictionaryEntry( 1763, pUser.socket.language )); // That item must be in your backpack before it can be used.
+		pUser.SysMessage( GetDictionaryEntry( 1763, socket.language )); // That item must be in your backpack before it can be used.
 		return false;
 	}
 
-	var hairItem = pUser.FindItemLayer( 0x0B );
-	if( hairItem != null )
+	// Are we dealing with hair dye, or beard dye?
+	var itemToDye = null;
+	if( iUsed.morex == 0 ) // Hair dye
+	{
+		// Find hair equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+	}
+	else if( iUsed.morex == 1 ) // Beard dye
+	{
+		// Find beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x10 );
+	}
+
+	if( itemToDye != null )
 	{
 		DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
 	}
 	else
 	{
-		pUser.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
-		return false;
+		if( iUsed.morex == 0 )
+		{
+			// No hair!
+			pUser.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
+		}
+		else if( iUsed.morex == 1 )
+		{
+			// No beard!
+			pUser.SysMessage( GetDictionaryEntry( 17116, socket.language )); // You have no beard to dye.
+		}
 	}
+	return false;
 }
 
 const brownDyes = [
@@ -83,9 +105,9 @@ function DisplayDyes( dyesArray, pageNum, color, pUser )
 	var COL_SPACING = 15; // spacing between radio control and text
 	var colNum = 160;    // starting column number
 	var rowOffset = 0;   // starting row offset
-	var myHairDye = new Gump;
+	var myDyeGump = new Gump;
 
-	ShowHairDyeMenu( myHairDye, pUser );
+	ShowDyeMenu( myDyeGump, pUser );
 	for ( var i = 0; i < dyesArray.length; i++ )
 	{
 		if( i > 0 && i % MAX_ROWS == 0 )
@@ -94,44 +116,83 @@ function DisplayDyes( dyesArray, pageNum, color, pUser )
 			rowOffset = 0;
 		}
 
-		myHairDye.AddPage( pageNum );
-		myHairDye.AddRadio( colNum, 30 + ( rowOffset * 20 ), 0xa92, 0, dyesArray[0] + i );
-		myHairDye.AddText( colNum + COL_SPACING, 30 + ( rowOffset * 20 ), dyesArray[i], color );
+		myDyeGump.AddPage( pageNum );
+		myDyeGump.AddRadio( colNum, 30 + ( rowOffset * 20 ), 0xa92, 0, dyesArray[0] + i );
+		myDyeGump.AddText( colNum + COL_SPACING, 30 + ( rowOffset * 20 ), dyesArray[i], color );
 		rowOffset++;
 	}
-	myHairDye.Send( pUser );
-	myHairDye.Free();
+	myDyeGump.Send( pUser );
+	myDyeGump.Free();
 }
 
-function ShowHairDyeMenu( myHairDye, pUser)
+function ShowDyeMenu( myDyeGump, pUser)
 {
 	var socket = pUser.socket;
-	myHairDye.AddPage( 0 );
-	myHairDye.AddBackground( 0, 0, 420, 400, 5054 );
-	myHairDye.AddBackground( 10, 10, 400, 380, 3000 );
-	myHairDye.AddText( 91, 10, 1000, GetDictionaryEntry( 17101, socket.language )); // Hair Color Selection Menu
-	myHairDye.AddText( 81, 361, 1000, GetDictionaryEntry( 17102, socket.language )); // Dye my hair this color!
-	myHairDye.AddBackground( 28, 30, 120, 315, 5054 );
-	myHairDye.AddButton( 251, 360, 0xf7, 1, 0, 1 );
+	var iUsed = pUser.dyeItem;
+	myDyeGump.AddPage( 0 );
+	myDyeGump.AddBackground( 0, 0, 420, 400, 5054 );
+	myDyeGump.AddBackground( 10, 10, 400, 380, 3000 );
+	if( iUsed.morex == 0 )
+	{
+		// Hair
+		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17101, socket.language )); // Hair Color Selection Menu
+		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17102, socket.language )); // Dye my hair this color!
+	}
+	else if( iUsed.morex == 1 )
+	{
+		// Beards
+		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17117, socket.language ) ); // Beard Color Selection Menu
+		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17118, socket.language ) ); // Dye my beard this color!
+	}
+	myDyeGump.AddBackground( 28, 30, 120, 315, 5054 );
+	myDyeGump.AddButton( 251, 360, 0xf7, 1, 0, 1 );
 
 	var menuDye = [1601, 1627, 1501, 1301, 1401, 1201, 2401, 2212, 1101, 1109, 1117, 1133];
 	var menuNames = [17103, 17104, 17105, 17106, 17107, 17108, 17109, 17110, 17111, 17112, 17113, 17114];
 
 	for( var i = 0; i < menuDye.length; i++ )
 	{
-		myHairDye.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
-		myHairDye.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry( menuNames[i], socket.language ));
+		myDyeGump.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
+		myDyeGump.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry( menuNames[i], socket.language ));
 	}
 }
 
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
-	var iUsed = pUser.hairDyeItem;
+	var iUsed = pUser.dyeItem;
+
+	// Verify that dye item still exists
+	if( !ValidateObject( iUsed ))
+		return;
+
+	// Make sure dye item is STILL in player's backpack, or disallow use
+	var itemOwner = GetPackOwner( iUsed, 0 );
+	if( itemOwner == null || itemOwner != pUser )
+	{
+		pUser.SysMessage( GetDictionaryEntry( 1763, pSock.language )); // That item must be in your backpack before it can be used.
+		return false;
+	}
+
 	var scriptID = 5040;
 	var gumpID = scriptID + 0xffff;
 	var colour = 0;
-	var hairItem = pUser.FindItemLayer( 0x0B );
+	var itemToDye = null;
+	if( iUsed.morex == 0 )
+	{
+		// Find hair equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+	}
+	else if( iUsed.morex == 1 )
+	{
+		// Find beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x10 );
+	}
+
+	// Verify that hair/beard still exists
+	if( !ValidateObject( itemToDye ))
+		return;
+
 	switch( pButton )
 	{
 		case 0:
@@ -710,13 +771,10 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 	}
 
-	if ( colour != 0 )
+	if( colour != 0 )
 	{
-		hairItem.colour = colour;
-		if( ValidateObject( iUsed ))
-		{
-			iUsed.Delete();
-		}
+		itemToDye.colour = colour;
+		iUsed.Delete();
 		return;
 	}
 }
