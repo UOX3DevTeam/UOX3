@@ -1,3 +1,9 @@
+08/11/2022 - Dragon Slayer/ldilley
+	Added item definition (misc/consumables.dfn), JS script (item/hairdye.js) and dictionary entries for hair dye
+	Added hair dyes (and tribal paint) to new consumables menu in add-menu (Xuri)
+	Cleaned up hair dye script based on style guidelines, addressed a few issues (Xuri)
+	Removed hard-coded hairdye functionality (Xuri)
+
 06/11/2022 - Dragon Slayer/Xuri
 	Implemented Taxidermy Kits for creating trophy house addons (Dragon Slayer)
 	Fixed an issue related to open doors in houses that would prevent the placement of house-addons because of an incorrect distance check (Xuri)
