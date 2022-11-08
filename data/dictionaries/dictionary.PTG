@@ -2584,6 +2584,13 @@
 2860=Vendedores-jogadores só podem ser colocados em casas públicas!
 2861=Não se pode colocar um vendedor de jogadores ao lado de uma porta!
 2862=As suas mãos devem estar livres para lançar feitiços ou meditar.
+2863=Não é suficientemente hábil como carpinteiro para utilizar isto.
+2864=Alvo ao cadáver para fazer um troféu.
+2865=O cadáver parece já ter sido visitado por um taxidermista.
+2866=Você analisa o cadáver e considera-o digno de um troféu.
+2867=Você utiliza o seu kit para fazer o troféu.
+2868=Isso não se parece com algo que se queira pendurar numa parede.
+2869=Não tens tábuas suficientes.
 // [3000-4999] Animal and Monster names
 3001=um ogre
 3002=an ettin
@@ -4069,6 +4076,9 @@
 9180=Apenas os contentores podem ser marcados como 'não destinados à venda' na embalagem principal do vendedor.
 9181=O artigo foi marcado como 'não à venda'.
 9182=Este artigo não se encontra à venda.
+9183=Sua caixa bancária está sobrecarregada e não aguenta mais peso.
+9184=Selecionar um local para o addon da casa.
+9185=Pode usar um machado para desmontar os viciados da casa e recuperar as suas escrituras.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
