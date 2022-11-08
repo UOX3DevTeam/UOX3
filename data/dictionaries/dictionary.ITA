@@ -4784,5 +4784,21 @@
 17053=Hai già attivato il teletrasporto sicuro! Per favore aspetta...
 17054=[Teletrasporto in sicurezza tra circa mezzo minuto...]
 17055=[Teletrasporto in sicurezza tra circa 15 secondi...]
+//Hair/Beard Dye Menus
+17100=Non ci sono capelli da tingere.
+17101=Menu di selezione del colore dei capelli
+17102=Tingi i capelli di questo colore!
+17103=Marrone
+17104=Castagno
+17105=Capelli castani
+17106=Blu
+17107=Verde
+17108=Rosso
+17109=Leggero
+17110=Biondo
+17111=Nero
+17112=Beige
+17113=Dorato
+17114=Marrone chiaro
 }
 EOF

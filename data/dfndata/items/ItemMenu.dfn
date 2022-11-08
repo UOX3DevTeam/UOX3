@@ -502,6 +502,8 @@ ITEMMENU=118
 ITEMMENU=124
 <=Rawfoods
 ITEMMENU=122
+<=Consumables
+ITEMMENU=250
 <=Previous Menu
 ITEMMENU=1
 }
