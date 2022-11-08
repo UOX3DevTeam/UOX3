@@ -20,5 +20,20 @@ get=base_item
 name=a hair dye
 id=0x0eff
 weight=100
-script=5040//hairdye.js
+value=50 25
+restock=10
+script=5040//hairbearddye.js
+morex=0
+}
+
+[bearddye]
+{
+get=base_item
+name=a beard dye
+id=0x0eff
+weight=100
+value=50 25
+restock=10
+script=5040//hairbearddye.js
+morex=1
 }
