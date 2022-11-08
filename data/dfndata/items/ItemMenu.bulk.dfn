@@ -13907,6 +13907,8 @@ consumables.dfn
 ADDITEM=tribalpaint
 0x0eff=hair dye
 ADDITEM=hairdye
+0x0eff=beard dye
+ADDITEM=bearddye
 <=Previous Menu
 ITEMMENU=9
 }
