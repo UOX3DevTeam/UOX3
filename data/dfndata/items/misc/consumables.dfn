@@ -18,7 +18,7 @@ get=tribalpaint
 {
 get=base_item
 name=a hair dye
-id=0xEFF
-WEIGHT=100
-SCRIPT=5040
+id=0x0eff
+weight=100
+script=5040//hairdye.js
 }

@@ -4784,5 +4784,21 @@
 17053=Sie haben den sicheren Teleport bereits aktiviert! Bitte warten Sie...
 17054=[Teleportiere mich in etwa einer halben Minute in Sicherheit...]
 17055=[Teleportieren in Sicherheit in etwa 15 Sekunden...]
+//Hair/Beard Dye Menus
+17100=Sie haben keine Haare zum Färben.
+17101=Haarfarbauswahl-Menü
+17102=Färben Sie mein Haar in dieser Farbe!
+17103=Braun
+17104=Kastanienbraun
+17105=Kastanienbraun
+17106=Blau
+17107=Grün
+17108=Rot
+17109=Hell
+17110=Blond
+17111=Schwarz
+17112=Beige
+17113=Gold
+17114=DK Braun
 }
 EOF
