@@ -1140,6 +1140,11 @@ function ItemDetailGump( pUser )
 			HARVEST = [10015];
 			mainSkill = parseInt( pUser.skills.tinkering );
 			break;
+		case 214: // Fletcher's Tools
+			createEntry = CreateEntries[284];
+			HARVEST = [10015];
+			mainSkill = parseInt( pUser.skills.tinkering );
+			break;
 		// Page 3 - Parts
 		case 224: // Barrel Hoops
 			createEntry = CreateEntries[224];

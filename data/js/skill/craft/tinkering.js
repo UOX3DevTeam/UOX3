@@ -17,7 +17,7 @@ const myPage = [
 	[ 11801, 11802, 11803, 11804, 11805 ],
 
 	// Page 2 - Tools
-	[ 11820, 11821, 11822, 11823, 11824, 11825, 11826, 11827, 11828, 11829, 11830, 11831, 11832, 11833, 11834, 11835, 11836, 11837 ],
+	[ 11820, 11821, 11822, 11823, 11824, 11825, 11826, 11827, 11828, 11829, 11830, 11831, 11832, 11833, 11834, 11835, 11836, 11837, 11838 ],
 
 	// Page 3 - Parts
 	[ 11860, 11861, 11862, 11863, 11864, 11865, 11866 ],
@@ -222,6 +222,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			makeID = 253; timerID = 2; break;
 		case 217: // Tool Kit (Tinker's tools)
 			makeID = 213; timerID = 2; break;
+		case 218: // Fletcher's Tools
+			makeID = 214; timerID = 2; break;
 		// Page 3 - Parts
 		case 300: // Barrel Hoops
 			makeID = 224; timerID = 3; break;
@@ -379,6 +381,8 @@ function onGumpPress( pSock, pButton, gumpData )
 			itemDetailsID = 253; break;
 		case 2217: // Tool Kit (Tinker's tools)
 			itemDetailsID = 213; break;
+		case 2218: // Fletcher's Tools
+			itemDetailsID = 214; break;
 		// Page 3 - Parts
 		case 2300: // Barrel Hoops
 			itemDetailsID = 224; break;
