@@ -13899,3 +13899,16 @@ ADDITEM=0x1ebd
 <=Previous Menu
 ITEMMENU=0
 }
+
+[ITEMMENU 250]
+{
+consumables.dfn
+0x09ec=tribal paint
+ADDITEM=tribalpaint
+0x0eff=hair dye
+ADDITEM=hairdye
+0x0eff=beard dye
+ADDITEM=bearddye
+<=Previous Menu
+ITEMMENU=9
+}
