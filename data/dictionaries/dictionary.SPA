@@ -4784,5 +4784,21 @@
 17053=¡Ya ha activado el teletransporte seguro! Por favor, espere...
 17054=[Teletransportándose a un lugar seguro en medio minuto...]
 17055=[Teletransportándose a un lugar seguro en unos 15 segundos...]
+//Hair/Beard Dye Menus
+17100=No tiene cabello para teñir.
+17101=Menú de selección de color de pelo
+17102=¡Teñirme el pelo de este color!
+17103=Castaño
+17104=Castaño
+17105=Castaño
+17106=Azul
+17107=Verde
+17108=Rojo
+17109=Luz
+17110=Rubio
+17111=Negro
+17112=Beige
+17113=Dorado
+17114=Marrón Rojo
 }
 EOF
