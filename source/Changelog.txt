@@ -1,6 +1,9 @@
 09/11/2022 - Dragon Slayer/ldilley
 	Added item definition (in misc/consumables.dfn), JS script (item/bearddye.js) and dictionary entries for hair dye
 	Combined hair and beard dye scripts into one, since they shared most code (Xuri)
+	Added dyes to alchemist shoplist (items/shoplist.dfn) (Xuri)
+	Removed old hair dye menu from legacy gump DFN (dfndata/misc/gumps.dfn) (Xuri)
+	Selling items to NPC shopkeepers now relies on sectionID of items instead of their ID/Type/Morex values (Xuri)
 
 08/11/2022 - Dragon Slayer/ldilley
 	Added item definition (misc/consumables.dfn), JS script (item/hairdye.js) and dictionary entries for hair dye
