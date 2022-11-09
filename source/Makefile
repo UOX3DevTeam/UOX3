@@ -7,6 +7,7 @@ ifeq ($(PLATFORM),FreeBSD)
 CXX     	:= clang++
 else
 CXX     	:= g++
+GCCVER8		:= $(shell expr `gcc -dumpversion | cut -f1 -d.` \<= 8)
 endif
 
 CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value
@@ -21,6 +22,10 @@ POSTCOMPILE = mv -f $(DEPDIR)/$*.Td $(DEPDIR)/$*.d && touch $@
 BUILD    	:= ./build
 SRC      	:= $(wildcard *.cpp)
 OBJECTS  	:= $(SRC:%.cpp=$(BUILD)/%.o)
+
+ifeq "$(GCCVER8)" "1"
+	LDFLAGS += -lstdc++fs
+endif
 
 #COMPILE 	:= $(CXX) $(DEPFLAGS) $(CXXFLAGS) $(INCLUDE) -c
 
