@@ -15,6 +15,7 @@ function onUseChecked( pUser, iUsed )
 
 	// Are we dealing with hair dye, or beard dye?
 	var itemToDye = null;
+	var itemToDye2 = null;
 	if( iUsed.morex == 0 ) // Hair dye
 	{
 		// Find hair equipped on character
@@ -25,8 +26,14 @@ function onUseChecked( pUser, iUsed )
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
+	else if( iUsed.morex == 2 ) // Hair/Beard dye
+	{
+		// Find Hair/Beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
 
-	if( itemToDye != null )
+	if( itemToDye != null || itemToDye != null && itemToDye2 != null)
 	{
 		DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
 	}
@@ -144,6 +151,12 @@ function ShowDyeMenu( myDyeGump, pUser)
 		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17117, socket.language ) ); // Beard Color Selection Menu
 		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17118, socket.language ) ); // Dye my beard this color!
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Hair/Beards
+		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17101, socket.language ) ); // Hair Color Selection Menu
+		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17102, socket.language ) ); // Dye my Hair this color!
+	}
 	myDyeGump.AddBackground( 28, 30, 120, 315, 5054 );
 	myDyeGump.AddButton( 251, 360, 0xf7, 1, 0, 1 );
 
@@ -188,9 +201,15 @@ function onGumpPress( pSock, pButton, gumpData )
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Find Hair/beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
 
 	// Verify that hair/beard still exists
-	if( !ValidateObject( itemToDye ))
+	if( !ValidateObject( itemToDye ) || !ValidateObject( itemToDye ) && !ValidateObject( itemToDye2 ))
 		return;
 
 	switch( pButton )
@@ -774,7 +793,9 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( colour != 0 )
 	{
 		itemToDye.colour = colour;
+		itemToDye2.colour = colour;
 		iUsed.Delete();
+		pUser.SoundEffect( 0x4E, true );
 		return;
 	}
 }

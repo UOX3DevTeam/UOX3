@@ -1538,4 +1538,14 @@ SELLITEM=0x09c4
 SELLITEM=0x098d
 }
 
+[SHOPLIST HairStylistShopping]
+{
+RSHOPITEM=haironlydye
+RSHOPITEM=beardonlydye
+RSHOPITEM=hairdye
+SELLITEM=haironlydye
+SELLITEM=beardonlydye
+SELLITEM=hairdye
+}
+
 EOF
