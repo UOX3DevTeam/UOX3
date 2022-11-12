@@ -3192,7 +3192,7 @@
 5124=un cavaliere d'ossa
 5125=un mago delle ossa
 5126=il Tessitore
-5127=il cartografo
+5127=il Cartografo
 5128=il Commerciante di pellicce
 5129=il Conciatore
 5130=la Cameriera
@@ -3200,18 +3200,19 @@
 5132=il Ranger
 5133=il Guerriero
 5134=il Giocatore d'azzardo
-5135=il giudice
+5135=il Giudice
 5136=il Mugnaio
 5137=il Monaco
 5138=il Rancher
-5139=il prigioniero
-5140=lo scultore
-5141=il sindaco
+5139=il Prigioniero
+5140=lo Scultore
+5141=il Sindaco
 5142=un demone minore
 5143=un cacodaemon
 5144=un demone bestiale
 5145=un mannaia orco
 5146=il controllore
+5147=il Parrucchiere
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -4804,5 +4805,7 @@
 17116=Non hai barba da tingere.
 17117=Menu di selezione del colore della barba
 17118=Tingi la mia barba di questo colore!
+17119=Tingi i miei capelli e la mia barba di questo colore!
+17120=Non hai capelli o barba da tingere.
 }
 EOF

@@ -3215,6 +3215,7 @@
 5144=zvířecí démon
 5145=orkský sekáček
 5146=ovladač
+5147=kadeřník
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -4811,5 +4812,7 @@
 17116=Nemáš vousy k barvení.
 17117=Nabídka výběru barvy vousů
 17118=Barvi mi vousy touto barvou!
+17119=Nabarvi mi vlasy a vousy na tuto barvu!
+17120=Nemáš žádné vlasy ani vousy k barvení.
 }
 EOF

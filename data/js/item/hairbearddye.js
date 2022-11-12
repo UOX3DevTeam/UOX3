@@ -15,32 +15,44 @@ function onUseChecked( pUser, iUsed )
 
 	// Are we dealing with hair dye, or beard dye?
 	var itemToDye = null;
-	if( iUsed.morex == 0 ) // Hair dye
+	var itemToDye2 = null;
+	if( iUsed.morex == 0 ) // Hair only dye
 	{
 		// Find hair equipped on character
 		itemToDye = pUser.FindItemLayer( 0x0B );
 	}
-	else if( iUsed.morex == 1 ) // Beard dye
+	else if( iUsed.morex == 1 ) // Beard only dye
 	{
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
+	else if( iUsed.morex == 2 ) // Hair/Beard dye
+	{
+		// Find Hair/Beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
 
-	if( itemToDye != null )
+	if( itemToDye != null || itemToDye2 != null )
 	{
 		DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
 	}
 	else
 	{
-		if( iUsed.morex == 0 )
+		if( itemToDye == null && iUsed.morex == 0 )
 		{
 			// No hair!
 			pUser.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
 		}
-		else if( iUsed.morex == 1 )
+		else if( itemToDye == null && iUsed.morex == 1 )
 		{
 			// No beard!
 			pUser.SysMessage( GetDictionaryEntry( 17116, socket.language )); // You have no beard to dye.
+		}
+		else if( itemToDye == null && itemToDye2 == null )
+		{
+			// No hair or beard!
+			pUser.SysMessage( GetDictionaryEntry( 17120, socket.language )); // You have no hair or beard to dye.
 		}
 	}
 	return false;
@@ -100,11 +112,11 @@ const dkBrownDyes = [
 
 function DisplayDyes( dyesArray, pageNum, color, pUser )
 {
-	var MAX_ROWS = 15;    // maximum number of rows displayed in a page
-	var COL_INC = 100;    // increment column by this value when MAX_ROWS is reached
-	var COL_SPACING = 15; // spacing between radio control and text
-	var colNum = 160;    // starting column number
-	var rowOffset = 0;   // starting row offset
+	var MAX_ROWS = 15;    	// maximum number of rows displayed in a page
+	var COL_INC = 100;    	// increment column by this value when MAX_ROWS is reached
+	var COL_SPACING = 15; 	// spacing between radio control and text
+	var colNum = 160;    	// starting column number
+	var rowOffset = 0;   	// starting row offset
 	var myDyeGump = new Gump;
 
 	ShowDyeMenu( myDyeGump, pUser );
@@ -144,6 +156,12 @@ function ShowDyeMenu( myDyeGump, pUser)
 		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17117, socket.language ) ); // Beard Color Selection Menu
 		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17118, socket.language ) ); // Dye my beard this color!
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Hair/Beards
+		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17101, socket.language ) ); // Hair Color Selection Menu
+		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17119, socket.language ) ); // Dye my hair and beard this color!
+	}
 	myDyeGump.AddBackground( 28, 30, 120, 315, 5054 );
 	myDyeGump.AddButton( 251, 360, 0xf7, 1, 0, 1 );
 
@@ -178,6 +196,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	var gumpID = scriptID + 0xffff;
 	var colour = 0;
 	var itemToDye = null;
+	var itemToDye2 = null;
 	if( iUsed.morex == 0 )
 	{
 		// Find hair equipped on character
@@ -188,9 +207,15 @@ function onGumpPress( pSock, pButton, gumpData )
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Find Hair/beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
 
 	// Verify that hair/beard still exists
-	if( !ValidateObject( itemToDye ))
+	if( !ValidateObject( itemToDye ) && !ValidateObject( itemToDye2 ))
 		return;
 
 	switch( pButton )
@@ -773,8 +798,18 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( colour != 0 )
 	{
-		itemToDye.colour = colour;
+		if( ValidateObject( itemToDye ))
+		{
+			itemToDye.colour = colour;
+		}
+
+		if( ValidateObject( itemToDye2 ))
+		{
+			itemToDye2.colour = colour;
+		}
+
 		iUsed.Delete();
+		pUser.SoundEffect( 0x4E, true );
 		return;
 	}
 }
