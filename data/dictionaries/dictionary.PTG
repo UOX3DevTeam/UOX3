@@ -3194,9 +3194,9 @@
 5126=a Weaver
 5127=o Mapeador
 5128=o Furtrader
-5129=o curtidor
-5130=a empregada de mesa
-5131=o empregado de mesa
+5129=o Curtidor
+5130=a Empregada de Mesa
+5131=o Empregado de Mesa
 5132=o Ranger
 5133=o Guerreiro
 5134=o Jogador
@@ -3212,6 +3212,7 @@
 5144=um daemon besta
 5145=um cortador orc
 5146=o controlador
+5147=o Cabeleireiro
 // [6000-6499] Misc Skill Msgs
 6000=Que a pessoa parece %s e %t.
 6001=Não se pode fazer nada de útil com isso.
@@ -4803,5 +4804,7 @@
 17116=Não se tem barba para tingir.
 17117= Menu de selecção de cor de barba
 17118=Tinja a minha barba desta cor!
+17119=Pintar o meu cabelo e barba desta cor!
+17120=Não tem cabelo nem barba para tingir.
 }
 EOF

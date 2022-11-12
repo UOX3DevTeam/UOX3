@@ -1,3 +1,7 @@
+12/11/2022 - Dragon Slayer
+	Added hair-only and beard-only variants of hair dyes
+	Added hair stylist vendors that sell all types of dye
+
 09/11/2022 - Dragon Slayer/ldilley
 	Added item definition (in misc/consumables.dfn), JS script (item/bearddye.js) and dictionary entries for hair dye
 	Combined hair and beard dye scripts into one, since they shared most code (Xuri)
