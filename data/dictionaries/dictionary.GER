@@ -3212,6 +3212,7 @@
 5144=ein bestialischer Dämon
 5145=ein Ork-Häcksler
 5146=der Kontrolleur
+5147=die Friseurin
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -4804,5 +4805,7 @@
 17116=Sie haben keinen Bart zum Färben.
 17117=Menü zur Auswahl der Bartfarbe
 17118=Färbe meinen Bart in dieser Farbe!
+17119=Färbe meine Haare und meinen Bart in dieser Farbe!
+17120=Du hast keine Haare und keinen Bart zum Färben.
 }
 EOF

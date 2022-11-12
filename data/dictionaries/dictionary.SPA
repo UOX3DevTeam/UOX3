@@ -3196,7 +3196,7 @@
 5128=el Peletero
 5129=el Curtidor
 5130=la Camarera
-5131=camarero
+5131=el Camarero
 5132=el Guardabosques
 5133=el Guerrero
 5134=el Jugador
@@ -3206,12 +3206,13 @@
 5138=el Ganadero
 5139=el Prisionero
 5140=el Escultor
-5141=el alcalde
+5141=el Alcalde
 5142=un demonio menor
 5143=un cacodemonio
 5144=un demonio bestial
 5145=un cortador de orcos
 5146=el controlador
+5147=el Peluquero
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -4804,5 +4805,7 @@
 17116=No tiene barba para teñir.
 17117=Menú de selección del color de la barba
 17118=¡Tiña mi barba de este color!
+17119=¡Tiñe mi pelo y mi barba de este color!
+17120=No tienes pelo ni barba para teñir.
 }
 EOF

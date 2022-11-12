@@ -14,6 +14,30 @@ script=5037//tribal_paint.js
 get=tribalpaint
 }
 
+[haironlydye]
+{
+get=base_item
+name=a hair-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=0
+}
+
+[beardonlydye]
+{
+get=base_item
+name=a beard-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=1
+}
+
 [hairdye]
 {
 get=base_item
@@ -23,17 +47,5 @@ weight=100
 value=50 25
 restock=10
 script=5040//hairbearddye.js
-morex=0
-}
-
-[bearddye]
-{
-get=base_item
-name=a beard dye
-id=0x0eff
-weight=100
-value=50 25
-restock=10
-script=5040//hairbearddye.js
-morex=1
+morex=2
 }

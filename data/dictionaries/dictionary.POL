@@ -3195,23 +3195,24 @@
 5127=Kapelusznik
 5128=handlarz żywym towarem
 5129=Garbarz
-5130=kelnerka
-5131=kelner
+5130=Kelnerka
+5131=Kelner
 5132=Strażnik
-5133=wojownik
+5133=Wojownik
 5134=Grajek
-5135=sędzia
-5136=młynarz
-5137=mnich
+5135=Sędzia
+5136=Młynarz
+5137=Mnich
 5138=Rolnik
-5139=więzień
-5140=rzeźbiarz
-5141=burmistrz
+5139=Więzień
+5140=Rzeźbiarz
+5141=Burmistrz
 5142=mniejszy demon
 5143=kakodaemon
 5144=potworny demon
 5145=orkowy tasak
 5146=kontroler
+5147=Stylista Fryzur
 // [6000-6499] Różne umiejętności Msgs
 6000=Ta osoba wygląda na %s i %t.
 6001=Nie możesz zrobić z tego nic użytecznego.
@@ -4804,4 +4805,6 @@
 17116=Nie masz brody do farbowania.
 17117=Menu wyboru koloru brody
 17118=Przefarbuj moją brodę na ten kolor!
+17119=Przefarbuj moje włosy i brodę na ten kolor!
+17120=Nie masz włosów ani brody do farbowania.
 }
