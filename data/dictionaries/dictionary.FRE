@@ -3355,18 +3355,18 @@
 5123=une hache en os
 5124=un chevalier des os
 5125=un mage des os
-5126=le tisserand
-5127=le cartographe
-5128=le commerçant de fourrures
-5129=le tanneur
+5126=le Tisserand
+5127=le Cartographe
+5128=le Commerçant de Fourrures
+5129=le Tanneur
 5130=la Serveuse
 5131=le Serveur
 5132=le Ranger
-5133=le guerrier
-5134=le joueur
+5133=le Guerrier
+5134=le Joueur
 5135=le Juge
-5136=le meunier
-5137=le moine
+5136=le Meunier
+5137=le Moine
 5138=le Rancher
 5139=le Prisonnier
 5140=le Sculpteur
@@ -3376,6 +3376,7 @@
 5144=un daemon bestial
 5145=un hachoir orc
 5146=le contrôleur
+5147=le Coiffeur
 // [6000-6499] Misc Skill Msgs
 6000=Cette personne a l'air %s et %t.
 6001=On ne peut pas en faire quelque chose d'utile.
@@ -4968,5 +4969,7 @@
 17116=Vous n'avez pas de barbe à teindre.
 17117=Menu de sélection de la couleur de la barbe
 17118=Toignez ma barbe de cette couleur !
+17119=Transformez mes cheveux et ma barbe en cette couleur !
+17120=Vous n'avez pas de cheveux ou de barbe à teindre.
 }
 EOF

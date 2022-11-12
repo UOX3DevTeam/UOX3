@@ -17,7 +17,7 @@ get=tribalpaint
 [haironlydye]
 {
 get=base_item
-name=a hair dye
+name=a hair-only dye
 id=0x0eff
 weight=100
 value=30000 15000
@@ -29,7 +29,7 @@ morex=0
 [beardonlydye]
 {
 get=base_item
-name=a beard dye
+name=a beard-only dye
 id=0x0eff
 weight=100
 value=30000 15000
