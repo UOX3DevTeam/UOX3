@@ -474,7 +474,7 @@ public:
 	auto		SaveIni( const std::string &filename ) -> bool;
 
 	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
-	auto		EraStringToEnum( std::string eraString ) ->ExpansionRuleset;
+	auto		EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset;
 
 	auto ResetDefaults() -> void;
 	auto Startup() -> void;
