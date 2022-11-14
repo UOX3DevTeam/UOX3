@@ -1,3 +1,8 @@
+15/11/2022 - Dragon Slayer
+	Added special hair dyes
+	Updated item menu in dfndata/items/ItemMenu.bulk.dfn with dyes (Xuri)
+	Added hairstylist NPC alias to dfndata/npc/vendors.dfn (Xuri)
+
 13/11/2022 - Xuri
 	When buying items from NPC shopkeepers where the total cost is higher than the buy threshold set in uox.ini, UOX3 will now check the player's bankbox for gold first, then their backpack second, instead of just failing outright if bank didn't have the required amount
 	Minor cleanup of some UO era-specific code for better maintainability
