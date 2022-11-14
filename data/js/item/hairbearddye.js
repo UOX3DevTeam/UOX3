@@ -40,7 +40,9 @@ function onUseChecked( pUser, iUsed )
 			DisplayDyes( purpleSpecialDyes, 1, "*****", pUser );
 		}
 		else
+		{
 			DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
+		}
 	}
 	else
 	{
@@ -211,7 +213,7 @@ function ShowDyeMenu( myDyeGump, pUser )
 		for( var i = 0; i < menuDye.length; i++ ) 
 		{
 			myDyeGump.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
-			myDyeGump.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry(menuNames[i], socket.language ));
+			myDyeGump.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry( menuNames[i], socket.language ));
 		}
 	}
 }
@@ -269,105 +271,105 @@ function onGumpPress( pSock, pButton, gumpData )
 			switch( OtherButton )
 			{
 				case 12:
-                    colour = 0x12;break;
+                    colour = 0x12; break;
 				case 13:
-                    colour = 0x13;break;
+                    colour = 0x13; break;
 				case 14:
-                    colour = 0x14;break;
+                    colour = 0x14; break;
 				case 15:
-                    colour = 0x15;break;
+                    colour = 0x15; break;
 				case 16:
-                    colour = 0x16;break;
+                    colour = 0x16; break;
 				case 17:
-                    colour = 0x17;break;
+                    colour = 0x17; break;
 				case 18:
-                    colour = 0x18;break;
+                    colour = 0x18; break;
 				case 19:
-                    colour = 0x19;break;
+                    colour = 0x19; break;
 				case 20:
-                    colour = 0x1A;break;
+                    colour = 0x1A; break;
 				case 21:
-                     colour = 0x1B;break;
+                    colour = 0x1B; break;
 				case 22:
-                    colour = 0x1C;break;
+                    colour = 0x1C; break;
 				case 32:
-                    colour = 0x20;break;
+                    colour = 0x20; break;
 				case 33:
-                    colour = 0x21;break;
+                    colour = 0x21; break;
 				case 34:
-                    colour = 0x22;break;
+                    colour = 0x22; break;
 				case 35:
-                    colour = 0x23;break;
+                    colour = 0x23; break;
 				case 36:
-                    colour = 0x24;break;
+                    colour = 0x24; break;
 				case 37:
-                    colour = 0x25;break;
+                    colour = 0x25; break;
 				case 38:
-                    colour = 0x26;break;
+                    colour = 0x26; break;
 				case 39:
-                    colour = 0x27;break;
+                    colour = 0x27; break;
 				case 40:
-                    colour = 0x28;break;
+                    colour = 0x28; break;
 				case 41:
-                    colour = 0x29;break;
+                    colour = 0x29; break;
 				case 42:
-                    colour = 0x2A;break;
+                    colour = 0x2A; break;
 				case 43:
-                    colour = 0x2B;break;
+                    colour = 0x2B; break;
 				case 44:
-                    colour = 0x2C;break;
+                    colour = 0x2C; break;
 				case 45:
-                    colour = 0x2D;break;
+                    colour = 0x2D; break;
 				case 46:
-                    colour = 0x2E;break;
+                    colour = 0x2E; break;
 				case 54:
-                    colour = 0x36;break;
+                    colour = 0x36; break;
 				case 55:
-                    colour = 0x37;break;
+                    colour = 0x37; break;
 				case 56:
-                    colour = 0x38;break;
+                    colour = 0x38; break;
 				case 57:
-                    colour = 0x39;break;
+                    colour = 0x39; break;
 				case 62:
-                    colour = 0x3E;break;
+                    colour = 0x3E; break;
 				case 63:
-                    colour = 0x3F;break;
+                    colour = 0x3F; break;
 				case 64:
-                    colour = 0x40;break;
+                    colour = 0x40; break;
 				case 65:
-                    colour = 0x41;break;
+                    colour = 0x41; break;
 				case 66:
-                    colour = 0x42;break;
+                    colour = 0x42; break;
 				case 67:
-                    colour = 0x43;break;
+                    colour = 0x43; break;
 				case 68:
-                    colour = 0x44;break;
+                    colour = 0x44; break;
 				case 69:
-                    colour = 0x45;break;
+                    colour = 0x45; break;
 				case 70:
-                    colour = 0x46;break;
+                    colour = 0x46; break;
 				case 71:
-                    colour = 0x47;break;
+                    colour = 0x47; break;
 				case 72:
-                    colour = 0x48;break;
+                    colour = 0x48; break;
 				case 81:
-                    colour = 0x51;break;
+                    colour = 0x51; break;
 				case 82:
-                    colour = 0x52;break;
+                    colour = 0x52; break;
 				case 83:
-                    colour = 0x53;break;
+                    colour = 0x53; break;
 				case 89:
-                    colour = 0x59;break;
+                    colour = 0x59; break;
 				case 90:
-                    colour = 0x5A;break;
+                    colour = 0x5A; break;
 				case 91:
-                    colour = 0x5B;break;
+                    colour = 0x5B; break;
 				case 1153:
-                    colour = 0x481;break;
+                    colour = 0x481; break;
 				case 1154:
-                    colour = 0x482;break;
+                    colour = 0x482; break;
 				case 1155:
-                    colour = 0x483;break;
+                    colour = 0x483; break;
 				case 1601:
 					colour = 0x641; break;
 				case 1602:
@@ -889,75 +891,91 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 2:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( purpleSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, pSock.language ), pUser ); // Brown
+			}
 			break;
 		case 3:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( redSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( chestnutDyes, 1, GetDictionaryEntry( 17104, pSock.language ), pUser ); // Chestnut
+			}
 			break;
 		case 4:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( orangeSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( auburnDyes, 1, GetDictionaryEntry( 17105, pSock.language ), pUser ); // Auburn
+			}
 			break;
 		case 5:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( yellowSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( blueDyes, 1, GetDictionaryEntry( 17106, pSock.language ), pUser ); // Blue
+			}
 			break;
 		case 6:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( limeSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( greenDyes, 1, GetDictionaryEntry( 17107, pSock.language ), pUser ); // Green
+			}
 			break;
 		case 7:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( dklimeSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( redDyes, 1, GetDictionaryEntry( 17108, pSock.language ), pUser ); // Red
+			}
 			break;
 		case 8:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( iceblueSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( lightDyes, 1, GetDictionaryEntry( 17109, pSock.language ), pUser ); // Light
+			}
 			break;
 		case 9:
 			pSock.CloseGump( gumpID, 0 );
-			if ( iUsed.morey == 1 ) 
+			if( iUsed.morey == 1 )
 			{
 				DisplayDyes( icewhiteSpecialDyes, 1, "*****", pUser );
 			}
 			else
+			{
 				DisplayDyes( blondeDyes, 1, GetDictionaryEntry( 17110, pSock.language ), pUser ); // Blonde
+			}
 			break;
 		case 10:
 			pSock.CloseGump( gumpID, 0 );
