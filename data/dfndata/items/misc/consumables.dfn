@@ -49,3 +49,42 @@ restock=10
 script=5040//hairbearddye.js
 morex=2
 }
+
+[specialhaironlydye]
+{
+get=base_item
+name=a special hair-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=0
+morey=1
+}
+
+[specialbeardonlydye]
+{
+get=base_item
+name=a special beard-only dye
+id=0x0eff
+weight=100
+value=30000 15000
+restock=10
+script=5040//hairbearddye.js
+morex=1
+morey=1
+}
+
+[specialhairdye]
+{
+get=base_item
+name=a special hair dye
+id=0x0eff
+weight=100
+value=50 25
+restock=10
+script=5040//hairbearddye.js
+morex=2
+morey=1
+}
