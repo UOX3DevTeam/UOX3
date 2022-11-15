@@ -11,8 +11,8 @@ CChar * CPartyEntry::Member( void ) const	{	return member;							}
 bool CPartyEntry::IsLeader( void ) const		{	return settings.test( BIT_LEADER   );	}
 bool CPartyEntry::IsLootable( void ) const	{	return settings.test( BIT_LOOTABLE );	}
 void CPartyEntry::Member( CChar *valid )		{	member = valid;							}
-void CPartyEntry::IsLeader( bool /*value*/ )		{	settings.set( BIT_LEADER, true   );		}
-void CPartyEntry::IsLootable( bool /*value*/ )	{	settings.set( BIT_LOOTABLE, true );		}
+void CPartyEntry::IsLeader( [[maybe_unused]] bool value )		{	settings.set( BIT_LEADER, true   );		}
+void CPartyEntry::IsLootable( [[maybe_unused]] bool value )	{	settings.set( BIT_LOOTABLE, true );		}
 CPartyEntry::CPartyEntry() : member( nullptr )	{	settings.reset();						}
 CPartyEntry::CPartyEntry( CChar *m, bool isLeader, bool isLootable ) : member( m )
 {

@@ -83,9 +83,8 @@ auto FindNearbyItems( CBaseObject *mObj, distLocs distance ) -> std::vector<CIte
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if nearby NPCs run scripts that react to speech
 //o------------------------------------------------------------------------------------------------o
-UI08 DoJSResponse( CSocket *mSock, CChar *mChar, const std::string& text )
+UI08 DoJSResponse( [[maybe_unused]] CSocket *mSock, CChar *mChar, const std::string& text )
 {
-  (void)mSock; // unused variable
 	for( auto &nearbyNpc : FindNearbyNPCs( mChar, DIST_CMDRANGE ))
 	{
 		if( !ValidateObject( nearbyNpc ))
@@ -210,7 +209,7 @@ bool WhichResponse( CSocket *mSock, CChar *mChar, std::string text, CChar *tChar
 			case TW_KILL:			[[fallthrough]];
 			case TW_ATTACK:				tResp = new CPetAttackResponse( false, oldstrutil::upper( text ));		break;
 			case TW_ALLKILL:		[[fallthrough]];
-			case TW_ALLATTACK:		
+			case TW_ALLATTACK:
 			/*{
 				tResp = new CPetAttackResponse( true, oldstrutil::upper( text ));
 				tResp->Handle( mSock, mChar );
@@ -344,9 +343,8 @@ CEscortResponse::CEscortResponse( bool newVal )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles NPC escort response to player wanting to take on the escorting job
 //o------------------------------------------------------------------------------------------------o
-void CEscortResponse::Handle( CSocket *mSock, CChar *mChar )
+void CEscortResponse::Handle( [[maybe_unused]] CSocket *mSock, CChar *mChar )
 {
-  (void)mSock; // unused variable
 	// If the PC is dead then break out, The dead cannot accept quests
 	if( mChar->IsDead() )
 		return;
@@ -953,9 +951,8 @@ CVendorBuyResponse::CVendorBuyResponse( bool vendVal, const std::string &text ) 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to buy something from a vendor
 //o------------------------------------------------------------------------------------------------o
-bool CVendorBuyResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
+bool CVendorBuyResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-  (void)mChar; // unused variable
 	vendorNpc->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60 ));
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
@@ -1019,9 +1016,8 @@ CVendorViewResponse::CVendorViewResponse( bool vendVal, const std::string &text 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to view the items a vendor has for sale
 //o------------------------------------------------------------------------------------------------o
-bool CVendorViewResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
+bool CVendorViewResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CItem *pack	= nullptr;
@@ -1046,9 +1042,8 @@ CVendorGoldResponse::CVendorGoldResponse( bool vendVal, const std::string &text 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to withdraw their earnings from their vendor
 //o------------------------------------------------------------------------------------------------o
-bool CVendorGoldResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
+bool CVendorGoldResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -1115,9 +1110,8 @@ CVendorStatusResponse::CVendorStatusResponse( bool vendVal, const std::string &t
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to see the status of their vendor
 //o------------------------------------------------------------------------------------------------o
-bool CVendorStatusResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
+bool CVendorStatusResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();
@@ -1160,9 +1154,8 @@ CVendorDismissResponse::CVendorDismissResponse( bool vendVal, const std::string 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles response to players wanting to dismiss their vendor
 //o------------------------------------------------------------------------------------------------o
-bool CVendorDismissResponse::Handle( CSocket *mSock, CChar *mChar, CChar *vendorNpc )
+bool CVendorDismissResponse::Handle( CSocket *mSock, [[maybe_unused]] CChar *mChar, CChar *vendorNpc )
 {
-  (void)mChar; // unused variable
 	if( vendorNpc->GetNpcAiType() == AI_PLAYERVENDOR )
 	{
 		CChar *mChar = mSock->CurrcharObj();

@@ -269,7 +269,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 	}
 }
 
-void CPacketSpeech::GhostIt( UI08 /*method*/ )
+void CPacketSpeech::GhostIt( [[maybe_unused]] UI08 method )
 {
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
@@ -330,7 +330,7 @@ void CPacketSpeech::Font( FontType toPut )
 #if defined( _MSC_VER )
 #pragma note( "Function Warning: CPacketSpeech::Language(), does nothing" )
 #endif
-void CPacketSpeech::Language( UnicodeTypes /*toPut*/ )
+void CPacketSpeech::Language( [[maybe_unused]] UnicodeTypes toPut )
 {
 
 }
@@ -861,7 +861,7 @@ void CPRelay::InternalReset( void )
 //|						Client will send this packet without 0x01 Byte when the server sends FLAG & 0x02 in the 0xA9 Packet during logon.
 //|						Server responds with same packet, plus the 0x01 Byte, allowing client to finish logging out.
 //o------------------------------------------------------------------------------------------------o
-CPLogoutResponse::CPLogoutResponse( UI08 /*extraByte*/ )
+CPLogoutResponse::CPLogoutResponse( [[maybe_unused]] UI08 extraByte )
 {
 	InternalReset();
 }
@@ -1465,7 +1465,7 @@ void CPWeather::Particles( UI08 nParts )
 	{
 		nParts = 70;
 	}
-  // nParts is unsigned and can never be negative
+	// nParts is unsigned and can never be negative
 	/*if( nParts < 0 )
 	{
 		nParts = 0;
@@ -3253,9 +3253,8 @@ void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
 //|					KICKONASSISTANTSILENCE is enabled in uox.ini. If no valid response is received
 //|					within 30 seconds, player is disconnected from the server.
 //o------------------------------------------------------------------------------------------------o
-CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( CSocket *mSock )
+CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( [[maybe_unused]] CSocket *mSock )
 {
-  (void)mSock; // unused variable
 	pStream.ReserveSize( 12 );
 	pStream.WriteByte(  0, 0xF0 );
 	pStream.WriteShort( 1, 0x000C );
@@ -4068,9 +4067,8 @@ void CharacterListUpdate::AddCharName( UI08 charNum, std::string charName )
 //|							0x10000000,
 //|							0x5a, 0xce, 0x3e, 0xe3, 0x97, 0x92, 0xe4, 0x8a, 0xf1, 0x9a, 0xd3, 0x04, 0x41, 0x03, 0xcb, 0x53
 //o------------------------------------------------------------------------------------------------o
-CPKREncryptionRequest::CPKREncryptionRequest( CSocket* s)
+CPKREncryptionRequest::CPKREncryptionRequest( [[maybe_unused]] CSocket *s )
 {
-  (void)s; // unused variable
 	pStream.ReserveSize( 77 );
 	pStream.WriteByte( 0, 0xE3 );
 
@@ -5048,7 +5046,7 @@ CPCharAndStartLoc::CPCharAndStartLoc()
 {
 	InternalReset();
 }
-CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, UI08 /*numCharacters*/, UI08 numLocations, CSocket *mSock )
+CPCharAndStartLoc::CPCharAndStartLoc( CAccountBlock_st& actbBlock, [[maybe_unused]] UI08 numCharacters, UI08 numLocations, CSocket *mSock )
 {
 	InternalReset();
 
@@ -5125,9 +5123,8 @@ void CPCharAndStartLoc::AddCharacter( CChar *toAdd, UI08 charOffset )
 	pStream.WriteString( baseOffset, toAdd->GetName(), 60 );
 }
 
-void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, CSocket *mSock )
+void CPCharAndStartLoc::NumberOfLocations( UI08 numLocations, [[maybe_unused]] CSocket *mSock )
 {
-  (void)mSock; // unused variable
 	UI16 byteOffset = 0;
 	byteOffset = static_cast<UI16>( 4 + ( pStream.GetByte( 3 ) * 60 ));
 	pStream.WriteByte( byteOffset, numLocations );
@@ -6238,7 +6235,7 @@ void CPUnicodeSpeech::ID( UI16 toSet )
 	pStream.WriteShort( 7, toSet );
 }
 
-void CPUnicodeSpeech::GhostIt( UI08 /*method*/ )
+void CPUnicodeSpeech::GhostIt( [[maybe_unused]] UI08 method )
 {
 	// Method ignored currently
 	// Designed with the idea that you can garble text in more than one way
@@ -6802,7 +6799,7 @@ void CPSendGumpMenu::Finalize( void )
 				Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 				break;
 			}
-			
+
 			pStream.ReserveSize( static_cast<size_t>( length ) + static_cast<size_t>( increment ));
 			cmdString = "{ "s + entry + " }"s;
 			pStream.WriteString( length, cmdString, increment );
@@ -6835,7 +6832,7 @@ void CPSendGumpMenu::Finalize( void )
 				Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 				break;
 			}
-			
+
 			pStream.ReserveSize( static_cast<size_t>( length ) + static_cast<size_t>( increment ));
 			pStream.WriteShort( length, lineLen );
 			for( UI16 i = 0; i < lineLen; ++i )
@@ -7870,7 +7867,7 @@ auto CPSellList::CopyData( CChar& mChar, CChar& vendorId ) -> void
 		{
 			tReg = CalcRegionFromXY( vendorId.GetX(), vendorId.GetY(), vendorId.WorldNumber(), vendorId.GetInstanceId() );
 		}
-		
+
 		auto spCont = buyPack->GetContainsList();
 		for( const auto &spItem : spCont->collection() )
 		{
@@ -8214,9 +8211,8 @@ void CPSendMsgBoardPosts::InternalReset( void )
 	pStream.WriteShort( 1, 5 );
 }
 
-void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, UI08 pToggle, SERIAL oSerial )
+void CPSendMsgBoardPosts::CopyData( CSocket *mSock, SERIAL mSerial, [[maybe_unused]] UI08 pToggle, SERIAL oSerial )
 {
-  (void)pToggle; // unused variable
 	size_t byteOffset = pStream.GetSize();
 	if( mSock->ClientVerShort() >= CVS_6017 )
 	{
@@ -8871,7 +8867,7 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 			numEntries++;
 			pStream.WriteShort( offset, 0x000C );	// Unique ID
 			pStream.WriteShort( offset += 2, 6103 );
-			
+
 			if( ObjInRange( mChar, &toCopy, 8 ))
 			{
 				pStream.WriteShort( offset += 2, 0x0020 );	// Flag, entry enabled
@@ -9263,7 +9259,7 @@ void CPClilocMessage::CopyData( CBaseObject& toCopy )
 	Body( toCopy.GetId() );
 
 	std::string toCopyName = toCopy.GetName();
-	
+
 	if( toCopy.CanBeObjType( OT_CHAR ))
 	{
 		CChar *toCopyChar = CalcCharObjFromSer( toCopy.GetSerial() );

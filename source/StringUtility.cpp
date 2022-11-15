@@ -336,7 +336,7 @@ namespace oldstrutil
 			data = value.substr( startoffset, length );
 		}
 		return data;
-  }
+	}
 
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::vector<std::string> breakSize( std::size_t maxsize, const std::string& input )

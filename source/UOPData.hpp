@@ -18,7 +18,7 @@
  This information was gleamed from Mythic LegacyMul Convertor and UOFiddler.
  Special thanks for those that deciphered that data, and allowing that
  source to be available for others to examine and learn.
- 
+
  ******************************************************************************/
 /*******************************************************************************
  Hashes
@@ -29,37 +29,37 @@
  the number of characters the final substituion should be (to pad leading 0).
  So a {2} would indicate that it should be two characters. So if one is reprenting
  a number 1, it would result in 01.
- 
+
  The hash strings used for each file type are as follows(case is important).
  Some file types use two different hashes. In addition the number of keys(hashes )
  to be built can very.  Other programs that process UOP files use
  0x7FFFF as an entry.
- 
+
  Art
  "build/artlegacymul/{8}.tga"
  The number being replaced essentially corresponds to the idx
  entry in artidx.mul.
  The number of keys to be built is around 0x13FDC.
  UOFiddler requires this exact idx length to recognize UOHS art files (it checks with == operator, not with >=)
- 
+
  GumpArt
  "build/gumpartlegacymul/{8}.tga"
  "build/gumpartlegacymul/{7}.tga"
  The number being replaced essentially corresponds to the idx
  entry in gumpidx.mul.
- 
+
  Map
  "build/map{1}legacymul/{8}.dat"
  The first substitution is the map number, the second one is the
  index.  An index represents index*C4000 location in a corresponding
  map mul file.
- 
+
  Sound
  "build/soundlegacymul/{8}.dat"
- 
+
  Multi
  "build/multicollection/{6}.bin"
- 
+
  Embedded with the multi data is a file, housing.bin.  This
  is identifed has file hash : 0x126D1E99DDEDEE0A
  It is compressed, and that data should be treated as a
@@ -85,11 +85,11 @@
  file name , and it format varies based on each file type.  The hash has a direct
  correlation of what "index" in an IDX (or mapblock for non idx files ) the data
  is correlated with.
- 
+
  A table entry has the following format
- 
+
  UOP Table entry:
- 
+
  std::int64_t	data_offset	;	// Offset to the data for this entry (actually, best I can tell
  // this is the offset to this header, for the data one adds the header length
  // to it.  So not sure if the TableEntry can actually not be right before
@@ -100,12 +100,12 @@
  std::uint64_t	identifer;		// Filename(index) hash (HashLittle2)
  std::uint32_t	data_hash;		// Data hash (Alder32)
  std::int16_t	compression;	// 0 = none, 1 = zlib
- 
- 
+
+
  Using the table entry, the file format is as follows
- 
+
  UOP File Format (the table entry will be at offset 0x28 or greater):
- 
+
  std::int32_t	signature;		// This signifies to be a UOP file
  // and has a fixed value of
  // 0x50594D  ('MYP')
@@ -114,24 +114,22 @@
  // is valid for versions below 5 inclusive
  std::int32_t	timestamp;		// ? Uknown, believed to be a timestamp or something
  // for the file (0xFD23EC43)
- 
+
  std::uint64_t	table_offset;	// Offset to the next table
  // There can be multiple tables in the file!
- 
+
  std::uint32_t	tablesize		// Only needed really for writing(table (block) size)
  // current value is 1000
  std::uint32_t	filecount		// Each entry is consider a file
  std::int32_t	unknown		// Value is 1, perhaps modified count?
  std::int32_t	unknown		// Value is 1
  std::int32_t	unknown		// Value is 0
- 
- 
- 
+
  The following is repeated for each table
- 
+
  std::uint32_t	number_entries;	// how many entries are in the table
  std::uint64_t	next_table;		// Offset to the next table
- 
+
  UOPTable		table[number_entries];
  ******************************************************************************/
 #include <cstdint>
@@ -214,15 +212,15 @@ protected:
 	//==============================================================================
 	// Virtual routines, modify based on uop file processing
 	//==============================================================================
-	virtual auto ProcessEntry( std::size_t /*entry*/, std::size_t /*index*/, std::vector<std::uint8_t> & /*&data*/ ) -> bool { return true; }
-	virtual auto ProcessHash( std::uint64_t /*hash*/, std::size_t /*entry*/, std::vector<std::uint8_t> & /*&data*/ ) -> bool { return true; }
+	virtual auto ProcessEntry( [[maybe_unused]] std::size_t entry, [[maybe_unused]] std::size_t index, [[maybe_unused]] std::vector<std::uint8_t> &data ) -> bool { return true; }
+	virtual auto ProcessHash( [[maybe_unused]] std::uint64_t hash, [[maybe_unused]] std::size_t entry, [[maybe_unused]] std::vector<std::uint8_t> &data ) -> bool { return true; }
 	virtual auto NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool;
 	virtual auto EndUopProcessing() -> bool { return true; };
 
 	virtual auto EntriesToWrite() const -> int { return 0; }
 	virtual auto WriteCompress() const -> bool { return false; }
-	virtual auto EntryForWrite( int /*entry*/ ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
-	virtual auto WriteHash( int /*entry*/ ) -> std::string{ return std::string(); };
+	virtual auto EntryForWrite( [[maybe_unused]] int entry ) -> std::vector<unsigned char>{ return std::vector<unsigned char>(); }
+	virtual auto WriteHash( [[maybe_unused]] int entry ) -> std::string{ return std::string(); };
 	//========================================================================
 	auto IsUop( const std::string &filepath ) const -> bool;
 

@@ -1316,7 +1316,7 @@ auto CPITips::Handle() -> bool
 
 		SI32 x = i;
 		std::string tag, data, sect;
-		
+
 		for( tag = tips->First(); !tips->AtEnd(); tag = tips->Next() )
 		{
 			if( !tag.empty() && oldstrutil::upper( tag ) == "TIP" )
@@ -2260,7 +2260,7 @@ bool CPITalkRequest::HandleCommon( void )
 	CItem *speechItem = ourChar->GetSpeechItem();
 
 	UI32 j = 0;
-	
+
 	switch( ourChar->GetSpeechMode() )
 	{
 		case 3: // Player vendor item pricing
@@ -3560,7 +3560,7 @@ CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s ) : CPInputBuffer( s )
 {
 	Receive();
 }
-CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, bool /*receive*/ ) : CPInputBuffer( s )
+CPIMsgBoardEvent::CPIMsgBoardEvent( CSocket *s, [[maybe_unused]] bool receive ) : CPInputBuffer( s )
 {
 }
 

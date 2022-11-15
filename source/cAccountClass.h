@@ -105,7 +105,7 @@ public:
 	UI32						wFirstLogin;
 	UI32						dwInGame;
 	UI32						dwLastIP;
-  bool            bChanged;
+	bool						bChanged;
 	UI32						dwLastClientVer;
 	UI08						dwLastClientType;
 	UI08						dwLastClientVerShort;
