@@ -163,3 +163,13 @@ good=28
 newbie
 script=5029
 }
+
+[potionkeg]
+{
+name=a potion keg
+id=0x1940
+weight=2000
+decay=1
+movable=1
+script=5041
+}
