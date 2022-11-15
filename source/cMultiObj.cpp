@@ -1021,20 +1021,16 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	outStream << "MaxFriends=" + std::to_string( maxFriends ) + newLine;
 	outStream << "MaxGuests=" + std::to_string( maxGuests ) + newLine;
 
-	std::for_each( lockedList.begin(), lockedList.end(), [this, &outStream, newLine]( CItem *entry )
+	std::for_each( lockedList.begin(), lockedList.end(), [&outStream]( CItem *entry )
 	{
-                (void)this;    // unused
-                (void)newLine; // unused
 		if( ValidateObject( entry ))
 		{
 			outStream << "LockedItem=" + std::to_string( entry->GetSerial() ) + newLine;
 		}
 	});
 
-	std::for_each( secureContainerList.begin(), secureContainerList.end(), [this, &outStream, newLine]( CItem *entry )
+	std::for_each( secureContainerList.begin(), secureContainerList.end(), [&outStream]( CItem *entry )
 	{
-                (void)this;    // unused
-                (void)newLine; // unused
 		if( ValidateObject( entry ))
 		{
 			outStream << "SecureContainer=" + std::to_string( entry->GetSerial() ) + newLine;

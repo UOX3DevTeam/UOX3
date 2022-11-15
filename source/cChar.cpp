@@ -4918,9 +4918,8 @@ void CChar::Cleanup( void )
 				Effect->Source( INVALIDSERIAL );
 			}
 		}
-		std::for_each( removedEffect.begin(), removedEffect.end(), [this]( CTEffect *effect )
+		std::for_each( removedEffect.begin(), removedEffect.end(), []( CTEffect *effect )
 		{
-                        (void)this; // unused
 			cwmWorldState->tempEffects.Remove( effect, true );
 		});
 
@@ -5970,10 +5969,10 @@ void CChar::SetCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-  	if( DEFPLAYER_CALLNUM < 0 || (DEFPLAYER_CALLNUM >= 0 && newValue != (unsigned)DEFPLAYER_CALLNUM) )
-	  {
-		 	CreatePlayer();
-    }
+		if( DEFPLAYER_CALLNUM < 0 || (DEFPLAYER_CALLNUM >= 0 && newValue != static_cast<unsigned>(DEFPLAYER_CALLNUM)) )
+		{
+			CreatePlayer();
+		}
 	}
 	if( IsValidPlayer() )
 	{
@@ -6000,10 +5999,10 @@ void CChar::SetPlayerCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( DEFPLAYER_PLAYERCALLNUM < 0 || (DEFPLAYER_PLAYERCALLNUM >= 0 && newValue != (unsigned)DEFPLAYER_PLAYERCALLNUM) )
-  	{
-  		CreatePlayer();
-  	}
+		if( DEFPLAYER_PLAYERCALLNUM < 0 || (DEFPLAYER_PLAYERCALLNUM >= 0 && newValue != static_cast<unsigned>(DEFPLAYER_PLAYERCALLNUM)) )
+		{
+			CreatePlayer();
+		}
 	}
 	if( IsValidPlayer() )
 	{
@@ -7501,9 +7500,8 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 	bool retVal = false;
 	if( ValidateObject( toCheck ))
 	{
-		auto iter = std::find_if( GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(), [&toCheck, this]( CChar *petChar )
+		auto iter = std::find_if( GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(), [&toCheck]( CChar *petChar )
 		{
-                        (void)this; // unused
 			return ValidateObject( petChar ) && ( petChar == toCheck );
 		});
 		if( iter != GetPetOwnerList()->collection().end() )
@@ -8003,7 +8001,7 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Lets character react to damage dealt to them
 //o------------------------------------------------------------------------------------------------o
-void CChar::ReactOnDamage( WeatherType /*damageType*/, CChar *attacker )
+void CChar::ReactOnDamage( [[maybe_unused]] WeatherType damageType, CChar *attacker )
 {
 	CSocket *mSock = GetSocket();
 
@@ -8314,7 +8312,7 @@ void CChar::UpdateDamageTrack( void )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets weight of character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetWeight( SI32 newVal, bool /*doWeightUpdate*/ )
+void CChar::SetWeight( SI32 newVal, [[maybe_unused]] bool doWeightUpdate )
 {
 	Dirty( UT_STATWINDOW );
 	weight = newVal;

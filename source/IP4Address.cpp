@@ -593,8 +593,7 @@ auto ip4list_t::available() -> ip4list_t
 	ip4list_t rValue;
 	struct ifaddrs * ifAddrStruct = NULL;
 	struct ifaddrs * ifa = NULL;
-	void * tmpAddrPtr = NULL;
-  (void)tmpAddrPtr;
+	[[maybe_unused]] void * tmpAddrPtr = NULL;
 	Ip4Addr_st device_address;
 
 	getifaddrs( &ifAddrStruct );
@@ -1119,7 +1118,7 @@ std::vector<IP4Address> IP4Address::available()
 				break;
 			}
 
-  		Iterations++;
+			Iterations++;
 
 		} while(( dwRetVal == ERROR_BUFFER_OVERFLOW ) && ( Iterations < MAX_TRIES ));
 

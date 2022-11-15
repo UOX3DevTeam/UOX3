@@ -2422,7 +2422,7 @@ void CBaseObject::Cleanup( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces the object onto the global refresh queue
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::Dirty( UpdateTypes /*updateType*/ )
+void CBaseObject::Dirty( [[maybe_unused]] UpdateTypes updateType )
 {
 	if( IsDeleted() )
 	{

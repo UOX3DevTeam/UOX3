@@ -63,8 +63,7 @@ auto CCharStuff::AddRandomLoot( CItem *s, const std::string& lootlist, bool shou
 					if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 					{
 						iAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-						CItem *retItemNested = nullptr;
-            (void)retItemNested;
+						[[maybe_unused]] CItem *retItemNested = nullptr;
 						for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 						{
 							retItemNested = AddRandomLoot( s, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), shouldSave );

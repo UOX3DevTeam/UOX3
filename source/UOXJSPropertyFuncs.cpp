@@ -38,13 +38,13 @@
 
 void MakeShop( CChar *c );
 
-JSBool CGuildsProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval *vp )
+JSBool CGuildsProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, jsval *vp )
 {
 	*vp = INT_TO_JSVAL( 0 );
 	return JS_TRUE;
 }
 
-JSBool CGuildsProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
+JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	return JS_TRUE;
 }
@@ -76,7 +76,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
+JSBool CSpellProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	return JS_TRUE;
 }
@@ -190,7 +190,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
+JSBool CGlobalSkillProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	return JS_TRUE;
 }
@@ -208,7 +208,7 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 		JSString *tString = nullptr;
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CGSKILL_NAME:	
+			case CGSKILL_NAME:
 				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
@@ -227,7 +227,7 @@ JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 	return JS_TRUE;
 }
 
-JSBool CTimerProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval id, jsval *vp )
+JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -295,7 +295,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
+JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	return JS_TRUE;
 }
@@ -2950,7 +2950,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				{
 					gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));				break;
 				}
-        [[fallthrough]];
+				[[fallthrough]];
 			case CSOCKP_TEMPOBJ2: // Reserved for JS usage
 				if( *vp == JSVAL_NULL )
 				{
@@ -3631,7 +3631,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval id, jsval *vp )
+JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3646,7 +3646,7 @@ JSBool CConsoleProps_getProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, js
 	return JS_TRUE;
 }
 
-JSBool CConsoleProps_setProperty( JSContext *cx, JSObject * /* *obj*/, jsval id, jsval *vp )
+JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -3682,7 +3682,7 @@ JSBool CScriptSectionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CScriptSectionProps_setProperty( JSContext * /* *cx*/, JSObject * /* *obj*/, jsval /*id*/, jsval * /* *vp*/ )
+JSBool CScriptSectionProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	/*		JSEncapsulate encaps( cx, vp );
 		if( JSVAL_IS_INT( id ))

@@ -268,9 +268,8 @@ auto UopFile::IsUop( const std::string &filepath ) const -> bool
 
 //===============================================================
 //===============================================================
-auto UopFile::NonIndexHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool
+auto UopFile::NonIndexHash( std::uint64_t hash, std::size_t entry, [[maybe_unused]] std::vector<std::uint8_t> &data ) -> bool
 {
-  (void)data; // unused variable
 	auto fill = std::cerr.fill();
 
 	std::cerr << "Hashlookup failed for entry "s << entry << " with a hash of " << std::showbase 
