@@ -4807,5 +4807,28 @@
 17118=Dye my beard this color!
 17119=Dye my hair and beard this color!
 17120=You have no hair or beard to dye.
+// Potion Keg
+17200=You pour some of the keg's contents into an empty bottle...
+17201=...and place it into your backpack.
+17202=you have no empty bottles.
+17204=I can't reach that.
+17205=Only the owner can drop potions in this keg.
+17206=The keg will not hold any more!
+17207=You don't have room for the empty bottle in your backpack.
+17208=You place the empty bottle in your backpack.
+17209=You decide that it would be a bad idea to mix different types of potions.
+17210=The keg is not designed to hold that type of object.
+17211=The keg is empty.
+17212=The keg is nearly empty.
+17213=The keg is not very full.
+17214=The keg is about one quarter full.
+17215=The keg is about one third full.
+17216=The keg is almost half full.
+17217=The keg is approximately half full.
+17218=The keg is more than half full.
+17219=The keg is about three quarters full.
+17220=The keg is very full.
+17221=The liquid is almost to the top of the keg.
+17222=The keg is completely full.
 }
 EOF
