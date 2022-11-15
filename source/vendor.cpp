@@ -597,7 +597,7 @@ void RestockNPC( CChar& i, bool stockAll )
 	}
 }
 
-bool RestockFunctor( CBaseObject *a, UI32 &b, void * /* *extraData*/ )
+bool RestockFunctor( CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData )
 {
 	bool retVal = true;
 	CChar *c = static_cast<CChar *>( a );

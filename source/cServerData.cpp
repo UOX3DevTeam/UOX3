@@ -2808,7 +2808,7 @@ auto CServerData::HirelingCombatTraining() const -> bool
 {
 	return boolVals.test( BIT_HIRELINGCOMBATTRAINING );
 }
-auto CServerData::HirelingCombatTraining( bool /*newVal*/ ) -> void
+auto CServerData::HirelingCombatTraining( [[maybe_unused]] bool newVal ) -> void
 {
 	boolVals.set( BIT_HIRELINGCOMBATTRAINING );
 }
@@ -4971,7 +4971,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								}
 							}
 						}
-            [[fallthrough]];
+						[[fallthrough]];
 						case static_cast<int>( search_t::startsection ):
 						{
 							if( line[0] == '{' )
@@ -4979,7 +4979,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								state = search_t::endsection;
 							}
 						}
-            [[fallthrough]];
+						[[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
 							if( line[0] != '}' )

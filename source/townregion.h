@@ -43,7 +43,7 @@ private:
 	};
 
 	UI16				regionNum;
-  UI16        numGuards;
+	UI16				numGuards;
 	UI16				parentRegion; // reference to parent region
 	std::string			name;
 	UI16				musicList;
@@ -56,27 +56,27 @@ private:
 	std::vector<std::string>	guards;
 	std::vector<OrePref_st>		orePreferences;
 	std::vector<TownPers_st>	townMember;
-	std::vector<UI16>			alliedTowns;		// allied towns are ones taken over, or ones allied to.  Share resources
+	std::vector<UI16>			alliedTowns;	// allied towns are ones taken over, or ones allied to.  Share resources
 	std::vector<RegLocs_st>		locations;
 	std::map<SI32, GoodData_st> goodList;
 	std::string			guardList;
-	SERIAL				mayorSerial;			// serial of the mayor, calculated on startup always
-	RACEID				race;					// town's race property, guards will be racially based
-	WEATHID				weather;				// weather system the region belongs to
-	SI32				goldReserved;			// amount of gold belonging to the town's treasury
+	SERIAL				mayorSerial;					// serial of the mayor, calculated on startup always
+	RACEID				race;									// town's race property, guards will be racially based
+	WEATHID				weather;							// weather system the region belongs to
+	SI32				goldReserved;						// amount of gold belonging to the town's treasury
 
-  WorldType   visualAppearance;   // seasonal choice, basically.  Each of the 4 seasons, or "dead"
-	SI32				timeSinceGuardsPaid;	// time since the guards were last paid
+	WorldType		visualAppearance;				// seasonal choice, basically.  Each of the 4 seasons, or "dead"
+	SI32				timeSinceGuardsPaid;		// time since the guards were last paid
 	SI32				timeSinceTaxedMembers;	// time since we last taxed our own members
-	SI32				timeToElectionClose;	// time since the last election was completed
-	SI32				timeToNextPoll;			// time since the polling booth was opened
+	SI32				timeToElectionClose;		// time since the last election was completed
+	SI32				timeToNextPoll;					// time since the polling booth was opened
 	SI16				guardsPurchased;
-	SI32				resourceCollected;		// how much we have gotten from taxes
-	UI16				taxedResource;			// item # of the taxed resource
-	UI16				taxedAmount;			// how much to tax
+	SI32				resourceCollected;			// how much we have gotten from taxes
+	UI16				taxedResource;					// item # of the taxed resource
+	UI16				taxedAmount;						// how much to tax
 
-	SI16				health;					// health of the town
-	UI08				chanceFindBigOre;		// chance of finding big ore
+	SI16				health;									// health of the town
+	UI08				chanceFindBigOre;				// chance of finding big ore
 
 	UI16				jsScript;
 	std::vector<UI16>	scriptTriggers;

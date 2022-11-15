@@ -123,7 +123,7 @@ CItem *StartTrade( CSocket *mSock, CChar *nChar )
 	return tradeWindowOne;
 }
 
-bool ClearTradesFunctor( CBaseObject *a, UI32 &b, void * /* *extraData*/ )
+bool ClearTradesFunctor( CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ) && a->CanBeObjType( OT_ITEM ))

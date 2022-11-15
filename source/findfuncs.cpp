@@ -344,7 +344,7 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		return false;
 
 	const UI16 multiId = static_cast<UI16>( m->GetId() - 0x4000 );
-	/*SI32 length = 0;*/ // unused variable
+	[[maybe_unused]] SI32 length = 0;
 
 	if( !Map->MultiExists( multiId ))
 	{
@@ -353,7 +353,7 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		// so as a measure... if it's wet, we'll make it a boat
 		// if it's dry, we'll make it a house
 		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
-		//length = 0; // unused variable
+		length = 0;
 
 		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );
 		if( map1.CheckFlag( TF_WET )) // is it water?
