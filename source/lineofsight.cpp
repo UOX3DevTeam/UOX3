@@ -266,9 +266,8 @@ inline auto Line3D_st::Projection2D( void ) const ->Line2D_st
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o------------------------------------------------------------------------------------------------o
-bool MapTileBlocks( CSocket *mSock, bool nostatic, Line3D_st LoS, SI16 x1, SI16 y1, SI08 /*z*/, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
+bool MapTileBlocks( [[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, SI16 x1, SI16 y1, [[maybe_unused]] SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
 {
-  (void)mSock; // unused variable
 	// Map tile at previous coordinate along the LoS path
 	auto srcMap = Map->SeekMap( x1, y1, worldNum );
 
@@ -403,7 +402,7 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
 	{
 		const UI16 multiId = static_cast<UI16>( toCheck->GetId() - 0x4000 );
-		/*SI32 length = 0;*/ // unused variable
+		[[maybe_unused]] SI32 length = 0;
 
 		if( !Map->MultiExists( multiId ))
 		{
@@ -418,7 +417,7 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 			{
 				toCheck->SetId( 0x4064 );
 			}
-			//length = 0; // unused
+			length = 0;
 		}
 		else
 		{

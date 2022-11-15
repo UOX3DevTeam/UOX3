@@ -502,7 +502,8 @@ auto CCharStuff::LoadShopList( const std::string& list, CChar *c ) -> void
 
 	bool shouldSave = c->ShouldSave();
 	std::string cdata;
-	SI32 ndata		= -1, odata = -1; (void)odata;
+	SI32 ndata		= -1;
+  [[maybe_unused]] SI32 odata = -1;
 	CItem *retItem	= nullptr;
 	for( const auto &sec : ShoppingList->collection2() )
 	{

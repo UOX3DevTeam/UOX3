@@ -2840,9 +2840,8 @@ const UI08 *CPUOXBuffer::PackedPointer( void ) const
 	return ( const UI08 * )&packedBuffer[0];
 }
 
-bool CPUOXBuffer::ClientCanReceive( CSocket *mSock )
+bool CPUOXBuffer::ClientCanReceive( [[maybe_unused]] CSocket *mSock )
 {
-  (void)mSock; // unused variable
 	// Default implementation, all clients can receive all packets
 	return true;
 }

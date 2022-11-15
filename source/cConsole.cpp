@@ -395,7 +395,7 @@ auto CConsole::operator << ( const std::string &output ) -> CConsole&
 }
 
 //================================================================================================
-auto CConsole::operator << ( CEndL& /*myObj*/ ) -> CConsole&
+auto CConsole::operator << ( [[maybe_unused]] CEndL& myObj ) -> CConsole&
 {
 	if( curLeft == 0 )
 	{
@@ -768,7 +768,7 @@ auto CConsole::MoveTo( SI32 x, SI32 y ) -> void
 	}
 }
 #else
-void CConsole::MoveTo( SI32 x, SI32 /*y*/ )
+void CConsole::MoveTo( SI32 x, [[maybe_unused]] SI32 y )
 {
 	std::cout << "\033[255D";
 	std::cout << "\033[" << x << "C";

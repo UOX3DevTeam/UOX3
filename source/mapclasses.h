@@ -227,7 +227,7 @@ enum TileType_t { terrain, art, dyn };
 
 struct Tile_st
 {
-  TileType_t type;
+	TileType_t type;
 	std::uint16_t tileId;	// for instance, this should be a tileid_t , that would make sense!
 	std::int8_t altitude;
 	std::uint16_t staticHue;

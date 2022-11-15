@@ -260,9 +260,8 @@ public:
 
 	// we need to read :integral/floating, vectors/list/strings
 	template <typename T>
-	auto read( int offset =- 1, int amount =- 1, bool reverse = true ) const -> T
+	auto read( int offset =- 1, [[maybe_unused]] int amount =- 1, bool reverse = true ) const -> T
 	{
-    (void)amount; // unused variable
 		if( offset < 0 )
 		{
 			offset = _index;

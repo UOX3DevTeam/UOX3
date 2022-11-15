@@ -2717,7 +2717,7 @@ void CSkills::AdvanceStats( CChar *s, UI08 sk, bool skillsuccess )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	New make menu system, based on create DFNs
 //o------------------------------------------------------------------------------------------------o
-void CSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 /*skill*/ )
+void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 {
 	VALIDATESOCKET( s );
 	CChar *ourChar = s->CurrcharObj();
@@ -2728,7 +2728,7 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, UI08 /*skill*/ )
 
 	UI16 background = cwmWorldState->ServerData()->BackgroundPic();
 	UI16 btnCancel	= cwmWorldState->ServerData()->ButtonCancel();
-	UI16 btnLeft	= cwmWorldState->ServerData()->ButtonLeft(); (void)btnLeft;
+	[[maybe_unused]] UI16 btnLeft	= cwmWorldState->ServerData()->ButtonLeft();
 	UI16 btnRight	= cwmWorldState->ServerData()->ButtonRight();
 
 	CPSendGumpMenu toSend;

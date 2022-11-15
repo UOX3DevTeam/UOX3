@@ -763,7 +763,7 @@ auto CNetworkStuff::Startup() -> void
 }
 CSocket *CNetworkStuff::GetSockPtr( UOXSOCKET s )
 {
-	if( (unsigned)s >= connClients.size() )
+	if( static_cast<unsigned>(s) >= connClients.size() )
 		return nullptr;
 
 	return connClients[s];
@@ -778,7 +778,7 @@ CPInputBuffer *WhichLoginPacket( UI08 packetId, CSocket *s );
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::GetMsg( UOXSOCKET s )
 {
-	if( (unsigned)s >= connClients.size() )
+	if( static_cast<unsigned>(s) >= connClients.size() )
 		return;
 
 	CSocket *mSock = connClients[s];
@@ -1319,7 +1319,7 @@ void CNetworkStuff::Disconnect( CSocket *s ) // Force disconnection of player //
 
 UOXSOCKET CNetworkStuff::FindLoginPtr( CSocket *s )
 {
-	for( UOXSOCKET i = 0; (unsigned)i < loggedInClients.size(); ++i )
+	for( UOXSOCKET i = 0; static_cast<unsigned>(i) < loggedInClients.size(); ++i )
 	{
 		if( loggedInClients[i] == s )
 			return i;
@@ -1338,7 +1338,7 @@ UOXSOCKET CNetworkStuff::FindLoginPtr( CSocket *s )
 void CNetworkStuff::Transfer( CSocket *mSock )
 {
 	UOXSOCKET s = FindLoginPtr( mSock );
-	if( (unsigned)s >= loggedInClients.size() )
+	if( static_cast<unsigned>(s) >= loggedInClients.size() )
 		return;
 
 	//std::scoped_lock lock(internallock);
@@ -1365,8 +1365,7 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 
 	if( mSock->NewClient() )
 	{
-		SI32 count;
-    (void)count;
+		[[maybe_unused]] SI32 count;
 		count = mSock->Receive( 4 );
 		auto packetId = mSock->Buffer()[0];
 
@@ -1513,7 +1512,7 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 
 UOXSOCKET CNetworkStuff::FindNetworkPtr( CSocket *toFind )
 {
-	for( UOXSOCKET i = 0; (unsigned)i < connClients.size(); ++i )
+	for( UOXSOCKET i = 0; static_cast<unsigned>(i) < connClients.size(); ++i )
 	{
 		if( connClients[i] == toFind )
 			return i;
@@ -1638,7 +1637,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void
 	}
 }
 
-void CNetworkStuff::RegisterPacket( UI08 packet, UI08 /*subCmd*/, UI16 scriptId )
+void CNetworkStuff::RegisterPacket( UI08 packet, [[maybe_unused]] UI08 subCmd, UI16 scriptId )
 {
 	//UI16 packetId = static_cast<UI16>(( subCmd << 8 ) + packet ); // Registration of subCmd disabled until it can be fully implemented
 	UI16 packetId = static_cast<UI16>( packet );

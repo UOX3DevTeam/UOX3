@@ -547,7 +547,7 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 		return 0;
 
 	UI16 multiId = static_cast<UI16>( i->GetId() - 0x4000 );
-	/*SI32 length = 0;*/ // unused variable
+	[[maybe_unused]] SI32 length = 0;
 
 	if( !MultiExists( multiId ))
 	{
@@ -561,7 +561,7 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 		{
 			i->SetId( 0x4064 );
 		}
-		/*length = 0;*/ // unused
+		length = 0;
 	}
 	else
 	{
@@ -1961,7 +1961,7 @@ auto UltimaMap::BlockAndIndexFor( int x, int y ) const -> std::tuple<int, int, i
 	return std::make_tuple( block, x - offset.first, y - offset.second );
 }
 //=========================================================
-auto UltimaMap::ProcessEntry( std::size_t /*entry*/, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
+auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
 {
 	auto count = data.size() / 196;
 	size_t block = ( static_cast<int>( index ) * 0xC4000 ) / 196;

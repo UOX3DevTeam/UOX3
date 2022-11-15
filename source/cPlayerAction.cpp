@@ -109,9 +109,8 @@ void PickupBounce( CSocket *bouncer, UI08 mode = 0 )
 //|	Changes		-	09/09/2001 - returns true if item deleted
 //|					09/25/2002 - Weight fixes
 //o------------------------------------------------------------------------------------------------o
-CItem *DoStacking( CSocket *mSock, CChar *mChar, CItem *i, CItem *stack )
+CItem *DoStacking( CSocket *mSock, [[maybe_unused]] CChar *mChar, CItem *i, CItem *stack )
 {
-  (void)mChar; // unused variable
 	UI32 newAmt = stack->GetAmount() + i->GetAmount();
 	if( newAmt > MAX_STACK )
 	{
@@ -1588,9 +1587,8 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock, CChar *mChar )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Called when item is dropped on a container
 //o------------------------------------------------------------------------------------------------o
-bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
+bool DropOnContainer( CSocket& mSock, CChar& mChar, CItem& droppedOn, CItem& iDropped, [[maybe_unused]] bool &stackDeleted, SI16 x, SI16 y, SI08 gridLoc )
 {
-  (void)stackDeleted; // unused variable
 	CChar *contOwner = FindItemOwner( &droppedOn );
 	if( ValidateObject( contOwner ))
 	{

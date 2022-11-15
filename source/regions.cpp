@@ -19,12 +19,12 @@ SI32 FileSize( std::string filename )
 
 	try
 	{
-		retVal = static_cast<SI32>( std::filesystem::file_size( filename )); 
+		retVal = static_cast<SI32>( std::filesystem::file_size( filename ));
 	}
 	catch( ... )
 	{
 		retVal = 0;
-	}   
+	}
 
 	return retVal;
 }
@@ -917,9 +917,8 @@ void CMapHandler::Save( void )
 	}
 }
 
-bool PostLoadFunctor( CBaseObject *a, UI32 &b, void * /* *extraData*/ )
+bool PostLoadFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )
 {
-  (void)b; // unused variable
 	if( ValidateObject( a ))
 	{
 		if( !a->IsFree() )
