@@ -72,13 +72,13 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 		return false;
 	}
 
-	if ( iDropped.type == 19 ) //If the item being dropped is a potion
+	if( iDropped.type == 19 ) //If the item being dropped is a potion
 	{
 		if( potionSectionID == "" || iDropped.sectionID == potionSectionID ) // Check to see if it is the same potion.
 		{
 			// Check that the player's backpack can contain a empty bottle
 			var pPack = pUser.pack;
-			if ( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax ) 
+			if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax ) 
 			{
 				pSocket.SysMessage( GetDictionaryEntry( 17207, pSocket.language ) );//You don't have room for the empty bottle in your backpack.
 				return false;
@@ -90,7 +90,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 				potionKeg.SetTag( "potionCount", potionCount + 1 );
 				potionKeg.weight += Math.round( iDropped.weight / 5 );
 				potionKeg.name = "A keg of " + iDropped.name;
-				if ( iDropped.amount > 1 )
+				if( iDropped.amount > 1 )
 				{
 					iDropped.amount = ( iDropped.amount - 1 );
 				}
