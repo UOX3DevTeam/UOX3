@@ -1661,6 +1661,7 @@ void MassCurseStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't curse NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -1801,6 +1802,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -2084,6 +2086,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -2237,6 +2240,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
