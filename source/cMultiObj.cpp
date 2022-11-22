@@ -1021,7 +1021,7 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 	outStream << "MaxFriends=" + std::to_string( maxFriends ) + newLine;
 	outStream << "MaxGuests=" + std::to_string( maxGuests ) + newLine;
 
-	std::for_each( lockedList.begin(), lockedList.end(), [&outStream, newLine]( CItem *entry )
+	std::for_each( lockedList.begin(), lockedList.end(), [&outStream]( CItem *entry )
 	{
 		if( ValidateObject( entry ))
 		{
@@ -1029,7 +1029,7 @@ bool CMultiObj::DumpBody( std::ofstream &outStream ) const
 		}
 	});
 
-	std::for_each( secureContainerList.begin(), secureContainerList.end(), [&outStream, newLine]( CItem *entry )
+	std::for_each( secureContainerList.begin(), secureContainerList.end(), [&outStream]( CItem *entry )
 	{
 		if( ValidateObject( entry ))
 		{
