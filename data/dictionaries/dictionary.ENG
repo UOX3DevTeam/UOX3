@@ -4807,5 +4807,28 @@
 17118=Dye my beard this color!
 17119=Dye my hair and beard this color!
 17120=You have no hair or beard to dye.
+//Bulk Order Deed System
+17250=A bulk order
+17251=Amount to make:
+17252=Amount finished:
+17253=Item requested:
+17254=exceptional
+17255=Special requirements to meet:
+17256=All items must be exceptional.
+17257=All items must be made with
+17258=Combine this deed with the item requested.
+17259=You must have the item in your backpack to target it.
+17260=The maximum amount of requested items have already been combined to this deed.
+17261=The item is not made from the requested ore.
+17262=The item must be exceptional.
+17263=The item has been combined with the deed.
+17264=The item is not in the request.
+17265=An Offer may be available in about
+17266=minutes
+17267=Ah!  Thanks for the goods!  Would you help me out?
+17268=Do you want to accept this order?
+17269=Ok
+17270=You have not completed the order yet.
+17271=Thank you so much!  Here is a reward for your effort.
 }
 EOF

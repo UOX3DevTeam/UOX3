@@ -28,3 +28,24 @@ NAME=a coupon for a free hair restyling
 ID=0x14F0
 script=5028
 }
+
+[smallbod_pub15]
+{
+id=0x14ef
+}
+
+[smallbod_aos]
+{
+id=0x2258
+}
+
+[smallbod]
+{
+get=base_item
+name=a bulk order deed
+colour=0x44E//Blacksmith: 0x44E; Tailoring: 0x483
+weight=100
+script=5042
+getpub15=smallbod_pub15
+getaos=smallbod_aos
+}

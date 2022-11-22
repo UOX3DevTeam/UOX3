@@ -105,6 +105,7 @@
 2504=server/misc/dungeon_trap.js
 2505=server/misc/dungeon_treasure_decay.js
 2506=server/data/material_types.js
+2507=server/misc/smallbodacceptgump.js
 
 // Server Teleporters [2750-2999]
 2750=server/teleporter/teleporter_wind_city_entrance.js
@@ -248,6 +249,7 @@
 5038=item/tribal_spear.js
 5039=item/taxidermykit.js
 5040=item/hairbearddye.js
+5042=item/smallbod.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]
