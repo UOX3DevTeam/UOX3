@@ -78,7 +78,7 @@ private:
 	SI16				health;									// health of the town
 	UI08				chanceFindBigOre;				// chance of finding big ore
 
-	UI16				jsScript;
+	[[maybe_unused]] UI16				jsScript;
 	std::vector<UI16>	scriptTriggers;
 
 	void				SendEnemyGump( CSocket *sock );
