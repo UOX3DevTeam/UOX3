@@ -1814,8 +1814,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 		Combat->AttackTarget( target, caster );
 	}
 	/*Effects->PlaySound( caster, 0x0029 );*/
-	CChar *def = nullptr;
-  (void)def;
+	[[maybe_unused]] CChar *def = nullptr;
 	if( Magic->CheckMagicReflect( target ))
 	{
 		def = caster;
