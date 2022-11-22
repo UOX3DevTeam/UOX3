@@ -21,7 +21,7 @@ inline JSClass global_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass uox_class =
@@ -36,7 +36,7 @@ inline JSClass uox_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXSpell_class =
@@ -51,7 +51,7 @@ inline JSClass UOXSpell_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXSpells_class =
@@ -66,7 +66,7 @@ inline JSClass UOXSpells_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXGlobalSkill_class =
@@ -81,7 +81,7 @@ inline JSClass UOXGlobalSkill_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline  JSClass UOXGlobalSkills_class =
@@ -96,7 +96,7 @@ inline  JSClass UOXGlobalSkills_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXCreateEntry_class =
@@ -111,7 +111,7 @@ inline JSClass UOXCreateEntry_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXCreateEntries_class =
@@ -126,7 +126,7 @@ inline JSClass UOXCreateEntries_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXTimer_class =
@@ -141,7 +141,7 @@ inline JSClass UOXTimer_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSExtendedClass UOXChar_class =
@@ -203,7 +203,7 @@ inline JSClass UOXSkills_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXBaseSkills_class =
@@ -218,7 +218,7 @@ inline JSClass UOXBaseSkills_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXSkillsUsed_class =
@@ -233,7 +233,7 @@ inline JSClass UOXSkillsUsed_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXSkillsLock_class =
@@ -248,7 +248,7 @@ inline JSClass UOXSkillsLock_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXRace_class =
@@ -263,7 +263,7 @@ inline JSClass UOXRace_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXGuild_class =
@@ -278,7 +278,7 @@ inline JSClass UOXGuild_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 /* Unused
@@ -294,7 +294,7 @@ static JSClass UOXGuilds_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 */
 
@@ -310,7 +310,7 @@ inline JSClass UOXRegion_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXSpawnRegion_class =
@@ -325,7 +325,7 @@ inline JSClass UOXSpawnRegion_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSExtendedClass UOXSocket_class =
@@ -361,7 +361,7 @@ inline JSClass UOXFile_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 // var myGump = new Gump; // should be possible
@@ -377,7 +377,7 @@ inline JSClass UOXGump_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 //o------------------------------------------------------------------------------------------------o
@@ -396,7 +396,7 @@ inline JSClass UOXGumpData_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXAccount_class =
@@ -411,7 +411,7 @@ inline JSClass UOXAccount_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXConsole_class =
@@ -426,7 +426,7 @@ inline JSClass UOXConsole_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 /* Unused
@@ -442,7 +442,7 @@ static JSClass UOXScriptSection_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 */
 
@@ -458,7 +458,7 @@ inline JSClass UOXResource_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSClass UOXPacket_class =
@@ -473,7 +473,7 @@ inline JSClass UOXPacket_class =
 	JS_ResolveStub,
 	JS_ConvertStub,
 	JS_FinalizeStub,
-  JSCLASS_NO_OPTIONAL_MEMBERS
+	JSCLASS_NO_OPTIONAL_MEMBERS
 };
 
 inline JSExtendedClass UOXParty_class =
