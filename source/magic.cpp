@@ -4968,7 +4968,7 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Flags((( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ))) < 8 ) ||
+										spells[i].Flags((( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ))) << 8 ) |
 												    static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
 									}
 									else
@@ -5055,7 +5055,7 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) < 8 ) ||
+										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
 													 static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
 									}
 									else
