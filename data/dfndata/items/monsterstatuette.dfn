@@ -1,0 +1,133 @@
+[base_monster_statuette]
+{
+get=base_item
+weight=100
+script=5046
+more=0x02 0x00 0x00 0x00
+}
+
+[cowstatue]
+{
+get=base_monster_statuette
+name=Cow Statuette
+id=0x2103
+}
+
+[crocodilestatue]
+{
+get=base_monster_statuette
+name=Crocodile Statuette
+id=0x20DA
+}
+
+[daemonstatue]
+{
+get=base_monster_statuette
+name=Daemon Statuette
+id=0x20D3
+}
+
+[dragonstatue]
+{
+get=base_monster_statuette
+name=Dragon Statuette
+id=0x20D6
+}
+
+[earthelementalstatue]
+{
+get=base_monster_statuette
+name=Earth Elemental Statuette
+id=0x20D7
+}
+
+[ettinstatue]
+{
+get=base_monster_statuette
+name=Ettin Statuette
+id=0x20D8
+}
+
+[gargoylestatue]
+{
+get=base_monster_statuette
+name=Gargoyle Statuette
+id=0x20D9
+}
+
+[gorillastatue]
+{
+get=base_monster_statuette
+name=Gorilla Statuette
+id=0x20F5
+}
+
+[lichstatue]
+{
+get=base_monster_statuette
+name=Lich Statuette
+id=0x20F8
+}
+
+[lizardmanstatue]
+{
+get=base_monster_statuette
+name=Lizardman Statuette
+id=0x20DE
+}
+
+[ogrestatue]
+{
+get=base_monster_statuette
+name=Ogre Statuette
+id=0x20DF
+}
+
+[orcstatue]
+{
+get=base_monster_statuette
+name=Orc Statuette
+id=0x20E0
+}
+
+[ratmanstatue]
+{
+get=base_monster_statuette
+name=Ratman Statuette
+id=0x20E3
+}
+
+[skeletonstatue]
+{
+get=base_monster_statuette
+name=Skeleton Statuette
+id=0x20E7
+}
+
+[trollstatue]
+{
+get=base_monster_statuette
+name=Troll Statuette
+id=0x20E9
+}
+
+[zombiestatue]
+{
+get=base_monster_statuette
+name=Zombie Statuette
+id=0x20EC
+}
+
+[llamastatue]
+{
+get=base_monster_statuette
+name=Llama Statuette
+id=0x20F6
+}
+
+[ophidianstatue]
+{
+get=base_monster_statuette
+name=Ophidian Statuette
+id=0x2133
+}
