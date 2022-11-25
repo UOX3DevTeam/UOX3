@@ -1465,11 +1465,6 @@ void CPWeather::Particles( UI08 nParts )
 	{
 		nParts = 70;
 	}
-	// nParts is unsigned and can never be negative
-	/*if( nParts < 0 )
-	{
-		nParts = 0;
-	}*/
 
 	pStream.WriteByte( 2, nParts );
 }
