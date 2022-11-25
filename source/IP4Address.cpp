@@ -593,7 +593,6 @@ auto ip4list_t::available() -> ip4list_t
 	ip4list_t rValue;
 	struct ifaddrs * ifAddrStruct = NULL;
 	struct ifaddrs * ifa = NULL;
-	[[maybe_unused]] void * tmpAddrPtr = NULL;
 	Ip4Addr_st device_address;
 
 	getifaddrs( &ifAddrStruct );
@@ -607,7 +606,6 @@ auto ip4list_t::available() -> ip4list_t
 		if( ifa->ifa_addr->sa_family == AF_INET ) // check it is IP4
 		{
 			// is a valid IP4 Address
-			tmpAddrPtr = &(( struct sockaddr_in * )ifa->ifa_addr )->sin_addr;
 			auto holder = *reinterpret_cast<sockaddr_in *>( ifa->ifa_addr );
 			auto addr = Ip4Addr_st( holder.sin_addr.s_addr );
 			if( addr.type() != Ip4Addr_st::ip4type_t::apipa )
