@@ -249,7 +249,9 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			myNPC.TurnToward( myPlayer );
 			for ( let i = 0; i < myArray.length; i++ ) 
 			{
-				var myQuest = myArray[i].split(",");
+				var myQuestData = myArray[i].split(",");
+				var playerSerial = myQuestData[1];
+				var questStatusData = myQuestData[15];
 				if ( myNPC.GetTag("Declined_" + playerSerial ) == 0 || myPlayer.GetTag( questStatusData ) >= 1 )
 				//if (myQuest[1] == myPlayer.serial)
 				{
@@ -258,7 +260,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 					TriggerEvent(19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
-				else if( myQuest[0] == questSlot )
+				else if( myQuestData[0] == questSlot )
 				{
 					questslotUsed = true;
 					indexOfquestSlot = i;
