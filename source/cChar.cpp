@@ -5969,7 +5969,7 @@ void CChar::SetCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( DEFPLAYER_CALLNUM < 0 || (DEFPLAYER_CALLNUM >= 0 && newValue != static_cast<unsigned>(DEFPLAYER_CALLNUM)) )
+		if( newValue != INVALIDSERIAL )
 		{
 			CreatePlayer();
 		}
@@ -5999,7 +5999,7 @@ void CChar::SetPlayerCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( DEFPLAYER_PLAYERCALLNUM < 0 || (DEFPLAYER_PLAYERCALLNUM >= 0 && newValue != static_cast<unsigned>(DEFPLAYER_PLAYERCALLNUM)) )
+		if( newValue != INVALIDSERIAL )
 		{
 			CreatePlayer();
 		}
