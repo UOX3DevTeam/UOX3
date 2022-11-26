@@ -269,6 +269,17 @@
 15005=server/house/strongbox.js
 15006=server/house/playerVendorDeed.js
 15007=server/house/houseAddonUse.js
+
+// Quest System Please do not change this are hard coded to the system.
+19800=custom/quests/core/questlog.js
+19801=custom/quests/core/questgump.js
+19802=custom/quests/core/convoeventgump.js
+19803=custom/quests/core/questbutton.js
+19805=custom/quests/core/ondeathevent.js
+19806=custom/quests/core/questdata.js
+
+// Quests starts at 20000
+20000=custom/quests/solenquest.js
 }
 
 //-------------------------------------------
