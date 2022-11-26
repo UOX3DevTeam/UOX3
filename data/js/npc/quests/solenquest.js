@@ -170,8 +170,8 @@ function onCharDoubleClick( myPlayer, myNPC )
 	// Next up, we want to loop through myArray, and make sure our friend is not already there
 	var questslotUsed = false;
 	var indexOfquestSlot = -1;
-	var questSlot = 2;
-	var questTrg = 20001;
+	var questSlot = 1;
+	var questTrg = 20000;
 	var iNumToGet = "SQ_numToGet";
 	var iLevel = "SQ_level";
 	var nNumToKill = "SQ_numToKill";
