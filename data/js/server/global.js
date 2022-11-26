@@ -54,6 +54,18 @@ function CheckCustomGlobalData( fileName, dataToCheck )
 	return rValue;
 }
 
+function onQuestGump(pUser)
+{
+    if( ValidateObject( pUser ))
+    {
+      TriggerEvent( 19803, "questbutton", pUser);
+    }
+    else
+    {
+      pUser.SysMessage( "Something is wrong, pUser is not valid." );
+    }
+}
+
 // Fetch corpsedecaytimer from uox.ini
 const corpseDecayTimer = GetServerSetting( "CORPSEDECAYTIMER" );
 const playerCorpseIDs = [ 0x0190, 0x0191, 0x025D, 0x025E, 0x029A, 0x029B ];
