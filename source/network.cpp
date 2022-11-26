@@ -277,7 +277,7 @@ void CNetworkStuff::SetLastOn( CSocket *s )
 
 	// some ctime()s like to stick \r\n on the end, we don't want that
 	size_t mLen = strlen( t );
-	for( size_t end = mLen - 1; end > 0 && isspace( t[end] ) && end < mLen; --end )
+	for( size_t end = mLen - 1; end-- > 0 && isspace( t[end] ) && end < mLen; )
 	{
 		t[end] = '\0';
 	}
