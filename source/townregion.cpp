@@ -1925,7 +1925,7 @@ void CTownRegion::Possess( CTownRegion *possessorTown )
 
 	// remove the old members, preparing the way for the new ones
 	CChar *targChar;
-	for( size_t counter = townMember.size() - 1; counter > 0 && counter < townMember.size(); ++counter )
+	for( size_t counter = townMember.size() - 1; counter-- > 0 && counter < townMember.size(); )
 	{
 		targChar = CalcCharObjFromSer( townMember[counter].townMember );
 		RemoveCharacter( counter );
