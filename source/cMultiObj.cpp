@@ -603,7 +603,7 @@ auto CMultiObj::ReleaseItem( CItem *toRemove ) -> void
 	{
 		toRemove->Dirty( UT_UPDATE );
 		lockedList.erase( iter );
-		toRemove->SetMovable( 0 );
+		toRemove->SetMovable( 1 ); // Default to "always movable" for released items
 		toRemove->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_DECAYINHOUSE ));
 	}
 }

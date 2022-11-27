@@ -54,6 +54,30 @@ function onMakeItem( pSock, crafter, itemCrafted, craftEntryID )
 					}
 				}
 				break;
+			case 290: // Potion: Agility
+			case 291: // Potion: Greater Agility
+			case 292: // Potion: Lesser Cure
+			case 293: // Potion: Cure
+			case 294: // Potion: Greater Cure
+			case 295: // Potion: Lesser Explosion
+			case 296: // Potion: Explosion
+			case 297: // Potion: Greater Explosion
+			case 298: // Potion: Lesser Heal
+			case 299: // Potion: Heal
+			case 300: // Potion: Greater heal
+			case 301: // Potion: Lesser Poison
+			case 302: // Potion: Poison
+			case 303: // Potion: Greater Poison
+			case 304: // Potion: Deadly Poison
+			case 305: // Potion: Refresh
+			case 306: // Potion: Total Refresh
+			case 307: // Potion: Strength
+			case 308: // Potion: Greater Strength
+			case 309: // Potion: Nightsight
+				// Players auto-identify potions they craft
+				itemCrafted.name = itemCrafted.name2;
+				itemCrafted.name2 = "#";
+				break;
 			case 0: // Failed to craft item
 			default:
 				break;

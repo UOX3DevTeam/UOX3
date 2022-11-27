@@ -1,3 +1,11 @@
+27/11/2022 - Dragon Slayer, Xuri
+	Implemented potion kegs; these can be crafted by carpenters/tinkerers, and can be used to store potions at a fraction of their original weight (Dragon Slayer)
+	Only the owner (if locked down), the current holder (if in backpack) or someone who have previously taste identified a potion keg may add additional potions to it (Xuri)
+	Potions dropped from monsters and bought from stores are unidentified by default, but can be identified by players using the taste identification skill. (Xuri)
+	Potions crafted by players are identified by default for all to see (Xuri)
+	Releasing locked down items in houses now set the items as movable (1) instead of client default (0) (Xuri)
+	Added socket as another parameter to the onToolTip JS event
+
 15/11/2022 - Dragon Slayer
 	Added special hair dyes
 	Updated item menu in dfndata/items/ItemMenu.bulk.dfn with dyes (Xuri)
