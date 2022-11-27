@@ -3339,6 +3339,7 @@
 6275=You combine the berry and the flour into the tribal paint worn by the savages.
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
+6278=You have to use your taste identification skill to know more about this potion.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4409,6 +4410,7 @@
 10925=lesser explosion
 10926=explosion
 10927=greater explosion
+10928=Empty Bottle
 // 11201 - 11400 Bowcraft Fletching Crafting Skill
 11201=BOWCRAFT AND FLETCHING MENU
 11202=Materials
@@ -4810,7 +4812,7 @@
 // Potion Keg
 17200=You pour some of the keg's contents into an empty bottle...
 17201=...and place it into your backpack.
-17202=you have no empty bottles.
+17202=You have no empty bottles.
 17204=I can't reach that.
 17205=Only the owner can drop potions in this keg.
 17206=The keg will not hold any more!
@@ -4830,5 +4832,8 @@
 17220=The keg is very full.
 17221=The liquid is almost to the top of the keg.
 17222=The keg is completely full.
+17223=A specially lined keg for potions.
+17224=There is nothing in the keg to taste!
+17225=You are already familiar with this keg's contents.
 }
 EOF

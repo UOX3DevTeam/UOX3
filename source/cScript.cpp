@@ -765,7 +765,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 	if( !ExistAndVerify( seOnTooltip, "onTooltip" ))
 		return "";
 
-	jsval rval, params[1];
+	jsval rval, params[2];
 	JSObject *tooltipObj = nullptr;
 	if( myObj->CanBeObjType( OT_CHAR ))
 	{

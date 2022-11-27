@@ -102,6 +102,15 @@ function HasUserTastedItem( pUser, potionItem )
 function onDropItemOnItem( iDropped, pUser, potionKeg )
 {
 	var socket = pUser.socket;
+	if( iDropped.type != 19 ) // prevent script from running when moving the potion keg itself
+	{
+		if( iDropped.sectionID != "potionkeg" )
+		{
+			pUser.TextMessage( GetDictionaryEntry( 17210, socket.language ), false, 0x03b2 ); // The keg is not designed to hold that type of object.
+		}
+		return 1;
+	}
+
 	var potionCount = parseInt( potionKeg.GetTag( "potionCount" ));
 	var potionSectionID = potionKeg.GetTag( "potionSectionID" );
 
@@ -111,7 +120,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 		socket.SysMessage( GetDictionaryEntry( 17206, socket.language )); // The keg will not hold any more!
 		return 0;
 	}
-	else if( potionKeg.movable == 3 ) // Locked down
+	else if( potionKeg.sectionID == "potionKeg" && potionKeg.movable == 3 ) // Locked down
 	{
 		if( potionCount == 0 )
 		{
@@ -222,10 +231,6 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 			pUser.TextMessage( GetDictionaryEntry( 17209, socket.language ), false, 0x03b2 ); // You decide that it would be a bad idea to mix different types of potions.
 			return 0;
 		}
-	}
-	else
-	{
-		pUser.TextMessage( GetDictionaryEntry( 17210, socket.language ), false, 0x03b2 ); // The keg is not designed to hold that type of object.
 	}
 	return 1;
 }
