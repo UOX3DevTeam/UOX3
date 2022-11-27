@@ -1,6 +1,7 @@
 // This script handles functionality of potion kegs
 const maxPotion = 100; // Max potions in a potion keg
 const limitLockedDownKegUsage = false; // If set to true, only owner/co-owners/friends can use locked down potion kegs
+const limitLockedDownPotionDrop = false; // If set to true, only owner/co-owner/friends can drop potions on locked down potion kegs
 
 function onUseChecked( pUser, potionKeg )
 {
@@ -31,8 +32,8 @@ function onUseChecked( pUser, potionKeg )
 		// Checking potion Count
 		if( potionCount > 0 )
 		{
-			var resource = pUser.ResourceCount( 0x0f0e ); // Checking Make sure we have a bottle.
-			if( resource >= 0 )
+			var emptyBottles = pUser.ResourceCount( 0x0f0e ); // Checking Make sure we have a bottle.
+			if( emptyBottles > 0 )
 			{
 				var potionSectionID = potionKeg.GetTag( "potionSectionID" );
 				var newPotion = CreateDFNItem( socket, pUser, potionSectionID, 1, "ITEM", true );
@@ -122,7 +123,7 @@ function onDropItemOnItem( iDropped, pUser, potionKeg )
 	}
 	else if( potionKeg.sectionID == "potionKeg" && potionKeg.movable == 3 ) // Locked down
 	{
-		if( potionCount == 0 )
+		if( potionCount == 0 || limitLockedDownPotionDrop )
 		{
 			// Only house owner, co-owners and friends can fill an empty, locked-down potion keg
 			var iMulti = potionKeg.multi;
@@ -242,7 +243,7 @@ function onNameRequest( potionKeg, pUser )
 	var nameString = potionKeg.name;
 
 	var shardEra = GetServerSetting( "CoreShardEra" );
-	if( shardEra == "pub15" || shardEra == "t2a" || shardEra == "uor" || shardEra == "td" || shardEra == "lbr" )
+	if( shardEra == "t2a" || shardEra == "uor" || shardEra == "td" || shardEra == "lbr" )
 	{
 		// Prior to Publish 15, players only see true contents of potion kegs if they're the owner, or have
 		// used taste identification on it
