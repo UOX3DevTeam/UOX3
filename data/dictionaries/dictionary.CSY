@@ -2584,6 +2584,13 @@
 2860=Hráčské prodejce lze umístit pouze do veřejných domů!
 2861=Prodejce hráčů nelze umístit do sousedství dveří!
 2862=Pro sesílání kouzel nebo meditaci musíš mít volné ruce.
+2863=Nejsi dostatečně zručný tesař, abys to mohl použít.
+2864=Zaměřte se na mrtvolu, ze které chcete vyrobit trofej.
+2865=Tuto mrtvolu již zřejmě navštívil taxidermista.
+2866=Prohlížíš si mrtvolu a shledáváš ji hodnou trofeje.
+2867=Použiješ svou výbavu na výrobu trofeje.
+2868=Tohle nevypadá jako něco, co bys chtěl mít pověšené na zdi.
+2869=Nemáš dostatek desek.
 // [3000-4999] Animal and Monster names
 3001=zlobr
 3002=ettin
@@ -3208,6 +3215,7 @@
 5144=zvířecí démon
 5145=orkský sekáček
 5146=ovladač
+5147=kadeřník
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3338,6 +3346,7 @@
 6275=Spojíte bobule a mouku do kmenové barvy, kterou nosí divoši.
 6276=Nemáš dovednost vaření, abys mohl vytvořit barvu na tělo.
 6277=Identifikační číslo suroviny nebylo nalezeno v seznamu surovin použitých k výrobě předmětu.
+6278=Chceš-li se o tomto lektvaru dozvědět více, musíš použít dovednost rozpoznávání chutí.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4077,6 +4086,9 @@
 9180=V hlavním balení prodejce lze nastavit jako "neprodejné" pouze kontejnery.
 9181=Předmět byl označen jako "neprodejný".
 9182=Tento předmět není určen k prodeji.
+9183=Bankovní schránka je přetížená a neunese další hmotnost.
+9184=Vyberte umístění doplňku domu.
+9185=Sekerou můžete rozebrat doplňky domu a získat zpět jejich listiny.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -4405,6 +4417,7 @@
 10925=menší výbuch
 10926=výbuch
 10927=větší výbuch
+10928=Prázdná láhev
 // 11201 - 11400 Dovednost řemeslného zpracování luku (Bowcraft Fletching)
 11201=NABÍDKA PRO VÝROBU LUKŮ A FLETCHING
 11202=Materiály
@@ -4582,6 +4595,7 @@
 11835=Kovářské kladivo
 11836=Kleště
 11837=Sada nářadí (dráteník)
+11838=Fletcherovy nástroje
 // Strana 3 - Díly
 11860=Obruče na hlavně
 11861=Závit na hlaveň
@@ -4781,5 +4795,52 @@
 17053=Již jste aktivovali bezpečný teleport! Počkejte prosím...
 17054=[Teleportuji se do bezpečí asi za půl minuty...]
 17055=[Teleportace do bezpečí asi za 15 sekund...]
+//Hair/Beard Dye Menus
+17100=Nemáš žádné vlasy k barvení.
+17101=Nabídka výběru barvy vlasů
+17102=Barvi mi vlasy touto barvou!
+17103=Hnědá
+17104=Kaštanové vlasy
+17105=Karounské vlasy
+17106=Modrá
+17107=Zelená
+17108=Červená
+17109=Světlá
+17110=Blondýnka
+17111=Černá
+17112=Béžová
+17113=Zlatá
+17114=DK hnědá
+17116=Nemáš vousy k barvení.
+17117=Nabídka výběru barvy vousů
+17118=Barvi mi vousy touto barvou!
+17119=Nabarvi mi vlasy a vousy na tuto barvu!
+17120=Nemáš žádné vlasy ani vousy k barvení.
+// Soudek s lektvarem
+17200=Nalijete část obsahu soudku do prázdné láhve...
+17201=...a vložíš ji do batohu.
+17202=Nemáš žádné prázdné láhve.
+17204=Nedosáhnu na to.
+17205=Do tohoto soudku může vhazovat lektvary pouze jeho majitel.
+17206=Další lektvary už soudek nepojme!
+17207=Na prázdnou láhev nemáš v batohu místo.
+17208=Prázdnou láhev umístíš do svého batohu.
+17209=Rozhodneš se, že by nebylo dobré míchat různé druhy lektvarů.
+17210=Soudeček není určen k uložení tohoto typu předmětu.
+17211=Soudeček je prázdný.
+17212=Soudeček je téměř prázdný.
+17213=Soudeček není příliš plný.
+17214=Soudeček je asi ze čtvrtiny plný.
+17215=Soudeček je asi z jedné třetiny plný.
+17216=Soudeček je téměř z poloviny plný.
+17217=Soudeček je přibližně z poloviny plný.
+17218=Soudeček je více než z poloviny plný.
+17219=Soudeček je plný přibližně ze tří čtvrtin.
+17220=Soudeček je velmi plný.
+17221=Kapalina je téměř po vrchol sudu.
+17222=Soudeček je zcela plný.
+17223=Speciálně vyložený soudek na lektvary.
+17224=V sudu není nic, co by se dalo ochutnat!
+17225=Obsah tohoto soudku je ti již znám.
 }
 EOF

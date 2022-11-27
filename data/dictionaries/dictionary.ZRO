@@ -2584,6 +2584,13 @@
 2860=Player vendors can only be placed in public houses!
 2861=You cannot place a player vendor adjacent to a door!
 2862=Your hands must be free to cast spells or meditate.
+2863=You are not skilled enough as a carpenter to use this.
+2864=Target the corpse to make a trophy out of.
+2865=That corpse seems to have been visited by a taxidermist already.
+2866=You review the corpse and find it worthy of a trophy.
+2867=You use your kit up making the trophy.
+2868=That does not look like something you want hanging on a wall.
+2869=You do not have enough boards.
 // [3000-4999] Animal and Monster names
 3001=an ogre
 3002=an ettin
@@ -3205,6 +3212,7 @@
 5144=a beastly daemon
 5145=an orc chopper
 5146=the controller
+5147=the Hair Stylist
 // [6000-6499] Misc Skill Msgs
 6000=That person looks %s and %t.
 6001=You can't make anything useful from that.
@@ -3953,7 +3961,7 @@
 9025=Invalid SpawnRegion %u
 9026=This command requires more arguments!
 9027=This object must be placed in your house
-9028=You cannot place a house-addon adjacent to a door.
+9028=You cannot place a house addon adjacent to a door.
 9029=You cannot build your house on the selected terrain!
 9030=You cannot build your house there - location is blocked by one or more items!
 9031=You cannot build your house there - houses not allowed in this region!
@@ -4022,7 +4030,7 @@
 9094=Unloading Event
 9095=%i event decorations removed for event %s.
 9096=No event decorations found.
-9097=You cannot place this house-addon there, location is blocked!
+9097=You cannot place this house addon there, location is blocked!
 9098=Item immovable to normal players, but can be dragged out of backpack by GM characters.
 9099=Tip: Try 'ALLMOVE ON command or modify item's movable property with 'TWEAK command!
 9100=*avoids trap*
@@ -4070,6 +4078,9 @@
 9180=Only containers can be set to 'not for sale' in the vendor's main pack.
 9181=The item has been marked as 'not for sale'
 9182=This item is not for sale.
+9183=Your bank box is overloaded and cannot hold any more weight.
+9184=Select a location for the house addon.
+9185=You can use an axe to dismantle house addons and get their deeds back.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -4572,6 +4583,7 @@
 11835=Smith's Hammer
 11836=Tongs
 11837=Tool Kit (Tinker's tools)
+11838=Fletcher's Tools
 // Page 3 - Parts
 11860=Barrel Hoops
 11861=Barrel Tap
@@ -4771,5 +4783,26 @@
 17053=You have already activated safe teleport! Please wait...
 17054=[Teleporting to safety in about half a minute...]
 17055=[Teleporting to safety in about 15 seconds...]
+//Hair/Beard Dye Menus
+17100=You have no hair to dye.
+17101=Hair Color Selection Menu
+17102=Dye my hair this color!
+17103=Brown
+17104=Chestnut
+17105=Auburn
+17106=Blue
+17107=Green
+17108=Red
+17109=Light
+17110=Blonde
+17111=Black
+17112=Beige
+17113=Golden
+17114=DK Brown
+17116=You have no beard to dye.
+17117=Beard Color Selection Menu
+17118=Dye my beard this color!
+17119=Dye my hair and beard this color!
+17120=You have no hair or beard to dye.
 }
 EOF

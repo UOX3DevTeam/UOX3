@@ -9,3 +9,14 @@ script=5027
 newbie
 value=5000 2500
 }
+
+[taxidermykit]
+{
+get=base_item
+name=a taxidermy kit
+id=0x1EBA
+weight=100
+decay=1
+script=5039
+value=90000 45000
+}

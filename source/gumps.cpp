@@ -304,36 +304,6 @@ void HandleTownstoneButton( CSocket *s, SERIAL button, SERIAL ser, SERIAL type )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	HandleHairDyeButton()
-//o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Handles button pressed in hair dye gump
-//o------------------------------------------------------------------------------------------------o
-void HandleHairDyeButton( CSocket *s, CItem *j )
-{
-	if( !ValidateObject( j ))
-		return;
-
-	// we only HAVE one button, so we'll assume safely that the colour has changed if we hit here
-	CChar *dest	= s->CurrcharObj();
-	if( !ValidateObject( dest ))
-		return;
-
-	UI16 dyeColour		= s->GetWord( 21 );
-	CItem *beardobject	= dest->GetItemAtLayer( IL_FACIALHAIR );
-	CItem *hairobject	= dest->GetItemAtLayer( IL_HAIR );
-
-	if( ValidateObject( hairobject ))
-	{
-		hairobject->SetColour( dyeColour );
-	}
-	if( ValidateObject( beardobject ))
-	{
-		beardobject->SetColour( dyeColour );
-	}
-	j->Delete();
-}
-
-//o------------------------------------------------------------------------------------------------o
 //|	Function	-	HandleAccountModButton()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handles button pressed in account gump
@@ -1925,7 +1895,6 @@ bool CPIGumpMenuSelect::Handle( void )
 	// 2	Tweak Char
 	// 3	Townstones
 	// 4	WhoList
-	// 6	Hair Dye Menu
 	// 7	Accounts (TBR)
 	// 8	Racial editor (TBDU)
 	// 9	Add menu
@@ -1943,14 +1912,6 @@ bool CPIGumpMenuSelect::Handle( void )
 	{
 		case 3:	HandleTownstoneButton( tSock, buttonId, id, gumpId );	break;	// Townstones
 		case 4:	WhoList->ButtonSelect( tSock, static_cast<UI16>( buttonId ), static_cast<UI08>( gumpId ));	break;	// Wholist
-		case 6:																		// Hair Dye Menu
-			j = static_cast<CItem *>( tSock->TempObj() );
-			tSock->TempObj( nullptr );
-			if( ValidateObject( j ))
-			{
-				HandleHairDyeButton( tSock, j );
-			}
-			break;
 		case 7:																		// Accounts
 			CChar *c;
 			c = CalcCharObjFromSer( id );
