@@ -3339,6 +3339,7 @@
 6275=Łączysz jagody i mąkę w plemienną farbę noszoną przez dzikusów.
 6276=Nie masz umiejętności gotowania, by stworzyć farbę do ciała.
 6277=Nie znaleziono ID źródła na liście zasobów użytych do stworzenia przedmiotu.
+6278=Musisz użyć umiejętności identyfikacji smaku, aby dowiedzieć się więcej o tej miksturze.
 // [7000-7499] AI Scripts
 7000=Jesteś przestępcą i nie masz dostępu do swojej skrytki bankowej.
 7001=Którą pozycję chcesz umieścić w swojej skrytce bankowej?
@@ -4409,6 +4410,7 @@
 10925=mniejszy wybuch
 10926=wybuch
 10927=większa eksplozja
+10928=Pusta butelka
 // 11201 - 11400 Rzemiosło łucznicze i obróbka skrawaniem
 11201=MENU RZEMIOSŁA ŁUCZNICZEGO I OBRÓBKI MIOTEŁ
 11202=Materiały
@@ -4807,4 +4809,30 @@
 17118=Przefarbuj moją brodę na ten kolor!
 17119=Przefarbuj moje włosy i brodę na ten kolor!
 17120=Nie masz włosów ani brody do farbowania.
+// Beczka z eliksirem
+17200=Wylewasz część zawartości beczki do pustej butelki...
+17201=...i wkładasz ją do plecaka.
+17202=Nie masz żadnych pustych butelek.
+17204=Nie mogę tego dosięgnąć.
+17205=Tylko właściciel może wrzucać mikstury do tej beczki.
+17206=Beczka nie pomieści więcej!
+17207=Nie masz miejsca na pustą butelkę w swoim plecaku.
+17208= Umieszczasz pustą butelkę w swoim plecaku.
+17209=Decydujesz, że mieszanie różnych rodzajów eliksirów byłoby złym pomysłem.
+17210=Beczka nie jest przeznaczona do przechowywania tego typu przedmiotów.
+17211=Beczka jest pusta.
+17212=Beczka jest prawie pusta.
+17213=Beczka nie jest zbyt pełna.
+17214=Beczka jest mniej więcej w jednej czwartej pełna.
+17215=Beczka jest mniej więcej w jednej trzeciej pełna.
+17216=Beczka jest prawie w połowie pełna.
+17217=Beczka jest mniej więcej w połowie pełna.
+17218=Beczka jest więcej niż w połowie pełna.
+17219=Beczka jest pełna w około trzech czwartych.
+17220=Beczka jest bardzo pełna.
+17221=Płyn jest prawie na wierzchu beczki.
+17222=Beczka jest całkowicie pełna.
+17223=Specjalnie wyłożona beczka do eliksirów.
+17224=W beczce nie ma nic do smakowania!
+17225=Jesteś już zaznajomiony z zawartością tej beczki.
 }
