@@ -2584,6 +2584,13 @@
 2860=I venditori di giocatori possono essere messi solo nelle case pubbliche!
 2861=Non puoi piazzare un venditore di giocatori adiacente a una porta!
 2862=Le tue mani devono essere libere per lanciare incantesimi o meditare.
+2863=Non sei abbastanza abile come falegname per usare questo.
+2864=Prendi di mira il cadavere per farne un trofeo.
+2865=Questo cadavere sembra essere già stato visitato da un tassidermista.
+2866=Esaminate il cadavere e lo ritenete degno di un trofeo.
+2867=Usa il tuo kit per realizzare il trofeo.
+2868=Non sembra qualcosa da appendere al muro.
+2869=Non hai abbastanza tavole.
 // [3000-4999] Animal and Monster names
 3001=un orco
 3002=un ettin
@@ -3185,7 +3192,7 @@
 5124=un cavaliere d'ossa
 5125=un mago delle ossa
 5126=il Tessitore
-5127=il cartografo
+5127=il Cartografo
 5128=il Commerciante di pellicce
 5129=il Conciatore
 5130=la Cameriera
@@ -3193,18 +3200,19 @@
 5132=il Ranger
 5133=il Guerriero
 5134=il Giocatore d'azzardo
-5135=il giudice
+5135=il Giudice
 5136=il Mugnaio
 5137=il Monaco
 5138=il Rancher
-5139=il prigioniero
-5140=lo scultore
-5141=il sindaco
+5139=il Prigioniero
+5140=lo Scultore
+5141=il Sindaco
 5142=un demone minore
 5143=un cacodaemon
 5144=un demone bestiale
 5145=un mannaia orco
 5146=il controllore
+5147=il Parrucchiere
 // [6000-6499] Misc Skill Msgs
 6000=Quella persona sembra %s e %t.
 6001=Non puoi ricavarne nulla di utile.
@@ -4070,6 +4078,9 @@
 9180=Solo i contenitori possono essere impostati come "non in vendita" nel pacchetto principale del venditore.
 9181=L'oggetto è stato contrassegnato come "non in vendita".
 9182=Questo articolo non è in vendita.
+9183=La cassa è sovraccarica e non può più reggere il peso.
+9184=Seleziona una posizione per l'addon della casa.
+9185=Puoi usare un'ascia per smantellare gli addendi delle case e recuperare i loro atti.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -4398,6 +4409,7 @@
 10925=maggiore esplosione
 10926=esplosione
 10927=maggiore esplosione
+10928=Bottiglia vuota
 // 11201 - 11400 Abilità Artigianale Bowcraft Fletching
 11201=MENÙ ARCIERIA E FLETCHING
 11202=Materiali
@@ -4575,6 +4587,7 @@
 11835=Martello da fabbro
 11836=Tonghe
 11837=Kit di attrezzi (attrezzi da scultore)
+11838=Strumenti di Fletcher
 // Pagina 3 - Parti
 11860=Cerchi per canne
 11861=Barile Tap
@@ -4774,5 +4787,52 @@
 17053=Hai già attivato il teletrasporto sicuro! Per favore aspetta...
 17054=[Teletrasporto in sicurezza tra circa mezzo minuto...]
 17055=[Teletrasporto in sicurezza tra circa 15 secondi...]
+//Hair/Beard Dye Menus
+17100=Non ci sono capelli da tingere.
+17101=Menu di selezione del colore dei capelli
+17102=Tingi i capelli di questo colore!
+17103=Marrone
+17104=Castagno
+17105=Capelli castani
+17106=Blu
+17107=Verde
+17108=Rosso
+17109=Leggero
+17110=Biondo
+17111=Nero
+17112=Beige
+17113=Dorato
+17114=Marrone chiaro
+17116=Non hai barba da tingere.
+17117=Menu di selezione del colore della barba
+17118=Tingi la mia barba di questo colore!
+17119=Tingi i miei capelli e la mia barba di questo colore!
+17120=Non hai capelli o barba da tingere.
+// Fusto di pozione
+17200=Versate un po' del contenuto del barilotto in una bottiglia vuota...
+17201=... e la metti nello zaino.
+17202=Non hai bottiglie vuote.
+17204=Non ci arrivo.
+17205=Solo il proprietario può gettare pozioni in questo barile.
+17206=Il barile non può più contenere nulla!
+17207=Non c'è spazio per la bottiglia vuota nello zaino.
+17208=Metti la bottiglia vuota nello zaino.
+17209=Decidi che sarebbe una cattiva idea mescolare diversi tipi di pozioni.
+17210=Il barilotto non è progettato per contenere quel tipo di oggetto.
+17211=Il barilotto è vuoto.
+17212=Il barilotto è quasi vuoto.
+17213=Il barilotto non è molto pieno.
+17214=Il barilotto è pieno per circa un quarto.
+17215=Il barilotto è pieno per circa un terzo.
+17216=Il barilotto è quasi mezzo pieno.
+17217=Il fusto è pieno per circa metà.
+17218=Il fusto è pieno per più di metà.
+17219=Il fusto è pieno per circa tre quarti.
+17220=Il fusto è molto pieno.
+17221=Il liquido è quasi in cima al fusto.
+17222=Il fusto è completamente pieno.
+17223=Un barilotto appositamente rivestito per le pozioni.
+17224=Non c'è nulla da assaggiare nel barilotto!
+17225=Conosci già il contenuto di questo barilotto.
 }
 EOF

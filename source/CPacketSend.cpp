@@ -7240,7 +7240,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( toExecute1 != nullptr )
 		{
 			// Custom tooltip - each word capitalized
-			std::string textFromScript1 = toExecute1->OnTooltip( &cItem );
+			std::string textFromScript1 = toExecute1->OnTooltip( &cItem, tSock );
 			if( !textFromScript1.empty() )
 			{
 				UI32 clilocNumFromScript = 0;
@@ -7266,7 +7266,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 	cScript *toExecuteGlobal = JSMapping->GetScript( static_cast<UI16>( 0 ));
 	if( toExecuteGlobal != nullptr )
 	{
-		std::string textFromGlobalScript = toExecuteGlobal->OnTooltip( &cItem );
+		std::string textFromGlobalScript = toExecuteGlobal->OnTooltip( &cItem, tSock );
 		if( !textFromGlobalScript.empty() )
 		{
 			UI32 clilocNumFromScript = 0;
@@ -7330,7 +7330,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
-	else if( !cItem.IsCorpse() && cItem.GetName2() != "#" && cItem.GetName2() != "" )
+	else if( !cItem.IsCorpse() && cItem.GetType() != IT_POTION && cItem.GetSectionId() != "potionkeg" && cItem.GetName2() != "#" && cItem.GetName2() != "" )
 	{
 		tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 		tempEntry.ourText = oldstrutil::format( " \t%s\t ", Dictionary->GetEntry( 9402 ).c_str(), tSock->Language() ); // [Unidentified]
@@ -7736,7 +7736,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 		if( toExecute != nullptr )
 		{
 			// Custom tooltip - each word capitalized
-			std::string textFromScript = toExecute->OnTooltip( &mChar );
+			std::string textFromScript = toExecute->OnTooltip( &mChar, tSock );
 			if( !textFromScript.empty() )
 			{
 				UI32 clilocNumFromScript = 0;
@@ -7889,16 +7889,24 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
-			else if( opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
+			else if(( opItem->GetSectionId() == spItem->GetSectionId() )
+				&& ( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
+			{
+				// Basing it on GetSectionId() should replace all the other checks below...
+				AddItem( tReg, spItem, opItem, packetLen );
+				++numItems;
+			}
+			/*else if( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
 					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
-				// Special case for deeds, which all use same ID
-				if( opItem->GetId() != 0x14f0 || ( opItem->GetTempVar( CITV_MOREX ) == spItem->GetTempVar( CITV_MOREX )))
+				// Special case for deeds and dyes, which all use same ID
+				if(( opItem->GetId() != 0x14f0 && opItem->GetId() != 0x0eff ) || ( opItem->GetTempVar( CITV_MOREX ) == spItem->GetTempVar( CITV_MOREX )))
 				{
 					AddItem( tReg, spItem, opItem, packetLen );
 					++numItems;
 				}
-			}
+			}*/
+
 			if( numItems >= 60 )
 			{
 				return;

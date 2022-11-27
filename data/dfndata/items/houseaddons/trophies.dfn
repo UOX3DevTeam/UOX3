@@ -1,0 +1,63 @@
+[base_trophy]
+{
+get=base_item
+movable=2
+decay=1
+script=15007//houseAddonUse.js
+}
+
+[brownbeartrophy]
+{
+get=base_trophy
+name=a brown bear trophy
+id=0x1E60
+morez=0x1E67
+}
+
+[stagtrophy]
+{
+get=base_trophy
+name=a stag trophy
+id=0x1E61
+morez=0x1E68
+}
+
+[bigfishtrophy]
+{
+get=base_trophy
+name=a big fish trophy
+id=0x1E62
+morez=0x1E69
+}
+
+[gorillatrophy]
+{
+get=base_trophy
+name=a gorilla trophy
+id=0x1E63
+morez=0x1E6a
+}
+
+[orctrophy]
+{
+get=base_trophy
+name=an orc trophy
+id=0x1E64
+morez=0x1E6b
+}
+
+[polarbeartrophy]
+{
+get=base_trophy
+name=a polar bear trophy
+id=0x1E65
+morez=0x1E6c
+}
+
+[trolltrophy]
+{
+get=base_trophy
+name=a troll trophy
+id=0x1E66
+morez=0x1E6d
+}

@@ -3184,21 +3184,6 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 				mSock->SysMessage( 466 ); // You failed to use this.
 			}
 			return true;
-		case IT_HAIRDYE:	// Hair Dye
-			// If item is locked down, check if player has access to use it
-			if( iUsed->IsLockedDown() && !ValidateLockdownAccess( mChar, mSock, iUsed, false ))
-				return true;
-
-			// Don't allow using GM-locked down tools
-			if( iUsed->GetMovable() == 2 )
-			{
-				mSock->SysMessage( 1032 ); // This is not yours!
-				return true;
-			}
-
-			mSock->TempObj( iUsed );
-			BuildGumpFromScripts( mSock, 6 );
-			return true;
 		default:
 			if( iType )
 			{

@@ -83,6 +83,11 @@ GET=m_fisher f_fisher
 GET=m_furtrader f_furtrader
 }
 
+[hairstylist]
+{
+GET=m_hairstylist f_hairstylist
+}
+
 [healer]
 {
 GET=m_healer f_healer

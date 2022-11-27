@@ -2584,6 +2584,13 @@
 2860=¡Los vendedores de jugadores sólo pueden colocarse en casas públicas!
 2861=¡No puedes colocar un vendedor de jugadores junto a una puerta!
 2862=Tus manos deben estar libres para lanzar hechizos o meditar.
+2863=No tienes la suficiente habilidad como carpintero para usar esto.
+2864=Apunta al cadáver para hacer un trofeo con él.
+2865=Ese cadáver parece haber sido visitado ya por un taxidermista.
+2866=Revisas el cadáver y lo encuentras digno de un trofeo.
+2867=Usa su equipo para hacer el trofeo.
+2868=Eso no parece algo que quieras colgar en la pared.
+2869=No tienes suficientes tablas.
 // [3000-4999] Nombres de animales y monstruos
 3001=un ogro
 3002=un ettin
@@ -3189,7 +3196,7 @@
 5128=el Peletero
 5129=el Curtidor
 5130=la Camarera
-5131=camarero
+5131=el Camarero
 5132=el Guardabosques
 5133=el Guerrero
 5134=el Jugador
@@ -3199,12 +3206,13 @@
 5138=el Ganadero
 5139=el Prisionero
 5140=el Escultor
-5141=el alcalde
+5141=el Alcalde
 5142=un demonio menor
 5143=un cacodemonio
 5144=un demonio bestial
 5145=un cortador de orcos
 5146=el controlador
+5147=el Peluquero
 // [6000-6499] Misc Skill Msgs
 6000=Esa persona parece %s y %t.
 6001=No se puede hacer nada útil con eso.
@@ -3331,6 +3339,7 @@
 6275=Combinas la baya y la harina en la pintura tribal que llevan los salvajes.
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
+6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -4070,6 +4079,9 @@
 9180=Sólo los contenedores pueden ponerse como "no en venta" en el paquete principal del vendedor.
 9181=El artículo ha sido marcado como 'no en venta'
 9182=Este artículo no está a la venta.
+9183=Su caja bancaria está sobrecargada y no puede soportar más peso.
+9184=Seleccione una ubicación para el complemento de la casa.
+9185=Puedes usar un hacha para desmantelar los complementos de la casa y recuperar sus escrituras.
 // [9250-9300] Libros de correr
 9250=Este libro necesita tiempo para recargarse.
 9251=¡No puedes usar un Runebook de la mochila de otra persona!
@@ -4398,6 +4410,7 @@
 10925=menos explosión
 10926=explosión
 10927=explosión mayor
+10928=Botella vacía
 // 11201 - 11400 Habilidad de Artesanía de Arco y Emplumado
 11201=MENÚ DE ARQUERÍA Y EMPLUMADO
 11202=Materiales
@@ -4575,6 +4588,7 @@
 11835=Martillo de herrero
 11836=Pinzas
 11837=Juego de herramientas (herramientas de calderero)
+11838=Herramientas de Carpintero
 // Página 3 - Piezas
 11860=Aros de barril
 11861=Grifo de barril
@@ -4774,5 +4788,52 @@
 17053=¡Ya ha activado el teletransporte seguro! Por favor, espere...
 17054=[Teletransportándose a un lugar seguro en medio minuto...]
 17055=[Teletransportándose a un lugar seguro en unos 15 segundos...]
+//Hair/Beard Dye Menus
+17100=No tiene cabello para teñir.
+17101=Menú de selección de color de pelo
+17102=¡Teñirme el pelo de este color!
+17103=Castaño
+17104=Castaño
+17105=Castaño
+17106=Azul
+17107=Verde
+17108=Rojo
+17109=Luz
+17110=Rubio
+17111=Negro
+17112=Beige
+17113=Dorado
+17114=Marrón Rojo
+17116=No tiene barba para teñir.
+17117=Menú de selección del color de la barba
+17118=¡Tiña mi barba de este color!
+17119=¡Tiñe mi pelo y mi barba de este color!
+17120=No tienes pelo ni barba para teñir.
+// Barril de pociones
+17200=Viertes parte del contenido del barril en una botella vacía...
+17201=...y la coloca en su mochila.
+17202=No tienes botellas vacías.
+17204=No puedo alcanzarlo.
+17205=Sólo el propietario puede dejar pociones en este barril.
+17206=¡El barril no puede contener más!
+17207=No tienes espacio para la botella vacía en tu mochila.
+17208=Colocas la botella vacía en tu mochila.
+17209=Decides que sería una mala idea mezclar diferentes tipos de pociones.
+17210=El barril no está diseñado para contener ese tipo de objetos.
+17211=El barril está vacío.
+17212=El barril está casi vacío.
+17213=El barril no está muy lleno.
+17214=El barril está aproximadamente un cuarto de su capacidad.
+17215=El barril está aproximadamente un tercio lleno.
+17216=El barril está casi medio lleno.
+17217=El barril está aproximadamente medio lleno.
+17218=El barril está más de la mitad.
+17219=El barril está lleno en sus tres cuartas partes.
+17220=El barril está muy lleno.
+17221=El líquido está casi hasta arriba del barril.
+17222=El barril está completamente lleno.
+17223=Un barril especialmente forrado para pociones.
+17224=¡No hay nada en el barril para probar!
+17225=Ya conoce el contenido de este barril.
 }
 EOF

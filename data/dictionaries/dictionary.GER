@@ -2584,6 +2584,13 @@
 2860=Spielerverkäufer können nur in öffentlichen Häusern platziert werden!
 2861=Sie können keinen Spielerverkäufer neben einer Tür platzieren!
 2862=Deine Hände müssen frei sein, um zu zaubern oder zu meditieren.
+2863=Du bist als Tischler nicht geschickt genug, um das zu benutzen.
+2864=Zielt auf die Leiche, um eine Trophäe daraus zu machen.
+2865=Diese Leiche scheint bereits von einem Tierpräparator besucht worden zu sein.
+2866=Du begutachtest die Leiche und findest sie würdig für eine Trophäe.
+2867=Du verwendest deine Ausrüstung, um die Trophäe herzustellen.
+2868=Das sieht nicht nach etwas aus, das man sich an die Wand hängen möchte.
+2869=Du hast nicht genug Bretter.
 // [3000-4999] Animal and Monster names
 3001=ein Oger
 3002=ein Ettin
@@ -3205,6 +3212,7 @@
 5144=ein bestialischer Dämon
 5145=ein Ork-Häcksler
 5146=der Kontrolleur
+5147=die Friseurin
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3331,6 +3339,7 @@
 6275=Du kombinierst die Beeren und das Mehl zu der Stammesfarbe, die von den Wilden getragen wird.
 6276=Du hast nicht die Fertigkeit Kochen, um die Körperfarbe herzustellen.
 6277=Ressourcen-ID nicht in der Liste der für die Herstellung des Gegenstands verwendeten Ressourcen gefunden.
+6278=Um mehr über diesen Trank zu erfahren, musst du deine Fähigkeit zur Geschmackserkennung einsetzen.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4070,6 +4079,9 @@
 9180=Nur Container können im Hauptpaket des Verkäufers auf 'unverkäuflich' gesetzt werden.
 9181=Der Artikel wurde als 'nicht zum Verkauf' gekennzeichnet.
 9182=Dieser Gegenstand ist nicht zum Verkauf bestimmt.
+9183=Ihr Bankschließfach ist überladen und kann kein weiteres Gewicht mehr tragen.
+9184=Wählen Sie einen Standort für das Haus-Addon.
+9185=Mit einer Axt können Sie Hausanbauten zerlegen und ihre Taten zurückerhalten.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -4398,6 +4410,7 @@
 10925=geringere Explosion
 10926=Explosion
 10927=größere Explosion
+10928=Leere Flasche
 // 11201 - 11400 Bogenhandwerk und Befiederung Fertigkeit
 11201=BOGENHANDWERK UND BEFIEDERUNG MENÜ
 11202=Materialien
@@ -4575,6 +4588,7 @@
 11835=Schmiedehammer
 11836=Zange
 11837=Werkzeugsatz (Bastelwerkzeug)
+11838=Fletcher's Werkzeuge
 // Seite 3 - Teile
 11860=Laufbügel
 11861=Fassgewindebohrer
@@ -4774,5 +4788,52 @@
 17053=Sie haben den sicheren Teleport bereits aktiviert! Bitte warten Sie...
 17054=[Teleportiere mich in etwa einer halben Minute in Sicherheit...]
 17055=[Teleportieren in Sicherheit in etwa 15 Sekunden...]
+//Hair/Beard Dye Menus
+17100=Sie haben keine Haare zum Färben.
+17101=Haarfarbauswahl-Menü
+17102=Färben Sie mein Haar in dieser Farbe!
+17103=Braun
+17104=Kastanienbraun
+17105=Kastanienbraun
+17106=Blau
+17107=Grün
+17108=Rot
+17109=Hell
+17110=Blond
+17111=Schwarz
+17112=Beige
+17113=Gold
+17114=DK Braun
+17116=Sie haben keinen Bart zum Färben.
+17117=Menü zur Auswahl der Bartfarbe
+17118=Färbe meinen Bart in dieser Farbe!
+17119=Färbe meine Haare und meinen Bart in dieser Farbe!
+17120=Du hast keine Haare und keinen Bart zum Färben.
+// Zaubertrank-Fass
+17200=Du gießt etwas von dem Inhalt des Fasses in eine leere Flasche...
+17201=...und legst sie in deinen Rucksack.
+17202=Du hast keine leeren Flaschen.
+17204=Da komme ich nicht ran.
+17205=Nur der Besitzer kann Tränke in dieses Fass werfen.
+17206=Das Fass fasst nicht mehr!
+17207=Du hast keinen Platz für die leere Flasche in deinem Rucksack.
+17208=Du legst die leere Flasche in deinen Rucksack.
+17209=Du beschließt, dass es eine schlechte Idee wäre, verschiedene Arten von Tränken zu mischen.
+17210=Das Fass ist nicht für diese Art von Gegenständen geeignet.
+17211=Das Fass ist leer.
+17212=Das Fass ist fast leer.
+17213=Das Fass ist nicht sehr voll.
+17214=Das Fass ist etwa ein Viertel voll.
+17215=Das Fass ist etwa zu einem Drittel gefüllt.
+17216=Das Fass ist fast halb voll.
+17217=Das Fass ist ungefähr halb voll.
+17218=Das Fass ist mehr als halb voll.
+17219=Das Fass ist etwa zu drei Vierteln gefüllt.
+17220=Das Fass ist sehr voll.
+17221=Die Flüssigkeit steht fast bis zum oberen Rand des Fasses.
+17222=Das Fass ist vollständig gefüllt.
+17223=Ein speziell ausgekleidetes Fass für Tränke.
+17224=Im Fass ist nichts zu schmecken!
+17225=Du kennst den Inhalt dieses Fasses bereits.
 }
 EOF

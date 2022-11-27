@@ -1,3 +1,46 @@
+27/11/2022 - Dragon Slayer, Xuri
+	Implemented potion kegs; these can be crafted by carpenters/tinkerers, and can be used to store potions at a fraction of their original weight (Dragon Slayer)
+	Only the owner (if locked down), the current holder (if in backpack) or someone who have previously taste identified a potion keg may add additional potions to it (Xuri)
+	Potions dropped from monsters and bought from stores are unidentified by default, but can be identified by players using the taste identification skill. (Xuri)
+	Potions crafted by players are identified by default for all to see (Xuri)
+	Releasing locked down items in houses now set the items as movable (1) instead of client default (0) (Xuri)
+	Added socket as another parameter to the onToolTip JS event
+
+15/11/2022 - Dragon Slayer
+	Added special hair dyes
+	Updated item menu in dfndata/items/ItemMenu.bulk.dfn with dyes (Xuri)
+	Added hairstylist NPC alias to dfndata/npc/vendors.dfn (Xuri)
+
+13/11/2022 - Xuri
+	When buying items from NPC shopkeepers where the total cost is higher than the buy threshold set in uox.ini, UOX3 will now check the player's bankbox for gold first, then their backpack second, instead of just failing outright if bank didn't have the required amount
+	Minor cleanup of some UO era-specific code for better maintainability
+	Adjusted default light-settings in UOX.INI:
+		DUNGEONLIGHTLEVEL changed from 3 to 15
+		WORLDDARKLEVEL changed from 5 to 12
+
+12/11/2022 - Dragon Slayer
+	Added hair-only and beard-only variants of hair dyes
+	Added hair stylist vendors that sell all types of dye
+
+09/11/2022 - Dragon Slayer/ldilley
+	Added item definition (in misc/consumables.dfn), JS script (item/bearddye.js) and dictionary entries for hair dye
+	Combined hair and beard dye scripts into one, since they shared most code (Xuri)
+	Added dyes to alchemist shoplist (items/shoplist.dfn) (Xuri)
+	Removed old hair dye menu from legacy gump DFN (dfndata/misc/gumps.dfn) (Xuri)
+	Selling items to NPC shopkeepers now relies on sectionID of items instead of their ID/Type/Morex values (Xuri)
+	Tinkerers can now craft Fletching Tools (Dragon Slayer)
+
+08/11/2022 - Dragon Slayer/ldilley
+	Added item definition (misc/consumables.dfn), JS script (item/hairdye.js) and dictionary entries for hair dye
+	Added hair dyes (and tribal paint) to new consumables menu in add-menu (Xuri)
+	Cleaned up hair dye script based on style guidelines, addressed a few issues (Xuri)
+	Removed hard-coded hairdye functionality (Xuri)
+
+06/11/2022 - Dragon Slayer/Xuri
+	Implemented Taxidermy Kits for creating trophy house addons (Dragon Slayer)
+	Fixed an issue related to open doors in houses that would prevent the placement of house-addons because of an incorrect distance check (Xuri)
+	Fixed an issue with placement of house addons that would allow them to be placed in locations blocked either by other items or by parts of the multi itself (such as walls) (Xuri)
+
 1/11/2022 - Dragon Slayer
 	Updated spawn regions in Yew with NPCs for Empath Abbey
 
