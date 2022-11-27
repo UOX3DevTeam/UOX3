@@ -1342,7 +1342,7 @@ function ItemDetailGump( pUser )
 			break;
 		case 281: // Potion Keg
 			createEntry = CreateEntries[281];
-			HARVEST = [10642];
+			HARVEST = [10642, 11861, 10612, 10928];
 			mainSkill = parseInt( pUser.skills.tinkering );
 			break;
 		case 282: // Sextant

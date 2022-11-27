@@ -757,7 +757,7 @@ bool cScript::OnSkill( CBaseObject *skillUse, SI08 skillUsed )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for objects which server is about to send tooltip to client for
 //o------------------------------------------------------------------------------------------------o
-std::string cScript::OnTooltip( CBaseObject *myObj )
+std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 {
 	if( !ValidateObject( myObj ))
 		return "";
@@ -775,8 +775,10 @@ std::string cScript::OnTooltip( CBaseObject *myObj )
 	{
 		tooltipObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
 	}
+	JSObject *sockObj = JSEngine->AcquireObject( IUE_SOCK, pSocket, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( tooltipObj );
+	params[1] = OBJECT_TO_JSVAL( sockObj );
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onTooltip", 2, params, &rval );
 	if( retVal == JS_FALSE )
 	{
