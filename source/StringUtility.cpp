@@ -291,7 +291,6 @@ namespace oldstrutil
 		stopoffset = value.find( sep, startoffset );
 		while( startoffset != std::string::npos )
 		{
-			count++;
 			if( count == start )
 			{
 				match = true;
@@ -325,6 +324,7 @@ namespace oldstrutil
 				}
 				stopoffset = value.find( sep, startoffset );
 			}
+			count++;
 		}
 		if( match )
 		{
