@@ -59,15 +59,15 @@ function onGumpPress( socket, pButton, gumpData )
 	var myNPC = socket.tempObj;
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	switch ( pButton )
+	switch( pButton )
 	{
 		case 0:break; // abort and do nothing if gump is closed with right click
 		case 1:
 			var OtherButton = gumpData.getButton(0);
-			switch ( OtherButton )
+			switch( OtherButton )
 			{
 				case 0:
-					for (let i = 0; i < myArray.length; i++)
+					for(let i = 0; i < myArray.length; i++)
 					{
 						var myQuestData = myArray[i].split(",");
 						var questSlot = myQuestData[0];
@@ -96,7 +96,7 @@ function onGumpPress( socket, pButton, gumpData )
 							pUser.SetTag(parseInt( iIdToKill ), 0);
 						}
 
-						pUser.SetTag( questStatus, null );
+						pUser.SetTag( questStatus, 0 );
 						myNPC.SetTag( "Declined_"+playerSerial, 1 )
 						pUser.SysMessage( "Such a pity, if you change your mind, I'll be here." ); // decline
 					}

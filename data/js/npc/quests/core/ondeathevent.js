@@ -10,12 +10,12 @@ function onDeathBlow( mKilled, mKiller )
 		var questSlot = myQuestData[0];
 		var QnNumToKill = myQuestData[9];
 
-		if( questSlot == mKiller.GetTempTag( "QuestSlotTemp" )) 
-		{
+		//if( questSlot == mKiller.GetTempTag( "QuestSlotTemp" )) 
+		//{
 			switch ( parseInt( questSlot )) 
 			{
 				case parseInt( questSlot ):
-					if( mKiller.GetTag(QnNumToKill.toString()) >= 1 )
+					if( mKiller.GetTag( QnNumToKill.toString()) >= 1 )
 					{
 						var oldSqToKill = mKiller.GetTag( QnNumToKill.toString() );
 						var newNumToKill = ( oldSqToKill - 1 );
@@ -28,9 +28,11 @@ function onDeathBlow( mKilled, mKiller )
 						break;
 					}
 					break;
+				default:
+					mKiller.SysMessage( "Contact a Gm as something has broken." );
+					break;
 			}
-			break;
-		}
+		//}
 	}
 	return true;
 }

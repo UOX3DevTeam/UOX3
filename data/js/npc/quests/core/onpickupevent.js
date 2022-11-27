@@ -56,22 +56,23 @@ function onPickupEvent( iPickedUp, pGrabber )
 		var oldNumToGet = pGrabber.GetTag( iNumToGet );
 		var newNumToGet = ( oldNumToGet - 1 );
 
-		if( questSlot == pGrabber.GetTempTag( "QuestSlotTemp" ))
-		{
-			switch ( parseInt( questSlot ) )
+		//if( questSlot == pGrabber.GetTempTag( "QuestSlotTemp" )) // removed for time been might not really need it.
+		//{
+			switch( parseInt( questSlot ))
 			{
 				case parseInt( questSlot ):
-					if( oldNumToGet >= 1 )
+					if( oldNumToGet >= 1 && iPickedUp.morex == 0)
 					{
 						if( oldNumToGet && itemId == iPickedUp.id )
 						{
 							pGrabber.SetTag( iNumToGet, newNumToGet );
-							pGrabber.SetTempTag( "QuestSlotTemp", parseInt( questSlot ) );
+							pGrabber.SetTempTag( "QuestSlotTemp", parseInt( questSlot ));
 
 							if( oldNumToGet >= 1 )
 							{
-								pGrabber.SysMessage("You have " + NumToString( newNumToGet ) + " more items to collect.");
-								TriggerEvent(19800, "questLog", pGrabber);
+								pGrabber.SysMessage( "You have " + NumToString( newNumToGet ) + " more items to collect." );
+								iPickedUp.morex = 1; // This Sets the Item to Know its been Picked up so you cannot drop and pick back up.
+								TriggerEvent( 19800, "questLog", pGrabber );
 							}
 							else
 							{
@@ -81,8 +82,10 @@ function onPickupEvent( iPickedUp, pGrabber )
 						break;
 					}
 					break;
+				default:
+					pGrabber.SysMessage( "Contact a GM as something has broken." );
+					break;
 			}
-			break;
-		}
+		//}
 	}
 }

@@ -35,7 +35,7 @@ function questbutton( pUser )
 		var questStatus = myQuestData[15];
 
 		var index = i % 10;
-		if ( pUser.GetTag( questStatus.toString() ) >= 1 && pUser.GetTag( questStatus.toString() ) < 5)
+		if ( pUser.GetTag( questStatus.toString() ) >= 1 && pUser.GetTag( questStatus.toString() ) <= 5)
 		{
 			myGump.AddHTMLGump( 98, 140 + ( index * 20 ), 270, 21, false, false, "<BASEFONT color=#FFFFFF>" + myQuestName + "</BASEFONT>" );
 			myGump.AddButton( 368, 140 + ( index * 20 ), 0x26B0, 0x26B1, 1, 0, 1 * myQuestSlot );
