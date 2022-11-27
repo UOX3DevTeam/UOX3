@@ -1,4 +1,4 @@
-function questlog( mKiller )
+function questLog( mKiller )
 {
 	var questGump = new Gump;
 	questGump.AddPage( 0 );
@@ -13,13 +13,14 @@ function questlog( mKiller )
 	questGump.Free();
 }
 
-function progress( pUser )
+function questProgress( pUser )
 {
 	var questGump = new Gump;
 	var socket = pUser.socket;
 
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
+
 	questGump.AddPage( 0 );
 	questGump.AddGump( 0, 0, 3600 );
 	questGump.AddTiledGump( 0, 14, 15, 375, 3603 );
@@ -84,6 +85,6 @@ function onGumpPress( socket, pButton, gumpData )
 	switch ( pButton ) 
 	{
 		case 0:break;
-		case 1:progress( pUser ); break;
+		case 1:questProgress( pUser ); break;
 	}
 }

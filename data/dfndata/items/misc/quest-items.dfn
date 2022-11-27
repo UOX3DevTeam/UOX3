@@ -1,0 +1,10 @@
+[ZoogiFungus]
+{ 
+get=base_item
+name=Zoogi Fungus
+id=0x26B7
+pileable=1
+amount=1
+decay=1
+script=19807 // onpickupevent
+}

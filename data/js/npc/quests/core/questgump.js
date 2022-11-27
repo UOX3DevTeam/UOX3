@@ -1,4 +1,4 @@
-function questgump( pUser, myNPC)
+function questGump( pUser, myNPC)
 {
 	var socket = pUser.socket;
 	socket.tempObj = myNPC;
@@ -13,15 +13,15 @@ function questgump( pUser, myNPC)
 	questGump.AddTiledGump( 130, 65, 175, 1, 9101 );
 	questGump.AddGump( 140, 110, 1209 );
 
-	for ( let i = 0; i < myArray.length; i++ )
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
 		var questTrg = myQuestData[6];
 
-		if ( questSlot == myNPC.GetTag( "QuestSlot" ) ) 
+		if( questSlot == myNPC.GetTag( "QuestSlot" ))
 		{
-			switch ( parseInt(questSlot ) )
+			switch( parseInt(questSlot ))
 			{
 				case parseInt(questSlot ):TriggerEvent( parseInt( questTrg ), "questOffer", questGump ); break;
 			}
@@ -86,7 +86,7 @@ function onGumpPress( socket, pButton, gumpData )
 						var iIdToKill = myQuestData[14];
 						var questStatus = myQuestData[15];
 
-						if (questSlot == 2) 
+						if( questSlot == 2 ) 
 						{
 							pUser.SetTag(parseInt( iNumToGet ), 0);
 							pUser.SetTag(parseInt( iIdToGet ), 0);
@@ -96,30 +96,34 @@ function onGumpPress( socket, pButton, gumpData )
 							pUser.SetTag(parseInt( iIdToKill ), 0);
 						}
 
-						pUser.SetTag(questStatus, null);
-						myNPC.SetTag("Declined_"+playerSerial, 1)
-						pUser.SysMessage( "Such a pity, if you change your mind, I'll be here." );//decline
+						pUser.SetTag( questStatus, null );
+						myNPC.SetTag( "Declined_"+playerSerial, 1 )
+						pUser.SysMessage( "Such a pity, if you change your mind, I'll be here." ); // decline
 					}
 					break;
 				case 1:// Accept
-					for ( let i = 0; i < myArray.length; i++ )
+					for( let i = 0; i < myArray.length; i++ )
 					{
 						var myQuestData = myArray[i].split(",");
 						var questSlot = myQuestData[0];
 						var killAmount = myQuestData[4];
 						var collectAmount = myQuestData[5];
 
-						if ( questSlot == myNPC.GetTag( "QuestSlot" ) )
+						if( questSlot == myNPC.GetTag( "QuestSlot" ))
 						{
-							switch (parseInt(questSlot))
+							switch( parseInt( questSlot ))
 							{
-								case parseInt(questSlot):
-									pUser.SetTempTag("QuestSlotTemp", questSlot);
-									TriggerEvent( 19802, "convoeventgump", pUser, myNPC );			//accept gump
-									if(killAmount >= 1)
-										CreateNpcQuest( pUser, parseInt( questSlot ), parseInt ( killAmount ) );			// creating the quest setup  Example: Player,level,amount
-									if(collectAmount >= 1)
+								case parseInt( questSlot ):
+									pUser.SetTempTag( "QuestSlotTemp", questSlot );
+									TriggerEvent( 19802, "convoeventgump", pUser, myNPC ); // accept gump
+									if( killAmount >= 1 )
+									{
+										CreateNpcQuest( pUser, parseInt( questSlot ), parseInt ( killAmount ) ); // creating the quest setup  Example: Player,level,amount
+									}
+									if( collectAmount >= 1 )
+									{
 										CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ) );
+									}
 									break;
 							}
 							break;
@@ -135,16 +139,16 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 	var typeToGet = GetItemType( pUser, questLevel );
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for (let i = 0; i < myArray.length; i++)
+	for(let i = 0; i < myArray.length; i++)
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
 		var QiNumToGet = myQuestData[7];
 		var QiLevel = myQuestData[8];
 
-		if ( questSlot == pUser.GetTempTag("QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag("QuestSlotTemp" ) )
 		{
-			switch ( parseInt( questSlot ) )
+			switch( parseInt( questSlot ) )
 			{
 				case parseInt( questSlot ):
 					pUser.SetTag( QiNumToGet.toString(), numToGet );
@@ -159,19 +163,19 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 
 function CreateNpcQuest( pUser, npcLevel, numToKill )
 {
-	var typeToKill = GetMonsterType(pUser, npcLevel );
+	var typeToKill = GetMonsterType( pUser, npcLevel );
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for ( let i = 0; i < myArray.length; i++ )
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
 		var QnNumToKill = myQuestData[9];
 		var QnLevel = myQuestData[10];
 
-		if ( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
 		{
-			switch (parseInt( questSlot ) )
+			switch( parseInt( questSlot ) )
 			{
 				case parseInt( questSlot ):
 					pUser.SetTag( QnNumToKill.toString(), numToKill );
@@ -188,14 +192,14 @@ function GetItemType( pUser, questLevel )
 {
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for (let i = 0; i < myArray.length; i++) 
+	for ( let i = 0; i < myArray.length; i++ ) 
 	{
 		var myQuestData = myArray[i].split(",");
 		var ItemId = myQuestData[11];
 		var iIdToGet = myQuestData[12];
-		switch (questLevel)
+		switch( questLevel )
 		{
-			case questLevel: pUser.SetTag(iIdToGet, ItemId);break;
+			case questLevel: pUser.SetTag( iIdToGet, ItemId );break;
 		}
 		break;
 	}
@@ -206,14 +210,14 @@ function GetMonsterType( pUser, npcLevel )
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
 
-	for (let i = 0; i < myArray.length; i++)
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var npcId = myQuestData[13];
 		var iIdToKill = myQuestData[14];
-		switch (npcLevel) 
+		switch ( npcLevel ) 
 		{
-			case npcLevel: pUser.SetTag(iIdToKill, npcId); break;
+			case npcLevel: pUser.SetTag( iIdToKill, npcId ); break;
 		}
 	}
 }

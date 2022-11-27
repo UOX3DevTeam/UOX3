@@ -117,42 +117,25 @@ function questBusy( questGump )
 
 function questObjective( questGump )
 {
-	questGump.AddXMFHTMLGumpColor( 70, 130, 300, 100, 1054062, false, false, 19777215 );//Red Solen Queens
-	//questGump.AddXMFHTMLGumpColor(70, 130, 300, 100, 1054063, false, false, 19777215);//Black Solen Queens
+	questGump.AddText( 70, 130, 0x64, "Kill " + killAmount + " Red Solen Queens" );
+	questGump.AddText( 70, 150, 0x64, "Collect " + collectAmount + " Zoogi Fungus" );
 }
 
 function questProgress( questGump, myPlayer )
 {
 	var numToKill = myPlayer.GetTag( "SQ_numToKill" );
-	if( numToKill >= killAmount )
-	{
-		myPlayer.SetTag( questlevel, 5 )// end
-	}
+	var numToGet = myPlayer.GetTag( "SQ_numToGet" )
+	var questStatus = myPlayer.GetTag( "SQ_Status" )
+
 	//completed
-	if( myPlayer.GetTag( questlevel ) == 5 )
+	if( questStatus == 6 )
 	{
 		questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1049077, false, false, 19777215 );// completed
-		//questGump.AddText(70, 280, 0x64, myPlayer.GetTag("SQ_numToKill"));
-		//questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1049078, false, false, 19777215);// has not been completed
 	}
 	else
 	{
-		if(numToKill < killAmount)
-		{
-			//questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054065, false, false, 19777215 );//black queens
-			questGump.AddXMFHTMLGumpColor( 70, 260, 270, 100, 1054064, false, false, 19777215 );//red queens
-			questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "SQ_numToKill" ));
-			//questGump.AddText(100, 280, 0x64, "/");
-			//questGump.AddText(130, 280, 0x64, myPlayer.GetTag(QnNumToKill.toString()));
-		}
-		else
-		{
-			questGump.AddXMFHTMLGumpColor(70, 260, 270, 100, 1054064, false, false, 19777215);//red queens
-			questGump.AddText( 70, 280, 0x64, myPlayer.GetTag( "SQ_numToGet" ));
-			questGump.AddText( 100, 280, 0x64, "/" );
-			questGump.AddText( 130, 280, 0x64, collectAmount.toString() );
-		}
-
+			questGump.AddText( 70, 260,  0x64, "Npcs left to Kill: "  + numToKill );
+			questGump.AddText( 70, 280, 0x64, "Items left to Collect: " + numToGet );
 	}
 }
 
@@ -190,7 +173,7 @@ function onCharDoubleClick( myPlayer, myNPC )
 		//if (myQuest[1] == myPlayer.serial)
 		{
 			// Quest is already in the log! Abort
-			myPlayer.SetTag(questStatus, 6 )
+			myPlayer.SetTag(questStatus, 8 )
 			TriggerEvent(19802, "convoeventgump", myPlayer, myNPC );
 			return false;
 		}
@@ -213,7 +196,7 @@ function onCharDoubleClick( myPlayer, myNPC )
 	{
 		myNPC.SetTag( "QuestSlot", questSlot );
 		myPlayer.SetTag( questStatus, 1 );
-		TriggerEvent( 19801, "questgump", myPlayer, myNPC );
+		TriggerEvent( 19801, "questGump", myPlayer, myNPC );
 		return false;
 	}
 }
@@ -256,7 +239,7 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				//if (myQuest[1] == myPlayer.serial)
 				{
 					// Quest is already in the log! Abort
-					myPlayer.SetTag(questStatus, 6)
+					myPlayer.SetTag(questStatus, 8)
 					TriggerEvent(19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
@@ -277,21 +260,22 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			myArray.push( questSlot.toString() + "," + ( myPlayer.serial ).toString() + "," + myPlayer.name + "," + questName + "," + killAmount.toString() + "," + collectAmount.toString()+ "," + questTrg.toString() + "," + iNumToGet + "," + iLevel + "," + nNumToKill + "," + nLevel + "," + itemId.toString() + "," + iIdToGet + "," + npcId.toString() + "," + iIdToKill + "," + questStatus );
 			if( TriggerEvent( 19806, "WriteQuestLog", myPlayer, myArray ))
 			{
-				myPlayer.SetTag( "slot", 1)
 				myNPC.SetTag( "QuestSlot", questSlot );
 				myPlayer.SetTag( questStatus, 1 );
-				TriggerEvent( 19801, "questgump", myPlayer, myNPC );
+				TriggerEvent( 19801, "questGump", myPlayer, myNPC );
 				return false;
 			}
 		}
-		else if( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ))
+		else if( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) || Speech_Array[currObj].match( /\bprogress\b/i ) )
 		{
 			myNPC.TurnToward(myPlayer);
 			var npcLevel = myPlayer.GetTag( "SQ_npcLevel" );
 			var itemLevel = myPlayer.GetTag( "SQ_level" );
+
 			if ( npcLevel ) 
 			{
 				var numToKill = myPlayer.GetTag( "SQ_numToKill" );
+
 				if( numToKill > 0 )
 				{
 					myPlayer.SetTag( questStatus, 2 );
@@ -308,9 +292,11 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 
 				}
 			}
-			if( itemLevel ) 
+
+			if( itemLevel )
 			{
 				var numToGet = myPlayer.GetTag( "SQ_numToGet" );
+
 				if( numToGet > 0 )
 				{
 					myPlayer.SetTag( questStatus, 4 )
@@ -324,10 +310,10 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 			}
 			return false;
 		}
-		else if( Speech_Array[currObj].match( /\bQuite\b/i ) || Speech_Array[currObj].match( /\bquite\b/i ))
+		else if( Speech_Array[currObj].match( /\bQuite\b/i ) || Speech_Array[currObj].match( /\bquite\b/i ) || Speech_Array[currObj].match( /\bresign\b/i ))
 		{
 			myNPC.TurnToward( myPlayer );
-			decline( myPlayer );
+			decline( myPlayer, myNPC );
 		}
 		currObj++;
 	}
@@ -335,43 +321,115 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
-	pDroppedOn.TurnToward( pDropper );
-	var taskLevel = pDropper.GetTag( "SQ_level" );
-	if( taskLevel )
+	// Read Quests Log
+	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
+	for ( let i = 0; i < myArray.length; i++ )
 	{
-		var numZoogiFungus = pDropper.ResourceCount( itemId );
-		if( numZoogiFungus >= collectAmount )
+		var myQuestData = myArray[i].split(",");
+		var myQuestData = myArray[i].split(",");
+		var questSlot = myQuestData[0];
+		var playerSerial = myQuestData[1];
+		var questName = myQuestData[3];
+		var killAmount = myQuestData[4];
+		var collectAmount = myQuestData[5];
+		var questTrg = myQuestData[6];
+		var iNumToGet = myQuestData[7];
+		var iLevel = myQuestData[8];
+		var nNumToKill = myQuestData[9];
+		var nLevel = myQuestData[10];
+		var itemId = myQuestData[11];
+		var iIdToGet = myQuestData[12];
+		var npcId = myQuestData[13];
+		var iIdToKill = myQuestData[14];
+		var questStatus = myQuestData[15];
+
+		pDroppedOn.TurnToward( pDropper );
+		var npcLevel = pDropper.GetTag( nLevel );
+		var itemLevel = pDropper.GetTag( iLevel );
+
+		if( npcLevel )
 		{
-			myPlayer.SetTag( questStatus, 5 )
-			TriggerEvent( 19802, "convoeventgump", myPlayer , pDroppedOn);
-			var goldToGive = 0;
-			switch( RandomNumber( 0, 2 ) )
+			var numToKill = pDropper.GetTag( nNumToKill );
+
+			if(numToKill > 0)
 			{
-				case 0: goldToGive = 50; break;
-				case 1: goldToGive = 75; break;
-				case 2: goldToGive = 100; break;
+				pDropper.SetTag( questStatus, 2 ); // Still need to kill npcs
+				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+				return false;
 			}
-			CreateDFNItem( pDropper.socket, pDropper, "0x0EED", goldToGive, "ITEM", true );
-			pDropper.SoundEffect( 0x0037, false );
-			decline( pDropper );
-			pDropper.UseResource( collectAmount, itemId );
-			return 0;
+			else
+			{
+				pDropper.SetTag( questStatus, 3 ); // Finished Killing Npcs now need to still gather items.
+				pDropper.SetTag( nLevel, 0 );
+				pDropper.SetTag( nNumToKill, 0 );
+				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+				return false;
+			}
 		}
-		else if( numZoogiFungus < collectAmount ) 
+
+		if( itemLevel )
 		{
-			pDropper.SetTag( questStatus, 4 )
-			TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn);
-			return 0;
+			var numToGet = pDropper.GetTag( "SQ_numToGet" );
+
+			if( numToGet > 0 )
+			{
+				pDropper.SetTag( questStatus, 4 ) // still gathering items
+				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+				return false;
+			}
+			else
+			{
+				var numZoogiFungus = pDropper.ResourceCount(itemId); // This will look for the Item ID you put in at the top.
+
+				if( numZoogiFungus >= collectAmount ) // Checks to make sure you collected the amount
+				{
+					pDropper.UseResource(collectAmount, itemId);
+					if (nNumToKill >= killAmount)  // Checks to make sure you have killed the amount
+					{
+						pDropper.SetTag(questStatus, 6) // Quest Completed
+						TriggerEvent(19802, "convoeventgump", pDropper, pDroppedOn);
+						decline(pDropper, pDroppedOn); // Sets all tags to 0 or null
+						rewardPlayer(pDropper, pDroppedOn); // Reward Player
+						return 0;
+					}
+					else
+					{
+						pDropper.SetTag( questStatus, 2 ); // Still need to kill npcs
+						TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+						return false;
+					}
+					return 0;
+				}
+				else if (numZoogiFungus < collectAmount)
+				{
+					pDropper.SetTag( questStatus, 4 )
+					TriggerEvent(19802, "convoeventgump", pDropper, pDroppedOn);
+					return 0;
+				}
+			}
 		}
-	}
-	else
-	{
-		pDroppedOn.TextMessage( "Our arrangement was for 50 of the zoogi fungus. Please return to me when you have that amount." );
+		else
+		{
+			pDroppedOn.TextMessage( "Our arrangement was for 50 of the zoogi fungus. Please return to me when you have that amount." );
+		}
 	}
 	return 0;
 }
 
-function decline( myPlayer )
+function rewardPlayer( myPlayer, myNPC )
+{
+	var goldToGive = 0;
+	switch ( RandomNumber( 0, 2 ))
+	{
+		case 0: goldToGive = 50; break;
+		case 1: goldToGive = 75; break;
+		case 2: goldToGive = 100; break;
+	}
+	CreateDFNItem( myPlayer.socket, myPlayer, "0x0EED", goldToGive, "ITEM", true );
+	myPlayer.SoundEffect( 0x0037, false );
+}
+
+function decline( myPlayer, myNPC )
 {
 	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
 	for( let i = 0; i < myArray.length; i++ )
@@ -392,13 +450,13 @@ function decline( myPlayer )
 		var npcId = myQuestData[13];
 		var iIdToKill = myQuestData[14];
 		var questStatus = myQuestData[15];
-		myNPC.SetTag("Declined_" + playerSerial, 1)
-		myPlayer.SetTag(parseInt(iNumToGet), 0);
-		myPlayer.SetTag(parseInt(iIdToGet), 0);
-		myPlayer.SetTag(parseInt(iLevel), 0);
-		myPlayer.SetTag(parseInt(nNumToKill), 0);
-		myPlayer.SetTag(parseInt(nLevel), 0);
-		myPlayer.SetTag(parseInt(iIdToKill), 0);
-		myPlayer.SetTag(questStatus.toString(), 0);
+		myNPC.SetTag( "Declined_" + playerSerial, 1 )
+		myPlayer.SetTag( parseInt( iNumToGet ), 0 );
+		myPlayer.SetTag( parseInt( iIdToGet ), 0 );
+		myPlayer.SetTag( parseInt( iLevel ), 0 );
+		myPlayer.SetTag( parseInt( nNumToKill ), 0 );
+		myPlayer.SetTag( parseInt( nLevel ), 0 );
+		myPlayer.SetTag( parseInt( iIdToKill ), 0 );
+		myPlayer.SetTag( parseInt( questStatus ), 0 );
 	}
 }

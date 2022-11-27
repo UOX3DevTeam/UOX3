@@ -35,8 +35,11 @@ function convoeventgump( pUser, myNPC)
 						case 2: TriggerEvent(parseInt( questTrg ), "questDuringNpcKilling", questGump ); break;
 						case 3: TriggerEvent(parseInt( questTrg ), "questGathering", questGump ); break;
 						case 4: TriggerEvent(parseInt( questTrg ), "questDuringGathering", questGump ); break;
-						case 5: TriggerEvent(parseInt( questTrg ), "questEnd", questGump ); break;
-						case 6: TriggerEvent(parseInt( questTrg ), "questBusy", questGump ); break;
+						case 5: TriggerEvent(parseInt( questTrg ), "questDuringStudy", questGump ); break;
+						case 6: TriggerEvent(parseInt( questTrg ), "questEnd", questGump ); break;
+						case 7: TriggerEvent(parseInt( questTrg ), "questSpecialEnd", questGump ); break;
+						case 8: TriggerEvent(parseInt( questTrg ), "questBusy", questGump ); break;
+						case 9: TriggerEvent(parseInt( questTrg ), "questFullBackpack", questGump ); break;
 					}
 					break;
 			}

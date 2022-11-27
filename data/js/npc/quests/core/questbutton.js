@@ -61,7 +61,7 @@ function onGumpPress( pSock, pButton, gumpData )
 			case 0: break;// abort and do nothing
 			case parseInt( myQuestSlot ):
 				pUser.SetTempTag( "QuestSlotTemp", myQuestSlot );
-				TriggerEvent( 19800, "progress", pUser );
+				TriggerEvent( 19800, "questProgress", pUser );
 				break;//accept
 		}
 	}
