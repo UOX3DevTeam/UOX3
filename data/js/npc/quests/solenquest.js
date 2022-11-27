@@ -266,13 +266,12 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				return false;
 			}
 		}
-		else if( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) || Speech_Array[currObj].match( /\bprogress\b/i ) )
+		else if( Speech_Array[currObj].match( /\bReward\b/i ) || Speech_Array[currObj].match( /\breward\b/i ) || Speech_Array[currObj].match( /\bprogress\b/i ))
 		{
 			myNPC.TurnToward(myPlayer);
 			var npcLevel = myPlayer.GetTag( "SQ_npcLevel" );
-			var itemLevel = myPlayer.GetTag( "SQ_level" );
 
-			if ( npcLevel ) 
+			if( npcLevel )
 			{
 				var numToKill = myPlayer.GetTag( "SQ_numToKill" );
 
@@ -288,19 +287,6 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 					myPlayer.SetTag( "SQ_npcLevel", 0 );
 					myPlayer.SetTag( "SQ_numToKill", 0 );
 					TriggerEvent(19802, "convoeventgump", myPlayer, myNPC );
-					return false;
-
-				}
-			}
-
-			if( itemLevel )
-			{
-				var numToGet = myPlayer.GetTag( "SQ_numToGet" );
-
-				if( numToGet > 0 )
-				{
-					myPlayer.SetTag( questStatus, 4 )
-					TriggerEvent( 19802, "convoeventgump", myPlayer, myNPC );
 					return false;
 				}
 			}
@@ -322,90 +308,48 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
 	// Read Quests Log
-	var myArray = TriggerEvent( 19806, "ReadQuestLog", myPlayer );
+	var myArray = TriggerEvent( 19806, "ReadQuestLog", pDropper );
 	for ( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var myQuestData = myArray[i].split(",");
-		var questSlot = myQuestData[0];
-		var playerSerial = myQuestData[1];
-		var questName = myQuestData[3];
 		var killAmount = myQuestData[4];
 		var collectAmount = myQuestData[5];
-		var questTrg = myQuestData[6];
-		var iNumToGet = myQuestData[7];
 		var iLevel = myQuestData[8];
 		var nNumToKill = myQuestData[9];
-		var nLevel = myQuestData[10];
-		var itemId = myQuestData[11];
-		var iIdToGet = myQuestData[12];
-		var npcId = myQuestData[13];
-		var iIdToKill = myQuestData[14];
 		var questStatus = myQuestData[15];
 
 		pDroppedOn.TurnToward( pDropper );
-		var npcLevel = pDropper.GetTag( nLevel );
 		var itemLevel = pDropper.GetTag( iLevel );
-
-		if( npcLevel )
-		{
-			var numToKill = pDropper.GetTag( nNumToKill );
-
-			if(numToKill > 0)
-			{
-				pDropper.SetTag( questStatus, 2 ); // Still need to kill npcs
-				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
-				return false;
-			}
-			else
-			{
-				pDropper.SetTag( questStatus, 3 ); // Finished Killing Npcs now need to still gather items.
-				pDropper.SetTag( nLevel, 0 );
-				pDropper.SetTag( nNumToKill, 0 );
-				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
-				return false;
-			}
-		}
 
 		if( itemLevel )
 		{
-			var numToGet = pDropper.GetTag( "SQ_numToGet" );
+			var numZoogiFungus = pDropper.ResourceCount( itemId ); // This will look for the Item ID you put in at the top.
 
-			if( numToGet > 0 )
+			if ( numZoogiFungus >= collectAmount ) // Checks to make sure you collected the amount
 			{
-				pDropper.SetTag( questStatus, 4 ) // still gathering items
-				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
-				return false;
+				pDropper.UseResource( collectAmount, itemId );
+				if ( nNumToKill >= killAmount )  // Checks to make sure you have killed the amount
+				{
+					pDropper.SetTag( questStatus, 6 ) // Quest Completed
+					TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+					decline( pDropper, pDroppedOn ); // Sets all tags to 0 or null
+					rewardPlayer( pDropper, pDroppedOn ); // Reward Player
+					return 0;
+				}
+				else
+				{
+					pDropper.SetTag( questStatus, 2 ); // Still need to kill npcs
+					TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+					return false;
+				}
+				return 0;
 			}
-			else
+			else if ( numZoogiFungus < collectAmount ) 
 			{
-				var numZoogiFungus = pDropper.ResourceCount(itemId); // This will look for the Item ID you put in at the top.
-
-				if( numZoogiFungus >= collectAmount ) // Checks to make sure you collected the amount
-				{
-					pDropper.UseResource(collectAmount, itemId);
-					if (nNumToKill >= killAmount)  // Checks to make sure you have killed the amount
-					{
-						pDropper.SetTag(questStatus, 6) // Quest Completed
-						TriggerEvent(19802, "convoeventgump", pDropper, pDroppedOn);
-						decline(pDropper, pDroppedOn); // Sets all tags to 0 or null
-						rewardPlayer(pDropper, pDroppedOn); // Reward Player
-						return 0;
-					}
-					else
-					{
-						pDropper.SetTag( questStatus, 2 ); // Still need to kill npcs
-						TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
-						return false;
-					}
-					return 0;
-				}
-				else if (numZoogiFungus < collectAmount)
-				{
-					pDropper.SetTag( questStatus, 4 )
-					TriggerEvent(19802, "convoeventgump", pDropper, pDroppedOn);
-					return 0;
-				}
+				pDropper.SetTag( questStatus, 4 )
+				TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+				return 0;
 			}
 		}
 		else
@@ -457,6 +401,6 @@ function decline( myPlayer, myNPC )
 		myPlayer.SetTag( parseInt( nNumToKill ), 0 );
 		myPlayer.SetTag( parseInt( nLevel ), 0 );
 		myPlayer.SetTag( parseInt( iIdToKill ), 0 );
-		myPlayer.SetTag( parseInt( questStatus ), 0 );
+		myPlayer.SetTag( questStatus, 0 );
 	}
 }
