@@ -2948,9 +2948,9 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				}
 				else
 				{
-					gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));				break;
+					gPriv->TempObj( static_cast<CBaseObject *>( encaps.toObject() ));
 				}
-				[[fallthrough]];
+				break;
 			case CSOCKP_TEMPOBJ2: // Reserved for JS usage
 				if( *vp == JSVAL_NULL )
 				{
@@ -2958,8 +2958,9 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				}
 				else
 				{
-					gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));				break;
+					gPriv->TempObj2( static_cast<CBaseObject *>( encaps.toObject() ));
 				}
+				break;
 			case CSOCKP_BUFFER:
 				break;
 			case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
