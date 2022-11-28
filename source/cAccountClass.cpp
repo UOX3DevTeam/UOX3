@@ -498,15 +498,20 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			}
 			else
 			{
-				if( !r.empty() && r.length() != 0 && static_cast<unsigned>(oldstrutil::value<SI32>( r )) != INVALIDSERIAL )
+				r = oldstrutil::trim(r);
+				if( !r.empty() )
 				{
-					actb.dwCharacters[charNum-1] = static_cast<UI32>( std::stoul( r, nullptr, 0 ));
-					actb.lpCharacters[charNum-1] = CalcCharObjFromSer( actb.dwCharacters[charNum-1] );
-				}
-				else
-				{
-					actb.dwCharacters[charNum-1] = INVALIDSERIAL;
-					actb.lpCharacters[charNum-1] = nullptr;
+					auto temp = oldstrutil::value<std::int64_t>(r); // int64_t used for promotion from 32-bit int
+					if( (temp > 0) && (temp < static_cast<std::int64_t>(INVALIDSERIAL)) )
+					{
+						actb.dwCharacters[charNum-1] = static_cast<UI32>(std::stoul( r, nullptr, 0 ));
+						actb.lpCharacters[charNum-1] = CalcCharObjFromSer( actb.dwCharacters[charNum-1] );
+					}
+					else
+					{
+						actb.dwCharacters[charNum-1] = INVALIDSERIAL;
+						actb.lpCharacters[charNum-1] = nullptr;
+					}
 				}
 			}
 			std::getline( fs2, sLine );
