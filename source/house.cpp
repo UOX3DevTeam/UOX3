@@ -943,7 +943,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		fakeHouse->SetLocation( x, y, z );
 
 		CMultiObj *mMulti = FindMulti( fakeHouse );
-		if( ValidateObject( mMulti ))
+		if( checkLocation && ValidateObject( mMulti ))
 		{
 			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() )
 			{
@@ -959,7 +959,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 				return nullptr;
 			}
 		}
-		else
+		else if( checkLocation )
 		{
 			if( mSock )
 			{
