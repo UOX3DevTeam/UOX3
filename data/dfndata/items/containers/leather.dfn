@@ -94,6 +94,19 @@ dyeable=1
 get=0x0e76
 }
 
+[bagofsending]
+{
+get=base_item
+name=bag of sending
+id=0x0e76
+weight=200
+colorlist=37
+dyeable=0
+decay=1
+good=5
+script=5050
+}
+
 [0x0e7a]
 {
 get=base_item

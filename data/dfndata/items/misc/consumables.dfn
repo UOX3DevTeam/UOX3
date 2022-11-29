@@ -88,3 +88,14 @@ script=5040//hairbearddye.js
 morex=2
 morey=1
 }
+
+[powderoftranslocation]
+{
+get=base_item
+name=powder of translocation
+id=0x26B8
+weight=01
+color=0x0835
+pileable=1
+script=5051
+}
