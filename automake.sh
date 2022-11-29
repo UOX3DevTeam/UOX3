@@ -66,6 +66,7 @@ fi
 ev=$?
 if [ $ev -ne 0 ]; then
   echo "Unable to build UOX3! Exiting..."
+  cd ..
   exit $ev
 else
   if [ -f ./uox3 ]; then
@@ -78,4 +79,3 @@ else
   fi
 fi
 cd ..
-exit $ev
