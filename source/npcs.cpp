@@ -53,17 +53,17 @@ auto CCharStuff::AddRandomLoot( CItem *s, const std::string& lootlist, bool shou
 			std::string tagData = lootList->GrabData();
 			auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( tagData, "//" )), "," );
 			auto tcsecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( tag, "//" )), "," );
-			
+
 			if( !tag.empty() )
 			{
 				UI16 iAmount = 0;
-				
+
 				if( oldstrutil::upper( tag ) == "LOOTLIST" )
 				{
 					if( csecs.size() > 1 ) // Amount specified behind lootlist entry?
 					{
 						iAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-						CItem *retItemNested = nullptr;
+						[[maybe_unused]] CItem *retItemNested = nullptr;
 						for( UI16 iCount = 0; iCount < iAmount; ++iCount )
 						{
 							retItemNested = AddRandomLoot( s, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), shouldSave );
@@ -502,7 +502,8 @@ auto CCharStuff::LoadShopList( const std::string& list, CChar *c ) -> void
 
 	bool shouldSave = c->ShouldSave();
 	std::string cdata;
-	SI32 ndata		= -1, odata = -1;
+	SI32 ndata		= -1;
+  [[maybe_unused]] SI32 odata = -1;
 	CItem *retItem	= nullptr;
 	for( const auto &sec : ShoppingList->collection2() )
 	{

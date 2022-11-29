@@ -113,7 +113,7 @@ void MsgBoardOpen( CSocket *mSock )
 				SERIAL tmpSerial	= 0;
 				UI08 tmpToggle		= 0;
 				UI16 tmpSize		= 0;
-				SERIAL repliedTo	= 0;
+				[[maybe_unused]] SERIAL repliedTo	= 0;
 
 				file.read( buffer, 2 );
 				tmpSize = static_cast<UI16>(( buffer[0] << 8 ) + buffer[1] );

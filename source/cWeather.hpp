@@ -13,7 +13,7 @@ private:
 		bool Active;
 	};
 
-	WEATHID		ID;
+	[[maybe_unused]] WEATHID	ID;
 	WeathPart_st	weather[WEATHNUM];
 	R32			assortVals[3][3];
 	R32			snowThreshold;
