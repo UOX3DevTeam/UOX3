@@ -4918,7 +4918,7 @@ void CChar::Cleanup( void )
 				Effect->Source( INVALIDSERIAL );
 			}
 		}
-		std::for_each( removedEffect.begin(), removedEffect.end(), [this]( CTEffect *effect )
+		std::for_each( removedEffect.begin(), removedEffect.end(), []( CTEffect *effect )
 		{
 			cwmWorldState->tempEffects.Remove( effect, true );
 		});
@@ -5969,7 +5969,7 @@ void CChar::SetCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != DEFPLAYER_CALLNUM )
+		if( newValue != INVALIDSERIAL )
 		{
 			CreatePlayer();
 		}
@@ -5999,7 +5999,7 @@ void CChar::SetPlayerCallNum( SERIAL newValue )
 {
 	if( !IsValidPlayer() )
 	{
-		if( newValue != DEFPLAYER_PLAYERCALLNUM )
+		if( newValue != INVALIDSERIAL )
 		{
 			CreatePlayer();
 		}
@@ -7500,7 +7500,7 @@ bool CChar::IsOnPetOwnerList( CChar *toCheck )
 	bool retVal = false;
 	if( ValidateObject( toCheck ))
 	{
-		auto iter = std::find_if( GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(), [&toCheck, this]( CChar *petChar )
+		auto iter = std::find_if( GetPetOwnerList()->collection().begin(), GetPetOwnerList()->collection().end(), [&toCheck]( CChar *petChar )
 		{
 			return ValidateObject( petChar ) && ( petChar == toCheck );
 		});
@@ -8001,7 +8001,7 @@ void CChar::Heal( SI16 healValue, CChar *healer )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Lets character react to damage dealt to them
 //o------------------------------------------------------------------------------------------------o
-void CChar::ReactOnDamage( WeatherType damageType, CChar *attacker )
+void CChar::ReactOnDamage( [[maybe_unused]] WeatherType damageType, CChar *attacker )
 {
 	CSocket *mSock = GetSocket();
 
@@ -8312,7 +8312,7 @@ void CChar::UpdateDamageTrack( void )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Sets weight of character
 //o------------------------------------------------------------------------------------------------o
-void CChar::SetWeight( SI32 newVal, bool doWeightUpdate )
+void CChar::SetWeight( SI32 newVal, [[maybe_unused]] bool doWeightUpdate )
 {
 	Dirty( UT_STATWINDOW );
 	weight = newVal;

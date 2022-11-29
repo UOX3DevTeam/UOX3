@@ -105,10 +105,10 @@ public:
 	UI32						wFirstLogin;
 	UI32						dwInGame;
 	UI32						dwLastIP;
+	bool						bChanged;
 	UI32						dwLastClientVer;
 	UI08						dwLastClientType;
 	UI08						dwLastClientVerShort;
-	bool						bChanged;
 	UI32						dwCharacters[7];
 	CChar *						lpCharacters[7];
 } CAccountBlock_st;

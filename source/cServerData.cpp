@@ -409,7 +409,7 @@ constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= UI32( 58 );
 constexpr auto BIT_MARKRUNESINMULTIS			= UI32( 59 );
 constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= UI32( 60 );
 constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= UI32( 61 );
-constexpr auto BIT_CONSOLELOG					= UI32( 62 );
+[[maybe_unused]] constexpr auto BIT_CONSOLELOG					= UI32( 62 );
 constexpr auto BIT_NETWORKLOG					= UI32( 63 );
 constexpr auto BIT_SPEECHLOG					= UI32( 64 );
 constexpr auto BIT_CONTEXTMENUS					= UI32( 65 );
@@ -2808,7 +2808,7 @@ auto CServerData::HirelingCombatTraining() const -> bool
 {
 	return boolVals.test( BIT_HIRELINGCOMBATTRAINING );
 }
-auto CServerData::HirelingCombatTraining( bool newVal ) -> void
+auto CServerData::HirelingCombatTraining( [[maybe_unused]] bool newVal ) -> void
 {
 	boolVals.set( BIT_HIRELINGCOMBATTRAINING );
 }
@@ -4989,6 +4989,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								}
 							}
 						}
+						[[fallthrough]];
 						case static_cast<int>( search_t::startsection ):
 						{
 							if( line[0] == '{' )
@@ -4996,6 +4997,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								state = search_t::endsection;
 							}
 						}
+						[[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
 							if( line[0] != '}' )

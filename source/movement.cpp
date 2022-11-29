@@ -710,7 +710,7 @@ bool CMovement::CheckForStealth( CChar *c )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	See if a player has tried to move into a house they were banned from
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::CheckForHouseBan( CChar *c, CSocket *mSock )
+bool CMovement::CheckForHouseBan( CChar *c, [[maybe_unused]] CSocket *mSock )
 {
 	CMultiObj *house = FindMulti( c );
 	if( ValidateObject( house ))
@@ -824,8 +824,8 @@ auto CMovement::GetBlockingDynamics( SI16 x, SI16 y, std::vector<Tile_st> &xyblo
 					else if( std::abs( tItem->GetX() - x ) <= DIST_BUILDRANGE && std::abs( tItem->GetY() - y ) <= DIST_BUILDRANGE ) // implication, is, this is now a CMultiObj
 					{
 						const UI16 multiId = ( tItem->GetId() - 0x4000 );
-						SI32 length = 0;
-						
+						[[maybe_unused]] SI32 length = 0;
+
 						if( !Map->MultiExists( multiId ))
 						{
 							Console.Error( "Walking() - Bad length in multi file. Avoiding stall" );
@@ -901,7 +901,7 @@ void CMovement::SendWalkToPlayer( CChar *c, CSocket *mSock, SI16 sequence )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the character's walk action to other players in range
 //o------------------------------------------------------------------------------------------------o
-void CMovement::SendWalkToOtherPlayers( CChar *c, UI08 dir, SI16 oldx, SI16 oldy )
+void CMovement::SendWalkToOtherPlayers( CChar *c, [[maybe_unused]] UI08 dir, SI16 oldx, SI16 oldy )
 {
 	// lets cache these vars in advance
 	const SI16 newx		= c->GetX();
@@ -1150,7 +1150,7 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 		}
 		else if( dOld == ( visibleRange + 1 ) && dNew > ( visibleRange + 1 )) // Just went out of range
 		{
-#pragma note( "Is it necessary to send packets with item removal when they go out of range, or does client handle this itself?" )
+			// Note: Is it necessary to send packets with item removal when they go out of range, or does client handle this itself?
 			if( mSock != nullptr )
 			{
 				tItem->RemoveFromSight( mSock );
@@ -2623,8 +2623,8 @@ void CMovement::GetAverageZ( UI08 nm, SI16 x, SI16 y, SI08& z, SI08& avg, SI08& 
 //|	Purpose		-	Checks that target location has no blocking tiles within range of
 //|						character's potential new Z and the top of their head
 //o------------------------------------------------------------------------------------------------o
-bool CMovement::IsOk( std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 world, SI08 ourZ, 
-					SI08 ourTop, SI16 x, SI16 y, UI16 instanceId, bool ignoreDoor, bool waterWalk )
+bool CMovement::IsOk( std::vector<Tile_st> &xyblock, [[maybe_unused]] UI16 &xycount, [[maybe_unused]] UI08 world, SI08 ourZ,
+					SI08 ourTop, [[maybe_unused]] SI16 x, [[maybe_unused]] SI16 y, [[maybe_unused]] UI16 instanceId, bool ignoreDoor, bool waterWalk )
 {
 	for( auto &tile : xyblock )
 	{
@@ -2658,7 +2658,7 @@ bool CMovement::IsOk( std::vector<Tile_st> &xyblock, UI16 &xycount, UI08 world, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calculate the Z height at the character's feet at specified location
 //o------------------------------------------------------------------------------------------------o
-void CMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceId, bool waterwalk )
+void CMovement::GetStartZ( UI08 world, [[maybe_unused]] CChar *c, SI16 x, SI16 y, SI08 z, SI08& zlow, SI08& ztop, UI16 instanceId, bool waterwalk )
 {
 	SI08 landz = 0;
 	SI08 landcent = 0;
@@ -2672,7 +2672,7 @@ void CMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	{
 		landBlock = false;
 	}
-	
+
 	std::vector<Tile_st> xyblock;
 	UI16 xycount = 0;
 	GetBlockingStatics( x, y, xyblock, xycount, world );
@@ -2700,7 +2700,7 @@ void CMovement::GetStartZ( UI08 world, CChar *c, SI16 x, SI16 y, SI08 z, SI08& z
 	for( auto &tile : xyblock )
 	{
 		// If the tile is a surface that can be walked on, or swam on...
-		if(( !isset || tile.top() >= zcenter ) && 
+		if(( !isset || tile.top() >= zcenter ) &&
 			( tile.CheckFlag( TF_SURFACE ) || ( waterwalk && tile.CheckFlag( TF_WET ))) && z >= tile.top() )
 		{
 			// Fetch the base Z position of surface tile
@@ -2814,7 +2814,7 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 //|						new z - value        if not blocked
 //|						illegal_z == -128, if walk is blocked
 //o------------------------------------------------------------------------------------------------o
-SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, bool justask, bool waterWalk )
+SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 oldz, [[maybe_unused]] bool justask, bool waterWalk )
 {
 	if( !ValidateObject( c ))
 		return ILLEGAL_Z;
@@ -2832,10 +2832,10 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	GetBlockingDynamics( x, y, xyblock, xycount, worldNumber, instanceId );
 
 	auto map	= Map->SeekMap( x, y, c->WorldNumber() );
-	
+
 	// Does landtile in target location block movement?
 	landBlock = map.CheckFlag( TF_BLOCKING );
-	
+
 	// If it does, but it's WET and character can swim, it doesn't block!
 	if( landBlock && waterWalk )
 	{
@@ -2845,7 +2845,7 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 			landBlock = false;
 		}
 	}
-	
+
 	bool considerLand = Map->IsIgnored( map.tileId ); //Special case for a couple of land-tiles. Returns true if tile being checked equals one of those tiles.
 
 	SI08 startTop = 0;

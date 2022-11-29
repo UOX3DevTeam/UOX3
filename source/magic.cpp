@@ -210,27 +210,27 @@ bool FieldSpell( CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 fieldDir, 
 	return true;
 }
 
-bool splClumsy( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splClumsy( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	// This spell is now handled in JS/MAGIC/level1targ.js
 	return false;
 }
-bool splCreateFood( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splCreateFood( [[maybe_unused]] CSocket *sock, [[maybe_unused]] CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	// This spell is now handled in JS/MAGIC/createfood.js
 	return false;
 }
-bool splFeeblemind( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splFeeblemind( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	// This spell is now handled in JS/MAGIC/level1targ.js
 	return false;
 }
-bool splHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splHeal( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	// This spell is now handled in JS/MAGIC/level1targ.js
 	return false;
 }
-bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splMagicArrow( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	// This spell is now handled in JS/MAGIC/level1targ.js
 	return false;
@@ -241,7 +241,7 @@ bool splMagicArrow( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Night Sight spell
 //o------------------------------------------------------------------------------------------------o
-bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splNightSight( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 2, 0, 0, 0 );
 	if( target->IsMurderer() )
@@ -256,7 +256,7 @@ bool splNightSight( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Reactive Armor spell
 //o------------------------------------------------------------------------------------------------o
-bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 15, caster->GetSkill( MAGERY ) / 100, 0, 0 );
 	target->SetReactiveArmour( true );
@@ -268,7 +268,7 @@ bool splReactiveArmor( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Weaken spell
 //o------------------------------------------------------------------------------------------------o
-bool splWeaken( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splWeaken( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 5, caster->GetSkill( MAGERY ) / 100, 0, 0 );
 	return true;
@@ -279,7 +279,7 @@ bool splWeaken( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Agility spell
 //o------------------------------------------------------------------------------------------------o
-bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splAgility( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 6, caster->GetSkill( MAGERY ) / 100, 0, 0 );
 	if( target->IsMurderer() )
@@ -294,7 +294,7 @@ bool splAgility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Cunning spell
 //o------------------------------------------------------------------------------------------------o
-bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splCunning( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 7, caster->GetSkill( MAGERY ) / 100, 0, 0 );
 	if( target->IsMurderer() )
@@ -309,7 +309,7 @@ bool splCunning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Cure spell
 //o------------------------------------------------------------------------------------------------o
-bool splCure( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splCure( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	target->SetPoisoned( 0 );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
@@ -342,7 +342,7 @@ bool splHarm( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Trap spell
 //o------------------------------------------------------------------------------------------------o
-bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsContType() && target->GetId() != 0x0E75 )
 	{
@@ -370,7 +370,7 @@ bool splMagicTrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Untrap spell
 //o------------------------------------------------------------------------------------------------o
-bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsContType() )
 	{
@@ -413,7 +413,7 @@ bool splMagicUntrap( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Protection spell
 //o------------------------------------------------------------------------------------------------o
-bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splProtection( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 21, caster->GetSkill( MAGERY ) / 10, 0, 0 );
 	if( target->IsMurderer() )
@@ -428,7 +428,7 @@ bool splProtection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Strength spell
 //o------------------------------------------------------------------------------------------------o
-bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splStrength( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	Effects->TempEffect( src, target, 8, caster->GetSkill( MAGERY ) / 100, 0, 0 );
 	if( target->IsMurderer() )
@@ -443,7 +443,7 @@ bool splStrength( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Bless spell
 //o------------------------------------------------------------------------------------------------o
-bool splBless( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splBless( CChar *caster, CChar *target, CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	SI32 j = caster->GetSkill( MAGERY ) / 100;
 	Effects->TempEffect( src, target, 11, j, j, j);
@@ -476,7 +476,7 @@ bool splFireball( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Lock spell
 //o------------------------------------------------------------------------------------------------o
-bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+bool splMagicLock( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell )
 {
 	ItemTypes type = target->GetType();
 	if(( type == IT_CONTAINER || type == IT_DOOR || type == IT_SPAWNCONT ) && ( target->GetId( 1 ) != 0x0E || target->GetId( 2 ) != 0x75 ))
@@ -597,7 +597,7 @@ UI08 CalculateMagicPoisonStrength( CChar *caster, CChar *target, UI16 skillVal, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Poison spell
 //o------------------------------------------------------------------------------------------------o
-bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splPoison( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	// Calculate poison strength of spell based on caster's skills, range to target and whether target resists
 	UI08 poisonStrength = CalculateMagicPoisonStrength( caster, target, 0, true, 3 );
@@ -625,7 +625,7 @@ bool splPoison( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Telekinesis spell
 //o------------------------------------------------------------------------------------------------o
-bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsContType() )
 	{
@@ -663,7 +663,7 @@ bool splTelekinesis( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Teleport spell
 //o------------------------------------------------------------------------------------------------o
-bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell )
 {
 	CMultiObj *m = FindMulti( x, y, z, caster->WorldNumber(), caster->GetInstanceId() );
 	if( ValidateObject( m ) && m->GetOwnerObj() != caster && !caster->IsNpc() )
@@ -712,7 +712,7 @@ bool splTeleport( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 cur
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Unlock spell
 //o------------------------------------------------------------------------------------------------o
-bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
+bool splUnlock( CSocket *sock, CChar *caster, CItem *target, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsDivineLocked() )
 	{
@@ -859,7 +859,7 @@ bool splUnlock( CSocket *sock, CChar *caster, CItem *target, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Wall of Stone spell
 //o------------------------------------------------------------------------------------------------o
-bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splWallOfStone( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	return FieldSpell( caster, 0x0080, x, y, z, fieldDir, curSpell );
 }
@@ -869,7 +869,7 @@ bool splWallOfStone( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Arch Cure spell to an individual target
 //o------------------------------------------------------------------------------------------------o
-void ArchCureStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+void ArchCureStub( [[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	target->SetPoisoned( 0 );
 	target->SetTimer( tCHAR_POISONWEAROFF, cwmWorldState->GetUICurrentTime() );
@@ -880,7 +880,7 @@ void ArchCureStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Arch Cure as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splArchCure( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ArchCureStub, curSpell );
 	return true;
@@ -891,7 +891,7 @@ bool splArchCure( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Arch Protection spell to an individual target
 //o------------------------------------------------------------------------------------------------o
-void ArchProtectionStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+void ArchProtectionStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	Magic->PlaySound( target, 26 );
 	Magic->DoStaticEffect( target, 15 );	// protection
@@ -903,7 +903,7 @@ void ArchProtectionStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Arch Protection as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splArchProtection( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ArchProtectionStub, curSpell );
 	return true;
@@ -914,7 +914,7 @@ bool splArchProtection( CSocket *sock, CChar *caster, CChar *target, CChar *src,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Curse spell
 //o------------------------------------------------------------------------------------------------o
-bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splCurse( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	SI32 j = caster->GetSkill( MAGERY ) / 100;
 	Effects->TempEffect( caster, target, 12, j, j, j);
@@ -926,7 +926,7 @@ bool splCurse( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Fire Field as a field spell
 //o------------------------------------------------------------------------------------------------o
-bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splFireField( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
 	{
@@ -943,7 +943,7 @@ bool splFireField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Greater Heal spell
 //o------------------------------------------------------------------------------------------------o
-bool splGreaterHeal( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splGreaterHeal( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	SI32 srcHealth		= target->GetHP();
 	SI32 baseHealing	= Magic->spells[curSpell].BaseDmg();
@@ -980,7 +980,7 @@ bool splLightning( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mana Drain spell
 //o------------------------------------------------------------------------------------------------o
-bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splManaDrain( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 4 ))
 	{
@@ -998,7 +998,7 @@ bool splManaDrain( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Recall spell
 //o------------------------------------------------------------------------------------------------o
-auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) -> bool
+auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell ) -> bool
 {
 	// No recall if too heavy, GMs excempt
 	if( Weight->IsOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ))
@@ -1166,7 +1166,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell ) -> bool
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Blade Spirits spell (summons a Blade Spirit)
 //o------------------------------------------------------------------------------------------------o
-auto splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell ) -> bool
+auto splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell ) -> bool
 {
 	Magic->SummonMonster( sock, caster, 6, x, y, z );
 	return true;
@@ -1177,7 +1177,7 @@ auto splBladeSpirits( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Dispel Field spell
 //o------------------------------------------------------------------------------------------------o
-bool splDispelField( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splDispelField( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	CItem *i = CalcItemObjFromSer( sock->GetDWord( 7 ));
 	if( ValidateObject( i ))
@@ -1214,7 +1214,7 @@ void SetRandomName( CChar *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Incognito spell
 //o------------------------------------------------------------------------------------------------o
-bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splIncognito( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->IsIncognito() )
 	{
@@ -1324,7 +1324,7 @@ bool splIncognito( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Magic Reflection spell
 //o------------------------------------------------------------------------------------------------o
-bool splMagicReflection( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splMagicReflection( [[maybe_unused]] CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	caster->SetTempReflected( true );
 	return true;
@@ -1376,7 +1376,7 @@ bool splMindBlast( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Paralyze spell
 //o------------------------------------------------------------------------------------------------o
-bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splParalyze( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ))
 	{
@@ -1390,7 +1390,7 @@ bool splParalyze( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Poison Field as a field spell
 //o------------------------------------------------------------------------------------------------o
-bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splPoisonField( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
 	{
@@ -1407,7 +1407,7 @@ bool splPoisonField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Creature spell (summons a creature)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 380 )
 	{
@@ -1425,7 +1425,7 @@ bool splSummonCreature( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Dispel spell
 //o------------------------------------------------------------------------------------------------o
-bool splDispel( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splDispel( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsDispellable() && !target->IsGM() )
 	{
@@ -1525,7 +1525,7 @@ bool splExplosion( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Invisibility spell
 //o------------------------------------------------------------------------------------------------o
-bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splInvisibility( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	target->SetVisible( VT_INVISIBLE );
 	target->SetTimer( tCHAR_INVIS, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_INVISIBILITY ));
@@ -1551,7 +1551,7 @@ bool splInvisibility( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //|	Changes		-	09/22/2002	-	Fixed marking of locked down runes..
 //|									(shouldn't be possible)
 //o------------------------------------------------------------------------------------------------o
-bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
+bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell )
 {
 	if( i->IsLockedDown() )
 	{
@@ -1631,7 +1631,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mass Curse spell to an individual target
 //o------------------------------------------------------------------------------------------------o
-void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+void MassCurseStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	if( target->IsNpc() && target->GetNpcAiType() == AI_PLAYERVENDOR )
 		return;	// Player Vendors can't be killed
@@ -1661,6 +1661,7 @@ void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount 
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't curse NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -1691,7 +1692,7 @@ void MassCurseStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Mass Curse as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splMassCurse( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MassCurseStub, curSpell );
 	return true;
@@ -1702,7 +1703,7 @@ bool splMassCurse( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Paralyze Field as a field spell
 //o------------------------------------------------------------------------------------------------o
-bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splParalyzeField( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
 	{
@@ -1719,7 +1720,7 @@ bool splParalyzeField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Reveal spell
 //o------------------------------------------------------------------------------------------------o
-auto splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell ) -> bool
+auto splReveal( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell ) -> bool
 {
 	if( LineOfSight( sock, caster, x, y, ( z + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ) || caster->IsGM() )
 	{
@@ -1801,6 +1802,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -1812,7 +1814,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 		Combat->AttackTarget( target, caster );
 	}
 	/*Effects->PlaySound( caster, 0x0029 );*/
-	CChar *def = nullptr;
+	[[maybe_unused]] CChar *def = nullptr;
 	if( Magic->CheckMagicReflect( target ))
 	{
 		def = caster;
@@ -1842,7 +1844,7 @@ void ChainLightningStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targC
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Chain Lightning as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splChainLightning( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &ChainLightningStub, curSpell );
 	return true;
@@ -1853,7 +1855,7 @@ bool splChainLightning( CSocket *sock, CChar *caster, CChar *target, CChar *src,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Energy Field spell as a field spell
 //o------------------------------------------------------------------------------------------------o
-bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splEnergyField( [[maybe_unused]] CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y, SI08 z, SI08 curSpell )
 {
 	if( fieldDir == 0 )
 	{
@@ -1870,7 +1872,7 @@ bool splEnergyField( CSocket *sock, CChar *caster, UI08 fieldDir, SI16 x, SI16 y
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Flame Strike spell on target
 //o------------------------------------------------------------------------------------------------o
-bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splFlameStrike( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	SI16 spellDamage = 0;
 	bool spellResisted = Magic->CheckResist( caster, target, Magic->spells[curSpell].Circle() );
@@ -1887,7 +1889,7 @@ bool splFlameStrike( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Gate Travel spell (opens gate from recall rune)
 //o------------------------------------------------------------------------------------------------o
-bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
+bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curSpell )
 {
 	// No recall if too heavy, GM's excempt
 	if( Weight->IsOverloaded( caster ) && !cwmWorldState->ServerData()->TravelSpellsWhileOverweight() && ( !caster->IsCounselor() && !caster->IsGM() ))
@@ -1954,7 +1956,7 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mana Vampire spell to target
 //o------------------------------------------------------------------------------------------------o
-bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splManaVampire( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	if( !Magic->CheckResist( caster, target, 7 ))
 	{
@@ -1977,7 +1979,7 @@ bool splManaVampire( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Mass Dispel spell to an individual target
 //o------------------------------------------------------------------------------------------------o
-void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+void MassDispelStub( CChar *caster, CChar *target, [[maybe_unused]] SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	if( target->IsDispellable() )
 	{
@@ -2042,7 +2044,7 @@ void MassDispelStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Mass Dispel spell as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splMassDispel( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splMassDispel( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MassDispelStub, curSpell );
 	return true;
@@ -2083,6 +2085,7 @@ void MeteorSwarmStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCoun
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -2168,7 +2171,7 @@ auto AreaAffectSpell( CSocket *sock, CChar *caster, void (*trgFunc)( MAGIC_AREA_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts Meteor Swarm spell as an area affect spell
 //o------------------------------------------------------------------------------------------------o
-bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splMeteorSwarm( CSocket *sock, CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, SI08 curSpell )
 {
 	AreaAffectSpell( sock, caster, &MeteorSwarmStub, curSpell );
 	return true;
@@ -2179,7 +2182,7 @@ bool splMeteorSwarm( CSocket *sock, CChar *caster, CChar *target, CChar *src, SI
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Polymorph spell
 //o------------------------------------------------------------------------------------------------o
-bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splPolymorph( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->IsPolymorphed() )
 	{
@@ -2205,7 +2208,7 @@ bool splPolymorph( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Earthquake spell to an individual target
 //o------------------------------------------------------------------------------------------------o
-void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount )
+void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, [[maybe_unused]] SI08 targCount )
 {
 	// Check if target is in a safe zone, or invulnerable
 	if( target->GetRegion()->IsSafeZone() || target->IsInvulnerable() )
@@ -2236,6 +2239,7 @@ void EarthquakeStub( CChar *caster, CChar *target, SI08 curSpell, SI08 targCount
 			{
 				if( target->GetNpcAiType() == AI_FIGHTER || target->GetNpcAiType() == AI_CASTER )
 					return; // Don't damage NPCs with similar AI types
+				break;
 			}
 			default:
 				break;
@@ -2327,7 +2331,7 @@ bool splEarthquake( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Energy Vortex spell (summons an Energy Vortex)
 //o------------------------------------------------------------------------------------------------o
-bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08 curSpell )
+bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2341,7 +2345,7 @@ bool splEnergyVortex( CSocket *sock, CChar *caster, SI16 x, SI16 y, SI08 z, SI08
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Resurrection spell to a target
 //o------------------------------------------------------------------------------------------------o
-bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splResurrection( [[maybe_unused]] CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	if( target->IsDead() )
 	{
@@ -2356,7 +2360,7 @@ bool splResurrection( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Air Elemental spell (Summons Air Elemental)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splSummonAir( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2370,7 +2374,7 @@ bool splSummonAir( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Daemon spell (Summons Daemon)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splSummonDaemon( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2384,7 +2388,7 @@ bool splSummonDaemon( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Earth Elemental spell (Summons Earth Elemental)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splSummonEarth( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2398,7 +2402,7 @@ bool splSummonEarth( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Fire Elemental spell (Summons Fire Elemental)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splSummonFire( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2412,7 +2416,7 @@ bool splSummonFire( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Water Elemental spell (Summons Water Elemental)
 //o------------------------------------------------------------------------------------------------o
-bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splSummonWater( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2426,7 +2430,7 @@ bool splSummonWater( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effects of Summon Monster spell (Summons random monster)
 //o------------------------------------------------------------------------------------------------o
-bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splRandom( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	if( caster->GetSkill( MAGERY ) <= 800 )
 		return false;
@@ -2440,7 +2444,7 @@ bool splRandom( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 //o------------------------------------------------------------------------------------------------o
-bool splNecro1( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splNecro1( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	return true;
 }
@@ -2450,7 +2454,7 @@ bool splNecro1( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies effect of Necromantic summon spell (summons monster)
 //o------------------------------------------------------------------------------------------------o
-bool splNecro2( CSocket *sock, CChar *caster, SI08 curSpell )
+bool splNecro2( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell )
 {
 	Magic->SummonMonster( sock, caster, 9, caster->GetX() +1, caster->GetY() +1, caster->GetZ() );
 	return true;
@@ -2461,7 +2465,7 @@ bool splNecro2( CSocket *sock, CChar *caster, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 //o------------------------------------------------------------------------------------------------o
-bool splNecro3( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splNecro3( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	return true;
 }
@@ -2471,7 +2475,7 @@ bool splNecro3( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 //o------------------------------------------------------------------------------------------------o
-bool splNecro4( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splNecro4( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	return true;
 }
@@ -2481,7 +2485,7 @@ bool splNecro4( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UNUSED
 //o------------------------------------------------------------------------------------------------o
-bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
+bool splNecro5( [[maybe_unused]] CChar *caster, [[maybe_unused]] CChar *target, [[maybe_unused]] CChar *src, [[maybe_unused]] SI08 curSpell )
 {
 	return true;
 }
@@ -2491,7 +2495,7 @@ bool splNecro5( CChar *caster, CChar *target, CChar *src, SI08 curSpell )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a diamond
 //o------------------------------------------------------------------------------------------------o
-bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool DiamondSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI32 j;
 	SI16 fx[5], fy[5];
@@ -2552,7 +2556,7 @@ bool DiamondSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a square
 //o------------------------------------------------------------------------------------------------o
-bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool SquareSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 fx[5], fy[5];
 	SI16 yOffset = length;
@@ -2602,7 +2606,7 @@ bool SquareSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Casts field spell in the shape of a filled square
 //o------------------------------------------------------------------------------------------------o
-bool FloodSpell( CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
+bool FloodSpell( [[maybe_unused]] CSocket *sock, CChar *caster, UI16 id, SI16 x, SI16 y, SI08 z, UI08 length )
 {
 	SI16 yOffset = length;
 	SI16 xOffset = length;
@@ -4964,7 +4968,7 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Flags((( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ))) << 8 ) ||
+										spells[i].Flags((( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ))) << 8 ) |
 												    static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
 									}
 									else
@@ -5051,7 +5055,7 @@ void CMagic::LoadScript( void )
 									auto ssecs = oldstrutil::sections( data, " " );
 									if( ssecs.size() > 1 )
 									{
-										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) ||
+										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
 													 static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
 									}
 									else
@@ -5065,7 +5069,7 @@ void CMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
-										
+
 										stat->Effect( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
 										stat->Speed( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
 										stat->Loop( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));

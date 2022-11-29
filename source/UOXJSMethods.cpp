@@ -170,7 +170,7 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prepares a new packet stream, ready for network shenanigans in JS
 //o------------------------------------------------------------------------------------------------o
-JSBool Packet( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool Packet( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
@@ -187,7 +187,7 @@ JSBool Packet( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 
@@ -208,7 +208,7 @@ JSBool CPacket_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a single byte at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -237,7 +237,7 @@ JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes two bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -266,7 +266,7 @@ JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes four bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -297,7 +297,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes variable number of bytes at specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 3 )
 	{
@@ -327,7 +327,7 @@ JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reserves a specific size for the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -356,7 +356,7 @@ JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends prepared packet stream to network socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -384,7 +384,7 @@ JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Cosntructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
-JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
@@ -405,7 +405,7 @@ JSBool Gump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	SEGump_st *toDelete = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
@@ -429,7 +429,7 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump Data object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSBool CGumpData_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGumpData_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	SEGumpData_st *toDelete = static_cast<SEGumpData_st*>( JS_GetPrivate( cx, obj ));
 
@@ -560,7 +560,7 @@ JSBool CGumpData_GetButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a checkbox gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 5 || argc > 6 )
 	{
@@ -614,7 +614,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Adds noclose element to gump stream; specifies that gump cannot be closed by
 //|					clicking the right mouse button
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -642,7 +642,7 @@ JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds nomove element to gump stream; specifies that gump cannot be moved
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -674,7 +674,7 @@ JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //|					using the "Close Dialogs" client macro
 //|					No response is sent to server upon closing the Gump in this manner.
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -702,7 +702,7 @@ JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds noresize element to gump stream; specifies that gump cannot be resized
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -729,7 +729,7 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Possible that the mastergump command itself only has any effect with client versions between 4.0.4d and 5.0.5b?
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -758,7 +758,7 @@ JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds background gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 5 )
 	{
@@ -790,7 +790,7 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 6 || argc > 7 )
 	{
@@ -811,7 +811,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		MethodError( "AddButton: Couldn't find gump associated with object" );
 		return JS_FALSE;
 	}
-	
+
 	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
 
 	return JS_TRUE;
@@ -824,7 +824,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump with tileart to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 11 )
 	{
@@ -862,7 +862,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump for navigating gump pages to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 4 || argc > 5 )
 	{
@@ -894,7 +894,7 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds transparent area gump to gump stream, turns underlying elements transparent
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -926,7 +926,7 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds text field gump to gump stream, cropped to certain dimensions
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 6 )
 	{
@@ -971,7 +971,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds new group element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -997,7 +997,7 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Ends a previously started group element
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -1023,7 +1023,7 @@ JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -1065,7 +1065,7 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -1104,7 +1104,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|					UOX3 will send the following gump command to add a tooltip element to previous
 //|					gump element: "tooltip 1042971 @My Custom Text@"
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 11 )
 	{
@@ -1152,7 +1152,7 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new HTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 7 )
 	{
@@ -1200,7 +1200,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new page element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -1226,7 +1226,7 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 3 )
 	{
@@ -1256,7 +1256,7 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -1288,7 +1288,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //|	Purpose		-	Adds a picinpic gump to the gump stream
 //|	Notes		-	Requires client v7.0.80.0 or above
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 7 )
 	{
@@ -1326,7 +1326,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|					object serial that was provided as a regular tooltip on cursor. Could be used to
 //|					show item stats for items on a custom paperdoll, for instance.
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -1363,7 +1363,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a radio button gump to gumps stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 5 || argc > 6 )
 	{
@@ -1416,7 +1416,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -1460,7 +1460,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 8 )
 	{
@@ -1502,7 +1502,7 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump with maximum length to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 9 )
 	{
@@ -1546,7 +1546,7 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds tiled gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 5 )
 	{
@@ -1579,7 +1579,7 @@ JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 7 )
 	{
@@ -1617,7 +1617,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 8 )
 	{
@@ -1655,7 +1655,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream, with optional cliloc arguments
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 8 )
 	{
@@ -1697,7 +1697,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump stream to socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -1757,7 +1757,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 7 )
 	{
@@ -1890,7 +1890,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill all related timers that have been associated with an item or character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval)
 {
 	if( argc > 1 )
 	{
@@ -2102,7 +2102,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
@@ -2124,7 +2124,7 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Specifies a wander area for an NPC, as either a box or a circle
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 3 && argc != 4 )
 	{
@@ -2171,7 +2171,7 @@ JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces NPC to follow specified target
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -2216,7 +2216,7 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes character do specified action
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 5 )
 	{
@@ -2278,7 +2278,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to emote specified text
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 5 )
 	{
@@ -2339,7 +2339,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dismounts character, if mounted
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -2371,7 +2371,7 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a system message to the player
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc == 0 || argc > 11 )
 	{
@@ -2437,7 +2437,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disconnects specified client
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -2469,7 +2469,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Teleports object to specified location
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	JSEncapsulate myClass( cx, obj );
 
@@ -2648,7 +2648,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect for character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	UI16 effectId		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	UI08 speed			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
@@ -2682,7 +2682,7 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends specified make menu to player
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -2719,7 +2719,7 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a sound effect at object's location
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -2825,7 +2825,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up the shopkeeper gump for buying from specified vendor NPC
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -2958,7 +2958,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified spell from first spellbook found in player's inventory
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3047,7 +3047,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Stores persistent tag with specified name and value on object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3189,7 +3189,7 @@ JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Stores temporary tag with specified name and value on object, does not persist
 //|					across server restart (or character reconnect)
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3289,7 +3289,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of tags stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -3314,7 +3314,7 @@ JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens bankbox of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
@@ -3357,7 +3357,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified layer of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
@@ -3391,7 +3391,7 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turns character to face object/location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
@@ -3518,7 +3518,7 @@ JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Executes specified command (with cmd params as part of cmdString) for character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -3546,7 +3546,7 @@ JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Accepts specified character as a recruit in the guild
 //o------------------------------------------------------------------------------------------------o
-JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 
@@ -3683,7 +3683,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the lightning bolt effect on specified character to all nearby
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( ValidateObject( myChar ))
@@ -3710,7 +3710,7 @@ JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|
 //|					Useable with both sockets and characters.
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	JSEncapsulate myClass( cx, obj );
 
@@ -3788,7 +3788,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|					inclusive. Says toSay, and shows a cursor. Note that this allows access
 //|					potentially to GM functions.
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
@@ -3896,7 +3896,7 @@ JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|						true (calls back to existing script)
 //|						int (scriptId to call back to)
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
@@ -4074,7 +4074,7 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens plank for item (boat)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -4101,7 +4101,7 @@ JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls up the onSpeechInput event using specified ID, with the text the user types
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	// Get our own Script ID
 	UI08 speechId		= 0;
@@ -4205,7 +4205,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies spell effects of specified spell to character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
@@ -4228,7 +4228,7 @@ JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of a character's serial
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
 {
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4251,7 +4251,7 @@ JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of an object's serial
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4276,7 +4276,7 @@ void UpdateStats( CBaseObject *mObj, UI08 x );
 //|	Purpose		-	Sends update to client with specified stat (health, mana or stamina) for object
 //| Notes		-	Can be used with any character, as well as with items/multis with damageable flag enabled
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval)
 {
 	if( argc != 1 )
 	{
@@ -4334,7 +4334,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 2 || argc > 3 )
 	{
@@ -4378,7 +4378,7 @@ void ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, bo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes specified item by exploding it, dealing 5-10 dmg to nearby characters
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -4411,7 +4411,7 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Sets character to the specified visibility level for the specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 2 )
 	{
@@ -4437,7 +4437,7 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets container of item to be the specified object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_SetCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
 {
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
@@ -4461,7 +4461,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -4489,7 +4489,7 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a boat
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5012,7 +5012,7 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears multi's list of banned players
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5041,7 +5041,7 @@ JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of friends
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5070,7 +5070,7 @@ JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of guests
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5099,7 +5099,7 @@ JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of co-owners
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5168,7 +5168,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified URL in player's browser
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 ) // 1 parameters
 	{
@@ -5387,7 +5387,7 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 1 byte at socket stream's offset to equal 8-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -5413,7 +5413,7 @@ JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 2 bytes at socket stream's offset to equal 16-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -5441,7 +5441,7 @@ JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 4 bytes at socket stream's offset to equal 32-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -5469,7 +5469,7 @@ JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets data at socket stream's offset to equal string value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -5503,7 +5503,7 @@ JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads specified amount of bytes from socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5530,7 +5530,7 @@ JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gump populated with all online or offline (if param is false) players
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
@@ -5563,7 +5563,7 @@ JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to socket to play specified midi/mp3
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5590,7 +5590,7 @@ JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Yells a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5636,7 +5636,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Whispers a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5682,7 +5682,7 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified gumpmenu from dfnata/misc/gumps.dfn for socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5715,7 +5715,7 @@ JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes specified generic gump based on its ID, and provides a button ID response
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -5863,7 +5863,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies the values from a DFN section to an Item/Character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5915,7 +5915,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a spell to the first spell book found in character's pack
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -5940,7 +5940,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does the actions associated with spell failure, called after the failure happens
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5970,7 +5970,7 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes the item to be refreshed to sockets that can see it
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6021,7 +6021,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|					values will increase base properties of item, lower will decrease base
 //|					properties). maxRank is the maximum amount of ranks in the rank system (10 by default).
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -6075,7 +6075,7 @@ JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_GetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_GetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	return JS_FALSE;
 }
@@ -6085,7 +6085,7 @@ JSBool CAccount_GetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_SetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_SetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	return JS_FALSE;
 }
@@ -6100,7 +6100,7 @@ JSBool CAccount_SetAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_AddAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 4 )
 	{
@@ -6151,7 +6151,7 @@ JSBool CAccount_AddAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -6191,7 +6191,7 @@ JSBool CAccount_DelAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_ModAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_ModAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	return JS_FALSE;
 }
@@ -6201,14 +6201,14 @@ JSBool CAccount_ModAccount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_SaveAccounts( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CAccount_SaveAccounts( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	return JS_FALSE;
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
 // UOXCFile constructor !
-JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool UOXCFile( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
@@ -6228,7 +6228,7 @@ JSBool UOXCFile( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *r
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Frees memory allocated by file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6250,7 +6250,7 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a file for reading, writing or appending
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 2 || argc > 4 )
 	{
@@ -6327,7 +6327,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes a file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Close( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_Close( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6434,7 +6434,7 @@ JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a string out to the file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -6470,7 +6470,7 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns if we have read to the end of a file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6494,7 +6494,7 @@ JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of the file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6557,7 +6557,7 @@ JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6608,7 +6608,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6659,7 +6659,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all items in object's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -6696,7 +6696,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 && argc != 3 )
 	{
@@ -6788,7 +6788,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 && argc != 3 )
 	{
@@ -6919,7 +6919,7 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the specified timer with the amount of miliseconds until it expires
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -6996,13 +6996,13 @@ JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attaches a light-emitting object to the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
 
 	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
-	
+
 	if( !ValidateObject( mItem ))
 	{
 		MethodError( "Glow: Invalid object" );
@@ -7051,7 +7051,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes light-emitting object from the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
@@ -7100,7 +7100,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gate to the location marked on an item, or to a specified set of coords
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 && argc != 4 )
 	{
@@ -7173,7 +7173,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character recalls to the location marked on an item
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7224,7 +7224,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks item with character's current location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7313,7 +7313,7 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kills the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7353,7 +7353,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resurrects the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7426,7 +7426,7 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dupes specified character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7465,7 +7465,7 @@ JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Jails character, either for ~27 hours or for specified amount of time in seconds
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc > 1 )
 	{
@@ -7496,7 +7496,7 @@ JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases character from jail
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7523,7 +7523,7 @@ void GMPage( CSocket *s, const std::string& reason );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a page based on provided pageType
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc > 1 )
 	{
@@ -7572,7 +7572,7 @@ JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a message in UOX3 console. Message should end with \n
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Print( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7591,7 +7591,7 @@ JSBool CConsole_Print( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a message either in default log file or in specified file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Log( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -7618,7 +7618,7 @@ JSBool CConsole_Log( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs an error-message in default error log file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Error( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7636,7 +7636,7 @@ JSBool CConsole_Error( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a warning-message in default warnings log file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Warning( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7654,7 +7654,7 @@ JSBool CConsole_Warning( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a section separator in the console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintSectionBegin( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintSectionBegin( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7671,7 +7671,7 @@ JSBool CConsole_PrintSectionBegin( JSContext *cx, JSObject *obj, uintN argc, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnYellow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnYellow( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7688,7 +7688,7 @@ JSBool CConsole_TurnYellow( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates yellow text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnRed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnRed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7705,7 +7705,7 @@ JSBool CConsole_TurnRed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates green text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnGreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7722,7 +7722,7 @@ JSBool CConsole_TurnGreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates blue text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnBlue( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7739,7 +7739,7 @@ JSBool CConsole_TurnBlue( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates normal text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnNormal( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7756,7 +7756,7 @@ JSBool CConsole_TurnNormal( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates bright white text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_TurnBrightWhite( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7774,7 +7774,7 @@ JSBool CConsole_TurnBrightWhite( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [done] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintDone( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -7805,7 +7805,7 @@ JSBool CConsole_PrintDone( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [failed] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintFailed( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 && argc != 1 )
 	{
@@ -7835,7 +7835,7 @@ JSBool CConsole_PrintFailed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [skipped] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintPassed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7852,7 +7852,7 @@ JSBool CConsole_PrintPassed( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_ClearScreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7869,7 +7869,7 @@ JSBool CConsole_ClearScreen( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints [done] or [failed] based on provided boolean
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintBasedOnVal( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7888,7 +7888,7 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, JSObject *obj, uintN argc, jsval
 //|	Purpose		-	Moves console cursor position to specified x, y location
 //|	Notes		-	If you want the same line,  y == -1
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_MoveTo( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -7915,7 +7915,7 @@ JSBool CConsole_MoveTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|					4 - Yellow
 //|					5 - Bright White
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_PrintSpecial( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -7934,7 +7934,7 @@ JSBool CConsole_PrintSpecial( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start the UOX3 shutdown sequence
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_BeginShutdown( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -7960,7 +7960,7 @@ JSBool CConsole_BeginShutdown( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //|						7 Reload JS
 //|						8 Reload HTML
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CConsole_Reload( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -7985,7 +7985,7 @@ JSBool CConsole_Reload( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Purpose		-	Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going from the
 //|					character to the target
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -8024,7 +8024,7 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the STATFX effect of the specified spell in SPELLS.DFN, on the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -8063,7 +8063,7 @@ JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Break a caster's concentration. Provide socket as extra argument for player chars
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc > 1 )
 	{
@@ -8100,7 +8100,7 @@ JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the Add-menu to the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -8128,7 +8128,7 @@ JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks item down (sets movable value to 3)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -8154,7 +8154,7 @@ JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //|	Purpose		-	Initializes a WanderArea (10x10 box, or 10 radius circle) for the NPC.
 //|					Will only work if they already have a wandermode set to box or circle.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
@@ -8173,7 +8173,7 @@ void NewCarveTarget( CSocket *s, CItem *i );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes the character belonging to socket carve up a corpse
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc > 1 )
 	{
@@ -8205,7 +8205,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile name of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -8955,7 +8955,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified damage value over character's head
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -8994,7 +8994,7 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Lets character react to damage taken
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -9048,7 +9048,7 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Deals damage of a specified damageType to a character, with optional parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc < 1 || argc > 4 )
 	{
@@ -9141,7 +9141,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -9167,7 +9167,7 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Heals a character, with optional argument to provide character who healed
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 && argc != 2 )
 	{
@@ -9426,7 +9426,7 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //|					Valid moreVarValue values: 0 - 255
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 3 )
 	{
@@ -9491,7 +9491,7 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -9535,7 +9535,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -9609,7 +9609,7 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -9654,7 +9654,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 1 )
 	{
@@ -9781,7 +9781,7 @@ JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -9841,7 +9841,7 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -9881,7 +9881,7 @@ JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's pets/followers
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10189,7 +10189,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 		JSEncapsulate toGetMember( cx, &( argv[0] ));
 		size_t memberOffset = toGetMember.toInt();
-		if( memberOffset < 0 || memberOffset >= ourParty->MemberList()->size() )
+		if( memberOffset >= ourParty->MemberList()->size() )
 		{
 			MethodError( "GetMember: Invalid character to get, index out of bounds" );
 			*rval = JSVAL_NULL;
@@ -10218,7 +10218,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10243,7 +10243,7 @@ JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10268,7 +10268,7 @@ JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all trigger words in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
 	if( argc != 0 )
 	{
