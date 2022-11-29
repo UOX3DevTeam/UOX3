@@ -169,8 +169,13 @@ function onCharDoubleClick( myPlayer, myNPC )
 		var myQuestData = myArray[i].split(",");
 		var playerSerial = myQuestData[1];
 		var questStatusData = myQuestData[15];
+		if ( myNPC.GetTag( "Completed_" + playerSerial ) == 1 )
+		{
+			myNPC.TextMessage( "You have already completed this quest." );
+			return false;
+		}
+
 		if( myNPC.GetTag( "Declined_" + playerSerial ) == 0 || myPlayer.GetTag( questStatusData ) >= 1 )
-		//if (myQuest[1] == myPlayer.serial)
 		{
 			// Quest is already in the log! Abort
 			myPlayer.SetTag(questStatus, 8 )
@@ -235,8 +240,13 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 				var myQuestData = myArray[i].split(",");
 				var playerSerial = myQuestData[1];
 				var questStatusData = myQuestData[15];
+				if ( myNPC.GetTag( "Completed_" + playerSerial ) == 1 )
+				{
+					myNPC.TextMessage( "You have already completed this quest." );
+					return false;
+				}
+
 				if ( myNPC.GetTag("Declined_" + playerSerial ) == 0 || myPlayer.GetTag( questStatusData ) >= 1 )
-				//if (myQuest[1] == myPlayer.serial)
 				{
 					// Quest is already in the log! Abort
 					myPlayer.SetTag(questStatus, 8)
@@ -307,12 +317,13 @@ function onSpeech( myString, myPlayer, myNPC, pSock )
 
 function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 {
+	var socket = pDropper.socket;
 	// Read Quests Log
 	var myArray = TriggerEvent( 19806, "ReadQuestLog", pDropper );
 	for ( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
-		var myQuestData = myArray[i].split(",");
+		var playerSerial = myQuestData[1];
 		var killAmount = myQuestData[4];
 		var collectAmount = myQuestData[5];
 		var iLevel = myQuestData[8];
@@ -328,10 +339,19 @@ function onDropItemOnNpc( pDropper, pDroppedOn, iDropped )
 
 			if ( numZoogiFungus >= collectAmount ) // Checks to make sure you collected the amount
 			{
+				var pPack = pDropper.pack;
+				if( pPack.totalItemCount >= pPack.maxItems || pPack.weight >= pPack.weightMax ) 
+				{
+					pDropper.SetTag( questStatus, 9 ) // Full Backpack
+					TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
+					return 0;
+				}
+
 				pDropper.UseResource( collectAmount, itemId );
 				if ( nNumToKill >= killAmount )  // Checks to make sure you have killed the amount
 				{
 					pDropper.SetTag( questStatus, 6 ) // Quest Completed
+					pDroppedOn.SetTag( "Completed_" + playerSerial, 1)
 					TriggerEvent( 19802, "convoeventgump", pDropper, pDroppedOn );
 					decline( pDropper, pDroppedOn ); // Sets all tags to 0 or null
 					rewardPlayer( pDropper, pDroppedOn ); // Reward Player
