@@ -3,12 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		6452D32227D3A7CB00E5AFB4 /* osunique.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6452D32127D3A7CB00E5AFB4 /* osunique.cpp */; };
-		648AF6EE27CFEFA3009327DE /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 648AF6ED27CFEF94009327DE /* libz.tbd */; platformFilters = (maccatalyst, macos, ); };
 		648AF79627CFF2CD009327DE /* cConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6F627CFF2CC009327DE /* cConsole.cpp */; };
 		648AF79727CFF2CD009327DE /* dist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6F727CFF2CC009327DE /* dist.cpp */; };
 		648AF79827CFF2CD009327DE /* calcfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF6FA27CFF2CC009327DE /* calcfuncs.cpp */; };
@@ -87,7 +86,8 @@
 		648AF7E327CFF2CD009327DE /* weight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79127CFF2CD009327DE /* weight.cpp */; };
 		648AF7E427CFF2CD009327DE /* effect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79327CFF2CD009327DE /* effect.cpp */; };
 		648AF7E527CFF2CD009327DE /* speech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 648AF79527CFF2CD009327DE /* speech.cpp */; };
-		64EAC33128484667004BF08B /* libjs32.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64EAC33028484655004BF08B /* libjs32.a */; };
+		64E0066C2935A37500BEBA8F /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E0066829354B1800BEBA8F /* libz.tbd */; };
+		64E0066E2935A39A00BEBA8F /* libjs.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E0066D2935A38900BEBA8F /* libjs.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -108,8 +108,6 @@
 		6453667D2859FB340064E649 /* Changelog.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Changelog.txt; sourceTree = "<group>"; };
 		6453667E285A04130064E649 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		648AF6E427CFEF79009327DE /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
-		648AF6ED27CFEF94009327DE /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		648AF6EF27CFF0F5009327DE /* libjs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs.a; path = ../spidermonkey/libjs.a; sourceTree = "<group>"; };
 		648AF6F627CFF2CC009327DE /* cConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cConsole.cpp; sourceTree = "<group>"; };
 		648AF6F727CFF2CC009327DE /* dist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dist.cpp; sourceTree = "<group>"; };
 		648AF6F827CFF2CC009327DE /* cSpawnRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cSpawnRegion.h; sourceTree = "<group>"; };
@@ -265,7 +263,8 @@
 		648AF79327CFF2CD009327DE /* effect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = effect.cpp; sourceTree = "<group>"; };
 		648AF79427CFF2CD009327DE /* cSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cSocket.h; sourceTree = "<group>"; };
 		648AF79527CFF2CD009327DE /* speech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = speech.cpp; sourceTree = "<group>"; };
-		64EAC33028484655004BF08B /* libjs32.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs32.a; path = ../spidermonkey/libjs32.a; sourceTree = "<group>"; };
+		64E0066829354B1800BEBA8F /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		64E0066D2935A38900BEBA8F /* libjs.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjs.a; path = ../spidermonkey/libjs.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -273,8 +272,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				648AF6EE27CFEFA3009327DE /* libz.tbd in Frameworks */,
-				64EAC33128484667004BF08B /* libjs32.a in Frameworks */,
+				64E0066E2935A39A00BEBA8F /* libjs.a in Frameworks */,
+				64E0066C2935A37500BEBA8F /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,9 +533,8 @@
 		648AF6EC27CFEF94009327DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				64EAC33028484655004BF08B /* libjs32.a */,
-				648AF6EF27CFF0F5009327DE /* libjs.a */,
-				648AF6ED27CFEF94009327DE /* libz.tbd */,
+				64E0066D2935A38900BEBA8F /* libjs.a */,
+				64E0066829354B1800BEBA8F /* libz.tbd */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -589,7 +587,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Charles Kerr";
 				TargetAttributes = {
 					648AF6E327CFEF79009327DE = {
@@ -598,7 +596,7 @@
 				};
 			};
 			buildConfigurationList = 648AF6DD27CFEEC5009327DE /* Build configuration list for PBXProject "uox3" */;
-			compatibilityVersion = "Xcode 13.0";
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -727,6 +725,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -736,9 +735,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = ../spidermonkey;
+				LIBRARY_SEARCH_PATHS = ./spidermonkey;
 				ONLY_ACTIVE_ARCH = YES;
-				USER_HEADER_SEARCH_PATHS = ../spidermonkey;
+				USER_HEADER_SEARCH_PATHS = ./spidermonkey;
 			};
 			name = Debug;
 		};
@@ -764,6 +763,7 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				DEAD_CODE_STRIPPING = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -772,8 +772,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = ../spidermonkey;
-				USER_HEADER_SEARCH_PATHS = ../spidermonkey;
+				LIBRARY_SEARCH_PATHS = ./spidermonkey;
+				USER_HEADER_SEARCH_PATHS = ./spidermonkey;
 			};
 			name = Release;
 		};
@@ -813,6 +813,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -832,7 +833,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../spidermonkey";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../spidermonkey";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -878,6 +881,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -891,7 +895,9 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 12.1;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/../spidermonkey";
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../spidermonkey";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
