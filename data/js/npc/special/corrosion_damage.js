@@ -3,6 +3,9 @@ function onDamage( damaged, attacker, damageValue, damageType )
 {
 	if( damageType == 1 ) // Physical damage
 	{
+		if( !ValidateObject( attacker ))
+			return true;
+
 		// Find weapon of attacking player
 		var weaponInHand = attacker.FindItemLayer( 0x01 ); // Item in right hand - 1h weapon
 
