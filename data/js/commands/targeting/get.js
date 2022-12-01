@@ -22,7 +22,7 @@ function command_GET( socket, cmdString )
 // Common Object Properties
 function onCallback0( socket, ourObj )
 {
-	if( socket.GetWord( 1 ) )
+	if( socket.GetWord( 1 ) && !ValidateObject( ourObj ))
 	{
 		socket.SysMessage( "'Get': " + GetDictionaryEntry( 2353, socket.language )); // Invalid target.
 		return;
