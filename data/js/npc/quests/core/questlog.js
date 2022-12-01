@@ -1,4 +1,4 @@
-function questLog( mKiller )
+function questLog( pUser )
 {
 	var questGump = new Gump;
 	questGump.AddPage( 0 );
@@ -9,7 +9,7 @@ function questLog( mKiller )
 	questGump.AddXMFHTMLGumpColor( 0, 78, 120, 40, 1049079, false, false, 0x7FFF ); // Quest Log Updated
 
 	questGump.AddButton( 30, 15, 5575, 5576, 1, 0, 1 );
-	questGump.Send( mKiller );
+	questGump.Send( pUser );
 	questGump.Free();
 }
 
@@ -56,18 +56,27 @@ function questProgress( pUser )
 		var questSlot = myQuestData[0];
 		var questTrg = myQuestData[6];
 		// Max Quests for the Log is 10
-		if ( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
 		{
-			switch ( parseInt( questSlot ) )
+			switch( parseInt( questSlot ) )
 			{
-				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questObjective", questGump ); break;
+				case parseInt( questSlot ):
+					TriggerEvent( parseInt( questTrg ), "questObjective", questGump );
+					break;
+				default:
+					pUser.SysMessage( "Contact a GM, questProgress broke." );
+					break;
 			}
 			//Progress
-			switch ( parseInt( questSlot ) )
+			switch( parseInt( questSlot ) )
 		    {
-				case parseInt( questSlot ): TriggerEvent( parseInt( questTrg ), "questProgress", questGump, pUser ); break;
+				case parseInt( questSlot ):
+					TriggerEvent( parseInt( questTrg ), "questProgress", questGump, pUser );
+					break;
+				default:
+					pUser.SysMessage( "Contact a GM, questProgress broke." );
+					break;
 			}
-			break;
 		}
 	}
 
@@ -84,7 +93,13 @@ function onGumpPress( socket, pButton, gumpData )
 	var pUser = socket.currentChar;
 	switch ( pButton ) 
 	{
-		case 0:break;
-		case 1:questProgress( pUser ); break;
+		case 0:
+			break;
+		case 1:
+			questProgress( pUser );
+			break;
+		default:
+			pUser.SysMessage( "Contact a GM, questProgress button broke." );
+			break;
 	}
 }

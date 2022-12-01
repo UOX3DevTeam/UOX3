@@ -23,7 +23,7 @@ function onPickup( iPickedUp, pGrabber )
     case 5: //bank
      return false;
     default:
-      pGrabber.TextMessage( "Error. Redo from Start." );
+      pGrabber.TextMessage( "Error. onPickup Broke" );
     break;
    }
 }
@@ -71,7 +71,7 @@ function onPickupEvent( iPickedUp, pGrabber )
 							if( oldNumToGet >= 1 )
 							{
 								pGrabber.SysMessage( "You have " + NumToString( newNumToGet ) + " more items to collect." );
-								iPickedUp.morex = 1; // This Sets the Item to Know its been Picked up so you cannot drop and pick back up.
+								iPickedUp.morex = 1; // This Sets the Item to Know its been Picked up so you cannot drop and pick back up to get more to count towards quest.
 								TriggerEvent( 19800, "questLog", pGrabber );
 							}
 							else
@@ -83,7 +83,7 @@ function onPickupEvent( iPickedUp, pGrabber )
 					}
 					break;
 				default:
-					pGrabber.SysMessage( "Contact a GM as something has broken." );
+					pGrabber.SysMessage( "Contact a GM, onPickupEvent broke." );
 					break;
 			}
 		//}

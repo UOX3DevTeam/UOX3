@@ -21,9 +21,14 @@ function questGump( pUser, myNPC)
 
 		if( questSlot == myNPC.GetTag( "QuestSlot" ))
 		{
-			switch( parseInt(questSlot ))
+			switch( parseInt( questSlot ))
 			{
-				case parseInt(questSlot ):TriggerEvent( parseInt( questTrg ), "questOffer", questGump ); break;
+				case parseInt( questSlot ):
+					TriggerEvent( parseInt( questTrg ), "questOffer", questGump );
+					break;
+				default: 
+					pUser.SysMessage( "Contact a GM, questGump Broke." );
+					break;
 			}
 			break;
 		}

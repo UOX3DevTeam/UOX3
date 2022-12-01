@@ -7,7 +7,7 @@ function WriteQuestLog( pUser, myArray )
 	var fileName = "QuestLog_"+userAccount.id+".jsdata";
 
     mFile.Open(fileName, "w", "Quests"); // Open file for Writing
-    if ( mFile != null )
+    if( mFile != null )
     {
         // Loop through each entry in myArray and save it to a new line
         for( let i = 0; i < myArray.length; i++ )
@@ -32,7 +32,7 @@ function ReadQuestLog( pUser )
     var userAccount = pUser.account;
     var fileName = "QuestLog_"+userAccount.id+".jsdata";
 
-    // Create an array variable to store contents of address book
+    // Create an array variable to store contents of Quest System
     var myArray = [];
 
     mFile.Open( fileName, "r", "Quests" );
@@ -44,7 +44,9 @@ function ReadQuestLog( pUser )
             // Read a line of text from the file
             var line = mFile.ReadUntil( "\n" );
             if( line.length <= 1 || line == "" )
-                continue;
+            {
+				continue;
+			}
 
             // Store each line from file in myArray
             myArray.push( line );

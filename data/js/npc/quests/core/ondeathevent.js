@@ -29,7 +29,7 @@ function onDeathBlow( mKilled, mKiller )
 					}
 					break;
 				default:
-					mKiller.SysMessage( "Contact a Gm as something has broken." );
+					mKiller.SysMessage( "Contact a GM, onDeathBlow broke." );
 					break;
 			}
 		//}

@@ -26,7 +26,7 @@ function questbutton( pUser )
 	myGump.AddGump( 425, 0, 0x28C9 );
 	myGump.AddGump( 90, 33, 0x232D );
 	myGump.AddTiledGump( 130, 65, 175, 1, 0x238D );
-	for ( let i = 0; i < myArray.length; i++ ) 
+	for( let i = 0; i < myArray.length; i++ ) 
 	{
 		var myQuestData = myArray[i].split(",");
 		var myQuestSlot = myQuestData[0];
@@ -36,7 +36,7 @@ function questbutton( pUser )
 		var status = pUser.GetTag( questStatus );
 
 		var index = i % 10;
-		if ( status >= 1 && status <= 5 || status == 8 || status == 9 )
+		if( status >= 1 && status <= 5 || status == 8 || status == 9 )
 		{
 			myGump.AddHTMLGump( 98, 140 + ( index * 20 ), 270, 21, false, false, "<BASEFONT color=#FFFFFF>" + myQuestName + "</BASEFONT>" );
 			myGump.AddButton( 368, 140 + ( index * 20 ), 0x26B0, 0x26B1, 1, 0, 1 * myQuestSlot );
@@ -53,11 +53,11 @@ function onGumpPress( pSock, pButton, gumpData )
 	var pUser = pSock.currentChar;
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for ( let i = 0; i < myArray.length; i++ )
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var myQuestSlot = myQuestData[0];
-		switch ( pButton )
+		switch( pButton )
 		{
 			case 0: break;// abort and do nothing
 			case parseInt( myQuestSlot ):
