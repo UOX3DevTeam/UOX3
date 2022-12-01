@@ -1193,7 +1193,7 @@ function onCallback32( socket, ourObj )
 
 		var houseID = socket.tempint;
 		socket.tempint = 0;
-		var newMulti = CreateHouse( houseID, x, y, z, mChar.worldnumber, mChar.instanceID );
+		var newMulti = CreateHouse( houseID, x, y, z, mChar.worldnumber, mChar.instanceID, 0, false );
 
 		if( !newMulti || !newMulti.IsMulti() )
 		{

@@ -33,7 +33,7 @@ function command_SET( socket, cmdString )
 // Common Object properties
 function onCallback0( socket, ourObj )
 {
-	if( socket.GetWord( 1 ) )
+	if( socket.GetWord( 1 ) && !ValidateObject( ourObj ))
 	{
 		socket.SysMessage( "'Set': " + GetDictionaryEntry( 2353, socket.language )); // Invalid target
 		return;
