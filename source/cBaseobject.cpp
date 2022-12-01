@@ -114,7 +114,6 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion(
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
 	objSettings.reset();
-	
 	tempContainerSerial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
@@ -2423,7 +2422,7 @@ void CBaseObject::Cleanup( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces the object onto the global refresh queue
 //o------------------------------------------------------------------------------------------------o
-void CBaseObject::Dirty( UpdateTypes updateType )
+void CBaseObject::Dirty( [[maybe_unused]] UpdateTypes updateType )
 {
 	if( IsDeleted() )
 	{

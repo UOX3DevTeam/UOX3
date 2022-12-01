@@ -3339,6 +3339,7 @@
 6275=Combinas la baya y la harina en la pintura tribal que llevan los salvajes.
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
+6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -4409,6 +4410,7 @@
 10925=menos explosión
 10926=explosión
 10927=explosión mayor
+10928=Botella vacía
 // 11201 - 11400 Habilidad de Artesanía de Arco y Emplumado
 11201=MENÚ DE ARQUERÍA Y EMPLUMADO
 11202=Materiales
@@ -4807,5 +4809,31 @@
 17118=¡Tiña mi barba de este color!
 17119=¡Tiñe mi pelo y mi barba de este color!
 17120=No tienes pelo ni barba para teñir.
+// Barril de pociones
+17200=Viertes parte del contenido del barril en una botella vacía...
+17201=...y la coloca en su mochila.
+17202=No tienes botellas vacías.
+17204=No puedo alcanzarlo.
+17205=Sólo el propietario puede dejar pociones en este barril.
+17206=¡El barril no puede contener más!
+17207=No tienes espacio para la botella vacía en tu mochila.
+17208=Colocas la botella vacía en tu mochila.
+17209=Decides que sería una mala idea mezclar diferentes tipos de pociones.
+17210=El barril no está diseñado para contener ese tipo de objetos.
+17211=El barril está vacío.
+17212=El barril está casi vacío.
+17213=El barril no está muy lleno.
+17214=El barril está aproximadamente un cuarto de su capacidad.
+17215=El barril está aproximadamente un tercio lleno.
+17216=El barril está casi medio lleno.
+17217=El barril está aproximadamente medio lleno.
+17218=El barril está más de la mitad.
+17219=El barril está lleno en sus tres cuartas partes.
+17220=El barril está muy lleno.
+17221=El líquido está casi hasta arriba del barril.
+17222=El barril está completamente lleno.
+17223=Un barril especialmente forrado para pociones.
+17224=¡No hay nada en el barril para probar!
+17225=Ya conoce el contenido de este barril.
 }
 EOF

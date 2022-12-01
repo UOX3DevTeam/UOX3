@@ -15,16 +15,17 @@ protected:
 	std::vector<CItem *>	secureContainerList;
 	UI16					maxSecureContainers;
 
-	std::vector<CItem *>	trashContainerList;
-	UI16					maxTrashContainers;
-
-	std::vector<CChar *>	vendorList;
-	UI16				maxVendors;
-
 	UI16				maxFriends;
 	UI16				maxGuests;
 	UI16				maxOwners;
 	UI16				maxBans;
+
+	UI16				maxVendors;
+
+	std::vector<CItem *>	trashContainerList;
+	UI16				maxTrashContainers;
+
+	std::vector<CChar *>	vendorList;
 
 	SI16				banX;
 	SI16				banY;

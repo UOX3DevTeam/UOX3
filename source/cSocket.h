@@ -94,34 +94,51 @@ private:
 	std::vector<UI08>	largePackBuffer;
 
 	std::string		xtext;
-
-	//	Temporary variables (For targeting commands, etc)
-	CBaseObject *	tmpObj;
-	CBaseObject *	tmpObj2;
+	SI16			clickx;
+	SI16			clicky;
 	SI08			clickz;
-	UI08			addid[4];
-	SI32			tempint;
-	SI32			tempint2;
-	UI08			dyeall;
-
-	bool			newClient;
-	bool			firstPacket;
-	bool			cryptclient;
-	bool			forceOffline;
-
-	size_t			cliSocket;		// client
-	UI08			clientip[4];
-	SI16			walkSequence;
-
 	UI08			currentSpellType;
-
 	SI32			outlength;
 	SI32			inlength;
-
 	bool			logging;
+	UI08			range;
+	bool			cryptclient;
+	size_t		cliSocket;		// client
+	SI16			walkSequence;
+	size_t		postAckCount;
+	PickupLocations	pSpot;
+	SERIAL		pFrom;
+
+	SI16			pX;
+	SI16			pY;
+	SI08			pZ;
+
+	UnicodeTypes		lang;
+	ClientTypes			cliType;
+	ClientVersions	cliVerShort;
+	UI32						clientVersion;
 
 	UI32			bytesReceived;
 	UI32			bytesSent;
+	bool			receivedVersion;
+	//	Temporary variables (For targeting commands, etc)
+	CBaseObject *	tmpObj;
+	CBaseObject *	tmpObj2;
+	SI32			tempint;
+	SI32			tempint2;
+	UI08			dyeall;
+	UI08			addid[4];
+
+	bool			newClient;
+	bool			firstPacket;
+
+	bool			forceOffline;
+
+	UI08			clientip[4];
+
+	bool			loginComplete;
+	CItem *		cursorItem; //pointer to item held on mouse cursor
+
 	UI16			bytesRecvWarningCount;
 	UI16			bytesSentWarningCount;
 
@@ -129,29 +146,8 @@ private:
 
 	std::vector<SERIAL>					postAcked;
 	std::vector<SERIAL>::iterator		ackIter;
-	size_t			postAckCount;
-
-	SI16			clickx;
-	SI16			clicky;
-
-	PickupLocations	pSpot;
-	SERIAL			pFrom;
-	SI16			pX;
-	SI16			pY;
-	SI08			pZ;
-	CItem *			cursorItem; //pointer to item held on mouse cursor
-
 
 	UI32			Pack( void *pvIn, void *pvOut, SI32 len );
-
-	UnicodeTypes	lang;
-	UI32			clientVersion;
-	ClientTypes		cliType;
-	ClientVersions	cliVerShort;
-	UI08			range;
-
-	bool			receivedVersion;
-	bool			loginComplete;
 
 	// Timer Vals moved here from CChar due to their inherently temporary nature and to reduce wasted memory
 	TIMERVAL		pcTimers[tPC_COUNT];

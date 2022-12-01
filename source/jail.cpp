@@ -169,7 +169,7 @@ void CJailCell::PeriodicCheck( void )
 {
 	time_t now;
 	time( &now );
-	for( size_t i = playersInJail.size() - 1; i >= 0 && i < playersInJail.size(); --i )
+	for( size_t i = playersInJail.size(); i-- > 0 && i < playersInJail.size(); )
 	{
 		if( difftime( now, playersInJail[i]->releaseTime ) >= 0 )
 		{	// time to release them

@@ -199,6 +199,7 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 								rValue = true;
 							}
 						}
+						[[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
 							if( line != "}" )
@@ -220,7 +221,6 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 								break;
 							}
 						}
-
 					}
 				}
 			}
@@ -391,7 +391,6 @@ auto CDictionaryContainer::GetEntry( const SI32 message_number, const UnicodeTyp
 	catch(...)
 	{
 		return invalid_dictionary_string;
-		
 	}
 }
 
