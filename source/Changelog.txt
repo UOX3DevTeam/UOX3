@@ -1,3 +1,8 @@
+29/11/2022 - Xuri
+	Added some validation checks for attacker object in onDamage JS event in several scripts
+	Enabled onSellToVendor, onSoldToVendor, onBuyFromVendor and onBoughtFromVendor JS events to also run if attached to NPCs
+	Disabled location check for 'addmulti command
+
 29/11/2022 - ldilley
 	Fixed many compile-time warnings (closes Fix compile warnings #131).
 		Clang and GCC builds were both successful and completely clean using -Wall, -Wextra, and -Werror. The following various problems were corrected:
