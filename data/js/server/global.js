@@ -54,11 +54,11 @@ function CheckCustomGlobalData( fileName, dataToCheck )
 	return rValue;
 }
 
-function onQuestGump(pUser)
+function onQuestGump( pUser )
 {
     if( ValidateObject( pUser ))
     {
-      TriggerEvent( 19803, "questbutton", pUser);
+      TriggerEvent( 19803, "questbutton", pUser );
     }
     else
     {
