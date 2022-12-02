@@ -591,11 +591,11 @@ auto illinst( SI32 x = 0 ) -> void
 	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
 	EndMessage( x );
 }
-auto aus( SI32 signal ) -> void
+auto aus( [[maybe_unused]] SI32 signal ) -> void
 {
 	Console.Error( "Server crash averted! Floating point exception caught." );
 }
-void app_stopped( int sig )
+void app_stopped( [[maybe_unused]] int sig )
 {
 	// function called when signal is received.
 	if( isWorldSaving == false )
@@ -1015,7 +1015,7 @@ auto DismountCreature( CChar *s ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Global message players with shutdown message
 //o------------------------------------------------------------------------------------------------o
-auto EndMessage( SI32 x ) -> void
+auto EndMessage( [[maybe_unused]] SI32 x ) -> void
 {
 	x = 0; // Really, then why take a parameter?
 	const UI32 iGetClock = cwmWorldState->GetUICurrentTime();
@@ -2615,7 +2615,7 @@ auto InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for a multi at object's location and assigns any multi found to object
 //o------------------------------------------------------------------------------------------------o
-auto FindMultiFunctor( CBaseObject *a, UI32 &b, void *extraData ) -> bool
+auto FindMultiFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData ) -> bool
 {
 	if( ValidateObject( a ))
 	{
@@ -3794,7 +3794,7 @@ auto UpdateFlag( CChar *mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send mapchange packet to client to teleport player to new world/map
 //o------------------------------------------------------------------------------------------------o
-void SendMapChange( UI08 worldNumber, CSocket *sock, bool initialLogin )
+void SendMapChange( UI08 worldNumber, CSocket *sock, [[maybe_unused]] bool initialLogin )
 {
 	if( sock )
 	{

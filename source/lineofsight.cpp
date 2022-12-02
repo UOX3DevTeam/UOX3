@@ -266,7 +266,7 @@ inline auto Line3D_st::Projection2D( void ) const ->Line2D_st
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if maptile blocks Line of Sight
 //o------------------------------------------------------------------------------------------------o
-bool MapTileBlocks( CSocket *mSock, bool nostatic, Line3D_st LoS, SI16 x1, SI16 y1, SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
+bool MapTileBlocks( [[maybe_unused]] CSocket *mSock, bool nostatic, Line3D_st LoS, SI16 x1, SI16 y1, [[maybe_unused]] SI08 z, SI16 x2, SI16 y2, UI08 worldNum, SI08 z2Top )
 {
 	// Map tile at previous coordinate along the LoS path
 	auto srcMap = Map->SeekMap( x1, y1, worldNum );
@@ -402,13 +402,13 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 	else if( distX <= DIST_BUILDRANGE && distY <= DIST_BUILDRANGE )
 	{
 		const UI16 multiId = static_cast<UI16>( toCheck->GetId() - 0x4000 );
-		SI32 length = 0;
-		
+		[[maybe_unused]] SI32 length = 0;
+
 		if( !Map->MultiExists( multiId ))
 		{
 			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			auto map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
-			
+
 			if( map1.CheckFlag( TF_WET )) // is it water?
 			{
 				toCheck->SetId( 0x4001 );
@@ -422,7 +422,7 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 		else
 		{
 			for( auto &multi : Map->SeekMulti( multiId ).items )
-			{				
+			{
 				if( multi.flag )
 				{
 					const SI16 checkX = ( curX + multi.offsetX );
@@ -648,7 +648,7 @@ auto LineOfSight( CSocket *mSock, CChar *mChar, SI16 destX, SI16 destY, SI08 des
 			// If item toCheck is at the exact same spot as the target location, it should not block LoS.
 			if( toCheck->GetX() == destX && toCheck->GetY() == destY && toCheck->GetZ() == destZ )
 				continue;
-				
+
 			const UI16 idToPush = DynamicCanBlock( toCheck, collisions, collisioncount, distX, distY, x1, x2, y1, y2, dz );
 			if( idToPush != INVALIDID )
 			{

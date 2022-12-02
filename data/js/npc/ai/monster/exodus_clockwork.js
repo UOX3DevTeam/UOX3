@@ -84,10 +84,13 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 			DoMovingEffect( exodusNPC, exodusNPC, 0x375a, 0, 0x10, false, 0x089F, 0x0 );
 			exodusNPC.SoundEffect( 0x02f4, true );
 
-			var socket = attacker.socket;
-			if( socket != null )
+			if( ValidateObject( attacker ))
 			{
-				socket.SysMessage( GetDictionaryEntry( 9130, socket.language )); // Your weapon cannot penetrate the creature's magical barrier.
+				var socket = attacker.socket;
+				if( socket != null )
+				{
+					socket.SysMessage( GetDictionaryEntry( 9130, socket.language )); // Your weapon cannot penetrate the creature's magical barrier.
+				}
 			}
 			return false;
 		}
@@ -96,21 +99,24 @@ function onDamage( exodusNPC, attacker, damageValue, damageType )
 	{
 		if( immuneToMagic )
 		{
-			// Creature is immune to Magical damage, so return false...
-			// ... after returning fire in the shape of an e-bolt!
-			if( RandomNumber( 0, 1 ))
+			if( ValidateObject( attacker ))
 			{
-				// Shoot energy bolt at attacker
-				var eBoltSpell = Spells[42]; // Fetch energy bolt data
-				exodusNPC.SoundEffect( eBoltSpell.soundEffect, true );
-				exodusNPC.SpellMoveEffect( attacker, eBoltSpell );
-				attacker.Damage( eBoltSpell.baseDmg, 6, exodusNPC );
-			}
+				// Creature is immune to Magical damage, so return false...
+				// ... after returning fire in the shape of an e-bolt!
+				if( RandomNumber( 0, 1 ))
+				{
+					// Shoot energy bolt at attacker
+					var eBoltSpell = Spells[42]; // Fetch energy bolt data
+					exodusNPC.SoundEffect( eBoltSpell.soundEffect, true );
+					exodusNPC.SpellMoveEffect( attacker, eBoltSpell );
+					attacker.Damage( eBoltSpell.baseDmg, 6, exodusNPC );
+				}
 
-			var socket = attacker.socket;
-			if( socket != null )
-			{
-				socket.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+				var socket = attacker.socket;
+				if( socket != null )
+				{
+					socket.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+				}
 			}
 			return false;
 		}

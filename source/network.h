@@ -141,15 +141,15 @@ public:
 	{
 		return this->raw();
 	}
-	
+
 	auto GetSize() const -> size_t
 	{
 		return this->size();
 	}
-	
+
 	// End compatability of original CPacketStream
 	//o------------------------------------------------------------------------------------------------o
-	
+
 	//o------------------------------------------------------------------------------------------------o
 	// Normally part of strutil, but included here for stand alone
 public:
@@ -159,14 +159,14 @@ public:
 
 	// Dumps a byte buffer, formatted to a provided stream.
 	// The entries_line indicate how many bytes to display per line.
-	static auto DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix = radix_t::hex, int entries_line = 8 ) -> void;
-	
+	static auto DumpByteBuffer( std::ostream &output, const std::uint8_t *buffer, std::size_t length, radix_t radix = radix_t::hex, std::size_t entries_line = 8 ) -> void;
+
 private:
 
 	// Convert a bool to a string
 	// the true_value/false_value are returned based on the bool
 	static auto ntos( bool value, const std::string &true_value = "true", const std::string &false_value = "false" ) -> std::string;
-	
+
 
 	// Convert a number to a string, with options on radix, prefix, size, pad
 	// Radix indicates the radix the string will represent
@@ -234,8 +234,7 @@ private:
 	}
 	// End of strutil inclusion
 	//=============================================================================================
-	
-	
+
 protected:
 	mutable int _index;
 	std::vector<std::uint8_t> _bytedata;
@@ -243,25 +242,25 @@ protected:
 	auto Exceeds( int offset, int bytelength, bool expand ) -> bool;
 public:
 	ByteBuffer_t( int size = 0, int reserve = 0 );
-	
+
 	auto size() const -> size_t;
 	auto size( int value, std::uint8_t fill = 0 ) -> void;
-	
+
 	auto index() const -> int;
 	auto index( int value ) -> void;
-	
+
 	auto raw() const -> const std::uint8_t*;
 	auto raw() -> std::uint8_t*;
-	
+
 	auto operator[]( int index ) const -> const std::uint8_t &;
 	auto operator[]( int index ) -> std::uint8_t &;
-	
+
 	auto Fill( std::uint8_t value, int offset, int length ) -> void;
 	auto LogByteBuffer( std::ostream &output, radix_t radix = radix_t::hex, int entries_line = 8 ) const -> void;
-	
+
 	// we need to read :integral/floating, vectors/list/strings
 	template <typename T>
-	auto read( int offset =- 1, int amount =- 1, bool reverse = true ) const -> T
+	auto read( int offset =- 1, [[maybe_unused]] int amount =- 1, bool reverse = true ) const -> T
 	{
 		if( offset < 0 )
 		{
@@ -419,15 +418,16 @@ public:
 			return *this;  // we put this here, versue at the end, for we want a compile error if a type not caught with if constexpr. So a return in each if constexpr at the top level
 		}
 	}
-	
+
 	template<typename T>
 	auto write( int offset, const T &value, int amount = -1, bool reverse = true, bool expand = true ) -> ByteBuffer_t&
 	{
+    (void)amount; // unused variable
 		if( offset < 0 )
 		{
 			offset = _index;
 		}
-		
+
 		if constexpr( std::is_integral_v<T> || std::is_floating_point_v<T> )
 		{
 			// we ignore amount for integrals and floating point
@@ -438,7 +438,7 @@ public:
 			}
 			if( Exceeds( offset, size, expand ))
 			{
-				
+
 				throw ByteBufferBounds_st( offset, size, static_cast<int>( _bytedata.size() ));
 			}
 			// we need to write it

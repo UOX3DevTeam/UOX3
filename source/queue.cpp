@@ -71,9 +71,9 @@ SERIAL PageVector::Add( CHelpRequest *toAdd )
 	if( adding == nullptr )
 		return INVALIDSERIAL;
 #endif
-#pragma note( "Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?" )
-	memcpy( adding, toAdd, sizeof( CHelpRequest ));
-	//*adding = *toAdd; // Maybe we should do this instead?
+	// Note: Bad idea to use memcpy to copy one class object to another (especially if the class contains an std::string)?"
+	//memcpy( adding, toAdd, sizeof( CHelpRequest ));
+	*adding = *toAdd; // Maybe we should do this instead?
 	requestQueue.push_back( adding );
 	adding->RequestId( ++maxId );
 	std::sort( requestQueue.begin(), requestQueue.end() );

@@ -462,3 +462,56 @@ function ApplyExplosionDamage( timerObj, targetChar )
 		targetChar.Damage( RandomNumber( timerObj.lodamage, timerObj.hidamage ), 5 );
 	}
 }
+
+// Show real name to those who have identified potion
+function onNameRequest( iPotion, pUser )
+{
+	// Default name
+	var nameString = iPotion.name;
+
+	if( iPotion.name2 != "#" )
+	{
+		// Potion has a second name revealed only to people who've used taste identification on it
+		var listOfTastersTemp = iPotion.GetTag( "listOfTasters" );
+		if( listOfTastersTemp.length > 0 )
+		{
+			listOfTasters = listOfTastersTemp.split( "," ).map( Number );
+			if( listOfTasters && listOfTasters.indexOf( pUser.serial ) != -1 )
+			{
+				// Show identified name of potion in tooltip
+				nameString = iPotion.name2;
+			}
+		}
+	}
+
+	return nameString;
+}
+
+// Add tooltip details
+function onTooltip( iPotion, pSocket )
+{
+	var pUser = null;
+	if( pSocket != null )
+	{
+		pUser = pSocket.currentChar;
+	}
+
+	var tooltipText = "";
+	var listOfTasters = new Array;
+	if( iPotion.name2 != "#" )
+	{
+		// Check if player is on potion's list of players who have identified its taste
+		var listOfTastersTemp = iPotion.GetTag( "listOfTasters" );
+		if( listOfTastersTemp.length > 0 )
+		{
+			listOfTasters = listOfTastersTemp.split( "," ).map( Number );
+			if( listOfTasters && listOfTasters.indexOf( pUser.serial ) == -1 )
+			{
+				// If potion has not been identified by player, add [Unidentified] tooltip entry
+				tooltipText = GetDictionaryEntry( 9402, pSocket.language ); // [Unidentified]
+			}
+		}
+	}
+
+	return tooltipText;
+}

@@ -208,7 +208,7 @@ public:
 	auto IsRoadId() const -> bool
 	{
 		auto rValue = false;
-		for( auto j = 0; j < roadIds.size(); j += 2 )
+		for( size_t j = 0; j < roadIds.size(); j += 2 )
 		{
 			if( textureId >= roadIds[j] && textureId <= roadIds[j + 1] )
 			{
@@ -227,8 +227,8 @@ enum TileType_t { terrain, art, dyn };
 
 struct Tile_st
 {
-	std::uint16_t tileId;	// for instance, this should be a tileid_t , that would make sense!
 	TileType_t type;
+	std::uint16_t tileId;	// for instance, this should be a tileid_t , that would make sense!
 	std::int8_t altitude;
 	std::uint16_t staticHue;
 	union

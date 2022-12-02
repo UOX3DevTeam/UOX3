@@ -3339,6 +3339,7 @@
 6275= Combina-se a baga e a farinha com a tinta tribal usada pelos selvagens.
 6276=Não se tem a capacidade de cozinhar para criar a pintura corporal.
 6277=Denominação de recursos não encontrada na lista de recursos utilizados para confeccionar item.
+6278=É preciso usar a sua capacidade de identificação gustativa para saber mais sobre esta poção.
 // [7000-7499] AI Scripts
 7000=Tu és um criminoso e não podes aceder à tua caixa bancária.
 7001=Que artigo deseja depositar na sua caixa bancária?
@@ -4408,6 +4409,7 @@
 10925=explosão mais inútil
 10926=explosão
 10927=explosão mais acentuada
+10928=Garrafa Vazia
 // 11201 - 11400 Habilidade de Artesanato em Bowcraft Fletching
 11201=MENÚ DE AVIÕES E FLETCHING
 11202=Materiais
@@ -4806,5 +4808,31 @@
 17118=Tinja a minha barba desta cor!
 17119=Pintar o meu cabelo e barba desta cor!
 17120=Não tem cabelo nem barba para tingir.
+// Barril de poção
+17200=Deitas parte do conteúdo do barril numa garrafa vazia...
+17201=...e coloque-o na sua mochila.
+17202=Não tens nenhuma garrafa vazia.
+17204=Não consigo chegar a isso.
+17205=Só o proprietário pode deixar cair poções neste barril.
+17206= O barril não aguenta mais!
+17207=Você não tem espaço para a garrafa vazia na sua mochila.
+17208=Você coloca a garrafa vazia na sua mochila.
+17209= Decide que seria uma má ideia misturar diferentes tipos de poções.
+17210=O barril não é concebido para segurar esse tipo de objecto.
+17211=O barril está vazio.
+17212=O barril está quase vazio.
+17213=O barril não está muito cheio.
+17214=O barril está cerca de um quarto cheio.
+17215=O barril está cerca de um terço cheio.
+17216=O barril está quase meio cheio.
+17217=O barril está aproximadamente meio cheio.
+17218=O barril está mais de meio cheio.
+17219=O barril está cerca de três quartos cheio.
+17220=O barril está muito cheio.
+17221=O líquido está quase no topo do barril.
+17222=O barril está completamente cheio.
+17223=Um barril especialmente forrado para poções.
+17224=Não há nada no barril a saborear!
+17225=Já está familiarizado com o conteúdo deste barril.
 }
 EOF
