@@ -48,6 +48,7 @@ function onUseChecked( pUser, iUsed )
 		{
 			socket.tempObj = iUsed;
 			socket.CustomTarget( 0 );
+			iUsed.Refresh();
 		}
 	}
 	return false;
@@ -85,12 +86,12 @@ function onCallback0( socket, myTarget)
 			Console.Error( "No valid bankbox found for character " + pUser.name + " with serial " + ( pUser.serial ).toString() + "!" );
 			return false;
 		}
-		/*if ( bankBox && myTarget.container && (( myTarget.container == pUser ) || ( myTarget.container == pUser.pack )))
+		else if( !ValidateObject( myTarget.container ) || myTarget.container != pUser.pack )
 		{
 			socket.SysMessage( "You may only send items from your backpack to your bank box." ); // You may only send items from your backpack to your bank box.
 			return false;
 		}
-		else*/ if( myTarget.type == 1 || myTarget == iUsed )
+		else if( myTarget.type == 1 || myTarget == iUsed )
 		{
 			socket.SysMessage( "You cannot send a container through the bag of sending." ); // You may only send items from your backpack to your bank box.
 			return false;
@@ -107,7 +108,7 @@ function onCallback0( socket, myTarget)
 		}
 		else if( requiredCharges > Charges )
 		{
-			pUser.SysMessage( "You don't have enough charges to send that much weight" ); // This item is out of charges.
+			pUser.SysMessage( "You don't have enough charges to send that much weight" ); // You don't have enough charges to send that much weight
 			return false;
 		}
 		else
@@ -115,6 +116,7 @@ function onCallback0( socket, myTarget)
 			iUsed.SetTag( "Charges", Charges - requiredCharges );
 			socket.SysMessage( "The item was placed in your bank box." ); // The item was placed in your bank box.
 			myTarget.container = bankBox;
+			iUsed.Refresh();
 		}
 	}
 	else

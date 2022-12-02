@@ -389,7 +389,9 @@ function rewardPlayer( myPlayer, myNPC )
 		case 1: goldToGive = 75; break;
 		case 2: goldToGive = 100; break;
 	}
-	CreateDFNItem( myPlayer.socket, myPlayer, "0x0EED", goldToGive, "ITEM", true );
+	CreateDFNItem( myPlayer.socket, myPlayer, "0x0eed", goldToGive, "ITEM", true );
+	CreateDFNItem( myPlayer.socket, myPlayer, "bagofsending", 1, "ITEM", true );
+	CreateDFNItem( myPlayer.socket, myPlayer, "powderoftranslocation", 50, "ITEM", true );
 	myPlayer.SoundEffect( 0x0037, false );
 }
 
