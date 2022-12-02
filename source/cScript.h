@@ -136,9 +136,9 @@ private:
 	JSContext *			targContext;
 	JSObject *			targObject;
 
+	bool				isFiring;
 	UI08				runTime;
 
-	bool				isFiring;
 	std::bitset<64>		eventPresence[3];
 	std::bitset<64>		needsChecking[3];
 	bool				EventExists( ScriptEvent eventNum ) const;
@@ -190,7 +190,7 @@ public:
 	SI08		OnDispel( CBaseObject *dispelled );
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
-	std::string		OnTooltip( CBaseObject *myObj );
+	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
 	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );

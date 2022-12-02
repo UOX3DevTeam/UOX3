@@ -3339,6 +3339,7 @@
 6275=You combine the berry and the flour into the tribal paint worn by the savages.
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
+6278=You have to use your taste identification skill to know more about this potion.
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -4409,6 +4410,7 @@
 10925=lesser explosion
 10926=explosion
 10927=greater explosion
+10928=Empty Bottle
 // 11201 - 11400 Bowcraft Fletching Crafting Skill
 11201=BOWCRAFT AND FLETCHING MENU
 11202=Materials
@@ -4807,6 +4809,32 @@
 17118=Dye my beard this color!
 17119=Dye my hair and beard this color!
 17120=You have no hair or beard to dye.
+// Potion Keg
+17200=You pour some of the keg's contents into an empty bottle...
+17201=...and place it into your backpack.
+17202=You have no empty bottles.
+17204=I can't reach that.
+17205=Only the owner can drop potions in this keg.
+17206=The keg will not hold any more!
+17207=You don't have room for the empty bottle in your backpack.
+17208=You place the empty bottle in your backpack.
+17209=You decide that it would be a bad idea to mix different types of potions.
+17210=The keg is not designed to hold that type of object.
+17211=The keg is empty.
+17212=The keg is nearly empty.
+17213=The keg is not very full.
+17214=The keg is about one quarter full.
+17215=The keg is about one third full.
+17216=The keg is almost half full.
+17217=The keg is approximately half full.
+17218=The keg is more than half full.
+17219=The keg is about three quarters full.
+17220=The keg is very full.
+17221=The liquid is almost to the top of the keg.
+17222=The keg is completely full.
+17223=A specially lined keg for potions.
+17224=There is nothing in the keg to taste!
+17225=You are already familiar with this keg's contents.
 //Bulk Order Deed System
 17250=A bulk order
 17251=Amount to make:

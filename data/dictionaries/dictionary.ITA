@@ -4409,6 +4409,7 @@
 10925=maggiore esplosione
 10926=esplosione
 10927=maggiore esplosione
+10928=Bottiglia vuota
 // 11201 - 11400 Abilità Artigianale Bowcraft Fletching
 11201=MENÙ ARCIERIA E FLETCHING
 11202=Materiali
@@ -4807,5 +4808,31 @@
 17118=Tingi la mia barba di questo colore!
 17119=Tingi i miei capelli e la mia barba di questo colore!
 17120=Non hai capelli o barba da tingere.
+// Fusto di pozione
+17200=Versate un po' del contenuto del barilotto in una bottiglia vuota...
+17201=... e la metti nello zaino.
+17202=Non hai bottiglie vuote.
+17204=Non ci arrivo.
+17205=Solo il proprietario può gettare pozioni in questo barile.
+17206=Il barile non può più contenere nulla!
+17207=Non c'è spazio per la bottiglia vuota nello zaino.
+17208=Metti la bottiglia vuota nello zaino.
+17209=Decidi che sarebbe una cattiva idea mescolare diversi tipi di pozioni.
+17210=Il barilotto non è progettato per contenere quel tipo di oggetto.
+17211=Il barilotto è vuoto.
+17212=Il barilotto è quasi vuoto.
+17213=Il barilotto non è molto pieno.
+17214=Il barilotto è pieno per circa un quarto.
+17215=Il barilotto è pieno per circa un terzo.
+17216=Il barilotto è quasi mezzo pieno.
+17217=Il fusto è pieno per circa metà.
+17218=Il fusto è pieno per più di metà.
+17219=Il fusto è pieno per circa tre quarti.
+17220=Il fusto è molto pieno.
+17221=Il liquido è quasi in cima al fusto.
+17222=Il fusto è completamente pieno.
+17223=Un barilotto appositamente rivestito per le pozioni.
+17224=Non c'è nulla da assaggiare nel barilotto!
+17225=Conosci già il contenuto di questo barilotto.
 }
 EOF

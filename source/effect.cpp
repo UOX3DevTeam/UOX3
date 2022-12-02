@@ -398,7 +398,7 @@ void cEffects::Bolteffect( CChar *player )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Explode an item, dealing damage to nearby characters and deleting the item
 //o------------------------------------------------------------------------------------------------o
-auto ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType = 0, bool explodeNearby = true ) -> void
+auto ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, [[maybe_unused]] UI08 damageType = 0, bool explodeNearby = true ) -> void
 {
 	auto c = mSock->CurrcharObj();
 
@@ -416,7 +416,7 @@ auto ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage = 0, UI08 damageType
 		Effects->PlayStaticAnimation( nItem, 0x36B0, 0x00, 0x09, 0x00 );
 		Effects->PlaySound( nItem, 0x0207 );
 	}
-	
+
 	UI32 len = nItem->GetTempVar( CITV_MOREX ) / 250; //4 square max damage at 100 alchemy
 	if( damage == 0 )
 	{
@@ -1090,7 +1090,7 @@ auto cEffects::CheckTempeffects() -> void
 		}
 		removeEffects.push_back( Effect );
 	}
-	std::for_each( removeEffects.begin(), removeEffects.end(), [this]( CTEffect *effect )
+	std::for_each( removeEffects.begin(), removeEffects.end(), []( CTEffect *effect )
 	{
 		cwmWorldState->tempEffects.Remove( effect, true );
 	});
@@ -1186,7 +1186,7 @@ void ReverseEffect( CTEffect *Effect )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to a character
 //o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr )
+void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, [[maybe_unused]] CItem *targItemPtr )
 {
 	//if( !ValidateObject( source ) || !ValidateObject( dest ))
 	if( !ValidateObject( dest ))
@@ -1231,7 +1231,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			}
 		}
 	}
-	std::for_each( removeEffect.begin(), removeEffect.end(), [this]( CTEffect *effect )
+	std::for_each( removeEffect.begin(), removeEffect.end(), []( CTEffect *effect )
 	{
 		cwmWorldState->tempEffects.Remove( effect, true );
 	});
@@ -1695,7 +1695,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a temp effect to an item
 //o------------------------------------------------------------------------------------------------o
-void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 )
+void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, [[maybe_unused]] UI16 more3 )
 {
 	if( !ValidateObject( dest ))
 		return;

@@ -123,7 +123,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 	bool bBraces2[3]= { false, false, false };
 	CAccountBlock_st	actb;
 	UI16 wAccountId		= 0x0000;
-	UI16 wAccessId		= 0x0000;
+	[[maybe_unused]] UI16 wAccessId    = 0x0000;
 	UI16 wAccountCount	= 0x0000;
 	UI08 nLockCount		= 0x00;
 	bool bSkipUAD		= false;
@@ -498,15 +498,20 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			}
 			else
 			{
-				if( !r.empty() && r.length() != 0 && oldstrutil::value<SI32>( r ) != INVALIDSERIAL )
+				r = oldstrutil::trim(r);
+				if( !r.empty() )
 				{
-					actb.dwCharacters[charNum-1] = static_cast<UI32>( std::stoul( r, nullptr, 0 ));
-					actb.lpCharacters[charNum-1] = CalcCharObjFromSer( actb.dwCharacters[charNum-1] );
-				}
-				else
-				{
-					actb.dwCharacters[charNum-1] = INVALIDSERIAL;
-					actb.lpCharacters[charNum-1] = nullptr;
+					auto temp = oldstrutil::value<std::int64_t>(r); // int64_t used for promotion from 32-bit int
+					if( (temp > 0) && (temp < static_cast<std::int64_t>(INVALIDSERIAL)) )
+					{
+						actb.dwCharacters[charNum-1] = static_cast<UI32>(std::stoul( r, nullptr, 0 ));
+						actb.lpCharacters[charNum-1] = CalcCharObjFromSer( actb.dwCharacters[charNum-1] );
+					}
+					else
+					{
+						actb.dwCharacters[charNum-1] = INVALIDSERIAL;
+						actb.lpCharacters[charNum-1] = nullptr;
+					}
 				}
 			}
 			std::getline( fs2, sLine );
@@ -942,7 +947,7 @@ UI16 cAccountClass::Load( void )
 	sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
 	// Ok start the loop and process
 	bool bBraces[3]					= { false, false, false };
-	bool bBraces2[3]				= { false, false, false };
+	[[maybe_unused]] bool bBraces2[3] 				= { false, false, false };
 	CAccountBlock_st actb;
 	UI16 wAccountId					= 0x0000;
 	UI16 wAccountCount				= 0x0000;
@@ -1232,7 +1237,7 @@ UI16 cAccountClass::Load( void )
 		actb.reset();
 	}
 	// We need to see if there are any new accounts to come.
-	UI16 wImportCount = 0x0000;
+	[[maybe_unused]] UI16 wImportCount = 0x0000;
 	wImportCount = ImportAccounts();
 	// Return the number of accounts loaded
 	return static_cast<UI16>( m_mapUsernameMap.size() );
@@ -1768,7 +1773,7 @@ CAccountBlock_st& cAccountClass::GetAccountById( UI16 wAccountId )
 //|							file, even though the access.adm will still eventually
 //|							be used for server sharing.
 //o------------------------------------------------------------------------------------------------o
-UI16 cAccountClass::Save( bool bForceLoad )
+UI16 cAccountClass::Save( [[maybe_unused]] bool bForceLoad )
 {
 	// Ok were not going to mess around. so we open truncate the file and write
 	std::string sTemp( m_sAccountsDirectory );

@@ -166,7 +166,7 @@ UI16 CGump::StartPage( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Callback for gumps.cpp
 //o------------------------------------------------------------------------------------------------o
-void MultiGumpCallback( CSocket *mySocket, SERIAL gumpSerial, UI32 button )
+void MultiGumpCallback( [[maybe_unused]] CSocket *mySocket, SERIAL gumpSerial, [[maybe_unused]] UI32 button )
 {
 	if( gumpSerial == 0 ) // Do nothing on close gump
 		return;
@@ -179,4 +179,3 @@ void MultiGumpCallback( CSocket *mySocket, SERIAL gumpSerial, UI32 button )
 		}
 	};
 }
-

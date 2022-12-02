@@ -27,7 +27,7 @@ namespace oldstrutil
 				   []( unsigned char c ){ return std::tolower( c ); } );
 		return rValue;
 	}
-	
+
 	//=====================================================================
 	// Uppercase the string
 	std::string upper( const std::string &value )
@@ -37,7 +37,7 @@ namespace oldstrutil
 				   []( unsigned char c ){ return std::toupper( c ); } );
 		return rValue;
 	}
-	
+
 	//=====================================================================
 	// Remove leading whitespace
 	std::string ltrim( const std::string &value )
@@ -54,7 +54,7 @@ namespace oldstrutil
 				count++;
 			}
 		}
-		
+
 		return std::string();
 	}
 
@@ -74,7 +74,7 @@ namespace oldstrutil
 				count++;
 			}
 		}
-		
+
 		return std::string();
 	}
 
@@ -164,7 +164,7 @@ namespace oldstrutil
 	//+++++++++++++++++++++++++++++++++++++
 	std::string format( std::size_t maxsize, const std::string fmtstring, ... )
 	{
-		
+
 		std::va_list argptr;
 		va_start( argptr, fmtstring );
 		auto test = oldstrutil::format( fmtstring, argptr );
@@ -221,7 +221,7 @@ namespace oldstrutil
 		{
 			return format;
 		}
-		auto index = 0;
+		size_t index = 0;
 		while( pos != std::string::npos )
 		{
 			if( index >= values.size() )
@@ -237,12 +237,12 @@ namespace oldstrutil
 		}
 		return format;
 	}
-	
+
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::vector<std::string> sections( const std::string& value, const std::string& sep, std::string::size_type start, std::string::size_type end )
 	{
 		std::vector<std::string> rValue;
-		
+
 		auto pos = value.find( sep, start );
 		while( pos < end )
 		{
@@ -262,13 +262,13 @@ namespace oldstrutil
 		rValue.push_back( value.substr( start, pos - start ));
 		return rValue;
 	}
-	
+
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::uintmax_t sectionCount( const std::string& value, const std::string& sep, std::string::size_type start, std::string::size_type end )
 	{
 		return oldstrutil::sections( value, sep, start, end ).size();
 	}
-	
+
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::string indexSection( const std::string& value, std::uintmax_t sectionindex, const std::string& sep, std::string::size_type start, std::string::size_type end )
 	{
@@ -279,19 +279,18 @@ namespace oldstrutil
 		}
 		throw std::runtime_error( oldstrutil::format( "Section index %ul exceeded size %ul from sections %s", sectionindex, sec.size(), value.c_str() ));
 	}
-	
+
 	//+++++++++++++++++++++++++++++++++++++++++
 	std::string extractSection( const std::string& value, const std::string& sep, std::string::size_type start, std::string::size_type stop )
 	{
 		std::string data;
-		int count = -1;
+		size_t count = 0;
 		size_t startoffset = 0;
 		size_t stopoffset = 0;
 		bool match = false;
 		stopoffset = value.find( sep, startoffset );
 		while( startoffset != std::string::npos )
 		{
-			count++;
 			if( count == start )
 			{
 				match = true;
@@ -311,7 +310,7 @@ namespace oldstrutil
 					}
 				}
 				break;
-				
+
 			}
 			else
 			{
@@ -325,6 +324,7 @@ namespace oldstrutil
 				}
 				stopoffset = value.find( sep, startoffset );
 			}
+			count++;
 		}
 		if( match )
 		{
@@ -337,7 +337,7 @@ namespace oldstrutil
 		}
 		return data;
 	}
-	
+
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::vector<std::string> breakSize( std::size_t maxsize, const std::string& input )
 	{
@@ -355,7 +355,7 @@ namespace oldstrutil
 		}
 		return total;
 	}
-	
+
 	//++++++++++++++++++++++++++++++++++++++++++
 	std::string fixDirectory( const std::string& base )
 	{
@@ -370,28 +370,28 @@ namespace oldstrutil
 		{
 			data = data + "/";
 		}
-		
+
 		return data;
 	}
-	
+
 	//+++++++++++++++++++++++++++++++++++++++++++
 	std::string replaceSlash( std::string& data )
 	{
 		std::string value = "\\";
 		std::string::size_type index = 0;
-		
+
 		while(( index = data.find( value, index )) != std::string::npos )
 		{
 			data = data.replace( index, 1, "/" );
 		}
 		return data;
 	}
-	
+
 	std::string number( char n, int base )
 	{
 		std::stringstream conversion;
 		auto value = static_cast<std::int16_t>( n );
-		
+
 		switch( base )
 		{
 			case 10:
@@ -407,14 +407,14 @@ namespace oldstrutil
 				conversion << std::dec << value;
 				break;
 		}
-		
+
 		return conversion.str();
 	}
 	std::string number( unsigned char n, int base )
 	{
 		std::stringstream conversion;
 		auto value = static_cast<std::uint16_t>( n );
-		
+
 		switch( base )
 		{
 			case 10:
@@ -430,10 +430,10 @@ namespace oldstrutil
 				conversion << std::dec << value;
 				break;
 		}
-		
+
 		return conversion.str();
 	}
-	
+
 #if defined( _MSC_VER )
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -442,7 +442,7 @@ namespace oldstrutil
 	std::wstring stringToWstring( const std::string& t_str )
 	{
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
-		
+
 		// use converter (.to_bytes: wstr->str, .from_bytes: str->wstr)
 		try
 		{
@@ -456,7 +456,7 @@ namespace oldstrutil
 	}
 #if defined( _MSC_VER )
 #pragma warning(pop)
-#endif	
+#endif
 
 	// "Encode" a wstring into UTF8, while retaining any special wide characters
 	std::string wStringToString( const std::wstring& t_str )

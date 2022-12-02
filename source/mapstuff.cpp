@@ -39,7 +39,7 @@ auto CMulHandler::LoadMapsDFN( const std::string &uodir ) -> std::map<int, MapDf
 	auto entrycount = FileLookup->CountOfEntries( maps_def );
 	std::map<int, MapDfnData_st> results;
 	auto uopath = std::filesystem::path( uodir );
-	for( auto i = 0; i < entrycount; i++ )
+	for( size_t i = 0; i < entrycount; i++ )
 	{
 		auto toFind = FileLookup->FindEntry( "MAP "s + std::to_string( i ), maps_def );
 		if( toFind == nullptr )
@@ -547,8 +547,8 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 		return 0;
 
 	UI16 multiId = static_cast<UI16>( i->GetId() - 0x4000 );
-	SI32 length = 0;
-	
+	[[maybe_unused]] SI32 length = 0;
+
 	if( !MultiExists( multiId ))
 	{
 		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
@@ -1700,7 +1700,7 @@ auto ArtBlock::LoadArtBlock( int length, std::uint8_t *data, const TileInfo *inf
 //|	UltimaMap
 //o------------------------------------------------------------------------------------------------o
 //o------------------------------------------------------------------------------------------------o
-UltimaMap::UltimaMap() : _diffCount( 0 ), _diffTerrain( 0 ), _width( 0 ), _height( 0 ), tileInfo( nullptr )
+UltimaMap::UltimaMap() : tileInfo( nullptr ), _width( 0 ), _height( 0 ), _diffCount( 0 ), _diffTerrain( 0 )
 {
 }
 //=========================================================
@@ -1836,7 +1836,7 @@ auto UltimaMap::LoadArt( const std::string &mulFile, const std::string &idxFile 
 			auto offset = std::uint32_t( 0 );
 			auto length = std::int32_t( 0 );
 			auto extra = std::uint32_t( 0 );
-			auto block = 0;
+			size_t block = 0;
 			while( idx.good() && !idx.eof() )
 			{
 				idx.read( reinterpret_cast<char*>( &offset ), 4 );
@@ -1961,11 +1961,11 @@ auto UltimaMap::BlockAndIndexFor( int x, int y ) const -> std::tuple<int, int, i
 	return std::make_tuple( block, x - offset.first, y - offset.second );
 }
 //=========================================================
-auto UltimaMap::ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
+auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool
 {
 	auto count = data.size() / 196;
-	auto block = ( static_cast<int>( index ) * 0xC4000 ) / 196;
-	for( auto i = 0; i < count; ++i )
+	size_t block = ( static_cast<int>( index ) * 0xC4000 ) / 196;
+	for( size_t i = 0; i < count; ++i )
 	{
 		auto ptr = data.data() + ( i * 196 );
 		if( block < _terrain.size() )

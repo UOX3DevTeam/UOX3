@@ -149,7 +149,7 @@ void NextCall( CSocket *s, bool isGM )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Replaces legacy spawner objects that have incorrect item type
 //o------------------------------------------------------------------------------------------------o
-bool FixSpawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool FixSpawnFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ))
@@ -718,7 +718,7 @@ void Command_SetShopRestockRate( CSocket *s )
 		s->SysMessage( 57 ); // Invalid number of parameters.
 }
 
-bool RespawnFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool RespawnFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )
 {
 	bool retVal = true;
 	if( ValidateObject( a ))
@@ -1508,7 +1508,7 @@ void CCommands::CommandReset()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unregisters a command from JS command table
 //o------------------------------------------------------------------------------------------------o
-void CCommands::UnRegister( const std::string &cmdName, cScript *toRegister )
+void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
 	Console.Print( oldstrutil::format( "   UnRegistering command %s\n", cmdName.c_str() ));
