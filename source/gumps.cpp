@@ -1907,7 +1907,6 @@ bool CPIGumpMenuSelect::Handle( void )
 	Console << "Type is " << gumpId << " button is " <<  buttonId << myendl;
 #endif
 
-	CItem *j = nullptr;
 	switch( gumpId )
 	{
 		case 3:	HandleTownstoneButton( tSock, buttonId, id, gumpId );	break;	// Townstones
