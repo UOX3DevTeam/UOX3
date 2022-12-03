@@ -359,14 +359,14 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 				for( size_t j = 0; j < resEntry.idList.size(); j++ )
 				{
 					jsval targId = INT_TO_JSVAL( resEntry.idList[j] );
-					JS_SetElement( cx, idList, j, &targId );
+					JS_SetElement( cx, idList, static_cast<int>( j ), &targId );
 				}
 				jsval idListVal = OBJECT_TO_JSVAL( idList );
 				JS_SetElement( cx, resource, 2, &idListVal );
 
 				// Now stuff the resource object into the parent object
 				jsval resourceVal = OBJECT_TO_JSVAL( resource );
-				JS_SetElement( cx, resources, i, &resourceVal );
+				JS_SetElement( cx, resources, static_cast<int>( i ), &resourceVal );
 			}
 
 			*vp = OBJECT_TO_JSVAL( resources );
@@ -397,7 +397,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 				// Now stuff the skill object into the parent object
 				jsval skillVal = OBJECT_TO_JSVAL( skill );
-				JS_SetElement( cx, skills, i, &skillVal );
+				JS_SetElement( cx, skills, static_cast<int>( i ), &skillVal );
 			}
 
 			*vp = OBJECT_TO_JSVAL( skills );
@@ -511,7 +511,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
@@ -1522,7 +1522,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
@@ -2485,7 +2485,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				for( size_t i = 0; i < scriptTriggers.size(); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );

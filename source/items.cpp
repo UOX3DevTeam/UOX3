@@ -958,11 +958,11 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 						// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
 						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
 						{
-							itemEntryToSpawn = j;
+							itemEntryToSpawn = static_cast<int>( j );
 							weightOfChosenItem = itemWeight;
 
 							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
-							matchingEntries.push_back( j );
+							matchingEntries.push_back( static_cast<int>( j ) );
 							continue;
 						}
 					}
