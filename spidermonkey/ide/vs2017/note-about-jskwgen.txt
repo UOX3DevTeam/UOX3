@@ -1,0 +1,3 @@
+jskwgen is an executable, for interactive javascript.
+Not used in UOX3.  If/When we retire VS2017, or we modify the build project,
+we could do delete the jskwgen project files, and the unique files it references
