@@ -30,6 +30,7 @@ function onCallback0( socket, myTarget )
 			{
 				iUsed.Delete();
 			}
+			myTarget.Refresh();
 		}
 	}
 	else
