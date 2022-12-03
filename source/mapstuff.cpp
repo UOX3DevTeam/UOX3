@@ -111,7 +111,7 @@ auto CMulHandler::LoadMapsDFN( const std::string &uodir ) -> std::map<int, MapDf
 					}
 					break;
 			}
-			results.insert_or_assign( i, entry );
+			results.insert_or_assign( static_cast<int>( i ), entry );
 		}
 	}
 	return results;
@@ -1970,7 +1970,7 @@ auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t in
 		auto ptr = data.data() + ( i * 196 );
 		if( block < _terrain.size() )
 		{
-			LoadTerrainBlock( block, ptr );
+			LoadTerrainBlock( static_cast<int>( block ), ptr );
 		}
 		++block;
 	}
