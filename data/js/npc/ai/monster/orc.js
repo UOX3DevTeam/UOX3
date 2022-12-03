@@ -44,6 +44,9 @@ function onAICombatTarget( pChar, pTarget )
 
 function onDamage( pDefender, pAttacker, damageValue, damageType )
 {
+	if( !ValidateObject( pAttacker ))
+		return;
+
 	// Check if the attacker is actually a pet/hireling/summoned creature
 	var pOwner = pAttacker.owner;
 	if( !ValidateObject( pOwner ))

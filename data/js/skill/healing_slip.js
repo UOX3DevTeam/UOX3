@@ -13,7 +13,8 @@ function onDamage( damaged, attacker, damageValue, damageType )
 	}
 
 	// Only have player "slip up" at healing for high damage numbers
-	if( ( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
+	if( !ValidateObject( attacker ) ||
+		( damageValue >= slipOnNPCDamage && attacker.npc && !attacker.isHuman ) ||
 		( damageValue >= slipOnPlayerDamage && !attacker.npc ))
 	{
 		damaged.SetTempTag( "slipCount", damaged.GetTempTag( "slipCount" ) + 1 );
