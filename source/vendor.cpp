@@ -120,7 +120,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 bool CPIBuyItem::Handle( void )
 {
 	UI16 i;
-	UI32 totalPlayerGold, totalGoldCost = 0;
+	UI32 totalPlayerGold = 0, totalGoldCost = 0;
 	bool soldout	= false, clear = false;
 	CChar *mChar	= tSock->CurrcharObj();
 	CItem *p		= mChar->GetPackItem();
@@ -160,7 +160,7 @@ bool CPIBuyItem::Handle( void )
 		// Count gold in bank if amount is higher than threshold
 		totalPlayerGold = GetBankCount( mChar, 0x0EED );
 	}
-	
+
 	if( !tryUsingBank || totalPlayerGold < totalGoldCost )
 	{
 		// Count gold in backpack if amount is NOT higher than threshold,
@@ -181,6 +181,23 @@ bool CPIBuyItem::Handle( void )
 			// Check if onBuyFromVendor JS event is present for each item being purchased
 			// If return false or 0 has been returned from the script, halt the purchase
 			std::vector<UI16> scriptTriggers = bItems[i]->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					{
+						bItems.clear();
+						bItems.shrink_to_fit();
+						return true;
+					}
+				}
+			}
+
+			// Also run the event on the vendor itself. If purchase didn't get blocked on the item side, maybe
+			// vendor has a script with something to say about it instead
+			std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
@@ -366,6 +383,20 @@ bool CPIBuyItem::Handle( void )
 							}
 						}
 					}
+
+					std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns 1, prevent other scripts with event from running
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -437,8 +468,8 @@ bool CPISellItem::Handle( void )
 				// Check if onSellToVendor JS event is present for item being sold
 				// If present and a value of "false" or 0 was returned from the script, halt the sale
 				bool saleHalted = false;
-				std::vector<UI16> scriptTriggers = j->GetScriptTriggers();
-				for( auto scriptTrig : scriptTriggers )
+				std::vector<UI16> jScriptTriggers = j->GetScriptTriggers();
+				for( auto scriptTrig : jScriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
@@ -448,6 +479,26 @@ bool CPISellItem::Handle( void )
 							// Halt sale! 
 							saleHalted = true;
 							break;
+						}
+					}
+				}
+
+				// Also check for same event on vendor itself, for broader usecases that doesn't require scripts on every item sold
+				// Only run this check if the sale was not halted by a script on the item itself, though
+				if( !saleHalted )
+				{
+					std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+					for( auto scriptTrig : nScriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+							{
+								// Halt sale! 
+								saleHalted = true;
+								break;
+							}
 						}
 					}
 				}
@@ -530,8 +581,24 @@ bool CPISellItem::Handle( void )
 				}
 				if( l )
 				{
-					std::vector<UI16> scriptTriggers = l->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					// Check for onSoldToVendor event on item
+					std::vector<UI16> lScriptTriggers = l->GetScriptTriggers();
+					for( auto scriptTrig : lScriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns true/1, prevent other scripts with event from running
+							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							{
+								break;
+							}
+						}
+					}
+
+					// Check for onSoldToVendor event on vendor
+					std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+					for( auto scriptTrig : nScriptTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
