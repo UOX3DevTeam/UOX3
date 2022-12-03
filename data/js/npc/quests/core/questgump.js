@@ -1,4 +1,4 @@
-function questGump( pUser, myNPC)
+function questGump( pUser, myNPC )
 {
 	var socket = pUser.socket;
 	socket.tempObj = myNPC;
@@ -123,11 +123,11 @@ function onGumpPress( socket, pButton, gumpData )
 									TriggerEvent( 19802, "convoeventgump", pUser, myNPC ); // accept gump
 									if( killAmount >= 1 )
 									{
-										CreateNpcQuest( pUser, parseInt( questSlot ), parseInt ( killAmount ) ); // creating the quest setup  Example: Player,level,amount
+										CreateNpcQuest( pUser, parseInt( questSlot ), parseInt ( killAmount )); // creating the quest setup  Example: Player,level,amount
 									}
 									if( collectAmount >= 1 )
 									{
-										CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ) );
+										CreateItemQuest( pUser, parseInt( questSlot ), parseInt( collectAmount ));
 									}
 									break;
 							}
@@ -151,9 +151,9 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 		var QiNumToGet = myQuestData[7];
 		var QiLevel = myQuestData[8];
 
-		if( questSlot == pUser.GetTempTag("QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ))
 		{
-			switch( parseInt( questSlot ) )
+			switch( parseInt( questSlot ))
 			{
 				case parseInt( questSlot ):
 					pUser.SetTag( QiNumToGet.toString(), numToGet );
@@ -178,9 +178,9 @@ function CreateNpcQuest( pUser, npcLevel, numToKill )
 		var QnNumToKill = myQuestData[9];
 		var QnLevel = myQuestData[10];
 
-		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ))
 		{
-			switch( parseInt( questSlot ) )
+			switch( parseInt( questSlot ))
 			{
 				case parseInt( questSlot ):
 					pUser.SetTag( QnNumToKill.toString(), numToKill );
