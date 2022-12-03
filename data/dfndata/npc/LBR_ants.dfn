@@ -1,0 +1,265 @@
+[blacksolenqueen]
+{
+NAME=a black solen queen
+ID=0x0327
+BACKPACK
+GOLD=500 800
+PACKITEM=zoogifungus,4
+LOOT=randomgems,10
+// Crystal Ball of Pet Summoning, rare spawn
+// picnicbasket full version rare spawn
+SKIN=0x453
+STR=296 320
+DEX=121 145
+INT=76 100
+HP=162
+KARMA=-4500
+FAME=4500
+MAGICRESISTANCE=700 700
+TACTICS=900 900
+WRESTLING=900 900
+DAMAGE=10 15
+DEF=52
+ELEMENTRESIST=0 0 0 100
+TOPROV=471
+TOPEACE=471 5
+RACE=28
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+SCRIPT=19805
+// Special Abilities:
+// Spits Acid.
+// Spills Acid.
+// Lays Solen Egg Sacs.
+// Summons her workers to aid her.
+}
+
+[blacksoleninfiltratorqueen]
+{
+NAME=a black solen infiltrator queen
+ID=0x0327
+BACKPACK
+GOLD=250 350
+PACKITEM=zoogifungus,4
+LOOT=randomgems,10
+//picnicbasket full version rare spawn
+SKIN=0x453
+STR=326 350
+DEX=141 165
+INT=796 120
+KARMA=-6500
+FAME=6500
+MAGICRESISTANCE=900 900
+TACTICS=900 900
+WRESTLING=900 900
+DAMAGE=10 15
+DEF=72
+TOPROV=497
+TOPEACE=497 5
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+RUNS
+RACE=28
+}
+
+[blacksoleninfiltratorwarrior]
+{
+NAME=a black solen infiltrator
+ID=0x0326
+BACKPACK
+GOLD=250 350
+PACKITEM=zoogifungus,4
+LOOT=randomgems,10
+//picnicbasket full version rare spawn
+SKIN=0x453
+STR=206 230
+DEX=121 145
+INT=66 90
+KARMA=-3000
+FAME=3000
+MAGICRESISTANCE=800 800
+TACTICS=800 800
+WRESTLING=800 800
+DAMAGE=5 15
+DEF=72
+TOPROV=415
+TOPEACE=415 5
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+RUNS
+RACE=28
+}
+
+[blacksolenwarrior]
+{
+NAME=a black solen warrior
+ID=0x0326
+BACKPACK
+GOLD=250 350
+PACKITEM=zoogifungus,4
+LOOT=randomgems,10
+//picnicbasket full version rare spawn
+SKIN=0x453
+STR=196 220
+DEX=101 125
+INT=36 60
+KARMA=-3000
+FAME=3000
+MAGICRESISTANCE=600 600
+TACTICS=800 800
+WRESTLING=800 800
+DAMAGE=5 15
+DEF=35
+ELEMENTRESIST=0 0 0 100
+TOPROV=341
+TOPEACE=341 5
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+RUNS
+RACE=28
+// Special Abilities:
+// Spits Acid.
+// Spills Acid.
+}
+
+[blacksolenworker]
+{
+NAME=a black solen worker
+ID=0x0325
+BACKPACK
+GOLD=80 150
+PACKITEM=zoogifungus,4
+LOOT=randomgems,4
+//picnicbasket full version rare spawn
+SKIN=0x453
+STR=96 120
+DEX=81 105
+INT=36 60
+KARMA=-1500
+FAME=1500
+MAGICRESISTANCE=600 600
+TACTICS=600 600
+WRESTLING=600 600
+DAMAGE=5 7
+DEF=32
+ELEMENTRESIST=0 0 0 100
+TOPROV=192
+TOPEACE=192 5
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+RUNS
+RACE=28
+}
+
+[redsolenqueen]
+{
+GET=blacksolenqueen
+NAME=a red solen queen
+SKIN=0
+RACE=29
+}
+
+[redsoleninfiltratorqueen]
+{
+GET=blacksoleninfiltratorqueen
+NAME=a red solen infiltrator
+SKIN=0
+RACE=29
+}
+
+[redsoleninfiltratorwarrior]
+{
+GET=blacksoleninfiltratorwarrior
+NAME=a red solen infiltrator
+SKIN=0
+RACE=29
+}
+
+[redsolenwarrior]
+{
+GET=blacksolenwarrior
+NAME=a red solen warrior
+SKIN=0
+RACE=29
+}
+
+[redsolenworker]
+{
+GET=blacksolenworker
+NAME=a red solen worker
+SKIN=0
+RACE=29
+}
+
+[antlion]
+{
+NAME=an ant lion
+ID=0x0313
+BACKPACK
+STR=296 320
+DEX=81 105
+INT=736 60
+HPMAX=296 320
+KARMA=-4500
+FAME=4500
+MAGICRESISTANCE=700 700
+TACTICS=900 900
+WRESTLING=900 900
+DAMAGE=7 21
+DEF=45
+ELEMENTRESIST=0 0 0 100
+TOPROV=706
+TOPEACE=706 5
+FX1=-1
+FY1=-1
+FZ1=-1
+FX2=20
+NPCWANDER=4
+DIRECTION=N
+NPCAI=2
+FLAG=NEUTRAL
+TOTAME=2000
+FOOD=carnivore
+RUNS
+RACE=30
+}
