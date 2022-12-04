@@ -946,7 +946,7 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 
 			// Loop through the items in the itemlist/lootlist
 			int weightOfChosenItem = 0;
-			for( size_t j = 0; j < itemListSize; j++ )
+			for( auto j = 0; j < static_cast<int>( itemListSize ); j++ )
 			{
 				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
 				if( csecs.size() == 2 )
@@ -958,11 +958,11 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 						// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
 						if( weightOfChosenItem == 0 || weightOfChosenItem == itemWeight )
 						{
-							itemEntryToSpawn = static_cast<int>( j );
+							itemEntryToSpawn = j;
 							weightOfChosenItem = itemWeight;
 
 							// Add the entry index to a temporary vector of all entries with same weight, then continue looking for more!
-							matchingEntries.push_back( static_cast<int>( j ) );
+							matchingEntries.push_back( j );
 							continue;
 						}
 					}

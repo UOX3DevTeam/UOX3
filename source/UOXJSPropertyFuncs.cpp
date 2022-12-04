@@ -343,7 +343,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval amountNeeded = 0;
 			jsval targColour = 0;
 			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
-			for( size_t i = 0; i < resourcesNeeded.size(); i++ )
+			for( auto i = 0; i < static_cast<int>( resourcesNeeded.size() ); i++ )
 			{
 				resEntry = resourcesNeeded[i];
 				amountNeeded = INT_TO_JSVAL( resEntry.amountNeeded );
@@ -356,17 +356,17 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 				// Make a child object with all the supported resource IDs
 				JSObject *idList = JS_NewArrayObject( cx, 0, nullptr );
-				for( size_t j = 0; j < resEntry.idList.size(); j++ )
+				for( auto j = 0; j < static_cast<int>( resEntry.idList.size() ); j++ )
 				{
 					jsval targId = INT_TO_JSVAL( resEntry.idList[j] );
-					JS_SetElement( cx, idList, static_cast<int>( j ), &targId );
+					JS_SetElement( cx, idList, j, &targId );
 				}
 				jsval idListVal = OBJECT_TO_JSVAL( idList );
 				JS_SetElement( cx, resource, 2, &idListVal );
 
 				// Now stuff the resource object into the parent object
 				jsval resourceVal = OBJECT_TO_JSVAL( resource );
-				JS_SetElement( cx, resources, static_cast<int>( i ), &resourceVal );
+				JS_SetElement( cx, resources, i, &resourceVal );
 			}
 
 			*vp = OBJECT_TO_JSVAL( resources );
@@ -382,7 +382,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval minSkill = 0;
 			jsval maxSkill = 0;
 			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
-			for( size_t i = 0; i < skillReqs.size(); i++ )
+			for( auto i = 0; i < static_cast<int>( skillReqs.size() ); i++ )
 			{
 				resEntry = skillReqs[i];
 				skillNumber = INT_TO_JSVAL( resEntry.skillNumber );
@@ -397,7 +397,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 				// Now stuff the skill object into the parent object
 				jsval skillVal = OBJECT_TO_JSVAL( skill );
-				JS_SetElement( cx, skills, static_cast<int>( i ), &skillVal );
+				JS_SetElement( cx, skills, i, &skillVal );
 			}
 
 			*vp = OBJECT_TO_JSVAL( skills );
@@ -508,10 +508,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
@@ -1519,10 +1519,10 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
@@ -2482,10 +2482,10 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
-					JS_SetElement( cx, scriptTriggersJS, static_cast<int>( i ), &scriptId );
+					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
 				}
 
 				*vp = OBJECT_TO_JSVAL( scriptTriggersJS );
