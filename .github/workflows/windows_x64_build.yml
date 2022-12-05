@@ -22,8 +22,5 @@ jobs:
           arch: x64
       - name: cmake and build
         run: |
-          cd make
-          mkdir build
-          cd build
-          cmake ../cmake -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" 
+          cmake make/cmake -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" 
           cmake --build . --config Release
