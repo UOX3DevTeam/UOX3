@@ -19,7 +19,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: prepare automake
-      run: chmod +x automake.sh
-    - name: automake
-      run: ./automake.sh
+    - name: move to make directory
+      run: cd make
+    - name: Create Build directory
+      run: mkdir build
+    - name: Change to build directory
+      run: cd build
+    - name: Generate Makefiles
+      run: cmake .. -DCMAKE_BUILD_TYPE=Release
+    - name: Building
+      run: cmake --build .

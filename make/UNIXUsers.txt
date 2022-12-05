@@ -1,0 +1,30 @@
+Two options on building UOX3
+
+Opton 1: Automake.sh
+	From this Directory, enter ./automake
+	the uox3 binary will be in this directory upon completion
+	
+Option 2: CMake
+	1) Open a terminal window    
+		- **Windows** users note:  
+			- From the windows Start menu, open a Developers Command Prompt  
+	2) Navigage to this directory (UOX3/make)  
+	2) Create a build location 
+		- Enter: mkdir build  
+	3) Move to that locations
+		- Enter: `cd build`  
+	4) Create the make files   
+		- **WINDOWS**  
+			- Enter:  cmake ../cmake -DCMAKE_BUILD_TYPE=Release -A x64 -G"NMake Makefiles" 
+	- **macOS** 
+		- Enter: cmake ../cmake -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"  
+	- **All Other Operation Systems**    
+		- Enter:  cmake ../cmake -DCMAKE_BUILD_TYPE=Release  
+5) Build the system entering:
+		- Enter: cmake --build . --config Release
+6) The resulting product will be in the current (build) directory  
+	
+
+
+
+
