@@ -15,7 +15,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: setupt msvc console
         uses: ilammy/msvc-dev-cmd@v1
         with:
@@ -25,5 +25,5 @@ jobs:
           cd make
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" 
+          cmake ../cmake -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" 
           cmake --build . --config Release

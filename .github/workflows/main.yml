@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: move to make directory
       run: cd make
     - name: Create Build directory
@@ -26,6 +26,6 @@ jobs:
     - name: Change to build directory
       run: cd build
     - name: Generate Makefiles
-      run: cmake .. -DCMAKE_BUILD_TYPE=Release
+      run: cmake ../cmake -DCMAKE_BUILD_TYPE=Release
     - name: Building
       run: cmake --build .
