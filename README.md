@@ -42,18 +42,18 @@ UOX3 supports Integrated Development Environment(IDE) building for Visual Studio
 	-) **Windows** Open the UOX3\make\VS2022\uox3\uox3.sln file, select build.
 	-) **macOS** Open the UOX3/make/XCode/uox3/uox3.xcworkspace.  Select build.
 	-) **Linux**
-		<details> 
-			<summary> Single command</summary>
-			Enter from a termain windows in the UOX3 directory: `./automake.sh`
-		</details>
-		<details>
-			<summary>Individual steps</summary>
+<details> 
+<summary> Single command</summary>
+			Enter from a terminal window, in the UOX3 directory: `./automake.sh`
+</details>
+<details>
+<summary>Individual steps</summary>
 			Enter the following:
 			-) `mkdir build`
 			-) `cd build`
 			-) `cmake ../make/cmake -DCMAKE_BUILD_TYPE=Release `
 			-) `cmake --build . --config Release`
-		</details>
+</details>
 	The binary/executable will be located:
 		**Windows** UOX3\make\vs2022\uox3\x64\Release\uox3.exe
 		**macOS** UOX3\make\XCode\uox3\Build\Products\Release\uox3
