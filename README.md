@@ -26,7 +26,7 @@ UOX3 supports Integrated Development Environment(IDE) building for Visual Studio
 	-) **Windows or macOS** Download [GitHub Desktop](https://desktop.github.com/)
 	-) **Linux** Debian based distributions execute: 'sudo apt install git'
 	
-*** Acquire CMake (if using command line build generation)*
+### Acquire CMake (if using command line build generation)
 	-) **Windows** CMake is part of the Visual Studio IDE, nothing more is needed
 	-) **macOS** Download and install [CMake](https://cmake.org/download/)
 	-) **Linux** Debian based sitrubitons execute: 'sudo apt install cmake'
