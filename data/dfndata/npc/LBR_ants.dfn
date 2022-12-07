@@ -23,7 +23,7 @@ DEF=52
 ELEMENTRESIST=0 0 0 100
 TOPROV=471
 TOPEACE=471 5
-RACE=28
+RACE=29
 FX1=-1
 FY1=-1
 FZ1=-1
@@ -75,7 +75,7 @@ FLAG=NEUTRAL
 TOTAME=2000
 FOOD=carnivore
 RUNS
-RACE=28
+RACE=29
 }
 
 [blacksoleninfiltratorwarrior]
@@ -111,7 +111,7 @@ FLAG=NEUTRAL
 TOTAME=2000
 FOOD=carnivore
 RUNS
-RACE=28
+RACE=29
 }
 
 [blacksolenwarrior]
@@ -148,7 +148,7 @@ FLAG=NEUTRAL
 TOTAME=2000
 FOOD=carnivore
 RUNS
-RACE=28
+RACE=29
 // Special Abilities:
 // Spits Acid.
 // Spills Acid.
@@ -188,7 +188,7 @@ FLAG=NEUTRAL
 TOTAME=2000
 FOOD=carnivore
 RUNS
-RACE=28
+RACE=29
 }
 
 [redsolenqueen]
@@ -196,7 +196,7 @@ RACE=28
 GET=blacksolenqueen
 NAME=a red solen queen
 SKIN=0
-RACE=29
+RACE=30
 }
 
 [redsoleninfiltratorqueen]
@@ -204,7 +204,7 @@ RACE=29
 GET=blacksoleninfiltratorqueen
 NAME=a red solen infiltrator
 SKIN=0
-RACE=29
+RACE=30
 }
 
 [redsoleninfiltratorwarrior]
@@ -212,7 +212,7 @@ RACE=29
 GET=blacksoleninfiltratorwarrior
 NAME=a red solen infiltrator
 SKIN=0
-RACE=29
+RACE=30
 }
 
 [redsolenwarrior]
@@ -220,7 +220,7 @@ RACE=29
 GET=blacksolenwarrior
 NAME=a red solen warrior
 SKIN=0
-RACE=29
+RACE=30
 }
 
 [redsolenworker]
@@ -228,7 +228,7 @@ RACE=29
 GET=blacksolenworker
 NAME=a red solen worker
 SKIN=0
-RACE=29
+RACE=30
 }
 
 [antlion]
@@ -261,5 +261,5 @@ FLAG=NEUTRAL
 TOTAME=2000
 FOOD=carnivore
 RUNS
-RACE=30
+RACE=31
 }
