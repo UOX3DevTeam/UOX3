@@ -3674,7 +3674,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ));
 	}
 
-	bool colorCheck = ( itemColour != -1 ? true : false );
+	bool colorCheck = ( itemColour != -1 );
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
 	UI32 retVal = 0;
