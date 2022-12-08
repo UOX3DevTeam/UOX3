@@ -64,7 +64,6 @@ CALL=5
 [REGIONSPAWN 6204]
 {
 NAME=Location_Orc_Fort
-//NPCLIST=Location_Orc_Fort
 NPCLIST=Location_Orc_Fort_Savages
 MAXNPCS=15
 X1=5200
