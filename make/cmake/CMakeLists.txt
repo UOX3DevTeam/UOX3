@@ -1,0 +1,102 @@
+add_library(uox
+	STATIC
+		CGump.cpp
+		boats.cpp
+		cSocket.cpp
+		items.cpp
+		speech.cpp
+		CJSEngine.cpp
+		books.cpp
+		cSpawnRegion.cpp
+		jail.cpp
+		ssection.cpp
+		CJSMapping.cpp
+		cAccountClass.cpp
+		cThreadQueue.cpp
+		lineofsight.cpp
+		targeting.cpp
+		CPacketReceive.cpp
+		cBaseobject.cpp
+		cVersionClass.cpp
+		magic.cpp
+		CPacketSend.cpp
+		cChar.cpp
+		cWeather.cpp
+		mapstuff.cpp
+		townregion.cpp
+		CResponse.cpp
+		cConsole.cpp
+		calcfuncs.cpp
+		movement.cpp
+		trade.cpp
+		Dictionary.cpp
+		cDice.cpp
+		cmdtable.cpp
+		msgboard.cpp
+		uox3.cpp
+		JSEncapsulate.cpp
+		cGuild.cpp
+		combat.cpp
+		network.cpp
+		cHTMLSystem.cpp
+		commands.cpp
+		npcs.cpp
+		vendor.cpp
+		ObjectFactory.cpp
+		cItem.cpp
+		cPlayerAction.cpp
+		pcmanage.cpp
+		weight.cpp
+		PartySystem.cpp
+		cMultiObj.cpp
+		dist.cpp
+		quantityfuncs.cpp
+		wholist.cpp
+		SEFunctions.cpp
+		effect.cpp
+		queue.cpp
+		worldmain.cpp
+		UOXJSMethods.cpp
+		cRaces.cpp
+		fileio.cpp
+		regions.cpp
+		UOXJSPropertyFuncs.cpp
+		cScript.cpp
+		findfuncs.cpp
+		scriptc.cpp
+		ai.cpp
+		cServerData.cpp
+		gumps.cpp
+		skills.cpp
+		archive.cpp
+		cServerDefinitions.cpp
+		house.cpp
+		sound.cpp
+		StringUtility.cpp
+		UOPData.cpp
+		MultiMul.cpp
+		IP4Address.cpp
+		TimeUtility.cpp
+		EventTimer.cpp
+		osunique.cpp
+)
+
+target_include_directories(uox
+	PUBLIC
+		${PROJECT_SOURCE_DIR}/spidermonkey
+		${PROJECT_SOURCE_DIR}/zlib
+)
+
+target_compile_definitions(uox
+	PRIVATE
+		_CRT_NO_VA_START_VALIDATION
+		$<$<CONFIG:Debug>:_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH>
+		$<$<PLATFORM_ID:Windows>:EXPORT_JS_API>
+)
+
+target_link_libraries(uox
+	PUBLIC
+		js32
+		zlibstatic
+		$<$<PLATFORM_ID:Windows>:ws2_32>
+)
