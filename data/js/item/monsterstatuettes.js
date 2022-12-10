@@ -1,60 +1,28 @@
-function onCreateDFN(objMade, objType)
+function onCreateDFN( objMade, objType )
 {
 		var rewardYear = "";
 		switch( objMade.id )
 		{
-			case 0x2103: // Cow
-				rewardYear = "3rd year";
-				break;
 			case 0x20DA: // Crocodile
-				rewardYear = "1st year";
-				break;
 			case 0x20D3: // Daemon
-				rewardYear = "1st year";
-				break;
 			case 0x20D6: // Dragon
-				rewardYear = "1st year";
-				break;
 			case 0x20D7: // Earth Elemental
-				rewardYear = "1st year";
-				break;
 			case 0x20D8: // Ettin
-				rewardYear = "1st year";
-				break;
 			case 0x20D9: // Gargoyle
-				rewardYear = "1st year";
-				break;
 			case 0x20F5: // Gorilla
-				rewardYear = "1st year";
-				break;
 			case 0x20F8: // Lich
-				rewardYear = "1st year";
-				break;
 			case 0x20DE: // Lizardman
-				rewardYear = "1st year";
-				break;
-			case 0x20F6: // Llama
-				rewardYear = "3rd year";
-				break;
 			case 0x20DF: // Ogre
-				rewardYear = "1st year";
-				break;
 			case 0x2133: // Ophidian
-				rewardYear = "1st year";
-				break;
 			case 0x20E0: // Orc
-				rewardYear = "1st year";
-				break;
 			case 0x20E3: // Ratman
-				rewardYear = "1st year";
-				break;
 			case 0x20E7: // Skeleton
-				rewardYear = "1st year";
-				break;
 			case 0x20E9: // Troll
 				rewardYear = "1st year";
 				break;
 			case 0x20EC: // Zombie
+			case 0x2103: // Cow
+			case 0x20F6: // Llama
 				rewardYear = "3rd year";
 				break;
 		}
@@ -173,7 +141,7 @@ function onMoveDetect( monsterStatue, pChar, rangeToChar, oldCharX, oldCharY )
 	return true;
 }
 
-function onTooltip( monsterStatue )
+function onTooltip( monsterStatue, pSocket )
 {
 	var tooltipText = "";
 	var turnedOnOff = monsterStatue.GetTag( "turnedOnOff" );
