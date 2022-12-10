@@ -67,7 +67,7 @@ function onGumpPress( socket, pButton, gumpData )
 	switch( pButton )
 	{
 		case 0:
-			for (let i = 0; i < myArray.length; i++) 
+			for( let i = 0; i < myArray.length; i++ ) 
 			{
 				var myQuestData = myArray[i].split(",");
 				var questSlot = myQuestData[0];
@@ -86,17 +86,18 @@ function onGumpPress( socket, pButton, gumpData )
 				var iIdToKill = myQuestData[14];
 				var questStatus = myQuestData[15];
 
-				if (questSlot == 2) {
-					pUser.SetTag(parseInt(iNumToGet), 0);
-					pUser.SetTag(parseInt(iIdToGet), 0);
-					pUser.SetTag(parseInt(iLevel), 0);
-					pUser.SetTag(parseInt(nNumToKill), 0);
-					pUser.SetTag(parseInt(nLevel), 0);
-					pUser.SetTag(parseInt(iIdToKill), 0);
+				if( questSlot == 2 )
+				{
+					pUser.SetTag(parseInt( iNumToGet ), 0 );
+					pUser.SetTag(parseInt( iIdToGet ), 0 );
+					pUser.SetTag(parseInt( iLevel ), 0 );
+					pUser.SetTag(parseInt( nNumToKill ), 0 );
+					pUser.SetTag(parseInt( nLevel ), 0 );
+					pUser.SetTag(parseInt (iIdToKill ), 0 );
 				}
 
-				pUser.SetTag(questStatus, 0);
-				myNPC.SetTag("Declined_" + playerSerial, 1)
+				pUser.SetTag( questStatus, 0 );
+				myNPC.SetTag( "Declined_" + playerSerial, 1 )
 			}
 			break; // abort and do nothing if gump is closed with right click
 		case 1:
@@ -104,7 +105,7 @@ function onGumpPress( socket, pButton, gumpData )
 			switch( OtherButton )
 			{
 				case 0:
-					for(let i = 0; i < myArray.length; i++)
+					for( let i = 0; i < myArray.length; i++ )
 					{
 						var myQuestData = myArray[i].split(",");
 						var questSlot = myQuestData[0];
@@ -176,7 +177,7 @@ function CreateItemQuest( pUser, questLevel, numToGet )
 	var typeToGet = GetItemType( pUser, questLevel );
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for(let i = 0; i < myArray.length; i++)
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
@@ -229,7 +230,7 @@ function GetItemType( pUser, questLevel )
 {
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for ( let i = 0; i < myArray.length; i++ ) 
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var ItemId = myQuestData[11];
