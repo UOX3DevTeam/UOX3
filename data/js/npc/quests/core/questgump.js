@@ -66,7 +66,40 @@ function onGumpPress( socket, pButton, gumpData )
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
 	switch( pButton )
 	{
-		case 0:break; // abort and do nothing if gump is closed with right click
+		case 0:
+			for( let i = 0; i < myArray.length; i++ )
+			{
+				var myQuestData = myArray[i].split(",");
+				var questSlot = myQuestData[0];
+				var playerSerial = myQuestData[1];
+				var questName = myQuestData[3];
+				var killAmount = myQuestData[4];
+				var collectAmount = myQuestData[5];
+				var questTrg = myQuestData[6];
+				var iNumToGet = myQuestData[7];
+				var iLevel = myQuestData[8];
+				var nNumToKill = myQuestData[9];
+				var nLevel = myQuestData[10];
+				var itemId = myQuestData[11];
+				var iIdToGet = myQuestData[12];
+				var npcId = myQuestData[13];
+				var iIdToKill = myQuestData[14];
+				var questStatus = myQuestData[15];
+
+				if( questSlot == 2 )
+				{
+					pUser.SetTag(parseInt(iNumToGet), 0);
+					pUser.SetTag(parseInt(iIdToGet), 0);
+					pUser.SetTag(parseInt(iLevel), 0);
+					pUser.SetTag(parseInt(nNumToKill), 0);
+					pUser.SetTag(parseInt(nLevel), 0);
+					pUser.SetTag(parseInt(iIdToKill), 0);
+				}
+
+				pUser.SetTag( questStatus, 0 );
+				myNPC.SetTag( "Declined_" + playerSerial, 1 )
+			}
+			break; // abort and do nothing if gump is closed with right click
 		case 1:
 			var OtherButton = gumpData.getButton(0);
 			switch( OtherButton )
