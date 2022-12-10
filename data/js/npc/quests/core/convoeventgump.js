@@ -1,4 +1,4 @@
-function convoeventgump( pUser, myNPC)
+function convoeventgump( pUser, myNPC )
 {
 	var questGump = new Gump;
 
@@ -17,19 +17,19 @@ function convoeventgump( pUser, myNPC)
 
 	// Read Quests Log
     var myArray = TriggerEvent( 19806, "ReadQuestLog", pUser );
-	for (let i = 0; i < myArray.length; i++)
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
 		var questTrg = myQuestData[6];
 		var questStatus = myQuestData[15];
 
-		if ( questSlot == myNPC.GetTag("QuestSlot" ) )
+		if ( questSlot == myNPC.GetTag("QuestSlot" ))
 		{
-			switch (parseInt( questSlot ) )
+			switch (parseInt( questSlot ))
 			{
 				case parseInt( questSlot ):
-					switch ( pUser.GetTag( questStatus.toString() ) )// status of each part of the quest
+					switch ( pUser.GetTag( questStatus.toString() ))// status of each part of the quest
 					{
 						case 1: TriggerEvent(parseInt( questTrg ), "questAccept", questGump ); break;
 						case 2: TriggerEvent(parseInt( questTrg ), "questDuringNpcKilling", questGump ); break;

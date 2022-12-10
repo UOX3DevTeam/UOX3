@@ -50,15 +50,15 @@ function questProgress( pUser )
 	questGump.AddPage( 1 );
 
 	//Objectives
-	for (let i = 0; i < myArray.length; i++)
+	for( let i = 0; i < myArray.length; i++ )
 	{
 		var myQuestData = myArray[i].split(",");
 		var questSlot = myQuestData[0];
 		var questTrg = myQuestData[6];
 		// Max Quests for the Log is 10
-		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ) )
+		if( questSlot == pUser.GetTempTag( "QuestSlotTemp" ))
 		{
-			switch( parseInt( questSlot ) )
+			switch( parseInt( questSlot ))
 			{
 				case parseInt( questSlot ):
 					TriggerEvent( parseInt( questTrg ), "questObjective", questGump );
@@ -68,7 +68,7 @@ function questProgress( pUser )
 					break;
 			}
 			//Progress
-			switch( parseInt( questSlot ) )
+			switch( parseInt( questSlot ))
 		    {
 				case parseInt( questSlot ):
 					TriggerEvent( parseInt( questTrg ), "questProgress", questGump, pUser );
@@ -91,7 +91,7 @@ function questProgress( pUser )
 function onGumpPress( socket, pButton, gumpData )
 {
 	var pUser = socket.currentChar;
-	switch ( pButton ) 
+	switch( pButton ) 
 	{
 		case 0:
 			break;
