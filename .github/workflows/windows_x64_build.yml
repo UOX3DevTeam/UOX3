@@ -15,12 +15,12 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
-      - name: setupt msvc console
+        uses: actions/checkout@v3
+      - name: setup msvc console
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
       - name: cmake and build
         run: |
-          cmake -G "NMake Makefiles" .
-          nmake
+          cmake make/cmake -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles" 
+          cmake --build . --config Release
