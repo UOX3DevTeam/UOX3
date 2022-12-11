@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		648153CA29466EF400784170 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648153C929466EF400784170 /* libjscript.a */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -86,7 +87,6 @@
 		64A90167293E3DD4009B54DA /* weight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90114293E3DD4009B54DA /* weight.cpp */; };
 		64A90168293E3DD4009B54DA /* wholist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90116293E3DD4009B54DA /* wholist.cpp */; };
 		64A90169293E3DD4009B54DA /* worldmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90118293E3DD4009B54DA /* worldmain.cpp */; };
-		64A9016D293E3EED009B54DA /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A9016C293E3EED009B54DA /* libjscript.a */; };
 		64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A9016E293E3EF5009B54DA /* libz.tbd */; };
 /* End PBXBuildFile section */
 
@@ -103,6 +103,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
 		64A90076293E3DD4009B54DA /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = archive.cpp; sourceTree = "<group>"; };
@@ -261,7 +262,6 @@
 		64A90117293E3DD4009B54DA /* wholist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wholist.h; sourceTree = "<group>"; };
 		64A90118293E3DD4009B54DA /* worldmain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = worldmain.cpp; sourceTree = "<group>"; };
 		64A90119293E3DD4009B54DA /* worldmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = worldmain.h; sourceTree = "<group>"; };
-		64A9016C293E3EED009B54DA /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9016E293E3EF5009B54DA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -270,8 +270,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64A9016D293E3EED009B54DA /* libjscript.a in Frameworks */,
 				64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */,
+				648153CA29466EF400784170 /* libjscript.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -312,14 +312,14 @@
 				64A90104293E3DD4009B54DA /* uox3.h */,
 			);
 			name = source;
-			path = ../../../source;
+			path = ../../source;
 			sourceTree = "<group>";
 		};
 		64A9016B293E3EED009B54DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				648153C929466EF400784170 /* libjscript.a */,
 				64A9016E293E3EF5009B54DA /* libz.tbd */,
-				64A9016C293E3EED009B54DA /* libjscript.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -804,8 +804,8 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
-					../../../source,
-					../../../spidermonkey,
+					../../source,
+					../../spidermonkey,
 				);
 				WARNING_CFLAGS = "-Wno-shift-negative-value";
 			};
@@ -823,8 +823,8 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
-					../../../source,
-					../../../spidermonkey,
+					../../source,
+					../../spidermonkey,
 				);
 				WARNING_CFLAGS = "-Wno-shift-negative-value";
 			};
