@@ -1440,6 +1440,30 @@ HOUSE_DEED=bigfishtrophydeed
 HOUSE_ITEM=807
 }
 
+//Solen Ant Hole
+[HOUSE 208]
+{
+NAME=a hole
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=solenantholedeed
+HOUSE_ITEM=600
+HOUSE_ITEM=601
+HOUSE_ITEM=602
+HOUSE_ITEM=603
+HOUSE_ITEM=604
+HOUSE_ITEM=605
+HOUSE_ITEM=606
+HOUSE_ITEM=607
+HOUSE_ITEM=608
+HOUSE_ITEM=609
+HOUSE_ITEM=610
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -3211,6 +3235,96 @@ Z=0
 ITEM=0x09a8
 X=0
 Y=0
+Z=0
+}
+
+// dirt 1
+[HOUSE ITEM 600]
+{ 
+ITEM=dirt1
+X=0
+Y=0
+Z=0
+}
+
+// a hole
+[HOUSE ITEM 602]
+{
+ITEM=ahole
+X=0
+Y=0
+Z=0
+}
+
+// dirt 2
+[HOUSE ITEM 603]
+{ 
+ITEM=dirt2
+X=1
+Y=1
+Z=0
+}
+
+// dirt 3
+[HOUSE ITEM 604]
+{ 
+ITEM=dirt3
+X=1
+Y=0
+Z=0
+}
+
+// dirt 4
+[HOUSE ITEM 605]
+{ 
+ITEM=dirt4
+X=1
+Y=-1
+Z=0
+}
+
+// dirt 5
+[HOUSE ITEM 606]
+{ 
+ITEM=dirt5
+X=0
+Y=-1
+Z=0
+}
+
+// dirt 6
+[HOUSE ITEM 607]
+{ 
+ITEM=dirt6
+X=-1
+Y=-1
+Z=0
+}
+
+// dirt 7
+[HOUSE ITEM 608]
+{ 
+ITEM=dirt7
+X=-1
+Y=0
+Z=0
+}
+
+// dirt 8
+[HOUSE ITEM 609]
+{ 
+ITEM=dirt8
+X=-1
+Y=1
+Z=0
+}
+
+// dirt 9
+[HOUSE ITEM 610]
+{ 
+ITEM=dirt9
+X=0
+Y=1
 Z=0
 }
 

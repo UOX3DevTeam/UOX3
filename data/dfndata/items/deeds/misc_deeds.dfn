@@ -28,3 +28,10 @@ NAME=a coupon for a free hair restyling
 ID=0x14F0
 script=5028
 }
+
+[solenantholedeed]
+{
+name=a solen ant hole
+id=0x14F0
+morex=208
+}

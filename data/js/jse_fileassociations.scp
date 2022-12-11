@@ -109,6 +109,7 @@
 // Server Teleporters [2750-2999]
 2750=server/teleporter/teleporter_wind_city_entrance.js
 2751=server/teleporter/teleporter_orc_caves_2_3.js
+2752=server/teleporter/teleporter_solen_hive.js
 
 //-------------------------------------------
 // NPC, and AI [3000-3999]
@@ -166,6 +167,7 @@
 3511=npc/special/colossal_blow.js
 3512=npc/special/physical_immunity.js
 3513=npc/special/bola_ability.js
+3514=npc/special/solenant_death.js
 
 //-------------------------------------------
 // General Skills [4000-4499]
