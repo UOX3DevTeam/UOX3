@@ -17,7 +17,7 @@ For detailed instructions on compiling and using this zlib configuration with UO
   2. Traverse to the make/cmake folder, and enter the following commands:
   3. `mkdir build`
   4. `cd build`
-  5. `cmake .. -DCMAKE_BUILD_TYPE=Release -G"NMake Makefiles"`
+  5. `cmake .. -DCMAKE_BUILD_TYPE=Release`
   6. `cmake --build . --config Release`
 </details>
 

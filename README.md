@@ -80,7 +80,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > - `cd make/cmake`
   > - `mkdir -p build`
   > - `cd build`
-  > - `cmake .. -DCMAKE_BUILD_TYPE=Release` (Linux/FreeBSD)
+  > - `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)
   > - `cmake .. -DCMAKE_BUILD_TYPE=Release` -G"Unix Makefiles" (macOS)
   > - `cmake --build . --config Release`
 </details>
