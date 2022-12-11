@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:../../../spidermonkey/make/XCode/jscript/jscript.xcodeproj">
+      location = "group:../../spidermonkey/make/XCode/jscript/jscript.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:uox3.xcodeproj">
