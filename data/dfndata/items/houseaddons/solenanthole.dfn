@@ -6,6 +6,7 @@ NAME=dirt
 ID=0x914
 weight=100
 movable=2
+decay=0
 }
 
 [ahole]
@@ -16,6 +17,7 @@ COLOUR=0x1
 weight=100
 movable=2
 SCRIPT=2752
+decay=0
 }
 
 [dirt2]
@@ -25,6 +27,7 @@ ID=0x1B23
 COLOUR=0x970
 weight=100
 movable=2
+decay=0
 }
 
 [dirt3]
@@ -33,6 +36,7 @@ NAME=dirt
 ID=0xEE0
 weight=100
 movable=2
+decay=0
 }
 
 [dirt4]
@@ -42,6 +46,7 @@ ID=0x1B24
 COLOUR=0x970
 weight=100
 movable=2
+decay=0
 }
 
 [dirt5]
@@ -50,6 +55,7 @@ NAME=dirt
 ID=0xEE1
 weight=100
 movable=2
+decay=0
 }
 
 [dirt6]
@@ -59,6 +65,7 @@ ID=0x1B25
 COLOUR=0x970
 weight=100
 movable=2
+decay=0
 }
 
 [dirt7]
@@ -67,6 +74,7 @@ NAME=dirt
 ID=0xEE2
 weight=100
 movable=2
+decay=0
 }
 
 [dirt8]
@@ -76,6 +84,7 @@ ID=0x1B26
 COLOUR=0x970
 weight=100
 movable=2
+decay=0
 }
 
 [dirt9]
@@ -84,6 +93,7 @@ NAME=dirt
 ID=0xED3
 weight=100
 movable=2
+decay=0
 }
 
 [solenentrancehole]
@@ -93,6 +103,19 @@ ID=0x1775
 COLOUR=0x1
 weight=100
 movable=2
+decay=0
+SCRIPT=2752
+}
+
+[solenentrancehole2]
+{
+NAME=a hole
+ID=0x1776
+COLOUR=0x1
+weight=100
+movable=2
+decay=0
+SCRIPT=2752
 }
 
 [shentrancepeice1]
@@ -100,6 +123,7 @@ movable=2
 ID=0x549
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice2]
@@ -107,6 +131,7 @@ movable=2
 ID=0x54D
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice3]
@@ -114,6 +139,7 @@ movable=2
 ID=0x54E
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice4]
@@ -121,6 +147,7 @@ movable=2
 ID=0x548
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice5]
@@ -128,6 +155,7 @@ movable=2
 ID=0x54B
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice6]
@@ -135,6 +163,7 @@ movable=2
 ID=0x53B
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice7]
@@ -142,6 +171,7 @@ movable=2
 ID=0x544
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice8]
@@ -149,6 +179,7 @@ movable=2
 ID=0x54C
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice9]
@@ -156,6 +187,7 @@ movable=2
 ID=0x545
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice10]
@@ -163,6 +195,7 @@ movable=2
 ID=0x547
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice11]
@@ -170,6 +203,7 @@ movable=2
 ID=0x541
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice12]
@@ -177,6 +211,7 @@ movable=2
 ID=0x543
 weight=100
 movable=2
+decay=0
 }
 
 [shentrancepeice13]
@@ -184,4 +219,15 @@ movable=2
 ID=0x540
 weight=100
 movable=2
+decay=0
+}
+
+[shexitteleporter]
+{
+name=a hole
+ID=0x495
+movable=2
+colour=0x1
+decay=0
+SCRIPT=2752
 }

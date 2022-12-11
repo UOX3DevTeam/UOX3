@@ -3382,7 +3382,7 @@ Z=0
 // entrance hole
 [HOUSE ITEM 613]
 { 
-ITEM=solenentrancehole
+ITEM=solenentrancehole2
 X=1
 Y=1
 Z=0
