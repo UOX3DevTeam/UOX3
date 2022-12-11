@@ -235,6 +235,7 @@ target_link_libraries(uox3 PRIVATE
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Linux>:pthread>
+   $<$<PLATFORM_ID:FreeBSD>:pthread>
 )
 
 # *************************************************************************
