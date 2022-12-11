@@ -11,8 +11,17 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( iUsed.InRange( pUser, 2 ))
 		{
-			pUser.TextMessage( "*" + pUser.name + " dives into the hole and disappears!*" );
-			Teleport( pUser );
+			var rand = RandomNumber( 1, 100 );
+			if( rand < 50)
+			{
+				pUser.TextMessage( "* You examine the solen hole, but discover it does not lead anywhere *" );
+				return;
+			}
+			else
+			{
+				pUser.TextMessage( "* " + pUser.name + " dives into the hole and disappears! *" );
+				Teleport( pUser );
+			}
 		}
 		else
 		{
