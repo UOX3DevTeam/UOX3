@@ -1464,6 +1464,39 @@ HOUSE_ITEM=609
 HOUSE_ITEM=610
 }
 
+//Solen Hive Entrance Hole
+[HOUSE 209]
+{
+NAME=a hole
+ID=0x14F0
+SPACEX=1
+SPACEY=1
+CHARX=0
+CHARY=0
+CHARZ=0
+HOUSE_DEED=solenhiveentrancedeed
+HOUSE_ITEM=611
+HOUSE_ITEM=612
+HOUSE_ITEM=613
+HOUSE_ITEM=614
+HOUSE_ITEM=615
+HOUSE_ITEM=616
+HOUSE_ITEM=617
+HOUSE_ITEM=618
+HOUSE_ITEM=619
+HOUSE_ITEM=620
+HOUSE_ITEM=621
+HOUSE_ITEM=622
+HOUSE_ITEM=623
+HOUSE_ITEM=624
+HOUSE_ITEM=625
+HOUSE_ITEM=626
+HOUSE_ITEM=627
+HOUSE_ITEM=628
+HOUSE_ITEM=629
+HOUSE_ITEM=630
+}
+
 [HOUSE ITEM 1]
 { Wooden Door (Small house)
 ITEM=0x06A5
@@ -3325,6 +3358,170 @@ Z=0
 ITEM=dirt9
 X=0
 Y=1
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 611]
+{ 
+ITEM=solenentrancehole
+X=0
+Y=0
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 612]
+{ 
+ITEM=solenentrancehole
+X=1
+Y=0
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 613]
+{ 
+ITEM=solenentrancehole
+X=1
+Y=1
+Z=0
+}
+
+// entrance hole
+[HOUSE ITEM 614]
+{ 
+ITEM=solenentrancehole
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 615]
+{ 
+ITEM=shentrancepeice1
+X=-1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 616]
+{ 
+ITEM=shentrancepeice2
+X=0
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 617]
+{ 
+ITEM=shentrancepeice3
+X=1
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 618]
+{ 
+ITEM=shentrancepeice4
+X=2
+Y=-1
+Z=0
+}
+
+[HOUSE ITEM 619]
+{ 
+ITEM=shentrancepeice5
+X=-1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 620]
+{ 
+ITEM=shentrancepeice6
+X=0
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 621]
+{ 
+ITEM=shentrancepeice6
+X=1
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 622]
+{ 
+ITEM=shentrancepeice7
+X=2
+Y=0
+Z=0
+}
+
+[HOUSE ITEM 623]
+{ 
+ITEM=shentrancepeice8
+X=-1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 624]
+{ 
+ITEM=shentrancepeice6
+X=0
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 625]
+{ 
+ITEM=shentrancepeice6
+X=1
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 626]
+{ 
+ITEM=shentrancepeice9
+X=2
+Y=1
+Z=0
+}
+
+[HOUSE ITEM 627]
+{ 
+ITEM=shentrancepeice10
+X=-1
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 628]
+{ 
+ITEM=shentrancepeice11
+X=0
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 629]
+{ 
+ITEM=shentrancepeice12
+X=1
+Y=2
+Z=0
+}
+
+[HOUSE ITEM 630]
+{ 
+ITEM=shentrancepeice13
+X=2
+Y=2
 Z=0
 }
 

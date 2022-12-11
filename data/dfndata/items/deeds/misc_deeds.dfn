@@ -35,3 +35,10 @@ name=a solen ant hole
 id=0x14F0
 morex=208
 }
+
+[solenhiveentrancedeed]
+{
+name=a solen hive entrance deed
+id=0x14F0
+morex=209
+}
