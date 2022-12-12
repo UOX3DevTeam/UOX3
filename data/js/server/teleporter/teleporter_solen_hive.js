@@ -2,7 +2,7 @@
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
-	if ( pUser.visible == 1 || pUser.visible == 2 )
+	if( pUser.visible == 1 || pUser.visible == 2 )
 	{
 		pUser.visible = 0;
 	}
@@ -153,7 +153,10 @@ function onUseChecked( pUser, iUsed )
 // Spawns Solen Ants when you walk on it.
 function onCollide( pSock, pUser, iObject )
 {
-	if( !ValidateObject( pUser ) || !pUser.isChar || pUser.npc || iObject.sectionID == "solenentrancehole" || iObject.sectionID == "solenentrancehole2" || iObject.GetTag("Examined") == 1 )
+	if( !ValidateObject( pUser ) || !pUser.isChar || pUser.npc || iObject.sectionID == "solenentrancehole" || iObject.sectionID == "solenentrancehole2" || iObject.GetTag("Examined") == 1 || iObject.sectionID == "shexitteleporter" )
+		return false;
+
+	if( iObject.GetTag( "Spawned" ) == true )
 		return false;
 
 	var spawnCount = iObject.GetTag( "spawnCount" );
@@ -171,20 +174,31 @@ function onCollide( pSock, pUser, iObject )
 			{
 				spawnCount++;
 				iObject.SetTag( "spawnCount", spawnCount );
+				iObject.SetTag( "Spawned", true );
+				iObject.StartTimer( 300000, 1, true ); // 5 min cool down timer keep from spamming it.
 				spawnedAnt.SetTag( "parentSerial", ( iObject.serial ).toString() );
 			}
 		}
 	}
 
 	// need to chance to spawn a beetle.?
-
 	return true;
+}
+
+function onTimer( iObject, timerID )
+{
+	switch( timerID )
+	{
+		case 1:
+			iObject.SetTag( "Spawned", false );
+			break;
+	}
 }
 
 function SpawnAnt( iObject )
 {
 	var random = RandomNumber( 1, 3 );
-	var worldNum = iObject.worldnumber
+	var worldNum = iObject.worldnumber;
 	var spawnAnt = null;
 
 	if( random < 2 )
