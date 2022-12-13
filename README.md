@@ -76,13 +76,13 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   <summary>Manual command-line instructions for <strong>CMake</strong></summary>
 
   > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal:
-  > - Navigate to root of cloned UOX3 git repository
-  > - `cd make/cmake`
-  > - `mkdir -p build`
-  > - `cd build`
-  > - `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)
-  > - `cmake .. -DCMAKE_BUILD_TYPE=Release` -G"Unix Makefiles" (macOS)
-  > - `cmake --build . --config Release`
+  > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
+  > `cd make/cmake`\
+  > `mkdir -p build`\
+  > `cd build`\
+  > `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)\
+  > `cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"` (macOS)\
+  > `cmake --build . --config Release`
 </details>
 
 <details>
@@ -90,23 +90,23 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing **gmake** as an alternative to *make*: `pkg install gmake`
 
-  > First, navigate to **spidermonkey** directory and run these commands:
-  > `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc` (Linux)
-  > `ar -r libjs32.a Linux_All_DBG.OBJ/*.o` (Linux)
-  > `cp Linux_All_DBG.OBJ/jsautocfg.h ./` (Linux)
-  > `gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang` (FreeBSD)
-  > `ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o` (FreeBSD)
+  > First, navigate to **spidermonkey** directory and run these commands:\
+  > `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc` (Linux)\
+  > `ar -r libjs32.a Linux_All_DBG.OBJ/*.o` (Linux)\
+  > `cp Linux_All_DBG.OBJ/jsautocfg.h ./` (Linux)\
+  > `gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang` (FreeBSD)\
+  > `ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o` (FreeBSD)\
   > `cp FreeBSD_DBG.OBJ/jsautocfg.h ./` (FreeBSD)
 
-  > Next, head to the **zlib** directory:
-  > `cd ../zlib`
-  > `make distclean`
-  > `./configure`
+  > Next, head to the **zlib** directory:\
+  > `cd ../zlib`\
+  > `make distclean`\
+  > `./configure`\
   > `make`
 
-  > Finally, head to **UOX3/source** directory:
-  > `cd ../source`
-  > `make` (Linux)
+  > Finally, head to **UOX3/source** directory:\
+  > `cd ../source`\
+  > `make` (Linux)\
   > `gmake` (FreeBSD)
 </details>
 
