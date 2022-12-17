@@ -2986,15 +2986,20 @@ CPDyeVat &CPDyeVat::operator = ( CBaseObject &target )
 //| Purpose		-	Handles outgoing packet to bring up house/boat placement preview
 //o------------------------------------------------------------------------------------------------o
 //|	Notes		-	Packet: 0x99 (Bring Up House/Boat Placement View)
-//|					Size: 26 bytes
+//|					Size: 26/30 bytes
 //|
 //|					Packet Build
 //|						BYTE cmd
 //|						BYTE request (0x01 from server, 0x00 from client)
-//|						BYTE[4] ID of deed
-//|						BYTE[12] unknown (all 0)
+//|						BYTE[4] SERIAL of deed
+//|						BYTE cursorFlags (0?)
+//|						BYTE[11] unknown (all 0)
 //|						BYTE[2] multi model (item model - 0x4000)
-//|						BYTE[6] unknown (all 0)
+//|						BYTE[2] xOffset
+//|						BYTE[2] yOffset
+//|						BYTE[2] zOffset
+//|						clientVer > 7.0.9.0, 30 byte size packet
+//|							BYTE[4] Hue
 //o------------------------------------------------------------------------------------------------o
 void CPMultiPlacementView::InternalReset( void )
 {
