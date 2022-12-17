@@ -49,7 +49,7 @@ UI32 GetTotalItemCount( CItem *objCont )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item in a pack
 //o------------------------------------------------------------------------------------------------o
-auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false ) -> UI32
+auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck = false, bool moreCheck = false, std::string sectionId = "" ) -> UI32
 {
 	UI32 total = 0;
 	auto pCont = p->GetContainsList();
@@ -59,9 +59,12 @@ auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal,
 		{
 			if( i->GetId() != realId && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
 			{
-				total += GetSubItemAmount( i, realId, realColour, realMoreVal );
+				total += GetSubItemAmount( i, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId  );
 			}
-			else if( i->GetId() == realId && ( !colorCheck || ( colorCheck && i->GetColour() == realColour )))
+			else if( i->GetId() == realId 
+				&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour )) 
+				&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
+				&& ( sectionId == "" || sectionId == i->GetSectionId() ))
 			{
 				if( i->GetUsesLeft() > 0 )
 				{
@@ -82,13 +85,13 @@ auto GetSubItemAmount( CItem *p, UI16 realId, UI16 realColour, UI32 realMoreVal,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get the total amount of an item on a character
 //o------------------------------------------------------------------------------------------------o
-UI32 GetItemAmount( CChar *s, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck )
+UI32 GetItemAmount( CChar *s, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId )
 {
 	CItem *p = s->GetPackItem();
 	if( !ValidateObject( p ))
 		return 0;
 
-	return GetSubItemAmount( p, realId, realColour, realMoreVal, colorCheck );
+	return GetSubItemAmount( p, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -96,7 +99,7 @@ UI32 GetItemAmount( CChar *s, UI16 realId, UI16 realColour, UI32 realMoreVal, bo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a certain amount of an item of specified color in a pack
 //o------------------------------------------------------------------------------------------------o
-auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal ) -> UI32
+auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId ) -> UI32
 {
 	if( !ValidateObject( p ))
 		return 0;
@@ -113,9 +116,12 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, U
 		if( i->GetId() != realId && ( i->GetType() == IT_CONTAINER || i->GetType() == IT_LOCKEDCONTAINER ))
 		{
 			// Is item an pack or container?
-			amtDeleted += DeleteSubItemAmount( i, total, realId, realColour );
+			amtDeleted += DeleteSubItemAmount( i, total, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
 		}
-		else if( i->GetId() == realId && i->GetColour() == realColour && i->GetTempVar( CITV_MORE ) == realMoreVal )
+		else if( i->GetId() == realId 
+			&& ( !colorCheck || ( colorCheck && i->GetColour() == realColour ))
+			&& ( !moreCheck || ( moreCheck && i->GetTempVar( CITV_MORE ) == realMoreVal ))
+			&& ( sectionId == "" || sectionId == i->GetSectionId() ))
 		{
 			UI16 usesLeft = i->GetUsesLeft();
 			if( usesLeft > 0 )
@@ -171,7 +177,7 @@ auto DeleteSubItemAmount( CItem *p, UI32 amount, UI16 realId, UI16 realColour, U
 //|
 //|	Changes		-	09/25/2002	-	Weight Fixes
 //o------------------------------------------------------------------------------------------------o
-UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal )
+UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour, UI32 realMoreVal, bool colorCheck, bool moreCheck, std::string sectionId  )
 {
 	if( !ValidateObject( s ))
 		return 0;
@@ -180,7 +186,7 @@ UI32 DeleteItemAmount( CChar *s, UI32 amount, UI16 realId, UI16 realColour, UI32
 	if( !ValidateObject( p ))
 		return 0;
 
-	return DeleteSubItemAmount( p, amount, realId, realColour, realMoreVal );
+	return DeleteSubItemAmount( p, amount, realId, realColour, realMoreVal, colorCheck, moreCheck, sectionId );
 }
 
 //o------------------------------------------------------------------------------------------------o

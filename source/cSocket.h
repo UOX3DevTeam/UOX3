@@ -103,20 +103,20 @@ private:
 	bool			logging;
 	UI08			range;
 	bool			cryptclient;
-	size_t		cliSocket;		// client
+	size_t			cliSocket;		// client
 	SI16			walkSequence;
-	size_t		postAckCount;
+	size_t			postAckCount;
 	PickupLocations	pSpot;
-	SERIAL		pFrom;
+	SERIAL			pFrom;
 
 	SI16			pX;
 	SI16			pY;
 	SI08			pZ;
 
-	UnicodeTypes		lang;
-	ClientTypes			cliType;
+	UnicodeTypes	lang;
+	ClientTypes		cliType;
 	ClientVersions	cliVerShort;
-	UI32						clientVersion;
+	UI32			clientVersion;
 
 	UI32			bytesReceived;
 	UI32			bytesSent;
@@ -137,7 +137,7 @@ private:
 	UI08			clientip[4];
 
 	bool			loginComplete;
-	CItem *		cursorItem; //pointer to item held on mouse cursor
+	CItem *			cursorItem; //pointer to item held on mouse cursor
 
 	UI16			bytesRecvWarningCount;
 	UI16			bytesSentWarningCount;
