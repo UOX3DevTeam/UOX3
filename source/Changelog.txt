@@ -1,3 +1,26 @@
+03/12/2022 - Xuri
+	Updated .ResourceCount() and .UseResource() JS Object Methods to include optional parameter for sectionId. New supported syntax:
+		int ResourceCount( realId, colour )
+		int ResourceCount( realId, colour, moreVal )
+		int ResourceCount( realId, colour, moreVal, sectionId )
+		int UseResource( amount, realItemId )
+		int UseResource( amount, realItemId, colour )
+		int UseResource( amount, realItemId, colour, moreVal )
+		int UseResource( amount, realItemId, colour, moreVal, sectionId )
+	Fixed an issue where the bit flag for the HirelingCombatTraining setting was not set properly
+	Fixed an issue in SpiderMonkey VS project that prevented compiling a x64 debug build (thanks, punt!)
+	Some minor cleanup
+
+03/12/2022 - Dragon Slayer
+	GM and Counselors can now go though the wind teleporter
+
+03/12/2022 - ldilley
+	Comment line in jsconfig.mk that attempts to cat a non-existent Version file. This causes an error otherwise during the SpiderMonkey build.
+	Initialize totalPlayerGold in vendor.cpp.
+	Flag unused variable in gumps.cpp.
+	Update README.md to include references to FreeBSD and also alter the command (libtool instead of ar) used to generate the JavaScript library on macOS.
+	Improve automake.sh.
+
 29/11/2022 - Xuri
 	Added some validation checks for attacker object in onDamage JS event in several scripts
 	Enabled onSellToVendor, onSoldToVendor, onBuyFromVendor and onBoughtFromVendor JS events to also run if attached to NPCs
