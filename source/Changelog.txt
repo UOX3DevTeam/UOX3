@@ -1,3 +1,6 @@
+17/12/2022 - Xuri
+	When a player says "vendor buy" or "vendor sell", NPC shopkeepers (and related JS events) will now respond in priority of distance to the player
+
 11/12/2022 - Xuri
 	Added support for a SCRIPT tag in ore definitions in dfndata/skills/skills.dfn, which will be applied to any ore of that type that's mined
 
