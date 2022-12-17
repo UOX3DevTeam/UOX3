@@ -1,3 +1,6 @@
+08/12/2022 - Dragon Slayer
+	Replaced orc Spawns with Savages in T2A orc fort. this would bring the spawns up to date with LBR.
+
 03/12/2022 - Xuri
 	Updated .ResourceCount() and .UseResource() JS Object Methods to include optional parameter for sectionId. New supported syntax:
 		int ResourceCount( realId, colour )
