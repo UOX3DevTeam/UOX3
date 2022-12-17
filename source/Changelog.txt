@@ -1,3 +1,6 @@
+11/12/2022 - Xuri
+	Added support for a SCRIPT tag in ore definitions in dfndata/skills/skills.dfn, which will be applied to any ore of that type that's mined
+
 08/12/2022 - Dragon Slayer
 	Replaced orc Spawns with Savages in T2A orc fort. this would bring the spawns up to date with LBR.
 
