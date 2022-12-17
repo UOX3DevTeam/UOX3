@@ -30,20 +30,20 @@ private:
 	//SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
 
-	std::bitset<8>	bools;
-	RANGE						visDistance;
+	std::bitset<8>		bools;
+	RANGE				visDistance;
 	LIGHTLEVEL			nightVision;
 	ARMORCLASS			armourRestrict;
 	LIGHTLEVEL			lightLevel;
-	GENDER					restrictGender;
-	SKILLVAL				languageMin;
-	R32							poisonResistance;	// % of poison to cancel
-	R32							magicResistance;	// % of magic to cancel
+	GENDER				restrictGender;
+	SKILLVAL			languageMin;
+	R32					poisonResistance;	// % of poison to cancel
+	R32					magicResistance;	// % of magic to cancel
 
 	COLOURLIST			beardColours;
 	COLOURLIST			hairColours;
 	COLOURLIST			skinColours;
-	COLOUR					bloodColour;
+	COLOUR				bloodColour;
 
 	RACEIDLIST			racialEnemies;
 

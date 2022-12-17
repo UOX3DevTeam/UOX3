@@ -16,55 +16,55 @@ class CItem : public CBaseObject
 protected:
 	GenericList<CItem *>	Contains;
 
-	CBaseObject * contObj;
+	CBaseObject * 	contObj;
 	UI08			glowEffect;
-	SERIAL		glow;					// identifies glowing objects
-	COLOUR		glowColour;
-	SI08			madeWith;			// Store the skills used to make this item
+	SERIAL			glow;			// identifies glowing objects
+	COLOUR			glowColour;
+	SI08			madeWith;		// Store the skills used to make this item
 	SI32			rndValueRate;	// Store the value calculated base on RANDOMVALUE in region.dfn
-	SI16			good;					// Store type of GOODs to trade system! (Plz not set as UNSIGNED)
+	SI16			good;			// Store type of GOODs to trade system! (Plz not set as UNSIGNED)
 
 	// for example: RANK 5 --> 5*10 = 50% of malus
 	// this item has same values decreased by 50%..
 	// RANK 1 --> 1*10=10% this item has 90% of malus!
 	// RANK 10 --> 10*10 = 100% this item has no malus! RANK 10 is automatically setted if you select RANKSYSTEM 0.
 	// Vars: LODAMAGE, HIDAMAGE, ATT, DEF, HP, MAXHP
-	SI08				rank;			// for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
-	ARMORCLASS	armorClass;
-	UI16				restock;	// Number up to which shopkeeper should restock this item
-	SI08				movable;	// 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
+	SI08			rank;			// for rank system, this value is the LEVEL of the item from 1 to 10.  Simply multiply t he rank*10 and calculate the MALUS this item has from the original.
+	ARMORCLASS		armorClass;
+	UI16			restock;		// Number up to which shopkeeper should restock this item
+	SI08			movable;		// 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
 	TIMERVAL		tempTimer;
 	TIMERVAL		decayTime;
-	UI08				spd;		//The speed of the weapon
-	UI16				maxHp;	// Max number of hit points an item can have.
-	UI16				amount;	// Amount of items in pile
-	ItemLayers	layer;	// Layer if equipped on paperdoll
-	ItemTypes		type;		// For things that do special things on doubleclicking
-	SI08				offspell;
-	UI16				entryMadeFrom;
-	SERIAL			creator;	// Store the serial of the player made this item
-	SI08				gridLoc;
+	UI08			spd;			// The speed of the weapon
+	UI16			maxHp;			// Max number of hit points an item can have.
+	UI16			amount;			// Amount of items in pile
+	ItemLayers		layer;			// Layer if equipped on paperdoll
+	ItemTypes		type;			// For things that do special things on doubleclicking
+	SI08			offspell;
+	UI16			entryMadeFrom;
+	SERIAL			creator;		// Store the serial of the player made this item
+	SI08			gridLoc;
 
 	std::bitset<8>	bools;
-	std::bitset<8>	priv; // Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
+	std::bitset<8>	priv; 			// Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
 
 	std::string 	name2;
 	std::string		desc;
-	std::string		eventName;	// Name of custom event item belongs to
+	std::string		eventName;		// Name of custom event item belongs to
 
 	UI32			tempVars[CITV_COUNT];
-	SI32			weightMax;	//Maximum weight a container can hold
-	SI32			baseWeight;	//Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
+	SI32			weightMax;		// Maximum weight a container can hold
+	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
 	UI16			maxItems;		// Maximum amount of items a container can hold
 	UI08			maxRange;		// Max range of ranged weapon
-	UI08			baseRange;	// Base range of thrown weapon
+	UI08			baseRange;		// Base range of thrown weapon
 	UI16			maxUses;		// Max number of uses an item can have
 	UI16			usesLeft;		// Current number of uses left on an item
-	UI08			dir;				//direction an item can have
+	UI08			dir;			// direction an item can have
 
 	UI32			value[3];		// Price a shopkeep buys and sells items for, with price on player vendor as optional third value
 	UI16			ammo[2];		// Ammo ID and Hue
-	UI16			ammoFX[3];	// Ammo-effect ID, Hue and rendermode
+	UI16			ammoFX[3];		// Ammo-effect ID, Hue and rendermode
 
 	UI16			regionNum;
 
