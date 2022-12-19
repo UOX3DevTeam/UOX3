@@ -3580,8 +3580,9 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_ResourceCount()
-//|	Prototype	-	int ResourceCount( realitemid, colour )
-//|					int ResourceCount( realitemid, colour, moreVal )
+//|	Prototype	-	int ResourceCount( realId, colour )
+//|					int ResourceCount( realId, colour, moreVal )
+//|					int ResourceCount( realId, colour, moreVal, sectionId )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
 //o------------------------------------------------------------------------------------------------o
@@ -3597,11 +3598,12 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	UI16 realId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	SI32 itemColour = 0;
-	UI32 moreVal = 0;
+	SI64 moreVal = -1;
+	std::string sectionId = "";
 
-	if(( argc < 1 ) || ( argc > 3 ))
+	if(( argc < 1 ) || ( argc > 4 ))
 	{
-		MethodError( "(ResourceCount) Invalid count of parameters: %d, either needs 1, 2 or 3", argc );
+		MethodError( "(ResourceCount) Invalid count of parameters: %d, needs from 1 to 4 parameters", argc );
 		return JS_FALSE;
 	}
 
@@ -3611,20 +3613,26 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	}
 	if( argc >= 3 )
 	{
-		moreVal = static_cast<UI32>( JSVAL_TO_INT( argv[2] ));
+		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[2] ));
+	}
+	if( argc >= 4 )
+	{
+		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[3] ));
 	}
 
 	bool colorCheck = ( itemColour != -1 ? true : false );
+	bool moreCheck = ( moreVal != -1 ? true : false );
 
-	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), moreVal, colorCheck ));
+	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
 	return JS_TRUE;
 }
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBase_UseResource()
-//|	Prototype	-	int UseResource( amount, realitemid )
-//|					int UseResource( amount, realitemid, colour )
-//|					int UseResource( amount, realitemid, colour, moreVal )
+//|	Prototype	-	int UseResource( amount, realItemId )
+//|					int UseResource( amount, realItemId, colour )
+//|					int UseResource( amount, realItemId, colour, moreVal )
+//|					int UseResource( amount, realItemId, colour, moreVal, sectionId )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified amount of items of given ID, colour and MORE value from
 //|					char's packs, and returns amount deleted
@@ -3642,36 +3650,44 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	UI32 amount		= static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
 	UI16 realId		= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
-	UI16 itemColour = 0;
-	UI32 moreVal	= 0;
+	SI32 itemColour = 0;
+	SI64 moreVal	= -1;
+	std::string sectionId = "";
 
-	// Min. 2 Arguments (amount + id) or max 4 (amount + id + color + moreVal)
-	if(( argc < 2 ) || ( argc > 4 ))
+	// Min. 2 Arguments (amount + id) or max 5 (amount + id + color + moreVal + sectionId)
+	if(( argc < 2 ) || ( argc > 5 ))
 	{
-		MethodError( "(UseResource) Invalid count of parameters: %d, either needs 2, 3 or 4", argc );
+		MethodError( "(UseResource) Invalid count of parameters: %d, needs from 2 to 5 parameters", argc );
 		return JS_FALSE;
 	}
 
 	if( argc >= 3 )
 	{
-		itemColour = static_cast<UI16>( JSVAL_TO_INT( argv[2] ));
+		itemColour = static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
 	}
 	if( argc >= 4 )
 	{
-		moreVal = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+		moreVal = static_cast<SI64>( JSVAL_TO_INT( argv[3] ));
 	}
+	if( argc >= 5 )
+	{
+		sectionId = JS_GetStringBytes( JS_ValueToString( cx, argv[4] ));
+	}
+
+	bool colorCheck = ( itemColour != -1 );
+	bool moreCheck = ( moreVal != -1 ? true : false );
 
 	UI32 retVal = 0;
 
 	if( myClass.ClassName() == "UOXChar" )
 	{
 		CChar *myChar	= static_cast<CChar *>( myObj );
-		retVal			= DeleteItemAmount( myChar, amount, realId, itemColour, moreVal );
+		retVal			= DeleteItemAmount( myChar, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
 	else
 	{
 		CItem *myItem	= static_cast<CItem *>( myObj );
-		retVal			= DeleteSubItemAmount( myItem, amount, realId, itemColour, moreVal );
+		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
 	*rval = INT_TO_JSVAL( retVal );
 	return JS_TRUE;
