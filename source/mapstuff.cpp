@@ -39,7 +39,7 @@ auto CMulHandler::LoadMapsDFN( const std::string &uodir ) -> std::map<int, MapDf
 	auto entrycount = FileLookup->CountOfEntries( maps_def );
 	std::map<int, MapDfnData_st> results;
 	auto uopath = std::filesystem::path( uodir );
-	for( size_t i = 0; i < entrycount; i++ )
+	for( auto i = 0; i < static_cast<int>( entrycount ); i++ )
 	{
 		auto toFind = FileLookup->FindEntry( "MAP "s + std::to_string( i ), maps_def );
 		if( toFind == nullptr )
@@ -1965,7 +1965,7 @@ auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t in
 {
 	auto count = data.size() / 196;
 	size_t block = ( static_cast<int>( index ) * 0xC4000 ) / 196;
-	for( size_t i = 0; i < count; ++i )
+	for( auto i = 0; i < static_cast<int>( count ); ++i )
 	{
 		auto ptr = data.data() + ( i * 196 );
 		if( block < _terrain.size() )

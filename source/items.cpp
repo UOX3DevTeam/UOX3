@@ -946,7 +946,7 @@ auto cItem::CreateRandomItem( CItem *mCont, const std::string& sItemList, const 
 
 			// Loop through the items in the itemlist/lootlist
 			int weightOfChosenItem = 0;
-			for( size_t j = 0; j < itemListSize; j++ )
+			for( auto j = 0; j < static_cast<int>( itemListSize ); j++ )
 			{
 				auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ItemList->MoveTo( j ), "//" )), "|" );
 				if( csecs.size() == 2 )

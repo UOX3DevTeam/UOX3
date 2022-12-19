@@ -120,7 +120,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 bool CPIBuyItem::Handle( void )
 {
 	UI16 i;
-	UI32 totalPlayerGold, totalGoldCost = 0;
+	UI32 totalPlayerGold = 0, totalGoldCost = 0;
 	bool soldout	= false, clear = false;
 	CChar *mChar	= tSock->CurrcharObj();
 	CItem *p		= mChar->GetPackItem();
@@ -160,7 +160,7 @@ bool CPIBuyItem::Handle( void )
 		// Count gold in bank if amount is higher than threshold
 		totalPlayerGold = GetBankCount( mChar, 0x0EED );
 	}
-	
+
 	if( !tryUsingBank || totalPlayerGold < totalGoldCost )
 	{
 		// Count gold in backpack if amount is NOT higher than threshold,
