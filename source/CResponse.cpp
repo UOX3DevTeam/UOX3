@@ -74,6 +74,12 @@ auto FindNearbyNPCs( CChar *mChar, distLocs distance ) -> std::vector<CChar *>
 			}
 		}
 	}
+
+	// Sort NPCs by their distance to the player
+	std::sort( ourNpcs.begin(), ourNpcs.end(), [&]( CChar *a, CChar *b )
+	{
+		return GetDist( a, mChar ) < GetDist( b, mChar );
+	});
 	return ourNpcs;
 }
 
