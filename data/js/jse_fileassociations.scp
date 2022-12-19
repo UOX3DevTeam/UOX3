@@ -110,6 +110,8 @@
 2750=server/teleporter/teleporter_wind_city_entrance.js
 2751=server/teleporter/teleporter_orc_caves_2_3.js
 
+2753=server/misc/ruleset.js
+
 //-------------------------------------------
 // NPC, and AI [3000-3999]
 //-------------------------------------------

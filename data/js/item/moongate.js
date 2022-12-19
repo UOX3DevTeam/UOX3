@@ -25,10 +25,10 @@
 
 // Set to 0 to disable teleport locations for a certain map from appearing in the moongate menu
 var enableFelucca = 1;
-var enableTrammel = 0;
-var enableIlshenar = 0;
-var enableMalas = 0;
-var enableTokuno = 0;
+var enableTrammel = 1;
+var enableIlshenar = 1;
+var enableMalas = 1;
+var enableTokuno = 1;
 
 function onUseChecked( pUser, iUsed ) 
 { 
@@ -193,10 +193,12 @@ function onGumpPress( srcSock, myButton )
 	if( myButton >=5 && myButton <= 12 )
 	{
 		tWorld = 0;  //Going to Fel
+		srcChar.RemoveScriptTrigger( 2753 );
 	}
 	if( myButton >= 13 && myButton <= 20 )
 	{
 		tWorld = 1;  //Going to Tram
+		srcChar.AddScriptTrigger( 2753 );
 	}
 
 	var targetLocation = new Array();
@@ -266,54 +268,63 @@ function onGumpPress( srcSock, myButton )
 		{
 			// Compassion
 			targetLocation = [ 1215, 467, -13, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 22:
 		{
 			// Honesty
 			targetLocation = [ 722, 1366, -60, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 23:
 		{
 			// Honor
 			targetLocation = [ 744, 724, -28, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 24:
 		{
 			// Humility
 			targetLocation = [ 281, 1016, 0, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 25:
 		{
 			// Justice
 			targetLocation = [ 987, 1011, -32, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 26:
 		{
 			// Sacrifice
 			targetLocation = [ 1174, 1286, -30, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 27:
 		{
 			// Sprirituality
 			targetLocation = [ 1532, 1340, -3, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 28:
 		{
 			// Valor
 			targetLocation = [ 528, 216, -45, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 29:
 		{
 			// Chaos
 			targetLocation = [ 1721, 218, 96, 2 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		//Malas
@@ -321,18 +332,21 @@ function onGumpPress( srcSock, myButton )
 		{
 			// New Luna
 			targetLocation = [ 1015, 527, -65, 3 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 31:
 		{
 			//Old Luna
 			targetLocation = [ 1054, 358, -86, 3 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 32:
 		{
 			// Umbra
 			targetLocation = [ 1997, 1386, -85, 3 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		//Tokuno Islands
@@ -340,18 +354,21 @@ function onGumpPress( srcSock, myButton )
 		{
 			// Isamu~Jima
 			targetLocation = [ 1169, 998, 42, 4 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 34:
 		{
 			// Makoto~Jima
 			targetLocation = [ 801, 1204, 25, 4 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		case 35:
 		{
 			// Homare~Jima
 			targetLocation = [ 270, 628, 15, 4 ];
+			srcChar.AddScriptTrigger( 2753 );
 			break;
 		}
 		default:
