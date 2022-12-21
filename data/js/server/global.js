@@ -14,6 +14,8 @@ function onLogin( socket, pChar )
 			return;
 		}
 	}
+
+	pChar.AddScriptTrigger( 2753 );
 }
 
 // Generic global-script function to look up data in /shared/jsWorldData/ folder
