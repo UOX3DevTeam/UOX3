@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 11. December, 2022</small></p>
+	<p style="margin:0"><small>Last Updated: 24. December, 2022</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
 </div>
 
@@ -167,7 +167,7 @@
 						</ul>
 						<h4>November 13th, 2020</h4>
 						<ul>
-							<li>Added dos2unix instructions for Linux/MacOS users downloading default worldfiles/spawnfiles</li>
+							<li>Added dos2unix instructions for Linux/macOS users downloading default worldfiles/spawnfiles</li>
 						</ul>
 						<h4>November 7th, 2020</h4>
 						<ul>
@@ -4728,9 +4728,9 @@ packitem=0x0f8d,30
 						<ul>
 							<li><strong>Windows</strong> - Download and install <a href="https://visualstudio.microsoft.com/downloads/" title="Community Edition of Visual Studio" target="_blank">Community Edition of Visual Studio 2017 or 2022</a>.
 								<ul>
-									<li>Be sure to also install <strong>Desktop development with C++</strong> via the Visual Studio Installer, along with the individual component titled <strong>VC++ 2017 version 15.9 v14.16 latest v141 tools</strong> (VS2017) or <strong>MSVC v143 - VS 2022 C++ x64/x86 build tools</strong> (VS2022). CMake is included for command-line builds.</li>
+									<li>Be sure to also install <span class="hl">Desktop development with C++</span> via the Visual Studio Installer, along with the individual component titled <span class="hl">VC++ 2017 version 15.9 v14.16 latest v141 tools</span> (VS2017) or <span class="hl">MSVC v143 - VS 2022 C++ x64/x86 build tools</span> (VS2022). CMake is included for command-line builds.</li>
 								</ul>
-							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt install build-essentials cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
+							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
 							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
 							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> (for building with an IDE) via the App Store, and/or <a href="https://cmake.org/download/" title="CMake" target="_blank">CMake</a> (for command-line builds)</li>
 					</div>
@@ -4762,44 +4762,49 @@ packitem=0x0f8d,30
 					<input type="checkbox" id="spoiler_optional_other_branches">
 					<label for="spoiler_optional_other_branches">(Optional) Checking out Other Branches </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step: <span class="hl">git checkout develop</span></p>
+						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step:<br><span class="hl">git checkout develop</span></p>
 						<p>GitHub Desktop users can change the active branch via the Current Branch dropdown menu in GitHub Desktop.</p>
 					</div>
 
 					<h4>Step 3: Compile UOX3</h4>
-					<em>Finally, compile UOX3 using the build environment you setup above</em>
-					<ul style="margin-left: 15px">
-						<li><strong>Windows</strong> - Open <em>UOX3\make\VS2022\uox3.sln</em> (VS2022), choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
-						<li><strong>Linux/FreeBSD</strong> - Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository.</li>
-						<li><strong>macOS</strong> - Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
-					</ul>
-					<input type="checkbox" id="spoiler_compile_with_cmake">
-					<label for="spoiler_compile_with_cmake">Manual command-line instructions for <strong>CMake</strong> </strong> <i class="fas fa-angle-down"></i></label>
+					<em>Finally, compile UOX3 using the build environment you setup in Step 1.</em>
+					<input type="checkbox" id="spoiler_compile_with_vs2022_xcode_automake">
+					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal:</p>
+					<ul style="margin-left: 15px">
+						<li><strong>Visual Studio 2022</strong> - (Windows) Open <em>UOX3\make\VS2022\uox3.sln</em> (VS2022), choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
+						<li><strong>automake.sh</strong> - (Linux/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
+						<li><strong>XCode</strong> - (macOS) Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
+					</ul>
+					</div>
+					<input type="checkbox" id="spoiler_compile_with_cmake">
+					<label for="spoiler_compile_with_cmake"><strong>CMake</strong> (Any platform, manual instructions<i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compile with IDEs:</p>
 						<ul>
 							<li>Navigate to root of cloned UOX3 git repository</li>
 							<li><span class="hl">cd make/cmake</span></li>
-							<li><span class="hl">mkdir -p build</span></li>
+							<li><span class="hl">mkdir build</span></li>
 							<li><span class="hl">cd build</span></li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release (Windows/Linux/FreeBSD)</span></li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles" (macOS)</span></li>
+							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release</span> (Windows/Linux/FreeBSD)</li>
+							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"</span> (macOS)</li>
 							<li><span class="hl">cmake --build . --config Release</span></li>
 						</ul>
+						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build; delete <strong>make/cmake/build</strong> directory to do clean builds.</p>
 					</div>
 
 					<input type="checkbox" id="spoiler_compile_with_gccmake">
-					<label for="spoiler_compile_with_gccmake">Manual command-line instructions for <strong>GCC/make/gmake</strong> </strong> <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_compile_with_gccmake"><strong>GCC/make/gmake</strong> (Linux/FreeBSD, manual instructions) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<p>If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing gmake as an alternative to make: pkg install gmake</p>
 
 						<p>First, navigate to spidermonkey directory and run these commands:<br>
-						<span class="hl">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc (Linux)</span><br>
-						<span class="hl">ar -r libjs32.a Linux_All_DBG.OBJ/*.o (Linux)</span><br>
-						<span class="hl">cp Linux_All_DBG.OBJ/jsautocfg.h ./ (Linux)</span><br>
-						<span class="hl">gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang (FreeBSD)</span><br>
-						<span class="hl">ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o (FreeBSD)</span><br>
-						<span class="hl">cp FreeBSD_DBG.OBJ/jsautocfg.h ./ (FreeBSD)</span></p>
+						<span class="hl">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc</span> (Linux)<br>
+						<span class="hl">ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span> (Linux)<br>
+						<span class="hl">cp Linux_All_DBG.OBJ/jsautocfg.h ./</span> (Linux)<br>
+						<span class="hl">gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang</span> (FreeBSD)<br>
+						<span class="hl">ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o</span> (FreeBSD)<br>
+						<span class="hl">cp FreeBSD_DBG.OBJ/jsautocfg.h ./</span> (FreeBSD)</p>
 
 						<p>Next, head to the zlib directory:<br>
 						<span class="hl">cd ../zlib</span><br>
@@ -4823,9 +4828,9 @@ packitem=0x0f8d,30
 					</div>
 
 					<input type="checkbox" id="spoiler_compile_with_vs2017">
-					<label for="spoiler_compile_with_vs2017">Instructions for <strong>VS2017</strong> </strong> <i class="fas fa-angle-down"></i></label>
+					<label for="spoiler_compile_with_vs2017"><strong>Visual Studio 2017</strong> (Windows) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled first before UOX3 itself can be compiled UOX3 will work:</p>
+						<p>When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled prior to the UOX3 project. However, after those sub-projects have been compiled once, they never need to be compiled again, and from that point on only the build instructions for UOX3 itself applies:</p>
 
 						<h4>SpiderMonkey</h4>
 						<ol style="margin-left: 15px">
@@ -4852,9 +4857,10 @@ packitem=0x0f8d,30
 					<h4>UOX3 Compiled! Now what?</h4>
 					<p><em>Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:</em></p>
 					<ul style="margin-left: 15px">
-						<li>Windows - Compiled UOX3.exe can be found in UOX3/make/VS2022/x64/Release</li>
-						<li>Linux/FreeBSD - Compiled uox3 binary can be found in root UOX3 repository</li>
-						<li>macOS - Compiled uox3 binary can be found in UOX3\make\XCode\Build\Products\Release</li>
+						<li><strong>Windows</strong> - (VS2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
+						<li><strong>Linux/FreeBSD</strong> - (automake.sh) Compiled uox3 binary can be found in <strong>root UOX3 repository</strong></li>
+						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
+						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>
 					</ul>
 					<p><strong>It is recommended</strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
 					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3" title="UOX3 Docs - Configuring Your UOX3 Shard">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
@@ -8167,7 +8173,7 @@ function commandTitle()
 					<p>A home for discussion of non-Official Ultima Online Servers, also known as Freeshards - hosted by Stratics (who once upon a time also hosted the UOX3 website and IRC channels!)</p>
 					<h4><a href="https://shardportal.com/" target="_blank" title="ShardPortal - UO Freeshard portal">ShardPortal</a></h4>
 					<p>The ShardPortal is a place for anyone to advertise their shard as well as search out other active shards.</p>
-					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway (Dead?)</a></h4>
+					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway</a></h4>
 					<p>(Possibly dead) A top site list for free UO shards made in the spirit of and in honor of Mr. Fixit's original UOGateway tool.</p>
 					<h4><a href="http://www.uo-pixel.de/" target="_blank" title="UO-Pixel - custom artwork assets for UO client">UO-Pixel</a></h4>
 					<p>Another nice (German) website focusing on providing custom artwork for UO shards. Amongst other things, it has some very nice animated item artwork (including a moving water-mill).</p>
@@ -11166,7 +11172,7 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of November 2022):</p>
+							<p>Contributors active within last year (as of December 2022):</p>
 							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
 						</div>
 					</div>
