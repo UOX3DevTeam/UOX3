@@ -5,11 +5,20 @@ on:
       - '**.js'
       - '**.dfn'
       - '**.scp'
+      - '**.txt'
+      - '**.html'
+      - '**.sln'
+      - '**.vcxproj'
   pull_request:
     paths-ignore:
       - '**.js'
       - '**.dfn'
       - '**.scp'
+      - '**.txt'
+      - '**.html'
+      - '**.sln'
+      - '**.vcxproj'
+
 jobs:
   build:
     runs-on: windows-latest

@@ -23,7 +23,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > * **Windows** - Download and install [Community Edition of Visual Studio 2017 or 2022](https://visualstudio.microsoft.com/downloads/).
   > * * Be sure to also install **Desktop development with C++** via the Visual Studio Installer, along with the individual component titled **VC++ 2017 version 15.9 v14.16 latest v141 tools** (VS2017) or **MSVC v143 - VS 2022 C++ x64/x86 build tools** (VS2022). CMake is included for command-line builds.
-  > * **Linux (Debian-based)** - Run `sudo apt install build-essentials cmake` in a Terminal:  (or use your Linux distro's package manager)
+  > * **Linux (Debian-based)** - Run `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
   > * **FreeBSD** - Run `pkg install cmake` in a Terminal. Alternatively, build `cmake` via ports if desired.
   > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for building with an IDE) via the App Store, and/or [CMake](https://cmake.org/download/) (for command-line builds)
 </details>
@@ -67,26 +67,32 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 ## Step 3: Compile UOX3
-*Finally, compile UOX3 using the build environment you set up above.*
-  * **Windows** - Open *UOX3\make\VS2022\uox3.sln* (VS2022), choose *Release/Debug* from dropdown menu, and hit *Build -> Build UOX3*
-  * **Linux/FreeBSD** - Run `./automake.sh` in a Terminal, from the root of the cloned UOX3 repository.
-  * **macOS** - Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
-
+*Finally, compile UOX3 using the build environment you set up in Step 1.*
 <details>
-  <summary>Manual command-line instructions for <strong>CMake</strong></summary>
+  <summary><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS)</summary>
 
-  > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal:
-  > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
-  > `cd make/cmake`\
-  > `mkdir -p build`\
-  > `cd build`\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"` (macOS)\
-  > `cmake --build . --config Release`
+  > * **Visual Studio 2022** - (Windows) Open *UOX3\make\VS2022\uox3.sln* (VS2022), choose *Release/Debug* from dropdown menu, and hit *Build -> Build UOX3*
+  > * **automake.sh** - (Linux/FreeBSD) Run `./automake.sh` in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument `-b debug` to create debug build, and/or `-o clean` to do a clean build
+  > * **XCode** - (macOS) Open *UOX3/make/XCode/uox3/uox3.xcworkspace*, select *Build*
 </details>
 
 <details>
-  <summary>Manual command-line instructions for <strong>GCC/make/gmake</strong></summary>
+  <summary><strong>CMake</strong> (Any platform, manual instructions)</summary>
+
+  > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compiling with IDEs:
+  > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
+  > `cd make/cmake`\
+  > `mkdir build`\
+  > `cd build`\
+  > `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)\
+  > `cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"` (macOS)\
+  > `cmake --build . --config Release`\
+
+  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **make/cmake/build** directory to do clean builds.
+</details>
+
+<details>
+  <summary><strong>GCC/make/gmake</strong> (Linux/FreeBSD, manual instructions)</summary>
 
   > If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing **gmake** as an alternative to *make*: `pkg install gmake`
 
@@ -111,9 +117,9 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 </details>
 
 <details>
-  <summary>Instructions for <strong>VS2017</strong></summary>
+  <summary><strong>Visual Studio 2017</strong> (Windows)</summary>
 
-  > When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled first before UOX3 itself can be compiled UOX3 will work:
+  > When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled prior to the UOX3 project. However, after those sub-projects have been compiled once, they never need to be compiled again, and from that point on only the build instructions for UOX3 itself applies:
 
   > #### SpiderMonkey ####
   > 1) Navigate to the **UOX3\spidermonkey\make\VS2017\jscript\** folder and open **jscript.sln** in VS2017.
@@ -131,6 +137,9 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > 1) Navigate to the **UOX3\make\VS2017\** folder and open **uox3.sln** in VS2017.
   > 2) Make sure you have **UOX3** selected in the Solution Explorer, then select **Release** and **x64** (64-bit) in the *Solution Configuration/Platform dropdown menus*, or via **Build -> Configuration Manager**.
   > 3) Select **Build -> Build UOX3** to start compiling UOX3. When done, you'll find **UOX3.exe** in **UOX3\make\VS2017\Release\x64**.
+
+  > From here on, if you wish to re-compile UOX3, just open the uox3.sln and hit rebuild.
+  > Note that if you wish to change from Release to Debug build, the sub-projects (SpiderMonkey and zlib) also need to be compiled for Debug mode prior to compiling UOX3.
 
 <details>
   <summary>(Troubleshooting) Adding SpiderMonkey/zlib references in Configuration Manager</summary>
@@ -152,9 +161,10 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 ## UOX3 Compiled! Now what?
 Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:
-  * **Windows** - Compiled UOX3.exe can be found in **UOX3/make/VS2022/x64/Release**
-  * **Linux/FreeBSD** - Compiled uox3 binary can be found in **root UOX3 repository**
-  * **macOS** - Compiled uox3 binary can be found in **UOX3\make\XCode\Build\Products\Release**
+  * **Windows** - (VS2022) Compiled UOX3.exe can be found in **UOX3/make/VS2022/x64/Release**
+  * **Linux/FreeBSD** - (automake.sh) Compiled uox3 binary can be found in **root UOX3 repository**
+  * **macOS** - (XCode) Compiled uox3 binary can be found in **UOX3\make\XCode\Build\Products\Release**
+  * **Either Platform** - (CMake, manual) Compiled uox3 binary can be found in **UOX3\make\cmake\build**
 
 **It is recommended** to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
 

@@ -1,13 +1,32 @@
 #!/bin/sh
 
-# Support optional argument: -b Debug/Release
+# Support optional arguments:
+#   -b debug
+#   -o clean
 buildtype="Release"
-while getopts b: flag
+buildoption="Normal"
+while getopts ":b:o:" flag
 do
-    case "${flag}" in
-        b) buildtype=${OPTARG};;
-    esac
+  case "${flag}" in
+    b)
+      if [ ${OPTARG} = "debug" ] || [ ${OPTARG} = "Debug" ]
+      then
+        buildtype="Debug"
+      fi;;
+    o)
+      if [ ${OPTARG} = "clean" ] || [ ${OPTARG} = "Clean" ]
+      then
+        buildoption="Clean"
+      fi;;
+  esac
 done
+
+# if -o clean was provided, do a clean build
+if [ $buildoption = "Clean" ]
+then
+  echo "Preparing for clean build..."
+  rm -R make/cmake/build/
+fi
 
 echo "Creating Build directory"
 cd make/cmake
