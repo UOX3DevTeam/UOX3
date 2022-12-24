@@ -6,11 +6,19 @@ on:
       - '**.js'
       - '**.dfn'
       - '**.scp'
+      - '**.txt'
+      - '**.html'
+      - '**.sln'
+      - '**.vcxproj'
   pull_request:
     paths-ignore:
       - '**.js'
       - '**.dfn'
       - '**.scp'
+      - '**.txt'
+      - '**.html'
+      - '**.sln'
+      - '**.vcxproj'
 
 jobs:
   build:
@@ -18,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: prepare automake
-      run: chmod +x automake.sh
-    - name: automake
-      run: ./automake.sh
+    - uses: actions/checkout@v3
+    - name: Generate Makefiles
+      run: cmake make/cmake -DCMAKE_BUILD_TYPE=Release
+    - name: Building
+      run: cmake --build .

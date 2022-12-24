@@ -1,6 +1,5 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -35,18 +34,14 @@ IDI_MAINFRAME           ICON                    "uox3.ico"
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
 
-2 TEXTINCLUDE 
+1 TEXTINCLUDE 
 BEGIN
     "#include ""windows.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+2 TEXTINCLUDE 
 BEGIN
     "\r\n"
     "\0"
@@ -79,11 +74,11 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "UOX3"
-            VALUE "FileVersion", "0.99.6-RC1"
+            VALUE "FileVersion", "0.99.6-RC2"
             VALUE "InternalName", "UOX3.exe"
             VALUE "OriginalFilename", "UOX3.exe"
             VALUE "ProductName", "Ultima Offline eXperiment 3"
-            VALUE "ProductVersion", "0.99.6-RC1"
+            VALUE "ProductVersion", "0.99.6-RC2"
         END
     END
     BLOCK "VarFileInfo"

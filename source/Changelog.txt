@@ -1,3 +1,26 @@
+24/12/2022 - Xuri, punt, ldilley (0.99.6-RC2)
+	CMake is now default build system on Linux/FreeBSD, and an alternative for Windows/macOS-users instead of VS/XCode, though the old GCC/Make build process is still intact (for now)
+	Resource files (uox3.rc and uox3.ico) have been moved from UOX3/source to UOX3/assets
+	Build/project-related files have been moved to /make/[buildsystem] sub-directories, for both UOX3 and sub-projects:
+		UOX3/make/cmake
+		UOX3/make/VS2017
+		UOX3/make/VS2022
+		UOX3/make/XCode
+		spidermonkey/make/cmake
+		spidermonkey/make/VS2017
+		spidermonkey/make/VS2022
+		spidermonkey/make/XCode
+		zlib/make/cmake
+		zlib/make/VS2017
+		zlib/make/VS2022
+		zlib/make/XCode
+	CMake, VS2022 and XCode will compile sub-projects automatically when UOX3 is compiled, while VS2017 requires compiling sub-projects prior to UOX3
+	automake.sh script (still in root of repository) now uses CMake instead of GCC/Make, and supports optional arguments for creating debug/clean builds
+	Updated instructions on compiling UOX3 can be found on GitHub and/or in the UOX3 documentation
+	Some redundant files have been deleted from the repository (like DLL folder and file)
+	Code style guide added to UOX3/docs directory (styleguide.html)
+	Updated GitHub workflows to use cmake for Linux and to ignore changes to .txt/.html/.sln/.vcxproj files for both Linux & Windows workflows
+
 17/12/2022 - Xuri
 	When a player says "vendor buy" or "vendor sell", NPC shopkeepers (and related JS events) will now respond in priority of distance to the player
 
