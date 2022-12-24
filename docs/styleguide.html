@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>document.getElementsByTagName("html")[0].className += " js";</script>
+  <link rel="stylesheet" href="assets/css/style.css" deferred>
+  <link rel="stylesheet" href="assets/css/all.css" deferred>
+  <link rel="stylesheet" href="assets/css/prism.css" deferred>
+  <title>UOX3 Style Guide for Code</title>
+</head>
+<body>
+<header class="cd-header flex flex-column flex-center">
+	<div class="text-component text-center">
+		<div style="margin: 0 auto; clear:both">
+			<img class="headerImg" src="logo.gif" style="max-height: 150px;padding: 0 0"/>
+		</div>
+		<!--<h1>Ultima Offline eXperiment 3 - Docs</h1>-->
+		<h1>UOX3 Style Guide</h1>
+	</div>
+</header>
+
+<div class="text-component text-center navbar-container">
+	<div class="navbar-wrapper">
+		<p class="navbar styleguide"><a class="styleguide" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="styleguide" href="https://www.github.com/UOX3DevTeam/UOX3" rel="noopener" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="styleguide" href="https://discord.gg/uBAXxhF" rel="noopener" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="styleguide" href="index.html" title="UOX3 Documentation">UOX3 Docs</a> | <a class="styleguide" href="jsdocs.html" title="UOX3 JavaScript Engine Docs">UOX3 JSE Docs</a></p>
+	</div>
+</div>
+
+<div style="text-align: center; margin-top: 0; margin-bottom: 0">
+	<p style="margin:0"><small>Last Updated: 24. November, 2022</small></p>
+	<p style="margin:0"><small>UOX3 Version: v0.99.6-RC1</small></p>
+</div>
+
+<section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
+	<ul class="cd-faq__categories topicListStyleGuide">
+		<!--<img src="../gfx/docs.jpg" style="width:100%"/>-->
+		<li><a class="cd-faq__category cd-faq__category-selected truncate" href="#about">About</a></li>
+		<li><a class="cd-faq__category truncate" href="#basic">Basic Style Guide</a></li>
+		<li><a class="cd-faq__category truncate" href="#advanced">Advanced Style Guide</a></li>
+	</ul> <!-- cd-faq__categories -->
+
+	<div class="cd-faq__items">
+		<ul id="about" class="cd-faq__group">
+			<li class="cd-faq__title title-codedoc"><h1>About this Style Guide</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#latestUpdates" id="latestUpdates"><span>Latest Updates</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>This section contains the latest notable updates made to the style guide.</p>
+					<input type="checkbox" id="spoiler_docs_updates"/>
+					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<h4>November 24th, 2022</h4>
+						<ul>
+							<li>Initial version of document completed</li>
+						</ul>
+					</div>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#aboutUOX3docs" id="aboutUOX3docs"><span>Purpose of This Style Guide</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>This style provides a <strong>common, shared set of (lightweight) guidelines</strong> for anyone who wishes to contribute source code and/or scripts to the UOX3 project, in order to help ensure that those contributions follow a <strong>standardized approach</strong> not only for <strong>code style</strong>, but also for <strong>conventions</strong> and <strong>practices</strong> used in the project. This also improves the maintainability of the project in the future.</p>
+					<p>The UOX3 code base has historically been a hodgepodge of different styles and approaches, written by people with varying programming skills over a period of more than 20 years, and that history highlights the need for a standard that can be followed when working on the project.</p>
+					<p>These guidelines are not meant to be understood as <em>hard requirements</em>, yet the closer to the guidelines that new contributions adhere to, the easier it will be to review any changes in context of the current code base and - if accepted - merge those contributions in.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul> <!-- cd-faq__group -->
+
+		<ul id="basic" class="cd-faq__group">
+			<li class="cd-faq__title title-codedoc"><h1>Basic Style Guide</h1></li>
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#basicGuidelines" id="basicGuidelines"><span>General Guidelines</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Above all else, please take to heart the general guidelines listed below and follow them as best you can:</p>
+					<ul>
+						<li><span class="hl">Write understandable, self-documenting code</span> - Give sensible, descriptive names to classes, functions and variables that clarify their purpose, rather than short and ambiguous names that say nothing about what they are for.</li>
+						<li><span class="hl">Add comments where needed</span> - Use comments to leave hints for the reader of your code if the code is not self-explanatory for the average programmer. If the code you write is so advanced and complex that no one else can understand it by reading it, then comments are crucial for anyone else to be able to maintain it if/once you've lost interest in the project and moved on (as happens).</li>
+						<li><span class="hl">Be consistent with existing code</span> - Make life easy for anyone who needs to read or maintain your code in the future, by adopting the coding style, conventions and practices most commonly used in the project. If the existing code offers two alternatives on how to proceed in this context, choose one of the two; don't introduce a third option.</li>
+						<li><span class="hl">Avoid making unnecessary, sweeping style changes</span> - If possible, avoid making sweeping changes throughout the entire code base that forces everyone else to adopt your own preferred style. Not only is it quite an assumption to make that everyone else on the project will prefer your style, it may also cause problems for anyone who wishes to merge their code changes with yours; instead of comparing differences in a few functions in a few files, they now potentially have thousands of differences to go through!</li>
+						<li><span class="hl">If unsure, ask</span> - If you're unsure if a change would conflict with the guidelines laid out in this Style Guide, don't hesitate to bring it up in Discord or on the UOX3 Community forums to get a second opinion - preferably before you make the change!</li>
+					</ul>
+					<p>If you have identified a need for a change that conflicts with the above points, or with anything else in this Style Guide, create a new topic on the Communtiy Forums and state your case, or bring it up in the Discord chat. None of these "rules" are etched in stone, they can (and should) be challenged, updated and added to when appropriate.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#cplusplusversion" id="cplusplusversion"><span>C++ Target Versions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>Currently, any new code written for UOX3 should target <span class="hl">C++11 to C++17</span>, and aim to be cross-platform conforming across Windows, Linux and macOS platforms, when compiled using <strong>VS2017-2022</strong>, <strong>GCC/G++ v8-9</strong> and/or <strong>CMake v?</strong>. Avoid using features specific to C++20 or newer, to not introduce additional compiler dependencies and requirements.</p>
+					<ul>
+						<li><a href="https://github.com/AnthonyCalandra/modern-cpp-features#c17-language-features" rel="noopener" target="_blank" title="Cheatsheet for C++17 Language Features">C++17 Cheatsheet</a></li>
+						<li><a href="https://github.com/AnthonyCalandra/modern-cpp-features#c14-language-features" rel="noopener" target="_blank" title="Cheatsheet for C++14 Language Features">C++14 Cheatsheet</a></li>
+						<li><a href="https://github.com/AnthonyCalandra/modern-cpp-features#c11-language-features" rel="noopener" target="_blank" title="Cheatsheet for C++11 Language Features">C++11 Cheatsheet</a></li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#crossplatform" id="crossplatform"><span>Cross-Platform Support</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<p>UOX3 aims to be <span class="hl">cross-platform conformant</span> across (at least) <strong>64-bit Windows, Linux and macOS</strong> platforms, with <span class="hl">feature parity</span> between each platform. Implementations specific to any one particular platform <strong>should be avoided</strong> if possible, though there might be exceptions for special cases where platform-specific handling is unavoidable - such as when dealing with console and/or networking.</p>
+					<p><strong>Any code</strong> being contributed that does not <span class="hl">compile</span>, <span class="hl">run</span> and <span class="hl">function the same</span> on all the above-mentioned platforms will probably not be approved for inclusion in UOX3 until/unless necessary changes have been made to comply with the above.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#namingConventions" id="namingConventions"><span>Naming Conventions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+						<h3>Use Self-Descriptive Names</h3>
+						<p>Always prefer <span class="hl">self-descriptive names</span> (<strong>skillUsageDelay</strong> instead of skUseDel, <strong>itemCount</strong> instead of ic)</p>
+				  	<h3>Filenames</h3>
+						<p>If creation of new source files is necessary, use <span class="hl">camelCase</span> when naming the files to make the name more readable in a list of other, perhaps similarly named files. Try to stick close to existing naming practice.</p>
+						<h3>Classes/Methods/Functions</h3>
+						<p>Use <span class="hl">PascalCase</span> for class/function/method names.</p>
+						<h3>Variables and Parameters</h3>
+						<p>Use <span class="hl">camelCase</span> for variables, non-method class/struct members and function/method parameters.</p>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+		</ul> <!-- cd-faq__group -->
+
+		<ul id="advanced" class="cd-faq__group">
+			<li class="cd-faq__title title-codedoc"><h1>Advanced Style Guide</h1></li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#commentBlocks" id="commentBlocks"><span>Comments and Comment Blocks</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Function/Method Comment Blocks</h3>
+				  	<p>This Style Guide makes no differentiation between functions and methods for the purpose of comment blocks.</p>
+					<ul>
+						<li>Comment blocks <span class="hl">should be added</span> for any new functions or methods added, should <span class="hl">describe the purpose</span> of the function/method and <span class="hl">provide any extra context</span> that is relevant for future maintainers of the code. For the sake of making the maintenance of comments more manageable, adopt a minimalistic approach where only relevant details are included:</li>
+<pre><code class="language-c++">//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CSocket::AddTrigWord()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Adds trigger word to list of trigger words detected in player's speech
+//o-----------------------------------------------------------------------------------------------o</code></pre>
+						<li><span class="hl">Getters/setters</span> that have been grouped together <span class="hl">should be commented together</span>, where possible:</li>
+<pre><code class="language-c++">//o-----------------------------------------------------------------------------------------------o
+//| Function	-	CSocket::TargetOK()
+//o-----------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets socket property to indicate whether waiting for client target
+//o-----------------------------------------------------------------------------------------------o
+auto CSocket::TargetOK( void ) const -> bool
+{
+	return targetok;
+}
+auto CSocket::TargetOK( bool newValue ) -> void
+{
+	targetok = newValue;
+}</code></pre>
+					</ul>
+					<h3>General Comments</h3>
+					<ul>
+						<li>Pay attention to grammar, spelling and punctuation, even in comments</li>
+						<li>Variables in general should have names that are descriptive enough that they'd not need comments, but if comments are needed - add them!</li>
+						<li>For global variables, try to always add a comment to explain what it's used for, and potentially why it needs to be a global variable</li>
+						<li>Don't remove comments added by other maintainers unless the comments in question are no longer relevant/accurate</li>
+						<li>If the use of magic numbers is necessary, add context for the magic number via comments</li>
+						<li>When deciding what to comment or not, try to think from the perspective of people maintaining the code after you're gone. Is it likely that someone will need some extra context to understand your code? <em>Add a comment</em>.</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#const" id="const"><span>Const</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<ul>
+						<li><span class="hl">Make liberal use of const</span>. Any member function <strong>that does not modify its object</strong> should be const. Any function parameter <strong>that references an object, but doesn't actually change it</strong>, should be passed as a const reference.</li>
+						<li>For function parameters passed by value, const has no effect on the caller, and is not needed</li>
+						<li>When declaring something as const, follow this pattern: <strong>const int *foo</strong> (const comes first)</li>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#functions" id="functions"><span>Functions</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					  <h3>Write Short Functions</h3>
+						<ul>
+							<li>Write short functions, whenever possible. Sometimes it makes sense for a function to be a bit longer, but if the code in a function exceeds ~40 lines, start thinking about whether it could be broken up.</li>
+							<li>Short functions are easier to read, easier to test, easier to debug, and easier to modify.</li>
+						</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#gettersAndSetters" id="gettersAndSetters"><span>Getters and Setters</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<ul>
+						<li><span class="hl">Group getters and setters</span> for class members together <strong>in pairs</strong>; put the getter for X next to the setter for X. Avoid spreading them out to different sections of a file. Grouping them up makes the code <strong>easier to read, maintain and debug</strong>:</li>
+<pre><code class="language-c++">auto CItem::GetType( void ) const -> ItemTypes
+{
+	return type;
+}
+auto CItem::SetType( ItemTypes newValue ) -> void
+{
+	type = newValue;
+}</code></pre>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#variableScope" id="variableScope"><span>Variable Scope</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<ul>
+						<li>Declare local variables <span class="hl">when you need to use them</span>, and not a moment sooner. The <strong>narrower the scope</strong> for a variable, and the <strong>closer it is declared</strong> to where it is actually used, the <strong>easier it becomes</strong> to read and understand the code for future code maintainers (or yourself a month from now).</li>
+						<li>If possible <span class="hl">initialize variables as they are declared</span>, instead of declaring and then assigning values to them separately, so whoever reads the code can see at a glance both the type and value the variable was initialized to.</li>
+						<p>Example:
+<pre><code class="language-c++">// Not ideal
+std::string myString;
+myString = "Hello";
+
+// Better
+std::string myString = "Hello";
+
+// Preferred
+auto myString = "Hello"s; // note the 's' at the end
+</code></pre>
+						<ul>
+							<li><em>Exception: If the variable is an object, and it's used in a for-loop, <span class="hl">declare it outside</span> the for-loop so the constructor and destructor of the object doesn't get invoked multiple times as it loops.</em></li>
+						</ul>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#auto" id="auto"><span>Auto keyword</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+					<ul>
+						<li>Use the <span class="hl">auto</span> <strong>keyword</strong> when declaring variables to automatically deduct the variable type based on the initializer. Same can be done with return types for functions. Examples:</li>
+<pre><code class="language-c++">// Using auto with a variable
+auto myChar = "Hello"; // type is const char* pointer to const char[5] array
+auto myString = "Hello, World!"s; // type is std::string (note the 's' at the end)
+auto myVar = GetMyVarValue(); // type depends on what GetMyVarValue() returns
+
+// Using auto with functions
+auto CItem::SetRegion( UI16 newValue ) -> void
+{
+	regionNum = newValue;
+	UpdateRegion();
+}
+auto CItem::GetRegionNum( void ) const -> UI16
+{
+	return regionNum;
+}</code></pre>
+					</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#variablesandcasting" id="variablesandcasting"><span>Variable Types and Casting</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+						<ul>
+							<li>Use the UOX3-defined type aliases like UI16, SI32, etc. for different integer types where possible, to increase readability and maintainability of the code. These are defined as follows:
+								<pre><code class="language-c">using R32 = float;
+using R64 = double;
+using UI08 = std::uint8_t;	// 0 to 255
+using SI08 = std::int8_t;	// -128 to 127
+using UI16 = std::uint16_t;	// 0 to 65535
+using SI16 = std::int16_t;	// -32768 to 32767
+using UI32 = std::uint32_t;	// 0 to 4294967295
+using SI32 = std::int32_t;	// -2147483648 to 2147483647
+using UI64 = std::uint64_t;	// 0 to 18446744073709551615
+using SI64 = std::int64_t;	// -9223372036854775808 to 9223372036854775807</code></pre></li>
+<li><span class="hl">Use C++-style casts</span>, and avoid C-style casts. Example:
+								<pre><code class="language-c">// Good - C++-style cast
+static_cast&#x3C;R32&#x3E;( double_value )
+
+// Avoid - C-style cast
+( R32 )double_value</code></pre></li>
+							<li>When in doubt about how large integer type is needed, prefer the larger type unless(i.e. UI64 over UI32, or SI32 over SI16)</li>
+						</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#const" id="const"><span>Whitespace, Indentation and Braces</span></a>
+				<div class="cd-faq__content">
+				  <div class="text-component">
+				  	<h3>Tabs vs Spaces</h3>
+				  	<p>For consistency with the rest of the code base, indent your code using <span class="hl">tabs</span> (size: 4), not spaces.</p>
+				  	<h3>Indentation</h3>
+				  	<ul>
+				  		<li>Vertical alignment can be done to increase readability in certain situations, like:</li>
+								<pre><code class="language-c++">case CCP_FAME:			*vp = INT_TO_JSVAL( gPriv->GetFame() );					break;
+case CCP_KARMA:			*vp = INT_TO_JSVAL( gPriv->GetKarma() );				break;
+case CCP_ATTACK:		*vp = INT_TO_JSVAL( Combat->calcAtt( gPriv, true ));	break;
+case CCP_CANATTACK:		*vp = BOOLEAN_TO_JSVAL( gPriv->GetCanAttack() );		break;
+case CCP_BRKPEACE:		*vp = INT_TO_JSVAL( gPriv->GetBrkPeaceChance() );		break;
+case CCP_HUNGER:		*vp = INT_TO_JSVAL( gPriv->GetHunger() );				break;</code></pre>
+								<pre><code class="language-c++">pStream.ReserveSize( 44 );
+pStream.WriteByte(   0, 0x1C );
+pStream.WriteShort(  1, 44 );
+pStream.WriteLong(   3, 0xFFFFFFFF );
+pStream.WriteShort(  7, 0xFFFF );
+pStream.WriteString( 14, "System", 6 );
+pStream.WriteByte(   20, 0 );</code></pre>
+				  	</ul>
+				  	<h3>Whitespace Guidelines</h3>
+				  	<ul>
+				  		<li>Spaces inside parentheses</li>
+				  			<pre><code class="language-c++">( x, y, z )</code></pre>
+				  		<li>Spaces after commas in list/function/method parameters</li>
+								<pre><code class="language-c++">void MyFunction( std::string myString, int myInt )</code></pre>
+				  		<li>Spaces around operators</li>
+								<pre><code class="language-c++">var foo = x - 1;
+var bar = x <= 10;</code></pre>
+				  		<li>No spaces before parentheses in function or method declarations</li>
+								<pre><code class="language-c++">bool myClass::MyMethod()</code></pre>
+				  		<li>No spaces before parentheses in control statements</li>
+								<pre><code class="language-c++">if( x == 1 )
+for( int i = 0; i < 10; ++i )</code></pre>
+							<li>No spaces between multiple parentheses in control statements</li>
+								<pre><code class="language-c++">if( foo || ( !bar ))
+if(( x == y ) && ( z != x ))</code></pre>
+							<li>No spaces inside angled or square brackets, except after comma, or between operators</li>
+								<pre><code class="language-c++">[x, y, z]
+static_cast&#x3C;SI16&#x3E;</code></pre>
+						</ul>
+			  		<h3>Braces</h3>
+			  		<ul>
+				  		<li>Braces ALWAYS on their own lines (Allman style)</li>
+				  		<pre><code class="language-c++">if( something )
+{
+  ...
+}
+
+void myFunction( std::string myString )
+{
+}</code></pre>
+							<li>Always use braces with if & else statements, even for one liners, to prevent easy mistakes by future maintainers</li>
+							<pre><code class="language-c++">if( something )
+{
+	// one liner
+}
+</code></pre>
+							<li><span class="hl">Exception</span> to the previous point: Braces can be skipped for one-liners that are intended to return early, continue/break a loop, etc. In those cases, try to leave an empty line after the early return/continue/break and the rest of the code in the function/method in question</li>
+							<pre><code class="language-c++">bool cScript::OnCreate( CBaseObject *thingCreated, bool dfnCreated )
+{
+	if( !ValidateObject( thingCreated ))
+		return false;
+
+	std::string functionName = "onCreateDFN";
+	...
+}</code></pre>
+							<pre><code class="language-c++">for( auto &MapArea : MapRegion->PopulateList( this ))
+{
+	if( MapArea == nullptr )
+		continue;
+
+	// First remove nearby characters from sight
+	...
+}</code></pre>
+				  	</ul>
+				  </div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+		</ul> <!-- cd-faq__group -->
+	</div> <!-- cd-faq__items -->
+
+
+	<a href="#0" class="cd-faq__close-panel text-replace">Close</a>
+
+  <div class="cd-faq__overlay" aria-hidden="true"></div>
+</section> <!-- cd-faq -->
+<div style="text-align: center; margin-top: 0; margin-bottom: 20px">
+	<p><small>UOX3 Style Guide for Code by Geir Ove Alnes @ Copyright 2022</small></p>
+	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
+</div>
+<script src="assets/js/util.js"></script> <!-- util functions included in the CodyHouse framework -->
+<script src="assets/js/main.js"></script>
+<script src="assets/js/prism.js"></script>
+</body>
+</html>
