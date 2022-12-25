@@ -6,14 +6,24 @@ const timeBetweenMurdererVisit = 2592000; // 30 days between each time a murdere
 const facetCorpseCarveRestrict = [1, 2, 3, 4, 5];
 const facetMurdererRestrict = [1, 2, 3, 4, 5];
 const facetCombatRestrict = [1, 2, 3, 4, 5];
+const facetSpellRestrict = [1, 2, 3, 4, 5];
+const facetPotionRestrict = [1, 2, 3, 4, 5];
 const facetStealRestrict = [1, 2, 3, 4, 5];
+const facetSnoopRestrict = [1, 2, 3, 4, 5];
+const facetLootingRestrict = [1, 2, 3, 4, 5];
+const facetBlockMovementRestrict = [1, 2, 3, 4, 5];
 
 // Override above facet-specific rules for specific regions
 // Example: const regionCorpseCarveOverride = [ 17, 23, 56 ]; // Override corpse carving restrictions in these regions
 const regionCorpseCarveOverride = [];
 const regionMurdererOverride = [];
 const regionCombatOverride = [];
+const regionSpellOverride = [];
+const regionPotionOverride = [];
 const regionStealOverride = [];
+const regionSnoopOverride = [];
+const regionLootingOverride = [];
+const regionBlockMovementOverride = [];
 
 function onCombatStart( pAttacker, pDefender )
 {
@@ -66,7 +76,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 	if( socket != null )
 	{
 		var worldNum = pCaster.worldnumber;
-		if( regionCombatOverride.indexOf( pCaster.region.id ) == -1 && facetCombatRestrict.indexOf( pCaster.worldnumber ) != -1 )
+		if( regionSpellOverride.indexOf( pCaster.region.id ) == -1 && facetSpellRestrict.indexOf( pCaster.worldnumber ) != -1 )
 		{
 			var spellCast = Spells[spellID];
 			if( spellCast.aggressive )
@@ -175,7 +185,7 @@ function onSnoopAttempt( pSnooped, pSnooping )
 
 	var socket = pSnooping.socket;
 	var worldNum = pSnooping.worldnumber;
-	if(( regionStealOverride.indexOf( pSnooping.region.id ) == -1 && facetStealRestrict.indexOf( pSnooping.worldnumber ) != -1 ) && !pSnooped.npc )
+	if(( regionSnoopOverride.indexOf( pSnooping.region.id ) == -1 && facetSnoopRestrict.indexOf( pSnooping.worldnumber ) != -1 ) && !pSnooped.npc )
 	{
 		socket.SysMessage( "You cannot perform negative acts on your target." );
 		return false;
@@ -224,7 +234,7 @@ function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;
 	var worldNum = pGrabber.worldnumber;
-	if( worldNum == 1 || worldNum == 2 || worldNum == 3) // Trammel, Ilshenar or Malas
+	if( regionLootingOverride.indexOf( pGrabber.region.id ) == -1 && facetLootingRestrict.indexOf( pGrabber.worldnumber ) != -1 )
 	{
 		//Check the value of pSock.pickupSpot to determine where the item was picked up from
 		switch( pSock.pickupSpot )
@@ -268,7 +278,7 @@ function onCollide( trgSock, srcChar, trgObj )
 		return true;
 
 	var worldNum = srcChar.worldnumber;
-	if( worldNum == 1 || worldNum == 2 || worldNum == 3) // Trammel, Ilshenar or Malas
+	if( regionBlockMovementOverride.indexOf( pCaster.region.id ) == -1 && facetBlockMovementRestrict.indexOf( pCaster.worldnumber ) != -1 )
 	{
 		// Don't let characters block other characters...
 		if( trgObj.isChar )
@@ -289,7 +299,7 @@ function onCollide( trgSock, srcChar, trgObj )
 		{
 			// Don't let Wall of Stone (or Energy Field) block movement unless players are in same guild or at war
 			var trgChar = trgObj.caster; // need a way to detect who cast the spell
-			var guildRelations = CheckGuildRelations( srcChar, trgChar );
+			var guildRelations = CheckGuildRelationShip( srcChar, trgChar );
 			if( guildRelations != 1 && guildRelations != 4 )
 			{
 				return false;
@@ -303,7 +313,7 @@ function onCollide( trgSock, srcChar, trgObj )
 
 function FacetRuleExplosionDamage( sourceChar, targetChar )
 {
-	if( regionCombatOverride.indexOf( targetChar.region.id ) == -1 && facetCombatRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	if( regionPotionOverride.indexOf( targetChar.region.id ) == -1 && facetPotionRestrict.indexOf( targetChar.worldnumber ) != -1 )
 	{
 		var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
 		if( guildRelations != 1 )
