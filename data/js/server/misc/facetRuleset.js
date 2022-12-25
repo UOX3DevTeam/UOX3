@@ -188,7 +188,7 @@ function onSnoopAttempt( pSnooped, pSnooping )
 function onFlagChange( pChanging, newStatus, oldStatus )
 {
 	var worldNum = pChanging.worldnumber;
-	if( worldNum == 1 || worldNum == 2 || worldNum == 3) // Trammel, Ilshenar or Malas
+	if( regionMurdererOverride.indexOf( pChanging.region.id ) == -1 && facetMurdererRestrict.indexOf( pChanging.worldnumber ) != -1 )
 	{
 		if( newStatus == 0x01 ) // Murderer
 		{
