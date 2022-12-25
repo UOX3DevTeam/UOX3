@@ -422,6 +422,12 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	var sourceChar = CalcCharFromSer( timerObj.more );
 	if( ValidateObject( sourceChar ))
 	{
+		//Check for Facet Ruleset
+		if( !TriggerEvent( 2753, "FacetRuleExplosionDamage", sourceChar, targetChar ))
+		{
+			return;
+		}
+
 		// Ignore targets that are in safe zones
 		var targetRegion = targetChar.region;
 		if( targetRegion.isSafeZone )
@@ -432,6 +438,10 @@ function ApplyExplosionDamage( timerObj, targetChar )
 
 		// Don't allow a Z difference greater than 5
 		if( Math.abs( targetChar.z - timerObj.z) > 5 )
+			return;
+
+		// Don't damage offline players
+		if( !targetChar.npc && !targetChar.online )
 			return;
 
 		// Ignore characters that are not in Line of Sight of the potion

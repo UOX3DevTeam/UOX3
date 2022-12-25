@@ -274,7 +274,7 @@ function onCollide( trgSock, srcChar, trgObj )
 		if( trgObj.isChar )
 		{
 			// ...unless they're in the same guild, or at war!
-			var guildRelations = CheckGuildRelations( srcChar, trgObj );
+			var guildRelations = CheckGuildRelationShip( srcChar, trgObj );
 			if( guildRelations != 1 && guildRelations != 4 )
 			{
 				return false;
@@ -299,6 +299,20 @@ function onCollide( trgSock, srcChar, trgObj )
 
 	// Default to hard-coded collision handling
 	return true;
+}
+
+function FacetRuleExplosionDamage( sourceChar, targetChar )
+{
+	if( regionCombatOverride.indexOf( targetChar.region.id ) == -1 && facetCombatRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	{
+		var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
+		if( guildRelations != 1 )
+		{
+			// Not at war with target player's guild
+			sourceChar.SysMessage( "You cannot perform negative acts on your target. Expl" );
+			return;
+		}
+	}
 }
 
 function CheckGuildRelationShip( pAttacker, pDefender )
