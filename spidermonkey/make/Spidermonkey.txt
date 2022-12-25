@@ -1,0 +1,5 @@
+Spidermonkey distribution consists of three components:
+
+1. fdlibm    (math library)
+2. jscript   (referenced in the distribution as js32, this is the actual interpreter)
+3. jskwgen   (Command line tool to interactively do javascript).  This is not used by UOX3

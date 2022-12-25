@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</ProjectGuid>
+    <RootNamespace>jscript</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINDOWS;_X86_=1;EXPORT_JS_API;JSFILE;XP_WIN</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile />
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4047;4703;4267;4146;4244</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINDOWS;_X86_=1;EXPORT_JS_API;JSFILE;XP_WIN</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile />
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4047;4703;4267;4146;4244</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINDOWS;_X86_=1;EXPORT_JS_API;JSFILE;XP_WIN</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile />
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4047;4703;4267;4146;4244;4334;4090;4311</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_WINDOWS;_X86_=1;EXPORT_JS_API;JSFILE;XP_WIN</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile />
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc11</LanguageStandard_C>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DisableSpecificWarnings>4047;4703;4267;4146;4244;4334;4090;4311</DisableSpecificWarnings>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>
+      </SubSystem>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>winmm.lib</AdditionalDependencies>
+      <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\jsapi.c" />
+    <ClCompile Include="..\..\..\jsarena.c" />
+    <ClCompile Include="..\..\..\jsarray.c" />
+    <ClCompile Include="..\..\..\jsatom.c" />
+    <ClCompile Include="..\..\..\jsbool.c" />
+    <ClCompile Include="..\..\..\jscntxt.c" />
+    <ClCompile Include="..\..\..\jsdate.c" />
+    <ClCompile Include="..\..\..\jsdbgapi.c" />
+    <ClCompile Include="..\..\..\jsdhash.c" />
+    <ClCompile Include="..\..\..\jsdtoa.c" />
+    <ClCompile Include="..\..\..\jsemit.c" />
+    <ClCompile Include="..\..\..\jsexn.c" />
+    <ClCompile Include="..\..\..\jsfun.c" />
+    <ClCompile Include="..\..\..\jsgc.c" />
+    <ClCompile Include="..\..\..\jshash.c" />
+    <ClCompile Include="..\..\..\jsinterp.c" />
+    <ClCompile Include="..\..\..\jsiter.c" />
+    <ClCompile Include="..\..\..\jslock.c" />
+    <ClCompile Include="..\..\..\jslog2.c" />
+    <ClCompile Include="..\..\..\jslong.c" />
+    <ClCompile Include="..\..\..\jsmath.c" />
+    <ClCompile Include="..\..\..\jsnum.c" />
+    <ClCompile Include="..\..\..\jsobj.c" />
+    <ClCompile Include="..\..\..\jsopcode.c" />
+    <ClCompile Include="..\..\..\jsparse.c" />
+    <ClCompile Include="..\..\..\jsprf.c" />
+    <ClCompile Include="..\..\..\jsregexp.c" />
+    <ClCompile Include="..\..\..\jsscan.c" />
+    <ClCompile Include="..\..\..\jsscope.c" />
+    <ClCompile Include="..\..\..\jsscript.c" />
+    <ClCompile Include="..\..\..\jsstr.c" />
+    <ClCompile Include="..\..\..\jsutil.c" />
+    <ClCompile Include="..\..\..\jsxdrapi.c" />
+    <ClCompile Include="..\..\..\jsxml.c" />
+    <ClCompile Include="..\..\..\prmjtime.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\jsapi.h" />
+    <ClInclude Include="..\..\..\jsarena.h" />
+    <ClInclude Include="..\..\..\jsarray.h" />
+    <ClInclude Include="..\..\..\jsatom.h" />
+    <ClInclude Include="..\..\..\jsbool.h" />
+    <ClInclude Include="..\..\..\jscntxt.h" />
+    <ClInclude Include="..\..\..\jsdate.h" />
+    <ClInclude Include="..\..\..\jsdbgapi.h" />
+    <ClInclude Include="..\..\..\jsdhash.h" />
+    <ClInclude Include="..\..\..\jsdtoa.h" />
+    <ClInclude Include="..\..\..\jsemit.h" />
+    <ClInclude Include="..\..\..\jsexn.h" />
+    <ClInclude Include="..\..\..\jsfun.h" />
+    <ClInclude Include="..\..\..\jsgc.h" />
+    <ClInclude Include="..\..\..\jshash.h" />
+    <ClInclude Include="..\..\..\jsinterp.h" />
+    <ClInclude Include="..\..\..\jsiter.h" />
+    <ClInclude Include="..\..\..\jslock.h" />
+    <ClInclude Include="..\..\..\jslong.h" />
+    <ClInclude Include="..\..\..\jsmath.h" />
+    <ClInclude Include="..\..\..\jsnum.h" />
+    <ClInclude Include="..\..\..\jsobj.h" />
+    <ClInclude Include="..\..\..\jsopcode.h" />
+    <ClInclude Include="..\..\..\jsparse.h" />
+    <ClInclude Include="..\..\..\jsprf.h" />
+    <ClInclude Include="..\..\..\jsprvtd.h" />
+    <ClInclude Include="..\..\..\jspubtd.h" />
+    <ClInclude Include="..\..\..\jsregexp.h" />
+    <ClInclude Include="..\..\..\jsscan.h" />
+    <ClInclude Include="..\..\..\jsscope.h" />
+    <ClInclude Include="..\..\..\jsscript.h" />
+    <ClInclude Include="..\..\..\jsstddef.h" />
+    <ClInclude Include="..\..\..\jsstr.h" />
+    <ClInclude Include="..\..\..\jstypes.h" />
+    <ClInclude Include="..\..\..\jsutil.h" />
+    <ClInclude Include="..\..\..\jsxdrapi.h" />
+    <ClInclude Include="..\..\..\jsxml.h" />
+    <ClInclude Include="..\..\..\prmjtime.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\jsopcode.tbl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
