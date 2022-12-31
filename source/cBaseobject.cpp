@@ -741,6 +741,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	std::string myLocation = "Location=" + std::to_string( x ) + "," + std::to_string( y ) + "," +std::to_string( z ) + "," + std::to_string( worldNumber ) + "," + std::to_string( instanceId ) + newLine;
 	outStream << myLocation;
 	outStream << "Title=" << title << newLine;
+	outStream << "Origin=" << origin << newLine;
 
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
@@ -1417,6 +1418,21 @@ void CBaseObject::SetTitle( std::string newtitle )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetOrigin()
+//|					CBaseObject::SetOrigin()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the object's origin
+//o------------------------------------------------------------------------------------------------o
+std::string CBaseObject::GetOrigin( void ) const
+{
+	return origin;
+}
+void CBaseObject::SetOrigin( std::string newOrigin )
+{
+	origin = newOrigin.substr( 0, MAX_ORIGIN );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetScriptTriggers()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of script triggers on object
@@ -1896,7 +1912,11 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 			}
 			break;
 		case 'O':
-			if( UTag == "OWNERID" )
+			if( UTag == "ORIGIN" )
+			{
+				origin = data.substr( 0, MAX_ORIGIN - 1 );
+			}
+			else if( UTag == "OWNERID" )
 			{
 				owner = oldstrutil::value<UI32>( data );
 			}
@@ -2452,6 +2472,7 @@ void CBaseObject::CopyData( CBaseObject *target )
 {
 	target->SetSectionId( GetSectionId() );
 	target->SetTitle( GetTitle() );
+	target->SetOrigin( GetOrigin() );
 	target->SetRace( GetRace() );
 	target->SetName( GetName() );
 	target->SetStrength( GetStrength() );
