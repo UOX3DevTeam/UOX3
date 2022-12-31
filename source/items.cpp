@@ -419,6 +419,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>( ndata ));		break;
+			case DFNTAG_ORIGIN:			applyTo->SetOrigin( cdata );							break;
 			case DFNTAG_POISONDAMAGE:	applyTo->SetWeatherDamage( POISON, ndata != 0 );		break;
 			case DFNTAG_POISONED:		applyTo->SetPoisoned( static_cast<UI08>( ndata ));		break;
 			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
@@ -507,6 +508,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				break;
 			}
 			case DFNTAG_RAIN:			applyTo->SetWeatherDamage( RAIN, ndata != 0 );			break;
+			case DFNTAG_SECTIONID:		applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SK_MADE:		applyTo->SetMadeWith( static_cast<SI08>( ndata ));		break;
 			case DFNTAG_SPD:			applyTo->SetSpeed( static_cast<UI08>( ndata ));			break;
 			case DFNTAG_STRENGTH:		applyTo->SetStrength( static_cast<SI16>( ndata ));		break;
@@ -1195,8 +1197,11 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			iCreated->SetAmount( iAmount );
 		}
 
-		// Keep reference to DFN sectionId item was created from
-		iCreated->SetSectionId( ourItem );
+		// Keep reference to DFN sectionId item was created from (if it has not been set already via special DFN tag SECTIONID)
+		if( iCreated->GetSectionId() == "" )
+		{
+			iCreated->SetSectionId( ourItem );
+		}
 	}
 
 	return iCreated;

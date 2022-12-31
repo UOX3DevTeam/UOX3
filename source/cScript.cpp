@@ -128,7 +128,7 @@ static JSFunctionSpec my_functions[] =
 	{ "Moon",						SE_Moon,					2, 0, 0 },
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
-	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
 
