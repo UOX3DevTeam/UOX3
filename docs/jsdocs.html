@@ -7067,15 +7067,20 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>SpawnRegion GetSpawnRegion( spawnRegionNum );</em></p>
+									<p><em>SpawnRegion GetSpawnRegion( x, y, worldNum, instanceID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns SpawnRegion object for specified spawnRegionNum.</p>
+									<p>Returns SpawnRegion object for specified spawnRegionNum, or for specified set of coordinates</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Returns SpawnRegion object for spawn region #1 from spawns.dfn
 var spawnRegion = GetSpawnRegion( 1 );
+pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );
+
+// Returns SpawnRegion object for spawn region at specified coordinates:
+var spawnRegion = GetSpawnRegion( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
 pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
 								</div>
 							</div>
@@ -14212,6 +14217,10 @@ myObject.propertyName = newValue;
 							Get/Set name of character</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.origin</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Get/Set origin (expansion, era) of character</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Section ID from DFNs that object originated from</p>
 						</div>
@@ -14868,6 +14877,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.name2</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set secondary name of item - used in relation to magical items whose names get revealed upon successful use of Item Identification</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.origin</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Get/Set origin (expansion, era) of item</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>

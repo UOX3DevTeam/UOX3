@@ -1,3 +1,15 @@
+31/12/2022 - Xuri
+	Extended GetSpawnRegion JS Function to fetch spawn region reference based on a set of coordinates. Supported syntax are now:
+		GetSpawnRegion( spawnRegionID )
+		GetSpawnRegion( x, y, worldNum, instanceID )
+	Added new DFN tags for Items and NPC:
+		SECTIONID	// Override which [sectionID] is stored for an object
+		ORIGIN		// Store reference to which expansion/era of UO an item/NPC originated in
+	Added new Item/Character JS property:
+		.origin 	// Get reference to expansion/era of UO an item/NPC originated in
+	Fixed an issue with IsInBuilding JS Function which could only handled a limited subset of instance ID values
+	Corrected name of tag used to attach scripts to ore types - from SCRIPTID to SCRIPT
+
 24/12/2022 - Xuri, punt, ldilley (0.99.6-RC2)
 	CMake is now default build system on Linux/FreeBSD, and an alternative for Windows/macOS-users instead of VS/XCode, though the old GCC/Make build process is still intact (for now)
 	Resource files (uox3.rc and uox3.ico) have been moved from UOX3/source to UOX3/assets

@@ -2123,7 +2123,7 @@ bool CSkills::LoadMiningData( void )
 								}
 								break;
 							case 'S':
-								if( UTag == "SCRIPTID" )
+								if( UTag == "SCRIPT" )
 								{
 									toAdd.scriptID = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 								}

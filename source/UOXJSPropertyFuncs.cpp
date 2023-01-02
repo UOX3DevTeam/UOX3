@@ -733,6 +733,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 			}
 			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
+			case CIP_ORIGIN:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetOrigin().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
 
 				// The following entries are specifically for CSpawnItem objects
@@ -1269,6 +1273,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MAXRANGE:		gPriv->SetMaxRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_BASERANGE:		gPriv->SetBaseRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));		break;
+			case CIP_ORIGIN:		gPriv->SetOrigin( encaps.toString() );						break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
 
 				// The following entries are specifically for CSpawnItem objects
