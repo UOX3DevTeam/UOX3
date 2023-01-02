@@ -395,6 +395,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "loyalty",		CCP_LOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "loyaltyRate",	CCP_LOYALTYRATE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "shouldSave",		CCP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{ "origin",			CCP_ORIGIN,			JSPROP_ENUMANDPERM },
 	{ "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "party",			CCP_PARTY,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "multi",			CCP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -523,6 +524,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	// The Following vars are specific to CSpawnItem objects

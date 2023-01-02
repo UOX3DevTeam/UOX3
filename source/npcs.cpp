@@ -1427,6 +1427,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					applyTo->SetCanTrain( false );
 				}
 				break;
+			case DFNTAG_ORIGIN:				applyTo->SetOrigin( cdata );			break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>( ndata )); break;
 			case DFNTAG_PRIV:
 				if( !isGate )
@@ -1552,6 +1553,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 			case DFNTAG_RUNNINGSPEEDMOUNTED:
 				applyTo->SetMountedRunningSpeed( std::stof( cdata ));
 				break;
+			case DFNTAG_SECTIONID:			applyTo->SetSectionId( cdata );							break;
 			case DFNTAG_SKIN:				applyTo->SetSkin( static_cast<UI16>( ndata ));		break;
 			case DFNTAG_SHOPKEEPER:
 				if( !isGate )

@@ -3420,20 +3420,28 @@ JSBool SE_GetTownRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 1 && argc != 4 )
 	{
-		DoSEErrorMessage( "GetSpawnRegion: Invalid number of parameters (1)" );
+		DoSEErrorMessage( "GetSpawnRegion: Invalid number of parameters (1 - spawnRegionID, or 4 - x, y, world and instanceID)" );
 		return JS_FALSE;
 	}
 
-	UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
+	if( argc == 1 )
 	{
-		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-		if( spawnReg != nullptr )
+		// Assume spawn region number was provided
+		UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			*rval = OBJECT_TO_JSVAL( myObj );
+			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+			if( spawnReg != nullptr )
+			{
+				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				*rval = OBJECT_TO_JSVAL( myObj );
+			}
+			else
+			{
+				*rval = JSVAL_NULL;
+			}
 		}
 		else
 		{
@@ -3442,8 +3450,31 @@ JSBool SE_GetSpawnRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		// Assume coordinates were provided
+		UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+		UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+		// Iterate over each spawn region to find the right one
+		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval]( std::pair<UI16, CSpawnRegion*> entry )
+		{
+			if( entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1()
+				&& y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum )
+			{
+				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, entry.second, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				*rval = OBJECT_TO_JSVAL( myObj );
+				return true;
+			}
+			return false;
+		});
+
+		if( iter == cwmWorldState->spawnRegions.end() )
+		{
+			*rval = JSVAL_NULL;
+		}
 	}
+
 	return JS_TRUE;
 }
 
@@ -3504,7 +3535,7 @@ JSBool SE_IsInBuilding( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId = static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	UI16 instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
 	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool isInBuilding = Map->InBuilding( x, y, z, worldNum, instanceId );
 	if( !isInBuilding )

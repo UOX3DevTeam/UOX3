@@ -95,6 +95,7 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
+	std::string			origin; // Stores expansion item originates from
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -126,6 +127,10 @@ public:
 
 	void					SetTitle( std::string newtitle );
 	std::string				GetTitle( void ) const;
+
+	void					SetOrigin( std::string newOrigin );
+	std::string				GetOrigin( void ) const;
+
 	virtual void			SetMana( SI16 mn );
 	SI16					GetMana( void ) const;
 	virtual void			SetStamina( SI16 stam );
