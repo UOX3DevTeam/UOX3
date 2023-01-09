@@ -22,12 +22,12 @@
 
 <div class="text-component text-center navbar-container">
 	<div class="navbar-wrapper">
-		<p class="navbar docs"><a class="docs" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="docs" href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="docs" href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="docs" href="jsdocs.html" title="UOX3 JavaScript Engine Documentation">UOX3 JSE Docs</a></p>
+		<p class="navbar docs"><a class="docs" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="docs" href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="docs" href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="docs" href="jsdocs.html" title="UOX3 JavaScript Engine Documentation">UOX3 JSE Docs</a> | <a class="docs" href="styleguide.html" title="UOX3 Style Guide">UOX3 Style Guide</a></p>
 	</div>
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 22. November, 2022</small></p>
+	<p style="margin:0"><small>Last Updated: 24. December, 2022</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
 </div>
 
@@ -60,6 +60,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>December 11th, 2022</h4>
+						<ul>
+							<li>Updated instructions on <a href="#compilingUOX3">Compiling UOX3</a></li>
+						</ul>
+						<h4>November 24th, 2022</h4>
+						<ul>
+							<li>Updated <a href="#uoxINISettings">UOX.INI Settings</a> section with details on additional settings: BLOODDECAYTIMER, BLOODDECAYCORPSETIMER, CORESHARDERA, ARMORCALCULATION, STRENGTHDAMAGEBONUS, TACTICSDAMAGEBONUS, ANATOMYDAMAGEBONUS, LUMBERJACKDAMAGEBONUS, RACIALDAMAGEBONUS, DAMAGEBONUSCAP, SHIELDPARRY, WEAPONPARRY, WRESTLINGPARRY, COMBATHITCHANCE, GLOBALRESTOCKMULTIPLIER, SHOWREPUTATIONTITLEINTOOLTIP, SHOWGUILDINFOINTOOLTIP, SHOWNPCTITLESINTOOLTIPS, SHOWNPCTITLESOVERHEAD, SHOWINVULNERABLETAGOVERHEAD, SHOWRACEWITHNAME, SHOWRACEINPAPERDOLL, MAXPLAYERPACKWEIGHT, MAXPLAYERBANKWEIGHT, FORCENEWANIMATIONPACKET, CASTSPELLSWHILEMOVING</li>
+						</ul>
 						<h4>August 24th, 2022</h4>
 						<ul>
 							<li>Made it easier to find the Frequently Asked Questions section of the document</li>
@@ -159,7 +167,7 @@
 						</ul>
 						<h4>November 13th, 2020</h4>
 						<ul>
-							<li>Added dos2unix instructions for Linux/MacOS users downloading default worldfiles/spawnfiles</li>
+							<li>Added dos2unix instructions for Linux/macOS users downloading default worldfiles/spawnfiles</li>
 						</ul>
 						<h4>November 7th, 2020</h4>
 						<ul>
@@ -1025,8 +1033,8 @@ packitem=0x0f8d,30
 							Determines if support for the UOGateway Info Request Service is enabled.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">CUOENABLED</span><strong>=0</strong><br>
-							Determines if support for the ConnectUO Server Poll Packet request is enabled.</p>
+							<p><span class="hl">FREESHARDSERVERPOLL</span><strong>=0</strong><br>
+							Determines if support for the Freeshard Server Poll Packet request is enabled.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">RANDOMSTARTINGLOCATION</span><strong>=0</strong><br>
@@ -1312,6 +1320,119 @@ packitem=0x0f8d,30
 							<p><span class="hl">NPCFLAGUPDATETIMER</span><strong>=5</strong><br>
 							Interval in seconds between each time NPC flags are updated.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BLOODDECAYTIMER</span><strong>=3</strong><br>
+							Time in seconds it takes small blood splatter on ground spawned during combat to decay. Defaults to 3 seconds.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BLOODDECAYCORPSETIMER</span><strong>=210</strong><br>
+							Time in seconds it takes larger blood splatter on ground spawned upon death to decay. Defaults to half the duration of the default corpse decay timer.</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_expansion_settings">
+					<label for="spoiler_ini_expansion_settings">[expansion settings] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>Supported era values: core, t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol<br>Note: A value of 'core' inherits whatever is set in CORESHARDERA</p>
+						<div class="settingsDiv">
+							<p><span class="hl">CORESHARDERA</span><strong>=pub15</strong><br>
+							Defines the "core" era of the shard. Defaults to pub15 (Publish 15).</p>
+							<ul>
+								<li><strong>any</strong> - determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15</li>
+								<li><strong>uor or later</strong> - enables bonus hit chance for archery via ARCHERYHITBONUS setting</li>
+								<li><strong>pub15 or earlier</strong> - final combat damage value reduced by half</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ARMORCALCULATION</span><strong>=core</strong><br>
+							Defines era to base armor calculations on</p>
+							<ul>
+								<li><strong>pub15 or earlier</strong> - different armor pieces contribute different percentage of the total Armor Rating</li>
+								<li><strong>aos or later</strong> - each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">STRENGTHDAMAGEBONUS</span><strong>=core</strong><br>
+							Defines era to base strength damage bonus on</p>
+							<ul>
+								<li><strong>uor or earlier</strong> - 20% damage bonus based on strength, capped at 200 strength</li>
+								<li><strong>td or later</strong> - 35% damage bonus based on strength if 100 strength or more, otherwise 30% damage bonus</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">TACTICSDAMAGEBONUS</span><strong>=core</strong><br>
+							Defines era to base tactics damage bonus on</p>
+							<ul>
+								<li><strong>pub15 or earlier</strong> - bonus = Tactics skill + 50</li>
+								<li><strong>aos or later</strong> - 68.75% damage bonus if GM Tactics, 62.5% bonus if below</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ANATOMYDAMAGEBONUS</span><strong>=core</strong><br>
+							Defines era to base anatomy damage bonus on</p>
+							<ul>
+								<li><strong>uor or earlier</strong> - bonus = Anatomy / 5 vs NPCs, Anatomy / 2.5 vs Players</li>
+								<li><strong>td or later</strong> - 30% damage bonus at GM anatomy, up to 20% below GM</li>
+								<li><strong>ml or later</strong> - 50% + 5 damage bonus at GM anatomy, up to 50% below GM</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">LUMBERJACKDAMAGEBONUS</span><strong>=core</strong><br>
+							Defines era to base lumberjacking damage bonus on</p>
+							<ul>
+								<li><strong>uor or earlier</strong> - 35% damage bonus at GM skill, up to 25% below GM</li>
+								<li><strong>td or later</strong> - 30% damage bonus at GM skill, up to 20% below GM</li>
+								<li><strong>hs or later</strong> - 10% chance of 100% damage bonus</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">RACIALDAMAGEBONUS</span><strong>=core</strong><br>
+							Defines era to base racial damage bonus on</p>
+							<ul>
+								<li><strong>sa or later</strong> - Gargoyles gain +15% damage bonus per each 20 HP lost</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">DAMAGEBONUSCAP</span><strong>=core</strong><br>
+							Defines era to base damage bonus cap on</p>
+							<ul>
+								<li><strong>pub15 or earlier</strong> - No cap on damage bonus multiplier</li>
+								<li><strong>aos or later</strong> - Total damage bonus multiplier capped at 300% higher than base damage</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHIELDPARRY</span><strong>=core</strong><br>
+							Defines era to base shield parry calculations on</p>
+							<ul>
+								<li><strong>t2a</strong> - chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery</li>
+								<li><strong>uor to pub15</strong> - higher AR equals lower block chance, but more damage absorbed.</li>
+								<li><strong>aos or later</strong> - chance to block dependent on parry skill vs bushido skill, with dex modifier</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WEAPONPARRY</span><strong>=core</strong><br>
+							Defines era to base weapon parry calculations on</p>
+							<ul>
+								<li><strong>aos or later</strong> - chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 16.6% chance weapon will take damage from parrying</li>
+								<li><strong>ml or later</strong> - chance to parry with weapon based on parry skill and bushido skill, with a dex modifier, 5% chance weapon will take damage from parrying, or 75% if opponent has mace</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">WRESTLINGPARRY</span><strong>=core</strong><br>
+							Defines era to base wrestling parry calculations on</p>
+							<ul>
+								<li><strong>tol or later</strong> - From 12.5% chance (at GM wrestling, increases with higher skill) that an NPC will parry an attack</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">COMBATHITCHANCE</span><strong>=core</strong><br>
+							Defines era to base combat hit chance calculations on</p>
+							<ul>
+								<li><strong>t2a to pub15</strong> - hit chance based on attacker's skill vs defender's skill. No minimum chance to hit</li>
+								<li><strong>uor to pub15</strong> - Additional bonus hit chance for archery</li>
+								<li><strong>aos to tol</strong> - hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit</li>
+							</ul>
+						</div>
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_settings">
@@ -1363,11 +1484,15 @@ packitem=0x0f8d,30
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SELLBYNAME</span><strong>=0</strong><br>
-							Determines if items are sold by their name, not just ID/Colour.</p>
+							Determines if items are sold by their name, not just ID/Colour. Recommended to leave off.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">SELLMAXITEMS</span><strong>=5</strong><br>
 							Maximum number of items that can be sold to a vendor at a time.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">GLOBALRESTOCKMULTIPLIER</span><strong>=1</strong><br>
+							Global multiplier used to alter how many items NPC shopkeepers will restock. Defaults to 1, which means RESTOCK values in item definitions are taken at face value.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">BANKBUYTHRESHOLD</span><strong>=2000</strong><br>
@@ -1492,6 +1617,35 @@ packitem=0x0f8d,30
 							<p><span class="hl">BASICTOOLTIPSONLY</span><strong>=0</strong><br>
 							If enabled, tooltips will only show name and weight of items</p>
 						</div>
+
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWREPUTATIONTITLEINTOOLTIP</span><strong>=1</strong><br>
+							If enabled, shows player's reputation title in tooltip. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWGUILDINFOINTOOLTIP</span><strong>=1</strong><br>
+							If enabled, shows player's guild info in tooltip. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWNPCTITLESINTOOLTIPS</span><strong>=1</strong><br>
+							If enabled, shows NPC titles in tooltip. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWNPCTITLESOVERHEAD</span><strong>=1</strong><br>
+							If enabled, shows NPC titles over their heads. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWINVULNERABLETAGOVERHEAD</span><strong>=1</strong><br>
+							If enabled, shows invulnerable tags over the head of characters. Defaults to 0</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWRACEWITHNAME</span><strong>=1</strong><br>
+							If enabled, shows a character's race along with their name. Defaults to 1</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SHOWRACEINPAPERDOLL</span><strong>=1</strong><br>
+							If enabled, shows a character's race in the paperdoll. Defaults to 1</p>
+						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">GLOBALITEMDECAY</span><strong>=1</strong><br>
 							Toggles decay on/off on a global scale. Does not remove decay flag from items, only stops them from decaying</p>
@@ -1523,6 +1677,18 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">MAXPLAYERBANKITEMS</span><strong>=125</strong><br>
 							Sets max amount of items players can keep in their bank box.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXPLAYERPACKWEIGHT</span><strong>=40000</strong><br>
+							Sets max weight capacity in stones for player backpacks (including items in sub-containers). 40000 = 400.00 stones</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">MAXPLAYERBANKWEIGHT</span><strong>=160000</strong><br>
+							Sets max weight capacity in stones for player bankboxes (including items in sub-containers). 160000 = 1600.00 stones</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">FORCENEWANIMATIONPACKET</span><strong>=1</strong><br>
+							 If enabled (default), forces the use of the new animation packet for playing various character animations for both NPCs in general and for player characters connected with client v7.0.0.0+</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">MAPDIFFSENABLED</span><strong>=0</strong><br>
@@ -1926,6 +2092,10 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">HIDESTATSFORUNKNOWNMAGICITEMS</span><strong>=1</strong><br>
 							Toggles whether item stats for unidentified magic items are hidden from tooltips</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">CASTSPELLSWHILEMOVING</span><strong>=0</strong><br>
+							Toggles whether spells can be cast while moving, without ever having to stop!</p>
 						</div>
 					</div>
 
@@ -4548,184 +4718,152 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#compilingUOX3" id="compilingUOX3"><span>Compiling UOX3 Source</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>Follow the steps below for your preferred platform if you wish to download and compile the UOX3 source directly from GitHub yourself.</p>
-					<h3>Windows Users</h3>
-					<h4>Step 1 - Clone the UOX3 Git Repository</h4>
-					<input type="checkbox" id="spoiler_compile_windows_0">
-					<label for="spoiler_compile_windows_0">Using GitHub Desktop <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<ol>
-							<li>Download and install <a href="https://desktop.github.com/" target="_blank" title="GitHub Desktop homepage">GitHub Desktop</a>. If you already have another tool for git installed, you can use that instead.</li>
-							<li>Run GitHub Desktop (or your preferred git tool) and click <strong>File->Clone Repository</strong> from the menu.</li>
-							<li>Click the <strong>URL</strong> tab, enter <strong>https://github.com/UOX3DevTeam/UOX3.git</strong>, then provide a local path for where you want the UOX3 git repository cloned on your drive.</li>
-							<li>Hit the <strong>Clone</strong> button to clone the stable branch of the UOX3 git repository to the specified local path, along with the latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>).</li>
-						</ol>
-						<input type="checkbox" id="spoiler_compile_other_branches_0">
-						<label for="spoiler_compile_other_branches_0">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can click the <strong>Current branch</strong> dropdown menu in GitHub Desktop and select the branch you wish to check out. If you're out to do some code development, or just want to get at the latest possible changes, be sure to select the develop branch instead of the main/master one!</p>
-						</div>
-					</div>
-					<h4>Step 2 - Compile UOX3</h4>
-					<input type="checkbox" id="spoiler_compile_windows_1">
-					<label for="spoiler_compile_windows_1">Option A - Visual Studio 2017/2019 <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p><em>This option will let you use Visual Studio solution/project files to compile both UOX3, SpiderMonkey and zlib with Visual Studio's default VC++ compiler. Note that you can download the <a href="https://visualstudio.microsoft.com/downloads/" target="_blank" title="Visual Studio download page">Free Community Edition</a> of Visual Studio if you don't have it already. This approach also embeds SpiderMonkey directly inside UOX3 for a slightly larger (~1-2MB) executable, instead of requiring a separate DLL file, and comes with options for compiling either <span class="hl">32-bit or 64-bit (default)</span> versions of UOX3.</em></p>
-						<p><em>Note: You'll need to install <strong>"Desktop development with C++"</strong> via the Visual Studio Installer if you don't have it already, along with the option for this titled <strong>MSVC v141 - VS 2017 C++ x64/x86 build tools (v14.16)</strong></em></p>
-						<h4>SpiderMonkey</h4>
-						<ol>
-							<li>Navigate to the <strong>UOX3\spidermonkey</strong> folder and open <span class="hl">SpiderMonkey.sln</span> in Visual Studio.</li>
-							<li>Make sure you have <span class="hl">js32</span> selected in the Solution Explorer, then select <span class="hl">Release</span> and either <span class="hl">x64</span> (64-bit) or <span class="hl">Win32</span> (32-bit) in the Solution Configuration/Platform dropdown menus</li>
-							<li>Click <span class="hl">Build > Build js32</span> from the menu.</li>
-							<li>Visual Studio will compile SpiderMonkey and create <strong>spidermonkey\Release\x64</strong> (64-bit) or <strong>spidermonkey\Release\x86</strong> (32-bit) folders with the compiled <span class="hl">js32.lib</span> library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.</li>
-						</ol>
-						<h4>zlib</h4>
-						<ol>
-							<li>Navigate to the <strong>UOX3\zlib folder</strong> and open <strong>zlib.sln</strong> in Visual Studio.</li>
-							<li>Select <strong>Release</strong> and either <strong>x64</strong> (64-bit) or <strong>Win32</strong> (32-bit) in the <strong>Solution Configuration/Platform</strong> dropdown menus</li>
-							<li>Click <strong>Build > Build zlib-static</strong> from the menu.</li>
-							<li>Visual Studio will compile zlib and create <strong>zlib\x64\Release</strong> (64-bit) or <strong>zlib\x86\Release</strong> (32-bit) folders with the compiled <strong>zlib-static.lib</strong> library file contained within. No further actions are necessary here, so you can close the zlib VS Solution.</li>
-						</ol>
-						<h4>UOX3</h4>
-						<ol>
-							<li>Open <span class="hl">UOX3_Official.sln</span> from the <strong>UOX3\source</strong> folder.</li>
-							<li>Make sure you have <span class="hl">UOX3_Official</span> selected in the Solution Explorer, then select either <span class="hl">Release</span> or <span class="hl">Debug</span>, and either <span class="hl">x64</span> (64-bit) or <span class="hl">Win32</span> (32-bit) in the <em>Solution Configuration/Platform dropdown menus</em>, or via <em>Build -> Configuration Manager</em>.</li>
-							<li>Select <span class="hl">Build -> Build UOX3_Official</span> to start compiling UOX3. When done, you'll find <span class="hl">UOX3.exe</span> in either <strong>UOX3\source\Release\x64</strong> (or <strong>\x86)</strong> or <strong>UOX3\source\Debug\x64</strong> (or <strong>\x86)</strong>, depending on your choices in the previous step.</li>
-						</ol>
-						<input type="checkbox" id="spoiler_compile_windows_1b">
-						<label for="spoiler_compile_windows_1b">Adding SpiderMonkey/zlib references in Configuration Manager <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>If VS give you link errors when attempting to build UOX3, references to SpiderMonkey or zlib might have gone missing! Try the following steps to add them back.</p>
-							<ol>
-								<li>Right click on <span class="hl">UOX3_Official</span> in the Solution Explorer, and select <span class="hl">Properties</span>.</li>
-								<li>With the desired configuration (ex: Release, x64) selected at the top of the panel, add references to SpiderMonkey and zlib in these sections:</li>
-								<ul>
-									<li><em>VC++ Directories ></em> <strong>Include Directories</strong> (add path to SpiderMonkey and zlib root folders)</li>
-									<li><em>VC++ Directories ></em> <strong>Library Directories</strong> (add path to SpiderMonkey <strong>Release\x64</strong> or <strong>Release\x86</strong> folder, as well as zlib <strong>\x64\Release</strong> or <strong>\x86\Release</strong> folder, depending on desired configuration)
-									<li><em>VC++ Directories ></em> <strong>Source Directories</strong> (add path to SpiderMonkey and zlib root folder)</li>
-									<li><em>Linker ></em> <strong>Additional Library Dependencies</strong> (add path to SpiderMonkey <strong>Release\x64</strong> or <strong>Release\x86</strong> folder, as well as zlib <strong>\x64\Release</strong> or <strong>\x86\Release</strong> , depending on desired configuration)</li>
-								</ul>
-								<li>Press apply!</li>
-								<li>Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!</li>
-							</ol>
-						</div>
-					</div>
-					<input type="checkbox" id="spoiler_compile_windows_2">
-					<label for="spoiler_compile_windows_2">Option B - Visual Studio 2017/2019 and CMake <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p><em>This option requires installing the Visual Studio toolset named <strong>Linux development with C++</strong> and the component called <strong>Visual C++ tools for CMake and Linux</strong>. Use the Visual Studio Installer to modify your install of Visual Studio if you don't already have these installed! This approach compiles SpiderMonkey to a separate DLL (<span class="hl">js32.dll</span>) file that needs to live inside the same folder as the main UOX3 executable, and currently only supports compiling a <span class="hl">32-bit</span> version of UOX3.</em></p>
-						<ol>
-							<li>Start Visual Studio and use <strong>File > Open > CMake</strong> and select <strong>CMakeLists.txt</strong> in the root project folder (Example: D:\UOX3). <strong>Don't</strong> open the similarly named file in the source folder directly.</li>
-							<li>After Visual Studio is done loading the project and has generated some necessary files, select <strong>CMake > Change CMake Settings > UOX3</strong> from the toolbar menu, and select either <strong>x86-Debug</strong> or <strong>x86-Release</strong> depending on what kind of build you want to make - or do this using the Solution Configuration select menu.</li>
-							<li>When Visual Studio is done switching to the new configuration, select <strong>CMake > Build All</strong> from the toolbar menu to start compiling UOX3.</li>
-							<li>When done, you'll find <span class="hl">UOX3.exe</span> and <span class="hl">js32.dll</span> in a subfolder named <strong>out</strong> of the root project folder, more specifically <strong>/UOX3/out/build/x86-Debug</strong> or <strong>x86-Release</strong>, based on the selected configuration.</li>
-							<li>Note that the <strong>js32.dll</strong> file must be copied to the same folder as UOX3.exe.</li>
-						</ol>
-					</div>
-					<p>Once this process is done, you can copy your new <span class="hl">UOX3.exe</span> (and if using CMake, <strong>js32.dll</strong>) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the <strong>data</strong> subfolder of the UOX3 repository, if you don't already have these.</p>
-					<p><strong>It is recommended </strong> to run your UOX3 shard from a separate, dedicated folder instead of the data folder in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
-					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
-					<h3>Linux/macOS Users</h3>
-					<h4>Step 1 - Clone the UOX3 Git Repository</h4>
-					<input type="checkbox" id="spoiler_compile_linux_1">
-					<label for="spoiler_compile_linux_1">Using git and Terminal  <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>First step, open a new terminal and enter the following commands:
-						<ol>
-							<li><strong>(Linux)</strong> <span class="hl">sudo apt install git</span> - This will install git if not already installed (Ubuntu/Debian-based Linux variants). If you're using a non-Debian flavour of Linux, use the default package manager that comes with it to install git instead.</li>
-							<li><strong>(macOS)</strong> <span class="hl">xcode-select --install</span> - This will install git if not already installed, along with required make and gcc tools</li>
-							<li><span class="hl">git clone https://github.com/UOX3DevTeam/UOX3.git</span> - This will clone the stable branch of the UOX3 git repository into a subdirectory of the current directory you're in, named UOX3. The latest verified compatible version of SpiderMonkey (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>) is also included, as well as a minimal set of files required to compile zlib-1.2.11.</li>
-						</ol>
-						<input type="checkbox" id="spoiler_compile_other_branches">
-						<label for="spoiler_compile_other_branches">Checking out Other Branches <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command *after* completing the previous step: <span class="hl">git checkout develop</span></p>
-						</div>
-					</div>
-					<input type="checkbox" id="spoiler_compile_macos_githubdesktop">
-					<label for="spoiler_compile_macos_githubdesktop">(macOS alternative) Using GitHub Desktop <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<ol>
-							<li>Download and install the macOS version of <a href="https://desktop.github.com/" target="_blank" title="GitHub Desktop homepage">GitHub Desktop</a>.</li>
-							<li>Run GitHub Desktop and click <strong>File->Clone Repository</strong> from the menu.</li>
-							<li>Click the <strong>URL</strong> tab, enter <strong>https://github.com/UOX3DevTeam/UOX3.git</strong>, then provide a local path for where you want the UOX3 git repository cloned on your drive.</li>
-							<li>Hit the <strong>Clone</strong> button!</li>
-						</ol>
-					</div>
-					<h4>Step 2 - Compile UOX3</h4>
-					<input type="checkbox" id="spoiler_compile_linux_2">
-					<label for="spoiler_compile_linux_2">Compiling with GNU Make and GCC  (v9.x and above) <i class="fas fa-angle-down"></i></label>
-					<div class="spoiler">
-						<p>You'll need a couple tools before you can compile UOX3 on Linux, like <strong>GNU Make</strong> (4.2.1 or higher recommended) and <strong>gcc</strong> (v9.x or higher recommended). Install these through your favourite package manager or through your flavour of Linux' variant of the following terminal command (specific to Debian/Ubuntu Linux flavours):</p>
-						<ul>
-							<li><strong>(Linux only)</strong> <span class="hl">sudo apt install build-essential</span></li>
-						</ul>
-						<p>Once these tools are in place, navigate to the <strong>UOX3</strong> project directory in your terminal and execute the following commands from the project's root directory, in order:</p>
-						<ol>
-							<li><span class="hl">./automake.sh</span> - First compiles the SpiderMonkey JS library bundled with UOX3, then compiles the included zlib library, and finally compiles the actual UOX3 build, before copying the compiled binary to the <strong>root</strong> UOX3 project directory.</li>
-						</ol>
+					<p>Follow the steps below for your preferred platform if you wish to download and compile the UOX3 source directly from GitHub yourself. These instructions are also available in <a href="https://github.com/UOX3DevTeam/UOX3/" title="UOX3 @ GitHub" target="_blank">UOX3's GitHub repository</a>.</p>
 
-					<input type="checkbox" id="spoiler_compile_linux_2b">
-						<label for="spoiler_compile_linux_2b">Special note for users of Debian/GCC versions below 9.x <i class="fas fa-angle-down"></i></label>
+					<h4>Step 1: Set up a Build Environment</h4>
+					<em>First, setup a proper build environment with the various tools needed to clone and compile UOX3.</em>
+					<input type="checkbox" id="spoiler_install_build_tools">
+					<label for="spoiler_install_build_tools">Install <strong>build tools</strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li><strong>Windows</strong> - Download and install <a href="https://visualstudio.microsoft.com/downloads/" title="Community Edition of Visual Studio" target="_blank">Community Edition of Visual Studio 2017 or 2022</a>.
+								<ul>
+									<li>Be sure to also install <span class="hl">Desktop development with C++</span> via the Visual Studio Installer, along with the individual component titled <span class="hl">VC++ 2017 version 15.9 v14.16 latest v141 tools</span> (VS2017) or <span class="hl">MSVC v143 - VS 2022 C++ x64/x86 build tools</span> (VS2022). CMake is included for command-line builds.</li>
+								</ul>
+							<li><strong>Linux</strong> (Debian-based) - Run <span class="hl">sudo apt install build-essential cmake</span> in a Terminal: (or use your Linux distro's package manager)</li>
+							<li><strong>FreeBSD</strong> - Run <span class="hl">pkg install cmake</span> in a Terminal. Alternatively, build cmake via ports if desired.</li>
+							<li><strong>macOS</strong> - Download <a href="https://apps.apple.com/us/app/xcode/id497799835?mt=12" title="XCode" target="_blank">Xcode</a> (for building with an IDE) via the App Store, and/or <a href="https://cmake.org/download/" title="CMake" target="_blank">CMake</a> (for command-line builds)</li>
+					</div>
+					<input type="checkbox" id="spoiler_install_git">
+					<label for="spoiler_install_git">Install <strong>Git</strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li>Windows/macOS - Grab <a href="https://desktop.github.com/" title="GitHub Desktop" target="_blank">GitHub Desktop</a> or your preferred git tool</li>
+							<li>Linux - Run <span class="hl">sudo apt install git</span> in a Terminal.</li>
+							<li>FreeBSD - Run <span class="hl">pkg install git</span> in a Terminal. Alternatively, build <strong>git</strong> via ports if desired.</li>
+					</div>
+
+					<h4>Step 2: Clone the UOX3 Git Repository</h4>
+					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.7.0) and a minimal set of files required to compile zlib-1.2.11.</em>
+					<input type="checkbox" id="spoiler_clone_with_github_desktop">
+					<label for="spoiler_clone_with_github_desktop">Using <strong>GitHub Desktop (Windows/macOS) </strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li>Run GitHub Desktop and click <strong>File->Clone Repository</strong> from the menu.</li>
+							<li>Enter <span class="hl">https://github.com/UOX3DevTeam/UOX3.git</span> in the URL tab, and provide a local path for storing the cloned repo on your drive.</li>
+							<li>Hit the <strong>Clone</strong> button to clone the stable master branch of UOX3 to the specified local path</li>
+					</div>
+					<input type="checkbox" id="spoiler_clone_with_git">
+					<label for="spoiler_clone_with_git">Using <strong>Command Line git (Linux/FreeBSD/any) </strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<ul>
+							<li>Run <span class="hl">git clone https://github.com/UOX3DevTeam/UOX3.git</span> in a Terminal to clone the stable master branch of UOX3 into a subdirectory of the current directory you're in.</li>
+					</div>
+					<input type="checkbox" id="spoiler_optional_other_branches">
+					<label for="spoiler_optional_other_branches">(Optional) Checking out Other Branches </strong> <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you'd rather grab another branch of the git repository, like the <strong>develop</strong> branch where most updates get pushed first before being merged into the master branch, you can use the following command after completing the previous step:<br><span class="hl">git checkout develop</span></p>
+						<p>GitHub Desktop users can change the active branch via the Current Branch dropdown menu in GitHub Desktop.</p>
+					</div>
+
+					<h4>Step 3: Compile UOX3</h4>
+					<em>Finally, compile UOX3 using the build environment you setup in Step 1.</em>
+					<input type="checkbox" id="spoiler_compile_with_vs2022_xcode_automake">
+					<label for="spoiler_compile_with_vs2022_xcode_automake"><strong>Visual Studio 2022</strong> (Windows), <strong>automake.sh</strong> (Linux/FreeBSD), <strong>XCode</strong> (macOS) <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+					<ul style="margin-left: 15px">
+						<li><strong>Visual Studio 2022</strong> - (Windows) Open <em>UOX3\make\VS2022\uox3.sln</em> (VS2022), choose Release/Debug from dropdown menu, and hit Build -> Build UOX3</li>
+						<li><strong>automake.sh</strong> - (Linux/FreeBSD) Run <span class="hl">./automake.sh</span> in a Terminal, from the root of the cloned UOX3 repository. This compiles UOX3 with CMake, but in one command only. Use optional argument <span class="hl">-b debug</span> to create debug build, and/or <span class="hl">-o clean</span> to do a clean build.</li>
+						<li><strong>XCode</strong> - (macOS) Open <em>UOX3/make/XCode/uox3/uox3.xcworkspace</em>, select Build</li>
+					</ul>
+					</div>
+					<input type="checkbox" id="spoiler_compile_with_cmake">
+					<label for="spoiler_compile_with_cmake"><strong>CMake</strong> (Any platform, manual instructions<i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compile with IDEs:</p>
+						<ul>
+							<li>Navigate to root of cloned UOX3 git repository</li>
+							<li><span class="hl">cd make/cmake</span></li>
+							<li><span class="hl">mkdir build</span></li>
+							<li><span class="hl">cd build</span></li>
+							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release</span> (Windows/Linux/FreeBSD)</li>
+							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"</span> (macOS)</li>
+							<li><span class="hl">cmake --build . --config Release</span></li>
+						</ul>
+						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build; delete <strong>make/cmake/build</strong> directory to do clean builds.</p>
+					</div>
+
+					<input type="checkbox" id="spoiler_compile_with_gccmake">
+					<label for="spoiler_compile_with_gccmake"><strong>GCC/make/gmake</strong> (Linux/FreeBSD, manual instructions) <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<p>If you'd rather use GCC (v9.x or higher)/make (GNU Make 4.2.1 or higher) than CMake, you can follow these manual steps. Note that for FreeBSD, this approach requires installing gmake as an alternative to make: pkg install gmake</p>
+
+						<p>First, navigate to spidermonkey directory and run these commands:<br>
+						<span class="hl">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc</span> (Linux)<br>
+						<span class="hl">ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span> (Linux)<br>
+						<span class="hl">cp Linux_All_DBG.OBJ/jsautocfg.h ./</span> (Linux)<br>
+						<span class="hl">gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang</span> (FreeBSD)<br>
+						<span class="hl">ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o</span> (FreeBSD)<br>
+						<span class="hl">cp FreeBSD_DBG.OBJ/jsautocfg.h ./</span> (FreeBSD)</p>
+
+						<p>Next, head to the zlib directory:<br>
+						<span class="hl">cd ../zlib</span><br>
+						<span class="hl">make distclean</span><br>
+						<span class="hl">./configure</span><br>
+						<span class="hl">make</span></p>
+
+						<p>Finally, head to UOX3/source directory:<br>
+						<span class="hl">cd ../source</span><br>
+						<span class="hl">make (Linux)</span><br>
+						<span class="hl">gmake (FreeBSD)</span></p>
+						<input type="checkbox" id="spoiler_compile_with_gccmake_special">
+						<label for="spoiler_compile_with_gccmake_special">Special note for users of Debian/GCC versions below 9.x  </strong> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>If your version of gcc is below 9.x, you'll need to add <em>-lstdc++fs</em> in <em>Makefile</em> to include the experimental filesystem library from c++17.:</p>
+							<p>If your version of gcc is below 9.x, you'll need to add -lstdc++fs in Makefile to include the experimental filesystem library from c++17.:</p>
 							<p>Change the following line (~34) from<br>
 							<span class="hl">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS)</span><br>
 							to<br>
 							<span class="hl">$(CXX) $(CXXFLAGS) -o $(TARGET) $^ $(LDFLAGS) -lstdc++fs</span></p>
 						</div>
-
-						<input type="checkbox" id="spoiler_compile_linux_3">
-						<label for="spoiler_compile_linux_3">Manual Instructions <i class="fas fa-angle-down"></i></label>
-						<div class="spoiler">
-							<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does):</p>
-							<ul>
-								<li><span class="hl">cd spidermonkey</span></li>
-								<li><span class="hl">make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc</span></li>
-								<li>Linux</li>
-								<ul>
-									<li><span class="hl">ar -r libjs32.a Linux_All_DBG.OBJ/*.o</span></li>
-									<li><span class="hl">cp Linux_All_DBG.OBJ/jsautocfg.h ./</span></li>
-								</ul>
-								<li>macOS</li>
-								<ul>
-									<li><span class="hl">ar rcs libjs32.a Darwin_DBG.OBJ/*.o</span></li>
-									<li><span class="hl">cp Darwin_DBG.OBJ/jsautocfg.h ./</span></li>
-								</ul>
-								<li>Next up, compile a static library of the included zlib package:</li>
-								<ul>
-									<li><span class="hl">cd ../zlib</span></li>
-									<li><span class="hl">make distclean</span></li>
-									<li><span class="hl">./configure</span></li>
-									<li><span class="hl">make</span></li>
-								</ul>
-								<li>At this point, now cd to the root UOX3 project directory and build UOX3:</li>
-								<ul>
-									<li><span class="hl">cd ../source</span></li>
-									<li><span class="hl">make</span></li>
-								</ul>
-							</ul>
-						</div>
 					</div>
-					<p>Once this process is done, you will find the compiled uox3 binary in the root UOX3 directory. You can copy this binary to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the <em>UOX3/data/</em> subdirectory.</p>
 
-					<p><strong>It is recommended </strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
-
-					<input type="checkbox" id="spoiler_copy_files"/>
-					<label for="spoiler_copy_files">Copying Required Files to Dedicated UOX3 Directory <i class="fas fa-angle-down"></i></label>
+					<input type="checkbox" id="spoiler_compile_with_vs2017">
+					<label for="spoiler_compile_with_vs2017"><strong>Visual Studio 2017</strong> (Windows) <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
-						<p>This is an example of how to copy all required files to a directory called UOX3 in your user account's home directory
-						<ol>
-							<li><em>navigate to root UOX3 project directory</em></li>
-							<li><span class="hl">mkdir ~/UOX3</span></li>
-							<li><span class="hl">cp uox3 ~/UOX3</span></li>
-							<li><span class="hl">cp -r data/* ~/UOX3</span></li>
-							<li><span class="hl">cd ~/UOX3</span></li>
-						</p>
+						<p>When using VS2017, static libraries of the dependency projects (SpiderMonkey and zlib) need to be compiled prior to the UOX3 project. However, after those sub-projects have been compiled once, they never need to be compiled again, and from that point on only the build instructions for UOX3 itself applies:</p>
+
+						<h4>SpiderMonkey</h4>
+						<ol style="margin-left: 15px">
+							<li>Navigate to the <em>UOX3\spidermonkey\make\VS2017\jscript</em> folder and open <strong>jscript.sln</strong> in VS2017.</li>
+							<li>Make sure you have <strong>jscript</strong> selected in the Solution Explorer, then select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus</li>
+							<li>Click <strong>Build > Build jscript</strong> from the menu.</li>
+							<li>Visual Studio will compile SpiderMonkey and create a <em>spidermonkey\make\VS2017\jscript\x64\Release</em> (64-bit) folder with the compiled <strong>jscript.lib</strong> library file contained within. No further actions are necessary here, so you can close the SpiderMonkey VS Solution.</li>
+						</ol>
+						<h4>zlib</h4>
+						<ol style="margin-left: 15px">
+							<li>Navigate to the <em>UOX3\zlib\make\VS2017</em> folder and open <strong>zlib.sln</strong> in VS2017.</li>
+							<li>Select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus</li>
+							<li>Click <strong>Build > Build zlib-static</strong> from the menu.</li>
+							<li>Visual Studio will compile zlib and create a <em>zlib\x64\Release</em> (64-bit) folder with the compiled <strong>zlib-static.lib</strong> library file contained within. No further actions are necessary here, so you can close the zlib VS Solution.</li>
+						</ol>
+						<h4>UOX3</h4>
+						<ol style="margin-left: 15px">
+							<li>Navigate to the <em>UOX3\make\VS2017</em> folder and open <strong>uox3.sln</strong> in VS2017.</li>
+							<li>Make sure you have <strong>UOX3</strong> selected in the Solution Explorer, then select <strong>Release</strong> and <strong>x64</strong> (64-bit) in the Solution Configuration/Platform dropdown menus, or via Build -> Configuration Manager.</li>
+							<li>Select <strong>Build -> Build UOX3</strong> to start compiling UOX3. When done, you'll find <strong>UOX3.exe</strong> in <em>UOX3\make\VS2017\Release\x64</em>.</li>
+						</ol>
 					</div>
 
-					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup.</p>
-				  </div>
+					<h4>UOX3 Compiled! Now what?</h4>
+					<p><em>Once done compiling, you can copy the compiled UOX3 binary/executable to the directory you intend to run your UOX3 shard from, along with all the files and folders contained in the UOX3/data subdirectory. Where you'll find the compiled UOX3 binary/executable depends on your platform and build method. Examples:</em></p>
+					<ul style="margin-left: 15px">
+						<li><strong>Windows</strong> - (VS2022) Compiled UOX3.exe can be found in <strong>UOX3/make/VS2022/x64/Release</strong></li>
+						<li><strong>Linux/FreeBSD</strong> - (automake.sh) Compiled uox3 binary can be found in <strong>root UOX3 repository</strong></li>
+						<li><strong>macOS</strong> - (XCode) Compiled uox3 binary can be found in <strong>UOX3\make\XCode\Build\Products\Release</strong></li>
+						<li><strong>Either Platform</strong> - (CMake, manual) Compiled uox3 binary can be found in <strong>UOX3\make\cmake\build</strong>
+					</ul>
+					<p><strong>It is recommended</strong> to run your UOX3 shard from a separate, dedicated directory instead of the data directory in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.</p>
+					<p>Once you have all the files in place, you can follow the regular steps listed under <a href="#configureUOX3" title="UOX3 Docs - Configuring Your UOX3 Shard">Installation and Setup > Configuring Your UOX3 Shard</a> to finish your UOX3 setup!</p>
 				</div> <!-- cd-faq__content -->
 			</li>
 
@@ -4746,8 +4884,8 @@ packitem=0x0f8d,30
 					</ul>
 					<p>Any contributions that involve making changes to UOX3 can either be posted in the <a href="https://www.uox3.org/forums/viewforum.php?f=20" target="_blank" title="UOX3 Community Forums - Submissions - Fixes & Improvements">Submissions - Fixes & Improvements</a> section of the UOX3.org forums, or can be submitted as a Pull Request on <a href="https://www.github.com/UOX3DevTeam/UOX3" target="_blank" title="UOX3 @ GitHub">UOX3's GitHub page</a>, for those familiar with that workflow. Do note that any such contributions will be reviewed for quality and fit with the project before being accepted and merged into the core UOX3 project.</p>
 					<p>If it so happens, that your code or script contribution is not approved for inclusion in the core UOX3 project, you can still post it as custom additions/tweaks in other parts of the UOX3.org forums, for other users to download! Alternatively, if your changes are extensive enough, you can do what many others have done before you and branch off the main UOX3 project to create something entirely new and exciting!</p>
-					<!-- <h3>A Note about Coding Styles and Practices</h3>
-					<p>Before venturing on a grand coding adventure, pause for a moment and take a peek at the <a href="#" title="UOX3 Style Guide for Code" target="_blank">UOX3 Style Guide for Code</a> (WIP). Sticking closely to the guidelines in that document increases the chance that one's code submissions can be included/merged into the main UOX3 codebase, and also helps ensure that all (new, if not all old) code follows a consistent style. This makes it easier to read and understand the codebase.</p> -->
+					<h3>A Note about Coding Styles and Practices</h3>
+					<p>Before venturing on a grand coding adventure, pause for a moment and take a peek at the <a href="#" title="UOX3 Style Guide for Code" target="_blank">UOX3 Style Guide for Code</a> (WIP). Sticking closely to the guidelines in that document increases the chance that one's code submissions can be included/merged into the main UOX3 codebase, and also helps ensure that all (new, if not all old) code follows a consistent style. This makes it easier to read and understand the codebase.</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
 			</li>
@@ -5273,6 +5411,10 @@ packitem=0x0f8d,30
 						Passive AI that doesn't fight back or react to being attacked.</p>
 						<p><span class="hl">8</span> - <strong>AI_BANKER</strong><br>
 						Bankers give players access to their bank boxes when saying the word "bank" nearby. Tip: This can also be used on players to ALWAYS give them access to their bankbox ;)</p>
+						<p><span class="hl">10</span> - <strong>AI_CASTER</strong><br>
+						Same as AI_FIGHTER, but will try to stay at casting range.</p>
+						<p><span class="hl">11</span> - <strong>AI_EVIL_CASTER</strong><br>
+						Same as AI_EVIL, but will try to stay at casting range.</p>
 						<p><span class="hl">17</span> - <strong>AI_PLAYERVENDOR</strong><br>
 						Used by playervendors placed by players at their houses to sell items to other players.</p>
 						<p><span class="hl">32</span> - <strong>AI_PET_GUARD</strong><br>
@@ -6431,6 +6573,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set Physical-resist/defense value - either fixed or random range</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">defbonus</span>=<strong>[minDefenseBonus maxDefenseBonus]</strong><br>
+							Set defense/physical resistance bonus applied on top of standard def (maxDefenseBonus is optional, but if specified, randomizes). Should be applied <em>after</em> the def tag.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">detectinghidden</span>=<strong>[skillpoints]</strong> or <strong>[lowskill highskill]</strong><br>
 							Set Detecting Hidden skill (0 - 1000)</p>
 						</div>
@@ -6445,6 +6591,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">elementresist</span>=<strong>[fire cold energy poison]</strong><br>
 							Set Element-resist stats (0 - 1000 for each stat)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">erbonus</span>=<strong>[fire cold energy poison]</strong><br>
+							Set elemental resistance bonus applied on top of standard elementresist. Should be applied <em>after</em> the elementresist tag.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">emotecolour</span>=<strong>[color]</strong><br>
@@ -6525,6 +6675,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">get</span>=<strong>[npcSectionID]</strong><br>
 							Inherit properties from NPC defined by npcSectionID in NPC DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[npcSectionID]</strong><br>
+							Inherit properties from NPC defined by npcSectionID in NPC DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">gold</span>=<strong>[gold]</strong> or <strong>[mingold maxgold]</strong><br>
@@ -7022,6 +7176,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set physical resist/armor rating value of item. Primarily used with wearables like clothes, armour, etc.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">defbonus</span>=<strong>[minDefenseBonus maxDefenseBonus]</strong><br>
+							Set defense/physical resistance bonus applied on top of standard def (maxDefenseBonus is optional, but if specified, randomizes). Should be applied <em>after</em> the def tag.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">dex</span>=<strong>[statpoints]</strong><br>
 							Minimum dexterity required to equip item</p>
 						</div>
@@ -7050,8 +7208,16 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set fire, cold, energy and poison resistance values (0 - 1000, where 1000 = 100.0)</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">erbonus</span>=<strong>[fire cold energy poison]</strong><br>
+							Set elemental resistance bonus applied on top of standard elementresist. Should be applied <em>after</em> the elementresist tag.</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">get</span>=<strong>[itemSectionID]</strong><br>
 							Inherit properties of item with specified itemSectionID from item DFNs</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">gett2a/gettd/getuor/getlbr/getpub15/getaos/getse/getml/getsa/gettol</span>=<strong>[itemSectionID]</strong><br>
+							Inherit properties from Item defined by itemSectionID in Item DFNs, based on selected era in expansion settings of uox.ini</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">glow</span>=<strong>[0/1]</strong><br>
@@ -8007,7 +8173,7 @@ function commandTitle()
 					<p>A home for discussion of non-Official Ultima Online Servers, also known as Freeshards - hosted by Stratics (who once upon a time also hosted the UOX3 website and IRC channels!)</p>
 					<h4><a href="https://shardportal.com/" target="_blank" title="ShardPortal - UO Freeshard portal">ShardPortal</a></h4>
 					<p>The ShardPortal is a place for anyone to advertise their shard as well as search out other active shards.</p>
-					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway (Dead?)</a></h4>
+					<h4><a href="https://www.uogateway.com" target="_blank" title="UOGateway - UO Freeshard top list">UOGateway</a></h4>
 					<p>(Possibly dead) A top site list for free UO shards made in the spirit of and in honor of Mr. Fixit's original UOGateway tool.</p>
 					<h4><a href="http://www.uo-pixel.de/" target="_blank" title="UO-Pixel - custom artwork assets for UO client">UO-Pixel</a></h4>
 					<p>Another nice (German) website focusing on providing custom artwork for UO shards. Amongst other things, it has some very nice animated item artwork (including a moving water-mill).</p>
@@ -10932,6 +11098,7 @@ function commandTitle()
 						<div class="spoiler">
 							<p><span class="hl">Grimson</span><br> Programmer, 07/06/2005, 0.98.3-0</p>
 							<p><span class="hl">ShadowBranch</span><br> Daniel Moree, Programmer, 11/06/2005, 0.98-3.0</p>
+							<p><span class="hl">Sydius</span><br> Chris Ogden, Programmer, 04/08/2005, 0.98-3.0</p>
 							<p><span class="hl">lingo</span><br> Lingo Chen, Programmer, 05/08/2005, 0.98-3.0e</p>
 						</div>
 
@@ -11006,7 +11173,7 @@ function commandTitle()
 						<input type="checkbox" id="spoiler_history_halloffame_active"/>
 						<label for="spoiler_history_halloffame_active"><h3>Active Contributors</h3> <i class="fas fa-angle-down"></i></label>
 						<div class="spoiler">
-							<p>Contributors active within last year (as of November 2022):</p>
+							<p>Contributors active within last year (as of December 2022):</p>
 							<p><span class="hl">Xuri, punt, Dragon Slayer, Azzerhoden Razeri, ldilley</span><br></p>
 						</div>
 					</div>

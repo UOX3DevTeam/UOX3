@@ -23,7 +23,7 @@
 
 <div class="text-component text-center navbar-container">
 	<div class="navbar-wrapper">
-		<p class="navbar jsdocs"><a class="jsdocs" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="jsdocs" href="https://www.github.com/UOX3DevTeam/UOX3" rel="noopener" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="jsdocs" href="https://discord.gg/uBAXxhF" rel="noopener" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="jsdocs" href="index.html" rel='noopener' title="UOX3 Documentation">UOX3 Docs</a></p>
+		<p class="navbar jsdocs"><a class="jsdocs" href="https://www.uox3.org" target="_blank" title="UOX3 Community Homepage">UOX3.org</a> | <a class="jsdocs" href="https://www.github.com/UOX3DevTeam/UOX3" rel="noopener" target="_blank" title="UOX3 @ GitHub - source and data repository">UOX3@GitHub</a> | <a class="jsdocs" href="https://discord.gg/uBAXxhF" rel="noopener" target="_blank" title="UOX3 Discord Server">UOX3@Discord</a> | <a class="jsdocs" href="index.html" rel='noopener' title="UOX3 Documentation">UOX3 Docs</a> | <a class="jsdocs" href="styleguide.html" rel='noopener' title="UOX3 Style Guide">UOX3 Style Guide</a></p>
 	</div>
 </div>
 
@@ -4041,7 +4041,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onTooltip( myObject )</em></p>
+							<p><em>function onTooltip( myObject, pSocket )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -4054,7 +4054,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Display remaining uses left in a tooltip, based on item's UsesLeft tag
-function onTooltip( myObj )
+function onTooltip( myObj, pSocket )
 {
 	var tooltipText = "";
 	var usesLeft = myObj.GetTag( "UsesLeft" );
@@ -7067,15 +7067,20 @@ if( GetRaceSkillAdjustment( myRace.id, 32 ) > 10 )
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
 									<p><em>SpawnRegion GetSpawnRegion( spawnRegionNum );</em></p>
+									<p><em>SpawnRegion GetSpawnRegion( x, y, worldNum, instanceID );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Returns SpawnRegion object for specified spawnRegionNum.</p>
+									<p>Returns SpawnRegion object for specified spawnRegionNum, or for specified set of coordinates</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Returns SpawnRegion object for spawn region #1 from spawns.dfn
 var spawnRegion = GetSpawnRegion( 1 );
+pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );
+
+// Returns SpawnRegion object for spawn region at specified coordinates:
+var spawnRegion = GetSpawnRegion( pUser.x, pUser.y, pUser.worldnumber, pUser.instanceID );
 pUser.TextMessage( "The name of this SpawnRegion is: " + spawnRegion.name );</code></pre>
 								</div>
 							</div>
@@ -8740,7 +8745,7 @@ for( var i = 0; i < petList.length; i++ )
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Get/Set the time in milliseconds until specified timer expires for a Character object</p>
+									<p>Get a timestamp for when timer will run out, or set the time in milliseconds until specified timer expires for a Character object</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
@@ -8755,7 +8760,7 @@ Timer.POISONWEAROFF	// Time until poison wears off
 Timer.SPELLTIME		// Time until spell cast is completed. Can be set to 0 to interrupt
 Timer.SPELLRECOVERYTIME // Time until player has recovered from casting a spell
 Timer.ANTISPAM		// Time until next speech message can be sent (for anti spam purposes)
-Timer.CRIMFLAG		// Time until criminal flag runs out
+Timer.CRIMFLAG		// Time until criminal flag runs out (should be set after criminal flag itself)
 Timer.MURDERRATE	// Time until next murder count decay
 Timer.PEACETIMER	// Time until character can re-enter combat after being affected by peacemaking
 Timer.FLYINGTOGGLE	// Time until next time flying ability can be toggled for gargoyles
@@ -8773,10 +8778,12 @@ Timer.LOGOUT 		// Time it takes for a player char to vanish after logout</code><
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-										<pre><code class="language-javascript">// Get remaining time in milliseconds before criminal flag expires
-var criminalTimer = myChar.GetTimer( Timer.CRIMFLAG );
+										<pre><code class="language-javascript">// Get a timestamp for when criminal flag expires, and spit out milliseconds left
+var criminalTimestamp = myChar.GetTimer( Timer.CRIMFLAG );
+myChar.TextMessage(( myTarget.GetTimer( Timer.CRIMFLAG ) - GetCurrentClock() ).toString() );
 
-// Set time from now in milliseconds that criminal flag will last
+// Set time from now in milliseconds that criminal flag will last, after making character a criminal
+myChar.criminal = true;
 myChar.SetTimer( timer.CRIMFLAG, 3000 );</code></pre>
 								</div>
 							</div>
@@ -10478,7 +10485,7 @@ myGuild.AcceptRecruit( pChar );</code></pre>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Purpose</span></p>
-								<p>Adds a gump on the current gump (ie any image in the gumps part of InsideUO). A fourth parameter - hue - is optional, and can be used to set the color of the gump.</p>
+								<p>Adds a gump on the current gump (ie any image in the Gumps-tab of a tool like <a href="https://github.com/polserver/UOFiddler" target="_blank" title="UOFiddler on GitHub">UOFiddler</a>). A fourth parameter - hue - is optional, and can be used to set the color of the gump.</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -10499,7 +10506,7 @@ myGuild.AcceptRecruit( pChar );</code></pre>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Purpose</span></p>
-								<p>Adds a gump on the current gump (ie any image in the gumps part of InsideUO). Same as AddGump, but with an additional parameter for hue/color.</p>
+								<p>Adds a gump on the current gump (ie any image in the Gumps-tab of a tool like <a href="https://github.com/polserver/UOFiddler" target="_blank" title="UOFiddler on GitHub">UOFiddler</a>). Same as AddGump, but with an additional parameter for hue/color.</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
@@ -12977,8 +12984,10 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-										<pre><code class="language-javascript">// Get remaining time in milliseconds until next time player can use an object
-var objectDelay = mySock.GetTimer( Timer.SOCK_OBJDELAY );
+										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
+Get a timestamp for when criminal flag expires, and spit out milliseconds left
+var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
+myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
 
 // Set time from now in milliseconds until next time player can use another item
 mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
@@ -13529,7 +13538,7 @@ myObject.propertyName = newValue;
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.criminal</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set whether the character is flagged as a criminal</p>
+							Get/Set whether the character is flagged as a criminal. If set to true, default criminal timer is applied, as defined in the uox.ini setting CRIMINALTIMER. Can override with .SetTimer( Timer.CRIMFLAG, timeInMilliseconds ) <em>after</em> flag has already been set to true.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.dead</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -13549,7 +13558,7 @@ myObject.propertyName = newValue;
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.innocent</span> <strong>(bool, <em>true/false</em>)</strong><br>
-							Get/Set whether character is flagged as innocent</p>
+							Get/Set whether character is flagged as innocent. If set to false, default criminal timer is applied, as defined in the uox.ini setting CRIMINALTIMER.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.isAwake</span> <strong>(bool, <em>true/false</em>)</strong><br>
@@ -14208,6 +14217,10 @@ myObject.propertyName = newValue;
 							Get/Set name of character</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">.origin</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Get/Set origin (expansion, era) of character</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Section ID from DFNs that object originated from</p>
 						</div>
@@ -14864,6 +14877,10 @@ myObject.propertyName = newValue;
 						<div class="settingsDiv">
 							<p><span class="hl">.name2</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
 							Get/Set secondary name of item - used in relation to magical items whose names get revealed upon successful use of Item Identification</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">.origin</span> <strong>(text, <em>max 127 characters</em>)</strong><br>
+							Get/Set origin (expansion, era) of item</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">.sectionID</span> <strong>(text, <em>max 127 characters</em>)</strong><br>

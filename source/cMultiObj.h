@@ -23,7 +23,7 @@ protected:
 	UI16				maxVendors;
 
 	std::vector<CItem *>	trashContainerList;
-	UI16				maxTrashContainers;
+	UI16					maxTrashContainers;
 
 	std::vector<CChar *>	vendorList;
 

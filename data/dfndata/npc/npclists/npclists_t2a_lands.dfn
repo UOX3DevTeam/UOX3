@@ -45,6 +45,12 @@ orcmage
 orclord
 }
 
+[NPCLIST Location_Orc_Fort_Savages]
+{
+savageshaman
+savagewarrior
+}
+
 [NPCLIST Location_Terathan_Keep]
 {
 allterathans

@@ -244,6 +244,7 @@ void MakeOre( CSocket& mSock, CChar *mChar, CTownRegion *targRegion )
 				{
 					const std::string oreName = found->name + " ore";
 					oreItem->SetName( oreName );
+					oreItem->AddScriptTrigger( found->scriptID );
 					if( oreItem->GetCont() != nullptr )
 					{
 						mSock.SysMessage( 982, oreName.c_str() ); // You place some %s in your pack.
@@ -2082,6 +2083,7 @@ bool CSkills::LoadMiningData( void )
 					toAdd.name		= oreName;
 					toAdd.oreName	= oreName;
 					toAdd.oreChance = 0;
+					toAdd.scriptID	= 0;
 					for( const auto &sec : individualOre->collection() )
 					{
 						tag = sec->tag;
@@ -2118,6 +2120,12 @@ bool CSkills::LoadMiningData( void )
 								if( UTag == "ORECHANCE" )
 								{
 									toAdd.oreChance = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
+								}
+								break;
+							case 'S':
+								if( UTag == "SCRIPT" )
+								{
+									toAdd.scriptID = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 								}
 								break;
 							default:
