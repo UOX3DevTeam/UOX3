@@ -1,38 +1,31 @@
 #syntax = docker/dockerfile:1.4.0
 
 FROM quay.io/centos/centos:stream AS buildbase
-#RUN yum -y install tar unzip wget glibc.i686 which sudo gcc net-tools dos2unix make gcc-c++ && yum clean all && rm -rf /var/cache/yum
 RUN yum -y install tar unzip glibc.i686 gcc dos2unix make gcc-c++ && yum clean all && rm -rf /var/cache/yum
 RUN mkdir -p ~/uox3
 
 FROM buildbase AS buildjs
-#COPY automakejs.sh /root/uox3
 COPY automake.sh /root/uox3
 COPY spidermonkey /root/uox3/spidermonkey/
 RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
-#RUN cd /root/uox3 && ./automakejs.sh
 RUN cd /root/uox3 && ./automake.sh 1
 CMD ["/bin/bash"]
 
 FROM buildbase AS buildzlib
-#COPY automakezlib.sh /root/uox3
 COPY automake.sh /root/uox3
 COPY zlib /root/uox3/zlib/
 RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
-#RUN cd /root/uox3 && ./automakezlib.sh
 RUN cd /root/uox3 && ./automake.sh 2
 CMD ["/bin/bash"]
 
 FROM buildbase AS buildapp
 WORKDIR /root/uox3
 RUN mkdir -p spidermonkey && mkdir -p zlib
-#COPY automakeuox3.sh .
 COPY automake.sh .
 COPY source source/
 RUN find /root/uox3 -name \* -type f -exec dos2unix {} \;
 COPY --from=buildjs   /root/uox3/spidermonkey spidermonkey/
 COPY --from=buildzlib /root/uox3/zlib         zlib/
-#RUN cd /root/uox3 && ./automakeuox3.sh
 RUN cd /root/uox3 && ./automake.sh 3
 CMD ["/bin/bash"]
 
