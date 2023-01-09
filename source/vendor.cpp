@@ -120,7 +120,7 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 bool CPIBuyItem::Handle( void )
 {
 	UI16 i;
-	UI32 playergoldtotal, goldTotal = 0;
+	UI32 totalPlayerGold = 0, totalGoldCost = 0;
 	bool soldout	= false, clear = false;
 	CChar *mChar	= tSock->CurrcharObj();
 	CItem *p		= mChar->GetPackItem();
@@ -146,23 +146,30 @@ bool CPIBuyItem::Handle( void )
 	SI32 baseOffset = 0;
 	for( i = 0; i < itemTotal; ++i )
 	{
-		baseOffset	= 7 * i;
-		layer[i]	= tSock->GetByte( 8 + static_cast<size_t>( baseOffset ));
-		bItems[i]	= CalcItemObjFromSer( tSock->GetDWord( 9 + static_cast<size_t>( baseOffset )));
-		amount[i]	= tSock->GetWord( 13 + static_cast<size_t>( baseOffset ));
-		goldTotal	+= ( amount[i] * ( bItems[i]->GetBuyValue() ));
+		baseOffset		= 7 * i;
+		layer[i]		= tSock->GetByte( 8 + static_cast<size_t>( baseOffset ));
+		bItems[i]		= CalcItemObjFromSer( tSock->GetDWord( 9 + static_cast<size_t>( baseOffset )));
+		amount[i]		= tSock->GetWord( 13 + static_cast<size_t>( baseOffset ));
+		totalGoldCost	+= ( amount[i] * ( bItems[i]->GetBuyValue() ));
 	}
 
-	bool useBank = ( goldTotal >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ));
-	if( useBank )
+	bool didUseBank = true;
+	bool tryUsingBank = ( totalGoldCost >= static_cast<UI32>( cwmWorldState->ServerData()->BuyThreshold() ));
+	if( tryUsingBank )
 	{
-		playergoldtotal = GetBankCount( mChar, 0x0EED );
+		// Count gold in bank if amount is higher than threshold
+		totalPlayerGold = GetBankCount( mChar, 0x0EED );
 	}
-	else
+
+	if( !tryUsingBank || totalPlayerGold < totalGoldCost )
 	{
-		playergoldtotal = GetItemAmount( mChar, 0x0EED );
+		// Count gold in backpack if amount is NOT higher than threshold,
+		// or if bank doesn't have enough gold
+		totalPlayerGold = GetItemAmount( mChar, 0x0EED );
+		didUseBank = false;
 	}
-	if( playergoldtotal >= goldTotal || mChar->IsGM() )
+
+	if( mChar->IsGM() || (( tryUsingBank && totalPlayerGold >= totalGoldCost ) || ( !tryUsingBank && totalPlayerGold >= totalGoldCost )))
 	{
 		for( i = 0; i < itemTotal; ++i )
 		{
@@ -174,6 +181,23 @@ bool CPIBuyItem::Handle( void )
 			// Check if onBuyFromVendor JS event is present for each item being purchased
 			// If return false or 0 has been returned from the script, halt the purchase
 			std::vector<UI16> scriptTriggers = bItems[i]->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					{
+						bItems.clear();
+						bItems.shrink_to_fit();
+						return true;
+					}
+				}
+			}
+
+			// Also run the event on the vendor itself. If purchase didn't get blocked on the item side, maybe
+			// vendor has a script with something to say about it instead
+			std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
 			for( auto scriptTrig : scriptTriggers )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
@@ -201,30 +225,30 @@ bool CPIBuyItem::Handle( void )
 			}
 			else
 			{
-				if( goldTotal == 1 )
+				if( totalGoldCost == 1 )
 				{
-					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), goldTotal ); // Here you are, %s. That will be %d gold coin.  I thank thee for thy business.
+					npc->TextMessage( nullptr, 1338, TALK, 0, mChar->GetName().c_str(), totalGoldCost ); // Here you are, %s. That will be %d gold coin.  I thank thee for thy business.
 				}
 				else
 				{
-					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), goldTotal ); // Here you are, %s. That will be %d gold coins.  I thank thee for thy business.
+					npc->TextMessage( nullptr, 1339, TALK, 0, mChar->GetName().c_str(), totalGoldCost ); // Here you are, %s. That will be %d gold coins.  I thank thee for thy business.
 				}
 
-				Effects->GoldSound( tSock, goldTotal );
+				Effects->GoldSound( tSock, totalGoldCost );
 			}
 
 			clear = true;
 			if( !mChar->IsGM() )
 			{
-				if( useBank )
+				if( didUseBank )
 				{
 					// Remove total amount of gold spent, from player's bankbox
-					DeleteBankItem( mChar, goldTotal, 0x0EED );
+					DeleteBankItem( mChar, totalGoldCost, 0x0EED );
 				}
 				else
 				{
 					// Remove total amount of gold spent, from player's backpack
-					DeleteItemAmount( mChar, goldTotal, 0x0EED );
+					DeleteItemAmount( mChar, totalGoldCost, 0x0EED );
 				}
 			}
 			CItem *biTemp;
@@ -359,6 +383,20 @@ bool CPIBuyItem::Handle( void )
 							}
 						}
 					}
+
+					std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
+					for( auto scriptTrig : scriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns 1, prevent other scripts with event from running
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							{
+								break;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -430,8 +468,8 @@ bool CPISellItem::Handle( void )
 				// Check if onSellToVendor JS event is present for item being sold
 				// If present and a value of "false" or 0 was returned from the script, halt the sale
 				bool saleHalted = false;
-				std::vector<UI16> scriptTriggers = j->GetScriptTriggers();
-				for( auto scriptTrig : scriptTriggers )
+				std::vector<UI16> jScriptTriggers = j->GetScriptTriggers();
+				for( auto scriptTrig : jScriptTriggers )
 				{
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
@@ -441,6 +479,26 @@ bool CPISellItem::Handle( void )
 							// Halt sale! 
 							saleHalted = true;
 							break;
+						}
+					}
+				}
+
+				// Also check for same event on vendor itself, for broader usecases that doesn't require scripts on every item sold
+				// Only run this check if the sale was not halted by a script on the item itself, though
+				if( !saleHalted )
+				{
+					std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+					for( auto scriptTrig : nScriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+							{
+								// Halt sale! 
+								saleHalted = true;
+								break;
+							}
 						}
 					}
 				}
@@ -523,8 +581,24 @@ bool CPISellItem::Handle( void )
 				}
 				if( l )
 				{
-					std::vector<UI16> scriptTriggers = l->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					// Check for onSoldToVendor event on item
+					std::vector<UI16> lScriptTriggers = l->GetScriptTriggers();
+					for( auto scriptTrig : lScriptTriggers )
+					{
+						cScript *toExecute = JSMapping->GetScript( scriptTrig );
+						if( toExecute != nullptr )
+						{
+							// If script returns true/1, prevent other scripts with event from running
+							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							{
+								break;
+							}
+						}
+					}
+
+					// Check for onSoldToVendor event on vendor
+					std::vector<UI16> nScriptTriggers = n->GetScriptTriggers();
+					for( auto scriptTrig : nScriptTriggers )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
@@ -597,7 +671,7 @@ void RestockNPC( CChar& i, bool stockAll )
 	}
 }
 
-bool RestockFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool RestockFunctor( CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraData )
 {
 	bool retVal = true;
 	CChar *c = static_cast<CChar *>( a );

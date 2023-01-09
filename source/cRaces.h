@@ -30,21 +30,25 @@ private:
 	//SKILLVAL			iSkills[SKILLS];
 	std::string			raceName;
 
+	std::bitset<8>	bools;
+	RANGE						visDistance;
+	LIGHTLEVEL			nightVision;
+	ARMORCLASS			armourRestrict;
+	LIGHTLEVEL			lightLevel;
+	GENDER					restrictGender;
+	SKILLVAL				languageMin;
+	R32							poisonResistance;	// % of poison to cancel
+	R32							magicResistance;	// % of magic to cancel
+
 	COLOURLIST			beardColours;
 	COLOURLIST			hairColours;
 	COLOURLIST			skinColours;
-	COLOUR				bloodColour;
+	COLOUR					bloodColour;
 
-	std::bitset<8>		bools;
-
-	GENDER				restrictGender;
 	RACEIDLIST			racialEnemies;
 
-	LIGHTLEVEL			lightLevel;
 	COLDLEVEL			coldLevel;
 	HEATLEVEL			heatLevel;
-	LIGHTLEVEL			nightVision;
-	ARMORCLASS			armourRestrict;
 
 	ALLOWEQUIPLIST		allowedEquipment;
 	BANEQUIPLIST		bannedEquipment;
@@ -55,10 +59,6 @@ private:
 	std::array<SI08, WEATHNUM> weathDamage;
 	//SI08					weathDamage[WEATHNUM];
 
-	SKILLVAL		languageMin;
-	RANGE			visDistance;
-	R32				poisonResistance;	// % of poison to cancel
-	R32				magicResistance;	// % of magic to cancel
 	bool			doesHunger;
 	bool			doesThirst;
 	UI16			hungerRate;

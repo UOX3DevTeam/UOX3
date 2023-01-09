@@ -409,7 +409,7 @@ constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= UI32( 58 );
 constexpr auto BIT_MARKRUNESINMULTIS			= UI32( 59 );
 constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= UI32( 60 );
 constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= UI32( 61 );
-constexpr auto BIT_CONSOLELOG					= UI32( 62 );
+[[maybe_unused]] constexpr auto BIT_CONSOLELOG					= UI32( 62 );
 constexpr auto BIT_NETWORKLOG					= UI32( 63 );
 constexpr auto BIT_SPEECHLOG					= UI32( 64 );
 constexpr auto BIT_CONTEXTMENUS					= UI32( 65 );
@@ -550,10 +550,10 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_POTION, 10 );
 	ServerMoon( 0, 0 );
 	ServerMoon( 1, 0 );
-	DungeonLightLevel( 3 );
+	DungeonLightLevel( 15 );
 	WorldLightCurrentLevel( 0 );
 	WorldLightBrightLevel( 0 );
-	WorldLightDarkLevel( 5 );
+	WorldLightDarkLevel( 12 );
 
 	ServerNetRcvTimeout( 3 );
 	ServerNetSndTimeout( 3 );
@@ -2808,7 +2808,7 @@ auto CServerData::HirelingCombatTraining() const -> bool
 {
 	return boolVals.test( BIT_HIRELINGCOMBATTRAINING );
 }
-auto CServerData::HirelingCombatTraining( bool newVal ) -> void
+auto CServerData::HirelingCombatTraining( [[maybe_unused]] bool newVal ) -> void
 {
 	boolVals.set( BIT_HIRELINGCOMBATTRAINING );
 }
@@ -4345,6 +4345,27 @@ auto CServerData::SaveIni() -> bool
 	return SaveIni( s );
 }
 
+// Map of era enums to era strings, used for conversion between the two types
+static const std::unordered_map<ExpansionRuleset, std::string> eraNames
+{
+	{ ER_T2A,	"t2a"s },
+	{ ER_UOR,	"uor"s },
+	{ ER_TD,	"td"s },
+	{ ER_LBR,	"lbr"s },
+	{ ER_PUB15, "pub15"s },
+	{ ER_AOS,	"aos"s },
+	{ ER_SE,	"se"s },
+	{ ER_ML,	"ml"s },
+	{ ER_SA,	"sa"s },
+	{ ER_HS,	"hs"s },
+	{ ER_TOL,	"tol"s }
+};
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EraEnumToString()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pass an era enum in, get an era string back
+//o------------------------------------------------------------------------------------------------o
 auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> std::string
 {
 	std::string eraName = "pub15"; // default
@@ -4355,49 +4376,46 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 	}
 	else
 	{
-		switch( eraEnum )
+		try
 		{
-			case ER_CORE:	eraName = "core";	break;
-			case ER_T2A:	eraName = "t2a";	break;
-			case ER_UOR:	eraName = "uor";	break;
-			case ER_TD:		eraName = "td";		break;
-			case ER_LBR:	eraName = "lbr";	break;
-			case ER_PUB15:	eraName = "pub15";	break;
-			case ER_AOS:	eraName = "aos";	break;
-			case ER_SE:		eraName = "se";		break;
-			case ER_ML:		eraName = "ml";		break;
-			case ER_SA:		eraName = "sa";		break;
-			case ER_HS:		eraName = "hs";		break;
-			case ER_TOL:	eraName = "tol";	break;
-			default:
-				break;
+			eraName = eraNames.at( eraEnum );
+		}
+		catch( const std::out_of_range &e )
+		{
+			Console.Error( oldstrutil::format( "Unknown era enum detected, exception thrown: %s", e.what() ));
 		}
 	}
 
 	return eraName;
 }
 
-auto CServerData::EraStringToEnum( std::string eraString ) ->ExpansionRuleset
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EraStringToEnum()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Pass an era string in, get an era enum back
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset
 {
-	ExpansionRuleset eraEnum = ER_PUB15; // default
+	auto searchEra = oldstrutil::lower( eraString );
+	auto rValue = ER_PUB15; // Default era if specified era is not found
 
-	// Convert to lower case first
-	eraString = oldstrutil::lower( eraString );
+	if( searchEra == "core" )
+	{
+		// Inherit setting from CORESHARDERA setting
+		return static_cast<ExpansionRuleset>( ExpansionCoreShardEra() );
+	}
+	
+	// Look for string with era name in eras map
+	auto iter = std::find_if( eraNames.begin(), eraNames.end(), [&searchEra]( const std::pair<ExpansionRuleset, std::string> &value ) {
+		return searchEra == std::get<1>( value );
+	});
 
-	if( eraString == "core" )		{ eraEnum = static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ); }
-	else if( eraString == "t2a" )	{ eraEnum = ER_T2A; }
-	else if( eraString == "uor" )	{ eraEnum = ER_UOR; }
-	else if( eraString == "td" )	{ eraEnum = ER_TD; }
-	else if( eraString == "lbr" )	{ eraEnum = ER_UOR; }
-	else if( eraString == "pub15" ) { eraEnum = ER_PUB15; }
-	else if( eraString == "aos" )	{ eraEnum = ER_AOS; }
-	else if( eraString == "se" )	{ eraEnum = ER_SE; }
-	else if( eraString == "ml" )	{ eraEnum = ER_ML; }
-	else if( eraString == "sa" )	{ eraEnum = ER_SA; }
-	else if( eraString == "hs" )	{ eraEnum = ER_HS; }
-	else if( eraString == "tol" )	{ eraEnum = ER_TOL; }
+	if( iter != eraNames.end() )
+	{
+		rValue = iter->first;
+	}
 
-	return eraEnum;
+	return rValue;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4971,6 +4989,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								}
 							}
 						}
+						[[fallthrough]];
 						case static_cast<int>( search_t::startsection ):
 						{
 							if( line[0] == '{' )
@@ -4978,6 +4997,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								state = search_t::endsection;
 							}
 						}
+						[[fallthrough]];
 						case static_cast<int>( search_t::endsection ):
 						{
 							if( line[0] != '}' )

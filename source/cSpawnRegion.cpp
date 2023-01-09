@@ -36,8 +36,8 @@ const bool		DEFSPAWN_ISSPAWNER		= false;
 CSpawnRegion::CSpawnRegion( UI16 spawnregion ) : regionNum( spawnregion ), maxCharSpawn( DEFSPAWN_MAXCSPAWN ), maxItemSpawn( DEFSPAWN_MAXISPAWN ),
 curCharSpawn( DEFSPAWN_CURCSPAWN ), curItemSpawn( DEFSPAWN_CURISPAWN ), minTime( DEFSPAWN_MINTIME ), maxTime( DEFSPAWN_MAXTIME ),
 nextTime( DEFSPAWN_NEXTTIME ), x1( DEFSPAWN_X1 ), x2( DEFSPAWN_X2 ), y1( DEFSPAWN_Y1 ), y2( DEFSPAWN_Y2 ),
-call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM ), prefZ( DEFSPAWN_PREFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER ),
-defZ( DEFSPAWN_DEFZ )
+prefZ( DEFSPAWN_PREFZ ), defZ( DEFSPAWN_DEFZ ), onlyOutside( DEFSPAWN_ONLYOUTSIDE ), isSpawner( DEFSPAWN_ISSPAWNER ),
+call( DEFSPAWN_CALL ), worldNumber( DEFSPAWN_WORLDNUM )
 {
 	sItems.resize( 0 );
 	sNpcs.resize( 0 );

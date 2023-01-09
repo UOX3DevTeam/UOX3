@@ -82,7 +82,7 @@ class UltimaMap : public UopFile
 	bool isUop;
 	int _diffCount;
 	int _diffTerrain;
-	auto ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
+	auto virtual ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
 	auto CalcBlock (int x, int y ) const -> int;
 	auto CalcXYOffset( int block ) const -> std::pair<int, int>;
 	auto LoadTerrainBlock( int blockNum, std::uint8_t *data ) -> void;

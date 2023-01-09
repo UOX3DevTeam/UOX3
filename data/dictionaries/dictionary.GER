@@ -3212,6 +3212,7 @@
 5144=ein bestialischer Dämon
 5145=ein Ork-Häcksler
 5146=der Kontrolleur
+5147=die Friseurin
 // [6000-6499] Misc Skill Msgs
 6000=Diese Person sieht %s und %t aus.
 6001=Da kann man nichts Nützliches draus machen.
@@ -3338,6 +3339,7 @@
 6275=Du kombinierst die Beeren und das Mehl zu der Stammesfarbe, die von den Wilden getragen wird.
 6276=Du hast nicht die Fertigkeit Kochen, um die Körperfarbe herzustellen.
 6277=Ressourcen-ID nicht in der Liste der für die Herstellung des Gegenstands verwendeten Ressourcen gefunden.
+6278=Um mehr über diesen Trank zu erfahren, musst du deine Fähigkeit zur Geschmackserkennung einsetzen.
 // [7000-7499] AI Scripts
 7000=Du bist ein Verbrecher und kannst nicht auf dein Bankschließfach zugreifen.
 7001=Welchen Gegenstand möchten Sie in Ihr Bankschließfach einzahlen?
@@ -4408,6 +4410,7 @@
 10925=geringere Explosion
 10926=Explosion
 10927=größere Explosion
+10928=Leere Flasche
 // 11201 - 11400 Bogenhandwerk und Befiederung Fertigkeit
 11201=BOGENHANDWERK UND BEFIEDERUNG MENÜ
 11202=Materialien
@@ -4804,5 +4807,33 @@
 17116=Sie haben keinen Bart zum Färben.
 17117=Menü zur Auswahl der Bartfarbe
 17118=Färbe meinen Bart in dieser Farbe!
+17119=Färbe meine Haare und meinen Bart in dieser Farbe!
+17120=Du hast keine Haare und keinen Bart zum Färben.
+// Zaubertrank-Fass
+17200=Du gießt etwas von dem Inhalt des Fasses in eine leere Flasche...
+17201=...und legst sie in deinen Rucksack.
+17202=Du hast keine leeren Flaschen.
+17204=Da komme ich nicht ran.
+17205=Nur der Besitzer kann Tränke in dieses Fass werfen.
+17206=Das Fass fasst nicht mehr!
+17207=Du hast keinen Platz für die leere Flasche in deinem Rucksack.
+17208=Du legst die leere Flasche in deinen Rucksack.
+17209=Du beschließt, dass es eine schlechte Idee wäre, verschiedene Arten von Tränken zu mischen.
+17210=Das Fass ist nicht für diese Art von Gegenständen geeignet.
+17211=Das Fass ist leer.
+17212=Das Fass ist fast leer.
+17213=Das Fass ist nicht sehr voll.
+17214=Das Fass ist etwa ein Viertel voll.
+17215=Das Fass ist etwa zu einem Drittel gefüllt.
+17216=Das Fass ist fast halb voll.
+17217=Das Fass ist ungefähr halb voll.
+17218=Das Fass ist mehr als halb voll.
+17219=Das Fass ist etwa zu drei Vierteln gefüllt.
+17220=Das Fass ist sehr voll.
+17221=Die Flüssigkeit steht fast bis zum oberen Rand des Fasses.
+17222=Das Fass ist vollständig gefüllt.
+17223=Ein speziell ausgekleidetes Fass für Tränke.
+17224=Im Fass ist nichts zu schmecken!
+17225=Du kennst den Inhalt dieses Fasses bereits.
 }
 EOF
