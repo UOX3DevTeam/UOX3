@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "648AF6E327CFEF79009327DE"
+               BlueprintIdentifier = "64A90069293E3DA3009B54DA"
                BuildableName = "uox3"
                BlueprintName = "uox3"
                ReferencedContainer = "container:uox3.xcodeproj">
@@ -41,27 +41,18 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
+      viewDebuggingEnabled = "No"
       consoleMode = "1">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "648AF6E327CFEF79009327DE"
+            BlueprintIdentifier = "64A90069293E3DA3009B54DA"
             BuildableName = "uox3"
             BlueprintName = "uox3"
             ReferencedContainer = "container:uox3.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "tasty.cake"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "uox.ini"
-            isEnabled = "NO">
-         </CommandLineArgument>
-      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -73,7 +64,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "648AF6E327CFEF79009327DE"
+            BlueprintIdentifier = "64A90069293E3DA3009B54DA"
             BuildableName = "uox3"
             BlueprintName = "uox3"
             ReferencedContainer = "container:uox3.xcodeproj">

@@ -343,7 +343,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval amountNeeded = 0;
 			jsval targColour = 0;
 			JSObject *resources = JS_NewArrayObject( cx, 0, nullptr );
-			for( size_t i = 0; i < resourcesNeeded.size(); i++ )
+			for( auto i = 0; i < static_cast<int>( resourcesNeeded.size() ); i++ )
 			{
 				resEntry = resourcesNeeded[i];
 				amountNeeded = INT_TO_JSVAL( resEntry.amountNeeded );
@@ -356,7 +356,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 
 				// Make a child object with all the supported resource IDs
 				JSObject *idList = JS_NewArrayObject( cx, 0, nullptr );
-				for( size_t j = 0; j < resEntry.idList.size(); j++ )
+				for( auto j = 0; j < static_cast<int>( resEntry.idList.size() ); j++ )
 				{
 					jsval targId = INT_TO_JSVAL( resEntry.idList[j] );
 					JS_SetElement( cx, idList, j, &targId );
@@ -382,7 +382,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			jsval minSkill = 0;
 			jsval maxSkill = 0;
 			JSObject *skills = JS_NewArrayObject( cx, 0, nullptr );
-			for( size_t i = 0; i < skillReqs.size(); i++ )
+			for( auto i = 0; i < static_cast<int>( skillReqs.size() ); i++ )
 			{
 				resEntry = skillReqs[i];
 				skillNumber = INT_TO_JSVAL( resEntry.skillNumber );
@@ -508,7 +508,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
@@ -733,6 +733,10 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 			}
 			case CIP_SPAWNSERIAL:	*vp = INT_TO_JSVAL( gPriv->GetSpawn() );				break;
+			case CIP_ORIGIN:
+				tString = JS_NewStringCopyZ( cx, gPriv->GetOrigin().c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
 
 				// The following entries are specifically for CSpawnItem objects
@@ -1269,6 +1273,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MAXRANGE:		gPriv->SetMaxRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_BASERANGE:		gPriv->SetBaseRange( static_cast<UI08>( encaps.toInt() ));	break;
 			case CIP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));		break;
+			case CIP_ORIGIN:		gPriv->SetOrigin( encaps.toString() );						break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
 
 				// The following entries are specifically for CSpawnItem objects
@@ -1519,7 +1524,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
@@ -2482,7 +2487,7 @@ JSBool CRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				JSObject *scriptTriggersJS = JS_NewArrayObject( cx, 0, nullptr );
 
 				std::vector<UI16> scriptTriggers = gPriv->GetScriptTriggers();
-				for( size_t i = 0; i < scriptTriggers.size(); i++ )
+				for( auto i = 0; i < static_cast<int>( scriptTriggers.size() ); i++ )
 				{
 					scriptId = INT_TO_JSVAL( scriptTriggers[i] );
 					JS_SetElement( cx, scriptTriggersJS, i, &scriptId );
