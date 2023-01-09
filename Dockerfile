@@ -50,5 +50,5 @@ RUN <<EOF cat >> ~/app/run.sh
 cd ~/app
 ./uox3 data/uox.ini
 EOF
-RUN chmod 777 ~/app/run.sh && dos2unix ~/app/run.sh
-CMD ["~/app/run.sh"]
+RUN chmod 777 /home/uox3/app/run.sh && dos2unix /home/uox3/app/run.sh
+CMD ["/home/uox3/app/run.sh"]
