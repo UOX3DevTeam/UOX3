@@ -17,8 +17,8 @@ class TileInfo;
 //==================================================================================================
 // MultiItem_st
 //==================================================================================================
-// A tile item in a multi.  Contains its offset from the center point of the multi structure, its 
-// altitude relative to the center point of the tile, and its multi flag (is it a placeholder item, 
+// A tile item in a multi.  Contains its offset from the center point of the multi structure, its
+// altitude relative to the center point of the tile, and its multi flag (is it a placeholder item,
 // should be replaced with a dynamic).
 struct MultiItem_st
 {
@@ -37,12 +37,12 @@ struct MultiItem_st
 // So a multi is a colleciton (thus collection_item) of MultiItem_st.
 struct CollectionItem_st
 {
+	int minX;
 	int minY;
+	int maxX;
 	int maxY;
 	int minAlt;
 	int maxAlt;
-	int minX;
-	int maxX;
 	std::vector<MultiItem_st> items;
 	CollectionItem_st();
 	static const std::unordered_map<int, std::string> collectionNames;
@@ -58,15 +58,15 @@ class MultiCollection : public UopFile
 	constexpr static auto hsSize = 908592;
 	TileInfo *info;
 	std::unordered_map<int, CollectionItem_st> _multis;
-	
+
 	std::string _housingBin;
-	auto ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
-	auto ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool final;
+	auto virtual ProcessEntry( std::size_t entry, std::size_t index, std::vector<std::uint8_t> &data ) -> bool final;
+	auto virtual ProcessHash( std::uint64_t hash, std::size_t entry, std::vector<std::uint8_t> &data ) -> bool final;
 	auto ProcessData( bool isHS, int index, std::vector<std::uint8_t> &data ) -> void;
-	
+
 public:
 	MultiCollection( const std::filesystem::path &uodir = std::filesystem::path(), TileInfo *info = nullptr );
-	
+
 	auto LoadMultiCollection( const std::filesystem::path &uodir, TileInfo *info = nullptr ) -> bool;
 	auto LoadMultiCollection( const std::filesystem::path &uodir, const std::string &housingbin, TileInfo *info = nullptr ) -> bool;
 	auto LoadMul( const std::filesystem::path &uodir, TileInfo *info = nullptr ) -> bool;

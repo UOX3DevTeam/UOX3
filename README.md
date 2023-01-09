@@ -5,7 +5,7 @@
 
 **develop** ![Windows x86 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x86%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Windows%20x64%20Build/badge.svg?branch=develop) ![Windows x64 Build - develop](https://github.com/UOX3DevTeam/UOX3/workflows/Linux%20x64%20Build/badge.svg?branch=develop)
 
-**Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux** and **macOS**. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
+**Ultima Offline eXperiment 3** - the original open source Ultima Online server emulator, allowing people to run their own, custom UO shards since 1997. Comes with cross-platform 64-bit support for **Windows**, **Linux**, **macOS**, and **FreeBSD**. News, releases, forums, additional documentation and more can be found at https://www.uox3.org
 
 Supported UO Client versions: **~4.0.0p** to **~7.0.91.15** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
@@ -16,7 +16,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 # How to compile UOX3...
-# ...under Linux or macOS
+# ...under Linux, macOS, or FreeBSD
 ## Step 1: Clone the UOX3 Git Repository
 <details>
   <summary>Using git and Terminal</summary>
@@ -91,7 +91,7 @@ Once these are in place, navigate to the **UOX3** project folder in your termina
   - `cp Linux_All_DBG.OBJ/jsautocfg.h ./`
   ### macOS ###
   - `make -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=gcc`
-  - `ar rcs libjs32.a Darwin_DBG.OBJ/*.o`
+  - `libtool -static -o libjs32.a -s Darwin_DBG.OBJ/*.o`
   - `cp Darwin_DBG.OBJ/jsautocfg.h ./`
   ### FreeBSD ###
   - `gmake -f Makefile.ref DEFINES=-DHAVE_VA_LIST_AS_ARRAY CC=clang`

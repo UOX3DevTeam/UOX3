@@ -3215,6 +3215,7 @@
 5144=zvířecí démon
 5145=orkský sekáček
 5146=ovladač
+5147=kadeřník
 // [6000-6499] Misc Skill Msgs
 6000=Tato osoba vypadá jako %s a %t.
 6001=Nemůžeš z toho udělat nic užitečného.
@@ -3345,6 +3346,7 @@
 6275=Spojíte bobule a mouku do kmenové barvy, kterou nosí divoši.
 6276=Nemáš dovednost vaření, abys mohl vytvořit barvu na tělo.
 6277=Identifikační číslo suroviny nebylo nalezeno v seznamu surovin použitých k výrobě předmětu.
+6278=Chceš-li se o tomto lektvaru dozvědět více, musíš použít dovednost rozpoznávání chutí.
 // [7000-7499] AI Scripts
 7000=Jsi zločinec a nemáš přístup ke své bankovní schránce.
 7001=Který předmět si přeješ uložit do své bankovní schránky?
@@ -4415,6 +4417,7 @@
 10925=menší výbuch
 10926=výbuch
 10927=větší výbuch
+10928=Prázdná láhev
 // 11201 - 11400 Dovednost řemeslného zpracování luku (Bowcraft Fletching)
 11201=NABÍDKA PRO VÝROBU LUKŮ A FLETCHING
 11202=Materiály
@@ -4811,5 +4814,33 @@
 17116=Nemáš vousy k barvení.
 17117=Nabídka výběru barvy vousů
 17118=Barvi mi vousy touto barvou!
+17119=Nabarvi mi vlasy a vousy na tuto barvu!
+17120=Nemáš žádné vlasy ani vousy k barvení.
+// Soudek s lektvarem
+17200=Nalijete část obsahu soudku do prázdné láhve...
+17201=...a vložíš ji do batohu.
+17202=Nemáš žádné prázdné láhve.
+17204=Nedosáhnu na to.
+17205=Do tohoto soudku může vhazovat lektvary pouze jeho majitel.
+17206=Další lektvary už soudek nepojme!
+17207=Na prázdnou láhev nemáš v batohu místo.
+17208=Prázdnou láhev umístíš do svého batohu.
+17209=Rozhodneš se, že by nebylo dobré míchat různé druhy lektvarů.
+17210=Soudeček není určen k uložení tohoto typu předmětu.
+17211=Soudeček je prázdný.
+17212=Soudeček je téměř prázdný.
+17213=Soudeček není příliš plný.
+17214=Soudeček je asi ze čtvrtiny plný.
+17215=Soudeček je asi z jedné třetiny plný.
+17216=Soudeček je téměř z poloviny plný.
+17217=Soudeček je přibližně z poloviny plný.
+17218=Soudeček je více než z poloviny plný.
+17219=Soudeček je plný přibližně ze tří čtvrtin.
+17220=Soudeček je velmi plný.
+17221=Kapalina je téměř po vrchol sudu.
+17222=Soudeček je zcela plný.
+17223=Speciálně vyložený soudek na lektvary.
+17224=V sudu není nic, co by se dalo ochutnat!
+17225=Obsah tohoto soudku je ti již znám.
 }
 EOF

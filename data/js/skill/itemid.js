@@ -32,6 +32,11 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 1546, pLanguage )); // You have to use your forensics evaluation skill to know more about this corpse.
 			return;
 		}
+		else if( ourObj.type == 19 ) // Potions
+		{
+			pSock.SysMessage( GetDictionaryEntry( 6278, pLanguage )); // You have to use your taste identification skill to know more about this potion.
+			return;
+		}
 		else if( ourObj.isItemHeld || ourObj.worldnumber != pUser.worldnumber || ourObj.instanceID != pUser.instanceID )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 393, pLanguage )); // That is too far away.

@@ -943,7 +943,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 		fakeHouse->SetLocation( x, y, z );
 
 		CMultiObj *mMulti = FindMulti( fakeHouse );
-		if( ValidateObject( mMulti ))
+		if( checkLocation && ValidateObject( mMulti ))
 		{
 			if( mMulti->GetLockdownCount() < mMulti->GetMaxLockdowns() )
 			{
@@ -959,7 +959,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 				return nullptr;
 			}
 		}
-		else
+		else if( checkLocation )
 		{
 			if( mSock )
 			{
@@ -1054,8 +1054,12 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 	if( xLoc == -1 || yLoc == -1 || zLoc == 127 )
 		return nullptr;
 
-	SI16 sx = 0, sy = 0, cx = 0, cy = 0, bx = 0, by = 0;
-	SI08 cz = 7;
+	SI16 sx = 0, sy = 0;
+  [[maybe_unused]] SI16 cx = 0;
+  [[maybe_unused]] SI16 cy = 0;
+  [[maybe_unused]] SI16 bx = 0;
+  [[maybe_unused]] SI16 by = 0;
+	[[maybe_unused]] SI08 cz = 7;
 
 	// If multiId provided was lower than 0x4000, add 0x4000 so we get the ID the system expects
 	if( multiId < 0x4000 )
@@ -1126,7 +1130,7 @@ CMultiObj * BuildBaseMulti( UI16 multiId, SI16 xLoc = -1, SI16 yLoc = -1, SI08 z
 //|	Notes		-	This function is rather CPU-expensive, but AFAIK there is no
 //|					better way to find all keys than to do it this way.. :/
 //o------------------------------------------------------------------------------------------------o
-bool KillKeysFunctor( CBaseObject *a, UI32 &b, void *extraData )
+bool KillKeysFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, void *extraData )
 {
 	UI32 *ourData		= (UI32 *)extraData;
 	SERIAL targSerial	= ourData[0];

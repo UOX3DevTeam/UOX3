@@ -10,7 +10,7 @@ CXX     	:= g++
 GCCVER8		:= $(shell expr `gcc -dumpversion | cut -f1 -d.` \<= 8)
 endif
 
-CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value
+CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value -Wall -Wextra -Wno-attributes
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
 INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)

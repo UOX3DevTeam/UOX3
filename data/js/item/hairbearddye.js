@@ -15,32 +15,51 @@ function onUseChecked( pUser, iUsed )
 
 	// Are we dealing with hair dye, or beard dye?
 	var itemToDye = null;
-	if( iUsed.morex == 0 ) // Hair dye
+	var itemToDye2 = null;
+	if( iUsed.morex == 0 ) // Hair only dye
 	{
 		// Find hair equipped on character
 		itemToDye = pUser.FindItemLayer( 0x0B );
 	}
-	else if( iUsed.morex == 1 ) // Beard dye
+	else if( iUsed.morex == 1 ) // Beard only dye
 	{
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
-
-	if( itemToDye != null )
+	else if( iUsed.morex == 2 ) // Hair/Beard dye
 	{
-		DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
+		// Find Hair/Beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
+
+	if( itemToDye != null || itemToDye2 != null )
+	{
+		if( iUsed.morey == 1 )
+		{
+			DisplayDyes( purpleSpecialDyes, 1, "*****", pUser );
+		}
+		else
+		{
+			DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, socket.language ), pUser ); // Brown
+		}
 	}
 	else
 	{
-		if( iUsed.morex == 0 )
+		if( itemToDye == null && iUsed.morex == 0 )
 		{
 			// No hair!
 			pUser.SysMessage( GetDictionaryEntry( 17100, socket.language )); // You have no hair to dye.
 		}
-		else if( iUsed.morex == 1 )
+		else if( itemToDye == null && iUsed.morex == 1 )
 		{
 			// No beard!
 			pUser.SysMessage( GetDictionaryEntry( 17116, socket.language )); // You have no beard to dye.
+		}
+		else if( itemToDye == null && itemToDye2 == null )
+		{
+			// No hair or beard!
+			pUser.SysMessage( GetDictionaryEntry( 17120, socket.language )); // You have no hair or beard to dye.
 		}
 	}
 	return false;
@@ -98,13 +117,37 @@ const dkBrownDyes = [
 	1133, 1134, 1135, 1136, 1137, 1138, 1139, 1140, 1141, 1142,
 	1143, 1144, 1145, 1146, 1147, 1148];
 
+const purpleSpecialDyes = [
+	12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];
+
+const redSpecialDyes = [
+	32, 33, 34, 35, 36, 37];
+
+const orangeSpecialDyes = [
+	38, 39, 40, 41, 42, 43, 44, 45, 46];
+
+const yellowSpecialDyes = [
+	54, 55, 56, 57];
+
+const limeSpecialDyes = [
+	62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72];
+
+const dklimeSpecialDyes = [
+	81, 82, 83];
+
+const iceblueSpecialDyes = [
+	89, 90, 91];
+
+const icewhiteSpecialDyes = [
+	1153, 1154, 1155];
+
 function DisplayDyes( dyesArray, pageNum, color, pUser )
 {
-	var MAX_ROWS = 15;    // maximum number of rows displayed in a page
-	var COL_INC = 100;    // increment column by this value when MAX_ROWS is reached
-	var COL_SPACING = 15; // spacing between radio control and text
-	var colNum = 160;    // starting column number
-	var rowOffset = 0;   // starting row offset
+	var MAX_ROWS = 15;    	// maximum number of rows displayed in a page
+	var COL_INC = 100;    	// increment column by this value when MAX_ROWS is reached
+	var COL_SPACING = 15; 	// spacing between radio control and text
+	var colNum = 160;    	// starting column number
+	var rowOffset = 0;   	// starting row offset
 	var myDyeGump = new Gump;
 
 	ShowDyeMenu( myDyeGump, pUser );
@@ -125,7 +168,7 @@ function DisplayDyes( dyesArray, pageNum, color, pUser )
 	myDyeGump.Free();
 }
 
-function ShowDyeMenu( myDyeGump, pUser)
+function ShowDyeMenu( myDyeGump, pUser )
 {
 	var socket = pUser.socket;
 	var iUsed = pUser.dyeItem;
@@ -144,16 +187,34 @@ function ShowDyeMenu( myDyeGump, pUser)
 		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17117, socket.language ) ); // Beard Color Selection Menu
 		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17118, socket.language ) ); // Dye my beard this color!
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Hair/Beards
+		myDyeGump.AddText( 91, 10, 1000, GetDictionaryEntry( 17101, socket.language ) ); // Hair Color Selection Menu
+		myDyeGump.AddText( 81, 361, 1000, GetDictionaryEntry( 17119, socket.language ) ); // Dye my hair and beard this color!
+	}
 	myDyeGump.AddBackground( 28, 30, 120, 315, 5054 );
 	myDyeGump.AddButton( 251, 360, 0xf7, 1, 0, 1 );
 
+	var menuSpecialDye = [12, 32, 38, 54, 62, 81, 89, 1153];
 	var menuDye = [1601, 1627, 1501, 1301, 1401, 1201, 2401, 2212, 1101, 1109, 1117, 1133];
 	var menuNames = [17103, 17104, 17105, 17106, 17107, 17108, 17109, 17110, 17111, 17112, 17113, 17114];
 
-	for( var i = 0; i < menuDye.length; i++ )
+	if( iUsed.morey == 1 )
 	{
-		myDyeGump.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
-		myDyeGump.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry( menuNames[i], socket.language ));
+		for( var i = 0; i < menuSpecialDye.length; i++ )
+		{
+			myDyeGump.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
+			myDyeGump.AddText( 60, 40 + ( i * 20 ), menuSpecialDye[i], "*****" );
+		}
+	}
+	else
+	{
+		for( var i = 0; i < menuDye.length; i++ ) 
+		{
+			myDyeGump.AddButton( 40, 40 + ( i * 20 ), 0x0a9a, 1, 0, 2 + i );
+			myDyeGump.AddText( 60, 40 + ( i * 20 ), menuDye[i], GetDictionaryEntry( menuNames[i], socket.language ));
+		}
 	}
 }
 
@@ -178,6 +239,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	var gumpID = scriptID + 0xffff;
 	var colour = 0;
 	var itemToDye = null;
+	var itemToDye2 = null;
 	if( iUsed.morex == 0 )
 	{
 		// Find hair equipped on character
@@ -188,9 +250,15 @@ function onGumpPress( pSock, pButton, gumpData )
 		// Find beard equipped on character
 		itemToDye = pUser.FindItemLayer( 0x10 );
 	}
+	else if( iUsed.morex == 2 )
+	{
+		// Find Hair/beard equipped on character
+		itemToDye = pUser.FindItemLayer( 0x0B );
+		itemToDye2 = pUser.FindItemLayer( 0x10 );
+	}
 
 	// Verify that hair/beard still exists
-	if( !ValidateObject( itemToDye ))
+	if( !ValidateObject( itemToDye ) && !ValidateObject( itemToDye2 ))
 		return;
 
 	switch( pButton )
@@ -202,6 +270,106 @@ function onGumpPress( pSock, pButton, gumpData )
 			var OtherButton = gumpData.getButton( 0 );
 			switch( OtherButton )
 			{
+				case 12:
+                    colour = 0x12; break;
+				case 13:
+                    colour = 0x13; break;
+				case 14:
+                    colour = 0x14; break;
+				case 15:
+                    colour = 0x15; break;
+				case 16:
+                    colour = 0x16; break;
+				case 17:
+                    colour = 0x17; break;
+				case 18:
+                    colour = 0x18; break;
+				case 19:
+                    colour = 0x19; break;
+				case 20:
+                    colour = 0x1A; break;
+				case 21:
+                    colour = 0x1B; break;
+				case 22:
+                    colour = 0x1C; break;
+				case 32:
+                    colour = 0x20; break;
+				case 33:
+                    colour = 0x21; break;
+				case 34:
+                    colour = 0x22; break;
+				case 35:
+                    colour = 0x23; break;
+				case 36:
+                    colour = 0x24; break;
+				case 37:
+                    colour = 0x25; break;
+				case 38:
+                    colour = 0x26; break;
+				case 39:
+                    colour = 0x27; break;
+				case 40:
+                    colour = 0x28; break;
+				case 41:
+                    colour = 0x29; break;
+				case 42:
+                    colour = 0x2A; break;
+				case 43:
+                    colour = 0x2B; break;
+				case 44:
+                    colour = 0x2C; break;
+				case 45:
+                    colour = 0x2D; break;
+				case 46:
+                    colour = 0x2E; break;
+				case 54:
+                    colour = 0x36; break;
+				case 55:
+                    colour = 0x37; break;
+				case 56:
+                    colour = 0x38; break;
+				case 57:
+                    colour = 0x39; break;
+				case 62:
+                    colour = 0x3E; break;
+				case 63:
+                    colour = 0x3F; break;
+				case 64:
+                    colour = 0x40; break;
+				case 65:
+                    colour = 0x41; break;
+				case 66:
+                    colour = 0x42; break;
+				case 67:
+                    colour = 0x43; break;
+				case 68:
+                    colour = 0x44; break;
+				case 69:
+                    colour = 0x45; break;
+				case 70:
+                    colour = 0x46; break;
+				case 71:
+                    colour = 0x47; break;
+				case 72:
+                    colour = 0x48; break;
+				case 81:
+                    colour = 0x51; break;
+				case 82:
+                    colour = 0x52; break;
+				case 83:
+                    colour = 0x53; break;
+				case 89:
+                    colour = 0x59; break;
+				case 90:
+                    colour = 0x5A; break;
+				case 91:
+                    colour = 0x5B; break;
+				case 1153:
+                    colour = 0x481; break;
+				case 1154:
+                    colour = 0x482; break;
+				case 1155:
+                    colour = 0x483; break;
 				case 1601:
 					colour = 0x641; break;
 				case 1602:
@@ -723,35 +891,91 @@ function onGumpPress( pSock, pButton, gumpData )
 			break;
 		case 2:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, pSock.language ), pUser ); // Brown
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( purpleSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( brownDyes, 1, GetDictionaryEntry( 17103, pSock.language ), pUser ); // Brown
+			}
 			break;
 		case 3:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( chestnutDyes, 1, GetDictionaryEntry( 17104, pSock.language ), pUser ); // Chestnut
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( redSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( chestnutDyes, 1, GetDictionaryEntry( 17104, pSock.language ), pUser ); // Chestnut
+			}
 			break;
 		case 4:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( auburnDyes, 1, GetDictionaryEntry( 17105, pSock.language ), pUser ); // Auburn
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( orangeSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( auburnDyes, 1, GetDictionaryEntry( 17105, pSock.language ), pUser ); // Auburn
+			}
 			break;
 		case 5:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( blueDyes, 1, GetDictionaryEntry( 17106, pSock.language ), pUser ); // Blue
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( yellowSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( blueDyes, 1, GetDictionaryEntry( 17106, pSock.language ), pUser ); // Blue
+			}
 			break;
 		case 6:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( greenDyes, 1, GetDictionaryEntry( 17107, pSock.language ), pUser ); // Green
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( limeSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( greenDyes, 1, GetDictionaryEntry( 17107, pSock.language ), pUser ); // Green
+			}
 			break;
 		case 7:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( redDyes, 1, GetDictionaryEntry( 17108, pSock.language ), pUser ); // Red
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( dklimeSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( redDyes, 1, GetDictionaryEntry( 17108, pSock.language ), pUser ); // Red
+			}
 			break;
 		case 8:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( lightDyes, 1, GetDictionaryEntry( 17109, pSock.language ), pUser ); // Light
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( iceblueSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( lightDyes, 1, GetDictionaryEntry( 17109, pSock.language ), pUser ); // Light
+			}
 			break;
 		case 9:
 			pSock.CloseGump( gumpID, 0 );
-			DisplayDyes( blondeDyes, 1, GetDictionaryEntry( 17110, pSock.language ), pUser ); // Blonde
+			if( iUsed.morey == 1 )
+			{
+				DisplayDyes( icewhiteSpecialDyes, 1, "*****", pUser );
+			}
+			else
+			{
+				DisplayDyes( blondeDyes, 1, GetDictionaryEntry( 17110, pSock.language ), pUser ); // Blonde
+			}
 			break;
 		case 10:
 			pSock.CloseGump( gumpID, 0 );
@@ -773,8 +997,18 @@ function onGumpPress( pSock, pButton, gumpData )
 
 	if( colour != 0 )
 	{
-		itemToDye.colour = colour;
+		if( ValidateObject( itemToDye ))
+		{
+			itemToDye.colour = colour;
+		}
+
+		if( ValidateObject( itemToDye2 ))
+		{
+			itemToDye2.colour = colour;
+		}
+
 		iUsed.Delete();
+		pUser.SoundEffect( 0x4E, true );
 		return;
 	}
 }

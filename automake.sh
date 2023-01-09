@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 if (( $# == 0 )); then
   # No parameters, all stages
   stage=0
@@ -7,7 +7,7 @@ else
 fi
 
 if [ $stage -eq 0 ] || [ $stage -eq 1 ]; then
-  echo "Building spidermonkey"
+  echo "Building SpiderMonkey..."
   cd spidermonkey
   if [ "$(uname)" = "FreeBSD" ]
   then
@@ -18,60 +18,80 @@ if [ $stage -eq 0 ] || [ $stage -eq 1 ]; then
   
   ev=$?
   if [ $ev -ne 0 ]; then
-    echo "Unable to build spidermonkey, cannot continue"
+    echo "Unable to build SpiderMonkey! Exiting..."
     exit $ev
+  else
+    echo "Done building SpiderMonkey."
   fi
-  if [ "$(uname)" = "Darwin" ]
+  
+  echo "Creating JavaScript library..."
+  if [ "$(uname)" = "Darwin" ] # macOS
   then
-          # Mac OS X
-          ar rcs libjs32.a Darwin_DBG.OBJ/*.o
-          cp Darwin_DBG.OBJ/jsautocfg.h ./
+    libtool -static -o libjs32.a -s Darwin_DBG.OBJ/*.o
+    cp Darwin_DBG.OBJ/jsautocfg.h ./
   elif [ "$(uname)" = "FreeBSD" ]
   then
-          ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o
-          cp FreeBSD_DBG.OBJ/jsautocfg.h ./
+    ar rcs libjs32.a FreeBSD_DBG.OBJ/*.o
+    cp FreeBSD_DBG.OBJ/jsautocfg.h ./
   elif [ "$(expr substr $(uname -s) 1 5)" = "Linux" ]
   then
-          # Linux
-          ar -r libjs32.a Linux_All_DBG.OBJ/*.o
-          cp Linux_All_DBG.OBJ/jsautocfg.h ./
+    # Linux
+    ar -r libjs32.a Linux_All_DBG.OBJ/*.o
+    cp Linux_All_DBG.OBJ/jsautocfg.h ./
+  fi
+  
+  ev=$?
+  if [ $ev -ne 0 ]; then
+    echo "Unable to create JavaScript library! Exiting..."
+    exit $ev
+  else
+    echo "Done creating JavaScript library."
   fi
   cd ..
   if [ $stage -eq 1 ]; then exit 0; fi
 fi
 
 if [ $stage -eq 0 ] || [ $stage -eq 2 ]; then
+  echo "Bulding zlib..."
   cd zlib
-  echo "Bulding zlib"
   make distclean
-  ./configure
-  make
+  ./configure && make
   
   ev=$?
   if [ $ev -ne 0 ]; then
-    echo "Unable to build zlib, cannot continue"
+    echo "Unable to build zlib! Exiting..."
     exit $ev
+  else
+    echo "Done building zlib."
   fi
   cd ..
   if [ $stage -eq 2 ]; then exit 0; fi
 fi
 
 if [ $stage -eq 0 ] || [ $stage -eq 3 ]; then
+  echo "Building UOX3..."
   cd source
-  echo "Building UOX3"
   if [ "$(uname)" = "FreeBSD" ]
   then
     gmake
   else
     make
   fi
+  
   ev=$?
-  if [ -f ./uox3 ]; then
-    cp uox3 ..
-    echo "Done! You should now find the compiled uox3 binary in the root UOX3 project directory. Copy this binary to a separate directory dedicated to running your UOX3 shard, along with the contents of the UOX3/data directory, to avoid potential git conflicts and accidental overwriting of data when pulling UOX3 updates in the future."
+  if [ $ev -ne 0 ]; then
+    echo "Unable to build UOX3! Exiting..."
+    cd ..
+    exit $ev
   else
-    echo "uox3 output not created!  Please review compile status"
+    if [ -f ./uox3 ]; then
+      cp uox3 ..
+      echo "Done! You should now find the compiled uox3 binary in the root UOX3 project directory. Copy this binary"
+      echo "to a separate directory dedicated to running your UOX3 shard, along with the contents of the UOX3/data directory,"
+      echo "to avoid potential git conflicts and accidental overwriting of data when pulling UOX3 updates in the future."
+    else
+      echo "uox3 program not found! Please review the build status."
+    fi
   fi
   cd ..
-  exit $ev
 fi
