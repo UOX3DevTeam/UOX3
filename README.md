@@ -199,7 +199,15 @@ Repeat process for both Release and Debug configurations (chosen at top of panel
 </details>
 
 ---
+# ...with Docker
+## Step 1: Clone the UOX3 Git Repository
 
+  See steps above for appropriate platform for cloning the Git repository to the target of your choice
+## Step 2: Compile UOX3
+
+  Open a command prompt and navigate to the Git repository root.  Using docker, execute a build of the image like so: `docker buildx build --progress=plain -t uox3 .`
+
+---
 Once done compiling, you can copy your new **uox3.exe** (and if using CMake, **js32.dll**) file from the appropriate output folders (depending on which method and configuration you used) to the root folder of your actual UOX3 project. You'll also need to copy the files and folders contained within the **data** subfolder of the UOX3 repository, if you don't already have these.
 
 **It is recommended** to run your UOX3 shard from a separate, dedicated folder instead of the data folder in your local UOX3 git repository, to avoid potential git conflicts and accidental overwrites when pulling updates to UOX3 from GitHub in the future.
