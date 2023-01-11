@@ -1,5 +1,3 @@
-#syntax = docker/dockerfile:1.4.0
-
 FROM quay.io/centos/centos:stream AS buildbase
 RUN yum -y install tar unzip glibc.i686 gcc dos2unix cmake gcc-c++ && yum clean all && rm -rf /var/cache/yum
 RUN mkdir -p ~/uox3
@@ -20,10 +18,6 @@ WORKDIR /home/uox3/app
 COPY --from=buildapp --chown=uox3 /root/uox3/uox3 .
 COPY --chown=uox3 data data/
 COPY --chown=uox3 docs docs/
-RUN <<EOF cat >> ~/app/run.sh
-#!/usr/bin/env bash
-cd ~/app
-./uox3 data/uox.ini
-EOF
+COPY --chown=uox3 docker/run.sh .
 RUN chmod 777 /home/uox3/app/run.sh && dos2unix /home/uox3/app/run.sh
 CMD ["/home/uox3/app/run.sh"]
