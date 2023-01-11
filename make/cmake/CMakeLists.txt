@@ -236,6 +236,7 @@ target_link_libraries(uox3 PRIVATE
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Linux>:pthread>
    $<$<PLATFORM_ID:FreeBSD>:pthread>
+   $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>
 )
 
 # *************************************************************************

@@ -26,6 +26,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > * **Linux (Debian-based)** - Run `sudo apt install build-essential cmake` in a Terminal:  (or use your Linux distro's package manager)
   > * **FreeBSD** - Run `pkg install cmake` in a Terminal. Alternatively, build `cmake` via ports if desired.
   > * **macOS** - Download [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (for building with an IDE) via the App Store, and/or [CMake](https://cmake.org/download/) (for command-line builds)
+  > * **Docker/Podman** - Ensure that it is downloaded and installed (Windows) or installed from your package manager
 </details>
 
 <details>
@@ -156,6 +157,11 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
   > Repeat process for both Release and Debug configurations (chosen at top of panel), then retry the UOX3 build process!
 
 </details>
+</details>
+<details>
+  <summary><strong>Docker/Podman</strong></summary>
+
+  Build and tag the image from the root of the repository like: `docker buildx build --progress=plain -t uox3 .` or `podman build -t uox3 .`
 </details>
 
 ---
