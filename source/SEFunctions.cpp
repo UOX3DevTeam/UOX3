@@ -3777,6 +3777,44 @@ JSBool SE_DeleteFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_EraStringToNum()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = reinterpret_cast<long>(nullptr);
+
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EraStringToNum: Invalid number of arguments (takes 1 - era string)" );
+		return JS_FALSE;
+	}
+
+	JSString *tString;
+	std::string eraString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	if( !eraString.empty() )
+	{
+		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
+		if( eraNum != 0 )
+		{
+			*rval = eraNum;
+		}
+		else
+		{
+			DoSEErrorMessage( "EraStringToNum: Provided argument not valid era string (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs or tol)" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		DoSEErrorMessage( "EraStringToNum: Provided argument contained no valid string data" );
+		return JS_FALSE;
+	}
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetServerSetting()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of specified server setting
@@ -4801,6 +4839,27 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 320:	// MAXPLAYERBANKWEIGHT
 				*rval = INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerBankWeight() ));
+				break;
+			case 321:	// SAFECOOWNERLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeCoOwnerLogout() );
+				break;
+			case 322:	// SAFEFRIENDLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeFriendLogout() );
+				break;
+			case 323:	// SAFEGUESTLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeGuestLogout() );
+				break;
+			case 324:	// KEYLESSOWNERACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessOwnerAccess() );
+				break;
+			case 325:	// KEYLESSCOOWNERACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessCoOwnerAccess() );
+				break;
+			case 326:	// KEYLESSFRIENDACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessFriendAccess() );
+				break;
+			case 327:	// KEYLESSGUESTACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessGuestAccess() );
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

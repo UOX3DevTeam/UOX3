@@ -1,3 +1,45 @@
+04/03/2023 - Xuri (0.99.6-RC3)
+	Updated Item DFNs with ORIGIN and SECTIONID tags for relevant items
+	Added JS Function to make comparing eras (based on object origin or server settings) easier:
+		EraStringToNum( eraString )	// Takes an era string (uo, t2a, uor, td, lbr, aos, etc) and returns an int
+	Updated some JS scripts to use EraStringToNum() for era comparisons (potionkeg.js)
+	Default CORESHARDERA setting is now LBR
+	Removed PUB15 as a separate "era" - it's identical to late stage LBR anyway:
+		Removed support for GETPUB15 tag
+	Added support for GETUO tag for items/NPCs:
+		GETUO=<sectionID>		// Inherit DFN section if core shard era is Ultima Online (original release, before T2A)
+	Rewrote portions of MsgBoardQuestEscortCreate() function in msgboard.cpp to ensure only escort regions within same world as NPC can be selected as destinations
+	Increased maximum number of possible escort regions that can exist from 255 to 65535
+	Added region definitions for all shrines in Britannia (Fel & Trammel), and marked them as valid destinations for NPC escorts (uox3/regions/regions.dfn)
+	Moved bankers from vendor to human DFN files, and made them inherit basehuman instead of basevendor - since they are not vendors
+	To address an issue with escorted NPCs not timing out and vanishing if they are left in a "dormant" area of the world with no player activity, the NPCs are marked as "always awake" the moment they arrive at their destination. Note that the uox.ini setting ALLOWAWAKENPCS needs to be enabled for this to work.
+	Fixed an issue where spawnsection of spawners did not show up correctly in tweak menu
+	Fixed an issue where the generic Orc AI script didn't have a return true at end of onDamage() event, which prevented all orcs from taking damage in combat (js/npc/ai/monster/orc.js)
+	Moved Anatomy skill-check in healing script (js/skill/healing.js) from onCallback1() function to onTimer() to prevent the skill-check from being spammable
+	Added mount ID for Frost Mite in creatures.dfn, allowing it to be used as mount
+	Exposed the following character properties to JS engine, which can be used to view/adjust the permanent hair/beard options for a character:
+		.hairStyle
+		.hairColour
+		.beardStyle
+		.beardColour
+	Updated 'kill hair, 'shavehair, 'shavebeard and 'remove commands to clear permanent hair/beard colour and style properties in addition to removing the item itself
+	Added a GM override to let GMs place as many houses as they want (js/server/house/houseDeed.js)
+	Fixed an issue where attempting to sell items to NPC shopkeepers could result in client crashing
+	Added a new JS Event:
+		onMultiLogout( iMulti, cPlayer ) 	// Handles players logging out while inside multis
+	Updated house script (js/server/house/house.js) with onMultiLogout event, which allows owners (always) and co-owners/friends/guests (if option enabled in uox.ini) to safely log out inside the house (without getting booted).
+	Added a "keyless" option for interacting with locked doors (js/item/doors.js) of player-owned houses, which lets owners/co-owners/friends/guests of a house use locked doors in the house without requiring a key in their backpack, if the options for that are enabled in UOX.INI. Enabled for owners/co-owners and friends by default (but not for guests)
+		Note that if option to safely log out is enabled, but keyless option is NOT enabled, then the server will check if the player has a key to the house in their backpack, and eject them from the house upon logging out if not. This is to make sure players don't get stuck inside a house they can't get out of because they lack the rights to open doors etc.
+	Added new UOX.INI options, under the [houses] section:
+		SAFECOOWNERLOGOUT=1 	// Allow co-owners to safely and instantly log out inside house
+		SAFEFRIENDLOGOUT=1 		// Allow friends to safely and instantly log out inside house
+		SAFEGUESTLOGOUT=1 		// Allow guests to safely and instantly log out inside house
+		KEYLESSOWNERACCESS=1 	// Allow owner of house to use locked doors in house without key in pack
+		KEYLESSCOOWNERACCESS=1 	// Allow co-owners of house to use locked doors in house without key in pack
+		KEYLESSFRIENDACCESS=1 	// Allow friends of house to use locked doors in house without key in pack
+		KEYLESSGUESTACCESS=0 	// Allow guests of house to use locked doors in house without key in pack
+	Fixed NOHAIR tag from races.dfn not being loaded correctly
+
 31/12/2022 - Xuri
 	Extended GetSpawnRegion JS Function to fetch spawn region reference based on a set of coordinates. Supported syntax are now:
 		GetSpawnRegion( spawnRegionID )
@@ -232,14 +274,14 @@
 	Renamed 0xf1_connectUOServerPoll.js to 0xf1_freeshardServerPoll.js, and updated script to respond to the "standard" freeshard server poll request rather than the more specific (and now dead) ConnectUO one.
 	Renamed INI setting CUOENABLED to FREESHARDSERVERPOLL
 	Added new INI settings under [expansion settings] section to help shard admins customize some key behaviours of their shard, based on their preferred "era" of UO. Note that a value of "core" means the setting inherits the chosen era from the CORESHARDERA setting:
-			CORESHARDERA=pub15
+			CORESHARDERA=lbr
 				Defines the "core" era of the shard. Defaults to pub15 (Publish 15).
 					any 				- determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15
 					uor or later 		- enables bonus hit chance for archery via ARCHERYHITBONUS setting
-					pub15 or earlier	- final combat damage value reduced by half
+					lbr or earlier		- final combat damage value reduced by half
 			ARMORCALCULATION=core
 				Defines era to base armor calculations on
-					pub15 or earlier 	- different armor pieces contribute different percentage of the total Armor Rating
+					lbr or earlier 		- different armor pieces contribute different percentage of the total Armor Rating
 					aos or later 		- each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats
 			STRENGTHDAMAGEBONUS=core
 				Defines era to base strength damage bonus on
@@ -247,7 +289,7 @@
 					td or later 		- 35% damage bonus based on strength if 100 strength or more, otherwise 30% damage bonus
 			TACTICSDAMAGEBONUS=core
 				Defines era to base tactics damage bonus on
-					pub15 or earlier 	- bonus = Tactics skill + 50
+					lbr or earlier 		- bonus = Tactics skill + 50
 					aos or later 		- 68.75% damage bonus if GM Tactics, 62.5% bonus if below
 			ANATOMYDAMAGEBONUS=core
 				Defines era to base anatomy damage bonus on
@@ -264,12 +306,12 @@
 					sa or later 		- Gargoyles gain +15% damage bonus per each 20 HP lost
 			DAMAGEBONUSCAP=core
 				Defines era to base damage bonus cap on
-					pub15 or earlier 	- No cap on damage bonus multiplier
+					lbr or earlier 		- No cap on damage bonus multiplier
 					aos or later 		- Total damage bonus multiplier capped at 300% higher than base damage
 			SHIELDPARRY=core
 				Defines era to base shield parry calculations on
 					t2a 				- chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery
-					uor to pub15 		- higher AR equals lower block chance, but more damage absorbed.
+					uor to lbr 			- higher AR equals lower block chance, but more damage absorbed.
 					aos or later 		- chance to block dependent on parry skill vs bushido skill, with dex modifier
 			WEAPONPARRY=core
 				Defines era to base weapon parry calculations on
@@ -280,17 +322,17 @@
 					tol or later 		- From 12.5% chance (at GM wrestling, increases with higher skill) that an NPC will parry an attack
 			COMBATHITCHANCE=core
 				Defines era to base combat hit chance calculations on
-					t2a to pub15 		- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
-					uor to pub15 		- Additional bonus hit chance for archery
+					t2a to lbr 			- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
+					uor to lbr 			- Additional bonus hit chance for archery
 					aos to tol 			- hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit
 		Supported era values:
-			t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
+			uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
 	Added (optional) new Item/NPC DFN tags to help determine which variants of Items/NPCs to load from DFNs, based on chosen era in CORESHARDERA setting:
+		GETUO=<sectionID>		// Inherit DFN section if core shard era is Ultima Online (original release, before T2A)
 		GETT2A=<sectionID>		// Inherit DFN section if core shard era is The Second Age
 		GETTD=<sectionID>		// Inherit DFN section if core shard era is Third Dawn
 		GETUOR=<sectionID>		// Inherit DFN section if core shard era is UO Renaissance
 		GETLBR=<sectionID>		// Inherit DFN section if core shard era is Lord Blackthorn's Revenge
-		GETPUB15=<sectionID>	// Inherit DFN section if core shard era is Pub15
 		GETAOS=<sectionID>		// Inherit DFN section if core shard era is Age of Shadows
 		GETSE=<sectionID>		// Inherit DFN section if core shard era is Samurai Empire
 		GETML=<sectionID>		// Inherit DFN section if core shard era is Mondain's Legacy

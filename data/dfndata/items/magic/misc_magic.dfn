@@ -10,6 +10,7 @@ restock=15
 decay=1
 good=28
 layer=1
+sectionid=0x0efa
 }
 
 [spellbook]
@@ -29,6 +30,7 @@ type=50
 restock=15
 decay=1
 good=28
+sectionid=0x1f14
 }
 
 [usedrecallrune]
@@ -48,6 +50,7 @@ type=50
 restock=15
 decay=1
 good=28
+sectionid=0x1f17
 }
 
 [recallrune]
@@ -64,6 +67,7 @@ weight=100
 value=2 1
 movable=2
 good=28
+sectionid=0x0e2d
 }
 
 [crystalball]
@@ -80,6 +84,7 @@ weight=100
 value=2 1
 movable=2
 good=28
+sectionid=0x0e2e
 }
 
 [sparklingcrystalball]
@@ -96,6 +101,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=aos
+sectionid=0x2252
 }
 
 [paladinspellbook]
@@ -112,6 +119,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=aos
+sectionid=0x2253
 }
 
 [necromancerbook]
@@ -128,6 +137,8 @@ weight=100
 value=22 11
 decay=1
 good=28
+origin=sa
+sectionid=0x2d9d
 }
 
 [mysticbook]
@@ -161,5 +172,6 @@ decay=1
 maxhp=10
 good=28
 newbie
+origin=t2a
 script=5029
 }

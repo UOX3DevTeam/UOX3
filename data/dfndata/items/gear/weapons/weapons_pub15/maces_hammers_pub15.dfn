@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// War Axe - Pub15 stats (default)
-[0x13af_pub15]
+// War Axe - LBR stats (default)
+[0x13af_lbr]
 {
 get=base_war_axe
 weight=800
@@ -16,8 +16,8 @@ spd=40
 str=35
 }
 
-// Smith's Hammer - Pub15 stats (default)
-[0x13e3_pub15]
+// Smith's Hammer - LBR stats (default)
+[0x13e3_lbr]
 {
 get=base_smiths_hammer
 weight=800
@@ -28,8 +28,8 @@ spd=30
 str=30
 }
 
-// Club - Pub15 stats (default)
-[0x13b3_pub15]
+// Club - LBR stats (default)
+[0x13b3_lbr]
 {
 get=base_club
 weight=900
@@ -40,8 +40,8 @@ spd=40
 str=10
 }
 
-// Sledge Hammer - Pub15 stats (default)
-[0x0fb4_pub15]
+// Sledge Hammer - LBR stats (default)
+[0x0fb4_lbr]
 {
 get=base_sledge_hammer
 weight=900
@@ -52,8 +52,8 @@ spd=15
 str=30
 }
 
-// Mace - Pub15 stats (default)
-[0x0f5c_pub15]
+// Mace - LBR stats (default)
+[0x0f5c_lbr]
 {
 get=base_mace
 weight=1400
@@ -64,8 +64,8 @@ spd=30
 str=20
 }
 
-// War Mace - Pub15 stats (default)
-[0x1406_pub15]
+// War Mace - LBR stats (default)
+[0x1406_lbr]
 {
 get=base_war_mace
 weight=1700
@@ -76,8 +76,8 @@ spd=32
 str=30
 }
 
-// War Hammer - Pub15 stats (default)
-[0x1438_pub15]
+// War Hammer - LBR stats (default)
+[0x1438_lbr]
 {
 get=base_war_hammer
 weight=1000
@@ -88,8 +88,8 @@ spd=31
 str=40
 }
 
-// Maul - Pub15 stats (default)
-[0x143a_pub15]
+// Maul - LBR stats (default)
+[0x143a_lbr]
 {
 get=base_maul
 weight=1400
@@ -100,8 +100,8 @@ spd=30
 str=20
 }
 
-// Hammer Pick - Pub15 stats (default)
-[0x143c_pub15]
+// Hammer Pick - LBR stats (default)
+[0x143c_lbr]
 {
 get=base_hammer_pick
 weight=900
@@ -116,8 +116,8 @@ str=35
 
 // AGE OF SHADOWS
 
-// Scepter - Pub15 stats (default)
-[0x26bc_pub15]
+// Scepter - LBR stats (default)
+[0x26bc_lbr]
 {
 get=base_scepter
 weight=800
@@ -131,8 +131,8 @@ str=20
 //------------------------------------------------------------------------------------------------//
 
 // SAMURAI EMPIRE
-// Tessen - Pub15 stats (default)
-[0x27a3_pub15]
+// Tessen - LBR stats (default)
+[0x27a3_lbr]
 {
 get=base_tessen
 weight=500
@@ -143,8 +143,8 @@ spd=54
 str=25
 }
 
-// Tetsubo - Pub15 stats (default)
-[0x27a6_pub15]
+// Tetsubo - LBR stats (default)
+[0x27a6_lbr]
 {
 get=base_tetsubo
 weight=700
@@ -155,8 +155,8 @@ spd=43
 str=25
 }
 
-// Nunchaku - Pub15 stats (default)
-[0x27ae_pub15]
+// Nunchaku - LBR stats (default)
+[0x27ae_lbr]
 {
 get=base_nunchaku
 weight=400
@@ -170,8 +170,8 @@ str=15
 //------------------------------------------------------------------------------------------------//
 
 // MONDAIN'S LEGACY
-// Diamond Mace - Pub15 stats (default)
-[0x2d24_pub15]
+// Diamond Mace - LBR stats (default)
+[0x2d24_lbr]
 {
 get=base_diamond_mace
 damage=9 29
@@ -185,8 +185,8 @@ weight=1000
 //------------------------------------------------------------------------------------------------//
 
 // STYGIAN ABYSS
-// Gargish Maul - Pub15 stats (default)
-[0x48c2_pub15]
+// Gargish Maul - LBR stats (default)
+[0x48c2_lbr]
 {
 get=base_gargish_maul
 damage=10 30
@@ -197,8 +197,8 @@ value=31 15
 weight=1400
 }
 
-// Disc Mace - Pub15 stats (default)
-[0x0903_pub15]
+// Disc Mace - LBR stats (default)
+[0x0903_lbr]
 {
 get=base_disc_mace
 damage=8 25
@@ -209,8 +209,8 @@ value=76 42
 weight=1400
 }
 
-// Gargish War Hammer - Pub15 stats (default)
-[0x48c0_pub15]
+// Gargish War Hammer - LBR stats (default)
+[0x48c0_lbr]
 {
 get=base_gargish_war_hammer
 damage=8 36
@@ -221,8 +221,8 @@ value=27 13
 weight=1000
 }
 
-// Gargish Tessen - Pub15 stats (default)
-[0x48cc_pub15]
+// Gargish Tessen - LBR stats (default)
+[0x48cc_lbr]
 {
 get=base_gargish_tessen
 damage=6 23
@@ -236,8 +236,8 @@ weight=500
 //------------------------------------------------------------------------------------------------//
 
 // TIME OF LEGENDS
-// Barbed Whip - Pub15 stats (default)
-[0xa289_pub15]
+// Barbed Whip - LBR stats (default)
+[0xa289_lbr]
 {
 get=base_barbed_whip
 damage=9 29

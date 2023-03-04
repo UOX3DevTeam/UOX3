@@ -105,12 +105,6 @@ function onCallback2( socket, ourObj )
 			return;
 		}
 
-		if( ourObj.id != 0x1f17 )
-		{
-			pUser.SysMessage( "That rune is not blank." );
-			return;
-		}
-
 		socket.SysMessage( GetDictionaryEntry( 686 )); // Recall rune marked.
 		mChar.Mark( ourObj );
 

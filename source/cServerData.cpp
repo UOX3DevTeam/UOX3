@@ -341,6 +341,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SHOWGUILDINFOINTOOLTIP"s, 318},
 	{"MAXPLAYERPACKWEIGHT"s, 319},
 	{"MAXPLAYERBANKWEIGHT"s, 320},
+	{"SAFECOOWNERLOGOUT", 321},
+	{"SAFEFRIENDLOGOUT", 322},
+	{"SAFEGUESTLOGOUT", 323},
+	{"KEYLESSOWNERACCESS", 324},
+	{"KEYLESSCOOWNERACCESS", 325},
+	{"KEYLESSFRIENDACCESS", 326},
+	{"KEYLESSGUESTACCESS", 327}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -437,6 +444,13 @@ constexpr auto BIT_SHOWRACEINPAPERDOLL				= UI32( 86 );
 constexpr auto BIT_CASTSPELLSWHILEMOVING			= UI32( 87 );
 constexpr auto BIT_SHOWREPTITLEINTOOLTIP			= UI32( 88 );
 constexpr auto BIT_SHOWGUILDINFOINTOOLTIP			= UI32( 89 );
+constexpr auto BIT_SAFECOOWNERLOGOUT				= UI32( 90 );
+constexpr auto BIT_SAFEFRIENDLOGOUT					= UI32( 91 );
+constexpr auto BIT_SAFEGUESTLOGOUT					= UI32( 92 );
+constexpr auto BIT_KEYLESSOWNERACCESS				= UI32( 93 );
+constexpr auto BIT_KEYLESSCOOWNERACCESS				= UI32( 94 );
+constexpr auto BIT_KEYLESSFRIENDACCESS				= UI32( 95 );
+constexpr auto BIT_KEYLESSGUESTACCESS				= UI32( 96 );
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -692,7 +706,7 @@ auto CServerData::ResetDefaults() -> void
 	Directory( CSDDP_LOGS, tDir );
 
 	// Expansion settings
-	ExpansionCoreShardEra( ER_PUB15 ); // Default to pub15
+	ExpansionCoreShardEra( ER_LBR ); // Default to LBR expansion
 	ExpansionArmorCalculation( ER_CORE );
 	ExpansionStrengthDamageBonus( ER_CORE );
 	ExpansionTacticsDamageBonus( ER_CORE );
@@ -747,7 +761,7 @@ auto CServerData::ResetDefaults() -> void
 	CraftColouredWeapons( false );
 	MaxSafeTeleportsPerDay( 1 );
 	TeleportToNearestSafeLocation( false );
-	AllowAwakeNPCs( false );
+	AllowAwakeNPCs( true );
 	GlobalRestockMultiplier( 1.0 );
 	ShowItemResistStats( false );
 	ShowWeaponDamageTypes( true );
@@ -828,6 +842,13 @@ auto CServerData::ResetDefaults() -> void
 	CoOwnHousesOnSameAccount( true );
 	MaxHousesOwnable( 1 );
 	MaxHousesCoOwnable( 10 );
+	SafeCoOwnerLogout( 1 );
+	SafeFriendLogout( 1 );
+	SafeGuestLogout( 1 );
+	KeylessOwnerAccess( 1 );
+	KeylessCoOwnerAccess( 1 );
+	KeylessFriendAccess( 1 );
+	KeylessGuestAccess( 0 );
 
 	// Towns
 	TownNumSecsPollOpen( 3600 );	// one hour
@@ -1394,11 +1415,11 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set core era ruleset for shard
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1424,11 +1445,11 @@ auto CServerData::ExpansionCoreShardEra( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for armor/defense calculation
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1463,11 +1484,11 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for strength damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1477,7 +1498,7 @@ auto CServerData::ExpansionArmorCalculation( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionStrengthDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionStrengthDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionStrengthDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1498,11 +1519,11 @@ auto CServerData::ExpansionStrengthDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for tactics damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1533,11 +1554,11 @@ auto CServerData::ExpansionTacticsDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for anatomy damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1547,7 +1568,7 @@ auto CServerData::ExpansionTacticsDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionAnatomyDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionAnatomyDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1568,11 +1589,11 @@ auto CServerData::ExpansionAnatomyDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for lumberjack damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1582,7 +1603,7 @@ auto CServerData::ExpansionAnatomyDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionLumberjackDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionLumberjackDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionLumberjackDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1603,11 +1624,11 @@ auto CServerData::ExpansionLumberjackDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for racial damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1617,7 +1638,7 @@ auto CServerData::ExpansionLumberjackDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionRacialDamageBonus() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionRacialDamageBonus ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionRacialDamageBonus ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1638,11 +1659,11 @@ auto CServerData::ExpansionRacialDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for cap applied to damage bonus
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1652,7 +1673,7 @@ auto CServerData::ExpansionRacialDamageBonus( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionDamageBonusCap() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionDamageBonusCap ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionDamageBonusCap ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1673,11 +1694,11 @@ auto CServerData::ExpansionDamageBonusCap( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for shield parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1687,7 +1708,7 @@ auto CServerData::ExpansionDamageBonusCap( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionShieldParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionShieldParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionShieldParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1708,11 +1729,11 @@ auto CServerData::ExpansionShieldParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for weapon parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1722,7 +1743,7 @@ auto CServerData::ExpansionShieldParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWeaponParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionWeaponParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionWeaponParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1743,11 +1764,11 @@ auto CServerData::ExpansionWeaponParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for wrestling parry
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1757,7 +1778,7 @@ auto CServerData::ExpansionWeaponParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionWrestlingParry() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionWrestlingParry ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionWrestlingParry ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -1778,11 +1799,11 @@ auto CServerData::ExpansionWrestlingParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Set era ruleset for combat hit chance calculations
 //|	Notes		-		0 = Core (used to inherit CoreShardEra setting)
-//|						1 = T2A - The Second Age
-//|						2 = UOR - Rennaissance
-//|						3 = TD - Third Dawn
-//|						4 = LBR - Lord Blackthorn's Revenge
-//|						5 = PUB15 - Pub15 (Pre-AoS)
+//|						1 = UO - Original UO release
+//|						2 = T2A - The Second Age
+//|						3 = UOR - Rennaissance
+//|						4 = TD - Third Dawn
+//|						5 = LBR - Lord Blackthorn's Revenge
 //|						6 = AoS - Age of Shadows
 //|						7 = SE - Samurai Empire
 //|						8 = ML - Mondain's Legacy
@@ -1792,7 +1813,7 @@ auto CServerData::ExpansionWrestlingParry( UI08 setting ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::ExpansionCombatHitChance() const -> UI08
 {
-	if(  static_cast<ExpansionRuleset>( expansionCombatHitChance ) == ER_CORE )
+	if( static_cast<ExpansionRuleset>( expansionCombatHitChance ) == ER_CORE )
 	{
 		// Inherit CoreShardEra setting
 		return ExpansionCoreShardEra();
@@ -2956,6 +2977,107 @@ auto CServerData::CoOwnHousesOnSameAccount() const -> bool
 auto CServerData::CoOwnHousesOnSameAccount( bool newVal ) -> void
 {
 	boolVals.set( BIT_COOWNHOUSESONSAMEACCOUNT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData:SafeCoOwnerLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether co-owners of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeCoOwnerLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFECOOWNERLOGOUT );
+}
+auto CServerData::SafeCoOwnerLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFECOOWNERLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SafeFriendLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether friends of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeFriendLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFEFRIENDLOGOUT );
+}
+auto CServerData::SafeFriendLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFEFRIENDLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SafeGuestLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guests of a house can safely log out in the house without
+//|					being booted out of the house
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SafeGuestLogout() const -> bool
+{
+	return boolVals.test( BIT_SAFEGUESTLOGOUT );
+}
+auto CServerData::SafeGuestLogout( bool newVal ) -> void
+{
+	boolVals.set( BIT_SAFEGUESTLOGOUT, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessOwnerAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether owner of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessOwnerAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSOWNERACCESS );
+}
+auto CServerData::KeylessOwnerAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSOWNERACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessCoOwnerAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether co-owners of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessCoOwnerAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSCOOWNERACCESS );
+}
+auto CServerData::KeylessCoOwnerAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSCOOWNERACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessFriendAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether friends of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessFriendAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSFRIENDACCESS );
+}
+auto CServerData::KeylessFriendAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSFRIENDACCESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::KeylessGuestAccess()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether guests of a house can access locked doors without a key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::KeylessGuestAccess() const -> bool
+{
+	return boolVals.test( BIT_KEYLESSGUESTACCESS );
+}
+auto CServerData::KeylessGuestAccess( bool newVal ) -> void
+{
+	boolVals.set( BIT_KEYLESSGUESTACCESS, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4348,11 +4470,11 @@ auto CServerData::SaveIni() -> bool
 // Map of era enums to era strings, used for conversion between the two types
 static const std::unordered_map<ExpansionRuleset, std::string> eraNames
 {
+	{ ER_UO,	"uo"s },
 	{ ER_T2A,	"t2a"s },
 	{ ER_UOR,	"uor"s },
 	{ ER_TD,	"td"s },
 	{ ER_LBR,	"lbr"s },
-	{ ER_PUB15, "pub15"s },
 	{ ER_AOS,	"aos"s },
 	{ ER_SE,	"se"s },
 	{ ER_ML,	"ml"s },
@@ -4368,7 +4490,7 @@ static const std::unordered_map<ExpansionRuleset, std::string> eraNames
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> std::string
 {
-	std::string eraName = "pub15"; // default
+	std::string eraName = "lbr"; // default
 	if( !coreEnum && eraEnum == static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ))
 	{
 		// Enum matches the core shard era setting; return it as "core"
@@ -4394,12 +4516,16 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Pass an era string in, get an era enum back
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset
+auto CServerData::EraStringToEnum( const std::string &eraString, bool useDefault, bool inheritCore ) -> ExpansionRuleset
 {
-	auto searchEra = oldstrutil::lower( eraString );
-	auto rValue = ER_PUB15; // Default era if specified era is not found
+	auto rValue = ER_CORE;
+	if( useDefault )
+	{
+		rValue = ER_LBR; // Default era if specified era is not found
+	}
 
-	if( searchEra == "core" )
+	auto searchEra = oldstrutil::lower( eraString );
+	if( inheritCore && searchEra == "core" )
 	{
 		// Inherit setting from CORESHARDERA setting
 		return static_cast<ExpansionRuleset>( ExpansionCoreShardEra() );
@@ -4561,7 +4687,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "BLOODDECAYCORPSETIMER=" << SystemTimer( tSERVER_BLOODDECAYCORPSE ) << '\n';
 		ofsOutput << "}" << '\n';
 
-		ofsOutput << '\n' << "// Supported era values: core, t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol" << '\n';
+		ofsOutput << '\n' << "// Supported era values: core, uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol" << '\n';
 		ofsOutput << '\n' << "// Note: A value of 'core' inherits whatever is set in CORESHARDERA" << '\n';
 		ofsOutput << "[expansion settings]" << '\n' << "{" << '\n';
 		ofsOutput << "CORESHARDERA=" << EraEnumToString( static_cast<ExpansionRuleset>( ExpansionCoreShardEra() ), true ) << '\n';
@@ -4799,6 +4925,13 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "PROTECTPRIVATEHOUSES=" << ( ProtectPrivateHouses() ? 1 : 0 ) << '\n';
 		ofsOutput << "MAXHOUSESOWNABLE=" << MaxHousesOwnable() << '\n';
 		ofsOutput << "MAXHOUSESCOOWNABLE=" << MaxHousesCoOwnable() << '\n';
+		ofsOutput << "SAFECOOWNERLOGOUT=" << ( SafeCoOwnerLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "SAFEFRIENDLOGOUT=" << ( SafeFriendLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "SAFEGUESTLOGOUT=" << ( SafeGuestLogout() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSOWNERACCESS=" << ( KeylessOwnerAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSCOOWNERACCESS=" << ( KeylessCoOwnerAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSFRIENDACCESS=" << ( KeylessFriendAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "KEYLESSGUESTACCESS=" << ( KeylessGuestAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
@@ -6013,6 +6146,27 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 320:	// MAXPLAYERBANKWEIGHT
 			MaxPlayerBankWeight( static_cast<SI32>( std::stoi( value, nullptr, 0 )));
+			break;
+		case 321:	// SAFECOOWNERLOGOUT
+			SafeCoOwnerLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 322:	// SAFEFRIENDLOGOUT
+			SafeFriendLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 323:	// SAFEGUESTLOGOUT
+			SafeGuestLogout(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 324:	// KEYLESSOWNERACCESS
+			KeylessOwnerAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 325:	// KEYLESSCOOWNERACCESS
+			KeylessCoOwnerAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 326:	// KEYLESSFRIENDACCESS
+			KeylessFriendAccess(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 327:	// KEYLESSGUESTACCESS
+			KeylessGuestAccess( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
 			break;
 		default:
 			rValue = false;

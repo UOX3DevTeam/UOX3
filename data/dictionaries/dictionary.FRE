@@ -3892,6 +3892,10 @@
 8433=Coord en X en bas à droite de la limite du wandertype du personnage
 8434=Coordon Y inférieur droit de la limite du wandertype du personnage
 8435=Z coord pour la limite du type d'errance du personnage
+8436=Couleur de la barbe permanente du personnage
+8437=Type de barbe permanente du personnage
+8438=Couleur permanente des cheveux du personnage
+8439=Coiffure permanente du personnage
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Nombre actuel de joueurs bannis de Multi. Contrôlé par le serveur (en lecture seule)
 8501=Coordonnée X du lieu de bannissement de Multi

@@ -3735,6 +3735,10 @@
 8433=Dole vpravo X coord pro hranici typu putování postavy
 8434=Souřadnice Y vpravo dole pro hranici typu putování postavy
 8435=Z coord pro hranici typu putování postavy
+8436=Stálá barva vousů postavy
+8437=Stálý styl vousů postavy
+8438=Stálá barva vlasů postavy
+8439=Stálý účes postavy
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuální počet hráčů se zákazem vstupu do Multi. Řízeno serverem (pouze pro čtení)
 8501=X souřadnice místa zákazu v Multi

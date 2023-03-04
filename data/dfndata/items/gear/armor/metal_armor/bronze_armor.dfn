@@ -19,12 +19,13 @@ erbonus=0 7 2 2
 // Bronze Ringmail Gloves - N/S
 [0x13eb-b]
 {
-getpub15=0x13eb_pub15
+getlbr=0x13eb_lbr
 getaos=0x13eb_aos
 gettol=0x13eb_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13eb-b
 }
 
 // Bronze Ringmail Gloves - E/W
@@ -43,12 +44,13 @@ get=0x13eb-b 0x13f2-b
 // Bronze Ringmail Tunic - N/S
 [0x13ec-b]
 {
-getpub15=0x13ec_pub15
+getlbr=0x13ec_lbr
 getaos=0x13ec_aos
 gettol=0x13ec_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13ec-b
 }
 
 // Bronze Ringmail Tunic - E/W
@@ -67,12 +69,13 @@ get=0x13ec-b 0x13ed-b
 // Bronze Ringmail Sleeves - N/S
 [0x13ee-b]
 {
-getpub15=0x13ee_pub15
+getlbr=0x13ee_lbr
 getaos=0x13ee_aos
 gettol=0x13ee_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13ee-b
 }
 
 // Bronze Ringmail Sleeves - E/W
@@ -91,12 +94,13 @@ get=0x13ee-b 0x13ef-b
 // Bronze Ringmail Leggings - N/S
 [0x13f0-b]
 {
-getpub15=0x13f0_pub15
+getlbr=0x13f0_lbr
 getaos=0x13f0_aos
 gettol=0x13f0_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13f0-b
 }
 
 // Bronze Ringmail Leggings - E/W
@@ -117,12 +121,13 @@ get=0x13f0-b 0x13f1-b
 // Bronze Chainmail Coif - N/S
 [0x13bb-b]
 {
-getpub15=0x13bb_pub15
+getlbr=0x13bb_lbr
 getaos=0x13bb_aos
 gettol=0x13bb_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13bb-b
 }
 
 // Bronze Chainmail Coif - E/S
@@ -141,12 +146,13 @@ get=0x13bb 0x13c0
 // Bronze Chainmail Leggings - N/S
 [0x13be-b]
 {
-getpub15=0x13be_pub15
+getlbr=0x13be_lbr
 getaos=0x13be_aos
 gettol=0x13be_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13be-b
 }
 
 // Bronze Chainmail Leggings - E/W
@@ -165,12 +171,13 @@ get=0x13be-b 0x13c3-b
 // Bronze Chainmail Tunic - N/S
 [0x13bf-b]
 {
-getpub15=0x13bf_pub15
+getlbr=0x13bf_lbr
 getaos=0x13bf_aos
 gettol=0x13bf_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x13bf-b
 }
 
 // Bronze Chainmail Tunic - E/W
@@ -189,12 +196,13 @@ get=0x13bf-b 0x13c4-b
 // Bronze Female Plate - N/S
 [0x1c04-b]
 {
-getpub15=0x1c04_pub15
+getlbr=0x1c04_lbr
 getaos=0x1c04_aos
 gettol=0x1c04_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1c04-b
 }
 
 // Bronze Female Plate - E/W
@@ -215,12 +223,13 @@ get=0x1c04-b 0x1c05-b
 // Bronze Platemail Arms - E/W
 [0x1410-b]
 {
-getpub15=0x1410_pub15
+getlbr=0x1410_lbr
 getaos=0x1410_aos
 gettol=0x1410_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1410-b
 }
 
 // Bronze Platemail Arms - N/S
@@ -239,12 +248,13 @@ get=0x1410-b 0x1417-b
 // Bronze Platemail Leggings - N/S
 [0x1411-b]
 {
-getpub15=0x1411_pub15
+getlbr=0x1411_lbr
 getaos=0x1411_aos
 gettol=0x1411_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1411-b
 }
 
 // Bronze Platemail Leggings - E/W
@@ -263,12 +273,13 @@ get=0x1411-b 0x141a-b
 // Bronze Platemail Gorget
 [0x1413-b]
 {
-getpub15=0x1413_pub15
+getlbr=0x1413_lbr
 getaos=0x1413_aos
 gettol=0x1413_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1413-b
 }
 
 // Bronze Platemail Gorget - Alias
@@ -280,12 +291,13 @@ get=0x1413-b
 // Bronze Platemail Gloves - N/S
 [0x1414-b]
 {
-getpub15=0x1414_pub15
+getlbr=0x1414_lbr
 getaos=0x1414_aos
 gettol=0x1414_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1414-b
 }
 
 // Bronze Platemail Gloves - E/W
@@ -304,12 +316,13 @@ get=0x1414-b 0x1418-b
 // Bronze Platemail Chest - N/S
 [0x1415-b]
 {
-getpub15=0x1415_pub15
+getlbr=0x1415_lbr
 getaos=0x1415_aos
 gettol=0x1415_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1415-b
 }
 
 // Bronze Platemail Chest - E/W
@@ -330,12 +343,13 @@ get=0x1415-b 0x1416-b
 // Bronze Heavy Platemail Jingasa - A
 [0x2777-b]
 {
-getpub15=0x2777_pub15
+getlbr=0x2777_lbr
 getaos=0x2777_aos
 gettol=0x2777_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2777-b
 }
 
 // Bronze Heavy Platemail Jingasa - B
@@ -354,12 +368,13 @@ get=0x2777-b 0x27c2-b
 // Bronze Decorative Platemail Kabuto - A
 [0x2778-b]
 {
-getpub15=0x2778_pub15
+getlbr=0x2778_lbr
 getaos=0x2778_aos
 gettol=0x2778_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2778-b
 }
 
 // Bronze Decorative Platemail Kabuto - B
@@ -378,12 +393,13 @@ get=0x2778-b 0x27c3-b
 // Bronze Platemail Do - A
 [0x277d-b]
 {
-getpub15=0x277d_pub15
+getlbr=0x277d_lbr
 getaos=0x277d_aos
 gettol=0x277d_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x277d-b
 }
 
 // Bronze Platemail Do - B
@@ -402,12 +418,13 @@ get=0x277d-b 0x27c8-b
 // Bronze Platemail Hiro Sode - A
 [0x2780-b]
 {
-getpub15=0x2780_pub15
+getlbr=0x2780_lbr
 getaos=0x2780_aos
 gettol=0x2780_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2780-b
 }
 
 // Bronze Platemail Hiro Sode - B
@@ -426,12 +443,13 @@ get=0x2780-b 0x27cb-b
 // Bronze Platemail Jingasa - A
 [0x2781-b]
 {
-getpub15=0x2781_pub15
+getlbr=0x2781_lbr
 getaos=0x2781_aos
 gettol=0x2781_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2781-b
 }
 
 // Bronze Platemail Jingasa - B
@@ -450,12 +468,13 @@ get=0x2781-b 0x27cc-b
 // Bronze Small Platemail Jingasa - A
 [0x2784-b]
 {
-getpub15=0x2784_pub15
+getlbr=0x2784_lbr
 getaos=0x2784_aos
 gettol=0x2784_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2784-b
 }
 
 // Bronze Small Platemail Jingasa - B
@@ -474,12 +493,13 @@ get=0x2784-b 0x27cf-b
 // Bronze Platemail Battle Kabuto - A
 [0x2785-b]
 {
-getpub15=0x2785_pub15
+getlbr=0x2785_lbr
 getaos=0x2785_aos
 gettol=0x2785_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2785-b
 }
 
 // Bronze Platemail Battle Kabuto - B
@@ -498,12 +518,13 @@ get=0x2785-b 0x27d0-b
 // Bronze Platemail Suneate - A
 [0x2788-b]
 {
-getpub15=0x2788_pub15
+getlbr=0x2788_lbr
 getaos=0x2788_aos
 gettol=0x2788_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2788-b
 }
 
 // Bronze Platemail Suneate - B
@@ -522,12 +543,13 @@ get=0x2788-b 0x27d3-b
 // Bronze Platemail Kabuto - A
 [0x2789-b]
 {
-getpub15=0x2789_pub15
+getlbr=0x2789_lbr
 getaos=0x2789_aos
 gettol=0x2789_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2789-b
 }
 
 // Bronze Platemail Kabuto - B
@@ -546,12 +568,13 @@ get=0x2789-b 0x27d4-b
 // Bronze Kabuto - A
 [0x236c-b]
 {
-getpub15=0x236c_pub15
+getlbr=0x236c_lbr
 getaos=0x236c_aos
 gettol=0x236c_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x236c-b
 }
 
 // Bronze Kabuto - B
@@ -570,12 +593,13 @@ get=0x236c-b 0x236d-b
 // Bronze Platemail Haidate - A
 [0x278d-b]
 {
-getpub15=0x278d_pub15
+getlbr=0x278d_lbr
 getaos=0x278d_aos
 gettol=0x278d_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x278d-b
 }
 
 // Bronze Platemail Haidate - B
@@ -594,12 +618,13 @@ get=0x278d-b 0x27d8-b
 // Bronze Platemail Hatsuburi - A
 [0x2775-b]
 {
-getpub15=0x2775_pub15
+getlbr=0x2775_lbr
 getaos=0x2775_aos
 gettol=0x2775_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2775-b
 }
 
 // Bronze Platemail Hatsuburi - B
@@ -618,12 +643,13 @@ get=0x2775-b 0x27c0-b
 // Bronze Chainmail Hatsuburi - A
 [0x2774-b]
 {
-getpub15=0x2774_pub15
+getlbr=0x2774_lbr
 getaos=0x2774_aos
 gettol=0x2774_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2774-b
 }
 
 // Bronze Chainmail Hatsuburi - B
@@ -642,12 +668,13 @@ get=0x2774-b 0x27bf-b
 // Bronze Platemail Mempo - E/W
 [0x2779-b]
 {
-getpub15=0x2779_pub15
+getlbr=0x2779_lbr
 getaos=0x2779_aos
 gettol=0x2779_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x2779-b
 }
 
 // Bronze Platemail Mempo - N/S
@@ -668,12 +695,13 @@ get=0x2779-b 0x27c4-b
 // Bronze Close Helm - E/W
 [0x1408-b]
 {
-getpub15=0x1408_pub15
+getlbr=0x1408_lbr
 getaos=0x1408_aos
 gettol=0x1408_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1408-b
 }
 
 // Bronze Close Helm - N/S
@@ -692,12 +720,13 @@ get=0x1408-b 0x1409-b
 // Bronze Helmet - E/W
 [0x140a-b]
 {
-getpub15=0x140a_pub15
+getlbr=0x140a_lbr
 getaos=0x140a_aos
 gettol=0x140a_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x140a-b
 }
 
 // Bronze Helmet - N/S
@@ -716,12 +745,13 @@ get=0x140a-b 0x140b-b
 // Bronze Bascinet - E/W
 [0x140c-b]
 {
-getpub15=0x140c_pub15
+getlbr=0x140c_lbr
 getaos=0x140c_aos
 gettol=0x140c_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x140c-b
 }
 
 // Bronze Bascinet - N/S
@@ -740,12 +770,13 @@ get=0x140c-b 0x140d-b
 // Bronze Norse Helm - E/W
 [0x140e-b]
 {
-getpub15=0x140e_pub15
+getlbr=0x140e_lbr
 getaos=0x140e_aos
 gettol=0x140e_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x140e-b
 }
 
 // Bronze Norse Helm - N/S
@@ -764,12 +795,13 @@ get=0x140e-b 0x140f-b
 // Bronze Plate Helm - N/S
 [0x1412-b]
 {
-getpub15=0x1412_pub15
+getlbr=0x1412_lbr
 getaos=0x1412_aos
 gettol=0x1412_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1412-b
 }
 
 // Bronze Plate Helm - E/W
@@ -790,12 +822,13 @@ get=0x1412-b 0x1419-b
 // Bronze Bronze Shield
 [0x1b72-b]
 {
-getpub15=0x1b72_pub15
+getlbr=0x1b72_lbr
 getaos=0x1b72_aos
 gettol=0x1b72_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b72-b
 }
 
 // Bronze Bronze Shield - Alias
@@ -807,12 +840,13 @@ get=0x1b72-b
 // Bronze Buckler
 [0x1b73-b]
 {
-getpub15=0x1b73_pub15
+getlbr=0x1b73_lbr
 getaos=0x1b73_aos
 gettol=0x1b73_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b73-b
 }
 
 // Bronze Buckler - Alias
@@ -824,34 +858,37 @@ get=0x1b73-b
 // Bronze Kite Shield (Metal) - N/S
 [0x1b74-b]
 {
-getpub15=0x1b74_pub15
+getlbr=0x1b74_lbr
 getaos=0x1b74_aos
 gettol=0x1b74_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b74-b
 }
 
 // Bronze Heater Shield - N/S
 [0x1b76-b]
 {
-getpub15=0x1b76_pub15
+getlbr=0x1b76_lbr
 getaos=0x1b76_aos
 gettol=0x1b76_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b76-b
 }
 
 // Bronze Kite Shield (Wood) - N/S
 [0x1b78-b]
 {
-getpub15=0x1b78_pub15
+getlbr=0x1b78_lbr
 getaos=0x1b78_aos
 gettol=0x1b78_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b78-b
 }
 
 // Bronze Kite Shield (wood) - E/W
@@ -870,12 +907,13 @@ get=0x1b78-b 0x1b79-b
 // AgapiteWooden Shield
 [0x1b7a-b]
 {
-getpub15=0x1b7a_pub15
+getlbr=0x1b7a_lbr
 getaos=0x1b7a_aos
 gettol=0x1b7a_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b7a-b
 }
 
 // Bronze Wooden Shield - Alias
@@ -887,12 +925,13 @@ get=0x1b7a-b
 // Bronze Metal Shield
 [0x1b7b-b]
 {
-getpub15=0x1b7b_pub15
+getlbr=0x1b7b_lbr
 getaos=0x1b7b_aos
 gettol=0x1b7b_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1b7b-b
 }
 
 // Bronze Metal Shield - Alias
@@ -904,12 +943,13 @@ get=0x1b7b-b
 // Bronze Chaos Shield
 [0x1bc3-b]
 {
-getpub15=0x1bc3_pub15
+getlbr=0x1bc3_lbr
 getaos=0x1bc3_aos
 gettol=0x1bc3_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1bc3-b
 }
 
 // Bronze Chaos Shield - Alias
@@ -921,12 +961,13 @@ get=0x1bc3-b
 // Bronze Order Shield - N/S
 [0x1bc4-b]
 {
-getpub15=0x1bc4_pub15
+getlbr=0x1bc4_lbr
 getaos=0x1bc4_aos
 gettol=0x1bc4_tol
 getaos=bronze_armor_bonus_aos
 gettol=bronze_armor_bonus_tol
 color=0x8a9
+sectionid=0x1bc4-b
 }
 
 // Bronze Order Shield - E/W
