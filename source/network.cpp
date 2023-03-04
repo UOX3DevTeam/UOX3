@@ -414,7 +414,7 @@ void CNetworkStuff::LogOut( CSocket *s )
 	}
 	if( !valid )
 	{
-		CMultiObj *multi = nullptr;
+		CMultiObj* multi = nullptr;
 		if( !ValidateObject( p->GetMultiObj() ))
 		{
 			multi = FindMulti( p );
@@ -425,15 +425,19 @@ void CNetworkStuff::LogOut( CSocket *s )
 		}
 		if( ValidateObject( multi ))
 		{
-			if( multi->IsOwner( p ))
+			// Check house script for onMultiLogout handling. If it returns true, instant logout is allowed
+			std::vector<UI16> scriptTriggers = multi->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
 			{
-				valid = true;
-			}
-			else if( !p->IsGM() )
-			{
-				SI16 sx, sy, ex, ey;
-				Map->MultiArea( multi, sx, sy, ex, ey );
-				p->SetLocation( ex, ey + 1, p->GetZ() );
+				cScript* toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					if( toExecute->OnMultiLogout( multi, p ) == 1 )
+					{
+						valid = true;
+						break;
+					}
+				}
 			}
 		}
 	}

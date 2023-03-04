@@ -2,7 +2,7 @@
 
 // Note: Pickaxes are located in DFNDATA\ITEMS\SKILLS\TOOLS\MINING.DFN
 
-// CLASSIC
+// ORIGINAL UO
 // Large Battle Axe - Base item
 [base_large_battle_axe]
 {
@@ -20,9 +20,10 @@ movable=1
 // Large Battle Axe - E/W
 [0x13fa]
 {
-getpub15=0x13fa_pub15
+getlbr=0x13fa_lbr
 getaos=0x13fa_aos
 gettol=0x13fa_tol
+sectionid=0x13fa
 }
 
 // Large Battle Axe - N/S
@@ -55,9 +56,10 @@ movable=1
 // Two Handed Axe - E/W
 [0x1442]
 {
-getpub15=0x1442_pub15
+getlbr=0x1442_lbr
 getaos=0x1442_aos
 gettol=0x1442_tol
+sectionid=0x1442
 }
 
 // Two Handed Axe - N/S
@@ -90,9 +92,10 @@ movable=1
 // Hatchet - N/S
 [0x0f43]
 {
-getpub15=0x0f43_pub15
+getlbr=0x0f43_lbr
 getaos=0x0f43_aos
 gettol=0x0f43_tol
+sectionid=0x0f43
 }
 
 // Hatchet - E/W
@@ -125,9 +128,10 @@ movable=1
 // Executioner's Axe - N/S
 [0x0f45]
 {
-getpub15=0x0f45_pub15
+getlbr=0x0f45_lbr
 getaos=0x0f45_aos
 gettol=0x0f45_tol
+sectionid=0x0f45
 }
 
 // Executioner's Axe - E/W
@@ -160,9 +164,10 @@ movable=1
 // Battle Axe - N/S
 [0x0f47]
 {
-getpub15=0x0f47_pub15
+getlbr=0x0f47_lbr
 getaos=0x0f47_aos
 gettol=0x0f47_tol
+sectionid=0x0f47
 }
 
 // Battle Axe - E/W
@@ -195,9 +200,10 @@ movable=1
 // Axe - N/S
 [0x0f49]
 {
-getpub15=0x0f49_pub15
+getlbr=0x0f49_lbr
 getaos=0x0f49_aos
 gettol=0x0f49_tol
+sectionid=0x0f49
 }
 
 // Axe - E/W
@@ -230,9 +236,10 @@ movable=1
 // Double Axe - N/S
 [0x0f4b]
 {
-getpub15=0x0f4b_pub15
+getlbr=0x0f4b_lbr
 getaos=0x0f4b_aos
 gettol=0x0f4b_tol
+sectionid=0x0f4b
 }
 
 // Double Axe - E/W
@@ -261,6 +268,7 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=ml
 restock=10
 type=216
 }
@@ -268,9 +276,10 @@ type=216
 // Ornate Axe - N/S
 [0x2d28]
 {
-getpub15=0x2d28_pub15
+getlbr=0x2d28_lbr
 getaos=0x2d28_aos
 gettol=0x2d28_tol
+sectionid=0x2d28
 }
 
 // Ornate Axe - E/W
@@ -299,6 +308,7 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=sa
 restock=10
 type=216
 }
@@ -306,9 +316,10 @@ type=216
 // Gargish Battle Axe - N/S
 [0x48b0]
 {
-getpub15=0x48b0_pub15
+getlbr=0x48b0_lbr
 getaos=0x48b0_aos
 gettol=0x48b0_tol
+sectionid=0x48b0
 }
 
 // Gargish Battle Axe - E/W
@@ -334,15 +345,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Dual Short Axes - N/S
 [0x08fd]
 {
-getpub15=0x08fd_pub15
+getlbr=0x08fd_lbr
 getaos=0x08fd_aos
 gettol=0x08fd_tol
+sectionid=0x08fd
 }
 
 // Dual Short Axes - E/W
@@ -368,15 +381,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Axe - N/S
 [0x48b2]
 {
-getpub15=0x48b2_pub15
+getlbr=0x48b2_lbr
 getaos=0x48b2_aos
 gettol=0x48b2_tol
+sectionid=0x48b2
 }
 
 // Gargish Axe - E/W

@@ -31,7 +31,7 @@ const propertyLabelEnd = "</BASEFONT>";
 
 // Settings
 const enableTransparentGump = true;
-var enableTooltips = false; // Too much data for regular UO client, but works with ClassicUO client
+var enableTooltips = false; // Too much data for client, especially for regular UO client, but also for CUO when it comes to character properties
 const tooltipClilocID = 1042971; // Cliloc ID to use for tooltips. 1042971 should work with clients from ~v3.0.x to modern day
 
 // If any properties are removed or added, make sure to update the value behind each entry so there
@@ -136,135 +136,139 @@ var charProp = {
 	attackFirst:205,
 	atWar:206,
 	baseskills:207,
-	brkPeaceChance:208,
-	canAttack:209,
-	canBroadcast:210,
-	canRun:211,
-	canSnoop:212,
-	cell:213,
-	colour:214,
-	commandlevel:215,
-	criminal:216,
-	dead:217,
-	deaths:218,
-	dexterity:219,
-	direction:220,
-	emoteColour:221,
-	fame:222,
-	flag:223,
-	fontType:224,
-	foodList:225,
-	frozen:226,
-	fx1:227,
-	fy1:228,
-	fx2:229,
-	fy2:230,
-	fz:231,
-	gender:232,
-	guild:233,
-	guildTitle:234,
-	health:235,
-	hidamage:236,
-	houseicons:237,
-	housesCoOwned:238,
-	housesOwned:239,
-	hunger:240,
-	hungerWildChance:241,
-	innocent:242,
-	instanceID:243,
-	intelligence:244,
-	isAnimal:245,
-	isCasting:246,
-	isCounselor:247,
-	isDispellable:248,
-	isflying:249,
-	isGM:250,
-	isGMPageable:251,
-	isHuman:252,
-	isIncognito:253,
-	isJailed:254,
-	isMeditating:255,
-	isonhorse:256,
-	isPolymorphed:257,
-	isShop:258,
-	isUsingPotion:259,
-	karma:260,
-	lightlevel:261,
-	lodamage:262,
-	magicReflect:263,
-	mana:264,
-	maxhp:265,
-	maxmana:266,
-	maxstamina:267,
-	mounted:268,
-	multi:269,
-	murdercount:270,
-	murderer:271,
-	neutral:272,
-	nextAct:273,
-	noNeedMana:274,
-	noNeedReags:275,
-	noSkillTitles:276,
-	npc:277,
-	npcFlag:278,
-	oldWandertype:279,
-	online:280,
-	orgID:281,
-	orgSkin:282,
-	ownedItemsCount:283,
-	owner:284,
-	pack:285,
-	party:286,
-	partyLootable:287,
-	petCount:288,
-	poison:289,
-	poisonStrength:290,
-	race:291,
-	raceGate:292,
-	region:293,
-	sayColour:294,
-	scripttrigger:295,
-	sectionID:296,
-	singClickSer:297,
-	skillLock:298,
-	skills:299,
-	skillsused:300,
-	skillToPeace:301,
-	skillToProv:302,
-	skillToTame:303,
-	spattack:304,
-	spdelay:305,
-	spellCast:306,
-	split:307,
-	splitchance:308,
-	squelch:309,
-	stabled:310,
-	stamina:311,
-	stealth:312,
-	strength:313,
-	tamed:314,
-	tamedHungerRate:315,
-	tamedThirstRate:316,
-	target:317,
-	tempdex:318,
-	tempint:319,
-	tempstr:320,
-	thirst:321,
-	thirstWildChance:322,
-	title:323,
-	town:324,
-	townPriv:325,
-	trainer:326,
-	visible:327,
-	vulnerable:328,
-	wandertype:329,
-	weight:330,
-	willhunger:331,
-	willthirst:332,
-	worldnumber:333,
-	x:334,
-	y:335,
-	z:336
+	beardColour:208,
+	beardStyle:209,
+	brkPeaceChance:210,
+	canAttack:211,
+	canBroadcast:212,
+	canRun:213,
+	canSnoop:214,
+	cell:215,
+	colour:216,
+	commandlevel:217,
+	criminal:218,
+	dead:219,
+	deaths:220,
+	dexterity:221,
+	direction:222,
+	emoteColour:223,
+	fame:224,
+	flag:225,
+	fontType:226,
+	foodList:227,
+	frozen:228,
+	fx1:229,
+	fy1:230,
+	fx2:231,
+	fy2:232,
+	fz:233,
+	gender:234,
+	guild:235,
+	guildTitle:236,
+	hairColour:237,
+	hairStyle:238,
+	health:239,
+	hidamage:240,
+	housesCoOwned:241,
+	housesOwned:242,
+	hunger:243,
+	hungerWildChance:244,
+	innocent:245,
+	instanceID:246,
+	intelligence:247,
+	isAnimal:248,
+	isCasting:249,
+	isCounselor:250,
+	isDispellable:251,
+	isflying:252,
+	isGM:253,
+	isGMPageable:254,
+	isHuman:255,
+	isIncognito:256,
+	isJailed:257,
+	isMeditating:258,
+	isonhorse:259,
+	isPolymorphed:260,
+	isShop:261,
+	isUsingPotion:262,
+	karma:263,
+	lightlevel:264,
+	lodamage:265,
+	magicReflect:266,
+	mana:267,
+	maxhp:268,
+	maxmana:269,
+	maxstamina:270,
+	mounted:271,
+	multi:272,
+	murdercount:273,
+	murderer:274,
+	neutral:275,
+	nextAct:276,
+	noNeedMana:277,
+	noNeedReags:278,
+	noSkillTitles:279,
+	npc:280,
+	npcFlag:281,
+	oldWandertype:282,
+	online:283,
+	orgID:284,
+	orgSkin:285,
+	origin:286,
+	ownedItemsCount:287,
+	owner:288,
+	pack:289,
+	party:290,
+	partyLootable:291,
+	petCount:292,
+	poison:293,
+	poisonStrength:294,
+	race:295,
+	raceGate:296,
+	region:297,
+	sayColour:298,
+	scripttrigger:299,
+	sectionID:300,
+	singClickSer:301,
+	skillLock:302,
+	skills:303,
+	skillsused:304,
+	skillToPeace:305,
+	skillToProv:306,
+	skillToTame:307,
+	spattack:308,
+	spdelay:309,
+	spellCast:310,
+	split:311,
+	splitchance:312,
+	squelch:313,
+	stabled:314,
+	stamina:315,
+	stealth:316,
+	strength:317,
+	tamed:318,
+	tamedHungerRate:319,
+	tamedThirstRate:320,
+	target:321,
+	tempdex:322,
+	tempint:323,
+	tempstr:324,
+	thirst:325,
+	thirstWildChance:326,
+	title:327,
+	town:328,
+	townPriv:329,
+	trainer:330,
+	visible:331,
+	vulnerable:332,
+	wandertype:333,
+	weight:334,
+	willhunger:335,
+	willthirst:336,
+	worldnumber:337,
+	x:338,
+	y:339,
+	z:340
 }
 
 // List of character skills to handle
@@ -435,7 +439,7 @@ var accountProp = {
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
 const itemPropCount = 85;
-const charPropCount = 137;
+const charPropCount = 141;
 const charSkillCount = 58;
 const multiPropCount = 32;
 const regionPropCount = 27;
@@ -1302,11 +1306,11 @@ function HandleItemTarget( pSocket, myTarget )
 				itemLabelTooltip 	= GetDictionaryEntry( 8192, pSocket.language ); // SpawnSection used to spawn objects from - SpawnObject only
 				if( myTarget.isSpawner )
 				{
-					itemValue 		= ( myTarget.hasOwnProperty( 'spawnSection' ) ? ( myTarget.spawnSection ).toString() : "-" );
+					itemValue 		= ( myTarget.hasOwnProperty( 'spawnsection' ) ? ( myTarget.spawnsection ).toString() : "-" );
 				}
 				else
 				{
-					itemValue 		= ( myTarget.hasOwnProperty( 'spawnSection' ) ? ( myTarget.spawnSection ).toString() : "<BASEFONT color=#EECD8B>n/a</BASEFONT>" );
+					itemValue 		= ( myTarget.hasOwnProperty( 'spawnsection' ) ? ( myTarget.spawnsection ).toString() : "<BASEFONT color=#EECD8B>n/a</BASEFONT>" );
 				}
 				break;
 			case itemProp.speed:
@@ -1540,9 +1544,16 @@ function HandleCharTarget( pSocket, myTarget )
 				charValueTooltip  	= myTarget.accountNum;
 				break;
 			case charProp.aitype:
-				charLabelTooltip 	= GetDictionaryEntry( 8301, pSocket.language ); // NPC AI Type
-				charValue 			= ( myTarget.aitype ).toString();
-				charValueTooltip 	= aiTypeName[myTarget.aitype];
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8301, pSocket.language ); // NPC AI Type
+					charValue 			= ( myTarget.aitype ).toString();
+					charValueTooltip 	= aiTypeName[myTarget.aitype];
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.allmove:
 				charLabelTooltip 	= GetDictionaryEntry( 8302, pSocket.language ); // Toggles being able to move all items regardless of movable status
@@ -1570,6 +1581,14 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.baseskills:
 				charLabelTooltip 	= GetDictionaryEntry( 8307, pSocket.language ); // Base skill values for character
 				charValue 			= "<BASEFONT color=#32668A>[click to view]</BASEFONT>";
+				break;
+			case charProp.beardColour:
+				charLabelTooltip	= GetDictionaryEntry( 8436, pSocket.language ); // Permanent beard colour of character
+				charValue 				= "0x" + ( myTarget.beardColour ).toString( 16 );
+				break;
+			case charProp.beardStyle:
+				charLabelTooltip	= GetDictionaryEntry( 8437, pSocket.language ); // Permanent beard style of character
+				charValue 				= "0x" + ( myTarget.beardStyle ).toString( 16 );
 				break;
 			case charProp.brkPeaceChance:
 				charLabelTooltip 	= GetDictionaryEntry( 8308, pSocket.language ); // Chance of character affected by peacemaking will break out of peace state
@@ -1659,24 +1678,59 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.frozen ? "true" : "false" );
 				break;
 			case charProp.fx1:
-				charLabelTooltip 	= GetDictionaryEntry( 8431, pSocket.language ); // Top left X coord of character's wandertype boundary
-				charValue 			= ( myTarget.fx1 ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8431, pSocket.language ); // Top left X coord of character's wandertype boundary
+					charValue 			= ( myTarget.fx1 ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.fy1:
-				charLabelTooltip 	= GetDictionaryEntry( 8432, pSocket.language ); // Top left Y coord of character's wandertype boundary
-				charValue 			= ( myTarget.fy1 ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8432, pSocket.language ); // Top left Y coord of character's wandertype boundary
+					charValue 			= ( myTarget.fy1 ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.fx2:
-				charLabelTooltip 	= GetDictionaryEntry( 8433, pSocket.language ); // Bottom right X coord of character's wandertype boundary
-				charValue 			= ( myTarget.fx2 ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8433, pSocket.language ); // Bottom right X coord of character's wandertype boundary
+					charValue 			= ( myTarget.fx2 ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.fy2:
-				charLabelTooltip 	= GetDictionaryEntry( 8434, pSocket.language ); // Bottom right Y coord of character's wandertype boundary
-				charValue 			= ( myTarget.fy2 ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8434, pSocket.language ); // Bottom right Y coord of character's wandertype boundary
+					charValue 			= ( myTarget.fy2 ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.fz:
-				charLabelTooltip 	= GetDictionaryEntry( 8435, pSocket.language ); // Z coord of character's wandertype boundary
-				charValue 			= ( myTarget.fz ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8435, pSocket.language ); // Z coord of character's wandertype boundary
+					charValue 			= ( myTarget.fz ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.gender:
 				charLabelTooltip 	= GetDictionaryEntry( 8327, pSocket.language ); // Gender of character (male/female)
@@ -1690,6 +1744,14 @@ function HandleCharTarget( pSocket, myTarget )
 				charLabelTooltip 	= GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character
 				charValue 			= myTarget.guildTitle != "" ? ( myTarget.guildTitle ).toString() : "-";
 				break;
+			case charProp.hairColour:
+				charLabelTooltip	= GetDictionaryEntry( 8436, pSocket.language ); // Permanent hair colour of character
+				charValue 				= "0x" + ( myTarget.hairColour ).toString( 16 );
+				break;
+			case charProp.hairStyle:
+				charLabelTooltip	= GetDictionaryEntry( 8437, pSocket.language ); // Permanent hair style of character
+				charValue 				= "0x" + ( myTarget.hairStyle ).toString( 16 );
+				break;
 			case charProp.health:
 				charLabelTooltip 	= GetDictionaryEntry( 8330, pSocket.language ); // Character's current health/hitpoints (cannot exceed value of maxhp property)
 				charValue 			= ( myTarget.health ).toString();
@@ -1698,25 +1760,42 @@ function HandleCharTarget( pSocket, myTarget )
 				charLabelTooltip 	= GetDictionaryEntry( 8331, pSocket.language ); // Highest damage character can deal in combat with wrestlin/unarmed attacks
 				charValue 			= ( myTarget.hidamage ).toString();
 				break;
-			case charProp.houseicons:
-				charLabelTooltip 	= GetDictionaryEntry( 8332, pSocket.language ); // Toggles whether house icons/deeds are shown instead of multis for character
-				charValue 			= ( myTarget.houseicons ).toString();
-				break;
 			case charProp.housesCoOwned:
-				charLabelTooltip 	= GetDictionaryEntry( 8333, pSocket.language ); // Number of houses co-owned by character. Controlled by server (Read-Only)
-				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.housesCoOwned ).toString() + "</BASEFONT>";
+				if( !myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8333, pSocket.language ); // Number of houses co-owned by character. Controlled by server (Read-Only)
+					charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.housesCoOwned ).toString() + "</BASEFONT>";
+				}
+				else
+				{
+					charValue 			= "-Player only-";
+				}
 				break;
 			case charProp.housesOwned:
-				charLabelTooltip 	= GetDictionaryEntry( 8334, pSocket.language ); // Number of houses owned by character. Controlled by server (Read-Only)
-				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.housesOwned ).toString() + "</BASEFONT>";
+				if( !myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8334, pSocket.language ); // Number of houses owned by character. Controlled by server (Read-Only)
+					charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.housesOwned ).toString() + "</BASEFONT>";
+				}
+				else
+				{
+					charValue 			= "-Player only-";
+				}
 				break;
 			case charProp.hunger:
 				charLabelTooltip 	= GetDictionaryEntry( 8335, pSocket.language ); // Character's current hunger status (0-6)
 				charValue 			= ( myTarget.hunger ).toString();
 				break;
 			case charProp.hungerWildChance:
-				charLabelTooltip 	= GetDictionaryEntry( 8336, pSocket.language ); // Chance for extremely hungry pet to go wild with every NPC AI loop
-				charValue 			= ( myTarget.hungerWildChance ).toString() + "%";
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8336, pSocket.language ); // Chance for extremely hungry pet to go wild with every NPC AI loop
+					charValue 			= ( myTarget.hungerWildChance ).toString() + "%";
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.innocent:
 				charLabelTooltip 	= GetDictionaryEntry( 8337, pSocket.language ); // Marks character as innocent, instead of neutral, criminal or murderer
@@ -1739,8 +1818,15 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.isCasting ? "true" : "false" );
 				break;
 			case charProp.isCounselor:
-				charLabelTooltip 	= GetDictionaryEntry( 8342, pSocket.language ); // Is character a counselor?
-				charValue 			= ( myTarget.isCounselor ? "true" : "false" );
+				if( !myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8342, pSocket.language ); // Is character a counselor?
+					charValue 			= ( myTarget.isCounselor ? "true" : "false" );
+				}
+				else
+				{
+					charValue 			= "-Player only-";
+				}
 				break;
 			case charProp.isDispellable:
 				charLabelTooltip 	= GetDictionaryEntry( 8343, pSocket.language ); // Can character be dispelled by the Dispel spell? (NPC only)
@@ -1751,20 +1837,34 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.isflying ? "true" : "false" ) + "</BASEFONT>";
 				break;
 			case charProp.isGM:
-				if( myTarget.commandlevel >= pSocket.currentChar.commandlevel )
+				if( !myTarget.npc )
 				{
-					charLabelTooltip 	= GetDictionaryEntry( 8345, pSocket.language ); // Is character a GM? (Read-Only)
-					charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.isGM ? "true" : "false" ) + "</BASEFONT>";
+					if( myTarget.commandlevel >= pSocket.currentChar.commandlevel )
+					{
+						charLabelTooltip 	= GetDictionaryEntry( 8345, pSocket.language ); // Is character a GM? (Read-Only)
+						charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.isGM ? "true" : "false" ) + "</BASEFONT>";
+					}
+					else
+					{
+						charLabelTooltip 	= GetDictionaryEntry( 8346, pSocket.language ); // Is character a GM?
+						charValue 			= ( myTarget.isGM ? "true" : "false" );
+					}
 				}
 				else
 				{
-					charLabelTooltip 	= GetDictionaryEntry( 8346, pSocket.language ); // Is character a GM?
-					charValue 			= ( myTarget.isGM ? "true" : "false" );
+					charValue 			= "-Player only-";
 				}
 				break;
 			case charProp.isGMPageable:
-				charLabelTooltip 	= GetDictionaryEntry( 8347, pSocket.language ); // Is character able to see and respond to GM pages?
-				charValue 			= ( myTarget.isGMPageable ? "true" : "false" );
+				if( !myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8347, pSocket.language ); // Is character able to see and respond to GM pages?
+					charValue 			= ( myTarget.isGMPageable ? "true" : "false" );
+				}
+				else
+				{
+					charValue 			= "-Player only-";
+				}
 				break;
 			case charProp.isHuman:
 				charLabelTooltip 	= GetDictionaryEntry( 8348, pSocket.language ); // Is character a human? Controlled by server (Read-Only)
@@ -1871,18 +1971,39 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.npc ? "true" : "false" ) + "</BASEFONT>";
 				break;
 			case charProp.npcFlag:
-				charLabelTooltip 	= "NPC flag (<BASEFONT COLOR=grey>0 = Neutral</BASEFONT>, <BASEFONT COLOR=cyan>1 = Innocent</BASEFONT>, <BASEFONT COLOR=red>2 = Evil</BASEFONT>)";
-				var npcFlagText 	= ( myTarget.npcFlag == 0 ? " (<BASEFONT COLOR=grey>Neutral</BASEFONT>)" : ( myTarget.npcFlag == 1 ? " (<BASEFONT COLOR=cyan>Innocent</BASEFONT>)" : " (<BASEFONT COLOR=red>Evil</BASEFONT>)" ));
-				charValue 			= ( myTarget.npcFlag ).toString();
-				charValueTooltip	= ( myTarget.npcFlag ).toString() + npcFlagText;
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= "NPC flag (<BASEFONT COLOR=grey>0 = Neutral</BASEFONT>, <BASEFONT COLOR=cyan>1 = Innocent</BASEFONT>, <BASEFONT COLOR=red>2 = Evil</BASEFONT>)";
+					var npcFlagText 	= ( myTarget.npcFlag == 0 ? " (<BASEFONT COLOR=grey>Neutral</BASEFONT>)" : ( myTarget.npcFlag == 1 ? " (<BASEFONT COLOR=cyan>Innocent</BASEFONT>)" : " (<BASEFONT COLOR=red>Evil</BASEFONT>)" ));
+					charValue 				= ( myTarget.npcFlag ).toString();
+					charValueTooltip	= ( myTarget.npcFlag ).toString() + npcFlagText;
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.oldWandertype:
-				charLabelTooltip 	= GetDictionaryEntry( 8374, pSocket.language ); // NPC's old/previous wandertype
-				charValue 			= ( myTarget.oldWandertype ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8374, pSocket.language ); // NPC's old/previous wandertype
+					charValue 			= ( myTarget.oldWandertype ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.online:
-				charLabelTooltip 	= GetDictionaryEntry( 8375, pSocket.language ); // Whether player character is online or not. Controlled by server (Read-Only)
-				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.online ).toString() + "</BASEFONT>";
+				if( !myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8375, pSocket.language ); // Whether player character is online or not. Controlled by server (Read-Only)
+					charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.online ).toString() + "</BASEFONT>";
+				}
+				else
+				{
+					charValue 			= "-Player only-";
+				}
 				break;
 			case charProp.orgID:
 				charLabelTooltip 	= GetDictionaryEntry( 8376, pSocket.language ); // Character's original body ID
@@ -1891,6 +2012,10 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.orgSkin:
 				charLabelTooltip 	= GetDictionaryEntry( 8377, pSocket.language ); // Character's original skin (colour)
 				charValue 			= "0x" + ( myTarget.orgSkin ).toString( 16 );
+				break;
+			case charProp.origin:
+				charLabelTooltip 	= GetDictionaryEntry( 8177, pSocket.language ); // Era in which item was added to the game
+				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.origin ? ( myTarget.origin ).toString() : "-" ) + "</BASEFONT>";
 				break;
 			case charProp.ownedItemsCount:
 				charLabelTooltip 	= GetDictionaryEntry( 8378, pSocket.language ); // Number of items owned by character. Controlled by server (Read-Only)
@@ -1947,8 +2072,15 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.scripttrigger ).toString();
 				break;
 			case charProp.sectionID:
-				charLabelTooltip 	= GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
-				charValue 			= ( myTarget.sectionID ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8213, pSocket.language ); // Section ID from DFNs object originated from
+					charValue 			= ( myTarget.sectionID ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.singClickSer:
 				charLabelTooltip 	= GetDictionaryEntry( 8391, pSocket.language ); // Toggles whether single-clicks shows serial of clicked object
@@ -1979,12 +2111,26 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.skillToTame ).toString();
 				break;
 			case charProp.spattack:
-				charLabelTooltip 	= GetDictionaryEntry( 8398, pSocket.language ); // NPC will cast spells from this spell circle #
-				charValue 			= ( myTarget.spattack ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8398, pSocket.language ); // NPC will cast spells from this spell circle #
+					charValue 			= ( myTarget.spattack ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.spdelay:
-				charLabelTooltip 	= GetDictionaryEntry( 8399, pSocket.language ); // Delay between spellcasts for NPC character
-				charValue 			= ( myTarget.spdelay ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8399, pSocket.language ); // Delay between spellcasts for NPC character
+					charValue 			= ( myTarget.spdelay ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.spellCast:
 				charLabelTooltip 	= GetDictionaryEntry( 8400, pSocket.language ); // Spell currently being cast by character. Controlled by server (Read-Only)
@@ -2023,12 +2169,26 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.tamed ).toString();
 				break;
 			case charProp.tamedHungerRate:
-				charLabelTooltip 	= GetDictionaryEntry( 8409, pSocket.language ); // The rate at which a pet grows hungry
-				charValue 			= ( myTarget.tamedHungerRate ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8409, pSocket.language ); // The rate at which a pet grows hungry
+					charValue 			= ( myTarget.tamedHungerRate ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.tamedThirstRate:
-				charLabelTooltip 	= GetDictionaryEntry( 8410, pSocket.language ); // The rate at which a pet grows thirsty
-				charValue 			= ( myTarget.tamedThirstRate ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8410, pSocket.language ); // The rate at which a pet grows thirsty
+					charValue 			= ( myTarget.tamedThirstRate ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.target:
 				charLabelTooltip 	= GetDictionaryEntry( 8411, pSocket.language ); // Character's current target
@@ -2051,8 +2211,15 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.thirst ).toString();
 				break;
 			case charProp.thirstWildChance:
-				charLabelTooltip 	= GetDictionaryEntry( 8416, pSocket.language ); // Chance for extremely thirsty pet to go wild with every NPC AI loop
-				charValue 			= ( myTarget.thirstWildChance ).toString() + "%";
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8416, pSocket.language ); // Chance for extremely thirsty pet to go wild with every NPC AI loop
+					charValue 			= ( myTarget.thirstWildChance ).toString() + "%";
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.title:
 				charLabelTooltip 	= GetDictionaryEntry( 8417, pSocket.language ); // The title of the character
@@ -2081,8 +2248,15 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( myTarget.vulnerable ).toString();
 				break;
 			case charProp.wandertype:
-				charLabelTooltip 	= GetDictionaryEntry( 8423, pSocket.language ); // Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)
-				charValue 			= ( myTarget.wandertype ).toString();
+				if( myTarget.npc )
+				{
+					charLabelTooltip 	= GetDictionaryEntry( 8423, pSocket.language ); // Determines wandertype for NPC (0 = None, 2 = Free, 3 = Box, 4 = Circle, 5 = Frozen)
+					charValue 			= ( myTarget.wandertype ).toString();
+				}
+				else
+				{
+					charValue 			= "-NPC only-";
+				}
 				break;
 			case charProp.weight:
 				charLabelTooltip 	= GetDictionaryEntry( 8424, pSocket.language ); // Total weight of character (100 = 1.0 stone)
@@ -2115,7 +2289,7 @@ function HandleCharTarget( pSocket, myTarget )
 			default:
 				errorFound = true;
 				Console.PrintSectionBegin();
-  				Console.Print( "Unhandled charProperty in tweak command script!" );
+  			Console.Print( "Unhandled charProperty in tweak command script!" );
 				Console.PrintDone();
 				break;
 		}
@@ -2176,6 +2350,8 @@ function HandleCharTarget( pSocket, myTarget )
 				default:
 					if((( i + 200 ) == charProp.accountNum) && myTarget.npc )
 						break;
+					if( charValue == "-NPC only-" || charValue == "-Player only-" )
+						break;
 					charGump.AddButton( 120, buttonStartY, gumpMainButtonOff, gumpMainButtonOn, 1, 0, buttonID );
 					if( enableTooltips )
 					{
@@ -2185,13 +2361,16 @@ function HandleCharTarget( pSocket, myTarget )
 			}
 
 			// Values
-			if( enableTooltips )
+			if( charValue != "" )
 			{
-				charGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + charValue + propertyValueEnd );
-			}
-			else
-			{
-				charGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, charValue );
+				if( enableTooltips )
+				{
+					charGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, propertyValueStart + charValue + propertyValueEnd );
+				}
+				else
+				{
+					charGump.AddHTMLGump( 125, valueStartY, 105, 20, 0, 0, charValue );
+				}
 			}
 
 			switch( i + 200 )
@@ -3945,6 +4124,20 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxVal = 0xffffffff;
 			break;
 		// Character Properties
+		case charProp.beardColour:
+			propertyName = "beardColour";
+			propertyType = "Hexadecimal";
+			propertyHint = GetDictionaryEntry( 8436, pSocket.language ); // Permanent beard colour of character
+			maxLength = 6;
+			maxVal = 0xffff;
+			break;
+		case charProp.beardStyle:
+			propertyName = "beardStyle";
+			propertyType = "Hexadecimal";
+			propertyHint = GetDictionaryEntry( 8437, pSocket.language ); // Permanent beard style of character
+			maxLength = 6;
+			maxVal = 0xffff;
+			break;
 		case charProp.colour:
 			propertyName = "colour";
 			propertyType = "Hexadecimal";
@@ -3972,6 +4165,20 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = "NPC flag (0x1 = murderer, 0x2 = criminal, 0x4 = innocent, 0x8 = neutral)";
 			maxLength = 4;
 			maxVal = 0xff;
+			break;
+		case charProp.hairColour:
+			propertyName = "hairColour";
+			propertyType = "Hexadecimal";
+			propertyHint = GetDictionaryEntry( 8438, pSocket.language ); // Permanent hair colour of character
+			maxLength = 6;
+			maxVal = 0xffff;
+			break;
+		case charProp.hairStyle:
+			propertyName = "hairStyle";
+			propertyType = "Hexadecimal";
+			propertyHint = GetDictionaryEntry( 8439, pSocket.language ); // Permanent hair style of character
+			maxLength = 6;
+			maxVal = 0xffff;
 			break;
 		case charProp.nextAct:
 			propertyName = "nextAct";
@@ -4055,6 +4262,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyHint = GetDictionaryEntry( 8175, pSocket.language ); // Secondary name of object, revealed using item identification
 			maxLength = 127;
 			break;
+		case itemProp.origin:
+			propertyName = "origin";
+			propertyType = "Text";
+			propertyHint = GetDictionaryEntry( 8177, pSocket.language ); // Era in which item was added to the game
+			maxLength = 127;
+			break;
 		case itemProp.sectionID:
 			propertyName = "sectionID";
 			propertyType = "Text";
@@ -4062,7 +4275,7 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 127;
 			break;
 		case itemProp.spawnsection:
-			propertyName = "spawnSection";
+			propertyName = "spawnsection";
 			propertyType = "Text";
 			propertyHint = GetDictionaryEntry( 8192, pSocket.language ); // SpawnSection used to spawn objects from - SpawnObject only
 			maxLength = 127;
@@ -4084,6 +4297,12 @@ function onGumpPress( pSocket, pButton, gumpData )
 			propertyName = "guildTitle";
 			propertyType = "Text";
 			propertyHint = GetDictionaryEntry( 8329, pSocket.language ); // Guild title of character. Normally set by Guild Master via Guild menu.
+			maxLength = 127;
+			break;
+		case charProp.origin:
+			propertyName = "origin";
+			propertyType = "Text";
+			propertyHint = GetDictionaryEntry( 8177, pSocket.language ); // Era in which item was added to the game
 			maxLength = 127;
 			break;
 		case charProp.title:
@@ -5562,11 +5781,6 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.frozen:
 			propertyName = "frozen";
 			propertyHint = GetDictionaryEntry( 8326, pSocket.language ); // Toggles whether object is frozen (immovable) or not
-			propertyType = "Boolean";
-			break;
-		case charProp.houseicons:
-			propertyName = "houseicons";
-			propertyHint = GetDictionaryEntry( 8332, pSocket.language ); // Toggles whether house icons/deeds are shown instead of multis for character
 			propertyType = "Boolean";
 			break;
 		case charProp.innocent:

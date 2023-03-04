@@ -98,6 +98,7 @@ TOPEACE=92 5
 CARVE=2
 RUNS
 RACE=4
+ORIGIN=se
 }
 
 [eagle]

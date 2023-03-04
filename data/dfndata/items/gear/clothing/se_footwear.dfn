@@ -8,6 +8,8 @@ layer=0x03
 weight=200
 decay=1
 good=19
+origin=se
+sectionid=0x2796
 }
 
 [samuraitabi]
@@ -25,6 +27,8 @@ layer=0x03
 weight=200
 decay=1
 good=19
+origin=se
+sectionid=0x2797
 }
 
 [ninjatalltabi]

@@ -93,6 +93,7 @@ const SI16			DEFBASE_FAME		= 0;
 const SI16			DEFBASE_KILLS		= 0;
 const UI16			DEFBASE_RESIST 		= 0;
 const bool			DEFBASE_NAMEREQUESTACTIVE = 0;
+const ExpansionRuleset	DEFBASE_ORIGIN	= ER_UO;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject constructor
@@ -109,7 +110,7 @@ loDamage( DEFBASE_LODAMAGE ), weight( DEFBASE_WEIGHT ),
 mana( DEFBASE_MANA ), stamina( DEFBASE_STAMINA ), scriptTrig( DEFBASE_SCPTRIG ), st2( DEFBASE_STR2 ), dx2( DEFBASE_DEX2 ),
 in2( DEFBASE_INT2 ), FilePosition( DEFBASE_FP ),
 poisoned( DEFBASE_POISONED ), carve( DEFBASE_CARVE ), oldLocX( 0 ), oldLocY( 0 ), oldLocZ( 0 ), oldTargLocX( 0 ), oldTargLocY( 0 ),
-fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE )
+fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion( DEFBASE_SUBREGION ), nameRequestActive( DEFBASE_NAMEREQUESTACTIVE ), origin( DEFBASE_ORIGIN )
 {
 	multis = nullptr;
 	tempMulti = INVALIDSERIAL;
@@ -117,6 +118,7 @@ fame( DEFBASE_FAME ), karma( DEFBASE_KARMA ), kills( DEFBASE_KILLS ), subRegion(
 	tempContainerSerial = INVALIDSERIAL;
 	name.reserve( MAX_NAME );
 	title.reserve( MAX_TITLE );
+	//origin.reserve( MAX_ORIGIN );
 	sectionId.reserve( MAX_NAME );
 	if( cwmWorldState != nullptr && cwmWorldState->GetLoaded() )
 	{
@@ -741,7 +743,7 @@ bool CBaseObject::DumpBody( std::ofstream &outStream ) const
 	std::string myLocation = "Location=" + std::to_string( x ) + "," + std::to_string( y ) + "," +std::to_string( z ) + "," + std::to_string( worldNumber ) + "," + std::to_string( instanceId ) + newLine;
 	outStream << myLocation;
 	outStream << "Title=" << title << newLine;
-	outStream << "Origin=" << origin << newLine;
+	outStream << "Origin=" << cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( origin )) << newLine;
 
 	//=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
 	temp_st2 = st2;
@@ -1423,13 +1425,25 @@ void CBaseObject::SetTitle( std::string newtitle )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets the object's origin
 //o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetOrigin( void ) const
+/*std::string CBaseObject::GetOrigin( void ) const
 {
 	return origin;
 }
 void CBaseObject::SetOrigin( std::string newOrigin )
 {
 	origin = newOrigin.substr( 0, MAX_ORIGIN );
+}*/
+auto CBaseObject::GetOrigin() const -> UI08
+{
+	return origin;
+}
+auto CBaseObject::SetOrigin( UI08 setting ) -> void
+{
+	if( setting >= ER_COUNT )
+	{
+		setting = ER_COUNT - 1;
+	}
+	origin = setting;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1914,7 +1928,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 		case 'O':
 			if( UTag == "ORIGIN" )
 			{
-				origin = data.substr( 0, MAX_ORIGIN - 1 );
+				origin = cwmWorldState->ServerData()->EraStringToEnum( data.substr( 0, MAX_ORIGIN - 1 ));
 			}
 			else if( UTag == "OWNERID" )
 			{

@@ -111,6 +111,7 @@ SEngineFunc SE_GetTileIdAtMapCoord;		//										***
 SEngineFunc SE_StringToNum;				// Marked for Deletion
 SEngineFunc SE_NumToString;				// Marked for Deletion
 SEngineFunc SE_NumToHexString;			// Marked for Deletion
+SEngineFunc SE_EraStringToNum;
 
 SEngineFunc SE_GetRaceCount;
 SEngineFunc SE_AreaCharacterFunction;

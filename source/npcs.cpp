@@ -1098,11 +1098,11 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				}
 				break;
 			}
+			case DFNTAG_GETUO:
 			case DFNTAG_GETT2A:
 			case DFNTAG_GETUOR:
 			case DFNTAG_GETTD:
 			case DFNTAG_GETLBR:
-			case DFNTAG_GETPUB15:
 			case DFNTAG_GETAOS:
 			case DFNTAG_GETSE:
 			case DFNTAG_GETML:
@@ -1115,11 +1115,11 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				std::string tagName = "";
 				switch( cwmWorldState->ServerData()->ExpansionCoreShardEra() )
 				{
+					case ER_UO:		if( tag == DFNTAG_GETUO ) { getParent = true; tagName = "GETUO"; }		break;
 					case ER_T2A:	if( tag == DFNTAG_GETT2A ) { getParent = true; tagName = "GETT2A"; }		break;
 					case ER_UOR:	if( tag == DFNTAG_GETUOR ) { getParent = true; tagName = "GETUOR"; }		break;
 					case ER_TD:		if( tag == DFNTAG_GETTD ) { getParent = true; tagName = "GETTD"; }			break;
 					case ER_LBR:	if( tag == DFNTAG_GETLBR ) { getParent = true; tagName = "GETLBR"; }		break;
-					case ER_PUB15:	if( tag == DFNTAG_GETPUB15 ) { getParent = true; tagName = "GETPUB15"; }	break;
 					case ER_AOS:	if( tag == DFNTAG_GETAOS ) { getParent = true; tagName = "GETAOS"; }		break;
 					case ER_SE:		if( tag == DFNTAG_GETSE ) { getParent = true; tagName = "GETSE"; }			break;
 					case ER_ML:		if( tag == DFNTAG_GETML ) { getParent = true; tagName = "GETML"; }			break;
@@ -1427,7 +1427,7 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 					applyTo->SetCanTrain( false );
 				}
 				break;
-			case DFNTAG_ORIGIN:				applyTo->SetOrigin( cdata );			break;
+			case DFNTAG_ORIGIN:				applyTo->SetOrigin( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->EraStringToEnum( cdata )));			break;
 			case DFNTAG_POISONSTRENGTH:		applyTo->SetPoisonStrength( static_cast<UI08>( ndata )); break;
 			case DFNTAG_PRIV:
 				if( !isGate )

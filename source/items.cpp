@@ -264,7 +264,6 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_GETUOR:
 			case DFNTAG_GETTD:
 			case DFNTAG_GETLBR:
-			case DFNTAG_GETPUB15:
 			case DFNTAG_GETAOS:
 			case DFNTAG_GETSE:
 			case DFNTAG_GETML:
@@ -281,7 +280,6 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					case ER_UOR:	if( tag == DFNTAG_GETUOR ) { getParent = true; tagName = "GETUOR"; }		break;
 					case ER_TD:		if( tag == DFNTAG_GETTD ) { getParent = true; tagName = "GETTD"; }			break;
 					case ER_LBR:	if( tag == DFNTAG_GETLBR ) { getParent = true; tagName = "GETLBR"; }		break;
-					case ER_PUB15:	if( tag == DFNTAG_GETPUB15 ) { getParent = true; tagName = "GETPUB15"; }	break;
 					case ER_AOS:	if( tag == DFNTAG_GETAOS ) { getParent = true; tagName = "GETAOS"; }		break;
 					case ER_SE:		if( tag == DFNTAG_GETSE ) { getParent = true; tagName = "GETSE"; }			break;
 					case ER_ML:		if( tag == DFNTAG_GETML ) { getParent = true; tagName = "GETML"; }			break;
@@ -419,7 +417,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_NAME2:			applyTo->SetName2( cdata );								break;
 			case DFNTAG_NEWBIE:			applyTo->SetNewbie( true );								break;
 			case DFNTAG_OFFSPELL:		applyTo->SetOffSpell( static_cast<SI08>( ndata ));		break;
-			case DFNTAG_ORIGIN:			applyTo->SetOrigin( cdata );							break;
+			case DFNTAG_ORIGIN:			applyTo->SetOrigin( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->EraStringToEnum( cdata )));		break;
 			case DFNTAG_POISONDAMAGE:	applyTo->SetWeatherDamage( POISON, ndata != 0 );		break;
 			case DFNTAG_POISONED:		applyTo->SetPoisoned( static_cast<UI08>( ndata ));		break;
 			case DFNTAG_PILEABLE:		applyTo->SetPileable( ndata != 0 );						break;
@@ -1198,7 +1196,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 		}
 
 		// Keep reference to DFN sectionId item was created from (if it has not been set already via special DFN tag SECTIONID)
-		if( iCreated->GetSectionId() == "" )
+		if( iCreated->GetSectionId() == "UNKNOWN" )
 		{
 			iCreated->SetSectionId( ourItem );
 		}
