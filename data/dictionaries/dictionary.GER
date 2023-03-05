@@ -3728,6 +3728,10 @@
 8433=Rechte untere X-Koordinate der Wandertyp-Grenze der Figur
 8434=Untere rechte Y-Koordinate für die Wandertypgrenze des Zeichens
 8435=Z-Koordinate für die Wandertyp-Grenze der Figur
+8436=Dauerhafte Bartfarbe des Charakters
+8437=Permanenter Bartstil der Person
+8438=Dauerhafte Haarfarbe des Charakters
+8439=Dauerhafte Frisur des Charakters
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuelle Anzahl der Spieler, die für Multi gesperrt sind. Gesteuert vom Server (Read-Only)
 8501=X-Koordinate für Multis Bann-Ort

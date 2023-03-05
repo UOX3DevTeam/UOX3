@@ -79,6 +79,22 @@ function onCallback0( socket, ourObj )
 						var objMulti = ourObj.multi;
 						objMulti.Delete();
 					}
+
+					// Reset hair/beard style/colour if item being removed is hair or beard on a character
+					var packOwner = GetPackOwner( ourObj, 0 );
+					if( packOwner != null && packOwner.isChar )
+					{
+						if( ourObj.layer == 0x0b ) // Hair
+						{
+							packOwner.hairStyle = 0;
+							packOwner.hairColour = 0;
+						}
+						else if( ourObj.layer == 0x10 ) // Beard
+						{
+							packOwner.beardStyle = 0;
+							packOwner.beardColour = 0;
+						}
+					}
 					ourObj.Delete();
 				}
 			}

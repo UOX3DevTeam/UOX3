@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// Wand - Pub15 stats (default)
-[0x0df2_pub15]
+// Wand - LBR stats (default)
+[0x0df2_lbr]
 {
 get=base_wand
 weight=200

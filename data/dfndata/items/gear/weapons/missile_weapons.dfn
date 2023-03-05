@@ -9,6 +9,7 @@ restock=10
 movable=1
 decay=1
 good=23
+origin=td
 }
 
 //------------------------------------------------------------------------------------------------//
@@ -27,15 +28,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Fukiya - E/W
 [0x27aa]
 {
-getpub15=0x27aa_pub15
+getlbr=0x27aa_lbr
 getaos=0x27aa_aos
 gettol=0x27aa_tol
+sectionid=0x27aa
 }
 
 // Fukiya - N/S

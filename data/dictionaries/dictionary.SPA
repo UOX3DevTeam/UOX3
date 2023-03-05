@@ -3728,6 +3728,10 @@
 8433=Coordenada X inferior derecha del límite del wandertype del personaje
 8434=Coordenada Y inferior derecha para el límite de wandertype del personaje
 8435=Coordenada Z del límite del wandertype del personaje
+8436=Color de la barba permanente del personaje
+8437=Estilo de barba permanente del personaje
+8438=Color de pelo permanente del personaje
+8439=Estilo de pelo permanente del personaje
 // [8500-8549] Menú de ajustes - Descripciones de propiedades múltiples
 8500=Número actual de jugadores vetados en Multi. Controlado por el servidor (sólo lectura)
 8501=coordenada X para la ubicación de prohibición de Multi

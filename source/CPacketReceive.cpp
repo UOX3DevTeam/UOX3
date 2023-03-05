@@ -790,9 +790,14 @@ void CPINewClientVersion::Receive( void )
 				{
 					tSock->ClientVerShort( CVS_70331 );
 				}
-				else if( clientRevision < 61 )
+				else if( clientRevision < 46 )
 				{
 					tSock->ClientVerShort( CVS_704565 );
+				}
+				else if( clientRevision < 61 )
+				{
+					tSock->ClientType( CV_TOL2D );
+					tSock->ClientVerShort( CVS_705527 );
 				}
 				else
 				{
@@ -1101,8 +1106,13 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 			{
 				tSock->ClientVerShort( CVS_70331 );
 			}
+			else if( CliVerSub < 46)
+			{
+				tSock->ClientVerShort( CVS_704565 );
+			}
 			else if( CliVerSub < 61 )
 			{
+				tSock->ClientType( CV_TOL2D );
 				tSock->ClientVerShort( CVS_704565 );
 			}
 			else
@@ -2665,16 +2675,29 @@ void CPITalkRequestUnicode::Receive( void )
 		SI32 myj			= 12;
 		size_t numTrigWords	= 0;
 
+		// Let's keep track of trigger words we've already added, so we don't add same one twice
+		std::unordered_set<uint16_t> trigWords;
+
 		// number of distinct trigger words
 		numTrigWords = ( static_cast<size_t>( tSock->GetByte( 12 )) << 4 ) + ( static_cast<size_t>( tSock->GetByte( 13 )) >> 4 );
 
 		size_t byteNum = 13;
 		for( size_t tWord = 0; tWord < numTrigWords; )
 		{
-			tSock->AddTrigWord((( tSock->GetByte( byteNum+tWord ) % 0x10 ) << 8 ) + tSock->GetByte( byteNum+tWord + 1 ));
+			uint16_t word = (( tSock->GetByte( byteNum + tWord ) % 0x10 ) << 8 ) + tSock->GetByte( byteNum + tWord + 1 );
+			if( trigWords.find( word ) == trigWords.end() )
+			{
+				tSock->AddTrigWord( word );
+				trigWords.insert( word );
+			}
 			if( tWord + 2 <= numTrigWords )
 			{
-				tSock->AddTrigWord(( tSock->GetByte( byteNum + tWord + 2 ) << 4 ) + ( tSock->GetByte( byteNum + tWord + 3 ) >> 4 ));
+				word = ( tSock->GetByte( byteNum + tWord + 2 ) << 4 ) + ( tSock->GetByte( byteNum + tWord + 3 ) >> 4 );
+				if( trigWords.find( word ) == trigWords.end() )
+				{
+					tSock->AddTrigWord( word );
+					trigWords.insert( word );
+				}
 			}
 			tWord += 2;
 			byteNum++;

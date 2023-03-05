@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// Large Battle Axe - Pub 15 stats (default)
-[0x13fa_pub15]
+// Large Battle Axe - LBR stats (default)
+[0x13fa_lbr]
 {
 get=base_large_battle_axe
 weight=600
@@ -16,8 +16,8 @@ spd=30
 str=40
 }
 
-// Two Handed Axe - Pub15 stats (default)
-[0x1442_pub15]
+// Two Handed Axe - LBR stats (default)
+[0x1442_lbr]
 {
 get=base_two_handed_axe
 weight=800
@@ -28,8 +28,8 @@ spd=30
 str=35
 }
 
-// Hatchet Pub15 stats (default)
-[0x0f43_pub15]
+// Hatchet LBR stats (default)
+[0x0f43_lbr]
 {
 get=base_hatchet
 weight=400
@@ -40,8 +40,8 @@ spd=40
 str=15
 }
 
-// Executioner's Axe - Pub15 stats (default)
-[0x0f45_pub15]
+// Executioner's Axe - LBR stats (default)
+[0x0f45_lbr]
 {
 get=base_executioners_axe
 weight=800
@@ -52,8 +52,8 @@ spd=37
 str=35
 }
 
-// Battle Axe - Pub15 stats (default)
-[0x0f47_pub15]
+// Battle Axe - LBR stats (default)
+[0x0f47_lbr]
 {
 get=base_battle_axe
 weight=400
@@ -64,8 +64,8 @@ spd=30
 str=40
 }
 
-// Axe - Pub15 stats (default)
-[0x0f49_pub15]
+// Axe - LBR stats (default)
+[0x0f49_lbr]
 {
 get=base_axe
 weight=400
@@ -76,8 +76,8 @@ spd=37
 str=35
 }
 
-// Double Axe - Pub15 stats (default)
-[0x0f4b_pub15]
+// Double Axe - LBR stats (default)
+[0x0f4b_lbr]
 {
 get=base_double_axe
 weight=800
@@ -91,8 +91,8 @@ str=45
 //------------------------------------------------------------------------------------------------//
 
 // MONDAIN'S LEGACY
-// Ornate Axe - Pub15 stats (default)
-[0x2d28_pub15]
+// Ornate Axe - LBR stats (default)
+[0x2d28_lbr]
 {
 get=base_ornate_axe
 weight=1200
@@ -106,8 +106,8 @@ str=40
 //------------------------------------------------------------------------------------------------//
 
 // STYGIAN ABYSS
-// Gargish Battle Axe - Pub15 stats (default)
-[0x48b0_pub15]
+// Gargish Battle Axe - LBR stats (default)
+[0x48b0_lbr]
 {
 get=base_gargish_battle_axe
 weight=400
@@ -118,8 +118,8 @@ spd=30
 str=40
 }
 
-// Dual Short Axes - Pub15 stats (default)
-[0x08fd_pub15]
+// Dual Short Axes - LBR stats (default)
+[0x08fd_lbr]
 {
 get=base_dual_short_axes
 weight=400
@@ -130,8 +130,8 @@ spd=36
 str=30
 }
 
-// Gargish Axe - Pub15 stats (default)
-[0x48b2_pub15]
+// Gargish Axe - LBR stats (default)
+[0x48b2_lbr]
 {
 get=base_gargish_axe
 weight=400

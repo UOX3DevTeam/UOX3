@@ -1,6 +1,6 @@
 // STAVES AND POLEARMS
 
-// CLASSIC
+// ORIGINAL UO
 // Crook - Base item
 [base_crook]
 {
@@ -21,9 +21,10 @@ script=4015// herding skill
 // Crook - E/W
 [0x13f4]
 {
-getpub15=0x13f4_pub15
+getlbr=0x13f4_lbr
 getaos=0x13f4_aos
 gettol=0x13f4_tol
+sectionid=0x13f4
 }
 
 // Crook - N/S
@@ -59,9 +60,10 @@ script=4015// herding skill
 // Shepherd's Crook - E/W
 [0x0e81]
 {
-getpub15=0x0e81_pub15
+getlbr=0x0e81_lbr
 getaos=0x0e81_aos
 gettol=0x0e81_tol
+sectionid=0x0e81
 }
 
 // Shepherd's Crook - N/S
@@ -93,9 +95,10 @@ restock=10
 // Gnarled Staff - N/S
 [0x13f8]
 {
-getpub15=0x13f8_pub15
+getlbr=0x13f8_lbr
 getaos=0x13f8_aos
 gettol=0x13f8_tol
+sectionid=0x13f8
 }
 
 // Gnarled Staff - E/W
@@ -127,9 +130,10 @@ restock=10
 // Black Staff - E/W
 [0x0df0]
 {
-getpub15=0x0df0_pub15
+getlbr=0x0df0_lbr
 getaos=0x0df0_aos
 gettol=0x0df0_tol
+sectionid=0x0df0
 }
 
 // Black Staff - N/S
@@ -161,9 +165,10 @@ restock=10
 // Quarter Staff - N/S
 [0x0e89]
 {
-getpub15=0x0e89_pub15
+getlbr=0x0e89_lbr
 getaos=0x0e89_aos
 gettol=0x0e89_tol
+sectionid=0x0e89
 }
 
 // Quarter Staff - E/W
@@ -195,9 +200,10 @@ restock=10
 // Halberd - E/W
 [0x143e]
 {
-getpub15=0x143e_pub15
+getlbr=0x143e_lbr
 getaos=0x143e_aos
 gettol=0x143e_tol
+sectionid=0x143e
 }
 
 // Halberd - N/S
@@ -248,9 +254,10 @@ restock=10
 // Bardiche - N/S
 [0x0f4d]
 {
-getpub15=0x0f4d_pub15
+getlbr=0x0f4d_lbr
 getaos=0x0f4d_aos
 gettol=0x0f4d_tol
+sectionid=0x0f4d
 }
 
 // Bardiche - E/W
@@ -279,15 +286,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=aos
 restock=10
 }
 
 // Scythe - E/W
 [0x26ba]
 {
-getpub15=0x26ba_pub15
+getlbr=0x26ba_lbr
 getaos=0x26ba_aos
 gettol=0x26ba_tol
+sectionid=0x26ba
 }
 
 // Scythe - N/S
@@ -313,15 +322,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=aos
 restock=10
 }
 
 // Bladed Staff - E/W
 [0x26bd]
 {
-getpub15=0x26bd_pub15
+getlbr=0x26bd_lbr
 getaos=0x26bd_aos
 gettol=0x26bd_tol
+sectionid=0x26bd
 }
 
 // Bladed Staff - N/S
@@ -347,15 +358,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=aos
 restock=10
 }
 
 // Double Bladed Staff - E/W
 [0x26bf]
 {
-getpub15=0x26bf_pub15
+getlbr=0x26bf_lbr
 getaos=0x26bf_aos
 gettol=0x26bf_tol
+sectionid=0x26bf
 }
 
 // Double Bladed Staff - N/S
@@ -384,15 +397,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=ml
 restock=10
 }
 
 // Wild Staff - N/S
 [0x2d25]
 {
-getpub15=0x2d25_pub15
+getlbr=0x2d25_lbr
 getaos=0x2d25_aos
 gettol=0x2d25_tol
+sectionid=0x2d25
 }
 
 // Wild Staff - E/W
@@ -421,15 +436,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Bardiche - N/W
 [0x48b4]
 {
-getpub15=0x48b4_pub15
+getlbr=0x48b4_lbr
 getaos=0x48b4_aos
 gettol=0x48b4_tol
+sectionid=0x48b4
 }
 
 // Gargish Bardiche - E/W
@@ -455,15 +472,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Scythe - N/S
 [0x48c4]
 {
-getpub15=0x48c4_pub15
+getlbr=0x48c4_lbr
 getaos=0x48c4_aos
 gettol=0x48c4_tol
+sectionid=0x48c4
 }
 
 // Gargish Scythe - E/W
@@ -489,15 +508,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Serpentstone Staff - N/S
 [0x0906]
 {
-getpub15=0x0906_pub15
+getlbr=0x0906_lbr
 getaos=0x0906_aos
 gettol=0x0906_tol
+sectionid=0x0906
 }
 
 // Serpentstone Staff - E/W
@@ -523,15 +544,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Gnarled Staff - N/S
 [0x48b8]
 {
-getpub15=0x48b8_pub15
+getlbr=0x48b8_lbr
 getaos=0x48b8_aos
 gettol=0x48b8_tol
+sectionid=0x48b8
 }
 
 // Gargish Gnarled Staff - E/W
@@ -557,15 +580,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Glass Staff - N/S
 [0x0905]
 {
-getpub15=0x0905_pub15
+getlbr=0x0905_lbr
 getaos=0x0905_aos
 gettol=0x0905_tol
+sectionid=0x0905
 }
 
 // Glass Staff - E/W

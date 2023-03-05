@@ -45,7 +45,7 @@ function onAICombatTarget( pChar, pTarget )
 function onDamage( pDefender, pAttacker, damageValue, damageType )
 {
 	if( !ValidateObject( pAttacker ))
-		return;
+		return false;
 
 	// Check if the attacker is actually a pet/hireling/summoned creature
 	var pOwner = pAttacker.owner;
@@ -64,4 +64,6 @@ function onDamage( pDefender, pAttacker, damageValue, damageType )
 			pOwner.ExplodeItem( headWear, 50, 5, false );
 		}
 	}
+
+	return true;
 }

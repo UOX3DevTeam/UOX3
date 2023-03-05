@@ -19,12 +19,13 @@ erbonus=7 2 2 2
 // Agapite Ringmail Gloves - N/S
 [0x13eb-a]
 {
-getpub15=0x13eb_pub15
+getlbr=0x13eb_lbr
 getaos=0x13eb_aos
 gettol=0x13eb_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13eb-a
 }
 
 // Agapite Ringmail Gloves - E/W
@@ -43,12 +44,13 @@ get=0x13eb-a 0x13f2-a
 // Agapite Ringmail Tunic - N/S
 [0x13ec-a]
 {
-getpub15=0x13ec_pub15
+getlbr=0x13ec_lbr
 getaos=0x13ec_aos
 gettol=0x13ec_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13ec-a
 }
 
 // Agapite Ringmail Tunic - E/W
@@ -67,12 +69,13 @@ get=0x13ec-a 0x13ed-a
 // Agapite Ringmail Sleeves - N/S
 [0x13ee-a]
 {
-getpub15=0x13ee_pub15
+getlbr=0x13ee_lbr
 getaos=0x13ee_aos
 gettol=0x13ee_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13ee-a
 }
 
 // Agapite Ringmail Sleeves - E/W
@@ -91,12 +94,13 @@ get=0x13ee-a 0x13ef-a
 // Agapite Ringmail Leggings - N/S
 [0x13f0-a]
 {
-getpub15=0x13f0_pub15
+getlbr=0x13f0_lbr
 getaos=0x13f0_aos
 gettol=0x13f0_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13f0-a
 }
 
 // Agapite Ringmail Leggings - E/W
@@ -117,12 +121,13 @@ get=0x13f0-a 0x13f1-a
 // Agapite Chainmail Coif - N/S
 [0x13bb-a]
 {
-getpub15=0x13bb_pub15
+getlbr=0x13bb_lbr
 getaos=0x13bb_aos
 gettol=0x13bb_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13bb-a
 }
 
 // Agapite Chainmail Coif - E/S
@@ -141,12 +146,13 @@ get=0x13bb 0x13c0
 // Agapite Chainmail Leggings - N/S
 [0x13be-a]
 {
-getpub15=0x13be_pub15
+getlbr=0x13be_lbr
 getaos=0x13be_aos
 gettol=0x13be_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13be-a
 }
 
 // Agapite Chainmail Leggings - E/W
@@ -165,12 +171,13 @@ get=0x13be-a 0x13c3-a
 // Agapite Chainmail Tunic - N/S
 [0x13bf-a]
 {
-getpub15=0x13bf_pub15
+getlbr=0x13bf_lbr
 getaos=0x13bf_aos
 gettol=0x13bf_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x13bf-a
 }
 
 // Agapite Chainmail Tunic - E/W
@@ -189,12 +196,13 @@ get=0x13bf-a 0x13c4-a
 // Agapite Female Plate - N/S
 [0x1c04-a]
 {
-getpub15=0x1c04_pub15
+getlbr=0x1c04_lbr
 getaos=0x1c04_aos
 gettol=0x1c04_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1c04-a
 }
 
 // Agapite Female Plate - E/W
@@ -215,12 +223,13 @@ get=0x1c04-a 0x1c05-a
 // Agapite Platemail Arms - E/W
 [0x1410-a]
 {
-getpub15=0x1410_pub15
+getlbr=0x1410_lbr
 getaos=0x1410_aos
 gettol=0x1410_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1410-a
 }
 
 // Agapite Platemail Arms - N/S
@@ -239,12 +248,13 @@ get=0x1410-a 0x1417-a
 // Agapite Platemail Leggings - N/S
 [0x1411-a]
 {
-getpub15=0x1411_pub15
+getlbr=0x1411_lbr
 getaos=0x1411_aos
 gettol=0x1411_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1411-a
 }
 
 // Agapite Platemail Leggings - E/W
@@ -263,12 +273,13 @@ get=0x1411-a 0x141a-a
 // Agapite Platemail Gorget
 [0x1413-a]
 {
-getpub15=0x1413_pub15
+getlbr=0x1413_lbr
 getaos=0x1413_aos
 gettol=0x1413_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1413-a
 }
 
 // Agapite Platemail Gorget - Alias
@@ -280,12 +291,13 @@ get=0x1413-a
 // Agapite Platemail Gloves - N/S
 [0x1414-a]
 {
-getpub15=0x1414_pub15
+getlbr=0x1414_lbr
 getaos=0x1414_aos
 gettol=0x1414_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1414-a
 }
 
 // Agapite Platemail Gloves - E/W
@@ -304,12 +316,13 @@ get=0x1414-a 0x1418-a
 // Agapite Platemail Chest - N/S
 [0x1415-a]
 {
-getpub15=0x1415_pub15
+getlbr=0x1415_lbr
 getaos=0x1415_aos
 gettol=0x1415_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1415-a
 }
 
 // Agapite Platemail Chest - E/W
@@ -330,12 +343,13 @@ get=0x1415-a 0x1416-a
 // Agapite Heavy Platemail Jingasa - A
 [0x2777-a]
 {
-getpub15=0x2777_pub15
+getlbr=0x2777_lbr
 getaos=0x2777_aos
 gettol=0x2777_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2777-a
 }
 
 // Agapite Heavy Platemail Jingasa - B
@@ -354,12 +368,13 @@ get=0x2777-a 0x27c2-a
 // Agapite Decorative Platemail Kabuto - A
 [0x2778-a]
 {
-getpub15=0x2778_pub15
+getlbr=0x2778_lbr
 getaos=0x2778_aos
 gettol=0x2778_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2778-a
 }
 
 // Agapite Decorative Platemail Kabuto - B
@@ -378,12 +393,13 @@ get=0x2778-a 0x27c3-a
 // Agapite Platemail Do - A
 [0x277d-a]
 {
-getpub15=0x277d_pub15
+getlbr=0x277d_lbr
 getaos=0x277d_aos
 gettol=0x277d_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x277d-a
 }
 
 // Agapite Platemail Do - B
@@ -402,12 +418,13 @@ get=0x277d-a 0x27c8-a
 // Agapite Platemail Hiro Sode - A
 [0x2780-a]
 {
-getpub15=0x2780_pub15
+getlbr=0x2780_lbr
 getaos=0x2780_aos
 gettol=0x2780_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2780-a
 }
 
 // Agapite Platemail Hiro Sode - B
@@ -426,12 +443,13 @@ get=0x2780-a 0x27cb-a
 // Agapite Platemail Jingasa - A
 [0x2781-a]
 {
-getpub15=0x2781_pub15
+getlbr=0x2781_lbr
 getaos=0x2781_aos
 gettol=0x2781_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2781-a
 }
 
 // Agapite Platemail Jingasa - B
@@ -450,12 +468,13 @@ get=0x2781-a 0x27cc-a
 // Agapite Small Platemail Jingasa - A
 [0x2784-a]
 {
-getpub15=0x2784_pub15
+getlbr=0x2784_lbr
 getaos=0x2784_aos
 gettol=0x2784_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2784-a
 }
 
 // Agapite Small Platemail Jingasa - B
@@ -474,12 +493,13 @@ get=0x2784-a 0x27cf-a
 // Agapite Platemail Battle Kabuto - A
 [0x2785-a]
 {
-getpub15=0x2785_pub15
+getlbr=0x2785_lbr
 getaos=0x2785_aos
 gettol=0x2785_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2785-a
 }
 
 // Agapite Platemail Battle Kabuto - B
@@ -498,12 +518,13 @@ get=0x2785-a 0x27d0-a
 // Agapite Platemail Suneate - A
 [0x2788-a]
 {
-getpub15=0x2788_pub15
+getlbr=0x2788_lbr
 getaos=0x2788_aos
 gettol=0x2788_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2788-a
 }
 
 // Agapite Platemail Suneate - B
@@ -522,12 +543,13 @@ get=0x2788-a 0x27d3-a
 // Agapite Platemail Kabuto - A
 [0x2789-a]
 {
-getpub15=0x2789_pub15
+getlbr=0x2789_lbr
 getaos=0x2789_aos
 gettol=0x2789_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2789-a
 }
 
 // Agapite Platemail Kabuto - B
@@ -546,12 +568,13 @@ get=0x2789-a 0x27d4-a
 // Agapite Kabuto - A
 [0x236c-a]
 {
-getpub15=0x236c_pub15
+getlbr=0x236c_lbr
 getaos=0x236c_aos
 gettol=0x236c_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x236c-a
 }
 
 // Agapite Kabuto - B
@@ -570,12 +593,13 @@ get=0x236c-a 0x236d-a
 // Agapite Platemail Haidate - A
 [0x278d-a]
 {
-getpub15=0x278d_pub15
+getlbr=0x278d_lbr
 getaos=0x278d_aos
 gettol=0x278d_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x278d-a
 }
 
 // Agapite Platemail Haidate - B
@@ -594,12 +618,13 @@ get=0x278d-a 0x27d8-a
 // Agapite Platemail Hatsuburi - A
 [0x2775-a]
 {
-getpub15=0x2775_pub15
+getlbr=0x2775_lbr
 getaos=0x2775_aos
 gettol=0x2775_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2775-a
 }
 
 // Agapite Platemail Hatsuburi - B
@@ -618,12 +643,13 @@ get=0x2775-a 0x27c0-a
 // Agapite Chainmail Hatsuburi - A
 [0x2774-a]
 {
-getpub15=0x2774_pub15
+getlbr=0x2774_lbr
 getaos=0x2774_aos
 gettol=0x2774_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2774-a
 }
 
 // Agapite Chainmail Hatsuburi - B
@@ -642,12 +668,13 @@ get=0x2774-a 0x27bf-a
 // Agapite Platemail Mempo - E/W
 [0x2779-a]
 {
-getpub15=0x2779_pub15
+getlbr=0x2779_lbr
 getaos=0x2779_aos
 gettol=0x2779_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x2779-a
 }
 
 // Agapite Platemail Mempo - N/S
@@ -668,12 +695,13 @@ get=0x2779-a 0x27c4-a
 // Agapite Close Helm - E/W
 [0x1408-a]
 {
-getpub15=0x1408_pub15
+getlbr=0x1408_lbr
 getaos=0x1408_aos
 gettol=0x1408_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1408-a
 }
 
 // Agapite Close Helm - N/S
@@ -692,12 +720,13 @@ get=0x1408-a 0x1409-a
 // Agapite Helmet - E/W
 [0x140a-a]
 {
-getpub15=0x140a_pub15
+getlbr=0x140a_lbr
 getaos=0x140a_aos
 gettol=0x140a_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x140a-a
 }
 
 // Agapite Helmet - N/S
@@ -716,12 +745,13 @@ get=0x140a-a 0x140b-a
 // Agapite Bascinet - E/W
 [0x140c-a]
 {
-getpub15=0x140c_pub15
+getlbr=0x140c_lbr
 getaos=0x140c_aos
 gettol=0x140c_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x140c-a
 }
 
 // Agapite Bascinet - N/S
@@ -740,12 +770,13 @@ get=0x140c-a 0x140d-a
 // Agapite Norse Helm - E/W
 [0x140e-a]
 {
-getpub15=0x140e_pub15
+getlbr=0x140e_lbr
 getaos=0x140e_aos
 gettol=0x140e_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x140e-a
 }
 
 // Agapite Norse Helm - N/S
@@ -764,12 +795,13 @@ get=0x140e-a 0x140f-a
 // Agapite Plate Helm - N/S
 [0x1412-a]
 {
-getpub15=0x1412_pub15
+getlbr=0x1412_lbr
 getaos=0x1412_aos
 gettol=0x1412_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1412-a
 }
 
 // Agapite Plate Helm - E/W
@@ -790,12 +822,13 @@ get=0x1412-a 0x1419-a
 // Agapite Bronze Shield
 [0x1b72-a]
 {
-getpub15=0x1b72_pub15
+getlbr=0x1b72_lbr
 getaos=0x1b72_aos
 gettol=0x1b72_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b72-a
 }
 
 // Agapite Bronze Shield - Alias
@@ -807,12 +840,13 @@ get=0x1b72-a
 // Agapite Buckler
 [0x1b73-a]
 {
-getpub15=0x1b73_pub15
+getlbr=0x1b73_lbr
 getaos=0x1b73_aos
 gettol=0x1b73_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b73-a
 }
 
 // Agapite Buckler - Alias
@@ -824,34 +858,37 @@ get=0x1b73-a
 // Agapite Kite Shield (Metal) - N/S
 [0x1b74-a]
 {
-getpub15=0x1b74_pub15
+getlbr=0x1b74_lbr
 getaos=0x1b74_aos
 gettol=0x1b74_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b74-a
 }
 
 // Agapite Heater Shield - N/S
 [0x1b76-a]
 {
-getpub15=0x1b76_pub15
+getlbr=0x1b76_lbr
 getaos=0x1b76_aos
 gettol=0x1b76_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b76-a
 }
 
 // Agapite Kite Shield (Wood) - N/S
 [0x1b78-a]
 {
-getpub15=0x1b78_pub15
+getlbr=0x1b78_lbr
 getaos=0x1b78_aos
 gettol=0x1b78_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b78-a
 }
 
 // Agapite Kite Shield (wood) - E/W
@@ -870,12 +907,13 @@ get=0x1b78-a 0x1b79-a
 // AgapiteWooden Shield
 [0x1b7a-a]
 {
-getpub15=0x1b7a_pub15
+getlbr=0x1b7a_lbr
 getaos=0x1b7a_aos
 gettol=0x1b7a_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b7a-a
 }
 
 // Agapite Wooden Shield - Alias
@@ -887,12 +925,13 @@ get=0x1b7a-a
 // Agapite Metal Shield
 [0x1b7b-a]
 {
-getpub15=0x1b7b_pub15
+getlbr=0x1b7b_lbr
 getaos=0x1b7b_aos
 gettol=0x1b7b_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1b7b-a
 }
 
 // Agapite Metal Shield - Alias
@@ -904,12 +943,13 @@ get=0x1b7b-a
 // Agapite Chaos Shield
 [0x1bc3-a]
 {
-getpub15=0x1bc3_pub15
+getlbr=0x1bc3_lbr
 getaos=0x1bc3_aos
 gettol=0x1bc3_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1bc3-a
 }
 
 // Agapite Chaos Shield - Alias
@@ -921,12 +961,13 @@ get=0x1bc3-a
 // Agapite Order Shield - N/S
 [0x1bc4-a]
 {
-getpub15=0x1bc4_pub15
+getlbr=0x1bc4_lbr
 getaos=0x1bc4_aos
 gettol=0x1bc4_tol
 getaos=agapite_armor_bonus_aos
 gettol=agapite_armor_bonus_tol
 color=0x979
+sectionid=0x1bc4-a
 }
 
 // Agapite Order Shield - E/W

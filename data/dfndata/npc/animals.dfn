@@ -130,6 +130,7 @@ FOOD=carnivore
 CARVE=6
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=t2a
 }
 
 [cat]
@@ -882,6 +883,7 @@ FOOD=fruit
 RUNS
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=ml
 }
 
 [ferret]
@@ -909,4 +911,5 @@ FOOD=fruit
 RUNS
 RACE=9
 CONTROLSLOTS=1
+ORIGIN=ml
 }

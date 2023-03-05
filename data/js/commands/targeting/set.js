@@ -99,6 +99,10 @@ function onCallback0( socket, ourObj )
 		ourObj.mana = nVal;
 		okMsg( socket );
 		break;
+	case "ORIGIN":
+		ourObj.origin = socket.xText.substring( 7 );
+		okMsg( socket );
+		break;
 	case "OWNER":
 		socket.tempObj = ourObj;
 		socket.CustomTarget( 1, GetDictionaryEntry( 8104, socket.language )); // Choose character to own this object
@@ -182,7 +186,7 @@ function onCallback0( socket, ourObj )
 		}
 		break;
 	case "SECTIONID":
-		ourObj.sectionID = socket.xText.substring( 5 );
+		ourObj.sectionID = socket.xText.substring( 10 );
 		okMsg( socket );
 		break;
 	case "SHOULDSAVE":
@@ -573,6 +577,24 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "COMMANDLEVEL":
 		ourChar.commandlevel = nVal;
+		okMsg( socket );
+		break;
+	case "HAIRSTYLE":
+		ourChar.hairStyle = nVal;
+		okMsg( socket );
+		break;
+	case "HAIRCOLOUR":
+	case "HAIRCOLOR":
+		ourChar.hairColour = nVal;
+		okMsg( socket );
+		break;
+	case "BEARDSTYLE":
+		ourChar.beardStyle = nVal;
+		okMsg( socket );
+		break;
+	case "BEARDCOLOUR":
+	case "BEARDCOLOR":
+		ourChar.beardColour = nVal;
 		okMsg( socket );
 		break;
 	case "Z":
