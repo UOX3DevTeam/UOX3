@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// Cleaver - Pub15 stats (default)
-[0x0ec2_pub15]
+// Cleaver - LBR stats (default)
+[0x0ec2_lbr]
 {
 get=base_cleaver
 weight=100
@@ -16,8 +16,8 @@ spd=40
 str=10
 }
 
-// Skinning Knife - Pub15 stats (default)
-[0x0ec4_pub15]
+// Skinning Knife - LBR stats (default)
+[0x0ec4_lbr]
 {
 get=base_skinning_knife
 weight=100
@@ -28,8 +28,8 @@ spd=40
 str=5
 }
 
-// Dagger - Pub15 stats (default)
-[0x0f51_pub15]
+// Dagger - LBR stats (default)
+[0x0f51_lbr]
 {
 get=base_dagger
 weight=100
@@ -40,8 +40,8 @@ spd=55
 str=1
 }
 
-// Butcher Knife - Pub15 stats (default)
-[0x13f6_pub15]
+// Butcher Knife - LBR stats (default)
+[0x13f6_lbr]
 {
 get=base_butcher_knife
 weight=100
@@ -55,8 +55,8 @@ str=5
 //------------------------------------------------------------------------------------------------//
 
 // MONDAIN'S LEGACY
-// Leafblade - Pub15 stats (default)
-[0x2d22_pub15]
+// Leafblade - LBR stats (default)
+[0x2d22_lbr]
 {
 get=base_leafblade
 damage=4 27
@@ -67,8 +67,8 @@ value=27 14
 weight=600
 }
 
-// Assassin Spike - Pub15 stats (default)
-[0x2d21_pub15]
+// Assassin Spike - LBR stats (default)
+[0x2d21_lbr]
 {
 get=base_assassin_spike
 damage=3 15
@@ -82,8 +82,8 @@ weight=300
 //------------------------------------------------------------------------------------------------//
 
 // STYGIAN ABYSS
-// Gargish Dagger - Pub15 stats (default)
-[0x0902_pub15]
+// Gargish Dagger - LBR stats (default)
+[0x0902_lbr]
 {
 get=base_gargish_dagger
 damage=3 15

@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// Spear - Pub15 stats (default)
-[0x0f62_pub15]
+// Spear - LBR stats (default)
+[0x0f62_lbr]
 {
 get=base_spear
 weight=700
@@ -16,8 +16,8 @@ spd=46
 str=30
 }
 
-// Tribal Spear - Pub15 stats (default)
-[tribalspear_pub15]
+// Tribal Spear - LBR stats (default)
+[tribalspear_lbr]
 {
 get=base_spear
 weight=700
@@ -28,8 +28,8 @@ spd=46
 str=30
 }
 
-// Kryss - Pub15 stats (default)
-[0x1400_pub15]
+// Kryss - LBR stats (default)
+[0x1400_lbr]
 {
 get=base_kryss
 weight=100
@@ -40,8 +40,8 @@ spd=53
 str=10
 }
 
-// Short Spear - Pub15 stats (default)
-[0x1402_pub15]
+// Short Spear - LBR stats (default)
+[0x1402_lbr]
 {
 get=base_short_spear
 weight=400
@@ -52,8 +52,8 @@ spd=50
 str=15
 }
 
-// War Fork - Pub15 stats (default)
-[0x1404_pub15]
+// War Fork - LBR stats (default)
+[0x1404_lbr]
 {
 get=base_war_fork
 weight=900
@@ -64,8 +64,8 @@ spd=45
 str=35
 }
 
-// Pitchfork - Pub15 stats (default)
-[0x0e87_pub15]
+// Pitchfork - LBR stats (default)
+[0x0e87_lbr]
 {
 get=base_pitchfork
 weight=1000
@@ -78,8 +78,8 @@ str=15
 
 // Age of Shadows
 
-// Pike - Pub15 stats (default)
-[0x26be_pub15]
+// Pike - LBR stats (default)
+[0x26be_lbr]
 {
 get=base_pike
 weight=800
@@ -90,8 +90,8 @@ spd=37
 str=20
 }
 
-// Lance - Pub15 stats (default)
-[0x26c0_pub15]
+// Lance - LBR stats (default)
+[0x26c0_lbr]
 {
 get=base_lance
 weight=1200
@@ -104,8 +104,8 @@ str=40
 
 // Samurai Empire
 
-// Lajatang - Pub15 stats (default)
-[0x27a7_pub15]
+// Lajatang - LBR stats (default)
+[0x27a7_lbr]
 {
 get=base_lajatang
 weight=1200
@@ -116,8 +116,8 @@ spd=32
 str=30
 }
 
-// Tekagi - Pub15 stats (default)
-[0x27ab_pub15]
+// Tekagi - LBR stats (default)
+[0x27ab_lbr]
 {
 get=base_tekagi
 weight=500
@@ -128,8 +128,8 @@ spd=56
 str=5
 }
 
-// Kama - Pub15 stats (default)
-[0x27ad_pub15]
+// Kama - LBR stats (default)
+[0x27ad_lbr]
 {
 get=base_kama
 weight=700
@@ -140,8 +140,8 @@ spd=56
 str=10
 }
 
-// Sai - Pub15 stats (default)
-[0x27af_pub15]
+// Sai - LBR stats (default)
+[0x27af_lbr]
 {
 get=base_sai
 weight=700
@@ -155,8 +155,8 @@ str=10
 //------------------------------------------------------------------------------------------------//
 
 // MONDAIN'S LEGACY
-// War Cleaver - Pub15 stats (default)
-[0x2d23_pub15]
+// War Cleaver - LBR stats (default)
+[0x2d23_lbr]
 {
 get=base_war_cleaver
 weight=500
@@ -167,8 +167,8 @@ spd=50
 str=10
 }
 
-// Elven Spellblade - Pub15 stats (default)
-[0x2d20_pub15]
+// Elven Spellblade - LBR stats (default)
+[0x2d20_lbr]
 {
 get=base_elven_spellblade
 weight=500
@@ -182,8 +182,8 @@ str=15
 //------------------------------------------------------------------------------------------------//
 
 // STYGIAN ABYSS
-// Gargish War Fork - Pub15 stats (default)
-[0x48be_pub15]
+// Gargish War Fork - LBR stats (default)
+[0x48be_lbr]
 {
 get=base_gargish_war_fork
 weight=900
@@ -194,8 +194,8 @@ spd=45
 str=35
 }
 
-// Shortblade - Pub15 stats (default)
-[0x0907_pub15]
+// Shortblade - LBR stats (default)
+[0x0907_lbr]
 {
 get=base_shortblade
 weight=700
@@ -206,8 +206,8 @@ spd=49
 str=5
 }
 
-// Bloodblade - Pub15 stats (default)
-[0x08fe_pub15]
+// Bloodblade - LBR stats (default)
+[0x08fe_lbr]
 {
 get=base_bloodblade
 weight=300
@@ -218,8 +218,8 @@ spd=55
 str=5
 }
 
-// Gargish Kryss - Pub15 stats (default)
-[0x48bc_pub15]
+// Gargish Kryss - LBR stats (default)
+[0x48bc_lbr]
 {
 get=base_gargish_kryss
 weight=100
@@ -230,8 +230,8 @@ spd=53
 str=10
 }
 
-// Gargish Lance - Pub15 stats (default)
-[0x48ca_pub15]
+// Gargish Lance - LBR stats (default)
+[0x48ca_lbr]
 {
 get=base_gargish_lance
 weight=1200
@@ -242,8 +242,8 @@ spd=26
 str=40
 }
 
-// Gargish Pike - Pub15 stats (default)
-[0x48c8_pub15]
+// Gargish Pike - LBR stats (default)
+[0x48c8_lbr]
 {
 get=base_gargish_pike
 weight=800
@@ -254,8 +254,8 @@ spd=37
 str=20
 }
 
-// Dual Pointed Spear - Pub15 stats (default)
-[0x0904_pub15]
+// Dual Pointed Spear - LBR stats (default)
+[0x0904_lbr]
 {
 get=base_dual_pointed_spear
 weight=700
@@ -266,8 +266,8 @@ spd=50
 str=20
 }
 
-// Gargish Tekagi - Pub15 stats (default)
-[0x48ce_pub15]
+// Gargish Tekagi - LBR stats (default)
+[0x48ce_lbr]
 {
 get=base_gargish_tekagi
 weight=500
@@ -281,8 +281,8 @@ str=5
 //------------------------------------------------------------------------------------------------//
 
 // TIME OF LEGENDS
-// Spiked Whip - Pub15 stats (default)
-[0xa28a_pub15]
+// Spiked Whip - LBR stats (default)
+[0xa28a_lbr]
 {
 get=base_spiked_whip
 weight=600

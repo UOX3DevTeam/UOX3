@@ -30,6 +30,7 @@ TOPROV=726
 TOPEACE=726 5
 RACE=21
 FLAG=EVIL
+ORIGIN=lbr
 }
 
 [jukalord]
@@ -67,6 +68,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=21
 FLAG=EVIL
+ORIGIN=lbr
 }
 
 [jukamage]
@@ -105,6 +107,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=21
 FLAG=EVIL
+ORIGIN=lbr
 }
 
 // Meer
@@ -143,6 +146,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=20
 FLAG=NEUTRAL
+ORIGIN=lbr
 SCRIPT=3300
 }
 
@@ -172,6 +176,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=20
 FLAG=GOOD
+ORIGIN=lbr
 }
 
 [meercaptain]
@@ -202,6 +207,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=20
 FLAG=GOOD
+ORIGIN=lbr
 }
 
 [meermage]
@@ -238,6 +244,7 @@ TOTAME=2000
 FOOD=carnivore
 RACE=20
 FLAG=NEUTRAL
+ORIGIN=lbr
 SCRIPT=3300
 }
 
@@ -272,6 +279,7 @@ TOTAME=2000
 RACE=0
 NPCAI=2
 FLAG=EVIL
+ORIGIN=lbr
 SCRIPT=3511// Colossal Blow
 }
 
@@ -308,6 +316,7 @@ TOTAME=2000
 RACE=0
 NPCAI=2
 FLAG=EVIL
+ORIGIN=lbr
 SCRIPT=3503// Damage Aura
 SCRIPT=3511// Colossal Blow
 SCRIPT=3300// Random Magic Items

@@ -2373,7 +2373,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					else if( serverData->ExpansionShieldParry() < ER_AOS )
 					{
-						// Pre-AoS/Pub15/UOR
+						// Pre-AoS/LBR/UOR
 						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
 						if( getFightSkill == ARCHERY )
 						{
@@ -2421,7 +2421,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					/*else
 					{
-						// Old Pre-AoS (~Publish 15) block with shield
+						// Old Pre-AoS (LBR, ~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
 						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 
@@ -2635,8 +2635,8 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		damage = RandomNum( 0, 4 );
 	}
 
-	// Half remaining damage by 2 if PUB15 or earlier
-	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_PUB15 )
+	// Half remaining damage by 2 if LBR (Pub15) or earlier
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
 		damage /= 2;
 	}
@@ -2780,8 +2780,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			case ER_T2A: // T2A - The Second Age
 			case ER_UOR: // UOR - Renaissance
 			case ER_TD: // TD - Third Dawn
-			case ER_LBR: // LBR - Lord Blackthorn's Revenge
-			case ER_PUB15: // PUB15 - Pub15 (Pre-AoS)
+			case ER_LBR: // LBR - Lord Blackthorn's Revenge (Publish 15)
 				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
 				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
 				if( hitChance < 0 )

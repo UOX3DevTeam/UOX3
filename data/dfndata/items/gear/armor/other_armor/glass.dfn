@@ -1,9 +1,10 @@
 // Elven Glasses - E/W
 [0x2fb8]
 {
-getpub15=0x2fb8_pub15
+getlbr=0x2fb8_lbr
 getaos=0x2fb8_aos
 gettol=0x2fb8_tol
+sectionid=0x2fb8
 }
 
 // Elven Glasses - N/S

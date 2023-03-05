@@ -1,11 +1,13 @@
 // Studded Sleeves - E/W
 [0x13d4-ranger]
 {
-getpub15=0x13d4_pub15
+getlbr=0x13d4_lbr
 getaos=0x13d4_aos
 gettol=0x13d4_tol
 color=0x59c
 name=studded sleeves, ranger armor
+origin=t2a
+sectionid=0x13d4-ranger
 }
 
 // Studded Sleeves - N/S
@@ -24,11 +26,13 @@ get=0x13d4-ranger 0x13dc-ranger
 // Studded Gloves - E/W
 [0x13d5-ranger]
 {
-getpub15=0x13d5_pub15
+getlbr=0x13d5_lbr
 getaos=0x13d5_aos
 gettol=0x13d5_tol
 color=0x59c
 name=studded gloves, ranger armor
+origin=t2a
+sectionid=0x13d5-ranger
 }
 
 // Studded Gloves - N/S
@@ -47,11 +51,13 @@ get=0x13d5-ranger 0x13dd-ranger
 // Studded Gorget
 [0x13d6-ranger]
 {
-getpub15=0x13d6_pub15
+getlbr=0x13d6_lbr
 getaos=0x13d6_aos
 gettol=0x13d6_tol
 color=0x59c
 name=studded gorget, ranger armor
+origin=t2a
+sectionid=0x13d6-ranger
 }
 
 // Studded Gorget - Alias
@@ -63,11 +69,13 @@ get=0x13d6-ranger
 // Studded Leggings - E/W
 [0x13da-ranger]
 {
-getpub15=0x13da_pub15
+getlbr=0x13da_lbr
 getaos=0x13da_aos
 gettol=0x13da_tol
 color=0x59c
 name=studded leggings, ranger armor
+origin=t2a
+sectionid=0x13da-ranger
 }
 
 // Studded Leggings - N/S
@@ -86,11 +94,13 @@ get=0x13da-ranger 0x13e1-ranger
 // Studded Tunic - E/W
 [0x13db-ranger]
 {
-getpub15=0x13db_pub15
+getlbr=0x13db_lbr
 getaos=0x13db_aos
 gettol=0x13db_tol
 color=0x59c
 name=studded tunic, ranger armor
+origin=t2a
+sectionid=0x13db-ranger
 }
 
 // Studded Tunic - N/S

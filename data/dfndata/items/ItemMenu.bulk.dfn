@@ -9199,6 +9199,8 @@ ADDITEM=townstonedeed
 ADDITEM=guildstonedeed
 0x14F0=Player vendor deed
 ADDITEM=playervendordeed
+0x14F0=Hair Restyle Deed
+ADDITEM=hairrestyledeed
 <=Previous Menu
 ITEMMENU=4
 }

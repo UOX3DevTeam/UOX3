@@ -1,11 +1,11 @@
-// Weapon Stats matching up with Publish 15
+// Weapon Stats matching up with Lord Blackthorn's Revenge (Publish 15)
 //
 // Items in this file are generally not added or referenced directly.
 // Reference instead, the corresponding entries in the root weapons folder, which then
 // picks the correct sub-entry based on the active NPC ruleset on the server
 
-// Soul Glaives - Pub15 stats (default)
-[0x090a_pub15]
+// Soul Glaives - LBR stats (default)
+[0x090a_lbr]
 {
 get=base_soul_glaive
 weight=900
@@ -18,8 +18,8 @@ baserange=8
 maxrange=11
 }
 
-// Boomerang - Pub15 stats (default)
-[0x08ff_pub15]
+// Boomerang - LBR stats (default)
+[0x08ff_lbr]
 {
 get=base_boomerang
 baserange=4
@@ -32,8 +32,8 @@ value=32 16
 weight=400
 }
 
-// Cyclone - Pub15 stats (default)
-[0x0901_pub15]
+// Cyclone - LBR stats (default)
+[0x0901_lbr]
 {
 get=base_cyclone
 weight=600

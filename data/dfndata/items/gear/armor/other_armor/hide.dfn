@@ -2,9 +2,10 @@
 // Hide Pauldrons - N/S
 [0x2b77]
 {
-getpub15=0x2b77_pub15
+getlbr=0x2b77_lbr
 getaos=0x2b77_aos
 gettol=0x2b77_tol
+sectionid=0x2b77
 }
 
 // Hide Pauldrons - E/S
@@ -24,9 +25,10 @@ get=0x2b77 0x316e
 // Hide Tunic - E/W
 [0x2b74]
 {
-getpub15=0x2b74_pub15
+getlbr=0x2b74_lbr
 getaos=0x2b74_aos
 gettol=0x2b74_tol
+sectionid=0x2b74
 }
 
 // Hide Tunic - N/S
@@ -46,9 +48,10 @@ get=0x2b74 0x316b
 // Hide Armor (Female) - E/W
 [0x2b79]
 {
-getpub15=0x2b79_pub15
+getlbr=0x2b79_lbr
 getaos=0x2b79_aos
 gettol=0x2b79_tol
+sectionid=0x2b79
 }
 
 // Hide Armor (Female) - N/S
@@ -68,9 +71,10 @@ get=0x2b79 0x3170
 // Hide Gloves - E/W
 [0x2b75]
 {
-getpub15=0x2b75_pub15
+getlbr=0x2b75_lbr
 getaos=0x2b75_aos
 gettol=0x2b75_tol
+sectionid=0x2b75
 }
 
 // Hide Gloves - N/S
@@ -90,9 +94,10 @@ get=0x2b75 0x316c
 // Hide Pants - N/S
 [0x2b78]
 {
-getpub15=0x2b78_pub15
+getlbr=0x2b78_lbr
 getaos=0x2b78_aos
 gettol=0x2b78_tol
+sectionid=0x2b78
 }
 
 // Hide Pants - E/W
@@ -112,9 +117,10 @@ get=0x2b78 0x316f
 // Hide Gorget - E/W
 [0x2b76]
 {
-getpub15=0x2b76_pub15
+getlbr=0x2b76_lbr
 getaos=0x2b76_aos
 gettol=0x2b76_tol
+sectionid=0x2b76
 }
 
 // Hide Gorget - N/S
@@ -136,9 +142,10 @@ get=0x2b76 0x316d
 // Dragon Turtle Hide Arms
 [0x782e]
 {
-getpub15=0x782e_pub15
+getlbr=0x782e_lbr
 getaos=0x782e_aos
 gettol=0x782e_tol
+sectionid=0x782e
 }
 
 // Dragon Turtle Hide Arms - Alias
@@ -151,9 +158,10 @@ get=0x782e
 // Dragon Turtle Hide Chest
 [0x782a]
 {
-getpub15=0x782a_pub15
+getlbr=0x782a_lbr
 getaos=0x782a_aos
 gettol=0x782a_tol
+sectionid=0x782a
 }
 
 // Dragon Turtle Hide Chest - Alias
@@ -165,9 +173,10 @@ get=0x782a
 // Dragon Turtle Hide Bustier
 [0x782b]
 {
-getpub15=0x782b_pub15
+getlbr=0x782b_lbr
 getaos=0x782b_aos
 gettol=0x782b_tol
+sectionid=0x782b
 }
 
 // Dragon Turtle Hide Bustier - Alias
@@ -180,9 +189,10 @@ get=0x782b
 // Dragon Turtle Hide Helm
 [0x782d]
 {
-getpub15=0x782d_pub15
+getlbr=0x782d_lbr
 getaos=0x782d_aos
 gettol=0x782d_tol
+sectionid=0x782d
 }
 
 // Dragon Turtle Hide Helm - Alias
@@ -196,9 +206,10 @@ get=0x782d
 // Dragon Turtle Hide Leggings
 [0x782c]
 {
-getpub15=0x782c_pub15
+getlbr=0x782c_lbr
 getaos=0x782c_aos
 gettol=0x782c_tol
+sectionid=0x782c
 }
 
 // Dragon Turtle Hide Leggings - Alias
