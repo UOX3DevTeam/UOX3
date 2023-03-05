@@ -762,11 +762,11 @@ enum BodyType
 enum ExpansionRuleset
 {
 	ER_CORE,
+	ER_UO,
 	ER_T2A,
 	ER_UOR,
 	ER_TD,
 	ER_LBR,
-	ER_PUB15,
 	ER_AOS,
 	ER_SE,
 	ER_ML,

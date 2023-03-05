@@ -1,6 +1,6 @@
 // FENCING WEAPONS
 
-// CLASSIC
+// ORIGINAL UO
 // Spear - Base item with shared DFN stats
 [base_spear]
 {
@@ -17,9 +17,10 @@ restock=10
 // Spear - N/S
 [0x0f62]
 {
-getpub15=0x0f62_pub15
+getlbr=0x0f62_lbr
 getaos=0x0f62_aos
 gettol=0x0f62_tol
+sectionid=0x0f62
 }
 
 // Spear - E/W
@@ -38,7 +39,7 @@ get=0x0f62 0x0f63
 // Tribal Spear
 [tribalspear]
 {
-getpub15=tribalspear_pub15
+getlbr=tribalspear_lbr
 getaos=tribalspear_aos
 gettol=tribalspear_tol
 name=tribal spear
@@ -63,9 +64,10 @@ restock=10
 // Kryss - E/W
 [0x1400]
 {
-getpub15=0x1400_pub15
+getlbr=0x1400_lbr
 getaos=0x1400_aos
 gettol=0x1400_tol
+sectionid=0x1400
 }
 
 // Kryss - N/S
@@ -97,9 +99,10 @@ restock=10
 // Short Spear - E/W
 [0x1402]
 {
-getpub15=0x1402_pub15
+getlbr=0x1402_lbr
 getaos=0x1402_aos
 gettol=0x1402_tol
+sectionid=0x1402
 }
 
 // Short Spear - N/S
@@ -131,9 +134,10 @@ restock=10
 // War Fork - E/W
 [0x1404]
 {
-getpub15=0x1404_pub15
+getlbr=0x1404_lbr
 getaos=0x1404_aos
 gettol=0x1404_tol
+sectionid=0x1404
 }
 
 // War Fork - N/S
@@ -165,9 +169,10 @@ restock=10
 // Pitchfork - N/S
 [0x0e87]
 {
-getpub15=0x0e87_pub15
+getlbr=0x0e87_lbr
 getaos=0x0e87_aos
 gettol=0x0e87_tol
+sectionid=0x0e87
 }
 
 // Pitchfork - E/W
@@ -196,15 +201,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=aos
 restock=10
 }
 
 // Pike - E/W
 [0x26be]
 {
-getpub15=0x26be_pub15
+getlbr=0x26be_lbr
 getaos=0x26be_aos
 gettol=0x26be_tol
+sectionid=0x26be
 }
 
 // Pike - N/S
@@ -230,15 +237,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=aos
 restock=10
 }
 
 // Lance - E/W
 [0x26c0]
 {
-getpub15=0x26c0_pub15
+getlbr=0x26c0_lbr
 getaos=0x26c0_aos
 gettol=0x26c0_tol
+sectionid=0x26c0
 }
 
 // Lance - N/S
@@ -266,15 +275,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Lajatang - E/W
 [0x27a7]
 {
-getpub15=0x27a7_pub15
+getlbr=0x27a7_lbr
 getaos=0x27a7_aos
 gettol=0x27a7_tol
+sectionid=0x27a7
 }
 
 // Lajatang - N/S
@@ -300,15 +311,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Tekagi - E/W
 [0x27ab]
 {
-getpub15=0x27ab_pub15
+getlbr=0x27ab_lbr
 getaos=0x27ab_aos
 gettol=0x27ab_tol
+sectionid=0x27ab
 }
 
 // Tekagi - N/S
@@ -334,15 +347,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Kama - E/W
 [0x27ad]
 {
-getpub15=0x27ad_pub15
+getlbr=0x27ad_lbr
 getaos=0x27ad_aos
 gettol=0x27ad_tol
+sectionid=0x27ad
 }
 
 // Kama - N/S
@@ -368,15 +383,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Sai - E/W
 [0x27af]
 {
-getpub15=0x27af_pub15
+getlbr=0x27af_lbr
 getaos=0x27af_aos
 gettol=0x27af_tol
+sectionid=0x27af
 }
 
 // Sai - N/S
@@ -405,15 +422,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=ml
 restock=10
 }
 
 // War Cleaver - N/S
 [0x2d23]
 {
-getpub15=0x2d23_pub15
+getlbr=0x2d23_lbr
 getaos=0x2d23_aos
 gettol=0x2d23_tol
+sectionid=0x2d23
 }
 
 // War Cleaver - E/W
@@ -439,15 +458,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=ml
 restock=10
 }
 
 // Elven Spellblade - N/S
 [0x2d20]
 {
-getpub15=0x2d20_pub15
+getlbr=0x2d20_lbr
 getaos=0x2d20_aos
 gettol=0x2d20_tol
+sectionid=0x2d20
 }
 
 // Elven Spellblade - E/W
@@ -476,15 +497,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish War Fork - N/S
 [0x48be]
 {
-getpub15=0x48be_pub15
+getlbr=0x48be_lbr
 getaos=0x48be_aos
 gettol=0x48be_tol
+sectionid=0x48be
 }
 
 // Gargish War Fork - E/W
@@ -510,15 +533,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Shortblade - N/S
 [0x0907]
 {
-getpub15=0x0907_pub15
+getlbr=0x0907_lbr
 getaos=0x0907_aos
 gettol=0x0907_tol
+sectionid=0x0907
 }
 
 // Shortblade - E/W
@@ -544,15 +569,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Bloodblade - N/S
 [0x08fe]
 {
-getpub15=0x08fe_pub15
+getlbr=0x08fe_lbr
 getaos=0x08fe_aos
 gettol=0x08fe_tol
+sectionid=0x08fe
 }
 
 // Bloodblade - E/W
@@ -578,15 +605,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Kryss - N/S
 [0x48bc]
 {
-getpub15=0x48bc_pub15
+getlbr=0x48bc_lbr
 getaos=0x48bc_aos
 gettol=0x48bc_tol
+sectionid=0x48bc
 }
 
 // Gargish Kryss - E/W
@@ -612,15 +641,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Spiked Whip - N/S
 [0xa28a]
 {
-getpub15=0xa28a_pub15
+getlbr=0xa28a_lbr
 getaos=0xa28a_aos
 gettol=0xa28a_tol
+sectionid=0xa28a
 }
 
 // Spiked Whip - E/W
@@ -646,15 +677,17 @@ decay=1
 good=22
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Lance - N/S
 [0x48ca]
 {
-getpub15=0x48ca_pub15
+getlbr=0x48ca_lbr
 getaos=0x48ca_aos
 gettol=0x48ca_tol
+sectionid=0x48ca
 }
 
 // Gargish Lance - E/W
@@ -680,15 +713,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Pike - N/S
 [0x48c8]
 {
-getpub15=0x48c8_pub15
+getlbr=0x48c8_lbr
 getaos=0x48c8_aos
 gettol=0x48c8_tol
+sectionid=0x48c8
 }
 
 // Gargish Pike - E/W
@@ -714,15 +749,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Dual Pointed Spear - N/S
 [0x0904]
 {
-getpub15=0x0904_pub15
+getlbr=0x0904_lbr
 getaos=0x0904_aos
 gettol=0x0904_tol
+sectionid=0x0904
 }
 
 // Dual Pointed Spear - E/W
@@ -748,15 +785,17 @@ decay=1
 good=22
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Tekagi - N/S
 [0x48ce]
 {
-getpub15=0x48ce_pub15
+getlbr=0x48ce_lbr
 getaos=0x48ce_aos
 gettol=0x48ce_tol
+sectionid=0x48ce
 }
 
 // Gargish Tekagi - E/W

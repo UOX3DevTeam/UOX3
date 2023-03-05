@@ -1,9 +1,10 @@
 // Studded Sleeves - E/W
 [0x13d4]
 {
-getpub15=0x13d4_pub15
+getlbr=0x13d4_lbr
 getaos=0x13d4_aos
 gettol=0x13d4_tol
+sectionid=0x13d4
 }
 
 // Studded Sleeves - N/S
@@ -22,9 +23,10 @@ get=0x13d4 0x13dc
 // Studded Gloves - E/W
 [0x13d5]
 {
-getpub15=0x13d5_pub15
+getlbr=0x13d5_lbr
 getaos=0x13d5_aos
 gettol=0x13d5_tol
+sectionid=0x13d5
 }
 
 // Studded Gloves - N/S
@@ -43,9 +45,10 @@ get=0x13d5 0x13dd
 // Studded Gorget
 [0x13d6]
 {
-getpub15=0x13d6_pub15
+getlbr=0x13d6_lbr
 getaos=0x13d6_aos
 gettol=0x13d6_tol
+sectionid=0x13d6
 }
 
 // Studded Gorget - Alias
@@ -57,9 +60,10 @@ get=0x13d6
 // Studded Leggings - E/W
 [0x13da]
 {
-getpub15=0x13da_pub15
+getlbr=0x13da_lbr
 getaos=0x13da_aos
 gettol=0x13da_tol
+sectionid=0x13da
 }
 
 // Studded Leggings - N/S
@@ -78,9 +82,10 @@ get=0x13da 0x13e1
 // Studded Tunic - E/W
 [0x13db]
 {
-getpub15=0x13db_pub15
+getlbr=0x13db_lbr
 getaos=0x13db_aos
 gettol=0x13db_tol
+sectionid=0x13db
 }
 
 // Studded Tunic - N/S
@@ -99,9 +104,10 @@ get=0x13db 0x13e2
 // Studded Armor (Female) - E/W
 [0x1c02]
 {
-getpub15=0x1c02_pub15
+getlbr=0x1c02_lbr
 getaos=0x1c02_aos
 gettol=0x1c02_tol
+sectionid=0x1c02
 }
 
 // Studded Armor (Female) - N/S
@@ -120,9 +126,10 @@ get=0x1c02 0x1c03
 // Studded Bustier (Female) - E/W
 [0x1c0c]
 {
-getpub15=0x1c0c_pub15
+getlbr=0x1c0c_lbr
 getaos=0x1c0c_aos
 gettol=0x1c0c_tol
+sectionid=0x1c0c
 }
 
 // Studded Bustier (Female) - N/S

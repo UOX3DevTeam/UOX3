@@ -91,6 +91,9 @@ function onCallback0( socket, ourObj )
 			socket.SysMessage( "null" );
 		}
 		break;
+	case "ORIGIN":
+		socket.SysMessage( ourObj.origin );
+		break;
 	case "PERMANENTMAGICREFLECT":
 		socket.SysMessage( ourObj.permanentMagicReflect );
 		break;
@@ -459,6 +462,20 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "COMMANDLEVEL":
 		socket.SysMessage( ourChar.commandlevel );
+		break;
+	case "HAIRSTYLE":
+		socket.SysMessage( ourChar.hairStyle );
+		break;
+	case "HAIRCOLOUR":
+	case "HAIRCOLOR":
+		socket.SysMessage( ourChar.hairColour );
+		break;
+	case "BEARDSTYLE":
+		socket.SysMessage( ourChar.beardStyle );
+		break;
+	case "BEARDCOLOUR":
+	case "BEARDCOLOR":
+		socket.SysMessage( ourChar.beardColour );
 		break;
 	case "Z":
 		socket.SysMessage( ourChar.z );

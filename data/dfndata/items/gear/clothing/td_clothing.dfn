@@ -16,6 +16,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2649
 }
 
 // TD Jester Pants
@@ -45,6 +47,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x264d
 }
 
 // TD Haidate
@@ -74,6 +78,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x264f
 }
 
 // TD Kobakama
@@ -103,6 +109,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2651
 }
 
 // TD Ninja Pants
@@ -132,6 +140,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x265f
 }
 
 // TD Shirt
@@ -161,6 +171,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2661
 }
 
 // TD Shirt
@@ -190,6 +202,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2663
 }
 
 // TD Shirt
@@ -219,6 +233,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2665
 }
 
 // TD Shirt
@@ -248,6 +264,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2667
 }
 
 // TD Ninja Shirt
@@ -277,6 +295,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x267b
 }
 
 // TD Fancy Dress 1
@@ -306,6 +326,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x267d
 }
 
 // TD Fancy Dress 2
@@ -335,6 +357,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x267f
 }
 
 // TD Long Dress
@@ -364,6 +388,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2681
 }
 
 // TD Kimono
@@ -393,6 +419,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2683
 }
 
 // TD Hooded Shroud
@@ -422,6 +450,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x2685
 }
 
 // TD Death Shroud
@@ -451,6 +481,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x26ad
 }
 
 [tdarcanecloak]
@@ -479,6 +511,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x26ae
 }
 
 [tdarcanerobe]
@@ -507,6 +541,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x26b0
 }
 
 [tdarcanegloves]
@@ -536,6 +572,8 @@ dyeable=1
 decay=1
 good=18
 str=10
+origin=td
+sectionid=0x2309
 }
 
 // Fur Cape

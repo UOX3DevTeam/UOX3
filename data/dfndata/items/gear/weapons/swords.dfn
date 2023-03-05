@@ -1,6 +1,6 @@
 // SWORDS
 
-// CLASSIC
+// ORIGINAL UO
 // Cutlass - Base item
 [base_cutlass]
 {
@@ -17,9 +17,10 @@ restock=10
 // Cutlass - E/W
 [0x1440]
 {
-getpub15=0x1440_pub15
+getlbr=0x1440_lbr
 getaos=0x1440_aos
 gettol=0x1440_tol
+sectionid=0x1440
 }
 
 // Cutlass - N/S
@@ -50,9 +51,10 @@ restock=10
 // Katana - E/W
 [0x13fe]
 {
-getpub15=0x13fe_pub15
+getlbr=0x13fe_lbr
 getaos=0x13fe_aos
 gettol=0x13fe_tol
+sectionid=0x13fe
 }
 
 // Katana - N/S
@@ -83,9 +85,10 @@ restock=10
 // Broadsword - N/S
 [0x0f5e]
 {
-getpub15=0x0f5e_pub15
+getlbr=0x0f5e_lbr
 getaos=0x0f5e_aos
 gettol=0x0f5e_tol
+sectionid=0x0f5e
 }
 
 // Broadsword - E/W
@@ -116,9 +119,10 @@ restock=10
 // Longsword - E/W
 [0x0f60]
 {
-getpub15=0x0f60_pub15
+getlbr=0x0f60_lbr
 getaos=0x0f60_aos
 gettol=0x0f60_tol
+sectionid=0x0f60
 }
 
 // Longsword - N/S
@@ -149,9 +153,10 @@ restock=10
 // Long Sword (thin) - E/W
 [0x13b7]
 {
-getpub15=0x13b7_pub15
+getlbr=0x13b7_lbr
 getaos=0x13b7_aos
 gettol=0x13b7_tol
+sectionid=0x13b7
 }
 
 // Long Sword (thin) - N/S
@@ -182,9 +187,10 @@ restock=10
 // Scimitar - E/W
 [0x13b5]
 {
-getpub15=0x13b5_pub15
+getlbr=0x13b5_lbr
 getaos=0x13b5_aos
 gettol=0x13b5_tol
+sectionid=0x13b5
 }
 
 // Scimitar - N/S
@@ -215,9 +221,10 @@ restock=10
 // Viking Sword - N/S
 [0x13b9]
 {
-getpub15=0x13b9_pub15
+getlbr=0x13b9_lbr
 getaos=0x13b9_aos
 gettol=0x13b9_tol
+sectionid=0x13b9
 }
 
 // Viking Sword - E/W
@@ -246,15 +253,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=aos
 restock=10
 }
 
 // Bone Harvester - E/W
 [0x26bb]
 {
-getpub15=0x26bb_pub15
+getlbr=0x26bb_lbr
 getaos=0x26bb_aos
 gettol=0x26bb_tol
+sectionid=0x26bb
 }
 
 // Bone Harvester - N/S
@@ -280,15 +289,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=aos
 restock=10
 }
 
 // Crescent Blade - E/W
 [0x26c1]
 {
-getpub15=0x26c1_pub15
+getlbr=0x26c1_lbr
 getaos=0x26c1_aos
 gettol=0x26c1_tol
+sectionid=0x26c1
 }
 
 // Crescent Blade - N/S
@@ -314,15 +325,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=aos
 restock=10
 }
 
 // Paladin Sword - E/W
 [0x26ce]
 {
-getpub15=0x26ce_pub15
+getlbr=0x26ce_lbr
 getaos=0x26ce_aos
 gettol=0x26ce_tol
+sectionid=0x26ce
 }
 
 // Paladin Sword - N/S
@@ -351,15 +364,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // No-Dachi - E/W
 [0x27a2]
 {
-getpub15=0x27a2_pub15
+getlbr=0x27a2_lbr
 getaos=0x27a2_aos
 gettol=0x27a2_tol
+sectionid=0x27a2
 }
 
 // No-Dachi - N/S
@@ -385,15 +400,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=se
 restock=10
 }
 
 // Wakizashi - E/W
 [0x27a4]
 {
-getpub15=0x27a4_pub15
+getlbr=0x27a4_lbr
 getaos=0x27a4_aos
 gettol=0x27a4_tol
+sectionid=0x27a4
 }
 
 // Wakizashi - N/S
@@ -419,15 +436,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=se
 restock=10
 }
 
 // Bokuto - E/W
 [0x27a8]
 {
-getpub15=0x27a8_pub15
+getlbr=0x27a8_lbr
 getaos=0x27a8_aos
 gettol=0x27a8_tol
+sectionid=0x27a8
 }
 
 // Bokuto - N/S
@@ -453,15 +472,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=se
 restock=10
 }
 
 // Daisho - E/W
 [0x27a9]
 {
-getpub15=0x27a9_pub15
+getlbr=0x27a9_lbr
 getaos=0x27a9_aos
 gettol=0x27a9_tol
+sectionid=0x27a9
 }
 
 // Daisho - N/S
@@ -491,15 +512,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=ml
 restock=10
 }
 
 // Elven Machete - N/S
 [0x2d29]
 {
-getpub15=0x2d29_pub15
+getlbr=0x2d29_lbr
 getaos=0x2d29_aos
 gettol=0x2d29_tol
+sectionid=0x2d29
 }
 
 // Elven Machete - E/W
@@ -525,15 +548,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=ml
 restock=10
 }
 
 // Radiant Scimitar - N/S
 [0x2d29]
 {
-getpub15=0x2d29_pub15
+getlbr=0x2d29_lbr
 getaos=0x2d29_aos
 gettol=0x2d29_tol
+sectionid=0x2d29
 }
 
 // Radiant Scimitar - E/W
@@ -559,15 +584,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=ml
 restock=10
 }
 
 // Rune Blade - N/S
 [0x2d26]
 {
-getpub15=0x2d26_pub15
+getlbr=0x2d26_lbr
 getaos=0x2d26_aos
 gettol=0x2d26_tol
+sectionid=0x2d26
 }
 
 // Rune Blade - E/W
@@ -596,15 +623,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Dread Sword - N/S
 [0x090b]
 {
-getpub15=0x090b_pub15
+getlbr=0x090b_lbr
 getaos=0x090b_aos
 gettol=0x090b_tol
+sectionid=0x090b
 }
 
 // Dread Sword - E/W
@@ -630,15 +659,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Bone Harvester - N/S
 [0x48c6]
 {
-getpub15=0x48c6_pub15
+getlbr=0x48c6_lbr
 getaos=0x48c6_aos
 gettol=0x48c6_tol
+sectionid=0x48c6
 }
 
 // Gargish Bone Harvester - E/W
@@ -664,15 +695,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Glass Sword - N/S
 [0x090c]
 {
-getpub15=0x090c_pub15
+getlbr=0x090c_lbr
 getaos=0x090c_aos
 gettol=0x090c_tol
+sectionid=0x090c
 }
 
 // Glass Sword - E/W
@@ -698,15 +731,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Cleaver - N/S
 [0x48ae]
 {
-getpub15=0x48ae_pub15
+getlbr=0x48ae_lbr
 getaos=0x48ae_aos
 gettol=0x48ae_tol
+sectionid=0x48ae
 }
 
 // Gargish Cleaver - E/W
@@ -732,15 +767,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Katana - N/S
 [0x48ba]
 {
-getpub15=0x48ba_pub15
+getlbr=0x48ba_lbr
 getaos=0x48ba_aos
 gettol=0x48ba_tol
+sectionid=0x48ba
 }
 
 // Gargish Katana - E/W
@@ -766,15 +803,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Butcher Knife - N/S
 [0x48b6]
 {
-getpub15=0x48b6_pub15
+getlbr=0x48b6_lbr
 getaos=0x48b6_aos
 gettol=0x48b6_tol
+sectionid=0x48b6
 }
 
 // Gargish Butcher Knife - E/W
@@ -800,15 +839,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Stone War Sword - N/S
 [0x0900]
 {
-getpub15=0x0900_pub15
+getlbr=0x0900_lbr
 getaos=0x0900_aos
 gettol=0x0900_tol
+sectionid=0x0900
 }
 
 // Stone War Sword - E/W
@@ -834,15 +875,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Talwar - N/S
 [0x0908]
 {
-getpub15=0x0908_pub15
+getlbr=0x0908_lbr
 getaos=0x0908_aos
 gettol=0x0908_tol
+sectionid=0x0908
 }
 
 // Gargish Talwar - E/W
@@ -868,15 +911,17 @@ decay=1
 good=21
 layer=2
 movable=1
+origin=sa
 restock=10
 }
 
 // Gargish Daisho - N/S
 [0x48d0]
 {
-getpub15=0x48d0_pub15
+getlbr=0x48d0_lbr
 getaos=0x48d0_aos
 gettol=0x48d0_tol
+sectionid=0x48d0
 }
 
 // Gargish Daisho - E/W
@@ -905,15 +950,17 @@ decay=1
 good=21
 layer=1
 movable=1
+origin=tol
 restock=10
 }
 
 // Bladed Whip - N/S
 [0xa28b]
 {
-getpub15=0xa28b_pub15
+getlbr=0xa28b_lbr
 getaos=0xa28b_aos
 gettol=0xa28b_tol
+sectionid=0xa28b
 }
 
 // Bladed Whip - E/W

@@ -1974,6 +1974,10 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 				{
 					NoBeard( true );
 				}
+				else if( UTag == "NOHAIR" )
+				{
+					NoHair( true );
+				}
 				else if( UTag == "NIGHTVIS" ) // night vision level... light bonus
 				{
 					NightVision( static_cast<UI08>( std::stoul( data, nullptr, 0 )));

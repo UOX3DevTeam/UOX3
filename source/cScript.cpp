@@ -128,7 +128,7 @@ static JSFunctionSpec my_functions[] =
 	{ "Moon",						SE_Moon,					2, 0, 0 },
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
-	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
 
@@ -172,6 +172,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetMultiCount",				SE_GetMultiCount,			0, 0, 0 },
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
+	{ "EraStringToNum",				SE_EraStringToNum,			1, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -1376,6 +1377,37 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLeaving, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnMultiLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for multi when a player logs out inside the multi
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( iMulti ) || !ValidateObject( cPlayer ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnMultiLogout, "onMultiLogout" ))
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *myMulti = JSEngine->AcquireObject( IUE_ITEM, iMulti, runTime );
+	JSObject *myPlayer = JSEngine->AcquireObject( IUE_CHAR, cPlayer, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myMulti );
+	params[1] = OBJECT_TO_JSVAL( myPlayer );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMultiLogout", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnMultiLogout, false );
 		return RV_NOFUNC;
 	}
 

@@ -4,6 +4,15 @@ doorTypes = new Array (
 	0x084C, 0x0866, 0x190E, 0x190f, 0x1FED
 );
 
+// Fetch settings that determine who (if anyone) have keyless access to locked doors in the house
+const keylessOwnerAccess 	= GetServerSetting( "KeylessOwnerAccess" );
+const keylessCoOwnerAccess	= GetServerSetting( "KeylessCoOwnerAccess" );
+const keylessFriendAccess 	= GetServerSetting( "KeylessFriendAccess" );
+const keylessGuestAccess 	= GetServerSetting( "KeylessGuestAccess" );
+
+// Fetch setting for whether all characters on a player's account co-own houses together
+const coOwnHousesOnSameAccount = GetServerSetting( "CoOwnHousesOnSameAccount" );
+
 function onUseChecked( pUser, iUsed )
 {
 	var socket = pUser.socket;
@@ -11,7 +20,19 @@ function onUseChecked( pUser, iUsed )
 	{
 		if( !pUser.InRange( iUsed, 3 ))
 		{
-			socket.SysMessage( GetDictionaryEntry( 1183, socket.language ));
+			socket.SysMessage( GetDictionaryEntry( 1183, socket.language )); // You cannot reach the handle from here.
+			return false;
+		}
+	}
+
+	if( iUsed.type == 13 ) // Locked
+	{
+		if( !FindKey( pUser, iUsed ))
+		{
+			if( socket )
+			{
+				socket.SysMessage( GetDictionaryEntry( 406, socket.language )); // This door is currently locked.
+			}
 			return false;
 		}
 	}
@@ -22,22 +43,10 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( socket )
 			{
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ));
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language )); // There is something blocking this door.
 			}
 		}
 		return false;
-	}
-
-	if( iUsed.type == 13 ) // Locked
-	{
-		if( !FindKey( pUser, iUsed ))
-		{
-			if( socket )
-			{
-				socket.SysMessage( GetDictionaryEntry( 406, socket.language ));
-			}
-			return false;
-		}
 	}
 
 	var isDoor = false;
@@ -171,14 +180,14 @@ function onUseChecked( pUser, iUsed )
 		{
 			if( socket )
 			{
-				socket.SysMessage( GetDictionaryEntry( 1661, socket.language ));
+				socket.SysMessage( GetDictionaryEntry( 1661, socket.language )); // There is something blocking this door.
 			}
 		}
 		else if( iUsed.type == 13 )
 		{
 			if( socket )
 			{
-				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e );
+				pUser.TextMessage( GetDictionaryEntry( 405, socket.language ), false, 0x047e ); // Using your key, you quickly unlock and open the door.  You hastily relock it.
 			}
 		}
 	}
@@ -396,12 +405,32 @@ function GetDoorType( iUsed )
 function FindKey( pUser, iUsed )
 {
 	var foundKey = false;
-	if( iUsed.more > 0 )
+
+	// Handle key-less interactions with house doors
+	var iMulti = iUsed.multi;
+	if( ValidateObject( iMulti ))
 	{
-		var pPack = pUser.pack;
-		if( pPack != null )
+		if( keylessOwnerAccess && ValidateObject( iMulti.owner ) && ( iMulti.owner == pUser || ( coOwnHousesOnSameAccount && iMulti.owner.accountNum == pUser.accountNum )))
 		{
-			foundKey = FindKeyInPack( pUser, pPack, iUsed );
+			// House owner requires no key
+			foundKey = true;
+		}
+		else if(( keylessCoOwnerAccess && iMulti.IsOnOwnerList( pUser ))
+			|| ( keylessFriendAccess && iMulti.IsOnFriendList( pUser ))
+			|| ( keylessGuestAccess && iMulti.IsOnGuestList( pUser )))
+		{
+			foundKey = true;
+		}
+		else
+		{
+			if( iUsed.more > 0 )
+			{
+				var pPack = pUser.pack;
+				if( pPack != null )
+				{
+					foundKey = FindKeyInPack( pUser, pPack, iUsed );
+				}
+			}
 		}
 	}
 
@@ -419,7 +448,7 @@ function FindKeyInPack( pUser, pPack, iUsed )
 				return true;
 			}
 		}
-		else if( toCheck.more == iUsed.more )
+		else if(( iUsed.IsMulti() && toCheck.more == iUsed.serial ) || ( toCheck.more == iUsed.more ))
 		{
 			return true;
 		}
@@ -427,11 +456,12 @@ function FindKeyInPack( pUser, pPack, iUsed )
 		{
 			//If it's a keyring, check to see if any of the keys there match the lock on the door
 			var keyAmount = toCheck.GetTag( "keys" );
+			var iMore = ( iUsed.IsMulti() ? iUsed.serial : iUsed.more );
 			var i = 1;
 			for( i = 1; i < keyAmount + 1; i++ )
 			{
 				var keyItemMore = toCheck.GetTag( "key" + i + "more" );
-				if( keyItemMore == iUsed.more || keyItemMore == 255 )
+				if( keyItemMore == iMore || keyItemMore == 255 )
 				{
 					return true;
 				}

@@ -14,6 +14,7 @@ amount=1
 decay=1
 good=23
 movable=1
+sectionid=0x0f3f
 }
 
 [0x0f3f-5]
@@ -48,6 +49,7 @@ amount=1
 decay=1
 good=23
 movable=1
+sectionid=0x1bfb
 }
 
 [0x1bfb-5]
@@ -81,7 +83,9 @@ pileable=1
 amount=1
 decay=1
 good=23
+origin=se
 movable=1
+sectionid=0x27ac
 }
 
 [0x27ac-5]
