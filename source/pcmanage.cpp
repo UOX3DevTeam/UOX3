@@ -731,7 +731,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	}
 	else if( mChar->GetId() == 0x029A )
 	{
-		AddNewbieItem( tSock, mChar, "DEFAULT GARG FEMALE", pantsColour, shirtColour );
+		AddNewbieItem( tSock, mChar, "DEFAULT GARG MALE", pantsColour, shirtColour );
 	}
 	else if( mChar->GetId() == 0x029B )
 	{

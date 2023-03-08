@@ -1,3 +1,7 @@
+08/03/2023 - Xuri
+	Fixed an issue where houses could lose track of locked down items on server restart
+	Fixed an issue where items could be accidentally dropped through the floor of houses/boats
+
 04/03/2023 - Xuri (0.99.6-RC3)
 	Updated Item DFNs with ORIGIN and SECTIONID tags for relevant items
 	Added JS Function to make comparing eras (based on object origin or server settings) easier:
