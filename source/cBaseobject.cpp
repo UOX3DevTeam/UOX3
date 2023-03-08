@@ -2163,6 +2163,19 @@ void CBaseObject::PostLoadProcessing( void )
 		multis		= nullptr;
 		SetMulti( tempMulti, false );
 	}
+	else if( multis == nullptr && tempMulti != INVALIDSERIAL )
+	{
+		// Get locked down items reacquainted with multis that were loaded before them
+		CItem *tempItem = static_cast<CItem *>( this );
+		if( tempItem->GetMovable() == 3 )
+		{
+			CMultiObj *iMulti = CalcMultiFromSer( tempMulti );
+			if( ValidateObject( iMulti ))
+			{
+				iMulti->LockDownItem( static_cast<CItem *>( this ));
+			}
+		}
+	}
 	if( spawnSerial != INVALIDSERIAL )
 	{
 		tmpSerial	= spawnSerial;
