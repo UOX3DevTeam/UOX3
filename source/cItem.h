@@ -285,7 +285,7 @@ public:
 	auto			IsMetalType() const -> bool;
 	auto			IsLeatherType() const -> bool;
 	auto			CanBeLockedDown() const -> bool;
-	auto			LockDown() -> void;
+	auto			LockDown( CMultiObj *multiObj = nullptr ) -> void;
 	auto			IsContType() const -> bool;
 	auto			UpdateRegion() -> void;
 
