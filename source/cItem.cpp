@@ -1407,8 +1407,12 @@ auto CItem::IsLockedDown() const -> bool
 {
 	return ( movable == 3 );
 }
-auto CItem::LockDown() -> void
+auto CItem::LockDown( CMultiObj *multiObj ) -> void
 {
+	if( ValidateObject( multiObj ))
+	{
+		multis = multiObj;
+	}
 	movable = 3;
 	UpdateRegion();
 }
