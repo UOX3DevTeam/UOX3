@@ -786,6 +786,14 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 		SetEventExists( seOnTooltip, false );
 	}
 
+	// If rval is negative, it's possible some other function/method called from within Ontooltip() encountered
+	// an error. Abort attempt to turn it into a string - it might crash the server!
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
+		return "";
+	}
+
 	JSString *str = JS_ValueToString( targContext, rval );
 	std::string returnString = JS_GetStringBytes( str );
 
@@ -812,47 +820,67 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 	// Mark object as having an active name lookup via onNameRequest
 	myObj->NameRequestActive( true );
 
-	jsval rval, params[2];
-
-	// Create JS object reference for myObj, based on whether it's an item or character
-	JSObject *nameRequestObj = nullptr;
-	if( myObj->CanBeObjType( OT_CHAR ))
+	try
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		jsval rval, params[2];
+
+		// Create JS object reference for myObj, based on whether it's an item or character
+		JSObject *nameRequestObj = nullptr;
+		if( myObj->CanBeObjType( OT_CHAR ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		}
+		else if( myObj->CanBeObjType( OT_ITEM ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		}
+
+		// Create JS object reference for the name requester (which might be nullptr!)
+		JSObject *nameRequesterObj = nullptr;
+		if( nameRequester != nullptr )
+		{
+			nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+		}
+
+		params[0] = OBJECT_TO_JSVAL( nameRequestObj );
+		params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
+		if( retVal == JS_FALSE )
+		{
+			SetEventExists( seOnNameRequest, false );
+		}
+
+		// If rval is negative, it's possible some other function/method called from within onNameRequest() encountered
+		// an error. Abort attempt to turn it into a string - it might crash the server!
+		if( rval < 0 )
+		{
+			Console.Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
+			return "";
+		}
+
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
+		if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+		{
+			returnString = "";
+		}
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
+
+		return returnString;
 	}
-	else if( myObj->CanBeObjType( OT_ITEM ))
+	catch(...)
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		Console.Error( "Handled exception in cScript.cpp OnNameRequest()" );
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
 	}
 
-	// Create JS object reference for the name requester (which might be nullptr!)
-	JSObject *nameRequesterObj = nullptr;
-	if( nameRequester != nullptr )
-	{
-		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
-	}
-
-	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
-	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnNameRequest, false );
-	}
-
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
-
-	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
-	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
-	{
-		returnString = "";
-	}
-
-	// Clear flag that marks object as having an active name lookup via onNameRequest
-	myObj->NameRequestActive( false );
-
-	return returnString;
+	return "";
 }
 
 //o------------------------------------------------------------------------------------------------o

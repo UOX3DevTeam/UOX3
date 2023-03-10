@@ -900,24 +900,33 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 {
 	auto dynZ = ILLEGAL_Z;
 
-	auto MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea )
+	// Special case for handling multis that cross over between multiple map regions because of size
+	CMultiObj *tempMulti = FindMulti( x, y, z, worldNumber, instanceId );
+	if( ValidateObject( tempMulti ) )
 	{
-		auto regItems = MapArea->GetItemList();
-		for( const auto tempItem : regItems->collection() )
+		dynZ = MultiHeight( tempMulti, x, y, z, maxZ );
+	}
+	else
+	{
+		auto MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
+		if( MapArea )
 		{
-			if( ValidateObject( tempItem ) || tempItem->GetInstanceId() != instanceId )
+			auto regItems = MapArea->GetItemList();
+			for( const auto tempItem : regItems->collection() )
 			{
-				if( tempItem->GetId( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
+				if( ValidateObject( tempItem ) || tempItem->GetInstanceId() != instanceId )
 				{
-					dynZ = MultiHeight( tempItem, x, y, z, maxZ );
-				}
-				else if( tempItem->GetX() == x && tempItem->GetY() == y )
-				{
-					SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
-					if(( zTemp <= z + maxZ ) && zTemp > dynZ )
+					if( tempItem->GetId( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
 					{
-						dynZ = zTemp;
+						dynZ = MultiHeight( tempItem, x, y, z, maxZ );
+					}
+					else if( tempItem->GetX() == x && tempItem->GetY() == y )
+					{
+						SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
+						if(( zTemp <= z + maxZ ) && zTemp > dynZ )
+						{
+							dynZ = zTemp;
+						}
 					}
 				}
 			}

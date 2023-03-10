@@ -579,7 +579,7 @@ auto CMultiObj::LockDownItem( CItem *toLock ) -> void
 		});
 		if( iter == lockedList.end() )
 		{
-			toLock->LockDown();
+			toLock->LockDown( this );
 			toLock->Dirty( UT_UPDATE );
 			lockedList.push_back( toLock );
 

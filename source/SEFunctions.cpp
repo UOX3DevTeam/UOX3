@@ -3798,7 +3798,7 @@ JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
 		if( eraNum != 0 )
 		{
-			*rval = eraNum;
+			*rval = INT_TO_JSVAL( eraNum );
 		}
 		else
 		{
@@ -4524,7 +4524,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 231:	// CORESHARDERA
 			{
-				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() )) };
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() ), true ) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
 				*rval = STRING_TO_JSVAL( tString );
 				break;
