@@ -1,0 +1,6 @@
+[submodule "spidermonkey"]
+	path = spidermonkey
+	url = https://github.com/UOX3DevTeam/spidermonkey.git
+[submodule "zlib"]
+	path = zlib
+	url = https://github.com/UOX3DevTeam/zlib.git
