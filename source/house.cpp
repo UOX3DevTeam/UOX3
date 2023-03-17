@@ -333,7 +333,7 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 			for( SI16 l = 0; l <= spaceY - 1; ++l )
 			{
 				curY = y + l;
-				if( ValidateObject( mChar ) && mChar->GetCommandLevel() < CL_GM )
+				if( ValidateObject( mChar ) && !mChar->IsGM() )
 				{
 					CMultiObj *mMulti = FindMulti( curX, curY, z, worldNum, instanceId );
 					if( !ValidateObject( mMulti ) || !mMulti->IsOwner( mChar ))

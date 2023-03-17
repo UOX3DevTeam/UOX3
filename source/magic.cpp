@@ -4155,6 +4155,8 @@ bool CMagic::SelectSpell( CSocket *mSock, SI32 num )
 	}
 	else
 	{
+		// Inform GM why there's no spellcast delay
+		mSock->SysMessage( 6280 ); // Spellcast delay ignored due to elevated command level!
 		mChar->SetTimer( tCHAR_SPELLTIME, 0 );
 	}
 	// Delay measurement end

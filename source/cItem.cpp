@@ -1371,6 +1371,7 @@ auto CItem::IsFieldSpell() const -> UI08
 		case 0x3967:	return 3;// paralyze
 		case 0x3956:
 		case 0x3946:	return 4;// energy
+		case 0x0080:	return 5;// wall of stone
 		default:		return 0;
 	}
 }

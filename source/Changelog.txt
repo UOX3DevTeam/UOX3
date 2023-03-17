@@ -1,3 +1,11 @@
+17/03/2023 - Xuri
+	Fixed an issue where casting Wall of Stone inside a multi would lead to the wall of stone never expiring, because it was not correctly marked as a field spell
+	Reduced combat message spam; attacking messages now only appear when attacking targets who are not already fighting the attacker
+	Added a new character state - "passive combat mode" - primarily used by players when they tab out of combat. Tabbing out of combat will prevent the character from retaliating in combat if they're already fighting someone
+	Fixed several issues with dropping items through floors, tables and generally not being placed correctly when dropped inside multis
+	Hard-defined the Z-level at which some jewellers in Britain spawn to deny them rooftop access (spawn_felucca_town_britain.dfn and spawn_trammel_town_britain.dfn)
+	Added system messages informing shard staff with elevated command privileges why they are getting 100% skill check success, and no spellcast delay
+
 10/03/2023 - Xuri
 	Fixed an issue where EraStringToNum JS Function would return incorrect values and lead to unexpected behaviour
 	Added some safeguards against server crashes in onNameRequest() and onTooltip() JS Events

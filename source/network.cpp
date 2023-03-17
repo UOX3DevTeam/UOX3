@@ -913,7 +913,8 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 						}
 
 						ourChar->SetWar( buffer[1] != 0 );
-						ourChar->SetTarg( nullptr );
+						ourChar->SetPassive( buffer[1] == 0 ); // Set player as passive if they tab out of combat
+
 						if( ourChar->GetTimer( tCHAR_TIMEOUT ) <= cwmWorldState->GetUICurrentTime() )
 						{
 							ourChar->SetTimer( tCHAR_TIMEOUT, BuildTimeValue( 1 ));
