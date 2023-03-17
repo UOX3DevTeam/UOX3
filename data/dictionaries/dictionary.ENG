@@ -3340,6 +3340,8 @@
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
 6278=You have to use your taste identification skill to know more about this potion.
+6279=Skill check success guaranteed due to elevated command level!
+6280=Spellcast delay ignored due to elevated command level!
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
