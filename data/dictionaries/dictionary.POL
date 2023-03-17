@@ -4839,4 +4839,31 @@
 17223=Specjalnie wyłożona beczka do eliksirów.
 17224=W beczce nie ma nic do smakowania!
 17225=Jesteś już zaznajomiony z zawartością tej beczki.
+//System zamówień zbiorczych
+17250=Zamówienie zbiorcze
+17251=Liczba do wykonania:
+17252=Liczba zakończona:
+17253=Żądana pozycja:
+17254=wyjątkowe
+17255=Specjalne wymagania do spełnienia:
+17256=Wszystkie przedmioty muszą być wyjątkowe.
+17257=Wszystkie przedmioty muszą być wykonane z
+17258=Połącz ten czyn z żądanym przedmiotem.
+17259=Musisz mieć przedmiot w swoim plecaku, aby go namierzyć.
+17260=Maksymalna ilość żądanych przedmiotów została już połączona z tym czynem.
+17261=Przedmiot nie jest wykonany z żądanej rudy.
+17262=Przedmiot musi być wyjątkowy.
+17263=Przedmiot został już połączony z tym czynem.
+17264=Przedmiot nie znajduje się w żądaniu.
+17265=Oferta może być dostępna za ok.
+17266=minut
+17267=Dziękuję za towar!  Czy mógłbyś mi pomóc?
+17268=Czy chcesz przyjąć to zamówienie?
+17269=Ok
+17270=Nie zakończyłeś jeszcze zamówienia.
+17271=Dziękuję bardzo!  Oto nagroda za twój wysiłek.
+17272=To zamówienie jest dla jakiegoś innego sklepikarza.
+17273=Będziesz musiał poczekać kilka sekund, podczas gdy ja będę sprawdzał ostatnie zamówienie.
+17274=Akt zamówienia zbiorczego został umieszczony w twoim plecaku.
+17275=Nie masz wystarczająco dużo miejsca w plecaku na nagrodę za zamówienie zbiorcze.
 }

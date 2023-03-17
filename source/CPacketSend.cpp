@@ -8697,6 +8697,25 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
 	}*/
 
+	// Bulk Order Info - if enabled in ini
+	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopy.IsShop() )
+	{
+		TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
+		if( isBodVendor.m_IntValue > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x0100 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6152 ); // Bulk Order Info
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+	}
+
 	// Open Backpack
 	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))
 	if( toCopy.GetQuestType() != QT_ESCORTQUEST && (( toCopy.GetSerial() == tSock.CurrcharObj()->GetSerial() 

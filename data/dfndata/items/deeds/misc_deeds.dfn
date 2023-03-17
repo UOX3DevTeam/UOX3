@@ -29,7 +29,7 @@ ID=0x14F0
 script=5028
 }
 
-[smallbod_pub15]
+[smallbod_lbr]
 {
 id=0x14ef
 }
@@ -46,6 +46,6 @@ name=a bulk order deed
 colour=0x44E//Blacksmith: 0x44E; Tailoring: 0x483
 weight=100
 script=5042
-getpub15=smallbod_pub15
+getlbr=smallbod_lbr
 getaos=smallbod_aos
 }

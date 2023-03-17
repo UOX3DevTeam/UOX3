@@ -400,3 +400,89 @@ morex=82
 value=1000 500
 restock=15
 }
+
+// Colored Anvil Deeds - BOD reward
+[dc_anvil_deed]
+{
+get=base_item
+name=dull copper anvil deed
+id=0x14f0
+color=0x0973
+morex=100
+origin=uor
+}
+
+[si_anvil_deed]
+{
+get=base_item
+name=shadow iron anvil deed
+id=0x14f0
+color=0x0966
+morex=101
+origin=uor
+}
+
+[c_anvil_deed]
+{
+get=base_item
+name=copper anvil deed
+id=0x14f0
+color=0x096e
+morex=102
+origin=uor
+}
+
+[b_anvil_deed]
+{
+get=base_item
+name=bronze anvil deed
+id=0x14f0
+color=0x06d6
+morex=103
+origin=uor
+}
+
+[g_anvil_deed]
+{
+get=base_item
+name=gold anvil deed
+id=0x14f0
+color=0x08a5
+morex=104
+origin=uor
+}
+
+[a_anvil_deed]
+{
+get=base_item
+name=agapite anvil deed
+id=0x14f0
+color=0x0979
+morex=105
+origin=uor
+}
+
+[ve_anvil_deed]
+{
+get=base_item
+name=verite anvil deed
+id=0x14f0
+color=0x089f
+morex=106
+origin=uor
+}
+
+[va_anvil_deed]
+{
+get=base_item
+name=valorite anvil deed
+id=0x14f0
+color=0x08ab
+morex=107
+origin=uor
+}
+
+[colored_anvil_deed]
+{
+get=dc_anvil_deed si_anvil_deed c_anvil_deed b_anvil_deed g_anvil_deed a_anvil_deed ve_anvil_deed va_anvil_deed
+}

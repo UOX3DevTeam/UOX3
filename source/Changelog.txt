@@ -1,3 +1,27 @@
+17/03/2023 - Dragon Slayer, Xuri
+	Created framework, gumps, initial system for Bulk Order Deeds (Dragon Slayer)
+	Expanded BOD system to include gold, fame and special item rewards (Xuri)
+	Added optional support for triggering BOD offers from shopkeepers via context menus (Xuri)
+	Added new UOX.INI section with settings for Bulk Order System: (Xuri)
+		OFFERBODSFROMITEMSALES=1 	// If enabled, shopkeepers might offer BODs when players sell items to them
+		OFFERBODSFROMCONTEXTMENU=0 	// If enabled, shopkeepers might offer BODs via context menu option
+		BODSFROMCRAFTEDITEMSONLY=0 	// If enabled, only selling of crafted items will trigger BOD offers
+		BODGOLDREWARDMULTIPLIER=1 	// Reward multiplier for Gold given for completing a BODs - defaults to 1.0
+		BODFAMEREWARDMULTIPLIER=1 	// Reward multiplier for Fame given for completing a BOD - defaults to 1.0
+	Updated smithing-related create DFNs (dfndata/create/*) with proper names for entries (Xuri)
+	Added special BOD item rewards: (Xuri)
+		Sturdy Pickaxe - More uses than normal pickaxes
+		Sturdy Shovel - More uses than normal shovels
+		Mining Gloves +1/+3/+5 - Boosts mining skill when equipped
+		Runic Hammers - Adds bonuses to crafted weapons and armors, applied after crafting the items (js/skill/craft/crafting_complete.js)
+		Colored Anvils - No unique property other than color, but can be added to houses as decoration/functional anvils
+		Ancient Smithy Hammers +10/+15/+30/+60 - Boosts blacksmithy skill when equipped
+		(Not fully implemented, AoS feature) Gargoyle's Pickaxe
+		(Not fully implemented, AoS feature) Prospector's Tool
+		(Not fully implemented, AoS feature) Powder of Temperament
+		(Not fully implemented, AoS feature) Blacksmith Power Scrolls +5/+10/+15/+20
+	Updated onMakeItem() JS event to always include the create entry ID as a parameter, even when crafting an item failed (Xuri)
+
 10/03/2023 - Xuri
 	Fixed an issue where EraStringToNum JS Function would return incorrect values and lead to unexpected behaviour
 	Added some safeguards against server crashes in onNameRequest() and onTooltip() JS Events

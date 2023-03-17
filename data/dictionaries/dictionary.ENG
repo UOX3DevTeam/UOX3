@@ -4220,7 +4220,7 @@
 10220=ringmail chest
 10221=chainmail coif
 10222=chainmail leggings
-10223=chainmail chest
+10223=chainmail tunic
 10224=platemail arms
 10225=platemail gloves
 10226=platemail gorget
@@ -4862,5 +4862,9 @@
 17269=Ok
 17270=You have not completed the order yet.
 17271=Thank you so much!  Here is a reward for your effort.
+17272=That order is for some other shopkeeper.
+17273=You'll have to wait a few seconds while I inspect the last order.
+17274=The bulk order deed has been placed in your backpack.
+17275=You do not have enough room in your backpack for the bulk request's reward.
 }
 EOF

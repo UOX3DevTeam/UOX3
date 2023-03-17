@@ -281,7 +281,7 @@ SOUND=0x002A
 }
 [ITEM 4]
 {
-NAME=tear kite shield
+NAME=kite shield
 ID=0x1b78
 RESOURCE=METAL 8
 SKILL=7 0 250
@@ -434,8 +434,8 @@ MAXRANK=10
 SOUND=0x002A
 }
 [ITEM 18]
-{
-NAME=platemail (tunic)
+{ // platemail (tunic)
+NAME=platemail
 ID=0x1415
 RESOURCE=METAL 25
 SKILL=7 750 1250
@@ -445,8 +445,8 @@ MAXRANK=10
 SOUND=0x002A
 }
 [ITEM 19]
-{
-NAME=platemail (female)
+{ // platemail (female)
+NAME=plate armor
 ID=0x1c04
 RESOURCE=METAL 20
 SKILL=7 441 940
@@ -516,7 +516,7 @@ NAME=broadsword
 ID=0x0f61
 RESOURCE=METAL 10
 SKILL=7 354 850
-ADDITEM=0x0f61
+ADDITEM=0x0f5e
 MINRANK=1
 MAXRANK=10
 SOUND=0x002A
