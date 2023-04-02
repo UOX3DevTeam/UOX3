@@ -1133,33 +1133,31 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI
 
 	if( !dropLocationBlocked )
 	{
-		// Check static items for TF_BLOCKING flag, or if map tile blocks dropping item
-		dropLocationBlocked = ( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false )
-			|| Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false ));
-		if( !dropLocationBlocked )
+		// Check for a valid surface to drop item on first - then check for blocking tiles after
+		// If done the other way, the valid surface will override the blocking tiles!
+
+		// First, check for a static surface to drop item on
+		if( !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, false ))
 		{
-			// No? Well, then check static flags for TF_ROOF flag
-			dropLocationBlocked = Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, false );
-			if( !dropLocationBlocked )
+			// Nowhere static to put item? Check dynamic tiles for surface!
+			if( !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE ))
 			{
-				// Still no? Time to check dynamic items for TF_BLOCKING flag...
-				dropLocationBlocked = ( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING ));
-				if( !dropLocationBlocked )
-				{
-					// ...and then for TF_ROOF flag
-					dropLocationBlocked = Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF );
-				}
-				else
-				{
-					// Location blocked! But wait, there might be a valid dynamic surface to place the item on...
-					dropLocationBlocked = !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE );
-				}
+				// No static OR dynamic surface was found to place item? Check if map itself blocks the placement
+				dropLocationBlocked = Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false );
 			}
 		}
-		else
+
+		if( !dropLocationBlocked )
 		{
-			// Location blocked! But wait, there might be a valid static surface to place the item on...
-			dropLocationBlocked = !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, false );
+			// Some kind of valid surface was found. But is it blocked by...
+			if( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false ) || Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, false ))
+			{ // ...static items?
+				dropLocationBlocked = true;
+			}
+			else if( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING ) || Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF ) )
+			{ // No? What about dynamic items?
+				dropLocationBlocked = true;
+			}
 		}
 	}
 
@@ -1251,12 +1249,12 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 
 		// New location either is not blocking, or has a surface we can put the item on, so let's find the exact Z of where to put it
 //		auto nCharZ = nChar->GetZ();
-		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 16 );
-		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 16 )
+		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 14 );
+		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 14 )
 		{
 			// No valid static elevation found, use dynamic elevation instead
-			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
-			if( newZ < z || newZ > z + 16 )
+			newZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14 );
+			if( newZ < z || newZ > z + 14 )
 			{
 				// No valid dynamic elevation found. Use map elevation instead (don't implicitly trust Z from client)
 				newZ = Map->MapElevation( x, y, nChar->WorldNumber() );
@@ -1264,8 +1262,20 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 		else
 		{
-			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 16 );
-			newZ = (( dynZ >= z && dynZ <= z + 16 ) ? dynZ : newZ );
+			auto dynZ = Map->DynamicElevation( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), 14 );
+			newZ = (( dynZ >= z && dynZ <= z + 14 ) ? dynZ : newZ );
+		}
+
+		if( newZ + tile.Height() > ( z + 14 ) )
+		{
+			// Item is too tall - can't drop it this high up
+			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			{
+				Weight->SubtractItemWeight( nChar, i );
+			}
+			Bounce( mSock, i );
+			mSock->SysMessage( 683 ); // There seems to be something in the way
+			return;
 		}
 
 		i->SetCont( nullptr );
