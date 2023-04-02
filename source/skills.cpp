@@ -982,15 +982,15 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 
 	if( !exists )
 	{
+		CSocket *mSock = s->GetSocket();
 		R32 chanceSkillSuccess = 0;
 
 		if(( highSkill - lowSkill ) <= 0 || !ValidateObject( s ) || s->GetSkill( sk ) < lowSkill )
 			return false;
 
-		if( s->IsDead() )
+		if( s->IsDead() && mSock != nullptr )
 		{
-			CSocket *sSock = s->GetSocket();
-			sSock->SysMessage( 1487 ); // You are dead and cannot gain skill.
+			mSock->SysMessage( 1487 ); // You are dead and cannot gain skill.
 			return false;
 		}
 
@@ -1027,6 +1027,11 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 		// Same if chance of success is 100% already - no need to proceed!
 		if( s->GetCommandLevel() > 0 || chanceSkillSuccess == 1000 )
 		{
+			if( s->GetCommandLevel() > 0 && mSock != nullptr )
+			{
+				// Inform the counselor/gm to make it obvious why skillcheck always succeeds
+				mSock->SysMessage( 6279 ); // Skill check success guaranteed due to elevated command level!
+			}
 			skillCheck = true;
 		}
 		else
@@ -1038,7 +1043,6 @@ bool CSkills::CheckSkill( CChar *s, UI08 sk, SI16 lowSkill, SI16 highSkill, bool
 			skillCheck = ( static_cast<SI16>( chanceSkillSuccess ) >= rnd );
 		}
 
-		CSocket *mSock = s->GetSocket();
 		if( mSock != nullptr )
 		{
 			bool mageryUp = true;

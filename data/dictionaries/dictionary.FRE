@@ -3504,6 +3504,8 @@
 6276=Vous n'avez pas la compétence cuisine pour créer la peinture corporelle.
 6277=Resource ID non trouvée dans la liste des ressources utilisées pour fabriquer l'objet.
 6278=Vous devez utiliser votre compétence d'identification des goûts pour en savoir plus sur cette potion.
+6279=Succès de la vérification des compétences garanti grâce à un niveau de commande élevé !
+6280=Délai de lancement de sort ignoré en raison d'un niveau de commande élevé !
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?

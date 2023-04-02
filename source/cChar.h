@@ -329,6 +329,7 @@ public:
 	bool		IsDead( void ) const;
 	bool		GetCanAttack( void ) const;
 	bool		IsAtWar( void ) const;
+	bool		IsPassive( void ) const;
 	bool		DidAttackFirst( void ) const;
 	bool		IsOnHorse( void ) const;
 	bool		GetTownTitle( void ) const;
@@ -356,6 +357,7 @@ public:
 	void		SetCanAttack( bool newValue );
 	void		SetPeace( UI32 newValue );
 	void		SetWar( bool newValue );
+	void		SetPassive( bool newValue );
 	void		SetAttackFirst( bool newValue );
 	void		SetOnHorse( bool newValue );
 	void		SetTownTitle( bool newValue );

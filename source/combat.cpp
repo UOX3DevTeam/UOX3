@@ -107,7 +107,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
 	cAttack->SetAttackFirst(( cTarget->GetTarg() != cAttack ));
-	if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+
+	// If target doesn't already have cAttack as a target, update their target selection
+	//if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+	if( !cTarget->IsInvulnerable() && !ValidateObject( cTarget->GetTarg() ))	// Only invuln don't fight back
 	{
 		if( cTarget->GetNpcAiType() != AI_DUMMY )
 		{
@@ -115,6 +118,12 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			cTarget->SetAttacker( cAttack );
 			cTarget->SetAttackFirst( false );
 			returningAttack = true;
+
+			// If target is not already at war/in combat, make sure to disable their passive mode
+			if( !cTarget->IsAtWar() )
+			{
+				cTarget->SetPassive( false );
+			}
 		}
 
 		if( cTarget->GetSocket() != nullptr )
@@ -427,21 +436,24 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			PetGuardAttack( ourChar, i, i );
 		}
 
-		// Send attacker message to all nearby players
-		for( auto &tSock : FindNearbyPlayers( ourChar ))
+		// Send attacker message to all nearby players, IF player is attacking someone who wasn't already fighting them
+		if( i->GetTarg() != ourChar )
 		{
-			if( tSock )
+			for( auto &tSock : FindNearbyPlayers( ourChar ))
 			{
-				// Valid socket found
-				CChar *witness = tSock->CurrcharObj();
-				if( ValidateObject( witness ))
+				if( tSock )
 				{
-					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( ourChar, tSock );
-					std::string targetName = GetNpcDictName( i, tSock );
+					// Valid socket found
+					CChar *witness = tSock->CurrcharObj();
+					if( ValidateObject( witness ))
+					{
+						// Fetch names of attacker and target
+						std::string attackerName = GetNpcDictName( ourChar, tSock );
+						std::string targetName = GetNpcDictName( i, tSock );
 
-					// Send an emote about attacking target to nearby witness
-					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+						// Send an emote about attacking target to nearby witness
+						ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+					}
 				}
 			}
 		}
@@ -3531,7 +3543,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					{
 						HandleNPCSpellAttack( &mChar, ourTarg, GetDist( &mChar, ourTarg ));
 					}
-					else
+					else if( mChar.IsNpc() || !mChar.IsPassive() ) // Don't trigger for players who are marked as passive combatants
 					{
 						combatHandled = HandleCombat( mSock, mChar, ourTarg );
 					}

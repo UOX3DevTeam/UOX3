@@ -3340,6 +3340,8 @@
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
+6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
+6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
