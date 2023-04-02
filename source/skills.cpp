@@ -3089,7 +3089,7 @@ void CSkills::MakeItem( CreateEntry_st &toMake, CChar *player, CSocket *sock, UI
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnMakeItem( sock, player, nullptr, 0 );
+				toExecute->OnMakeItem( sock, player, nullptr, itemEntry );
 			}
 		}
 	}

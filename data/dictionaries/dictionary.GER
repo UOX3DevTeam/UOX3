@@ -4841,5 +4841,32 @@
 17223=Ein speziell ausgekleidetes Fass für Tränke.
 17224=Im Fass ist nichts zu schmecken!
 17225=Du kennst den Inhalt dieses Fasses bereits.
+//Großauftragsformular-System
+17250=Eine Großbestellung
+17251=Anzufertigende Menge:
+17252=Betrag fertig:
+17253=Angeforderter Artikel:
+17254=Ausnahme
+17255=Besondere Anforderungen müssen erfüllt werden:
+17256=Alle Gegenstände müssen außergewöhnlich sein.
+17257=Alle Artikel müssen mit folgenden Materialien hergestellt werden
+17258=Kombinieren Sie diese Urkunde mit dem gewünschten Gegenstand.
+17259=Der Gegenstand muss sich in deinem Rucksack befinden, damit du ihn anvisieren kannst.
+17260=Die maximale Anzahl der angeforderten Gegenstände wurde bereits mit dieser Urkunde kombiniert.
+17261=Der Gegenstand ist nicht aus dem gewünschten Erz hergestellt.
+17262=Der Gegenstand muss außergewöhnlich sein.
+17263=Der Gegenstand wurde bereits mit der Urkunde kombiniert.
+17264=Der Gegenstand ist nicht in der Anfrage enthalten.
+17265=Ein Angebot kann in etwa
+17266=Minuten
+17267=Ah! Danke für die Ware!  Würden Sie mir aushelfen?
+17268=Möchten Sie diese Bestellung annehmen?
+17269=Okay
+17270=Sie haben die Bestellung noch nicht abgeschlossen.
+17271=Vielen Dank!  Hier ist eine Belohnung für Ihre Mühe.
+17272=Diese Bestellung ist für einen anderen Ladenbesitzer.
+17273=Sie müssen ein paar Sekunden warten, während ich die letzte Bestellung prüfe.
+17274=Die Großbestellungsurkunde wurde in deinen Rucksack gelegt.
+17275=Du hast nicht genug Platz in deinem Rucksack für die Belohnung der Großbestellung.
 }
 EOF

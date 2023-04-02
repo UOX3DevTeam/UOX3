@@ -4848,5 +4848,32 @@
 17223=Speciálně vyložený soudek na lektvary.
 17224=V sudu není nic, co by se dalo ochutnat!
 17225=Obsah tohoto soudku je ti již znám.
+//Systém hromadných objednávek
+17250=Hromadná objednávka
+17251=Částka k provedení:
+17252=Množství hotové:
+17253=Požadovaná položka:
+17254=výjimečně
+17255=Speciální požadavky, které je třeba splnit:
+17256=Všechny položky musí být výjimečné.
+17257=Všechny položky musí být vyrobeny s použitím
+17258=Kombinujte tuto listinu s požadovanou položkou.
+17259=Předmět musíš mít v batohu, abys na něj mohl zacílit.
+17260=Maximální množství požadovaných předmětů již bylo k tomuto činu zkombinováno.
+17261=Předmět není vyroben z požadované rudy.
+17262=Předmět musí být výjimečný.
+17263=Předmět byl k tomuto činu již kombinován.
+17264=Předmět není v žádosti uveden.
+17265=Nabídka může být k dispozici v cca.
+17266=minut
+17267=Díky za zboží!  Mohl byste mi pomoci?
+17268=Chcete tuto objednávku přijmout?
+17269=Ok
+17270=Objednávku jste ještě nedokončili.
+17271=Moc vám děkuji!  Zde je odměna za vaši snahu.
+17272=Tato objednávka je určena pro nějakého jiného obchodníka.
+17273=Musíte několik vteřin počkat, než zkontroluji poslední objednávku.
+17274=Listina s hromadnou objednávkou byla vložena do tvého batohu.
+17275=Nemáš v batohu dost místa na odměnu za hromadnou objednávku.
 }
 EOF

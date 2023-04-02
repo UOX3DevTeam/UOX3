@@ -4840,5 +4840,32 @@
 17223=Um barril especialmente forrado para poções.
 17224=Não há nada no barril a saborear!
 17225=Já está familiarizado com o conteúdo deste barril.
+/Sistema de Ordens de Compras a Granel
+17250=Uma encomenda a granel
+17251=Montante a fazer:
+17252=montante terminado:
+17253=Item pedido:
+17254=excepcional
+17255=Requisitos especiais a cumprir:
+17256=Todos os artigos devem ser excepcionais.
+17257=Todos os artigos devem ser feitos com
+17258=Combinar esta escritura com o artigo solicitado.
+17259=Tem de ter o item na mochila para o visar.
+17260=A quantidade máxima de itens solicitados já foi combinada com esta escritura.
+17261=O item não é feito a partir do minério solicitado.
+17262=O item tem de ser excepcional.
+17263=O item já foi combinado com a escritura.
+17264=O item não está no pedido.
+17265=A oferta pode estar disponível em cerca de
+17266=minutos
+17267=Ah! Obrigado pela mercadoria!  Poderia ajudar-me?
+17268=Quer aceitar esta encomenda?
+17269=Ok
+17270=Você ainda não completou a encomenda.
+17271=Muito obrigado!  Aqui está uma recompensa pelo seu esforço.
+17272=Esta encomenda é para algum outro lojista.
+17273=Terá de esperar alguns segundos enquanto eu inspecciono a última encomenda.
+17274=A encomenda a granel foi colocada na sua mochila.
+17275=Não tem espaço suficiente na sua mochila para a recompensa do pedido por grosso.
 }
 EOF

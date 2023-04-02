@@ -5050,6 +5050,27 @@ bool CPIPopupMenuSelect::Handle( void )
 				tSock->SysMessage( 393 ); // That is too far away
 			}
 			break;
+		case 0x0100:	// Bulk Order Info
+			if( ObjInRange( mChar, targChar, 8 ))
+			{
+				// Set a tag on the player to reference the NPC they're requesting bulk order from
+				TAGMAPOBJECT targCharSerialTag;
+				targCharSerialTag.m_Destroy = false;
+				targCharSerialTag.m_IntValue = targChar->GetSerial();
+				targCharSerialTag.m_ObjectType = TAGMAP_TYPE_INT;
+				targCharSerialTag.m_StringValue = "";
+				mChar->SetTempTag( "bodShopkeeperSerial", targCharSerialTag );
+
+				tSock->ClearTrigWords();
+				tSock->AddTrigWord( TW_BODINFO ); // Custom UOX3 trigger word
+				std::string targName = GetNpcDictName( targChar, tSock );
+				WhichResponse( tSock, mChar, targName, targChar );
+			}
+			else
+			{
+				tSock->SysMessage( 393 ); // That is too far away
+			}
+			break;
 		default:
 			Console.Print( oldstrutil::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
 			break;

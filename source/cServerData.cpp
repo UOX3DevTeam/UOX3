@@ -341,13 +341,19 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"SHOWGUILDINFOINTOOLTIP"s, 318},
 	{"MAXPLAYERPACKWEIGHT"s, 319},
 	{"MAXPLAYERBANKWEIGHT"s, 320},
-	{"SAFECOOWNERLOGOUT", 321},
-	{"SAFEFRIENDLOGOUT", 322},
-	{"SAFEGUESTLOGOUT", 323},
-	{"KEYLESSOWNERACCESS", 324},
-	{"KEYLESSCOOWNERACCESS", 325},
-	{"KEYLESSFRIENDACCESS", 326},
-	{"KEYLESSGUESTACCESS", 327}
+	{"SAFECOOWNERLOGOUT"s, 321},
+	{"SAFEFRIENDLOGOUT"s, 322},
+	{"SAFEGUESTLOGOUT"s, 323},
+	{"KEYLESSOWNERACCESS"s, 324},
+	{"KEYLESSCOOWNERACCESS"s, 325},
+	{"KEYLESSFRIENDACCESS"s, 326},
+	{"KEYLESSGUESTACCESS"s, 327},
+	{"WEAPONDAMAGEBONUSTYPE"s, 328},
+	{"OFFERBODSFROMITEMSALES"s, 329},
+	{"OFFERBODSFROMCONTEXTMENU"s, 330},
+	{"BODSFROMCRAFTEDITEMSONLY"s, 331},
+	{"BODGOLDREWARDMULTIPLIER"s, 332},
+	{"BODFAMEREWARDMULTIPLIER"s, 333}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -451,6 +457,10 @@ constexpr auto BIT_KEYLESSOWNERACCESS				= UI32( 93 );
 constexpr auto BIT_KEYLESSCOOWNERACCESS				= UI32( 94 );
 constexpr auto BIT_KEYLESSFRIENDACCESS				= UI32( 95 );
 constexpr auto BIT_KEYLESSGUESTACCESS				= UI32( 96 );
+constexpr auto BIT_OFFERBODSFROMITEMSALES			= UI32( 97 );
+constexpr auto BIT_OFFERBODSFROMCONTEXTMENU			= UI32( 98 );
+constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY			= UI32( 99 );
+
 
 // New uox3.ini format lookup
 // January 13, 2001	- 	Modified: January 30, 2001 Converted to uppercase
@@ -667,6 +677,7 @@ auto CServerData::ResetDefaults() -> void
 	PetCombatTraining( true );
 	HirelingCombatTraining( true );
 	NpcCombatTraining( false );
+	WeaponDamageBonusType( 2 );
 
 	CheckPetControlDifficulty( true );
 	SetPetLoyaltyGainOnSuccess( 1 );
@@ -842,13 +853,20 @@ auto CServerData::ResetDefaults() -> void
 	CoOwnHousesOnSameAccount( true );
 	MaxHousesOwnable( 1 );
 	MaxHousesCoOwnable( 10 );
-	SafeCoOwnerLogout( 1 );
-	SafeFriendLogout( 1 );
-	SafeGuestLogout( 1 );
-	KeylessOwnerAccess( 1 );
-	KeylessCoOwnerAccess( 1 );
-	KeylessFriendAccess( 1 );
-	KeylessGuestAccess( 0 );
+	SafeCoOwnerLogout( true );
+	SafeFriendLogout( true );
+	SafeGuestLogout( true );
+	KeylessOwnerAccess( true );
+	KeylessCoOwnerAccess( true );
+	KeylessFriendAccess( true );
+	KeylessGuestAccess( false );
+
+	// Bulk Order Deeds
+	OfferBODsFromItemSales( true );
+	OfferBODsFromContextMenu( false );
+	BODsFromCraftedItemsOnly( false );
+	BODGoldRewardMultiplier( 1.0 );
+	BODFameRewardMultiplier( 1.0 );
 
 	// Towns
 	TownNumSecsPollOpen( 3600 );	// one hour
@@ -2108,6 +2126,36 @@ auto CServerData::GlobalRestockMultiplier( R32 value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODGoldRewardMultiplier()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a multiplier that adjusts amount of Gold rewarded to players for
+//|					handing in completed Bulk Order Deeds
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODGoldRewardMultiplier() const -> float
+{
+	return bodGoldRewardMultiplier;
+}
+auto CServerData::BODGoldRewardMultiplier( R32 value ) -> void
+{
+	bodGoldRewardMultiplier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODFameRewardMultiplier()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets a multiplier that adjusts amount of Fame rewarded to players for
+//|					handing in completed Bulk Order Deeds
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODFameRewardMultiplier() const -> float
+{
+	return bodFameRewardMultiplier;
+}
+auto CServerData::BODFameRewardMultiplier( R32 value ) -> void
+{
+	bodFameRewardMultiplier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::SellByNameStatus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether items are sold by their name, not just ID/Colour
@@ -2508,6 +2556,24 @@ auto CServerData::AlchemyDamageBonusModifier() const -> UI08
 auto CServerData::AlchemyDamageBonusModifier( UI08 value ) -> void
 {
 	alchemyDamageBonusModifier = value;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::WeaponDamageBonusType()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the Weapon Damage Bonus Type, which determines how bonuses to weapon
+//|					damage is applied to weapons:
+//|						0 - Apply flat weapon damage bonus to .hidamage
+//|						1 - Split weapon damage bonus between .lodamage and .hidamage
+//|						2 - Apply flat weapon damage bonus to BOTH .lodamage and .hidamage (Default)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::WeaponDamageBonusType() const -> UI08
+{
+	return combatWeaponDamageBonusType;
+}
+auto CServerData::WeaponDamageBonusType( UI08 value ) -> void
+{
+	combatWeaponDamageBonusType = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3106,6 +3172,52 @@ auto CServerData::CombatMonstersVsAnimals() const -> bool
 auto CServerData::CombatMonstersVsAnimals( bool newVal ) -> void
 {
 	boolVals.set( BIT_MONSTERSVSANIMALS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OfferBODsFromItemSales()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players upon selling
+//|					items to a vendor that supports that feature (like a blacksmith)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OfferBODsFromItemSales() const -> bool
+{
+	return boolVals.test( BIT_OFFERBODSFROMITEMSALES );
+}
+auto CServerData::OfferBODsFromItemSales( bool newVal ) -> void
+{
+	boolVals.set( BIT_OFFERBODSFROMITEMSALES, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::OfferBODsFromContextMenu()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deeds should be offered to players via
+//|					context menu option on vendors that supports that feature (like a blacksmith)
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::OfferBODsFromContextMenu() const -> bool
+{
+	return boolVals.test( BIT_OFFERBODSFROMCONTEXTMENU );
+}
+auto CServerData::OfferBODsFromContextMenu( bool newVal ) -> void
+{
+	boolVals.set( BIT_OFFERBODSFROMCONTEXTMENU, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::BODsFromCraftedItemsOnly()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether Bulk Order Deed offers will be triggered by selling any
+//|					items to a vendor that supports the feature, or just from selling crafted items.
+//|					Depends on OFFERBODSFROMITEMSALES feature being enabled.
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::BODsFromCraftedItemsOnly() const -> bool
+{
+	return boolVals.test( BIT_BODSFROMCRAFTEDITEMSONLY );
+}
+auto CServerData::BODsFromCraftedItemsOnly( bool newVal ) -> void
+{
+	boolVals.set( BIT_BODSFROMCRAFTEDITEMSONLY, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4882,6 +4994,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "NPCCOMBATTRAINING=" << ( NpcCombatTraining() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWITEMRESISTSTATS=" << ( ShowItemResistStats() ? 1 : 0 ) << '\n';
 		ofsOutput << "SHOWWEAPONDAMAGETYPES=" << ( ShowWeaponDamageTypes() ? 1 : 0 ) << '\n';
+		ofsOutput << "WEAPONDAMAGEBONUSTYPE=" << static_cast<UI16>( WeaponDamageBonusType() ) << '\n';
 
 		ofsOutput << "}" << '\n';
 
@@ -4932,6 +5045,14 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "KEYLESSCOOWNERACCESS=" << ( KeylessCoOwnerAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "KEYLESSFRIENDACCESS=" << ( KeylessFriendAccess() ? 1 : 0 ) << '\n';
 		ofsOutput << "KEYLESSGUESTACCESS=" << ( KeylessGuestAccess() ? 1 : 0 ) << '\n';
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[bulk order deeds]" << '\n' << "{" << '\n';
+		ofsOutput << "OFFERBODSFROMITEMSALES=" << ( OfferBODsFromItemSales() ? 1 : 0 ) << '\n';
+		ofsOutput << "OFFERBODSFROMCONTEXTMENU=" << ( OfferBODsFromContextMenu() ? 1 : 0 ) << '\n';
+		ofsOutput << "BODSFROMCRAFTEDITEMSONLY=" << ( BODsFromCraftedItemsOnly() ? 1 : 0 ) << '\n';
+		ofsOutput << "BODGOLDREWARDMULTIPLIER=" << BODGoldRewardMultiplier() << '\n';
+		ofsOutput << "BODFAMEREWARDMULTIPLIER=" << BODFameRewardMultiplier() << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[towns]" << '\n' << "{" << '\n';
@@ -6167,6 +6288,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 327:	// KEYLESSGUESTACCESS
 			KeylessGuestAccess( ( static_cast<UI16>( std::stoul( value, nullptr, 0 ) ) >= 1 ? true : false ) );
+			break;
+		case 328:	// WEAPONDAMAGEBONUSTYPE
+			WeaponDamageBonusType( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 329:	// OFFERBODSFROMITEMSALES
+			OfferBODsFromItemSales(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 330:	// OFFERBODSFROMCONTEXTMENU
+			OfferBODsFromContextMenu(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 331:	// BODSFROMCRAFTEDITEMSONLY
+			BODsFromCraftedItemsOnly(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 332:	 // BODGOLDREWARDMULTIPLIER
+			BODGoldRewardMultiplier( std::stof( value ));
+			break;
+		case 333:	 // BODFAMEREWARDMULTIPLIER
+			BODFameRewardMultiplier( std::stof( value ));
 			break;
 		default:
 			rValue = false;

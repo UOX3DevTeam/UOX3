@@ -794,10 +794,18 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 		return "";
 	}
 
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
+	try
+	{
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
 
-	return returnString;
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip()" );
+		return "";
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

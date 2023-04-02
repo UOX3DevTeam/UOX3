@@ -4861,6 +4861,24 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 327:	// KEYLESSGUESTACCESS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessGuestAccess() );
 				break;
+			case 328:	// WEAPONDAMAGEBONUSTYPE
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->WeaponDamageBonusType() ));
+				break;
+			case 329:	// OFFERBODSFROMITEMSALES
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromItemSales() );
+				break;
+			case 330:	// OFFERBODSFROMCONTEXTMENU
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromContextMenu() );
+				break;
+			case 331:	// BODSFROMCRAFTEDITEMSONLY
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BODsFromCraftedItemsOnly() );
+				break;
+			case 332:	// BODGOLDREWARDMULTIPLIER
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODGoldRewardMultiplier() ));
+				break;
+			case 333:	// BODFAMEREWARDMULTIPLIER
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODFameRewardMultiplier() ));
+				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );
 				return false;
