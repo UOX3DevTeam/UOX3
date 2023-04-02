@@ -128,7 +128,7 @@ static JSFunctionSpec my_functions[] =
 	{ "Moon",						SE_Moon,					2, 0, 0 },
 
 	{ "GetTownRegion",				SE_GetTownRegion,			1, 0, 0 },
-	{ "GetSpawnRegion",				SE_GetSpawnRegion,			1, 0, 0 },
+	{ "GetSpawnRegion",				SE_GetSpawnRegion,			4, 0, 0 },
 	{ "GetSpawnRegionCount",		SE_GetSpawnRegionCount,		0, 0, 0 },
 
 
@@ -172,6 +172,7 @@ static JSFunctionSpec my_functions[] =
 	{ "GetMultiCount",				SE_GetMultiCount,			0, 0, 0 },
 	{ "GetCharacterCount",			SE_GetCharacterCount,		0, 0, 0 },
 	{ "GetServerVersionString",		SE_GetServerVersionString,	0, 0, 0 },
+	{ "EraStringToNum",				SE_EraStringToNum,			1, 0, 0 },
 
 	{ "BASEITEMSERIAL",				SE_BASEITEMSERIAL,			0, 0, 0 },
 	{ "INVALIDSERIAL",				SE_INVALIDSERIAL,			0, 0, 0 },
@@ -785,10 +786,26 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 		SetEventExists( seOnTooltip, false );
 	}
 
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
+	// If rval is negative, it's possible some other function/method called from within Ontooltip() encountered
+	// an error. Abort attempt to turn it into a string - it might crash the server!
+	if( rval < 0 )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
+		return "";
+	}
 
-	return returnString;
+	try
+	{
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		return returnString;
+	}
+	catch( ... )
+	{
+		Console.Error( "Handled exception in cScript.cpp OnTooltip()" );
+		return "";
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -811,47 +828,67 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester )
 	// Mark object as having an active name lookup via onNameRequest
 	myObj->NameRequestActive( true );
 
-	jsval rval, params[2];
-
-	// Create JS object reference for myObj, based on whether it's an item or character
-	JSObject *nameRequestObj = nullptr;
-	if( myObj->CanBeObjType( OT_CHAR ))
+	try
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		jsval rval, params[2];
+
+		// Create JS object reference for myObj, based on whether it's an item or character
+		JSObject *nameRequestObj = nullptr;
+		if( myObj->CanBeObjType( OT_CHAR ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_CHAR, myObj, runTime );
+		}
+		else if( myObj->CanBeObjType( OT_ITEM ))
+		{
+			nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		}
+
+		// Create JS object reference for the name requester (which might be nullptr!)
+		JSObject *nameRequesterObj = nullptr;
+		if( nameRequester != nullptr )
+		{
+			nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
+		}
+
+		params[0] = OBJECT_TO_JSVAL( nameRequestObj );
+		params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
+		JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
+		if( retVal == JS_FALSE )
+		{
+			SetEventExists( seOnNameRequest, false );
+		}
+
+		// If rval is negative, it's possible some other function/method called from within onNameRequest() encountered
+		// an error. Abort attempt to turn it into a string - it might crash the server!
+		if( rval < 0 )
+		{
+			Console.Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
+			return "";
+		}
+
+		JSString *str = JS_ValueToString( targContext, rval );
+		std::string returnString = JS_GetStringBytes( str );
+
+		// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
+		if( returnString == "undefined" || returnString == "false" || returnString == "true" )
+		{
+			returnString = "";
+		}
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
+
+		return returnString;
 	}
-	else if( myObj->CanBeObjType( OT_ITEM ))
+	catch(...)
 	{
-		nameRequestObj = JSEngine->AcquireObject( IUE_ITEM, myObj, runTime );
+		Console.Error( "Handled exception in cScript.cpp OnNameRequest()" );
+
+		// Clear flag that marks object as having an active name lookup via onNameRequest
+		myObj->NameRequestActive( false );
 	}
 
-	// Create JS object reference for the name requester (which might be nullptr!)
-	JSObject *nameRequesterObj = nullptr;
-	if( nameRequester != nullptr )
-	{
-		nameRequesterObj = JSEngine->AcquireObject( IUE_CHAR, nameRequester, runTime );
-	}
-
-	params[0] = OBJECT_TO_JSVAL( nameRequestObj );
-	params[1] = OBJECT_TO_JSVAL( nameRequesterObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onNameRequest", 2, params, &rval );
-	if( retVal == JS_FALSE )
-	{
-		SetEventExists( seOnNameRequest, false );
-	}
-
-	JSString *str = JS_ValueToString( targContext, rval );
-	std::string returnString = JS_GetStringBytes( str );
-
-	// If no string was returned from the event, make sure we return an empty string instead of "undefined", "false" or "true"
-	if( returnString == "undefined" || returnString == "false" || returnString == "true" )
-	{
-		returnString = "";
-	}
-
-	// Clear flag that marks object as having an active name lookup via onNameRequest
-	myObj->NameRequestActive( false );
-
-	return returnString;
+	return "";
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1376,6 +1413,37 @@ SI08 cScript::OnLeaving( CMultiObj *left, CBaseObject *leaving )
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnLeaving, false );
+		return RV_NOFUNC;
+	}
+
+	return TryParseJSVal( rval );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::OnMultiLogout()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Triggers for multi when a player logs out inside the multi
+//o------------------------------------------------------------------------------------------------o
+SI08 cScript::OnMultiLogout( CMultiObj *iMulti, CChar *cPlayer )
+{
+	const SI08 RV_NOFUNC = -1;
+	if( !ValidateObject( iMulti ) || !ValidateObject( cPlayer ))
+		return RV_NOFUNC;
+
+	if( !ExistAndVerify( seOnMultiLogout, "onMultiLogout" ))
+		return RV_NOFUNC;
+
+	jsval params[2], rval;
+	JSObject *myMulti = JSEngine->AcquireObject( IUE_ITEM, iMulti, runTime );
+	JSObject *myPlayer = JSEngine->AcquireObject( IUE_CHAR, cPlayer, runTime );
+
+	params[0] = OBJECT_TO_JSVAL( myMulti );
+	params[1] = OBJECT_TO_JSVAL( myPlayer );
+
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onMultiLogout", 2, params, &rval );
+	if( retVal == JS_FALSE )
+	{
+		SetEventExists( seOnMultiLogout, false );
 		return RV_NOFUNC;
 	}
 

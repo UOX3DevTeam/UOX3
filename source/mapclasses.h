@@ -157,9 +157,9 @@ public:
 	auto Weight() const -> std::uint8_t { return weight; }
 	auto Layer() const -> std::int8_t { return layer; }
 	auto Height() const -> std::int8_t { return height; }
-	auto ClimbHeight() const -> std::int8_t
+	auto ClimbHeight( bool trueHeight = false ) const -> std::int8_t
 	{
-		if( CheckFlag( TF_CLIMBABLE ))
+		if( CheckFlag( TF_CLIMBABLE ) && !trueHeight )
 		{
 			return height / 2;
 		}

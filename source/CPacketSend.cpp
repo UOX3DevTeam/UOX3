@@ -7894,23 +7894,24 @@ auto CPSellList::AddContainer( CTownRegion *tReg, CItem *spItem, CItem *ourPack,
 			{
 				AddContainer( tReg, spItem, opItem, packetLen );
 			}
-			else if(( opItem->GetSectionId() == spItem->GetSectionId() )
+			else if(( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetSectionId() != "UNKNOWN" )
 				&& ( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
 				// Basing it on GetSectionId() should replace all the other checks below...
 				AddItem( tReg, spItem, opItem, packetLen );
 				++numItems;
 			}
-			/*else if( opItem->GetSectionId() == spItem->GetSectionId() && opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
+			else if( opItem->GetSectionId() == "UNKNOWN" && opItem->GetId() == spItem->GetId() && opItem->GetType() == spItem->GetType() &&
 					( spItem->GetName() == opItem->GetName() || !cwmWorldState->ServerData()->SellByNameStatus() ))
 			{
-				// Special case for deeds and dyes, which all use same ID
+				// If sectionID of an item is Unknown, it's a legacy item. Handle it the legacy way.
+				// Also includes special case for deeds and dyes, which all use same ID
 				if(( opItem->GetId() != 0x14f0 && opItem->GetId() != 0x0eff ) || ( opItem->GetTempVar( CITV_MOREX ) == spItem->GetTempVar( CITV_MOREX )))
 				{
 					AddItem( tReg, spItem, opItem, packetLen );
 					++numItems;
 				}
-			}*/
+			}
 
 			if( numItems >= 60 )
 			{
@@ -8695,6 +8696,25 @@ void CPPopupMenu::CopyData( CChar& toCopy, CSocket &tSock )
 		pStream.WriteShort( offset+=2, 0x0021 ); // Flag, color enabled, entry disabled
 		pStream.WriteShort( offset+=2, 0xFFFF ); // Hue of text
 	}*/
+
+	// Bulk Order Info - if enabled in ini
+	if( cwmWorldState->ServerData()->OfferBODsFromContextMenu() && toCopy.IsShop() )
+	{
+		TAGMAPOBJECT isBodVendor = toCopy.GetTag( "bodType" );
+		if( isBodVendor.m_IntValue > 0 )
+		{
+			if( numEntries > 0 )
+			{
+				offset += 2;
+			}
+
+			numEntries++;
+			pStream.WriteShort( offset, 0x0100 );	// Unique ID
+			pStream.WriteShort( offset += 2, 6152 ); // Bulk Order Info
+			pStream.WriteShort( offset += 2, 0x0020 ); // Flag, color enabled
+			pStream.WriteShort( offset += 2, 0x03E0 ); // Hue of text
+		}
+	}
 
 	// Open Backpack
 	//	|| ( toCopy.IsTamed() && ValidateObject( toCopy.GetOwnerObj() ) && toCopy.GetOwnerObj() == mChar && !toCopy.CanBeHired() )))

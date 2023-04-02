@@ -32,13 +32,13 @@ CARVE=78
 RACE=22
 SCRIPT=3001//monster speech
 SCRIPT=3207//generic orc AI
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Orc
 [orc]
 {
-GETPUB15=orc_pub15
+GETLBR=orc_lbr
 GETAOS=orc_aos
 GETTOL=orc_tol
 }
@@ -66,13 +66,13 @@ CARVE=80
 RACE=22
 SCRIPT=3001//monster speech
 SCRIPT=3207//generic orc AI
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Orc Captain
 [orccaptain]
 {
-GETPUB15=orccaptain_pub15
+GETLBR=orccaptain_lbr
 GETAOS=orccaptain_aos
 GETTOL=orccaptain_tol
 }
@@ -87,13 +87,13 @@ CARVE=82
 RACE=22
 SCRIPT=3001//monster speech
 SCRIPT=3207//generic orc AI
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Orc Mage
 [orcmage]
 {
-GETPUB15=orcmage_pub15
+GETLBR=orcmage_lbr
 GETAOS=orcmage_aos
 GETTOL=orcmage_tol
 }
@@ -112,13 +112,13 @@ CARVE=81
 RACE=22
 SCRIPT=3001//monster speech
 SCRIPT=3207//generic orc AI
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Orc Lord
 [orclord]
 {
-GETPUB15=orclord_pub15
+GETLBR=orclord_lbr
 GETAOS=orclord_aos
 GETTOL=orclord_tol
 }
@@ -138,7 +138,7 @@ ORIGIN=td
 // Orc Bomber
 [orcbomber]
 {
-GETPUB15=orcbomber_pub15
+GETLBR=orcbomber_lbr
 GETAOS=orcbomber_aos
 GETTOL=orcbomber_tol
 }
@@ -161,7 +161,7 @@ ORIGIN=td
 // Orc Scout
 [orcscout]
 {
-GETPUB15=orcscout_pub15
+GETLBR=orcscout_lbr
 GETAOS=orcscout_aos
 GETTOL=orcscout_tol
 }
@@ -185,7 +185,7 @@ ORIGIN=td
 // Orc Brute
 [orcbrute]
 {
-GETPUB15=orcbrute_pub15
+GETLBR=orcbrute_lbr
 GETAOS=orcbrute_aos
 GETTOL=orcbrute_tol
 }
@@ -209,7 +209,7 @@ ORIGIN=td
 // Orc Chopper
 [orcchopper]
 {
-GETPUB15=orcchopper_pub15
+GETLBR=orcchopper_lbr
 GETAOS=orcchopper_aos
 GETTOL=orcchopper_tol
 }
@@ -229,13 +229,13 @@ LOOT=randomgemsandjewelry
 CARVE=73
 RACE=5
 SCRIPT=3001//monster speech
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Lizardman
 [lizardman]
 {
-GETPUB15=lizardman_pub15
+GETLBR=lizardman_lbr
 GETAOS=lizardman_aos
 GETTOL=lizardman_tol
 }
@@ -273,13 +273,13 @@ LOOT=randomreagents,2
 CARVE=85
 RACE=23
 SCRIPT=3001//monster speech
-ORIGIN=classic
+ORIGIN=uo
 }
 
 // Ratman
 [ratman]
 {
-GETPUB15=ratman_pub15
+GETLBR=ratman_lbr
 GETAOS=ratman_aos
 GETTOL=ratman_tol
 }
@@ -317,14 +317,14 @@ LOOT=randomreagents,5
 LOOT=lowlevelscrolls
 CARVE=87
 RACE=23
-ORIGIN=classic
+ORIGIN=uo
 SCRIPT=3001//monster speech
 }
 
 // Ratman Mage
 [ratmanmage]
 {
-GETPUB15=ratmanmage_pub15
+GETLBR=ratmanmage_lbr
 GETAOS=ratmanmage_aos
 GETTOL=ratmanmage_tol
 }
@@ -341,14 +341,14 @@ PACKITEM=0x0f3f,50
 PACKITEM=0x1515
 CARVE=85
 RACE=23
-ORIGIN=classic
+ORIGIN=uo
 SCRIPT=3001//monster speech
 }
 
 // Ratman Archer
 [ratmanarcher]
 {
-GETPUB15=ratmanarcher_pub15
+GETLBR=ratmanarcher_lbr
 GETAOS=ratmanarcher_aos
 GETTOL=ratmanarcher_tol
 }

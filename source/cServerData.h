@@ -208,8 +208,8 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<91>	boolVals;				// Many values stored this way, rather than using bools.
-	std::bitset<64>	spawnRegionsFacets;		// Used to determine which facets to enable spawn regions for, set in UOX>INI
+	std::bitset<101>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
 	std::string sServerName;				// 04/03/2004 - Need a place to store the name of the server (Added to support the UOG Info Request)
@@ -273,7 +273,7 @@ private:
 	std::string actualINI;					// 	The actual uox.ini file loaded, used for saveing
 
 	// Expansion
-	// 0 = T2A, 1 = UOR, 2 = TD, 3 = LBR, 4 = Pub15/Pre-AoS, 5 = AoS, 6 = SE, 7 = ML, 8 = SA, 9 = HS, 10 = ToL
+	// 0 = core, 1 = UO, 2 = T2A, 3 = UOR, 4 = TD, 5 = LBR (Pub15), 6 = AoS, 7 = SE, 8 = ML, 9 = SA, 10 = HS, 11 = ToL
 	UI08		coreShardEra;					// Determines core era ruleset for shard (determines which items/npcs are loaded, and which rules are applied in combat)
 	UI08		expansionArmorCalculation;		// Determines which era ruleset to use for calculating armor and defense
 	UI08		expansionStrengthDamageBonus;	// Determines which era ruleset to use for calculating strength damage bonus
@@ -317,6 +317,8 @@ private:
 	R32			globalAttackSpeed;				//  Global attack speed that can be tweaked to quickly increase or decrease overall combat speed. Defaults to 1.0
 	R32			npcSpellcastSpeed;				//  For adjusting the overall speed of (or delay between) NPC spell casts. Defaults to 1.0
 	R32			globalRestockMultiplier;		//	Global multiplier applied to restock properties of items when loaded from DFNs
+	R32			bodGoldRewardMultiplier;		//	Multiplier that adjusts the amount of Gold rewarded by completing Bulk Order Deeds
+	R32			bodFameRewardMultiplier;		//	Multiplier that adjusts the amount of Fame rewarded by completing Bulk Order Deeds
 	R64			checkItems;						//	How often (in seconds) items are checked for decay and other things
 	R64			checkBoats;						//	How often (in seconds) boats are checked for motion and so forth
 	R64			checkNpcAi;						//	How often (in seconds) NPCs can execute an AI routine
@@ -379,6 +381,7 @@ private:
 	UI08		combatParryDamageMax;			//  Maximum amount of hitpoints a shield/weapon can lose when successfully parrying in combat
 	UI08		combatBloodEffectChance;		//  Chance of blood splatter effects spawning during combat
 	UI08		alchemyDamageBonusModifier;		//  Modifier used to calculate bonus damage for explosion potions based on alchemy skill
+	UI08		combatWeaponDamageBonusType;	//  Weapon damage bonus type (0 - apply to hidamage, 1 - split between lo and hi, 2 - apply equally to lo and hi
 	SI08		combatArcheryHitBonus;			//  Bonus to hit chance for Archery skill in combat, applied after regular hit chance calculation
 	SI16		combatMaxRange;					//	RANGE?  Range at which combat can actually occur
 	SI16		combatMaxSpellRange;			//	RANGE?  Range at which spells can be cast
@@ -474,7 +477,7 @@ public:
 	auto		SaveIni( const std::string &filename ) -> bool;
 
 	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
-	auto		EraStringToEnum( const std::string &eraString ) -> ExpansionRuleset;
+	auto		EraStringToEnum( const std::string &eraString, bool useDefault = true, bool inheritCore = true ) -> ExpansionRuleset;
 
 	auto ResetDefaults() -> void;
 	auto Startup() -> void;
@@ -662,6 +665,12 @@ public:
 	auto		GlobalRestockMultiplier( R32 value ) -> void;
 	R32			GlobalRestockMultiplier() const;
 
+	auto		BODGoldRewardMultiplier( R32 value ) -> void;
+	R32			BODGoldRewardMultiplier() const;
+
+	auto		BODFameRewardMultiplier( R32 value ) -> void;
+	R32			BODFameRewardMultiplier() const;
+
 	auto		MsgBoardPostingLevel( UI08 value ) -> void;
 	UI08		MsgBoardPostingLevel() const;
 
@@ -676,6 +685,9 @@ public:
 
 	auto		AlchemyDamageBonusModifier( UI08 value ) -> void;
 	UI08		AlchemyDamageBonusModifier() const;
+
+	auto		WeaponDamageBonusType( UI08 value ) -> void;
+	UI08		WeaponDamageBonusType() const;
 
 	auto		ItemsInterruptCasting( bool value ) -> void;
 	auto		ItemsInterruptCasting() const -> bool;
@@ -794,6 +806,27 @@ public:
 	auto		CoOwnHousesOnSameAccount( bool value ) -> void;
 	auto		CoOwnHousesOnSameAccount() const -> bool;
 
+	auto		SafeCoOwnerLogout( bool value ) -> void;
+	auto		SafeCoOwnerLogout() const -> bool;
+
+	auto		SafeFriendLogout( bool value ) -> void;
+	auto		SafeFriendLogout() const -> bool;
+
+	auto		SafeGuestLogout( bool value ) -> void;
+	auto		SafeGuestLogout() const -> bool;
+
+	auto		KeylessOwnerAccess( bool value ) -> void;
+	auto		KeylessOwnerAccess() const -> bool;
+
+	auto		KeylessCoOwnerAccess( bool value ) -> void;
+	auto		KeylessCoOwnerAccess() const -> bool;
+
+	auto		KeylessFriendAccess( bool value ) -> void;
+	auto		KeylessFriendAccess() const -> bool;
+
+	auto		KeylessGuestAccess( bool value ) -> void;
+	auto		KeylessGuestAccess() const -> bool;
+
 	auto		MaxHousesOwnable( UI16 value ) -> void;
 	auto		MaxHousesOwnable() const -> UI16;
 
@@ -874,6 +907,15 @@ public:
 
 	auto		CraftColouredWeapons( bool value ) -> void;
 	auto		CraftColouredWeapons() const -> bool;
+
+	auto		OfferBODsFromItemSales( bool value ) -> void;
+	auto		OfferBODsFromItemSales() const -> bool;
+
+	auto		OfferBODsFromContextMenu( bool value ) -> void;
+	auto		OfferBODsFromContextMenu() const -> bool;
+
+	auto		BODsFromCraftedItemsOnly( bool value ) -> void;
+	auto		BODsFromCraftedItemsOnly() const -> bool;
 
 	auto		MaxControlSlots( UI08 value ) -> void;
 	UI08		MaxControlSlots() const;

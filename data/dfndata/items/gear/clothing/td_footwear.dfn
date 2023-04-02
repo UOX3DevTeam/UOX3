@@ -16,6 +16,8 @@ str=20
 dyeable=1
 decay=1
 good=19
+origin=td
+sectionid=0x2655
 }
 
 // TD Jester Shoes
@@ -45,6 +47,8 @@ movable=1
 dyeable=1
 decay=1
 good=18
+origin=td
+sectionid=0x26af
 }
 
 [tdarcanethighboots]
@@ -72,6 +76,8 @@ str=20
 dyeable=1
 decay=1
 good=19
+origin=td
+sectionid=0x2653
 }
 
 // TD Waraji

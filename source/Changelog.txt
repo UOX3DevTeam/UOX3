@@ -1,3 +1,97 @@
+17/03/2023 - Dragon Slayer, Xuri
+	Created framework, gumps, initial system for Bulk Order Deeds (Dragon Slayer)
+	Expanded BOD system to include gold, fame and special item rewards (Xuri)
+	Added optional support for triggering BOD offers from shopkeepers via context menus (Xuri)
+	Added new UOX.INI section with settings for Bulk Order System: (Xuri)
+		OFFERBODSFROMITEMSALES=1 	// If enabled, shopkeepers might offer BODs when players sell items to them
+		OFFERBODSFROMCONTEXTMENU=0 	// If enabled, shopkeepers might offer BODs via context menu option
+		BODSFROMCRAFTEDITEMSONLY=0 	// If enabled, only selling of crafted items will trigger BOD offers
+		BODGOLDREWARDMULTIPLIER=1 	// Reward multiplier for Gold given for completing a BODs - defaults to 1.0
+		BODFAMEREWARDMULTIPLIER=1 	// Reward multiplier for Fame given for completing a BOD - defaults to 1.0
+	Updated smithing-related create DFNs (dfndata/create/*) with proper names for entries (Xuri)
+	Added special BOD item rewards: (Xuri)
+		Sturdy Pickaxe - More uses than normal pickaxes
+		Sturdy Shovel - More uses than normal shovels
+		Mining Gloves +1/+3/+5 - Boosts mining skill when equipped
+		Runic Hammers - Adds bonuses to crafted weapons and armors, applied after crafting the items (js/skill/craft/crafting_complete.js)
+		Colored Anvils - No unique property other than color, but can be added to houses as decoration/functional anvils
+		Ancient Smithy Hammers +10/+15/+30/+60 - Boosts blacksmithy skill when equipped
+		(Not fully implemented, AoS feature) Gargoyle's Pickaxe
+		(Not fully implemented, AoS feature) Prospector's Tool
+		(Not fully implemented, AoS feature) Powder of Temperament
+		(Not fully implemented, AoS feature) Blacksmith Power Scrolls +5/+10/+15/+20
+	Updated onMakeItem() JS event to always include the create entry ID as a parameter, even when crafting an item failed (Xuri)
+
+17/03/2023 - Xuri
+	Fixed an issue where casting Wall of Stone inside a multi would lead to the wall of stone never expiring, because it was not correctly marked as a field spell
+	Reduced combat message spam; attacking messages now only appear when attacking targets who are not already fighting the attacker
+	Added a new character state - "passive combat mode" - primarily used by players when they tab out of combat. Tabbing out of combat will prevent the character from retaliating in combat if they're already fighting someone
+	Fixed several issues with dropping items through floors, tables and generally not being placed correctly when dropped inside multis
+	Hard-defined the Z-level at which some jewellers in Britain spawn to deny them rooftop access (spawn_felucca_town_britain.dfn and spawn_trammel_town_britain.dfn)
+	Added system messages informing shard staff with elevated command privileges why they are getting 100% skill check success, and no spellcast delay
+
+10/03/2023 - Xuri
+	Fixed an issue where EraStringToNum JS Function would return incorrect values and lead to unexpected behaviour
+	Added some safeguards against server crashes in onNameRequest() and onTooltip() JS Events
+
+08/03/2023 - Xuri
+	Fixed an issue where houses could lose track of locked down items on server restart
+	Fixed an issue where items could be accidentally dropped through the floor of houses/boats
+
+04/03/2023 - Xuri (0.99.6-RC3)
+	Updated Item DFNs with ORIGIN and SECTIONID tags for relevant items
+	Added JS Function to make comparing eras (based on object origin or server settings) easier:
+		EraStringToNum( eraString )	// Takes an era string (uo, t2a, uor, td, lbr, aos, etc) and returns an int
+	Updated some JS scripts to use EraStringToNum() for era comparisons (potionkeg.js)
+	Default CORESHARDERA setting is now LBR
+	Removed PUB15 as a separate "era" - it's identical to late stage LBR anyway:
+		Removed support for GETPUB15 tag
+	Added support for GETUO tag for items/NPCs:
+		GETUO=<sectionID>		// Inherit DFN section if core shard era is Ultima Online (original release, before T2A)
+	Rewrote portions of MsgBoardQuestEscortCreate() function in msgboard.cpp to ensure only escort regions within same world as NPC can be selected as destinations
+	Increased maximum number of possible escort regions that can exist from 255 to 65535
+	Added region definitions for all shrines in Britannia (Fel & Trammel), and marked them as valid destinations for NPC escorts (uox3/regions/regions.dfn)
+	Moved bankers from vendor to human DFN files, and made them inherit basehuman instead of basevendor - since they are not vendors
+	To address an issue with escorted NPCs not timing out and vanishing if they are left in a "dormant" area of the world with no player activity, the NPCs are marked as "always awake" the moment they arrive at their destination. Note that the uox.ini setting ALLOWAWAKENPCS needs to be enabled for this to work.
+	Fixed an issue where spawnsection of spawners did not show up correctly in tweak menu
+	Fixed an issue where the generic Orc AI script didn't have a return true at end of onDamage() event, which prevented all orcs from taking damage in combat (js/npc/ai/monster/orc.js)
+	Moved Anatomy skill-check in healing script (js/skill/healing.js) from onCallback1() function to onTimer() to prevent the skill-check from being spammable
+	Added mount ID for Frost Mite in creatures.dfn, allowing it to be used as mount
+	Exposed the following character properties to JS engine, which can be used to view/adjust the permanent hair/beard options for a character:
+		.hairStyle
+		.hairColour
+		.beardStyle
+		.beardColour
+	Updated 'kill hair, 'shavehair, 'shavebeard and 'remove commands to clear permanent hair/beard colour and style properties in addition to removing the item itself
+	Added a GM override to let GMs place as many houses as they want (js/server/house/houseDeed.js)
+	Fixed an issue where attempting to sell items to NPC shopkeepers could result in client crashing
+	Added a new JS Event:
+		onMultiLogout( iMulti, cPlayer ) 	// Handles players logging out while inside multis
+	Updated house script (js/server/house/house.js) with onMultiLogout event, which allows owners (always) and co-owners/friends/guests (if option enabled in uox.ini) to safely log out inside the house (without getting booted).
+	Added a "keyless" option for interacting with locked doors (js/item/doors.js) of player-owned houses, which lets owners/co-owners/friends/guests of a house use locked doors in the house without requiring a key in their backpack, if the options for that are enabled in UOX.INI. Enabled for owners/co-owners and friends by default (but not for guests)
+		Note that if option to safely log out is enabled, but keyless option is NOT enabled, then the server will check if the player has a key to the house in their backpack, and eject them from the house upon logging out if not. This is to make sure players don't get stuck inside a house they can't get out of because they lack the rights to open doors etc.
+	Added new UOX.INI options, under the [houses] section:
+		SAFECOOWNERLOGOUT=1 	// Allow co-owners to safely and instantly log out inside house
+		SAFEFRIENDLOGOUT=1 		// Allow friends to safely and instantly log out inside house
+		SAFEGUESTLOGOUT=1 		// Allow guests to safely and instantly log out inside house
+		KEYLESSOWNERACCESS=1 	// Allow owner of house to use locked doors in house without key in pack
+		KEYLESSCOOWNERACCESS=1 	// Allow co-owners of house to use locked doors in house without key in pack
+		KEYLESSFRIENDACCESS=1 	// Allow friends of house to use locked doors in house without key in pack
+		KEYLESSGUESTACCESS=0 	// Allow guests of house to use locked doors in house without key in pack
+	Fixed NOHAIR tag from races.dfn not being loaded correctly
+
+31/12/2022 - Xuri
+	Extended GetSpawnRegion JS Function to fetch spawn region reference based on a set of coordinates. Supported syntax are now:
+		GetSpawnRegion( spawnRegionID )
+		GetSpawnRegion( x, y, worldNum, instanceID )
+	Added new DFN tags for Items and NPC:
+		SECTIONID	// Override which [sectionID] is stored for an object
+		ORIGIN		// Store reference to which expansion/era of UO an item/NPC originated in
+	Added new Item/Character JS property:
+		.origin 	// Get reference to expansion/era of UO an item/NPC originated in
+	Fixed an issue with IsInBuilding JS Function which could only handled a limited subset of instance ID values
+	Corrected name of tag used to attach scripts to ore types - from SCRIPTID to SCRIPT
+
 24/12/2022 - Xuri, punt, ldilley (0.99.6-RC2)
 	CMake is now default build system on Linux/FreeBSD, and an alternative for Windows/macOS-users instead of VS/XCode, though the old GCC/Make build process is still intact (for now)
 	Resource files (uox3.rc and uox3.ico) have been moved from UOX3/source to UOX3/assets
@@ -220,14 +314,14 @@
 	Renamed 0xf1_connectUOServerPoll.js to 0xf1_freeshardServerPoll.js, and updated script to respond to the "standard" freeshard server poll request rather than the more specific (and now dead) ConnectUO one.
 	Renamed INI setting CUOENABLED to FREESHARDSERVERPOLL
 	Added new INI settings under [expansion settings] section to help shard admins customize some key behaviours of their shard, based on their preferred "era" of UO. Note that a value of "core" means the setting inherits the chosen era from the CORESHARDERA setting:
-			CORESHARDERA=pub15
+			CORESHARDERA=lbr
 				Defines the "core" era of the shard. Defaults to pub15 (Publish 15).
 					any 				- determines which Item/NPC DFNs gets loaded, based on tags like GETT2A, GETPUB15
 					uor or later 		- enables bonus hit chance for archery via ARCHERYHITBONUS setting
-					pub15 or earlier	- final combat damage value reduced by half
+					lbr or earlier		- final combat damage value reduced by half
 			ARMORCALCULATION=core
 				Defines era to base armor calculations on
-					pub15 or earlier 	- different armor pieces contribute different percentage of the total Armor Rating
+					lbr or earlier 		- different armor pieces contribute different percentage of the total Armor Rating
 					aos or later 		- each armor piece contribute to sum total of Physical Resistance, and other elemental resistance stats
 			STRENGTHDAMAGEBONUS=core
 				Defines era to base strength damage bonus on
@@ -235,7 +329,7 @@
 					td or later 		- 35% damage bonus based on strength if 100 strength or more, otherwise 30% damage bonus
 			TACTICSDAMAGEBONUS=core
 				Defines era to base tactics damage bonus on
-					pub15 or earlier 	- bonus = Tactics skill + 50
+					lbr or earlier 		- bonus = Tactics skill + 50
 					aos or later 		- 68.75% damage bonus if GM Tactics, 62.5% bonus if below
 			ANATOMYDAMAGEBONUS=core
 				Defines era to base anatomy damage bonus on
@@ -252,12 +346,12 @@
 					sa or later 		- Gargoyles gain +15% damage bonus per each 20 HP lost
 			DAMAGEBONUSCAP=core
 				Defines era to base damage bonus cap on
-					pub15 or earlier 	- No cap on damage bonus multiplier
+					lbr or earlier 		- No cap on damage bonus multiplier
 					aos or later 		- Total damage bonus multiplier capped at 300% higher than base damage
 			SHIELDPARRY=core
 				Defines era to base shield parry calculations on
 					t2a 				- chance to block is parryskill / 2. shield absorbs damage equivalent of AR/2 for melee, or equivalent of AR for archery
-					uor to pub15 		- higher AR equals lower block chance, but more damage absorbed.
+					uor to lbr 			- higher AR equals lower block chance, but more damage absorbed.
 					aos or later 		- chance to block dependent on parry skill vs bushido skill, with dex modifier
 			WEAPONPARRY=core
 				Defines era to base weapon parry calculations on
@@ -268,17 +362,17 @@
 					tol or later 		- From 12.5% chance (at GM wrestling, increases with higher skill) that an NPC will parry an attack
 			COMBATHITCHANCE=core
 				Defines era to base combat hit chance calculations on
-					t2a to pub15 		- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
-					uor to pub15 		- Additional bonus hit chance for archery
+					t2a to lbr 			- hit chance based on attacker's skill vs defender's skill. No minimum chance to hit
+					uor to lbr 			- Additional bonus hit chance for archery
 					aos to tol 			- hit chance based on attacker's skill (and hit chance increase) vs defender's skill (and defense chance increase). Minimum 2% chance to hit
 		Supported era values:
-			t2a, uor, td, lbr, pub15, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
+			uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol and core (inherits era defined in CORESHARDERA)
 	Added (optional) new Item/NPC DFN tags to help determine which variants of Items/NPCs to load from DFNs, based on chosen era in CORESHARDERA setting:
+		GETUO=<sectionID>		// Inherit DFN section if core shard era is Ultima Online (original release, before T2A)
 		GETT2A=<sectionID>		// Inherit DFN section if core shard era is The Second Age
 		GETTD=<sectionID>		// Inherit DFN section if core shard era is Third Dawn
 		GETUOR=<sectionID>		// Inherit DFN section if core shard era is UO Renaissance
 		GETLBR=<sectionID>		// Inherit DFN section if core shard era is Lord Blackthorn's Revenge
-		GETPUB15=<sectionID>	// Inherit DFN section if core shard era is Pub15
 		GETAOS=<sectionID>		// Inherit DFN section if core shard era is Age of Shadows
 		GETSE=<sectionID>		// Inherit DFN section if core shard era is Samurai Empire
 		GETML=<sectionID>		// Inherit DFN section if core shard era is Mondain's Legacy
@@ -814,7 +908,7 @@
 	Added Ice and Fire dungeon locations (dfndata/location/location.dfn) and added these to the GM travel menu (dfndata/item/travelmenu.dfn/travelmenu.bulk.dfn)
 	Fixed body ID for ancient wyrm NPCs, which also fixes their name (dfndata/npc/dragons.dfn)
 	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
-		Quest of the Virtues – Volume 1 	// [quest_of_the_virtues_vol1]
+		Quest of the Virtues Â– Volume 1 	// [quest_of_the_virtues_vol1]
 		Fropoz's Journal 					// [fropoz_journal]
 		Translated Gargoyle Journal 		// [translated_gargoyle_journal]
 		Kabur's Journal 					// [kaburs_journal]
@@ -6545,7 +6639,7 @@ July 28 2004 - Maarc
 		GetWorldBrightLevel() renamed to WorldBrightLevel(), now sets and returns cSD::WorldLightBrightLevel()
 
 14 July 2004 - Maarc
-============
+------------
 	Integrated Xuri's dir property for JS items
 	Bug fix on command_darklight (Xuri)
 	Altered the ACCOUNTSBLOCK code so that it uses proper constructor rather than assignment (double assignment, essentially)
@@ -6573,13 +6667,13 @@ July 28 2004 - Maarc
 	Added a few more dictionary entries.
 
 09 July 2004 - Maarc
-============
+------------
 	Completely switched over to ObjectFactory code, getting rid of the other stuff - think its best for debugging
 	Fixed a bug with 'make gm, we were trying to sprintf a std::string
 	Removed periodic trigger code, as it never has a chance to load or activate, and needs a rethink (more like commands or spells?)
 
 08 July 2004 - Maarc
-============
+------------
 	Changed the saving of Damage property, we read it in as lo,hi and write it as hi,lo - now consistent
 	Found the non-disappearing horse bug on mounting.... Teleport() does a RemoveFromSight, but by THAT time, we've already... gone :)
 		2 possible fixes
@@ -6601,7 +6695,7 @@ July 28 2004 - Maarc
 	Modified a few of the targeting functions to make way for adding spawner items.
 
 07 July 2004 - Maarc
-============
+------------
 	JS related fixes
 		"scrollLow" property of Spell objects was set as an index... it's not that, it's an individual value
 		skillsused is now like baseskills and skills for characters (previously unaccessible)
@@ -6656,7 +6750,7 @@ July 28 2004 - Maarc
 	OKAY, the base default world now loads with the new object factory, and it's all fun and games.
 
 06 July 2004 - Maarc
-============
+------------
 	JS related fixes
 		Reenabled the ability to set poison and magic resistance on a race object
 		All setProperty routines now use JSEncapsulated, should be *much* more tolerant now
@@ -6664,7 +6758,7 @@ July 28 2004 - Maarc
 		It is now possible to set a socket's tempInt property
 
 05 July 2004 - Maarc
-============
+------------
 	Fixed a problem where it would crash on reloading JS scripts (via magic and commands)
 	Removed commented out code that was never used (including tempeffectsoff and tempeffectson)
 	Added some methods to help with deletion issues in the temp effects queues
@@ -6676,7 +6770,7 @@ July 28 2004 - Maarc
 	As certainly we will need this for more than just the character class
 
 04 July 2004 - Maarc
-============
+------------
 	nspawnsp and ncspawnsp rolled into CItem class.  Only items can be spawners (not NPCs), and all references to those objects now are done within the CItem class, or through FirstSpawn/NextSpawn/FinishedSpawn
 	Updated documents to not use CHARACTER or ITEM unless where it is actually used, to aid in finding where CHARACTER and ITEM references are that need to be ported to CChar * / CItem *
 	Updated ObjectFactory with a CountOfObjects method, which allows us to discretely count (if we wish) the number of objects for each type we have
@@ -6696,7 +6790,7 @@ July 28 2004 - Maarc
 	A few functions are implemented thusly (including world load postloadprocessing)
 
 03 July 2004 - Maarc
-============
+------------
 	Fixed an accidental bug where it would constantly process legacy accounts
 	More use of upper() caching
 	Added Config.h, Platform.h, Prerequisites.h and UOXStdHeaders.h
@@ -6735,9 +6829,9 @@ July 28 2004 - Maarc
 
 	chars[] and items[] are now really only referenced in a few small places (less than 10 by array on both, less than 50 by member funcs eg calling Count)
 
-	================
+	----------------
 	Discussion Ideas
-	================
+	----------------
 
 	OgreConfig	- Compile time configuration options
 	OgrePlatform	- Platform / compiler compatibility file - includes OgreConfig
@@ -6768,7 +6862,7 @@ July 28 2004 - Maarc
 	Initial implementation of CSpawnItem in order to break CItem up into smaller classes.
 
 02 July 2004 - Maarc
-============
+------------
 
 	Fixed display issue with saving packet logs (hex values a->f weren't displayed right)
 	Fixed an issue with the add menu that was relying on gumps that didn't exist in older clients
@@ -6792,7 +6886,7 @@ July 28 2004 - Maarc
 	A very basic workflow script exists for clumsy - it does not take everything into account, nor does it actually do the clumsy part, it's just an example.
 
 01 July 2004 - Maarc
-============
+------------
 	Fixed a bug with newaccounts.adm and parsing
 	Converted ImportAccounts to use std::string and UStrings
 	Removed the ability to pass "+add:user,pass,email" and "+import:filename.import" arguments to the binary.  This *cannot* be done at this stage, as the accounts haven't been initialised and loaded, so conflict resolution cannot occur.
@@ -7463,7 +7557,7 @@ Oct 04 2003 - giwo
 
 
 07 Aug 2003 - Maarc
-===========
+-----------
 	Overhauled HTMLTemplate Class to actually handle multiple templates correctly.
 
 	Templates Supported at this time are :
@@ -7542,19 +7636,18 @@ Oct 04 2003 - giwo
 
 
 05 Aug 2003 - Maarc
-===========
+-----------
 	Fixed PC dying issue, not changing to ghost and not turning to gray
 	Reinstated terminating NULL with regards to CPOpenBuyWindow, which should hopefully restore pricing in 3D client
 
 03 Aug 2003 - Maarc
-=======
+-----------
 	Fixed issue with delete characters. Now characters should delete correctly, and not list unknown
 	values, and erroneous data.
 	Fixed an issue with CPIGumpMenuSelect, which was getting radio buttons wrong
 	Fixed an issue with BuyFrom, where the logic was backward... should be more like pUser.BuyFrom( NPC ) than NPC.BuyFrom( pUser )
 	Fixed similar issue with SellTo
 	Added "movable" to area commands on request of Xuri
->>>>>>> 1.1.2.22
 
 02 Aug 2003 - Maarc
 	Updated CPItemsInContainer so that it will work faster and should work better with vendors
@@ -10091,7 +10184,7 @@ Changed:
 	into a single file, all german into a single file, and so on
 	Now require only roughly half a dozen dictionary files
 
-	==================
+	------------------
 	Copy dictionary.zro from the scripts/release archive to scripts/ in
 	the installed directory.  Duplicate it and rename the duplicates to
 	have extensions of UNK and ENG
@@ -10515,7 +10608,7 @@ Changed:
 	Also, not all of those language codes will be translatable.
 
 	TO DO
-	======
+	-------
 	All english and other languages have commonality.  Alter dictionary
 	so that all english is from one file, all german from another, and
 	so on
@@ -10960,7 +11053,7 @@ Changed:
 	On accept, cSocket is set to xGM for the xgm connected sockets
 
 	TODO
-	=====
+	-----
 	Real authentication on xGM
 
 2001-07-18 21:39  darkangelab
@@ -11278,7 +11371,7 @@ Changed:
 	Added jail saving
 
 	TODO
-	=====
+	-----
 	Add jail loading
 	Add jail scriptable locations
 	Write util to convert existing Reserved=0 to Reserved=-1 for
@@ -11334,7 +11427,7 @@ Changed:
 	are now available
 	Note that the NPCs and mounted creatures don't match up quite right
 	yet
-	===============
+	---------------
 	Courtesy of Weazel
 
 2001-07-11 19:27  darkangelab
@@ -11993,7 +12086,7 @@ Changed:
 	* cmdtable.cpp, commands.cpp, items.cpp, mapstuff.cpp, scriptc.cpp,
 	targeting.cpp, uox3.cpp:
 	Zane
-	====
+	----
 	Soundfx properly played for picking up items from ground
 	'set kills added, 'setmurder removed (code commented)
 	ItemSpawn() and ItemSpawnBackpack2() automatically add the items
@@ -12001,7 +12094,7 @@ Changed:
 	Minor cleanups in targeting.cpp
 
 	Abaddon
-	=======
+	-------
 	Started work on definition section header support
 
 2001-07-03 21:16  uid43025

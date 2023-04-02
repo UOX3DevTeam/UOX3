@@ -113,6 +113,7 @@ const UI32 BIT_EVADE			=	29; // This property is not saved
 const UI32 BIT_FLYING			=	30; // This property is not saved
 const UI32 BIT_WILLTHIRST		=	31;
 const UI32 BIT_HIRELING			=	32;
+const UI32 BIT_ISPASSIVE		=	33;
 
 const UI32 BIT_MOUNTED			=	0;
 const UI32 BIT_STABLED			=	1;
@@ -1090,6 +1091,23 @@ void CChar::SetWar( bool newValue )
 			SetVisible( VT_GHOSTHIDDEN );
 		}
 	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar::IsPassive()
+//|					CChar::SetPassive()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns/Sets whether the character is passive in combat. Primarily used to
+//|					allow players to "tab out" of combat and not hit back even though someone is
+//|					hitting them
+//o------------------------------------------------------------------------------------------------o
+bool CChar::IsPassive( void ) const
+{
+	return bools.test( BIT_ISPASSIVE );
+}
+void CChar::SetPassive( bool newValue )
+{
+	bools.set( BIT_ISPASSIVE, newValue );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2855,7 +2873,7 @@ bool CChar::WearItem( CItem *toWear )
 		{
 #if defined( UOX_DEBUG_MODE )
 			std::string charName = GetNpcDictName( this );
-			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str() ));
+			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
 #endif
 			rValue = false;
 		}
@@ -8146,7 +8164,7 @@ bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 		// Reputation system
 		if( doRepsys )
 		{
-			if( WillResultInCriminal( attacker, this )) //REPSYS
+			if( attacker->DidAttackFirst() && WillResultInCriminal( attacker, this )) //REPSYS
 			{
 				MakeCriminal( attacker );
 				bool regionGuarded = ( GetRegion()->IsGuarded() );

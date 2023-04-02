@@ -145,6 +145,7 @@
 3211=npc/ai/monster/exodus_clockwork.js
 3212=npc/ai/monster/savage.js
 3213=npc/ai/monster/savage_shaman.js
+3214=npc/ai/vendor_bdo_dispenser.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -252,6 +253,8 @@
 5039=item/taxidermykit.js
 5040=item/hairbearddye.js
 5041=item/potionkeg.js
+5042=item/smallbod.js
+5043=item/equip_effects/skill_boosting_equipment.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]

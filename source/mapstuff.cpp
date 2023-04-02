@@ -525,8 +525,9 @@ auto CMulHandler::MultiHeight( CItem *i, std::int16_t x, std::int16_t y, std::in
 				tmpTop = static_cast<SI08>( baseZ + multi.altitude );
 				if( std::abs( tmpTop - oldZ ) <= maxZ )
 				{
-					mHeight = tmpTop + multi.info->ClimbHeight();
-					break;
+					mHeight = tmpTop + multi.info->ClimbHeight( true );
+					if( mHeight == oldZ ) // We found a surface at the suggested height
+						break;
 				}
 			}
 		}
@@ -805,48 +806,72 @@ auto CMulHandler::CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z
 //o------------------------------------------------------------------------------------------------o
 auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck ) -> bool
 {
-	for( auto &cellResponse : MapRegion->PopulateList( x, y, worldNumber ))
+	// Special case for handling multis that cross over between multiple map regions because of size
+	CMultiObj *tempMulti = FindMulti( x, y, z, worldNumber, instanceId );
+	if( ValidateObject( tempMulti ) )
 	{
-		if( cellResponse == nullptr )
-			continue;
-
-		auto regItems = cellResponse->GetItemList();
-		for( const auto &item : regItems->collection() )
+		// Look for a multi item at specific location
+		auto multiId = static_cast<UI16>( tempMulti->GetId() - 0x4000 );
+		for( auto &multiItem : SeekMulti( multiId ).items )
 		{
-			if( !ValidateObject( item ) || item->GetInstanceId() != instanceId )
-				continue;
-					
-			if(( item->GetId( 1 ) >= 0x40 ) && (( item->GetObjType() == OT_MULTI ) || (item->CanBeObjType( OT_MULTI ))))
+			if( multiItem.flag > 0 && ( abs( tempMulti->GetZ() + multiItem.altitude - z ) <= 1 ))
 			{
-				// Found a multi
-				// Look for a multi item at specific location
-				auto multiId = static_cast<UI16>( item->GetId() - 0x4000 );
-				for( auto &multiItem : SeekMulti( multiId ).items )
+				if(( tempMulti->GetX() + multiItem.offsetX == x ) && ( tempMulti->GetY() + multiItem.offsetY == y ))
 				{
-					if( multiItem.flag > 0 && ( abs( item->GetZ() + multiItem.altitude - z ) <= 1 ))
+					if( SeekTile( multiItem.tileId ).CheckFlag( toCheck ))
 					{
-						if(( item->GetX() + multiItem.offsetX == x ) && ( item->GetY() + multiItem.offsetY == y ))
+						return true;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		// Search map region of given location for all potentially blocking dynamic items
+		for( auto &cellResponse : MapRegion->PopulateList( x, y, worldNumber ))
+		{
+			if( cellResponse == nullptr )
+				continue;
+
+			auto regItems = cellResponse->GetItemList();
+			for( const auto &item : regItems->collection() )
+			{
+				if( !ValidateObject( item ) || item->GetInstanceId() != instanceId )
+					continue;
+					
+				if(( item->GetId( 1 ) >= 0x40 ) && (( item->GetObjType() == OT_MULTI ) || (item->CanBeObjType( OT_MULTI ))))
+				{
+					// Found a multi
+					// Look for a multi item at specific location
+					auto multiId = static_cast<UI16>( item->GetId() - 0x4000 );
+					for( auto &multiItem : SeekMulti( multiId ).items )
+					{
+						if( multiItem.flag > 0 && ( abs( item->GetZ() + multiItem.altitude - z ) <= 1 ))
 						{
-							if( SeekTile( multiItem.tileId ).CheckFlag( toCheck ))
+							if(( item->GetX() + multiItem.offsetX == x ) && ( item->GetY() + multiItem.offsetY == y ))
 							{
-								return true;
+								if( SeekTile( multiItem.tileId ).CheckFlag( toCheck ))
+								{
+									return true;
+								}
 							}
 						}
 					}
 				}
-			}
-			else
-			{
-				// item is not a multi
-				if(( item->GetX() == x ) && ( item->GetY() == y ) && ( item->GetZ() == z ))
+				else
 				{
-					auto itemZ = item->GetZ();
-					const SI08 tileHeight = static_cast<SI08>( TileHeight( item->GetId() ));
-					if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
+					// item is not a multi
+					if(( item->GetX() == x ) && ( item->GetY() == y ) && ( item->GetZ() == z ))
 					{
-						if( SeekTile( item->GetId() ).CheckFlag( toCheck ))
+						auto itemZ = item->GetZ();
+						const SI08 tileHeight = static_cast<SI08>( TileHeight( item->GetId() ));
+						if(( itemZ == z && itemZ + tileHeight > z ) || ( itemZ < z && itemZ + tileHeight >= z ))
 						{
-							return true;
+							if( SeekTile( item->GetId() ).CheckFlag( toCheck ))
+							{
+								return true;
+							}
 						}
 					}
 				}
@@ -900,24 +925,46 @@ auto CMulHandler::DynamicElevation( std::int16_t x, std::int16_t y, std::int8_t 
 {
 	auto dynZ = ILLEGAL_Z;
 
-	auto MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
-	if( MapArea )
+	// Special case for handling multis that cross over between multiple map regions because of size
+	CMultiObj *tempMulti = FindMulti( x, y, z, worldNumber, instanceId );
+	if( ValidateObject( tempMulti ))
 	{
-		auto regItems = MapArea->GetItemList();
-		for( const auto tempItem : regItems->collection() )
+		dynZ = MultiHeight( tempMulti, x, y, z, maxZ );
+
+		// Also check dynamic items inside the multi
+		for( const auto &tempMultiItem : tempMulti->GetItemsInMultiList()->collection() )
 		{
-			if( ValidateObject( tempItem ) || tempItem->GetInstanceId() != instanceId )
+			if( tempMultiItem->GetX() == x && tempMultiItem->GetY() == y )
 			{
-				if( tempItem->GetId( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
+				SI08 zTemp = static_cast<SI08>( tempMultiItem->GetZ() + TileHeight( tempMultiItem->GetId() ));
+				if(( zTemp <= z + maxZ ) && ( zTemp > dynZ || ( dynZ >= z + maxZ )))
 				{
-					dynZ = MultiHeight( tempItem, x, y, z, maxZ );
+					dynZ = zTemp;
 				}
-				else if( tempItem->GetX() == x && tempItem->GetY() == y )
+			}
+		}
+	}
+	else
+	{
+		auto MapArea = MapRegion->GetMapRegion( MapRegion->GetGridX( x ), MapRegion->GetGridY( y ), worldNumber );
+		if( MapArea )
+		{
+			auto regItems = MapArea->GetItemList();
+			for( const auto tempItem : regItems->collection() )
+			{
+				if( ValidateObject( tempItem ) || tempItem->GetInstanceId() != instanceId )
 				{
-					SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
-					if(( zTemp <= z + maxZ ) && zTemp > dynZ )
+					if( tempItem->GetId( 1 ) >= 0x40 && tempItem->CanBeObjType( OT_MULTI ))
 					{
-						dynZ = zTemp;
+						dynZ = MultiHeight( tempItem, x, y, z, maxZ );
+					}
+					else if( tempItem->GetX() == x && tempItem->GetY() == y )
+					{
+						SI08 zTemp = static_cast<SI08>( tempItem->GetZ() + TileHeight( tempItem->GetId() ));
+						if(( zTemp <= z + maxZ ) && zTemp > dynZ )
+						{
+							dynZ = zTemp;
+						}
 					}
 				}
 			}

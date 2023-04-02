@@ -3340,6 +3340,8 @@
 6276=No tienes la habilidad de cocinar para crear la pintura corporal.
 6277=El ID del recurso no se encuentra en la lista de recursos utilizados para elaborar el artículo.
 6278=Tienes que usar tu habilidad de identificación de sabores para saber más sobre esta poción.
+6279=¡Exito de la comprobación de habilidad garantizado debido al elevado nivel de mando!
+6280=¡Retraso de lanzamiento ignorado debido al elevado nivel de mando!
 // [7000-7499] Guiones de IA
 7000=Eres un delincuente y no puedes acceder a tu caja bancaria.
 7001=¿Qué artículo desea depositar en su caja?
@@ -3728,6 +3730,10 @@
 8433=Coordenada X inferior derecha del límite del wandertype del personaje
 8434=Coordenada Y inferior derecha para el límite de wandertype del personaje
 8435=Coordenada Z del límite del wandertype del personaje
+8436=Color de la barba permanente del personaje
+8437=Estilo de barba permanente del personaje
+8438=Color de pelo permanente del personaje
+8439=Estilo de pelo permanente del personaje
 // [8500-8549] Menú de ajustes - Descripciones de propiedades múltiples
 8500=Número actual de jugadores vetados en Multi. Controlado por el servidor (sólo lectura)
 8501=coordenada X para la ubicación de prohibición de Multi
@@ -4835,5 +4841,32 @@
 17223=Un barril especialmente forrado para pociones.
 17224=¡No hay nada en el barril para probar!
 17225=Ya conoce el contenido de este barril.
+//Sistema de órdenes de compra a granel
+17250=Un pedido a granel
+17251=Cantidad a fabricar:
+17252=Cantidad terminada:
+17253=Pedido solicitado:
+17254=Excepcional
+17255=Requisitos especiales que cumplir:
+17256=Todos los artículos deben ser excepcionales.
+17257=Todos los artículos deben estar hechos con
+17258=Combine esta escritura con el artículo solicitado.
+17259=Debe tener el objeto en su mochila para poder apuntarlo.
+17260=La cantidad máxima de objetos solicitados ya han sido combinados con esta hazaña.
+17261=El objeto no está hecho del mineral solicitado.
+17262=El objeto debe ser excepcional.
+17263=El objeto ya ha sido combinado con la escritura.
+17264=El objeto no está en la petición.
+17265=Una Oferta puede estar disponible en unos
+17266=minutos
+17267=¡Ah! ¡Gracias por la mercancía!  ¿Me ayudarías?
+17268=¿Desea aceptar este pedido?
+17269=Ok
+17270=Aún no ha completado el pedido.
+17271=¡Muchas gracias!  Aquí tiene una recompensa por su esfuerzo.
+17272=Ese pedido es para otro tendero.
+17273=Tendrá que esperar unos segundos mientras inspecciono el último pedido.
+17274=La escritura de pedido a granel ha sido colocada en su mochila.
+17275=No tiene suficiente espacio en su mochila para la recompensa del pedido a granel.
 }
 EOF

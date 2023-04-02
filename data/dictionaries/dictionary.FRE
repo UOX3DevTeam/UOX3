@@ -3504,6 +3504,8 @@
 6276=Vous n'avez pas la compétence cuisine pour créer la peinture corporelle.
 6277=Resource ID non trouvée dans la liste des ressources utilisées pour fabriquer l'objet.
 6278=Vous devez utiliser votre compétence d'identification des goûts pour en savoir plus sur cette potion.
+6279=Succès de la vérification des compétences garanti grâce à un niveau de commande élevé !
+6280=Délai de lancement de sort ignoré en raison d'un niveau de commande élevé !
 // [7000-7499] AI Scripts
 7000=Tu es un criminel et tu ne peux pas accéder à ton coffre de banque.
 7001=Quel objet souhaitez-vous déposer dans votre coffret bancaire ?
@@ -3892,6 +3894,10 @@
 8433=Coord en X en bas à droite de la limite du wandertype du personnage
 8434=Coordon Y inférieur droit de la limite du wandertype du personnage
 8435=Z coord pour la limite du type d'errance du personnage
+8436=Couleur de la barbe permanente du personnage
+8437=Type de barbe permanente du personnage
+8438=Couleur permanente des cheveux du personnage
+8439=Coiffure permanente du personnage
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Nombre actuel de joueurs bannis de Multi. Contrôlé par le serveur (en lecture seule)
 8501=Coordonnée X du lieu de bannissement de Multi
@@ -4999,5 +5005,32 @@
 17223=Un tonneau spécialement garni pour les potions.
 17224=Il n'y a rien à goûter dans le tonneau !
 17225=Tu connais déjà le contenu de ce tonneau.
+//Système d'actes de vente en vrac
+17250=Une commande en bloc
+17251=Montant à fabriquer :
+17252=Montant terminé :
+17253=article demandé :
+17254=exceptionnel
+17255=Exigences particulières à respecter :
+17256=Tous les articles doivent être exceptionnels.
+17257=Tous les articles doivent être fabriqués avec des matériaux de qualité supérieure.
+17258=Combinez cet acte avec l'objet demandé.
+17259=Vous devez avoir l'objet dans votre sac à dos pour le cibler.
+17260=Le nombre maximum d'objets demandés a déjà été combiné à cet acte.
+17261=L'objet n'est pas fabriqué à partir du minerai demandé.
+17262=L'objet doit être exceptionnel.
+17263=L'objet a été combiné à l'acte.
+17264=L'objet n'est pas dans la demande.
+17265=Une offre peut être disponible dans environ
+17266=minutes
+17267=Ah ! Merci pour la marchandise !  Voulez-vous m'aider ?
+17268=Voulez-vous accepter cette commande ?
+17269=Ok
+17270=Vous n'avez pas encore terminé la commande.
+17271=Merci beaucoup !  Voici une récompense pour vos efforts.
+17272=Cette commande est destinée à un autre commerçant.
+17273=Vous allez devoir patienter quelques secondes pendant que j'inspecte la dernière commande.
+17274=L'acte de commande groupée a été placé dans votre sac à dos.
+17275=Vous n'avez pas assez de place dans votre sac à dos pour la récompense de la commande groupée.
 }
 EOF

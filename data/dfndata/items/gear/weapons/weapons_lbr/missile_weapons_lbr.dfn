@@ -1,6 +1,6 @@
 
-// Fukiya - Pub15 stats (default)
-[0x27aa_pub15]
+// Fukiya - LBR stats (default)
+[0x27aa_lbr]
 {
 get=base_fukiya
 damage=2 12

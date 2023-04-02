@@ -1556,11 +1556,6 @@ void CMovement::CombatWalk( CChar *i )
 
 	CPExtMove toSend = ( *i );
 
-	if( !i->IsAtWar() )
-	{
-		i->SetTarg( nullptr );
-	}
-
 	for( auto &sock : FindNearbyPlayers( i ))
 	{
 		CChar *mChar = sock->CurrcharObj();

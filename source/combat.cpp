@@ -107,7 +107,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	cAttack->SetTarg( cTarget );
 	cAttack->SetAttacker( cTarget );
 	cAttack->SetAttackFirst(( cTarget->GetTarg() != cAttack ));
-	if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+
+	// If target doesn't already have cAttack as a target, update their target selection
+	//if( !cTarget->IsInvulnerable() && ( !ValidateObject( cTarget->GetTarg() ) || !ObjInRange( cTarget, cTarget->GetTarg(), DIST_INRANGE )))	// Only invuln don't fight back
+	if( !cTarget->IsInvulnerable() && !ValidateObject( cTarget->GetTarg() ))	// Only invuln don't fight back
 	{
 		if( cTarget->GetNpcAiType() != AI_DUMMY )
 		{
@@ -115,6 +118,12 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			cTarget->SetAttacker( cAttack );
 			cTarget->SetAttackFirst( false );
 			returningAttack = true;
+
+			// If target is not already at war/in combat, make sure to disable their passive mode
+			if( !cTarget->IsAtWar() )
+			{
+				cTarget->SetPassive( false );
+			}
 		}
 
 		if( cTarget->GetSocket() != nullptr )
@@ -427,21 +436,24 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			PetGuardAttack( ourChar, i, i );
 		}
 
-		// Send attacker message to all nearby players
-		for( auto &tSock : FindNearbyPlayers( ourChar ))
+		// Send attacker message to all nearby players, IF player is attacking someone who wasn't already fighting them
+		if( i->GetTarg() != ourChar )
 		{
-			if( tSock )
+			for( auto &tSock : FindNearbyPlayers( ourChar ))
 			{
-				// Valid socket found
-				CChar *witness = tSock->CurrcharObj();
-				if( ValidateObject( witness ))
+				if( tSock )
 				{
-					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( ourChar, tSock );
-					std::string targetName = GetNpcDictName( i, tSock );
+					// Valid socket found
+					CChar *witness = tSock->CurrcharObj();
+					if( ValidateObject( witness ))
+					{
+						// Fetch names of attacker and target
+						std::string attackerName = GetNpcDictName( ourChar, tSock );
+						std::string targetName = GetNpcDictName( i, tSock );
 
-					// Send an emote about attacking target to nearby witness
-					ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+						// Send an emote about attacking target to nearby witness
+						ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
+					}
 				}
 			}
 		}
@@ -2373,7 +2385,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					else if( serverData->ExpansionShieldParry() < ER_AOS )
 					{
-						// Pre-AoS/Pub15/UOR
+						// Pre-AoS/LBR/UOR
 						// FORMULA: Melee Damage Absorbed = ( AR of Shield ) / 2 | Archery Damage Absorbed = AR of Shield
 						if( getFightSkill == ARCHERY )
 						{
@@ -2421,7 +2433,7 @@ SI16 CHandleCombat::ApplyDefenseModifiers( WeatherType damageType, CChar *mChar,
 					}
 					/*else
 					{
-						// Old Pre-AoS (~Publish 15) block with shield
+						// Old Pre-AoS (LBR, ~Publish 15) block with shield
 						damage -= HalfRandomNum( shield->GetResist( PHYSICAL ));
 						getDef = HalfRandomNum( CalcDef( ourTarg, hitLoc, doArmorDamage, PHYSICAL ));
 
@@ -2635,8 +2647,8 @@ SI16 CHandleCombat::CalcDamage( CChar *mChar, CChar *ourTarg, UI08 getFightSkill
 		damage = RandomNum( 0, 4 );
 	}
 
-	// Half remaining damage by 2 if PUB15 or earlier
-	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_PUB15 )
+	// Half remaining damage by 2 if LBR (Pub15) or earlier
+	if( cwmWorldState->ServerData()->ExpansionCoreShardEra() <= ER_LBR )
 	{
 		damage /= 2;
 	}
@@ -2780,8 +2792,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			case ER_T2A: // T2A - The Second Age
 			case ER_UOR: // UOR - Renaissance
 			case ER_TD: // TD - Third Dawn
-			case ER_LBR: // LBR - Lord Blackthorn's Revenge
-			case ER_PUB15: // PUB15 - Pub15 (Pre-AoS)
+			case ER_LBR: // LBR - Lord Blackthorn's Revenge (Publish 15)
 				// FORMULA: ( Attacker's skill + 50 / ((defender's skill + 50 )* 2 )) * 100
 				hitChance = ((( static_cast<R32>( attackSkill ) + 500.0 ) / (( static_cast<R32>( defendSkill ) + 500.0 ) * 2.0 )) * 100.0 );
 				if( hitChance < 0 )
@@ -3532,7 +3543,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					{
 						HandleNPCSpellAttack( &mChar, ourTarg, GetDist( &mChar, ourTarg ));
 					}
-					else
+					else if( mChar.IsNpc() || !mChar.IsPassive() ) // Don't trigger for players who are marked as passive combatants
 					{
 						combatHandled = HandleCombat( mSock, mChar, ourTarg );
 					}

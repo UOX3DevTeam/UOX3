@@ -36,8 +36,9 @@ enum ScriptEvent
 	seOnSwing,
 	seOnDecay,
 	seOnTransfer,
-	seOnLeaving,			//	**
 	seOnEntrance,			//	**
+	seOnLeaving,			//	**
+	seOnMultiLogout,		//	**
 	seOnEquipAttempt,		//	**
 	seOnEquip,				//	**
 	seOnUnequipAttempt,		//	**
@@ -206,8 +207,9 @@ public:
 	bool		OnContRemoveItem( CItem *contItem, CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	SI08		OnDecay( CItem *decaying );
-	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
 	SI08		OnEntrance( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnLeaving( CMultiObj *left, CBaseObject *leaving );
+	SI08		OnMultiLogout( CMultiObj* iMulti, CChar* cPlayer );
 	SI08		OnEquipAttempt( CChar *equipper, CItem *equipping );
 	SI08		OnEquip( CChar *equipper, CItem *equipping );
 	SI08		OnUnequipAttempt( CChar *equipper, CItem *equipping );

@@ -269,7 +269,6 @@ function onCallback1( socket, ourObj )
 
 				mChar.AddScriptTrigger( 4014 ); // Add healing_slip.js script
 				SetSkillInUse( socket, mChar, ourObj, skillNum, healTimer, true );
-				mChar.CheckSkill( 1, 0, 1000 );
 				mChar.StartTimer( healTimer, 2, true );
 			}
 		}
@@ -339,12 +338,18 @@ function onTimer( mChar, timerID )
 		if( mChar.dead )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9083, socket.language )); // You were unable to finish your work before you died.
+			return;
+		}
+
+		if( !ValidateObject( ourObj ))
+		{
+			return;
 		}
 		else if( ourObj.dead && timerID != 0 )
 		{
 			socket.SysMessage( GetDictionaryEntry( 9086, socket.language )); // You cannot heal that which is not alive.
 		}
-		else if( ValidateObject( ourObj ) && mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ))
+		else if( mChar.InRange( ourObj, 2 ) && mChar.CanSee( ourObj ))
 		{
 			switch ( timerID )
 			{
@@ -402,6 +407,9 @@ function onTimer( mChar, timerID )
 					}
 					else if( mChar.CheckSkill( skillNum, 0, healthLoss * 10 )) // Requires higher and higher amount of health lost in order for healer to gain skill
 					{
+						// Perform generic Anatomy skill check to allow skill increase
+						mChar.CheckSkill( 1, 0, 1000 );
+
 						// Increase karma when healing innocent/neutral characters
 						if( ourObj != mChar && ( ourObj.innocent || ourObj.neutral ))
 						{

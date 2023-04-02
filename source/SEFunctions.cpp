@@ -3420,20 +3420,28 @@ JSBool SE_GetTownRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetSpawnRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
-	if( argc != 1 )
+	if( argc != 1 && argc != 4 )
 	{
-		DoSEErrorMessage( "GetSpawnRegion: Invalid number of parameters (1)" );
+		DoSEErrorMessage( "GetSpawnRegion: Invalid number of parameters (1 - spawnRegionID, or 4 - x, y, world and instanceID)" );
 		return JS_FALSE;
 	}
 
-	UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
-	if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
+	if( argc == 1 )
 	{
-		CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
-		if( spawnReg != nullptr )
+		// Assume spawn region number was provided
+		UI16 spawnRegNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		if( cwmWorldState->spawnRegions.find( spawnRegNum ) != cwmWorldState->spawnRegions.end() )
 		{
-			JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
-			*rval = OBJECT_TO_JSVAL( myObj );
+			CSpawnRegion *spawnReg = cwmWorldState->spawnRegions[spawnRegNum];
+			if( spawnReg != nullptr )
+			{
+				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, spawnReg, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				*rval = OBJECT_TO_JSVAL( myObj );
+			}
+			else
+			{
+				*rval = JSVAL_NULL;
+			}
 		}
 		else
 		{
@@ -3442,8 +3450,31 @@ JSBool SE_GetSpawnRegion( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	}
 	else
 	{
-		*rval = JSVAL_NULL;
+		// Assume coordinates were provided
+		UI16 x = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+		UI16 y = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
+		UI08 worldNum = static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
+		UI16 instanceID = static_cast<UI16>( JSVAL_TO_INT( argv[3] ));
+
+		// Iterate over each spawn region to find the right one
+		auto iter = std::find_if( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&x, &y, &worldNum, &instanceID, &cx, &rval]( std::pair<UI16, CSpawnRegion*> entry )
+		{
+			if( entry.second && x >= entry.second->GetX1() && x <= entry.second->GetX2() && y >= entry.second->GetY1()
+				&& y <= entry.second->GetY2() && entry.second->GetInstanceId() == instanceID && entry.second->WorldNumber() == worldNum )
+			{
+				JSObject *myObj = JSEngine->AcquireObject( IUE_SPAWNREGION, entry.second, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+				*rval = OBJECT_TO_JSVAL( myObj );
+				return true;
+			}
+			return false;
+		});
+
+		if( iter == cwmWorldState->spawnRegions.end() )
+		{
+			*rval = JSVAL_NULL;
+		}
 	}
+
 	return JS_TRUE;
 }
 
@@ -3504,7 +3535,7 @@ JSBool SE_IsInBuilding( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
 	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
 	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-	UI08 instanceId = static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	UI16 instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
 	bool checkHeight = ( JSVAL_TO_BOOLEAN( argv[5] ) == JS_TRUE );
 	bool isInBuilding = Map->InBuilding( x, y, z, worldNum, instanceId );
 	if( !isInBuilding )
@@ -3742,6 +3773,44 @@ JSBool SE_DeleteFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc,
 
 	std::filesystem::path filePath = pathString;
 	*rval = std::filesystem::remove( filePath );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_EraStringToNum()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Converts an UO era string to an int value for easier comparison in JavaScripts
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	*rval = reinterpret_cast<long>(nullptr);
+
+	if( argc != 1 )
+	{
+		DoSEErrorMessage( "EraStringToNum: Invalid number of arguments (takes 1 - era string)" );
+		return JS_FALSE;
+	}
+
+	JSString *tString;
+	std::string eraString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	if( !eraString.empty() )
+	{
+		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
+		if( eraNum != 0 )
+		{
+			*rval = INT_TO_JSVAL( eraNum );
+		}
+		else
+		{
+			DoSEErrorMessage( "EraStringToNum: Provided argument not valid era string (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs or tol)" );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		DoSEErrorMessage( "EraStringToNum: Provided argument contained no valid string data" );
+		return JS_FALSE;
+	}
 	return JS_TRUE;
 }
 
@@ -4455,7 +4524,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 231:	// CORESHARDERA
 			{
-				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() )) };
+				std::string tempString = { cwmWorldState->ServerData()->EraEnumToString( static_cast<ExpansionRuleset>( cwmWorldState->ServerData()->ExpansionCoreShardEra() ), true ) };
 				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
 				*rval = STRING_TO_JSVAL( tString );
 				break;
@@ -4770,6 +4839,45 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 320:	// MAXPLAYERBANKWEIGHT
 				*rval = INT_TO_JSVAL( static_cast<SI32>( cwmWorldState->ServerData()->MaxPlayerBankWeight() ));
+				break;
+			case 321:	// SAFECOOWNERLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeCoOwnerLogout() );
+				break;
+			case 322:	// SAFEFRIENDLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeFriendLogout() );
+				break;
+			case 323:	// SAFEGUESTLOGOUT
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SafeGuestLogout() );
+				break;
+			case 324:	// KEYLESSOWNERACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessOwnerAccess() );
+				break;
+			case 325:	// KEYLESSCOOWNERACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessCoOwnerAccess() );
+				break;
+			case 326:	// KEYLESSFRIENDACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessFriendAccess() );
+				break;
+			case 327:	// KEYLESSGUESTACCESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->KeylessGuestAccess() );
+				break;
+			case 328:	// WEAPONDAMAGEBONUSTYPE
+				*rval = INT_TO_JSVAL( static_cast<UI08>( cwmWorldState->ServerData()->WeaponDamageBonusType() ));
+				break;
+			case 329:	// OFFERBODSFROMITEMSALES
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromItemSales() );
+				break;
+			case 330:	// OFFERBODSFROMCONTEXTMENU
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->OfferBODsFromContextMenu() );
+				break;
+			case 331:	// BODSFROMCRAFTEDITEMSONLY
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->BODsFromCraftedItemsOnly() );
+				break;
+			case 332:	// BODGOLDREWARDMULTIPLIER
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODGoldRewardMultiplier() ));
+				break;
+			case 333:	// BODFAMEREWARDMULTIPLIER
+				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODFameRewardMultiplier() ));
 				break;
 			default:
 				DoSEErrorMessage( "GetServerSetting: Invalid server setting name provided" );

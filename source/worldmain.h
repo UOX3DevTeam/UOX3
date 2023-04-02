@@ -217,7 +217,7 @@ public:
 	std::vector<CTeleLocationEntry>		teleLocs;
 	std::vector<LogoutLocationEntry_st>	logoutLocs;
 	std::vector<SOSLocationEntry_st>	sosLocs;
-	std::vector<UI08>					escortRegions;
+	std::vector<UI16>					escortRegions;
 	std::map<UI16, GoPlaces_st>			goPlaces;
 	std::unordered_map<UI16, CSpawnRegion *>	spawnRegions;
 	std::map<UI16, CTownRegion *>				townRegions;

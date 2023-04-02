@@ -112,6 +112,10 @@ enum TriggerWords
 	TW_STATUS			= 0x0174,		// Status
 	TW_DISMISS			= 0x0175,		// Dismiss
 	TW_SELL				= 0x0177,		// Sell
+
+	// UOX3 custom keywords (0x5000 and beyond)
+	TW_BODINFO			= 0x5000,		// Bulk Order Info
+
 	TW_COUNT			= 0xFFFF
 };
 

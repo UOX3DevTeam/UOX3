@@ -19,7 +19,7 @@ function onUseChecked ( pUser, iUsed )
 		}
 		else
 		{
-			// Not needed, in Pub15 era it takes 1 wheat to get 1 sack of flour
+			// Not needed, in LBR era it takes 1 wheat to get 1 sack of flour
 			/*var countOfResource = pUser.ResourceCount( 0x1EBD );	// item ID
 			if( countOfResource < 4 )
 			{

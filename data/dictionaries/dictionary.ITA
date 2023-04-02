@@ -3339,6 +3339,9 @@
 6275=Si combinano le bacche e la farina per ottenere la pittura tribale indossata dai selvaggi.
 6276=Non hai l'abilità di cucinare per creare la pittura per il corpo.
 6277=Identità della risorsa non trovata nell'elenco delle risorse utilizzate per creare l'oggetto.
+6278=Per saperne di più su questa pozione devi usare l'abilità di identificazione dei gusti.
+6279=Il successo del controllo dell'abilità è garantito grazie al livello di comando elevato!
+6280=Tardo di incantesimo ignorato a causa dell'elevato livello di comando!
 // [7000-7499] AI Scripts
 7000=Tu sei un criminale e non puoi accedere alla tua cassaforte.
 7001=Quale oggetto desidera depositare nella sua cassetta di sicurezza?
@@ -3727,6 +3730,10 @@
 8433=Coordinazione X in basso a destra per il confine del wandertype del personaggio
 8434=Coordinazione Y in basso a destra per il confine del wandertype del personaggio
 8435=Coordinazione Z per il confine del wandertype del personaggio
+8436=Colore della barba permanente del personaggio
+8437=Stile di barba permanente del personaggio
+8438=Colore dei capelli permanente del personaggio
+8439=Stile di capelli permanente del personaggio
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Numero attuale di giocatori banditi da Multi. Controllato dal server (Solo lettura)
 8501=Coordinata X per la posizione di interdizione di Multi
@@ -4834,5 +4841,32 @@
 17223=Un barilotto appositamente rivestito per le pozioni.
 17224=Non c'è nulla da assaggiare nel barilotto!
 17225=Conosci già il contenuto di questo barilotto.
+//Sistema di atti per ordini cumulativi
+17250=Un ordine in blocco
+17251=Quantità da produrre:
+17252=Importo finito:
+17253=Elemento richiesto:
+17254=Eccezionale
+17255=Requisiti speciali da soddisfare:
+17256=Tutti gli articoli devono essere eccezionali.
+17257=Tutti gli articoli devono essere realizzati con
+17258=Combina questo atto con l'oggetto richiesto.
+17259=Devi avere l'oggetto nello zaino per poterlo ottenere.
+17260=Il numero massimo di oggetti richiesti è già stato combinato con questo atto.
+17261=L'oggetto non è prodotto con il minerale richiesto.
+17262=L'oggetto deve essere eccezionale.
+17263=L'oggetto è già stato combinato con l'atto.
+17264=L'oggetto non è presente nella richiesta.
+17265=Un'offerta può essere disponibile in circa
+17266=minuti
+17267=Ah! Grazie per la merce!  Mi aiuterebbe?
+17268=Vuoi accettare questo ordine?
+17269=Ok
+17270=Non ha ancora completato l'ordine.
+17271=Grazie mille!  Ecco una ricompensa per il suo impegno.
+17272=Questo ordine è per un altro negoziante.
+17273=Devi aspettare qualche secondo mentre ispeziono l'ultimo ordine.
+17274=L'atto d'ordine è stato messo nel tuo zaino.
+17275=Non c'è abbastanza spazio nello zaino per la ricompensa della richiesta in blocco.
 }
 EOF
