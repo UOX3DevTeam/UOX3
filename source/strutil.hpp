@@ -284,59 +284,60 @@ namespace util {
     template <typename T>
     typename std::enable_if_t<std::is_integral_v<T> && !std::is_same_v<T, bool>, std::string>
     ntos(T value, int radix = 10, bool prefix = false,  int size = 0, char pad = '0') {
-        // first, thing we need to convert the value to a string
-        std::array<char, max_characters_in_number> str;
-        
-        if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(),
-                                          value, static_cast<int>(radix));
-            ec == std::errc()) {
-            // How many characters did this number take
-            auto numchars = static_cast<int>(std::distance(str.data(), pc));
-            // what is larger, that is the size of our string
-            auto sizeofstring = std::max(numchars, size);
-            // where do we start adding the number into our string ?
-            auto index = sizeofstring - numchars;
-            if (prefix) {
-                // We have a prefix, so we add two characters to the beginning
-                sizeofstring += 2;
-                index += 2;
-            }
-            auto rvalue = std::string(sizeofstring, pad);
-            // copy the value into the string
-            std::copy(str.data(), pc, rvalue.begin() + index);
-            // do we need our prefix?
-            if (prefix) {
-                switch (static_cast<int>(radix)) {
-                    case 10:
-                        // We dont add anything for decimal!
-                        break;
-                    case 16:
-                        rvalue[0] = '0';
-                        rvalue[1] = 'x';
-                        break;
-                    case 8:
-                        rvalue[0] = '0';
-                        rvalue[1] = 'o';
-                        break;
-                    case 2:
-                        rvalue[0] = '0';
-                        rvalue[1] = 'b';
-                        break;
-                        
-                    default:
-                        break;
+            // first, thing we need to convert the value to a string
+            std::array<char, max_characters_in_number> str;
+            
+            if (auto [pc, ec] = std::to_chars(str.data(), str.data() + str.size(),
+                                              value, static_cast<int>(radix));
+                ec == std::errc()) {
+                // How many characters did this number take
+                auto numchars = static_cast<int>(std::distance(str.data(), pc));
+                // what is larger, that is the size of our string
+                auto sizeofstring = std::max(numchars, size);
+                // where do we start adding the number into our string ?
+                auto index = sizeofstring - numchars;
+                if (prefix) {
+                    // We have a prefix, so we add two characters to the beginning
+                    sizeofstring += 2;
+                    index += 2;
                 }
+                auto rvalue = std::string(sizeofstring, pad);
+                // copy the value into the string
+                std::copy(str.data(), pc, rvalue.begin() + index);
+                // do we need our prefix?
+                if (prefix) {
+                    switch (static_cast<int>(radix)) {
+                        case 10:
+                            // We dont add anything for decimal!
+                            break;
+                        case 16:
+                            rvalue[0] = '0';
+                            rvalue[1] = 'x';
+                            break;
+                        case 8:
+                            rvalue[0] = '0';
+                            rvalue[1] = 'o';
+                            break;
+                        case 2:
+                            rvalue[0] = '0';
+                            rvalue[1] = 'b';
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                }
+                return rvalue;
             }
-            return rvalue;
-        }
-        else {
-            // The conversion was not successful, so we return an empty string
-            throw std::runtime_error("Unable to convert the value: ");
-            //return std::string();
-        }
+            else {
+                // The conversion was not successful, so we return an empty string
+                throw std::runtime_error("Unable to convert the value: ");
+                //return std::string();
+            }
+            
     }
     //=======================================================================
-    /// Convert a number to a string, with options on radix,prefix,size,pad
+    /// Convert a bool to a string,
     /// - Parameters:
     ///     - value: The value one is trying to convert to a string
     /// - Returns: Returns a string (true/false);
@@ -361,10 +362,11 @@ namespace util {
     typename std::enable_if_t<std::is_integral_v<T> && !std::is_same_v<T, bool>, T>
     ston(const std::string_view str_value, int radix = 10) {
         auto value = T{0};
+        //auto svalue = std::string(str_value);
         if (!str_value.empty()) {
             if (str_value.size() < 2) {
                 //std::from_chars(str_value.data(),str_value.data() + str_value.size(), value,radix);
-                std::from_chars(str_value.begin(),str_value.end(), value,radix);
+                std::from_chars(str_value.data(), str_value.data()+ str_value.size(), value, radix);
             }
             else if (std::isalpha(static_cast<int>(static_cast<int>(str_value[1])))) {
                 // This has a "radix indicator"
@@ -372,18 +374,18 @@ namespace util {
                     case 'b':
                     case 'B':
                         //std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(), value,2);
-                        std::from_chars(str_value.begin() + 2,str_value.end() + str_value.size(), value,2);
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,2);
                         break;
                     case 'x':
                     case 'X':
                         //std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(), value,16);
-                        std::from_chars(str_value.begin() + 2,str_value.end() + str_value.size(), value,16);
-                        break;
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,16);
+                       break;
                     case 'o':
                     case 'O':
                         //std::from_chars(str_value.data() + 2,str_value.data() + str_value.size(), value,8);
-                        std::from_chars(str_value.begin() + 2,str_value.end() + str_value.size(), value,8);
-                        break;
+                        std::from_chars(str_value.data() + 2, str_value.data() + str_value.size(), value,8);
+                       break;
                     default:
                         // we dont do anything, we dont undertand so let value be 0
                         break;
@@ -392,8 +394,8 @@ namespace util {
             }
             else {
                 //auto [ptr,ec] = std::from_chars(str_value.data(),str_value.data() + str_value.size(), value,radix);
-                auto [ptr,ec] = std::from_chars(str_value.begin(),str_value.end(), value,radix);
-                if (ec == std::errc::invalid_argument) {
+                auto [ptr,ec] = std::from_chars(str_value.data(), str_value.data()+ str_value.size(), value, radix);
+               if (ec == std::errc::invalid_argument) {
                     throw std::runtime_error("Invalid argument for number conversion from string.");
                 }
                 else if (ec == std::errc::result_out_of_range) {
@@ -422,7 +424,29 @@ namespace util {
         }
         return false;
     }
-    
+    //=======================================================================
+    /// Convert a string to a real
+    /// - Parameters:
+    ///     - value: The value one is trying to convert to a string
+    /// - Returns: a boolean of true if the text equals the true value (or if it converts as a number to not 0)
+    /// - Throws: If unable to convert it, or has a format error, throws a runtime error.
+    template <typename T>
+    typename std::enable_if_t<std::is_floating_point_v<T>, T>
+        ston(const std::string_view str_value) {
+        // If string empty, we return false
+        auto value = T{ 0.0 };
+        if (str_value.empty()) {
+            return value;
+        }
+        auto [ptr, ec] = std::from_chars(str_value.data(), str_value.data() + str_value.size(), value);
+        if (ec == std::errc::invalid_argument) {
+            throw std::runtime_error("Invalid argument for number conversion from string.");
+        }
+        else if (ec == std::errc::result_out_of_range) {
+            throw std::runtime_error("Out of range for number conversion from string.");
+        }
+    }
+
     //=======================================================================
     /// Dump a byte buffer in the standard value : alpha format
     /// - Parameters:
@@ -495,7 +519,7 @@ namespace util {
             << "" << std::setw(1) << " " << text << "\n";
         }
     }
-    
+
     
     //=========================================================
     // Time/String conversions
@@ -512,12 +536,12 @@ namespace util {
         auto time = std::chrono::system_clock::to_time_t(t);
         tm myvalue ;
 #if defined(_MSC_VER)
-        auto status = localtime_s(&myvalue,time) ;
+        auto status = ::localtime_s(&myvalue,&time) ;
 #else
         ::localtime_r(&time,&myvalue) ;
 #endif
         output << std::put_time(&myvalue, format.c_str());
-        
+
         return output.str() ;
     }
     
@@ -535,7 +559,7 @@ namespace util {
         auto ntime = mktime(&converted);
         return std::chrono::system_clock::from_time_t(ntime);
     }
-    
+
     //=======================================================================
     /// Returns time now in a string
     /// - Parameters:
