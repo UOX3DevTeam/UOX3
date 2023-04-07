@@ -10,6 +10,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
+#include "strutil.hpp"
 #include "osunique.hpp"
 
 //o------------------------------------------------------------------------------------------------o
@@ -51,7 +52,7 @@ void Script::Reload( bool disp )
 				input.getline( line, 2047 );
 				line[input.gcount()] = 0;
 				sLine = std::string( line );
-				sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+				sLine = util::trim( util::strip( sLine, "//" ));
 				if( !sLine.empty() )
 				{
 					// We have some real data
@@ -60,14 +61,14 @@ void Script::Reload( bool disp )
 					{
 						// Ok a section is starting here, get the name
 						std::string sectionname = sLine.substr( 1, sLine.size() - 2 );
-						sectionname				= oldstrutil::upper( oldstrutil::simplify( sectionname ));
+						sectionname				= util::upper( util::simplify( sectionname ));
 						// Now why we look for a {, no idea, but we do - Because we want to make sure that were IN a block not before the block. At least this makes sure that were inside the {}'s of a block...
 						while( !input.eof() && sLine.substr( 0, 1 ) != "{" && !input.fail() )
 						{
 							input.getline( line, 2047 );
 							line[input.gcount()] = 0;
 							sLine = std::string( line );
-							sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+							sLine = util::trim( util::strip( sLine, "//" ));
 						}
 						// We are finally in the actual section!
 						// We waited until now to create it, incase a total invalid file
@@ -88,7 +89,7 @@ void Script::Reload( bool disp )
 	}
 	if( disp )
 	{
-		Console.Print( oldstrutil::format( "Reloading %-15s: ", filename.c_str() ));
+		Console.Print( util::format( "Reloading %-15s: ", filename.c_str() ));
 	}
 
 	fflush( stdout );
@@ -139,7 +140,7 @@ Script::~Script()
 bool Script::IsInSection( const std::string& section )
 {
 	std::string temp( section );
-	SSMAP::const_iterator iSearch = defEntries.find( oldstrutil::upper( temp ));
+	SSMAP::const_iterator iSearch = defEntries.find( util::upper( temp ));
 	if( iSearch != defEntries.end() )
 		return true;
 
@@ -173,7 +174,7 @@ CScriptSection *Script::FindEntrySubStr( const std::string& section )
 {
 	CScriptSection *rValue = nullptr;
 	auto usection = std::string( section );
-	usection = oldstrutil::upper( usection );
+	usection = util::upper( usection );
 	for( SSMAP::const_iterator iSearch = defEntries.begin(); iSearch != defEntries.end(); ++iSearch )
 	{
 		if( iSearch->first.find( usection ) != std::string::npos )	// FOUND IT!

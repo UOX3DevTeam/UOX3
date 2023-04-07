@@ -3,6 +3,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
+#include "strutil.hpp"
 
 #include <filesystem>
 #include <memory>
@@ -155,7 +156,7 @@ auto CServerDefinitions::FindEntry( const std::string &toFind, DEFINITIONCATEGOR
 
 	if( !toFind.empty() && typeToFind != NUM_DEFS )
 	{
-		auto tUFind = oldstrutil::upper( toFind );
+		auto tUFind = util::upper( toFind );
 
 		VECSCRIPTLIST& toDel = ScriptListings[typeToFind];
 		for( VECSCRIPTLIST_CITERATOR dIter = toDel.begin(); dIter != toDel.end(); ++dIter )
@@ -255,7 +256,7 @@ auto CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad) -> void
 	if( !mSort.empty() )
 	{
 		std::sort( mSort.begin(), mSort.end() );
-		Console.Print( oldstrutil::format( "Section %20s : %6i", dirNames[toLoad].c_str(), 0 ));
+		Console.Print( util::format( "Section %20s : %6i", dirNames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
 		Console.TurnYellow();
 
@@ -265,10 +266,10 @@ auto CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad) -> void
 			Console.Print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script(( *mIter ).filename, toLoad, false ));
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
-			Console.Print( oldstrutil::format( "%6i", iTotal ));
+			Console.Print( util::format( "%6i", iTotal ));
 		}
 
-		Console.Print( oldstrutil::format( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad )));
+		Console.Print( util::format( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad )));
 		Console.TurnNormal();
 		Console.Print( " entries" );
 		switch( wasPriod )
@@ -385,13 +386,13 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 					{
 						auto tag = sec->tag;
 						auto data = sec->data;
-						if( oldstrutil::upper( tag ) == "DEFAULTPRIORITY" )
+						if( util::upper( tag ) == "DEFAULTPRIORITY" )
 						{
 							defaultPriority = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
 						}
 						else
 						{
-							std::string filenametemp = oldstrutil::lower( tag );
+							std::string filenametemp = util::lower( tag );
 							priorityMap[filenametemp] =static_cast<SI16>( std::stoi( data, nullptr, 0 ));
 						}
 					}
@@ -411,7 +412,7 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-	//	Console.Warning( oldstrutil::format( "Failed to open priority.nfo for reading in %s DFN", dirNames[category].c_str() ));
+	//	Console.Warning( util::format( "Failed to open priority.nfo for reading in %s DFN", dirNames[category].c_str() ));
 #endif
 	wasPrioritized = 2;
 }
@@ -435,7 +436,7 @@ void CServerDefinitions::DisplayPriorityMap()
 auto CServerDefinitions::GetPriority( const char *file ) -> SI16
 {
 	auto retVal = defaultPriority;
-	auto lowername = oldstrutil::lower( file );
+	auto lowername = util::lower( file );
 	auto p = priorityMap.find( lowername );
 	if( p != priorityMap.end() )
 	{
@@ -460,7 +461,7 @@ auto CDirectoryListing::PushDir( std::string toMove ) -> bool
 	auto rValue = true;
 	if( !std::filesystem::exists( path ))
 	{
-		Console.Error( oldstrutil::format( "DFN directory %s does not exist", toMove.c_str() ));
+		Console.Error( util::format( "DFN directory %s does not exist", toMove.c_str() ));
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	std::filesystem::current_path( path );

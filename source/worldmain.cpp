@@ -591,7 +591,7 @@ void CWorldMain::RegionSave()
 	std::ofstream regionsDestination( regionsFile.c_str() );
 	if( !regionsDestination )
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", regionsFile.c_str() ));
+		Console.Error( util::format( "Failed to open %s for writing", regionsFile.c_str() ));
 		return;
 	}
 	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<UI16, CTownRegion*> &town )
@@ -629,7 +629,7 @@ void CWorldMain::SaveStatistics( void )
 	std::ofstream	statsDestination( statsFile.c_str() );
 	if( !statsDestination )
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", statsFile.c_str() ));
+		Console.Error( util::format( "Failed to open %s for writing", statsFile.c_str() ));
 		return;
 	}
 	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';

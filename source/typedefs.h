@@ -18,10 +18,11 @@
 
 #include <unordered_map>
 #include <cstdint>
+
 #if defined( _DEBUG )
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 { \
-Console.Print( oldstrutil::format( "Socket failure at %s", __FILE__LINE__) );	\
+Console.Print( util::format( "Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
 #else
