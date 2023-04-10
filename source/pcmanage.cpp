@@ -15,7 +15,7 @@
 #include "cEffects.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "cServerData.h"
 #include "ObjectFactory.h"
 #include <algorithm>

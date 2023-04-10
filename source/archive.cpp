@@ -1,6 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <filesystem>
 #include <chrono>
 #include <ctime>

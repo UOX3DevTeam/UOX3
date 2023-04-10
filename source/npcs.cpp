@@ -15,7 +15,7 @@
 #include "cRaces.h"
 #include "townregion.h"
 #include "Dictionary.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "ObjectFactory.h"
 
 using namespace std::string_literals;

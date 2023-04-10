@@ -10,7 +10,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 
 //o------------------------------------------------------------------------------------------------o

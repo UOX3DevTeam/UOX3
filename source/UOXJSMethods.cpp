@@ -48,7 +48,7 @@
 #include "combat.h"
 #include "PartySystem.h"
 #include "osunique.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
 bool BuyShop( CSocket *s, CChar *c );

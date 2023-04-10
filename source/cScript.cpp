@@ -11,7 +11,7 @@
 #include "JSEncapsulate.h"
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 
 //o------------------------------------------------------------------------------------------------o

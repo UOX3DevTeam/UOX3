@@ -24,7 +24,7 @@
 #include "uox3.h"
 #include "mapstuff.h"
 #include "osunique.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 const UI16	DEFMULTI_MAXLOCKDOWNS	= 256;
 const UI16	DEFMULTI_MAXSECURECONTAINERS = 4;
 const UI16	DEFMULTI_MAXFRIENDS = 50;

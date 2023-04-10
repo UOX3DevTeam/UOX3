@@ -13,7 +13,7 @@
 #include "CPacketSend.h"
 #include "ObjectFactory.h"
 #include "osunique.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 cHTMLTemplates *HTMLTemplates;
 
 cHTMLTemplate::cHTMLTemplate() : updateTimer( 60 ), loaded( false ), type( ETT_INVALIDTEMPLATE ), scheduledUpdate( 0 )

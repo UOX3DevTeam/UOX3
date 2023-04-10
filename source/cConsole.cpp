@@ -30,7 +30,7 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #include <iostream>
 #include <cctype>

@@ -16,7 +16,7 @@
 #include <random>
 #include "uoxstruct.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <iostream>
 #include <type_traits>
 #include <algorithm>

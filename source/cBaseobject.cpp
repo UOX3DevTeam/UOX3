@@ -27,7 +27,7 @@
 #include "ObjectFactory.h"
 #include "weight.h"
 #include "Dictionary.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <bitset>
 
 const UI32 BIT_FREE			=	0;

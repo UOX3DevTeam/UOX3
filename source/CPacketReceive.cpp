@@ -17,7 +17,7 @@
 #include "cGuild.h"
 #include "CResponse.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "cRaces.h"
 #include <chrono>
 #include "IP4Address.hpp"

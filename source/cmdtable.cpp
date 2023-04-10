@@ -29,7 +29,7 @@
 #include "ObjectFactory.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "Dictionary.h"
 
 void CollectGarbage( void );

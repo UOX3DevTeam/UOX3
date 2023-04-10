@@ -4,7 +4,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <memory>
 using namespace std::string_literals;
 

@@ -12,7 +12,7 @@
 #include "regions.h"
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 cItem *Items = nullptr;

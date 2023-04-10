@@ -35,7 +35,7 @@
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 
 

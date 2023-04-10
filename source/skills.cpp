@@ -17,7 +17,7 @@
 #include "Dictionary.h"
 #include "movement.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "weight.h"
 #include <algorithm>
 

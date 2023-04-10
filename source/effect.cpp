@@ -14,7 +14,7 @@
 #include "CJSMapping.h"
 #include "townregion.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <algorithm>
 
 //o------------------------------------------------------------------------------------------------o

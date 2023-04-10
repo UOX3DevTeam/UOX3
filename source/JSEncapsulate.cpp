@@ -1,7 +1,7 @@
 #include "JSEncapsulate.h"
 #include <string>
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "jsobj.h"
 #include "jsutil.h"
 

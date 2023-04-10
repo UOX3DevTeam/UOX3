@@ -10,7 +10,7 @@
 #include "regions.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #include "ObjectFactory.h"
 

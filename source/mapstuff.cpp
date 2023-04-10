@@ -4,7 +4,7 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #include <filesystem>
 
