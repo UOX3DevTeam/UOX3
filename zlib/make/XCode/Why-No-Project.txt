@@ -1,2 +1,0 @@
-XCode uses the zlib that comes with macOS.  No reason to build
-a separate project.
