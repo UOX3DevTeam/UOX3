@@ -52,7 +52,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 <details>
   <summary>Using <strong>Command Line git</strong></summary>
 
-  > 1. Run `git clone https://github.com/UOX3DevTeam/UOX3.git` in a Terminal to clone the stable master branch of UOX3 into a subdirectory of the current directory you're in.
+  > 1. Run `git clone --recurse-submodules https://github.com/UOX3DevTeam/UOX3.git` in a Terminal to clone the stable master branch of UOX3 into a subdirectory of the current directory you're in.
 </details>
 
 <details>
