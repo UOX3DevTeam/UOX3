@@ -27,6 +27,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
     - name: Generate Makefiles
       run: cmake make/cmake -DCMAKE_BUILD_TYPE=Release
     - name: Building
