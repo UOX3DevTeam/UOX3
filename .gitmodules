@@ -1,0 +1,3 @@
+[submodule "support/zlib"]
+	path = support/zlib
+	url = https://github.com/UOX3DevTeam/zlib.git
