@@ -1,3 +1,9 @@
 [submodule "support/zlib"]
 	path = support/zlib
 	url = https://github.com/UOX3DevTeam/zlib.git
+[submodule "support/spidermonkey"]
+	path = support/spidermonkey
+	url = https://github.com/UOX3DevTeam/spidermonkey.git
+[submodule "support/utility"]
+	path = support/utility
+	url = https://github.com/UOX3DevTeam/utility.git
