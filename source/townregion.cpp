@@ -16,7 +16,7 @@
 #include "CJSEngine.h"
 #include "CJSMapping.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 // Implementation of town regions
 
 const SI08 MAYOR = 0x01;

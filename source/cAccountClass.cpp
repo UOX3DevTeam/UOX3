@@ -14,7 +14,7 @@
 #include <cstdint>
 #include <filesystem>
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 #if PLATFORM != WINDOWS
 #include <arpa/inet.h>

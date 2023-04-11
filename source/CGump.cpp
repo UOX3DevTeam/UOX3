@@ -6,7 +6,7 @@
 #include "uox3.h"
 #include "gump.h"
 #include "CPacketSend.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <cstdint>
 
 

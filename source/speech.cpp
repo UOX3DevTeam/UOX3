@@ -12,7 +12,7 @@
 #include "movement.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	ClilocMessage()
 //o------------------------------------------------------------------------------------------------o

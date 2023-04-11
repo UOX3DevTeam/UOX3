@@ -6,7 +6,7 @@
 
 #include "uox3.h"
 #include "ssection.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 constexpr auto DFN_STRING 		= UI08( 0 );
 constexpr auto DFN_NUMERIC 		= UI08( 1 );
 constexpr auto DFN_UPPERSTRING 	= UI08( 2 );

@@ -8,7 +8,7 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <memory>
 #include <filesystem>
 #include <fstream>

@@ -75,7 +75,7 @@
 #include "PartySystem.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "EventTimer.hpp"
 #include <atomic>
 

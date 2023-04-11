@@ -4,7 +4,7 @@
 #include "cSpawnRegion.h"
 #include "scriptc.h"
 #include "townregion.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #include <stdexcept>
 #include <vector>

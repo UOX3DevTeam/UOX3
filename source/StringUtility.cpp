@@ -14,7 +14,7 @@
 #include <stdexcept>
 #include <filesystem>
 #include <codecvt>
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 namespace oldstrutil

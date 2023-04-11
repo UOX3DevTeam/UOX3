@@ -147,7 +147,6 @@ add_executable(uox3
    ../../source/speech.h
    ../../source/ssection.h
    ../../source/StringUtility.hpp
-   ../../source/strutil.hpp
    ../../source/teffect.h
    ../../source/townregion.h
    ../../source/typedefs.h
@@ -225,16 +224,21 @@ endif(WIN32)
 target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
-		${PROJECT_SOURCE_DIR}/../../spidermonkey
-		${PROJECT_SOURCE_DIR}/../../zlib
+		${PROJECT_SOURCE_DIR}/../../support/spidermonkey
+		${PROJECT_SOURCE_DIR}/../../support
 )
-
+if(NOT APPLE)
+target_include_directories(uox3
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/../../support/zlib
+)
+endif()
 # *************************************************************************
 # The libraries we need
 # *************************************************************************
 target_link_libraries(uox3 PRIVATE
 	jscript
-	zlib 
+	z
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Linux>:pthread>
@@ -246,4 +250,7 @@ target_link_libraries(uox3 PRIVATE
 # The items we need built first
 # *************************************************************************
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
-add_subdirectory(${PROJECT_SOURCE_DIR}/../../zlib/make/cmake subproject/zlib)
+
+if(NOT APPLE)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../../support/zlib/make/cmake subproject/z)
+endif()

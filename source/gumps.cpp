@@ -19,7 +19,7 @@
 #include "PageVector.h"
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <algorithm>
 #include "osunique.hpp"
 

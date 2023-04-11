@@ -2,7 +2,7 @@
 #include "classes.h"
 #include "regions.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "ObjectFactory.h"
 #include <filesystem>
 

@@ -7,7 +7,7 @@
 #include "cEffects.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #define XP 0
 #define YP 1

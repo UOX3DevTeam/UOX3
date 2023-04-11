@@ -8,7 +8,7 @@
 #include "Dictionary.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 #ifndef va_start
 #include <cstdarg>

@@ -31,7 +31,7 @@
 #include "Dictionary.h"
 #include "cSpawnRegion.h"
 
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #include "jsobj.h"
 #include "jsutil.h"

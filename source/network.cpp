@@ -18,7 +18,7 @@
 
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 
 #if PLATFORM != WINDOWS

@@ -7,7 +7,7 @@
 #include "CJSEngine.h"
 #include "power.h"
 #include <unordered_set>
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 cRaces *Races = nullptr;
 

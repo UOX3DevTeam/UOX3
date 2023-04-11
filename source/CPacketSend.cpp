@@ -14,7 +14,7 @@
 #include "cScript.h"
 #include "CJSMapping.h"
 #include "cRaces.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 #include <string>
 #include <locale>
 #include <codecvt>

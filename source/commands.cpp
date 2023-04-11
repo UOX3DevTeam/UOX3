@@ -6,7 +6,7 @@
 #include "cScript.h"
 #include "CPacketSend.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 CCommands *Commands			= nullptr;
 

@@ -6,7 +6,7 @@
 #include "cEffects.h"
 #include "CPacketSend.h"
 #include "regions.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 

@@ -11,7 +11,7 @@
 #include "cScript.h"
 #include "CJSMapping.h"
 #include "combat.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 
 #define EFFECTIVE 2
 const UI08 MAXVAL	= 0;

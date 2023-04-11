@@ -20,7 +20,7 @@
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
 #include "Dictionary.h"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 void		SendTradeStatus( CItem *cont1, CItem *cont2 );

@@ -21,7 +21,7 @@
 #include "ObjectFactory.h"
 #include "PartySystem.h"
 #include "StringUtility.hpp"
-#include "strutil.hpp"
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 void OpenPlank( CItem *p );
