@@ -249,7 +249,7 @@ target_link_libraries(uox3 PRIVATE
 # *************************************************************************
 # The items we need built first
 # *************************************************************************
-add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../../support/spidermonkey/make/cmake subproject/jscript)
 
 if(NOT APPLE)
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../support/zlib/make/cmake subproject/z)
