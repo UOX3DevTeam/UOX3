@@ -57,7 +57,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\support\zlib;..\..\support\spidermonkey;..\..\support</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -78,7 +78,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\support\zlib;..\..\support\spidermonkey;..\..\support</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -256,10 +256,13 @@
     <ResourceCompile Include="..\..\assets\uox3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\spidermonkey\make\vs2022\jscript\jscript.vcxproj">
+    <ProjectReference Include="..\..\support\spidermonkey\make\VS2022\jscript\jscript.vcxproj">
       <Project>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\zlib\make\vs2022\zlib.vcxproj">
+    <ProjectReference Include="..\..\support\utility\utility.vcxproj">
+      <Project>{2e9dcd9a-7fc0-4cd6-8f8b-d3ee75832de5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\support\zlib\make\VS2022\zlib.vcxproj">
       <Project>{091529fd-5075-45f1-9d96-5708b3ab7c2b}</Project>
     </ProjectReference>
   </ItemGroup>
