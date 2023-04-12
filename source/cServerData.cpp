@@ -7,7 +7,7 @@
 #include <limits>
 #include <optional>
 #include "IP4Address.hpp"
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 #include <netdb.h>
 
 #include <arpa/inet.h>

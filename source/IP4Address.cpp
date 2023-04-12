@@ -638,7 +638,7 @@ auto ip4list_t::available() -> ip4list_t
 #include <algorithm>
 #include <sstream>
 
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <iphlpapi.h>
@@ -1011,7 +1011,7 @@ IP4Address IP4Address::lookup( const std::string& address )
 	hints.ai_socktype = SOCK_DGRAM; /* Datagram socket */
 	hints.ai_flags = 0;
 	hints.ai_protocol = 0;          /* Any protocol */
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 	WSAData wsdata;
 	int startresult = WSAStartup( MAKEWORD( 2, 2 ), &wsdata );
 	if( startresult != 0 )
@@ -1022,18 +1022,10 @@ IP4Address IP4Address::lookup( const std::string& address )
 	int status = getaddrinfo( address.c_str(), nullptr, &hints, &result );
 	if( status != 0 )
 	{
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 		WSACleanup();
 #endif
 		return IP4Address( address );
-		/*
-#if PLATFORM == WINDOWS
-		WSACleanup();
-		throw std::runtime_error( std::string( "Error on DNS lookup for ") + address+std::string( " : " ) + std::to_string( WSAGetLastError() ));
-#else
-		throw std::runtime_error( std::string( "Error on DNS lookup for ") + address+std::string( " : " )+std::string( gai_strerror( status )));
-#endif
-		 */
 	}
 	else
 	{
@@ -1044,7 +1036,7 @@ IP4Address IP4Address::lookup( const std::string& address )
 				sockaddr_in adr = *reinterpret_cast<sockaddr_in*>( rp->ai_addr );
 				auto number =  ntohl( adr.sin_addr.s_addr );
 				freeaddrinfo( result );
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 				WSACleanup();
 #endif
 				return IP4Address( number );
@@ -1058,7 +1050,7 @@ IP4Address IP4Address::lookup( const std::string& address )
 
 // Unfortunately, the approach here for the unix/windows is almost totally
 // different, so effectively, to completely different routines
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 //==================================================================================================
 std::vector<IP4Address> IP4Address::available()
 {

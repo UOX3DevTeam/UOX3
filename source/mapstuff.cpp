@@ -6,6 +6,8 @@
 #include "scriptc.h"
 #include "utility/strutil.hpp"
 
+#include "uodata/uoxtile.hpp"
+
 #include <filesystem>
 
 #include <algorithm>
@@ -1332,6 +1334,7 @@ auto CMulHandler::MapCount() const -> std::uint8_t
 	return static_cast<std::uint8_t>( uoWorlds.size() );
 }
 
+#if 0
 //o------------------------------------------------------------------------------------------------o
 //|	TileInfo
 //o------------------------------------------------------------------------------------------------o
@@ -1595,7 +1598,7 @@ auto TileInfo::TotalMemory() const -> size_t
 	auto art = flag + 20 + 23;
 	return static_cast<size_t>(( terrain * terrainData.size() ) + ( art * artData.size() ));
 }
-
+#endif
 //o------------------------------------------------------------------------------------------------o
 //|	TerrainBlock::TerrainBlock()
 //o------------------------------------------------------------------------------------------------o

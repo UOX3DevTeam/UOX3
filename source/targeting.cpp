@@ -22,6 +22,7 @@
 #include "PartySystem.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "uodata/uoxtile.hpp"
 using namespace std::string_literals;
 
 void OpenPlank( CItem *p );
@@ -647,7 +648,7 @@ void InfoTarget( CSocket *s )
 		CGumpDisplay mapStat( s, 300, 300 );
 		mapStat.SetTitle( "Map Tile" );
 		mapStat.AddData( "Tilenum", map1.tileId, 5 );
-		mapStat.AddData( "Flags", map1.terrainInfo->FlagsNum(), 1 );
+		mapStat.AddData( "Flags", map1.terrainInfo->flag.value(), 1 );
 		mapStat.AddData( "Name", map1.name() );
 		mapStat.Send( 4, false, INVALIDSERIAL );
 	}
@@ -672,7 +673,7 @@ void InfoTarget( CSocket *s )
 		statTile.AddData( "Unknown5", tile.Unknown5(), 1 );
 		statTile.AddData( "Height", tile.Height(), 0 );
 		statTile.AddData( "Name", tile.Name().c_str() );
-		statTile.AddData( "Flags:", tile.FlagsNum(), 1 );
+		statTile.AddData( "Flags:", tile.flag.value(), 1 );
 		statTile.AddData( "--> FloorLevel", tile.CheckFlag( TF_FLOORLEVEL ));
 		statTile.AddData( "--> Holdable", tile.CheckFlag( TF_HOLDABLE ));
 		statTile.AddData( "--> Transparent", tile.CheckFlag( TF_TRANSPARENT ));

@@ -5,9 +5,9 @@
 
 // Initial platform/compiler-related stuff to set.
 
-#define WINDOWS		1
-#define LINUX 		2
-#define MACOS		3
+//#define WINDOWS		1
+//#define LINUX 		2
+//#define MACOS		3
 
 // Finds the compiler type and version.
 #if defined( _MSC_VER )
@@ -42,7 +42,7 @@
 
 #endif   //_WIN32
 
-#define PLATFORM WINDOWS
+//#define PLATFORM WINDOWS
 
 #else       // A unix type system
 
@@ -53,7 +53,7 @@
 
 #ifdef __linux__
 
-#define PLATFORM LINUX
+//#define PLATFORM LINUX
 #define SOCKET int
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -66,7 +66,7 @@
 
 #elif defined(__APPLE__)
 
-#define PLATFORM MACOS
+//#define PLATFORM MACOS
 #define SOCKET int
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1

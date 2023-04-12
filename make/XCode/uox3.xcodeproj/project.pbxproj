@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		568093F529E5A6E400916F1E /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 568093F429E5A6DC00916F1E /* libjscript.a */; };
+		5680940C29E5C9CC00916F1E /* libutility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5680940B29E5C9C500916F1E /* libutility.a */; };
+		5680940F29E5CA5900916F1E /* tile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5680940D29E5CA5900916F1E /* tile.cpp */; };
+		5680941429E5EC9A00916F1E /* uoxtile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5680941229E5EC9A00916F1E /* uoxtile.cpp */; };
+		5680941729E6149100916F1E /* uomap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5680941529E6149100916F1E /* uomap.cpp */; };
+		5680941A29E61E1000916F1E /* hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5680941829E61E1000916F1E /* hash.cpp */; };
+		5680941D29E6B44A00916F1E /* uop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5680941B29E6B44A00916F1E /* uop.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -98,6 +104,13 @@
 			remoteGlobalIDString = 64A9FE47293E37BC009B54DA;
 			remoteInfo = jscript;
 		};
+		5680940A29E5C9C500916F1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5680940529E5C9C500916F1E /* utility.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 56490C4F29D23E7E00C91958;
+			remoteInfo = utility;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -122,6 +135,17 @@
 		568093FE29E5A7B900916F1E /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
 		568093FF29E5A7B900916F1E /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		5680940029E5A9F400916F1E /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../source/Makefile; sourceTree = "<group>"; };
+		5680940529E5C9C500916F1E /* utility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = utility.xcodeproj; path = ../../support/utility/utility.xcodeproj; sourceTree = "<group>"; };
+		5680940D29E5CA5900916F1E /* tile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = tile.cpp; path = uodata/tile.cpp; sourceTree = "<group>"; };
+		5680940E29E5CA5900916F1E /* tile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = tile.hpp; path = uodata/tile.hpp; sourceTree = "<group>"; };
+		5680941229E5EC9A00916F1E /* uoxtile.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uoxtile.cpp; path = uodata/uoxtile.cpp; sourceTree = "<group>"; };
+		5680941329E5EC9A00916F1E /* uoxtile.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = uoxtile.hpp; path = uodata/uoxtile.hpp; sourceTree = "<group>"; };
+		5680941529E6149100916F1E /* uomap.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uomap.cpp; path = uodata/uomap.cpp; sourceTree = "<group>"; };
+		5680941629E6149100916F1E /* uomap.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = uomap.hpp; path = uodata/uomap.hpp; sourceTree = "<group>"; };
+		5680941829E61E1000916F1E /* hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = hash.cpp; path = uodata/hash.cpp; sourceTree = "<group>"; };
+		5680941929E61E1000916F1E /* hash.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = hash.hpp; path = uodata/hash.hpp; sourceTree = "<group>"; };
+		5680941B29E6B44A00916F1E /* uop.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = uop.cpp; path = uodata/uop.cpp; sourceTree = "<group>"; };
+		5680941C29E6B44A00916F1E /* uop.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = uop.hpp; path = uodata/uop.hpp; sourceTree = "<group>"; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
 		64A90076293E3DD4009B54DA /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = archive.cpp; sourceTree = "<group>"; };
@@ -290,6 +314,7 @@
 			files = (
 				64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */,
 				568093F529E5A6E400916F1E /* libjscript.a in Frameworks */,
+				5680940C29E5C9CC00916F1E /* libutility.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,6 +360,14 @@
 			name = VS2022;
 			sourceTree = "<group>";
 		};
+		5680940629E5C9C500916F1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5680940B29E5C9C500916F1E /* libutility.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
@@ -376,6 +409,7 @@
 		64A9016B293E3EED009B54DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5680940529E5C9C500916F1E /* utility.xcodeproj */,
 				568093EF29E5A6DC00916F1E /* jscript.xcodeproj */,
 				64A9016E293E3EF5009B54DA /* libz.tbd */,
 			);
@@ -563,10 +597,20 @@
 		64E2F796293FCE8400546A08 /* UOData */ = {
 			isa = PBXGroup;
 			children = (
+				5680941829E61E1000916F1E /* hash.cpp */,
+				5680941929E61E1000916F1E /* hash.hpp */,
+				5680940D29E5CA5900916F1E /* tile.cpp */,
+				5680940E29E5CA5900916F1E /* tile.hpp */,
+				5680941229E5EC9A00916F1E /* uoxtile.cpp */,
+				5680941329E5EC9A00916F1E /* uoxtile.hpp */,
+				5680941529E6149100916F1E /* uomap.cpp */,
+				5680941629E6149100916F1E /* uomap.hpp */,
 				64A900D8293E3DD4009B54DA /* MultiMul.cpp */,
 				64A900D9293E3DD4009B54DA /* MultiMul.hpp */,
 				64A90101293E3DD4009B54DA /* UOPData.cpp */,
 				64A90102293E3DD4009B54DA /* UOPData.hpp */,
+				5680941B29E6B44A00916F1E /* uop.cpp */,
+				5680941C29E6B44A00916F1E /* uop.hpp */,
 			);
 			name = UOData;
 			sourceTree = "<group>";
@@ -649,6 +693,10 @@
 					ProductGroup = 568093F029E5A6DC00916F1E /* Products */;
 					ProjectRef = 568093EF29E5A6DC00916F1E /* jscript.xcodeproj */;
 				},
+				{
+					ProductGroup = 5680940629E5C9C500916F1E /* Products */;
+					ProjectRef = 5680940529E5C9C500916F1E /* utility.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -663,6 +711,13 @@
 			fileType = archive.ar;
 			path = libjscript.a;
 			remoteRef = 568093F329E5A6DC00916F1E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5680940B29E5C9C500916F1E /* libutility.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libutility.a;
+			remoteRef = 5680940A29E5C9C500916F1E /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -682,11 +737,13 @@
 				64A90163293E3DD4009B54DA /* uox3.cpp in Sources */,
 				64A90125293E3DD4009B54DA /* CGump.cpp in Sources */,
 				64A9014C293E3DD4009B54DA /* msgboard.cpp in Sources */,
+				5680941729E6149100916F1E /* uomap.cpp in Sources */,
 				64A9015F293E3DD4009B54DA /* TimeUtility.cpp in Sources */,
 				64A90169293E3DD4009B54DA /* worldmain.cpp in Sources */,
 				64A9013D293E3DD4009B54DA /* effect.cpp in Sources */,
 				64A9011F293E3DD4009B54DA /* calcfuncs.cpp in Sources */,
 				64A9013E293E3DD4009B54DA /* EventTimer.cpp in Sources */,
+				5680941429E5EC9A00916F1E /* uoxtile.cpp in Sources */,
 				64A90155293E3DD4009B54DA /* queue.cpp in Sources */,
 				64A9014A293E3DD4009B54DA /* mapstuff.cpp in Sources */,
 				64A9015D293E3DD4009B54DA /* StringUtility.cpp in Sources */,
@@ -695,6 +752,7 @@
 				64A9014D293E3DD4009B54DA /* MultiMul.cpp in Sources */,
 				64A9015C293E3DD4009B54DA /* ssection.cpp in Sources */,
 				64A90127293E3DD4009B54DA /* cItem.cpp in Sources */,
+				5680940F29E5CA5900916F1E /* tile.cpp in Sources */,
 				64A90123293E3DD4009B54DA /* cDice.cpp in Sources */,
 				64A9012E293E3DD4009B54DA /* CPacketReceive.cpp in Sources */,
 				64A9012A293E3DD4009B54DA /* cmdtable.cpp in Sources */,
@@ -715,7 +773,9 @@
 				64A90138293E3DD4009B54DA /* cThreadQueue.cpp in Sources */,
 				64A9014B293E3DD4009B54DA /* movement.cpp in Sources */,
 				64A90145293E3DD4009B54DA /* jail.cpp in Sources */,
+				5680941A29E61E1000916F1E /* hash.cpp in Sources */,
 				64A9014F293E3DD4009B54DA /* npcs.cpp in Sources */,
+				5680941D29E6B44A00916F1E /* uop.cpp in Sources */,
 				64A9013B293E3DD4009B54DA /* Dictionary.cpp in Sources */,
 				64A90136293E3DD4009B54DA /* cSocket.cpp in Sources */,
 				64A90126293E3DD4009B54DA /* cHTMLSystem.cpp in Sources */,

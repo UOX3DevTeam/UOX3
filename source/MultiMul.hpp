@@ -12,7 +12,7 @@
 #include <filesystem>
 
 #include "UOPData.hpp"
-#include "mapclasses.h"
+#include "uodata/uoxtile.hpp"
 class TileInfo;
 //==================================================================================================
 // MultiItem_st

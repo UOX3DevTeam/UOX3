@@ -9,7 +9,7 @@
 
 #include "cServerData.h"
 #include "GenericList.h"
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 #include <winsock2.h>
 #undef min
 #undef max

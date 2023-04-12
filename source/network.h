@@ -16,7 +16,7 @@
 #include <charconv>
 #include <array>
 
-#if PLATFORM != WINDOWS
+#if !defined(_WIN32)
 #include <sys/socket.h>
 #include <netdb.h>
 #include <netinet/in.h>

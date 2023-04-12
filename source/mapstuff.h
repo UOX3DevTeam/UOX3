@@ -1,41 +1,14 @@
 #ifndef __MAPSTUFF_H__
 #define __MAPSTUFF_H__
 
-#include "mapclasses.h"
 #include <climits>
 #include "uox3.h"
 #include "MultiMul.hpp"
+#include "uodata/uoxtile.hpp"
+
 
 constexpr auto MAX_Z_STEP = std::uint8_t( 9 );
 constexpr auto MAX_Z_FALL = std::uint8_t( 20 );
-//===============================================================================================
-// TileInfo 
-//===============================================================================================
-class TileInfo
-{
-	constexpr static auto hsSize = 3188736;
-	std::vector<CLand> terrainData;
-	std::vector<CTile> artData;
-	auto ProcessTerrain( std::ifstream &input ) -> void;
-	auto ProcessArt( std::ifstream &input ) -> void;
-	bool isHsFormat;
-public:
-	TileInfo( const std::string &filename = "" );
-	auto LoadTiles( const std::string &filename ) -> bool;
-	auto TerrainInfo( std::uint16_t tileId ) const -> const CLand&;
-	auto TerrainInfo( std::uint16_t tileId ) -> CLand&;
-	auto ArtInfo( std::uint16_t tileId ) -> CTile&;
-	auto ArtInfo( std::uint16_t tileId ) const -> const CTile&;
-
-	auto SizeTerrain() const -> size_t;
-	auto SizeArt() const -> size_t;
-
-	auto CollectionTerrain() const -> const std::vector<CLand>&;
-	auto CollectionTerrain() -> std::vector<CLand>&;
-	auto CollectionArt() const -> const std::vector<CTile>&;
-	auto CollectionArt() -> std::vector<CTile>&;
-	auto TotalMemory() const -> size_t;
-};
 
 //==================================================================================================
 // Blocks and maps would normally be in separate files, but since we dont want to impact windows

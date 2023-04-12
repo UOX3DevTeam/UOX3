@@ -20,7 +20,7 @@
 #define P_TIMESTAMP 1
 
 //o------------------------------------------------------------------------------------------------o
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 // disable: "conversion from 'double' to 'float', possible loss of data
 #pragma warning (disable : 4244)
 // disable: "truncation from 'double' to 'float'

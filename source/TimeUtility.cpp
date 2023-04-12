@@ -26,7 +26,7 @@ namespace timeutil
 		
 		auto now_time = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 		struct tm buffer;
-#if PLATFORM == WINDOWS
+#if defined(_WIN32)
 		localtime_s( &buffer, &now_time );
 		auto now_tm = &buffer;
 #else
