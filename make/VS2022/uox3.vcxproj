@@ -57,7 +57,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\support\zlib;..\..\support;..\..\support\spidermonkey</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -78,7 +78,7 @@
       <PrecompiledHeaderFile />
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions> /J</AdditionalOptions>
-      <AdditionalIncludeDirectories>..\..\source;..\..\zlib;..\..\spidermonkey</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\source;..\..\support\zlib;..\..\support;..\..\support\spidermonkey</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -160,6 +160,11 @@
     <ClCompile Include="..\..\source\targeting.cpp" />
     <ClCompile Include="..\..\source\townregion.cpp" />
     <ClCompile Include="..\..\source\trade.cpp" />
+    <ClCompile Include="..\..\source\uodata\hash.cpp" />
+    <ClCompile Include="..\..\source\uodata\tile.cpp" />
+    <ClCompile Include="..\..\source\uodata\uomap.cpp" />
+    <ClCompile Include="..\..\source\uodata\uop.cpp" />
+    <ClCompile Include="..\..\source\uodata\uoxtile.cpp" />
     <ClCompile Include="..\..\source\UOPData.cpp" />
     <ClCompile Include="..\..\source\uox3.cpp" />
     <ClCompile Include="..\..\source\UOXJSMethods.cpp" />
@@ -235,6 +240,11 @@
     <ClInclude Include="..\..\source\teffect.h" />
     <ClInclude Include="..\..\source\townregion.h" />
     <ClInclude Include="..\..\source\typedefs.h" />
+    <ClInclude Include="..\..\source\uodata\hash.hpp" />
+    <ClInclude Include="..\..\source\uodata\tile.hpp" />
+    <ClInclude Include="..\..\source\uodata\uomap.hpp" />
+    <ClInclude Include="..\..\source\uodata\uop.hpp" />
+    <ClInclude Include="..\..\source\uodata\uoxtile.hpp" />
     <ClInclude Include="..\..\source\UOPData.hpp" />
     <ClInclude Include="..\..\source\uox3.h" />
     <ClInclude Include="..\..\source\UOXJSClasses.h" />
@@ -254,14 +264,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\assets\uox3.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\spidermonkey\make\vs2022\jscript\jscript.vcxproj">
-      <Project>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\zlib\make\vs2022\zlib.vcxproj">
-      <Project>{091529fd-5075-45f1-9d96-5708b3ab7c2b}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

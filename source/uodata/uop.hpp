@@ -8,6 +8,7 @@
 #include <istream>
 #include <ostream>
 #include <map>
+#include <vector>
 //=========================================================================================
 namespace uo {
     namespace uop{

@@ -91,25 +91,25 @@ namespace uo {
         auto table_entry::save(void *ptr) const ->void{
             auto offset = 0 ;
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&file_offset),reinterpret_cast<const std::uint8_t*>(&file_offset)+sizeof(file_offset),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&file_offset),reinterpret_cast<const std::uint8_t*>(&file_offset)+sizeof(file_offset),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(file_offset);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&header_length),reinterpret_cast<const std::uint8_t*>(&header_length)+sizeof(header_length),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&header_length),reinterpret_cast<const std::uint8_t*>(&header_length)+sizeof(header_length),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(header_length);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&compressed_length),reinterpret_cast<const std::uint8_t*>(&compressed_length)+sizeof(compressed_length),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&compressed_length),reinterpret_cast<const std::uint8_t*>(&compressed_length)+sizeof(compressed_length),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(compressed_length);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&decompressed_length),reinterpret_cast<const std::uint8_t*>(&decompressed_length)+sizeof(decompressed_length),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&decompressed_length),reinterpret_cast<const std::uint8_t*>(&decompressed_length)+sizeof(decompressed_length),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(decompressed_length);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&hash),reinterpret_cast<const std::uint8_t*>(&hash)+sizeof(hash),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&hash),reinterpret_cast<const std::uint8_t*>(&hash)+sizeof(hash),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(hash);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&data_hash),reinterpret_cast<const std::uint8_t*>(&data_hash)+sizeof(data_hash),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&data_hash),reinterpret_cast<const std::uint8_t*>(&data_hash)+sizeof(data_hash),static_cast< std::uint8_t*>(ptr)+offset);
             offset+=sizeof(data_hash);
             
-            std::copy(reinterpret_cast<const std::uint8_t*>(&use_compression),reinterpret_cast<const std::uint8_t*>(&use_compression)+sizeof(use_compression),static_cast<const std::uint8_t*>(ptr)+offset);
+            std::copy(reinterpret_cast<const std::uint8_t*>(&use_compression),reinterpret_cast<const std::uint8_t*>(&use_compression)+sizeof(use_compression),static_cast< std::uint8_t*>(ptr)+offset);
             
         }
         

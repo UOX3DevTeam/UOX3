@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include "uodata/uoxtile.hpp"
 
@@ -34,8 +35,8 @@ class uomap {
     int mapwidth ;
     int mapnumber ;
     
-    void *dataptr ;
-    void *mapdiffptr ;
+    const void *dataptr ;
+    const void *mapdiffptr ;
     int mapdiffcount ;
     std::unordered_map<int, std::unordered_map<int, Tile_st>> tiles ;
 
@@ -56,7 +57,7 @@ public:
     /// - Returns: a pair that contains the uop block#, and the offset into that block
     static auto uopblockForBlock(int block_number) ->std::pair<int,std::uint64_t> ;
     
-    auto tile(int x,int y) -> const Tile_st& ;
+    //auto tile(int x,int y) -> const Tile_st& ;
 
 };
 

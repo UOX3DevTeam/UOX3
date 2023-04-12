@@ -303,6 +303,21 @@
     <ClCompile Include="..\..\source\cChar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\uodata\hash.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\tile.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uomap.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uop.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\uodata\uoxtile.cpp">
+      <Filter>Source Files\UOData</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\source\ConfigOS.h">
@@ -537,6 +552,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\UOXJSPropertySpecs.h" />
+    <ClInclude Include="..\..\source\uodata\hash.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\tile.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uomap.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uop.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\uodata\uoxtile.hpp">
+      <Filter>Header Files\UOData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\assets\uox3.rc">
