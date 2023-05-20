@@ -177,6 +177,7 @@ public:
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
 	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
+	bool		DoesEventExist( char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
 	SI08		OnSpeech( const char *speech, CChar *personTalking, CBaseObject *talkingTo );
@@ -235,7 +236,7 @@ public:
 	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	SI08		OnSnooped( CChar *snooped, CChar *snooper, bool success );
-	SI08		OnSnoopAttempt( CChar *snooped, CChar *snooper );
+	SI08		OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper );
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );

@@ -101,6 +101,7 @@ SEngineFunc SE_UseItem;					//										***
 SEngineFunc SE_TriggerTrap;				//										***
 
 SEngineFunc SE_TriggerEvent;			//										*
+SEngineFunc SE_DoesEventExist;			//										*
 
 SEngineFunc SE_GetPackOwner;			//										***
 SEngineFunc SE_FindRootContainer;		//										***

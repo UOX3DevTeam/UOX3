@@ -329,13 +329,24 @@ function onTimer( mChar, timerID )
 
 function onCallback0( mSock, ourTarg )
 {
-	if( ourTarg && ourTarg.isChar )
+	var mChar = mSock.currentChar;
+	if( !ValidateObject( mChar ))
+		return;
+
+	if( ValidateObject( ourTarg ) && ourTarg.isChar )
 	{
-		var mChar = mSock.currentChar;
-		if( mChar )
+		if( ourTarg != mChar && mChar.spellCast != -1 )
 		{
-			onSpellSuccess( mSock, mChar, ourTarg );
+			if( DoesEventExist( 2507, "onSpellTarget" ))
+			{
+				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, 0, mChar, mChar.spellCast ) != false )
+				{
+					return;
+				}
+			}
 		}
+
+		onSpellSuccess( mSock, mChar, ourTarg );
 	}
 }
 

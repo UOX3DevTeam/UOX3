@@ -234,6 +234,7 @@ JSMethodFunc CSocket_Page;
 
 // Guild Methods
 JSMethodFunc CGuild_AcceptRecruit;
+JSMethodFunc CGuild_IsAtPeace;
 
 // Misc
 JSMethodFunc CMisc_SoundEffect;
@@ -574,7 +575,8 @@ inline JSFunctionSpec CSocket_Methods[] =
 
 inline JSFunctionSpec CGuild_Methods[] =
 {
-	{ "AcceptRecruit",		CGuild_AcceptRecruit,	1, 0, 0 },
+	{ "AcceptRecruit",		CGuild_AcceptRecruit,		1, 0, 0 },
+	{ "IsAtPeace",			CGuild_IsAtPeace,			0, 0, 0 },
 	{ nullptr,				nullptr,					0, 0, 0 }
 };
 

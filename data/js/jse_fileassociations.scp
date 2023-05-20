@@ -105,13 +105,12 @@
 2504=server/misc/dungeon_trap.js
 2505=server/misc/dungeon_treasure_decay.js
 2506=server/data/material_types.js
+2507=server/misc/facetRuleset.js
+2508=server/misc/facetChange.js
 
 // Server Teleporters [2750-2999]
 2750=server/teleporter/teleporter_wind_city_entrance.js
 2751=server/teleporter/teleporter_orc_caves_2_3.js
-
-2753=server/misc/facetRuleset.js
-2754=server/misc/facetChange.js
 
 //-------------------------------------------
 // NPC, and AI [3000-3999]
@@ -146,6 +145,8 @@
 3212=npc/ai/monster/savage.js
 3213=npc/ai/monster/savage_shaman.js
 3214=npc/ai/vendor_bdo_dispenser.js
+3215=npc/ai/summon/blade_spirit.js
+3216=npc/ai/summon/energy_vortex.js
 
 // Magic Items
 3300=item/magic_items.js

@@ -364,22 +364,30 @@ function onTimer( mChar, timerID )
 function onCallback0( mSock, ourTarg )
 {
 	var mChar = mSock.currentChar;
-	if( ourTarg && ourTarg.isChar )
+	if( !ValidateObject( mChar ))
+		return;
+
+	if( ValidateObject( ourTarg ) && ourTarg.isChar )
 	{
-		if( mChar )
+		if( ourTarg != mChar && mChar.spellCast != -1 )
 		{
-			onSpellSuccess( mSock, mChar, ourTarg, 0 );
+			if( DoesEventExist( 2507, "onSpellTarget" ))
+			{
+				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, 0, mChar, mChar.spellCast ) != false )
+				{
+					return;
+				}
+			}
 		}
+
+		onSpellSuccess( mSock, mChar, ourTarg, 0 );
 	}
 	else
 	{
-		if( mChar )
-		{
-			mChar.SetTimer( Timer.SPELLTIME, 0 );
-			mChar.isCasting = false;
-			mChar.spellCast = -1;
-			mChar.frozen = false;
-		}
+		mChar.SetTimer( Timer.SPELLTIME, 0 );
+		mChar.isCasting = false;
+		mChar.spellCast = -1;
+		mChar.frozen = false;
 	}
 }
 

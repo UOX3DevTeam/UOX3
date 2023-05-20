@@ -15,10 +15,10 @@ function onLogin( socket, pChar )
 		}
 	}
 
-	// Attach OnfacetChange to characters logging into the shard
-	if( !pChar.HasScriptTrigger( 2754 ))
+	// Attach OnFacetChange to characters logging into the shard
+	if( !pChar.HasScriptTrigger( 2508 ))
     {
-        pChar.AddScriptTrigger( 2754 );
+        pChar.AddScriptTrigger( 2508 );
     }
 }
 

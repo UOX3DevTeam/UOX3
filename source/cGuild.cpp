@@ -609,6 +609,20 @@ bool CGuild::IsAlly( GUILDID otherGuild ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	 CGuild::IsAtPeace()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Determine if this guild is in a state of peace, i.e. NOT at war with anyone
+//o------------------------------------------------------------------------------------------------o
+bool CGuild::IsAtPeace() const
+{
+	for( auto &relation : relationList )
+	{
+		if( relation.second == GR_WAR )
+			return true;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CGuild::SetGuildRelation()
 //|					CGuild::GuildRelationList()
 //o------------------------------------------------------------------------------------------------o

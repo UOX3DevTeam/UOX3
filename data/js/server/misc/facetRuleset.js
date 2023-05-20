@@ -3,15 +3,18 @@ const timeBetweenMurdererVisit = 2592000; // 30 days between each time a murdere
 
 // Define which rules apply to which facets
 // Example: const facetCorpseCarveRestrict = [ 1, 2, 3, 4 ]; // Corpse carving restricted in Trammel, Ilshenar, Malas, Tokuno
-const facetCorpseCarveRestrict = [1, 2, 3, 4, 5];
-const facetMurdererRestrict = [1, 2, 3, 4, 5];
-const facetCombatRestrict = [1, 2, 3, 4, 5];
-const facetSpellRestrict = [1, 2, 3, 4, 5];
-const facetPotionRestrict = [1, 2, 3, 4, 5];
-const facetStealRestrict = [1, 2, 3, 4, 5];
-const facetSnoopRestrict = [1, 2, 3, 4, 5];
-const facetLootingRestrict = [1, 2, 3, 4, 5];
-const facetBlockMovementRestrict = [1, 2, 3, 4, 5];
+const facetCorpseCarveRestrict = [1, 2, 3, 4, 5];			// Prevents players from carving corpses of other players
+const facetMurdererRestrict = [1, 2, 3, 4, 5];				// Restricts access to facet for Murderers
+const facetCombatRestrict = [1, 2, 3, 4, 5];				// Prevents players from attacking other players
+const facetSpellRestrict = [1, 2, 3, 4, 5];					// Prevents players from casting hostile and/or beneficial spells on other players
+const facetPotionRestrict = [1, 2, 3, 4, 5];				// Prevents players from damaging other players with explosion potions
+const facetStealRestrict = [1, 2, 3, 4, 5];					// Prevents players from stealing from other players
+const facetSnoopRestrict = [1, 2, 3, 4, 5];					// Prevents players from snooping in packs of other players
+const facetLootingRestrict = [1, 2, 3, 4, 5];				// Prevents players from looting corpses if that would make them criminal
+const facetBlockMovementRestrict = [1, 2, 3, 4, 5];			// Prevents characters from being blocked by other players and/or movable objects
+const facetBladeSpiritTargetRestrict = [1, 2, 3, 4, 5]; 	// Restricts BS targets to monsters, wild animals and caster and guild members/enemies
+const facetEnergyVortexTargetRestrict = [1, 2, 3, 4, 5];	// Restricts EV targets to monsters, wild animals and caster and guild members/enemies
+const facetBardProvokeRestrict = [1, 2, 3, 4, 5];			// Restricts targets for bard provocation skill to monsters, wild animals, caster and guild members/enemies
 
 // Override above facet-specific rules for specific regions
 // Example: const regionCorpseCarveOverride = [ 17, 23, 56 ]; // Override corpse carving restrictions in these regions
@@ -24,12 +27,15 @@ const regionStealOverride = [];
 const regionSnoopOverride = [];
 const regionLootingOverride = [];
 const regionBlockMovementOverride = [];
+const regionBladeSpiritTargetOverride = [];
+const regionEnergyVortexTargetOverride = [];
+const regionBardProvokeOverride = [];
 
 function onCombatStart( pAttacker, pDefender )
 {
 	var socket = pAttacker.socket;
 	var worldNum = pAttacker.worldnumber;
-	// so the check would look like this instead:
+
 	if( regionCombatOverride.indexOf( pAttacker.region.id ) == -1 && facetCombatRestrict.indexOf( pAttacker.worldnumber ) != -1 )
 	{
 		if( pDefender.npc )
@@ -44,7 +50,7 @@ function onCombatStart( pAttacker, pDefender )
 			 	if(( pDefender.npcFlag == 1 && pDefender.innocent ) || pDefender.innocent )
 			 	{
 			 		// Don't allow starting combat against "good" NPCs that are innocent, or against innocent NPCs
-			 		socket.SysMessage( "You cannot perform negative acts on your target." );
+			 		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
 					return false;
 			 	}
 			 	else
@@ -60,8 +66,8 @@ function onCombatStart( pAttacker, pDefender )
 		if( guildRelations != 1 && guildRelations != 4 )
 		{
 			// Neither in same guild nor at war, disallow combat
-			socket.SysMessage( "You cannot perform negative acts on your target." );
-			return false;			
+			socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+			return false;
 		}
 	}
 
@@ -72,6 +78,10 @@ function onCombatStart( pAttacker, pDefender )
 // Players cannot cast aggressive spells at other players in Trammel/Ilshenar/Malas
 function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 {
+	// We don't care if caster and target is the same
+	if( myTarget == pCaster )
+		return 0;
+
 	var socket = pCaster.socket;
 	if( socket != null )
 	{
@@ -79,7 +89,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 		if( regionSpellOverride.indexOf( pCaster.region.id ) == -1 && facetSpellRestrict.indexOf( pCaster.worldnumber ) != -1 )
 		{
 			var spellCast = Spells[spellID];
-			if( spellCast.aggressive )
+			if( spellCast.aggressiveSpell )
 			{
 				if( myTarget.npc )
 				{
@@ -93,7 +103,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 					 	if(( myTarget.npcFlag == 1 && myTarget.innocent ) || myTarget.innocent )
 					 	{
 					 		// Don't allow aggressive spells against blue/innocent/good NPCs
-					 		socket.SysMessage( "You cannot perform negative acts on your target." );
+					 		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
 							return 2;
 					 	}
 					 	else
@@ -109,7 +119,7 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 				if( guildRelations != 1 && guildRelations != 4 )
 				{
 					// Neither in same guild nor at war
-					socket.SysMessage( "You cannot perform negative acts on your target." );
+					socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
 					return 2;
 				}
 			}
@@ -124,36 +134,30 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 					}
 					else if( !myTarget.isHuman || ( !myTarget.innocent && myTarget.npcFlag != 1 ))
 					{
-						socket.SysMessage( "You cannot perform beneficial acts on your target." );
+						socket.SysMessage( GetDictionaryEntry( 9231, socket.language )); // You cannot perform beneficial acts on your target.
 						return 2;
 					}
 				}
 
-				// Only allowed between...
-				// ...players in same guild / non-guild players and non-guild players
+				// Beneficial spellcasts only allowed between...
 				if( guildRelations == 4 || ( pCaster.guild == null && myTarget.guild == null ))
 				{
-					// Allow beneficial spellcast
+					// ...players in same guild / non-guild players and non-guild players
+					return false;
+				}
+				else if(( pCaster.guild == null && myTarget.guild != null && myTarget.guild.IsAtPeace() ) ||
+					( myTarget.guild == null && pCaster.guild != null && pCaster.guild.IsAtPeace() ))
+				{
+					// ...non-guild players and players in guilds not at war with anyone
+					return false;
+				}
+				else if( pCaster.guild != null && pCaster.guild.IsAtPeace() && myTarget.guild != null && myTarget.guild.IsAtPeace() )
+				{
+					// ...players in guilds not at war with anyone and another player in another guild not at war with anyone
 					return false;
 				}
 
-				// ...non-guild players and players in guilds not at war with anyone
-				/*if(( pCaster.guild == null && myTarget.guild != null ) || ( pCaster.guild != null && myTarget.guild == null ))
-				{
-					// Currently unable to check if a guild is NOT at war with _anyone_, need additional guild properties/functions to handle this
-					// Allow beneficial spellcast
-					return false;
-				}*/
-
-				// ...players in guilds not at war with anyone and another player in another guild not at war with anyone
-				/*if()
-				{
-					// Currently unable to check if a guild is NOT at war with anyone
-					// Allow beneficial spellcast
-					return false;
-				}*/
-
-				socket.SysMessage( "You cannot perform beneficial acts on your target." );
+				socket.SysMessage( GetDictionaryEntry( 9231, socket.language )); // You cannot perform beneficial acts on your target.
 				return 2;
 			}
 		}
@@ -165,16 +169,16 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 function onSteal( pThief, iStolen, pVictim )
 {
 	if( !ValidateObject( pThief ) || !ValidateObject( pVictim ))
-		return true;
+		return 1;
 
 	var socket = pThief.socket;
 	var worldNum = pThief.worldnumber;
 	if( regionStealOverride.indexOf( pThief.region.id ) == -1 && facetStealRestrict.indexOf( pThief.worldnumber ) != -1 )
 	{
-		socket.SysMessage( "You cannot perform negative acts on your target." );
-		return true;
+		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
+		return 1;
 	}
-	return false;
+	return 0;
 }
 
 // Players cannot snoop the backpacks of other players in Trammel/Ilshenar/Malas
@@ -187,7 +191,7 @@ function onSnoopAttempt( pSnooped, pSnooping )
 	var worldNum = pSnooping.worldnumber;
 	if(( regionSnoopOverride.indexOf( pSnooping.region.id ) == -1 && facetSnoopRestrict.indexOf( pSnooping.worldnumber ) != -1 ) && !pSnooped.npc )
 	{
-		socket.SysMessage( "You cannot perform negative acts on your target." );
+		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
 		return false;
 	}
 
@@ -220,9 +224,9 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 		}
 		else if( newStatus == 0x02 ) // Criminal
 		{
-			if( coreShardEra == "pub15" || coreShardEra == "aos" || coreShardEra == "se" || coreShardEra == "ml" || coreShardEra == "sa" || coreShardEra == "hs" || coreShardEra == "tol" )
+			if( EraStringToNum( coreShardEra ) >= EraStringToNum( "lbr" ))
 			{
-				// Criminal flag is not enabled in Trammel ruleset, as per Publish 15, so make sure it can't be set
+				// Criminal flag is not enabled in Trammel ruleset, as per Publish 15 (LBR), so make sure it can't be set
 				pChanging.innocent = true;
 			}
 		}
@@ -230,19 +234,20 @@ function onFlagChange( pChanging, newStatus, oldStatus )
 	return false;
 }
 
+// Handle corpse-looting rules
 function onPickup( iPickedUp, pGrabber )
 {
 	var pSock = pGrabber.socket;
 	var worldNum = pGrabber.worldnumber;
 	if( regionLootingOverride.indexOf( pGrabber.region.id ) == -1 && facetLootingRestrict.indexOf( pGrabber.worldnumber ) != -1 )
 	{
-		//Check the value of pSock.pickupSpot to determine where the item was picked up from
+		// Check the value of pSock.pickupSpot to determine where the item was picked up from
 		switch( pSock.pickupSpot )
 		{
 			case 3: // otherpack
 				if( iPickedUp.container && ( iPickedUp.container ).corpse )
 				{
-					var corpseOwner = ( iPickedUp.container ).corpse.owner;
+					var corpseOwner = ( iPickedUp.container ).owner;
 					if( ValidateObject( corpseOwner ) && !corpseOwner.npc )
 					{
 						// If corpse belongs to another player, disallow picking up the item, unless
@@ -256,6 +261,7 @@ function onPickup( iPickedUp, pGrabber )
 							if( !corpseOwner.criminal && !corpseOwner.murderer )
 							{
 								// Neither in same guild nor at war, disallow looting corpse
+								pSock.SysMessage( GetDictionaryEntry( 9064, pSock.language )); // You cannot pick that up.
 								return false;							
 							}
 						}
@@ -272,18 +278,25 @@ function onPickup( iPickedUp, pGrabber )
 }
 
 // Players cannot collide with non-locked down items or shove other players in Trammel/Ilshenar
+// TODO: How is collision with non-locked down items overridden? Client prevents movement through blocking items...
 function onCollide( trgSock, srcChar, trgObj )
 {
 	if( !ValidateObject( srcChar ) || !ValidateObject( trgObj ))
 		return true;
 
 	var worldNum = srcChar.worldnumber;
-	if( regionBlockMovementOverride.indexOf( pCaster.region.id ) == -1 && facetBlockMovementRestrict.indexOf( pCaster.worldnumber ) != -1 )
+	if( regionBlockMovementOverride.indexOf( trgObj.region.id ) == -1 && facetBlockMovementRestrict.indexOf( trgObj.worldnumber ) != -1 )
 	{
 		// Don't let characters block other characters...
 		if( trgObj.isChar )
 		{
 			// ...unless they're in the same guild, or at war!
+			if( ValidateObject( trgObj.owner ))
+			{
+				// Treat target as if it IS its owner
+				trgObj = trgObj.owner;
+			}
+
 			var guildRelations = CheckGuildRelationShip( srcChar, trgObj );
 			if( guildRelations != 1 && guildRelations != 4 )
 			{
@@ -298,11 +311,15 @@ function onCollide( trgSock, srcChar, trgObj )
 		else if( trgObj.isItem && trgObj.dispellable ) // Wall of Stone
 		{
 			// Don't let Wall of Stone (or Energy Field) block movement unless players are in same guild or at war
-			var trgChar = trgObj.caster; // need a way to detect who cast the spell
-			var guildRelations = CheckGuildRelationShip( srcChar, trgChar );
-			if( guildRelations != 1 && guildRelations != 4 )
+			// TODO: Client seems to automatically block movement through these items though...
+			var trgChar = CalcCharFromSer( trgObj.morey );
+			if( ValidateObject( trgChar ))
 			{
-				return false;
+				var guildRelations = CheckGuildRelationShip( srcChar, trgChar );
+				if( guildRelations != 1 && guildRelations != 4 )
+				{
+					return false;
+				}
 			}
 		}
 	}
@@ -315,14 +332,160 @@ function FacetRuleExplosionDamage( sourceChar, targetChar )
 {
 	if( regionPotionOverride.indexOf( targetChar.region.id ) == -1 && facetPotionRestrict.indexOf( targetChar.worldnumber ) != -1 )
 	{
+		if( ValidateObject( targetChar.owner ))
+		{
+			// Treat target as if it IS its owner
+			targetChar = targetChar.owner;
+		}
+
+		if( targetChar.npc && targetChar.innocent )
+		{
+			// Not a valid target for Explosion Damage
+			return false;
+		}
+
+		if( !targetChar.npc )
+		{
+			var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
+			if( guildRelations != 1 )
+			{
+				// Not at war with target player's guild
+				if( sourceChar.socket )
+				{
+					sourceChar.socket.SysMessage( GetDictionaryEntry( 9230, sourceChar.socket.language )); // You cannot perform negative acts on your target.
+				}
+				return;
+			}
+		}
+	}
+
+	return true;
+}
+
+function FacetRuleBladeSpiritTarget( sourceChar, targetChar )
+{
+	if( regionBladeSpiritTargetOverride.indexOf( targetChar.region.id ) == -1
+		&& facetBladeSpiritTargetRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	{
+		if( ValidateObject( targetChar.owner ))
+		{
+			// Treat target as if it IS its owner
+			targetChar = targetChar.owner;
+		}
+
+		if( targetChar.npc && targetChar.innocent )
+		{
+			// Not a valid target for Blade Spirit
+			return false;
+		}
+
+		if( !targetChar.npc )
+		{
+			var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
+			if( guildRelations != 1 && guildRelations != 4 ) // not at war, nor same guild
+			{
+				// Not a valid target for Blade Spirit
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function FacetRuleEnergyVortexTarget( sourceChar, targetChar )
+{
+	if( regionEnergyVortexTargetOverride.indexOf( targetChar.region.id ) == -1
+		&& facetEnergyVortexTargetRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	{
+		if( ValidateObject( targetChar.owner ))
+		{
+			// Treat target as if it IS its owner
+			targetChar = targetChar.owner;
+		}
+
+		if( targetChar.npc && targetChar.innocent )
+		{
+			// Not a valid target for Energy Vortex
+			return false;
+		}
+
+		if( !targetChar.npc )
+		{
+			var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
+			if( guildRelations != 1 && guildRelations != 4 ) // not at war, nor same guild
+			{
+				// Not a valid target for Energy Vortex
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function FacetRuleBardProvoke( sourceChar, targetChar )
+{
+	if( regionBardProvokeOverride.indexOf( targetChar.region.id ) == -1
+		&& facetBardProvokeRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	{
+		if( ValidateObject( targetChar.owner ))
+		{
+			// Treat target as if it IS its owner
+			targetChar = targetChar.owner;
+		}
+
+		if( targetChar.npc && targetChar.innocent )
+		{
+			// Not a valid target for provocation
+			if( sourceChar.socket )
+			{
+				sourceChar.socket.SysMessage( GetDictionaryEntry( 9230, sourceChar.socket.language )); // You cannot perform negative acts on your target.
+			}
+			return false;
+		}
+
+		if( !targetChar.npc )
+		{
+			var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
+			if( guildRelations != 1 && guildRelations != 4 ) // not at war, nor same guild
+			{
+				// Not a valid target for provocation
+				if( sourceChar.socket )
+				{
+					sourceChar.socket.SysMessage( GetDictionaryEntry( 9230, sourceChar.socket.language )); // You cannot perform negative acts on your target.
+				}
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
+function onDamage( targetChar, sourceChar, damageValue, damageType )
+{
+	// Allow all damage with a non-tame/non-hirling NPC as the source
+	if( ValidateObject( sourceChar ) && sourceChar.npc && !ValidateObject( targetChar.owner ))
+		return true;
+
+	if( regionSpellOverride.indexOf( targetChar.region.id ) == -1 && facetSpellRestrict.indexOf( targetChar.worldnumber ) != -1 )
+	{
+		if( ValidateObject( targetChar.owner ))
+		{
+			// Treat target as if it IS its owner
+			targetChar = targetChar.owner;
+		}
+
 		var guildRelations = CheckGuildRelationShip( sourceChar, targetChar );
 		if( guildRelations != 1 )
 		{
 			// Not at war with target player's guild
-			sourceChar.SysMessage( "You cannot perform negative acts on your target. Expl" );
-			return;
+			return false;
 		}
 	}
+
+	return true;
 }
 
 function CheckGuildRelationShip( pAttacker, pDefender )
