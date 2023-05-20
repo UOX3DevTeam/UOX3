@@ -6,7 +6,7 @@ function onAICombatTarget( pChar, pTarget )
 		return false;
 
 	// Check for Facet Ruleset - don't allow target if facet restricts EV targeting
-	if( DoesEventExist( 2507, "FacetRuleEnergyVortexTarget" )
+	if( DoesEventExist( 2507, "FacetRuleEnergyVortexTarget" ))
 	{
 		if( !TriggerEvent( 2507, "FacetRuleEnergyVortexTarget", pChar, pTarget ))
 		{

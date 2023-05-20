@@ -6,7 +6,7 @@ function onAICombatTarget( pChar, pTarget )
 		return false;
 
 	// Check for Facet Ruleset - don't allow target if facet restricts BS targeting
-	if( DoesEventExist( 2507, "FacetRuleBladeSpiritTarget" )
+	if( DoesEventExist( 2507, "FacetRuleBladeSpiritTarget" ))
 	{
 		if( !TriggerEvent( 2507, "FacetRuleBladeSpiritTarget", pChar, pTarget ))
 		{
