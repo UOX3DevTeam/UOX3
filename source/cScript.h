@@ -236,7 +236,7 @@ public:
 	bool		OnThirstChange( CChar* pChanging, SI08 newStatus );
 	SI08		OnStolenFrom( CChar *stealing, CChar *stolenFrom, CItem *stolen );
 	SI08		OnSnooped( CChar *snooped, CChar *snooper, bool success );
-	SI08		OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper );
+	SI08		OnSnoopAttempt( CChar *snooped, CChar *snooper );
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
