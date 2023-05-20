@@ -1060,14 +1060,17 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 						}
 					}
 					
-					if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+					if( didShove )
 					{
-						mSock->SysMessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
-					}
-					else
-					{
-						std::string charName = GetNpcDictName( ourChar );
-						mSock->SysMessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+						if( ourChar->GetVisible() == VT_TEMPHIDDEN || ourChar->GetVisible() == VT_INVISIBLE )
+						{
+							mSock->SysMessage( 1384 ); // Being perfectly rested, you shove something invisible out of the way.
+						}
+						else
+						{
+							std::string charName = GetNpcDictName( ourChar );
+							mSock->SysMessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
+						}
 					}
 				}
 			}

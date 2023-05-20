@@ -422,6 +422,16 @@ function ApplyExplosionDamage( timerObj, targetChar )
 	var sourceChar = CalcCharFromSer( timerObj.more );
 	if( ValidateObject( sourceChar ))
 	{
+		// Don't damage offline players
+		if( !targetChar.npc && !targetChar.online )
+			return;
+
+		// Check for Facet Ruleset
+		if( !TriggerEvent( 2507, "FacetRuleExplosionDamage", sourceChar, targetChar ))
+		{
+			return;
+		}
+
 		// Ignore targets that are in safe zones
 		var targetRegion = targetChar.region;
 		if( targetRegion.isSafeZone )

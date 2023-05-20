@@ -102,6 +102,7 @@ static JSFunctionSpec my_functions[] =
 	{ "AreaCharacterFunction",		SE_AreaCharacterFunction,	3, 0, 0 },
 	{ "AreaItemFunction",			SE_AreaItemFunction,		3, 0, 0 },
 	{ "TriggerEvent",				SE_TriggerEvent,			3, 0, 0 },
+	{ "DoesEventExist",				SE_DoesEventExist,			2, 0, 0 },
 	{ "Reload",						SE_Reload,					1, 0, 0 },
 	{ "SendStaticStats",			SE_SendStaticStats,			1, 0, 0 },
 	{ "GetTileHeight",				SE_GetTileHeight,			1, 0, 0 },
@@ -346,6 +347,23 @@ bool cScript::OnStart( void )
 bool cScript::OnStop( void )
 {
 	return false;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	cScript::DoesEventExist()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Allows scripters to check if a particular JS event (or function) exists in a
+//|					script before attempting to call it via TriggerEvent
+//o------------------------------------------------------------------------------------------------o
+bool cScript::DoesEventExist( char *eventToFind )
+{
+	jsval Func = JSVAL_NULL;
+	JS_GetProperty( targContext, targObject, eventToFind, &Func );
+	if( Func == JSVAL_VOID )
+	{
+		return false;
+	}
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o

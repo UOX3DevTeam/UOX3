@@ -131,6 +131,15 @@ function onCallback1( pSock, toAttack )
 			}
 			else
 			{
+				// Check for Facet Ruleset
+				if( DoesEventExist( 2507, "FacetRuleBardProvoke" ))
+				{
+					if( !TriggerEvent( 2507, "FacetRuleBardProvoke", pUser, toAttack ))
+					{
+						return;
+					}
+				}
+
 				var myInstrument = GetInstrument( pUser );
 				if( ValidateObject( myInstrument ))
 				{

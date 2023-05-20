@@ -1944,6 +1944,37 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_DoesEventExist()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks for the existence of a JS event in a different JS file
+//|	Notes		-	Takes 2 parameters, which is the script number to check and the
+//|					event name to check for
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_DoesEventExist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 2 )
+	{
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( 1 );
+	UI16 scriptNumberToCheck = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
+	char *eventToCheck		= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
+	cScript *toExecute		= JSMapping->GetScript( scriptNumberToCheck );
+
+	if( toExecute == nullptr || eventToCheck == nullptr )
+		return JS_FALSE;
+
+	bool retVal = toExecute->DoesEventExist( eventToCheck );
+	if( !retVal )
+	{
+		*rval = INT_TO_JSVAL( 0 );
+	}
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_GetPackOwner()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns owner of container item is contained in (if any)

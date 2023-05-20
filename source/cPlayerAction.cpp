@@ -442,8 +442,30 @@ bool CPIGetItem::Handle( void )
 			tSock->SysMessage( 9098 ); // Item immovable to normal players, but can be dragged out of backpack by GM characters.
 		}
 	}
-
+	
+	// Trigger pickup event for item being picked up
 	std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+	for( auto scriptTrig : scriptTriggers )
+	{
+		cScript *toExecute = JSMapping->GetScript( scriptTrig );
+		if( toExecute != nullptr )
+		{
+			SI08 retStatus = toExecute->OnPickup( i, ourChar );
+
+			// -1 == script doesn't exist, or returned -1
+			// 0 == script returned false, 0, or nothing - don't execute hard code
+			// 1 == script returned true or 1
+			if( retStatus == 0 )
+			{
+				Bounce( tSock, i );
+				return true;
+			}
+		}
+	}
+	scriptTriggers.clear();
+
+	// Trigger pickup event for character picking up item
+	scriptTriggers = ourChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );

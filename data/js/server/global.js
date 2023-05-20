@@ -14,6 +14,12 @@ function onLogin( socket, pChar )
 			return;
 		}
 	}
+
+	// Attach OnFacetChange to characters logging into the shard
+	if( !pChar.HasScriptTrigger( 2508 ))
+    {
+        pChar.AddScriptTrigger( 2508 );
+    }
 }
 
 // Generic global-script function to look up data in /shared/jsWorldData/ folder

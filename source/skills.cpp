@@ -3242,6 +3242,16 @@ void CSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 		}
 	}
 
+	// Check for global script version of event
+	cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+	if( toExecute != nullptr )
+	{
+		if( toExecute->OnSnoopAttempt( target, mChar ) == 0 )
+		{
+			return;
+		}
+	}
+
 	if( target->GetCommandLevel() > mChar->GetCommandLevel() )
 	{
 		s->SysMessage( 991 ); // You failed to peek into that container.

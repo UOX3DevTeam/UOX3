@@ -104,6 +104,7 @@ public:
 	bool		IsAtWar( GUILDID otherGuild ) const;
 	bool		IsNeutral( GUILDID otherGuild ) const;
 	bool		IsAlly( GUILDID otherGuild ) const;
+	bool		IsAtPeace() const;
 
 	void		SetGuildFaction( GuildType newFaction );
 	void		SetGuildRelation( GUILDID otherGuild, GUILDRELATION toSet );

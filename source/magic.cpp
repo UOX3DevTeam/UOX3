@@ -4593,10 +4593,8 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 						case 53: // Mana Vampire
 						case 59: // Resurrection
 						{
-							scriptTriggers.clear();
-							scriptTriggers.shrink_to_fit();
-							scriptTriggers = c->GetScriptTriggers();
-							for( auto scriptTrig : scriptTriggers )
+							// Check for onSpellTarget event on target
+							for( auto scriptTrig : c->GetScriptTriggers() )
 							{
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
 								if( toExecute != nullptr )
@@ -4612,6 +4610,8 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 									}
 								}
 							}
+
+							// All ok, continue casting spell
 							(*(( MAGIC_CHARFUNC )magic_table[curSpell-1].mag_extra ))( caster, c, src, curSpell );
 							break;
 						}

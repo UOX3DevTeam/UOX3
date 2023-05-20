@@ -1,3 +1,14 @@
+21/05/2023 - Dragon Slayer, Xuri
+	Added initial pass for supporting Trammel PvP ruleset, which can be applied to and/or customized per facet and optionally overridden per region via js/server/misc/facetRulset.js (Dragon Slayer)
+	Misc script cleanup and extension of pvp ruleset script to include target handling for Blade Spirits/Energy Vortex, as well as the Provoke barding skill (Xuri)
+	Added custom AI scripts for summoned Blade Spirits (js/npc/ai/summon/blade_spirit.js) and Energy Vortexes (js/npc/ai/summon/energy_vortex.js) with updated target selection rules (based on target stats) and checks for active pvp ruleset (Xuri)
+	Added JS Function to check for existence of a JS event in another file (Xuri):
+		DoesEventExist( scriptID, eventToCheck )
+	Updated scripted magic spells to check for facet ruleset before allowing casting hostile and/or beneficial spells on other players (Xuri)
+	Added new JS Method for Guilds to check if they are "at peace", i.e. NOT at war with any other guilds (Xuri):
+		.IsAtPeace()	// Returns true if guild is at peace, and not at war with any other guilds
+	Added support for triggering onPickup JS event for Characters, and not just items (Xuri)
+
 17/03/2023 - Dragon Slayer, Xuri
 	Created framework, gumps, initial system for Bulk Order Deeds (Dragon Slayer)
 	Expanded BOD system to include gold, fame and special item rewards (Xuri)
