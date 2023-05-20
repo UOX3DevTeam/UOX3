@@ -3579,6 +3579,32 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CGuild_IsAtPeace()
+//|	Prototype	-	bool IsAtPeace()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if guild is at peace, i.e. not at war with any other guilds
+//o------------------------------------------------------------------------------------------------o
+JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 0 )
+	{
+		MethodError( "(IsAtPeace) Invalid Parameter Count: %d", argc );
+		return JS_FALSE;
+	}
+
+	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
+	if( myGuild == nullptr )
+	{
+		MethodError( "(IsAtPeace) Invalid Object assigned" );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() );
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CChar_ResourceCount()
 //|	Prototype	-	int ResourceCount( realId, colour )
 //|					int ResourceCount( realId, colour, moreVal )
