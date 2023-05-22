@@ -14,6 +14,7 @@
 #endif
 
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 
 using namespace std::string_literals;
@@ -1378,11 +1379,11 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 		};
 		// First, let's normalize the path name and fix common errors
 		// remove all trailing and leading spaces...
-		auto sText = oldstrutil::trim( value );
+		auto sText = util::trim( value );
 
 		if( sText.empty() )
 		{
-			Console.Error( oldstrutil::format( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
+			Console.Error( util::format( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -1391,7 +1392,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 			// Just incase it's not set in the .ini
 			// and convert the windows backward slashes to forward slashes
 			
-			sText = oldstrutil::fixDirectory( sText );
+			sText = oldstrutil::fixDirectory( std::string(sText) );
 			
 			bool error = false;
 			if( !resettingDefaults )
@@ -1415,7 +1416,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 			
 			if( error )
 			{
-				Console.Error( oldstrutil::format( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() ));
+				Console.Error( util::format( "%s %s does not exist", verboseDirectory.c_str(), std::string(sText).c_str() ));
 				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			}
 			else
@@ -4616,7 +4617,7 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 		}
 		catch( const std::out_of_range &e )
 		{
-			Console.Error( oldstrutil::format( "Unknown era enum detected, exception thrown: %s", e.what() ));
+			Console.Error( util::format( "Unknown era enum detected, exception thrown: %s", e.what() ));
 		}
 	}
 
@@ -4628,7 +4629,7 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Pass an era string in, get an era enum back
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::EraStringToEnum( const std::string &eraString, bool useDefault, bool inheritCore ) -> ExpansionRuleset
+auto CServerData::EraStringToEnum( const std::string_view eraString, bool useDefault, bool inheritCore ) -> ExpansionRuleset
 {
 	auto rValue = ER_CORE;
 	if( useDefault )
@@ -4636,7 +4637,7 @@ auto CServerData::EraStringToEnum( const std::string &eraString, bool useDefault
 		rValue = ER_LBR; // Default era if specified era is not found
 	}
 
-	auto searchEra = oldstrutil::lower( eraString );
+	auto searchEra = util::lower( eraString );
 	if( inheritCore && searchEra == "core" )
 	{
 		// Inherit setting from CORESHARDERA setting
@@ -5097,7 +5098,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 	}
 	else
 	{
-		Console.Error( oldstrutil::format( "Unable to open file %s for writing", filename.c_str() ));
+		Console.Error( util::format( "Unable to open file %s for writing", filename.c_str() ));
 	}
 	return rValue;
 }
@@ -5210,8 +5211,8 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 			if( pos2 != std::string::npos )
 			{
 				// We have the bounds
-				auto contents = oldstrutil::trim( input.substr( pos1 + 1, ( pos2 - pos1 ) - 1 ));
-				return contents;
+				auto contents = util::trim( input.substr( pos1 + 1, ( pos2 - pos1 ) - 1 ));
+				return std::string(contents);
 			}
 		}
 		return {};
@@ -5227,7 +5228,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 			if( input.gcount() > 0 )
 			{
 				input_buffer[input.gcount()] = 0;
-				auto line = oldstrutil::trim( oldstrutil::removeTrailing( std::string( input_buffer ), "//" ));
+				auto line = std::string(util::trim( util::strip( std::string( input_buffer ), "//" )));
 				if( !line.empty() )
 				{
 					switch( static_cast<int>( state ))
@@ -5256,10 +5257,10 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 						{
 							if( line[0] != '}' )
 							{
-								auto [key, value] = oldstrutil::split( line, "=" );
+								auto [key, value] = util::split( line, "=" );
 								try
 								{
-									if( HandleLine( key, value ))
+									if( HandleLine( std::string(key), std::string(value) ))
 									{
 										rValue = true;
 									}
@@ -5267,8 +5268,8 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								catch( const std::exception &e )
 								{
 									Console.Error( "Error parsing ini file" );
-									Console.Error( oldstrutil::format( "Entry was: %s = %s", key.c_str(), value.c_str() ));
-									Console.Error( oldstrutil::format( "Exception was: %s", e.what() ));
+									Console.Error( util::format( "Entry was: %s = %s", std::string(key).c_str(), std::string(value).c_str() ));
+									Console.Error( util::format( "Exception was: %s", e.what() ));
 									exit( 1 );
 								}
 							}
@@ -5298,9 +5299,9 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	 if( section){
 	 for (auto &sec : section->collection() ){
 	 auto tag = sec->tag;
-	 auto data = oldstrutil::simplify( sec->data );
+	 auto data = util::simplify( sec->data );
 	 if( !HandleLine( tag, data )) {
-	 Console.Warning( oldstrutil::format( "Unhandled tag '%s'", tag.c_str() ));
+	 Console.Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
 	 }
 	 }
 	 }
@@ -5310,7 +5311,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	 }
 	 else
 	 {
-	 Console.Warning( oldstrutil::format( "%s File not found, Using default settings.", filename.c_str() ));
+	 Console.Warning( util::format( "%s File not found, Using default settings.", filename.c_str() ));
 	 cwmWorldState->ServerData()->save();
 	 }
 	 }
@@ -5997,31 +5998,31 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			MapDiffsEnabled( static_cast<UI16>( std::stoul( value, nullptr, 0 )) == 1 );
 			break;
 		case 231:	// CORESHARDERA
-			ExpansionCoreShardEra( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionCoreShardEra( EraStringToEnum( util::trim( value )));
 			break;
 		case 232:	// ARMORCALCULATION
-			ExpansionArmorCalculation( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionArmorCalculation( EraStringToEnum( util::trim( value )));
 			break;
 		case 233:	// STRENGTHDAMAGEBONUS
-			ExpansionStrengthDamageBonus( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionStrengthDamageBonus( EraStringToEnum( util::trim( value )));
 			break;
 		case 234:	// TACTICSDAMAGEBONUS
-			ExpansionTacticsDamageBonus( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionTacticsDamageBonus( EraStringToEnum( util::trim( value )));
 			break;
 		case 235:	// ANATOMYDAMAGEBONUS
-			ExpansionAnatomyDamageBonus( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionAnatomyDamageBonus( EraStringToEnum( util::trim( value )));
 			break;
 		case 236:	// LUMBERJACKDAMAGEBONUS
-			ExpansionLumberjackDamageBonus( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionLumberjackDamageBonus( EraStringToEnum( util::trim( value )));
 			break;
 		case 237:	// RACIALDAMAGEBONUS
-			ExpansionRacialDamageBonus( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionRacialDamageBonus( EraStringToEnum( util::trim( value )));
 			break;
 		case 238:	// DAMAGEBONUSCAP
-			ExpansionDamageBonusCap( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionDamageBonusCap( EraStringToEnum( util::trim( value )));
 			break;
 		case 239:	// SHIELDPARRY
-			ExpansionShieldParry( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionShieldParry( EraStringToEnum( util::trim( value )));
 			break;
 		case 240:	// PARRYDAMAGECHANCE
 			CombatParryDamageChance( static_cast<UI08>( std::stoul( value, nullptr, 0 )));
@@ -6245,13 +6246,13 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			ShowRaceInPaperdoll(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
 			break;
 		case 313:	// WEAPONPARRY
-			ExpansionWeaponParry( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionWeaponParry( EraStringToEnum( util::trim( value )));
 			break;
 		case 314:	// WRESTLINGPARRY
-			ExpansionWrestlingParry( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionWrestlingParry( EraStringToEnum( util::trim( value )));
 			break;
 		case 315:	// COMBATHITCHANCE
-			ExpansionCombatHitChance( EraStringToEnum( oldstrutil::trim( value )));
+			ExpansionCombatHitChance( EraStringToEnum( util::trim( value )));
 			break;
 		case 316:	// CASTSPELLSWHILEMOVING
 			CastSpellsWhileMoving(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
@@ -6462,29 +6463,29 @@ auto CServerData::ServerLocation( size_t locNum ) -> __STARTLOCATIONDATA__*
 auto CServerData::ServerLocation( std::string toSet ) -> void
 {
 	auto temp = toSet;
-	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
-	auto csecs = oldstrutil::sections( temp, "," );
+	temp = util::trim( util::strip( temp, "//" ));
+	auto csecs = util::parse( temp, "," );
 	
 	__STARTLOCATIONDATA__ toAdd;
 	if( csecs.size() >= 7 )
 	{
-		toAdd.oldTown 			= oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
-		toAdd.oldDescription 	= oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+		toAdd.oldTown 			= util::trim( util::strip( csecs[0], "//" ));
+		toAdd.oldDescription 	= util::trim( util::strip( csecs[1], "//" ));
 		toAdd.newTown 			= toAdd.oldTown;
 		toAdd.newDescription 	= toAdd.oldDescription;
 		
-		toAdd.x 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
-		toAdd.y 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
-		toAdd.z 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
-		toAdd.worldNum 	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 ));
+		toAdd.x 		= static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[2], "//" ))), nullptr, 0 ));
+		toAdd.y 		= static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[3], "//" ))), nullptr, 0 ));
+		toAdd.z 		= static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[4], "//" ))), nullptr, 0 ));
+		toAdd.worldNum 	= static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[5], "//" ))), nullptr, 0 ));
 		if( csecs.size() == 7 )
 		{
-			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[6], "//" ))), nullptr, 0 ));
 		}
 		else
 		{
-			toAdd.instanceId	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
-			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 ));
+			toAdd.instanceId	= static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[6], "//" ))), nullptr, 0 ));
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[7], "//" ))), nullptr, 0 ));
 		}
 		startlocations.push_back( toAdd );
 	}
@@ -6607,7 +6608,7 @@ auto CServerData::SaveTime() -> void
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", timeFile.c_str() ));
+		Console.Error( util::format( "Failed to open %s for writing", timeFile.c_str() ));
 		return;
 	}
 
@@ -6646,10 +6647,10 @@ auto CServerData::LoadTime() -> void
 			input.getline( line, 1023 );
 			line[input.gcount()] = 0;
 			std::string sLine( line );
-			sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+			sLine = util::trim( util::strip( sLine, "//" ));
 			if( !sLine.empty() )
 			{
-				if( oldstrutil::upper( sLine ) == "[TIME]" )
+				if( util::upper( sLine ) == "[TIME]" )
 				{
 					LoadTimeTags( input );
 				}
@@ -6668,7 +6669,7 @@ auto CServerData::LoadTimeTags( std::ifstream &input ) -> void
 		ReadWorldTagData( input, tag, data );
 		if( tag != "o---o" )
 		{
-			UTag = oldstrutil::upper( tag );
+			UTag = util::upper( tag );
 			
 			if( UTag == "AMPM" )
 			{
@@ -6692,11 +6693,11 @@ auto CServerData::LoadTimeTags( std::ifstream &input ) -> void
 			}
 			else if( UTag == "MOON" )
 			{
-				auto csecs = oldstrutil::sections( data, "," );
+				auto csecs = util::parse( data, "," );
 				if( csecs.size() > 1 )
 				{
-					ServerMoon( 0, static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-					ServerMoon( 1, static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					ServerMoon( 0, static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[0], "//" ))), nullptr, 0 )));
+					ServerMoon( 1, static_cast<SI16>( std::stoi( std::string(util::trim( util::strip( csecs[1], "//" ))), nullptr, 0 )));
 				}
 			}
 		}

@@ -20,7 +20,7 @@
 #include "cServerDefinitions.h"
 #include "cSkillClass.h"
 #include "Dictionary.h"
-
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 void		SendTradeStatus( CItem *cont1, CItem *cont2 );
@@ -854,7 +854,7 @@ auto IsOnFoodList( const std::string& sFoodList, const UI16 sItemId ) -> bool
 			auto tag = sec->tag;
 			if( !tag.empty() )
 			{
-				if( oldstrutil::upper( tag ) == "FOODLIST" )
+				if( util::upper( tag ) == "FOODLIST" )
 				{
 					doesEat = IsOnFoodList( sec->data, sItemId );
 				}
@@ -2284,20 +2284,20 @@ void GetFameTitle( CChar *p, std::string& fameTitle )
 			{
 				if( p->GetId( 2 ) == 0x91 )
 				{
-					fameTitle = oldstrutil::format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string( " " );
+					fameTitle = util::format( Dictionary->GetEntry( 1177 ), Races->Name( p->GetRace() ).c_str() ) + std::string( " " );
 				}
 				else
 				{
-					fameTitle = oldstrutil::format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string( " " );
+					fameTitle = util::format( Dictionary->GetEntry( 1178 ), Races->Name( p->GetRace() ).c_str() ) + std::string( " " );
 				}
 			}
 			else if( p->GetId( 2 ) == 0x91 )
 			{
-				fameTitle = oldstrutil::format( Dictionary->GetEntry( 1179 ), theTitle.c_str() ) + std::string( " " );
+				fameTitle = util::format( Dictionary->GetEntry( 1179 ), theTitle.c_str() ) + std::string( " " );
 			}
 			else
 			{
-				fameTitle = oldstrutil::format( Dictionary->GetEntry( 1180 ), theTitle.c_str() ) + std::string( " " );
+				fameTitle = util::format( Dictionary->GetEntry( 1180 ), theTitle.c_str() ) + std::string( " " );
 			}
 		}
 		else
@@ -2306,9 +2306,9 @@ void GetFameTitle( CChar *p, std::string& fameTitle )
 			{
 				fameTitle = Dictionary->GetEntry( 1181 ) + std::string( " " );
 			}
-			else if( !( theTitle = oldstrutil::removeTrailing( theTitle, "//" )).empty() )
+			else if( !( theTitle = util::strip( theTitle, "//" )).empty() )
 			{
-				fameTitle = oldstrutil::format( Dictionary->GetEntry( 1182 ), theTitle.c_str() );
+				fameTitle = util::format( Dictionary->GetEntry( 1182 ), theTitle.c_str() );
 			}
 		}
 	}
@@ -2399,7 +2399,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	{
 		if( cwmWorldState->murdererTags.empty() )
 		{
-			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+			tempstr = util::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 		}
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 		{
@@ -2426,7 +2426,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	else if( pdoll->IsCriminal() )
 	{
-		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+		tempstr = util::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 	}
 	else
 	{
@@ -2446,7 +2446,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
 			{
-				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
+				tempstr = util::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
 			}
 			else	// is Resident
 			{
@@ -3301,7 +3301,7 @@ ItemTypes FindItemTypeFromTag( const std::string &strToFind )
 	{
 		InitTagToItemType();
 	}
-	std::map<std::string, ItemTypes>::const_iterator toFind = tagToItemType.find( oldstrutil::upper( strToFind ));
+	std::map<std::string, ItemTypes>::const_iterator toFind = tagToItemType.find( util::upper( strToFind ));
 	if( toFind != tagToItemType.end() )
 		return toFind->second;
 
@@ -3326,7 +3326,7 @@ auto InitIdToItemType() -> void
 		{
 			auto tag = sec->tag;
 			auto data = sec->data;
-			auto comma_secs = oldstrutil::sections( data, "," );
+			auto comma_secs = util::parse( data, "," );
 			iType = FindItemTypeFromTag( tag );
 			if( iType != IT_COUNT )
 			{
@@ -3335,7 +3335,7 @@ auto InitIdToItemType() -> void
 				{
 					for( SI32 i = 0; i <= sectionCount; i++ )
 					{
-						idToItemType[ oldstrutil::value<UI16>( oldstrutil::extractSection( data, ",", i, i ), 16 )] = iType;
+						idToItemType[ util::ston<UI16>( oldstrutil::extractSection( data, ",", i, i ), 16 )] = iType;
 					}
 				}
 				else
@@ -3672,13 +3672,13 @@ const char *AppendData( CSocket *s, CItem *i, std::string &currentName )
 		case IT_CONTAINER:
 		case IT_SPAWNCONT:
 		case IT_UNLOCKABLESPAWNCONT:
-			dataToAdd = std::string( " (" ) + oldstrutil::number( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
-			dataToAdd += oldstrutil::number(( i->GetWeight() / 100 )) + std::string( " stones)" );
+			dataToAdd = std::string( " (" ) + util::ntos( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
+			dataToAdd += util::ntos(( i->GetWeight() / 100 )) + std::string( " stones)" );
 			break;
 		case IT_LOCKEDCONTAINER:		// containers
 		case IT_LOCKEDSPAWNCONT:	// spawn containers
-			dataToAdd = std::string( " (" ) + oldstrutil::number( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
-			dataToAdd += oldstrutil::number(( i->GetWeight() / 100 )) + std::string( " stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
+			dataToAdd = std::string( " (" ) + util::ntos( static_cast<SI32>( i->GetContainsList()->Num() )) + std::string( " items, " );
+			dataToAdd += util::ntos(( i->GetWeight() / 100 )) + std::string( " stones) " + Dictionary->GetEntry( 9050, s->Language() )); // [Locked]
 			break;
 		case IT_LOCKEDDOOR:
 			dataToAdd = " " + Dictionary->GetEntry( 9050 ); // [Locked]
@@ -3823,13 +3823,13 @@ bool CPISingleClick::Handle( void )
 	{
 		if( i->GetId() == 0x0ED5 ) //guildstone
 		{
-			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = util::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
 		}
 		if( !i->IsPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->IsCorpse() && getAmount > 1 )
 			{
-				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
+				realname = util::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
 			}
 			else
 			{
@@ -3838,7 +3838,7 @@ bool CPISingleClick::Handle( void )
 		}
 		else
 		{
-			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = util::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
 		}
 	}
 	else
@@ -3852,7 +3852,7 @@ bool CPISingleClick::Handle( void )
 	{
 		if( i->GetName2() == "#" || i->GetName2() == "" )
 		{
-			realname += oldstrutil::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
+			realname += util::format( Dictionary->GetEntry( 9404, tSock->Language() ), i->GetTempVar( CITV_MOREZ )); // with %d charges
 		}
 		else
 		{
@@ -3870,7 +3870,7 @@ bool CPISingleClick::Handle( void )
 		{
 			iCount = static_cast<SI32>( i->GetContainsList()->Num() );
 		}
-		realname += oldstrutil::format( ", (%u items, %u stones)", iCount, ( i->GetWeight() / 100 ));
+		realname += util::format( ", (%u items, %u stones)", iCount, ( i->GetWeight() / 100 ));
 	}
 
 	// Use item's real name as starting point for final string
@@ -3884,11 +3884,11 @@ bool CPISingleClick::Handle( void )
 			if( cwmWorldState->ServerData()->RankSystemStatus() && i->GetRank() == 10 )
 			{
 				std::string creatorName = GetNpcDictName( mCreator, tSock );
-				temp2 += oldstrutil::format( " %s", Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // of exceptional quality
+				temp2 += util::format( " %s", Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // of exceptional quality
 
 				if( cwmWorldState->ServerData()->DisplayMakersMark() && i->IsMarkedByMaker() )
 				{
-					temp2 += oldstrutil::format( " %s by %s", cwmWorldState->skill[i->GetMadeWith()-1].madeWord.c_str(), creatorName.c_str() ); //  [crafted] by %s
+					temp2 += util::format( " %s by %s", cwmWorldState->skill[i->GetMadeWith()-1].madeWord.c_str(), creatorName.c_str() ); //  [crafted] by %s
 				}
 			}
 		}

@@ -27,6 +27,7 @@
 #include "ssection.h"
 #include "CPacketSend.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include "osunique.hpp"
 
 using namespace std::string_literals;
@@ -48,7 +49,7 @@ bool CPINewBookHeader::Handle( void )
 		if( !ValidateObject( mBook ))
 			return true;
 
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( bookSer, 16 ) + std::string( ".bok" );
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + util::ntos( bookSer, 16 ) + std::string( ".bok" );
 
 		if( !FileExists( fileName ))
 		{
@@ -81,18 +82,18 @@ bool CPINewBookHeader::Handle( void )
 
 				if( file.fail() )
 				{
-					Console.Error( oldstrutil::format( "Couldn't write to book file %s", fileName.c_str() ));
+					Console.Error( util::format( "Couldn't write to book file %s", fileName.c_str() ));
 				}
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+				Console.Error( util::format( "Failed to seek to book file %s", fileName.c_str() ));
 			}
 			file.close();
 		}
 		else
 		{
-			Console.Error( oldstrutil::format( "Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
+			Console.Error( util::format( "Couldn't write to book file %s for book 0x%X", fileName.c_str(), bookSer) );
 		}
 	}
 	return true;
@@ -108,7 +109,7 @@ auto CBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) -> void
 {
 	if( mSock )
 	{
-		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ));
+		auto temp	= "BOOK "s + util::ntos( i->GetTempVar( CITV_MORE ));
 		auto book = FileLookup->FindEntry( temp, misc_def );
 		if( book )
 		{
@@ -121,7 +122,7 @@ auto CBooks::OpenPreDefBook( CSocket *mSock, CItem *i ) -> void
 			for( const auto &sec : book->collection() )
 			{
 				auto tag = sec->tag;
-				auto UTag = oldstrutil::upper( tag );
+				auto UTag = util::upper( tag );
 				auto data = sec->data;
 				if( UTag == "PAGES" )
 				{
@@ -169,7 +170,7 @@ void CBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 		UI16 numPages = 0;
 
 		std::string bookTitle, bookAuthor;
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string( ".bok" );
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + util::ntos( mBook->GetSerial(), 16 ) + std::string( ".bok" );
 
 		std::ifstream file( fileName.c_str(), std::ios::in | std::ios::binary );
 
@@ -217,7 +218,7 @@ void CBooks::OpenBook( CSocket *mSock, CItem *mBook, bool isWriteable )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+				Console.Error( util::format( "Failed to seek to book file %s", fileName.c_str() ));
 			}
 
 			file.close();
@@ -280,7 +281,7 @@ auto CBooks::ReadPreDefBook( CSocket *mSock, CItem *i, UI16 p ) -> void
 {
 	if( mSock )
 	{
-		auto temp	= "BOOK "s + oldstrutil::number( i->GetTempVar( CITV_MORE ));
+		auto temp	= "BOOK "s + util::ntos( i->GetTempVar( CITV_MORE ));
 		CScriptSection *book	= FileLookup->FindEntry( temp, misc_def );
 		if( book )
 		{
@@ -340,7 +341,7 @@ bool CPIBookPage::Handle( void )
 			return true;
 		}
 
-		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( mBook->GetSerial(), 16 ) + std::string( ".bok" );
+		const std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + util::ntos( mBook->GetSerial(), 16 ) + std::string( ".bok" );
 		UI16 totalLines	= tSock->GetWord( 11 );
 
 		// Cap amount of lines sent in one go at 8 per page
@@ -389,13 +390,13 @@ bool CPIBookPage::Handle( void )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Failed to seek to book file %s", fileName.c_str() ));
+				Console.Error( util::format( "Failed to seek to book file %s", fileName.c_str() ));
 			}
 			file.close();
 		}
 		else
 		{
-			Console.Error( oldstrutil::format( "Couldn't write to book file %s", fileName.c_str() ));
+			Console.Error( util::format( "Couldn't write to book file %s", fileName.c_str() ));
 		}
 	}
 	return true;
@@ -409,7 +410,7 @@ bool CPIBookPage::Handle( void )
 //o------------------------------------------------------------------------------------------------o
 void CBooks::DeleteBook( CItem *id )
 {
-	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + oldstrutil::number( id->GetSerial(), 16 ) + std::string( ".bok" );
+	std::string fileName = cwmWorldState->ServerData()->Directory( CSDDP_BOOKS ) + util::ntos( id->GetSerial(), 16 ) + std::string( ".bok" );
 	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 }
 

@@ -14,114 +14,11 @@
 #include <stdexcept>
 #include <filesystem>
 #include <codecvt>
+#include "utility/strutil.hpp"
 using namespace std::string_literals;
 
 namespace oldstrutil
 {
-	//=====================================================================
-	// Lowercase the string
-	std::string lower( const std::string &value )
-	{
-		auto rValue = value;
-		std::transform( rValue.begin(), rValue.end(), rValue.begin(), 
-				   []( unsigned char c ){ return std::tolower( c ); } );
-		return rValue;
-	}
-
-	//=====================================================================
-	// Uppercase the string
-	std::string upper( const std::string &value )
-	{
-		auto rValue = value;
-		std::transform( rValue.begin(), rValue.end(), rValue.begin(),
-				   []( unsigned char c ){ return std::toupper( c ); } );
-		return rValue;
-	}
-
-	//=====================================================================
-	// Remove leading whitespace
-	std::string ltrim( const std::string &value )
-	{
-		auto count = 0;
-		for( auto it = value.begin(); it != value.end(); it++ )
-		{
-			if( !isspace( *it ))
-			{
-				return value.substr( count );
-			}
-			else
-			{
-				count++;
-			}
-		}
-
-		return std::string();
-	}
-
-	//=====================================================================
-	// Remove trailing whitespace
-	std::string rtrim( const std::string &value )
-	{
-		auto count = 0;
-		for( auto it = value.rbegin(); it != value.rend(); it++ )
-		{
-			if( !isspace( *it ))
-			{
-				return value.substr( 0, value.size() - count );
-			}
-			else
-			{
-				count++;
-			}
-		}
-
-		return std::string();
-	}
-
-	//=====================================================================
-	// Remove leading/trailing whitespace
-	std::string trim( const std::string &value )
-	{
-		return rtrim( ltrim( value ));
-	}
-
-	//=====================================================================
-	// Remove leading/trailing whitepace, and reduce all other whitespace to one " "
-	std::string simplify( const std::string &value )
-	{
-		auto tvalue = trim( value );
-		auto rValue = ""s;
-		auto toggle = false;
-		for( auto &c : tvalue )
-		{
-			if( isspace( c ))
-			{
-				if( !toggle )
-				{
-					rValue = rValue + c;
-					toggle = true;
-				}
-			}
-			else
-			{
-				toggle = false;
-				rValue = rValue + c;
-			}
-		}
-		return rValue;
-	}
-
-	//=====================================================================
-	// Removing everything after a delimiter. Normally "//" for comments
-	std::string removeTrailing( const std::string& value, const std::string& delim )
-	{
-		auto loc = value.find( delim );
-		if( loc == std::string::npos )
-		{
-			return value;
-		}
-		return value.substr( 0, loc );
-	}
 
 	//=====================================================================
 	// Return the values between two delimitors.
@@ -143,22 +40,6 @@ namespace oldstrutil
 			return std::string();
 		}
 		return value.substr( start_search, end - start_search );
-	}
-
-	//=====================================================================
-	// Split a string based on a separator
-	std::tuple<std::string, std::string> split( const std::string &value, const std::string &sep )
-	{
-		auto loc = value.find( sep );
-		auto next = loc + sep.size();
-		if(( loc == std::string::npos ) || ( next >= value.size() ))
-		{
-			return std::make_tuple( trim( value ), ""s );
-		}
-		else
-		{
-			return std::make_tuple( trim( value.substr( 0, loc )), trim( value.substr( next )));
-		}
 	}
 
 	//+++++++++++++++++++++++++++++++++++++
@@ -192,13 +73,6 @@ namespace oldstrutil
 		return temp;
 	}
 
-	//+++++++++++++++++++++++++++++++++++++
-	std::string format( const std::string fmtstring, ... )
-	{
-		std::va_list argptr;
-		va_start( argptr, fmtstring );
-		return oldstrutil::format( fmtstring, argptr );
-	}
 
 	//++++++++++++++++++++++++++++++++++++++
 	std::string format( const std::string fmtstring, va_list& list )
@@ -214,7 +88,7 @@ namespace oldstrutil
 	//++++++++++++++++++++++++++++++++++++++++
 	std::string formatMessage( const std::string& uformat, const std::string& data )
 	{
-		auto values = oldstrutil::sections( data, "," );
+		auto values = util::parse( data, "," );
 		auto format = uformat;
 		auto pos = format.find_first_of( "%" );
 		if( pos == std::string::npos )
@@ -228,7 +102,7 @@ namespace oldstrutil
 			{
 				break;
 			}
-			auto temp = values[index];
+			auto temp = std::string(values[index]);
 			index++;
 			// now, we assume the formatting was done before the string, so basically we
 			// replace the format specifier, with the string
@@ -277,7 +151,7 @@ namespace oldstrutil
 		{
 			return sec[sectionindex];
 		}
-		throw std::runtime_error( oldstrutil::format( "Section index %ul exceeded size %ul from sections %s", sectionindex, sec.size(), value.c_str() ));
+		throw std::runtime_error( util::format( "Section index %ul exceeded size %ul from sections %s", sectionindex, sec.size(), value.c_str() ));
 	}
 
 	//+++++++++++++++++++++++++++++++++++++++++
@@ -361,7 +235,7 @@ namespace oldstrutil
 	{
 		std::string value = "\\";
 		std::string::size_type index = 0;
-		auto data = trim( base );
+		auto data = std::string(util::trim( base ));
 		while(( index = data.find( value, index )) != std::string::npos )
 		{
 			data = data.replace( index, 1, "/" );
@@ -387,52 +261,6 @@ namespace oldstrutil
 		return data;
 	}
 
-	std::string number( char n, int base )
-	{
-		std::stringstream conversion;
-		auto value = static_cast<std::int16_t>( n );
-
-		switch( base )
-		{
-			case 10:
-				conversion << std::dec << value;
-				break;
-			case 16:
-				conversion << std::hex << value << std::dec;
-				break;
-			case 8:
-				conversion << std::oct << value << std::dec;
-				break;
-			default:
-				conversion << std::dec << value;
-				break;
-		}
-
-		return conversion.str();
-	}
-	std::string number( unsigned char n, int base )
-	{
-		std::stringstream conversion;
-		auto value = static_cast<std::uint16_t>( n );
-
-		switch( base )
-		{
-			case 10:
-				conversion << std::dec << value;
-				break;
-			case 16:
-				conversion << std::hex << value << std::dec;
-				break;
-			case 8:
-				conversion << std::oct << value << std::dec;
-				break;
-			default:
-				conversion << std::dec << value;
-				break;
-		}
-
-		return conversion.str();
-	}
 
 #if defined( _MSC_VER )
 #pragma warning(push)

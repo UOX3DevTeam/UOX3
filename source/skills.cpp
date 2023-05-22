@@ -17,6 +17,7 @@
 #include "Dictionary.h"
 #include "movement.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include "weight.h"
 #include <algorithm>
 
@@ -843,7 +844,7 @@ void CSkills::SmeltOre( CSocket *s )
 					CItem *ingot = Items->CreateScriptItem( s, chr, "0x1BF2", ingotNum, OT_ITEM, true, oreType->colour );
 					if( ingot != nullptr )
 					{
-						ingot->SetName( oldstrutil::format( "%s Ingot", oreType->name.c_str() ));
+						ingot->SetName( util::format( "%s Ingot", oreType->name.c_str() ));
 					}
 
 					if( smeltItemId == 0x19B7 && itemToSmelt->GetAmount() % 2 != 0 )
@@ -1700,7 +1701,7 @@ void CSkills::Tracking( CSocket *s, SI32 selection )
 void CSkills::CreateTrackingMenu( CSocket *s, UI16 m )
 {
 	VALIDATESOCKET( s );
-	const std::string sect = std::string( "TRACKINGMENU " ) + oldstrutil::number( m );
+	const std::string sect = std::string( "TRACKINGMENU " ) + util::ntos( m );
 	CScriptSection *TrackStuff = FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == nullptr )
 		return;
@@ -1813,7 +1814,7 @@ void HandleCommonGump( CSocket *mSock, CScriptSection *gumpScript, UI16 gumpInde
 void CSkills::TrackingMenu( CSocket *s, UI16 gmindex )
 {
 	VALIDATESOCKET( s );
-	const std::string sect		= std::string( "TRACKINGMENU " ) + oldstrutil::number( gmindex );
+	const std::string sect		= std::string( "TRACKINGMENU " ) + util::ntos( gmindex );
 	CScriptSection *TrackStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( TrackStuff == nullptr )
 	{
@@ -2092,8 +2093,8 @@ bool CSkills::LoadMiningData( void )
 					{
 						tag = sec->tag;
 						data = sec->data;
-						UTag = oldstrutil::upper( tag );
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+						UTag = util::upper( tag );
+						data = util::trim( util::strip( data, "//" ));
 						switch(( UTag.data()[0] )) // break on tag
 						{
 							case 'C':
@@ -2261,15 +2262,15 @@ auto CSkills::LoadCreateMenus() -> void
 			auto eName = eName1;
 			if( "SUBMENU" == eName.substr( 0, 7 )) // is it a menu? (not really SUB, just to avoid picking up MAKEMENUs)
 			{
-				eName = oldstrutil::trim( oldstrutil::removeTrailing( eName, "//" ));
-				auto ssecs = oldstrutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				eName = util::trim( util::strip( eName, "//" ));
+				auto ssecs = util::parse( eName, " " );
+				ourEntry = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
 				for( const auto &sec : toSearch->collection() )
 				{
 					auto tag = sec->tag;
 					auto data = sec->data;
-					auto UTag = oldstrutil::upper( tag );
-					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					auto UTag = util::upper( tag );
+					data = util::trim( util::strip( data, "//" ));
 					if( UTag == "MENU" )
 					{
 						actualMenus[ourEntry].menuEntries.push_back( static_cast<UI16>( std::stoul( data, nullptr, 0 )));
@@ -2282,9 +2283,9 @@ auto CSkills::LoadCreateMenus() -> void
 			}
 			else if( "ITEM" == eName.substr( 0, 4 )) // is it an item?
 			{
-				auto ssecs = oldstrutil::sections( eName, " " );
+				auto ssecs = util::parse( eName, " " );
 				
-				ourEntry = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				ourEntry = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
 				CreateEntry_st tmpEntry;
 				tmpEntry.minRank		= 0;
 				tmpEntry.maxRank		= 10;
@@ -2296,8 +2297,8 @@ auto CSkills::LoadCreateMenus() -> void
 				{
 					auto tag = sec->tag;
 					auto data = sec->data;
-					auto UTag = oldstrutil::upper( tag );
-					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					auto UTag = util::upper( tag );
+					data = util::trim( util::strip( data, "//" ));
 					if( UTag == "COLOUR" )
 					{
 						tmpEntry.colour = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
@@ -2333,23 +2334,23 @@ auto CSkills::LoadCreateMenus() -> void
 					else if( UTag == "RESOURCE" )
 					{
 						ResAmountPair_st tmpResource;
-						auto ssecs = oldstrutil::sections( data," ");
+						auto ssecs = util::parse( data," ");
 						if( ssecs.size() > 1 )
 						{
 							if( ssecs.size() == 4 )
 							{
-								tmpResource.moreVal = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 0 ));
+								tmpResource.moreVal = static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( ssecs[3], "//" ))), nullptr, 0 ));
 							}
 							if( ssecs.size() >= 3 )
 							{
-								tmpResource.colour = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ));
+								tmpResource.colour = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[2], "//" ))), nullptr, 0 ));
 							}
 							if( ssecs.size() >= 2 )
 							{
-								tmpResource.amountNeeded = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+								tmpResource.amountNeeded = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
 							}
 						}
-						auto resType = "RESOURCE "s + oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ));
+						auto resType = "RESOURCE "s + std::string(util::trim( util::strip( ssecs[0], "//" )));
 						auto resList = FileLookup->FindEntry( resType, create_def );
 						if( resList )
 						{
@@ -2360,7 +2361,7 @@ auto CSkills::LoadCreateMenus() -> void
 						}
 						else
 						{
-							tmpResource.idList.push_back( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+							tmpResource.idList.push_back( static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[0], "//" ))), nullptr, 0 )));
 						}
 
 						tmpEntry.resourceNeeded.push_back( tmpResource );
@@ -2368,7 +2369,7 @@ auto CSkills::LoadCreateMenus() -> void
 					else if( UTag == "SKILL" )
 					{
 						ResSkillReq_st tmpResource;
-						auto ssecs = oldstrutil::sections( data, " " );
+						auto ssecs = util::parse( data, " " );
 						if( ssecs.size() == 1 )
 						{
 							tmpResource.maxSkill	= 1000;
@@ -2380,14 +2381,14 @@ auto CSkills::LoadCreateMenus() -> void
 							if( ssecs.size() == 2 )
 							{
 								tmpResource.maxSkill = 1000;
-								tmpResource.minSkill =  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+								tmpResource.minSkill =  static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
 							}
 							else
 							{
-								tmpResource.minSkill = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
-								tmpResource.maxSkill = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 ));
+								tmpResource.minSkill = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
+								tmpResource.maxSkill = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[2], "//" ))), nullptr, 0 ));
 							}
-							tmpResource.skillNumber = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 ));
+							tmpResource.skillNumber = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[0], "//" ))), nullptr, 0 ));
 						}
 						tmpEntry.skillReqs.push_back( tmpResource );
 					}
@@ -2400,14 +2401,14 @@ auto CSkills::LoadCreateMenus() -> void
 			}
 			else if( "MENUENTRY" == eName.substr( 0, 9 ))
 			{
-				auto ssecs = oldstrutil::sections( eName, " " );
-				ourEntry = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				auto ssecs = util::parse( eName, " " );
+				ourEntry = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( ssecs[1], "//" ))), nullptr, 0 ));
 				for( const auto &sec : toSearch->collection() )
 				{
 					auto tag = sec->tag;
 					auto data = sec->data;
-					auto UTag = oldstrutil::upper( tag );
-					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					auto UTag = util::upper( tag );
+					data = std::string(util::trim( util::strip( data, "//" )));
 					if( UTag == "ID" )
 					{
 						skillMenus[ourEntry].targId =  static_cast<UI16>( std::stoul( data, nullptr, 0 ));
@@ -2752,21 +2753,21 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 	CScriptSection *GumpHeader = FileLookup->FindEntry( "ADDMENU HEADER", misc_def );
 	if( GumpHeader == nullptr )
 	{
-		toSend.addCommand( oldstrutil::format( "resizepic 0 0 %i 400 320", background) );
+		toSend.addCommand( util::format( "resizepic 0 0 %i 400 320", background) );
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "Create menu" );
 		++textCounter;
-		toSend.addCommand( oldstrutil::format( "button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1 ));
+		toSend.addCommand( util::format( "button 360 15 %i %i 1 0 1", btnCancel, btnCancel + 1 ));
 	}
 	else
 	{
 		std::string tag, data, UTag;
 		for( tag = GumpHeader->First(); !GumpHeader->AtEnd(); tag = GumpHeader->Next() )
 		{
-			UTag = oldstrutil::upper( tag );
+			UTag = util::upper( tag );
 			data = GumpHeader->GrabData();
-			data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+			data = util::trim( util::strip( data, "//" ));
 			if( UTag == "BUTTONLEFT" )
 			{
 				btnLeft = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
@@ -2851,12 +2852,12 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 			}
 			if( canMake )
 			{
-				toSend.addCommand( oldstrutil::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, ( *ourMenu.iIter )));
+				toSend.addCommand( util::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, ( *ourMenu.iIter )));
 				if( iItem.targId )
 				{
-					toSend.addCommand( oldstrutil::format( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targId ));
+					toSend.addCommand( util::format( "tilepic %i %i %i", xLoc - 20, yLoc, iItem.targId ));
 				}
-				toSend.addCommand( oldstrutil::format( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
+				toSend.addCommand( util::format( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++ ));
 				toSend.addText( iItem.name );
 				yLoc += 40;
 				++actualItems;
@@ -2876,12 +2877,12 @@ void CSkills::NewMakeMenu( CSocket *s, SI32 menu, [[maybe_unused]] UI08 skill )
 		if( smIter != skillMenus.end() )
 		{
 			CreateMenuEntry_st iMenu = smIter->second;
-			toSend.addCommand(oldstrutil::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + ( *ourMenu.mIter )));
+			toSend.addCommand(util::format( "button %i %i %i %i 1 0 %i", xLoc - 40, yLoc, btnRight, btnRight + 1, CREATE_MENU_OFFSET + ( *ourMenu.mIter )));
 			if( iMenu.targId )
 			{
-				toSend.addCommand( oldstrutil::format( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targId) );
+				toSend.addCommand( util::format( "tilepic %i %i %i", xLoc - 20, yLoc, iMenu.targId) );
 			}
-			toSend.addCommand( oldstrutil::format( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
+			toSend.addCommand( util::format( "text %i %i 35 %i", xLoc + 20, yLoc, textCounter++) );
 			toSend.addText( iMenu.name );
 			yLoc += 40;
 			++actualItems;

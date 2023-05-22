@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		648153CA29466EF400784170 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648153C929466EF400784170 /* libjscript.a */; };
+		568093F529E5A6E400916F1E /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 568093F429E5A6DC00916F1E /* libjscript.a */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -90,6 +90,16 @@
 		64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A9016E293E3EF5009B54DA /* libz.tbd */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		568093F329E5A6DC00916F1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 568093EF29E5A6DC00916F1E /* jscript.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64A9FE47293E37BC009B54DA;
+			remoteInfo = jscript;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		64A90068293E3DA3009B54DA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -103,7 +113,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		568093EF29E5A6DC00916F1E /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../support/spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
+		568093F729E5A78000916F1E /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CMakeLists.txt; path = ../cmake/CMakeLists.txt; sourceTree = "<group>"; };
+		568093FA29E5A7AD00916F1E /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2022/uox3.sln; sourceTree = "<group>"; };
+		568093FB29E5A7AD00916F1E /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2022/uox3.vcxproj; sourceTree = "<group>"; };
+		568093FC29E5A7AD00916F1E /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2022/uox3.vcxproj.filters; sourceTree = "<group>"; };
+		568093FD29E5A7B900916F1E /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
+		568093FE29E5A7B900916F1E /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
+		568093FF29E5A7B900916F1E /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
+		5680940029E5A9F400916F1E /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../source/Makefile; sourceTree = "<group>"; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
 		64A90076293E3DD4009B54DA /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = archive.cpp; sourceTree = "<group>"; };
@@ -271,16 +289,56 @@
 			buildActionMask = 2147483647;
 			files = (
 				64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */,
-				648153CA29466EF400784170 /* libjscript.a in Frameworks */,
+				568093F529E5A6E400916F1E /* libjscript.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		568093F029E5A6DC00916F1E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				568093F429E5A6DC00916F1E /* libjscript.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		568093F629E5A75D00916F1E /* Maintenance */ = {
+			isa = PBXGroup;
+			children = (
+				5680940029E5A9F400916F1E /* Makefile */,
+				568093F929E5A79B00916F1E /* VS2022 */,
+				568093F829E5A78F00916F1E /* VS2017 */,
+				568093F729E5A78000916F1E /* CMakeLists.txt */,
+			);
+			name = Maintenance;
+			sourceTree = "<group>";
+		};
+		568093F829E5A78F00916F1E /* VS2017 */ = {
+			isa = PBXGroup;
+			children = (
+				568093FE29E5A7B900916F1E /* uox3.sln */,
+				568093FD29E5A7B900916F1E /* uox3.vcxproj */,
+				568093FF29E5A7B900916F1E /* uox3.vcxproj.filters */,
+			);
+			name = VS2017;
+			sourceTree = "<group>";
+		};
+		568093F929E5A79B00916F1E /* VS2022 */ = {
+			isa = PBXGroup;
+			children = (
+				568093FA29E5A7AD00916F1E /* uox3.sln */,
+				568093FB29E5A7AD00916F1E /* uox3.vcxproj */,
+				568093FC29E5A7AD00916F1E /* uox3.vcxproj.filters */,
+			);
+			name = VS2022;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
+				568093F629E5A75D00916F1E /* Maintenance */,
 				64A90074293E3DD4009B54DA /* source */,
 				64A9006B293E3DA3009B54DA /* Products */,
 				64A9016B293E3EED009B54DA /* Frameworks */,
@@ -318,7 +376,7 @@
 		64A9016B293E3EED009B54DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				648153C929466EF400784170 /* libjscript.a */,
+				568093EF29E5A6DC00916F1E /* jscript.xcodeproj */,
 				64A9016E293E3EF5009B54DA /* libz.tbd */,
 			);
 			name = Frameworks;
@@ -568,7 +626,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					64A90069293E3DA3009B54DA = {
 						CreatedOnToolsVersion = 14.1;
@@ -586,12 +644,28 @@
 			mainGroup = 64A90061293E3DA3009B54DA;
 			productRefGroup = 64A9006B293E3DA3009B54DA /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 568093F029E5A6DC00916F1E /* Products */;
+					ProjectRef = 568093EF29E5A6DC00916F1E /* jscript.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				64A90069293E3DA3009B54DA /* uox3 */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		568093F429E5A6DC00916F1E /* libjscript.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjscript.a;
+			remoteRef = 568093F329E5A6DC00916F1E /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		64A90066293E3DA3009B54DA /* Sources */ = {
@@ -716,6 +790,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -733,7 +808,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -774,6 +849,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -785,7 +861,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -797,6 +873,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -805,9 +882,14 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
 					../../source,
-					../../spidermonkey,
+					../../support/spidermonkey,
+					../../support,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Debug;
 		};
@@ -816,6 +898,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -824,9 +907,14 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				USER_HEADER_SEARCH_PATHS = (
 					../../source,
-					../../spidermonkey,
+					../../support/spidermonkey,
+					../../support,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Release;
 		};

@@ -4,7 +4,7 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
-
+#include "utility/strutil.hpp"
 #include <memory>
 using namespace std::string_literals;
 
@@ -247,7 +247,7 @@ auto CJailSystem::ReadSetup() -> void
 			auto data = sec->data;
 			if( !tag.empty() )
 			{
-				data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+				data = util::trim( util::strip( data, "//" ));
 				switch(( tag.data()[0] ))
 				{
 					case 'X':	toAdd.X( static_cast<SI16>( std::stoi( data, nullptr, 0 )));	break;
@@ -291,9 +291,9 @@ auto CJailSystem::ReadData() -> void
 				auto tag = sec->tag;
 				if( !tag.empty() )
 				{
-					auto UTag = oldstrutil::upper( tag );
+					auto UTag = util::upper( tag );
 					auto data = sec->data;
-					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+					data = util::trim( util::strip( data, "//" ));
 					switch(( UTag.data()[0] ))
 					{
 						case 'C':
@@ -358,7 +358,7 @@ void CJailSystem::WriteData( void )
 	std::ofstream jailsDestination( jailsFile.c_str() );
 	if( !jailsDestination )
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", jailsFile.c_str() ));
+		Console.Error( util::format( "Failed to open %s for writing", jailsFile.c_str() ));
 		return;
 	}
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )

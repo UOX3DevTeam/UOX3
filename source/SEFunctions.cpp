@@ -35,6 +35,7 @@
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
+#include "utility/strutil.hpp"
 
 
 
@@ -90,7 +91,7 @@ ObjectType FindObjTypeFromString( std::string strToFind )
 	{
 		InitStringToObjType();
 	}
-	std::map<std::string, ObjectType>::const_iterator toFind = stringToObjType.find( oldstrutil::upper( strToFind ));
+	std::map<std::string, ObjectType>::const_iterator toFind = stringToObjType.find( util::upper( strToFind ));
 	if( toFind != stringToObjType.end() )
 	{
 		return toFind->second;
@@ -192,7 +193,7 @@ JSBool SE_BroadcastMessage( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 	std::string trgMessage = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	if( trgMessage.empty() || trgMessage.length() == 0 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() ));
+		DoSEErrorMessage( util::format( "BroadcastMessage: Invalid string (%s)", trgMessage.c_str() ));
 		return JS_FALSE;
 	}
 	SysBroadcast( trgMessage );
@@ -215,7 +216,7 @@ JSBool SE_CalcItemFromSer( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 	if( argc == 1 )
 	{
 		std::string str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-		targSerial = oldstrutil::value<SERIAL>( str );
+		targSerial = util::ston<SERIAL>( str );
 	}
 	else
 	{
@@ -510,7 +511,7 @@ JSBool SE_MakeItem( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, j
 	CreateEntry_st *toFind = Skills->FindItem( itemMenu );
 	if( toFind == nullptr )
 	{
-		DoSEErrorMessage( oldstrutil::format( "MakeItem: Invalid make item (%i)", itemMenu) );
+		DoSEErrorMessage( util::format( "MakeItem: Invalid make item (%i)", itemMenu) );
 		return JS_FALSE;
 	}
 	UI16 resourceColour = 0;
@@ -707,7 +708,7 @@ JSBool SE_RegisterSkill( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 		Console.MoveTo( 15 );
 		Console.Print( "Registering skill number " );
 		Console.TurnYellow();
-		Console.Print( oldstrutil::format( "%i", skillNumber ));
+		Console.Print( util::format( "%i", skillNumber ));
 		if( !isEnabled )
 		{
 			Console.TurnRed();
@@ -754,7 +755,7 @@ JSBool SE_RegisterPacket( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( oldstrutil::format( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd ));
+		Console.Print( util::format( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd ));
 #endif
 		Network->RegisterPacket( packet, subCmd, scriptId );
 	}
@@ -2259,7 +2260,7 @@ JSBool SE_NumToString( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	auto str = oldstrutil::number( num );
+	auto str = util::ntos( num );
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ));
 	return JS_TRUE;
 }
@@ -2279,7 +2280,7 @@ JSBool SE_NumToHexString( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	}
 
 	SI32 num = JSVAL_TO_INT( argv[0] );
-	auto str = oldstrutil::number( num, 16 );
+	auto str = util::ntos( num, 16 );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, str.c_str() ));
 	return JS_TRUE;
@@ -2801,7 +2802,7 @@ JSBool SE_WorldBrightLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "WorldBrightLevel: Unknown Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2823,7 +2824,7 @@ JSBool SE_WorldDarkLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "WorldDarkLevel: Unknown Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "WorldDarkLevel: Unknown Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2845,7 +2846,7 @@ JSBool SE_WorldDungeonLevel( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "WorldDungeonLevel: Unknown Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2866,7 +2867,7 @@ JSBool SE_GetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unu
 {
 	if( argc > 1 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "GetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "GetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2894,7 +2895,7 @@ JSBool SE_SetSpawnRegionFacetStatus( [[maybe_unused]] JSContext *cx, [[maybe_unu
 {
 	if( argc > 2 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "SetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "SetSpawnRegionFacetStatus: Unknown Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	else if( argc == 1 )
@@ -2960,7 +2961,7 @@ JSBool SE_ReloadJSFile( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	if( scriptId == JSMapping->GetScriptId( JS_GetGlobalObject( cx )))
 	{
-		DoSEErrorMessage( oldstrutil::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ));
+		DoSEErrorMessage( util::format( "ReloadJSFile: JS Script attempted to reload itself, crash avoided (ScriptID %u)", scriptId ));
 		return JS_FALSE;
 	}
 
@@ -2979,12 +2980,12 @@ JSBool SE_ResourceArea( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 {
 	if( argc != 0 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "ResourceArea: Invalid Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "ResourceArea: Invalid Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
-	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
+	resType = util::upper( util::trim( util::strip( resType, "//" )));
 
 	*rval = INT_TO_JSVAL( cwmWorldState->ServerData()->ResourceAreaSize() );
 
@@ -3001,11 +3002,11 @@ JSBool SE_ResourceAmount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "ResourceAmount: Invalid Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
-	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
+	resType = util::upper( util::trim( util::strip( resType, "//" )));
 
 	if( argc == 2 )
 	{
@@ -3050,12 +3051,12 @@ JSBool SE_ResourceTime( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "ResourceTime: Invalid Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "ResourceTime: Invalid Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 
 	auto resType = std::string( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
-	resType = oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( resType, "//" )));
+	resType = util::upper( util::trim( util::strip( resType, "//" )));
 	if( argc == 2 )
 	{
 		UI16 newVal = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
@@ -3393,7 +3394,7 @@ JSBool SE_Moon( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, 
 {
 	if( argc > 2 || argc == 0 )
 	{
-		DoSEErrorMessage( oldstrutil::format( "Moon: Invalid Count of Arguments: %d", argc ));
+		DoSEErrorMessage( util::format( "Moon: Invalid Count of Arguments: %d", argc ));
 		return JS_FALSE;
 	}
 
@@ -3823,7 +3824,7 @@ JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	}
 
 	JSString *tString;
-	std::string eraString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	std::string eraString = util::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
 	if( !eraString.empty() )
 	{
 		UI08 eraNum = static_cast<UI08>( cwmWorldState->ServerData()->EraStringToEnum( eraString, false, false ));
@@ -3861,7 +3862,7 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 	}
 
 	JSString *tString;
-	std::string settingName = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
+	std::string settingName = util::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
 	if( !settingName.empty() )
 	{
 		auto settingId = cwmWorldState->ServerData()->LookupINIValue( settingName );

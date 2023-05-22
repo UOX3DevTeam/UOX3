@@ -1,6 +1,7 @@
 BASE      := ..
-SPIDER    := $(BASE)/spidermonkey
-ZLIB      := $(BASE)/zlib
+SPIDER    := $(BASE)/support/spidermonkey
+ZLIB      := $(BASE)/support/zlib
+SUPPORT      := $(BASE)/support
 PLATFORM  := $(shell uname)
 
 ifeq ($(PLATFORM),FreeBSD)
@@ -13,7 +14,7 @@ endif
 CXXFLAGS	:= -std=c++17 -O2 -pthread -Wno-shift-negative-value -Wall -Wextra -Wno-attributes
 LDFLAGS		:= -L$(SPIDER)  -ljs32 -L$(ZLIB) -lz
 TARGET		:= uox3
-INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB)
+INCLUDE		:=  -I$(SPIDER) -I. -I$(ZLIB) -I$(SUPPORT)
 
 DEPDIR := ./.deps
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d

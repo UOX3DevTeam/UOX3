@@ -6,7 +6,7 @@
 
 #include "uox3.h"
 #include "ssection.h"
-
+#include "utility/strutil.hpp"
 constexpr auto DFN_STRING 		= UI08( 0 );
 constexpr auto DFN_NUMERIC 		= UI08( 1 );
 constexpr auto DFN_UPPERSTRING 	= UI08( 2 );
@@ -515,7 +515,7 @@ const std::map<std::string, DFNTAGS> strToDFNTag
 //o------------------------------------------------------------------------------------------------o
 auto FindDFNTagFromStr( const std::string &strToFind ) ->DFNTAGS
 {
-	auto iter = strToDFNTag.find( oldstrutil::upper( strToFind ));
+	auto iter = strToDFNTag.find( util::upper( strToFind ));
 	if( iter != strToDFNTag.end() )
 	{
 		return iter->second;
@@ -873,32 +873,32 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 		line[input.gcount()] = 0;
 
 		sLine = line;
-		sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+		sLine = util::trim( util::strip( sLine, "//" ));
 		if( sLine != "}" && !sLine.empty() )
 		{
 			// do something here
 			if( sLine.substr( 0, 1 ) != "}" )
 			{
-				auto secs = oldstrutil::sections( sLine, "=" );
+				auto secs = util::parse( sLine, "=" );
 				tag = "";
 				if( secs.size() >= 1 )
 				{
 					try
 					{
-						tag = oldstrutil::trim( oldstrutil::removeTrailing( secs[0], "//" ));
+						tag = util::trim( util::strip( secs[0], "//" ));
 					}
 					catch (...)
 					{
 						tag = "";
 					}
 				}
-				auto utag = oldstrutil::upper( tag );
+				auto utag = util::upper( tag );
 				value = "";
 				if( secs.size() >= 2 )
 				{
 					try
 					{
-						value = oldstrutil::trim( oldstrutil::removeTrailing( secs[1], "//" ));
+						value = util::trim( util::strip( secs[1], "//" ));
 					}
 					catch (...)
 					{
@@ -926,15 +926,15 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 							{
 								case DFN_UPPERSTRING:
 								{
-									value = oldstrutil::upper( value );
+									value = util::upper( value );
 									if( utag == "ADDMENUITEM" )
 									{
 										// Handler for the new AUTO-Addmenu stuff. Each item that contains this tag is added to the list, and assigned to the correct menuitem group
 										// Format: ADDMENUITEM=GroupID,TileID,WeightPosition,ObjectFlags,ObjectID
 										ADDMENUITEM amiLocalCopy = {};
 										amiLocalCopy.itemName = std::string( localName );
-										auto csecs = oldstrutil::sections( value, "," );
-										amiLocalCopy.groupId = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+										auto csecs = util::parse( value, "," );
+										amiLocalCopy.groupId = static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[0], "//" ))), nullptr, 0 ));
 										if( amiLocalCopy.groupId != groupHolder )
 										{
 											groupHolder = amiLocalCopy.groupId;
@@ -945,10 +945,10 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 											itemIndexHolder += 1;
 										}
 										amiLocalCopy.itemIndex = itemIndexHolder;
-										amiLocalCopy.tileId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
-										amiLocalCopy.objectFlags = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
-										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
+										amiLocalCopy.tileId = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( csecs[1], "//" ))), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[2], "//" ))), nullptr, 0 ));
+										amiLocalCopy.objectFlags = static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[3], "//" ))), nullptr, 0 ));
+										amiLocalCopy.weightPosition = static_cast<UI32>( std::stoul( std::string(util::trim( util::strip( csecs[4], "//" ))), nullptr, 0 ));
 
 										//if( amiLocalCopy.tileId == INVALIDSERIAL )
 											//amiLocalCopy.tileId = amiLocalCopy.objectId;
@@ -973,19 +973,19 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 									catch (...)
 									{
 										toAdd2->ndata = 0;
-										Console.Warning( oldstrutil::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+										Console.Warning( util::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
 									}
 									break;
 								case DFN_DOUBLENUMERIC:
 								{
 									// Best I can tell the seperator here is a space
-									value = oldstrutil::simplify( value );
-									auto ssecs = oldstrutil::sections( value, " " );
+									value = util::simplify( value );
+									auto ssecs = util::parse( value, " " );
 									if( ssecs.size() >= 2 )
 									{
 										try
 										{
-											toAdd2->ndata = std::stoi( ssecs[0], nullptr, 0 );
+											toAdd2->ndata = std::stoi( std::string(ssecs[0]), nullptr, 0 );
 										}
 										catch (...)
 										{
@@ -993,7 +993,7 @@ auto CScriptSection::CreateSection( std::ifstream& input ) -> void
 										}
 										try
 										{
-											toAdd2->odata = std::stoi( ssecs[1], nullptr, 0 );
+											toAdd2->odata = std::stoi( std::string(ssecs[1]), nullptr, 0 );
 										}
 										catch (...)
 										{

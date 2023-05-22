@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
-project(zlib VERSION 1 LANGUAGES C)
+project(z VERSION 1 LANGUAGES C)
 
-add_library(zlib STATIC
+add_library(z STATIC
 	../../adler32.c
 	../../compress.c
 	../../crc32.c
@@ -32,14 +32,14 @@ add_library(zlib STATIC
 
 if (WIN32)
 
-	target_compile_definitions(zlib PRIVATE
+	target_compile_definitions(z PRIVATE
 		_LIB
 		_WINDOWS
 		_CRT_SECURE_NO_DEPRECATE
 		_CRT_NONSTDC_NO_DEPRECATE
 	)
 	
-	target_compile_options( zlib PRIVATE
+	target_compile_options( z PRIVATE
 		/W3
 		/sdl-
 		/wd4244 
@@ -54,18 +54,18 @@ if (WIN32)
 	
 else()
 
-	target_compile_definitions( zlib PRIVATE
+	target_compile_definitions( z PRIVATE
 	)
 	
-	target_compile_options( zlib PRIVATE
+	target_compile_options( z PRIVATE
 		-Wno-implicit-function-declaration
 	)
 	if (APPLE)
-		target_compile_options( zlib PRIVATE
+		target_compile_options( z PRIVATE
 			$<$<CONFIG:Release>:-Os>
 		)
 	else()
-		target_compile_options(zlib PRIVATE
+		target_compile_options(z PRIVATE
 			$<$<CONFIG:Release>:-O2>
 		)
 	endif(APPLE)

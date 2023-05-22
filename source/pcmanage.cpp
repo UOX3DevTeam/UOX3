@@ -15,6 +15,7 @@
 #include "cEffects.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include "cServerData.h"
 #include "ObjectFactory.h"
 #include <algorithm>
@@ -510,17 +511,17 @@ auto AddNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 	{
 		auto tag = sec->tag;
 		auto data = sec->data;
-		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+		data = util::trim( util::strip( data, "//" ));
 		if( !data.empty() )
 		{
-			auto UTag = oldstrutil::upper( tag );
+			auto UTag = util::upper( tag );
 			if( UTag == "PACKITEM" )
 			{
-				auto csecs = oldstrutil::sections( data, "," );
+				auto csecs = util::parse( data, "," );
 				if( csecs.size() > 1 )
 				{
-					UI16 nAmount = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-					n = Items->CreateScriptItem( socket, c, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nAmount, OT_ITEM, true );
+					UI16 nAmount = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( csecs[1], "//" ))), nullptr, 0 ));
+					n = Items->CreateScriptItem( socket, c, std::string(util::trim( util::strip( csecs[0], "//" ))), nAmount, OT_ITEM, true );
 				}
 				else
 				{
@@ -531,11 +532,11 @@ auto AddNewbieItem( CSocket *socket, CChar *c, const char* str, COLOUR pantsColo
 			{
 				UI16 itemHue = 0;
 				std::string itemSection;
-				auto csecs = oldstrutil::sections( data, "," );
+				auto csecs = util::parse( data, "," );
 				if( csecs.size() > 1 )
 				{
-					itemSection = oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
-					itemHue = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+					itemSection = util::trim( util::strip( csecs[0], "//" ));
+					itemHue = static_cast<UI16>( std::stoul( std::string(util::trim( util::strip( csecs[1], "//" ))), nullptr, 0 ));
 				}
 				else
 				{
@@ -704,7 +705,7 @@ void CPICreateCharacter::NewbieItems( CChar *mChar )
 	{
 		if( vecSkills[i].value > 0 )
 		{
-			whichsect = oldstrutil::format( "BESTSKILL %i", vecSkills[i].skill );
+			whichsect = util::format( "BESTSKILL %i", vecSkills[i].skill );
 			AddNewbieItem( tSock, mChar, whichsect.c_str(), 0, 0 );
 		}
 	}
@@ -991,7 +992,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			default:
-				Console.Error( oldstrutil::format( "Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				break;
 		}
 	}
@@ -1008,7 +1009,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 80 )
 			{
 				// If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
-				Console.Error( oldstrutil::format( "Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / static_cast<R32>( totalstats ));
 				mChar->SetStrength( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f )));
 				percheck = ( mChar->GetDexterity() / static_cast<R32>( totalstats ));
@@ -1018,7 +1019,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else if( totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats() )
@@ -1026,7 +1027,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 90 )
 			{
 				// If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
-				Console.Error( oldstrutil::format( "Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / static_cast<R32>( totalstats ));
 				mChar->SetStrength( static_cast<UI08>(Capped( percheck * 90, 10.0f, 60.0f )));
 				percheck = ( mChar->GetDexterity() / static_cast<R32>( totalstats ));
@@ -1036,7 +1037,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 
@@ -1063,7 +1064,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[2];
 			if( totalskills < 100 )
 			{
-				Console.Error( oldstrutil::format( "Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
@@ -1084,7 +1085,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[3];
 			if( totalskills < 120 )
 			{
-				Console.Error( oldstrutil::format( "Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+				Console.Error( util::format( "Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 #include "uox3.h"
 #include "regions.h"
+#include "utility/strutil.hpp"
 #include <filesystem>
 #include <chrono>
 #include <ctime>
@@ -33,7 +34,7 @@ void FileArchive( void )
 	auto mytime = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm ttemp;
 	char tbuffer[100];
-	auto timenow = oldstrutil::simplify( asciitime( tbuffer, 100, *lcltime( mytime, ttemp )));
+	auto timenow = util::simplify( asciitime( tbuffer, 100, *lcltime( mytime, ttemp )));
 	timenow = std::regex_replace( timenow, std::regex( "[\\s:]" ), std::string( "-" ));
 
 	std::string backupRoot	= cwmWorldState->ServerData()->Directory( CSDDP_BACKUP );
@@ -52,13 +53,13 @@ void FileArchive( void )
 		const SI16 AreaX = UpperX / 8;	// we're storing 8x8 grid arrays together
 		const SI16 AreaY = UpperY / 8;
 
-		auto backupPath = oldstrutil::format( "%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timenow.c_str() );
+		auto backupPath = util::format( "%s%s/", cwmWorldState->ServerData()->Directory( CSDDP_SHARED ).c_str(), timenow.c_str() );
 
 		for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 		{
 			for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 			{
-				auto filename1 = oldstrutil::format( "%i.%i.wsc", counter1, counter2 );
+				auto filename1 = util::format( "%i.%i.wsc", counter1, counter2 );
 				BackupFile( filename1, backupRoot );
 			}
 		}

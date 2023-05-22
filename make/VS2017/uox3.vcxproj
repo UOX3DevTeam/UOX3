@@ -101,18 +101,18 @@
     <OutDir>.\Release\x86\</OutDir>
     <IntDir>.\Release\x86\</IntDir>
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\Release\;..\..\zlib\make\VS2017\Release;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\support\spidermonkey\make\VS2017\jscript\Release\;..\..\support\zlib\make\VS2017\Release;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\..\support\spidermonkey;..\..\support\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\support;..\..\support\spidermonkey;..\..\support\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <LibraryPath>..\..\zlib\make\VS2017\x64\Release;..\..\spidermonkey\make\VS2017\jscript\x64\Release;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\zlib;..\..\spidermonkey;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\zlib;..\..\spidermonkey;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\support\zlib\make\VS2017\x64\Release;..\..\support\spidermonkey\make\VS2017\jscript\x64\Release;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\..\support\zlib;..\..\support\spidermonkey;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\support;..\..\support\zlib;..\..\support\spidermonkey;$(IncludePath)</IncludePath>
     <TargetName>UOX3</TargetName>
     <CodeAnalysisRuleSet>NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>false</RunCodeAnalysis>
@@ -131,16 +131,16 @@
     <OutDir>.\Debug\x86\</OutDir>
     <IntDir>.\Debug\x86\</IntDir>
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\Debug;..\..\zlib\make\VS2017\Debug;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\support\spidermonkey\make\VS2017\jscript\Debug;..\..\support\zlib\make\VS2017\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\..\support\spidermonkey;..\..\support\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\support;..\..\support\spidermonkey;..\..\support\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <LibraryPath>..\..\spidermonkey\make\VS2017\jscript\x64\Debug;..\..\zlib\make\VS2017\x64\Debug;$(LibraryPath)</LibraryPath>
-    <SourcePath>..\..\spidermonkey;..\..\zlib;$(SourcePath)</SourcePath>
-    <IncludePath>..\..\spidermonkey;..\..\zlib;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\support\spidermonkey\make\VS2017\jscript\x64\Debug;..\..\support\zlib\make\VS2017\x64\Debug;$(LibraryPath)</LibraryPath>
+    <SourcePath>..\..\support\spidermonkey;..\..\support\zlib;$(SourcePath)</SourcePath>
+    <IncludePath>..\..\support;..\..\support\spidermonkey;..\..\support\zlib;$(IncludePath)</IncludePath>
     <TargetName>UOX3_debug</TargetName>
     <OutDir>.\Debug\x64\</OutDir>
     <IntDir>.\Debug\x64\</IntDir>
@@ -171,10 +171,10 @@
       <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;support\zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\spidermonkey\make\VS2017\Release;..\zlib\make\VS2017\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\support;..\..\support\spidermonkey\make\VS2017\Release;..\support\zlib\make\VS2017\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -216,10 +216,10 @@
       <WholeProgramOptimization>true</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wsock32.lib;ws2_32.lib;jscript.lib;support\zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\zlib\make\VS2017\x64\Release\;..\..\spidermonkey\make\VS2017\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\support\zlib\make\VS2017\x64\Release\;..\..\support\spidermonkey\make\VS2017\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -327,10 +327,10 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;jscript.lib;support\zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\spidermonkey\make\VS2017\Release;..\..\zlib\make\VS2017\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\support\spidermonkey\make\VS2017\Release;..\..\support\zlib\make\VS2017\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -369,10 +369,10 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;jscript.lib;zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;jscript.lib;support\zlib-static.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName).exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>..\..\spidermonkey\make\VS2017\x64\Release;..\..\zlib\make\VS2017\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\support\spidermonkey\make\VS2017\x64\Release;..\..\support\zlib\make\VS2017\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
