@@ -4009,7 +4009,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	if( !ExistAndVerify( seOnBoughtFromVendor, "onBoughtFromVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -4050,7 +4050,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	if( !ExistAndVerify( seOnSoldToVendor, "onSoldToVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
