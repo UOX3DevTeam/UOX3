@@ -1425,19 +1425,9 @@ auto CItem::LockDown( CMultiObj *multiObj ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CItem::IsShieldType() const -> bool
 {
-	if( id >= 0x1B72 && id <= 0x1B7B )
-		return true;
-
-	if( id >= 0x1BC3 && id <= 0x1BC7 )
-		return true;
-
-	if( id >= 0x4200 && id <= 0x420B )
-		return true;
-
-	if( id >= 0x4228 && id <= 0x422C )
-		return true;
-
-	return false;
+	return ( id >= 0x1B72 && id <= 0x1B7B ) || ( id >= 0x1BC3 && id <= 0x1BC7 ) ||
+		( id >= 0x4200 && id <= 0x420B ) || ( id >= 0x4228 && id <= 0x422C ) ||
+		( id == 0xA649 || id == 0xA64A ) || ( id == 0xA831 || id == 0xA832 );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2636,7 +2626,8 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 	{
 		if( !mChar->IsGM() )
 		{
-			if( GetVisible() != VT_VISIBLE || ( GetVisible() == VT_TEMPHIDDEN && mChar != GetOwnerObj() ))	// Not a GM, and not the Owner
+			// Not the owner, nor a GM
+			if(( GetVisible() == VT_TEMPHIDDEN && mChar->GetSerial() != GetOwnerObj()->GetSerial() ) || ( GetVisible() != VT_VISIBLE && GetVisible() != VT_TEMPHIDDEN ))
 				return;
 		}
 		if( mSock->ClientType() >= CV_SA2D )

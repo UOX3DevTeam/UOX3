@@ -27,7 +27,7 @@ function AlertPack( srcChar, packMember )
 		{
 			if( !packMember.atWar && packMember.CanSee( srcChar ))
 			{
-				return tempPet.InitiateCombat( myTarget );
+				return packMember.InitiateCombat( myTarget );
 			}
 		}
 	}

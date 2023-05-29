@@ -37,6 +37,7 @@
 #include "PartySystem.h"
 
 void MakeShop( CChar *c );
+void ScriptError( const char *txt, JSContext *cx, ... );
 
 JSBool CGuildsProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, jsval *vp )
 {
@@ -55,7 +56,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	if( spellId >= Magic->spells.size() )
 	{
-		Console.Error( oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId )); // Revise please...
+		ScriptError( oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str(), cx );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -63,7 +64,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	CSpellInfo *mySpell = &Magic->spells[spellId];
 	if( mySpell == nullptr )
 	{
-		Console.Error( oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ));
+		ScriptError( oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str(), cx );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -169,7 +170,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 
 	if( skillId > THROWING )
 	{
-		Console.Error( "Invalid Skill ID, must be between 0 and 57" ); // Revise please...
+		ScriptError( oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str(), cx );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -177,7 +178,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
 	if( mySkill == nullptr )
 	{
-		Console.Error( "Invalid Skill" );
+		ScriptError( oldstrutil::format( "Invalid Skill" ).c_str(), cx );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -282,7 +283,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	CreateEntry_st *myCreateEntry = Skills->FindItem( createEntryId );
 	if( myCreateEntry == nullptr )
 	{
-		Console.Error( oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ));
+		ScriptError( oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str(), cx );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -1017,6 +1018,10 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -1054,7 +1059,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 				}
 				else
 				{
@@ -1071,7 +1076,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 					}
 					else
 					{
@@ -1396,6 +1401,19 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -1986,6 +2004,10 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 
 	if( JSVAL_IS_INT( id ))
@@ -2029,7 +2051,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 				}
 				else
 				{
@@ -2046,7 +2068,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 					}
 					else
 					{
@@ -2424,6 +2446,19 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -2530,6 +2565,10 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2559,7 +2598,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 				}
 				else
 				{
@@ -2576,7 +2615,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Error( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", oldstrutil::number( scriptId ).c_str() ));
+						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
 					}
 					else
 					{
@@ -2603,6 +2642,19 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 JSBool CSpawnRegionProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
@@ -2695,6 +2747,10 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2723,6 +2779,18 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 			case CSPAWNREGP_CALL:				gPriv->SetCall( static_cast<UI16>( encaps.toInt() ));			break;
 			default:
 				break;
+		}
+	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2804,6 +2872,10 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2849,6 +2921,19 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
@@ -2905,6 +2990,10 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2929,6 +3018,17 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it!
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -2937,6 +3037,10 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	CSocket *gPriv = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
+
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -2982,6 +3086,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			case CSOCKP_BUFFER:
 				break;
 			case CSOCKP_XTEXT:				gPriv->XText( encaps.toString() );						break;
+			case CSOCKP_XTEXT2:				gPriv->XText2( encaps.toString() );						break;
 			case CSOCKP_CLICKZ:				gPriv->ClickZ( static_cast<SI08>( encaps.toInt() ));	break;
 			case CSOCKP_ADDID:
 				break;
@@ -3015,6 +3120,19 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -3109,6 +3227,9 @@ JSBool CSocketProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				break;
 			case CSOCKP_XTEXT:				
 				tString = JS_NewStringCopyZ( cx, gPriv->XText().c_str() );
+				*vp = STRING_TO_JSVAL( tString );	break;
+			case CSOCKP_XTEXT2:				
+				tString = JS_NewStringCopyZ( cx, gPriv->XText2().c_str() );
 				*vp = STRING_TO_JSVAL( tString );	break;
 			case CSOCKP_CLICKZ:				*vp = INT_TO_JSVAL( gPriv->ClickZ() );					break;
 			case CSOCKP_ADDID:
@@ -3218,6 +3339,10 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	if( !ValidateObject( myChar ))
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
 	SI16 newSkillValue	= static_cast<SI16>( encaps.toInt() );
@@ -3300,6 +3425,19 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 			}
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -3577,6 +3715,10 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	if( myAccount == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 
 	if( JSVAL_IS_INT( id ))
@@ -3647,6 +3789,19 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -3678,6 +3833,7 @@ JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj,
 				break;
 		}
 	}
+
 	return JS_TRUE;
 }
 
@@ -3721,6 +3877,10 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	if( gPriv == nullptr )
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
@@ -3747,6 +3907,19 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 			default:																	break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -3777,6 +3950,10 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	Party *gPriv = static_cast<Party *>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
+
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -3811,6 +3988,19 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			default:																	break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 
@@ -3839,6 +4029,22 @@ JSBool CPartyProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 			case CPARTYP_MEMBERCOUNT:	*vp = INT_TO_JSVAL( gPriv->MemberList()->size() );			break;
 			case CPARTYP_ISNPC:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsNPC() );					break;
 			default:																				break;
+		}
+	}
+	return JS_TRUE;
+}
+
+JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
+{
+	if( JSVAL_IS_INT( id ))
+	{
+		switch( JSVAL_TO_INT( id ))
+		{
+			case CSCRIPT_SCRIPTID:		
+				*vp = INT_TO_JSVAL( JSMapping->GetScriptId( JS_GetGlobalObject( cx )) );
+				break;
+			default:
+				break;
 		}
 	}
 	return JS_TRUE;

@@ -192,6 +192,23 @@ void CWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
 			{
+				// Bring player's pets too
+				auto targetPets = targetChar->GetPetList();
+				for( const auto &targetPet : targetPets->collection() )
+				{
+					if( ValidateObject( targetPet ))
+					{
+						if( !targetPet->GetMounted() && targetPet->IsNpc() && targetPet->GetOwnerObj() == targetChar )
+						{
+							if( ObjInOldRange( targetChar, targetPet, DIST_BUILDRANGE )) // Be more lenient, bring pets within range
+							{
+								targetPet->SetLocation( sourceChar->GetX(), sourceChar->GetY(), sourceChar->GetZ(), sourceChar->WorldNumber(), sourceChar->GetInstanceId() );
+							}
+						}
+					}
+				}
+
+				// Then bring the player too
 				targetChar->SetLocation( sourceChar );
 				trgSock = targetChar->GetSocket();
 				SendMapChange( sourceChar->WorldNumber(), trgSock );

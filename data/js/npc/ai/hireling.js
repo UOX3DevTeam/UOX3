@@ -538,6 +538,7 @@ function onSpeech( pSpeech, pChar, hireling )
 					}
 					hireling.oldwandertype = 0;
 					hireling.wandertype = 0;
+					hireling.Follow( null );
 					return 1;
 				}
 				break;
@@ -552,6 +553,7 @@ function onSpeech( pSpeech, pChar, hireling )
 						{
 							tempPet.oldwandertype = 0;
 							tempPet.wandertype = 0;
+							tempPet.Follow( null );
 						}
 					}
 					return 1;
@@ -682,7 +684,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		}
 
 		// Check to make sure hireling has space for more weight in backpack
-		if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
+		if(( hPack.weight + iDropped.weight ) > hPack.weightMax )
 		{
 			if( hireling.isHuman )
 			{
@@ -749,7 +751,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 				return false;
 
 			// Check that hireling's pack can hold the weight of the gold
-			if(( hPack.weight + iDropped.weight ) > hPack.maxWeight )
+			if(( hPack.weight + iDropped.weight ) > hPack.weightMax )
 			{
 				if( hireling.isHuman )
 				{

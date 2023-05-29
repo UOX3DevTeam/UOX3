@@ -187,6 +187,20 @@ void CSocket::XText( const std::string &newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::XText2()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the socket's xtext2 buffer
+//o------------------------------------------------------------------------------------------------o
+std::string CSocket::XText2( void )
+{
+	return xtext2;
+}
+void CSocket::XText2( const std::string &newValue )
+{
+	xtext2 = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CSocket::TempObj()
 //|	Date		-	October 31, 2003
 //o------------------------------------------------------------------------------------------------o
@@ -659,6 +673,7 @@ void CSocket::InternalReset( void )
 	memset( buffer, 0, MAXBUFFER );
 	memset( outbuffer, 0, MAXBUFFER );
 	xtext.reserve( MAXBUFFER );
+	xtext2.reserve( MAXBUFFER );
 	addid[0] = addid[1] = addid[2] = addid[3] = 0;
 	clientip[0] = clientip[1] = clientip[2] = clientip[3] = 0;
 	// set the socket to nonblocking

@@ -666,7 +666,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 	}
 
 	// Does player actually have the spell they're trying to cast?
-	if( !pUser.HasSpell( spellNum ))
+	if( checkReagentReq && !pUser.HasSpell( spellNum ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 9266, pSocket.language )); // You don't have that spell.
 		return;

@@ -91,6 +91,15 @@
 88=Vaše zaslání chyby bylo oznámeno herním mistrům.
 89=Nebyl k dispozici žádný mistr hry, který by zaznamenal vaše hlášení chyby.
 90=No nejste vy ten vtipálek!
+91=Pravidlo o umístění položky zrušeno právy GM - Z je pro normální hráče příliš vysoké!
+92=Získat mapu trvalých značek pro který předmět?
+93=Počet trvalých značek: %i
+94=Získat mapu dočasných značek pro který objekt?
+95=Počet dočasných značek: %i
+96=Tag: %s | Typ: Typ: %i | Hodnota: %u
+97=Použít kterou položku?
+98=Poplatek %i za zvíře, které chcete ustájit. Stáhnu ho z tvého bankovního účtu.
+99=Účtuji %i za zvíře za %u dní ustájení. Vyberu je z tvého bankovního účtu.
 100=Narušujete své soustředění.
 101=Gildovní kámen pro %s
 102=Kontrola cechu

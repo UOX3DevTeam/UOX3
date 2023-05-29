@@ -91,6 +91,15 @@
 88=I Game Master disponibili sono stati informati della tua segnalazione di bug.
 89=Non c'era nessun Game Master disponibile per annotare la tua segnalazione di bug.
 90=Non sei tu quello divertente!
+91=Regola di posizionamento degli oggetti annullata dai privilegi del GM - Z troppo alto per i giocatori normali!
+92=Ricevere la mappa dei tag persistenti per quale oggetto?
+93=Numero di tag persistenti: %i
+94=Ricevi la mappa dei tag temporanei per quale oggetto?
+95=Numero di tag temporanei: %i
+96=Tag: %s | Tipo: %i | Valore: %u
+97=Usare quale articolo?
+98=Pago %i per ogni animale che vuoi stallare. La preleverò dal tuo conto corrente.
+99=Ti faccio pagare %i per animale per %u giorni di stabilità. Lo preleverò dal tuo conto corrente.
 100=Si rompe la concentrazione.
 101=Una pietra di gilda per %s
 102=Controllo gilda

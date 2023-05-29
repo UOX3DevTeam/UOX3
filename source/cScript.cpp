@@ -194,7 +194,54 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 		return;
 	}
 	Console.Error( oldstrutil::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
-	Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	if( report->linebuf != nullptr || report->tokenptr != nullptr )
+	{
+		Console.Error( oldstrutil::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+	}
+}
+
+// Global error message variable used to pass error message from MethodError() to the custom JSError callback function
+std::string g_errorMessage;
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptErrorCallback()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Callback for custom JSError
+//| Notes		-	Relies on global variable g_errorMessage to pass in error message from
+//|					MethodError function.
+//o------------------------------------------------------------------------------------------------o
+const JSErrorFormatString* ScriptErrorCallback( void *userRef, const char *locale, const uintN errorNumber )
+{
+	// Return a pointer to a JSErrorFormatString, to the UOX3ErrorReporter function in cScript.cpp
+	static JSErrorFormatString errorFormat;
+	errorFormat.format = g_errorMessage.c_str();
+	errorFormat.argCount = 0;
+	errorFormat.exnType = JSEXN_ERR;
+	return &errorFormat;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	ScriptError()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Spit out a custom error message related to JS Methods or their parameters
+//| Notes		-	Piggybacks on the internal error reporting mechanism in SpiderMonkey to get
+//|					the filename and relevant line number from associated script
+//o------------------------------------------------------------------------------------------------o
+void ScriptError( const char *txt, JSContext *cx, ... )
+{
+	// Combine error message with any potential additional arguments provided, store in g_errorMessage
+	va_list argptr;
+	va_start( argptr, txt );
+	g_errorMessage = oldstrutil::format( txt, argptr );
+	va_end( argptr );
+
+	// Define a custom error number. Needed, but not really used for anything
+	const uintN customErrorNumber = 1000;
+
+	// Manually trigger an error using SpiderMonkey's internal error reporting,
+	// which makes use of JSErrorFormatString from ScriptErrorCallback function
+	// to call upon UOX3ErrorReporter function in cScript.cpp
+	JS_ReportErrorNumber( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3210,7 +3257,14 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 
 	//FIXME === do we need this retvalue?
 	//JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
-	[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	try
+	{
+		[[maybe_unused]] JSBool retVal = JS_CallFunctionName( targContext, targObject, funcName, 3, params, &rval );
+	}
+	catch( ... )
+	{
+		Console.Error( "Some error!" );
+	}
 
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
 }
@@ -3946,7 +4000,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					bought from an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 objItemBoughtAmt )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
@@ -3967,8 +4021,9 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( objItemBoughtAmt );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3986,7 +4041,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					sold to an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 objItemSoldAmt )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
@@ -4007,8 +4062,9 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( objItemSoldAmt );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{

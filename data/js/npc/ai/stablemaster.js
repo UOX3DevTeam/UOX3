@@ -7,24 +7,21 @@
 // and it doesn't matter which stable-master you speak to, they will all have your pets
 
 // SETTINGS:
-var stableCost = 90; // The cost to stable a pet for a week
-var maxFollowers = 5; // The maximum amount of followers/pets a character can have at a given time
-var maxStableDays = 0; // The maximum amount of days a pet will be kept safe in the stables - 0 (forever) is default
-var NPCPause = 30000; // Time in seconds * 1000 the NPC pauses in his tracks for when players interact
+const stableCost = 90; // The cost to stable a pet for a week
+const maxFollowers = GetServerSetting( "MaxFollowers" ); // The maximum amount of followers/pets a character can have at a given time
+const maxControlSlots = GetServerSetting( "MaxControlSlots" ); // Maximum amount of control slots per player
+const maxStableDays = 0; // The maximum amount of days a pet will be kept safe in the stables - 0 (forever) is default
+const NPCPause = 30000; // Time in seconds * 1000 the NPC pauses in his tracks for when players interact
 
 // ingame coordinates where stabled pets are moved (should be unreachable for players!!!)
-var stableX = 8000;
-var stableY = 8000;
-var stableZ = 0;
+const stableX = 8000;
+const stableY = 8000;
+const stableZ = 0;
 
-// Ignore these
-var maxStabledPets = 0; // The amount of pets a character can have in the stables, determined later on by player skills
-var totalStabledPets = 0; // The total amount of pets a character has in the stables, retrieved later on from player
+// Max amount of pets a player can have in stables depends on their skill in animal taming, veterinary and animal lore
 
 // Script ID assigned to this script in jse_fileassociations.scp. Used to prevent multiple instances of same gump being opened
-var scriptID = 3105;
-
-const maxControlSlots = GetServerSetting( "MaxControlSlots" );
+const stableScriptID = 3105;
 
 function onSpeech( strSaid, pTalking, stableMaster )
 {
@@ -54,13 +51,18 @@ function onSpeech( strSaid, pTalking, stableMaster )
 				{
 					// Save stableMaster as a tempObj on the player, for retrieval later
 					pTalking.tempObj = stableMaster;
+
+					var npcMsg = "";
 					if( maxStableDays == 0 )
 					{
-						stableMaster.TextMessage( "I charge " + stableCost + " per pet you want to stable. I will withdraw it from thy bank account." );
+						npcMsg = GetDictionaryEntry( 98, pSock.language ); // I charge %i per pet you want to stable. I will withdraw it from thy bank account.
+						stableMaster.TextMessage( npcMsg.replace( /%i/gi, stableCost ));
 					}
 					else
 					{
-						stableMaster.TextMessage( "I charge " + stableCost + " per pet for " + maxStableDays + " days of stable time. I will withdraw it from thy bank account." );
+						npcMsg = GetDictionaryEntry( 99, pSock.language ); // I charge %i per pet for %u days of stable time. I will withdraw it from thy bank account.
+						npcMsg = npcMsg.replace( /%i/gi, stableCost );
+						stableMaster.TextMessage( npcMsg.replace( /%u/gi, maxStableDays ));
 					}
 
 
@@ -69,7 +71,7 @@ function onSpeech( strSaid, pTalking, stableMaster )
 				}
 				case 0x0009: // "claim"
 				{
-					totalStabledPets = pTalking.GetTag( "totalStabledPets" );
+					var totalStabledPets = parseInt( pTalking.GetTag( "totalStabledPets" ));
 					if( totalStabledPets > 0 )
 					{
 						if( strSaid.split( " " ).length == 1 ) // only claim, nothing else
@@ -80,15 +82,11 @@ function onSpeech( strSaid, pTalking, stableMaster )
 						else if( !ClaimPetByName( pTalking, stableMaster, strSaid ))
 						{
 							// Display the gump with all the pets
-							totalStabledPets = pTalking.GetTag( "totalStabledPets" );
-							if( totalStabledPets > 0 )
-							{
-								pTalking.SetTag( "stableMasterSerial", stableMaster.serial );
-								stableMaster.TextMessage( GetDictionaryEntry( 2100, pSock.language )); // I currently have the following pets of yours stabled right now...
+							pTalking.SetTag( "stableMasterSerial", stableMaster.serial );
+							stableMaster.TextMessage( GetDictionaryEntry( 2100, pSock.language )); // I currently have the following pets of yours stabled right now...
 
-								// Ok, player has animals stabled - let's give him the list of pets
-								ClaimGump( pTalking, stableMaster );
-							}
+							// Ok, player has animals stabled - let's give him the list of pets
+							ClaimGump( pTalking, stableMaster );
 						}
 					}
 					else
@@ -109,6 +107,7 @@ function onSpeech( strSaid, pTalking, stableMaster )
 
 function ClaimAllPets( pTalking, stableMaster, strSaid )
 {
+	var maxStabledPets = parseInt( pTalking.GetTag( "maxStabledPets" ));
 	var i = 0;
 	var petCount = 0;
 	var controlSlotsUsed = pTalking.controlSlotsUsed;
@@ -151,6 +150,7 @@ function ClaimPetByName( pTalking, stableMaster, strSaid )
 	if( !splitString || ( splitString.toUpperCase() == "LIST" || splitString[0].toUpperCase() == "LIST" ))
 		return false;
 
+	var maxStabledPets = parseInt( pTalking.GetTag( "maxStabledPets" ));
 	var i = 0;
 	var petFound = false;
 	var j = maxStabledPets - 1;
@@ -188,10 +188,14 @@ function ClaimPetByName( pTalking, stableMaster, strSaid )
 function ClaimGump( pUser, stableMaster )
 {
 	var pSock = pUser.socket;
-	var gumpID = scriptID + 0xffff;
+	if( pSock == null )
+		return;
+
+	var maxStabledPets = parseInt( pUser.GetTag( "maxStabledPets" ));
+	var gumpID = stableScriptID + 0xffff;
 	pSock.CloseGump( gumpID, 0 );
 
-   	totalStabledPets = pUser.GetTag( "totalStabledPets" );
+   	var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
 
    	// extraBGSize is used to resize the claim-pet gump based on how many slots
    	// the user has available - calculated above
@@ -234,6 +238,7 @@ function ClaimGump( pUser, stableMaster )
 
 function CalcStableSlotBonus( pUser )
 {
+	var maxStabledPets = 0;
 	// Let's check relevant player-skills and assign him a number of stable-slots depending on those skills
 	var stableModifier = pUser.skills.taming + pUser.skills.veterinary + pUser.skills.animallore;
    	if( stableModifier <= 160 )
@@ -267,6 +272,8 @@ function CalcStableSlotBonus( pUser )
    	{
    		maxStabledPets++;
    	}
+
+   	pUser.SetTag( "maxStabledPets", maxStabledPets );
 }
 
 function onGumpPress( pSock, pButton, gumpData )
@@ -314,7 +321,7 @@ function ClaimPet( pUser, petNum, stableMaster )
 						pUser.socket.SysMessage( GetDictionaryEntry( 2390, pUser.socket.language )); // That would exceed your maximum pet control slots.
 						return;
 					}
-					var totalStabledPets = pUser.GetTag( "totalStabledPets" );
+					var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
 					var stableTimeAt = petObj.GetTag( "stableTimeAt" );
 					var maxStableTime = maxStableDays * 86402350; // 86402350 should be approx 24 hours
 					var strokeOfLuck = RandomNumber( 1, 10 );
@@ -365,7 +372,8 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 	petObj.hungerstatus = true;
 	petObj.vulnerable = true;
 	petObj.Teleport( pUser );
-	totalStabledPets = totalStabledPets - 1;
+	var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
+	totalStabledPets--;
 	pUser.SetTag( "totalStabledPets", totalStabledPets );
 	pUser.SetTag( "stabledPet" + petNum, null );
 	pUser.SetTag( "stableMasterSerial", null );
@@ -392,7 +400,8 @@ function onCallback0( pSock, ourObj )
 	if( !pSock.GetWord( 1 ) && ValidateObject( ourObj ) && ourObj.isChar )
 	{
 		// Check how many pets the user has stabled already
-		totalStabledPets = pUser.GetTag( "totalStabledPets" );
+		var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
+		var maxStabledPets = parseInt( pUser.GetTag( "maxStabledPets" ));
 
 	   	// Lots of generic checks:
 		if( !pUser.InRange( stableMaster, 8 ))
@@ -509,6 +518,7 @@ function StablePet( pUser, ourObj, slotNum, stableMaster )
 		pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - ourObj.controlSlots );
 
 		// Increase the count of pets stabled, store as tag on player so it doesn't get lost if stablemaster is lost
+		var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
 		totalStabledPets++;
 		pUser.SetTag( "totalStabledPets", totalStabledPets );
 		stableMaster.TextMessage( GetDictionaryEntry( 2127, pUser.socket.language )); // Your pet has been stabled

@@ -561,6 +561,7 @@ enum CSocket_Properties
 	CSOCKP_TEMPINT2,
 	CSOCKP_BUFFER,
 	CSOCKP_XTEXT,
+	CSOCKP_XTEXT2,
 	CSOCKP_CLICKZ,
 	CSOCKP_ADDID,
 	CSOCKP_NEWCLIENT,
@@ -648,6 +649,12 @@ enum CScriptSectionProperties
 	CSS_ATEND,
 	CSS_ATENDTAGS,
 	CSS_COUNT
+};
+
+enum CScriptProperties
+{
+	CSCRIPT_SCRIPTID = 0,
+	CSCRIPT_COUNT
 };
 
 enum CResourceProperties

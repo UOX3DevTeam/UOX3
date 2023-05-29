@@ -91,6 +91,15 @@
 88=Available Game Masters have been notified of your bug submission.
 89=There was no Game Master available to note your bug report.
 90=Well aren't you the funny one!
+91=Item placement rule overruled by GM privileges - Z too high for normal players!
+92=Get persistent tag map for which object?
+93=Number of persistent tags: %i
+94=Get temporary tag map for which object?
+95=Number of temporary tags: %i
+96=Tag: %s | Type: %i | Value: %u
+97=Use which item?
+98=I charge %i per pet you want to stable. I will withdraw it from thy bank account.
+99=I charge %i per pet for %u days of stable time. I will withdraw it from thy bank account.
 100=You break your concentration.
 101=A guildstone for %s
 102=Guild Control

@@ -91,6 +91,15 @@
 88=Los Game Masters disponibles han sido notificados de su envío de errores.
 89=No había ningún Game Master disponible para anotar su informe de error.
 90=¡Bueno, no eres tú el gracioso!
+91=Regla de colocación de objetos anulada por privilegios del GM - ¡Z demasiado alta para jugadores normales!
+92=¿Obtener mapa de etiquetas persistentes para qué objeto?
+93=Número de etiquetas persistentes: %i
+94=¿Obtener mapa de etiquetas temporales para qué objeto?
+95=Número de etiquetas temporales: %i
+96=Etiqueta: %s | Tipo: %i | Valor: %u
+97=¿Qué artículo utilizar?
+98=Cargo %i por mascota que quieras estabular. Lo retiraré de tu cuenta bancaria.
+99=Cobro %i por mascota por %u días de tiempo estable. Lo retiraré de su cuenta bancaria.
 100=Se rompe la concentración.
 101=Una piedra de gremio para %s
 102=Control del gremio

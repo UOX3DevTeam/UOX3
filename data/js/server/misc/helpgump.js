@@ -73,11 +73,6 @@ function DisplayHelpMenu( pUser )
 
 	const serverStatus = GetDictionaryEntry( 17048, sLanguage ); // SERVER STATUS
 
-	const passwordRule1 = GetDictionaryEntry( 17023, sLanguage ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
-	const passwordRule2 = GetDictionaryEntry( 17037, sLanguage ); // Your password must be 5 (min) to 17 (max) characters long.
-	const passwordRule3 = GetDictionaryEntry( 17038, sLanguage ); // Confirm New Password' does not match 'New Password'! Note that passwords are cAsE sEnSiTiVe.
-	const passwordStatus = GetDictionaryEntry( 17039, sLanguage ); // The new password has been saved to your account.
-
 	// Return to previous menu
 	const wrongProblem = GetDictionaryEntry( 17029, sLanguage );
 
@@ -316,6 +311,13 @@ function BugReportGump( pSock )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+
+	// Password rules
+	const passwordRule1 = GetDictionaryEntry( 17023, pSock.language ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
+	const passwordRule2 = GetDictionaryEntry( 17037, pSock.language ); // Your password must be 5 (min) to 17 (max) characters long.
+	const passwordRule3 = GetDictionaryEntry( 17038, pSock.language ); // Confirm New Password' does not match 'New Password'! Note that passwords are cAsE sEnSiTiVe.
+	const passwordStatus = GetDictionaryEntry( 17039, pSock.language ); // The new password has been saved to your account.
+
 	switch( pButton )
 	{
 		case 0:

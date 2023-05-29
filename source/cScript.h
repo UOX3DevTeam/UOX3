@@ -282,8 +282,8 @@ public:
 	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
 	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
 	SI08		OnSell( CSocket *targSock, CChar *objVendor );
-	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 objItemBoughtAmt );
+	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 objItemSoldAmt );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
 

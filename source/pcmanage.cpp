@@ -1601,6 +1601,7 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 
 				if( !mChar.IsShop() )
 				{
+					// Move player's backpack to the BUYCONTAINER layer for safekeeping
 					j->SetLayer( IL_BUYCONTAINER );
 				}
 				break;
@@ -1766,6 +1767,7 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 		}
 	}
 
+	auto onDeathEventHandled = false;
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
@@ -1775,8 +1777,19 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			// If script returns true/1, prevent other scripts with event from running
 			if( toExecute->OnDeath( mChar, iCorpse ) == 1 )
 			{
+				onDeathEventHandled = true;
 				break;
 			}
+		}
+	}
+
+	if( !onDeathEventHandled )
+	{
+		// No script attached to character handled onDeath. Let's check global script!
+		cScript *toExecute = JSMapping->GetScript( static_cast<UI16>( 0 ));
+		if( toExecute != nullptr )
+		{
+			toExecute->OnDeath( mChar, iCorpse );
 		}
 	}
 

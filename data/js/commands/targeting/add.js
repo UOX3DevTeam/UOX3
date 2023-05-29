@@ -155,6 +155,16 @@ function onCallback1( socket, ourObj )
 				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
 			}
 		}
+		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
+		{
+			// If target is an item, and a container, add item to the container
+			var newItem = CreateBlankItem( socket, mChar, 1, "", itemID, 0, "ITEM", false );
+			if( ValidateObject( newItem ))
+			{
+				newItem.container = ourObj;
+				newItem.PlaceInPack();
+			}
+		}
 		else
 		{
 			var x = socket.GetWord( 11 );
@@ -217,6 +227,16 @@ function onCallback2( socket, ourObj )
 			else
 			{
 				mChar.SysMessage( GetDictionaryEntry( 8073, socket.language )); // That character has no backpack, no item added
+			}
+		}
+		else if( StrangeByte == 0 && ourObj.isItem && ourObj.type == 1 )
+		{
+			// If target is an item, and a container, add item to the container
+			var newItem = CreateDFNItem( socket, ourObj, iSection, 1, "ITEM", false );
+			if( ValidateObject( newItem ))
+			{
+				newItem.container = ourObj;
+				newItem.PlaceInPack();
 			}
 		}
 		else

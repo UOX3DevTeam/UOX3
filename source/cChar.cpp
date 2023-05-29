@@ -4496,6 +4496,9 @@ bool CChar::LoadRemnants( void )
 	}
 
 	const UI16 acct = GetAccount().wAccountIndex;
+
+	// Max body/anim ID supported in default client is 2048 (or 0x800),
+	// though custom clients like CUO can be modified to bypass this limit
 	if( GetId() > 0x999 )
 	{
 		if( acct == AB_INVALID_ID )
@@ -4886,10 +4889,13 @@ void CChar::Cleanup( void )
 				tItem->Delete();
 			}
 		}
+
+		// Clear up some stuff for our target in combat
 		CChar *tempChar = nullptr;
 		tempChar = GetTarg();
 		if( ValidateObject( tempChar ))
 		{
+			// Clear char as target of target, if set
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
@@ -4902,14 +4908,18 @@ void CChar::Cleanup( void )
 			}
 			SetTarg( nullptr );
 		}
+
+		// Do the same for our attacker (who could be a different character than our target)
 		tempChar = GetAttacker();
 		if( ValidateObject( tempChar ))
 		{
+			// Again, clear this char as attacker of our attacker, if set
 			if( tempChar->GetAttacker() == this )
 			{
 				tempChar->SetAttacker( nullptr );
 			}
 
+			// Also clear attacker's target, if it matches this char
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
@@ -8218,7 +8228,7 @@ SI16 CChar::GetKarma( void ) const
 {
 	if( GetOwnerObj() != nullptr && IsTamed() )
 	{
-		if( ValidateObject( GetOwnerObj() ))
+		if( ValidateObject( GetOwnerObj() ) && GetOwnerObj() != this )
 		{
 			// Pets inherit the karma of their owner
 			return GetOwnerObj()->GetKarma();

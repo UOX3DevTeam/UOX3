@@ -62,7 +62,7 @@ id=0x3164
 }
 
 // Woodland Armor (Female) - Alias
-[woodlandchest]
+[woodlandarmor]
 {
 get=0x2b6d 0x3164
 }

@@ -418,7 +418,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			i->TextMessage( nullptr, 1797, TALK, false ); // Woe is me! My escort has betrayed me!
 		}
 
-		// flag them FIRST so that anything attacking them as a result of this is not flagged.
+		// flag player FIRST so that anything attacking them as a result of this is not flagged.
 		if( WillResultInCriminal( ourChar, i )) // REPSYS
 		{
 			MakeCriminal( ourChar );
@@ -2713,9 +2713,11 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 	}
 
-	if( !checkDist && getFightSkill == ARCHERY )
+	// Allow longer range in combat based on weapon's maxRange
+	if( !checkDist && ValidateObject( mWeapon ) && mWeapon->GetMaxRange() > 1 )
 	{
-		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
+		// Check line of sight and Z differences if weapon's max range is higher than 1 tile
+		checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
 	}
 
 	if( checkDist )
@@ -3530,7 +3532,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				if( CharInRange( &mChar, ourTarg ))
 				{
 					CItem *equippedWeapon = GetWeapon( &mChar );
-					if( GetCombatSkill( equippedWeapon ) == ARCHERY || GetCombatSkill( equippedWeapon ) == THROWING )
+					if( ValidateObject( equippedWeapon ) && equippedWeapon->GetMaxRange() > 1 )
 					{
 						if( GetDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
 						{

@@ -139,6 +139,15 @@
 88=Les MJs disponibles ont ete avertis de votre rapport de bug.
 89=Aucun MJ n'etait disponible pour noter votre rapport de bug.
 90=Pff t'es drole, toi!
+91=La règle de placement des objets est annulée par les privilèges du MJ - Z trop élevé pour les joueurs normaux !
+92=Consultation de la carte des étiquettes persistantes pour quel objet ?
+93=Nombre de tags persistants : %i
+94=Consultation de la carte des tags temporaires pour quel objet ?
+95=Nombre de tags temporaires : %i
+96=Tag : %s | Type : %i | Valeur : %u
+97=Utiliser quel objet ?
+98=Je facture %i par animal que vous voulez stabiliser. Je le prélèverai sur votre compte bancaire.
+99=Je facture %i par animal pour %u jours de stabilité. Je le prélèverai sur votre compte bancaire.
 100=Vous perdez votre concentration.
 101=Une pierre de guilde pour %s
 102=Controle de Guilde

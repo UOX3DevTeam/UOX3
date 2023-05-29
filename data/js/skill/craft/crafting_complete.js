@@ -282,17 +282,20 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 		{
 			case 0x0973: // Dull Copper Runic Hamer
 				// Durable / Accurate
+				itemCrafted.name = "Dull Copper Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 10;
 				itemCrafted.SetTag( "accBonus", 50 );
 				itemCrafted.AddScriptTrigger( 3301 ); // magic_weapon_accbonus.js
 				break;
 			case 0x0966: // Shadow Iron Runic Hammer
 				// Durable / Ruin
+				itemCrafted.name = "Shadow Iron Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 10;
 				itemCrafted.hidamage += 1;
 				break;
 			case 0x07dd: // Copper Runic Hammer
 				// Fortified / Surpassingly Accurate / Ruin
+				itemCrafted.name = "Copper Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 40;
 				itemCrafted.hidamage += 1;
 				itemCrafted.SetTag( "accBonus", 100 );
@@ -300,6 +303,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			case 0x06d6: // Bronze Runic Hammer
 				// Fortified / Surpassingly Accurate / Might
+				itemCrafted.name = "Bronze Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 40;
 				itemCrafted.hidamage += 3;
 				itemCrafted.SetTag( "accBonus", 100 );
@@ -307,6 +311,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			case 0x08a5: // Gold Runic Hammer
 				// Indestructible / Eminently Accurate / Force
+				itemCrafted.name = "Gold Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 50;
 				itemCrafted.hidamage += 5;
 				itemCrafted.SetTag( "accBonus", 150 );
@@ -314,6 +319,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			case 0x0979: // Agapite Runic Hammer
 				// Indestructible / Eminently Accurate / Power
+				itemCrafted.name = "Agapite Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 50;
 				itemCrafted.hidamage += 7;
 				itemCrafted.SetTag( "accBonus", 150 );
@@ -321,6 +327,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			case 0x089f: // Verite Runic Hammer
 				// Indestructible / Exceedingly Accurate / Power
+				itemCrafted.name = "Verite Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 50;
 				itemCrafted.hidamage += 7;
 				itemCrafted.SetTag( "accBonus", 200 );
@@ -328,6 +335,7 @@ function ApplyRunicWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue, runi
 				break;
 			case 0x08ab: // Valorite Runic Hammer
 				// Indestructible / Supremely Accurate / Vanquishing
+				itemCrafted.name = "Valorite Runic " + itemCrafted.name;
 				itemCrafted.maxhp += 50;
 				itemCrafted.hidamage += 9;
 				itemCrafted.SetTag( "accBonus", 250 );

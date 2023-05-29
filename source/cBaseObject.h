@@ -116,6 +116,8 @@ public:
 	Point3_st				GetOldLocation( void );
 
 	size_t					GetNumTags( void ) const;
+	auto					GetTagMap() const -> const TAGMAP2;
+	auto					GetTempTagMap() const -> const TAGMAP2;
 
 	TAGMAPOBJECT			GetTag( std::string tagname ) const;
 	void					SetTag( std::string tagname, TAGMAPOBJECT tagval );

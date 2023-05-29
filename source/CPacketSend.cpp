@@ -4518,7 +4518,7 @@ CPItemsInContainer::CPItemsInContainer( CSocket *mSock, CItem *container, UI08 c
 			VendorSerial( container->GetSerial() );
 		}
 
-		CopyData( mSock, (*container) );
+		CopyData( mSock, ( *container ));
 	}
 }
 
@@ -5494,6 +5494,25 @@ void CPMapRelated::ID( SERIAL key )
 //|							if (model & 0x8000)
 //|								BYTE[2] hue
 //o------------------------------------------------------------------------------------------------o
+//|					Notes
+//|						Status Options
+//|							0x00: Normal
+//|							0x01: Unknown
+//|							0x02: Can Alter Paperdoll
+//|							0x04: Poisoned
+//|							0x08: Golden Health
+//|							0x10: Unknown
+//|							0x20: Unknown
+//|							0x40: War Mode
+//|						Notoriety
+//|							0x1: Innocent (Blue)
+//|							0x2: Friend (Green)
+//|							0x3: Grey (Grey - Animal)
+//|							0x4: Criminal (Grey)
+//|							0x5: Enemy (Orange)
+//|							0x6: Murderer (Red)
+//|							0x7: Invulnerable (Yellow)
+//o------------------------------------------------------------------------------------------------o
 CPDrawObject::CPDrawObject()
 {
 	InternalReset();
@@ -5749,7 +5768,7 @@ void CPNewObjectInfo::CopyData( CItem& mItem, CChar& mChar )
 
 void CPNewObjectInfo::CopyItemData( CItem &mItem, CChar &mChar )
 {
-	bool isInvisible	= ( mItem.GetVisible() != VT_VISIBLE );
+	bool isInvisible	= ( mItem.GetVisible() != VT_VISIBLE || ( mItem.GetVisible() == VT_TEMPHIDDEN && &mChar != mItem.GetOwnerObj() ));
 	bool isMovable		= ( mItem.GetMovable() == 1 || mChar.AllMove() || ( mItem.IsLockedDown() && &mChar == mItem.GetOwnerObj() ));
 
 	if( mItem.IsDamageable() )
@@ -7182,6 +7201,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			}
 		}
 	}
+
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 	FinalizeData( tempEntry, totalStringLen );
 

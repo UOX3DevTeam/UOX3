@@ -30,7 +30,7 @@ inline JSClass uox_class =
 	0,
 	JS_PropertyStub,
 	JS_PropertyStub,
-	JS_PropertyStub,
+	CScriptProps_getProperty,
 	JS_PropertyStub,
 	JS_EnumerateStub,
 	JS_ResolveStub,

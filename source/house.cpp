@@ -171,11 +171,12 @@ auto CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 							{
 								// An alternate rotation for item exists, stored in CITV_MOREZ
 								// Let's assume default rotation is North/South oriented, and check for walls to the left of the addon:
-								bool wallFound = ( Map->CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+								[[maybe_unused]] UI16 ignoreMe = 0;
+								bool wallFound = ( Map->CheckDynamicFlag( hItem->GetX() - 1, hItem->GetY(), hItem->GetZ(), worldNum, hInstanceId, TF_WALL, ignoreMe ));
 								if( wallFound )
 								{
 									// What if it's placed in a corner? Look for north wall too:
-									bool northWallFound = ( Map->CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, TF_WALL ));
+									bool northWallFound = ( Map->CheckDynamicFlag( hItem->GetX(), hItem->GetY() - 1, hItem->GetZ(), worldNum, hInstanceId, TF_WALL, ignoreMe ));
 									if( northWallFound )
 									{
 										// Randomize between the two directions
@@ -397,7 +398,8 @@ auto CheckForValidHouseLocation( CSocket *mSock, CChar *mChar, SI16 x, SI16 y, S
 					}
 
 					// Don't allow placing addon if it collides with a blocking tile at same height
-					bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING ));
+					[[maybe_unused]] UI16 ignoreMe = 0;
+					bool locationBlocked = ( Map->CheckDynamicFlag( curX, curY, z, worldNum, instanceId, TF_BLOCKING, ignoreMe ));
 					if( locationBlocked )
 					{
 						if( mSock )

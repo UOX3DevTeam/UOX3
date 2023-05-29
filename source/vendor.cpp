@@ -133,6 +133,7 @@ bool CPIBuyItem::Handle( void )
 
 	// vector for storing all objects that actually end up in user backpack
 	std::vector<CItem *> boughtItems;
+	std::vector<UI16> boughtItemAmounts;
 
 	CChar *npc		= CalcCharObjFromSer( tSock->GetDWord( 3 ));
 	UI16 itemTotal	= static_cast<UI16>(( tSock->GetWord( 1 ) - 8) / 7 );
@@ -140,6 +141,7 @@ bool CPIBuyItem::Handle( void )
 		return true;
 
 	boughtItems.reserve( itemTotal );
+	boughtItemAmounts.reserve( itemTotal );
 	bItems.resize( itemTotal );
 	amount.resize( itemTotal );
 	layer.resize( itemTotal );
@@ -180,8 +182,7 @@ bool CPIBuyItem::Handle( void )
 
 			// Check if onBuyFromVendor JS event is present for each item being purchased
 			// If return false or 0 has been returned from the script, halt the purchase
-			std::vector<UI16> scriptTriggers = bItems[i]->GetScriptTriggers();
-			for( auto scriptTrig : scriptTriggers )
+			for( auto scriptTrig : bItems[i]->GetScriptTriggers() )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
@@ -197,8 +198,7 @@ bool CPIBuyItem::Handle( void )
 
 			// Also run the event on the vendor itself. If purchase didn't get blocked on the item side, maybe
 			// vendor has a script with something to say about it instead
-			std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
-			for( auto scriptTrig : scriptTriggers )
+			for( auto scriptTrig : npc->GetScriptTriggers() )
 			{
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
@@ -268,6 +268,7 @@ bool CPIBuyItem::Handle( void )
 							iMade->SetCont( p );
 							iMade->PlaceInPack();
 							boughtItems.push_back( iMade );
+							boughtItemAmounts.push_back( amount[i] );
 						}
 					}
 					else
@@ -292,6 +293,7 @@ bool CPIBuyItem::Handle( void )
 								iMade->SetCont( p );
 								iMade->PlaceInPack();
 								boughtItems.push_back( iMade );
+								boughtItemAmounts.push_back( 1 );
 							}
 						}
 					}
@@ -312,6 +314,7 @@ bool CPIBuyItem::Handle( void )
 									iMade->SetCont( p );
 									iMade->PlaceInPack();
 									boughtItems.push_back( iMade );
+									boughtItemAmounts.push_back( amount[i] );
 								}
 							}
 							else
@@ -331,6 +334,7 @@ bool CPIBuyItem::Handle( void )
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );
+										boughtItemAmounts.push_back( 1 );
 									}
 								}
 							}
@@ -340,6 +344,7 @@ bool CPIBuyItem::Handle( void )
 						case 0x1B: // Bought Container
 							if( biTemp->IsPileable() )
 							{
+								boughtItemAmounts.push_back( biTemp->GetAmount() );
 								biTemp->SetCont( p );
 								boughtItems.push_back( biTemp );
 							}
@@ -353,11 +358,13 @@ bool CPIBuyItem::Handle( void )
 										iMade->SetCont( p );
 										iMade->PlaceInPack();
 										boughtItems.push_back( iMade );
+										boughtItemAmounts.push_back( 1 );
 									}
 								}
 								biTemp->SetCont( p );
 								biTemp->SetAmount( 1 );
 								boughtItems.push_back( biTemp );
+								boughtItemAmounts.push_back( 1 );
 							}
 							break;
 						default:
@@ -370,28 +377,26 @@ bool CPIBuyItem::Handle( void )
 			{
 				if( boughtItems[i] )
 				{
-					std::vector<UI16> scriptTriggers = boughtItems[i]->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					for( auto scriptTrig : boughtItems[i]->GetScriptTriggers() )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
 							// If script returns 1, prevent other scripts with event from running
-							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i], boughtItemAmounts[i] ) == 1 )
 							{
 								break;
 							}
 						}
 					}
 
-					std::vector<UI16> npcScriptTriggers = npc->GetScriptTriggers();
-					for( auto scriptTrig : scriptTriggers )
+					for( auto scriptTrig : npc->GetScriptTriggers() )
 					{
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
 							// If script returns 1, prevent other scripts with event from running
-							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i] ) == 1 )
+							if( toExecute->OnBoughtFromVendor( tSock, npc, boughtItems[i], boughtItemAmounts[i] ) == 1 )
 							{
 								break;
 							}
@@ -589,7 +594,7 @@ bool CPISellItem::Handle( void )
 						if( toExecute != nullptr )
 						{
 							// If script returns true/1, prevent other scripts with event from running
-							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							if( toExecute->OnSoldToVendor( tSock, n, l, amt ) == 1 )
 							{
 								break;
 							}
@@ -604,7 +609,7 @@ bool CPISellItem::Handle( void )
 						if( toExecute != nullptr )
 						{
 							// If script returns true/1, prevent other scripts with event from running
-							if( toExecute->OnSoldToVendor( tSock, n, l ) == 1 )
+							if( toExecute->OnSoldToVendor( tSock, n, l, amt ) == 1 )
 							{
 								break;
 							}

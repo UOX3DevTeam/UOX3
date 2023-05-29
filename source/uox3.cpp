@@ -1194,7 +1194,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 		}
 
-		// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
+		// MANA REGENERATION:Rewrite of passive and active meditation code
 		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
 			if( mChar.GetMana() < maxMana )
@@ -1242,7 +1242,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			}
 		}
 	}
-	// CUSTOM END
+
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
 	{
 		mChar.ExposeToView();

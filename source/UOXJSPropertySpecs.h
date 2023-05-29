@@ -530,7 +530,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "region",			CIP_REGION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM },
+	{ "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 
 	// The Following vars are specific to CSpawnItem objects
@@ -575,6 +575,7 @@ inline JSPropertySpec CSocketProps[] =
 	{ "tempInt2",			CSOCKP_TEMPINT2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "buffer",				CSOCKP_BUFFER,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "xText",				CSOCKP_XTEXT,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
+	{ "xText2",				CSOCKP_XTEXT2,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "addID",				CSOCKP_ADDID,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
 	{ "newClient",			CSOCKP_NEWCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
@@ -748,6 +749,12 @@ inline JSPropertySpec CPartyProperties[] =
 	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr	},
 	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+};
+
+inline JSPropertySpec CScriptProperties[] =
+{
+	{ "script_id",		CSCRIPT_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
 };
 

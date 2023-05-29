@@ -91,6 +91,15 @@
 88=Dostępni Mistrzowie Gry zostali powiadomieni o twoim zgłoszeniu błędu.
 89=Nie było dostępnego Mistrza Gry, który odnotowałby twoje zgłoszenie błędu.
 90=Cóż, czyż nie jesteś zabawny!
+91=Zasada umieszczania przedmiotów unieważniona przez uprawnienia GM - Z za wysokie dla zwykłych graczy!
+92=Pobierz trwałą mapę znaczników dla którego obiektu?
+93=Liczba trwałych znaczników: %i
+94=Pobierz tymczasową mapę znaczników dla jakiego obiektu?
+95=Liczba tymczasowych znaczników: %i
+96=Tag: %s | Typ: %i | Wartość: %u
+97=Jakiego przedmiotu użyć?
+98=Opłacam %i za każdego zwierzaka, którego chcesz ustabilizować. Pobiorę ją z twojego konta bankowego.
+99=Opłacam %i za zwierzaka za %u dni stabilizacji. Pobiorę tę opłatę z twojego konta bankowego.
 100=Przerywasz swoją koncentrację.
 101=Kamień gildii dla %s
 102=Kontrola Gildii
