@@ -324,32 +324,32 @@ void CWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	UI16 butRight		= cwmWorldState->ServerData()->ButtonRight();
 	//--static pages
 	toSend.addCommand( "page 0" );
-	toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic() ));
-	toSend.addCommand( oldstrutil::format( "button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); // OKAY
-	toSend.addCommand( oldstrutil::format( "text 30 40 %u 0", tColour ));	// text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
-	toSend.addCommand( oldstrutil::format( "text 30 60 %u 1", tColour) );
+	toSend.addCommand( util::format( "resizepic 0 0 %u 260 340", cwmWorldState->ServerData()->BackgroundPic() ));
+	toSend.addCommand( util::format( "button 30 300 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 )); // OKAY
+	toSend.addCommand( util::format( "text 30 40 %u 0", tColour ));	// text <Spaces from Left> <Space from top> <Length, Color?> <# in order>
+	toSend.addCommand( util::format( "text 30 60 %u 1", tColour) );
 	toSend.addCommand( "page 1" );
 
-	toSend.addCommand( oldstrutil::format( "text 50 90 %u 2", lColour) );	// goto text
-	toSend.addCommand( oldstrutil::format( "text 50 110 %u 3", lColour) );	// gettext
-	toSend.addCommand( oldstrutil::format( "text 50 130 %u 4", lColour ));	// Jail text
-	toSend.addCommand( oldstrutil::format( "text 50 150 %u 5", lColour ));	// Release text
-	toSend.addCommand( oldstrutil::format( "text 50 170 %u 6", lColour ));	// Kick user text
-	toSend.addCommand( oldstrutil::format( "text 50 190 %u 7", lColour ));
-	toSend.addCommand( oldstrutil::format( "text 50 210 %u 8", lColour ));
-	toSend.addCommand( oldstrutil::format( "text 50 230 %u 9", lColour) );
-	toSend.addCommand( oldstrutil::format( "text 50 270 %u 10", lColour ));
-	toSend.addCommand( oldstrutil::format( "button 20 90 %u %i 1 0 200", butRight, butRight + 1 ));		// goto button
-	toSend.addCommand( oldstrutil::format( "button 20 110 %u %i 1 0 201", butRight, butRight + 1 ));	// get button
-	toSend.addCommand( oldstrutil::format( "button 20 130 %u %i 1 0 202", butRight, butRight + 1 ));	// Jail button
-	toSend.addCommand( oldstrutil::format( "button 20 150 %u %i 1 0 203", butRight, butRight + 1 ));	// Release button
-	toSend.addCommand( oldstrutil::format( "button 20 170 %u %i 1 0 204", butRight, butRight + 1 ));	// kick button
-	toSend.addCommand( oldstrutil::format( "button 20 190 %u %i 1 0 205", butRight, butRight + 1 ));	// Where button
-	toSend.addCommand( oldstrutil::format( "button 20 210 %u %i 1 0 206", butRight, butRight + 1 ));	// Cstats button
-	toSend.addCommand( oldstrutil::format( "button 20 230 %u %i 1 0 207", butRight, butRight + 1 ));	// Tweak button
+	toSend.addCommand( util::format( "text 50 90 %u 2", lColour) );	// goto text
+	toSend.addCommand( util::format( "text 50 110 %u 3", lColour) );	// gettext
+	toSend.addCommand( util::format( "text 50 130 %u 4", lColour ));	// Jail text
+	toSend.addCommand( util::format( "text 50 150 %u 5", lColour ));	// Release text
+	toSend.addCommand( util::format( "text 50 170 %u 6", lColour ));	// Kick user text
+	toSend.addCommand( util::format( "text 50 190 %u 7", lColour ));
+	toSend.addCommand( util::format( "text 50 210 %u 8", lColour ));
+	toSend.addCommand( util::format( "text 50 230 %u 9", lColour) );
+	toSend.addCommand( util::format( "text 50 270 %u 10", lColour ));
+	toSend.addCommand( util::format( "button 20 90 %u %i 1 0 200", butRight, butRight + 1 ));		// goto button
+	toSend.addCommand( util::format( "button 20 110 %u %i 1 0 201", butRight, butRight + 1 ));	// get button
+	toSend.addCommand( util::format( "button 20 130 %u %i 1 0 202", butRight, butRight + 1 ));	// Jail button
+	toSend.addCommand( util::format( "button 20 150 %u %i 1 0 203", butRight, butRight + 1 ));	// Release button
+	toSend.addCommand( util::format( "button 20 170 %u %i 1 0 204", butRight, butRight + 1 ));	// kick button
+	toSend.addCommand( util::format( "button 20 190 %u %i 1 0 205", butRight, butRight + 1 ));	// Where button
+	toSend.addCommand( util::format( "button 20 210 %u %i 1 0 206", butRight, butRight + 1 ));	// Cstats button
+	toSend.addCommand( util::format( "button 20 230 %u %i 1 0 207", butRight, butRight + 1 ));	// Tweak button
 
-	toSend.addText(oldstrutil::format( "User %u selected (account %u)", buttonPressed, targetChar->GetAccount().wAccountIndex));
-	toSend.addText( oldstrutil::format( "Name: %s", targetChar->GetName().c_str() ));
+	toSend.addText(util::format( "User %u selected (account %u)", buttonPressed, targetChar->GetAccount().wAccountIndex));
+	toSend.addText( util::format( "Name: %s", targetChar->GetName().c_str() ));
 	toSend.addText( Dictionary->GetEntry( 1400, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1401, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1402, sLang ));
@@ -358,7 +358,7 @@ void CWhoList::Command( CSocket *toSendTo, UI08 type, UI16 buttonPressed )
 	toSend.addText( Dictionary->GetEntry( 1405, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1406, sLang ));
 	toSend.addText( Dictionary->GetEntry( 1407, sLang ));
-	toSend.addText( oldstrutil::format( "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )));
+	toSend.addText( util::format( "Serial#[%x %x %x %x]", targetChar->GetSerial( 1 ), targetChar->GetSerial( 2 ), targetChar->GetSerial( 3 ), targetChar->GetSerial( 4 )));
 
 	toSend.Finalize();
 	toSendTo->Send( &toSend );

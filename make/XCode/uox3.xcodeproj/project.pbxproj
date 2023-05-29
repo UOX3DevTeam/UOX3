@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		648153CA29466EF400784170 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648153C929466EF400784170 /* libjscript.a */; };
+		5604095829DF3196001C4533 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5604095729DF3192001C4533 /* libjscript.a */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -90,6 +90,16 @@
 		64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A9016E293E3EF5009B54DA /* libz.tbd */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		5604095629DF3192001C4533 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5604095129DF3192001C4533 /* jscript.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64A9FE47293E37BC009B54DA;
+			remoteInfo = jscript;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		64A90068293E3DA3009B54DA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -103,7 +113,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5604095129DF3192001C4533 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
+		5604095B29E02D33001C4533 /* strutil.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = strutil.hpp; sourceTree = "<group>"; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
 		64A90076293E3DD4009B54DA /* archive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = archive.cpp; sourceTree = "<group>"; };
@@ -271,13 +282,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */,
-				648153CA29466EF400784170 /* libjscript.a in Frameworks */,
+				5604095829DF3196001C4533 /* libjscript.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5604095229DF3192001C4533 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5604095729DF3192001C4533 /* libjscript.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
@@ -318,7 +337,7 @@
 		64A9016B293E3EED009B54DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				648153C929466EF400784170 /* libjscript.a */,
+				5604095129DF3192001C4533 /* jscript.xcodeproj */,
 				64A9016E293E3EF5009B54DA /* libz.tbd */,
 			);
 			name = Frameworks;
@@ -516,6 +535,7 @@
 		64E2F797293FCE8C00546A08 /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				5604095B29E02D33001C4533 /* strutil.hpp */,
 				64A900BD293E3DD4009B54DA /* EventTimer.cpp */,
 				64A900BE293E3DD4009B54DA /* EventTimer.hpp */,
 				64A900F7293E3DD4009B54DA /* StringUtility.cpp */,
@@ -568,7 +588,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					64A90069293E3DA3009B54DA = {
 						CreatedOnToolsVersion = 14.1;
@@ -586,12 +606,28 @@
 			mainGroup = 64A90061293E3DA3009B54DA;
 			productRefGroup = 64A9006B293E3DA3009B54DA /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5604095229DF3192001C4533 /* Products */;
+					ProjectRef = 5604095129DF3192001C4533 /* jscript.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				64A90069293E3DA3009B54DA /* uox3 */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		5604095729DF3192001C4533 /* libjscript.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjscript.a;
+			remoteRef = 5604095629DF3192001C4533 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		64A90066293E3DA3009B54DA /* Sources */ = {
@@ -716,6 +752,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -733,7 +770,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -774,6 +811,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -785,7 +823,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -797,6 +835,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -807,7 +846,11 @@
 					../../source,
 					../../spidermonkey,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Debug;
 		};
@@ -816,6 +859,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_CHAR_IS_UNSIGNED_CHAR = YES;
@@ -826,7 +870,11 @@
 					../../source,
 					../../spidermonkey,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Release;
 		};

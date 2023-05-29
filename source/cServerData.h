@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <array>
-
+#include <string_view>
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
 //o------------------------------------------------------------------------------------------------o
@@ -477,7 +477,7 @@ public:
 	auto		SaveIni( const std::string &filename ) -> bool;
 
 	auto		EraEnumToString( ExpansionRuleset eraNum, bool coreEnum = false ) -> std::string;
-	auto		EraStringToEnum( const std::string &eraString, bool useDefault = true, bool inheritCore = true ) -> ExpansionRuleset;
+	auto		EraStringToEnum( const std::string_view eraString, bool useDefault = true, bool inheritCore = true ) -> ExpansionRuleset;
 
 	auto ResetDefaults() -> void;
 	auto Startup() -> void;

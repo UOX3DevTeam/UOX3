@@ -6,6 +6,7 @@
 #include "uox3.h"
 #include "gump.h"
 #include "CPacketSend.h"
+#include "strutil.hpp"
 #include <cstdint>
 
 
@@ -112,7 +113,7 @@ void CGump::SetSerial( UI32 newSerial )
 //o------------------------------------------------------------------------------------------------o
 void CGump::AddBackground( UI16 x, UI16 y, UI16 gumpId, UI16 width, UI16 height )
 {
-	TagList.push_back( oldstrutil::format( "resizepic %u %u %u %u %u", x, y, gumpId, width, height ));
+	TagList.push_back( util::format( "resizepic %u %u %u %u %u", x, y, gumpId, width, height ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -122,7 +123,7 @@ void CGump::AddBackground( UI16 x, UI16 y, UI16 gumpId, UI16 width, UI16 height 
 //o------------------------------------------------------------------------------------------------o
 void CGump::AddGump( UI16 x, UI16 y, UI16 gumpId )
 {
-	TagList.push_back( oldstrutil::format( "gumppic %u %u %u", x, y, gumpId ));
+	TagList.push_back( util::format( "gumppic %u %u %u", x, y, gumpId ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -132,7 +133,7 @@ void CGump::AddGump( UI16 x, UI16 y, UI16 gumpId )
 //o------------------------------------------------------------------------------------------------o
 void CGump::AddButton( UI16 x, UI16 y, UI16 imageUp, UI16 imageDown, UI16 behaviour, UI16 page, UI32 uniqueId  )
 {
-	TagList.push_back( oldstrutil::format( "button %u %u %u %u %u %u %u", x, y, imageUp, imageDown, behaviour, page, uniqueId ));
+	TagList.push_back( util::format( "button %u %u %u %u %u %u %u", x, y, imageUp, imageDown, behaviour, page, uniqueId ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -145,7 +146,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string text )
 	UI32 textId = static_cast<UI32>( TextList.size() );
 
 	TextList.push_back( text );
-	TagList.push_back( oldstrutil::format( "text %u %u %u %u", x, y, hue, textId ));
+	TagList.push_back( util::format( "text %u %u %u %u", x, y, hue, textId ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -155,7 +156,7 @@ void CGump::AddText( UI16 x, UI16 y, UI16 hue, std::string text )
 //o------------------------------------------------------------------------------------------------o
 UI16 CGump::StartPage( void )
 {
-	TagList.push_back( oldstrutil::format( "page %u", PageCount ));
+	TagList.push_back( util::format( "page %u", PageCount ));
 
 	++PageCount;
 	return PageCount - 1;

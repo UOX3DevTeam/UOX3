@@ -147,6 +147,7 @@ add_executable(uox3
    ../../source/speech.h
    ../../source/ssection.h
    ../../source/StringUtility.hpp
+   ../../source/strutil.hpp
    ../../source/teffect.h
    ../../source/townregion.h
    ../../source/typedefs.h
@@ -200,6 +201,8 @@ else()
 	target_compile_options( uox3 PRIVATE
 		-funsigned-char
 		 -Wno-shift-negative-value
+		 -Wno-format-security
+		 -Wno-deprecated-declarations
 	)
 	if (APPLE)
 		target_compile_options( uox3 PRIVATE
