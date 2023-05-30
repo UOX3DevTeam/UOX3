@@ -41,6 +41,17 @@ function onCallback0( socket, ourObj )
 				if( ourObj.npc )
 				{
 					socket.SysMessage( GetDictionaryEntry( 1015, socket.language )); // Removing character.
+					if( ValidateObject( ourObj.owner ))
+					{
+						if( ourObj.tamed )
+						{
+							// Reduce petCount for owner
+							ourObj.owner.petCount--;
+						}
+
+						// Reduce controlSlotsUsed for owner
+						ourObj.owner.controlSlotsUsed -= ourObj.controlSlots;
+					}
 					ourObj.Delete();
 				}
 			}

@@ -362,6 +362,18 @@ function onCallback7( pSock, myTarget )
 		{
 			if( ValidateObject( myTarget ) && myTarget.npc || myTarget.isItem )
 			{
+				if( myTarget.isChar && ValidateObject( myTarget.owner ))
+				{
+					if( myTarget.tamed )
+					{
+						// Reduce petCount for owner
+						myTarget.owner.petCount--;
+					}
+
+					// Reduce controlSlotsUsed for owner
+					myTarget.owner.controlSlotsUsed -= myTarget.controlSlots;
+				}
+
 				myTarget.Delete();
 			}
 			else
