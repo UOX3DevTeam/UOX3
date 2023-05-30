@@ -18,7 +18,7 @@ function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 		}
 		return false;
 	}
-	if( maxFollowers > 0 && ( pUser.petCount + numItemsBought >= maxFollowers ))
+	if( maxFollowers > 0 && ( pUser.petCount + numItemsBought > maxFollowers ))
 	{
 		pSock.SysMessage( GetDictionaryEntry( 2400, pSock.language )); // You have too many followers already!
 		if( ValidateObject( vendor ))
