@@ -187,7 +187,7 @@ bool CPIBuyItem::Handle( void )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i], amount[i] ) == 0 )
 					{
 						bItems.clear();
 						bItems.shrink_to_fit();
@@ -203,7 +203,7 @@ bool CPIBuyItem::Handle( void )
 				cScript *toExecute = JSMapping->GetScript( scriptTrig );
 				if( toExecute != nullptr )
 				{
-					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i] ) == 0 )
+					if( toExecute->OnBuyFromVendor( tSock, npc, bItems[i], amount[i] ) == 0 )
 					{
 						bItems.clear();
 						bItems.shrink_to_fit();
@@ -479,7 +479,7 @@ bool CPISellItem::Handle( void )
 					cScript *toExecute = JSMapping->GetScript( scriptTrig );
 					if( toExecute != nullptr )
 					{
-						if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+						if( toExecute->OnSellToVendor( tSock, n, j, maxsell ) == 0 )
 						{
 							// Halt sale! 
 							saleHalted = true;
@@ -498,7 +498,7 @@ bool CPISellItem::Handle( void )
 						cScript *toExecute = JSMapping->GetScript( scriptTrig );
 						if( toExecute != nullptr )
 						{
-							if( toExecute->OnSellToVendor( tSock, n, j ) == 0 )
+							if( toExecute->OnSellToVendor( tSock, n, j, maxsell ) == 0 )
 							{
 								// Halt sale! 
 								saleHalted = true;

@@ -3920,16 +3920,16 @@ SI08 cScript::OnSell( CSocket *tSock, CChar *objVendor )
 //|	Purpose		-	Allows determining what happens when an item is in the process of being bought 
 //|					from an NPC vendor. Returning false/0 from the script will halt the purchase
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought )
+SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr || numItemsBuying == 0 )
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnBuyFromVendor, "onBuyFromVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3941,8 +3941,9 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsBuying );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBuyFromVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -3960,16 +3961,16 @@ SI08 cScript::OnBuyFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *ob
 //|	Purpose		-	Allows determining what happens when an item is in the process of being sold to
 //|					an NPC vendor. Returning false/0 from script will halt the sale
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold )
+SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
+	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr || numItemsSelling == 0 )
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnSellToVendor, "onSellToVendor" ))
 		return RV_NOFUNC;
 
-	jsval rval, params[3];
+	jsval rval, params[4];
 	JSObject *myObj		= JSEngine->AcquireObject( IUE_SOCK, tSock, runTime );
 	JSObject *charObj	= JSEngine->AcquireObject( IUE_CHAR, objVendor, runTime );
 	JSObject *myObj2	= nullptr;
@@ -3981,8 +3982,9 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
+	params[3] = INT_TO_JSVAL( numItemsSelling );
 
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 3, params, &rval );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSellToVendor", 4, params, &rval );
 
 	if( retVal == JS_FALSE )
 	{
@@ -4000,7 +4002,7 @@ SI08 cScript::OnSellToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					bought from an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 objItemBoughtAmt )
+SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemBought ) || tSock == nullptr )
@@ -4021,7 +4023,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
-	params[3] = INT_TO_JSVAL( objItemBoughtAmt );
+	params[3] = INT_TO_JSVAL( numItemsBought );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onBoughtFromVendor", 4, params, &rval );
 
@@ -4041,7 +4043,7 @@ SI08 cScript::OnBoughtFromVendor( CSocket *tSock, CChar *objVendor, CBaseObject 
 //|	Purpose		-	Allows determining what happens AFTER an item has been
 //|					sold to an NPC vendor
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 objItemSoldAmt )
+SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold )
 {
 	const SI08 RV_NOFUNC = -1;
 	if( !ValidateObject( objVendor ) || !ValidateObject( objItemSold ) || tSock == nullptr )
@@ -4062,7 +4064,7 @@ SI08 cScript::OnSoldToVendor( CSocket *tSock, CChar *objVendor, CBaseObject *obj
 	params[0] = OBJECT_TO_JSVAL( myObj );
 	params[1] = OBJECT_TO_JSVAL( charObj );
 	params[2] = OBJECT_TO_JSVAL( myObj2 );
-	params[3] = INT_TO_JSVAL( objItemSoldAmt );
+	params[3] = INT_TO_JSVAL( numItemsSold );
 
 	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSoldToVendor", 4, params, &rval );
 
