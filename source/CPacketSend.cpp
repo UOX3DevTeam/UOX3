@@ -2307,6 +2307,14 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		{
 			Sex( 3 );
 		}
+		else if( toCopy.GetId() == 0x029A || toCopy.GetOrgId() == 0x029A ) // Male Garg
+		{
+			Sex( 4 );
+		}
+		else if( toCopy.GetId() == 0x029B || toCopy.GetOrgId() == 0x029B ) // Female Garg
+		{
+			Sex( 5 );
+		}
 
 		if( isDead )
 		{
