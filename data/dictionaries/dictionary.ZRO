@@ -2529,6 +2529,7 @@
 2768=Set remaining time of JS timer for which object?
 2769=Kill specified JS timer for which object?
 2770=Specified JS timer has been killed for selected object.
+2771=%s remained in the stables because you have too many followers.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS

@@ -45,6 +45,7 @@
 	Fixed some issues with static pet scripts (js/npc/pets/*) that would allow players to exceed max number of followers and/or controlslots when buying animals from animal trainer
 	Updated OnBuyFromVendor, onBoughtFromVendor, onSellToVendor and onSoldToVendor JS Events to include a fourth parameter - iAmount - the number of items bought/sold
 	Fixed some issues with stabling and claiming pets from animal trainer NPCs (js/npc/ai/stablemaster.js)
+	Fixed an issue with 'remove and 'rremove commands where they would not reduce petCount/controlSlotsUsed for owners of characters removed (js/commands/targeting/remove.js and js/commands/custom/repeatingcmds.js)
 
 21/05/2023 - Dragon Slayer, Xuri
 	Added initial pass for supporting Trammel PvP ruleset, which can be applied to and/or customized per facet and optionally overridden per region via js/server/misc/facetRulset.js (Dragon Slayer)

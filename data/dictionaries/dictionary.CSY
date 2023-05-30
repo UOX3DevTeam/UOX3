@@ -2529,6 +2529,7 @@
 2768=Nastavit zbývající čas JS časovače pro který objekt?
 2769=Zabít zadaný JS časovač pro který objekt?
 2770=Zadaný JS časovač byl pro vybraný objekt zničen.
+2771=%s zůstal ve stájích, protože máš příliš mnoho následovníků.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
