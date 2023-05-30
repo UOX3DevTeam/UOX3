@@ -119,7 +119,20 @@ function ClaimAllPets( pTalking, stableMaster, strSaid )
 			var tempPet = CalcCharFromSer( tempPetSerial );
 			if( ValidateObject( tempPet ))
 			{
-				if( maxControlSlots > 0 && ( controlSlotsUsed + tempPet.controlSlots <= maxControlSlots ))
+				var npcMsg = "";
+				if( maxFollowers > 0 && ( pTalking.petCount >= maxFollowers ))
+				{
+					npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
+					stableMaster.TextMessage( npcMsg.replace( /%s/gi, tempPet.name ));
+					break;
+				}
+				else if( maxControlSlots > 0 && ( controlSlotsUsed + tempPet.controlSlots > maxControlSlots ))
+				{
+					npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
+					stableMaster.TextMessage( npcMsg.replace( /%s/gi, tempPet.name ));
+					break;
+				}
+				else
 				{
 					petCount++;
 					ReleasePet( tempPet, i, stableMaster, pTalking, false );
@@ -153,9 +166,8 @@ function ClaimPetByName( pTalking, stableMaster, strSaid )
 	var maxStabledPets = parseInt( pTalking.GetTag( "maxStabledPets" ));
 	var i = 0;
 	var petFound = false;
-	var j = maxStabledPets - 1;
 	var controlSlotsUsed = pTalking.controlSlotsUsed;
-	for( i = 0; i <= j; i++ )
+	for( i = 0; i < maxStabledPets; i++ )
 	{
 		var tempPet = pTalking.GetTag( "stabledPet" + i );
 		if( tempPet != null && tempPet != "0" )
@@ -165,7 +177,7 @@ function ClaimPetByName( pTalking, stableMaster, strSaid )
 			{
 				if( petObj.name.toUpperCase() == splitString.toUpperCase() )
 				{
-					if( maxControlSlots > 0 && ( controlSlotsUsed + tempPet.controlSlots <= maxControlSlots ))
+					if( maxControlSlots > 0 && ( controlSlotsUsed + petObj.controlSlots <= maxControlSlots ))
 					{
 						ClaimPet( pTalking, i, stableMaster );
 						petFound = true;
@@ -213,8 +225,7 @@ function ClaimGump( pUser, stableMaster )
 	ClaimGump.AddHTMLGump( 20, 75, 200, 20, 0, 0, "<BASEFONT COLOR=#FFFFFF>- - - - - - - - - - - - </BASEFONT>" );
 
 	var i = 0;
-	var j = maxStabledPets - 1;
-	for( i = 0; i <= j; i++ )
+	for( i = 0; i < maxStabledPets; i++ )
 	{
 		var tempPet = pUser.GetTag( "stabledPet" + i );
 		if( tempPet != null && tempPet != "0" )
@@ -385,6 +396,7 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 	}
 }
 
+// Stable targeted pet
 function onCallback0( pSock, ourObj )
 {
 	var pUser = pSock.currentChar;
@@ -446,8 +458,7 @@ function onCallback0( pSock, ourObj )
 		}
 		else
 		{
-			var i = 0;
-			for( i = 0; i <= 4; i++ )
+			for( var i = 0; i < maxStabledPets; i++ )
 			{
 				var tempPet = pUser.GetTag( "stabledPet" + i );
 				if( tempPet == null || tempPet == "0" )
@@ -516,6 +527,9 @@ function StablePet( pUser, ourObj, slotNum, stableMaster )
 
 		// Reduce control slots in use for player by amount occupied by pet that was stabled
 		pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - ourObj.controlSlots );
+
+		// Also reduce active petCount of player!
+		pUser.petCount--;
 
 		// Increase the count of pets stabled, store as tag on player so it doesn't get lost if stablemaster is lost
 		var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));

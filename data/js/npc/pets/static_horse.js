@@ -6,10 +6,10 @@ var maxControlSlots = GetServerSetting( "MaxControlSlots" );
 var maxFollowers = GetServerSetting( "MaxFollowers" );
 
 // Runs before purchase is validated by server
-function onBuyFromVendor( pSock, vendor, iBought )
+function onBuyFromVendor( pSock, vendor, iBought, numItemsBought )
 {
 	var pUser = pSock.currentChar;
-	if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + iBought.morez > maxControlSlots ))
+	if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + ( numItemsBought * iBought.morez ) > maxControlSlots ))
 	{
 		pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum pet control slots.
 		if( ValidateObject( vendor ))
@@ -18,7 +18,7 @@ function onBuyFromVendor( pSock, vendor, iBought )
 		}
 		return false;
 	}
-	if( pUser.petCount >= maxFollowers )
+	if( maxFollowers > 0 && ( pUser.petCount + numItemsBought >= maxFollowers ))
 	{
 		pSock.SysMessage( GetDictionaryEntry( 2400, pSock.language )); // You have too many followers already!
 		if( ValidateObject( vendor ))
@@ -32,7 +32,7 @@ function onBuyFromVendor( pSock, vendor, iBought )
 }
 
 // Runs after purchase has been completed
-function onBoughtFromVendor( pSock, Vendor, iBought )
+function onBoughtFromVendor( pSock, Vendor, iBought, numItemsBought )
 {
 	if( pSock && iBought )
 	{
