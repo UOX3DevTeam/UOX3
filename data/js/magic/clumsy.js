@@ -446,3 +446,5 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 
 	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round( mChar.skills.magery / 100 ), 0, 0 );
 }
+
+function _restorecontext_() {}
