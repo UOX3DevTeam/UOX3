@@ -2530,6 +2530,14 @@
 2769=Tempo restante do JS especificado para que objecto?
 2770=Tempo JS especificado foi morto para o objecto seleccionado.
 2771=%s ficou nos estábulos porque tens demasiados seguidores.
+2772=Deves ser um Journeyman ou um Tinker superior para construir um golem.
+2773=Número de animais de estimação: %i
+2774=Número de seguidores: %i
+2775=Obter lista de animais de estimação para que personagem?
+2776=Obter lista de seguidores para que personagem?
+2778=Name: %s | ID: %i | Série: %i | x: %i | y: %i | z: %i | mundo: %i | instanceID: %i
+2779=Isso excederia o número máximo de seguidores do outro jogador.
+2780=Isso excederia o seu número máximo de seguidores.
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS

@@ -10668,7 +10668,7 @@ JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 //|	Function	-	CChar_GetPetList()
 //|	Prototype	-	bool GetPetList()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Gets list of character's pets/followers
+//|	Purpose		-	Gets list of character's owned pets
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
@@ -10697,14 +10697,14 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 		return JS_FALSE;
 	}
 
-	// Fetch actual friend list
+	// Fetch actual pet list
 	auto petList = mChar->GetPetList();
 
 	// Prepare some temporary helper variables
 	JSObject *jsPetList = JS_NewArrayObject( cx, 0, nullptr );
 	jsval jsTempPet;
 
-	// Loop through list of friends, and add each one to the JS ArrayObject
+	// Loop through list of pets, and add each one to the JS ArrayObject
 	int i = 0;
 	for( const auto &pet : petList->collection() )
 	{
@@ -10821,6 +10821,160 @@ JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, j
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
 	*rval = INT_TO_JSVAL( petControlChance );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_AddFollower()
+//|	Prototype	-	bool AddFollower( npcToAdd )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds NPC to player's list of active followers
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_AddFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( "AddFollower: Invalid number of arguments (takes 1 - npcObject)", cx );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ))
+		{
+			ScriptError( "AddFollower: Passed an invalid Character", cx );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		ScriptError( "AddFollower: Passed an invalid Character", cx );
+		return JS_FALSE;
+	}
+
+	CChar *newFollower = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( newFollower ))
+	{
+		ScriptError( "(AddFollower) Invalid Object passed as function parameter", cx );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_RemoveFollower()
+//|	Prototype	-	bool Remove( followerToRemove )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes a follower from player's follower list
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_RemoveFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( "RemoveFollower: Invalid number of arguments (takes 1 - followerObject)", cx );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ))
+		{
+			ScriptError( "RemoveFollower: Passed an invalid Character", cx );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		ScriptError( "RemoveFollower: Passed an invalid Character", cx );
+		return JS_FALSE;
+	}
+
+	CChar *followerToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( followerToRemove ))
+	{
+		ScriptError( "(RemoveFollower) Invalid Object passed as function parameter", cx );
+		return JS_FALSE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_GetFollowerList()
+//|	Prototype	-	bool GetFollowerList()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets list of character's active followers
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_GetFollowerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+{
+	if( argc != 0 )
+	{
+		ScriptError( "GetFollowerList: Invalid number of arguments (takes 0)", cx );
+		return JS_FALSE;
+	}
+
+	JSEncapsulate myClass( cx, obj );
+	CChar *mChar = nullptr;
+
+	// Let's validate the character
+	if( myClass.ClassName() == "UOXChar" )
+	{
+		mChar = static_cast<CChar *>( myClass.toObject() );
+		if( !ValidateObject( mChar ))
+		{
+			ScriptError( "GetFollowerList: Passed an invalid Character", cx );
+			return JS_FALSE;
+		}
+	}
+	else
+	{
+		ScriptError( "GetFollowerList: Passed an invalid Character", cx );
+		return JS_FALSE;
+	}
+
+	// Fetch actual active follower list
+	auto followerList = mChar->GetFollowerList();
+
+	// Prepare some temporary helper variables
+	JSObject *jsFollowerList = JS_NewArrayObject( cx, 0, nullptr );
+	jsval jsTempFollower;
+
+	// Loop through list of friends, and add each one to the JS ArrayObject
+	int i = 0;
+	for( const auto &follower : followerList->collection() )
+	{
+		if( ValidateObject( follower ))
+		{
+			if( follower->GetOwnerObj() == mChar )
+			{
+				// Create a new JS Object based on character
+				JSObject *myObj = JSEngine->AcquireObject( IUE_CHAR, follower, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
+
+				// Convert JS Object to jsval
+				jsTempFollower = OBJECT_TO_JSVAL( myObj );
+
+				// Add jsval to ArrayObject
+				JS_SetElement( cx, jsFollowerList, i, &jsTempFollower );
+				i++;
+			}
+		}
+	}
+
+	// Convert ArrayObject to jsval and pass it to script
+	*rval = OBJECT_TO_JSVAL( jsFollowerList );
 	return JS_TRUE;
 }
 

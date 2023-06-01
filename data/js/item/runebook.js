@@ -895,15 +895,16 @@ function onTimer( timerObj, timerID )
 	// Handle effect of spell
 	if( spellNum == 32 ) // Recall spell
 	{
-		// Teleport player's pets
-		var petList = timerObj.GetPetList();
-		for( var i = 0; i < petList.length; i++ )
+		// Teleport player's followers
+		var followerList = timerObj.GetFollowerList();
+		for( var i = 0; i < followerList.length; i++ )
 		{
-			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( timerObj, 24 ))
+			var tempFollower = followerList[i];
+			// Only teleport player's pets if they are set to follow
+			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( timerObj, 24 ))
 			{
-				tempPet.Teleport( targLocX, targLocY, targLocZ, targWorld );
-				tempPet.Follow( timerObj );
+				tempFollower.Teleport( targLocX, targLocY, targLocZ, targWorld );
+				tempFollower.Follow( timerObj );
 			}
 		}
 

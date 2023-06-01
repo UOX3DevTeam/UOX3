@@ -127,3 +127,5 @@ function doTele( toTele, targX, targY, targZ )
 	toTele.SetLocation( targX, targY, targZ );
 	toTele.StaticEffect( 0x372A, 0x09, 0x06 );
 }
+
+function _restorecontext_() {}

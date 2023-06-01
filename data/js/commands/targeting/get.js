@@ -402,6 +402,9 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "PETCOUNT":
 		socket.SysMessage( ourChar.petCount );
 		break;
+	case "FOLLOWERCOUNT":
+		socket.SysMessage( ourChar.followerCount );
+		break;
 	case "MAXLOYALTY":
 		socket.SysMessage( ourChar.maxLoyalty );
 		break;

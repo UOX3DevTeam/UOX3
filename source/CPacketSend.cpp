@@ -2374,8 +2374,8 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 			}
 			else
 			{
-				// If pet control slots are disabled, send petCount and maxFollowers value specified in ini instead
-				CurrentPets( static_cast<UI08>( toCopy.GetPetList()->Num() ));
+				// If pet control slots are disabled, send count of followers and maxFollowers value specified in ini instead
+				CurrentPets( static_cast<UI08>( toCopy.GetFollowerList()->Num() ));
 				MaxPets( static_cast<UI08>( cwmWorldState->ServerData()->MaxFollowers() ));
 			}
 		}

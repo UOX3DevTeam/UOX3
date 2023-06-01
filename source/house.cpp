@@ -1025,15 +1025,16 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 	{
 		mChar->SetLocation( x + cx, y + cy, z + cz );
 
-		//Teleport pets as well
-		auto myPets = mChar->GetPetList();
-		for( const auto &pet : myPets->collection() )
+		// Teleport followers as well
+		auto myFollowers = mChar->GetFollowerList();
+		for( const auto &follower : myFollowers->collection() )
 		{
-			if( ValidateObject( pet ) && pet->GetNpcAiType() != AI_PLAYERVENDOR )
+			if( ValidateObject( follower ) && follower->GetNpcAiType() != AI_PLAYERVENDOR )
 			{
-				if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+				// No need to check if they're following player, just teleport them. Don't let them get stuck under house!
+				if( !follower->GetMounted() && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 				{
-					pet->SetLocation( mChar );
+					follower->SetLocation( mChar );
 				}
 			}
 		}

@@ -2694,6 +2694,14 @@
 2769=Faire mourir le timer JS spécifié pour quel objet ?
 2770=Le timer JS spécifié a été tué pour l'objet sélectionné.
 2771=%s sont restés dans les écuries parce que vous avez trop d'adeptes.
+2772=Vous devez être un compagnon ou un fondeur de niveau supérieur pour construire un golem.
+2773=Nombre de familiers : %i
+2774=Nombre d'adeptes : %i
+2775=Afficher la liste des familiers de quel personnage ?
+2776=Obtenir la liste des adeptes pour quel personnage ?
+2778=Nom : %s | ID : %i | Serial : %i | x : %i | y : %i | z : %i | world : %i | instanceID : %i
+2779=Cela dépasserait le nombre maximum de followers de l'autre joueur.
+2780=Cela dépasserait votre nombre maximum de followers.
 // [2800-2999] House script
 2800=Propriétaire de la maison :
 2801=CO-PARENTS

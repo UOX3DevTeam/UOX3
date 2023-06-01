@@ -2530,6 +2530,14 @@
 2769=Zabij określony timer JS dla jakiego obiektu?
 2770=Zdefiniowany timer JS został zabity dla wybranego obiektu.
 2771=%s pozostało w stajni, ponieważ masz zbyt wielu zwolenników.
+2772=Musisz być Czeladnikiem lub wyższym Tinkerem, aby zbudować golema.
+2773=Liczba zwierzaków: %i
+2774=Liczba wyznawców: %i
+2775=Pobierz listę zwierzaków dla której postaci?
+2776=Pobierz listę wyznawców dla której postaci?
+2778=Nazwa: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=Przekroczyłoby to maksymalną liczbę obserwujących innego gracza.
+2780=Przekroczyłoby to twoją maksymalną liczbę obserwujących.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE

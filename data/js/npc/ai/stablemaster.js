@@ -109,7 +109,7 @@ function ClaimAllPets( pTalking, stableMaster, strSaid )
 {
 	var maxStabledPets = parseInt( pTalking.GetTag( "maxStabledPets" ));
 	var i = 0;
-	var petCount = 0;
+	var petsClaimed = 0;
 	var controlSlotsUsed = pTalking.controlSlotsUsed;
 	for( i = 0; i < maxStabledPets; i++ )
 	{
@@ -120,28 +120,29 @@ function ClaimAllPets( pTalking, stableMaster, strSaid )
 			if( ValidateObject( tempPet ))
 			{
 				var npcMsg = "";
-				if( maxFollowers > 0 && ( pTalking.petCount >= maxFollowers ))
+				if( maxControlSlots > 0 )
+				{
+					if( controlSlotsUsed + tempPet.controlSlots > maxControlSlots )
+					{
+						npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
+						stableMaster.TextMessage( npcMsg.replace( /%s/gi, tempPet.name ));
+						break;
+					}
+				}
+				else if( maxFollowers > 0 && ( pTalking.followerCount >= maxFollowers ))
 				{
 					npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
 					stableMaster.TextMessage( npcMsg.replace( /%s/gi, tempPet.name ));
 					break;
 				}
-				else if( maxControlSlots > 0 && ( controlSlotsUsed + tempPet.controlSlots > maxControlSlots ))
-				{
-					npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
-					stableMaster.TextMessage( npcMsg.replace( /%s/gi, tempPet.name ));
-					break;
-				}
-				else
-				{
-					petCount++;
-					ReleasePet( tempPet, i, stableMaster, pTalking, false );
-				}
+
+				petsClaimed++;
+				ReleasePet( tempPet, i, stableMaster, pTalking, false );
 			}
 		}
 	}
 
-	if( petCount > 0 )
+	if( petsClaimed > 0 )
 	{
 		var hour = GetHour();
 		if( hour < 6 || hour > 18 )
@@ -177,17 +178,24 @@ function ClaimPetByName( pTalking, stableMaster, strSaid )
 			{
 				if( petObj.name.toUpperCase() == splitString.toUpperCase() )
 				{
-					if( maxControlSlots > 0 && ( controlSlotsUsed + petObj.controlSlots <= maxControlSlots ))
+					if( maxControlSlots > 0 )
 					{
-						ClaimPet( pTalking, i, stableMaster );
-						petFound = true;
-						return true;
+						if( controlSlotsUsed + petObj.controlSlots > maxControlSlots )
+						{
+							pTalking.socket.SysMessage( GetDictionaryEntry( 2390, pTalking.socket.language )); // That would exceed your maximum pet control slots.
+							return false;
+						}
 					}
-					else
+					else if( maxFollowers > 0 && pTalking.followerCount >= maxFollowers )
 					{
-						pTalking.socket.SysMessage( GetDictionaryEntry( 2390, pTalking.socket.language )); // That would exceed your maximum pet control slots.
+						var npcMsg = GetDictionaryEntry( 2771 ); // %s remained in the stables because you have too many followers.
+						stableMaster.TextMessage( npcMsg.replace( /%s/gi, petObj.name ));
 						return false;
 					}
+
+					ClaimPet( pTalking, i, stableMaster );
+					petFound = true;
+					return true;
 				}
 			}
 		}
@@ -295,7 +303,7 @@ function onGumpPress( pSock, pButton, gumpData )
 	if( stableMasterSer )
 	{
 		var stableMaster = CalcCharFromSer( stableMasterSer );
-		if( pUser.petCount < maxFollowers )
+		if( pUser.followerCount < maxFollowers )
 		{
 			switch( pButton )
 			{
@@ -327,11 +335,20 @@ function ClaimPet( pUser, petNum, stableMaster )
 				var petObj = CalcCharFromSer( tempPet );
 				if( ValidateObject( petObj ))
 				{
-					if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + petObj.controlSlots > maxControlSlots ))
+					if( maxControlSlots > 0 )
 					{
-						pUser.socket.SysMessage( GetDictionaryEntry( 2390, pUser.socket.language )); // That would exceed your maximum pet control slots.
+						if( pUser.controlSlotsUsed + petObj.controlSlots > maxControlSlots )
+						{
+							pUser.socket.SysMessage( GetDictionaryEntry( 2390, pUser.socket.language )); // That would exceed your maximum pet control slots.
+							return;
+						}
+					}
+					else if( maxFollowers > 0 && pUser.followerCount >= maxFollowers )
+					{
+						pUser.socket.SysMessage( GetDictionaryEntry( 2780, pUser.socket.language )); // That would exceed your maximum follower count.
 						return;
 					}
+
 					var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));
 					var stableTimeAt = petObj.GetTag( "stableTimeAt" );
 					var maxStableTime = maxStableDays * 86402350; // 86402350 should be approx 24 hours
@@ -389,6 +406,8 @@ function ReleasePet( petObj, petNum, stableMaster, pUser, sayReleaseMsg )
 	pUser.SetTag( "stabledPet" + petNum, null );
 	pUser.SetTag( "stableMasterSerial", null );
 	pUser.controlSlotsUsed = pUser.controlSlotsUsed + petObj.controlSlots;
+	pUser.AddFollower( petObj );
+	petObj.Follow( pUser );
 	if( sayReleaseMsg )
 	{
 		var npcMsg = GetDictionaryEntry( 2113, pUser.socket.language ); // I have thy pet; %s. Let me fetch it.
@@ -525,11 +544,11 @@ function StablePet( pUser, ourObj, slotNum, stableMaster )
 		ourObj.vulnerable = false;
 		ourObj.Teleport( stableX, stableY, stableZ );
 
+		// Remove pet as an active follower
+		pUser.RemoveFollower( ourObj );
+
 		// Reduce control slots in use for player by amount occupied by pet that was stabled
 		pUser.controlSlotsUsed = Math.max( 0, pUser.controlSlotsUsed - ourObj.controlSlots );
-
-		// Also reduce active petCount of player!
-		pUser.petCount--;
 
 		// Increase the count of pets stabled, store as tag on player so it doesn't get lost if stablemaster is lost
 		var totalStabledPets = parseInt( pUser.GetTag( "totalStabledPets" ));

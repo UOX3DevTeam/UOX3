@@ -3833,17 +3833,17 @@ auto SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate ) -> void
 	if( !ValidateObject( toMove ))
 		return;
 
-	// Teleport pets to new location too!
-	auto myPets = toMove->GetPetList();
-	for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+	// Teleport followers to new location too!
+	auto myFollowers = toMove->GetFollowerList();
+	for( CChar *myFollower = myFollowers->First(); !myFollowers->Finished(); myFollower = myFollowers->Next() )
 	{
-		if( ValidateObject( myPet ))
+		if( ValidateObject( myFollower ))
 		{
-			if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == toMove )
+			if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == toMove )
 			{
-				if( ObjInOldRange( toMove, myPet, DIST_CMDRANGE ))
+				if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( toMove, myFollower, DIST_CMDRANGE ))
 				{
-					myPet->SetLocation( static_cast<SI16>( gate->GetTempVar( CITV_MOREX )), 
+					myFollower->SetLocation( static_cast<SI16>( gate->GetTempVar( CITV_MOREX )), 
 										static_cast<SI16>( gate->GetTempVar( CITV_MOREY )), 
 										static_cast<SI08>( gate->GetTempVar( CITV_MOREZ )), tWorldNum, tInstanceId );
 				}

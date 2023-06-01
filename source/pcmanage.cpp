@@ -1666,9 +1666,9 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 			Effects->DeathAction( mChar, iCorpse, fallDirection );
 		}
 
-		// Prevent pets from following ghost of dead player
-		auto mPetList = mChar->GetPetList();
-		for( const auto &tempChar : mPetList->collection() )
+		// Prevent followers from following ghost of dead player
+		auto mFollowerList = mChar->GetFollowerList();
+		for( const auto &tempChar : mFollowerList->collection() )
 		{
 			if( ValidateObject( tempChar ))
 			{

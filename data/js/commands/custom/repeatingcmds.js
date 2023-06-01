@@ -364,11 +364,8 @@ function onCallback7( pSock, myTarget )
 			{
 				if( myTarget.isChar && ValidateObject( myTarget.owner ))
 				{
-					if( myTarget.tamed )
-					{
-						// Reduce petCount for owner
-						myTarget.owner.petCount--;
-					}
+					// Remove target as a follower of owner
+					myTarget.owner.RemoveFollower( myTarget );
 
 					// Reduce controlSlotsUsed for owner
 					myTarget.owner.controlSlotsUsed -= myTarget.controlSlots;

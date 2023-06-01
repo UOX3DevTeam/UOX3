@@ -1015,17 +1015,18 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 		{
 			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 			{
-				// Teleport player's pets too
-				auto myPets = caster->GetPetList();
-				for( const auto &myPet : myPets->collection() )
+				// Teleport player's followers too
+				auto myFollowers = caster->GetFollowerList();
+				for( const auto &myFollower : myFollowers->collection() )
 				{
-					if( ValidateObject( myPet ))
+					if( ValidateObject( myFollower ))
 					{
-						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+						if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
 						{
-							if( ObjInOldRange( caster, myPet, DIST_CMDRANGE ))
+							// Only teleport followers if they are set to actually following owner & are within range
+							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 							{
-								myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+								myFollower->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
 							}
 						}
 					}
@@ -1061,17 +1062,17 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 				{
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 					{
-						// Teleport player's pets too
-						auto myPets = caster->GetPetList();
-						for( const auto &myPet : myPets->collection() )
+						// Teleport player's followers too
+						auto myFollowers = caster->GetFollowerList();
+						for( const auto &myFollower : myFollowers->collection() )
 						{
-							if( ValidateObject( myPet ))
+							if( ValidateObject( myFollower ))
 							{
-								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+								if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
 								{
-									if( ObjInOldRange( caster, myPet, DIST_CMDRANGE ))
+									if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 									{
-										myPet->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
+										myFollower->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
 									}
 								}
 							}
@@ -1108,17 +1109,17 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 			{
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
 				{
-					// Teleport player's pets too
-					auto myPets = caster->GetPetList();
-					for( const auto &myPet : myPets->collection() )
+					// Teleport player's followers too
+					auto myFollowers = caster->GetFollowerList();
+					for( const auto &myFollower : myFollowers->collection() )
 					{
-						if( ValidateObject( myPet ))
+						if( ValidateObject( myFollower ))
 						{
-							if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+							if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
 							{
-								if( ObjInOldRange( caster, myPet, DIST_CMDRANGE ))
+								if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 								{
-									myPet->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>( i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+									myFollower->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>( i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
 								}
 							}
 						}
@@ -1136,17 +1137,17 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 			}
 			else
 			{
-				// Teleport player's pets too
-				auto myPets = caster->GetPetList();
-				for( const auto &myPet : myPets->collection() )
+				// Teleport player's followers too
+				auto myFollowers = caster->GetFollowerList();
+				for( const auto &myFollower : myFollowers->collection() )
 				{
-					if( ValidateObject( myPet ))
+					if( ValidateObject( myFollower ))
 					{
-						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == caster )
+						if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == caster )
 						{
-							if( ObjInOldRange( caster, myPet, DIST_CMDRANGE ))
+							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 							{
-								myPet->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+								myFollower->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
 							}
 						}
 					}
@@ -2900,16 +2901,17 @@ auto CMagic::GateCollision( CSocket *mSock, CChar *mChar, CItem *itemCheck, Item
 					mChar->SetLocation( otherGate->GetX() + dirOffset, otherGate->GetY(), otherGate->GetZ(), otherGate->WorldNumber(), otherGate->GetInstanceId() );
 				}
 				
-				auto myPets = mChar->GetPetList();
-				for( const auto &myPet : myPets->collection() )
+				// Teleport player's followers too
+				auto myFollowers = mChar->GetFollowerList();
+				for( const auto &myFollower : myFollowers->collection() )
 				{
-					if( ValidateObject( myPet ))
+					if( ValidateObject( myFollower ))
 					{
-						if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+						if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == mChar )
 						{
-							if( ObjInOldRange( mChar, myPet, DIST_CMDRANGE ))
+							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( mChar, myFollower, DIST_CMDRANGE ))
 							{
-								myPet->SetLocation( mChar );
+								myFollower->SetLocation( mChar );
 							}
 						}
 					}
@@ -2943,10 +2945,9 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	}
 
 	UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
-
 	UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
 	UI08 controlSlotsUsed = caster->GetControlSlotsUsed();
-	UI08 petCount = static_cast<UI08>( caster->GetPetList()->Num() );
+	UI08 followerCount = static_cast<UI08>( caster->GetFollowerList()->Num() );
 
 	CChar *newChar=nullptr;
 
@@ -2964,22 +2965,26 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 				return;
 			}
 
-			if( maxControlSlots > 0 && ( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots ))
+			if( maxControlSlots > 0 )
 			{
-				newChar->Delete();
-				if( validSocket )
+				if( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots )
 				{
-					s->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+					newChar->Delete();
+					if( validSocket )
+					{
+						s->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+					}
+					return;
 				}
-				return;
 			}
-			else if( petCount >= maxFollowers )
+			else if( maxFollowers > 0 && followerCount >= maxFollowers )
 			{
 				newChar->Delete();
 				if( validSocket )
 				{
 					s->SysMessage( 2346, maxFollowers ); // You can maximum have %i pets / followers active at the same time.
 				}
+				return;
 			}
 
 			if( Magic->spells[40].Effect() != INVALIDID )
@@ -3050,22 +3055,26 @@ void CMagic::SummonMonster( CSocket *s, CChar *caster, UI16 id, SI16 x, SI16 y, 
 	if( !ValidateObject( newChar ))
 		return;
 
-	if( maxControlSlots > 0 && ( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots ))
+	if( maxControlSlots > 0 )
 	{
-		newChar->Delete();
-		if( validSocket )
+		if( controlSlotsUsed + newChar->GetControlSlots() > maxControlSlots )
 		{
-			s->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+			newChar->Delete();
+			if( validSocket )
+			{
+				s->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+			}
+			return;
 		}
-		return;
 	}
-	else if( petCount >= maxFollowers )
+	else if( maxFollowers > 0 && followerCount >= maxFollowers )
 	{
 		newChar->Delete();
 		if( validSocket )
 		{
 			s->SysMessage( 2346, maxFollowers ); // You can maximum have %i pets / followers active at the same time.
 		}
+		return;
 	}
 
 	newChar->SetDispellable( true );

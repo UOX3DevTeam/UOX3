@@ -126,6 +126,9 @@ JSMethodFunc CChar_RemoveFriend;
 JSMethodFunc CChar_GetFriendList;
 JSMethodFunc CChar_ClearFriendList;
 JSMethodFunc CChar_GetPetList;
+JSMethodFunc CChar_GetFollowerList;
+JSMethodFunc CChar_AddFollower;
+JSMethodFunc CChar_RemoveFollower;
 JSMethodFunc CChar_HasBeenOwner;
 JSMethodFunc CChar_CalculateControlChance;
 
@@ -444,6 +447,9 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "GetFriendList",		CChar_GetFriendList,		0, 0, 0 },
 	{ "ClearFriendList",	CChar_ClearFriendList,		0, 0, 0 },
 	{ "GetPetList",			CChar_GetPetList,			0, 0, 0 },
+	{ "GetFollowerList",	CChar_GetFollowerList,		0, 0, 0 },
+	{ "AddFollower",		CChar_AddFollower,			1, 0, 0 },
+	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }

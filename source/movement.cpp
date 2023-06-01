@@ -154,17 +154,18 @@ auto HandleTeleporters( CChar *s ) -> void
 							SendMapChange( getTeleLoc->TargetWorld(), s->GetSocket() );
 						}
 						
-						// Teleport player's pets
-						auto myPets = s->GetPetList();
-						for( const auto &myPet : myPets->collection() )
+						// Teleport player's followers as well
+						auto myFollowers = s->GetFollowerList();
+						for( const auto &myFollower : myFollowers->collection() )
 						{
-							if( ValidateObject( myPet ))
+							if( ValidateObject( myFollower ))
 							{
-								if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == s )
+								if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == s )
 								{
-									if( ObjInOldRange( s, myPet, DIST_SAMESCREEN ))
+									// Teleport followers along with player if they're following the player and within range 
+									if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( s, myFollower, DIST_SAMESCREEN ))
 									{
-										myPet->SetLocation( s );
+										myFollower->SetLocation( s );
 									}
 								}
 							}

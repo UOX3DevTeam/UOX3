@@ -95,7 +95,7 @@ public:
 	bool		CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, bool checkDifficulty, bool ignoreOwnerCheck = false, bool ignoreLoyaltyChanges = false );
 	void		FinalizeTransfer( CChar *pet, CChar *srcChar, CChar *targChar );
 	void		ReleasePet( CChar *pet );
-	CChar *		GetGuardingPet( CChar *mChar, CBaseObject *guarded );
+	CChar *		GetGuardingFollower( CChar *mChar, CBaseObject *guarded );
 	bool		CheckPetFriend( CChar *mChar, CChar *pet );
 	void		StopPetGuarding( CChar *pet );
 	GenericList<CChar *> *	GetAlwaysAwakeNPCs( void );

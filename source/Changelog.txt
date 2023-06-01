@@ -1,3 +1,26 @@
+02/06/2023 - Xuri
+	Added new protected property for CChar class to track a player's currently controlled pets/followers/summons, and renamed the on tracking all pets owned:
+		GenericList<CChar *> activeFollowers
+		GenericList<CChar *> petsControlled -> petsOwned
+	Added new JS Character Methods to view/manipulate follower list:
+		GetFollowerList()
+		AddFollower( npcObject )
+		RemoveFollower( npcObject )
+	Added new JS Character Property to fetch current count of followers character has:
+		.followerCount
+	Added new GM commands for spitting out information on all pets/followers a player has, in the following format: Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+		'listpets
+		'listfollowers
+	Replaced most instances of GetPetList in code and scripts with GetFollowerList, as that's what we actually care about for the most part
+	Updated code and relevant scripts to make use of AddFollower and RemoveFollower functions where appropriate
+	Modified code for restoring pet loyalty upon feeding pet; by default it now restores 10/100 loyalty per time pet is fed, while if CoreShardEra setting in UOX.INI is set to AoS expansion or higher, loyalty is instantly restored to max when pet is fed (regardless of amount)
+	Updated AreaCharacterFunction and AreaItemFunction JS Functions to still work if third parameter (socket) is provided as null
+	Modified code and relevant scripts that teleport pets/followers along with player to only do so for pets/followers using the "follow" wandermode with player as follow target
+	Updated some instances of code and script that checked for both controlSlot AND maxFollowers requirements - now only checks maxFollowers if controlSlots is set to 0 in ini
+	Added function _restorecontext_() {} to a couple more scripts:
+		js/commands/targeting/tele.js
+	Updated error message shown when attempts are made to add deleted objects to refreshQueue, to include name, ID and serial of the object in question
+
 30/05/2023 - Xuri (0.99.6-RC4)
 	Fixed an issue that prevented onBuyFromVendor() and onBoughtFromVendor() JS Events from triggering when attached to NPC shopkeepers
 	Fixed an issue with help gump that prevented password management section from working as intended (js/server/misc/helpgump.js)

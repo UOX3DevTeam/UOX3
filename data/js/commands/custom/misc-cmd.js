@@ -57,6 +57,8 @@ function CommandRegistration()
 	RegisterCommand( "useitem", 2, true ); // Use a target item as if it was double-clicked
 	RegisterCommand( "gettagmap", 2, true ); // Spit out a list of all custom tags on object
 	RegisterCommand( "gettemptagmap", 2, true ); // Spit out a list of all custom tags on object
+	RegisterCommand( "listpets", 2, true ); // Spit out a list of all pets owned by target
+	RegisterCommand( "listfollowers", 2, true ); // Spit out a list of all followers of target
 }
 
 function command_RENAME( pSock, execString )
@@ -1346,6 +1348,56 @@ function onCallback36( pSock, ourObj )
 			}
 			var tagValue = tagMap[i][2].toString();
 			pSock.SysMessage( GetDictionaryEntry( 96, pSock.language), tagName, tagType, tagValue ); // Tag: %s | Type: %i | Value: %u
+		}
+	}
+}
+
+function command_LISTPETS( pSock, execString )
+{
+	pSock.CustomTarget( 37, GetDictionaryEntry( 2775, pSock.language )); // Get list of pets for which character?
+}
+
+function onCallback37( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var petList = ourObj.GetPetList();
+		pSock.SysMessage( GetDictionaryEntry( 2773, pSock.language ), petList.length ); // Number of pets: %i
+		for( var i = 0; i < petList.length; i++ )
+		{
+			if( ValidateObject( petList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), petList[i].name, petList[i].id, petList[i].serial, petList[i].x, petList[i].y, petList[i].z, petList[i].worldnumber, petList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
+		}
+	}
+}
+
+function command_LISTFOLLOWERS( pSock, execString )
+{
+	pSock.CustomTarget( 38, GetDictionaryEntry( 2776, pSock.language )); // Get list of followers for which character?
+}
+
+function onCallback38( pSock, ourObj )
+{
+	var cancelCheck = parseInt( pSock.GetByte( 11 ));
+	if( cancelCheck == 255 )
+		return;
+
+	if( ValidateObject( ourObj ))
+	{
+		var followerList = ourObj.GetFollowerList();
+		pSock.SysMessage( GetDictionaryEntry( 2774, pSock.language ), followerList.length ); // Number of followers: %i
+		for( var i = 0; i < followerList.length; i++ )
+		{
+			if( ValidateObject( followerList[i] ))
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2778, pSock.language ), followerList[i].name, followerList[i].id, followerList[i].serial, followerList[i].x, followerList[i].y, followerList[i].z, followerList[i].worldnumber, followerList[i].instanceID ); // Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+			}
 		}
 	}
 }

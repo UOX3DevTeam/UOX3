@@ -2530,6 +2530,14 @@
 2769=Zabít zadaný JS časovač pro který objekt?
 2770=Zadaný JS časovač byl pro vybraný objekt zničen.
 2771=%s zůstal ve stájích, protože máš příliš mnoho následovníků.
+2772=Konstruování golema vyžaduje, abys byl dráteník na úrovni Journeyman nebo vyšší.
+2773=Počet domácích zvířat: %i
+2774=Počet následovníků: %i
+2775=Získat seznam mazlíčků pro kterou postavu?
+2776=Získat seznam následovníků pro kterou postavu?
+2778=Jméno: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=To by překročilo maximální počet následovníků druhého hráče.
+2780=To by překročilo váš maximální počet sledujících.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU

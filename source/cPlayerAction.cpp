@@ -956,10 +956,19 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 					Effects->PlayCharacterAnimation( targNPC, ACT_ANIMAL_EAT, 0, 5 );
 				}
 
-				// Restore loyalty to max upon feeding pet
+				// Restore loyalty upon feeding pet
 				if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
 				{
-					targNPC->SetLoyalty( targNPC->GetMaxLoyalty() );
+					if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
+					{
+						// Post-AoS (Pub16), restore loyalty to max upon feeding, regardless of amount
+						targNPC->SetLoyalty( targNPC->GetMaxLoyalty() );
+					}
+					else
+					{
+						// Pre-AoS (Pub16), restore loyalty by 10 each time pet is fed, regardless of amount
+						targNPC->SetLoyalty( targNPC->GetLoyalty() + 10 );
+					}
 					mSock->SysMessage( 2416 ); // Your pet looks happier.
 				}
 

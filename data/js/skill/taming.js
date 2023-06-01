@@ -4,6 +4,8 @@ function SkillRegistration()
 }
 
 const maxControlSlots = GetServerSetting( "MaxControlSlots" );
+
+// maxFollowers only comes into play if maxControlSlots is 0 in UOX.INI
 const maxFollowers = GetServerSetting( "MaxFollowers" );
 const maxPetOwners = GetServerSetting( "MaxPetOwners" );
 const maxTimesTamed = 5; // The maximum number of times a pet can be tamed (by different players)
@@ -15,7 +17,15 @@ function onSkill( pUser, objType, skillUsed )
 	if( pSock )
 	{
 		// Check to see if player actually has space for ANY more pets
-		if( maxControlSlots > 0 && pUser.controlSlotsUsed >= maxControlSlots )
+		if( maxControlSlots > 0 )
+		{
+			if( pUser.controlSlotsUsed >= maxControlSlots )
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2397, pSock.language )); // You have too many followers to tame that creature.
+				return;
+			}
+		}
+		else if( maxFollowers > 0 && pUser.followerCount >= maxFollowers )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 2397, pSock.language )); // You have too many followers to tame that creature.
 			return;
@@ -59,13 +69,15 @@ function onCallback0( pSock, ourObj )
 		}
 
 		var controlSlots = ourObj.controlSlots;
-		if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + controlSlots > maxControlSlots ))
+		if( maxControlSlots > 0 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
-			return;
+			if( pUser.controlSlotsUsed + controlSlots > maxControlSlots )
+			{
+				pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
+				return;
+			}
 		}
-
-		if( pUser.petCount >= maxFollowers )
+		else if( pUser.followerCount >= maxFollowers )
 		{
 			var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
 			pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
@@ -205,6 +217,11 @@ function CheckTameSuccess( pUser, toTame )
 
 		toTame.Follow( pUser );
 		pUser.controlSlotsUsed = pUser.controlSlotsUsed + toTame.controlSlots;
+
+		// Also add pet to player's list of active followers
+		pUser.AddFollower( toTame );
+
+		// Pacify pet if it was previously in combat
 		if( toTame.atWar )
 		{
 			toTame.target 	= null;
@@ -289,14 +306,17 @@ function RunTameChecks( pUser )
 	}
 
 	var controlSlots = toTame.controlSlots;
-	if( maxControlSlots > 0 && ( pUser.controlSlotsUsed + controlSlots > maxControlSlots ))
+	if( maxControlSlots > 0 )
 	{
-		pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
-		return false;
+		if( pUser.controlSlotsUsed + controlSlots > maxControlSlots )
+		{
+			pSock.SysMessage( GetDictionaryEntry( 2390, pSock.language )); // That would exceed your maximum number of pet control slots.
+			return false;
+		}
 	}
-
-	if( pUser.petCount >= maxFollowers )
+	else if( pUser.followerCount >= maxFollowers )
 	{
+		// Only checked if maxControlSlots is 0
 		var tempMsg = GetDictionaryEntry( 2346, pSock.language ); // You can maximum have %i pets/followers active at the same time.
 		pSock.SysMessage( tempMsg.replace( /%i/gi, maxFollowers ));
 		return false;

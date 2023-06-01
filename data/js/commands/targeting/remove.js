@@ -43,11 +43,8 @@ function onCallback0( socket, ourObj )
 					socket.SysMessage( GetDictionaryEntry( 1015, socket.language )); // Removing character.
 					if( ValidateObject( ourObj.owner ))
 					{
-						if( ourObj.tamed )
-						{
-							// Reduce petCount for owner
-							ourObj.owner.petCount--;
-						}
+						// Remove pet as a follower of the player
+						ourObj.owner.RemoveFollower( ourObj );
 
 						// Reduce controlSlotsUsed for owner
 						ourObj.owner.controlSlotsUsed -= ourObj.controlSlots;

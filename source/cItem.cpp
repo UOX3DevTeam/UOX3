@@ -2996,7 +2996,7 @@ void CItem::Cleanup( void )
 			}
 			if( ValidateObject( owner ))
 			{
-				CChar *petGuard = Npcs->GetGuardingPet( owner, this );
+				CChar *petGuard = Npcs->GetGuardingFollower( owner, this );
 				if( ValidateObject( petGuard ))
 				{
 					petGuard->SetGuarding( nullptr );

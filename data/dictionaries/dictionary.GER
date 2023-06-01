@@ -2530,6 +2530,14 @@
 2769=Angegebenen JS-Timer für welches Objekt beenden?
 2770=Der angegebene JS-Timer wurde für das ausgewählte Objekt beendet.
 2771=%s ist in den Ställen geblieben, weil du zu viele Gefolgsleute hast.
+2772=Du musst ein Journeyman oder höherer Tinker sein, um einen Golem zu bauen.
+2773=Anzahl der Haustiere: %i
+2774=Anzahl der Gefolgsleute: %i
+2775=Liste der Haustiere für welchen Charakter?
+2776=Liste der Gefolgsleute für welchen Charakter?
+2778=Name: %s | ID: %i | Serie: %i | x: %i | y: %i | z: %i | Welt: %i | InstanzID: %i
+2779=Das würde die maximale Anzahl der Follower des anderen Spielers überschreiten.
+2780=Das würde deine maximale Anzahl an Anhängern überschreiten.
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER

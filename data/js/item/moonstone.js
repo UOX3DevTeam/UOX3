@@ -212,15 +212,16 @@ function onCollide( trgSock, srcChar, trgItem )
 		var tempVal = trgItem.GetTag( "TargetWorld" );
 		var worldVal = parseInt( tempVal );
 
-		// Teleport character's pets to target world and location
-		var petList = srcChar.GetPetList();
-		for( var i = 0; i < petList.length; i++ )
+		// Teleport character's followers to target world and location
+		var followerList = srcChar.GetFollowerList();
+		for( var i = 0; i < followerList.length; i++ )
 		{
-			var tempPet = petList[i];
-			if( ValidateObject( tempPet ) && tempPet.InRange( srcChar, 24 ))
+			var tempFollower = followerList[i];
+			// Only teleport pets if set to follow and within range
+			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
 			{
-				tempPet.Teleport( trgItem.x , trgItem.y, trgItem.z, worldVal );
-				tempPet.Follow( srcChar );
+				tempFollower.Teleport( trgItem.x , trgItem.y, trgItem.z, worldVal );
+				tempFollower.Follow( srcChar );
 			}
 		}
 

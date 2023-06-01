@@ -347,6 +347,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "ownerCount",		CCP_OWNERCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nextAct",		CCP_NEXTACT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "petCount",		CCP_PETCOUNT,		JSPROP_ENUMPERMRO, nullptr, nullptr },
+	{ "followerCount",	CCP_FOLLOWERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "ownedItemsCount",CCP_OWNEDITEMSCOUNT,JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "cell",			CCP_CELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },

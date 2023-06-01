@@ -2493,7 +2493,7 @@ void CBaseObject::Dirty( [[maybe_unused]] UpdateTypes updateType )
 {
 	if( IsDeleted() )
 	{
-		Console.Error( "Attempt was made to add deleted item to refreshQueue!" );
+		Console.Error( oldstrutil::format( "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial() ));
 	}
 	else if( IsPostLoaded() )
 	{

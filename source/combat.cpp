@@ -3701,7 +3701,7 @@ void CHandleCombat::PetGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 	if( !ValidateObject( petGuard ))
 	{
 		// No pet guard was passed into function, so let's look for one ourself
-		petGuard = Npcs->GetGuardingPet( owner, guarded );
+		petGuard = Npcs->GetGuardingFollower( owner, guarded );
 	}
 
 	if( ValidateObject( petGuard ) && ObjInRange( mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange() ))

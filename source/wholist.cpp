@@ -192,17 +192,17 @@ void CWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			}
 			if( !targetChar->IsNpc() && targetChar->WorldNumber() != sourceChar->WorldNumber() )
 			{
-				// Bring player's pets too
-				auto targetPets = targetChar->GetPetList();
-				for( const auto &targetPet : targetPets->collection() )
+				// Bring player's followers too
+				auto targetFollowers = targetChar->GetFollowerList();
+				for( const auto &targetFollower : targetFollowers->collection() )
 				{
-					if( ValidateObject( targetPet ))
+					if( ValidateObject( targetFollower ))
 					{
-						if( !targetPet->GetMounted() && targetPet->IsNpc() && targetPet->GetOwnerObj() == targetChar )
+						if( !targetFollower->GetMounted() && targetFollower->GetOwnerObj() == targetChar )
 						{
-							if( ObjInOldRange( targetChar, targetPet, DIST_BUILDRANGE )) // Be more lenient, bring pets within range
+							if( targetFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( targetChar, targetFollower, DIST_BUILDRANGE )) // Be more lenient, bring followers within range
 							{
-								targetPet->SetLocation( sourceChar->GetX(), sourceChar->GetY(), sourceChar->GetZ(), sourceChar->WorldNumber(), sourceChar->GetInstanceId() );
+								targetFollower->SetLocation( sourceChar->GetX(), sourceChar->GetY(), sourceChar->GetZ(), sourceChar->WorldNumber(), sourceChar->GetInstanceId() );
 							}
 						}
 					}

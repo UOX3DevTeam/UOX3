@@ -91,7 +91,7 @@ CBoatObj * GetBoat( CSocket *s )
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	LeaveBoat()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Teleport player and their pets off the boat and to a nearby valid location
+//|	Purpose		-	Teleport player and their followers off the boat and to a nearby valid location
 //o------------------------------------------------------------------------------------------------o
 auto LeaveBoat( CSocket *s, CItem *p ) -> bool
 {
@@ -116,14 +116,15 @@ auto LeaveBoat( CSocket *s, CItem *p ) -> bool
 				// Freeze player temporarily after teleporting
 				Effects->TempEffect( nullptr, mChar, 1, 1, 1, 5 ); // 1 second, divided by 5 for 0.2s duration freeze
 
-				auto myPets = mChar->GetPetList();
-				for( const auto &pet : myPets->collection() )
+				auto myFollowers = mChar->GetFollowerList();
+				for( const auto &follower : myFollowers->collection() )
 				{
-					if( ValidateObject( pet ))
+					if( ValidateObject( follower ))
 					{
-						if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+						// Only teleport followers with player if they're set to follow player, and within range
+						if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 						{
-							pet->SetLocation( x, y, z, worldNumber, instanceId );
+							follower->SetLocation( x, y, z, worldNumber, instanceId );
 						}
 					}
 				}
@@ -156,14 +157,15 @@ void PlankStuff( CSocket *s, CItem *p )
 		CMultiObj *boat2 = p->GetMultiObj();
 		if( ValidateObject( boat2 ))
 		{
-			auto myPets = mChar->GetPetList();
-			for( const auto &pet : myPets->collection() )
+			auto myFollowers = mChar->GetFollowerList();
+			for( const auto &follower : myFollowers->collection() )
 			{
-				if( ValidateObject( pet ))
+				if( ValidateObject( follower ))
 				{
-					if( !pet->GetMounted() && pet->IsNpc() && ObjInRange( mChar, pet, DIST_SAMESCREEN ))
+					// Only teleport followers with player if they're set to follow and within range
+					if( !follower->GetMounted() && follower->GetNpcWander() == WT_FOLLOW && ObjInRange( mChar, follower, DIST_SAMESCREEN ))
 					{
-						pet->SetLocation( mChar );
+						follower->SetLocation( mChar );
 					}
 				}
 			}

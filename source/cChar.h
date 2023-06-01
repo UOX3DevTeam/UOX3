@@ -228,7 +228,8 @@ protected:
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
-	GenericList<CChar *>	petsControlled;
+	GenericList<CChar *>	petsOwned;
+	GenericList<CChar *>	activeFollowers;
 	std::vector<CItem *>	ownedItems;
 	std::bitset<32>			skillUsed[2];	// no more than 64 skills
 	std::bitset<UT_COUNT>	updateTypes;
@@ -267,9 +268,12 @@ public:
 	UI08		GetPoisonStrength( void ) const;
 
 	GenericList<CChar *> *	GetPetList( void );
+	GenericList<CChar *> *	GetFollowerList( void );
 	GenericList<CChar *> *	GetPetOwnerList( void );
 	auto		GetOwnedItems() -> std::vector<CItem *>*;
 
+	auto		AddFollower( CChar *npcToAdd ) -> bool;
+	auto		RemoveFollower( CChar *followerToRemove ) -> bool;
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
 

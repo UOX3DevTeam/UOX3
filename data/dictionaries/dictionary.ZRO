@@ -2530,6 +2530,14 @@
 2769=Kill specified JS timer for which object?
 2770=Specified JS timer has been killed for selected object.
 2771=%s remained in the stables because you have too many followers.
+2772=You must be a Journeyman or higher Tinker to construct a golem.
+2773=Number of pets: %i
+2774=Number of followers: %i
+2775=Get list of pets for which character?
+2776=Get list of followers for which character?
+2778=Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=That would exceed the other player's maximum follower count.
+2780=That would exceed your maximum follower count.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS

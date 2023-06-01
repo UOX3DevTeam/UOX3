@@ -2530,6 +2530,14 @@
 2769=¿Matar el temporizador JS especificado para qué objeto?
 2770=El temporizador JS especificado ha sido eliminado para el objeto seleccionado.
 2771=%s quedó en los establos porque tienes demasiados seguidores.
+2772=Debes ser Journeyman o Tinker superior para construir un golem.
+2773=Número de mascotas: %i
+2774=Número de seguidores: %i
+2775=¿Qué personaje tiene mascota?
+2776=¿Qué personaje tiene lista de seguidores?
+2778=Nombre: %s | ID: %i | Serie: %i | x: %i | y: %i | z: %i | mundo: %i | instanceID: %i
+2779=Eso excedería el número máximo de seguidores del otro jugador.
+2780=Eso excedería tu número máximo de seguidores.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS
