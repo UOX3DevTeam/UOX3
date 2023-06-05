@@ -37,7 +37,7 @@
 #include "PartySystem.h"
 
 void MakeShop( CChar *c );
-void ScriptError( const char *txt, JSContext *cx, ... );
+void ScriptError( JSContext *cx, const char *txt, ... );
 
 JSBool CGuildsProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, jsval *vp )
 {
@@ -56,7 +56,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	if( spellId >= Magic->spells.size() )
 	{
-		ScriptError( oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str(), cx );
+		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -64,7 +64,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	CSpellInfo *mySpell = &Magic->spells[spellId];
 	if( mySpell == nullptr )
 	{
-		ScriptError( oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str(), cx );
+		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -170,7 +170,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 
 	if( skillId > THROWING )
 	{
-		ScriptError( oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str(), cx );
+		ScriptError( cx, oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -178,7 +178,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
 	if( mySkill == nullptr )
 	{
-		ScriptError( oldstrutil::format( "Invalid Skill" ).c_str(), cx );
+		ScriptError( cx, oldstrutil::format( "Invalid Skill" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -283,7 +283,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	CreateEntry_st *myCreateEntry = Skills->FindItem( createEntryId );
 	if( myCreateEntry == nullptr )
 	{
-		ScriptError( oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str(), cx );
+		ScriptError( cx, oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -1059,7 +1059,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -1076,7 +1076,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2052,7 +2052,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2069,7 +2069,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2599,7 +2599,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2616,7 +2616,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str(), cx );
+						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{

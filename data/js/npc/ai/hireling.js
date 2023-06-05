@@ -1311,11 +1311,13 @@ function PatrolArea( socket, pChar, myTarget )
 		hireling.SetTag( "pathMode", "patrolling" );
 		var targX = socket.GetWord( 11 );
 		var targY = socket.GetWord( 13 );
-		var targZ = socket.GetSByte( 16 );
 		hireling.SetTag( "origPosX", hireling.x );
 		hireling.SetTag( "origPosY", hireling.y );
-		hireling.SetTag( "origPosZ", hireling.z );
-		hireling.WalkTo( targX, targY, targZ );
+
+		// Calculate distance hireling needs to cover, then double it for max pathfinding steps
+		var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
+
+		hireling.WalkTo( targX, targY, maxSteps );
 	}
 }
 
@@ -1330,7 +1332,6 @@ function onPathfindEnd( hireling, pathfindResult )
 			hireling.SetTag( "patrolStop", null );
 			hireling.SetTag( "origPosX", null );
 			hireling.SetTag( "origPosY", null );
-			hireling.SetTag( "origPosZ", null );
 			return;
 		}
 
@@ -1407,11 +1408,13 @@ function onPathfindEnd( hireling, pathfindResult )
 					// Continue patrolling
 					var targX = hireling.GetTag( "origPosX" );
 					var targY = hireling.GetTag( "origPosY" );
-					var targZ = hireling.GetTag( "origPosY" );
 					hireling.SetTag( "origPosX", hireling.x );
 					hireling.SetTag( "origPosY", hireling.y );
-					hireling.SetTag( "origPosZ", hireling.z );
-					hireling.WalkTo( targX, targY, targZ );
+
+					// Calculate distance hireling needs to cover, then double it for max pathfinding steps
+					var maxSteps = DistanceBetween( hireling.x, hireling.y, targX, targY ) * 2;
+
+					hireling.WalkTo( targX, targY, maxSteps );
 				}
 				else if( pathMode == "guarding" )
 				{

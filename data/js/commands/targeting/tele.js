@@ -11,7 +11,7 @@ function CommandRegistration()
 // Alias of TELESTUFF
 function command_MOVE( socket, cmdString )
 {
-	command_TELESTUFF( pSocket, cmdString );
+	command_TELESTUFF( socket, cmdString );
 }
 
 function command_TELESTUFF( socket, cmdString )

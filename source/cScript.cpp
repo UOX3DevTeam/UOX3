@@ -227,7 +227,7 @@ const JSErrorFormatString* ScriptErrorCallback( void *userRef, const char *local
 //| Notes		-	Piggybacks on the internal error reporting mechanism in SpiderMonkey to get
 //|					the filename and relevant line number from associated script
 //o------------------------------------------------------------------------------------------------o
-void ScriptError( const char *txt, JSContext *cx, ... )
+void ScriptError( JSContext *cx, const char *txt, ... )
 {
 	// Combine error message with any potential additional arguments provided, store in g_errorMessage
 	va_list argptr;

@@ -2455,8 +2455,20 @@ auto CWorldMain::CheckAutoTimers() -> void
 						{
 							actbTemp.dwInGame = INVALIDSERIAL;
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
+
+							// End combat, clear targets
+							charCheck->SetAttacker( nullptr );
+							charCheck->SetWar( false );
+							charCheck->SetTarg( nullptr );
+
 							charCheck->Update();
 							charCheck->Teleport();
+
+							// Announce that player has logged out (if enabled)
+							if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
+							{
+								SysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry( 752 ), charCheck->GetName().c_str() )); // %s has left the realm.
+							}
 						}
 					}
 				}

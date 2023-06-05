@@ -1415,7 +1415,10 @@ void NpcResurrectTarget( CChar *i )
 			i->SetMana( i->GetMaxMana() / 10 );
 			i->SetAttacker( nullptr );
 			i->SetAttackFirst( false );
-			i->SetWar( false );
+			if( i->IsAtWar() )
+			{
+				i->ToggleCombat();
+			}
 			i->SetHunger( 6 );
 			CItem *c = nullptr;
 			for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )

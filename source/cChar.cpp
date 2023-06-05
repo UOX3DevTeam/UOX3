@@ -3333,6 +3333,8 @@ auto CChar::AddFollower( CChar *npcToAdd ) -> bool
 	{
 		return GetFollowerList()->Add( npcToAdd );
 	}
+
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
