@@ -122,6 +122,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			// If target is not already at war/in combat, make sure to disable their passive mode
 			if( !cTarget->IsAtWar() )
 			{
+				if( cTarget->IsNpc() )
+				{
+					cTarget->ToggleCombat();
+				}
 				cTarget->SetPassive( false );
 			}
 		}
@@ -441,7 +445,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			for( auto &tSock : FindNearbyPlayers( ourChar ))
 			{
-				if( tSock )
+				if( tSock && tSock != ourChar->GetSocket() )
 				{
 					// Valid socket found
 					CChar *witness = tSock->CurrcharObj();
@@ -3437,7 +3441,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		ourTarg->SetTarg( nullptr );
 		ourTarg->SetAttacker( nullptr );
 		ourTarg->SetAttackFirst( false );
-		if( ourTarg->IsAtWar() )
+		if( ourTarg->IsAtWar() && ourTarg->IsNpc() )
 		{
 			ourTarg->ToggleCombat();
 		}
@@ -3574,7 +3578,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			mChar.SetTarg( nullptr );
 			mChar.SetAttacker( nullptr );
 			mChar.SetAttackFirst( false );
-			if( mChar.IsAtWar() )
+			if( mChar.IsAtWar() && mChar.IsNpc() )
 			{
 				mChar.ToggleCombat();
 			}

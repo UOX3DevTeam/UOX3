@@ -4939,7 +4939,7 @@ void CChar::Cleanup( void )
 				tempChar->SetTarg( nullptr );
 				tempChar->SetAttacker( nullptr );
 				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
 					tempChar->ToggleCombat();
 				}
@@ -4962,7 +4962,7 @@ void CChar::Cleanup( void )
 			{
 				tempChar->SetTarg( nullptr );
 				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
 					tempChar->ToggleCombat();
 				}

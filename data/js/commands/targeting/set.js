@@ -989,3 +989,5 @@ function okMsg( socket )
 	// Sends verification to the player that the specified value was successfully set.
 	socket.SysMessage( GetDictionaryEntry( 1756, socket.language )); // Value successfully set.
 }
+
+function _restorecontext_() {}

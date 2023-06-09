@@ -1,3 +1,14 @@
+09/06/2023 - Xuri
+	Fixed client freeze after login for sub-7.x clients, caused by sending an unsupported animation packet; FORCENEWANIMATIONPACKET will now not be enabled if support for client versions below 7.x is enabled
+	Added function _restorecontext_() {} to a couple more scripts:
+		js/commands/targeting/set.js
+		js/commands/decorate.js
+		js/commands/go.js
+	Fixed an issue with 'xgo command that would prevent it from working properly (js/commands/targeting/x.js)
+	Fixed an issue with teleport function in help gump which prevented pets from teleporting with player (js/server/misc/helpgump.js)
+	Fixed an issue with players in some cases getting toggled out of combat mode visually on other clients even though they were still in combat mode (when target dies, resurrection of ghost in combat mode, etc)
+	Players no longer see a message above their character's head about their own character attacking other characters
+
 05/06/2023 - Xuri
 	Fixed an issue with patrolling-portion of hireling script - was incorrectly using Z coordinate as a parameter of WalkTo - should be maxSteps (js/npc/ai/hireling.js)
 	Added error checking to .WalkTo() and .RunTo() JS Methods that cancels pathfinding attempt if maxSteps provided is zero

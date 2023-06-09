@@ -2658,7 +2658,18 @@ auto CServerData::ForceNewAnimationPacket() const -> bool
 }
 auto CServerData::ForceNewAnimationPacket( bool newVal ) -> void
 {
-	boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+	if( ClientSupport4000()
+		|| ClientSupport5000()
+		|| ClientSupport6000()
+		|| ClientSupport6050() )
+	{
+		boolVals.set( BIT_FORCENEWANIMATIONPACKET, false );
+		Console.Warning( "FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!" );
+	}
+	else
+	{
+		boolVals.set( BIT_FORCENEWANIMATIONPACKET, newVal );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o

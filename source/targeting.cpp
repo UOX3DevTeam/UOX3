@@ -1415,7 +1415,7 @@ void NpcResurrectTarget( CChar *i )
 			i->SetMana( i->GetMaxMana() / 10 );
 			i->SetAttacker( nullptr );
 			i->SetAttackFirst( false );
-			if( i->IsAtWar() )
+			if( i->IsAtWar() && i->IsNpc() )
 			{
 				i->ToggleCombat();
 			}

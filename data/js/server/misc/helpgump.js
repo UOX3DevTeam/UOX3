@@ -731,7 +731,7 @@ function PerformTeleportation( pSock, pUser )
 	{
 		var tempFollower = followerList[i];
 		// Only teleport player's pets if they are set to follow and are within range
-		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pUser, 24 ))
 		{
 			tempFollower.Teleport( pUser.x, pUser.y, pUser.z );
 			tempFollower.setPeace = 10;
