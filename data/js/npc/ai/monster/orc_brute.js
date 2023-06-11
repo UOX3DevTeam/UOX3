@@ -83,3 +83,5 @@ function LookForSummonedCreatures( mNPC, targChar )
 		targChar.Delete();
 	}
 }
+
+function _restorecontext_() {}

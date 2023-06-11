@@ -111,13 +111,13 @@ function onCallback1( socket, ourObj )
 		if( splitString != null )
 		{
 			splitString = splitString.split( " " );
-		if( splitString[0] )
-		{
-			worldNum = parseInt( splitString[0] );
-		}
-		if( splitString[1] )
-		{
-			instanceID = parseInt( splitString[1] );
+			if( splitString[0] )
+			{
+				worldNum = parseInt( splitString[0] );
+			}
+			if( splitString[1] )
+			{
+				instanceID = parseInt( splitString[1] );
 			}
 		}
 

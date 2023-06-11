@@ -410,3 +410,5 @@ function CalcPoisonDuration( poisonStrength )
 	}
 	return poisonDuration;
 }
+
+function _restorecontext_() {}

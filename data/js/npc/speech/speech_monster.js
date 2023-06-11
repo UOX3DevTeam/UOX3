@@ -415,3 +415,5 @@ function GetTextSound( myNPC )
 			return 0x00;
 	}
 }
+
+function _restorecontext_() {}

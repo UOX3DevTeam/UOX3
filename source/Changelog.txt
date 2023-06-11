@@ -1,3 +1,43 @@
+11/06/2023 - Xuri
+	Fixed an issue with the Clumsy spell script (js/magic/clumsy.js) where an attempt could be made to send a system message to the non-existent sockets of NPCs casting the spell
+	Fixed an issue where [golem] NPCs were trying to GET crafted_golem instead of craftedgolem (dfndata/npc/clockwork.dfn)
+	Fixed an issue where [golem] and [craftedgolem] NPCs were setup to use colossal blow special ability, but ability script didn't allow for it (js/ai/special/colossal_blow.js)
+	Removed some debug messages from gate opener script (js/item/gate_opener.js)
+	Added some comments to musiclists in regions.dfn, and added a few missing music entries to a few regions (dfndata/regions/regions.dfn)
+	Added function _restorecontext_() {} to another bunch of scripts:
+		js/npc/ai/monster/ethereal_warrior.js
+		js/commands/zerokills.js
+		js/commands/killall.js
+		js/commands/fixcont.js
+		js/commands/delid.js
+		js/commands/cleanup.js
+		js/commands/areacommand.js
+		js/item/guildstone.js
+		js/item/gate_opener.js
+		js/item/bedroll.js
+		js/item/potion.js
+		js/item/kindling.js
+		js/item/doors.js
+		js/item/dungeons/switch_puzzle_covetous.js
+		js/skill/peacemaking.js
+		js/skill/detecthidden.js
+		js/skill/craft/cooking.js
+		js/skill/craft/blacksmithing.js
+		js/skill/cooking/wheat.js
+		js/skill/cooking/flourmill.js
+		js/npc/ai/pack_ai.js
+		js/npc/ai/monster/savage_shaman.js
+		js/npc/ai/monster/orc_chopper.js
+		js/npc/ai/monster/orc_brute.js
+		js/npc/ai/exodus_clockwork.js
+		js/npc/special/life_drain_aura.js
+		js/npc/special/dull_copper_elemental.js
+		js/npc/special/damage_aura.js
+		js/npc/speech/speech_monster.js
+		js/server/misc/dungeon_trap.js
+		js/server/house/playerVendorDeed.js
+		js/server/house/houseCommands.js
+
 09/06/2023 - Xuri
 	Fixed client freeze after login for sub-7.x clients, caused by sending an unsupported animation packet; FORCENEWANIMATIONPACKET will now not be enabled if support for client versions below 7.x is enabled
 	Added function _restorecontext_() {} to a couple more scripts:

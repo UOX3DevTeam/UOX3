@@ -33,3 +33,5 @@ function AlertPack( srcChar, packMember )
 	}
 	return false;
 }
+
+function _restorecontext_() {}
