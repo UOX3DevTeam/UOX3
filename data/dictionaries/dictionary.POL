@@ -91,6 +91,15 @@
 88=Dostępni Mistrzowie Gry zostali powiadomieni o twoim zgłoszeniu błędu.
 89=Nie było dostępnego Mistrza Gry, który odnotowałby twoje zgłoszenie błędu.
 90=Cóż, czyż nie jesteś zabawny!
+91=Zasada umieszczania przedmiotów unieważniona przez uprawnienia GM - Z za wysokie dla zwykłych graczy!
+92=Pobierz trwałą mapę znaczników dla którego obiektu?
+93=Liczba trwałych znaczników: %i
+94=Pobierz tymczasową mapę znaczników dla jakiego obiektu?
+95=Liczba tymczasowych znaczników: %i
+96=Tag: %s | Typ: %i | Wartość: %u
+97=Jakiego przedmiotu użyć?
+98=Opłacam %i za każdego zwierzaka, którego chcesz ustabilizować. Pobiorę ją z twojego konta bankowego.
+99=Opłacam %i za zwierzaka za %u dni stabilizacji. Pobiorę tę opłatę z twojego konta bankowego.
 100=Przerywasz swoją koncentrację.
 101=Kamień gildii dla %s
 102=Kontrola Gildii
@@ -1609,7 +1618,7 @@
 1609=Czujesz się o wiele bardziej zwinny!
 1610=Całun Śmierci
 1611=plecak
-1612=korpus %s
+1612=Korpus %s
 // targeting.cpp
 1613=Jaki przedmiot chcesz zatruć?
 // speech.cpp
@@ -2520,6 +2529,15 @@
 2768=Ustawić pozostały czas timera JS dla jakiego obiektu?
 2769=Zabij określony timer JS dla jakiego obiektu?
 2770=Zdefiniowany timer JS został zabity dla wybranego obiektu.
+2771=%s pozostało w stajni, ponieważ masz zbyt wielu zwolenników.
+2772=Musisz być Czeladnikiem lub wyższym Tinkerem, aby zbudować golema.
+2773=Liczba zwierzaków: %i
+2774=Liczba wyznawców: %i
+2775=Pobierz listę zwierzaków dla której postaci?
+2776=Pobierz listę wyznawców dla której postaci?
+2778=Nazwa: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=Przekroczyłoby to maksymalną liczbę obserwujących innego gracza.
+2780=Przekroczyłoby to twoją maksymalną liczbę obserwujących.
 // [2800-2999] Skrypt domu
 2800=Właściciel domu:
 2801=WŁAŚCICIELE

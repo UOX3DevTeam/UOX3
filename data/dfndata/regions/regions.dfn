@@ -526,7 +526,7 @@ X2=5379
 Y2=255
 }
 
-[REGION 23]
+[REGION 23] // moongates
 {
 MUSICLIST=18
 GUARDED=1
@@ -570,7 +570,7 @@ X2=1503
 Y2=3777
 }
 
-[REGION 24]
+[REGION 24] // Hedge Maze
 {
 GUARDED=0
 MUSICLIST=19
@@ -596,7 +596,7 @@ X2=1113
 Y2=2302
 }
 
-[REGION 25]
+[REGION 25] // Center of Hedge Maze
 {
 GUARDED=0
 MUSICLIST=20
@@ -1502,7 +1502,7 @@ Y2=255
 WORLD=1
 }
 
-[REGION 64]
+[REGION 64] // moongates
 {
 MUSICLIST=18
 GUARDED=1
@@ -1547,7 +1547,7 @@ Y2=3777
 WORLD=1
 }
 
-[REGION 65]
+[REGION 65] // Hedge Maze
 {
 GUARDED=0
 MUSICLIST=19
@@ -1574,7 +1574,7 @@ Y2=2302
 WORLD=1
 }
 
-[REGION 66]
+[REGION 66] // Center of Hedge Maze
 {
 GUARDED=0
 MUSICLIST=20
@@ -2464,7 +2464,7 @@ WORLD=0
 {
 NAME=Blighted Grove
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=25
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2556,7 +2556,7 @@ WORLD=0
 [REGION 116]
 {
 NAME=Heartwood
-MUSICLIST=1
+MUSICLIST=24
 GUARDED=1
 GUARDLIST=guard
 GUARDOWNER=The Town
@@ -2592,7 +2592,7 @@ WORLD=3
 {
 NAME=Bedlam
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=28
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2613,7 +2613,7 @@ WORLD=3
 {
 NAME=Twisted Weald
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=27
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2630,7 +2630,7 @@ WORLD=2
 {
 NAME=The Fan Dancer Dojo
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=29
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2664,7 +2664,7 @@ WORLD=3
 {
 NAME=The Yomotsu Mines
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=29
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2681,7 +2681,7 @@ WORLD=3
 {
 NAME=Palace of Paroxysmus
 GUARDED=0
-MUSICLIST=23
+MUSICLIST=26
 MAGICDAMAGE=1
 MARK=1
 GATE=1
@@ -2722,7 +2722,7 @@ WORLD=1
 [REGION 126]
 {
 NAME=Heartwood
-MUSICLIST=1
+MUSICLIST=24
 GUARDED=1
 GUARDLIST=guard
 GUARDOWNER=The Town
@@ -3164,110 +3164,131 @@ X2=7167
 Y2=4095
 }
 
+// Britain
 [MUSICLIST 1]
 {
 MUSIC=09
 }
 
+// Buccaneers' Den
 [MUSICLIST 2]
 {
 MUSIC=11
 }
 
+// Jhelom
 [MUSICLIST 3]
 {
 MUSIC=12
 }
 
+// Lord British' Castle
 [MUSICLIST 4]
 {
 MUSIC=13
 }
 
+// Magincia
 [MUSICLIST 5]
 {
 MUSIC=15
 }
 
+// Minoc
 [MUSICLIST 6]
 {
 MUSIC=16
 }
 
+// Ocllo/New Haven
 [MUSICLIST 7]
 {
 MUSIC=17
 }
 
+// Serpent's Hold
 [MUSICLIST 8]
 {
 MUSIC=19
 }
 
+// Skara Brae
 [MUSICLIST 9]
 {
 MUSIC=20
 }
 
+// Trinsic
 [MUSICLIST 10]
 {
 MUSIC=21
 }
 
+// Vesper
 [MUSICLIST 11]
 {
 MUSIC=22
 }
 
+// Wind
 [MUSICLIST 12]
 {
 MUSIC=14
 MUSIC=23
 }
 
+// Yew
 [MUSICLIST 13]
 {
 MUSIC=24
 }
 
+// Lord Blackthorn's Castle
 [MUSICLIST 14]
 {
 MUSIC=44
 }
 
+// Nujel'm
 [MUSICLIST 15]
 {
 MUSIC=45
 }
 
+// Cove
 [MUSICLIST 16]
 {
 MUSIC=47
 }
 
+// Moonglow
 [MUSICLIST 17]
 {
 MUSIC=48
 }
 
+// Moongates
 [MUSICLIST 18]
 {
-MUSIC=08
+MUSIC=8
 }
 
+// Hedge Maze
 [MUSICLIST 19]
 {
 MUSIC=30
 }
 
+// Center of Hedge maze
 [MUSICLIST 20]
 {
 MUSIC=24
 }
 
+// Britain Farmlands
 [MUSICLIST 21]
 {
-MUSIC=05
+MUSIC=5
 }
 
 // Tavern Music
@@ -3279,10 +3300,47 @@ MUSIC=36
 MUSIC=37
 }
 
+// Dungeons
 [MUSICLIST 23]
 {
 MUSIC=25
 MUSIC=26
+}
+
+// Heartwood
+[MUSICLIST 24]
+{
+MUSIC=53
+}
+
+// Blighted Grove
+[MUSICLIST 25]
+{
+MUSIC=55
+}
+
+// Palace of Paroxysmus
+[MUSICLIST 26]
+{
+MUSIC=56
+}
+
+// Twisted Weald
+[MUSICLIST 27]
+{
+MUSIC=52
+}
+
+// Bedlam
+[MUSICLIST 28]
+{
+MUSIC=54
+}
+
+// The Yomotsu Mines
+[MUSICLIST 29]
+{
+MUSIC=50
 }
 
 [MUSICLIST COMBAT]
@@ -3297,6 +3355,7 @@ MUSIC=40
 MUSIC=42
 }
 
+// Wilderness
 [MUSICLIST 255]
 {
 MUSIC=27

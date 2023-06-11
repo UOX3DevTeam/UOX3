@@ -279,11 +279,11 @@ public:
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
-	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying );
+	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling );
 	SI08		OnSell( CSocket *targSock, CChar *objVendor );
-	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought );
-	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold );
+	SI08		OnBoughtFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBought );
+	SI08		OnSoldToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSold );
 	SI08		OnHouseCommand( CSocket *targSock, CMultiObj *multiObj, UI08 targId );
 	SI08		OnMakeItem( CSocket *mSock, CChar *objChar, CItem *objItem, UI16 createEntryId );
 

@@ -117,6 +117,7 @@ CChar *			FindItemOwner( CItem *p );
 CBaseObject *	FindItemOwner( CItem *i, ObjectType &objType );
 CItem *			FindRootContainer( CItem *i );
 CItem *			FindItemOfType( CChar *toFind, ItemTypes type );
+CItem *			FindItemOfSectionId( CChar *toFind, std::string sectionId );
 CItem *			FindItem( CChar *toFind, UI16 itemId );
 
 //o------------------------------------------------------------------------------------------------o

@@ -204,6 +204,8 @@ CJSRuntime::~CJSRuntime( void )
 	//JS_RemoveRoot( jsContext, &createEntriesObj );
 	JS_UnlockGCThing( jsContext, timerObj );
 	//JS_RemoveRoot( jsContext, &timersObj );
+	JS_UnlockGCThing( jsContext, scriptObj );
+	//JS_RemoveRoot( jsContext, &scriptObj )
 
 	for( size_t i = JSP_ITEM; i < JSP_COUNT; ++i )
 	{
@@ -272,12 +274,14 @@ void CJSRuntime::InitializePrototypes()
 	protoList[JSP_PACKET]	=	JS_InitClass( cx, obj, nullptr, &UOXPacket_class,		Packet,			0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_GUMP]		=	JS_InitClass( cx, obj, nullptr, &UOXGump_class,			Gump,			0,		nullptr,				nullptr,			nullptr,	nullptr );
 	protoList[JSP_FILE]		=	JS_InitClass( cx, obj, nullptr, &UOXFile_class,			UOXCFile,		0,		nullptr,				nullptr,			nullptr,	nullptr );
+	protoList[JSP_SCRIPT]	=	JS_InitClass( cx, obj, nullptr, &uox_class,				nullptr,		0,		CScriptProperties,		nullptr,			nullptr,	nullptr );
 	spellsObj				=	JS_DefineObject( cx, obj, "Spells", &UOXSpells_class, protoList[JSP_SPELLS], 0 );
 	skillsObj				=	JS_DefineObject( cx, obj, "Skills", &UOXGlobalSkills_class, protoList[JSP_GLOBALSKILLS], 0 );
 	accountsObj				=	JS_DefineObject( cx, obj, "Accounts", &UOXAccount_class, protoList[JSP_ACCOUNTS], 0 );
 	consoleObj				=	JS_DefineObject( cx, obj, "Console", &UOXConsole_class, protoList[JSP_CONSOLE], 0 );
 	createEntriesObj		=	JS_DefineObject( cx, obj, "CreateEntries", &UOXCreateEntries_class, protoList[JSP_CREATEENTRIES], 0 );
 	timerObj				=	JS_DefineObject( cx, obj, "Timer", &UOXTimer_class, protoList[JSP_TIMER], 0 );
+	scriptObj				=	JS_DefineObject( cx, obj, "SCRIPT", &uox_class, protoList[JSP_SCRIPT], 0 );
 	JS_LockGCThing( cx, spellsObj );
 	//JS_AddRoot( cx, &spellsObj );
 	JS_LockGCThing( cx, skillsObj );

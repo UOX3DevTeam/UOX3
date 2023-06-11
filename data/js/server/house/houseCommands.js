@@ -2043,3 +2043,5 @@ function onGumpPress( pSocket, pButton, gumpData )
 		}
 	}
 }
+
+function _restorecontext_() {}

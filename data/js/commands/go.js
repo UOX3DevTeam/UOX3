@@ -95,3 +95,5 @@ function command_GO( socket, cmdString )
 		mChar.ExecuteCommand( "itemmenu 6000" );
 	}
 }
+
+function _restorecontext_() {}

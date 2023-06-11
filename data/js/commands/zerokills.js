@@ -19,3 +19,5 @@ function onIterate( toCheck )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

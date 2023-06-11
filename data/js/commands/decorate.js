@@ -2065,3 +2065,5 @@ function CheckForDuplicate( srcItem, trgItem, pSock )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

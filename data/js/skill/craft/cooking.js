@@ -462,3 +462,5 @@ function onGumpPress( pSock, pButton, gumpData )
 		TriggerEvent( itemDetailsScriptID, "ItemDetailGump", pUser );
 	}
 }
+
+function _restorecontext_() {}

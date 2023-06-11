@@ -618,8 +618,10 @@ bool CGuild::IsAtPeace() const
 	for( auto &relation : relationList )
 	{
 		if( relation.second == GR_WAR )
-			return true;
+			return false;
 	}
+
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o

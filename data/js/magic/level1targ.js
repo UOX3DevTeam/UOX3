@@ -695,3 +695,5 @@ function DispatchSpell( spellNum, mSpell, sourceChar, ourTarg, caster )
 		MagicDamage( ourTarg, baseDamage, caster, caster.socket, 5 );
 	}
 }
+
+function _restorecontext_() {}

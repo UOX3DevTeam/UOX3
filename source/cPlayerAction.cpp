@@ -954,13 +954,22 @@ bool DropOnNPC( CSocket *mSock, CChar *mChar, CChar *targNPC, CItem *i )
 				if( cwmWorldState->creatures[targNPC->GetId()].IsAnimal() )
 				{
 					Effects->PlayCharacterAnimation( targNPC, ACT_ANIMAL_EAT, 0, 5 );
+				}
 
-					// Restore loyalty to max upon feeding pet
-					if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
+				// Restore loyalty upon feeding pet
+				if( targNPC->GetLoyalty() < targNPC->GetMaxLoyalty() )
+				{
+					if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_AOS )
 					{
+						// Post-AoS (Pub16), restore loyalty to max upon feeding, regardless of amount
 						targNPC->SetLoyalty( targNPC->GetMaxLoyalty() );
-						mSock->SysMessage( 2416 ); // Your pet looks happier.
 					}
+					else
+					{
+						// Pre-AoS (Pub16), restore loyalty by 10 each time pet is fed, regardless of amount
+						targNPC->SetLoyalty( targNPC->GetLoyalty() + 10 );
+					}
+					mSock->SysMessage( 2416 ); // Your pet looks happier.
 				}
 
 				UI08 poisonStrength = i->GetPoisoned();
@@ -1148,7 +1157,7 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI
 	bool dropLocationBlocked = false;
 
 	// Don't allow dropping item at a location far below or far above character
-	if( z < nChar->GetZ() - 5 || z > nChar->GetZ() + 16 )
+	if( z < nChar->GetZ() - 7 || z > nChar->GetZ() + 16 ) // 7 to allow to stand on bottom of stairs and drop items on floor/ground below
 	{
 		dropLocationBlocked = true;
 	}
@@ -1159,10 +1168,12 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI
 		// If done the other way, the valid surface will override the blocking tiles!
 
 		// First, check for a static surface to drop item on
-		if( !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, false ))
+		UI16 foundTileId1 = 0;
+		UI16 foundTileId2 = 0;
+		if( !Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_SURFACE, foundTileId1, false ))
 		{
 			// Nowhere static to put item? Check dynamic tiles for surface!
-			if( !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE ))
+			if( !Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_SURFACE, foundTileId1 ))
 			{
 				// No static OR dynamic surface was found to place item? Check if map itself blocks the placement
 				dropLocationBlocked = Map->DoesMapBlock( x, y, z, nChar->WorldNumber(), true, false, false, false );
@@ -1172,13 +1183,19 @@ bool CheckForValidDropLocation( CSocket *mSock, CChar *nChar, UI16 x, UI16 y, SI
 		if( !dropLocationBlocked )
 		{
 			// Some kind of valid surface was found. But is it blocked by...
-			if( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, false ) || Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, false ))
+			if( Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_BLOCKING, foundTileId2, false ) || Map->CheckStaticFlag( x, y, z, nChar->WorldNumber(), TF_ROOF, foundTileId2, false ))
 			{ // ...static items?
-				dropLocationBlocked = true;
+				if( foundTileId1 != foundTileId2 )
+				{
+					dropLocationBlocked = true;
+				}
 			}
-			else if( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING ) || Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF ) )
+			else if( Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_BLOCKING, foundTileId2 ) || Map->CheckDynamicFlag( x, y, z, nChar->WorldNumber(), nChar->GetInstanceId(), TF_ROOF, foundTileId2 ))
 			{ // No? What about dynamic items?
-				dropLocationBlocked = true;
+				if( foundTileId1 != foundTileId2 )
+				{
+					dropLocationBlocked = true;
+				}
 			}
 		}
 	}
@@ -1270,8 +1287,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		}
 
 		// New location either is not blocking, or has a surface we can put the item on, so let's find the exact Z of where to put it
-//		auto nCharZ = nChar->GetZ();
-		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 14 );
+		auto newZ = Map->StaticTop( x, y, z, nChar->WorldNumber(), 14 - ( z - nChar->GetZ() ));
 		if( newZ == ILLEGAL_Z || newZ < z || newZ > z + 14 )
 		{
 			// No valid static elevation found, use dynamic elevation instead
@@ -1288,16 +1304,48 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 			newZ = (( dynZ >= z && dynZ <= z + 14 ) ? dynZ : newZ );
 		}
 
-		if( newZ + tile.Height() > ( z + 14 ) )
+		auto iMulti = FindMulti( x, y, newZ, nChar->WorldNumber(), nChar->GetInstanceId() );
+		if( ValidateObject( iMulti ) )
+		{
+			// Check if new Z plus height of dropped item will make it exceed 20 Z limit per floor in houses, and deny placement if so
+			if( newZ > ( nChar->GetZ() + ( 20 - tile.Height() )))
+			{
+				// Item is too tall - can't drop it this high up
+				if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
+				{
+					// GM override
+					mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
+				}
+				else
+				{
+					if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+					{
+						Weight->SubtractItemWeight( nChar, i );
+					}
+					Bounce( mSock, i );
+					mSock->SysMessage( 683 ); // There seems to be something in the way
+					return;
+				}
+			}
+		}
+		else if( newZ + tile.Height() > z + tile.Height() )
 		{
 			// Item is too tall - can't drop it this high up
-			if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+			if( nChar->GetCommandLevel() >= 2 || nChar->IsGM() )
 			{
-				Weight->SubtractItemWeight( nChar, i );
+				// GM override
+				mSock->SysMessage( 91 ); // Item placement rule overruled by GM privileges - Z too high for normal players!
 			}
-			Bounce( mSock, i );
-			mSock->SysMessage( 683 ); // There seems to be something in the way
-			return;
+			else
+			{
+				if( mSock->PickupSpot() == PL_OTHERPACK || mSock->PickupSpot() == PL_GROUND )
+				{
+					Weight->SubtractItemWeight( nChar, i );
+				}
+				Bounce( mSock, i );
+				mSock->SysMessage( 683 ); // There seems to be something in the way
+				return;
+			}
 		}
 
 		i->SetCont( nullptr );
@@ -1306,7 +1354,7 @@ void Drop( CSocket *mSock, SERIAL item, SERIAL dest, SI16 x, SI16 y, SI08 z, SI0
 		// If item was picked up from a container and dropped on ground, update old location to match new!
 		if( mSock->PickupSpot() != PL_GROUND )
 		{
-			i->SetOldLocation( x, y, z );
+			i->SetOldLocation( x, y, newZ );
 		}
 	}
 	else
@@ -2455,12 +2503,22 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 		else	// No Town Title
 		{
-			if( !pdoll->IsIncognito() && !( pdoll->GetTitle().empty() ))	// Titled & Skill
+			if( !pdoll->IsIncognito() && !( pdoll->GetTitle().empty() ))
 			{
-				tempstr += " " + pdoll->GetTitle() + ", " + skillProwessTitle;
+				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A )
+				{
+					// Title & Skill
+					tempstr += " " + pdoll->GetTitle() + ", " + skillProwessTitle;
+				}
+				else
+				{
+					// Title only
+					tempstr += " " + pdoll->GetTitle();
+				}
 			}
-			else	// Just skilled
+			else if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A )
 			{
+				// Just Skill
 				tempstr += ", " + skillProwessTitle;
 			}
 		}

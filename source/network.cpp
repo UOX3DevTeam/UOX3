@@ -300,13 +300,6 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	CChar *currChar = connClients[s]->CurrcharObj();
 	Console << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 
-	if( currChar != nullptr )
-	{
-		if( currChar->GetAccount().wAccountIndex == connClients[s]->AcctNo() && cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
-		{
-			SysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry( 752 ), currChar->GetName().c_str() )); //message upon leaving a server
-		}
-	}
 	if( connClients[s]->AcctNo() != AB_INVALID_ID )
 	{
 		CAccountBlock_st &actbAccount = connClients[s]->GetAccount();
@@ -470,10 +463,10 @@ void CNetworkStuff::LogOut( CSocket *s )
 		}
 		p->SetTimer( tPC_LOGOUT, BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_LOGINTIMEOUT )));
 	}
+
 	s->LoginComplete( false );
 	actbAccount.wFlags.set( AB_FLAGS_ONLINE, false );
 	p->SetSocket( nullptr );
-	p->SetLocation( p );
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -91,6 +91,15 @@
 88=Available Game Masters have been notified of your bug submission.
 89=There was no Game Master available to note your bug report.
 90=Well aren't you the funny one!
+91=Item placement rule overruled by GM privileges - Z too high for normal players!
+92=Get persistent tag map for which object?
+93=Number of persistent tags: %i
+94=Get temporary tag map for which object?
+95=Number of temporary tags: %i
+96=Tag: %s | Type: %i | Value: %u
+97=Use which item?
+98=I charge %i per pet you want to stable. I will withdraw it from thy bank account.
+99=I charge %i per pet for %u days of stable time. I will withdraw it from thy bank account.
 100=You break your concentration.
 101=A guildstone for %s
 102=Guild Control
@@ -1609,7 +1618,7 @@
 1609=You feel much more agile!
 1610=A Death Shroud
 1611=a backpack
-1612=corpse of %s
+1612=Corpse of %s
 // targeting.cpp
 1613=What item do you want to poison?
 // speech.cpp
@@ -2520,6 +2529,15 @@
 2768=Set remaining time of JS timer for which object?
 2769=Kill specified JS timer for which object?
 2770=Specified JS timer has been killed for selected object.
+2771=%s remained in the stables because you have too many followers.
+2772=You must be a Journeyman or higher Tinker to construct a golem.
+2773=Number of pets: %i
+2774=Number of followers: %i
+2775=Get list of pets for which character?
+2776=Get list of followers for which character?
+2778=Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=That would exceed the other player's maximum follower count.
+2780=That would exceed your maximum follower count.
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS

@@ -2011,23 +2011,23 @@ void CCharStuff::ReleasePet( CChar *pet )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CCharStuff::GetGuardingPet()
+//|	Function	-	CCharStuff::GetGuardingFollower()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Get the pet guarding an item / character
+//|	Purpose		-	Get the active follower guarding an item / character
 //o------------------------------------------------------------------------------------------------o
-auto CCharStuff::GetGuardingPet( CChar *mChar, CBaseObject *guarded ) ->CChar *
+auto CCharStuff::GetGuardingFollower( CChar *mChar, CBaseObject *guarded ) ->CChar *
 {
 	if( ValidateObject( mChar ) && ValidateObject( guarded ))
 	{
-		auto myPets = mChar->GetPetList();
-		for( const auto &pet : myPets->collection() )
+		auto myFollowers = mChar->GetFollowerList();
+		for( const auto &follower : myFollowers->collection() )
 		{
-			if( ValidateObject( pet ))
+			if( ValidateObject( follower ))
 			{
-				//if( !pet->GetMounted() && pet->GetNpcAiType() == AI_PET_GUARD &&
-				if( !pet->GetMounted() && pet->GetGuarding() == guarded && pet->GetOwnerObj() == mChar )
+				//if( !follower->GetMounted() && follower->GetNpcAiType() == AI_PET_GUARD &&
+				if( !follower->GetMounted() && follower->GetGuarding() == guarded && follower->GetOwnerObj() == mChar )
 				{
-					return pet;
+					return follower;
 				}
 			}
 		}

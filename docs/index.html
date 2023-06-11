@@ -5444,7 +5444,22 @@ packitem=0x0f8d,30
 						}</span></p>
 						<p><span class="hl">ESCORTENABLED</span> is used to enable (1) or disable (1) the system, while <span class="hl">ESCORTINITEXPIRE</span> is the amount of time (in seconds) a quest NPC will wait for someone to initiate the quest, before vanishing. <span class="hl">ESCORTACTIVEEXPIRE</span> is the amount of time (in seconds) a player has available to bring the quest NPC to its desired destination before the quest is aborted. Finally, <span class="hl">ESCORTDONEEXPIRE</span> is the time in seconds until a quest NPC will vanish after having successfully reached its destination.</p>
 						<h3>Escort Quest NPCs</h3>
-						<p>To actually spawn the quest NPCs required by the Escort Quest system, you need to setup and place out some <strong>Escort NPC Spawners</strong>. These are special spawner objects of type that are only active if the escort quest system itself is active via the above mentioned ini setting. For additional instructions on how to setup these spawners, please refer to the <a href="#itemtypes" title="UOX3 Documentation - Item Types">list of item types</a> in UOX3, and follow the steps provided there for type <span class="hl">125 - IT_ESCORTNPCSPAWNER</span>. Once one of these spawners has been setup, it can be duplicated into many copies using a command like <span class="hl">'dupe 50</span>, and then placed in areas where quest NPCs should spawn.</p>
+						<p>To actually spawn the quest NPCs required by the Escort Quest system, you need to setup and place out some <strong>Escort NPC Spawners</strong>. These are special spawner objects of type that are only active if the escort quest system itself is active via the above mentioned ini setting. Here's an example of how to set one up:</p>
+						<p><ul>
+							<li>Step 1 - Create the spawner in GM's backpack: <span class="hl">'add spawner 0x04a9</span> and target the GM</li>
+							<li>Step 2 - Set the spawner properties on the spawner (wooden floor boards item) in GM's backpack:
+								<ul>
+									<li><span class="hl">'set name escortspawner</span> (Name the spawner to make it more obvious what it is/does)</li>
+									<li><span class="hl">'set mininterval 1</span> (minimum time in minutes before another escort (up to max amount) spawns</li>
+									<li><span class="hl">'set maxinterval 2</span> (maximum time in minutes before another escort (up to max amount) spawns</li>
+									<li><span class="hl">'set amount 2</span> (max amount of escort NPCs to spawn)</li>
+									<li><span class="hl">'set spawnsection escorts 1</span> (NPC or NPCLIST to spawn escort NPCs from - if an NPCLIST (like "escorts") is used, the additional parameter 1 can be used to flag to UOX3 that the spawnsection is a list. If the additional parameter is 0, it will flag it as an individual NPC. This is handled via the "sectionalist" property seen in the 'tweak menu.)</li>
+									<li><span class="hl">'set type 125</span> (set the correct item type - IT_ESCORTNPCSPAWNER - on spawner to activate it)</li>
+									<li><span class="hl">'set visible 3</span> (hide the spawner from mortal eyes)</li>
+								</ul></li>
+								<li>Step 3 - Drag and drop the spawner onto the ground where you want escort NPCs to spawn</li>
+								<li>Step 4 (Optional) - Use <span class="hl">'dupe</span> to make another copy of the spawner in GM's backpack, for placing out in additional locations.</li>
+							</ul></p>
 						<h3>Escort Quest Rewards</h3>
 						<p>The rewards for completing an escort quest are based partly on a given quest NPC's fame, and partly on the amount of gold they're carrying. This setup provides some flexibility for how shard admins want to handle the NPC escorts and associated rewards. For instance, one could setup a Nobleman with high fame (but little gold), a merchant with low fame (but a lot of gold), or an adventurer (with random amount of fame and random amount of gold). The formulate used to calculate the final reward given to the player looks like this: <span class="hl">rewardAmount = (( totalFame / 100 ) * 50 ) + ( totalGold * 0.25 )</span></p>
 				  </div>
@@ -11189,7 +11204,7 @@ function commandTitle()
   <div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2022</small></p>
+	<p><small>Docs revamp by Geir Ove Alnes @ Copyright 2020 - 2023</small></p>
 	<p><small>Built on <a href="https://codyhouse.co/demo/faq-template" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framework by CodyHouse</a>.</small></p>
 </div>
 <script defer>
@@ -11200,7 +11215,7 @@ function filterInputHandler( e ) {
 	if( e.keyCode == 32 ) // spacebar
 		return;
 	var filterInput = this.textContent.toUpperCase();
-	var parentDiv = e.path[0].closest('body');
+	var parentDiv = e.composedPath()[0].closest('body');
 	var filterElements = parentDiv.getElementsByClassName('cd-faq__content');
 	var filterCategories = parentDiv.getElementsByClassName('cd-faq__item');
 

@@ -33,7 +33,6 @@ restock=10
 get=base_item
 id=0x20F6
 name=llama
-morez=0xDC
 value=700 350
 script=3102
 good=39

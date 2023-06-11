@@ -96,6 +96,7 @@ private:
 	std::vector<UI08>	largePackBuffer;
 
 	std::string		xtext;
+	std::string		xtext2;
 	SI16			clickx;
 	SI16			clicky;
 	SI08			clickz;
@@ -202,6 +203,7 @@ public:
 	SI16			WalkSequence( void ) const;
 	UI16			AcctNo( void ) const;
 	std::string		XText( void );
+	std::string		XText2( void );
 	bool			CryptClient( void ) const;
 	size_t			CliSocket( void ) const;
 	UI08			CurrentSpellType( void ) const;
@@ -322,6 +324,7 @@ public:
 	void			PostAckCount( size_t newValue );
 	void			PostClear();
 	void			XText( const std::string &newValue );
+	void			XText2( const std::string &newValue );
 
 	void			Send( CPUOXBuffer *toSend );
 

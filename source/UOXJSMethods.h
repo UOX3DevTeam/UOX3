@@ -102,6 +102,7 @@ JSMethodFunc CChar_BoltEffect;
 JSMethodFunc CChar_Gate;
 JSMethodFunc CChar_Recall;
 JSMethodFunc CChar_Mark;
+JSMethodFunc CChar_SetRandomName;
 JSMethodFunc CChar_SetSkillByName;
 JSMethodFunc CChar_Kill;
 JSMethodFunc CChar_Resurrect;
@@ -112,6 +113,7 @@ JSMethodFunc CChar_SpellMoveEffect;
 JSMethodFunc CChar_SpellStaticEffect;
 JSMethodFunc CChar_BreakConcentration;
 JSMethodFunc CChar_FindItemType;
+JSMethodFunc CChar_FindItemSection;
 JSMethodFunc CChar_InitWanderArea;
 JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
@@ -124,6 +126,9 @@ JSMethodFunc CChar_RemoveFriend;
 JSMethodFunc CChar_GetFriendList;
 JSMethodFunc CChar_ClearFriendList;
 JSMethodFunc CChar_GetPetList;
+JSMethodFunc CChar_GetFollowerList;
+JSMethodFunc CChar_AddFollower;
+JSMethodFunc CChar_RemoveFollower;
 JSMethodFunc CChar_HasBeenOwner;
 JSMethodFunc CChar_CalculateControlChance;
 
@@ -153,6 +158,8 @@ JSMethodFunc CBase_SetTag;
 JSMethodFunc CBase_GetTempTag;
 JSMethodFunc CBase_SetTempTag;
 JSMethodFunc CBase_GetNumTags;
+JSMethodFunc CBase_GetTagMap;
+JSMethodFunc CBase_GetTempTagMap;
 JSMethodFunc CBase_InRange;
 JSMethodFunc CBase_StartTimer;
 JSMethodFunc CBase_KillTimers;
@@ -223,6 +230,7 @@ JSMethodFunc CSocket_SetWord;
 JSMethodFunc CSocket_SetDWord;
 JSMethodFunc CSocket_SetString;
 JSMethodFunc CSocket_ReadBytes;
+JSMethodFunc CSocket_OpenContainer;
 JSMethodFunc CSocket_OpenGump;
 JSMethodFunc CSocket_CloseGump;
 JSMethodFunc CSocket_WhoList;
@@ -366,6 +374,8 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "GetTempTag",			CBase_GetTempTag,		1, 0, 0 },
 	{ "SetTempTag",			CBase_SetTempTag,		2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,		0, 0, 0 },
+	{ "GetTagMap",			CBase_GetTagMap,		0, 0, 0 },
+	{ "GetTempTagMap",		CBase_GetTempTagMap,	0, 0, 0 },
 	{ "OpenBank",			CChar_OpenBank,			1, 0, 0 },
 	{ "DirectionTo",		CChar_DirectionTo,		1, 0, 0 },
 	{ "TurnToward",			CChar_TurnToward,		1, 0, 0 },
@@ -406,6 +416,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "Gate",				CChar_Gate,				1, 0, 0 },
 	{ "Recall",				CChar_Recall,			1, 0, 0 },
 	{ "Mark",				CChar_Mark,				1, 0, 0 },
+	{ "SetRandomName",		CChar_SetRandomName,	1, 0, 0 },
 	{ "SetSkillByName",		CChar_SetSkillByName,	2, 0, 0 },
 	{ "Kill",				CChar_Kill,				0, 0, 0 },
 	{ "Resurrect",			CChar_Resurrect,		0, 0, 0 },
@@ -418,6 +429,7 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "SpellStaticEffect",	CChar_SpellStaticEffect,1, 0, 0 },
 	{ "BreakConcentration",	CChar_BreakConcentration,0, 0, 0 },
 	{ "FindItemType",		CChar_FindItemType,		1, 0, 0 },
+	{ "FindItemSection",	CChar_FindItemSection,	1, 0, 0 },
 	{ "InitWanderArea",		CChar_InitWanderArea,	0, 0, 0 },
 	{ "CanSee",				CBase_CanSee,			1, 0, 0 },
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
@@ -435,6 +447,9 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "GetFriendList",		CChar_GetFriendList,		0, 0, 0 },
 	{ "ClearFriendList",	CChar_ClearFriendList,		0, 0, 0 },
 	{ "GetPetList",			CChar_GetPetList,			0, 0, 0 },
+	{ "GetFollowerList",	CChar_GetFollowerList,		0, 0, 0 },
+	{ "AddFollower",		CChar_AddFollower,			1, 0, 0 },
+	{ "RemoveFollower",		CChar_RemoveFollower,		1, 0, 0 },
 	{ "HasBeenOwner",		CChar_HasBeenOwner,			1, 0, 0 },
 	{ "CalculateControlChance",	CChar_CalculateControlChance,	1, 0, 0 },
 	{ nullptr,				nullptr,				0, 0, 0 }
@@ -459,6 +474,8 @@ inline JSFunctionSpec CItem_Methods[] =
 	{ "GetTempTag",			CBase_GetTempTag,			1, 0, 0 },
 	{ "SetTempTag",			CBase_SetTempTag,			2, 0, 0 },
 	{ "GetNumTags",			CBase_GetNumTags,			0, 0, 0 },
+	{ "GetTagMap",			CBase_GetTagMap,			0, 0, 0 },
+	{ "GetTempTagMap",		CBase_GetTempTagMap,		0, 0, 0 },
 	{ "InRange",			CBase_InRange,				2, 0, 0 },
 	{ "StartTimer",			CBase_StartTimer,			2, 0, 0 },
 	{ "OpenPlank",			CItem_OpenPlank,			0, 0, 0 },
@@ -552,6 +569,7 @@ inline JSFunctionSpec CSocket_Methods[] =
 	{ "SetDWord",			CSocket_SetDWord,	2, 0, 0 },
 	{ "SetString",			CSocket_SetString,	2, 0, 0 },
 	{ "ReadBytes",			CSocket_ReadBytes,	1, 0, 0 },
+	{ "OpenContainer",		CSocket_OpenContainer,	1, 0, 0 },
 	{ "OpenGump",			CSocket_OpenGump,	1, 0, 0 },
 	{ "CloseGump",			CSocket_CloseGump,	2, 0, 0 },
 	{ "OpenURL",			CSocket_OpenURL,    1, 0, 0 },

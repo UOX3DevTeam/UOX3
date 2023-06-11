@@ -1,3 +1,133 @@
+11/06/2023 - Xuri
+	Fixed an issue with the Clumsy spell script (js/magic/clumsy.js) where an attempt could be made to send a system message to the non-existent sockets of NPCs casting the spell
+	Fixed an issue where [golem] NPCs were trying to GET crafted_golem instead of craftedgolem (dfndata/npc/clockwork.dfn)
+	Fixed an issue where [golem] and [craftedgolem] NPCs were setup to use colossal blow special ability, but ability script didn't allow for it (js/ai/special/colossal_blow.js)
+	Removed some debug messages from gate opener script (js/item/gate_opener.js)
+	Added some comments to musiclists in regions.dfn, and added a few missing music entries to a few regions (dfndata/regions/regions.dfn)
+	Added function _restorecontext_() {} to another bunch of scripts:
+		js/npc/ai/monster/ethereal_warrior.js
+		js/commands/zerokills.js
+		js/commands/killall.js
+		js/commands/fixcont.js
+		js/commands/delid.js
+		js/commands/cleanup.js
+		js/commands/areacommand.js
+		js/item/guildstone.js
+		js/item/gate_opener.js
+		js/item/bedroll.js
+		js/item/potion.js
+		js/item/kindling.js
+		js/item/doors.js
+		js/item/dungeons/switch_puzzle_covetous.js
+		js/skill/peacemaking.js
+		js/skill/detecthidden.js
+		js/skill/craft/cooking.js
+		js/skill/craft/blacksmithing.js
+		js/skill/cooking/wheat.js
+		js/skill/cooking/flourmill.js
+		js/npc/ai/pack_ai.js
+		js/npc/ai/monster/savage_shaman.js
+		js/npc/ai/monster/orc_chopper.js
+		js/npc/ai/monster/orc_brute.js
+		js/npc/ai/exodus_clockwork.js
+		js/npc/special/life_drain_aura.js
+		js/npc/special/dull_copper_elemental.js
+		js/npc/special/damage_aura.js
+		js/npc/speech/speech_monster.js
+		js/server/misc/dungeon_trap.js
+		js/server/house/playerVendorDeed.js
+		js/server/house/houseCommands.js
+
+09/06/2023 - Xuri
+	Fixed client freeze after login for sub-7.x clients, caused by sending an unsupported animation packet; FORCENEWANIMATIONPACKET will now not be enabled if support for client versions below 7.x is enabled
+	Added function _restorecontext_() {} to a couple more scripts:
+		js/commands/targeting/set.js
+		js/commands/decorate.js
+		js/commands/go.js
+	Fixed an issue with 'xgo command that would prevent it from working properly (js/commands/targeting/x.js)
+	Fixed an issue with teleport function in help gump which prevented pets from teleporting with player (js/server/misc/helpgump.js)
+	Fixed an issue with players in some cases getting toggled out of combat mode visually on other clients even though they were still in combat mode (when target dies, resurrection of ghost in combat mode, etc)
+	Players no longer see a message above their character's head about their own character attacking other characters
+
+05/06/2023 - Xuri
+	Fixed an issue with patrolling-portion of hireling script - was incorrectly using Z coordinate as a parameter of WalkTo - should be maxSteps (js/npc/ai/hireling.js)
+	Added error checking to .WalkTo() and .RunTo() JS Methods that cancels pathfinding attempt if maxSteps provided is zero
+	Swapped around order of arguments in ScriptError() function in cScript.cpp, so the const char used by va_start() is now the last named argument (thanks ldilley!)
+	Fixed a socket error with 'move command alias in js/commands/targeting/tele.js (thanks Dragon Slayer!)
+	Fixed a server crash caused by an attempt to fetch the serial of a nullptr!
+
+02/06/2023 - Xuri
+	Added new protected property for CChar class to track a player's currently controlled pets/followers/summons, and renamed the on tracking all pets owned:
+		GenericList<CChar *> activeFollowers
+		GenericList<CChar *> petsControlled -> petsOwned
+	Added new JS Character Methods to view/manipulate follower list:
+		GetFollowerList()
+		AddFollower( npcObject )
+		RemoveFollower( npcObject )
+	Added new JS Character Property to fetch current count of followers character has:
+		.followerCount
+	Added new GM commands for spitting out information on all pets/followers a player has, in the following format: Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+		'listpets
+		'listfollowers
+	Replaced most instances of GetPetList in code and scripts with GetFollowerList, as that's what we actually care about for the most part
+	Updated code and relevant scripts to make use of AddFollower and RemoveFollower functions where appropriate
+	Modified code for restoring pet loyalty upon feeding pet; by default it now restores 10/100 loyalty per time pet is fed, while if CoreShardEra setting in UOX.INI is set to AoS expansion or higher, loyalty is instantly restored to max when pet is fed (regardless of amount)
+	Updated AreaCharacterFunction and AreaItemFunction JS Functions to still work if third parameter (socket) is provided as null
+	Modified code and relevant scripts that teleport pets/followers along with player to only do so for pets/followers using the "follow" wandermode with player as follow target
+	Updated some instances of code and script that checked for both controlSlot AND maxFollowers requirements - now only checks maxFollowers if controlSlots is set to 0 in ini
+	Added function _restorecontext_() {} to a couple more scripts:
+		js/commands/targeting/tele.js
+	Updated error message shown when attempts are made to add deleted objects to refreshQueue, to include name, ID and serial of the object in question
+
+30/05/2023 - Xuri (0.99.6-RC4)
+	Fixed an issue that prevented onBuyFromVendor() and onBoughtFromVendor() JS Events from triggering when attached to NPC shopkeepers
+	Fixed an issue with help gump that prevented password management section from working as intended (js/server/misc/helpgump.js)
+	Fixed an issue where UOX3 would fail to load pre-HS multi.mul files
+	Added chess board to Misc->Games add menu (dfndata/items/ItemMenu.bulk.dfn)
+	Fixed an issue with 'move (alias for 'telestuff) command that referenced the wrong variable name (js/commands/targeting/tele.js)
+	When a player is teleported via the GM 'wholist menu, any pets within range are now also brought along for the ride
+	Consolidated error-reporting for JS Functions, Object Methods and Object Properties to provide more context (scriptID, filename, line number) when something goes wrong
+	Added some missing shield IDs (0xA649, 0xA64A, 0xA831, 0xA832) to IsShieldType() function
+	MAXRANGE item property previously only worked for ranged weapons; now it works for melee weapons too, and potentially allows melee weapons with combat range longer than 1 tile
+	MAXRANGE item property can now be used to define max combat range for melee weapons
+	Fixed an issue (non-critical) with .PlaceInPack() JS Method that would cause UOX3 to try adding items marked for deletion to refreshQueue and spam console with errors
+	Added missing AI scripts to summoned Blade Spirits and Energy Vortexes (dfndata/npc/magicsummon.dfn)
+	Fixed an issue with weight calculation for hireling backpacks (js/npc/ai/hireling.js)
+	Fixed an issue with the 'fix command, which would in most cases set character's Z to -1 regardless of location, but now adheres to map elevation instead
+	Fixed an issue with Pack AI (js/npc/ai/pack_ai.js) that prevented pack members from attacking target correctly (thanks Dragon Slayer)
+	Fixed an issue with DoesMapBlock JS Function that incorrectly checked for 6 function arguments, when it actually requires 8
+	Fixed an issue with DoesDynamicBlock JS Function that incorrectly checked for 8 function arguments, when it actually requires 9
+	Fixed an issue with runebook script (js/item/runebook.js) that prevented players from being able to use recall charges without having spellbook with spell in inventory
+	Fixed issues with placement of tall items on ground/floor, and with stacking of items in houses
+	Fixed incorrect alias for woodland armor (dfndata/items/gear/armor/other/armor/wood.dfn - thanks Dragon Slayer)
+	Fixed a critical issue with script context sometimes changing while executing a script, because of events in other scripts being triggered. Affected scripts can be safeguarded against this by the addition of a dummy callback function anywhere in the script: function _restorecontext_() {}
+	Fixed an issue with non-animal pets not gaining loyalty when being fed (thanks Dragon Slayer)
+	Added new JS Object Methods for Chars/Items/Multis to fetch list of custom tags associated with object:
+		.GetTagMap()		// Gets list of persistent custom tags associated with object
+		.GetTempTagMap()	// Gets list of temporary custom tags associated with object
+	Added new JS commands ('GETTAGMAP and 'GETTEMPTAGMAP) that spits out details of custom tags associated with targeted object (js/commands/custom/misc-cmd.js)
+	Added new JS command ('USEITEM) that acts as a short-cut for double-clicking on targeted item (js/commands/custom/misc-cmd.js)
+	Updated 'ADD # and 'ADD ITEM # JS commands to support targeting a container directly and adding the new item inside (js/commands/targeting/add.js)
+	Updated axe script to only perform lumberjacking skill-check when there's still wood available in a given area, and to play appropriate animations for Gargoyle players (js/item/axe.js)
+	Updated script for gameboards to make generated pieces newbiefied so they won't appear on ground if board decays (js/item/gameboards.js)
+	Updated script for stablemasters to avoid relying on global variables (js/npc/ai/stablemaster.js)
+	Updated names of items crafted with runic hammers to include the material name of the hammers used to craft them (js/skill/craft/crafting_complete.js)
+	Fixed a small issue with Detect Hidden skill that would return the wrong message if players found anyone hiding nearby (js/skill/detecthidden.js)
+	Fixed an issue that prevented tile overrides in dfndata/maps/tiles.dfn from loading properly
+	Added entries for a couple of walls with missing no-shoot flags to tile overrides in dfndata/maps/tiles.dfn
+	Updated JS Method .SoundEffect() to support optional third argument (creatureSoundNum) to play creature-defined sounds from dfndata/creatures/creatures.dfn. New syntax:
+		.SoundEffect( soundID, allHear[, creatureSoundNum] ) // 0=SOUND_STARTATTACK, 1=SOUND_IDLE, 2=SOUND_ATTACK, 3=SOUND_DEFEND, 4=SOUND_DIE
+	Added new Character JS Methods:
+		.SetRandomName( nameListID ) 	// apply a random name from specified namelist to character
+		.FindItemSection( sectionID ) 	// find item in player's backpack with specified sectionID
+	Added new Socket JS Method:
+		.OpenContainer()	// Opens specified container for socket
+	Fixed status window sex flag not being correctly sent for player characters of a Gargoyle nature (Dragon Slayer)
+	Fixed some issues with static pet scripts (js/npc/pets/*) that would allow players to exceed max number of followers and/or controlslots when buying animals from animal trainer
+	Updated OnBuyFromVendor, onBoughtFromVendor, onSellToVendor and onSoldToVendor JS Events to include a fourth parameter - iAmount - the number of items bought/sold
+	Fixed some issues with stabling and claiming pets from animal trainer NPCs (js/npc/ai/stablemaster.js)
+	Fixed an issue with 'remove and 'rremove commands where they would not reduce petCount/controlSlotsUsed for owners of characters removed (js/commands/targeting/remove.js and js/commands/custom/repeatingcmds.js)
+
 21/05/2023 - Dragon Slayer, Xuri
 	Added initial pass for supporting Trammel PvP ruleset, which can be applied to and/or customized per facet and optionally overridden per region via js/server/misc/facetRulset.js (Dragon Slayer)
 	Misc script cleanup and extension of pvp ruleset script to include target handling for Blade Spirits/Energy Vortex, as well as the Provoke barding skill (Xuri)

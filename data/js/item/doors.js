@@ -470,3 +470,5 @@ function FindKeyInPack( pUser, pPack, iUsed )
 	}
 	return false;
 }
+
+function _restorecontext_() {}

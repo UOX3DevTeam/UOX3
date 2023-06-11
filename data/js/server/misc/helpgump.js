@@ -73,11 +73,6 @@ function DisplayHelpMenu( pUser )
 
 	const serverStatus = GetDictionaryEntry( 17048, sLanguage ); // SERVER STATUS
 
-	const passwordRule1 = GetDictionaryEntry( 17023, sLanguage ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
-	const passwordRule2 = GetDictionaryEntry( 17037, sLanguage ); // Your password must be 5 (min) to 17 (max) characters long.
-	const passwordRule3 = GetDictionaryEntry( 17038, sLanguage ); // Confirm New Password' does not match 'New Password'! Note that passwords are cAsE sEnSiTiVe.
-	const passwordStatus = GetDictionaryEntry( 17039, sLanguage ); // The new password has been saved to your account.
-
 	// Return to previous menu
 	const wrongProblem = GetDictionaryEntry( 17029, sLanguage );
 
@@ -316,6 +311,13 @@ function BugReportGump( pSock )
 function onGumpPress( pSock, pButton, gumpData )
 {
 	var pUser = pSock.currentChar;
+
+	// Password rules
+	const passwordRule1 = GetDictionaryEntry( 17023, pSock.language ); // Passwords may only consist of letters (a-z, A-Z) and digits (0-9).
+	const passwordRule2 = GetDictionaryEntry( 17037, pSock.language ); // Your password must be 5 (min) to 17 (max) characters long.
+	const passwordRule3 = GetDictionaryEntry( 17038, pSock.language ); // Confirm New Password' does not match 'New Password'! Note that passwords are cAsE sEnSiTiVe.
+	const passwordStatus = GetDictionaryEntry( 17039, pSock.language ); // The new password has been saved to your account.
+
 	switch( pButton )
 	{
 		case 0:
@@ -521,11 +523,11 @@ function CanPlayerTeleport( pSock, pUser )
 	}
 
 	// Are any of the user's pets in combat?
-	var petList = pUser.GetPetList();
-	for( let i = 0; i < petList.length; i++ )
+	var followerList = pUser.GetFollowerList();
+	for( let i = 0; i < followerList.length; i++ )
 	{
-		var tempPet = petList[i];
-		if( ValidateObject( tempPet ) && tempPet.atWar )
+		var tempFollower = followerList[i];
+		if( ValidateObject( tempFollower ) && tempFollower.atWar )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 17053, sLanguage )); // You cannot use safe teleport while your followers are engaged in combat!
 			return false;
@@ -718,20 +720,21 @@ function PerformTeleportation( pSock, pUser )
 	// Play a sound effect
 	pSock.SoundEffect( 0x01FC, true );
 
-	// Player is unable to engage in fights for the next 5 minutes after making use of the
+	// Player is unable to engage in fights for the next 10 minutes after making use of the
 	// safe teleport option
 	pUser.setPeace = 10;
 	pUser.AddScriptTrigger( 7000 ); // Attach script that prevents entering combat mode
 
 	// Also teleport the player's pets/followers
-	var petList = pUser.GetPetList();
-	for( let i = 0; i < petList.length; i++ )
+	var followerList = pUser.GetFollowerList();
+	for( let i = 0; i < followerList.length; i++ )
 	{
-		var tempPet = petList[i];
-		if( ValidateObject( tempPet ))
+		var tempFollower = followerList[i];
+		// Only teleport player's pets if they are set to follow and are within range
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pUser, 24 ))
 		{
-			tempPet.Teleport( pUser.x, pUser.y, pUser.z );
-			tempPet.setPeace = 10;
+			tempFollower.Teleport( pUser.x, pUser.y, pUser.z );
+			tempFollower.setPeace = 10;
 		}
 	}
 }

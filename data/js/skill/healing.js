@@ -68,7 +68,7 @@ function onUseChecked( pUser, iUsed )
 		var pLanguage = socket.language;
 		if( iUsed.movable == 2 || iUsed.movable == 3 )
 		{
-			pSock.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
+			socket.SysMessage( GetDictionaryEntry( 774, pLanguage )); // That is locked down and you cannot use it.
 			return;
 		}
 

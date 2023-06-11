@@ -91,6 +91,15 @@
 88=Vaše zaslání chyby bylo oznámeno herním mistrům.
 89=Nebyl k dispozici žádný mistr hry, který by zaznamenal vaše hlášení chyby.
 90=No nejste vy ten vtipálek!
+91=Pravidlo o umístění položky zrušeno právy GM - Z je pro normální hráče příliš vysoké!
+92=Získat mapu trvalých značek pro který předmět?
+93=Počet trvalých značek: %i
+94=Získat mapu dočasných značek pro který objekt?
+95=Počet dočasných značek: %i
+96=Tag: %s | Typ: Typ: %i | Hodnota: %u
+97=Použít kterou položku?
+98=Poplatek %i za zvíře, které chcete ustájit. Stáhnu ho z tvého bankovního účtu.
+99=Účtuji %i za zvíře za %u dní ustájení. Vyberu je z tvého bankovního účtu.
 100=Narušujete své soustředění.
 101=Gildovní kámen pro %s
 102=Kontrola cechu
@@ -1609,7 +1618,7 @@
 1609=Cítíš se mnohem hbitější!
 1610=Smrtící rubáš
 1611=batoh
-1612=korpus %s
+1612=Korpus %s
 // targeting.cpp
 1613=Jaký předmět chcete otrávit?
 // speech.cpp
@@ -2520,6 +2529,15 @@
 2768=Nastavit zbývající čas JS časovače pro který objekt?
 2769=Zabít zadaný JS časovač pro který objekt?
 2770=Zadaný JS časovač byl pro vybraný objekt zničen.
+2771=%s zůstal ve stájích, protože máš příliš mnoho následovníků.
+2772=Konstruování golema vyžaduje, abys byl dráteník na úrovni Journeyman nebo vyšší.
+2773=Počet domácích zvířat: %i
+2774=Počet následovníků: %i
+2775=Získat seznam mazlíčků pro kterou postavu?
+2776=Získat seznam následovníků pro kterou postavu?
+2778=Jméno: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=To by překročilo maximální počet následovníků druhého hráče.
+2780=To by překročilo váš maximální počet sledujících.
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU

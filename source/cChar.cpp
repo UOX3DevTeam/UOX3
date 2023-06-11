@@ -1449,13 +1449,14 @@ void CChar::SetPeace( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Function	-  CChar::RemoveSelfFromOwner()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-  Removes character from its owner's pet list
+//| Purpose		-  Removes character from its owner's pet (and follower) list
 //o------------------------------------------------------------------------------------------------o
 void CChar::RemoveSelfFromOwner( void )
 {
 	CChar *oldOwner = GetOwnerObj();
 	if( ValidateObject( oldOwner ))
 	{
+		oldOwner->GetFollowerList()->Remove( this );
 		oldOwner->GetPetList()->Remove( this );
 		oldOwner->UpdateRegion();
 	}
@@ -1465,7 +1466,7 @@ void CChar::RemoveSelfFromOwner( void )
 //o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::AddSelfToOwner()
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Adds character to its new owner's pet list
+//| Purpose		-	Adds character to its new owner's pet (and follower) list
 //o------------------------------------------------------------------------------------------------o
 void CChar::AddSelfToOwner( void )
 {
@@ -1478,6 +1479,7 @@ void CChar::AddSelfToOwner( void )
 	else
 	{
 		newOwner->GetPetList()->Add( this );
+		newOwner->AddFollower( this );
 		newOwner->UpdateRegion();
 		if( !CanBeHired() )
 		{
@@ -3302,11 +3304,47 @@ void CChar::BreakConcentration( CSocket *sock )
 //| Function	-	CChar::GetPetList()
 //| Date		-	13 March 2001
 //o------------------------------------------------------------------------------------------------o
-//| Purpose		-	Returns the list of pets the character owns
+//| Purpose		-	Returns the list of ALL pets the character owns, regardless of where they might be
 //o------------------------------------------------------------------------------------------------o
 GenericList<CChar *> *CChar::GetPetList( void )
 {
-	return &petsControlled;
+	return &petsOwned;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetFollowerList()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Returns the list of active followers the character has
+//o------------------------------------------------------------------------------------------------o
+GenericList<CChar *> *CChar::GetFollowerList( void )
+{
+	return &activeFollowers;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::AddFollower()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Adds an owned NPC to character's list of followers
+//o------------------------------------------------------------------------------------------------o
+auto CChar::AddFollower( CChar *npcToAdd ) -> bool
+{
+	// Only add NPC as follower if they are not stabled
+	if( ValidateObject( npcToAdd ) && !npcToAdd->GetStabled() )
+	{
+		return GetFollowerList()->Add( npcToAdd );
+	}
+
+	return false;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::RemoveFollower()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Removes a follower from character's list of followers
+//o------------------------------------------------------------------------------------------------o
+auto CChar::RemoveFollower( CChar *followerToRemove ) -> bool
+{
+	return GetFollowerList()->Remove( followerToRemove );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4496,6 +4534,9 @@ bool CChar::LoadRemnants( void )
 	}
 
 	const UI16 acct = GetAccount().wAccountIndex;
+
+	// Max body/anim ID supported in default client is 2048 (or 0x800),
+	// though custom clients like CUO can be modified to bypass this limit
 	if( GetId() > 0x999 )
 	{
 		if( acct == AB_INVALID_ID )
@@ -4886,35 +4927,42 @@ void CChar::Cleanup( void )
 				tItem->Delete();
 			}
 		}
+
+		// Clear up some stuff for our target in combat
 		CChar *tempChar = nullptr;
 		tempChar = GetTarg();
 		if( ValidateObject( tempChar ))
 		{
+			// Clear char as target of target, if set
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
 				tempChar->SetAttacker( nullptr );
 				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
 					tempChar->ToggleCombat();
 				}
 			}
 			SetTarg( nullptr );
 		}
+
+		// Do the same for our attacker (who could be a different character than our target)
 		tempChar = GetAttacker();
 		if( ValidateObject( tempChar ))
 		{
+			// Again, clear this char as attacker of our attacker, if set
 			if( tempChar->GetAttacker() == this )
 			{
 				tempChar->SetAttacker( nullptr );
 			}
 
+			// Also clear attacker's target, if it matches this char
 			if( tempChar->GetTarg() == this )
 			{
 				tempChar->SetTarg( nullptr );
 				tempChar->SetAttackFirst( false );
-				if( tempChar->IsAtWar() )
+				if( tempChar->IsAtWar() && tempChar->IsNpc() )
 				{
 					tempChar->ToggleCombat();
 				}
@@ -4982,7 +5030,7 @@ void CChar::Cleanup( void )
 
 		if( IsGuarded() )
 		{
-			CChar *petGuard = Npcs->GetGuardingPet( this, this );
+			CChar *petGuard = Npcs->GetGuardingFollower( this, this );
 			if( ValidateObject( petGuard ))
 			{
 				petGuard->SetGuarding( nullptr );
@@ -4991,7 +5039,16 @@ void CChar::Cleanup( void )
 		}
 		Npcs->StopPetGuarding( this );
 
-		for( tempChar = petsControlled.First(); !petsControlled.Finished(); tempChar = petsControlled.Next() )
+		// Clear out char's followers
+		for( tempChar = activeFollowers.First(); !activeFollowers.Finished(); tempChar = activeFollowers.Next() )
+		{
+			if( ValidateObject( tempChar ) )
+			{
+				RemoveFollower( tempChar );
+			}
+		}
+
+		for( tempChar = petsOwned.First(); !petsOwned.Finished(); tempChar = petsOwned.Next() )
 		{
 			if( ValidateObject( tempChar ))
 			{
@@ -5004,6 +5061,7 @@ void CChar::Cleanup( void )
 		if( ValidateObject( oldOwner ))
 		{
 			oldOwner->SetControlSlotsUsed( std::max( 0, oldOwner->GetControlSlotsUsed() - GetControlSlots() ));
+			oldOwner->GetFollowerList()->Remove( this );
 		}
 
 		RemoveSelfFromOwner();	// Let's remove it from our owner (if any)
@@ -5451,21 +5509,6 @@ void CChar::SetStabled( bool newValue )
 	{
 		mNPC->boolFlags.set( BIT_STABLED, newValue );
 		UpdateRegion();
-
-		CChar *oldOwner = GetOwnerObj();
-		if( ValidateObject( oldOwner ))
-		{
-			if( newValue == true )
-			{
-				oldOwner->GetPetList()->Remove( this );
-				oldOwner->UpdateRegion();
-			}
-			else if( newValue == false )
-			{
-				oldOwner->GetPetList()->Add( this );
-				oldOwner->UpdateRegion();
-			}
-		}
 	}
 }
 
@@ -8218,7 +8261,7 @@ SI16 CChar::GetKarma( void ) const
 {
 	if( GetOwnerObj() != nullptr && IsTamed() )
 	{
-		if( ValidateObject( GetOwnerObj() ))
+		if( ValidateObject( GetOwnerObj() ) && GetOwnerObj() != this )
 		{
 			// Pets inherit the karma of their owner
 			return GetOwnerObj()->GetKarma();

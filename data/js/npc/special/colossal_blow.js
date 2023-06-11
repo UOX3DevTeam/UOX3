@@ -66,13 +66,15 @@ function GetStunProps( pAttacker )
 	var stunProps;
 
 	// If multiple NPCs share the same ID, check for extra stuff like skin color, name, etc.
-	switch( pAttacker.id )
+	switch( pAttacker.sectionID )
 	{
 		// Iron Golem?
-		case 0x02ff: // Betrayer
-			stunProps = { hitChance:20, stunTime:5, manaCost:0, cooldown:5000, sysMsgHue:0x096a, dictID:9124, hitFX:0x36fe, fxLength:0x0f, fxHue:0, fxRender:1, explode:false, sfx:0x236, minDmg:20, maxDmg:60, dmgType:1 };
-			break;
+		case "golem": // Golem
+		case "craftedgolem": // Crafted Golem
+		case "betrayer": // Betrayer
 		default:
+			// If NPCs listed above need special versions of it, remove fallthrough and give them a custom stunProps line!
+			stunProps = { hitChance:20, stunTime:5, manaCost:0, cooldown:5000, sysMsgHue:0x096a, dictID:9124, hitFX:0x36fe, fxLength:0x0f, fxHue:0, fxRender:1, explode:false, sfx:0x236, minDmg:20, maxDmg:60, dmgType:1 };
 			break;
 	}
 
@@ -97,3 +99,5 @@ function onTimer( timerObj, timerID )
 		timerObj.SetTempTag( "colossalBlowCD", null );
 	}
 }
+
+function _restorecontext_() {}

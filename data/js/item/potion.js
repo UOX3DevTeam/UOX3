@@ -525,3 +525,5 @@ function onTooltip( iPotion, pSocket )
 
 	return tooltipText;
 }
+
+function _restorecontext_() {}

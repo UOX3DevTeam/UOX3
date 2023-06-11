@@ -139,6 +139,26 @@ size_t CBaseObject::GetNumTags( void ) const
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetTagMap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return object's tag map
+//o------------------------------------------------------------------------------------------------o
+auto CBaseObject::GetTagMap() const -> const TAGMAP2
+{
+	return tags;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CBaseObject::GetTempTagMap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Return object's temporary tag map
+//o------------------------------------------------------------------------------------------------o
+auto CBaseObject::GetTempTagMap() const -> const TAGMAP2
+{
+	return tempTags;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::GetTag()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Fetch custom tag with specified name from object's tag map
@@ -2473,7 +2493,7 @@ void CBaseObject::Dirty( [[maybe_unused]] UpdateTypes updateType )
 {
 	if( IsDeleted() )
 	{
-		Console.Error( "Attempt was made to add deleted item to refreshQueue!" );
+		Console.Error( oldstrutil::format( "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial() ));
 	}
 	else if( IsPostLoaded() )
 	{

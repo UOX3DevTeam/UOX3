@@ -91,6 +91,15 @@
 88=I Game Master disponibili sono stati informati della tua segnalazione di bug.
 89=Non c'era nessun Game Master disponibile per annotare la tua segnalazione di bug.
 90=Non sei tu quello divertente!
+91=Regola di posizionamento degli oggetti annullata dai privilegi del GM - Z troppo alto per i giocatori normali!
+92=Ricevere la mappa dei tag persistenti per quale oggetto?
+93=Numero di tag persistenti: %i
+94=Ricevi la mappa dei tag temporanei per quale oggetto?
+95=Numero di tag temporanei: %i
+96=Tag: %s | Tipo: %i | Valore: %u
+97=Usare quale articolo?
+98=Pago %i per ogni animale che vuoi stallare. La preleverò dal tuo conto corrente.
+99=Ti faccio pagare %i per animale per %u giorni di stabilità. Lo preleverò dal tuo conto corrente.
 100=Si rompe la concentrazione.
 101=Una pietra di gilda per %s
 102=Controllo gilda
@@ -1609,7 +1618,7 @@
 1609=Ti senti molto più agile!
 1610=Un sudario di morte
 1611=uno zaino
-1612=corpo di %s
+1612=Corpo di %s
 // targeting.cpp
 1613=Quale oggetto vuoi avvelenare?
 // speech.cpp
@@ -2520,6 +2529,15 @@
 2768=Impostare il tempo rimanente del timer JS per quale oggetto?
 2769=Uccidere il timer JS specificato per quale oggetto?
 2770=Il timer JS specificato è stato ucciso per l'oggetto selezionato.
+2771=%s è rimasto nelle stalle perché ha troppi seguaci.
+2772=Per costruire un golem è necessario essere uno Stagnino Journeyman o superiore.
+2773=Numero di animali domestici: %i
+2774=Numero di seguaci: %i
+2775=Elenco degli animali domestici per quale personaggio?
+2776=Elenco dei seguaci per quale personaggio?
+2778=Nome: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
+2779=Questo supererebbe il numero massimo di follower dell'altro giocatore.
+2780=Questo supererebbe il tuo numero massimo di follower.
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI

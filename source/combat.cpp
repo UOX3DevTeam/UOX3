@@ -122,6 +122,10 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 			// If target is not already at war/in combat, make sure to disable their passive mode
 			if( !cTarget->IsAtWar() )
 			{
+				if( cTarget->IsNpc() )
+				{
+					cTarget->ToggleCombat();
+				}
 				cTarget->SetPassive( false );
 			}
 		}
@@ -418,7 +422,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			i->TextMessage( nullptr, 1797, TALK, false ); // Woe is me! My escort has betrayed me!
 		}
 
-		// flag them FIRST so that anything attacking them as a result of this is not flagged.
+		// flag player FIRST so that anything attacking them as a result of this is not flagged.
 		if( WillResultInCriminal( ourChar, i )) // REPSYS
 		{
 			MakeCriminal( ourChar );
@@ -441,7 +445,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 		{
 			for( auto &tSock : FindNearbyPlayers( ourChar ))
 			{
-				if( tSock )
+				if( tSock && tSock != ourChar->GetSocket() )
 				{
 					// Valid socket found
 					CChar *witness = tSock->CurrcharObj();
@@ -2713,9 +2717,11 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 		}
 	}
 
-	if( !checkDist && getFightSkill == ARCHERY )
+	// Allow longer range in combat based on weapon's maxRange
+	if( !checkDist && ValidateObject( mWeapon ) && mWeapon->GetMaxRange() > 1 )
 	{
-		checkDist = LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false );
+		// Check line of sight and Z differences if weapon's max range is higher than 1 tile
+		checkDist = ( ourDist <= mWeapon->GetMaxRange() && abs( mChar.GetZ() - ourTarg->GetZ() ) <= 15 && LineOfSight( mSock, &mChar, ourTarg->GetX(), ourTarg->GetY(), ( ourTarg->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ));
 	}
 
 	if( checkDist )
@@ -3435,7 +3441,7 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 		ourTarg->SetTarg( nullptr );
 		ourTarg->SetAttacker( nullptr );
 		ourTarg->SetAttackFirst( false );
-		if( ourTarg->IsAtWar() )
+		if( ourTarg->IsAtWar() && ourTarg->IsNpc() )
 		{
 			ourTarg->ToggleCombat();
 		}
@@ -3530,7 +3536,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				if( CharInRange( &mChar, ourTarg ))
 				{
 					CItem *equippedWeapon = GetWeapon( &mChar );
-					if( GetCombatSkill( equippedWeapon ) == ARCHERY || GetCombatSkill( equippedWeapon ) == THROWING )
+					if( ValidateObject( equippedWeapon ) && equippedWeapon->GetMaxRange() > 1 )
 					{
 						if( GetDist( &mChar, ourTarg ) > equippedWeapon->GetMaxRange() )
 						{
@@ -3572,7 +3578,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 			mChar.SetTarg( nullptr );
 			mChar.SetAttacker( nullptr );
 			mChar.SetAttackFirst( false );
-			if( mChar.IsAtWar() )
+			if( mChar.IsAtWar() && mChar.IsNpc() )
 			{
 				mChar.ToggleCombat();
 			}
@@ -3699,7 +3705,7 @@ void CHandleCombat::PetGuardAttack( CChar *mChar, CChar *owner, CBaseObject *gua
 	if( !ValidateObject( petGuard ))
 	{
 		// No pet guard was passed into function, so let's look for one ourself
-		petGuard = Npcs->GetGuardingPet( owner, guarded );
+		petGuard = Npcs->GetGuardingFollower( owner, guarded );
 	}
 
 	if( ValidateObject( petGuard ) && ObjInRange( mChar, petGuard, cwmWorldState->ServerData()->CombatMaxRange() ))

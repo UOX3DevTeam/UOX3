@@ -145,3 +145,5 @@ function ResetAllSwitches( srcItem, trgItem )
 		trgItem.morey = 0;
 	}
 }
+
+function _restorecontext_() {}

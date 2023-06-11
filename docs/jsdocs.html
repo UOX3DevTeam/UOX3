@@ -55,6 +55,14 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>May 4th, 2023</h4>
+						<ul>
+							<li>Added details for JS Event: onThirstChange</li>
+						</ul>
+						<h4>March 3rd, 2023</h4>
+						<ul>
+							<li>Added details for new JS Event: onMultiLogout</li>
+						</ul>
 						<h4>November 24th, 2022</h4>
 						<ul>
 							<li>Added details for new JS Event: onCarveCorpse</li>
@@ -484,7 +492,7 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>Runs on item after player verifies purchase, but before purchase has gone through</p>
+							<p>Runs on item and/or NPC vendor after player verifies purchase, but before purchase has gone through</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -521,7 +529,7 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>Runs on item after purchase has gone through and item has reached player's backpack.</p>
+							<p>Runs on item and/or NPC vendor after purchase has gone through and item has reached player's backpack.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -2497,6 +2505,49 @@ function onIterate( charCheck )
 			</li>
 
 			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnMultiLogout" id="eventOnMultiLogout"><span>onMultiLogout</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onMultiLogout( iMulti, cPlayer )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To validate/allow custom behaviour for players attempting to safely log out while inside a multi</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When cPlayer logs out while inside iMulti, event triggers in iMulti's script</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> or nothing to disallow player's attempt to safely log out from inside multi</li>
+								<li><strong>return true</strong> to allow player's attempt to safely log out from inside multi. Prevents same event from running in other scripts</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>When a safe logout attempt (by just logging out normally while inside multi) is allowed, script informs code that a safe/instant logout can be attempted. Code then performs other hard-coded checks before allowing this (checking for criminal status, aggressor status, etc). When safe logout attempt is disallowed, server rejects the instant log out, and character remains behind in the world for the normal logout timer, and additionally gets booted out of the multi they're in.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onMultiLogout( iMulti, cPlayer )
+{
+	if( ValidateObject( iMulti.owner ) && iMulti.owner == cPlayer )
+	{
+		// Owner of house! Allow safe logout
+		return true;
+	}
+	return false;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
 				<a class="cd-faq__trigger" href="#eventOnNameRequest" id="eventOnNameRequest"><span>onNameRequest</span></a>
 				<div class="cd-faq__content">
 					<div class="text-component">
@@ -2669,7 +2720,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pGrabber picks up iPickedUp, the event triggers in iPickedUp's script</p>
+							<p>When pGrabber picks up iPickedUp, the event triggers in iPickedUp's script, then in pGrabber's script</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -2983,7 +3034,7 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>Event triggers for iSold's script after player verifies sale, but before sale has actually gone through</p>
+							<p>Event triggers for iSold's (and/or Vendor's) script after player verifies sale, but before sale has actually gone through</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -3020,7 +3071,7 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>Event triggers for iSold's script after the item has already been sold and has reached the NPC vendor's "bought items"-backpack</p>
+							<p>Event triggers for iSold's (and/or Vendor's) script after the item has already been sold and has reached the NPC vendor's "bought items"-backpack</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -3284,7 +3335,7 @@ function onSoldToVendor( pSock, Vendor, iSold )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>After pSnooped snoops into pSnooping's pack</p>
+							<p>After pSnooping snoops into pSnooped's pack</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -3999,6 +4050,49 @@ function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
 <pre><code class="language-javascript">function onTempChange( myObject, temperature )
 {
 	myObject.TextMessage( "I detected a temperature change! The temperature is now " + temperature + " degrees." );
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnThirstChange" id="eventOnThirstChange"><span>onThirstChange</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onThirstChange( pChanging, newStatus )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow customization of behaviour when a character's thirst level changes. Could be used for changing AI of monsters, display custom messages to player, etc.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When a player's thirst level changes, event triggers in pChanging's script</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override hard-code and handle thirst in script</li>
+								<li><strong>return true</strong> to proceed with hard-code, and/or let other scripts with event handle thirst change</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>If overridden, the normal thirst messages are not displayed.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">function onThirstChange( pChanging, newStatus )
+{
+	pChanging.TextMessage( "ooooo, I feel more thirsty" );
+	if( newStatus == 0 )
+	{
+		TextMessage( pChanging, "I'm melting, I'm melting!" );
+	}
+	return true;
 }</code></pre></p>
 						</div>
 					</div>
@@ -6020,6 +6114,34 @@ var distance2 = DistanceBetween( pUser, iUsed, true );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_function_misc_DoesEventExist"/>
+							<label for="spoiler_function_misc_DoesEventExist">DoesEventExist <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>bool DoesEventExist( scriptID, eventToCheck );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Check for existence of a named JS event/function in another script</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Parameters: scriptID = ID of the script to check<br>
+									eventToCheck = name of event/function to look for</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if a custom function exists in a specific script (0), and trigger it with TriggerEvent() if it does:
+if( DoesEventExist( 0, "MyCustomFunction" ))
+{
+	TriggerEvent( 0, "MyCustomFunction", [additional parameters] );
+}</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_function_misc_GetAccountCount"/>
 							<label for="spoiler_function_misc_GetAccountCount">GetAccountCount <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -7921,17 +8043,18 @@ value = mItem.Resist( 1 );</code></pre>
 							<div class="spoiler">
 								<div class="settingsDiv">
 									<p><span class="hl">Prototype</span></p>
-									<p><em>void SoundEffect( soundID, bAllHear );</em></p>
+									<p><em>void SoundEffect( soundID, bAllHear[, creatureSoundNum] );</em></p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Plays a sound originating from Character or Item.</p>
+									<p>Plays a sound originating from Character or Item. Can optionally play monster sounds associated with Character.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
 									<ul>
 										<li>SoundID is the ID of the sound to play. If bAllHear is true, then everyone nearby hears it. If it's false, then only the Character hears it.</li>
 										<li>Beware that if you use sound IDs from UOFiddler, the sound IDs you see there are offset by +1 from what the client will play when you use those sound IDs. Subtract -1 from the sound ID when using it with UOX3 to get the correct sound!</li>
+										<li>If the optional parameter creatureSoundNum is included, and the object is a Character, UOX3 will look up the associated creature sound from creatures.dfn (0=SOUND_STARTATTACK, 1=SOUND_IDLE, 2=SOUND_ATTACK, 3=SOUND_DEFEND, 4=SOUND_DIE) for the character and play that instead of soundID</li>
 									</ul>
 								</div>
 								<div class="settingsDiv">
@@ -7940,7 +8063,11 @@ value = mItem.Resist( 1 );</code></pre>
 myChar.SoundEffect( 568, false );
 
 // Play sound effect originating from myItem, which all other nearby characters can also hear
-myItem.SoundEffect( 568, true );</code></pre>
+myItem.SoundEffect( 568, true );
+
+// Play SOUND_DIE sound from creatures.dfn for a character
+myChar.SoundEffect( 0, true, 4 );
+</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10302,7 +10429,7 @@ var untilT = mFile.ReadUntil( "t" );</code></pre>
 									<p>Accepts specified character as a recruit in the guild</p>
 								</div>
 								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
+									<p><span class="hl">Notes</span></p>
 									<p>If no character parameter is provided, UOX3 will attempt to accept into the guild... the character the Guild object was retrieved from? Not clear.</p>
 								</div>
 								<div class="settingsDiv">
@@ -10312,6 +10439,30 @@ var myGuild = myChar.guild;
 
 // Accept a specified recruit pChar into the guild
 myGuild.AcceptRecruit( pChar );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_guild_IsAtPeace"/>
+							<label for="spoiler_method_guild_IsAtPeace">IsAtPeace <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void IsAtPeace();</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Check if guild is at peace, i.e. not at war with any other guilds</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">// Check if guild player is in is at peace
+var myGuild = myChar.guild;
+if( myGuild.IsAtPeace() )
+{
+	myChar.TextMessage( "My guild is not at war with anyone! Peace be praised! ");
+}</code></pre>
 								</div>
 							</div>
 						</div>
@@ -11272,19 +11423,20 @@ else
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Creates a duplicate of the item, and optionally places it in a character's backpack</p>
+									<p>Creates a duplicate of the item, and optionally changes its container to a player character's backpack, via their socket</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Notes</span></p>
-									<p>If socket parameter is provided, item is placed in associated character's backpack. If no parameter is provided, item is duped, but it's up to the script to place it in the world.</p>
+									<p>If socket parameter is provided, item is placed in associated player character's backpack. If no parameter is provided, item is duped, using same container as the original item. It's up to the script what happens to the duped item after that.</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">// Dupe myItem and place is it the backpack of character associated with mySock
+									<pre><code class="language-javascript">// Dupe myItem and place is it the backpack of player character associated with mySock
 myItem.Dupe( mySock );
 
 // Dupe myItem and place it somewhere in the world
-var newItem = myItem.Dupe( mySock );
+var newItem = myItem.Dupe( null );
+newItem.container = null;
 newItem.Teleport( 1000, 1000, 0 );</code></pre>
 								</div>
 							</div>
@@ -12985,7 +13137,6 @@ Timer.SOCK_TRAFFICWARDEN 	// Time until next time traffic warden resets</code></
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 										<pre><code class="language-javascript">// Get timestamp for when player can next use an object, and spit out remaining time in milliseconds
-Get a timestamp for when criminal flag expires, and spit out milliseconds left
 var objectDelayTimestamp = myChar.GetTimer( Timer.SOCK_OBJDELAY );
 myChar.TextMessage(( myTarget.GetTimer( Timer.SOCK_OBJDELAY ) - GetCurrentClock() ).toString() );
 
@@ -13029,6 +13180,25 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<p><strong>See FirstTriggerWord() Method</strong></p>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_socket_openContainer"/>
+							<label for="spoiler_method_socket_openContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void OpenContainer( iCont )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Opens the specified container (iCont) for the specified socket</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -16387,7 +16557,7 @@ function findNearbyItems( pUser, trgItem, pSock )
 	<div class="cd-faq__overlay" aria-hidden="true"></div>
 </section> <!-- cd-faq -->
 <div style="text-align: center; margin-top: 0; margin-bottom: 20px">
-	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022</small></p>
+	<p><small>UOX3 JSE Docs by Geir Ove Alnes @ Copyright 2022-2023</small></p>
 	<p><small>Built upon <a href="https://codyhouse.co/demo/faq-template" rel="noopener" target="_blank" title="FAQ Template framework by CodyHouse">FAQ Template framwork provided by CodyHouse</a>.</small></p>
 </div>
 <script defer>
@@ -16399,8 +16569,8 @@ document.getElementById("filterInputProperties").addEventListener("keyup", filte
 
 function filterInputHandler( e ) {
 	var filterInput = this.textContent.toUpperCase();
-	var parentDivID = e.path[0].closest('ul').id;
-	var parentDiv = e.path[0].closest('ul');
+	var parentDivID = e.composedPath()[0].closest('ul').id;
+	var parentDiv = e.composedPath()[0].closest('ul');
 	var filterElements = null;
 
 	if( parentDivID == "events" )

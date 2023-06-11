@@ -107,14 +107,18 @@ function onCallback1( socket, ourObj )
 		var worldNum = socket.currentChar.worldnumber;
 		var instanceID = socket.currentChar.instanceid;
 
-		var splitString = socket.xText.split( " " );
-		if( splitString[0] )
+		var splitString = socket.xText;
+		if( splitString != null )
 		{
-			worldNum = parseInt( splitString[0] );
-		}
-		if( splitString[1] )
-		{
-			instanceID = parseInt( splitString[1] );
+			splitString = splitString.split( " " );
+			if( splitString[0] )
+			{
+				worldNum = parseInt( splitString[0] );
+			}
+			if( splitString[1] )
+			{
+				instanceID = parseInt( splitString[1] );
+			}
 		}
 
 		ourObj.SetLocation( socket.clickX, socket.clickY, socket.clickZ, worldNum, instanceID );

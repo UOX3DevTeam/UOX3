@@ -41,6 +41,14 @@ function onCallback0( socket, ourObj )
 				if( ourObj.npc )
 				{
 					socket.SysMessage( GetDictionaryEntry( 1015, socket.language )); // Removing character.
+					if( ValidateObject( ourObj.owner ))
+					{
+						// Remove pet as a follower of the player
+						ourObj.owner.RemoveFollower( ourObj );
+
+						// Reduce controlSlotsUsed for owner
+						ourObj.owner.controlSlotsUsed -= ourObj.controlSlots;
+					}
 					ourObj.Delete();
 				}
 			}
@@ -185,3 +193,5 @@ function onCallback2( socket, ourObj )
 		}
 	}
 }
+
+function _restorecontext_() {}

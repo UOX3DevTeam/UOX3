@@ -500,7 +500,7 @@ auto MultiCollection::ProcessData( bool isHS, int index, std::vector<std::uint8_
 
 		multi.items.push_back( item );
 	}
-	_multis[index] = multi;
+	_multis.insert_or_assign( static_cast<int>( index ), std::move( multi ));
 }
 
 auto MultiCollection::Size() const -> size_t

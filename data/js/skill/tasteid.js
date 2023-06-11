@@ -223,3 +223,5 @@ function TasteItem( pUser, itemToTaste, showInfo )
 		pSock.SysMessage( itemToTaste.name2 );
 	}
 }
+
+function _restorecontext_() {}

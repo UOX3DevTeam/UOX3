@@ -1194,7 +1194,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mChar.SetRegen( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STAMINAREGEN ), 1 );
 		}
 
-		// CUSTOM START - SPUD:MANA REGENERATION:Rewrite of passive and active meditation code
+		// MANA REGENERATION:Rewrite of passive and active meditation code
 		if( mChar.GetRegen( 2 ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
 			if( mChar.GetMana() < maxMana )
@@ -1242,7 +1242,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			}
 		}
 	}
-	// CUSTOM END
+
 	if( mChar.GetVisible() == VT_INVISIBLE && ( mChar.GetTimer( tCHAR_INVIS ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
 	{
 		mChar.ExposeToView();
@@ -2455,8 +2455,20 @@ auto CWorldMain::CheckAutoTimers() -> void
 						{
 							actbTemp.dwInGame = INVALIDSERIAL;
 							charCheck->SetTimer( tPC_LOGOUT, 0 );
+
+							// End combat, clear targets
+							charCheck->SetAttacker( nullptr );
+							charCheck->SetWar( false );
+							charCheck->SetTarg( nullptr );
+
 							charCheck->Update();
 							charCheck->Teleport();
+
+							// Announce that player has logged out (if enabled)
+							if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
+							{
+								SysBroadcast( oldstrutil::format(1024, Dictionary->GetEntry( 752 ), charCheck->GetName().c_str() )); // %s has left the realm.
+							}
 						}
 					}
 				}
@@ -3833,17 +3845,17 @@ auto SocketMapChange( CSocket *sock, CChar *charMoving, CItem *gate ) -> void
 	if( !ValidateObject( toMove ))
 		return;
 
-	// Teleport pets to new location too!
-	auto myPets = toMove->GetPetList();
-	for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+	// Teleport followers to new location too!
+	auto myFollowers = toMove->GetFollowerList();
+	for( CChar *myFollower = myFollowers->First(); !myFollowers->Finished(); myFollower = myFollowers->Next() )
 	{
-		if( ValidateObject( myPet ))
+		if( ValidateObject( myFollower ))
 		{
-			if( !myPet->GetMounted() && myPet->IsNpc() && myPet->GetOwnerObj() == toMove )
+			if( !myFollower->GetMounted() && myFollower->GetOwnerObj() == toMove )
 			{
-				if( ObjInOldRange( toMove, myPet, DIST_CMDRANGE ))
+				if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( toMove, myFollower, DIST_CMDRANGE ))
 				{
-					myPet->SetLocation( static_cast<SI16>( gate->GetTempVar( CITV_MOREX )), 
+					myFollower->SetLocation( static_cast<SI16>( gate->GetTempVar( CITV_MOREX )), 
 										static_cast<SI16>( gate->GetTempVar( CITV_MOREY )), 
 										static_cast<SI08>( gate->GetTempVar( CITV_MOREZ )), tWorldNum, tInstanceId );
 				}

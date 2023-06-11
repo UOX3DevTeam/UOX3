@@ -91,6 +91,15 @@
 88=Los Game Masters disponibles han sido notificados de su envío de errores.
 89=No había ningún Game Master disponible para anotar su informe de error.
 90=¡Bueno, no eres tú el gracioso!
+91=Regla de colocación de objetos anulada por privilegios del GM - ¡Z demasiado alta para jugadores normales!
+92=¿Obtener mapa de etiquetas persistentes para qué objeto?
+93=Número de etiquetas persistentes: %i
+94=¿Obtener mapa de etiquetas temporales para qué objeto?
+95=Número de etiquetas temporales: %i
+96=Etiqueta: %s | Tipo: %i | Valor: %u
+97=¿Qué artículo utilizar?
+98=Cargo %i por mascota que quieras estabular. Lo retiraré de tu cuenta bancaria.
+99=Cobro %i por mascota por %u días de tiempo estable. Lo retiraré de su cuenta bancaria.
 100=Se rompe la concentración.
 101=Una piedra de gremio para %s
 102=Control del gremio
@@ -1609,7 +1618,7 @@
 1609=¡Te sientes mucho más ágil!
 1610=Un sudario de muerte
 1611=una mochila
-1612=corpus de %s
+1612=Corpus de %s
 // targeting.cpp
 1613=¿Qué artículo quiere envenenar?
 // speech.cpp
@@ -2520,6 +2529,15 @@
 2768=¿Qué tiempo restante del temporizador JS para qué objeto?
 2769=¿Matar el temporizador JS especificado para qué objeto?
 2770=El temporizador JS especificado ha sido eliminado para el objeto seleccionado.
+2771=%s quedó en los establos porque tienes demasiados seguidores.
+2772=Debes ser Journeyman o Tinker superior para construir un golem.
+2773=Número de mascotas: %i
+2774=Número de seguidores: %i
+2775=¿Qué personaje tiene mascota?
+2776=¿Qué personaje tiene lista de seguidores?
+2778=Nombre: %s | ID: %i | Serie: %i | x: %i | y: %i | z: %i | mundo: %i | instanceID: %i
+2779=Eso excedería el número máximo de seguidores del otro jugador.
+2780=Eso excedería tu número máximo de seguidores.
 // [2800-2999] Escritura de la casa
 2800=Propietario de la casa:
 2801=CO-OWNERS

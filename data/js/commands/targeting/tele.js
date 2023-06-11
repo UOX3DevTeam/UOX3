@@ -11,7 +11,7 @@ function CommandRegistration()
 // Alias of TELESTUFF
 function command_MOVE( socket, cmdString )
 {
-	command_TELESTUFF( pSocket, cmdString );
+	command_TELESTUFF( socket, cmdString );
 }
 
 function command_TELESTUFF( socket, cmdString )
@@ -127,3 +127,5 @@ function doTele( toTele, targX, targY, targZ )
 	toTele.SetLocation( targX, targY, targZ );
 	toTele.StaticEffect( 0x372A, 0x09, 0x06 );
 }
+
+function _restorecontext_() {}

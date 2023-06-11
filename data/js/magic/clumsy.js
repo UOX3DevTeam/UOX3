@@ -283,7 +283,10 @@ function CheckReagents( mChar, mSpell )
 	}
 	if( failedCheck == 1 )
 	{
-		mChar.SysMessage( "You do not have enough reagents to cast that spell." );
+		if( mChar.socket != null )
+		{
+			mChar.socket.SysMessage( GetDictionaryEntry( 702, mChar.socket.language )); // You do not have enough reagents to cast that spell.
+		}
 		return false;
 	}
 	else
@@ -446,3 +449,5 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 
 	DoTempEffect( 0, sourceChar, ourTarg, 3, Math.round( mChar.skills.magery / 100 ), 0, 0 );
 }
+
+function _restorecontext_() {}

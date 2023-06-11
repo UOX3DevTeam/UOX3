@@ -1,15 +1,15 @@
 // Fire Breath
 const fireBreathDelay = 5;
-const maxRange = 12;
-const manaCost = 30;
+const fireBreathMaxRange = 12;
+const fireBreathManaCost = 30;
 
 function onAISliver( mNPC )
 {
 	var nextFireBallTime = parseInt( mNPC.GetTag( "nextFB" ));
-	if( mNPC.target != null && ( nextFireBallTime < GetCurrentClock() || nextFireBallTime > GetCurrentClock() + ( fireBreathDelay * 2000 )) && mNPC.InRange( mNPC.target, maxRange ))
+	if( mNPC.target != null && ( nextFireBallTime < GetCurrentClock() || nextFireBallTime > GetCurrentClock() + ( fireBreathDelay * 2000 )) && mNPC.InRange( mNPC.target, fireBreathMaxRange ))
 	{
 		var chanceOfFireBreath = mNPC.GetTag( "fbChance" );
-		if( mNPC.mana >= manaCost && RandomNumber( 1, 2000 ) <= chanceOfFireBreath )
+		if( mNPC.mana >= fireBreathManaCost && RandomNumber( 1, 2000 ) <= chanceOfFireBreath )
 		{
 			// Cast Fire Breath, then reset chance to cast back to 0
 			chanceOfFireBreath = 1;
@@ -17,7 +17,9 @@ function onAISliver( mNPC )
 			mNPC.SetTag( "fbChance", chanceOfFireBreath );
 			mNPC.SetTag( "nextFB", nextFireBallTime.toString() );
 			if( !mNPC.CanSee( mNPC.target ))
+			{
 				return;
+			}
 			CastFireBreath( mNPC );
 		}
 		else
@@ -47,7 +49,7 @@ function CastFireBreath( mNPC )
 		GetFireBreathInfo( mNPC );
 
 		// Give the NPC some time to stop before starting the casting anim
-		mNPC.StartTimer( 100, 0, true );
+		mNPC.StartTimer( 100, 0, SCRIPT.script_id );
 	}
 }
 
@@ -62,7 +64,7 @@ function onTimer( mNPC, timerID )
 		var fireBreathSFX = mNPC.GetTag( "fbSFX" );
 		mNPC.DoAction( fireBreathActionID, null, fireBreathFrameCount, fireBreathFrameDelay ); // Dragon "stomp" animation is 15 frames long
 		mNPC.SoundEffect( fireBreathSFX, true );
-		mNPC.StartTimer( 1400, 1, true );
+		mNPC.StartTimer( 1400, 1, SCRIPT.script_id );
 	}
 	else if( timerID == 1 && ValidateObject( mNPC ))
 	{
@@ -164,3 +166,5 @@ function GetFireBreathInfo( mNPC )
 	mNPC.SetTag( "fbFXHue", fireBreathFXColor );
 	mNPC.SetTag( "fbSFX", fireBreathSFX );
 }
+
+function _restorecontext_() {}

@@ -183,7 +183,7 @@ auto CMulHandler::LoadDFNOverrides() -> void
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
-				if(( entryNum == INVALIDID ) || ( entryNum < tileInfo.SizeArt() ))
+				if(( entryNum == INVALIDID ) || ( entryNum > tileInfo.SizeArt() ))
 					continue;
 
 				auto tile = &tileInfo.ArtInfo( entryNum );
@@ -770,7 +770,7 @@ auto CMulHandler::DoesMapBlock( std::int16_t x, std::int16_t y, std::int8_t z, s
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, bool checkSpawnSurface ) -> bool
+auto CMulHandler::CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, TileFlags toCheck, UI16 &foundtileID, bool checkSpawnSurface ) -> bool
 {
 	auto rValue = checkSpawnSurface;
 	for( const auto &tile : Map->ArtAt( x, y, worldNumber ))
@@ -791,6 +791,7 @@ auto CMulHandler::CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z
 			// Generic check exposed to JS
 			if(( z >= elev && z <= ( elev + tileHeight )) && tile.CheckFlag( toCheck ))
 			{
+				foundtileID = tile.tileId;
 				rValue = true; // Found static with specified flag
 				break;
 			}
@@ -804,7 +805,7 @@ auto CMulHandler::CheckStaticFlag( std::int16_t x, std::int16_t y, std::int8_t z
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any dynamics at given coordinates has a specific flag
 //o------------------------------------------------------------------------------------------------o
-auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck ) -> bool
+auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t z, std::uint8_t worldNumber, std::uint16_t instanceId, TileFlags toCheck, UI16 &foundTileId ) -> bool
 {
 	// Special case for handling multis that cross over between multiple map regions because of size
 	CMultiObj *tempMulti = FindMulti( x, y, z, worldNumber, instanceId );
@@ -820,6 +821,7 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 				{
 					if( SeekTile( multiItem.tileId ).CheckFlag( toCheck ))
 					{
+						foundTileId = multiItem.tileId;
 						return true;
 					}
 				}
@@ -853,6 +855,7 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 							{
 								if( SeekTile( multiItem.tileId ).CheckFlag( toCheck ))
 								{
+									foundTileId = multiItem.tileId;
 									return true;
 								}
 							}
@@ -870,6 +873,7 @@ auto CMulHandler::CheckDynamicFlag( std::int16_t x, std::int16_t y, std::int8_t 
 						{
 							if( SeekTile( item->GetId() ).CheckFlag( toCheck ))
 							{
+								foundTileId = item->GetId();
 								return true;
 							}
 						}
@@ -1222,7 +1226,8 @@ auto CMulHandler::ValidSpawnLocation( std::int16_t x, std::int16_t y, std::int8_
 		return false;
 
 	// if the static isn't a surface return false
-	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ), true ))
+	[[maybe_unused]] UI16 ignoreMe = 0;
+	if( !CheckStaticFlag( x, y, z, worldNumber, ( checkWater ? TF_SURFACE : TF_WET ), ignoreMe, true ))
 		return false;
 
 	if( DoesMapBlock( x, y, z, worldNumber, checkWater, !checkWater, false, false ))

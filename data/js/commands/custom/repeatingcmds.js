@@ -362,6 +362,15 @@ function onCallback7( pSock, myTarget )
 		{
 			if( ValidateObject( myTarget ) && myTarget.npc || myTarget.isItem )
 			{
+				if( myTarget.isChar && ValidateObject( myTarget.owner ))
+				{
+					// Remove target as a follower of owner
+					myTarget.owner.RemoveFollower( myTarget );
+
+					// Reduce controlSlotsUsed for owner
+					myTarget.owner.controlSlotsUsed -= myTarget.controlSlots;
+				}
+
 				myTarget.Delete();
 			}
 			else
@@ -648,3 +657,5 @@ function onCallback12( pSock, myTarget )
 		pSock.SysMessage( GetDictionaryEntry( 8932, pSock.language )); // Repeating command ended.
 	}
 }
+
+function _restorecontext_() {}

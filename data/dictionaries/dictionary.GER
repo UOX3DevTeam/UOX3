@@ -91,6 +91,15 @@
 88=Verfügbare Game Master wurden über Ihre Fehlermeldung benachrichtigt.
 89=Es war kein Game Master verfügbar, um Ihre Fehlermeldung zu notieren.
 90=Sind Sie nicht der Witzbold!
+91=Gegenstandsplatzierungsregel durch GM-Rechte außer Kraft gesetzt - Z zu hoch für normale Spieler!
+92=Persistente Tag-Map für welches Objekt erhalten?
+93=Anzahl der persistenten Tags: %i
+94=Provisorische Tag-Map für welches Objekt abrufen?
+95=Anzahl der temporären Tags: %i
+96=Tag: %s | Typ: %i | Wert: %u
+97=Welchen Gegenstand verwenden?
+98=Ich berechne %i pro Haustier, das du einstallen möchtest. Ich werde es von deinem Bankkonto abbuchen.
+99=Ich berechne %i pro Tier für %u Tage Stallzeit. Ich werde es von deinem Bankkonto abbuchen.
 100=Du hast deine Konzentration unterbrochen.
 101=Ein Gildenstein für %s
 102=Gildenkontrolle
@@ -2520,6 +2529,15 @@
 2768=Verbleibende Zeit des JS-Timers für welches Objekt setzen?
 2769=Angegebenen JS-Timer für welches Objekt beenden?
 2770=Der angegebene JS-Timer wurde für das ausgewählte Objekt beendet.
+2771=%s ist in den Ställen geblieben, weil du zu viele Gefolgsleute hast.
+2772=Du musst ein Journeyman oder höherer Tinker sein, um einen Golem zu bauen.
+2773=Anzahl der Haustiere: %i
+2774=Anzahl der Gefolgsleute: %i
+2775=Liste der Haustiere für welchen Charakter?
+2776=Liste der Gefolgsleute für welchen Charakter?
+2778=Name: %s | ID: %i | Serie: %i | x: %i | y: %i | z: %i | Welt: %i | InstanzID: %i
+2779=Das würde die maximale Anzahl der Follower des anderen Spielers überschreiten.
+2780=Das würde deine maximale Anzahl an Anhängern überschreiten.
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER

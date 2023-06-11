@@ -957,8 +957,8 @@ void AttackTarget( CSocket *s )
 	if( s->TempInt() == 1 )
 	{
 		s->TempInt( 0 );
-		GenericList<CChar *> *myPets = mChar->GetPetList();
-		for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+		GenericList<CChar *> *myFollowers = mChar->GetFollowerList();
+		for( CChar *myPet = myFollowers->First(); !myFollowers->Finished(); myPet = myFollowers->Next() )
 		{
 			// Make sure pet returned from petList is still a valid character
 			if( !ValidateObject( myPet ))
@@ -982,7 +982,7 @@ void AttackTarget( CSocket *s )
 				continue;
 			}
 
-			if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+			if( myPet->GetOwnerObj() == mChar )
 			{
 				myPet->FlushPath();
 				Combat->AttackTarget( myPet, target );
@@ -1057,10 +1057,10 @@ void FollowTarget( CSocket *s )
 	{
 		s->TempInt( 0 );
 
-		GenericList<CChar *> *myPets = mChar->GetPetList();
-		for( CChar *myPet = myPets->First(); !myPets->Finished(); myPet = myPets->Next() )
+		GenericList<CChar *> *myFollowers = mChar->GetFollowerList();
+		for( CChar *myPet = myFollowers->First(); !myFollowers->Finished(); myPet = myFollowers->Next() )
 		{
-			// Make sure pet returned from petList is still a valid character
+			// Make sure pet returned from followerList is still a valid character
 			if( !ValidateObject( myPet ))
 				continue;
 
@@ -1080,7 +1080,7 @@ void FollowTarget( CSocket *s )
 				continue;
 			}
 
-			if( myPet->IsNpc() && myPet->GetOwnerObj() == mChar )
+			if( myPet->GetOwnerObj() == mChar )
 			{
 				myPet->SetFTarg( target );
 				myPet->FlushPath();
@@ -1198,12 +1198,25 @@ void TransferTarget( CSocket *s )
 	}
 
 	UI08 maxControlSlots = cwmWorldState->ServerData()->MaxControlSlots();
-	if( maxControlSlots > 0 && ( targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots ))
+	UI08 maxFollowers = cwmWorldState->ServerData()->MaxFollowers();
+	if( maxControlSlots > 0 )
 	{
-		s->SysMessage( 2391 ); // That would exceed the other player's maximum pet control slots.
+		if( targChar->GetControlSlotsUsed() + petChar->GetControlSlots() > maxControlSlots )
+		{
+			s->SysMessage( 2391 ); // That would exceed the other player's maximum pet control slots.
+			if( targChar->GetSocket() != nullptr )
+			{
+				targChar->GetSocket()->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+			}
+			return;
+		}
+	}
+	else if( maxFollowers > 0 && static_cast<UI08>( targChar->GetFollowerList()->Num() ) >= maxFollowers )
+	{
+		s->SysMessage( 2779 ); // That would exceed the other player's maximum follower count.
 		if( targChar->GetSocket() != nullptr )
 		{
-			targChar->GetSocket()->SysMessage( 2390 ); // That would exceed your maximum pet control slots.
+			targChar->GetSocket()->SysMessage( 2780 ); // That would exceed your maximum follower count.
 		}
 		return;
 	}
@@ -1402,7 +1415,10 @@ void NpcResurrectTarget( CChar *i )
 			i->SetMana( i->GetMaxMana() / 10 );
 			i->SetAttacker( nullptr );
 			i->SetAttackFirst( false );
-			i->SetWar( false );
+			if( i->IsAtWar() && i->IsNpc() )
+			{
+				i->ToggleCombat();
+			}
 			i->SetHunger( 6 );
 			CItem *c = nullptr;
 			for( CItem *j = i->FirstItem(); !i->FinishedItems(); j = i->NextItem() )

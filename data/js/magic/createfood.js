@@ -364,3 +364,5 @@ function onSpellSuccess( mSock, mChar, ourTarg )
 		CreateDFNItem( NULL, mChar, foodItems[rndNum], 1, "ITEM", true );
 	}
 }
+
+function _restorecontext_() {}

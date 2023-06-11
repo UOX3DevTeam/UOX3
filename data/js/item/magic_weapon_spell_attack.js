@@ -30,7 +30,10 @@ function onAttack( mAttacker, mDefender )
 	// Check if the item has any charges left
 	if( spellCharges == 0 )
 	{
-		mAttacker.socket.SysMessage( GetDictionaryEntry( 9401, mAttacker.socket.language )); // This item is out of charges.
+		if( mAttacker.socket != null )
+		{
+			mAttacker.socket.SysMessage( GetDictionaryEntry( 9401, mAttacker.socket.language )); // This item is out of charges.
+		}
 		return;
 	}
 
