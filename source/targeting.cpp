@@ -1414,7 +1414,10 @@ void NpcResurrectTarget( CChar *i )
 			i->SetStamina( i->GetMaxStam() / 10 );
 			i->SetMana( i->GetMaxMana() / 10 );
 			i->SetAttacker( nullptr );
-			i->SetAttackFirst( false );
+
+			// Clear list of characters our char is marked as aggressor against
+			i->ClearAggressorFlags();
+
 			if( i->IsAtWar() && i->IsNpc() )
 			{
 				i->ToggleCombat();
@@ -2185,7 +2188,6 @@ bool CPITargetCursor::Handle( void )
 					case TARGET_SMELTORE:		Skills->SmeltOre( tSock );				break;
 					case TARGET_REPAIRMETAL:	Skills->RepairMetal( tSock );			break;
 					case TARGET_SMELT:			SmeltTarget( tSock );					break;
-					case TARGET_STEALING:		Skills->StealingTarget( tSock );		break;
 					case TARGET_PARTYADD:		PartyFactory::GetSingleton().CreateInvite( tSock );	break;
 					case TARGET_PARTYREMOVE:	PartyFactory::GetSingleton().Kick( tSock );			break;
 					default:															break;

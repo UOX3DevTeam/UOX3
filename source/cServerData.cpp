@@ -353,7 +353,13 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"OFFERBODSFROMCONTEXTMENU"s, 330},
 	{"BODSFROMCRAFTEDITEMSONLY"s, 331},
 	{"BODGOLDREWARDMULTIPLIER"s, 332},
-	{"BODFAMEREWARDMULTIPLIER"s, 333}
+	{"BODFAMEREWARDMULTIPLIER"s, 333},
+	{"ENABLENPCGUILDDISCOUNTS"s, 334},
+	{"ENABLENPCGUILDPREMIUMS"s, 335},
+	{"AGGRESSORFLAGTIMER"s, 336},
+	{"PERMAGREYFLAGTIMER"s, 337},
+	{"STEALINGFLAGTIMER"s, 338},
+	{"SNOOPAWARENESS"s, 339}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -460,6 +466,9 @@ constexpr auto BIT_KEYLESSGUESTACCESS				= UI32( 96 );
 constexpr auto BIT_OFFERBODSFROMITEMSALES			= UI32( 97 );
 constexpr auto BIT_OFFERBODSFROMCONTEXTMENU			= UI32( 98 );
 constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY			= UI32( 99 );
+constexpr auto BIT_ENABLENPCGUILDDISCOUNTS			= UI32( 100 );
+constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
+constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
 
 
 // New uox3.ini format lookup
@@ -567,7 +576,7 @@ auto CServerData::ResetDefaults() -> void
 	// JS API references describe it as "Maximum nominal heap before last ditch GC"
 	SetJSEngineSize( 256 );
 
-	// Send server-originating messages i`n Unicode format, if possible
+	// Send server-originating messages in Unicode format, if possible
 	UseUnicodeMessages( true );
 
 	ServerLanguage( DL_DEFAULT );
@@ -609,6 +618,20 @@ auto CServerData::ResetDefaults() -> void
 	CorpseLootDecay( true );
 	ServerSavesTimer( 600 );
 
+	// Enable login-support only for latest available client by default
+	ClientSupport4000( false );
+	ClientSupport5000( false );
+	ClientSupport6000( false );
+	ClientSupport6050( false );
+	ClientSupport7000( false );
+	ClientSupport7090( false );
+	ClientSupport70160( false );
+	ClientSupport70240( false );
+	ClientSupport70300( false );
+	ClientSupport70331( false );
+	ClientSupport704565( false );
+	ClientSupport70610( true );
+
 	SystemTimer( tSERVER_INVISIBILITY, 60 );
 	SystemTimer( tSERVER_HUNGERRATE, 6000 );
 	HungerDamage( 2 );
@@ -624,6 +647,8 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_STAMINAREGEN, 3 );
 	SystemTimer( tSERVER_MANAREGEN, 5 );
 	ArmorAffectManaRegen( true );
+	SnoopIsCrime( false );
+	SnoopAwareness( false );
 	SystemTimer( tSERVER_GATE, 30 );
 	MineCheck( 1 );
 	DeathAnimationStatus( true );
@@ -744,7 +769,6 @@ auto CServerData::ResetDefaults() -> void
 	BackupRatio( 5 );
 	MaxStealthMovement( 10 );
 	MaxStaminaMovement( 15 );
-	SnoopIsCrime( false );
 	SystemTimer( tSERVER_NPCFLAGUPDATETIMER, 10 );
 	PetOfflineTimeout( 5 );
 	PetHungerOffline( true );
@@ -778,6 +802,8 @@ auto CServerData::ResetDefaults() -> void
 	ShowWeaponDamageTypes( true );
 	ShowReputationTitleInTooltip( true );
 	ShowGuildInfoInTooltip( true );
+	EnableNPCGuildDiscounts( true );
+	EnableNPCGuildPremiums( true );
 
 	CheckBoatSpeed( 0.65 );
 	CheckNpcAISpeed( 1 );
@@ -827,6 +853,11 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_CRIMINAL, 120 );
 	RepMaxKills( 4 );
 	SystemTimer( tSERVER_MURDERDECAY, 28800 );
+	SystemTimer( tSERVER_AGGRESSORFLAG, 120 );
+	SystemTimer( tSERVER_PERMAGREYFLAG, 0 ); // No duration by default
+	SystemTimer( tSERVER_STEALINGFLAG, 120 );
+	SystemTimer( tSERVER_COMBATIGNORE, 20 ); // Not in ini
+
 	//RepSys ---^
 	TrackingBaseRange( 10 );
 	TrackingMaxTargets( 20 );
@@ -895,20 +926,6 @@ auto CServerData::ResetDefaults() -> void
 
 	// Set no assistant features as disabled by default
 	SetDisabledAssistantFeature( AF_ALL, false );
-
-	// Enable login-support for any supported client version by default.
-	ClientSupport4000( false );
-	ClientSupport5000( false );
-	ClientSupport6000( false );
-	ClientSupport6050( false );
-	ClientSupport7000( false );
-	ClientSupport7090( false );
-	ClientSupport70160( false );
-	ClientSupport70240( false );
-	ClientSupport70300( false );
-	ClientSupport70331( true );
-	ClientSupport704565( true );
-	ClientSupport70610( true );
 
 	ExtendedStartingStats( true );
 	ExtendedStartingSkills( true );
@@ -2037,6 +2054,20 @@ auto CServerData::SnoopIsCrime( bool newVal ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SnoopAwareness()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether targets of snooping become more aware of it over time
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SnoopAwareness() const -> bool
+{
+	return boolVals.test( BIT_SNOOPAWARENESS );
+}
+auto CServerData::SnoopAwareness( bool newVal ) -> void
+{
+	boolVals.set( BIT_SNOOPAWARENESS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CServerData::StatsAffectSkillChecks()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets whether stats like strength, dexterity and intelligence provide
@@ -2853,6 +2884,36 @@ auto CServerData::ShowReputationTitleInTooltip() const -> bool
 auto CServerData::ShowReputationTitleInTooltip( bool newVal ) -> void
 {
 	boolVals.set( BIT_SHOWREPTITLEINTOOLTIP, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnableNPCGuildDiscounts()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether a discounted price is given when buying items from shopkeepers
+//|					that belong to the same NPC Guild as the player
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnableNPCGuildDiscounts() const -> bool
+{
+	return boolVals.test( BIT_ENABLENPCGUILDDISCOUNTS );
+}
+auto CServerData::EnableNPCGuildDiscounts( bool newVal ) -> void
+{
+	boolVals.set( BIT_ENABLENPCGUILDDISCOUNTS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::EnableNPCGuildPremiums()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether a premium price is offered when selling items to shopkeepers
+//|					that belong to the same NPC Guild as the player
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::EnableNPCGuildPremiums() const -> bool
+{
+	return boolVals.test( BIT_ENABLENPCGUILDPREMIUMS );
+}
+auto CServerData::EnableNPCGuildPremiums( bool newVal ) -> void
+{
+	boolVals.set( BIT_ENABLENPCGUILDPREMIUMS, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4783,6 +4844,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXSTEALTHMOVEMENTS=" << MaxStealthMovement() << '\n';
 		ofsOutput << "MAXSTAMINAMOVEMENTS=" << MaxStaminaMovement() << '\n';
 		ofsOutput << "SNOOPISCRIME=" << ( SnoopIsCrime() ? 1 : 0 ) << '\n';
+		ofsOutput << "SNOOPAWARENESS=" << ( SnoopAwareness() ? 1 : 0 ) << '\n';
 		ofsOutput << "ARMORAFFECTMANAREGEN=" << ( ArmorAffectManaRegen() ? 1 : 0) << '\n';
 		ofsOutput << "}" << '\n';
 
@@ -4885,6 +4947,8 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXSAFETELEPORTSPERDAY=" << static_cast<UI16>( MaxSafeTeleportsPerDay() ) << '\n';
 		ofsOutput << "TELEPORTTONEARESTSAFELOCATION=" << ( TeleportToNearestSafeLocation() ? 1 : 0 ) << '\n';
 		ofsOutput << "ALLOWAWAKENPCS=" << ( AllowAwakeNPCs() ? 1 : 0 ) << '\n';
+		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
+		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -4942,6 +5006,9 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MURDERDECAYTIMER=" << SystemTimer( tSERVER_MURDERDECAY ) << '\n';
 		ofsOutput << "MAXKILLS=" << RepMaxKills() << '\n';
 		ofsOutput << "CRIMINALTIMER=" << SystemTimer( tSERVER_CRIMINAL ) << '\n';
+		ofsOutput << "AGGRESSORFLAGTIMER=" << SystemTimer( tSERVER_AGGRESSORFLAG ) << '\n';
+		ofsOutput << "PERMAGREYFLAGTIMER=" << SystemTimer( tSERVER_PERMAGREYFLAG ) << '\n';
+		ofsOutput << "STEALINGFLAGTIMER=" << SystemTimer( tSERVER_STEALINGFLAG ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[resources]" << '\n' << "{" << '\n';
@@ -6317,6 +6384,24 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 			break;
 		case 333:	 // BODFAMEREWARDMULTIPLIER
 			BODFameRewardMultiplier( std::stof( value ));
+			break;
+		case 334:	// ENABLENPCGUILDDISCOUNTS
+			EnableNPCGuildDiscounts(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 335:	// ENABLENPCGUILDPREMIUMS
+			EnableNPCGuildPremiums(( static_cast<UI16>( std::stoul( value, nullptr, 0 )) >= 1 ? true : false ));
+			break;
+		case 336:	 // AGGRESSORFLAGTIMER
+			SystemTimer( tSERVER_AGGRESSORFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 337:	 // PERMAGREYFLAGTIMER
+			SystemTimer( tSERVER_PERMAGREYFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 338:	 // STEALINGFLAGTIMER
+			SystemTimer( tSERVER_STEALINGFLAG, static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 339:	 // SNOOPAWARENESS
+			SnoopAwareness( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
 		default:
 			rValue = false;

@@ -2213,7 +2213,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	{
 		charName += " (guarded)";
 	}
-	if( i->GetGuildNumber() != -1 && !i->IsIncognito() )
+	if( i->GetGuildNumber() != -1 && !i->IsIncognito() && !i->IsDisguised() )
 	{
 		GuildSys->DisplayTitle( this, i );
 	}
@@ -2253,7 +2253,25 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 {
 	COLOUR retVal = 0x0058;
-	switch( trg->FlagColour( src ))
+	auto flagColour = trg->FlagColour( src );
+
+	if( trg->CheckAggressorFlag( src->GetSerial() ))
+	{
+		// trg char is an aggressor to src, and should appear grey
+		flagColour = FC_NEUTRAL;
+	}
+	if( trg->CheckPermaGreyFlag( src->GetSerial() ))
+	{
+		// trg char is permagrey to src
+		flagColour = FC_CRIMINAL;
+	}
+	if( trg->HasStolen() )
+	{
+		// trg char has stolen recently. Appear grey!
+		flagColour = FC_CRIMINAL;
+	}
+
+	switch( flagColour )
 	{
 		case FC_INNOCENT:		retVal = 0x0059;		break;	// Blue
 		case FC_NEUTRAL:
@@ -2263,6 +2281,47 @@ COLOUR CSocket::GetFlagColour( CChar *src, CChar *trg )
 		case FC_FRIEND:			retVal = 0x003F;		break;	// Green
 		case FC_ENEMY:			retVal = 0x0090;		break;	// Orange
 		case FC_INVULNERABLE:	retVal = 0x0035;		break;	// Yellow
+	}
+
+	return retVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CSocket::GetHtmlFlagColour()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets the current html flag colour associated with the socket
+//o------------------------------------------------------------------------------------------------o
+auto CSocket::GetHtmlFlagColour( CChar *src, CChar *trg ) -> std::string
+{
+	std::string retVal = "#00FFFF";
+	auto flagColour = trg->FlagColour( src );
+
+	if( trg->CheckAggressorFlag( src->GetSerial() ))
+	{
+		// trg char is an aggressor to src, and should appear grey
+		flagColour = FC_NEUTRAL;
+	}
+	if( trg->CheckPermaGreyFlag( src->GetSerial() ))
+	{
+		// trg char is permagrey to src
+		flagColour = FC_CRIMINAL;
+	}
+	if( trg->HasStolen() )
+	{
+		// trg char has stolen recently. Appear grey!
+		flagColour = FC_CRIMINAL;
+	}
+
+	switch( flagColour )
+	{
+		case FC_INNOCENT:		retVal = "#00FFFF";		break;	// Blue
+		case FC_NEUTRAL:
+		case FC_CRIMINAL:
+		default:				retVal = "#808080";		break;	// Gray
+		case FC_MURDERER:		retVal = "#FF0000";		break;	// Red
+		case FC_FRIEND:			retVal = "#00FF00";		break;	// Green
+		case FC_ENEMY:			retVal = "#FFA500";		break;	// Orange
+		case FC_INVULNERABLE:	retVal = "#FFFF00";		break;	// Yellow
 	}
 
 	return retVal;

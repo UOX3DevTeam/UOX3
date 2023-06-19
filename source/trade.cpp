@@ -157,6 +157,9 @@ bool ClearTradesFunctor( CBaseObject *a, UI32 &b, [[maybe_unused]] void *extraDa
 
 								// Throw item from trade window back into owner's backpack
 								j->SetCont( ownerPack );
+
+								// Store a timestamp indicating when item last left secure trade window
+								j->SetTempLastTraded( cwmWorldState->GetUICurrentTime() );
 							}
 						}
 					}
@@ -255,6 +258,9 @@ void CompleteTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 					i->SetCont( bp1 );
 				}
 				i->PlaceInPack();
+
+				// Store a timestamp indicating when item last left secure trade window
+				i->SetTempLastTraded( cwmWorldState->GetUICurrentTime() );
 			}
 		}
 		GenericList<CItem *> *c2Cont = tradeWindowTwo->GetContainsList();
@@ -299,6 +305,9 @@ void CompleteTrade( CItem *tradeWindowOne, CItem *tradeWindowTwo, bool tradeSucc
 					i->SetCont( bp2 );
 				}
 				i->PlaceInPack();
+
+				// Store a timestamp indicating when item last left secure trade window
+				i->SetTempLastTraded( cwmWorldState->GetUICurrentTime() );
 			}
 		}
 	}

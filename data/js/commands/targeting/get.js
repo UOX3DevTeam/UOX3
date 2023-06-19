@@ -60,6 +60,9 @@ function onCallback0( socket, ourObj )
 	case "KILLS":
 		socket.SysMessage( ourObj.murdercount );
 		break;
+	case "ISAGGRESSOR":
+		socket.SysMessage( )
+		break;
 	case "HUE":
 	case "SKIN":
 	case "COLOR":
@@ -232,6 +235,18 @@ function HandleGetItem( socket, ourItem, uKey )
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.more + " ( " + hexVal + ")" );
 		break;
+	case "MORE0":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more0 + " ( " + hexVal + ")" );
+		break;
+	case "MORE1":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more1 + " ( " + hexVal + ")" );
+		break;
+	case "MORE2":
+		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.more ).toString( 16 ))).slice( -8 )
+		socket.SysMessage( ourItem.more2 + " ( " + hexVal + ")" );
+		break;
 	case "MOREX":
 		var hexVal = "0x" + ( "00000000" + ( Number( ourItem.morex ).toString( 16 ))).slice( -8 )
 		socket.SysMessage( ourItem.morex + " ( " + hexVal + ")" );
@@ -328,6 +343,9 @@ function HandleGetItem( socket, ourItem, uKey )
 	case "USESLEFT":
 		socket.SysMessage( ourItem.usesLeft );
 		break;
+	case "STEALABLE":
+		socket.SysMessage( ourItem.stealable );
+		break;
 	default:
 		if( ourItem.isSpawner )
 		{
@@ -399,6 +417,24 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "CONTROLSLOTSUSED":
 		socket.SysMessage( ourChar.controlSlotsUsed );
 		break;
+	case "CRIMINAL":
+		socket.SysMessage( ourChar.criminal );
+		break;
+	case "INNOCENT":
+		socket.SysMessage( ourChar.innocent );
+		break;
+	case "MURDERER":
+		socket.SysMessage( ourChar.murderer );
+		break;
+	case "PERMAGREY":
+		socket.SysMessage( ourChar.IsPermaGrey() );
+		break;
+	case "HASSTOLEN":
+		socket.SysMessage( ourChar.hasStolen );
+		break;
+	case "AGGRESSOR":
+		socket.SysMessage( ourChar.IsAggressor() );
+		break;
 	case "PETCOUNT":
 		socket.SysMessage( ourChar.petCount );
 		break;
@@ -446,6 +482,9 @@ function HandleGetChar( socket, ourChar, uKey )
 		break;
 	case "OLDWANDERTYPE":
 		socket.SysMessage( ourChar.oldWandertype );
+		break;
+	case "NPCGUILD":
+		socket.SysMessage( ourChar.npcGuild );
 		break;
 	case "DIR":
 	case "DIRECTION":

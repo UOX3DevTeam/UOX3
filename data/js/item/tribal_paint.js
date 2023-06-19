@@ -22,7 +22,7 @@ function onUseChecked( pUser, iUsed )
 		else
 		{
 			var helmLayerItem = pUser.FindItemLayer( 0x06 );
-			if( ValidateObject( helmLayerItem ) && helmLayerItem.sectionID == "orcishkinmask" )
+			if( pUser.isDisguised || ( ValidateObject( helmLayerItem ) && helmLayerItem.sectionID == "orcishkinmask" ))
 			{
 				socket.SysMessage( GetDictionaryEntry( 1679, socket.language )); // You are already disguised.
 			}

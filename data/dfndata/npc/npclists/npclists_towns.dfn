@@ -56,14 +56,11 @@ f_whealer
 
 [NPCLIST townlist]
 {
-bird
-bird
+3|dog
+2|bird
 crow
 canary
 cat
-dog
-dog
-dog
 rat
 raven
 }
@@ -467,6 +464,12 @@ f_towncrier
 {
 m_artist
 f_artist
+}
+
+[NPCLIST thiefguildmaster]
+{
+m_thief_guildmaster
+f_thief_guildmaster
 }
 
 EOF

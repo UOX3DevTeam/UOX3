@@ -365,6 +365,7 @@ public:
 	void			SetTimer( cS_TID timerId, TIMERVAL value );
 	void			ClearTimers( void );
 	COLOUR			GetFlagColour( CChar *src, CChar *trg );
+	auto			GetHtmlFlagColour( CChar *src, CChar *trg ) -> std::string;
 
 private:
 

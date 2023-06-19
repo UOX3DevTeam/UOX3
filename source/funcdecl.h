@@ -131,6 +131,7 @@ void	UpdateFlag( CChar *mChar );
 // Combat Stuff
 //o------------------------------------------------------------------------------------------------o
 void	MakeCriminal( CChar *c );
+void	FlagForStealing( CChar *c );
 bool	WillResultInCriminal( CChar *mChar, CChar *targ );
 void	CallGuards( CChar *mChar, CChar *targChar );
 void	CallGuards( CChar *mChar );

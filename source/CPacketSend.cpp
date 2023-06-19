@@ -7205,7 +7205,36 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 			}
 			else
 			{
-				tempEntry.ourText = oldstrutil::format( " \t%s\t ", cItemName.c_str() );
+				if( cItem.IsCorpse() )
+				{
+					std::string iFlagColor;
+					CChar *iOwner = cItem.GetOwnerObj();
+					if( ValidateObject( iOwner ))
+					{
+						// Match up corpse's flag color to that of the owner
+						iFlagColor = tSock->GetHtmlFlagColour( tSock->CurrcharObj(), iOwner );
+					}
+					else
+					{
+						// No corpse owner, corpse from NPC/monster
+						UI08 flag = cItem.GetTempVar( CITV_MOREZ ); // Get flag from morez value on corpse, to help determine color of corpse
+						switch( flag )
+						{
+							case 0x01:	iFlagColor = "#FF0000";	break;	// Murderer, red
+							case 0x02:	// Criminal, gray
+								[[fallthrough]];
+							case 0x08:	iFlagColor = "#808080";	break;	// Neutral, gray
+							default:
+							case 0x04:	iFlagColor = "#00FFFF";	break;	// Innocent, blue
+						}
+					}
+
+					tempEntry.ourText = oldstrutil::format( " \t<color=%s>%s</color>\t ", iFlagColor.c_str(), cItemName.c_str() );
+				}
+				else
+				{
+					tempEntry.ourText = oldstrutil::format( " \t%s\t ", cItemName.c_str() );
+				}
 			}
 		}
 	}
@@ -7687,7 +7716,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	std::string fameTitle = "";
 	if( cwmWorldState->ServerData()->ShowReputationTitleInTooltip() )
 	{
-		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() )
+		if( cwmWorldState->creatures[mChar.GetId()].IsHuman() && !mChar.IsIncognito() && !mChar.IsDisguised() )
 		{
 			GetFameTitle( &mChar, fameTitle );
 			fameTitle = oldstrutil::trim( fameTitle );
@@ -7705,7 +7734,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 	// Show guild title in character tooltip?
 	if( cwmWorldState->ServerData()->ShowGuildInfoInTooltip() )
 	{
-		if( !mChar.IsIncognito() )
+		if( !mChar.IsIncognito() && !mChar.IsDisguised() )
 		{
 			CGuild *myGuild = GuildSys->Guild( mChar.GetGuildNumber() );
 			if( myGuild != nullptr )

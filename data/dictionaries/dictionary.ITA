@@ -863,7 +863,7 @@
 860=Dove vuoi cercare i personaggi nascosti?
 861=Chi vuoi incitare?
 862=Chi vuoi attirare?
-863=Cosa vuoi rubare?
+863=Quale oggetto cercherai di rubare?
 864=Contatta il tuo operatore di shard se vuoi che il furto sia disponibile.
 865=Su cosa desideri fare un incantesimo?
 866=Chi vuoi infastidire?
@@ -880,12 +880,12 @@
 877=Tu metti la mano nello zaino di %s e cerchi di prendere qualcosa...
 878=Non si può rubare agli dei.
 879=Quell'oggetto non ha valore per te.
-880=Hai rubato con successo quell'oggetto.
+880=Sei riuscito a rubare l'oggetto!
 881=Non sei riuscito a rubare quell'oggetto.
 882=Sei stato catturato!
 883=Guardie!! Un ladro è tra noi!
-884=Ti sei accorto che %s sta cercando di rubarti %s!
-885=Hai notato che %s sta cercando di rubare %s da %s!
+884=Si nota che %s sta cercando di rubare %w a te!
+885=Si nota che %s sta cercando di rubare %w da %d!
 886=Sei troppo lontano per rubare quell'oggetto.
 887=Non vedi segni di animali.
 888=Non vedi alcun segno di creature.
@@ -2538,6 +2538,8 @@
 2778=Nome: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
 2779=Questo supererebbe il numero massimo di follower dell'altro giocatore.
 2780=Questo supererebbe il tuo numero massimo di follower.
+2781=* ignora %s *
+2782=Non sei abbastanza forte per mantenere alcuni dei tuoi oggetti equipaggiati!
 // [2800-2999] House Scripts
 2800=Proprietario della casa:
 2801=COOPERATORI
@@ -3611,6 +3613,7 @@
 8211=Rinvio al comando 'raddnpc...
 8212=Sintassi comando non valida per ripetere l'aggiunta di oggetti: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Identità della sezione da cui proviene l'oggetto DFN
+8214=L'oggetto è rubabile? 0 = non rubabile, 1 = rubabile, 2 = rubabile raramente
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Numero di account associato al giocatore. Controllato dal server (Solo lettura)
 8301=Tipo di IA del PNG
@@ -3752,6 +3755,7 @@
 8437=Stile di barba permanente del personaggio
 8438=Colore dei capelli permanente del personaggio
 8439=Stile di capelli permanente del personaggio
+8440=Il personaggio (giocatore) è segnalato come aggressore a qualcuno? Controllato dal server (di sola lettura)
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Numero attuale di giocatori banditi da Multi. Controllato dal server (Solo lettura)
 8501=Coordinata X per la posizione di interdizione di Multi
@@ -4106,6 +4110,41 @@
 9183=La cassa è sovraccarica e non può più reggere il peso.
 9184=Seleziona una posizione per l'addon della casa.
 9185=Puoi usare un'ascia per smantellare gli addendi delle case e recuperare i loro atti.
+// Furti vari
+9188=Tiri fuori lo zaino... ma scopri che è vuoto.
+9189=Entrambe le mani devono essere libere per rubare.
+9190=Devi far parte della gilda dei ladri per rubare agli altri giocatori.
+9191=Sei attualmente sospeso dalla gilda dei ladri.
+9192=Non puoi rubare ai negozianti.
+9193=Non puoi rubare da questo.
+9194=Quella creatura è già stata rubata.  Non c'è più nulla da rubare.
+9195=Il bersaglio non può essere visto.
+9196=Non puoi tentare di rubare nella foga del combattimento!
+9197=Come giocatore giovane, non puoi usare l'abilità rubare.
+9198=Non si possono rubare oggetti equipaggiati.
+9199=Non si può rubare ai venditori.
+9200=Non si può rubare alle guardie.
+9201=Non si può rubare ciò che non si vede...
+9202=Devi unirti a una fazione per farlo.
+9203=Non puoi rubare il tuo sigillo.
+9204=Non hai l'abilità sufficiente per rubare il sigillo.
+9205=Non puoi rubare il sigillo quando sei in incognito
+9206=Non si può rubare il sigillo quando si è polimorfizzati
+9207=Non si può rubare il sigillo quando si è mascherati
+9208=Non si può rubare il sigillo della città entro un'ora dall'avvio del server
+9209=Non si può rubare ai Giovani.
+9210=Sei riuscito a rubare un oggetto speciale alla creatura!
+9211=Non puoi usarlo mentre sei paralizzato.
+9212=Questo oggetto è temporaneamente protetto dal furto.
+9213=Tu sei feccia! Guardie!
+9214=Guardie! Un malvagio!
+9215=Si tratta di un furfante! Guardie!
+9216=Guardie! Aiuto!
+9230=Non puoi compiere atti negativi sul tuo bersaglio.
+9231=Non puoi compiere atti benefici sul tuo bersaglio.
+9232=Non si può fare mentre si è mascherati.
+9233=Non si può polimorfizzare mentre si è mascherati.
+9234=Hai rimosso il tuo travestimento.
 // [9250-9300] Runebooks
 9250=Questo libro ha bisogno di tempo per ricaricarsi.
 9251=Non puoi usare un Runebook dallo zaino di qualcun altro!
@@ -4135,6 +4174,14 @@
 9275=Questo libro ha già il massimo delle cariche.
 9276=Carichi il Runebook con una pila di scroll di richiamo.
 9277=Carichi il Runebook con una pergamena di richiamo.
+9278=Non si possono usare gli incantesimi Richiamo o Cancello quando si ha una bandiera criminale attiva o se si è rubato di recente!
+9279=Seleziona ciò che vuoi esaminare.
+9280=Il cadavere è stato saccheggiato l'ultima volta da %s.
+9281=Il cadavere non è stato profanato.
+9282=Questa serratura è stata scassinata l'ultima volta da %s.
+9283=Non si nota nulla di insolito.
+9284=Questo individuo è un ladro!
+9285=Non si può rubare da un contenitore sicuro.
 // [9301-9310] Pesce Magico
 9301=Sei già sotto un effetto simile.
 9302=Ingoi il pesce intero!
@@ -4886,5 +4933,117 @@
 17273=Devi aspettare qualche secondo mentre ispeziono l'ultimo ordine.
 17274=L'atto d'ordine è stato messo nel tuo zaino.
 17275=Non c'è abbastanza spazio nello zaino per la ricompensa della richiesta in blocco.
+// [17500-17529] Nomi delle gilde PNG
+17500=Sono il %s di %d
+17501=La Gilda delle Arti Arcane
+17502=La Gilda dei Guerrieri
+17503=La Società dei Ladri
+17504=La Lega dei Ranger
+17505=La Gilda dei Guaritori
+17506=La Cooperativa Mineraria
+17507=L'Associazione dei Mercanti
+17508=L'Ordine degli Ingegneri
+17509=La Società dei Vestiti
+17510=La Gilda Marittima
+17511=Il collegio bardico
+17512=La Compagnia dei Fabbri
+// [17550-17599] Sottogilde
+17550=La Gilda dei Maghi
+17551=La Gilda della Stregoneria
+17552=I Maestri dell'Illusione
+17553=L'Associazione dei Guerrieri
+17554=I combattenti e i fanti
+17555=La Gilda della Cavalleria e del Cavallo
+17556=La Federazione dei Furfanti e Mendicanti
+17557=La Gilda degli Assassini
+17558=La Società dei Ladri
+17559=La Gilda dei Mercanti
+17560=La Gilda dei Provvisori
+17561=La Gilda dei Commercianti
+17562=La Gilda dei Barattieri
+17563=Sala dei Taumaturghi
+17564=Gilda dei Pescatori
+17565=Associazione Marittima dei Marinai
+17566=Capitolo dei Marinai
+17567=Società dei maestri d'ascia
+17568=Gilda degli Armaioli
+17569=Gilda dei Fabbri
+17570=La Gilda degli Armamenti
+17571=La Società degli Armaioli
+// [17600-17700] Gilde PNG Varie
+17600=maestro di gilda
+17601=Gilda
+17602=C'è una tassa in monete d'oro per entrare nella gilda: %i
+17603=Non appartieni alla mia gilda!
+17604=Sei appena entrato nella mia gilda! Devi aspettare una settimana per dimetterti.
+17605=Accetto le tue dimissioni.
+17606=Questo particolare oggetto costa %i pezzi d'oro.
+17607=Non so di cosa stia parlando.
+17559=Benvenuto nella gilda! Scoprirai che i tuoi compagni ti garantiranno prezzi più bassi nei negozi.
+17608=Sei già un membro della nostra gilda.
+17609=Devi prima dimetterti dalla tua altra gilda.
+17610=Benvenuto a %s!
+17611=Sei troppo giovane per entrare nella mia gilda...
+17612=Non puoi essere membro della Gilda dei Ladri finché sei giovane.
+17613=Questa gilda è per i ladri astuti, non per i tagliagole oziosi.
+17614=Per entrare a far parte di questa organizzazione d'élite bisogna essere almeno un borseggiatore esperto.
+17615=Non è sufficiente per un kit di travestimento, mi dispiace.
+17616=Perché mi stai dando questo? No, grazie.
+17617=Spiacente, al momento non accettiamo nuovi membri.
+17618=Come membro della gilda, hai diritto a uno sconto!
+17619=Come membro della gilda, posso offrirti un prezzo maggiorato per questo!
+// Kit di travestimento
+18000=Vandyke
+18001=Baffi
+18002=Barba corta
+18003=Barba lunga
+18004=Barba corta
+18005=Barba lunga
+18010=Solo i membri della gilda dei ladri sono addestrati a usare questo oggetto.
+18011=Sei attualmente sospeso dalla gilda dei ladri.  Non vedono di buon occhio le tue azioni.
+18012=KIT DI TRAVESTIMENTO DA LADRO
+18013=OKAY
+18014=APPROVA
+18015=Selezione dei capelli del viso
+18016=Selezione dei capelli
+18017=Selezioni di corno facciale
+18018=Selezioni di corno
+18019=Stile di corno 1
+18020=Corno stile 2
+18021=Corno stile 3
+18022=Corno stile 4
+18023=Corno stile 5
+18024=Corno Stile 6
+18025=Corno Stile 7
+18026=Corno stile 8
+18027=Medio lungo
+18028=Piuma lunga
+18029=Corto
+18030=Mullet
+18031=Lungo
+18032=Nodo in testa
+18033=Treccia lunga
+18034=Acconciatura a spiga
+18035=Fiore
+18036=Buns
+18037=Il travestimento svanisce dopo 2 ore: hai un bell'aspetto.
+// [18500-19000] Consumabili speciali rubabili ai mostri
+18500=Il tuo spirito manca di coesione. Devi aspettare %i minuti prima di invocare il potere di una Gemma della Salvezza.
+18501=La gemma vi infonde il suo potere e viene distrutta nel processo.
+18502=La resurrezione
+18503=È possibile che veniate resuscitati qui da questo guaritore. Vuoi provare?<br>CONTINUA - Avete scelto di provare a tornare in vita adesso.<br>ANNULLA - Preferisci rimanere un fantasma per ora.
+18504=Devi aspettare %i secondi prima di poter usare questo oggetto.
+18505=Sei già al massimo del mana.
+18506=La corrente acida ripristina istantaneamente parte del tuo mana!
+18507=Sei già al massimo della salute.
+18508=Il seme amaro ripristina istantaneamente parte della tua salute!
+18509=Sei già sotto l'effetto di un balsamo o di una lozione.
+18510=Applichi l'unguento e ti senti improvvisamente meno vulnerabile!
+18511=Applichi il balsamo e ti senti improvvisamente più forte!
+18512=Applichi il balsamo e ti senti improvvisamente più agile!
+18513=Applichi il balsamo e ti senti improvvisamente più saggio!
+18514=Si applica la lozione Scudo vitale.
+18515=Si applica la lozione Pelle di pietra.
+18516=Gli effetti del balsamo o della lozione sono svaniti.
 }
 EOF

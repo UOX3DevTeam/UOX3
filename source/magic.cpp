@@ -108,7 +108,7 @@ const MagicTable_st magic_table[] = {
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	It will construct 2 linked gates, one at srcX / srcY / srcZ and another at trgX / trgY / trgZ
 //o------------------------------------------------------------------------------------------------o
-void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld )
+void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId )
 {
 	CItem *g1 = Items->CreateItem( nullptr, caster, 0x0F6C, 1, 0, OT_ITEM );
 	if( ValidateObject( g1 ))
@@ -124,7 +124,7 @@ void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, S
 		{
 			g2->SetDecayable( true );
 			g2->SetType( IT_GATE );
-			g2->SetLocation( trgX, trgY, trgZ, trgWorld, g2->GetInstanceId() );
+			g2->SetLocation( trgX, trgY, trgZ, trgWorld, trgInstanceId );
 			g2->SetDecayTime( cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_GATE ));
 			g2->SetDir( 1 );
 
@@ -1105,6 +1105,10 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 				worldNum = caster->WorldNumber();
 			}
 
+			SI16 targLocX = static_cast<SI16>( i->GetTempVar( CITV_MOREX ));
+			SI16 targLocY = static_cast<SI16>( i->GetTempVar( CITV_MOREY ));
+			SI08 targLocZ = static_cast<SI08>( i->GetTempVar( CITV_MOREZ ));
+			UI16 instanceId = static_cast<UI16>( i->GetTempVar( CITV_MORE0 ));
 			if( worldNum != caster->WorldNumber() )
 			{
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
@@ -1119,14 +1123,14 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 							{
 								if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 								{
-									myFollower->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>( i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+									myFollower->SetLocation( targLocX, targLocY, targLocZ, worldNum, instanceId );
 								}
 							}
 						}
 					}
 
 					// Teleport the player
-					caster->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>( i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+					caster->SetLocation( targLocX, targLocY, targLocZ, worldNum, instanceId );
 					SendMapChange( caster->WorldNumber(), sock, false );
 				}
 				else
@@ -1147,14 +1151,14 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 						{
 							if( myFollower->GetNpcWander() == WT_FOLLOW && ObjInOldRange( caster, myFollower, DIST_CMDRANGE ))
 							{
-								myFollower->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+								myFollower->SetLocation( targLocX, targLocY, targLocZ, worldNum, instanceId );
 							}
 						}
 					}
 				}
 
 				// Teleport the player
-				caster->SetLocation( static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum, caster->GetInstanceId() );
+				caster->SetLocation( targLocX, targLocY, targLocZ, worldNum, instanceId );
 			}
 			sock->SysMessage( 682 ); // You have recalled from the rune.
 			return true;
@@ -1227,7 +1231,12 @@ bool splIncognito( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell 
 		sock->SysMessage( 1674 ); // You can't do that while polymorphed.
 		return false;
 	}
-	else if( caster->GetId() == 0x00b8 || caster->GetId() == 0x00b7 ) // Savage Kin Paint transformation
+	if( caster->IsDisguised() )
+	{
+		sock->SysMessage( 9232 ); // You can't do that while disguised.
+		return false;
+	}
+	if( caster->GetId() == 0x00b8 || caster->GetId() == 0x00b7 ) // Savage Kin Paint transformation
 	{
 		sock->SysMessage( 1672 ); // You cannot use incognito while wearing body paint
 		return false;
@@ -1455,7 +1464,7 @@ bool splDispel( CChar *caster, CChar *target, [[maybe_unused]] CChar *src, [[may
 				targetResist = std::max( targetResist, target->GetOwnerObj()->GetSkill( MAGICRESISTANCE ));
 			}
 
-			UI16 dispelChance = static_cast<UI16>( std::max( static_cast<UI16>( 950 ),  static_cast<UI16>( std::ceil(( 500 - ( targetResist - casterMagery )) / 1.5 ))));
+			UI16 dispelChance = std::max( static_cast<UI16>( 950 ), ( static_cast<UI16>( std::max( 0.0, static_cast<double>( std::ceil( static_cast<double>( 500 - ( targetResist - casterMagery )) / 1.5 ))))));
 			if( dispelChance > RandomNum( 0, 1000 ))
 			{
 				// Dispel succeeded!
@@ -1606,6 +1615,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curS
 		i->SetTempVar( CITV_MOREY, caster->GetY() );
 		i->SetTempVar( CITV_MOREZ, caster->GetZ() );
 		i->SetTempVar( CITV_MORE, caster->WorldNumber() );
+		i->SetTempVar( CITV_MORE0, caster->GetInstanceId() );
 
 		std::string tempitemname;
 
@@ -1914,7 +1924,7 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 					{
 						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3 );
-						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber() );
+						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
 						return true;
 					}
 					else
@@ -1946,7 +1956,11 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 				return false;
 			}
 
-			SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), static_cast<SI16>( i->GetTempVar( CITV_MOREX )), static_cast<SI16>( i->GetTempVar( CITV_MOREY )), static_cast<SI08>(i->GetTempVar( CITV_MOREZ )), worldNum );
+			SI16 targLocX = static_cast<SI16>( i->GetTempVar( CITV_MOREX ));
+			SI16 targLocY = static_cast<SI16>( i->GetTempVar( CITV_MOREY ));
+			SI08 targLocZ = static_cast<SI08>( i->GetTempVar( CITV_MOREZ ));
+			UI16 instanceId = static_cast<UI16>( i->GetTempVar( CITV_MORE0 ));
+			SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), targLocX, targLocY, targLocZ, worldNum, instanceId );
 			return true;
 		}
 	}
@@ -2188,20 +2202,25 @@ bool splPolymorph( CSocket *sock, CChar *caster, [[maybe_unused]] SI08 curSpell 
 	if( caster->IsPolymorphed() )
 	{
 		sock->SysMessage( 1637 ); // You cannot polymorph while already in another form
-		return false;
 	}
 	else if( caster->IsIncognito() )
 	{
 		sock->SysMessage( 1673 ); // You can't do that while incognito.
-		return false;
+	}
+	else if( caster->IsDisguised() )
+	{
+		sock->SysMessage( 9233 ); // You cannot polymorph while disguised.
 	}
 	else if( caster->GetId() == 0x00b8 || caster->GetId() == 0x00b7 ) // Savage Kin Paint transformation
 	{
 		sock->SysMessage( 1671 ); // You cannot polymorph while wearing body paint
-		return false;
 	}
-	Magic->PolymorphMenu( sock, POLYMORPHMENUOFFSET ); // Antichrists Polymorph
-	return true;
+	else
+	{
+		Magic->PolymorphMenu( sock, POLYMORPHMENUOFFSET ); // Polymorph
+		return true;
+	}
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4318,11 +4337,24 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 
 	if( curSpell == 32 || curSpell == 52 )
 	{
-		if( !cwmWorldState->ServerData()->TravelSpellsWhileAggressor() && (( caster->DidAttackFirst() && ValidateObject( caster->GetTarg() ) && caster->GetTarg()->IsInnocent() ) || caster->IsCriminal() ))
+		if( !cwmWorldState->ServerData()->TravelSpellsWhileAggressor() )
+		{
+			// Aggressor flag only matters against other players, not against NPCs
+			if(( caster->IsAggressor( true ) && ValidateObject( caster->GetTarg() ) && caster->GetTarg()->IsInnocent() ))
+			{
+				if( validSocket )
+				{
+					s->SysMessage( 2066 ); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
+				}
+				return;
+			}
+		}
+
+		if( caster->IsCriminal() || caster->HasStolen() )
 		{
 			if( validSocket )
 			{
-				s->SysMessage( 2066 ); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
+				s->SysMessage( 9278 ); // You cannot use Recall or Gate spells while you have an active criminal flag, or if you have stolen recently!
 			}
 			return;
 		}

@@ -126,6 +126,10 @@ enum cSD_TID
 	tSERVER_ESCORTDONE,			// Amount of time until an escort NPC will dissapear when his quest is finished.
 	tSERVER_MURDERDECAY,		// Amount of time before a permanent murder count will decay.
 	tSERVER_CRIMINAL,			// Amount of time a character remains criminal after committing a criminal act.
+	tSERVER_STEALINGFLAG,		// Amount of time a character's stealing flag remains active
+	tSERVER_AGGRESSORFLAG,		// Amount of time a character remains aggressor after committing an aggressive act
+	tSERVER_PERMAGREYFLAG,		// Amount of time a permagrey flag remains active after player has stolen from someone
+	tSERVER_COMBATIGNORE,		// Amount of time an NPC will ignore an unreachable target in combat
 	tSERVER_POTION,				// Delay between using potions
 	tSERVER_PETOFFLINECHECK,	// Delay between checks for the PetOfflineTimeout
 	tSERVER_NPCFLAGUPDATETIMER, // Delay in seconds between each time NPC flags are updated
@@ -208,7 +212,7 @@ private:
 
 	// Once over 62, bitsets are costly.  std::vector<bool> has a special exception in the c++ specificaiton, to minimize wasted space for bools
 	// These should be updated
-	std::bitset<101>	boolVals;			// Many values stored this way, rather than using bools.
+	std::bitset<103>	boolVals;			// Many values stored this way, rather than using bools.
 	std::bitset<64>		spawnRegionsFacets;	// Used to determine which facets to enable spawn regions for, set in UOX>INI
 
 	// ServerSystems
@@ -614,6 +618,9 @@ public:
 	auto		SnoopIsCrime( bool value ) -> void;
 	auto		SnoopIsCrime() const -> bool;
 
+	auto		SnoopAwareness( bool value ) -> void;
+	auto		SnoopAwareness() const -> bool;
+
 	auto		PlayerPersecutionStatus( bool value ) -> void;
 	auto		PlayerPersecutionStatus() const -> bool;
 
@@ -763,6 +770,12 @@ public:
 
 	auto		ShowReputationTitleInTooltip( bool value ) -> void;
 	auto		ShowReputationTitleInTooltip() const -> bool;
+
+	auto		EnableNPCGuildDiscounts( bool value ) -> void;
+	auto		EnableNPCGuildDiscounts() const -> bool;
+
+	auto		EnableNPCGuildPremiums( bool value ) -> void;
+	auto		EnableNPCGuildPremiums() const -> bool;
 
 	auto		CastSpellsWhileMoving( bool value ) -> void;
 	auto		CastSpellsWhileMoving() const -> bool;

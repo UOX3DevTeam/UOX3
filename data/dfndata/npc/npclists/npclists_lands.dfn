@@ -611,14 +611,8 @@ boneaxeman
 
 [NPCLIST location_45_heavy]
 {
-npclist=weakorc
-npclist=weakorc
-npclist=weakorc
-npclist=weakorc
-npclist=weakorc
-npclist=weakorc
+7|npclist=weakorc
 npclist=allettin
-npclist=weakorc
 }
 
 [NPCLIST location_46_light]

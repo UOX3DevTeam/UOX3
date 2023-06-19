@@ -863,7 +863,7 @@
 860=Onde deseja procurar caracteres escondidos?
 861=Quem deseja incitar?
 862=Quem deseja seduzir?
-863=O que deseja roubar?
+863=Que objecto vai tentar roubar?
 864=Contacte o seu operador de fragmentos se desejar roubar disponível.
 865=Em que deseja colocar um feitiço?
 866=Quem deseja aborrecer?
@@ -880,12 +880,12 @@
 877=Você entra na mochila da %s e tenta levar alguma coisa...
 878=Não se pode roubar a deuses.
 879=Esse item não tem valor para si.
-880=Vocês roubam esse item com sucesso.
+880=Roubaste o objecto com sucesso!
 881=Não consegues roubar aquele item.
 882=Você foi apanhado!
 883=Guardas!! Um ladrão está entre nós!
-884=Vocês notam %s a tentar roubar-vos %s!
-885=Vocês notam %s a tentar roubar %s de %s!
+884=Vocês reparam que %s estão a tentar roubar-vos %w!
+885=Percebeu que %s está a tentar roubar %w de %d!
 886=Você está demasiado longe para roubar esse item.
 887=Não vê sinais de quaisquer animais.
 888=Não se vêem sinais de quaisquer criaturas.
@@ -2538,6 +2538,8 @@
 2778=Name: %s | ID: %i | Série: %i | x: %i | y: %i | z: %i | mundo: %i | instanceID: %i
 2779=Isso excederia o número máximo de seguidores do outro jogador.
 2780=Isso excederia o seu número máximo de seguidores.
+2781=* ignora %s *
+2782=Não és suficientemente forte para manteres alguns dos teus itens equipados!
 // [2800-2999] House script
 2800=Possuidor da casa:
 2801=CO-PROPRIETÁRIOS
@@ -3611,6 +3613,7 @@
 8211=Redireccionar para 'comando raddnpc...
 8212=Sintaxe de comando válida para repetir a adição de objectos: 'radd [hexID/decimalID], 'radditem [itemSecção], 'raddnpc [npcSecção]
 8213=Secção ID do objecto do DFN originado de
+8214=O artigo pode ser roubado? 0 = não pode ser roubado, 1 = pode ser roubado, 2 = pode ser roubado raramente
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Número de conta associado ao jogador. Controlado por servidor (Read-Only)
 8301=NPC Tipo de IA
@@ -3752,6 +3755,7 @@
 8437=Permanente estilo de barba de carácter
 8438=Permanente cor de cabelo de carácter
 8439=Permanente estilo de cabelo de personagem
+8440=A personagem (jogador) é assinalada como agressora por alguém? Controlado pelo servidor (Read-Only)
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Número actual de jogadores banidos da Multi. Controlado por Servidor (Read-Only)
 8501=X coordenada para a proibição-localização da Multi
@@ -4105,6 +4109,41 @@
 9183=Sua caixa bancária está sobrecarregada e não aguenta mais peso.
 9184=Selecionar um local para o addon da casa.
 9185=Pode usar um machado para desmontar os viciados da casa e recuperar as suas escrituras.
+// Roubos diversos
+9188=Tens a mão na mochila... mas ela está vazia.
+9189=As duas mãos têm de estar livres para roubar.
+9190=Deves estar no grémio dos ladrões para roubar a outros jogadores.
+9191=Estás actualmente suspenso do Grémio dos Ladrões.
+9192=Não podes roubar aos lojistas.
+9193=Não podes roubar isto.
+9194=Essa criatura já foi roubada.  Não há mais nada para roubar.
+9195=O alvo não pode ser visto.
+9196=Não podes tentar roubar no calor do combate!
+9197=Como um jogador jovem, não podes usar a habilidade de roubar
+9198=Não podes roubar itens que estejam equipados.
+9199=Não podes roubar de vendedores.
+9200=Não podes roubar dos guardas.
+9201=Não podes roubar o que não pode ser visto...
+9202=Deves juntar-te a uma facção para fazer isto
+9203=Não podes roubar o teu próprio sigilo
+9204=Não tens habilidade suficiente para roubar o sigilo
+9205=Não pode roubar o sigilo quando está incógnito
+9206=Não pode roubar o sigilo quando está polimorfado
+9207=Não pode roubar o sigilo quando está disfarçado
+9208=Não pode roubar o sigilo da cidade uma hora após o arranque do servidor
+9209=Não podes roubar aos Jovens.
+9210=Roubaste com sucesso um item especial da criatura!
+9211=Não podes usá-lo enquanto estiveres paralisado.
+9212=Esse objecto está temporariamente protegido contra roubo
+9213=Vocês são escumalha! Guardas!
+9214=Guardas! Um vilão!
+9215=É um vilão! Guardas!
+9216=Guardas! Socorro!
+9230=Não podes realizar actos negativos no teu alvo.
+9231=Não podes realizar actos benéficos no teu alvo.
+9232=Não podes fazer isso estando disfarçado.
+9233=Não podes polimorfar enquanto disfarçado.
+9234=Retiraste o teu disfarce.
 // [9250-9300] Runebooks
 9250=Este livro precisa de tempo para ser recarregado.
 9251=Não se pode usar um livro de Runebook da mochila de outra pessoa!
@@ -4134,6 +4173,14 @@
 9275= Este livro já tem o montante máximo de encargos.
 9276= Você cobra o livro de rúnicas com uma pilha de pergaminho de recolha.
 9277= Carrega-se o livro de ronda com um pergaminho de recolha.
+9278=Não podes usar os feitiços Recordar ou Portal enquanto tiveres um sinal de criminoso activo, ou se tiveres roubado recentemente!
+9279=Seleciona o que queres examinar.
+9280=O cadáver foi saqueado pela última vez por %s.
+9281=O cadáver não foi profanado.
+9282=Este cadeado foi aberto pela última vez por %s.
+9283=Não nota nada de anormal.
+9284=Este indivíduo é um ladrão!
+9285=Não podes roubar de um contentor seguro.
 // [9301-9310] Peixe Mágico
 9301=Já se encontra sob um efeito semelhante.
 9302= Engoles o peixe inteiro!
@@ -4885,5 +4932,114 @@
 17273=Terá de esperar alguns segundos enquanto eu inspecciono a última encomenda.
 17274=A encomenda a granel foi colocada na sua mochila.
 17275=Não tem espaço suficiente na sua mochila para a recompensa do pedido por grosso.
+// [17500-17529] Nomes de Guildas NPC
+17500=Eu sou o %s de %d
+17501=A Guilda das Artes Arcanas
+17502=A Guilda dos Guerreiros
+17503=A Sociedade dos Ladrões
+17504=A Liga dos Rangers
+17505=A Guilda dos Curandeiros
+17506=A Cooperativa de Mineração
+17507=Associação dos Comerciantes
+17508=A Ordem dos Engenheiros
+17509=Sociedade dos Confeccionistas
+17510=Grupo Marítimo
+17511=Colégio Bárbaro
+17512=A Irmandade dos Ferreiros
+// [17550-17599] Subguildas
+17550=Guilda dos Magos
+17551=A Guilda da Feitiçaria
+17552=Os Mestres da Ilusão
+17553=Associação dos Guerreiros
+17554=Associação dos Combatentes e dos Homens de Pé
+17555=Grémio da Cavalaria e dos Cavalos
+17556=Federação dos Vigaristas e Mendigos
+17557=Grupo dos Assassinos
+17558=A Sociedade dos Ladrões
+17559=Grupo dos Mercadores
+17560=Grupo dos Fornecedores
+17561=Grupo dos Comerciantes
+17562=Grémio dos Barterers
+17563=Salão dos Alfaiates
+17564=Guilda dos Pescadores
+17565=Associação Marítima dos Marinheiros
+17566=Seamen's Chapter
+17567=Sociedade dos Armadores
+17568=Grémio dos Armadores
+17569=Grémio dos Ferreiros
+17570=Grémio de Armamento
+17571=Sociedade dos Armeiros
+// [17600-17700] Guildas NPC Diversas
+17600=Guildmaster
+17601=Guildmistress
+17602=Há uma taxa em moedas de ouro para se juntar à guilda: %i
+17603=Não pertences à minha guilda!
+17604=Acabaste de entrar no meu Grémio! Deves esperar uma semana para te demitires.
+17605=Aceito a tua demissão.
+17606=Esse objecto custa %i moedas de ouro.
+17607=Não sei do que estás a falar.
+17559=Bem vindo ao grémio! Verás que os outros membros te concederão preços mais baixos nas lojas.
+17608=Já és membro do nosso grémio.
+17609=Deves primeiro demitir-te da tua outra Guild.
+17610=Bem vindo a %s!
+17611=És demasiado novo para te juntares à minha Guild...
+17612=Não podes ser membro do Grémio dos Ladrões enquanto fores jovem.
+17613=Este grémio é para ladrões astutos, não para assassinos idiotas.
+17614=Deves ser pelo menos um carteirista viajante para te juntares a esta organização de elite.
+17615=Isso não é suficiente para um kit de disfarce, desculpa.
+17616=Porque é que me estão a dar isto? Não, obrigado.
+// Kit de disfarce
+18000=Vandyke
+18001=Mustache
+18002=Barba curta
+18003=Barba comprida
+18004=Barba curta
+18005=Barba comprida
+18010=Apenas membros do grémio dos ladrões estão treinados para usar este item.
+18011=Estás actualmente suspenso do Grémio dos Ladrões.  Eles não gostariam de ver as tuas acções.
+18012=KIT DE DISFARCE DE LADRÃO
+18013=OKAY
+18014=APLICAR
+18015=Selecção de pêlos faciais
+18016=Selecções de cabelo
+18017=Selecções de trompa facial
+18018=Selecções de trompa
+18019=Estilo de trompa 1
+18020=Estilo de trompa 2
+18021=Estilo de trompa 3
+18022=Estilo de corno 4
+18023=Estilo de corno 5
+18024=Estilo chifre 6
+18025=Estilo chifre 7
+18026=Estilo de chifre 8
+18027=Médio comprido
+18028=Penas longas
+18029=Curto
+18030=Mullet
+18031=Longo
+18032=Nó de topo
+18033=Trança longa
+18034=Espigado
+18035=Flor
+18036=Penteados
+18037=Os disfarces desaparecem ao fim de 2 horas: Está com bom aspeto.
+// [18500-19000] Consumíveis roubáveis de monstros especiais
+18500=O teu espírito não tem coesão. Deves esperar %i minutos antes de invocar o poder de uma Gema da Salvação.
+18501=A gema infunde-te com o seu poder e é destruída no processo.
+18502=Ressurreição
+18503=É possível ser ressuscitado aqui por este curandeiro. Queres tentar?<br>CONTINUAR - Escolheu tentar voltar à vida agora.<br>CANCELAR - Prefere permanecer um fantasma por enquanto.
+18504=Deves esperar %i segundos antes de poderes usar este item.
+18505=Já estás com a mana cheia.
+18506=O caldo azedo restaura instantaneamente alguma da tua mana!
+18507=Já tens a saúde completa.
+18508=A semente amarga restaura instantaneamente parte da tua saúde!
+18509=Já estás sob o efeito de um bálsamo ou loção.
+18510=Aplicas a pomada e de repente sentes-te menos vulnerável!
+18511=Aplicas o bálsamo e de repente sentes-te mais forte!
+18512=Aplicas o bálsamo e de repente sentes-te mais ágil!
+18513=Aplicas o bálsamo e de repente sentes-te mais sábio!
+18514=Aplicas a Loção Escudo da Vida.
+18515=Aplicas a Loção Pele de Pedra.
+18516=Os efeitos do bálsamo ou da loção passaram.
 }
 EOF

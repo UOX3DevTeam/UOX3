@@ -270,6 +270,39 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		}
 		okMsg( socket );
 		break;
+	case "MORE0":
+		if( splitString[4] )
+		{
+			ourItem.more0 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more0 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE1":
+		if( splitString[4] )
+		{
+			ourItem.more1 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more1 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE2":
+		if( splitString[4] )
+		{
+			ourItem.more2 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more2 = nVal;
+		}
+		okMsg( socket );
+		break;
 	case "MOREX":
 		if( splitString[4] )
 		{
@@ -419,6 +452,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.usesLeft = nVal;
 		okMsg( socket );
 		break;
+	case "STEALABLE":
+		ourItem.stealable = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 		{
@@ -561,6 +598,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCAI":
 		ourChar.aitype = nVal;
+		okMsg( socket );
+		break;
+	case "NPCGUILD":
+		ourChar.npcGuild = nVal;
 		okMsg( socket );
 		break;
 	case "VULNERABLE":

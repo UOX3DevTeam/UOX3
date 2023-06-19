@@ -117,9 +117,10 @@ static JSFunctionSpec my_functions[] =
 	{ "CheckStaticFlag",			SE_CheckStaticFlag,			5, 0, 0 },
 	{ "CheckDynamicFlag",			SE_CheckDynamicFlag,		6, 0, 0 },
 	{ "CheckTileFlag",				SE_CheckTileFlag,			2, 0, 0 },
-	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		7, 0, 0 },
-	{ "DoesStaticBlock",			SE_DoesStaticBlock,			7, 0, 0 },
+	{ "DoesDynamicBlock",			SE_DoesDynamicBlock,		9, 0, 0 },
+	{ "DoesStaticBlock",			SE_DoesStaticBlock,			5, 0, 0 },
 	{ "DoesMapBlock",				SE_DoesMapBlock,			8, 0, 0 },
+	{ "DoesCharacterBlock",			SE_DoesCharacterBlock,		5, 0, 0 },
 	{ "DistanceBetween",			SE_DistanceBetween,			4, 0, 0 },
 
 	{ "ResourceArea",				SE_ResourceArea,			2, 0, 0 },
@@ -2580,10 +2581,10 @@ SI08 cScript::OnSnooped( CChar *snooped, CChar *snooper, bool success )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers for character with event attached if they attempt to snoop someone's backpack
 //o------------------------------------------------------------------------------------------------o
-SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
+SI08 cScript::OnSnoopAttempt( CChar *snooped, CItem *pack, CChar *snooper )
 {
 	const SI08 RV_NOFUNC = -1;
-	if( !ValidateObject( snooped ) || !ValidateObject( snooper ))
+	if( !ValidateObject( snooped ) || !ValidateObject( pack ) || !ValidateObject( snooper ))
 		return RV_NOFUNC;
 
 	if( !ExistAndVerify( seOnSnoopAttempt, "onSnoopAttempt" ))
@@ -2592,11 +2593,13 @@ SI08 cScript::OnSnoopAttempt( CChar *snooped, CChar *snooper )
 	jsval params[3], rval;
 
 	JSObject *thiefObj	= JSEngine->AcquireObject( IUE_CHAR, snooped, runTime );
+	JSObject *packObj	= JSEngine->AcquireObject( IUE_ITEM, pack, runTime );
 	JSObject *victimObj	= JSEngine->AcquireObject( IUE_CHAR, snooper, runTime );
 
 	params[0] = OBJECT_TO_JSVAL( thiefObj );
-	params[1] = OBJECT_TO_JSVAL( victimObj );
-	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnoopAttempt", 2, params, &rval );
+	params[1] = OBJECT_TO_JSVAL( packObj );
+	params[2] = OBJECT_TO_JSVAL( victimObj );
+	JSBool retVal = JS_CallFunctionName( targContext, targObject, "onSnoopAttempt", 3, params, &rval );
 	if( retVal == JS_FALSE )
 	{
 		SetEventExists( seOnSnoopAttempt, false );

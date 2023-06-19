@@ -72,6 +72,8 @@ function onCallback0( pSock, ourObj )
 						{
 							ourObj.type = 63;
 						}
+						ourObj.SetTempTag( "lockPickedBy", ( pUser.serial ).toString() );
+						ourObj.SetTempTag( "lockPickedSkill", pUser.skills.lockpicking );
 						ourObj.Refresh();
 						pSock.SoundEffect( 0x01FF, false );
 						pSock.SysMessage( GetDictionaryEntry( 935, pSock.language )); // You manage to pick the lock.

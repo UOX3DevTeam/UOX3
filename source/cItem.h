@@ -8,6 +8,9 @@ enum CITempVars
 	CITV_MOREX,
 	CITV_MOREY,
 	CITV_MOREZ,
+	CITV_MORE0,
+	CITV_MORE1,
+	CITV_MORE2,
 	CITV_COUNT
 };
 
@@ -33,6 +36,8 @@ protected:
 	ARMORCLASS		armorClass;
 	UI16			restock;		// Number up to which shopkeeper should restock this item
 	SI08			movable;		// 0=Default as stored in client, 1=Always movable, 2=Never movable, 3=Owner movable.
+	UI08			stealable;		// 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town rares, etc)
+	TIMERVAL		tempLastTraded;	// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
 	TIMERVAL		tempTimer;
 	TIMERVAL		decayTime;
 	UI08			spd;			// The speed of the weapon
@@ -103,6 +108,9 @@ public:
 
 	auto			GetGridLocation() const -> SI08;
 	auto			SetGridLocation( SI08 newLoc ) -> void;
+
+	auto			GetStealable() const -> UI08;
+	auto			SetStealable( UI08 newValue ) -> void;
 
 	auto			IsDoorOpen() const -> bool;
 	auto			IsPileable() const -> bool;
@@ -190,9 +198,11 @@ public:
 	auto			GetMovable() const -> SI08;
 	auto			SetMovable( SI08 newValue ) -> void;
 
+	auto			GetTempLastTraded() const -> TIMERVAL;
 	auto			GetTempTimer() const -> TIMERVAL;
 	auto			GetDecayTime() const -> TIMERVAL;
 
+	auto			SetTempLastTraded( TIMERVAL newValue ) -> void;
 	auto			SetTempTimer( TIMERVAL newValue ) -> void;
 	auto			SetDecayTime( TIMERVAL newValue ) -> void;
 

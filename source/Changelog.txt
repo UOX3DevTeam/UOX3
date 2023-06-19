@@ -1,3 +1,75 @@
+20/06/2023 - Xuri (0.99.6-RC5)
+	Added script for NPC guildmasters (js/npc/ai/guildmaster.js). Only one NPC guild has been setup in the script so far (more can be easily added) - the Thieves Guild - which if joined grants players the ability to steal from other players and to buy disguise kits
+	Added two new NPCs, which there will now spawn one of in a random location in each city in Britannia (felucca facet):
+		m_thief_guildmaster (dfndata/npc/male_human.dfn)
+		f_thief_guildmaster (dfndata/npc/female_Human.dfn)
+	Added two new character properties to keep track of which NPC guild a player (or NPC) belongs to. These properties have been exposed as the following Character JS properties:
+		.npcGuild 		// ID of NPC guild, as defined in script
+		.npcGuildJoined // Timestamp for when player joined NPC guild
+	Added script for Disguise Kits (js/item/disguisekit.js). These allow members of the Thieves Guild to disguise themselves from the prying eyes of other players.
+	Added two new character properties:
+		.isDisguised 	// true/false flag for character being disguised
+		.origName 		// used to store character's original name before disguise went into effect
+	Moved implementation of Stealing skill from code to script (js/skill/stealing.js) and revamped it completely in the process. Changes include:
+		New features:
+			Town rare stealing - any item marked as "special stealable" with new item property .stealable can be stolen, even if it's locked down by a GM on the ground, or inside a container
+			When stealing from item piles, thief can potentially steal the amount of items that makes up the max weight limit for what they can steal, from those piles
+			Chance to successfully steal is now affected by whether there are any characters (NPCs or Players) that witness the attempt. Depends on distance to character, and direction character is facing
+			Players now become "permagrey" when successfully stealing from another player, regardless of whether it's witnessed
+			Players now receive a "stealing" flag when stealing from another player, regardless of whether it's witnessed
+			Stolen items cannot be removed from thief's backpack for 30 seconds following the theft of the item (AoS core shard era and above)
+			Optional AoS feature to steal special consumable items from monsters
+		Updated default stealing rules:
+			Updated calculations to determine chance of success when stealing
+			Players cannot steal while engaged in combat
+			Players are revealed if hidden as soon as they use the stealing skill
+			Players can no longer steal items in the secure trade window
+			Players can no longer steal items from NPC shopkeepers
+			Both hands must be free to steal
+			Stealing now checks line of sight to target player/object
+			Only members of Thieves Guild (NPC guild) can now steal from other players, unless they are guild enemies
+			Players can no longer steal from NPC guards by default
+			Players can no longer steal from the same NPC monster more than once
+			Only gold and gems can be stolen from innocent players in dungeon/ll areas of Felucca, if core shard era is set to AoS or higher
+			Players can no longer steal items held on cursor by other players
+			Orcish masks now eplode if player steals from orcs while wearing it
+			If core shard era is set to LBR or lower, player is marked as an aggressor if they steal from another player
+			Guards can only be called on players that are flagged as criminals within the first 10 seconds of them being flagged
+		Stealing script options:
+			Allow stealing entire containers (off by default pre-AoS)
+			Return stolen items on thief death (off by default)
+			Temporarily make stolen items immovable in thief's backpack (on by default post-AoS)
+			Temporarily protect traded items (on by default)
+			Let dexterity affect chance for successful theft (off by default)
+			Let light level affect chance for successful theft (off by default)
+			Allow stealing from NPC Guards (off by default)
+			Allow stealing special loot from monsters (on by default post-ml)
+	Moved implementation of Snooping skill from code to script (js/skill/snooping.js), with some changes:
+		Players cannot snoop pack animals from inside a house, if the animal is outside
+		The deeper inside main backpack a container sits, the harder it becomes to snoop inside it
+		Included an optional feature that lets targets of snooping gradually become more aware, increasing the difficulty of succeeding. This awareness fades over time.
+		Players have a chance to stay hidden while snooping, based on their Hiding skill
+		Karma is now lowered by snooping regardless of success or failure
+	Added tracking system for "aggressors" in combat. A player attacking someone (regardless of flag status) will be marked as aggressor to that someone for 2 minutes
+	Added tracking system for "permagrey" flags - these are stored on a per-target basis, so a player can be flagged visibly as permagrey to multiple other players. Persists until player dies.
+	Player combat targets and war mode are now cleared on logout
+	Players will now be unable to hide if within visual distance and in line of sight of their attacker or current target in combat
+	Server leave-announcement now only happens after the logout timer has expired, instead of the exact moment the player presses the logout button
+	Fixed an issue that could cause swimming NPCs to swim on land
+	NPCs now have the ability to temporarily ignore unreachable targets in combat. If attacked by someone they are ignoring, they will enter evade state and try to move away from that someone.
+	SpawnRegions now support NPCLISTS with weighted entries. Example of an NPCLIST with 75% chance of spawning some kind of orc, and 25% chance of spawning a ratman archer:
+		[NPCLIST example]
+		{
+		75|NPCLIST=allorc
+		25|ratman
+		}
+	Added 3 additional "all purpose" item properties (.more0, .more1 and .more2) and exposed those to JS engine. These work the same as more/morex/morey/morez
+	Mark spell now stores a 4th property on recall runes - instanceID. This is stored in the rune's .more0 property.
+	Recall and Gate spells now check the recall rune (or runebook)'s 4th location property - instanceID - to determine where the player ends up
+	Fixed a server crash related to equipment being automatically unequipped if character is no longer strong enough to have it equipped
+	Added new JS Function to check if any characters at specified location potentially block movement:
+		DoesCharacterBlock( x, y, z, worldNum, instanceID )	// returns true if a character exists at given coordinate (within z +/- 4)
+
 11/06/2023 - Xuri
 	Fixed an issue with the Clumsy spell script (js/magic/clumsy.js) where an attempt could be made to send a system message to the non-existent sockets of NPCs casting the spell
 	Fixed an issue where [golem] NPCs were trying to GET crafted_golem instead of craftedgolem (dfndata/npc/clockwork.dfn)

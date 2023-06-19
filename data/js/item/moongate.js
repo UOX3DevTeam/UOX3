@@ -108,7 +108,7 @@ function CanUseGate( srcSock, pUser )
 		}
 		return false;
 	}
-	else if( pUser.atWar && pUser.attackFirst )
+	else if( pUser.IsAggressor() )
 	{
 		// Disallow moongate travel for players flagged as aggressors
 		var pTarget = pUser.target;
@@ -364,7 +364,7 @@ function onGumpPress( srcSock, myButton )
 	{
 		var tempFollower = followerList[i];
 		// Only teleport pet if set to follow and within range
-		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( pChar, 24 ))
+		if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( srcChar, 24 ))
 		{
 			tempFollower.Teleport( targetLocation[0], targetLocation[1], targetLocation[2], targetLocation[3] );
 			tempFollower.Follow( srcChar );

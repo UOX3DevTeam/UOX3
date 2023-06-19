@@ -10,6 +10,8 @@
 #include <iostream>
 #include <regex>
 
+using namespace std::string_literals;
+
 const TIMERVAL	DEFSPAWN_NEXTTIME		= 0;
 const UI16		DEFSPAWN_CALL			= 1;
 const SI16		DEFSPAWN_X1				= 0;
@@ -732,9 +734,36 @@ void CSpawnRegion::DoRegionSpawn( UI32& itemsSpawned, UI32& npcsSpawned )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do a char spawn
 //o------------------------------------------------------------------------------------------------o
-CChar *CSpawnRegion::RegionSpawnChar( void )
+auto CSpawnRegion::RegionSpawnChar() -> CChar *
 {	
-	std::string ourNPC = oldstrutil::trim( oldstrutil::removeTrailing( sNpcs[RandomNum( static_cast<size_t>( 0 ), sNpcs.size() - 1 )], "//" ));
+	// Stuff each NPC entry into a vector
+	std::vector<std::pair<std::string, UI16>> npcListVector;
+	for( size_t i = 0; i < sNpcs.size(); i++ )
+	{
+		// Split string for entry into a stringlist based on | as separator
+		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( sNpcs[i], "//" )), "|" );
+
+		UI16 sectionWeight = 1;
+		if( csecs.size() > 1 )
+		{
+			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+		}
+
+		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
+		npcListVector.emplace_back( npcSection, sectionWeight );
+	}
+
+	auto ourNPC = Npcs->ChooseNpcToCreate( npcListVector );
+	if( ourNPC.empty() )
+		return nullptr;
+
+	auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ourNPC, "//" )), "=" );
+	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
+	{
+		// Chosen entry contained another NPCLIST! Let's dive back into it...
+		ourNPC = Npcs->NpcListLookup( ourNPC );
+	}
+
 	CScriptSection *npcCreate = FileLookup->FindEntry( ourNPC, npc_def );
 	if( npcCreate == nullptr )
 		return nullptr;
@@ -801,7 +830,7 @@ CChar *CSpawnRegion::RegionSpawnChar( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Do an item spawn
 //o------------------------------------------------------------------------------------------------o
-CItem *CSpawnRegion::RegionSpawnItem( void )
+auto CSpawnRegion::RegionSpawnItem() -> CItem *
 {
 	CItem *ISpawn = nullptr;
 	SI16 x, y;

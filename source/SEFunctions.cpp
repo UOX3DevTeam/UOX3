@@ -3756,6 +3756,29 @@ JSBool SE_DoesMapBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObjec
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	SE_DoesCharacterBlock()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if characters at/above given coordinates blocks movement, etc
+//o------------------------------------------------------------------------------------------------o
+JSBool SE_DoesCharacterBlock( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+{
+	if( argc != 5 )
+	{
+		ScriptError( cx, "DoesCharacterBlock: Invalid number of arguments (takes 5: X, Y, z, WorldNumber, instanceId)" );
+		return JS_FALSE;
+	}
+
+	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+	SI16 y			= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+	SI08 z			= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+	UI08 worldNum	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+	UI08 instanceId	= static_cast<UI08>( JSVAL_TO_INT( argv[4] ));
+	bool characterBlocks = Map->DoesCharacterBlock( x, y, z, worldNum, instanceId );
+	*rval = BOOLEAN_TO_JSVAL( characterBlocks );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	SE_DeleteFile()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a file from the server's harddrive...
@@ -3839,7 +3862,6 @@ JSBool SE_EraStringToNum( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 		return JS_FALSE;
 	}
 
-	JSString *tString;
 	std::string eraString = oldstrutil::upper( JS_GetStringBytes( JS_ValueToString( cx, argv[0] )));
 	if( !eraString.empty() )
 	{
@@ -4926,6 +4948,24 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 				break;
 			case 333:	// BODFAMEREWARDMULTIPLIER
 				*rval = INT_TO_JSVAL( static_cast<R32>( cwmWorldState->ServerData()->BODFameRewardMultiplier() ));
+				break;
+			case 334:	// ENABLENPCGUILDDISCOUNTS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EnableNPCGuildDiscounts() );
+				break;
+			case 335:	// ENABLENPCGUILDPREMIUMS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->EnableNPCGuildPremiums() );
+				break;
+			case 336:	 // AGGRESSORFLAGTIMER
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_AGGRESSORFLAG )));
+				break;
+			case 337:	 // PERMAGREYFLAGTIMER
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG )));
+				break;
+			case 338:	 // STEALINGFLAGTIMER
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->SystemTimer( tSERVER_STEALINGFLAG )));
+				break;
+			case 339:	 // SNOOPAWARENESS
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopAwareness() );
 				break;
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );

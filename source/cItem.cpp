@@ -91,6 +91,8 @@ const UI08			DEFITEM_BASERANGE		= 0;
 const UI16			DEFITEM_USESLEFT		= 0;
 const UI16			DEFITEM_MAXUSES			= 0;
 const UI16			DEFITEM_REGIONNUM 		= 255;
+const UI16			DEFITEM_TEMPLASTTRADED	= 0;
+const SI08			DEFITEM_STEALABLE	 	= 1;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem()
@@ -104,7 +106,8 @@ restock( DEFITEM_RESTOCK ), movable( DEFITEM_MOVEABLE ), tempTimer( DEFITEM_TEMP
 spd( DEFITEM_SPEED ), maxHp( DEFITEM_MAXHP ), amount( DEFITEM_AMOUNT ),
 layer( DEFITEM_LAYER ), type( DEFITEM_TYPE ), offspell( DEFITEM_OFFSPELL ), entryMadeFrom( DEFITEM_ENTRYMADEFROM ),
 creator( DEFITEM_CREATOR ), gridLoc( DEFITEM_GRIDLOC ), weightMax( DEFITEM_WEIGHTMAX ), baseWeight( DEFITEM_BASEWEIGHT ), maxItems( DEFITEM_MAXITEMS ),
-maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM )
+maxRange( DEFITEM_MAXRANGE ), baseRange( DEFITEM_BASERANGE ), maxUses( DEFITEM_MAXUSES ), usesLeft( DEFITEM_USESLEFT ), regionNum( DEFITEM_REGIONNUM ), 
+tempLastTraded( DEFITEM_TEMPLASTTRADED ), stealable( DEFITEM_STEALABLE )
 {
 	spells[0]	= spells[1] = spells[2] = 0;
 	value[0]	= value[1] = value[2] = 0;
@@ -990,6 +993,21 @@ auto CItem::SetMovable( SI08 newValue ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetTempLastTraded()
+//|					CItem::SetTempLastTraded()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets timestamp for when item was last traded using secure trade window (not saved)
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetTempLastTraded() const -> TIMERVAL
+{
+	return tempLastTraded;
+}
+auto CItem::SetTempLastTraded( TIMERVAL newValue ) -> void
+{
+	tempLastTraded = newValue;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem::GetTempTimer()
 //|					CItem::SetTempTimer()
 //o------------------------------------------------------------------------------------------------o
@@ -1600,6 +1618,9 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetMana( GetMana() );
 	target->SetMaxHP( GetMaxHP() );
 	target->SetTempVar( CITV_MORE, GetTempVar( CITV_MORE ));
+	target->SetTempVar( CITV_MORE0, GetTempVar( CITV_MORE0 ));
+	target->SetTempVar( CITV_MORE1, GetTempVar( CITV_MORE1 ));
+	target->SetTempVar( CITV_MORE2, GetTempVar( CITV_MORE2 ));
 	target->SetTempVar( CITV_MOREX, GetTempVar( CITV_MOREX ));
 	target->SetTempVar( CITV_MOREY, GetTempVar( CITV_MOREY ));
 	target->SetTempVar( CITV_MOREZ, GetTempVar( CITV_MOREZ ));
@@ -1639,6 +1660,7 @@ auto CItem::CopyData( CItem *target ) -> void
 	target->SetMaxRange( GetMaxRange() );
 	target->SetMaxUses( GetMaxUses() );
 	target->SetUsesLeft( GetUsesLeft() );
+	target->SetStealable( GetStealable() );
 
 	// Set damage types on new item
 	for( SI32 i = 0; i < WEATHNUM; ++i )
@@ -1692,8 +1714,9 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 	outStream << "GridLoc=0x" << static_cast<SI16>( GetGridLocation() ) << newLine;
 	outStream << "Layer=0x" << static_cast<SI16>( GetLayer() ) << newLine;
 	outStream << "Cont=0x" << GetContSerial() << newLine;
-	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
 	outStream << "Creator=0x" << GetCreator() << newLine;
+	outStream << "More=0x" << GetTempVar( CITV_MORE ) << newLine;
+	outStream << "More012=0x" << GetTempVar( CITV_MORE0 ) << ",0x" << GetTempVar( CITV_MORE1 ) << ",0x" << GetTempVar( CITV_MORE2 ) << newLine;
 	outStream << "MoreXYZ=0x" << GetTempVar( CITV_MOREX ) << ",0x" << GetTempVar( CITV_MOREY ) << ",0x" << GetTempVar( CITV_MOREZ ) << newLine;
 	outStream << "Glow=0x" << GetGlow() << newLine;
 	outStream << "GlowBC=0x" << GetGlowColour() << newLine;
@@ -1731,6 +1754,8 @@ bool CItem::DumpBody( std::ofstream &outStream ) const
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( HEAT ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( COLD ) ? 1 : 0 )) + ","
 		+ std::to_string( static_cast<SI16>( GetWeatherDamage( SNOW ) ? 1 : 0 )) + "," + std::to_string( static_cast<SI16>( GetWeatherDamage( LIGHTNING ) ? 1 : 0 )) + newLine;
 	outStream << "EntryMadeFrom=" + std::to_string( EntryMadeFrom() ) + newLine;
+	outStream << "Stealable=" + std::to_string( GetStealable() ) + newLine;
+
 	return true;
 }
 
@@ -1923,8 +1948,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 				{
 					rValue = true;
 				}
-				else if( UTag == "MURDERER" )
+				else if( UTag == "MORE012" )
 				{
+					SetTempVar( CITV_MOREX, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MOREY, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+					SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				else if( UTag == "MOREXYZ" )
@@ -1977,6 +2005,10 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					{
 						SetTempVar( CITV_MOREZ, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					}
+					rValue = true;
+				}
+				else if( UTag == "MURDERER" )
+				{
 					rValue = true;
 				}
 				else if( UTag == "MOVABLE" )
@@ -2088,6 +2120,11 @@ bool CItem::HandleLine( std::string &UTag, std::string &data )
 					SetSpell( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
 					SetSpell( 1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
 					SetSpell( 2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 )));
+					rValue = true;
+				}
+				else if( UTag == "STEALABLE" )
+				{
+					SetStealable( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
 					rValue = true;
 				}
 				break;
@@ -2351,6 +2388,22 @@ auto CItem::IsDivineLocked() const -> bool
 auto CItem::SetDivineLock( bool newValue ) -> void
 {
 	priv.set( BIT_DIVINELOCK, newValue );
+	UpdateRegion();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CItem::GetStealable()
+//|					CItem::SetStealable()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets property that determines under which conditions item can be stolen
+//o------------------------------------------------------------------------------------------------o
+auto CItem::GetStealable() const -> UI08
+{
+	return stealable;
+}
+auto CItem::SetStealable( UI08 newValue ) -> void
+{
+	stealable = newValue;
 	UpdateRegion();
 }
 
@@ -2947,6 +3000,17 @@ void CItem::Cleanup( void )
 		CBaseObject *iCont = GetCont();
 		RemoveFromSight();
 		RemoveSelfFromCont();
+
+		// If a corpse, with valid player owner, remove from owner's list of corpses
+		if( IsCorpse() )
+		{
+			CChar *iOwner = GetOwnerObj();
+			if( ValidateObject( iOwner ) && !iOwner->IsNpc() )
+			{
+				iOwner->GetOwnedCorpses()->Remove( this );
+			}
+		}
+
 		RemoveSelfFromOwner();
 
 		for( CItem *tItem = Contains.First(); !Contains.Finished(); tItem = Contains.Next() )

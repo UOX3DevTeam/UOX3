@@ -766,6 +766,39 @@ auto CMulHandler::DoesMapBlock( std::int16_t x, std::int16_t y, std::int8_t z, s
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMulHandler::DoesCharacterBlock()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Checks if there are any characters at given coordinates that block movement
+//o------------------------------------------------------------------------------------------------o
+auto CMulHandler::DoesCharacterBlock( UI16 x, UI16 y, SI08 z, UI08 worldNumber, UI16 instanceId ) -> bool
+{
+	for( auto &cellResponse : MapRegion->PopulateList( x, y, worldNumber ))
+	{
+		if( cellResponse == nullptr )
+			continue;
+
+		auto regChars = cellResponse->GetCharList();
+		for( const auto &tempChar : regChars->collection() )
+		{
+			if( !ValidateObject( tempChar ) || ( tempChar->GetInstanceId() != instanceId ))
+				continue;
+
+			// Is character within the range that normally blocks movement?
+			if( tempChar->GetX() == x && tempChar->GetY() == y && tempChar->GetZ() >= z - 2 && tempChar->GetZ() <= z + 2 )
+			{
+				// Is character a visible NPC, or a non-dead visible player?
+				if(( tempChar->IsNpc() && tempChar->GetVisible() == VT_VISIBLE ) || ( !tempChar->IsDead() && tempChar->GetVisible() == VT_VISIBLE ))
+				{
+					// Character found, potentially blocking
+					return true;
+				}
+			}
+		}
+	}
+	return false;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMulHandler::CheckStaticFlag()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks to see whether any statics at given coordinates has a specific flag

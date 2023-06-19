@@ -278,7 +278,10 @@ function PlayInstrument( pSock, myInstrument, wellPlayed )
 
 function BeginAttack( charOne, charTwo, attackFirst )
 {
-	charOne.attackFirst = attackFirst;
+	if( attackFirst && !charTwo.CheckAggressorFlag( charOne ))
+	{
+		charOne.AddAggressorFlag( charTwo );
+	}
 	charOne.attacker = charTwo;
 	charOne.target = charTwo;
 
