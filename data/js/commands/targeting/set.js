@@ -41,7 +41,9 @@ function onCallback0( socket, ourObj )
 
 	var splitString = socket.xText.split( " " );
 	var uKey = splitString[0].toUpperCase();
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
+
 	switch( uKey )
 	{
 	case "NAME":
@@ -213,7 +215,8 @@ function onCallback0( socket, ourObj )
 // Item-specific properties
 function HandleSetItem( socket, ourItem, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -479,7 +482,8 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 // Spawner-specific properties
 function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -513,7 +517,8 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 // Character-specific properties
 function HandleSetChar( socket, ourChar, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -602,6 +607,10 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCGUILD":
 		ourChar.npcGuild = nVal;
+		okMsg( socket );
+		break;
+	case "NPCGUILDJOINED":
+		ourChar.npcGuildJoined = nVal;
 		okMsg( socket );
 		break;
 	case "VULNERABLE":
@@ -942,7 +951,8 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 
 function HandleSetSocket( socket, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{

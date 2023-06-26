@@ -486,6 +486,34 @@ function HandleGetChar( socket, ourChar, uKey )
 	case "NPCGUILD":
 		socket.SysMessage( ourChar.npcGuild );
 		break;
+	case "NPCGUILDJOINED":
+		if( !ourChar.npc )
+		{
+			var npcGuildJoined = ourChar.npcGuildJoined;
+			if( npcGuildJoined > 0 )
+			{
+				// Output raw value of timestamp
+				socket.SysMessage( npcGuildJoined );
+
+				// Calculate date of timestamp, and output as a formatted date
+				var joinedDate = new Date( npcGuildJoined * 60000 );
+				var options = { year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+				var formattedDateTime = joinedDate.toLocaleString( undefined, options );
+				socket.SysMessage( "Character joined guild on " + formattedDateTime );
+
+				// Calculate the duration in days, hours, and minutes, and output
+				var durationInMinutes = Math.floor( Date.now() / ( 60 * 1000 )) - npcGuildJoined;
+				var days = Math.floor(durationInMinutes / (24 * 60));
+				var hours = Math.floor((durationInMinutes % (24 * 60)) / 60);
+				var minutes = durationInMinutes % 60;
+				socket.SysMessage( "(" + days + " days, " + hours + " hours, " + minutes + " minutes ago)" );
+			}
+			else
+			{
+				socket.SysMessage( "Character has not joined an NPC Guild yet." );
+			}
+		}
+		break;
 	case "DIR":
 	case "DIRECTION":
 		socket.SysMessage( ourChar.direction );

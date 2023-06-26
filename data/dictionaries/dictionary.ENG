@@ -4992,6 +4992,8 @@
 17617=Sorry, we are not accepting any new members right now.
 17618=As a fellow guild member, you qualify for a discount!
 17619=As a fellow guild member, I can give you a premium price for this!
+17620=That's not enough to cover the guild membership fee, sorry.
+17621=Time since joining guild: %i minutes.
 // Disguise Kit
 18000=Vandyke
 18001=Mustache
@@ -5027,7 +5029,7 @@
 18035=Flower
 18036=Buns
 18037=Disguises wear off after 2 hours. : You're looking good.
-// [18500-19000] Special Monster Stealable Consumables
+// [18500-18600] Special Monster Stealable Consumables
 18500=Your spirit lacks cohesion. You must wait %i minutes before invoking the power of a Gem of Salvation.
 18501=The gem infuses you with its power and is destroyed in the process.
 18502=Resurrection

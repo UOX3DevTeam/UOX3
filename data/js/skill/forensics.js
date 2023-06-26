@@ -29,7 +29,7 @@ function onCallback0( pSock, ourObj )
 			pSock.SysMessage( GetDictionaryEntry( 6007, pLanguage )); // You examine the body..."
 
 			// How old is the corpse?
-			var timeSinceDeath = parseInt(( GetCurrentClock() / 1000 ) - ourObj.tempTimer );
+			var timeSinceDeath = parseInt( GetCurrentClock() / 1000 ) - parseInt( ourObj.tempTimer / 1000 );
 			if( timeSinceDeath > 180 )
 			{
 				pSock.SysMessage( GetDictionaryEntry( 6008, pLanguage )); // It stinks quite a lot by now.

@@ -97,14 +97,16 @@ const npcGuilds = {
 };
 
 // List of NPC guilds players are able to join:
-const enabledGuilds = [ 3 ];
+const enableddGuilds = [ 3 ];
 
+// Can call from other scripts using
+// var guildRelation = TriggerEvent( 3217, "CheckGuildRelation", npcGuildA, npcGuildB );
 function CheckGuildRelation( npcGuildA, npcGuildB )
 {
 	// Are the NPC guilds actually the same guild?
 	if( npcGuildA == npcGuildB )
 	{
-		return 1;
+		return 1; // Same guild!
 	}
 
 	const guildA = npcGuilds[npcGuildA];
@@ -113,21 +115,17 @@ function CheckGuildRelation( npcGuildA, npcGuildB )
 	// Do the NPC guilds share a parent/child relationship?
 	if( guildA[1] === npcGuildB || guildB[1] === npcGuildA )
 	{
-		return 2;
+		return 2; // Parent/child guilds!
 	}
 
 	// Are the NPC guilds considered enemies?
-	/*if( guildA[2].some( enemy => enemy === npcGuildB ) || guildB[2].some( enemy => enemy === npcGuildA ))
+	if( guildA[2] && npcGuilds[guildA[2]][3].indexOf( npcGuildB ) != -1 ||
+      guildB[2] && npcGuilds[guildB[2]][3].indexOf( npcGuildA ) != -1 )
 	{
-		return 3;
-	}*/
+    	return 3; // Enemy guilds!
+  	}
 
-	if (guildA[2] && npcGuilds[guildA[2]][3].indexOf(npcGuildB) != -1 ||
-      guildB[2] && npcGuilds[guildB[2]][3].indexOf(npcGuildA) != -1 ) {
-    return 3;
-  }
-
-	return 0;
+	return 0; // No relation
 }
 
 function onSpeech( strSaid, pChar, npcGuildMaster )
@@ -151,40 +149,42 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 					{
 						let dictMsg = GetDictionaryEntry( 17500, pSock.language ); // I am the %s of %d
 						dictMsg = dictMsg.replace( /%s/gi, GetDictionaryEntry( npcGuildMaster.gender ? 17601 : 17600, pSock.language )); // %s guildmaster/guildmistress
-						//dictMsg.replace( /%d/gi, GetDictionaryEntry( 17500 + npcGuildMaster.npcGuild, pSock.language )); // %d [npc guild name]
 						dictMsg = dictMsg.replace( /%d/gi, GetDictionaryEntry( npcGuilds[npcGuildMaster.npcGuild][0], pSock.language )); // %d [npc guild name]
 						dictMsg = GetDictionaryEntry( 17602, pSock.language ); // There is a fee in gold coins for joining the guild : %i
 						npcGuildMaster.TextMessage( dictMsg.replace( /%i/gi, joinGuildCost ));
-						trigWordHandled = true;
 					}
+					trigWordHandled = true;
 					break;
 				case 5: // resign | quit
 					if( pChar.npcGuild != npcGuildMaster.npcGuild )
 					{
 						npcGuildMaster.TextMessage( GetDictionaryEntry( 17603, pSock.language )); // Thou dost not belong to my guild!
-						return;
 					}
-					//else if( /* too short time since player joined guild */ )
-					//{
-						//npcGuildMaster.TextMessage( GetDictionaryEntry( 17604, pSock.language )); // You just joined my guild! You must wait a week to resign.
-						//return;
-					//}*/
 					else
 					{
-						npcGuildMaster.TextMessage( GetDictionaryEntry( 17605, pSock.language )); // I accept thy resignation.
-						pChar.npcGuild = 0;
-						trigWordHandled = true;
+						var currTimeMin = Math.floor( Date.now() / ( 60 * 1000 ));
+						if( currTimeMin - pChar.npcGuildJoined < 10080 )
+						{
+							var dictMsg = GetDictionaryEntry( 17621, pSock.language ); // Time since joining guild: %i minutes.
+							pChar.TextMessage( dictMsg.replace( /%i/gi, ( currTimeMin - pChar.npcGuildJoined ).toString() ), false, 0x3b2, 0, pChar.serial );
+							npcGuildMaster.TextMessage( GetDictionaryEntry( 17604, pSock.language )); // You just joined my guild! You must wait a week to resign.
+						}
+						else
+						{
+							npcGuildMaster.TextMessage( GetDictionaryEntry( 17605, pSock.language )); // I accept thy resignation.
+							pChar.npcGuild = 0;
+						}
 					}
+
+					trigWordHandled = true;
 					break;
 				case 6: // guild | guilds
-					//pChar.TextMessage( "Hm: " + npcGuilds[3][0].toString() );
 					var dictMsg = GetDictionaryEntry( 17500, pSock.language ); // I am the %s of %d
 					dictMsg = dictMsg.replace( /%s/gi, GetDictionaryEntry( npcGuildMaster.gender ? 17601 : 17600, pSock.language )); // %s guildmaster/guildmistress
-					//dictMsg.replace( /%d/gi, GetDictionaryEntry( 17500 + npcGuildMaster.npcGuild, pSock.language )); // %d [npc guild name]
 					dictMsg = dictMsg.replace( /%d/gi, GetDictionaryEntry( npcGuilds[npcGuildMaster.npcGuild][0], pSock.language )); // %d [npc guild name]
 					npcGuildMaster.TextMessage( dictMsg );
 					trigWordHandled = true;
-					return;
+					break;
 				case 0x1F: // disguise
 					// Make sure both NPC and player both belong to Thieves Guild
 					if( disguiseKitEnabled && npcGuildMaster.npcGuild == 3 && pChar.npcGuild == 3 )
@@ -192,13 +192,13 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 						let dictMsg = GetDictionaryEntry( 17606, pSock.language );
 						npcGuildMaster.TextMessage( dictMsg.replace( /%i/gi, disguiseKitCost )); // That particular item costs %i gold pieces.
 						pChar.SetTempTag( "guildServiceRequest", "disguisekit" );
-						return;
 					}
 					else
 					{
 						npcGuildMaster.TextMessage( GetDictionaryEntry( 17607, pSock.language )); // I don't know what you're talking about.
-						return;
 					}
+					trigWordHandled = true;
+					break;
 				default:
 					break;
 			}
@@ -207,6 +207,7 @@ function onSpeech( strSaid, pChar, npcGuildMaster )
 		if( trigWordHandled )
 		{
 			npcGuildMaster.SetTimer( Timer.MOVETIME, 10000 );
+			npcGuildMaster.TurnToward( pChar );
 		}
 	}
 }
@@ -234,25 +235,33 @@ function onDropItemOnNpc( pChar, npcGuildMaster, iDropped )
 		{
 			npcGuildMaster.TextMessage( GetDictionaryEntry( 17609, pSock.language )); // Thou must resign from thy other guild first.
 		}
-		else if( CheckJoinGuildRequirements( pSock, pChar, npcGuildMaster ) && iDropped.amount >= joinGuildCost )
+		else if( CheckJoinGuildRequirements( pSock, pChar, npcGuildMaster ))
 		{
-			let dictMsg = GetDictionaryEntry( 17610, pSock.language ); // Welcome to %s!
-			dictMsg = dictMsg.replace( /%s/gi, GetDictionaryEntry( 17500 + npcGuildMaster.npcGuild, pSock.language )); // %s [guildname]
-			npcGuildMaster.TextMessage( dictMsg, false, 0x3b2, 0, pChar.serial );
-			pChar.npcGuild = npcGuildMaster.npcGuild;
-			//pChar.npcGuildJoined = [insert timestamp];
-			// OR
-			//pChar.SetTag( "npcGuildJoinTime", [insert timestamp] );
-
-			if( iDropped.amount > joinGuildCost )
+			if( iDropped.amount >= joinGuildCost )
 			{
-				iDropped.amount -= joinGuildCost;
-				return 0; // Bounce remainder back to player's backpack
+				let dictMsg = GetDictionaryEntry( 17610, pSock.language ); // Welcome to %s!
+				dictMsg = dictMsg.replace( /%s/gi, GetDictionaryEntry( 17500 + npcGuildMaster.npcGuild, pSock.language )); // %s [guildname]
+				npcGuildMaster.TextMessage( dictMsg, false, 0x3b2, 0, pChar.serial );
+				pChar.npcGuild = npcGuildMaster.npcGuild;
+
+				// Get the current timestamp in milliseconds, but round to minutes before storing in character property
+				pChar.npcGuildJoined = Math.floor( Date.now() / ( 60 * 1000 ));
+
+				// Subtract the joining fee!
+				if( iDropped.amount > joinGuildCost )
+				{
+					iDropped.amount -= joinGuildCost;
+					return 0; // Bounce remainder back to player's backpack
+				}
+				else
+				{
+					iDropped.Delete();
+					return 2;
+				}
 			}
 			else
 			{
-				iDropped.Delete();
-				return 2;
+				npcGuildMaster.TextMessage( GetDictionaryEntry( 17620, pSock.language )); // That's not enough to cover the guild membership fee, sorry.
 			}
 		}
 
@@ -393,6 +402,8 @@ function HandleThievesGuildServices( pChar, npcGuildMaster, iDropped )
 					iDropped.Delete();
 					retVal = 2; // Do nothing else with item that was dropped
 				}
+
+				pChar.SetTempTag( "guildServiceRequest", null );
 			}
 		}
 		else
