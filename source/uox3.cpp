@@ -1043,6 +1043,13 @@ auto CallGuards( CChar *mChar ) -> void
 		{
 			if( !attacker->IsDead() && ( attacker->IsCriminal() || attacker->IsMurderer() ))
 			{
+				// Can only be called on criminals for the first 10 seconds of receiving the criminal flag
+				if( !attacker->IsMurderer() && attacker->IsCriminal() && mChar->GetTimer( tCHAR_CRIMFLAG ) - cwmWorldState->GetUICurrentTime() <= 10 )
+				{
+					// Too late!
+					return;
+				}
+
 				if( CharInRange( mChar, attacker ))
 				{
 					Combat->SpawnGuard( mChar, attacker, attacker->GetX(), attacker->GetY(), attacker->GetZ() );
@@ -1061,6 +1068,13 @@ auto CallGuards( CChar *mChar ) -> void
 				{
 					if( !tempChar->IsDead() && ( tempChar->IsCriminal() || tempChar->IsMurderer() ))
 					{
+						// Can only be called on criminals for the first 10 seconds of receiving the criminal flag
+						if( !tempChar->IsMurderer() && tempChar->IsCriminal() && mChar->GetTimer( tCHAR_CRIMFLAG ) - cwmWorldState->GetUICurrentTime() <= 10 )
+						{
+							// Too late!
+							return;
+						}
+
 						if( CharInRange( tempChar, mChar ))
 						{
 							Combat->SpawnGuard( mChar, tempChar, tempChar->GetX(), tempChar->GetY(), tempChar->GetZ() );
@@ -1089,6 +1103,13 @@ auto CallGuards( CChar *mChar, CChar *targChar ) -> void
 		{
 			if( !targChar->IsDead() && ( targChar->IsCriminal() || targChar->IsMurderer() ))
 			{
+				// Can only be called on criminals for the first 10 seconds of receiving the criminal flag
+				if( !targChar->IsMurderer() && targChar->IsCriminal() && mChar->GetTimer( tCHAR_CRIMFLAG ) - cwmWorldState->GetUICurrentTime() <= 10 )
+				{
+					// Too late!
+					return;
+				}
+
 				if( CharInRange( mChar, targChar ))
 				{
 					Combat->SpawnGuard( mChar, targChar, targChar->GetX(), targChar->GetY(), targChar->GetZ() );
@@ -1397,6 +1418,21 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		}
 	}
 
+	// Perform maintenance on NPC's list of ignored targets in combat
+	if( mChar.IsNpc() )
+	{
+		mChar.CombatIgnoreMaintenance();
+	}
+
+	// Perform maintenance on character's aggressor flags to clear out expired entries from the list
+	mChar.AggressorFlagMaintenance();
+
+	// Periodically reset permagrey flags if global timer is above 0, otherwise... they're permanent :P
+	if( cwmWorldState->ServerData()->SystemTimer( tSERVER_PERMAGREYFLAG ) > 0 )
+	{
+		mChar.PermaGreyFlagMaintenance();
+	}
+
 	if( mChar.IsCriminal() && mChar.GetTimer( tCHAR_CRIMFLAG ) && ( mChar.GetTimer( tCHAR_CRIMFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
 	{
 		if( mSock != nullptr )
@@ -1404,6 +1440,12 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			mSock->SysMessage( 1238 ); // You are no longer a criminal.
 		}
 		mChar.SetTimer( tCHAR_CRIMFLAG, 0 );
+		UpdateFlag( &mChar );
+	}
+	if( mChar.HasStolen() && mChar.GetTimer( tCHAR_STEALFLAG ) && ( mChar.GetTimer( tCHAR_STEALFLAG ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ) )
+	{
+		mChar.SetTimer( tCHAR_STEALFLAG, 0 );
+		mChar.HasStolen( false );
 		UpdateFlag( &mChar );
 	}
 	if( mChar.GetKills() && ( mChar.GetTimer( tCHAR_MURDERRATE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
@@ -1633,10 +1675,6 @@ auto CheckPC( CSocket *mSock, CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineCheck ) -> void
 {
-	// okay, this will only ever trigger after we check an npc...  Question is:
-	// should we remove the time delay on the AI check as well?  Just stick with AI/movement
-	// AI can never be faster than how often we check npcs
-
 	bool doAICheck = true;
 	std::vector<UI16> scriptTriggers = mChar.GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -3666,18 +3704,25 @@ auto WillResultInCriminal( CChar *mChar, CChar *targ ) -> bool
 	auto rValue = false;
 	if( ValidateObject( mChar ) && ValidateObject( targ ) && mChar != targ )
 	{
+		// Make sure they're not racial enemies, or guild members/guild enemies
 		if(( Races->Compare( mChar, targ ) > RACE_ENEMY ) && GuildSys->ResultInCriminal( mChar, targ ))
 		{
+			// Make sure they're not in the same party
 			if( !mCharParty || mCharParty->HasMember( targ ))
 			{
-				if( !targ->DidAttackFirst() || ( targ->GetTarg() != mChar ))
+				// Make sure the target is not the aggressor in the fight
+				if( !targ->CheckAggressorFlag( mChar->GetSerial() ))
 				{
-					if( !ValidateObject(tOwner ))
+					// Make sure target doesn't have an owner  
+					if( !ValidateObject( tOwner ))
 					{
+						// Make sure attacker doesn't have an owner
 						if( !ValidateObject( mOwner ))
 						{
+							// Make sure target is innocent
 							if( targ->IsInnocent() )
 							{
+								// All the stars align - this is a criminal action!
 								rValue = true;
 							}
 						}
@@ -3709,6 +3754,21 @@ auto MakeCriminal( CChar *c ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	FlagForStealing()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Flag character for stealing
+//o------------------------------------------------------------------------------------------------o
+auto FlagForStealing( CChar *c ) -> void
+{
+	c->SetTimer( tCHAR_STEALFLAG, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_STEALINGFLAG ));
+	if( !c->IsCriminal() && !c->IsMurderer() && !c->HasStolen() )
+	{
+		c->HasStolen( true );
+		UpdateFlag( c );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	UpdateFlag()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates character flags
@@ -3725,10 +3785,12 @@ auto UpdateFlag( CChar *mChar ) -> void
 		CChar *i = mChar->GetOwnerObj();
 		if( ValidateObject( i ))
 		{
+			// Set character's flag to match owner's flag
 			mChar->SetFlag( i->GetFlag() );
 		}
 		else
 		{
+			// Default to blue, invalid owner detected
 			mChar->SetFlagBlue();
 			Console.Warning( oldstrutil::format( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() ));
 		}
@@ -3737,10 +3799,12 @@ auto UpdateFlag( CChar *mChar ) -> void
 	{
 		if( mChar->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 		{
+			// Character is flagged as a murderer
 			mChar->SetFlagRed();
 		}
-		else if(( mChar->GetTimer( tCHAR_CRIMFLAG ) != 0 ) && ( mChar->GetNPCFlag() != fNPC_EVIL ))
+		else if(( mChar->GetTimer( tCHAR_CRIMFLAG ) != 0 || mChar->GetTimer( tCHAR_STEALFLAG ) != 0 ) && ( mChar->GetNPCFlag() != fNPC_EVIL ))
 		{
+			// Character is flagged as criminal or for stealing
 			mChar->SetFlagGray();
 		}
 		else
@@ -3798,6 +3862,18 @@ auto UpdateFlag( CChar *mChar ) -> void
 		}
 
 		mChar->Dirty( UT_UPDATE );
+	}
+
+	if( !mChar->IsNpc() )
+	{
+		// Flag was updated, so loop through player's corpses so flagging can be updated for those!
+		for( auto tempCorpse = mChar->GetOwnedCorpses()->First(); !mChar->GetOwnedCorpses()->Finished(); tempCorpse = mChar->GetOwnedCorpses()->Next() )
+		{
+			if( ValidateObject( tempCorpse ))
+			{
+				tempCorpse->Dirty( UT_UPDATE );
+			}
+		}
 	}
 }
 

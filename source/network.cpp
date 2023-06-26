@@ -446,7 +446,7 @@ void CNetworkStuff::LogOut( CSocket *s )
 	}
 
 	CAccountBlock_st& actbAccount = s->GetAccount();
-	if( valid && !p->IsCriminal() && !p->IsAtWar() )
+	if( valid && !p->IsCriminal() && !p->HasStolen() && !p->IsAtWar() && !p->IsAggressor( false ))
 	{
 		if( actbAccount.wAccountIndex != AB_INVALID_ID )
 		{

@@ -863,7 +863,7 @@
 860=Kde si přeješ hledat skryté znaky?
 861=Koho si přeješ podnítit?
 862=Koho si přejete nalákat?
-863=Co si přeješ ukrást?
+863=Který předmět se pokusíte ukrást?
 864=Kontaktujte provozovatele svého střepu, pokud chcete mít k dispozici krádež.
 865=Na co si přeješ seslat kouzlo?
 866=Koho si přeješ obtěžovat?
@@ -880,12 +880,12 @@
 877=Sáhneš %sovi do batohu a pokusíš se mu něco vzít...
 878=Nemůžeš krást bohům.
 879=Ten předmět pro tebe nemá žádnou hodnotu.
-880=Úspěšně ukradneš tento předmět.
+880=Úspěšně jsi ukradl předmět!
 881=Tento předmět se ti nepodařilo ukrást.
 882=Byl jsi chycen!
 883=Stráže!! Zloděj je mezi námi!
-884=Všimli jste si, že se vám %s snaží ukrást %s!
-885=Všimli jste si, že se %s snaží ukrást %s od %s!
+884=Všimli jste si, že se vám %s snaží ukrást %w!
+885=Všimli jste si, že se %s snaží ukrást %w od %d!
 886=Jste příliš daleko na to, abyste mohli tento předmět ukrást.
 887=Nevidíš žádné známky přítomnosti zvířat.
 888=Nevidíš žádné stopy po zvířatech.
@@ -2538,6 +2538,8 @@
 2778=Jméno: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
 2779=To by překročilo maximální počet následovníků druhého hráče.
 2780=To by překročilo váš maximální počet sledujících.
+2781=* ignoruje %s *
+2782=Nejsi dostatečně silný, abys udržel některé své předměty ve výbavě!
 // [2800-2999] House script
 2800=Vlastník domu:
 2801=VLASTNÍCI DOMU
@@ -3618,6 +3620,7 @@
 8211=Přesměrování na příkaz 'raddnpc...
 8212=Neplatná syntaxe příkazu pro opakované přidávání objektů: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=ID sekce z DFNs objekt pochází z
+8214=Dá se předmět ukrást? 0 = nelze ukrást, 1 = lze ukrást, 2 = lze ukrást vzácně
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Číslo účtu přidružené k hráči. Řízeno serverem (pouze pro čtení)
 8301=Typ umělé inteligence NPC
@@ -3759,6 +3762,7 @@
 8437=Stálý styl vousů postavy
 8438=Stálá barva vlasů postavy
 8439=Stálý účes postavy
+8440=Je postava (hráče) pro někoho označena jako agresor? Kontrolováno serverem (pouze pro čtení)
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuální počet hráčů se zákazem vstupu do Multi. Řízeno serverem (pouze pro čtení)
 8501=X souřadnice místa zákazu v Multi
@@ -4113,6 +4117,41 @@
 9183=Bankovní schránka je přetížená a neunese další hmotnost.
 9184=Vyberte umístění doplňku domu.
 9185=Sekerou můžete rozebrat doplňky domu a získat zpět jejich listiny.
+// Různé krádeže
+9188=Sáhneš do batohu... ale zjistíš, že je prázdný.
+9189=Pro krádež musíš mít volné obě ruce.
+9190=Musíš být v cechu zlodějů, abys mohl krást ostatním hráčům.
+9191=V současné době jsi vyloučen z cechu zlodějů.
+9192=Nemůžeš krást u majitelů obchodů.
+9193=Nemůžeš krást z tohoto.
+9194=Z této bytosti již bylo kradeno.  Už není co ukrást.
+9195=Tento cíl není vidět.
+9196=Nemůžeš se pokoušet krást v zápalu boje!
+9197=Jako mladý hráč nemůžeš použít dovednost krádeže.
+9198=Nemůžete krást předměty, které jsou vybaveny.
+9199=Nemůžeš krást u prodejců.
+9200=Nemůžeš krást strážím.
+9201=Nemůžete krást to, co není vidět...
+9202=Musíte se připojit k nějaké frakci, abyste to mohli udělat.
+9203=Nemůžeš ukrást svůj vlastní sigil.
+9204=Nemáš dostatečnou dovednost, abys mohl ukrást sigil.
+9205=Nemůžeš ukrást znamení, když jsi inkognito.
+9206=Nemůžeš ukrást znak, když jsi v polymorfním stavu.
+9207= Nemůžeš ukrást znamení, když jsi převlečený.
+9208=Nemůžete ukrást městský znak do jedné hodiny po spuštění serveru.
+9209=Nemůžete krást od Mladých.
+9210=Úspěšně ukradneš zvláštní předmět od nestvůry!
+9211=Nemůžeš jej použít, když jsi paralyzován.
+9212=Tento předmět je dočasně chráněn před krádeží.
+9213=Jsi šmejd! Stráže!
+9214=Stráže! Zloduch!
+9215=To je padouch! Stráže!
+9216=Stráže! Pomoc!
+9230=Nemůžeš na svém cíli provádět negativní úkony.
+9231=Nemůžete na svém cíli provádět prospěšné úkony.
+9232=V přestrojení to nejde.
+9233=V převleku nemůžete polymorfovat.
+9234=Zbavil ses svého převleku.
 // [9250-9300] Runebooks
 9250=Tato kniha potřebuje čas na dobití.
 9251=Nemůžete používat runbook z cizího batohu!
@@ -4142,6 +4181,14 @@
 9275=Tato kniha již obsahuje maximální množství nábojů.
 9276=Nabíjíš runovou knihu hromádkou svitku odvolání.
 9277=Nabíjíš Runebook svitkem odvolání.
+9278=Nemůžeš použít kouzla Vyvolání nebo Brána, pokud máš aktivní příznak zločince nebo pokud jsi nedávno kradl!
+9279=Vyber, co chceš prozkoumat.
+9280=Tuto mrtvolu naposledy uloupil %s.
+9281=Mrtvola nebyla znesvěcena.
+9282=Tento zámek naposledy vykradl %s.
+9283=Nezaznamenali jste nic neobvyklého.
+9284=Tento jedinec je zloděj!
+9285=Nemůžete krást ze zabezpečené schránky.
 // [9301-9310] Kouzelná ryba
 9301=Jste již pod podobným účinkem.
 9302=Rybu spolkneš celou!
@@ -4893,5 +4940,119 @@
 17273=Musíte několik vteřin počkat, než zkontroluji poslední objednávku.
 17274=Listina s hromadnou objednávkou byla vložena do tvého batohu.
 17275=Nemáš v batohu dost místa na odměnu za hromadnou objednávku.
+// [17500-17529] Názvy cechů NPC
+17500=Jsem %s z %d
+17501=Gilda arkanických umění
+17502=Gild válečníků
+17503=Spolek zlodějů
+17504=Liga strážců
+17505=Gilda léčitelů
+17506=Důlní družstvo
+17507=Sdružení obchodníků
+17508=Řád inženýrů
+17509=Spolek oděvníků
+17510=Námořní cech
+17511=Kolegium bardů
+17512=Společenstvo kovářů
+// [17550-17599] Dílčí cechy
+17550=Gildy mágů
+17551=Gild čarodějů
+17552=Mistři iluzí
+17553=Sdružení válečníků
+17554=Bojovníci a pěšáci
+17555=Gildy jezdců a koní
+17556=Sdružení tuláků a žebráků
+17557=Gildy vrahů a zabijáků
+17558=Spolek zlodějů
+17559=Gildy kupců
+17560=Gildy zásobovačů
+17561=Gildy obchodníků
+17562=Spolek překupníků
+17563=Krejčovská síň
+17564=Gild rybářů
+17565=Námořní spolek námořníků
+17566=Kapitula námořníků
+17567=Spolek lodních kapitánů
+17568=Gilda zbrojířů
+17569=Kovářský cech
+17570=Spolek zbrojířů
+17571=Spolek zbrojířů
+// [17600-17700] NPC cechy Různé
+17600=Gildmistr
+17601=Gildmistryně
+17602=Za vstup do cechu se platí poplatek ve zlatých mincích: %i
+17603=Nepatříš do mého cechu!
+17604=Ty ses právě připojil k mému cechu! Musíš počkat týden, abys mohl odstoupit.
+17605=Přijímám tvou rezignaci.
+17606=Tento konkrétní předmět stojí %i zlatých.
+17607=Nevím, o čem to mluvíš.
+17559=Vítej v cechu! Zjistíš, že kolegové členové ti v obchodech poskytnou nižší ceny.
+17608=Jsi již členem našeho cechu.
+17609=Nejprve musíš vystoupit ze svého jiného cechu.
+17610=Vítej v %s!
+17611=Jsi příliš mladý na to, aby ses stal členem mého cechu...
+17612=Dokud jsi mladý, nemůžeš být členem cechu zlodějů.
+17613=Tento cech je pro mazané zloděje, ne pro otylé hrdlořezy.
+17614=Můžeš-li se stát členem této elitní organizace, musíš být alespoň tovaryšem v kapsářství.
+17615=Na převlečník to nestačí, promiň.
+17616=Proč mi to dáváš? Ne, díky.
+17617=Omlouváme se, ale nyní nepřijímáme žádné nové členy.
+17618=Jako člen cechu máš nárok na slevu!
+17619=Jako kolegovi z cechu vám mohu poskytnout prémiovou cenu za toto!
+17620=To nestačí na pokrytí členského poplatku cechu, omlouvám se.
+17621=Čas od vstupu do cechu: %i minut.
+// Převlékací souprava
+18000=Vandyke
+18001=Vousy
+18002=Krátké vousy
+18003=Dlouhé vousy
+18004=Krátké vousy
+18005=Dlouhé vousy
+18010=Tento předmět mohou používat pouze členové cechu zlodějů.
+18011=V současné době jsi vyloučen z cechu zlodějů.  Tvé činy by se jim nelíbily.
+18012=SADA NA PŘEVLEK ZLODĚJE
+18013=OKAY
+18014=PŘIPRAVENO
+18015=Výběr vlasů na obličeji
+18016=Výběr vlasů
+18017=Výběry obličejových rohů
+18018=Výběry rohů
+18019=Styl rohu 1
+18020=Styl rohu 2
+18021=Styl rohu 3
+18022=Styl rohu 4
+18023=Styl rohu 5
+18024=Styl rohu 6
+18025=Styl rohu 7
+18026=Styl rohu 8
+18027=Středně dlouhý
+18028=Dlouhé pero
+18029=Krátké
+18030=Mullet
+18031=Dlouhé
+18032=Vrcholový uzel
+18033=Dlouhý cop
+18034=Spiked
+18035=Květina
+18036=Papuče
+18037=Převleky se po 2 hodinách sundají. : Vypadáš dobře.
+// [18500-19000] Speciální spotřební materiál pro krádeže monster
+18500=Váš duch postrádá soudržnost. Musíš počkat %i minut, než vyvoláš sílu drahokamu spásy.
+18501=Klenot ti vlije svou sílu a je přitom zničen.
+18502=Vzkříšení
+18503=Je možné, že vás zde tento léčitel vzkřísí. Chceš to zkusit?<br>Pokračovat - Rozhodli jste se, že se nyní pokusíte vrátit do života.<br>CANCEL - Prozatím chceš zůstat duchem.
+18504=Na použití této položky musíte počkat %i sekund.
+18505=Jste již na plném stavu many.
+18506=Kyselý nápoj ti okamžitě obnoví část many!
+18507=Jsi již plně zdráv.
+18508=Horké semínko ti okamžitě obnoví část zdraví!
+18509=Jsi již pod účinkem balzámu nebo pleťové vody.
+18510=Použiješ mast a rázem se cítíš méně zranitelný!
+18511=Použiješ balzám a náhle se cítíš silnější!
+18512=Naneseš balzám a náhle se cítíš hbitější!
+18513=Naneseš balzám a náhle se cítíš moudřejší!
+18514=Použiješ balzám Životní štít.
+18515=Použiješ balzám na kamennou kůži.
+18516=Účinky balzámu nebo pleťové vody již vyprchaly.
 }
 EOF

@@ -41,7 +41,9 @@ function onCallback0( socket, ourObj )
 
 	var splitString = socket.xText.split( " " );
 	var uKey = splitString[0].toUpperCase();
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
+
 	switch( uKey )
 	{
 	case "NAME":
@@ -213,7 +215,8 @@ function onCallback0( socket, ourObj )
 // Item-specific properties
 function HandleSetItem( socket, ourItem, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -267,6 +270,39 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		else
 		{
 			ourItem.more = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE0":
+		if( splitString[4] )
+		{
+			ourItem.more0 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more0 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE1":
+		if( splitString[4] )
+		{
+			ourItem.more1 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more1 = nVal;
+		}
+		okMsg( socket );
+		break;
+	case "MORE2":
+		if( splitString[4] )
+		{
+			ourItem.more2 = splitString[1] + " " + splitString[2] + " " + splitString[3] + " " + splitString[4];
+		}
+		else
+		{
+			ourItem.more2 = nVal;
 		}
 		okMsg( socket );
 		break;
@@ -419,6 +455,10 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 		ourItem.usesLeft = nVal;
 		okMsg( socket );
 		break;
+	case "STEALABLE":
+		ourItem.stealable = nVal;
+		okMsg( socket );
+		break;
 	default:
 		if( ourItem.isSpawner )
 		{
@@ -442,7 +482,8 @@ function HandleSetItem( socket, ourItem, uKey, splitString )
 // Spawner-specific properties
 function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -476,7 +517,8 @@ function HandleSetSpawner( socket, ourSpawn, uKey, splitString )
 // Character-specific properties
 function HandleSetChar( socket, ourChar, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{
@@ -561,6 +603,14 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 		break;
 	case "NPCAI":
 		ourChar.aitype = nVal;
+		okMsg( socket );
+		break;
+	case "NPCGUILD":
+		ourChar.npcGuild = nVal;
+		okMsg( socket );
+		break;
+	case "NPCGUILDJOINED":
+		ourChar.npcGuildJoined = nVal;
 		okMsg( socket );
 		break;
 	case "VULNERABLE":
@@ -901,7 +951,8 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 
 function HandleSetSocket( socket, uKey, splitString )
 {
-	var nVal = parseInt( splitString[1] );
+	var nVal = splitString[1];
+	nVal = nVal === "true" ? 1 : nVal === "false" ? 0 : parseInt( nVal );
 
 	switch( uKey )
 	{

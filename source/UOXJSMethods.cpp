@@ -50,7 +50,7 @@
 #include "osunique.hpp"
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
-void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld );
+void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
 bool BuyShop( CSocket *s, CChar *c );
 void InitializeWanderArea( CChar *c, SI16 xAway, SI16 yAway );
 void ScriptError( JSContext *cx, const char *txt, ... );
@@ -7730,14 +7730,15 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 //|	Function	-	CChar_Gate()
 //|	Prototype	-	void Gate( item )
 //|					void Gate( x, y, z, world )
+//|					void Gate( x, y, z, world, instanceID )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gate to the location marked on an item, or to a specified set of coords
 //o------------------------------------------------------------------------------------------------o
 JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
 {
-	if( argc != 1 && argc != 4 )
+	if( argc != 1 && argc != 4 && argc != 5 )
 	{
-		ScriptError( cx, "Gate: Invalid number of arguments (takes 1; item/place, or 4; x y z world)" );
+		ScriptError( cx, "Gate: Invalid number of arguments (takes 1: item/place; 4: x y z worldNumber; or 5: x y z worldNumber instanceID)" );
 		return JS_FALSE;
 	}
 
@@ -7751,6 +7752,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	SI16 destX = -1, destY = -1;
 	SI08 destZ = -1;
 	UI08 destWorld = 0;
+	UI16 destInstanceId = 0;
 
 	if( argc == 1 )
 	{
@@ -7768,6 +7770,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 			destY		= mItem->GetTempVar( CITV_MOREY );
 			destZ		= mItem->GetTempVar( CITV_MOREZ );
 			destWorld	= mItem->GetTempVar( CITV_MORE );
+			destInstanceId = mItem->GetTempVar( CITV_MORE0 );
 		}
 		else
 		{
@@ -7788,6 +7791,10 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		destY		= JSVAL_TO_INT( argv[1] );
 		destZ		= JSVAL_TO_INT( argv[2] );
 		destWorld	= JSVAL_TO_INT( argv[3] );
+		if( argc == 5 )
+		{
+			destInstanceId = JSVAL_TO_INT( argv[4] );
+		}
 	}
 
 	if( !Map->MapExists( destWorld ))
@@ -7795,7 +7802,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		destWorld = mChar->WorldNumber();
 	}
 
-	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), destX, destY, destZ, destWorld );
+	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), destX, destY, destZ, destWorld, destInstanceId );
 
 	return JS_TRUE;
 }
@@ -7832,6 +7839,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
 	SI08 destZ = mItem->GetTempVar( CITV_MOREZ );
 	UI08 destWorld = mItem->GetTempVar( CITV_MORE );
+	UI16 destInstanceId = mItem->GetTempVar( CITV_MORE0 );
 
 	if( !Map->MapExists( destWorld ))
 	{
@@ -7844,12 +7852,12 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 
 	if( mChar->WorldNumber() != destWorld && mChar->GetSocket() != nullptr )
 	{
-		mChar->SetLocation( destX, destY, destZ, destWorld, mChar->GetInstanceId() );
+		mChar->SetLocation( destX, destY, destZ, destWorld, destInstanceId );
 		SendMapChange( destWorld, mChar->GetSocket() );
 	}
 	else
 	{
-		mChar->SetLocation( destX, destY, destZ, destWorld, mChar->GetInstanceId() );
+		mChar->SetLocation( destX, destY, destZ, destWorld, destInstanceId );
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -7900,6 +7908,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	mItem->SetTempVar( CITV_MOREY, mChar->GetY() );
 	mItem->SetTempVar( CITV_MOREZ, mChar->GetZ() );
 	mItem->SetTempVar( CITV_MORE, mChar->WorldNumber() );
+	mItem->SetTempVar( CITV_MORE, mChar->GetInstanceId() );
 
 
 	if( mChar->GetRegion()->GetName()[0] != 0 )
@@ -9937,7 +9946,369 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[may
 			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
-	
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_AddAggressorFlag()
+//|	Prototype	-	void AddAggressorFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds aggressor flag for character towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_AddAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(AddAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->AddAggressorFlag( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_RemoveAggressorFlag()
+//|	Prototype	-	void RemoveAggressorFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes character's aggressor flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_RemoveAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(RemoveAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->RemoveAggressorFlag( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_CheckAggressorFlag()
+//|	Prototype	-	void CheckAggressorFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character has an aggressor flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_CheckAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(CheckAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_UpdateAggressorFlagTimestamp()
+//|	Prototype	-	void UpdateAggressorFlagTimestamp( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates the expiry timestamp of character's aggressor flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(UpdateAggressorFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->UpdateAggressorFlagTimestamp( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_ClearAggressorFlags()
+//|	Prototype	-	void ClearAggressorFlags()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears all the character's aggressor flags towards other characters
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_ClearAggressorFlags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "(ClearAggressorFlags) Invalid Number of Arguments %d, takes: 0)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(ClearAggressorFlags): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	mChar->ClearAggressorFlags();
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_IsAggressor()
+//|	Prototype	-	void IsAggressor( [bool]checkForPlayerOnly )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true/false depending on whether character has any active aggressor flags
+//|					Optional parameter supported to check only flags towards players and ignore NPCs
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_IsAggressor( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc > 1 )
+	{
+		ScriptError( cx, "(IsAggressor) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(IsAggressor): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_AddPermaGreyFlag()
+//|	Prototype	-	void AddPermaGreyFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Adds aggressor flag for character towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_AddPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(AddPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->AddPermaGreyFlag( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_RemovePermaGreyFlag()
+//|	Prototype	-	void RemovePermaGreyFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Removes character's permagrey flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_RemovePermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(RemovePermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->RemovePermaGreyFlag( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_CheckPermaGreyFlag()
+//|	Prototype	-	void CheckPermaGreyFlag( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Check if character has an active permagrey flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_CheckPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(CheckPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ));
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_UpdatePermaGreyFlagTimestamp()
+//|	Prototype	-	void UpdatePermaGreyFlagTimestamp( targetChar )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Updates the expiry timestamp of character's permagrey flag towards target character
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
+	if( !ValidateObject( ourTarget ))
+	{
+		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character (arg 0)" );
+		return JS_TRUE;
+	}
+
+	mChar->UpdatePermaGreyFlagTimestamp( ourTarget->GetSerial() );
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_ClearPermaGreyFlags()
+//|	Prototype	-	void ClearPermaGreyFlags()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Clears all the character's aggressor flags towards other characters
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_ClearPermaGreyFlags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "(ClearPermaGreyFlags) Invalid Number of Arguments %d, takes: 0)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(ClearPermaGreyFlags): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	mChar->ClearPermaGreyFlags();
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CChar_IsPermaGrey()
+//|	Prototype	-	void IsPermaGrey( [bool]checkForPlayerOnly )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Returns true/false depending on whether character has any active permagrey flags
+//|					Optional parameter supported to check only flags towards players and ignore NPCs
+//o------------------------------------------------------------------------------------------------o
+JSBool CChar_IsPermaGrey( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc > 1 )
+	{
+		ScriptError( cx, "(IsPermaGrey) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
+		return JS_TRUE;
+	}
+
+	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
+	if( !ValidateObject( mChar ))
+	{
+		ScriptError( cx, "(IsPermaGrey): Operating on an invalid Character" );
+		return JS_TRUE;
+	}
+
+	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
+
+	*rval = BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly ));
 	return JS_TRUE;
 }
 
@@ -10153,14 +10524,14 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the value of the specified moreVarName's moreVarPart
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Valid moreVarName values: "more", "morex", "morey", "morez
+//|	Notes		-	Valid moreVarName values: "more", "more0", "more1", "more2", "morex", "morey", "morez"
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //o------------------------------------------------------------------------------------------------o
 JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
 	{
-		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, morex, morey or morez - and the moreVarPart (1 to 4))" );
+		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, more0, more1, more2, morex, morey or morez - and the moreVarPart (1 to 4))" );
 		return JS_FALSE;
 	}
 
@@ -10203,6 +10574,18 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		moreVar = 3;
 	}
+	else if( moreVarName == "more0" )
+	{
+		moreVar = 4;
+	}
+	else if( moreVarName == "more1" )
+	{
+		moreVar = 5;
+	}
+	else if( moreVarName == "more2" )
+	{
+		moreVar = 6;
+	}
 	else
 	{
 		ScriptError( cx, "GetMoreVar: Passed an invalid argument: tempVarName" );
@@ -10220,7 +10603,7 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the value of the specified moreVar's moreVarPart to moreVarValue
 //o------------------------------------------------------------------------------------------------o
-//|	Notes		-	Valid moreVarName values: "more", "morex", "morey", "morez
+//|	Notes		-	Valid moreVarName values: "more", "more0", "more1", "more2", "morex", "morey", "morez"
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //|					Valid moreVarValue values: 0 - 255
 //o------------------------------------------------------------------------------------------------o
@@ -10228,7 +10611,7 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 {
 	if( argc != 3 )
 	{
-		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
+		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, more0, more1, more2, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
 		return JS_FALSE;
 	}
 
@@ -10271,6 +10654,18 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	else if( moreVarName == "morez" )
 	{
 		moreVar = 3;
+	}
+	else if( moreVarName == "more0" )
+	{
+		moreVar = 4;
+	}
+	else if( moreVarName == "more1" )
+	{
+		moreVar = 5;
+	}
+	else if( moreVarName == "more2" )
+	{
+		moreVar = 6;
 	}
 	else
 	{

@@ -258,7 +258,7 @@ function CanUseGate( srcSock, pUser )
 		}
 		return false;
 	}
-	else if( pUser.atWar && pUser.attackFirst)
+	else if( pUser.IsAggressor() )
 	{
 		// Disallow moongate travel for players flagged as aggressors
 		var pTarget = pUser.target;

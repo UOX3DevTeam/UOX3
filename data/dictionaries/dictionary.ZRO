@@ -669,7 +669,7 @@
 668=This item cannot be trapped!
 669=You cannot lock this!
 670=You can't teleport here!
-671=Give up wannabe Jesus!
+671=You can't teleport there!
 672=You cannot teleport there!
 673=This item has been protected with divine magic.  You cannot unlock this item.
 674=You unlock the item.
@@ -863,7 +863,7 @@
 860=Where do you wish to search for hidden characters?
 861=Whom do you wish to incite?
 862=Whom do you wish to entice?
-863=What do you wish to steal?
+863=Which item will you attempt to steal?
 864=Contact your shard operator if you want stealing available.
 865=What do you wish to place a spell on?
 866=Whom do you wish to annoy?
@@ -880,12 +880,12 @@
 877=You reach into %s's pack and try to take something...
 878=You can't steal from gods.
 879=That item has no value to you.
-880=You successfully steal that item.
+880=You successfully steal the item!
 881=You failed to steal that item.
 882=You have been caught!
 883=Guards!! A thief is among us!
-884=You notice %s trying to steal %s from you!
-885=You notice %s trying to steal %s from %s!
+884=You notice %s trying to steal %w from you!
+885=You notice %s trying to steal %w from %d!
 886=You are too far away to steal that item.
 887=You see no signs of any animals.
 888=You see no signs of any creatures.
@@ -2538,6 +2538,8 @@
 2778=Name: %s | ID: %i | Serial: %i | x: %i | y: %i | z: %i | world: %i | instanceID: %i
 2779=That would exceed the other player's maximum follower count.
 2780=That would exceed your maximum follower count.
+2781=* ignores %s *
+2782=You are not strong enough to keep some of your items equipped!
 // [2800-2999] House script
 2800=House Owner:
 2801=CO-OWNERS
@@ -3358,6 +3360,8 @@
 6276=You don't have the cooking skill to create the body paint.
 6277=Resource ID not found in list of resources used to craft item.
 6278=You have to use your taste identification skill to know more about this potion.
+6279=Skill check success guaranteed due to elevated command level!
+6280=Spellcast delay ignored due to elevated command level!
 // [7000-7499] AI Scripts
 7000=Thou art a criminal and cannot access thy bank box.
 7001=Which item do you wish to deposit in your bank box?
@@ -3463,7 +3467,7 @@
 8063=Decorations loaded; please wait while world is decorated...
 8064=Please wait...
 8065=Decorating World
-8066=%i decorations added!
+8066=%i %s added!
 8067=%i corpses or gates have been deleted
 8068=Select location for NPC:
 8069=Select location for scripted item:
@@ -3609,6 +3613,7 @@
 8211=Redirecting to 'raddnpc command...
 8212=Valid command syntax for repeating adding objects: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Section ID from DFNs object originated from
+8214=Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Account number associated with player. Controlled by server (Read-Only)
 8301=NPC AI Type
@@ -3750,6 +3755,7 @@
 8437=Permanent beard style of character
 8438=Permanent hair colour of character
 8439=Permanent hair style of character
+8440=Is (player) character flagged as an aggressor to anyone? Controlled by server (Read-Only)
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Current number of players banned from Multi. Controlled by Server (Read-Only)
 8501=X coordinate for Multi's ban-location
@@ -4104,6 +4110,43 @@
 9183=Your bank box is overloaded and cannot hold any more weight.
 9184=Select a location for the house addon.
 9185=You can use an axe to dismantle house addons and get their deeds back.
+9186=You find nothing in the grave.
+9187=Tool used to initiate digging can no longer be found!
+// Misc Stealing
+9188=You reach into the backpack... but find it's empty.
+9189=Both hands must be free to steal.
+9190=You must be in the thieves guild to steal from other players.
+9191=You are currently suspended from the thieves guild.
+9192=You cannot steal from shopkeepers.
+9193=You can't steal from this.
+9194=That creature has already been stolen from.  There is nothing left to steal.
+9195=Target cannot be seen.
+9196=You cannot attempt to steal in the heat of combat!
+9197=As a Young player, you cannot use the stealing skill
+9198=You cannot steal items which are equipped.
+9199=You cannot steal from vendors.
+9200=You cannot steal from guards.
+9201=You cannot steal what cannot be seen...
+9202=You must join a faction to do this
+9203=You cannot steal your own sigil
+9204=You do not have enough skill to steal the sigil
+9205=You cannot steal the sigil when you are incognito
+9206=You cannot steal the sigil while polymorphed
+9207=You cannot steal the sigil while disguised
+9208=Cannot steal town sigil within one hour after server startup
+9209=You cannot steal from the Young.
+9210=You successfully steal a special item from the creature!
+9211=You cannot use that while paralyzed.
+9212=That item is temporarily protected from theft
+9213=Thou'rt scum! Guards!
+9214=Guards! A villain!
+9215=Tis a villain! Guards!
+9216=Guards! help!
+9230=You cannot perform negative acts on your target.
+9231=You cannot perform beneficial acts on your target.
+9232=You can't do that while disguised.
+9233=You cannot polymorph while disguised.
+9234=You have removed your disguise.
 // [9250-9300] Runebooks
 9250=This book needs time to recharge.
 9251=You cannot use a Runebook from someone else's backpack!
@@ -4133,6 +4176,14 @@
 9275=This book already has the maximum amount of charges.
 9276=You charge the Runebook with a stack of recall scroll.
 9277=You charge the Runebook with a recall scroll.
+9278=You cannot use Recall or Gate spells while you have an active criminal flag, or if you have stolen recently!
+9279=Select what you want to examine.
+9280=The corpse was last looted by %s.
+9281=The corpse has not been desecrated.
+9282=This lock was last picked by %s.
+9283=You notice nothing unusual.
+9284=This individual is a thief!
+9285=You cannot steal from a secure container.
 // [9301-9310] Magic Fish
 9301=You are already under a similar effect.
 9302=You swallow the fish whole!
@@ -4581,6 +4632,9 @@
 11651=egg
 11652=raw leg of lamb
 11653=raw rib
+11654=You must be near a heat source to cook food.
+11655=You must be near a mill to create flour.
+11656=You must be near an oven to bake food.
 // 11801 - 12000 Tinkering Crafting Skill
 // Page 1 - Wooden Items
 11801=Axle
@@ -4881,5 +4935,119 @@
 17273=You'll have to wait a few seconds while I inspect the last order.
 17274=The bulk order deed has been placed in your backpack.
 17275=You do not have enough room in your backpack for the bulk request's reward.
+// [17500-17529] NPC Guilds Names
+17500=I am the %s of %d
+17501=The Guild of Arcane Arts
+17502=The Warrior's Guild
+17503=The Society of Thieves
+17504=The League of Rangers
+17505=The Healer's Guild
+17506=The Mining Cooperative
+17507=The Merchant's Association
+17508=The Order of Engineers
+17509=The Society of Clothiers
+17510=The Maritime Guild
+17511=The Bardic Collegium
+17512=The Fellowship of Blacksmiths
+// [17550-17599] Subguilds
+17550=The Guild of Mages
+17551=The Guild of Sorcery
+17552=The Masters of Illusion
+17553=The Association of Warriors
+17554=The Fighters and Footmen
+17555=The Guild of Cavalry and Horse
+17556=The Federation of Rogues and Beggars
+17557=The Guild of Assassins
+17558=The Society of Thieves
+17559=The Merchants' Guild
+17560=The Guild of Provisioners
+17561=The Traders' Guild
+17562=The Barterers' Guild
+17563=Tailor's Hall
+17564=Guild of Fishermen
+17565=Sailors' Maritime Association
+17566=Seamen's Chapter
+17567=Society of Shipwrights
+17568=The Armourers' Guild
+17569=The Blacksmiths' Guild
+17570=The Guild of Armaments
+17571=The Society of Weaponsmiths
+// [17600-17700] NPC Guilds Miscellaneous
+17600=guildmaster
+17601=guildmistress
+17602=There is a fee in gold coins for joining the guild: %i
+17603=Thou dost not belong to my guild!
+17604=You just joined my guild! You must wait a week to resign.
+17605=I accept thy resignation.
+17606=That particular item costs %i gold pieces.
+17607=I don't know what you're talking about.
+17559=Welcome to the guild! Thou shalt find that fellow members shall grant thee lower prices in shops.
+17608=Thou art already a member of our guild.
+17609=Thou must resign from thy other guild first.
+17610=Welcome to %s!
+17611=You are too young to join my guild...
+17612=You cannot be a member of the Thieves' Guild while you are Young.
+17613=This guild is for cunning thieves, not oafish cutthroats.
+17614=You must be at least a journeyman pickpocket to join this elite organization.
+17615=That's not enough for a disguise kit, sorry.
+17616=Why are you giving me this? No thanks.
+17617=Sorry, we are not accepting any new members right now.
+17618=As a fellow guild member, you qualify for a discount!
+17619=As a fellow guild member, I can give you a premium price for this!
+17620=That's not enough to cover the guild membership fee, sorry.
+17621=Time since joining guild: %i minutes.
+// Disguise Kit
+18000=Vandyke
+18001=Mustache
+18002=Short Beard
+18003=Long Beard
+18004=Short Beard
+18005=Long Beard
+18010=Only Members of the thieves guild are trained to use this item.
+18011=You are currently suspended from the thieves guild.  They would frown upon your actions.
+18012=THIEF DISGUISE KIT
+18013=OKAY
+18014=APPLY
+18015=Facial Hair Selections
+18016=Hair Selections
+18017=Facial Horn Selections
+18018=Horn Selections
+18019=Horn Style 1
+18020=Horn Style 2
+18021=Horn Style 3
+18022=Horn Style 4
+18023=Horn Style 5
+18024=Horn Style 6
+18025=Horn Style 7
+18026=Horn Style 8
+18027=Mid Long
+18028=Long Feather
+18029=Short
+18030=Mullet
+18031=Long
+18032=Topknot
+18033=Long Braid
+18034=Spiked
+18035=Flower
+18036=Buns
+18037=Disguises wear off after 2 hours. : You're looking good.
+// [18500-19000] Special Monster Stealable Consumables
+18500=Your spirit lacks cohesion. You must wait %i minutes before invoking the power of a Gem of Salvation.
+18501=The gem infuses you with its power and is destroyed in the process.
+18502=Resurrection
+18503=It is possible for you to be resurrected here by this healer. Do you wish to try?<br>CONTINUE - You chose to try to come back to life now.<br>CANCEL - You prefer to remain a ghost for now.
+18504=You must wait %i seconds before you can use this item.
+18505=You are already at full mana.
+18506=The sour draught instantly restores some of your mana!
+18507=You are already at full health.
+18508=The bitter seed instantly restores some of your health!
+18509=You are already under the effect of a balm or lotion.
+18510=You apply the ointment and suddenly feel less vulnerable!
+18511=You apply the balm and suddenly feel stronger!
+18512=You apply the balm and suddenly feel more agile!
+18513=You apply the balm and suddenly feel wiser!
+18514=You apply the Life Shield Lotion.
+18515=You apply the Stone Skin Lotion.
+18516=The effects of the balm or lotion have worn off.
 }
 EOF

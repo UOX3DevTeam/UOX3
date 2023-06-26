@@ -12,30 +12,27 @@ npclist=alltroll
 
 [NPCLIST Location_Cyclops_Valley]
 {
-Titan
+titan
 cyclops
 }
 
 [NPCLIST Location_The_Ruins]
 {
-Skeleton
+skeleton
 boneaxeman
-Wraith
-Spectre
-Ghoul
+wraith
+spectre
+ghoul
 }
 
 [NPCLIST Location_City_of_the_Dead]
 {
-Skeleton
-Lich
-boneaxeman
-Ghoul
-Skeleton
-boneaxeman
-Ghoul
-BoneKnight
-BoneMagi
+2|skeleton
+2|boneaxeman
+2|ghoul
+lich
+boneknight
+bonemagi
 }
 
 [NPCLIST Location_Orc_Fort]

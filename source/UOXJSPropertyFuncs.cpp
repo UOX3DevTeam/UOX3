@@ -576,6 +576,42 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			}
+			case CIP_MORE0:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE0 )))
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE0 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE0 ));
+				}
+				break;
+			}
+			case CIP_MORE1:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE1 )))
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE1 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE1 ));
+				}
+				break;
+			}
+			case CIP_MORE2:
+			{
+				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MORE2 )))
+				{
+					JS_NewNumberValue( cx, gPriv->GetTempVar( CITV_MORE2 ), vp );
+				}
+				else
+				{
+					*vp = INT_TO_JSVAL( gPriv->GetTempVar( CITV_MORE2 ));
+				}
+				break;
+			}
 			case CIP_MOREX:
 			{
 				if( !INT_FITS_IN_JSVAL( gPriv->GetTempVar( CITV_MOREX )))
@@ -691,6 +727,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->GetEvent().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
+			case CIP_TEMPLASTTRADED:	*vp = INT_TO_JSVAL( gPriv->GetTempLastTraded() / 1000 );		break;
 			case CIP_TEMPTIMER:		*vp = INT_TO_JSVAL( gPriv->GetTempTimer() / 1000 );		break;
 			case CIP_SHOULDSAVE:	*vp = BOOLEAN_TO_JSVAL( gPriv->ShouldSave() );			break;
 			case CIP_ISNEWBIE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsNewbie() );			break;
@@ -739,6 +776,7 @@ JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				*vp = STRING_TO_JSVAL( tString );
 				break;
 			case CIP_ISITEMHELD:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsHeldOnCursor() );		break;
+			case CIP_STEALABLE:		*vp = INT_TO_JSVAL( gPriv->GetStealable() );				break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
@@ -1137,6 +1175,60 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				}
 				break;
 			}
+			case CIP_MORE0:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE0, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MORE1:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE1, encaps.toInt() );
+				}
+				break;
+			}
+			case CIP_MORE2:
+			{
+				auto sEncaps = encaps.toString();
+				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				auto encapsSections = oldstrutil::sections( sEncaps, " " );
+				if( encapsSections.size() >= 4 )
+				{
+					gPriv->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					gPriv->SetTempVar( CITV_MORE2, encaps.toInt() );
+				}
+				break;
+			}
 			case CIP_MOREX:
 			{
 				auto sEncaps = encaps.toString();
@@ -1251,6 +1343,12 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_CORPSE:		gPriv->SetCorpse( encaps.toBool() );						break;
 			case CIP_DESC:			gPriv->SetDesc( encaps.toString() );						break;
 			case CIP_EVENT:			gPriv->SetEvent( encaps.toString() );						break;
+			case CIP_TEMPLASTTRADED:
+				newTime = encaps.toInt();
+				if( newTime != 0 )
+					newTime = BuildTimeValue( newTime );
+				gPriv->SetTempLastTraded( newTime );
+				break;
 			case CIP_TEMPTIMER:
 				newTime = encaps.toInt();
 				if( newTime != 0 )
@@ -1280,6 +1378,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_REGION:		gPriv->SetRegion( static_cast<UI16>( encaps.toInt() ));		break;
 			case CIP_ORIGIN:		gPriv->SetOrigin( cwmWorldState->ServerData()->EraStringToEnum( encaps.toString() ));						break;
 			case CIP_ISITEMHELD:	gPriv->SetHeldOnCursor( encaps.toBool() );					break;
+			case CIP_STEALABLE:		gPriv->SetStealable( static_cast<UI08>( encaps.toInt() ));	break;
 
 				// The following entries are specifically for CSpawnItem objects
 			case CIP_SPAWNSECTION:
@@ -1459,6 +1558,17 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					*vp = STRING_TO_JSVAL( tString );
 					break;
 				}
+			case CCP_ORIGNAME:
+			{
+				CSocket *tSock = nullptr;
+
+				std::string mCharName = gPriv->GetOrgName();
+				std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
+
+				tString = JS_NewStringCopyZ( cx, convertedString.c_str() );
+				*vp = STRING_TO_JSVAL( tString );
+				break;
+			}
 			case CCP_TITLE:
 				tString = JS_NewStringCopyZ( cx, gPriv->GetTitle().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
@@ -1676,6 +1786,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 				break;
 			}
+			case CCP_HASSTOLEN:		*vp = BOOLEAN_TO_JSVAL( gPriv->HasStolen() );	break;
 			case CCP_CRIMINAL:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsCriminal() );	break;
 			case CCP_MURDERER:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsMurderer() );	break;
 			case CCP_INNOCENT:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsInnocent() );	break;
@@ -1904,6 +2015,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_POISONSTRENGTH:	*vp = INT_TO_JSVAL( gPriv->GetPoisonStrength() );		break;
 			case CCP_ISPOLYMORPHED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsPolymorphed() );			break;
 			case CCP_ISINCOGNITO:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsIncognito() );				break;
+			case CCP_ISDISGUISED:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsDisguised() );				break;
 			case CCP_CANRUN:		*vp = BOOLEAN_TO_JSVAL( gPriv->CanRun() );					break;
 			case CCP_ISMEDITATING:	*vp = BOOLEAN_TO_JSVAL( gPriv->IsMeditating() );			break;
 			case CCP_ISGM:			*vp = BOOLEAN_TO_JSVAL( gPriv->IsGM() );					break;
@@ -1921,8 +2033,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_ORGID:			*vp = INT_TO_JSVAL( gPriv->GetOrgId() );					break;
 			case CCP_ORGSKIN:		*vp = INT_TO_JSVAL( gPriv->GetOrgSkin() );					break;
 			case CCP_NPCFLAG:		*vp = INT_TO_JSVAL( static_cast<SI32>(gPriv->GetNPCFlag() ));break;
+			case CCP_NPCGUILD:		*vp = INT_TO_JSVAL( gPriv->GetNPCGuild() );					break;
 			case CCP_ISSHOP:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsShop() );					break;
-			case CCP_ATTACKFIRST:	*vp = BOOLEAN_TO_JSVAL( gPriv->DidAttackFirst() );			break;
 			case CCP_MAXLOYALTY:	*vp = INT_TO_JSVAL( gPriv->GetMaxLoyalty() );				break;
 			case CCP_LOYALTY:		*vp = INT_TO_JSVAL( gPriv->GetLoyalty() );					break;
 			case CCP_LOYALTYRATE:
@@ -2019,6 +2131,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_CREATEDON:		break;
 			case CCP_SECTIONID:		gPriv->SetSectionId( encaps.toString() );									break;
 			case CCP_NAME:			gPriv->SetName( encaps.toString() );										break;
+			case CCP_ORIGNAME:		gPriv->SetOrgName( encaps.toString() );										break;
 			case CCP_TITLE:			gPriv->SetTitle( encaps.toString() );										break;
 			case CCP_X:				gPriv->SetLocation( static_cast<SI16>( encaps.toInt() ), gPriv->GetY(), gPriv->GetZ() );	break;
 			case CCP_Y:				gPriv->SetLocation( gPriv->GetX(), static_cast<SI16>( encaps.toInt() ), gPriv->GetZ() );	break;
@@ -2144,6 +2257,20 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_MAXHP:			gPriv->SetFixedMaxHP( static_cast<SI16>( encaps.toInt() ));			break;
 			case CCP_MAXMANA:		gPriv->SetFixedMaxMana( static_cast<SI16>( encaps.toInt() ));		break;
 			case CCP_MAXSTAMINA:	gPriv->SetFixedMaxStam( static_cast<SI16>( encaps.toInt() ));		break;
+			case CCP_HASSTOLEN:
+			{
+				if( encaps.toBool() )
+				{
+					FlagForStealing( gPriv );
+				}
+				else
+				{
+					gPriv->HasStolen( false );
+					gPriv->SetTimer( tCHAR_STEALFLAG, 0 );
+					UpdateFlag( gPriv );
+				}
+				break;
+			}
 			case CCP_CRIMINAL:
 				if( encaps.toBool() )
 				{
@@ -2373,6 +2500,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_POISONSTRENGTH:	gPriv->SetPoisonStrength( static_cast<UI08>( encaps.toInt() ));	break;
 			case CCP_ISPOLYMORPHED:	gPriv->IsPolymorphed( encaps.toBool() );		break;
 			case CCP_ISINCOGNITO:	gPriv->IsIncognito( encaps.toBool() );			break;
+			case CCP_ISDISGUISED:	gPriv->IsDisguised( encaps.toBool() );			break;
 			case CCP_CANRUN:		gPriv->SetRun( encaps.toBool() );				break;
 			case CCP_ISGUARDED:		gPriv->SetGuarded( encaps.toBool() );			break;
 			case CCP_GUARDING:
@@ -2406,6 +2534,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				gPriv->SetNPCFlag( static_cast<cNPC_FLAG>( encaps.toInt() ));
 				UpdateFlag( gPriv );
 				break;
+			case CCP_NPCGUILD:		gPriv->SetNPCGuild( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_ISSHOP:
 				if( encaps.toBool() )
 				{
@@ -2426,7 +2555,6 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					gPriv->Update();
 				}
 				break;
-			case CCP_ATTACKFIRST:	gPriv->SetAttackFirst( encaps.toBool() );		break;
 			case CCP_MAXLOYALTY:	gPriv->SetMaxLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_LOYALTY:		gPriv->SetLoyalty( static_cast<UI16>( encaps.toInt() ));	break;
 			case CCP_SHOULDSAVE:	gPriv->ShouldSave( encaps.toBool() );			break;

@@ -21,44 +21,15 @@ wraith
 
 [NPCLIST CovLvlOne]
 {
-corpser
-corpser
-headless
-headless
-gazer
-headless
-corpser
-headless
-corpser
-headless
-headless
-corpser
-gazer
+6|headless
+5|corpser
+2|gazer
 }
 
 [NPCLIST CovLvlOneHarpyNests]
 {
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
+20|harpy
 stoneharpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
-harpy
 }
 
 [NPCLIST CovLvlTwo]
@@ -74,18 +45,10 @@ waterele
 
 [NPCLIST CovLvlTwoLight]
 {
-corpser
-headless
-headless
-headless
-eldergazer
-headless
-corpser
+7|headless
+3|corpser
 gazer
-headless
-headless
-headless
-corpser
+eldergazer
 }
 
 [NPCLIST CovLvlThree]
@@ -162,28 +125,19 @@ zombie
 
 [NPCLIST DeceitLvlOneLight]
 {
-skeleton
-boneaxeman
-skeleton
-boneaxeman
+3|zombie
+2|skeleton
+2|boneaxeman
 wraith
-zombie
-zombie
-zombie
 }
 
 [NPCLIST DeceitLvlOneMedium]
 {
-spectre
-spectre
-skeleton
-boneaxeman
-skeleton
-boneaxeman
+3|zombie
+2|spectre
+2|skeleton
+2|boneaxeman
 wraith
-zombie
-zombie
-zombie
 shade
 }
 
@@ -721,26 +675,14 @@ phoenixe
 
 [NPCLIST terathankeeplvl1]
 {
-NPCLIST=allophidians
-NPCLIST=allterathans
+7|NPCLIST=allophidians
+7|NPCLIST=allterathans
 balron
-NPCLIST=allophidians
-NPCLIST=allterathans
 graydragon
-NPCLIST=allophidians
-NPCLIST=allterathans
 graydrake
-NPCLIST=allophidians
-NPCLIST=allterathans
 reddragon
-NPCLIST=allophidians
-NPCLIST=allterathans
 reddrake
-NPCLIST=allophidians
-NPCLIST=allterathans
 nightmare
-NPCLIST=allophidians
-NPCLIST=allterathans
 }
 
 [NPCLIST orcdungeonlvl1]

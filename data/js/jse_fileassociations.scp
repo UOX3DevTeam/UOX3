@@ -147,6 +147,7 @@
 3214=npc/ai/vendor_bdo_dispenser.js
 3215=npc/ai/summon/blade_spirit.js
 3216=npc/ai/summon/energy_vortex.js
+3217=npc/ai/guildmaster.js
 
 // Magic Items
 3300=item/magic_items.js
@@ -202,6 +203,7 @@
 4032=skill/craft/tinkering.js
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
+4055=skill/snooping.js
 
 // Doors
 4500=item/doors.js
@@ -237,6 +239,7 @@
 5020=item/diceandcup.js
 5021=item/bedroll.js
 5022=item/guildstone.js
+5023=item/disguisekit.js
 5024=item/gameboards.js
 5025=item/chesspiece.js
 5026=item/checkerpiece.js
@@ -256,6 +259,8 @@
 5041=item/potionkeg.js
 5042=item/smallbod.js
 5043=item/equip_effects/skill_boosting_equipment.js
+5044=item/consumables/special_loot_consumables.js
+5045=item/consumables/gem_of_salvation.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]
@@ -267,6 +272,11 @@
 // Combat Scripts [7000-7499]
 //-------------------------------------------
 7000=combat/peacemake_effect.js
+
+//-------------------------------------------
+// Misc Player Scripts [8000-8499]
+//-------------------------------------------
+8000=player/death/return_stolen_items.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
@@ -381,6 +391,7 @@
 817=skill/removetrap.js
 818=skill/itemid.js
 819=skill/tasteid.js
+820=skill/stealing.js
 }
 
 [PACKET_SCRIPTS]

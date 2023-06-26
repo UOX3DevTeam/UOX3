@@ -23,6 +23,7 @@ enum cC_TID
 	tCHAR_SPELLRECOVERYTIME,
 	tCHAR_ANTISPAM,
 	tCHAR_CRIMFLAG,
+	tCHAR_STEALFLAG,
 	tCHAR_MURDERRATE,
 	tCHAR_PEACETIMER,
 	tCHAR_FLYINGTOGGLE,
@@ -39,6 +40,12 @@ enum cC_TID
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
+};
+
+struct TargetInfo
+{
+	UI32 timestamp;
+	bool isNpc;
 };
 
 struct DamageTrackEntry_st
@@ -107,6 +114,7 @@ private:
 		UI08				controlSlots;		// Amount of control slots taken up by a particular NPC
 		std::vector<CChar *>	petFriends;		// Temporary list of friends a pet has
 		GenericList<CChar *>	petOwnerList;	// Persistent list of owners a pet has previously had
+		std::unordered_map<SERIAL, TargetInfo>	combatIgnore; // Chars this char ignores as targets in combat, with timestamps
 		UI16				maxLoyalty;			// Pet's maximum loyalty to its master
 		UI16				loyalty;			// Pet's current loyalty to its master
 		UI16				orneriness;			// Difficulty to control pet
@@ -156,6 +164,7 @@ private:
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
+		UI32		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
@@ -202,6 +211,8 @@ protected:
   	UI16    	advObj;			// Has used advance gate?
   	SERIAL  	guildFealty;	// Serial of player you are loyal to (default=yourself) (DasRaetsel)
   	SI16    	guildNumber;	// Number of guild player is in (0=no guild)     (DasRaetsel)
+	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
+
   	UI08    	flag;			// 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
   	SI08    	spellCast;
   	UI08    	nextAct;		// time to next spell action..
@@ -228,8 +239,11 @@ protected:
 
 	LAYERLIST				itemLayers;
 	LAYERLIST_ITERATOR		layerCtr;
+	std::unordered_map<SERIAL, TargetInfo>	aggressorFlags; // Chars this char is marked as aggressor to, with timestamps
+	std::unordered_map<SERIAL, TargetInfo>	permaGreyFlags; // Chars this char is marked as permanent grey to, with timestamps
 	GenericList<CChar *>	petsOwned;
 	GenericList<CChar *>	activeFollowers;
+	GenericList<CItem *>	ownedCorpses;
 	std::vector<CItem *>	ownedItems;
 	std::bitset<32>			skillUsed[2];	// no more than 64 skills
 	std::bitset<UT_COUNT>	updateTypes;
@@ -263,6 +277,7 @@ public:
 	void		UpdateRegion( void );
 
 	void		UpdateDamageTrack( void );
+	auto		CheckDamageTrack( SERIAL serialToCheck, TIMERVAL lastXSeconds ) -> bool;
 
 	void		SetPoisonStrength( UI08 value );
 	UI08		GetPoisonStrength( void ) const;
@@ -270,10 +285,34 @@ public:
 	GenericList<CChar *> *	GetPetList( void );
 	GenericList<CChar *> *	GetFollowerList( void );
 	GenericList<CChar *> *	GetPetOwnerList( void );
+
+	auto		GetOwnedCorpses() -> GenericList<CItem *>*;
 	auto		GetOwnedItems() -> std::vector<CItem *>*;
+
+	auto		AddCorpse( CItem *corpseToAdd ) -> bool;
+	auto		RemoveCorpse( CItem *corpseToRemove ) -> bool;
 
 	auto		AddFollower( CChar *npcToAdd ) -> bool;
 	auto		RemoveFollower( CChar *followerToRemove ) -> bool;
+
+	auto		GetAggressorFlags() const -> const std::unordered_map<SERIAL, TargetInfo>;
+	auto		AddAggressorFlag( SERIAL toAdd ) -> void;
+	auto		RemoveAggressorFlag( SERIAL toRemove ) -> void;
+	auto		CheckAggressorFlag( SERIAL toCheck ) -> bool;
+	auto		UpdateAggressorFlagTimestamp( SERIAL toUpdate ) -> void;
+	auto		ClearAggressorFlags() -> void;
+	auto		IsAggressor( bool checkForPlayersOnly ) -> bool;
+	auto		AggressorFlagMaintenance() -> void;
+
+	auto		GetPermaGreyFlags() const -> const std::unordered_map<SERIAL, TargetInfo>;
+	auto		AddPermaGreyFlag( SERIAL toAdd ) -> void;
+	auto		RemovePermaGreyFlag( SERIAL toRemove ) -> void;
+	auto		CheckPermaGreyFlag( SERIAL toCheck ) -> bool;
+	auto		UpdatePermaGreyFlagTimestamp( SERIAL toUpdate ) -> void;
+	auto		ClearPermaGreyFlags() -> void;
+	auto		IsPermaGrey( bool checkForPlayersOnly ) -> bool;
+	auto		PermaGreyFlagMaintenance() -> void;
+
 	void		AddOwnedItem( CItem *toAdd );
 	void		RemoveOwnedItem( CItem *toRemove );
 
@@ -334,7 +373,8 @@ public:
 	bool		GetCanAttack( void ) const;
 	bool		IsAtWar( void ) const;
 	bool		IsPassive( void ) const;
-	bool		DidAttackFirst( void ) const;
+	auto		HasStolen() -> const bool;
+	auto		HasStolen( bool newValue ) -> void;
 	bool		IsOnHorse( void ) const;
 	bool		GetTownTitle( void ) const;
 	bool		GetReactiveArmour( void ) const;
@@ -362,7 +402,6 @@ public:
 	void		SetPeace( UI32 newValue );
 	void		SetWar( bool newValue );
 	void		SetPassive( bool newValue );
-	void		SetAttackFirst( bool newValue );
 	void		SetOnHorse( bool newValue );
 	void		SetTownTitle( bool newValue );
 	void		SetReactiveArmour( bool newValue );
@@ -557,8 +596,10 @@ public:
 
 	bool			IsPolymorphed( void ) const;
 	bool			IsIncognito( void ) const;
+	bool			IsDisguised( void ) const;
 	void			IsPolymorphed( bool newValue );
 	void			IsIncognito( bool newValue );
+	void			IsDisguised( bool newValue );
 	bool			IsJailed( void ) const;
 
 	void			SetMaxHP( UI16 newmaxhp, UI16 newoldstr, RACEID newoldrace );
@@ -629,7 +670,15 @@ public:
 	bool		AddFriend( CChar *toAdd );
 	bool		RemoveFriend( CChar *toRemove );
 
+	auto		GetCombatIgnore() const -> const std::unordered_map<SERIAL, TargetInfo>;
+	auto		AddToCombatIgnore( SERIAL toAdd, bool isNpc ) -> void;
+	auto		RemoveFromCombatIgnore( SERIAL toRemove ) -> void;
+	auto		CheckCombatIgnore( SERIAL toCheck ) -> bool;
+	auto		ClearCombatIgnore() -> void;
+	auto		CombatIgnoreMaintenance() -> void;
+
 	SI16		GetNpcAiType( void ) const;
+	UI16		GetNPCGuild( void ) const;
 	SI16		GetTaming( void ) const;
 	SI16		GetPeaceing( void ) const;
 	SI16		GetProvoing( void ) const;
@@ -642,6 +691,7 @@ public:
 	UI16		GetOrneriness( void ) const;
 
 	void		SetNPCAiType( SI16 newValue );
+	void		SetNPCGuild( UI16 newValue );
 	void		SetTaming( SI16 newValue );
 	void		SetPeaceing( SI16 newValue );
 	void		SetProvoing( SI16 newValue );
@@ -762,6 +812,9 @@ public:
 
 	void		SetCreatedOn( UI32 newValue );
 	UI32		GetCreatedOn( void ) const;
+
+	void		SetNPCGuildJoined( UI32 newValue );
+	UI32		GetNPCGuildJoined( void ) const;
 
 	UI32		LastMoveTime( void ) const;
 	void		LastMoveTime( UI32 newValue );

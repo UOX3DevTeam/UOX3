@@ -173,7 +173,7 @@ function onSteal( pThief, iStolen, pVictim )
 
 	var socket = pThief.socket;
 	var worldNum = pThief.worldnumber;
-	if( regionStealOverride.indexOf( pThief.region.id ) == -1 && facetStealRestrict.indexOf( pThief.worldnumber ) != -1 )
+	if( regionStealOverride.indexOf( pThief.region.id ) == -1 && facetStealRestrict.indexOf( pThief.worldnumber ) != -1 && !pVictim.npc )
 	{
 		socket.SysMessage( GetDictionaryEntry( 9230, socket.language )); // You cannot perform negative acts on your target.
 		return 1;
@@ -182,9 +182,9 @@ function onSteal( pThief, iStolen, pVictim )
 }
 
 // Players cannot snoop the backpacks of other players in Trammel/Ilshenar/Malas
-function onSnoopAttempt( pSnooped, pSnooping )
+function onSnoopAttempt( pSnooped, targPack, pSnooping )
 {
-	if( !ValidateObject( pSnooped ) || !ValidateObject( pSnooping ))
+	if( !ValidateObject( pSnooped ) || !ValidateObject( pSnooping ) || !ValidateObject( targPack ))
 		return true;
 
 	var socket = pSnooping.socket;

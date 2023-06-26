@@ -124,3 +124,18 @@ function onHelpButton( pChar )
 	TriggerEvent( 2, "DisplayHelpMenu", pChar );
 	return false;
 }
+
+// Override hard-coded snooping request and go with scripted one
+function onSnoopAttempt( snoopTarget, targCont, pUser )
+{
+	return TriggerEvent( 4055, "SnoopAttempt", snoopTarget, targCont, pUser );
+}
+
+// Look for Gem of Salvation in player's backpack to give them chance to resurrect
+function onDeath( pDead, iCorpse )
+{
+	if( !ValidateObject( pDead ) || pDead.npc || !pDead.online )
+		return false;
+
+	return TriggerEvent( 5045, "onDeath", pDead, iCorpse );
+}

@@ -759,6 +759,11 @@ bool CPICreateCharacter::Handle( void )
 	// This function needs to be decomposed
 	// Way too large from a maintenance perspective
 	// --> I split certain things out into a few new functions to make this a bit more manageable
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Network->Disconnect( tSock );
+		return false;
+	}
 
 	if( tSock != nullptr )
 	{
@@ -1482,7 +1487,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	if( !ValidateObject( iCorpse ))
 		return nullptr;
 
-	iCorpse->SetName( oldstrutil::format( 512, Dictionary->GetEntry( 1612 ), corpseName.c_str() )); // corpse of %s
+	iCorpse->SetName( oldstrutil::format( 512, Dictionary->GetEntry( 1612 ), corpseName.c_str() )); // Corpse of %s
 	iCorpse->SetCarve( mChar.GetCarve() );
 	iCorpse->SetMovable( 2 );//non-movable
 	if( fallDirection )
@@ -1515,6 +1520,7 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 	if( !mChar.IsNpc() )
 	{
 		iCorpse->SetOwner( &mChar );
+		mChar.AddCorpse( iCorpse ); // Add to list that tracks player's corpses
 		iCorpse->SetDecayTime( BuildTimeValue( cwmWorldState->ServerData()->SystemTimer( tSERVER_CORPSEDECAY )));
 	}
 	else
@@ -1724,6 +1730,16 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	mChar->SetHP( 0 );
 	mChar->SetPoisoned( 0 );
 	mChar->SetPoisonStrength( 0 );
+
+	// Remove any permagrey flags on the character, but replace with a temporary criminal flag instead
+	if( mChar->IsPermaGrey( true ))
+	{
+		mChar->ClearPermaGreyFlags();
+		MakeCriminal( mChar );
+	}
+
+	// Also clear all aggressorflags
+	mChar->ClearAggressorFlags();
 
 	if( !mChar->IsNpc() )
 	{

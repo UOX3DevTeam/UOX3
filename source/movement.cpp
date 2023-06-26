@@ -2199,7 +2199,8 @@ void CMovement::NpcMovement( CChar& mChar )
 		bool shouldRun = false;
 		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
 		{
-			CChar *l = mChar.GetAttacker();
+			//CChar *l = mChar.GetAttacker();
+			CChar *l = mChar.GetTarg();
 			if( ValidateObject( l ) && ( IsOnline(( *l )) || l->IsNpc() ))
 			{
 				const UI08 charDir	= Direction( &mChar, l->GetX(), l->GetY() );
@@ -2354,6 +2355,7 @@ void CMovement::NpcMovement( CChar& mChar )
 									return;
 								}
 
+								// Failed pathfinding 20 times - let's give up
 								mChar.FlushPath();
 								mChar.SetOldTargLocX( 0 );
 								mChar.SetOldTargLocY( 0 );
@@ -2361,6 +2363,7 @@ void CMovement::NpcMovement( CChar& mChar )
 								mChar.TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
 								mChar.SetHP( mChar.GetMaxHP() );
 								mChar.SetEvadeState( true );
+								IgnoreAndEvadeTarget( &mChar );
 								Combat->InvalidateAttacker( &mChar );
 								//Console.Warning( oldstrutil::format( "EvadeTimer started for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mChar.GetName().c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 
@@ -2751,15 +2754,15 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 	{
 		dir = NORTH;
 	}
-	else if( xdif > 0 && ydif < 0 )
+	else if( xdif > 0 && ydif < 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = NORTHEAST;
 	}
-	else if( xdif > 0 && ydif == 0 )
+	else if( xdif > 0 &&abs( xdif ) > abs( ydif ))
 	{
 		dir = EAST;
 	}
-	else if( xdif > 0 && ydif > 0 )
+	else if( xdif > 0 && ydif > 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = SOUTHEAST;
 	}
@@ -2767,15 +2770,15 @@ UI08 CMovement::Direction( SI16 sx, SI16 sy, SI16 dx, SI16 dy )
 	{
 		dir = SOUTH;
 	}
-	else if( xdif < 0 && ydif > 0 )
+	else if( xdif < 0 && ydif > 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = SOUTHWEST;
 	}
-	else if( xdif < 0 && ydif == 0 )
+	else if( xdif < 0 && abs( xdif ) > abs( ydif ))
 	{
 		dir = WEST;
 	}
-	else if( xdif < 0 && ydif < 0 )
+	else if( xdif < 0 && ydif < 0 && abs( xdif ) <= abs( ydif ))
 	{
 		dir = NORTHWEST;
 	}
@@ -2836,12 +2839,24 @@ SI08 CMovement::CalcWalk( CChar *c, SI16 x, SI16 y, SI16 oldx, SI16 oldy, SI08 o
 	landBlock = map.CheckFlag( TF_BLOCKING );
 
 	// If it does, but it's WET and character can swim, it doesn't block!
-	if( landBlock && waterWalk )
+	if( waterWalk )
 	{
-		// Don't count the underwater coastal landtiles as blocking
-		if( map.CheckFlag( TF_WET ) || ( map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111 ))
+		auto mapIsWet = map.CheckFlag( TF_WET );
+		if( landBlock )
 		{
-			landBlock = false;
+			if( mapIsWet || ( map.terrainInfo->TextureId() >= 76 && map.terrainInfo->TextureId() <= 111 ) )
+			{
+				// Swimming creature attempting to move on water! Allow it.
+				landBlock = false;
+			}
+		}
+		else
+		{
+			if( !mapIsWet )
+			{
+				// Swimming creature attempting to move on dry land! Not allowed!
+				landBlock = true;
+			}
 		}
 	}
 
@@ -3184,7 +3199,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	UI16 startY			= mChar->GetY();
 	UI16 curX			= mChar->GetX();
 	UI16 curY			= mChar->GetY();
-	SI08 curZ			= mChar->GetZ();;
+	SI08 curZ			= mChar->GetZ();
 	UI08 oldDir			= mChar->GetDir();
 	UI16 loopCtr		= 0;
 	EVENT_TIMER( mytimer, EVENT_TIMER_OFF );
@@ -3298,6 +3313,10 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
 			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ));
 #endif
+		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+		{
+			IgnoreAndEvadeTarget( mChar );
+		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
 		EVENT_TIMER_NOW( mytimer, Time when loopCtr == maxSteps, 1 );
 		return false;
@@ -3307,6 +3326,10 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 #if defined( UOX_DEBUG_MODE )
 		Console.Warning( "AdvancedPathfinding: Unable to pathfind beyond 0 steps, aborting.\n" );
 #endif
+		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+		{
+			IgnoreAndEvadeTarget( mChar );
+		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
 		EVENT_TIMER_NOW( mytimer, Time when loopCtr == 0 and distance > 1, 1 );
 		return false;
@@ -3314,6 +3337,10 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	else if( mChar->GetX() == startX && mChar->GetY() == startY && GetDist( mChar->GetLocation(), Point3_st( targX, targY, curZ )) > 1 )
 	{
 		// NPC never moved, and target location is not nearby
+		if( !cwmWorldState->creatures[mChar->GetId()].IsWater() || mChar->GetPathFail() == 20 )
+		{
+			IgnoreAndEvadeTarget( mChar );
+		}
 		mChar->SetPathResult( -1 ); // Pathfinding failed
 		EVENT_TIMER_NOW( mytimer, Time when NPC never moved, 1 );
 
@@ -3335,4 +3362,99 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	}
 	EVENT_TIMER_NOW( mytimer, Time when total pathfinding used, 1 );
 	return true;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CMovement::IgnoreAndEvadeTarget()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Temporarily adds unreachable targets to NPC's ignore list, and potentially
+//|					takes evasive manoeuvres if target is somehow damaging the NPC 
+//o------------------------------------------------------------------------------------------------o
+auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
+{
+	auto mTarget = mChar->GetTarg();
+	if( mChar->IsAtWar() && ValidateObject( mTarget ) && mChar->GetNpcWander() != WT_FLEE && mChar->GetNpcWander() != WT_PATHFIND )
+	{
+		// Unable to reach target, add target to ignore list and clear target
+		if( !mChar->CheckCombatIgnore( mTarget->GetSerial() ))
+		{
+			mChar->AddToCombatIgnore( mTarget->GetSerial(), mTarget->IsNpc() );
+			mChar->TextMessage( nullptr, 2781, TALK, 0, GetNpcDictName( mTarget ).c_str() ); // * ignores %s *
+		}
+
+		// If target attacked mChar within last 10 seconds, also enter evade state
+		if( !mChar->IsEvading() && mChar->CheckDamageTrack( mTarget->GetSerial(), 10 ))
+		{
+			mChar->TextMessage( nullptr, Dictionary->GetEntry( 9049 ), SYSTEM, false ); // [Evading]
+			mChar->SetTimer( tNPC_EVADETIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_COMBATIGNORE ));
+			mChar->SetEvadeState( true );
+			mChar->SetHP( mChar->GetMaxHP() );
+
+			// Calculate where to move to in order to avoid character that is causing the evade state to trigger
+			SI16 mCharX = mChar->GetX();
+			SI16 mCharY = mChar->GetY();
+			SI16 mTargX = mTarget->GetX();
+			SI16 mTargY = mTarget->GetY();
+
+			SI16 distanceX = mTargX - mCharX; // Adjusted for the inverted x-axis
+			SI16 distanceY = mTargY - mCharY; // Adjusted for the inverted y-axis
+
+			SI16 moveDist = RandomNum( 2, 5 );
+
+			double magnitude = sqrt( distanceX * distanceX + distanceY * distanceY );
+			int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
+
+			SI16 evadeTargX = mCharX;
+			SI16 evadeTargY = mCharY;
+
+			if( std::abs( distanceX ) >= std::abs( distanceY ))
+			{
+				// Move primarily along the X-axis
+				if( distanceX >= 0 )
+				{
+					evadeTargX = mCharX - static_cast<SI16>( std::round( moveDist * ( abs( distanceX ) / magnitude )));
+				}
+				else
+				{
+					evadeTargX = mCharX + static_cast<SI16>( std::round( moveDist * ( abs( distanceX ) / magnitude )));
+				}
+				evadeTargY += RandomNum( -1, 1 ); // Add a small variation along the Y-axis
+			}
+			else
+			{
+				// Move primarily along the Y-axis
+				if( distanceY >= 0 )
+				{
+					evadeTargY = mCharY - static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+				}
+				else
+				{
+					evadeTargY = mCharY - static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+				}
+				evadeTargX += RandomNum( -1, 1 ); // Add a small variation along the X-axis
+			}
+
+			// Round the coordinates to the nearest whole integers
+			evadeTargX = round( evadeTargX );
+			evadeTargY = round( evadeTargY );
+
+			if( mChar->GetNpcWander() != WT_PATHFIND )
+			{
+				mChar->SetOldNpcWander( mChar->GetNpcWander() );
+			}
+			mChar->SetNpcWander( WT_PATHFIND );
+			[[maybe_unused]] bool retVal = AdvancedPathfinding( mChar, evadeTargX, evadeTargY, true, 20 );
+		}
+
+		if( mChar->GetAttacker() == mTarget )
+		{
+			mChar->SetAttacker( nullptr );
+
+			if( mTarget->GetTarg() == mChar )
+			{
+				mTarget->SetTarg( nullptr );
+			}
+		}
+		mChar->SetTarg( nullptr );
+	}
 }

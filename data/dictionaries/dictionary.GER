@@ -880,12 +880,12 @@
 877=Du greifst in den Rucksack von %s und versuchst, etwas zu nehmen...
 878=Die Götter kann man nicht bestehlen.
 879=Dieser Gegenstand hat keinen Wert für Sie.
-880=Du hast den Gegenstand erfolgreich gestohlen.
+880=Du hast den Gegenstand erfolgreich gestohlen!
 881=Sie haben diesen Gegenstand nicht gestohlen.
 882=Du wurdest erwischt!
 883=Wachen!!! Ein Dieb ist unter uns!
-884=Du bemerkst %s, der versucht, %s von dir zu stehlen!
-885=Sie bemerken, dass %s versucht, %s von %s zu stehlen!
+884=Sie bemerken, dass %s versucht, %w von Ihnen zu stehlen!
+885=Sie bemerken, dass %s versucht, %w von %d zu stehlen!
 886=Du bist zu weit weg, um den Gegenstand zu stehlen.
 887=Sie sehen keine Anzeichen von Tieren.
 888=Du siehst keine Anzeichen von irgendwelchen Kreaturen.
@@ -2538,6 +2538,8 @@
 2778=Name: %s | ID: %i | Serie: %i | x: %i | y: %i | z: %i | Welt: %i | InstanzID: %i
 2779=Das würde die maximale Anzahl der Follower des anderen Spielers überschreiten.
 2780=Das würde deine maximale Anzahl an Anhängern überschreiten.
+2781=* ignoriert %s *
+2782=Du bist nicht stark genug, um einige deiner Gegenstände ausgerüstet zu lassen!
 // [2800-2999] House script
 2800=Hauseigentümer:
 2801=HAUSBESITZER
@@ -3611,6 +3613,7 @@
 8211=Weiterleitung zum 'raddnpc-Befehl...
 8212=Ungültige Befehlssyntax für wiederholtes Hinzufügen von Objekten: 'radd [hexID/decimalID], 'radditem [itemSection], 'raddnpc [npcSection]
 8213=Schnittstellen-ID aus DFNs, aus denen das Objekt stammt
+8214=Ist der Gegenstand stehlbar? 0 = nicht stehlbar, 1 = stehlbar, 2 = selten stehlbar
 // [8300-8499] Tweak menu - Character property descriptions
 8300=Kontonummer, die dem Spieler zugeordnet ist. Wird vom Server gesteuert (Read-Only)
 8301=NPC-KI-Typ
@@ -3752,6 +3755,7 @@
 8437=Permanenter Bartstil der Person
 8438=Dauerhafte Haarfarbe des Charakters
 8439=Dauerhafte Frisur des Charakters
+8440=Ist der (Spieler-)Charakter für jemanden als Aggressor gekennzeichnet? Gesteuert durch den Server (schreibgeschützt)
 // [8500-8549] Tweak menu - Multi property descriptions
 8500=Aktuelle Anzahl der Spieler, die für Multi gesperrt sind. Gesteuert vom Server (Read-Only)
 8501=X-Koordinate für Multis Bann-Ort
@@ -4106,6 +4110,41 @@
 9183=Ihr Bankschließfach ist überladen und kann kein weiteres Gewicht mehr tragen.
 9184=Wählen Sie einen Standort für das Haus-Addon.
 9185=Mit einer Axt können Sie Hausanbauten zerlegen und ihre Taten zurückerhalten.
+// Verschiedenes Stehlen
+9188=Du greifst in den Rucksack... aber er ist leer.
+9189=Beide Hände müssen frei sein, um zu stehlen.
+9190=Du musst in der Diebesgilde sein, um von anderen Spielern zu stehlen.
+9191=Du bist derzeit von der Diebesgilde ausgeschlossen.
+9192=Du kannst nicht von Ladenbesitzern stehlen.
+9193=Das kannst du nicht bestehlen.
+9194=Diese Kreatur wurde bereits bestohlen.  Es gibt nichts mehr zu stehlen.
+9195=Das Ziel kann nicht gesehen werden.
+9196=Du kannst nicht versuchen, in der Hitze des Gefechts zu stehlen!
+9197=Als junger Spieler kannst du die Fertigkeit Stehlen nicht benutzen.
+9198=Du kannst keine Gegenstände stehlen, die ausgerüstet sind.
+9199=Du kannst nicht von Verkäufern stehlen.
+9200=Du kannst nicht von Wachen stehlen.
+9201=Du kannst nicht stehlen, was man nicht sehen kann...
+9202=Du musst einer Fraktion beitreten, um dies zu tun
+9203=Du kannst dein eigenes Siegel nicht stehlen.
+9204=Du hast nicht genug Fähigkeiten, um das Siegel zu stehlen
+9205=Du kannst das Siegel nicht stehlen, wenn du inkognito bist
+9206=Das Siegel kann nicht gestohlen werden, wenn man polymorph ist.
+9207=Du kannst das Siegel nicht stehlen, wenn du verkleidet bist
+9208=Das Siegel der Stadt kann nicht innerhalb einer Stunde nach dem Start des Servers gestohlen werden.
+9209=Du kannst das Siegel nicht von den Jungen stehlen.
+9210=Du hast erfolgreich einen besonderen Gegenstand von der Kreatur gestohlen!
+9211=Dieser Gegenstand kann nicht benutzt werden, wenn er gelähmt ist.
+9212=Dieser Gegenstand ist vorübergehend vor Diebstahl geschützt.
+9213=Du bist Abschaum! Wachen!
+9214=Wachen! Ein Schurke!
+9215=Das ist ein Schurke! Wachen!
+9216=Wachen! Hilfe!
+9230=Du kannst keine negativen Handlungen an deinem Ziel durchführen.
+9231=Du kannst keine nützlichen Handlungen an deinem Ziel durchführen.
+9232=Das kannst du nicht tun, wenn du verkleidet bist.
+9233=Du kannst dich nicht polymorphisieren, während du verkleidet bist.
+9234=Du hast deine Verkleidung entfernt.
 // [9250-9300] Runenbücher
 9250=Dieses Buch braucht Zeit zum Aufladen.
 9251=Du kannst kein Runenbuch aus dem Rucksack eines anderen Spielers benutzen!
@@ -4135,6 +4174,14 @@
 9275=Dieses Buch hat bereits die maximale Anzahl an Ladungen.
 9276=Du hast das Runenbuch mit einem Stapel Rückruf-Schriftrolle aufgeladen.
 9277=Du hast das Runenbuch mit einer Rückruf-Schriftrolle aufgeladen.
+9278=Sie können die Zauber "Rückruf" und "Tor" nicht verwenden, wenn Sie eine aktive Verbrecherflagge haben oder wenn Sie kürzlich gestohlen haben!
+9279=Wählen Sie aus, was Sie untersuchen wollen.
+9280=Der Leichnam wurde zuletzt von %s geplündert.
+9281=Der Leichnam wurde nicht entweiht.
+9282=Dieses Schloss wurde zuletzt von %s geknackt.
+9283=Du hast nichts Ungewöhnliches bemerkt.
+9284=Dieser Mensch ist ein Dieb!
+9285=Sie können nicht aus einem sicheren Behälter stehlen.
 // [9301-9310] Zauberfisch
 9301=Du stehst bereits unter einem ähnlichen Effekt.
 9302=Du verschluckst den Fisch ganz!
@@ -4886,5 +4933,119 @@
 17273=Sie müssen ein paar Sekunden warten, während ich die letzte Bestellung prüfe.
 17274=Die Großbestellungsurkunde wurde in deinen Rucksack gelegt.
 17275=Du hast nicht genug Platz in deinem Rucksack für die Belohnung der Großbestellung.
+// [17500-17529] Namen von NPC-Gilden
+17500=Ich bin der %s von %d
+17501=Die Gilde der arkanen Künste
+17502=Die Gilde des Kriegers
+17503=Die Gesellschaft der Diebe
+17504=Der Bund der Waldläufer
+17505=Die Gilde der Heiler
+17506=Die Bergbaugenossenschaft
+17507=Die Kaufmannsvereinigung
+17508=Der Orden der Ingenieure
+17509=Die Gesellschaft der Tuchmacher
+17510=Die Schiffergilde
+17511=Das Bardische Collegium
+17512=Die Gemeinschaft der Schmiede
+// [17550-17599] Untergilden
+17550=Die Gilde der Magier
+17551=Die Gilde der Zauberei
+17552=Die Meister der Illusion
+17553=Die Vereinigung der Krieger
+17554=Die Kämpfer und Fußvolk
+17555=Die Gilde der Kavallerie und des Pferdes
+17556=Der Bund der Schurken und Bettler
+17557=Die Gilde der Meuchelmörder
+17558=Die Gesellschaft der Diebe
+17559=Die Gilde der Kaufleute
+17560=Die Gilde der Lebensmittelhändler
+17561=Die Gilde der Händler
+17562=Die Gilde der Tauschhändler
+17563=Schneiderhalle
+17564=Zunft der Fischer
+17565=Seemannsvereinigung
+17566=Seemannskapitel
+17567=Gesellschaft der Schiffszimmermänner
+17568=Die Waffenschmiedezunft
+17569=Die Schmiedezunft
+17570=Die Gilde der Waffenschmiede
+17571=Die Gesellschaft der Waffenschmiede
+// [17600-17700] NPC-Gilden Sonstiges
+17600=Gildenmeister
+17601=Gildemeisterin
+17602=Für den Beitritt zur Gilde ist eine Gebühr in Goldmünzen zu entrichten: %i
+17603=Du gehörst nicht zu meiner Gilde!
+17604=Du bist gerade meiner Gilde beigetreten! Du musst eine Woche warten, um austreten zu können.
+17605=Ich akzeptiere deinen Austritt.
+17606=Dieser bestimmte Gegenstand kostet %i Goldstücke.
+17607=Ich weiß nicht, wovon du sprichst.
+17559=Willkommen in der Gilde! Du wirst feststellen, dass die anderen Mitglieder dir in den Geschäften niedrigere Preise gewähren werden.
+17608=Du bist bereits ein Mitglied unserer Gilde.
+17609=Du musst erst aus deiner anderen Gilde austreten.
+17610=Willkommen bei %s!
+17611=Du bist zu jung, um meiner Gilde beizutreten...
+17612=Du kannst nicht Mitglied der Diebesgilde sein, solange du jung bist.
+17613=Diese Gilde ist für gerissene Diebe, nicht für plumpe Halsabschneider.
+17614=Du musst mindestens ein Taschendiebgeselle sein, um dieser elitären Organisation beitreten zu können.
+17615=Das reicht nicht für ein Verkleidungsset, tut mir leid.
+17616=Warum gibst du mir das? Nein, danke.
+17617=Es tut uns leid, wir nehmen im Moment keine neuen Mitglieder auf.
+17618=Als Mitglied der Gilde erhalten Sie einen Rabatt!
+17619=Als Gildenmitglied kann ich Ihnen dafür einen Premiumpreis anbieten!
+17620=Das ist nicht genug, um den Mitgliedsbeitrag für die Gilde zu bezahlen, tut mir leid.
+17621=Zeit seit dem Beitritt zur Gilde: %i Minuten.
+// Verkleidungsset
+18000=Vandyke
+18001=Schnurrbart
+18002=Kurzer Bart
+18003=Langer Bart
+18004=Kurzer Bart
+18005=Langer Bart
+18010=Nur Mitglieder der Diebesgilde können diesen Gegenstand benutzen.
+18011=Du bist derzeit von der Diebesgilde ausgeschlossen.  Sie würden deine Handlungen missbilligen.
+18012=DIEBESVERKLEIDUNGSSET
+18013=OKAY
+18014=ANWENDEN
+18015=Auswahl der Gesichtsbehaarung
+18016=Haarauswahl
+18017=Gesichtshorn-Auswahlen
+18018=Horn-Auswahlen
+18019=Horn Stil 1
+18020=Horn Stil 2
+18021=Horn Stil 3
+18022=Horn Stil 4
+18023=Horn Stil 5
+18024=Horn Stil 6
+18025=Horn Stil 7
+18026=Horn Stil 8
+18027=Mittellang
+18028=Lange Feder
+18029=Kurz
+18030=Vokuhila
+18031=Lang
+18032=Deckelknoten
+18033=Langer Zopf
+18034=Gestachelt
+18035=Blume
+18036=Dutt
+18037=Die Verkleidung lässt nach 2 Stunden nach: Du siehst gut aus.
+// [18500-19000] Spezielle stählbare Verbrauchsgüter für Monster
+18500=Ihrem Geist fehlt es an Zusammenhalt. Du musst %i Minuten warten, bevor du die Macht eines Edelsteins der Erlösung anrufen kannst.
+18501=Der Edelstein durchdringt dich mit seiner Kraft und wird dabei zerstört.
+18502=Auferstehung
+18503=Es ist möglich, dass Sie hier von diesem Heiler wiederbelebt werden. Möchten Sie es versuchen?<br>CONTINUE - Sie haben sich entschieden, zu versuchen, jetzt ins Leben zurückzukehren.<br>CANCEL - Sie ziehen es vor, vorerst ein Geist zu bleiben.
+18504=Du musst %i Sekunden warten, bevor du diesen Gegenstand benutzen kannst.
+18505=Du hast bereits volles Mana.
+18506=Das saure Getränk stellt sofort einen Teil deines Manas wieder her!
+18507=Du hast bereits volle Gesundheit.
+18508=Die bittere Saat stellt sofort einen Teil deiner Gesundheit wieder her!
+18509=Du stehst bereits unter der Wirkung eines Balsams oder einer Lotion.
+18510=Du trägst die Salbe auf und fühlst dich plötzlich weniger verwundbar!
+18511=Sie tragen den Balsam auf und fühlen sich plötzlich stärker!
+18512=Sie tragen den Balsam auf und fühlen sich plötzlich beweglicher!
+18513=Sie tragen den Balsam auf und fühlen sich plötzlich weiser!
+18514=Du wendest die Lebensschild-Lotion an.
+18515=Du wendest die Steinhaut-Lotion an.
+18516=Die Wirkung des Balsams oder der Lotion hat nachgelassen.
 }
 EOF

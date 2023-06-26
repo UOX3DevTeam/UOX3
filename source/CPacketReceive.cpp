@@ -3023,6 +3023,13 @@ void CPICreateCharacter::Receive( void )
 //o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create3DCharacter( void )
 {
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Console.Error( oldstrutil::format( "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+		Network->Disconnect( tSock );
+		return;
+	}
+
 	tSock->Receive( 146, false );
 	Network->Transfer( tSock );
 
@@ -3115,6 +3122,13 @@ void CPICreateCharacter::Create3DCharacter( void )
 //o------------------------------------------------------------------------------------------------o
 void CPICreateCharacter::Create2DCharacter( void )
 {
+	if( ValidateObject( tSock->CurrcharObj() ))
+	{
+		Console.Error( oldstrutil::format( "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+		Network->Disconnect( tSock );
+		return;
+	}
+
 	if( tSock->ClientType() >= CV_HS2D && tSock->ClientVersionSub() >= 16 )
 	{
 		tSock->Receive( 106, true );
@@ -3123,6 +3137,7 @@ void CPICreateCharacter::Create2DCharacter( void )
 	{
 		tSock->Receive( 104, false );
 	}
+
 	Network->Transfer( tSock );
 
 	pattern1		= tSock->GetDWord( 1 );
@@ -5263,7 +5278,7 @@ bool CPIClosedStatusGump::Handle( void )
 		CChar *statusGumpChar = CalcCharObjFromSer( statusGumpCharSerial );
 		if( ValidateObject( statusGumpChar ))
 		{
-			tSock->StatWindow( statusGumpChar );
+			//tSock->StatWindow( statusGumpChar ); // Send statwindow update on closing the gump? Why? Doesn't seem like it's needed...
 			return true;
 		}
 	}

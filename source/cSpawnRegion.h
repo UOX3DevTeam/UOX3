@@ -112,8 +112,8 @@ public:
 	GenericList<CItem *> *	GetSpawnedItemsList( void );
 	GenericList<CChar *> *	GetSpawnedCharsList( void );
 private:
-	CChar *		RegionSpawnChar( void );
-	CItem *		RegionSpawnItem( void );
+	auto		RegionSpawnChar() -> CChar *;
+	auto		RegionSpawnItem() -> CItem *;
 
 	bool		FindItemSpotToSpawn( SI16 &x, SI16 &y, SI08 &z );
 	bool		FindCharSpotToSpawn( SI16 &x, SI16 &y, SI08 &z, bool &waterCreature, bool &amphiCreature );

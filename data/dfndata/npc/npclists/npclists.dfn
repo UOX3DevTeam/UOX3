@@ -344,12 +344,10 @@ ratmanmage
 
 [NPCLIST alldragonlist]
 {
-graydragon
-graydrake
+2|graydragon
+2|graydrake
 reddragon
 reddrake
-graydragon
-graydrake
 ancientwyrm
 whitewyrm
 shadowwyrm
@@ -360,9 +358,8 @@ wyvern
 
 [NPCLIST alldaemonlist]
 {
+2|daemon
 balron
-daemon
-daemon
 }
 
 [NPCLIST allelementals]

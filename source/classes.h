@@ -85,7 +85,9 @@ private:
 
 public:
 	CChar *		CreateBaseNPC( std::string ourNPC, bool shouldSave = true );
-	CChar *		CreateRandomNPC( const std::string& npcList );
+	auto		CreateRandomNPC( const std::string &npcList ) -> CChar *;
+	auto		ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>> npcListVector ) -> std::string;
+	auto		NpcListLookup( const std::string &npclist ) -> std::string;
 
 	CChar *		CreateNPC( CSpawnItem *iSpawner, const std::string &npc );
 	CChar *		CreateNPCxyz( const std::string &npc, SI16 x, SI16 y, SI08 z, UI08 worldNumber, UI16 instanceId, bool useNpcList = false );

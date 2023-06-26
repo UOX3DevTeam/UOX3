@@ -431,10 +431,14 @@ function onGumpPress( pSocket, myButton, gumpData )
 			if( runeData != 0 )
 			{
 				var splitData = runeData.split( "," );
-				runeBook.morex = splitData[2];
-				runeBook.morey = splitData[3];
-				runeBook.morez = splitData[4];
-				runeBook.more = splitData[5];
+				runeBook.morex = splitData[2]; // x
+				runeBook.morey = splitData[3]; // y
+				runeBook.morez = splitData[4]; // z
+				runeBook.more = splitData[5]; // worldNumber
+				if( splitData[6] )
+				{
+					runeBook.more0 = splitData[6]; // instanceID
+				}
 				runeBook.SetTag( "defaultRuneLoc", myButton );
 				pSocket.SysMessage( GetDictionaryEntry( 9259, pSocket.language )); // New default location set.
 			}
@@ -540,10 +544,14 @@ function onGumpPress( pSocket, myButton, gumpData )
 			{
 				var splitData = runeData.split( "," );
 				var droppedRune = CreateDFNItem( pSocket, pUser, "0x1f14", 1, "ITEM", true )
-				droppedRune.morex = parseInt( splitData[2] );
-				droppedRune.morey = parseInt( splitData[3] );
-				droppedRune.morez = parseInt( splitData[4] );
-				droppedRune.more = parseInt( splitData[5] );
+				droppedRune.morex = parseInt( splitData[2] ); // x
+				droppedRune.morey = parseInt( splitData[3] ); // y
+				droppedRune.morez = parseInt( splitData[4] ); // z
+				droppedRune.more = parseInt( splitData[5] ); // worldNumber
+				if( splitData[6] )
+				{
+					droppedRune.more0 = parseInt( splitData[6] ); // instanceId
+				}
 				droppedRune.name = splitData[0];
 				if( runeBook.GetTag( "defaultRuneLoc" ) == ( myButton - 100 ))
 				{
@@ -552,6 +560,7 @@ function onGumpPress( pSocket, myButton, gumpData )
 					runeBook.morey = 0;
 					runeBook.morez = 0;
 					runeBook.more = 0;
+					runeBook.more0 = 0;
 				}
 				runeBook.SetTag( "rune" + ( myButton - 100 ) + "Data", null );
 
@@ -672,7 +681,7 @@ function CastSpell( pSocket, pUser, spellNum, checkReagentReq )
 		return;
 	}
 
-	if( !GetServerSetting( "TravelSpellsWhileAggressor" ) && (( pUser.attackFirst && ValidateObject( pUser.target ) && pUser.target.innocent ) || pUser.criminal ))
+	if( !GetServerSetting( "TravelSpellsWhileAggressor" ) && ( pUser.IsAggressor() || pUser.criminal ))
 	{
 		pSocket.SysMessage( GetDictionaryEntry( 2066, pSocket.language )); // You are not allowed to use Recall or Gate spells while being the aggressor in a fight!
 		return;
@@ -877,6 +886,11 @@ function onTimer( timerObj, timerID )
 	var targLocY = parseInt(splitData[3]);
 	var targLocZ = parseInt(splitData[4]);
 	var targWorld = parseInt(splitData[5]);
+	var targInstanceID = 0;
+	if( splitData[6] )
+	{
+		targInstanceID = parseInt(splitData[6]);
+	}
 
 	// Do mana/reagent cost
 	var spellNum	= timerObj.spellCast;
@@ -903,18 +917,18 @@ function onTimer( timerObj, timerID )
 			// Only teleport player's pets if they are set to follow
 			if( ValidateObject( tempFollower ) && tempFollower.wandertype == 1 && tempFollower.InRange( timerObj, 24 ))
 			{
-				tempFollower.Teleport( targLocX, targLocY, targLocZ, targWorld );
+				tempFollower.Teleport( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
 				tempFollower.Follow( timerObj );
 			}
 		}
 
 		// Teleport player
-		timerObj.Teleport( targLocX, targLocY, targLocZ, targWorld );
+		timerObj.Teleport( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
 	}
 	else
 	{
 		// Gate spell
-		timerObj.Gate( targLocX, targLocY, targLocZ, targWorld );
+		timerObj.Gate( targLocX, targLocY, targLocZ, targWorld, targInstanceID );
 	}
 }
 
@@ -1010,9 +1024,10 @@ function onDropItemOnItem( iDropped, pUser, runeBook )
 				var yLoc = iDropped.morey;
 				var zLoc = iDropped.morez;
 				var worldNum = iDropped.more;
+				var instanceID = iDropped.more0;
 				var iName = iDropped.name;
 				var iColor = iDropped.color;
-				runeBook.SetTag( "rune" + i + "Data", iName + "," + iColor + "," + xLoc + "," + yLoc + "," + zLoc + "," + worldNum );
+				runeBook.SetTag( "rune" + i + "Data", iName + "," + iColor + "," + xLoc + "," + yLoc + "," + zLoc + "," + worldNum + "," + instanceID );
 				runeBook.SetTag( "runeCount", runeCount + 1 );
 				iDropped.Delete();
 

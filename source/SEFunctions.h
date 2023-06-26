@@ -152,6 +152,7 @@ SEngineFunc SE_CheckTileFlag;
 SEngineFunc SE_DoesStaticBlock;
 SEngineFunc SE_DoesDynamicBlock;
 SEngineFunc SE_DoesMapBlock;
+SEngineFunc SE_DoesCharacterBlock;
 SEngineFunc SE_DistanceBetween;
 
 SEngineFunc SE_ValidateObject;

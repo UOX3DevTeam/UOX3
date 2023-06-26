@@ -48,6 +48,11 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 			}
 		}
 
+		if( mChar.CheckCombatIgnore( cTarget->GetSerial() ))
+		{
+			return false;
+		}
+
 		if( cTarget->IsInvulnerable() || cTarget->IsDead() || cTarget->GetVisible() != VT_VISIBLE || cTarget->IsEvading() )
 		{
 			return false;
@@ -92,7 +97,7 @@ bool CheckForValidOwner( CChar& mChar, CChar *cTarget )
 //o------------------------------------------------------------------------------------------------o
 void HandleGuardAI( CChar& mChar )
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	for( auto &MapArea : MapRegion->PopulateList( &mChar ))
@@ -124,7 +129,7 @@ void HandleGuardAI( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 void HandleFighterAI( CChar& mChar )
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -136,6 +141,11 @@ void HandleFighterAI( CChar& mChar )
 			continue;
 
 		auto regChars = MapArea->GetCharList();
+		// Chance to reverse list of chars
+		if( RandomNum( 0, 1 ))
+		{
+			regChars->Reverse();
+		}
 		for( const auto &tempChar : regChars->collection() )
 		{
 			if( IsValidAttackTarget( mChar, tempChar ))
@@ -285,7 +295,7 @@ void HandleEvilHealerAI( CChar& mChar )
 //o------------------------------------------------------------------------------------------------o
 auto HandleEvilAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -378,7 +388,7 @@ auto HandleEvilAI( CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto HandleChaoticAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	// Fetch scriptTriggers attached to mChar
@@ -390,6 +400,12 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 			continue;
 
 		auto regChars = MapArea->GetCharList();
+
+		// Chance to reverse list of chars
+		if( RandomNum( 0, 1 ))
+		{
+			regChars->Reverse();
+		}
 		for( const auto &tempChar : regChars->collection() )
 		{
 			if( IsValidAttackTarget( mChar, tempChar ) && !CheckForValidOwner( mChar, tempChar ))
@@ -440,7 +456,7 @@ auto HandleChaoticAI( CChar& mChar ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto HandleAnimalAI( CChar& mChar ) -> void
 {
-	if( mChar.IsAtWar() )
+	if( mChar.IsAtWar() && ValidateObject( mChar.GetTarg() ))
 		return;
 
 	const SI08 hunger = mChar.GetHunger();

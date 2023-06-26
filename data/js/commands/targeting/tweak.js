@@ -112,18 +112,19 @@ const itemProp = {
 	sellvalue:90,
 	spawnsection:91,
 	speed:92,
-	strength:93,
-	tempTimer:94,
-	type:95,
-	usesLeft:96,
-	visible:97,
-	weight:98,
-	weightMax:99,
-	wipable:100,
-	worldnumber:101,
-	x:102,
-	y:103,
-	z:104
+	stealable:93,
+	strength:94,
+	tempTimer:95,
+	type:96,
+	usesLeft:97,
+	visible:98,
+	weight:99,
+	weightMax:100,
+	wipable:101,
+	worldnumber:102,
+	x:103,
+	y:104,
+	z:105
 };
 
 // List of character properties to handle
@@ -133,49 +134,49 @@ var charProp = {
 	allmove:202,
 	attack:203,
 	attacker:204,
-	attackFirst:205,
-	atWar:206,
-	baseskills:207,
-	beardColour:208,
-	beardStyle:209,
-	brkPeaceChance:210,
-	canAttack:211,
-	canBroadcast:212,
-	canRun:213,
-	canSnoop:214,
-	cell:215,
-	colour:216,
-	commandlevel:217,
-	criminal:218,
-	dead:219,
-	deaths:220,
-	dexterity:221,
-	direction:222,
-	emoteColour:223,
-	fame:224,
-	flag:225,
-	fontType:226,
-	foodList:227,
-	frozen:228,
-	fx1:229,
-	fy1:230,
-	fx2:231,
-	fy2:232,
-	fz:233,
-	gender:234,
-	guild:235,
-	guildTitle:236,
-	hairColour:237,
-	hairStyle:238,
-	health:239,
-	hidamage:240,
-	housesCoOwned:241,
-	housesOwned:242,
-	hunger:243,
-	hungerWildChance:244,
-	innocent:245,
-	instanceID:246,
-	intelligence:247,
+	atWar:205,
+	baseskills:206,
+	beardColour:207,
+	beardStyle:208,
+	brkPeaceChance:209,
+	canAttack:210,
+	canBroadcast:211,
+	canRun:212,
+	canSnoop:213,
+	cell:214,
+	colour:215,
+	commandlevel:216,
+	criminal:217,
+	dead:218,
+	deaths:219,
+	dexterity:220,
+	direction:221,
+	emoteColour:222,
+	fame:223,
+	flag:224,
+	fontType:225,
+	foodList:226,
+	frozen:227,
+	fx1:228,
+	fy1:229,
+	fx2:230,
+	fy2:231,
+	fz:232,
+	gender:233,
+	guild:234,
+	guildTitle:235,
+	hairColour:236,
+	hairStyle:237,
+	health:238,
+	hidamage:239,
+	housesCoOwned:240,
+	housesOwned:241,
+	hunger:242,
+	hungerWildChance:243,
+	innocent:244,
+	instanceID:245,
+	intelligence:246,
+	isAggressor:247,
 	isAnimal:248,
 	isCasting:249,
 	isCounselor:250,
@@ -269,7 +270,7 @@ var charProp = {
 	x:338,
 	y:339,
 	z:340
-}
+};
 
 // List of character skills to handle
 var charSkills = {
@@ -331,7 +332,7 @@ var charSkills = {
 	imbuing:455,
 	mysticism:456,
 	throwing:457
-}
+};
 
 // List of multi properties to handle
 var multiProp = {
@@ -367,7 +368,7 @@ var multiProp = {
 	x:529,
 	y:530,
 	z:531
-}
+};
 
 var regionProp = {
 	appearance:700,
@@ -397,7 +398,7 @@ var regionProp = {
 	taxResource:724,
 	weather:725,
 	worldNumber:726
-}
+};
 
 var accountProp = {
 	comment:800,
@@ -429,7 +430,7 @@ var accountProp = {
 	isSuspended:824,
 	timeban:825,
 	firstLogin:826
-}
+};
 
 /*var regionProp2 = {
   appearance : {value: 700, dictionary: 154},
@@ -438,7 +439,7 @@ var accountProp = {
 };*/
 
 // Remember to update the itemPropCount if adding/removing properties to itemProp!
-const itemPropCount = 85;
+const itemPropCount = 86;
 const charPropCount = 141;
 const charSkillCount = 58;
 const multiPropCount = 32;
@@ -1317,6 +1318,10 @@ function HandleItemTarget( pSocket, myTarget )
 				itemLabelTooltip 	= GetDictionaryEntry( 8193, pSocket.language ); // Attack speed of item - used by weapons
 				itemValue 			= ( myTarget.speed ).toString();
 				break;
+			case itemProp.stealable:
+				itemLabelTooltip	= GetDictionaryEntry( 8214, pSocket.language ); // Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
+				itemValue 			=	( myTarget.stealable ).toString();
+				break;
 			case itemProp.strength:
 				itemLabelTooltip 	= GetDictionaryEntry( 8194, pSocket.language ); // Strength required to equip item
 				itemValue 			= ( myTarget.strength ).toString();
@@ -1570,10 +1575,6 @@ function HandleCharTarget( pSocket, myTarget )
 				charValue 			= ( ValidateObject( myTarget.attacker) ? ( myTarget.attacker.name ).toString() : "-" );
 				charValueTooltip	= ( ValidateObject( myTarget.attacker) ? ( myTarget.attacker.name ).toString() + " ( " + ( myTarget.attacker.serial ).toString() + " )": "-" );
 				break;
-			case charProp.attackFirst:
-				charLabelTooltip 	= GetDictionaryEntry( 8305, pSocket.language ); // Did character attack first?
-				charValue 			= ( myTarget.attackFirst ? "true" : "false" );
-				break;
 			case charProp.atWar:
 				charLabelTooltip 	= GetDictionaryEntry( 8306, pSocket.language ); // Toggles combat mode for NPC characters (NPC Only)
 				charValue 			= ( myTarget.atWar ).toString();
@@ -1808,6 +1809,10 @@ function HandleCharTarget( pSocket, myTarget )
 			case charProp.intelligence:
 				charLabelTooltip 	= GetDictionaryEntry( 8339, pSocket.language ); // Intelligence attribute of character
 				charValue 			= ( myTarget.intelligence ).toString();
+				break;
+			case charProp.isAggressor:
+				charLabelTooltip 	= GetDictionaryEntry( 8440, pSocket.language ); // Is (player) character flagged as an aggressor to anyone? Controlled by server (Read-Only)
+				charValue 			= "<BASEFONT color=#EECD8B>" + ( myTarget.isAggressor ? "true" : "false" ) + "</BASEFONT>";
 				break;
 			case charProp.isAnimal:
 				charLabelTooltip 	= GetDictionaryEntry( 8340, pSocket.language ); // Is character an animal? Controlled by server (Read-Only)
@@ -4554,6 +4559,13 @@ function onGumpPress( pSocket, pButton, gumpData )
 			maxLength = 3;
 			maxVal = 127;
 			break;
+		case itemProp.stealable:
+			propertyName = "stealable";
+			propertyType = "Integer";
+			propertyHint = GetDictionaryEntry( 8214, pSocket.language ); // Is item stealable? 0 = not stealable, 1 = stealable, 2 = stealable rare
+			maxLength = 3;
+			maxVal = 127;
+			break;
 		case itemProp.strength:
 			propertyName = "strength";
 			propertyType = "Integer";
@@ -5736,11 +5748,6 @@ function onGumpPress( pSocket, pButton, gumpData )
 		case charProp.allmove:
 			propertyName = "allmove";
 			propertyHint = GetDictionaryEntry( 8302, pSocket.language ); // Toggles being able to move all items regardless of movable status
-			propertyType = "Boolean";
-			break;
-		case charProp.attackFirst:
-			propertyName = "attackFirst";
-			propertyHint = GetDictionaryEntry( 8305, pSocket.language ); // Did character attack first in combat?
 			propertyType = "Boolean";
 			break;
 		case charProp.atWar:

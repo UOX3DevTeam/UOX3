@@ -174,7 +174,7 @@ function ApplyExceptionalArmorBonuses( pCrafter, itemCrafted, coreShardEraValue 
 			// Arms Lore bonus
 			// Publish 44, 2007
 			// When a piece of armor (not including shields) is exceptionally crafted, it will receive a resist
-			// bonus based on the pCrafter’s Arms Lore skill. For every 20 points of Arms Lore, one resist normally
+			// bonus based on the pCrafterâ€™s Arms Lore skill. For every 20 points of Arms Lore, one resist normally
 			// available on that piece of armor will be raised by 1, for a total possible bonus of 5 distributed
 			// randomly. (Ex. At GM Arms Lore, the total resist bonus is +5%. One resist could receive the
 			// full +5% bonus. Alternatively, one resist could receive +2%, and three other resists could
@@ -231,9 +231,9 @@ function ApplyExceptionalWeaponBonuses( pCrafter, itemCrafted, coreShardEraValue
 	else // AoS and beyond
 	{
 		/* Publish 17
-			“Exceptional” weapons gain a 20% bonus to their damage rating (except for Runic weapons, which will only get a 10% bonus).*/
+			â€œExceptionalâ€ weapons gain a 20% bonus to their damage rating (except for Runic weapons, which will only get a 10% bonus).*/
 		/* Publish 19
-			The “exceptional” bonus for player-crafted items (weapons and armor) has been improved to 35%.*/
+			The â€œexceptionalâ€ bonus for player-crafted items (weapons and armor) has been improved to 35%.*/
 		var totalExceptionalDamageBonus = exceptionalDamageBonusAoS;
 		if( coreShardEraValue >= EraStringToNum( "ml" ))
 		{

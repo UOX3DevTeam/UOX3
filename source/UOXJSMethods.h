@@ -119,6 +119,18 @@ JSMethodFunc CChar_ReactOnDamage;
 JSMethodFunc CChar_Damage;
 JSMethodFunc CChar_InitiateCombat;
 JSMethodFunc CChar_InvalidateAttacker;
+JSMethodFunc CChar_AddAggressorFlag;
+JSMethodFunc CChar_RemoveAggressorFlag;
+JSMethodFunc CChar_CheckAggressorFlag;
+JSMethodFunc CChar_UpdateAggressorFlagTimestamp;
+JSMethodFunc CChar_IsAggressor;
+JSMethodFunc CChar_ClearAggressorFlags;
+JSMethodFunc CChar_AddPermaGreyFlag;
+JSMethodFunc CChar_RemovePermaGreyFlag;
+JSMethodFunc CChar_CheckPermaGreyFlag;
+JSMethodFunc CChar_UpdatePermaGreyFlagTimestamp;
+JSMethodFunc CChar_IsPermaGrey;
+JSMethodFunc CChar_ClearPermaGreyFlags;
 JSMethodFunc CChar_Heal;
 JSMethodFunc CChar_Defense;
 JSMethodFunc CChar_AddFriend;
@@ -435,7 +447,19 @@ inline JSFunctionSpec CChar_Methods[] =
 	{ "ReactOnDamage",		CChar_ReactOnDamage,	1, 0, 0 },
 	{ "Damage",				CChar_Damage,			1, 0, 0 },
 	{ "InitiateCombat",		CChar_InitiateCombat,	1, 0, 0 },
-	{ "InvalidateAttacker",	CChar_InvalidateAttacker,	0, 0, 0 },
+	{ "InvalidateAttacker",		CChar_InvalidateAttacker,				0, 0, 0 },
+	{ "AddAggressorFlag",		CChar_AddAggressorFlag,					1, 0, 0 },
+	{ "RemoveAggressorFlag",	CChar_RemoveAggressorFlag,				1, 0, 0 },
+	{ "CheckAggressorFlag",		CChar_CheckAggressorFlag,					1, 0, 0 },
+	{ "UpdateAggressorFlagTimestamp",	CChar_UpdateAggressorFlagTimestamp,	1, 0, 0 },
+	{ "IsAggressor",			CChar_IsAggressor,						1, 0, 0 },
+	{ "ClearAggressorFlags",	CChar_ClearAggressorFlags,				0, 0, 0 },
+	{ "AddPermaGreyFlag",		CChar_AddPermaGreyFlag,					1, 0, 0 },
+	{ "RemovePermaGreyFlag",	CChar_RemovePermaGreyFlag,				1, 0, 0 },
+	{ "CheckPermaGreyFlag",		CChar_CheckPermaGreyFlag,					1, 0, 0 },
+	{ "UpdatePermaGreyFlagTimestamp",	CChar_UpdatePermaGreyFlagTimestamp,	1, 0, 0 },
+	{ "IsPermaGrey",			CChar_IsPermaGrey,						1, 0, 0 },
+	{ "ClearPermaGreyFlags",	CChar_ClearPermaGreyFlags,				0, 0, 0 },
 	{ "Heal",				CChar_Heal,				1, 0, 0 },
 	{ "Resist",				CBase_Resist,			1, 0, 0 },
 	{ "Defense",			CChar_Defense,			3, 0, 0 },

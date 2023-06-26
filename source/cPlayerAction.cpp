@@ -524,6 +524,17 @@ bool CPIGetItem::Handle( void )
 	}
 	Effects->PlaySound( tSock, 0x0057, true );
 
+	if( i->IsCorpse() )
+	{
+		// Store temp tag on corpse with serial of player who looted the corpse last
+		TAGMAPOBJECT tagObject;
+		tagObject.m_Destroy = false;
+		tagObject.m_StringValue = oldstrutil::number( ourChar->GetSerial() );
+		tagObject.m_IntValue = 0;
+		tagObject.m_ObjectType = TAGMAP_TYPE_INT;
+		i->SetTempTag( "lootedBy", tagObject );
+	}
+
 	if( iCont == nullptr )
 	{
 		// Remove item from mapregion it was in before being picked up
@@ -2503,7 +2514,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 		else	// No Town Title
 		{
-			if( !pdoll->IsIncognito() && !( pdoll->GetTitle().empty() ))
+			if( !pdoll->IsIncognito() && !pdoll->IsDisguised() && !( pdoll->GetTitle().empty() ))
 			{
 				if( cwmWorldState->ServerData()->ExpansionCoreShardEra() >= ER_T2A )
 				{

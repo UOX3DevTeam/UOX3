@@ -17,6 +17,9 @@ function command_ADD( socket, cmdString )
 		var splitString = cmdString.split( " " );
 		switch( splitString[0].toUpperCase() )
 		{
+			case "NPCLIST":
+				socket.tempInt2 = 1;
+				// fallthrough
 			case "NPC":
 				if( splitString[1] )
 				{
@@ -115,9 +118,16 @@ function onCallback0( socket, ourObj )
 
 		var npcSection = socket.xText;
 		socket.xText = null;
-		var newChar = SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID );
 
-		if( newChar && newChar.isChar )
+		var useNpcList = false;
+		if( socket.tempInt2 )
+		{
+			useNpcList = true;
+			socket.tempInt2 = null;
+		}
+
+		var newChar = SpawnNPC( npcSection, x, y, z, mChar.worldnumber, mChar.instanceID, useNpcList );
+		if( ValidateObject( newChar ) && newChar.isChar )
 		{
 			newChar.InitWanderArea();
 		}

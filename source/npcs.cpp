@@ -161,36 +161,175 @@ CChar *CCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCharStuff::ChooseNpcToCreate()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Selects a random weighted entry from a vector with key-value pair (section and weight)
+//o------------------------------------------------------------------------------------------------o
+auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI16>> npcListVector ) -> std::string
+{
+	auto npcListSize = npcListVector.size();
+	if( npcListSize <= 0 )
+		return "";
+
+	int npcEntryToSpawn = -1;
+	int sum_of_weight = 0;
+	for( const auto& it : npcListVector )
+	{
+		//const std::string& sectionName = it.first;
+		const UI16 &sectionWeight = it.second;
+		sum_of_weight += sectionWeight;
+	}
+
+	int rndChoice = RandomNum( 0, sum_of_weight - 1 );
+	int npcWeight = 0;
+
+	std::vector<int> matchingEntries;
+
+	int weightOfChosenNpc = 0;
+	for( int i = 0; i < npcListVector.size(); ++i )
+	{
+		//const std::string &sectionName = npcList[i].first;
+		const UI16 &sectionWeight = npcListVector[i].second;
+
+		// Ok, section has a weight, let's compare that weight to our chosen random number
+		if( rndChoice < sectionWeight )
+		{
+			// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
+			if( weightOfChosenNpc == 0 || weightOfChosenNpc == sectionWeight )
+			{
+				npcEntryToSpawn = i;
+				weightOfChosenNpc = sectionWeight;
+
+				// Add the entry index to a temporary vector of all entries with shared weight, the continue looking for more!
+				matchingEntries.push_back( i );
+				continue;
+			}
+		}
+		rndChoice -= sectionWeight;
+	}
+
+	// Did we find one or more entry that matched our random weight criteria?
+	npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
+	matchingEntries.clear();
+
+	std::string chosenNpcSection = "";
+	if( npcEntryToSpawn != -1 )
+	{
+		// If entry was selected based on weights, use that
+		chosenNpcSection = npcListVector[npcEntryToSpawn].first;
+	}
+	else
+	{
+		// else, use a random entry from the list
+		chosenNpcSection = npcListVector[RandomNum( static_cast<size_t>( 0 ), npcListSize - 1 )].first;
+	}
+
+	return chosenNpcSection;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CCharStuff::NpcListLookup()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Retrieves entries from a specified NPCLIST and builds a vector that's provided
+//|					for ChooseNpcToCreate() function to perform a weighted random selection
+//o------------------------------------------------------------------------------------------------o
+auto CCharStuff::NpcListLookup( const std::string &npclist ) -> std::string
+{
+	auto sect = "NPCLIST "s + npclist;
+	sect = oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
+
+	auto npcList = FileLookup->FindEntry( sect, npc_def );
+	if( !npcList )
+		return "";
+
+	auto npcListSize = npcList->NumEntries();
+	if( npcListSize <= 0 )
+		return "";
+
+	// Stuff each entry from the npcList into a vector
+	std::vector<std::pair<std::string, UI16>> npcListVector;
+	for( size_t i = 0; i < npcListSize; i++ )
+	{
+		// Split string for entry into a stringlist based on | as separator
+		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( npcList->MoveTo( i ), "//" )), "|" );
+
+		UI16 sectionWeight = 1;
+		if( csecs.size() > 1 )
+		{
+			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+		}
+
+		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
+		npcListVector.emplace_back( npcSection, sectionWeight );
+	}
+
+	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
+	if( chosenNpcSection.empty() )
+		return "";
+
+	auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( chosenNpcSection, "//" )), "=" );
+	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
+	{
+		// Chosen entry contained another NPCLIST! Let's dive back into it...
+		chosenNpcSection = NpcListLookup( chosenNpcSection );
+	}
+
+	return chosenNpcSection;
+}
+
+//o------------------------------------------------------------------------------------------------o
 //|	Function	-	CCharStuff::CreateRandomNPC()
 //|	Date		-	10/12/2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a random npc from an npclist in specified dfn file
 //o------------------------------------------------------------------------------------------------o
-auto CCharStuff::CreateRandomNPC( const std::string& npclist ) -> CChar *
+auto CCharStuff::CreateRandomNPC( const std::string &npclist ) -> CChar *
 {
-	CChar *cCreated			= nullptr;
 	auto sect = "NPCLIST "s + npclist;
 	sect = oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
+
 	auto npcList = FileLookup->FindEntry( sect, npc_def );
-	if( npcList )
+	if( !npcList )
+		return nullptr;
+
+	auto npcListSize = npcList->NumEntries();
+	if( npcListSize <= 0 )
+		return nullptr;
+
+	// Stuff each entry from the npcList into a vector
+	std::vector<std::pair<std::string, UI16>> npcListVector;
+	for( size_t i = 0; i < npcListSize; i++ )
 	{
-		auto i = npcList->NumEntries();
-		if( i > 0 )
+		// Split string for entry into a stringlist based on | as separator
+		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( npcList->MoveTo( i ), "//" )), "|" );
+
+		UI16 sectionWeight = 1;
+		if( csecs.size() > 1 )
 		{
-			std::string k = npcList->MoveTo( RandomNum( static_cast<size_t>( 0 ), i - 1 ));
-			if( !k.empty() )
-			{
-				if( oldstrutil::upper( k ) == "NPCLIST" )
-				{
-					cCreated = CreateRandomNPC( npcList->GrabData() );
-				}
-				else
-				{
-					cCreated = CreateBaseNPC( k );
-				}
-			}
+			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
 		}
+
+		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
+		npcListVector.emplace_back( npcSection, sectionWeight );
 	}
+
+	auto chosenNpcSection = ChooseNpcToCreate( npcListVector );
+	if( chosenNpcSection.empty() )
+		return nullptr;
+
+	CChar *cCreated = nullptr;
+	auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( chosenNpcSection, "//" )), "=" );
+	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
+	{
+		// Chosen entry contained another NPCLIST! Let's dive back into it...
+		cCreated = CreateRandomNPC( npcList->GrabData() );
+	}
+	else
+	{
+		// Finally, an actual NPC entry. Spawn it!
+		cCreated = CreateBaseNPC( chosenNpcSection );
+	}
+
 	return cCreated;
 }
 
@@ -1413,6 +1552,12 @@ auto CCharStuff::ApplyNpcSection( CChar *applyTo, CScriptSection *NpcCreation, s
 				if( !isGate )
 				{
 					applyTo->SetNPCAiType( static_cast<SI16>( ndata ));
+				}
+				break;
+			case DFNTAG_NPCGUILD:
+				if( !isGate )
+				{
+					applyTo->SetNPCGuild( static_cast<UI16>( ndata ));
 				}
 				break;
 			case DFNTAG_NOHIRELING:

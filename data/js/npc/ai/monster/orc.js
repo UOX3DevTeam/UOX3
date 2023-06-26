@@ -54,16 +54,20 @@ function onDamage( pDefender, pAttacker, damageValue, damageType )
 		pOwner = pAttacker;
 	}
 
-	// See if pOwner is wearing an orcish kin mask
-	var headWear = pOwner.FindItemLayer( 0x06 );
-	if( ValidateObject( headWear ) )
+	ExplodeOrcishMask( pOwner );
+
+	return true;
+}
+
+function ExplodeOrcishMask( pChar )
+{
+	var headWear = pChar.FindItemLayer( 0x06 );
+	if( ValidateObject( headWear ))
 	{
 		if( headWear.id == 0x141c && headWear.colour == 0x08a4 )
 		{
-			// Punish pOwner for attacking an orc while wearing a mask of orcish kin!
-			pOwner.ExplodeItem( headWear, 50, 5, false );
+			// Punish pChar for negative actions towards orc while wearing a mask of orcish kin!
+			pChar.ExplodeItem( headWear, 50, 5, false );
 		}
 	}
-
-	return true;
 }
