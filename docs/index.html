@@ -27,8 +27,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 24. December, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
+	<p style="margin:0"><small>Last Updated: 1. July, 2023</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC6</small></p>
 </div>
 
 <div id="filterMainDocs" contenteditable="true" placeholder="(Search...)" style="margin: 0 auto; background-color: #fff; padding: 5px; width: 250px; margin-top: 5px;"></div>
@@ -278,6 +278,7 @@ packitem=0x0f8d,30
 						<ul>
 							<li><strong>Client Blocking</strong> - Mix and match which client versions to allow on your shard. Players using unsupported clients will be blocked and/or disconnected shortly after joining the shard.</li>
 							<li><strong>Feature Negotiation</strong> - UOX3 supports negotiating features with assistant tools that support this, like Razor. Enable or disable assistant functions like auto-remounting, weather filter and more.</li>
+							<li><strong>UO Era Settings</strong> - Although UOX3's main focus is on the LBR/Pub15 era of UO, settings are available to customize many era-specific features in the game, like combat mechanics, skills, NPCs, weapons and armor.</li>
 							<li><strong>ClassicUO Map Tracker</strong> - If using the ClassicUO client's World Map, guild and party members will show up on the map if this option is enabled.</li>
 							<li><strong>Skill and Stat-caps</strong> - Choose skill and stat-caps for all players via two simple settings.</li>
 							<li><strong>Rogue Skills</strong> - Adjust the amount of steps players can take while stealthing, make snooping a crime - or legalize it, disable hostile skills in protected regions, or disable rogue skills altogether.</li>
@@ -323,6 +324,7 @@ packitem=0x0f8d,30
 							<li><strong>Party System</strong> - Party up with friends and share a private, server-wide chat.</li>
 							<li><strong>Guildstones</strong> - Guild system that relies on classic guildstones that can be placed in player's houses.</li>
 							<li><strong>Player Vendors</strong> - Set up a trade empire across Britannia with a little help from player vendors!</li>
+							<li><strong>Young Player System</strong> - Start newbie players off easy and provide them with protection from both monsters and potentially negative player-to-player interactions!</li>
 						</ul>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -511,16 +513,16 @@ packitem=0x0f8d,30
 				  <div class="text-component">
 						<p>Refer to this Quick Start guide to get up and running with UOX3 in just a couple of minutes! If you run into any problems along the way, check the <a href="index.html#uox3Requirements">full setup guide below</a> for more detailed instructions with additional information that might help you resolve your issue. Also feel free to jump onto our <a href="https://discord.gg/uBAXxhF" title="UOX3 @ Discord">Discord server</a> or post in the <a href="https://www.uox3.org/forums" title="UOX3 Community Forums">community forums</a> for more hands-on support!</p>
 						<ol>
-							<li>Download the <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">UO Client</a>, and either <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - Open Source UO Client">ClassicUO</a> (recommended) or <a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO Assistant">Razor Community Edition</a> (or both!). For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <strong>ClassicUO</strong> client to run the game.</li>
+							<li>Download the <a href="https://uo.com/client-download/" target="_blank" rel="noopener" title="Official UO homepage - client download">UO Client</a>, and either <a href="https://www.classicuo.eu/" target="_blank" rel="noopener" title="ClassicUO - Open Source UO Client">ClassicUO</a> (<span class="hl">strongly recommended</span>) or <a href="http://www.razorce.com/" target="_blank" rel="noopener" title="Razor Community Edition - an UO Assistant">Razor Community Edition</a> (or both!). For Linux/macOS users, find a way to copy the installed UO directory on a Windows machine over to your Linux/macOS one, and then rely on <strong>ClassicUO</strong> client to run the game.</li>
 							<li>Download <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">UOX3</a> for your platform of choice.</li>
 							<li>Update <strong>SERVERNAME</strong> (name of your shard) and optionally <strong>EXTERNALIP</strong> (your internet IP) in <em>[system]</em> section of <strong>UOX.INI</strong>. If you just want to connect locally on same computer, leave EXTERNALIP alone</li>
-							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>.</li>
+							<li>Set client versions allowed on your shard via <strong>CLIENTSUPPORT#</strong> lines in <em>[clientsupport]</em> section of <strong>UOX.INI</strong>. Be as specific as possible!</li>
 							<li>Update <strong>DATADIRECTORY</strong> path in <em>[directories]</em> section of <strong>UOX.INI</strong>; point it to UO folder, or folder with UO data files.</li>
 							<li>Change default <strong>username</strong>/<strong>password</strong> for <em>account 0</em> (admin account) in <strong>UOX3/accounts/accounts.adm</strong>.</li>
 							<li>Start UOX3!</li>
 							<li>Start ClassicUO (or Razor), where you set up a user profile, then use it to load up the UO client and log in using the new username and password you created for the admin account!</li>
 						</ol>
-						<p>(Bonus tip: If you run into trouble launching the UO client using either ClassicUO or Razor, try running these tools in WinXP SP2/3 Compatibility mode)</p>
+						<p>(Bonus tip: If you run into trouble launching the UO client using either ClassicUO or Razor, try running these tools in WinXP SP2/3 Compatibility mode. Also beware that connecting to UOX3 using the regular UO client and any Razor versions newer than ~1.6.8.15 will probably not work!)</p>
 						<p>Assuming the setup process went without a hitch, you can now skip ahead to the section titled <a href="index.html#logInAndCreateChar">Logging In and Creating a Character</a> for a taking your first steps in your UOX3 shard! However, if you ran into any trouble along the way, refer to the full setup guide in the next few sections below!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
@@ -537,7 +539,7 @@ packitem=0x0f8d,30
 					<p>Default memory usage for an empty shard ranges from 35-50 MB, but will grow based on amount of content added to shard and number of players connected at any given time. Minimum 1+ GB RAM recommended.</p>
 					<h3>Ultima Online Client</h3>
 					<p>It is highly recommended to use the same data files for your UOX3 shard as found in the Ultima Online client you will be connecting to UOX3 with, to minimize the chance of issues related to mismatching files.</p>
-					<p>UOX3 currently supports client versions ranging from <strong>4.0.0p</strong> to at least <strong>7.0.90.x</strong>, and requires the following minimum set of UO data files to run:
+					<p>UOX3 currently supports client versions ranging from <strong>4.0.0p</strong> to at least <strong>7.0.98.x</strong>, and requires the following minimum set of UO data files to run:
 					<ul>
 						<li><strong>map0.mul/map0LegacyMUL.uop</strong> (depending on client version)</li>
 						<li><strong>staidx0.mul</strong></li>
@@ -565,8 +567,8 @@ packitem=0x0f8d,30
 					<p>To get started with UOX3, you have a couple of options:</p>
 					<h3>1) Stable All-in-One</h3>
 					<p>The first, and most straight-forward option is to download the latest stable <strong>All-in-One UOX3 package</strong> for your platform (Windows/Linux/macOS) from the <a href="https://www.uox3.org/downloads.shtml" target="_blank" title="UOX3.org Downloads page">Downloads page at UOX3.org</a>. It contains all the files you need to get a bare-bones version of UOX3 up and running; a clean slate for you to build on.</p>
-					<h3>2) Experimental Build</h3>
-					<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Experimental Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature.</p>
+					<h3>2) Development Build</h3>
+					<p>If it has been some time since the stable All-in-One package was updated, it might be a better approach to try out the <strong>"Development Build"</strong> sometimes posted on the <a href="https://www.uox3.org/forums/viewtopic.php?f=1&t=825" target="_blank" title="UOX3 Community Foums - Experimental Builds">forums at UOX3.org</a>. These versions contain all the latest changes and additions that have been made to UOX3 since the previous stable release, but could also potentially contain additional bugs and errors due to the "cutting edge" nature. However, depending on time since last release, development build might be only build available!</p>
 					<div class="note"><p style="color: black; font-style: italic">Note: For <strong>either</strong> of the two above options, unzip the downloaded file to a folder of your choice, preferably something easy to find and access, like C:\UOX3 for Windows, or your home directory for Linux/macOS.</p></div>
 					<h3>3) Compile Source Yourself</h3>
 					<p>The third option, for more advanced users, would be to <strong>download the UOX3 source-code directly from GitHub and compile it yourself</strong>. If you're interested in the inner workings of UOX3 and/or potentially want to contribute code-wise, or just like to live life on the cutting edge and want to stay up-to-date with the most recent changes at any given point of time, this might be the option for you. See <a href="#compilingUOX3">Additional UOX3 Info > Compiling UOX3 Source</a> for further instructions!</p>
@@ -973,6 +975,10 @@ packitem=0x0f8d,30
 							Port number that server listens on for connections.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">SECRETSHARDKEY</span><strong>=None</strong><br>
+							Secret key that can be used as a way to restrict which clients can connect to the shard, for instance via CUOWeb's 0xA4 packet, or other clients that can be configured to send that same secret key</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">SERVERLANGUAGE</span><strong>=0</strong><br>
 							Set default server dictionary language. Supported languages: 0 - None/language used by each client, 1 - English, 2 - German, 3 - Spanish, 4 - French, 5 - Portuguese, 6 - Italian, 7 - Czech, 8 - Polish</p>
 						</div>
@@ -1079,6 +1085,22 @@ packitem=0x0f8d,30
 						<div class="settingsDiv">
 							<p><span class="hl">NETTRAFFICTIMEBAN</span><strong>=30</strong><br>
 							Duration in minutes that an account will be banned after exceeding network budget three times in same session.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">APSPERFTHRESHOLD</span><strong>=50</strong><br>
+							Performance threshold (measured in simulation cycles/sec) below which the APS kicks in</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">APSINTERVAL</span><strong>=100</strong><br>
+							How often (in milliseconds) the APS checks performance and makes adjustments (if needed) to balance out shard performance</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">APSDELAYSTEP</span><strong>=50</strong><br>
+							How much the delay timer is modified by (in milliseconds) each time APS makes adjustments</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">APSDELAYMAXCAP</span><strong>=2000</strong><br>
+							Max amount of of delay APS can introduce for NPC AI/movement handling when attempting to restore shard performance</p>
 						</div>
 					</div>
 
@@ -1722,6 +1744,19 @@ packitem=0x0f8d,30
 							<p><span class="hl">ALLOWAWAKENPCS</span><strong>=0</strong><br>
 							If enabled, NPCs marked as awake will be checked by server (AI, timers, updates) regardless of whether the region they are in is inactive because of no nearby online players. If disabled, those NPCs are treated like any other NPCs. Disabled by default.</p>
 						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ENABLENPCGUILDDISCOUNTS</span><strong>=1</strong><br>
+							If enabled, players are granted a discount if they buy items from vendors that are members of the same NPC guild as the player.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">ENABLENPCGUILDPREMIUMS</span><strong>=1</strong><br>
+							If enabled, players are granted premium prices if they sell items to vendors that are members of the same NPC guild as the player.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">YOUNGPLAYERSYSTEM</span><strong>=1</strong><br>
+							If enabled, all newly created player accounts are automatically marked with Young flag, and all characters created under those accounts will be treated as Young players, with those restrictions that that entails.</p>
+						</div>
+
 					</div>
 
 					<input type="checkbox" id="spoiler_ini_petsandfollowers">
@@ -1848,7 +1883,7 @@ packitem=0x0f8d,30
 					<label for="spoiler_ini_worldlight">[worldlight] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
 						<div class="settingsDiv">
-							<p><span class="hl">DUNGEONLEVEL</span><strong>=3</strong><br>
+							<p><span class="hl">DUNGEONLEVEL</span><strong>=15</strong><br>
 							Specifies the light-level of Dungeon-areas.</p>
 						</div>
 						<div class="settingsDiv">
@@ -1856,7 +1891,7 @@ packitem=0x0f8d,30
 							Specifies the brightest light-level in the day/night cycles.</p>
 						</div>
 						<div class="settingsDiv">
-							<p><span class="hl">DARKLEVEL</span><strong>=5</strong><br>
+							<p><span class="hl">DARKLEVEL</span><strong>=12</strong><br>
 							Specifies the darkest light-level in the day/night cycles.</p>
 						</div>
 						<div class="settingsDiv">
@@ -2117,6 +2152,24 @@ packitem=0x0f8d,30
 						</div>
 					</div>
 
+					<input type="checkbox" id="spoiler_ini_young_start locations">
+					<label for="spoiler_ini_start young_locations">[young start locations] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p>Start locations used by the character-creation process in the client, but applied only to Young characters created on Young player accounts. Use either a single location (to make all Young players start there), or follow the fixed amount based on regular [start locations] and either re-use those locations or specify specific young-start locations for each town - using the following format: <strong>YOUNGLOCATION=TOWN,BUILDING,X,Y,Z,WORLD,INSTANCE,CLILOCMSG (description of town)</strong></p><br>
+							<p><strong>Default setup:</strong><br>
+							<span class="hl">YOUNGLOCATION=Yew,Center,545,982,0,0,0,1075072</span><br>
+							<span class="hl">YOUNGLOCATION=Minoc,Tavern,2477,411,15,0,0,1075073</span><br>
+							<span class="hl">YOUNGLOCATION=Britain,Sweet Dreams Inn,1495,1629,10,0,0,1075074</span><br>
+							<span class="hl">YOUNGLOCATION=Moonglow,Docks,4406,1045,0,0,0,1075075</span><br>
+							<span class="hl">YOUNGLOCATION=Trinsic,West Gate,1832,2779,0,0,0,1075076</span><br>
+							<span class="hl">YOUNGLOCATION=Magincia,Docks,3675,2259,26,0,0,1075077</span><br>
+							<span class="hl">YOUNGLOCATION=Jhelom,Docks,1492,3696,0,0,0,1075078</span><br>
+							<span class="hl">YOUNGLOCATION=Skara Brae,Docks,639,2236,0,0,0,1075079</span><br>
+							<span class="hl">YOUNGLOCATION=Vesper,Ironwood Inn,2771,977,0,0,0,1075080</span></p>
+						</div>
+					</div>
+
 					<input type="checkbox" id="spoiler_ini_startup">
 					<label for="spoiler_ini_startup">[startup] <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -2196,6 +2249,66 @@ packitem=0x0f8d,30
 							<p><span class="hl">MAXHOUSESCOOWNABLE</span><strong>=10</strong><br>
 							Sets the max amount of houses that is co-ownable per player.
 							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SAFECOOWNERLOGOUT</span><strong>=1</strong><br>
+							Allow co-owners to safely and instantly log out inside house.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SAFEFRIENDLOGOUT</span><strong>=1</strong><br>
+							Allow friends to safely and instantly log out inside house.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">SAFEGUESTLOGOUT</span><strong>=1</strong><br>
+							Allow guests to safely and instantly log out inside house.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">KEYLESSOWNERACCESS</span><strong>=1</strong><br>
+							Allow owner of house to use locked doors in house without key in pack.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">KEYLESSCOOWNERACCESS</span><strong>=1</strong><br>
+							Allow co-owners of house to use locked doors in house without key in pack.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">KEYLESSFRIENDACCESS</span><strong>=1</strong><br>
+							Allow friends of house to use locked doors in house without key in pack.
+							</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">KEYLESSGUESTACCESS</span><strong>=0</strong><br>
+							Allow guests of house to use locked doors in house without key in pack.
+							</p>
+						</div>
+					</div>
+
+					<input type="checkbox" id="spoiler_ini_bods">
+					<label for="spoiler_ini_bods">[bulk order deeds] <i class="fas fa-angle-down"></i></label>
+					<div class="spoiler">
+						<div class="settingsDiv">
+							<p><span class="hl">OFFERBODSFROMITEMSALES</span><strong>=1</strong><br>
+							If enabled, shopkeepers might offer BODs when players sell items to them.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">OFFERBODSFROMCONTEXTMENU</span><strong>=1</strong><br>
+							If enabled, shopkeepers might offer BODs via context menu option.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BODSFROMCRAFTEDITEMSONLY</span><strong>=0</strong><br>
+							If enabled, only selling of crafted items will trigger BOD offers.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BODGOLDREWARDMULTIPLIER</span><strong>=1</strong><br>
+							Reward multiplier for Gold given for completing a BODs - defaults to 1.0.</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">BODFAMEREWARDMULTIPLIER</span><strong>=1</strong><br>
+							Reward multiplier for Fame given for completing a BOD - defaults to 1.0.</p>
 						</div>
 					</div>
 
@@ -3096,7 +3209,7 @@ packitem=0x0f8d,30
 							<p>Plays the specified midi/mp3 file. Note that you can only switch what music plays every so often.</p>
 							<p>Command: <span class="hl">'music</span><br>
 							Parameters: <span class="hl"><em>(d)</em></span></p>
-							<p>The exact music available is dependent on which UO client version you're using. No matter which version you're using, you will find a file called <strong>Config.txt</strong> under the <strong>[path to UO]\Music\Digital\</strong> subfolder, which lists out the available music, from 0-67 (v5.0.0b to v6.0.1.10?), 0-87 (v7.0.8.2 to v7.0.20.0+) or 0-102 (v7.0.30.1 to v7.0.90.x).</p>
+							<p>The exact music available is dependent on which UO client version you're using. No matter which version you're using, you will find a file called <strong>Config.txt</strong> under the <strong>[path to UO]\Music\Digital\</strong> subfolder, which lists out the available music, from 0-67 (v5.0.0b to v6.0.1.10?), 0-87 (v7.0.8.2 to v7.0.20.0+) or 0-102 (v7.0.30.1 to v7.0.98.x).</p>
 						</div>
 
 						<input type="checkbox" id="spoiler_cmd_minecheck">
@@ -5261,7 +5374,7 @@ packitem=0x0f8d,30
 				<a class="cd-faq__trigger" href="#uox3mining" id="uox3mining"><span>Mining and Ore System</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>By default, UOX3 is setup with a very simple, yet customizable mining system, with some options in uox.ini to determine certain basic things.</p>
+					<p>By default, UOX3 is setup with a very simple, yet customizable mining system, with some options in uox.ini to determine certain basic things. More extensive customizations can be done via the mining script (js/skill/mining.js).</p>
 					<input type="checkbox" id="spoiler_mining_settings">
 					<label for="spoiler_mining_settings">Mining Settings in uox.ini <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -5415,6 +5528,8 @@ packitem=0x0f8d,30
 						Same as AI_FIGHTER, but will try to stay at casting range.</p>
 						<p><span class="hl">11</span> - <strong>AI_EVIL_CASTER</strong><br>
 						Same as AI_EVIL, but will try to stay at casting range.</p>
+						<p><span class="hl">12</span> - <strong>AI_ANIMAL_SCARED</strong><br>
+						Runs away from players if they get too close, even outside of combat.</p>
 						<p><span class="hl">17</span> - <strong>AI_PLAYERVENDOR</strong><br>
 						Used by playervendors placed by players at their houses to sell items to other players.</p>
 						<p><span class="hl">32</span> - <strong>AI_PET_GUARD</strong><br>
@@ -6832,6 +6947,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set NPC wander-mode (0 = immobile, 1 = follow target, 2 = wander freely, 3 = wander in box, 4 = wander in circle, 5 = frozen). See <a href="#npcMovement" title="UOX3 Documentation - NPC Movement and Pathfinding">NPC Movement and Pathfinding</a> for more details.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">origin</span>=<strong>[text]</strong><br>
+							Store reference to which expansion/era of UO an item/NPC originated in (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">packitem</span>=<strong>[itemSectionID]</strong> or <strong>[itemSectionID],[amount]</strong> or <strong>[itemSectionID],[minamount maxamount]</strong><br>
 							Add specified item from Item DFNs to NPC's backpack (must come after <strong>backpack</strong> tag!). Supports optional value for amount, or random amount values.</p>
 						</div>
@@ -6894,6 +7013,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">script</span>=<strong>[scriptID]</strong><br>
 							Set scriptID of JS to attach to NPC on creation</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">sectionid</span>=<strong>[text]</strong><br>
+							Override which [sectionID] is stored for an object</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">sellitem</span>=<strong>[itemSectionID]</strong><br>
@@ -7359,6 +7482,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Can be set to a value between -128 and 127,  but is currently not used for anything. In the olden days, this was a part of UOX3's unique armor/weapon engraving system that allowed you to engrave spells on equipment with the Inscription skill.</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">origin</span>=<strong>[text]</strong><br>
+							Store reference to which expansion/era of UO an item/NPC originated in (uo, t2a, uor, td, lbr, aos, se, ml, sa, hs, tol)</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">packitem</span>=<strong>[itemSectionID]</strong><br>
 							Add specified item from item DFNs to container</p>
 						</div>
@@ -7399,6 +7526,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 							Set scriptID of JS to attach to item on creation</p>
 						</div>
 						<div class="settingsDiv">
+							<p><span class="hl">sectionid</span>=<strong>[text]</strong><br>
+							Override which [sectionID] is stored for an object</p>
+						</div>
+						<div class="settingsDiv">
 							<p><span class="hl">sk_made</span>=<strong>[skillID]</strong><br>
 							Defines the skill that is used to create the item</p>
 						</div>
@@ -7417,6 +7548,21 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">spd</span>=<strong>[speed]</strong><br>
 							Set attack speed of weapon (higher is faster)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">spells</span>=<strong>[hex value for circles 1-4],[hex value for circles 5-8],[hex value - unused]</strong><br>
+							Define which spells a new spellbook starts out pre-filled with, using the following syntax: SPELLS=0x00000000,0x00000000,0x00000000<br>
+							<ul>
+								<li>The existence of a spell from within each circle have specific values (0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80), and a combined value of 0xff if all spells in said  circle are present.</li>
+								<li>The first comma-separated value in the SPELLS tag represents spell values for circles 1 to 4, while the second comma-separated value represents the spell values for circles 5 to 8. The third comma-separated value is currently unused.</li>
+								<li>The last two digits (0x000000##) of the first value in the SPELLS tag represent the combined value of spells from the first circle, the 5th and 6th digits (0x0000##00) spells from second circle, the 3rd and 4th from third circle (0x00##0000), and the 1st and 2nd from fourth circle (0x##000000). Repeat for the second value in the tag, with fifth (last two digits) to eight (first two digits) circle spells. Examples:</li>
+								<li>spellbook with only 1st circle spells: SPELLS=0x000000ff,0x0,0x0</li>
+								<li>spellbook with only 2nd circle spells: SPELLS=0x0000ff00,0x0,0x0</li>
+								<li>spellbook with 1st - 2nd circle spells: SPELLS=0x0000ffff,0x0,0x0</li>
+								<li>spellbook with only 2nd and 5th circle spells: SPELLS=0x0000ff00,0x000000ff,0x0</li>
+								<li>spellbook with only 4th and 8th circle spells: SPELLS=0xff000000,0xff000000,0x0</li>
+								<li>spellbook with all spells, from all eight circles: SPELLS=0xffffffff,0xffffffff,0x0</li>
+							</ul></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">stradd</span>=<strong>[statpoints]</strong><br>
@@ -7820,6 +7966,10 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 						<div class="settingsDiv">
 							<p><span class="hl">call</span>=<strong>[amount]</strong></strong><br>
 							Max amount of objects to spawn in one batch during respawns</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">defz</span>=<strong>[value]</strong><br>
+							Defines a definite Z level to attempt to spawn an object at</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">instanceid</span>=<strong>[instanceID]</strong><br>

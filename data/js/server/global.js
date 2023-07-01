@@ -33,7 +33,6 @@ function onLogin( socket, pChar )
 			pChar.AddScriptTrigger( 8001 );
 		}
 
-		Console.Warning( "Checking Young status upon login." );
     	// Check if "Young" player still meets requirement for being considered young
     	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
     }
@@ -51,7 +50,6 @@ function onCreatePlayer( pChar )
 	// If player character is created on a Young account, give them Young-specific items
 	if( pChar.account.isYoung )
 	{
-		Console.Warning( "Attaching young script to Young character." );
 		// Attach "Young" player script, if the account is young and does not have script
 		if( !pChar.HasScriptTrigger( 8001 ))
 		{
