@@ -5107,5 +5107,30 @@
 18744=Nearest moongate: %s, near %s (%i m away)
 18745=Nearest bank: %s, near %s (%i m away)
 18746=As a Young player, you cannot carve up player corpses.
+18747=This isn't your ticket! Shame on you! You have to use YOUR ticket.
+18748=That must be in your pack for you to use it.
+18749=Target any other ticket marked NEW PLAYER to win a prize.
+18750=You can't target the same ticket!
+18751=The item must be in your backpack to use it.
+18752=You need to find another ticket marked NEW PLAYER.
+18753=You will need to select a ticket.
+18754=That is not a valid ticket.
+18755=Choose the gift you prefer. WARNING: if you cancel, and your partner does not, you will need to find another matching ticket!
+18756=A sextant
+18757=A coupon for a single hair restyling
+18758=A spellbook with all 1st - 4th spells.
+18759=A wand of fireworks
+18760=A spyglass
+18761=Dyes and a dye tub
+18762=CANCEL
+18763=A sextant has been placed in your backpack.
+18764=A coupon for a free hair restyling has been placed in your backpack.
+18765=A bag with a set of Ranger armor has been placed in your backpack.
+18766=A spellbook with all 1st to 4th circle spells has been placed in your backpack.
+18767=A wand of fireworks has been placed in your backpack.
+18768=A spyglass has been placed in your backpack.
+18769=The dyes and dye tub have been placed in your backpack.
+18770=This is half a prize ticket! Double-click this ticket and target any other ticket marked NEW PLAYER and get a prize! This ticket will only work for YOU, so don’t give it away!
+18771=A full set of ranger armor.
 }
 EOF

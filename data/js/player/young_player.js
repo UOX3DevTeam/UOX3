@@ -34,16 +34,15 @@ const tokunoHealerLocations = [
 
 const youngPlayerItems = [
 	// itemSection, amount, newbie?
-	["sextant", 1, true]
-	//["youngplayerticket", 1, true] // not complete yet
+	["newplayerticket", 1, true]
 ];
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
 const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
-const youngMaxTotalSkills = 3500; // 350.0 skill points across all characters
-const youngMaxTotalStats = 150; // 150 stat points across all characters
-const youngMaxSkill = 700; // max skill points in a single skill, on a single character
-const youngMaxStat = 80; // max stat points in a single stat, on a single character
+const youngMaxTotalSkills = 3500; // Max skill points in total, per character
+const youngMaxTotalStats = 150; // Max 150 stat points in total, per character
+const youngMaxSkill = 700; // Max skill points in a single skill, per character
+const youngMaxStat = 80; // Max stat points in a single stat, per character
 const youngMaxAcctAge = 40; // 40 hours
 
 // Check to make sure player still meets requirements of being considered a "Young" player
@@ -78,17 +77,19 @@ function CheckYoungStatus( pSock, pChar, fromLogin )
 
 	if( revokeReason == "" )
 	{
-		// Iterate over the characters on player's account, and sum up their skills and stats
-		var totalSkillPoints = 0;
-		var highestSkill = 0;
-		var totalStatPoints = 0;
-		var highestStat = 0;
+		// Iterate over the characters on player's account, and check their skills and stats
 		for( var i = 1; i < 8; i++ )
 		{
+			// Reset these for each character
+			var totalSkillPoints = 0;
+			var highestSkill = 0;
+			var totalStatPoints = 0;
+			var highestStat = 0;
+
 			var tempChar = pAccount["character"+i];
 			if( ValidateObject( tempChar ))
 			{
-				// Add character's total base skillpoints to account total
+				// Add up character's total base skillpoints
 				totalSkillPoints += tempChar.baseskills.allskills;
 				if( totalSkillPoints > youngMaxTotalSkills )
 				{
@@ -110,7 +111,7 @@ function CheckYoungStatus( pSock, pChar, fromLogin )
 					break;
 				}
 
-				// Add character's total statpoints to account total
+				// Add up character's total statpoints
 				totalStatPoints += tempChar.strength;
 				totalStatPoints += tempChar.dexterity;
 				totalStatPoints += tempChar.intelligence;
@@ -169,6 +170,13 @@ function GiveYoungPlayerItems( pSock, pChar )
 			if( isNewbie )
 			{
 				newItem.newbie = true;
+			}
+
+			if( newItem.sectionID == "newplayerticket" )
+			{
+				// Store character's serial on ticket, and mark it as owned by player
+				newItem.owner = pChar;
+				newItem.SetTag( "ticketUsableBy", ( pChar.serial ).toString() );
 			}
 		}
 		else

@@ -552,6 +552,18 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_STEALABLE:		applyTo->SetStealable( static_cast<UI08>( ndata ));		break;
 			case DFNTAG_SNOW:			applyTo->SetWeatherDamage( SNOW, ndata != 0 );			break;
 			case DFNTAG_SCRIPT:			applyTo->AddScriptTrigger( static_cast<UI16>( ndata ));	break;
+			case DFNTAG_SPELLS:
+				if( ssecs.size() == 3 )
+				{
+					applyTo->SetSpell( 0, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 0 )));
+					applyTo->SetSpell( 1, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 )));
+					applyTo->SetSpell( 2, static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 0 )));
+				}
+				else
+				{
+					Console.Warning( oldstrutil::format( "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str() ));
+				}
+				break;
 			case DFNTAG_TYPE:
 				ItemTypes iType;
 				iType = FindItemTypeFromTag( cdata );

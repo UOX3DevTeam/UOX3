@@ -82,9 +82,15 @@
 				Any character has more than 150 total stat points
 				Any character has more than 80 stat points in a single stat
 			Young characters can renounce their Young status manually by saying the words "I renounce my young player status"
-			Young characters get two additional items upon creation:
-				a new player ticket (can be combined with any other players new player ticket for both players to get a reward)
-				a sextant (shows Young players directions to nearest moongate/bank regardless of where they are, as long as outdoors)
+			Young characters get an additional item upon creation:
+				a new player ticket, which can be combined with any other players new player ticket for both players to get a reward:
+					a sextant (shows Young players directions to nearest moongate/bank regardless of where they are, as long as outdoors)
+					a hair restyling deed
+					a ranger armor set (if coreShardEra is T2A or lower)
+					a spellbook with 1st to 4th circle spells (if CoreShardEra is UOR or higher)
+					a fireworks wand
+					a spyglass
+					a dye tub and dyes
 			Young characters cannot target other player characters with hostile spells or skills
 			Young characters cannot be the target of other player characters' hostile spells or skills
 			Young characters can only cast beneficial spells upon themselves or other Young characters
@@ -104,6 +110,21 @@
 		Restricted transferring and/or friending of pets (code) and hirelings (hirelings.js) between Young and non-Young players
 		Restricted Young players from recalling or gating to Felucca facet
 		Young players can instantly logout from anywhere, at any time
+	Added new Item DFN tag - SPELLS - which specifies which spells a spellbook starts with, using the following syntax: SPELLS=0x00000000,0x00000000,0x00000000
+		The existence of a spell from within each circle have specific values (0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80), and a combined value of 0xff if all spells in said  circle are present.
+		The first comma-separated value in the SPELLS tag represents spell values for circles 1 to 4, while the second comma-separated value represents the spell values for circles 5 to 8. The third comma-separated value is currently unused.
+		The last two digits (0x000000##) of the first value in the SPELLS tag represent the combined value of spells from the first circle, the 5th and 6th digits (0x0000##00) spells from second circle, the 3rd and 4th from third circle (0x00##0000), and the 1st and 2nd from fourth circle (0x##000000). Repeat for the second value in the tag, with fifth (last two digits) to eight (first two digits) circle spells.
+		Examples:
+			spellbook with only 1st circle spells: SPELLS=0x000000ff,0x0,0x0
+			spellbook with only 2nd circle spells: SPELLS=0x0000ff00,0x0,0x0
+			spellbook with 1st - 2nd circle spells: SPELLS=0x0000ffff,0x0,0x0
+			spellbook with only 2nd and 5th circle spells: SPELLS=0x0000ff00,0x000000ff,0x0
+			spellbook with only 4th and 8th circle spells: SPELLS=0xff000000,0xff000000,0x0
+			spellbook with all spells, from all eight circles: SPELLS=0xffffffff,0xffffffff,0x0
+	Added Item DFN entries for spellbook pre-filled with circles 1 to 4, and for spellbook pre-filled with all spells, and added these to GM 'add menu (dfndata/items/magic/misc_magic.dfn)
+	Fixed an incorrect character reference in Spyglass script (js/item/spyglass.js)
+	Added Item DFN entry for a fireworks wand with 50 charges (dfndata/items/gear/magic_items.dfn)
+	Added script for new player ticket (js/item/consumables/new_player_ticket.js)
 
 27/06/2023 - Xuri
 	Updated guildmaster script to properly check and set timestamp for when a player joins an NPC guild (js/npc/ai/guildmaster.js)
