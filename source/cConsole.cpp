@@ -1178,7 +1178,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				break;
 			case  'D':
 				// Disconnect account 0 (useful when client crashes)
-				for( tSock = Network->LastSocket(); tSock != nullptr; tSock = Network->PrevSocket() )
+				for( auto &tSock : Network->connClients )
 				{
 					if( tSock->AcctNo() == 0 )
 					{

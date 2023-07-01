@@ -25,9 +25,8 @@ function onSpeech( strSaid, pTalking, pTalkingTo )
 		var bankBox = pTalking.FindItemLayer( 29 );
 		if( !ValidateObject( bankBox ))
 		{
-			pSock.SysMessage( "Error: No valid bankbox found! Please contact a GM for assistance." );
-			Console.Error( "No valid bankbox found for character " + pTalking.name + " with serial " + ( pTalking.serial ).toString() + "!" );
-			return false;
+			// No bank box found for player talking - let's create one for them!
+			CreateNewBankBox( pTalking );
 		}
 
 		var trigWordHandled = false;

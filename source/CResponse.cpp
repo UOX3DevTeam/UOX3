@@ -400,7 +400,7 @@ void CEscortResponse::Handle( [[maybe_unused]] CSocket *mSock, CChar *mChar )
 				else // The must be enroute
 				{
 					// Send out a message saying we are already being escorted
-					nearbyNpc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str(), nearbyNpc->GetFTarg()->GetNameRequest( mChar ).c_str() );
+					nearbyNpc->TextMessage( nullptr, 1297, TALK, 0, cwmWorldState->townRegions[nearbyNpc->GetQuestDestRegion()]->GetName().c_str(), nearbyNpc->GetFTarg()->GetNameRequest( mChar, NRS_SPEECH ).c_str() );
 				}
 				return;
 			}
@@ -743,7 +743,7 @@ bool CPetMultiResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 	}
 	else
 	{
-		std::string npcName = petNpc->GetNameRequest( mChar );
+		std::string npcName = petNpc->GetNameRequest( mChar, NRS_SYSTEM );
 		if( npcName == "#" )
 		{
 			// If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID
@@ -778,7 +778,7 @@ CPetReleaseResponse::CPetReleaseResponse( const std::string &text ) : CBasePetRe
 //o------------------------------------------------------------------------------------------------o
 bool CPetReleaseResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 {
-	std::string npcName = GetNpcDictName( petNpc, mSock );
+	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( FindString( ourText, oldstrutil::upper( npcName )))
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, true, false ))
@@ -810,7 +810,7 @@ CPetGuardResponse::CPetGuardResponse( bool allVal, const std::string &text ) : C
 //o------------------------------------------------------------------------------------------------o
 bool CPetGuardResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 {
-	std::string npcName = GetNpcDictName( petNpc, mSock );
+	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
@@ -839,7 +839,7 @@ CPetAttackResponse::CPetAttackResponse( bool allVal, const std::string &text ) :
 //o------------------------------------------------------------------------------------------------o
 bool CPetAttackResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 {
-	std::string npcName = GetNpcDictName( petNpc, mSock );
+	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
@@ -868,7 +868,7 @@ CPetComeResponse::CPetComeResponse( bool allVal, const std::string &text ) : CPe
 //o------------------------------------------------------------------------------------------------o
 bool CPetComeResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 {
-	std::string npcName = GetNpcDictName( petNpc, mSock );
+	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
@@ -894,7 +894,7 @@ CPetStayResponse::CPetStayResponse( bool allVal, const std::string &text ) : CPe
 //o------------------------------------------------------------------------------------------------o
 bool CPetStayResponse::Handle( CSocket *mSock, CChar *mChar, CChar *petNpc )
 {
-	std::string npcName = GetNpcDictName( petNpc, mSock );
+	std::string npcName = GetNpcDictName( petNpc, mSock, NRS_SYSTEM );
 	if( saidAll || FindString( ourText, oldstrutil::upper( npcName )))
 	{
 		if( Npcs->CanControlPet( mChar, petNpc, false, true ))
@@ -939,7 +939,7 @@ void CBaseVendorResponse::Handle( CSocket *mSock, CChar *mChar )
 			if( !LineOfSight( mSock, mChar, nearbyNpc->GetX(), nearbyNpc->GetY(), ( nearbyNpc->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 				continue;
 
-			std::string npcName = GetNpcDictName( nearbyNpc, mSock );
+			std::string npcName = GetNpcDictName( nearbyNpc, mSock, NRS_SYSTEM );
 			if( saidVendor || FindString( ourText, oldstrutil::upper( npcName )))
 			{
 				if( !Handle( mSock, mChar, nearbyNpc ))

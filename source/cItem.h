@@ -18,6 +18,7 @@ class CItem : public CBaseObject
 {
 protected:
 	GenericList<CItem *>	Contains;
+	GenericList<CSocket *>	contOpenedBy;
 
 	CBaseObject * 	contObj;
 	UI08			glowEffect;
@@ -90,6 +91,7 @@ protected:
 public:
 
 	auto	GetContainsList() -> GenericList<CItem *> *;
+	auto	GetContOpenedByList() -> GenericList<CSocket *> *;
 
 	virtual void	SetWeight( SI32 newVal, bool doWeightUpdate = true ) override;
 	auto			EntryMadeFrom() const -> UI16;

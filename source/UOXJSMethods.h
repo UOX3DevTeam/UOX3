@@ -322,6 +322,8 @@ JSMethodFunc CSocket_FinishedTriggerWords;
 
 JSMethodFunc CRegion_AddScriptTrigger;
 JSMethodFunc CRegion_RemoveScriptTrigger;
+JSMethodFunc CRegion_GetOrePref;
+JSMethodFunc CRegion_GetOreChance;
 
 inline JSFunctionSpec CGump_Methods[] =
 {
@@ -571,6 +573,8 @@ inline JSFunctionSpec CRegion_Methods[] =
 {
 	{ "AddScriptTrigger",		CRegion_AddScriptTrigger,		1, 0, 0 },
 	{ "RemoveScriptTrigger",	CRegion_RemoveScriptTrigger,	1, 0, 0 },
+	{ "GetOrePref",				CRegion_GetOrePref,				1, 0, 0 },
+	{ "GetOreChance",			CRegion_GetOreChance,			0, 0, 0 },
 	{ nullptr,					nullptr,						0, 0, 0 }
 };
 

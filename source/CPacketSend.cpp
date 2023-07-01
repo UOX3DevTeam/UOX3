@@ -237,7 +237,7 @@ void CPacketSpeech::CopyData( CSpeechEntry &toCopy )
 			ourChar = CalcCharObjFromSer( toCopy.Speaker() );
 			if( ValidateObject( ourChar ))
 			{
-				std::string speakerName = GetNpcDictName( ourChar );
+				std::string speakerName = GetNpcDictName( ourChar, nullptr, NRS_SPEECH );
 				SpeakerName( speakerName );
 				SpeakerModel( ourChar->GetId() );
 			}
@@ -2251,7 +2251,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 		Flag( 0 );
 		Serial( toCopy.GetSerial() );
 
-		std::string charName = GetNpcDictName( &toCopy, &target );
+		std::string charName = GetNpcDictName( &toCopy, &target, NRS_STATWINDOW_OTHER );
 		Name( charName );
 		SI16 currentHP = toCopy.GetHP();
 		UI16 maxHP = toCopy.GetMaxHP();
@@ -2276,7 +2276,7 @@ void CPStatWindow::SetCharacter( CChar &toCopy, CSocket &target )
 	{
 		// Send player their own full stats
 		Serial( toCopy.GetSerial() );
-		Name( toCopy.GetNameRequest( &toCopy ));
+		Name( toCopy.GetNameRequest( &toCopy, NRS_STATWINDOW_SELF ));
 
 		bool isDead = toCopy.IsDead();
 		if( isDead )
@@ -2424,7 +2424,7 @@ CPStatWindow::CPStatWindow( CBaseObject &toCopy, CSocket &target )
 		pStream.ReserveSize( 43 );
 		pStream.WriteByte( 2, 43 );
 		Serial( itemObj->GetSerial() );
-		Name( itemObj->GetNameRequest( target.CurrcharObj() ));
+		Name( itemObj->GetNameRequest( target.CurrcharObj(), NRS_STATWINDOW_OTHER ));
 		SI16 currentHP = itemObj->GetHP();
 		UI16 maxHP = itemObj->GetMaxHP();
 		SI16 percentHP = 0;
@@ -6604,7 +6604,7 @@ void CPAllNames3D::CopyData( CBaseObject& obj )
 	pStream.WriteLong(   3, obj.GetSerial() );
 
 	CChar *objChar = CalcCharObjFromSer( obj.GetSerial() );
-	std::string objName = GetNpcDictName( objChar );
+	std::string objName = GetNpcDictName( objChar, nullptr, NRS_SINGLECLICK );
 	pStream.WriteString( 7, objName, objName.length() );
 }
 CPAllNames3D::CPAllNames3D()
@@ -7172,7 +7172,7 @@ void CPToolTip::FinalizeData( ToolTipEntry_st tempEntry, size_t &totalStringLen 
 
 void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmount, bool playerVendor )
 {
-	std::string cItemName = cItem.GetNameRequest( tSock->CurrcharObj() );
+	std::string cItemName = cItem.GetNameRequest( tSock->CurrcharObj(), NRS_TOOLTIP );
 	ToolTipEntry_st tempEntry = {};
 	if( cItem.GetType() == IT_HOUSESIGN )
 	{
@@ -7388,7 +7388,7 @@ void CPToolTip::CopyItemData( CItem& cItem, size_t &totalStringLen, bool addAmou
 		if( cItem.GetOwnerObj() != nullptr )
 		{
 			tempEntry.stringNum = 1061113; // Owner: ~1_val~
-			tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest( mChar );
+			tempEntry.ourText = cItem.GetOwnerObj()->GetNameRequest( mChar, NRS_TOOLTIP );
 			FinalizeData( tempEntry, totalStringLen );
 		}
 	}
@@ -7725,7 +7725,7 @@ void CPToolTip::CopyCharData( CChar& mChar, size_t &totalStringLen )
 
 	// Character Name
 	tempEntry.stringNum = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
-	std::string mCharName = GetNpcDictName( &mChar, tSock );
+	std::string mCharName = GetNpcDictName( &mChar, tSock, NRS_TOOLTIP );
 	std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
 	tempEntry.ourText = oldstrutil::format( "%s \t%s\t ", fameTitle.c_str(), convertedString.c_str() );
 
@@ -9348,7 +9348,7 @@ void CPClilocMessage::CopyData( CBaseObject& toCopy )
 	if( toCopy.CanBeObjType( OT_CHAR ))
 	{
 		CChar *toCopyChar = CalcCharObjFromSer( toCopy.GetSerial() );
-		toCopyName = GetNpcDictName( toCopyChar );
+		toCopyName = GetNpcDictName( toCopyChar, nullptr, NRS_SPEECH );
 	}
 	Name( toCopyName );
 }

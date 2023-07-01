@@ -1,3 +1,115 @@
+01/07/2023 - Xuri (0.99.6-RC6)
+	Removed arbitrary and hidden restrictions on refreshing list of online players shown with 'wholist command
+	Fixed an issue where player ghosts that get teleported would not see themselves get updated to new location
+	Fixed a server crash from clients disconnecting while running server in debug mode
+	Improved how container updates are sent to players; now only sends to clients that have actually opened the container, and who are still within range
+	Added more information about UO data files being loaded during server startup
+	Enhanced the GM 'add menu to allow clicking directly on images of items/npcs to add them, and adjusted size of menus to accommodate this
+	Fixed an issue with fleeing NPCs that could cause them to attempt to flee across time and space, regardless of distance to target/attacker in combat
+	Added NPC AI that runs away from players if they get too close (even outside combat). Applied to hind, rabbits, squirrels, ferrets and various birds by default:
+		AI_ANIMAL_SCARED (aitype 12)
+	Fixed issues with NPCs fleeing forever, or getting stuck in flee/don't flee loop, by introducing max fleeing distance (50 tiles) and cooldown (30 sec) on fleeing
+	Updated onNameRequest JS Event to include third parameter with origin of name request, so script responses can be tailored appropriately:
+		onNameRequest( myObj, requestedBy, requestSource )
+			Potential values for requestSource:
+				0 - Speech/System Messages
+				1 - Guild Menus
+				2 - Stat Window (self)
+				3 - Stat Window (other)
+				4 - Tooltip
+				5 - Paperdoll Journal
+				6 - Paperdoll
+				7 - Single Click / All-Names
+				8 - System
+				9 - Secure Trade Window
+	Added Adaptive Performance System (APS) that dynamically adjust how often NPC AI/movement is checked based on overall shard performance. If performance drops below defined threshold, UOX3 gradually slows down checks for NPC AI/movement to prioritize player movement/speech/command responsiveness. If performance climbs back up above threshold, slowdowns are gradually removed. The following UOX.INI options have been added under [system] category to support this system:
+		APSPERFTHRESHOLD=50 	// Performance threshold (measured in simulation cycles/sec) below which the APS kicks in
+		APSINTERVAL=100 		// How often (in milliseconds) the APS checks performance and makes adjustments (if needed) to balance out shard performance
+		APSDELAYSTEP=50 		// How much the delay timer is modified by (in milliseconds) each time APS makes adjustments
+		APSDELAYMAXCAP=2000 	// Max amount of of delay APS can introduce for NPC AI/movement handling when attempting to restore shard performance
+	Added new JS Methods for Region objects:
+		.GetOrePrefs( oreType )	// Get ore preference data for ore type found in town region. Returned as an array containing the following data:
+			orePrefData -> [
+				oreName,	// name of ore
+				color,		// color of ore
+				minskill,	// min skill to mine ore
+				ingotName,	// name of ingot created from ore
+				makemenu,	// makemenu entry for crafting something from ingot
+				oreChance,	// default global chance of finding this ore type
+				scriptID 	// script attached to mined ore
+			],
+			orePrefChance 	// Chance of finding this ore type in given town region
+		.GetOreChance() 	// Get base chance of finding any ore in town region
+	Moved Mining skill plus gravedigging feature from hard code to scripts (js/skill/mining.js) to make it easier to maintain and/or customize, and removed hard coded variants
+	Gravedigging now relies on the ore resource system behind the scenes to restrict how often graves in a given area can be dug up
+	Fixed some incorrect references to .worldNumber Character property in misc scripts (should be .worldnumber)
+	Made some "hard-scripted" system messages in misc scripts use dictionary system instead
+	Added spawn region for banker NPCs in Serpent's Hold (dfndata/spawn/felucca/spawn_town_serpents_hold.dfn, dfndata/spawn/trammel/spawn_town_serpents_hold.dfn)
+	Fixed region definition of Ocllo to actually cover the entire town (dfndata/regions/regions.dfn)
+	Added numerous additional locations accessible with 'goplace # command, for key locations in Ilshenar, Malas, Tokuno Islands and Ter Mur (dfndata/location/location.dfn)
+	Revised travel-menu portion of GM menu (shortcut: 'travel) to include more travel options based on new locations (dfndata/items/travelmenu.dfn and travelmenu.bulk.dfn)
+	Fixed an issue where NPCs could attempt to attack targets in other worlds/instances
+	Added new JS Event that triggers for characters who are about to deal damage in combat. Complimentary to onDamage, which triggers for chars receiving damage:
+		onDamageDeal( dmgDealer, dmgReceiver, damageValue, damageType )
+	Added new JS Event that can trigger in global script upon creation of new player chars. Note that this will trigger in place of onCreateDFN event for player characters:
+		onCreatePlayer( pChar )
+	Added new JS Event that triggers for characters selecting a target with a spell. Complimentary to onSpellTarget, which triggers for targets selected with a spell:
+		onSpellTargetSelect( caster, target, spellNum )
+	Updated onCombatStart and onCombatEnd JS Events to also trigger for the other party in combat
+	Updated onPickup JS Event to include a third parameter - the potential container item was picked up from. Event now also triggers event in scripts attached to said containers:
+		onPickup( iPickedUp, pChar, iCont )
+	Added tracking of total playtime per individual character, and per account across all characters, and exposed these properties to JS engine:
+		.totalPlayTime		// Account property, total playtime across all chars
+		.playTime 			// Character property, total playtime on given character only
+	Added new player-accessible command ('playtime) to spit out the playtime of current character/account as a whole (js/commands/playtime.js)
+	Implemented first version of Young Player System:
+		Replaced the UNUSED9 account flag with YOUNG, to be used by Young/New Player System
+		Added new JS Account property that gets/sets whether player account is considered Young:
+			.isYoung
+		Added new Char timers:
+			TIMER_YOUNGHEAL		// Restricts how often Young players are healed by NPC healers
+			TIMER_YOUNGMESSAGE	// Restricts how often Young players are warned about dangerous looking monsters in overworld
+		Updated GM commands 'get and 'set to get/set .isYoung property of player's account (js/commands/targeting/get.js and set.js)
+		Added new UOX.INI setting to enable/disable Young Player System (enabled by default):
+			YOUNGPLAYERSYSTEM=1
+		If Young Player System is enabled, all newly created player accounts are automatically marked with Young flag
+		Added new script to handle various restrictions and functions related to Young characters (js/player/young_player.js):
+			Young characters will have [Young] displayed over their head
+			Young characters will have their Young status checked and verified on every login + every stat/skill gain, to revoke the Young status if any of the following is true:
+				Account has a total playtime of more than 40 hours
+				Any character has more than 350 total (base) skill points
+				Any character has more than 70 skill points in a single skill
+				Any character has more than 150 total stat points
+				Any character has more than 80 stat points in a single stat
+			Young characters can renounce their Young status manually by saying the words "I renounce my young player status"
+			Young characters get two additional items upon creation:
+				a new player ticket (can be combined with any other players new player ticket for both players to get a reward)
+				a sextant (shows Young players directions to nearest moongate/bank regardless of where they are, as long as outdoors)
+			Young characters cannot target other player characters with hostile spells or skills
+			Young characters cannot be the target of other player characters' hostile spells or skills
+			Young characters can only cast beneficial spells upon themselves or other Young characters
+			Young characters can only be the target of beneficial spells from other Young players
+			Young players (and their pets/followers) cannot attack or harm any other players (or their pets/followers), nor themselves be attacked or harmed by any other players (or their pets/followers), whether from combat, spells, skills or items
+			Young players don't lose any of their items on death, and are teleported to the nearest healer upon death with all their items intact
+			Young players receive a warning upon entering dungeons that monsters there will be hostile
+		Updated global script (js/server/global.js) to:
+			Check/Verify Young status of players upon login
+			Attach young player script on login/creation for players on Young accounts
+			Give specific items to Young players upon creation
+		Added new script (js/item/corpse.js) that is assigned to all freshly created corpses. This script handles restrictions related to Young players interactions with corpses, and the interactions of other players with corpses of Young players
+		Updated JS Method .Carve() to return true/false depending on whether carving a corpse was successful
+		Updated Healer AI in code to heal nearby injured Young players
+		Updated Evil AI and Evil Caster AI in code to avoid selecting Young players as targets in combat outside of dungeons
+		Added a new section to UOX.INI - [young player starting locations] - that can be used to define starting locations for Young players. If only one such location is provided, all players start there. Otherwise, it matches the same starting location setup as the regular one - with one entry per town in Britannia.
+		Restricted transferring and/or friending of pets (code) and hirelings (hirelings.js) between Young and non-Young players
+		Restricted Young players from recalling or gating to Felucca facet
+		Young players can instantly logout from anywhere, at any time
+
+27/06/2023 - Xuri
+	Updated guildmaster script to properly check and set timestamp for when a player joins an NPC guild (js/npc/ai/guildmaster.js)
+	Updated GM command 'get to show values of .npcGuildJoined player property
+	Updated GM command 'set to also accept true/false to set boolean flags, not just 1/0 (js/commands/targeting/set.js)
+
 20/06/2023 - Xuri (0.99.6-RC5)
 	Added script for NPC guildmasters (js/npc/ai/guildmaster.js). Only one NPC guild has been setup in the script so far (more can be easily added) - the Thieves Guild - which if joined grants players the ability to steal from other players and to buy disguise kits
 	Added two new NPCs, which there will now spawn one of in a random location in each city in Britannia (felucca facet):
@@ -1121,7 +1233,7 @@
 	Added Ice and Fire dungeon locations (dfndata/location/location.dfn) and added these to the GM travel menu (dfndata/item/travelmenu.dfn/travelmenu.bulk.dfn)
 	Fixed body ID for ancient wyrm NPCs, which also fixes their name (dfndata/npc/dragons.dfn)
 	Added more pre-defined books to dfndata/misc/books.dfn (and dfndata/items/misc/books.dfn):
-		Quest of the Virtues  Volume 1 	// [quest_of_the_virtues_vol1]
+		Quest of the Virtues – Volume 1 	// [quest_of_the_virtues_vol1]
 		Fropoz's Journal 					// [fropoz_journal]
 		Translated Gargoyle Journal 		// [translated_gargoyle_journal]
 		Kabur's Journal 					// [kaburs_journal]

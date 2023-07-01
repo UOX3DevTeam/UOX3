@@ -129,7 +129,7 @@ Z=0
 
 [LOCATION 15]
 {
-// Lord British's Throne
+// Britain - Lord British's Throne
 X=1323
 Y=1624
 Z=55
@@ -137,7 +137,7 @@ Z=55
 
 [LOCATION 16]
 {
-// Blackthorne's Castle
+// Britain - Blackthorne's Castle
 X=1533
 Y=1415
 Z=56
@@ -155,7 +155,7 @@ Z=56
 
 [LOCATION 20]
 {
-// Center
+// Britain - Center
 X=1475
 Y=1645
 Z=20
@@ -163,7 +163,7 @@ Z=20
 
 [LOCATION 21]
 {
-// Lord British Castle Entrance
+// Britain - Lord British Castle Entrance
 X=1401
 Y=1625
 Z=28
@@ -171,7 +171,7 @@ Z=28
 
 [LOCATION 22]
 {
-// Blackthorn Castle Entrance
+// Britain - Blackthorn Castle Entrance
 X=1523
 Y=1456
 Z=15
@@ -179,7 +179,7 @@ Z=15
 
 [LOCATION 23]
 {
-// Suburbs
+// Britain - Suburbs
 X=1662
 Y=1572
 Z=5
@@ -187,7 +187,7 @@ Z=5
 
 [LOCATION 24]
 {
-// Park
+// Britain - Park
 X=1614
 Y=1641
 Z=35
@@ -195,7 +195,7 @@ Z=35
 
 [LOCATION 25]
 {
-// Farmlands
+// Britain - Farmlands
 X=1228
 Y=1705
 Z=0
@@ -203,15 +203,31 @@ Z=0
 
 [LOCATION 26]
 {
-// Graveyard
+// Britain - Graveyard
 X=1384
 Y=1497
 Z=10
 }
 
+[LOCATION 27]
+{
+// Britain - West Bank
+X=1436
+Y=1693
+Z=0
+}
+
+[LOCATION 28]
+{
+// Britain - East Bank
+X=1656
+Y=1614
+Z=20
+}
+
 [LOCATION 30]
 {
-// Docks
+// Buccaneer's Den - Docks
 X=2736
 Y=2166
 Z=0
@@ -219,7 +235,7 @@ Z=0
 
 [LOCATION 31]
 {
-// Bathhouse
+// Buccaneer's Den - Bathhouse
 X=2667
 Y=2084
 Z=5
@@ -227,7 +243,7 @@ Z=5
 
 [LOCATION 32]
 {
-// Pirates Plunder Tavern
+// Buccaneer's Den - Pirates Plunder Tavern
 X=2691
 Y=2233
 Z=2
@@ -235,15 +251,23 @@ Z=2
 
 [LOCATION 33]
 {
-// Hidden Caves
+// Buccaneer's Den - Hidden Caves
 X=2667
 Y=2069
 Z=-20
 }
 
+[LOCATION 33]
+{
+// Buccaneer's Den - Bank
+X=2732
+Y=2192
+Z=-20
+}
+
 [LOCATION 40]
 {
-// Gates
+// Cove - Gates
 X=2285
 Y=1209
 Z=0
@@ -251,7 +275,7 @@ Z=0
 
 [LOCATION 41]
 {
-// Guard Post
+// Cove - Guard Post
 X=2218
 Y=1116
 Z=19
@@ -259,7 +283,7 @@ Z=19
 
 [LOCATION 42]
 {
-// Orc Fort
+// Cove - Orc Fort
 X=2171
 Y=1332
 Z=0
@@ -267,15 +291,23 @@ Z=0
 
 [LOCATION 43]
 {
-// Cemetary
+// Cove - Cemetary
 X=2443
 Y=1123
 Z=5
 }
 
+[LOCATION 44]
+{
+// Cove - Bank
+X=2232
+Y=1199
+Z=0
+}
+
 [LOCATION 50]
 {
-// Main Island
+// Jhelom - Main Island
 X=1414
 Y=3816
 Z=0
@@ -283,7 +315,7 @@ Z=0
 
 [LOCATION 51]
 {
-// Fighting Pit
+// Jhelom - Fighting Pit
 X=1398
 Y=3742
 Z=235
@@ -291,16 +323,15 @@ Z=235
 
 [LOCATION 52]
 {
-// East Docks
+// Jhelom - East Docks
 X=1492
 Y=3696
 Z=0
 }
 
-
 [LOCATION 53]
 {
-// Cemetary
+// Jhelom - Cemetary
 X=1296
 Y=3719
 Z=0
@@ -308,7 +339,7 @@ Z=0
 
 [LOCATION 54]
 {
-// Medium Island
+// Jhelom - Medium Island
 X=1124
 Y=3623
 Z=5
@@ -316,15 +347,23 @@ Z=5
 
 [LOCATION 55]
 {
-// Small Island
+// Jhelom - Small Island
 X=1466
 Y=4015
 Z=5
 }
 
+[LOCATION 56]
+{
+// Jhelom - Bank
+X=1328
+Y=3771
+Z=0
+}
+
 [LOCATION 60]
 {
-// Docks
+// Magincia (original) - Docks
 X=3675
 Y=2259
 Z=20
@@ -332,7 +371,7 @@ Z=20
 
 [LOCATION 61]
 {
-// Parliament
+// Magincia (original) - Parliament
 X=3792
 Y=2248
 Z=20
@@ -340,15 +379,23 @@ Z=20
 
 [LOCATION 62]
 {
-// Park
+// Magincia (original) - Park
 X=3719
 Y=2063
 Z=25
 }
 
+[LOCATION 63]
+{
+// Magincia (original) - Bank
+X=3728
+Y=2160
+Z=0
+}
+
 [LOCATION 70]
 {
-// North
+// Minoc - North
 X=2475
 Y=417
 Z=15
@@ -356,7 +403,7 @@ Z=15
 
 [LOCATION 71]
 {
-// South
+// Minoc - South
 X=2526
 Y=583
 Z=0
@@ -372,7 +419,7 @@ Z=0
 
 [LOCATION 73]
 {
-// Bridge
+// Minoc - Bridge
 X=2539
 Y=501
 Z=30
@@ -380,15 +427,23 @@ Z=30
 
 [LOCATION 74]
 {
-// Mining Camp
+// Minoc - Mining Camp
 X=2583
 Y=528
 Z=15
 }
 
+[LOCATION 75]
+{
+// Minoc - Bank
+X=2505
+Y=560
+Z=0
+}
+
 [LOCATION 80]
 {
-// Center
+// Moonglow - Center
 X=4442
 Y=1122
 Z=5
@@ -396,15 +451,15 @@ Z=5
 
 [LOCATION 81]
 {
-// Docks
+// Moonglow - Docks
 X=4406
 Y=1045
-Z=254
+Z=-2
 }
 
 [LOCATION 82]
 {
-// Telescope
+// Moonglow - Telescope
 X=4707
 Y=1124
 Z=0
@@ -412,7 +467,7 @@ Z=0
 
 [LOCATION 83]
 {
-// Zoo
+// Moonglow - Zoo
 X=4549
 Y=1378
 Z=8
@@ -420,15 +475,23 @@ Z=8
 
 [LOCATION 84]
 {
-// Cemetary
+// Moonglow - Cemetary
 X=4546
 Y=1338
 Z=8
 }
 
+[LOCATION 85]
+{
+// Moonglow - Bank
+X=4469
+Y=1176
+Z=8
+}
+
 [LOCATION 90]
 {
-// Docks
+// Nujel'm - Docks
 X=3803
 Y=1279
 Z=5
@@ -436,7 +499,7 @@ Z=5
 
 [LOCATION 91]
 {
-// Palace
+// Nujel'm - Palace
 X=3698
 Y=1279
 Z=20
@@ -444,7 +507,7 @@ Z=20
 
 [LOCATION 92]
 {
-// North
+// Nujel'm - North
 X=3668
 Y=1116
 Z=0
@@ -452,7 +515,7 @@ Z=0
 
 [LOCATION 93]
 {
-// East
+// Nujel'm - East
 X=3755
 Y=1227
 Z=0
@@ -460,7 +523,7 @@ Z=0
 
 [LOCATION 94]
 {
-// West
+// Nujel'm - West
 X=3572
 Y=1211
 Z=0
@@ -468,7 +531,7 @@ Z=0
 
 [LOCATION 95]
 {
-// Chess board
+// Nujel'm - Chess board
 X=3728
 Y=1360
 Z=5
@@ -476,15 +539,23 @@ Z=5
 
 [LOCATION 96]
 {
-// Cemetary
+// Nujel'm - Cemetary
 X=3536
 Y=1156
 Z=20
 }
 
+[LOCATION 97]
+{
+// Nujel'm - Bank
+X=3768
+Y=1313
+Z=20
+}
+
 [LOCATION 100]
 {
-// Docks
+// Ocllo - Docks
 X=3650
 Y=2653
 Z=0
@@ -492,7 +563,7 @@ Z=0
 
 [LOCATION 101]
 {
-// North
+// Ocllo - North
 X=3650
 Y=2516
 Z=0
@@ -500,16 +571,23 @@ Z=0
 
 [LOCATION 102]
 {
-// Farmlands
+// Ocllo - Farmlands
 X=3722
 Y=2647
 Z=20
 }
 
+[LOCATION 103]
+{
+// Ocllo - Bank
+X=3690
+Y=2520
+Z=0
+}
 
 [LOCATION 110]
 {
-// North
+// Serpent's Hold - North
 X=3023
 Y=3417
 Z=15
@@ -517,7 +595,7 @@ Z=15
 
 [LOCATION 111]
 {
-// West Docks
+// Serpent's Hold - West Docks
 X=2945
 Y=3393
 Z=15
@@ -525,7 +603,7 @@ Z=15
 
 [LOCATION 112]
 {
-// South
+// Serpent's Hold - South
 X=2906
 Y=3505
 Z=10
@@ -533,15 +611,23 @@ Z=10
 
 [LOCATION 113]
 {
-// South Guardpost
+// Serpent's Hold - South Guardpost
 X=3011
 Y=3526
 Z=15
 }
 
+[LOCATION 114]
+{
+// Serpent's Hold - Bank
+X=2879
+Y=3471
+Z=15
+}
+
 [LOCATION 120]
 {
-// West Docks
+// Skara Brae - West Docks
 X=639
 Y=2236
 Z=0
@@ -549,7 +635,7 @@ Z=0
 
 [LOCATION 121]
 {
-// West
+// Skara Brae - West
 X=601
 Y=2171
 Z=0
@@ -557,7 +643,7 @@ Z=0
 
 [LOCATION 122]
 {
-// East Docks
+// Skara Brae - East Docks
 X=716
 Y=2233
 Z=253
@@ -565,7 +651,7 @@ Z=253
 
 [LOCATION 123]
 {
-// South
+// Skara Brae - South
 X=899
 Y=2381
 Z=0
@@ -573,7 +659,7 @@ Z=0
 
 [LOCATION 124]
 {
-// North
+// Skara Brae - North
 X=746
 Y=2165
 Z=0
@@ -581,15 +667,23 @@ Z=0
 
 [LOCATION 125]
 {
-// East
+// Skara Brae - East
 X=811
 Y=2243
 Z=0
 }
 
+[LOCATION 126]
+{
+// Skara Brae - Bank
+X=595
+Y=2152
+Z=0
+}
+
 [LOCATION 130]
 {
-// Center
+// Trinsic - Center
 X=1927
 Y=2779
 Z=0
@@ -597,7 +691,7 @@ Z=0
 
 [LOCATION 131]
 {
-// West Gate
+// Trinsic - West Gate
 X=1832
 Y=2779
 Z=0
@@ -605,7 +699,7 @@ Z=0
 
 [LOCATION 132]
 {
-// South Gate
+// Trinsic - South Gate
 X=2000
 Y=2930
 Z=0
@@ -613,7 +707,7 @@ Z=0
 
 [LOCATION 133]
 {
-// North
+// Trinsic - North
 X=1894
 Y=2666
 Z=0
@@ -621,7 +715,7 @@ Z=0
 
 [LOCATION 134]
 {
-// South
+// Trinsic - South
 X=1891
 Y=2850
 Z=20
@@ -630,7 +724,7 @@ Z=20
 
 [LOCATION 135]
 {
-// East Docks
+// Trinsic - East Docks
 X=2071
 Y=2855
 Z=-4
@@ -638,10 +732,26 @@ Z=-4
 
 [LOCATION 136]
 {
-// Island Park
+// Trinsic - Island Park
 X=2108
 Y=2793
 Z=2
+}
+
+[LOCATION 137]
+{
+// Trinsic - Bank (West)
+X=1819
+Y=2825
+Z=0
+}
+
+[LOCATION 138]
+{
+// Trinsic - Bank (East)
+X=1904
+Y=2686
+Z=0
 }
 
 [LOCATION 140]
@@ -692,9 +802,17 @@ Y=981
 Z=0
 }
 
+[LOCATION 146]
+{
+// Vesper - Bank
+X=2896
+Y=673
+Z=0
+}
+
 [LOCATION 150]
 {
-// Outside Entrance
+// Wind - Outside Entrance
 X=1362
 Y=896
 Z=0
@@ -702,7 +820,7 @@ Z=0
 
 [LOCATION 151]
 {
-// Caves
+// Wind - Caves
 X=5166
 Y=244
 Z=15
@@ -710,7 +828,7 @@ Z=15
 
 [LOCATION 152]
 {
-// South
+// Wind - South
 X=5223
 Y=189
 Z=5
@@ -718,7 +836,7 @@ Z=5
 
 [LOCATION 153]
 {
-// East
+// Wind - East
 X=5336
 Y=88
 Z=25
@@ -726,7 +844,7 @@ Z=25
 
 [LOCATION 154]
 {
-// West
+// Wind - West
 X=5180
 Y=90
 Z=26
@@ -734,7 +852,7 @@ Z=26
 
 [LOCATION 155]
 {
-// Park
+// Wind - Park
 X=5211
 Y=22
 Z=15
@@ -742,7 +860,7 @@ Z=15
 
 [LOCATION 160]
 {
-// Center
+// Yew - Center
 X=535
 Y=992
 Z=0
@@ -750,7 +868,7 @@ Z=0
 
 [LOCATION 161]
 {
-// Empath Abbey
+// Yew - Empath Abbey
 X=635
 Y=860
 Z=0
@@ -758,7 +876,7 @@ Z=0
 
 [LOCATION 162]
 {
-// Courts & Prisons
+// Yew - Courts & Prisons
 X=354
 Y=836
 Z=20
@@ -766,7 +884,7 @@ Z=20
 
 [LOCATION 163]
 {
-// Hidden Cave
+// Yew - Hidden Cave
 X=313
 Y=787
 Z=-26
@@ -774,7 +892,7 @@ Z=-26
 
 [LOCATION 164]
 {
-// Cemetary
+// Yew - Cemetery
 X=724
 Y=1138
 Z=0
@@ -782,12 +900,19 @@ Z=0
 
 [LOCATION 165]
 {
-// Orc Fort
+// Yew - Orc Fort
 X=633
 Y=1499
 Z=0
 }
 
+[LOCATION 166]
+{
+// Yew - Bank
+X=660
+Y=816
+Z=0
+}
 
 // *******
 // Shrines
@@ -873,7 +998,7 @@ Z=0
 
 [LOCATION 200]
 {
-// Outside Entrance
+// Covetous - Outside Entrance
 X=2499
 Y=919
 Z=0
@@ -881,7 +1006,7 @@ Z=0
 
 [LOCATION 201]
 {
-// Level 1
+// Covetous - Level 1
 X=5456
 Y=1863
 Z=0
@@ -889,7 +1014,7 @@ Z=0
 
 [LOCATION 202]
 {
-// Level 2
+// Covetous - Level 2
 X=5614
 Y=1997
 Z=0
@@ -897,7 +1022,7 @@ Z=0
 
 [LOCATION 203]
 {
-// Level 3
+// Covetous - Level 3
 X=5579
 Y=1924
 Z=0
@@ -905,7 +1030,7 @@ Z=0
 
 [LOCATION 204]
 {
-// Lake Room
+// Covetous - Lake Room
 X=5467
 Y=1805
 Z=5
@@ -913,7 +1038,7 @@ Z=5
 
 [LOCATION 205]
 {
-// Torture Rooms
+// Covetous - Torture Rooms
 X=5552
 Y=1807
 Z=0
@@ -929,7 +1054,7 @@ Z=5
 
 [LOCATION 211]
 {
-// Level 1
+// Deceit - Level 1
 X=5188
 Y=638
 Z=0
@@ -937,7 +1062,7 @@ Z=0
 
 [LOCATION 212]
 {
-// Level 2
+// Deceit - Level 2
 X=5305
 Y=533
 Z=2
@@ -945,7 +1070,7 @@ Z=2
 
 [LOCATION 213]
 {
-// Level 3
+// Deceit - Level 3
 X=5137
 Y=650
 Z=5
@@ -953,7 +1078,7 @@ Z=5
 
 [LOCATION 214]
 {
-// Level 4
+// Deceit - Level 4
 X=5306
 Y=652
 Z=2
@@ -961,7 +1086,7 @@ Z=2
 
 [LOCATION 220]
 {
-// Outside Entrance
+// Despise - Outside Entrance
 X=1298
 Y=1080
 Z=0
@@ -969,7 +1094,7 @@ Z=0
 
 [LOCATION 221]
 {
-// Entryway
+// Despise - Entryway
 X=5587
 Y=631
 Z=30
@@ -977,7 +1102,7 @@ Z=30
 
 [LOCATION 222]
 {
-// Level 1 *UP*
+// Despise - Level 1 *UP*
 X=5501
 Y=570
 Z=59
@@ -985,7 +1110,7 @@ Z=59
 
 [LOCATION 223]
 {
-// Level 2 *DOWN*
+// Despise - Level 2 *DOWN*
 X=5519
 Y=673
 Z=20
@@ -993,7 +1118,7 @@ Z=20
 
 [LOCATION 224]
 {
-// Level 3
+// Despise - Level 3
 X=5407
 Y=859
 Z=45
@@ -1001,7 +1126,7 @@ Z=45
 
 [LOCATION 230]
 {
-// Outside Entrance
+// Destard - Outside Entrance
 X=1176
 Y=2637
 Z=0
@@ -1009,7 +1134,7 @@ Z=0
 
 [LOCATION 231]
 {
-// Level 1
+// Destard - Level 1
 X=5243
 Y=1006
 Z=0
@@ -1017,7 +1142,7 @@ Z=0
 
 [LOCATION 232]
 {
-// Level 2
+// Destard - Level 2
 X=5143
 Y=801
 Z=5
@@ -1025,7 +1150,7 @@ Z=5
 
 [LOCATION 233]
 {
-// Level 3
+// Destard - Level 3
 X=5137
 Y=986
 Z=5
@@ -1033,7 +1158,7 @@ Z=5
 
 [LOCATION 240]
 {
-// Outside Entrance
+// Hythloth - Outside Entrance
 X=4721
 Y=3822
 Z=0
@@ -1041,7 +1166,7 @@ Z=0
 
 [LOCATION 241]
 {
-// Level 1
+// Hythloth - Level 1
 X=5905
 Y=20
 Z=46
@@ -1049,7 +1174,7 @@ Z=46
 
 [LOCATION 242]
 {
-// Level 2
+// Hythloth - Level 2
 X=5976
 Y=169
 Z=0
@@ -1057,7 +1182,7 @@ Z=0
 
 [LOCATION 243]
 {
-// Level 3
+// Hythloth - Level 3
 X=6083
 Y=145
 Z=-22
@@ -1065,7 +1190,7 @@ Z=-22
 
 [LOCATION 244]
 {
-// Level 4
+// Hythloth - Level 4
 X=6059
 Y=89
 Z=24
@@ -1073,7 +1198,7 @@ Z=24
 
 [LOCATION 250]
 {
-// Outside Entrance
+// Shame - Outside Entrance
 X=514
 Y=1561
 Z=0
@@ -1081,7 +1206,7 @@ Z=0
 
 [LOCATION 251]
 {
-// Level 1
+// Shame - Level 1
 X=5395
 Y=126
 Z=0
@@ -1089,7 +1214,7 @@ Z=0
 
 [LOCATION 252]
 {
-// Level 2
+// Shame - Level 2
 X=5515
 Y=11
 Z=5
@@ -1097,7 +1222,7 @@ Z=5
 
 [LOCATION 253]
 {
-// Level 3
+// Shame - Level 3
 X=5514
 Y=148
 Z=25
@@ -1105,7 +1230,7 @@ Z=25
 
 [LOCATION 254]
 {
-// Level 4
+// Shame - Level 4
 X=5875
 Y=20
 Z=-5
@@ -1113,7 +1238,7 @@ Z=-5
 
 [LOCATION 260]
 {
-// Outside Entrance
+// Wrong - Outside Entrance
 X=2043
 Y=238
 Z=10
@@ -1121,7 +1246,7 @@ Z=10
 
 [LOCATION 261]
 {
-// Level 1
+// Wrong - Level 1
 X=5825
 Y=630
 Z=0
@@ -1129,7 +1254,7 @@ Z=0
 
 [LOCATION 262]
 {
-// Level 2
+// Wrong - Level 2
 X=5690
 Y=569
 Z=25
@@ -1137,7 +1262,7 @@ Z=25
 
 [LOCATION 263]
 {
-// Level 3
+// Wrong - Level 3
 X=5703
 Y=639
 Z=0
@@ -1241,7 +1366,7 @@ Z=0
 
 //*****************************************************************
 //*                                                               *
-//*                        Lost Lands                             *
+//*                        Lost Lands [303-399]                   *
 //*                                                               *
 //*****************************************************************
 
@@ -1251,23 +1376,1911 @@ X=6032
 Y=1499
 Z=27
 }
+
 [LOCATION 304]
 { Papua - mage shop
 X=5736
 Y=3196
 Z=11
 }
+
 [LOCATION 305]
 { Delucia center
 X=5219
 Y=4028
 Z=37
 }
+
 [LOCATION 306]
 { Ice Dungeon
 X=1998
 Y=81
 Z=5
+}
+
+[LOCATION 307]
+{
+// Papua - Bank
+X=5674
+Y=3139
+Z=12
+}
+
+[LOCATION 308]
+{
+// Delucia - Bank
+X=5271
+Y=3988
+Z=12
+}
+
+//*****************************************************************
+//*                                                               *
+//*                        Ilshenar [400-599]                     *
+//*                                                               *
+//*****************************************************************
+
+// *****************
+// Cities - Ilshenar
+// *****************
+
+[LOCATION 400]
+{
+// Gargoyle City (original) - Bank
+X=852
+Y=602
+Z=-40
+WORLD=2
+}
+
+[LOCATION 401]
+{
+// Gargoyle City (original) - Central Area
+X=836
+Y=641
+Z=-20
+WORLD=2
+}
+
+[LOCATION 402]
+{
+// Lakeshire
+X=1203
+Y=1124
+Z=-25
+WORLD=2
+}
+
+[LOCATION 403]
+{
+// Desert Outpost (West)
+X=1508
+Y=622
+Z=-18
+WORLD=2
+}
+
+[LOCATION 404]
+{
+// Desert Outpost (East)
+X=1604
+Y=549
+Z=-19
+WORLD=2
+}
+
+[LOCATION 405]
+{
+// Mistas
+X=820
+Y=1073
+Z=-30
+WORLD=2
+}
+
+[LOCATION 406]
+{
+// Montor
+X=1643
+Y=310
+Z=48
+WORLD=2
+}
+
+[LOCATION 407]
+{
+// Reg Volon
+X=1362
+Y=1073
+Z=-13
+WORLD=2
+}
+
+[LOCATION 408]
+{
+// Savage Village
+X=1251
+Y=743
+Z=-80
+WORLD=2
+}
+
+[LOCATION 409]
+{
+// Terort Skitas
+X=567
+Y=437
+Z=21
+WORLD=2
+}
+
+// *******************
+// Dungeons - Ilshenar
+// *******************
+
+[LOCATION 420]
+{
+// Ankh - Entrance
+X=576
+Y=1150
+Z=-100
+WORLD=2
+}
+
+[LOCATION 421]
+{
+// Ankh - Level 1
+X=155
+Y=1482
+Z=-28
+WORLD=2
+}
+
+[LOCATION 422]
+{
+// Ankh - Kirin Passage
+X=11
+Y=874
+Z=-28
+WORLD=2
+}
+
+[LOCATION 423]
+{
+// Ankh - Serpentine Passage
+X=396
+Y=1578
+Z=-28
+WORLD=2
+}
+
+[LOCATION 430]
+{
+// Blood - Entrance
+X=1747
+Y=1228
+Z=-1
+WORLD=2
+}
+
+[LOCATION 431]
+{
+// Blood - Level 1
+X=2114
+Y=834
+Z=-28
+WORLD=2
+}
+
+[LOCATION 435]
+{
+// Exodus - Entrance
+X=835
+Y=777
+Z=-80
+WORLD=2
+}
+
+[LOCATION 436]
+{
+// Exodus - Level 1
+X=1974
+Y=115
+Z=-28
+WORLD=2
+}
+
+[LOCATION 440]
+{
+// Rock - Entrance
+X=1788
+Y=573
+Z=70
+WORLD=2
+}
+
+[LOCATION 441]
+{
+// Rock - Level 1
+X=2188
+Y=318
+Z=-7
+WORLD=2
+}
+
+[LOCATION 442]
+{
+// Rock - Level 2
+X=2188
+Y=28
+Z=-27
+WORLD=2
+}
+
+[LOCATION 445]
+{
+// Sorcerers Dungeon - Entrance
+X=548
+Y=462
+Z=-53
+WORLD=2
+}
+
+[LOCATION 446]
+{
+// Sorcerers Dungeon - Level 1
+X=428
+Y=109
+Z=-28
+WORLD=2
+}
+
+[LOCATION 447]
+{
+// Sorcerers Dungeon - Level 2
+X=240
+Y=23
+Z=-18
+WORLD=2
+}
+
+[LOCATION 448]
+{
+// Sorcerers Dungeon - Level 3
+X=272
+Y=136
+Z=-28
+WORLD=2
+}
+
+[LOCATION 449]
+{
+// Sorcerers Dungeon - Level 4
+X=132
+Y=124
+Z=-28
+WORLD=2
+}
+
+[LOCATION 450]
+{
+// Sorcerers Dungeon - Level 5
+X=236
+Y=121
+Z=-28
+WORLD=2
+}
+
+[LOCATION 460]
+{
+// Spectre - Entrance
+X=1363
+Y=1033
+Z=-8
+WORLD=2
+}
+
+[LOCATION 461]
+{
+// Spectre - Level 1
+X=1982
+Y=1103
+Z=-28
+WORLD=2
+}
+
+[LOCATION 465]
+{
+// Wisp - Entrance
+X=651
+Y=1302
+Z=-58
+WORLD=2
+}
+
+[LOCATION 466]
+{
+// Wisp - Level 1
+X=627
+Y=1525
+Z=-28
+WORLD=2
+}
+
+[LOCATION 467]
+{
+// Wisp - Level 2
+X=718
+Y=1492
+Z=-28
+WORLD=2
+}
+
+[LOCATION 468]
+{
+// Wisp - Level 3
+X=832
+Y=1551
+Z=-28
+WORLD=2
+}
+
+[LOCATION 469]
+{
+// Wisp - Level 4
+X=960
+Y=1428
+Z=-28
+WORLD=2
+}
+
+[LOCATION 470]
+{
+// Wisp - Level 5
+X=942
+Y=1465
+Z=-33
+WORLD=2
+}
+
+[LOCATION 471]
+{
+// Wisp - Level 6
+X=866
+Y=1434
+Z=-28
+WORLD=2
+}
+
+[LOCATION 472]
+{
+// Wisp - Level 7
+X=807
+Y=1547
+Z=-28
+WORLD=2
+}
+
+[LOCATION 473]
+{
+// Wisp - Level 8
+X=754
+Y=1479
+Z=-28
+WORLD=2
+}
+
+[LOCATION 485]
+{
+// Twisted Weald
+X=2153
+Y=1214
+Z=-60
+WORLD=2
+}
+
+// ****************
+// Caves - Ilshenar
+// ****************
+
+[LOCATION 490]
+{
+// Ancient Lair - Entrance
+X=940
+Y=504
+Z=-30
+WORLD=2
+}
+
+[LOCATION 491]
+{
+// Ancient Lair - Level 1
+X=85
+Y=746
+Z=-28
+WORLD=2
+}
+
+[LOCATION 495]
+{
+// Lizard Passage - Entrance
+X=314
+Y=1334
+Z=-36
+WORLD=2
+}
+
+[LOCATION 496]
+{
+// Lizard Passage - Level 1
+X=329
+Y=1589
+Z=-18
+WORLD=2
+}
+
+[LOCATION 497]
+{
+// Lizard Passage - Level 2
+X=227
+Y=1337
+Z=-18
+WORLD=2
+}
+
+[LOCATION 500]
+{
+// Mushroom Cave - Entrance
+X=1459
+Y=1329
+Z=-24
+WORLD=2
+}
+
+[LOCATION 505]
+{
+// Rat Cave - Entrance
+X=1034
+Y=1153
+Z=-23
+WORLD=2
+}
+
+[LOCATION 506]
+{
+// Rat Cave - Level 1
+X=1348
+Y=1510
+Z=-3
+WORLD=2
+}
+
+[LOCATION 507]
+{
+// Rat Cave - Level 2
+X=1247
+Y=1511
+Z=-28
+WORLD=2
+}
+
+[LOCATION 510]
+{
+// Spider Cave - Entrance
+X=1421
+Y=913
+Z=-19
+WORLD=2
+}
+
+[LOCATION 511]
+{
+// Spider Cave - Level 1
+X=1786
+Y=991
+Z=-28
+WORLD=2
+}
+
+[LOCATION 512]
+{
+// Spider Cave - Level 2
+X=1517
+Y=877
+Z=10
+WORLD=2
+}
+
+[LOCATION 513]
+{
+// Spider Cave - Ethereal Keep
+X=1365
+Y=1102
+Z=-26
+WORLD=2
+}
+
+// ******************
+// Shrines - Ilshenar
+// ******************
+
+[LOCATION 520]
+{
+// Ilshenar - Compassion
+X=1217
+Y=469
+Z=-13
+WORLD=2
+}
+
+[LOCATION 521]
+{
+// Ilshenar - Honesty
+X=720
+Y=1356
+Z=-60
+WORLD=2
+}
+
+[LOCATION 522]
+{
+// Ilshenar - Honor
+X=748
+Y=728
+Z=-29
+WORLD=2
+}
+
+[LOCATION 523]
+{
+// Ilshenar - Humility
+X=287
+Y=1016
+Z=0
+WORLD=2
+}
+
+[LOCATION 524]
+{
+// Ilshenar - Justice
+X=987
+Y=1007
+Z=-35
+WORLD=2
+}
+
+[LOCATION 525]
+{
+// Ilshenar - Sacrifice
+X=1175
+Y=1287
+Z=-30
+WORLD=2
+}
+
+[LOCATION 526]
+{
+// Ilshenar - Spirituality
+X=1532
+Y=1341
+Z=-3
+WORLD=2
+}
+
+[LOCATION 527]
+{
+// Ilshenar - Valor
+X=527
+Y=218
+Z=-44
+WORLD=2
+}
+
+[LOCATION 528]
+{
+// Gargoyle Shrine of Virtues
+X=1106
+Y=404
+Z=-80
+WORLD=2
+}
+
+// ****************
+// Other - Ilshenar
+// ****************
+
+[LOCATION 535]
+{
+// Ancient Citadel - Entrance
+X=1518
+Y=568
+Z=-14
+WORLD=2
+}
+
+[LOCATION 536]
+{
+// Harpy Nest
+X=1675
+Y=968
+Z=10
+WORLD=2
+}
+
+[LOCATION 537]
+{
+// Healer's Grove
+X=1093
+Y=958
+Z=-38
+WORLD=2
+}
+
+[LOCATION 538]
+{
+// Bandit Town
+X=512
+Y=546
+Z=-57
+WORLD=2
+}
+
+[LOCATION 539]
+{
+// Bet-Lem Reg (Pixie Village)
+X=1251
+Y=968
+Z=-15
+WORLD=2
+}
+
+[LOCATION 540]
+{
+// Burned Forest
+X=430
+Y=1433
+Z=15
+WORLD=2
+}
+
+[LOCATION 541]
+{
+// Castle Blackthorn (Ilshenar, destroyed)
+X=1084
+Y=651
+Z=-20
+WORLD=2
+}
+
+[LOCATION 542]
+{
+// Central Ilshenar Desert
+X=966
+Y=637
+Z=-80
+WORLD=2
+}
+
+[LOCATION 543]
+{
+// Cyclops Camp
+X=758
+Y=208
+Z=-41
+WORLD=2
+}
+
+[LOCATION 544]
+{
+// Cyclops Pyramid
+X=904
+Y=1296
+Z=-71
+WORLD=2
+}
+
+[LOCATION 545]
+{
+// Elemental Valley
+X=979
+Y=792
+Z=-80
+WORLD=2
+}
+
+[LOCATION 546]
+{
+// Gargoyle Mining Camp
+X=947
+Y=428
+Z=-80
+WORLD=2
+}
+
+[LOCATION 547]
+{
+// Lizardman Village
+X=292
+Y=1333
+Z=-26
+WORLD=2
+}
+
+[LOCATION 548]
+{
+// Meer Catacombs - Entrance
+X=1044
+Y=580
+Z=-80
+WORLD=2
+}
+
+[LOCATION 549]
+{
+// Meer Catacombs - Inside
+X=1787
+Y=61
+Z=-28
+WORLD=2
+}
+
+[LOCATION 550]
+{
+// Ratman Villa
+X=645
+Y=833
+Z=-44
+WORLD=2
+}
+
+[LOCATION 551]
+{
+// Pass of Karnaugh - Level 1
+X=1028
+Y=271
+Z=78
+WORLD=2
+}
+
+[LOCATION 552]
+{
+// Pass of Karnaugh - Level 2
+X=1028
+Y=271
+Z=78
+WORLD=2
+}
+
+[LOCATION 553]
+{
+// Savage Camp
+X=1048
+Y=520
+Z=-80
+WORLD=2
+}
+
+[LOCATION 554]
+{
+// Sheep Farm
+X=1316
+Y=1328
+Z=-14
+WORLD=2
+}
+
+[LOCATION 555]
+{
+// Undead Camp
+X=858
+Y=466
+Z=0
+WORLD=2
+}
+
+[LOCATION 556]
+{
+// Undead Fort
+X=360
+Y=1140
+Z=-57
+WORLD=2
+}
+
+//*****************************************************************
+//*                                                               *
+//*                        Malas [600-799]                        *
+//*                                                               *
+//*****************************************************************
+
+[LOCATION 600]
+{
+// Luna - Center/Bank
+X=990
+Y=520
+Z=-50
+WORLD=3
+}
+
+[LOCATION 601]
+{
+// Luna - Shrine of Wisdom
+X=976
+Y=510
+Z=-30
+WORLD=3
+}
+
+[LOCATION 610]
+{
+// Umbra - Center/Bank
+X=2047
+Y=1346
+Z=-85
+WORLD=3
+}
+
+// ****************
+// Dungeons - Malas
+// ****************
+
+[LOCATION 620]
+{
+// Doom - Entrance
+X=2367
+Y=1268
+Z=-85
+WORLD=3
+}
+
+[LOCATION 621]
+{
+// Doom - Tunnel
+X=2352
+Y=1267
+Z=-110
+WORLD=3
+}
+
+[LOCATION 622]
+{
+// Doom - Inside
+X=381
+Y=133
+Z=33
+WORLD=3
+}
+
+[LOCATION 623]
+{
+// Doom - Gauntlet
+X=433
+Y=331
+Z=-2
+WORLD=3
+}
+
+[LOCATION 624]
+{
+// Doom - Guardian's Room
+X=365
+Y=15
+Z=-1
+WORLD=3
+}
+
+[LOCATION 625]
+{
+// Doom - Lamp Room
+X=470
+Y=95
+Z=-1
+WORLD=3
+}
+
+[LOCATION 626]
+{
+// Labyrinth - Entrance
+X=1732
+Y=978
+Z=-80
+WORLD=3
+}
+
+[LOCATION 627]
+{
+// Labyrinth - Inside
+X=338
+Y=1967
+Z=0
+WORLD=3
+}
+
+[LOCATION 628]
+{
+// Labyrinth - North-West
+X=339
+Y=1882
+Z=25
+WORLD=3
+}
+
+[LOCATION 629]
+{
+// Labyrinth - Center
+X=388
+Y=1914
+Z=0
+WORLD=3
+}
+
+[LOCATION 630]
+{
+// Labyrinth - End
+X=382
+Y=1933
+Z=10
+WORLD=3
+}
+
+// **************************
+// Points of Interest - Malas
+// **************************
+
+[LOCATION 640]
+{
+// Broken Mountains
+X=1111
+Y=1461
+Z=-90
+WORLD=3
+}
+
+[LOCATION 641]
+{
+// Corrupted Forest
+X=2172
+Y=1144
+Z=-87
+WORLD=3
+}
+
+[LOCATION 642]
+{
+// Crumbling Continent
+X=736
+Y=1180
+Z=-95
+WORLD=3
+}
+
+[LOCATION 643]
+{
+// Crystal Fens
+X=1388
+Y=616
+Z=-85
+WORLD=3
+}
+
+[LOCATION 644]
+{
+// Divide of the Abyss
+X=1545
+Y=877
+Z=-85
+WORLD=3
+}
+
+[LOCATION 645]
+{
+// Dry Highlands
+X=2128
+Y=1668
+Z=-90
+WORLD=3
+}
+
+[LOCATION 646]
+{
+// Forgotten Pyramid
+X=1825
+Y=1799
+Z=-50
+WORLD=3
+}
+
+[LOCATION 647]
+{
+// Gravewater Lake
+X=1596
+Y=1656
+Z=-115
+WORLD=3
+}
+
+[LOCATION 648]
+{
+// Grimswind Ruins
+X=2192
+Y=330
+Z=-90
+WORLD=3
+}
+
+[LOCATION 649]
+{
+// Northern Crags
+X=1580
+Y=384
+Z=-50
+WORLD=3
+}
+
+[LOCATION 650]
+{
+// Orc Fortress
+X=1340
+Y=1226
+Z=-90
+WORLD=3
+}
+
+[LOCATION 651]
+{
+// Hanse's Hostel
+X=1065
+Y=1435
+Z=-90
+WORLD=3
+}
+
+// *******************
+// Caves/Mines - Malas
+// *******************
+
+[LOCATION 665]
+{
+// Mine 1
+X=2082
+Y=574
+Z=-90
+WORLD=3
+}
+
+[LOCATION 666]
+{
+// Mine 2
+X=2157
+Y=456
+Z=-90
+WORLD=3
+}
+
+[LOCATION 667]
+{
+// Mine 3
+X=1811
+Y=359
+Z=-90
+WORLD=3
+}
+
+[LOCATION 668]
+{
+// Mine 4
+X=1790
+Y=475
+Z=-90
+WORLD=3
+}
+
+[LOCATION 669]
+{
+// Mine 5
+X=1628
+Y=432
+Z=-86
+WORLD=3
+}
+
+[LOCATION 670]
+{
+// Mine 6
+X=1658
+Y=304
+Z=-90
+WORLD=3
+}
+
+[LOCATION 671]
+{
+// Mine 7
+X=1071
+Y=247
+Z=-90
+WORLD=3
+}
+
+[LOCATION 672]
+{
+// Mine 8
+X=1095
+Y=197
+Z=-90
+WORLD=3
+}
+
+[LOCATION 673]
+{
+// Mine 9
+X=1195
+Y=511
+Z=-90
+WORLD=3
+}
+
+// *****************
+// Orc Forts - Malas
+// *****************
+
+[LOCATION 680]
+{
+// Fort 1
+X=912
+Y=193
+Z=-79
+WORLD=3
+}
+
+[LOCATION 681]
+{
+// Fort 2
+X=1666
+Y=362
+Z=-50
+WORLD=3
+}
+
+[LOCATION 682]
+{
+// Fort 3
+X=1364
+Y=599
+Z=-86
+WORLD=3
+}
+
+[LOCATION 683]
+{
+// Fort 4
+X=1205
+Y=705
+Z=-88
+WORLD=3
+}
+
+[LOCATION 684]
+{
+// Fort 5
+X=1257
+Y=1331
+Z=-90
+WORLD=3
+}
+
+[LOCATION 685]
+{
+// Fort 6
+X=1598
+Y=1825
+Z=-110
+WORLD=3
+}
+
+//*****************************************************************
+//*                                                               *
+//*                        Tokuno Islands [800-999]               *
+//*                                                               *
+//*****************************************************************
+
+// ********************
+// Makoto-Jima - Tokuno
+// ********************
+
+[LOCATION 800]
+{
+// Zento - Bank
+X=735
+Y=1255
+Z=30
+WORLD=4
+}
+
+[LOCATION 801]
+{
+// Zento - Shrine
+X=718
+Y=1161
+Z=25
+WORLD=4
+}
+
+[LOCATION 802]
+{
+// Zento - Moongate
+X=802
+Y=1204
+Z=25
+WORLD=4
+}
+
+[LOCATION 810]
+{
+// The Waste
+X=724
+Y=943
+Z=42
+WORLD=4
+
+[LOCATION 811]
+{
+// Inu the Crone
+X=548
+Y=943
+Z=27
+WORLD=4
+}
+
+// *******************
+// Isamu-Jima - Tokuno
+// *******************
+
+[LOCATION 820]
+{
+// Moongate - Isamu-Jima
+X=1169
+Y=998
+Z=41
+WORLD=4
+}
+
+[LOCATION 821]
+{
+// Shrine - Isamu-Jima
+X=1047
+Y=512
+Z=15
+WORLD=4
+}
+
+[LOCATION 822]
+{
+// Lotus Lakes
+X=1066
+Y=817
+Z=20
+WORLD=4
+}
+
+[LOCATION 823]
+{
+// Mount Sho
+X=1159
+Y=696
+Z=70
+WORLD=4
+}
+
+[LOCATION 824]
+{
+// Dragon Valley
+X=948
+Y=432
+Z=8
+WORLD=4
+}
+
+[LOCATION 825]
+{
+// Winter Spur
+X=926
+Y=162
+Z=34
+WORLD=4
+}
+
+// ********************
+// Homare-Jima - Tokuno
+// ********************
+
+[LOCATION 830]
+{
+// Moongate - Homare-Jima
+X=270
+Y=628
+Z=15
+WORLD=4
+}
+
+[LOCATION 831]
+{
+// Shrine - Homare-Jima
+X=295
+Y=712
+Z=55
+WORLD=4
+}
+
+[LOCATION 832]
+{
+// Field of Echoes
+X=160
+Y=654
+Z=36
+WORLD=4
+}
+
+[LOCATION 833]
+{
+// Crane Marsh
+X=232
+Y=1107
+Z=10
+WORLD=4
+}
+
+[LOCATION 834]
+{
+// Bushido Dojo
+X=334
+Y=407
+Z=32
+WORLD=4
+}
+
+[LOCATION 835]
+{
+// Kitsune Woods
+X=523
+Y=520
+Z=32
+WORLD=4
+}
+
+// *****************
+// Dungeons - Tokuno
+// *****************
+
+[LOCATION 840]
+{
+// Fan Dancer Dojo - Entrance
+X=977
+Y=222
+Z=23
+WORLD=4
+}
+
+[LOCATION 841]
+{
+// Fan Dancer Dojo - Level 1
+X=69
+Y=338
+Z=-1
+WORLD=3
+}
+
+[LOCATION 842]
+{
+// Fan Dancer Dojo - Level 2
+X=65
+Y=525
+Z=-1
+WORLD=3
+}
+
+[LOCATION 843]
+{
+// Fan Dancer Dojo - Level 3
+X=77
+Y=690
+Z=-1
+WORLD=3
+}
+
+[LOCATION 850]
+{
+// The Citadel - Entrance
+X=1349
+Y=768
+Z=14
+WORLD=4
+}
+
+[LOCATION 851]
+{
+// The Citadel - Inside
+X=89
+Y=1884
+Z=0
+WORLD=3
+}
+
+[LOCATION 860]
+{
+// Yomotsu Mines - Entrance
+X=259
+Y=785
+Z=64
+WORLD=4
+}
+
+//*****************************************************************
+//*                                                               *
+//*                        Ter Mur [1000-1200]                    *
+//*                                                               *
+//*****************************************************************
+
+// *****************
+// Cities - Ter Mur
+// *****************
+
+[LOCATION 1000]
+{
+// Royal City - Bank
+X=842
+Y=3440
+Z=-20
+WORLD=5
+}
+
+[LOCATION 1001]
+{
+// Royal City - Moongate
+X=855
+Y=3526
+Z=-43
+WORLD=5
+}
+
+[LOCATION 1020]
+{
+// Holy City - Moongate
+X=928
+Y=3989
+Z=-40
+WORLD=5
+}
+
+[LOCATION 1030]
+{
+// Dugan
+X=1107
+Y=131
+Z=-52
+WORLD=5
+}
+
+// ******************
+// Dungeons - Ter Mur
+// ******************
+
+[LOCATION 1050]
+{
+// Tomb of Kings - Entrance
+X=997
+Y=3843
+Z=-41
+WORLD=5
+}
+
+[LOCATION 1051]
+{
+// Tomb of Kings - Gate to Stygian Abyss
+X=38
+Y=29
+Z=0
+WORLD=5
+}
+
+[LOCATION 1055]
+{
+// Stygian Abyss - Exit to Tomb of Kings
+X=946
+Y=71
+Z=72
+WORLD=5
+}
+
+[LOCATION 1056]
+{
+// Stygian Abyss - Exit to Underworld
+X=521
+Y=921
+Z=36
+WORLD=5
+}
+
+[LOCATION 1057]
+{
+// Stygian Abyss - Abyssal Lair Entrance
+X=985
+Y=366
+Z=-11
+WORLD=5
+}
+
+[LOCATION 1058]
+{
+// Stygian Abyss - Cavern of the Discarded
+X=912
+Y=501
+Z=-12
+WORLD=5
+}
+
+[LOCATION 1059]
+{
+// Stygian Abyss - Clan Scratch
+X=959
+Y=548
+Z=-14
+WORLD=5
+}
+
+[LOCATION 1060]
+{
+// Stygian Abyss - Crimson Veins
+X=974
+Y=164
+Z=-11
+WORLD=5
+}
+
+[LOCATION 1061]
+{
+// Stygian Abyss - Enslaved Goblins
+X=581
+Y=815
+Z=-45
+WORLD=5
+}
+
+[LOCATION 1062]
+{
+// Stygian Abyss - Fairy Dragon Lair
+X=888
+Y=277
+Z=3
+WORLD=5
+}
+
+[LOCATION 1063]
+{
+// Stygian Abyss - Fire Temple Ruins
+X=519
+Y=765
+Z=-92
+WORLD=5
+}
+
+[LOCATION 1064]
+{
+// Stygian Abyss - Hydra
+X=793
+Y=753
+Z=53
+WORLD=5
+}
+
+[LOCATION 1065]
+{
+// Stygian Abyss - Lands of the Lich
+X=538
+Y=656
+Z=8
+WORLD=5
+}
+
+[LOCATION 1066]
+{
+// Stygian Abyss - Lava Caldera
+X=587
+Y=895
+Z=-73
+WORLD=5
+}
+
+[LOCATION 1067]
+{
+// Stygian Abyss - Medusa's Lair
+X=818
+Y=755
+Z=50
+WORLD=5
+}
+
+[LOCATION 1068]
+{
+// Stygian Abyss - Passage of Tears
+X=685
+Y=579
+Z=-15
+WORLD=5
+}
+
+[LOCATION 1069]
+{
+// Stygian Abyss - Secret Garden
+X=462
+Y=719
+Z=22
+WORLD=5
+}
+
+[LOCATION 1070]
+{
+// Stygian Abyss - Serpent Lair
+X=711
+Y=720
+Z=-11
+WORLD=5
+}
+
+[LOCATION 1071]
+{
+// Stygian Abyss - Silver Sapling
+X=341
+Y=619
+Z=26
+WORLD=5
+}
+
+[LOCATION 1072]
+{
+// Stygian Abyss - Stygian Dragon Lair Entrance
+X=851
+Y=279
+Z=-12
+WORLD=5
+}
+
+[LOCATION 1073]
+{
+// Stygian Abyss - Sutek the Mage
+X=924
+Y=595
+Z=-14
+WORLD=5
+}
+
+[LOCATION 1080]
+{
+// Underworld - Entrance
+X=1128
+Y=1211
+Z=-2
+WORLD=5
+}
+
+// ****************************
+// Points of Interest - Ter Mur
+// ****************************
+
+[LOCATION 1100]
+{
+// Atoll Bend
+X=1118
+Y=3408
+Z=-42
+WORLD=5
+}
+
+[LOCATION 1101]
+{
+// Chicken Chase
+X=560
+Y=3412
+Z=37
+WORLD=5
+}
+
+[LOCATION 1102]
+{
+// City Residential
+X=952
+Y=3531
+Z=-43
+WORLD=5
+}
+
+[LOCATION 1103]
+{
+// Coral Desert
+X=1047
+Y=2980
+Z=62
+WORLD=5
+}
+
+[LOCATION 1104]
+{
+// Fishermans Reach
+X=631
+Y=3035
+Z=36
+WORLD=5
+}
+
+[LOCATION 1105]
+{
+// Gated Isle
+X=703
+Y=3934
+Z=-31
+WORLD=5
+}
+
+[LOCATION 1106]
+{
+// High Plain
+X=863
+Y=2931
+Z=38
+WORLD=5
+}
+
+[LOCATION 1107]
+{
+// Holy City Island
+X=996
+Y=3905
+Z=-42
+WORLD=5
+}
+
+[LOCATION 1108]
+{
+// Kepetch Waste
+X=447
+Y=3188
+Z=20
+WORLD=5
+}
+
+[LOCATION 1109]
+{
+// Lava Lake
+X=407
+Y=3010
+Z=-24
+WORLD=5
+}
+
+[LOCATION 1110]
+{
+// Lavapit Pyramid
+X=740
+Y=3691
+Z=-43
+WORLD=5
+}
+
+[LOCATION 1111]
+{
+// Lost Settlement
+X=526
+Y=3822
+Z=-44
+WORLD=5
+}
+
+[LOCATION 1112]
+{
+// Northern Steppes
+X=822
+Y=3063
+Z=61
+WORLD=5
+}
+
+[LOCATION 1113]
+{
+// Raptor Island
+X=816
+Y=3778
+Z=-42
+WORLD=5
+}
+
+[LOCATION 1114]
+{
+// Royal Park
+X=711
+Y=3255
+Z=38
+WORLD=5
+}
+
+[LOCATION 1115]
+{
+// Shrine of Singularity
+X=995
+Y=3814
+Z=-23
+WORLD=5
+}
+
+[LOCATION 1116]
+{
+// Slith Valley
+X=1078
+Y=3331
+Z=-42
+WORLD=5
+}
+
+[LOCATION 1117]
+{
+// Spider Island
+X=1115
+Y=3730
+Z=-42
+WORLD=5
+}
+
+[LOCATION 1118]
+{
+// Spiders Guarde
+X=1109
+Y=3606
+Z=-45
+WORLD=5
+}
+
+[LOCATION 1119]
+{
+// Talon Point
+X=676
+Y=3831
+Z=-39
+WORLD=5
+}
+
+[LOCATION 1120]
+{
+// Treefellow Course
+X=570
+Y=2936
+Z=39
+WORLD=5
+}
+
+[LOCATION 1121]
+{
+// Void Isle
+X=440
+Y=3577
+Z=38
+WORLD=5
+}
+
+[LOCATION 1122]
+{
+// Walled Circus
+X=370
+Y=3273
+Z=0
+WORLD=5
+}
+
+[LOCATION 1123]
+{
+// Waterfall Point
+X=661
+Y=2894
+Z=39
+WORLD=5
 }
 
 

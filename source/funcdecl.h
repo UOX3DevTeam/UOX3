@@ -226,7 +226,7 @@ bool		IsNumber( const std::string& str );
 bool		FileExists( const std::string& filepath );
 void		DismountCreature( CChar *s );
 size_t		GetTileName( CItem& mItem, std::string& itemname );
-std::string	GetNpcDictName( CChar *mChar, CSocket *tSock = nullptr );
+std::string	GetNpcDictName( CChar *mChar, CSocket *tSock = nullptr, UI08 requestSource = 0 );
 std::string	GetNpcDictTitle( CChar *mChar, CSocket *tSock = nullptr );
 bool		LineOfSight( CSocket *s, CChar *mChar, SI16 x2, SI16 y2, SI08 z2, UI08 checkfor, bool useSurfaceZ, SI08 z2Top = 0, bool checkDistance = true );
 bool		CheckItemLineOfSight( CChar *mChar, CItem *i );

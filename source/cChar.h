@@ -30,6 +30,8 @@ enum cC_TID
 	tCHAR_FIREFIELDTICK,
 	tCHAR_POISONFIELDTICK,
 	tCHAR_PARAFIELDTICK,
+	tCHAR_YOUNGHEAL,
+	tCHAR_YOUNGMESSAGE,
 	// NPC Timers
 	tNPC_MOVETIME,
 	tNPC_SPATIMER,
@@ -37,6 +39,8 @@ enum cC_TID
 	tNPC_EVADETIME,
 	tNPC_LOYALTYTIME,
 	tNPC_IDLEANIMTIME,
+	tNPC_PATHFINDDELAY,
+	tNPC_FLEECOOLDOWN,
 	// PC Timers
 	tPC_LOGOUT,
 	tCHAR_COUNT
@@ -84,6 +88,7 @@ private:
 		SI16				taming;
 		SI16				fleeAt;     // HP Level to flee at
 		SI16				reAttackAt; // HP Level to re-Attack at
+		UI08				fleeDistance;	// Maximum distance in tiles the NPC can flee in one go
 		UI08				splitNum;
 		UI08				splitChance;
 		UI08				trainingPlayerIn;
@@ -159,8 +164,9 @@ private:
 
 		std::string	lastOn; //Last time a character was on
 		UI32		lastOnSecs; //Last time a character was on in seconds.
+		UI32		playTime; // Character's full playtime
 
-		SERIAL	townVote;
+		SERIAL		townVote;
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
@@ -748,9 +754,11 @@ public:
 
 	SI16		GetFleeAt( void ) const;
 	SI16		GetReattackAt( void ) const;
+	UI08		GetFleeDistance( void ) const;
 
 	void		SetFleeAt( SI16 newValue );
 	void		SetReattackAt( SI16 newValue );
+	void		SetFleeDistance( UI08 newValue );
 
 	UI08		PopDirection( void );
 	void		PushDirection( UI08 newDir, bool pushFront = false );
@@ -809,6 +817,9 @@ public:
 	std::string GetLastOn( void ) const;
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
+
+	auto		GetPlayTime() const -> const UI32;
+	auto		SetPlayTime( UI32 newValue ) -> void;
 
 	void		SetCreatedOn( UI32 newValue );
 	UI32		GetCreatedOn( void ) const;

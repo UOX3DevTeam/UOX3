@@ -7,8 +7,9 @@ class CPIGumpInput;
 
 enum ScriptEvent
 {
-	seOnCreateDFN = 0,			//	*	Done for PCs on global script
+	seOnCreateDFN = 0,
 	seOnCreateTile,
+	seOnCreatePlayer,		//	*	Done for PCs on global script
 	seOnCommand,
 	seOnDelete,				//	**
 	seOnSpeech,				//	*	Missing item response at the moment
@@ -75,6 +76,7 @@ enum ScriptEvent
 	seOnEnterRegion,		//  **
 	seOnLeaveRegion,		//	**
 	seOnSpellTarget,
+	seOnSpellTargetSelect,
 	seOnSpellCast,
 	seOnSpellSuccess,
 	seOnTalk,
@@ -97,6 +99,7 @@ enum ScriptEvent
 	seOnDeathBlow,
 	seOnCombatDamageCalc,
 	seOnDamage,
+	seOnDamageDeal,
 	seOnGumpPress,
 	seOnGumpInput,
 	seOnScrollingGumpPress,
@@ -176,7 +179,7 @@ public:
 	bool		OnPacketReceive( CSocket *mSock, UI16 packetNum );
 	bool		OnIterate( CBaseObject *a, UI32 &b );
 	bool		OnIterateSpawnRegions( CSpawnRegion *a, UI32 &b );
-	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated );
+	bool		OnCreate( CBaseObject *thingCreated, bool dfnCreated, bool isPlayer );
 	bool		DoesEventExist( char *eventToFind );
 	SI08		OnCommand( CSocket *mSock, std::string command );
 	bool		OnDelete( CBaseObject *thingDestroyed );
@@ -193,7 +196,7 @@ public:
 	bool		OnSkill( CBaseObject *skillUse, SI08 skillUsed );
 	bool		OnStat( void );
 	std::string		OnTooltip( CBaseObject *myObj, CSocket *pSocket );
-	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester );
+	std::string		OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI08 requestSource );
 	bool		OnAttack( CChar *attacker, CChar *defender );
 	bool		OnDefense( CChar *attacker, CChar *defender );
 	SI08		OnSkillGain( CChar *player, SI08 skill, UI32 skillAmtGained );
@@ -204,7 +207,7 @@ public:
 	SI08		OnStatLoss( CChar *player, UI32 stat, UI32 statLossAmount );
 	bool		OnStatChange( CChar *player, UI32 stat, SI32 statChangeAmount );
 	SI08		OnDrop( CItem *item, CChar *dropper );
-	SI08		OnPickup( CItem *item, CChar *pickerUpper );
+	SI08		OnPickup( CItem *item, CChar *pickerUpper, CBaseObject *objCont );
 	bool		OnContRemoveItem( CItem *contItem, CItem *item, CChar *pickerUpper );
 	SI08		OnSwing( CItem *swinging, CChar *swinger, CChar *swingTarg );
 	SI08		OnDecay( CItem *decaying );
@@ -240,6 +243,7 @@ public:
 	bool		OnEnterRegion( CChar *entering, UI16 region );
 	bool		OnLeaveRegion( CChar *entering, UI16 region );
 	SI08		OnSpellTarget( CBaseObject *target, CChar *caster, UI08 spellNum );
+	SI08		OnSpellTargetSelect( CChar *caster, CBaseObject *target, UI08 spellNum );
 	bool		DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum );
 	SI16		OnSpellCast( CChar *tChar, UI08 SpellId );
 	SI16		OnScrollCast( CChar *tChar, UI08 SpellId );
@@ -278,6 +282,7 @@ public:
 
 	SI16		OnCombatDamageCalc( CChar *attacker, CChar *defender, UI08 getFightSkill, UI08 hitLoc );
 	SI08		OnDamage( CChar *damaged, CChar *attacker, SI16 damageValue, WeatherType damageType );
+	SI08		OnDamageDeal( CChar *attacker, CChar *damaged, SI16 damageValue, WeatherType damageType );
 	SI08		OnBuy( CSocket *targSock, CChar *objVendor );
 	SI08		OnBuyFromVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemBought, UI16 numItemsBuying );
 	SI08		OnSellToVendor( CSocket *targSock, CChar *objVendor, CBaseObject *objItemSold, UI16 numItemsSelling );

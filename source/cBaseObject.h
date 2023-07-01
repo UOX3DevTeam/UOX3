@@ -205,7 +205,7 @@ public:
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
 
-	std::string				GetNameRequest( CChar *nameRequester );
+	std::string				GetNameRequest( CChar *nameRequester, UI08 requestSource );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
 

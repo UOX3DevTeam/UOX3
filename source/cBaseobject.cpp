@@ -870,7 +870,7 @@ void CBaseObject::SetRace( RACEID newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the name of the object, but checks for presence of onNameRequest JS event
 //o------------------------------------------------------------------------------------------------o
-std::string CBaseObject::GetNameRequest( CChar *nameRequester )
+std::string CBaseObject::GetNameRequest( CChar *nameRequester, UI08 requestSource )
 {
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
@@ -878,7 +878,7 @@ std::string CBaseObject::GetNameRequest( CChar *nameRequester )
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			std::string textFromScript = toExecute->OnNameRequest( this, nameRequester );
+			std::string textFromScript = toExecute->OnNameRequest( this, nameRequester, requestSource );
 			if( !textFromScript.empty() )
 			{
 				// If a string was returned from the event, return that as the object's name

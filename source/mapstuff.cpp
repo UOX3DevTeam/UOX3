@@ -127,7 +127,7 @@ auto CMulHandler::Load() -> void
 	auto uodir = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
 	auto mapinfo = LoadMapsDFN( uodir );
 	Console.PrintSectionBegin();
-	Console << "Loading uodata (for maps, only mapfile shown)..." << myendl << "(If they don't open, fix your paths in uox.ini or filenames in maps.dfn)" << myendl;
+	Console << "Loading UO Data..." << myendl << "(If they fail to load, check your DATADIRECTORY path in uox.ini or filenames in maps.dfn)" << myendl;
 	LoadTileData( uodir );
 	LoadDFNOverrides();
 	LoadMapAndStatics( mapinfo );
@@ -378,22 +378,37 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 		uoWorlds.insert_or_assign( mapNum, UltimaMap( mapNum, dfndata.width, dfndata.height, &tileInfo ));
 		auto rValue = false;
 
+		// Load Terrain/Map data from UOP > MUL
 		if( std::filesystem::exists( dfndata.mapUop ))
 		{
-			Console << "\t" << dfndata.mapUop.string() << "(/" << dfndata.mapUop.filename().string() << ")\t\t";
+			//Console << "\t" << dfndata.mapUop.string() << "(/" << dfndata.mapUop.filename().string() << ")\t\t";
+			Console << "\t" << dfndata.mapUop.string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadUOPTerrainFile( dfndata.mapUop.string() );
 		}
 		else
 		{
-			Console << "\t" << dfndata.mapFile.string() << "(/" << dfndata.mapFile.filename().string() << ")\t\t";
+			//Console << "\t" << dfndata.mapFile.string() << "(/" << dfndata.mapFile.filename().string() << ")\t\t";
+			Console << "\t" << dfndata.mapFile.string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadMulTerrainFile( dfndata.mapFile.string() );
 			if( rValue )
 			{
 				uoWorlds[mapNum].ApplyTerrainDiff( dfndata.mapDiffl.string(), dfndata.mapDiff.string() );
 			}
 		}
+
+		if( !rValue )
+		{
+			Console.PrintFailed();
+		}
+		else
+		{
+			Console.PrintDone();
+		}
+
+		// Load Art/Statics data
 		if( rValue )
 		{
+			Console << "\t" << dfndata.staMul.string() << " / " << dfndata.staIdx.filename().string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadArt( dfndata.staMul.string(), dfndata.staIdx.string() );
 			if( rValue )
 			{
@@ -408,14 +423,15 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 					uoWorlds.erase( iter );
 				}
 			}
-		}
-		if( !rValue )
-		{
-			Console.PrintFailed();
-		}
-		else
-		{
-			Console.PrintDone();
+
+			if( !rValue )
+			{
+				Console.PrintFailed();
+			}
+			else
+			{
+				Console.PrintDone();
+			}
 		}
 	}
 }
@@ -428,7 +444,6 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 auto CMulHandler::LoadMultis( const std::string& uodir ) -> void
 {
 	// now main memory multiItems
-	Console << "Loading Multis....  ";
 	// Odd we do no check?
 	if( !multiData.LoadMultiCollection( std::filesystem::path( uodir ), &tileInfo ))
 	{

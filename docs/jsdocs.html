@@ -28,8 +28,8 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 24. November, 2022</small></p>
-	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC1</small></p>
+	<p style="margin:0"><small>Last Updated: 28. June, 2023</small></p>
+	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC6</small></p>
 </div>
 
 <section class="cd-faq js-cd-faq container max-width-lg margin-top-sm margin-bottom-md" style="margin-top: 5px">
@@ -55,6 +55,19 @@
 					<input type="checkbox" id="spoiler_docs_updates"/>
 					<label for="spoiler_docs_updates">Latest Documentation Updates <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
+						<h4>July 1st, 2023</h4>
+						<ul>
+							<li>Updated details for JS Event: onNameRequest</li>
+						</ul>
+						<h4>June 21st, 2023</h4>
+						<ul>
+							<li>Added details for new JS Events: onSpellTargetSelect, onDamageDeal, onCreatePlayer</li>
+						</ul>
+						<h4>May 30th, 2023</h4>
+						<ul>
+							<li>Added details for new JS Methods: SetRandomName, FindItemSection, OpenContainer</li>
+							<li>Updated details for JS Events: onBuyFromVendor, onBoughtFromVendor, onSellToVendor, onSoldToVendor</li>
+						</ul>
 						<h4>May 4th, 2023</h4>
 						<ul>
 							<li>Added details for JS Event: onThirstChange</li>
@@ -484,7 +497,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onBuyFromVendor( pSock, npcVendor, iBought )</em></p>
+							<p><em>function onBuyFromVendor( pSock, npcVendor, iBought, iAmount )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -503,10 +516,10 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onBuyFromVendor( pSock, npcVendor, iBought )
+<pre><code class="language-javascript">function onBuyFromVendor( pSock, npcVendor, iBought, iAmount )
 {
 	var pUser = pSock.currentChar;
-	pUser.TextMessage( "I am buying an item ("+iBought.name+") from a vendor!" );
+	pUser.TextMessage( "I am buying " + iAmount + " item(s) ("+iBought.name+") from a vendor!" );
 	npcVendor.TextMessage( "I am selling an item!" );
 	return true;
 }</code></pre></p>
@@ -521,7 +534,7 @@ function onAISliver( aiChar )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onBoughtFromVendor( pSock, npcVendor, iBought )</em></p>
+							<p><em>function onBoughtFromVendor( pSock, npcVendor, iBought, iAmount )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -544,10 +557,10 @@ function onAISliver( aiChar )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span></p>
-<pre><code class="language-javascript">function onBoughtFromVendor( pSock, npcVendor, iBought )
+<pre><code class="language-javascript">function onBoughtFromVendor( pSock, npcVendor, iBought, iAmount )
 {
 	var pUser = pSock.currentChar;
-	pUser.TextMessage( "I bought an item ("+iBought.name+") from a vendor!" );
+	pUser.TextMessage( "I bought " + iAmount + " item(s) ("+iBought.name+") from a vendor!" );
 	npcVendor.TextMessage( "I just sold an item to some random dude!" );
 	return true;
 }</code></pre>
@@ -1034,15 +1047,14 @@ function onCommand( mySock, cmdString )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>Used for customization of players at creation, or tinkering with newly created items/NPCs</p>
+							<p>Used for tinkering with newly created items/NPCs</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
 							<ul>
-								<li>When an object is created, event will trigger in script for the created object</li>
-								<li>For player characters, this is triggered when they first enter the world</li>
+								<li>When an non-player character object is created, event will trigger in script for the created object</li>
 							</ul>
-							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>. For Players, <span style="color:green">Yes</span></p>
+							<p>Usable in Global script (scriptID 0)? For NPCs/Items, <span class="hl">No</span>.</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
@@ -1054,11 +1066,45 @@ function onCommand( mySock, cmdString )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP,
-// it will send the sysmessage to all NEW characters that enters the world.
+// it will send a textmessage for all new NPC characters that enters the world.
 function onCreateDFN( objMade, objType )
 {
-	if( objType == 1 && !objMade.npc )
-		objMade.SysMessage( "Welcome to Our Unique World(TM)!" );
+	if( objType == 1 )
+	{
+		objMade.TextMessage( "I have SPAWNED! Tremble before me, world!" );
+	}
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnCreatePlayer" id="eventOnCreatePlayer"><span>onCreatePlayer</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onCreatePlayer( pChar )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Used for customization of players at creation</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<ul>
+								<li>For player characters, this is triggered in global script when they first enter the world</li>
+							</ul>
+							<p>Usable in Global script (scriptID 0)? For Players, <span style="color:green">Yes</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// When this script is setup as "global id" (0) in JSE_FILEASSOCIATIONS.SCP,
+// it will send the sysmessage to all new PLAYER characters that enters the world.
+function onCreatePlayer( pChar )
+{
+	pChar.SysMessage( "Welcome to Our Unique World(TM)!" );
 }</code></pre></p>
 						</div>
 					</div>
@@ -1162,6 +1208,74 @@ function onCreate( objMade, objType )/
 				break;
 		}
 		damaged.TextMessage( "Ouch, those "+damageValue+" points of " + dmgTypeString + " damage really hurt." );
+		return true;
+	}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnDamageDeal" id="eventOnDamageDeal"><span>onDamageDeal</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onDamageDeal( attacker, damaged, damageValue, damageType )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>Custom reactions to damage, or to prevent damage from taking place</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When the char "attacker" deals damage</p>
+							<p>Usable in Global script? <span class="hl">No</span></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false</strong> to override and prevent damage from taking place</li>
+								<li><strong>return true</strong> to allow damage to go through and continue with hard-coded application of damage</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>Unlike the onDamage event, neither attacker nor damaged can be NULL in this one. damageType is the type of damage being dealt. Supported damageTypes: 1 (Physical), 2 (Light), 3 (Rain), 4 (Cold/Ice), 5 (Heat/Fire), 6 (Lightning/Magic/Energy), 7 (Poison), 8 (Snow)</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+	<pre><code class="language-javascript">function onDamageDeal( attacker, damaged, damageValue, damageType )
+	{
+		var dmgTypeString = "";
+		switch( damageType )
+		{
+			case 1:
+				dmgTypeString = "Physical";
+				break;
+			case 2:
+				dmgTypeString = "Light";
+				break;
+			case 3:
+				dmgTypeString = "Rain";
+				break;
+			case 4:
+				dmgTypeString = "Cold";
+				break;
+			case 5:
+				dmgTypeString = "Heat";
+				break;
+			case 6:
+				dmgTypeString = "Lightning/Magic";
+				return false; // Character is immune to Lightning/Magic damage!
+			case 7:
+				dmgTypeString = "Poison";
+				break;
+			case 8:
+				dmgTypeString = "Snow";
+				break;
+		}
+		attacker.TextMessage( "Look at me, I'm dealing " + damageValue + " points of " + dmgTypeString + " damage to a target! *manic laughter*" );
 		return true;
 	}</code></pre></p>
 						</div>
@@ -2553,7 +2667,7 @@ function onIterate( charCheck )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onNameRequest( myObj, requestedBy )</em></p>
+							<p><em>function onNameRequest( myObj, requestedBy, requestSource )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -2575,11 +2689,22 @@ function onIterate( charCheck )
 							<ul>
 								<li>requestedBy is a reference to the character (if any) that requested the name, for instance via dragging myObj's health-bar, using all-names macro, opening of paperdoll or just from general client requests for info about myObj</li>
 								<li>If an attempt to retrieve myObj's name is done from within the onNameRequest event, it will return the real name of the object (to avoid infinite loop situations)</li>
+								<li>requestSource is a value that indicates where the name request originated, to allow scripts to tailor the response accordingly
+									<pre><code class="language-javascript">0 - Speech/System Messages
+1 - Guild Menus
+2 - Stat Window (self)
+3 - Stat Window (other)
+4 - Tooltip
+5 - Paperdoll Journal
+6 - Paperdoll
+7 - Single Click / All-Names
+8 - System
+9 - Secure Trade Window</code></pre></li>
 							</ul>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onNameRequest( myObj, requestedBy )
+<pre><code class="language-javascript">function onNameRequest( myObj, requestedBy, requestSource )
 {
 	if( myObj.isChar )
 	{
@@ -2712,7 +2837,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onPickup( iPickedUp, pGrabber )</em></p>
+							<p><em>function onPickup( iPickedUp, pGrabber, containerObj )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -2720,7 +2845,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pGrabber picks up iPickedUp, the event triggers in iPickedUp's script, then in pGrabber's script</p>
+							<p>When pGrabber picks up iPickedUp, the event triggers in iPickedUp's script, then in pGrabber's script - then finally in containerObj's script (if not null)</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -2731,7 +2856,7 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onPickup( iPickedUp, pGrabber )
+<pre><code class="language-javascript">function onPickup( iPickedUp, pGrabber, containerObj )
 {
 	var pSock = pGrabber.socket;
 
@@ -2748,7 +2873,8 @@ function onPacketReceive( pSocket, packetNum, subCommand )
 			pGrabber.TextMessage( "I picked up this item from my own backpack." );
 			break;
 		case 3: //otherpack
-			pGrabber.TextMessage( "I picked up this item from a container." );
+			var contName = ValidateObject( containerObj ) ? containerObj.name : "unknown";
+			pGrabber.TextMessage( "I picked up this item from a container (" + contName + ")." );
 			break;
 		case 4: //paperdoll
 			pGrabber.TextMessage( "I picked up this item from my paperdoll." );
@@ -3026,7 +3152,7 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSellToVendor( pSock, Vendor, iSold )</em></p>
+							<p><em>function onSellToVendor( pSock, Vendor, iSold, iAmount )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3045,10 +3171,10 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSellToVendor( pSock, Vendor, iSold )
+<pre><code class="language-javascript">function onSellToVendor( pSock, Vendor, iSold, iAmount )
 {
 	var pUser = pSock.currentChar;
-	pUser.TextMessage( "I am selling an item (" + iSold.name + ") to a vendor!" );
+	pUser.TextMessage( "I am selling " + iAmount + " item(s) (" + iSold.name + ") to a vendor!" );
 	Vendor.TextMessage( "I am buying an item!" );
 	return true;
 }</code></pre></p>
@@ -3063,7 +3189,7 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSoldToVendor( pSock, Vendor, iSold )</em></p>
+							<p><em>function onSoldToVendor( pSock, Vendor, iSold, iAmount )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3087,10 +3213,10 @@ function onScrollingGumpPress( pSock, gumpID, buttonID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">
-function onSoldToVendor( pSock, Vendor, iSold )
+function onSoldToVendor( pSock, Vendor, iSold, iAmount )
 {
 	var pUser = pSock.currentChar;
-	pUser.TextMessage( "I sold an item (" + iSold.name + ") to a vendor!" );
+	pUser.TextMessage( "I sold " + iAmount + " item(s) (" + iSold.name + ") to a vendor!" );
 	Vendor.TextMessage( "I just bought an item from some random dude!" );
 	return true;
 }</code></pre></p>
@@ -3373,15 +3499,15 @@ function onSoldToVendor( pSock, Vendor, iSold )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSnoopAttempt( pSnooped, pSnooping )</em></p>
+							<p><em>function onSnoopAttempt( pSnooped, iCont, pSnooping )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
-							<p>To allow for custom behaviour when players attempt to snoop into other characters' backpacks</p>
+							<p>To allow for custom behaviour when players attempt to snoop into other characters' iCont</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">When Triggered</span></p>
-							<p>When pSnooping attempts to snoop into pSnooped's pack</p>
+							<p>When pSnooping attempts to snoop into pSnooped's iCont container</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -3392,7 +3518,7 @@ function onSoldToVendor( pSock, Vendor, iSold )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
-<pre><code class="language-javascript">function onSnoopAttempt( pSnooped, pSnooping )
+<pre><code class="language-javascript">function onSnoopAttempt( pSnooped, iCont, pSnooping )
 {
 	pSnooping.SysMessage( "The target is protected and cannot be snooped!" );
 	return true;
@@ -3723,7 +3849,7 @@ function onSpellSuccess( pCaster, spellID )
 					<div class="text-component">
 						<div class="settingsDiv">
 							<p><span class="hl">Prototype</span></p>
-							<p><em>function onSpellTarget( myTarget, myTargetType, pCaster, spellID )</em></p>
+							<p><em>function onSpellTarget( myTarget, pCaster, spellID )</em></p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Purpose</span></p>
@@ -3735,7 +3861,7 @@ function onSpellSuccess( pCaster, spellID )
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Notes</span></p>
-							<p>myTarget can be both items and characters. myTargetType will be 0 if myTarget is a char, and 1 if myTarget is an item</p>
+							<p>myTarget can be both items and characters. Check target type using myTarget.isChar or .isItem</p>
 						</div>
 						<div class="settingsDiv">
 							<p><span class="hl">Return Values</span></p>
@@ -3748,7 +3874,50 @@ function onSpellSuccess( pCaster, spellID )
 						<div class="settingsDiv">
 							<p><span class="hl">Example of usage</span><br>
 <pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
-function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
+function onSpellTarget( myTarget, pCaster, spellID )
+{
+	var socket = pCaster.socket;
+	if( socket != null )
+		pCaster.SysMessage( GetDictionaryEntry( 9056, socket.language )); // That target is immune to magic!
+	return 2;
+}</code></pre></p>
+						</div>
+					</div>
+				</div> <!-- cd-faq__content -->
+			</li>
+
+			<li class="cd-faq__item">
+				<a class="cd-faq__trigger" href="#eventOnSpellTargetSelect" id="eventOnSpellTargetSelect"><span>onSpellTargetSelect</span></a>
+				<div class="cd-faq__content">
+					<div class="text-component">
+						<div class="settingsDiv">
+							<p><span class="hl">Prototype</span></p>
+							<p><em>function onSpellTargetSelect( pCaster, myTarget, spellID )</em></p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Purpose</span></p>
+							<p>To allow custom behaviour when caster with event attached targets an object with spells</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">When Triggered</span></p>
+							<p>When targeting something/someone with a spell, event triggers in caster's script</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Notes</span></p>
+							<p>myTarget can be both items and characters. Check target type using myTarget.isChar or .isItem</p>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Return Values</span></p>
+							<ul>
+								<li><strong>return false/0</strong> (or nothing) to allow other scripts with event to also run.</li>
+								<li><strong>return true/1</strong> to prevent other scripts with event from running</li>
+								<li><strong>return 2</strong> to reject spell being cast on target</li>
+							</ul>
+						</div>
+						<div class="settingsDiv">
+							<p><span class="hl">Example of usage</span><br>
+<pre><code class="language-javascript">// Script attached to an NPC that's immune to magic, where event returns 2 to reject spell being cast
+function onSpellTargetSelect( pCaster, myTarget, spellID )
 {
 	var socket = pCaster.socket;
 	if( socket != null )
@@ -8746,6 +8915,25 @@ myChar.ExplodeItem( myItem, 25, 5, true );</code></pre>
 						</div>
 
 						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_findItemSection"/>
+							<label for="spoiler_method_char_findItemSection">FindItemSection <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>Item FindItemSection( sectionID )</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Looks for item with specific sectionID in character's backpack</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">var runebook = myPlayer.FindItemSection( "runebook" ); // does the player have a runebook?</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
 							<input type="checkbox" id="spoiler_method_char_findItemType"/>
 							<label for="spoiler_method_char_findItemType">FindItemType <i class="fas fa-angle-down"></i></label>
 							<div class="spoiler">
@@ -9463,6 +9651,29 @@ var iCount = myChar.ResourceCount( 0x1bf2, 0x0482, 1 );</code></pre>
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">// Gives myChar a level 2 poison for 10 seconds.
 myChar.SetPoisoned( 2, 10000 );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_char_SetRandomName"/>
+							<label for="spoiler_method_char_SetRandomName">SetRandomName <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void SetRandomName( nameListID );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Applies a random name from a specified namelist to character.</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Notes</span></p>
+									<p>Trivia: Int values were originally used for namelist IDs in dfndata/npc/namelists.dfn, and those still persist, but they are actually strings, and any string can be used as a namelist ID. Doesn't have to be a number!</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">myChar.SetRandomName( "19" ); // Apply random name from Savage Warriors namelist</code></pre>
 								</div>
 							</div>
 						</div>
@@ -10574,15 +10785,15 @@ if( myGuild.IsAtPeace() )
 						<div class="spoiler">
 							<div class="settingsDiv">
 								<p><span class="hl">Prototype</span></p>
-								<p><em>void AddCroppedText( left, top, hue, width, height, actualText )</em></p>
+								<p><em>void AddCroppedText( left, top, hue, width, height, text )</em></p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Purpose</span></p>
-								<p>Crops the text if it's too long to display properly. Adds scrollbar?</p>
+								<p>Crops the text if it's too long to display properly</p>
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">myGump.AddCheckbox( 10, 10, 2706, 0, 1 );</code></pre>
+	<pre><code class="language-javascript">myGump.AddCroppedText( 10, 10, 2706, 50, 20, "Hello world, this text is cut off somewhere!" );</code></pre>
 							</div>
 							</div>
 					</div>
@@ -10686,7 +10897,7 @@ if( myGuild.IsAtPeace() )
 							</div>
 							<div class="settingsDiv">
 								<p><span class="hl">Example of usage</span></p>
-	<pre><code class="language-javascript">myGump.AddHTMLGump( 15, 40, 110, 20, false, false, "<B>This is a text with HTML</B>" );</code></pre>
+	<pre><code class="language-javascript">myGump.AddHTMLGump( 15, 40, 110, 20, false, false, "&lt;B&gt;This is a text with HTML&lt;/B&gt;" );</code></pre>
 							</div>
 						</div>
 					 </div>
@@ -11008,28 +11219,6 @@ myGump.AddPicInPic( 10, 10, 0x03de, 0, 0, 30, 30 );</code></pre>
 	<pre><code class="language-javascript">myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060656, 99 );
 	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1060658, 99, "BottlesOfBeer" );
 	myGump.AddXMFHTMLTok( 10, 10, 200, 300, true, true, 1, 1041522, 99, "BottlesOfBeer", "onTheWall" );</code></pre>
-								</div>
-							</div>
-						</div>
-
-						<div class="spoilerWrapper">
-							<input type="checkbox" id="spoiler_method_gump_addHTMLGump"/>
-							<label for="spoiler_method_gump_addHTMLGump">AddHTMLGump <i class="fas fa-angle-down"></i></label>
-							<div class="spoiler">
-								<div class="settingsDiv">
-									<p><span class="hl">Prototype</span></p>
-									<p><em>void AddHTMLGump( topHeight, topLeft, width, height, background, scrollbar, HTMLText )</em></p>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Purpose</span></p>
-									<p>background and scrollbar either <strong>false</strong> or <strong>true</strong>, for respectively off/on. HTMLText is the text in the gump, can use HTML here. Supported tags:</p>
-	<pre><code>&lt;B&gt;&lt;/B&gt; &lt;BIG&gt;&lt;/BIG&gt; &lt;SMALL&gt;&lt;/SMALL&gt; &lt;EM&gt;&lt;/EM&gt; &lt;I&gt;&lt;/I&gt; &lt;U&gt;&lt;/U&gt;
-	&lt;H1&gt;&lt;/H1&gt; &lt;H2&gt;&lt;/H2&gt; &lt;H3&gt;&lt;/H3&gt; &lt;H4&gt;&lt;/H4&gt; &lt;H5&gt;&lt;/H5&gt; &lt;H6&gt;&lt;/H6&gt; &lt;a href=""&gt;&lt;/a&gt;
-	&lt;div align="right"&gt;&lt;div align="left"&gt;&lt;/DIV&gt; &lt;left&gt;&lt;/left&gt; &lt;P&gt; &lt;CENTER&gt;&lt;/CENTER&gt; &lt;BR&gt;&lt;/BR&gt; &lt;BASEFONT color=#ffffff size=1-7&gt;&lt;/BASEFONT&gt;</code></pre>
-								</div>
-								<div class="settingsDiv">
-									<p><span class="hl">Example of usage</span></p>
-									<pre><code class="language-javascript">myGump.AddHTMLGump( 10, 10, 200, 300, true, true, "This is a test" );</code></pre>
 								</div>
 							</div>
 						</div>
@@ -13098,7 +13287,7 @@ sock.SetDWord( 1, 0x01640164 );</code></pre>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Purpose</span></p>
-									<p>Return a string from a socket at offset with optional length len</p>
+									<p>Return a string from a socket at offset with optional length len. If length is not provided, reads until next null terminator</p>
 								</div>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
@@ -13199,6 +13388,25 @@ mySock.SetTimer( timer.SOCK_OBJDELAY, 3000 );</code></pre>
 								<div class="settingsDiv">
 									<p><span class="hl">Example of usage</span></p>
 									<pre><code class="language-javascript">socket.OpenContainer( iCont );</code></pre>
+								</div>
+							</div>
+						</div>
+
+						<div class="spoilerWrapper">
+							<input type="checkbox" id="spoiler_method_socket_OpenContainer"/>
+							<label for="spoiler_method_socket_OpenContainer">OpenContainer <i class="fas fa-angle-down"></i></label>
+							<div class="spoiler">
+								<div class="settingsDiv">
+									<p><span class="hl">Prototype</span></p>
+									<p><em>void OpenContainer( iCont );</em></p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Purpose</span></p>
+									<p>Opens specified container (iCont) for socket</p>
+								</div>
+								<div class="settingsDiv">
+									<p><span class="hl">Example of usage</span></p>
+									<pre><code class="language-javascript">mySock.OpenContainer( myNPC.pack );</code></pre>
 								</div>
 							</div>
 						</div>

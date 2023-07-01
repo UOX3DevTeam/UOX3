@@ -131,6 +131,22 @@ function onCallback1( pSock, toAttack )
 			}
 			else
 			{
+				// If provoker is a Young player, and target is a player, or a player's pet - disallow
+				if( GetServerSetting( "YoungPlayerStatus" ))
+				{
+					if( pUser.account.isYoung && ( !toAttack.npc || ( ValidateObject( toAttack.owner ) && !toAttack.owner.npc )))
+					{
+						pSock.SysMessage( GetDictionaryEntry( 18736, pSock.language )); // Because of your young status in Britannia you cannot provoke the beast onto another player yet.
+						return;
+					}
+					if(( !toAttack.npc && toAttack.account.isYoung ) || ( toAttack.npc && ValidateObject( toAttack.owner ) && !toAttack.owner.npc && toAttack.owner.account.isYoung ))
+					{
+						// Disallow provoking creatures onto Young players, or their pets
+						pSock.SysMessage( GetDictionaryEntry( 18737, pSock.language )); // You cannot provoke the beast onto this player.
+						return;
+					}
+				}
+
 				// Check for Facet Ruleset
 				if( DoesEventExist( 2507, "FacetRuleBardProvoke" ))
 				{

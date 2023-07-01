@@ -744,7 +744,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 739" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 747" << std::endl;
 			}
 #endif
 		}
@@ -754,7 +754,7 @@ bool CSocket::FlushBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 744" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 757" << std::endl;
 			}
 #endif
 		}
@@ -808,7 +808,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != len )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 789" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 811" << std::endl;
 			}
 #endif
 		}
@@ -818,7 +818,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 #if defined( UOX_DEBUG_MODE )
 			if( sendResult != outlength )
 			{
-				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 796" << std::endl;
+				std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 821" << std::endl;
 			}
 #endif
 		}
@@ -1550,7 +1550,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1492" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1553" << std::endl;
 		}
 #endif
 	}
@@ -1561,7 +1561,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 #if defined( UOX_DEBUG_MODE )
 		if( sendResult != len )
 		{
-			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1501" << std::endl;
+			std::cerr << "DANGER DANGER WILL ROBINSON, socket send was less then requested at 1564" << std::endl;
 		}
 #endif
 	}
@@ -2147,7 +2147,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 	UI08 a2 = i->GetSerial( 2 );
 	UI08 a3 = i->GetSerial( 3 );
 	UI08 a4 = i->GetSerial( 4 );
-	std::string charName = GetNpcDictName( i, this );
+	std::string charName = GetNpcDictName( i, this, NRS_SINGLECLICK );
 	CChar *mChar = CurrcharObj();
 	if( mChar->GetSingClickSer() || showSer )
 	{
@@ -2777,6 +2777,11 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 	Send( &contSend );
 	CPItemsInContainer itemsIn( this, i, 0x0, isPlayerVendor );
 	Send( &itemsIn );
+
+	// Add player's socket to list of players who have opened container,
+	// and also add container to player's list of opened containers
+	i->GetContOpenedByList()->Add( this );
+	this->GetContsOpenedList()->Add( i );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2817,6 +2822,11 @@ void CSocket::OpenBank( CChar *i )
 	CPWornItem toWear = ( *bankBox );
 	Send( &toWear );
 	OpenPack( bankBox );
+}
+
+auto CSocket::GetContsOpenedList() -> GenericList<CItem *> *
+{
+	return &contsOpened;
 }
 
 //o------------------------------------------------------------------------------------------------o

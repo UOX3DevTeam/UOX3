@@ -311,10 +311,12 @@ auto MultiCollection::LoadMultiCollection( const std::filesystem::path &uodir, T
 	if( std::filesystem::exists( multifile ))
 	{
 		// It does, so lets load the uop
+		Console << "\t" << uodir.string() << "MultiCollection.uop" << "\t\t";
 		rValue = LoadMultiCollection( uodir, "", info );
 	}
 	else
 	{
+		Console << "\t" << uodir.string() << "multi.mul" << " / multi.idx" << "\t\t";
 		rValue = LoadMul( uodir, info );
 	}
 	return rValue;

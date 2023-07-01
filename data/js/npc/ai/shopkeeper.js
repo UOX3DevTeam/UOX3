@@ -7,6 +7,8 @@ const enableNPCGuildDiscounts = GetServerSetting( "EnableNPCGuildDiscounts" );
 // If enabled, guild members get a +10% premium price offered for items they sell to shopkeepers in the guild
 const enableNPCGuildPremiums = GetServerSetting( "EnableNPCGuildPremiums" );
 
+const coreShardEra = GetServerSetting( "CoreShardEra" );
+
 function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 {
 	if( pSock == null || !ValidateObject( npcShopkeep ) || !ValidateObject( iBought ))
@@ -42,6 +44,12 @@ function onBoughtFromVendor( pSock, npcShopkeep, iBought, iAmount )
 		}
 	}
 
+	// Add a custom tag to items bought from NPC shopkeepers
+	if( !iBought.isPileable )
+	{
+		iBought.SetTag( "boughtFromNPC", true );
+	}
+
 	return false;
 }
 
@@ -54,29 +62,43 @@ function onSoldToVendor( pSock, npcShopkeep, iSold, iAmount )
 	if( !ValidateObject( pChar ))
 		return false;
 
-	// Give player a 10% bonus for items sold to shopkeeper if member of the same guild
-	if( enableNPCGuildBonus && pChar.npcGuild == npcShopkeep.npcGuild )
+	if( youngPlayerSystem && EraStringToNum( coreShardEra ) >= EraStringToNum( "lbr" ) && pChar.account.isYoung && !iSold.isPileable && iSold.GetTag( "boughtFromNPC" ))
 	{
-		npcShopkeep.TextMessage( GetDictionaryEntry( 17619, pSock.language )); // As a fellow guild member, I can give you a premium price for this!
-		var itemValue = iSold.sellvalue * iAmount;
-		var bonusAmount = Math.round( itemValue * 1.1 );
-		var goldBonus = CreateDFNItem( pSock, pChar, "0x0eed", bonusAmount, "ITEM", true );
-		if( ValidateObject( goldBonus ))
+		// Young players can sell vendor-bought non-pileable items back to vendors for the full price
+		var goldDiff = iSold.buyvalue - iSold.sellvalue;
+		var moreGold = CreateDFNItem( pSock, pChar, "0x0eed", goldDiff, "ITEM", true );
+		if( ValidateObject( moreGold ))
 		{
-			// Play gold coins SFX
-			if( bonusAmount == 1 )
+			npcShopkeep.TextMessage( GetDictionaryEntry( 18739, pSock.language ), false, 0x3b2, 0, pChar.serial ); // As a Young player, you are refunded the full value of store-bought non-stackable items
+			moreGold.PlaceInPack( true );
+		}
+	}
+	else
+	{
+		// Give player a 10% bonus for items sold to shopkeeper if member of the same guild
+		if( enableNPCGuildBonus && pChar.npcGuild == npcShopkeep.npcGuild )
+		{
+			npcShopkeep.TextMessage( GetDictionaryEntry( 17619, pSock.language )); // As a fellow guild member, I can give you a premium price for this!
+			var itemValue = iSold.sellvalue * iAmount;
+			var bonusAmount = Math.round( itemValue * 1.1 );
+			var goldBonus = CreateDFNItem( pSock, pChar, "0x0eed", bonusAmount, "ITEM", true );
+			if( ValidateObject( goldBonus ))
 			{
-				pChar.SoundEffect( 0x0035, false );
+				// Play gold coins SFX
+				if( bonusAmount == 1 )
+				{
+					pChar.SoundEffect( 0x0035, false );
+				}
+				else if( bonusAmount < 6 )
+				{
+					pChar.SoundEffect( 0x0036, false );
+				}
+				else
+				{
+					pChar.SoundEffect( 0x0037, false );
+				}
+				goldBonus.PlaceInPack( true );
 			}
-			else if( bonusAmount < 6 )
-			{
-				pChar.SoundEffect( 0x0036, false );
-			}
-			else
-			{
-				pChar.SoundEffect( 0x0037, false );
-			}
-			goldBonus.PlaceInPack();
 		}
 	}
 

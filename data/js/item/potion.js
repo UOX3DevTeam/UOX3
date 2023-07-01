@@ -426,6 +426,24 @@ function ApplyExplosionDamage( timerObj, targetChar )
 		if( !targetChar.npc && !targetChar.online )
 			return;
 
+		// Don't damage Young players
+		if( GetServerSetting( "YoungPlayerStatus" ))
+		{
+			// Don't damage a Young player, or a Young player's pets
+			if(( !targetChar.npc && targetChar.account.isYoung )
+				|| ( targetChar.npc && ValidateObject( targetChar.owner ) && !targetChar.owner.npc && targetChar.owner.account.isYoung ))
+			{
+				return;
+			}
+
+			// Don't let Young players damage other players, or the pets of other players
+			if(( !sourceChar.npc && sourceChar.account.isYoung && !targetChar.npc )
+				|| ( targetChar.npc && ValidateObject( targetChar.owner ) && !targetChar.owner.npc ))
+			{
+				return;
+			}
+		}
+
 		// Check for Facet Ruleset
 		if( !TriggerEvent( 2507, "FacetRuleExplosionDamage", sourceChar, targetChar ))
 		{

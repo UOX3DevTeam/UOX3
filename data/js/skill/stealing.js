@@ -4,6 +4,7 @@ function SkillRegistration()
 }
 
 const coreShardEra = GetServerSetting( "CoreShardEra" );
+const youngPlayerSystem = GetServerSetting( "YoungPlayerSystem" );
 
 // If enabled, a thief's dexterity will directly affect the chance of success at stealing
 // 	Up to -10% penalty for dex from 50 down to 0
@@ -58,12 +59,11 @@ function onSkill( pThief, objType, skillUsed )
 		}
 
 		// Since T2A, and New Player Experience, players marked as "young" cannot steal from other players OR NPCs
-		// Uncomment when New Player Experience/Young status is implemented
-		/*if( pThief.isYoung && EraStringToNum( coreShardEra ) >= EraStringToNum( "t2a" ))
+		if( youngPlayerSystem && pThief.account.isYoung )
 		{
 			pSock.SysMessage( GetDictionaryEntry( 1997, pSock.language )); // As a Young player, you cannot use the stealing skill
 			return true;
-		}*/
+		}
 
 		var pRegion = pThief.region;
 		if( pRegion )
@@ -778,12 +778,11 @@ function DoStealing( pSock, itemOwner, itemToSteal, randomItem )
 	{
 		if( itemOwner.isChar )
 		{
-			// Uncomment when New Player Experience/Young system is implemented
-			/*if( itemOwner.isYoung )
+			if( youngPlayerSystem && !itemOwner.npc && itemOwner.account.isYoung )
 			{
 				pSock.SysMessage( GetDictionaryEntry( 9209, pSock.language )); // You cannot steal from the Young.
 				return;
-			}*/
+			}
 
 			// Explode orcish masks if stealing from an orc while wearing one (Since Publish 11, UO:TD)
 			if( itemOwner.race == 22 && pThief.FindItemLayer( 0x06 ))

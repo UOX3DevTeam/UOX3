@@ -153,7 +153,7 @@ CChar *CCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnCreate( cCreated, true );
+				toExecute->OnCreate( cCreated, true, false );
 			}
 		}
 	}
@@ -2060,7 +2060,7 @@ bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, boo
 					CSocket *mSock = mChar->GetSocket();
 					if( mSock != nullptr )
 					{
-						std::string npcName = GetNpcDictName( Npc, mSock );
+						std::string npcName = GetNpcDictName( Npc, mSock, NRS_SPEECH );
 						mSock->SysMessage( 2412, npcName.c_str() ); // %s disobeys your command
 					}
 				}
@@ -2088,7 +2088,7 @@ void CCharStuff::FinalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targCh
 	// Clear pet's existing friend-list
 	petChar->ClearFriendList();
 
-	std::string petName = GetNpcDictName( petChar );
+	std::string petName = GetNpcDictName( petChar, nullptr, NRS_SPEECH );
 	petChar->TextMessage( nullptr, 1074, TALK, 0, petName.c_str(), targChar->GetName().c_str() ); // * %s will now take %s as his master *
 
 	// Transfer ownership
@@ -2121,7 +2121,7 @@ void CCharStuff::ReleasePet( CChar *pet )
 	// Remove owner
 	pet->SetOwner( nullptr );
 
-	std::string petName = GetNpcDictName( pet );
+	std::string petName = GetNpcDictName( pet, nullptr, NRS_SPEECH );
 	pet->TextMessage( nullptr, 1325, TALK, 0, petName.c_str() ); // *%s appears to have decided that it is better off without a master *
 
 	// If a summoned creature, unsummon it

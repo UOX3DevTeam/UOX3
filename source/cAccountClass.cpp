@@ -463,6 +463,20 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			std::getline( fs2, sLine );
 			continue;
 		}
+		else if( l == "TOTALPLAYTIME" )
+		{
+			if( !r.empty() && r.length() != 0 )
+			{
+				actb.wTotalPlayTime = static_cast<UI32>( std::stoul( r, nullptr, 0 ));
+			}
+			else
+			{
+				actb.wTotalPlayTime = 0;
+			}
+
+			std::getline( fs2, sLine );
+			continue;
+		}
 		else if( l == "LOCK" )
 		{
 			if( nLockCount <= 5 )
@@ -672,6 +686,7 @@ void cAccountClass::WriteAccountSection( CAccountBlock_st& actbTemp, std::fstrea
 	fsOut << "PATH " << oldstrutil::replaceSlash( actbTemp.sPath ) << std::endl;
 	fsOut << "TIMEBAN 0x" << std::hex << actbTemp.wTimeBan << std::dec << std::endl;
 	fsOut << "FIRSTLOGIN 0x" << std::hex << actbTemp.wFirstLogin << std::dec << std::endl;
+	fsOut << "TOTALPLAYTIME 0x" << std::hex << actbTemp.wTotalPlayTime << std::dec << std::endl;
 	fsOut << "LASTIP " << static_cast<SI32>(( actbTemp.dwLastIP & 0xFF000000 ) >> 24 ) << "." 
 						<< static_cast<SI32>(( actbTemp.dwLastIP & 0x00FF0000 ) >> 16 ) << "." 
 						<< static_cast<SI32>(( actbTemp.dwLastIP & 0x0000FF00 ) >> 8 ) << "." 
@@ -743,11 +758,17 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	actbTemp.wFlags		= wAttributes;
 	actbTemp.wTimeBan	= 0;
 	actbTemp.wFirstLogin = 0;
+	actbTemp.wTotalPlayTime = 0;
 	actbTemp.dwLastIP	= 0;
 	for( UI08 ii = 0; ii < CHARACTERCOUNT; ++ii )
 	{
 		actbTemp.lpCharacters[ii] = nullptr;
 		actbTemp.dwCharacters[ii] = INVALIDSERIAL;
+	}
+
+	if( cwmWorldState->ServerData()->YoungPlayerSystem() )
+	{
+		actbTemp.wFlags.set( AB_FLAGS_YOUNG, 1 );
 	}
 	// Ok we have everything except the path to the account dir, so make that now
 	std::string sTempPath( m_sAccountsDirectory );
@@ -816,6 +837,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	fsAccountsUAD << "PASS " << actbTemp.sPassword << "\n";
 	fsAccountsUAD << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << "\n";
 	fsAccountsUAD << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << "\n";
+	fsAccountsUAD << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec << "\n";
 	fsAccountsUAD << "LASTIP " << static_cast<SI32>(( actbTemp.dwLastIP & 0xFF000000 ) >> 24 ) << "." 
 								<< static_cast<SI32>(( actbTemp.dwLastIP & 0x00FF0000 ) >> 16 ) << "." 
 								<< static_cast<SI32>(( actbTemp.dwLastIP & 0x0000FF00 ) >> 8 ) << "." 
@@ -1168,6 +1190,21 @@ UI16 cAccountClass::Load( void )
 			else
 			{
 				actb.wFirstLogin = 0;
+			}
+
+			std::getline( fsAccountsADM, sLine );
+			sLine = oldstrutil::trim( oldstrutil::removeTrailing( sLine, "//" ));
+			continue;
+		}
+		else if( l == "TOTALPLAYTIME" )
+		{
+			if( !r.empty() && r.length() != 0 )
+			{
+				actb.wTotalPlayTime = static_cast<UI32>( std::stoul( r, nullptr, 0 ));
+			}
+			else
+			{
+				actb.wTotalPlayTime = 0;
 			}
 
 			std::getline( fsAccountsADM, sLine );
@@ -2128,6 +2165,7 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//         PATH c:/uox3/Accounts/path2userdata/" << std::endl;
 	fsOut << "//         TIMEBAN 0" << std::endl;
 	fsOut << "//         FIRSTLOGIN 0" << std::endl;
+	fsOut << "//         TOTALPLAYTIME 0" << std::endl;
 	fsOut << "//         LASTIP 127.0.0.1" << std::endl;
 	fsOut << "//         CONTACT NONE" << std::endl;
 	fsOut << "//         CHARACTER-1 0xffffffff" << std::endl;
@@ -2142,7 +2180,7 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//   FLAGS: " << std::endl;
 	fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In" << std::endl;
 	fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked" << std::endl;
-	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused" << std::endl;
+	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Young" << std::endl;
 	fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account" << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   TIMEBAN: " << std::endl;
@@ -2150,6 +2188,9 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 	fsOut << "//" << std::endl;
 	fsOut << "//   FIRSTLOGIN: " << std::endl;
 	fsOut << "//      This would be timestamp of the account's first login." << std::endl;
+	fsOut << "//" << std::endl;
+	fsOut << "//   TOTALPLAYTIME: " << std::endl;
+	fsOut << "//      This would be total playtime on account in minutes across all characters, since first login." << std::endl;
 	fsOut << "//" << std::endl;
 	fsOut << "//   CONTACT: " << std::endl;
 	fsOut << "//      Usually this is the email address, but can be used as a comment or ICQ" << std::endl;
@@ -2183,7 +2224,7 @@ void cAccountClass::WriteAccessHeader( std::fstream &fsOut )
 	fsOut << "//   FLAGS: " << std::endl;
 	fsOut << "//      Bit:  0x0001) Banned           0x0002) Suspended        0x0004) Public           0x0008) Currently Logged In" << std::endl;
 	fsOut << "//            0x0010) Char-1 Blocked   0x0020) Char-2 Blocked   0x0040) Char-3 Blocked   0x0080) Char-4 Blocked" << std::endl;
-	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Unused" << std::endl;
+	fsOut << "//            0x0100) Char-5 Blocked   0x0200) Char-6 Blocked   0x0400) Char-7 Blocked   0x0800) Young" << std::endl;
 	fsOut << "//            0x1000) Unused           0x2000) Seer             0x4000) Counselor        0x8000) GM Account" << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 }
@@ -2231,6 +2272,7 @@ void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock_st& actbT
 	fsOut << "PASS " << actbTemp.sPassword << std::endl;
 	fsOut << "BANTIME " << std::hex << "0x" << actbTemp.wTimeBan << std::dec << std::endl;
 	fsOut << "FIRSTLOGIN " << std::hex << "0x" << actbTemp.wFirstLogin << std::dec << std::endl;
+	fsOut << "TOTALPLAYTIME " << std::hex << "0x" << actbTemp.wTotalPlayTime << std::dec << std::endl;
 	fsOut << "LASTIP " << static_cast<SI32>(( actbTemp.dwLastIP & 0xFF000000 ) >> 24 ) << "." 
 						<< static_cast<SI32>(( actbTemp.dwLastIP & 0x00FF0000 ) >> 16 ) << "." 
 						<< static_cast<SI32>(( actbTemp.dwLastIP & 0x0000FF00 ) >> 8 ) << "." 

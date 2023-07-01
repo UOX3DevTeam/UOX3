@@ -8,6 +8,8 @@
 constexpr auto P_PF_MRV = 22;
 // Minimum Flee Distance: MFD
 constexpr auto P_PF_MFD	= 15;
+// Maximum Flee Distance: MAXFD
+constexpr auto P_PF_MAXFD = 50;
 
 struct PfNode_st
 {

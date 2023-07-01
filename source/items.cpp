@@ -745,7 +745,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		instanceId = mChar->GetInstanceId();
 		if( inPack && !ValidateObject( mChar->GetPackItem() ))
 		{
-			std::string charName = GetNpcDictName( mChar );
+			std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 			Console.Warning( oldstrutil::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 			return nullptr;
 		}
@@ -805,7 +805,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OnCreate( iCreated, false );
+			toExecute->OnCreate( iCreated, false, false );
 		}
 	}
 
@@ -824,7 +824,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 {
 	if( inPack && !ValidateObject( mChar->GetPackItem() ))
 	{
-		std::string charName = GetNpcDictName( mChar );
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 		Console.Warning( oldstrutil::format( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 		return nullptr;
 	}
@@ -1203,7 +1203,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnCreate( iCreated, true );
+				toExecute->OnCreate( iCreated, true, false );
 			}
 		}
 	}
@@ -1902,7 +1902,7 @@ CItem *cItem::DupeItem( CSocket *s, CItem *i, UI32 amount )
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			toExecute->OnCreate( c, false );
+			toExecute->OnCreate( c, false, false );
 		}
 	}
 

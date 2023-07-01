@@ -1099,7 +1099,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 		CChar *fChar = CalcCharObjFromSer( mChar->GetGuildFealty() );
 		if( ValidateObject( fChar ))
 		{
-			guildFealty = fChar->GetNameRequest( mChar );
+			guildFealty = fChar->GetNameRequest( mChar, NRS_GUILD );
 		}
 	}
 	else
@@ -1195,7 +1195,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1206,7 +1206,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1217,7 +1217,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstMember(); !gList[trgGuild]->FinishedMember(); tChar = gList[trgGuild]->NextMember() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1227,7 +1227,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1237,7 +1237,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			tCtr = 0;
 			for( tChar = gList[trgGuild]->FirstRecruit(); !gList[trgGuild]->FinishedRecruits(); tChar = gList[trgGuild]->NextRecruit() )
 			{
-				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar ));
+				toSend.addText( CalcCharObjFromSer( tChar )->GetNameRequest( mChar, NRS_GUILD ));
 				++tCtr;
 			}
 			toSend.addText( Dictionary->GetEntry( 130, sLang ));
@@ -1301,7 +1301,7 @@ void CGuildCollection::Menu( CSocket *s, SI16 menu, GUILDID trgGuild, SERIAL plI
 			kChar = CalcCharObjFromSer( plId );
 			if( ValidateObject( kChar ))
 			{
-				auto temp = kChar->GetNameRequest( mChar );
+				auto temp = kChar->GetNameRequest( mChar, NRS_GUILD );
 				if( kChar->IsInnocent() )
 				{
 					temp += std::string(" Innocent" );

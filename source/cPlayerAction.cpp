@@ -450,7 +450,7 @@ bool CPIGetItem::Handle( void )
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			SI08 retStatus = toExecute->OnPickup( i, ourChar );
+			SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
 
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -462,16 +462,16 @@ bool CPIGetItem::Handle( void )
 			}
 		}
 	}
-	scriptTriggers.clear();
 
 	// Trigger pickup event for character picking up item
+	scriptTriggers.clear();
 	scriptTriggers = ourChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )
 	{
 		cScript *toExecute = JSMapping->GetScript( scriptTrig );
 		if( toExecute != nullptr )
 		{
-			SI08 retStatus = toExecute->OnPickup( i, ourChar );
+			SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
 
 			// -1 == script doesn't exist, or returned -1
 			// 0 == script returned false, 0, or nothing - don't execute hard code
@@ -480,6 +480,31 @@ bool CPIGetItem::Handle( void )
 			{
 				Bounce( tSock, i );
 				return true;
+			}
+		}
+	}
+
+	// Trigger pickup event for potential container item is being picked up from
+	if( ValidateObject( iCont ) && iCont != nullptr )
+	{
+		// Trigger pickup event for character picking up item
+		scriptTriggers.clear();
+		scriptTriggers = iCont->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				SI08 retStatus = toExecute->OnPickup( i, ourChar, iCont );
+
+				// -1 == script doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( retStatus == 0 )
+				{
+					Bounce( tSock, i );
+					return true;
+				}
 			}
 		}
 	}
@@ -2434,7 +2459,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		}
 		
 		// Then add actual name
-		tempstr += pdoll->GetNameRequest( myChar );
+		tempstr += pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );
 
 		// Append race, if enabled
 		if( cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535 )
@@ -2451,14 +2476,14 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	else if( pdoll->IsDead() )
 	{
-		tempstr = pdoll->GetNameRequest( myChar );
+		tempstr = pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );
 	}
 	// Murder tags now scriptable in SECTION MURDERER - Titles.dfn
 	else if( pdoll->GetKills() > cwmWorldState->ServerData()->RepMaxKills() )
 	{
 		if( cwmWorldState->murdererTags.empty() )
 		{
-			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+			tempstr = oldstrutil::format( Dictionary->GetEntry( 374, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 		}
 		else if( pdoll->GetKills() < cwmWorldState->murdererTags[0].lowBound )	// not a real murderer
 		{
@@ -2479,13 +2504,13 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 			}
 			else
 			{
-				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetNameRequest( myChar ) + ", " + pdoll->GetTitle() + skillProwessTitle;
+				tempstr = cwmWorldState->murdererTags[kCtr].toDisplay + " " + pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ) + ", " + pdoll->GetTitle() + skillProwessTitle;
 			}
 		}
 	}
 	else if( pdoll->IsCriminal() )
 	{
-		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
+		tempstr = oldstrutil::format( Dictionary->GetEntry( 373, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), pdoll->GetTitle().c_str(), skillProwessTitle.c_str() );
 	}
 	else
 	{
@@ -2493,7 +2518,7 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 	}
 	if( bContinue )
 	{
-		tempstr = fameTitle + pdoll->GetNameRequest( myChar );	//Repuation + Name
+		tempstr = fameTitle + pdoll->GetNameRequest( myChar, NRS_PAPERDOLL );	//Repuation + Name
 
 		// Append race, if enabled
 		if( cwmWorldState->ServerData()->ShowRaceInPaperdoll() && pdoll->GetRace() != 0 && pdoll->GetRace() != 65535 )
@@ -2505,11 +2530,11 @@ void PaperDoll( CSocket *s, CChar *pdoll )
 		{
 			if( pdoll->GetTownPriv() == 2 )	// is Mayor
 			{
-				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
+				tempstr = oldstrutil::format( Dictionary->GetEntry( 379, sLang ), pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ).c_str(), cwmWorldState->townRegions[pdoll->GetTown()]->GetName().c_str(), skillProwessTitle.c_str() );
 			}
 			else	// is Resident
 			{
-				tempstr = pdoll->GetNameRequest( myChar ) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
+				tempstr = pdoll->GetNameRequest( myChar, NRS_PAPERDOLL ) + " of " + cwmWorldState->townRegions[pdoll->GetTown()]->GetName() + ", " + skillProwessTitle;
 			}
 		}
 		else	// No Town Title
@@ -3888,26 +3913,26 @@ bool CPISingleClick::Handle( void )
 #if defined( _MSC_VER )
 #pragma todo( "We need to update this to use GetTileName almost exclusively, for plurality" )
 #endif
-	if( i->GetNameRequest( tSock->CurrcharObj() )[0] != '#' )
+	if( i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK )[0] != '#' )
 	{
 		if( i->GetId() == 0x0ED5 ) //guildstone
 		{
-			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = oldstrutil::format( Dictionary->GetEntry( 101, tSock->Language() ).c_str(), i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str() );
 		}
 		if( !i->IsPileable() || getAmount == 1 )
 		{
 			if( mChar->IsGM() && !i->IsCorpse() && getAmount > 1 )
 			{
-				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj() ).c_str(), getAmount );
+				realname = oldstrutil::format( "%s (%u)", i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str(), getAmount );
 			}
 			else
 			{
-				realname = i->GetNameRequest( tSock->CurrcharObj() );
+				realname = i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK );
 			}
 		}
 		else
 		{
-			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj() ).c_str() );
+			realname = oldstrutil::format( "%u %ss", getAmount, i->GetNameRequest( tSock->CurrcharObj(), NRS_SINGLECLICK ).c_str() );
 		}
 	}
 	else
@@ -3952,7 +3977,7 @@ bool CPISingleClick::Handle( void )
 		{
 			if( cwmWorldState->ServerData()->RankSystemStatus() && i->GetRank() == 10 )
 			{
-				std::string creatorName = GetNpcDictName( mCreator, tSock );
+				std::string creatorName = GetNpcDictName( mCreator, tSock, NRS_SINGLECLICK );
 				temp2 += oldstrutil::format( " %s", Dictionary->GetEntry( 9140, tSock->Language() ).c_str() ); // of exceptional quality
 
 				if( cwmWorldState->ServerData()->DisplayMakersMark() && i->IsMarkedByMaker() )

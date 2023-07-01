@@ -615,29 +615,12 @@ public:
 	CSocket *	GetSockPtr( UOXSOCKET s );
 	UOXSOCKET	FindNetworkPtr( CSocket *toFind );
 
-	CSocket *	FirstSocket( void );
-	CSocket *	NextSocket( void );
-	CSocket *	PrevSocket( void );
-	CSocket *	LastSocket( void );
-	bool		FinishedSockets( void );
-
 	void		CheckConnections( void );
 	void		CheckMessages( void );
 
 	void		Transfer( CSocket *s );
 
 	size_t		PeakConnectionCount( void ) const;
-
-	void		PushConn( void );
-	void		PopConn( void );
-	void 		pushConn( void );
-	void 		popConn( void );
-
-	void		pushLogg();
-	void 		popLogg();
-
-	void		PushLogg( void );
-	void		PopLogg( void );
 
 	// Login Specific
 	void		LoginDisconnect( UOXSOCKET s );
@@ -667,9 +650,6 @@ private:
 	struct sockaddr_in		client_addr;
 
 	size_t					peakConnectionCount;
-
-	std::vector<std::vector<CSocket *>::iterator>	connIteratorBackup, loggIteratorBackup;
-	std::vector<CSocket *>::iterator					currConnIter, currLoggIter;
 
 	void		LoadFirewallEntries( void );
 	void		GetMsg( UOXSOCKET s );
