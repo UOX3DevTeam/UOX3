@@ -3505,7 +3505,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 				}
 				else
 				{
-					evadeTargY = mCharY - static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+					evadeTargY = mCharY + static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
 				}
 				evadeTargX += RandomNum( -1, 1 ); // Add a small variation along the X-axis
 			}

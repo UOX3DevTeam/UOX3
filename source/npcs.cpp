@@ -171,7 +171,6 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	if( npcListSize <= 0 )
 		return "";
 
-	int npcEntryToSpawn = -1;
 	int sum_of_weight = 0;
 	for( const auto& it : npcListVector )
 	{
@@ -197,7 +196,6 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 			// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
 			if( weightOfChosenNpc == 0 || weightOfChosenNpc == sectionWeight )
 			{
-				npcEntryToSpawn = i;
 				weightOfChosenNpc = sectionWeight;
 
 				// Add the entry index to a temporary vector of all entries with shared weight, the continue looking for more!
@@ -209,7 +207,7 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	}
 
 	// Did we find one or more entry that matched our random weight criteria?
-	npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
+	int npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
 	matchingEntries.clear();
 
 	std::string chosenNpcSection = "";

@@ -906,7 +906,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 
 	try
 	{
-		jsval rval, params[2];
+		jsval rval, params[3];
 
 		// Create JS object reference for myObj, based on whether it's an item or character
 		JSObject *nameRequestObj = nullptr;

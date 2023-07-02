@@ -3503,25 +3503,28 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 	}
 
 	// Do the same for the opposite party in combat
-	scriptTriggers.clear();
-	scriptTriggers = ourTarg->GetScriptTriggers();
-	for( auto scriptTrig : scriptTriggers )
+	if( ValidateObject( ourTarg ))
 	{
-		cScript *toExecute = JSMapping->GetScript( scriptTrig );
-		if( toExecute != nullptr )
+		scriptTriggers.clear();
+		scriptTriggers = ourTarg->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
 		{
-			//Check if ourTarg validates as another character. If not, don't use
-			if( !ValidateObject( ourTarg ))
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
 			{
-				ourTarg = nullptr;
-			}
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( ourTarg ))
+				{
+					ourTarg = nullptr;
+				}
 
-			// -1 == event doesn't exist, or returned -1
-			// 0 == script returned false, 0, or nothing - don't execute hard code
-			// 1 == script returned true or 1
-			if( toExecute->OnCombatEnd( ourTarg, mChar ) == 0 )	// if it exists and we don't want hard code, return
-			{
-				return;
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( ourTarg, mChar ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
 			}
 		}
 	}

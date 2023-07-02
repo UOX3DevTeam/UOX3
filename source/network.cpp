@@ -1207,28 +1207,29 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 //o------------------------------------------------------------------------------------------------o
 void CNetworkStuff::CheckLoginMessage( void )
 {
-	fd_set all;
-	fd_set errsock;
+	//fd_set all; // This is already defined globally?
+	//fd_set errsock; // This is already defined globally?
 	size_t i;
 
-	cwmWorldState->uoxTimeout.tv_sec = 0;
-	cwmWorldState->uoxTimeout.tv_usec = 1;
+	//cwmWorldState->uoxTimeout.tv_sec = 0;
+	//cwmWorldState->uoxTimeout.tv_usec = 1; // This causes Windows to wait 1 extra milliseconds per loop, while Linux waits 1 microseconds, causing performance difference
 
 	FD_ZERO( &all );
 	FD_ZERO( &errsock );
 
 	SI32 nfds = 0;
-	for( i = 0; i < loggedInClients.size(); ++i )
+	for( auto &tSock : loggedInClients )
 	{
-		size_t clientSock = loggedInClients[i]->CliSocket();
+		auto clientSock = static_cast<UOXSOCKET>( tSock->CliSocket() );
 		FD_SET( clientSock, &all );
 		FD_SET( clientSock, &errsock );
 		if( static_cast<int>( clientSock ) + 1 > nfds )
 		{
-			nfds = static_cast<int>( clientSock ) + 1;
+			nfds = clientSock + 1;
 		}
 	}
-	SI32 s = select( static_cast<UOXSOCKET>( nfds ), &all, nullptr, &errsock, &cwmWorldState->uoxTimeout );
+
+	SI32 s = select( nfds, &all, nullptr, &errsock, &cwmWorldState->uoxTimeout );
 	if( s > 0 )
 	{
 		size_t oldnow = loggedInClients.size();

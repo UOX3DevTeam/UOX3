@@ -1,3 +1,9 @@
+02/07/2023 - Xuri
+	Cleaned up a couple of warnings highlighted by static code analysis
+	Fixed an issue with NPC evasion pathfinding where the direction wasn't always set correctly
+	Fixed an issue with onNameRequest JS Event where the size of param jsval (2) didn't match actual number of parameters provided (3)
+	Removed setting uoxTimeout.tv_usec to 1 in CNetworkStuff::CheckLoginMessage() to address slower core loop iterations on Windows, due to differences in timer resolutions supported by WinSock2 function select() on different platforms - tv_usec 1 is treated as 1 microsecond on Linux/macOS, but as 1 millisecond on Windows
+
 01/07/2023 - Xuri (0.99.6-RC6)
 	Removed arbitrary and hidden restrictions on refreshing list of online players shown with 'wholist command
 	Fixed an issue where player ghosts that get teleported would not see themselves get updated to new location
