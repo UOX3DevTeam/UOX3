@@ -1525,6 +1525,10 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	if( !ValidateObject( gPriv ))
 		return JS_FALSE;
 
+	// Keep track of original script that's executing
+	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+
 	if( JSVAL_IS_INT( id ))
 	{
 		CItem *TempItem			= nullptr;
@@ -2111,6 +2115,19 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				break;
 		}
 	}
+
+	// Active script-context might have been lost, so restore it...
+	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	{
+		// ... by calling a dummy function in original script!
+		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( retVal == JS_FALSE )
+		{
+			// Dummy function not found, let shard admin know!
+			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+		}
+	}
+
 	return JS_TRUE;
 }
 

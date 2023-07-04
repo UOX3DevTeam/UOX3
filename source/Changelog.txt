@@ -1,3 +1,8 @@
+04/07/2023 - Xuri
+	Applied fix to keep script context intact when getting certain Char JS Properties (like name); as before, requires dummy function to be present in script
+	Fixed an issue with 'tweak command not working properly alongside presence of onNameRequest JS events in other scripts on character (js/commands/targeting/tweak.js)
+	Fixed issue where character's stats (str, dex, int) could return value lower than 1 due to temporary debuffs, causing issues in status gump
+
 02/07/2023 - Xuri
 	Cleaned up a couple of warnings highlighted by static code analysis
 	Fixed an issue with NPC evasion pathfinding where the direction wasn't always set correctly

@@ -1030,8 +1030,8 @@ function HandleItemTarget( pSocket, myTarget )
 				break;
 			case itemProp.container:
 				itemLabelTooltip 	= GetDictionaryEntry( 8135, pSocket.language ); // Item/Character the item is contained in/on
-				itemValue 			= ( ValidateObject( myTarget.container ) ? "<BASEFONT color=#EECD8B>" + ( myTarget.container ).toString() + "</BASEFONT>" : "-" );
-				itemValueTooltip 	= ( ValidateObject( myTarget.container ) ? ( myTarget.container.name ).toString() + " ( " + ( myTarget.container.serial ) + " )": "-" );
+				itemValue 				= ( ValidateObject( myTarget.container ) ? "<BASEFONT color=#EECD8B>" + ( myTarget.container ).toString() + "</BASEFONT>" : "-" );
+				itemValueTooltip 	= ( ValidateObject( myTarget.container ) ? myTarget.container.name + " ( " + ( myTarget.container.serial ) + " )": "-" );
 				break;
 			case itemProp.corpse:
 				itemLabelTooltip 	= GetDictionaryEntry( 8136, pSocket.language ); // Marks item as corpse
@@ -6686,3 +6686,5 @@ const itemTypeNames = {
 	253:"IT_TRAININGDUMMY",
 	255:"IT_COUNT"
 }
+
+function _restorecontext_() { }

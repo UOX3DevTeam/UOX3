@@ -3953,10 +3953,20 @@ SI16 CChar::ActualStrength( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetStrength( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	auto tempStr = static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	if( tempStr < 1 )
+	{
+		tempStr = 1;
+	}
+	return tempStr;
 }
 void CChar::SetStrength( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetStrength( newValue );
 	Dirty( UT_HITPOINTS );
 	UpdateRegion();
@@ -3982,10 +3992,20 @@ SI16 CChar::ActualIntelligence( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetIntelligence( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	auto tempInt = static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	if( tempInt < 1 )
+	{
+		tempInt = 1;
+	}
+	return tempInt;
 }
 void CChar::SetIntelligence( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetIntelligence( newValue );
 	Dirty( UT_MANA );
 	UpdateRegion();
@@ -4011,10 +4031,20 @@ SI16 CChar::ActualDexterity( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetDexterity( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	auto tempDex = static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	if( tempDex < 1 )
+	{
+		tempDex = 1;
+	}
+	return tempDex;
 }
 void CChar::SetDexterity( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+	
 	CBaseObject::SetDexterity( newValue );
 	Dirty( UT_STAMINA );
 	UpdateRegion();
