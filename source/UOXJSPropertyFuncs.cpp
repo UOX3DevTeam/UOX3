@@ -1556,7 +1556,6 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_NAME:
 				{
 					CSocket *tSock = nullptr;
-					//JSObject *tempSock = JSEngine->AcquireObject( IUE_SOCK, tSock, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 					std::string mCharName = GetNpcDictName( gPriv, tSock, NRS_SCRIPT );
 					std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
@@ -2120,7 +2119,10 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
 	{
 		// ... by calling a dummy function in original script!
+		// ... but keep track of the property value we're trying to retrieve, stored in vp!
+		jsval origVp = *vp;
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		*vp = origVp;
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
