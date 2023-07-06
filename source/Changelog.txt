@@ -1,3 +1,6 @@
+05/07/2023 - Xuri
+	Fixed an issue with script context restoration while getting Char JS Properties that would also modify the return value for that property
+
 04/07/2023 - Xuri
 	Applied fix to keep script context intact when getting certain Char JS Properties (like name); as before, requires dummy function to be present in script
 	Fixed an issue with 'tweak command not working properly alongside presence of onNameRequest JS events in other scripts on character (js/commands/targeting/tweak.js)

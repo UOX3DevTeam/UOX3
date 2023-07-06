@@ -74,6 +74,10 @@
 // 'decorate loadevent <eventName>
 //		Load all items from file named event_<eventName>, and assign eventName to their .event property
 //
+// COPYING DECORATIONS FROM ONE FACET TO ANOTHER
+// ' decorate copy [sourceFacet] [targetFacet]
+//		Copy all items from one facet to another
+//
 // CLEANING UP DECORATIONS
 // 'decorate clean
 // 		Clean up duplicate decorations that might have been loaded/added by accident. Counts as duplicate if
