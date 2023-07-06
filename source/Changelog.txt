@@ -1,3 +1,6 @@
+07/07/2023 - Xuri
+	Fixed an issue which could cause lamp posts to turn into tall candelabras when light levels change
+
 05/07/2023 - Xuri
 	Fixed an issue with script context restoration while getting Char JS Properties that would also modify the return value for that property
 
