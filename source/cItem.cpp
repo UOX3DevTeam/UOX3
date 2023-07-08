@@ -2683,8 +2683,8 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 			auto iVisible = GetVisible();
 			auto ownerObj = GetOwnerObj();
 			if(( iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN )
-				|| iVisible == VT_TEMPHIDDEN &&
-				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() )))
+				|| ((iVisible == VT_TEMPHIDDEN &&
+				( !ValidateObject( ownerObj ))) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() )))
 			{
 				return;
 			}

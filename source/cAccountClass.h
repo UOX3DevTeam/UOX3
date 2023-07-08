@@ -105,13 +105,13 @@ public:
 	std::bitset<AB_FLAGS_ALL>	wFlags;
 	UI32						wTimeBan;
 	UI32						wFirstLogin;
-	UI32						wTotalPlayTime;
 	UI32						dwInGame;
 	UI32						dwLastIP;
 	bool						bChanged;
 	UI32						dwLastClientVer;
 	UI08						dwLastClientType;
 	UI08						dwLastClientVerShort;
+	UI32						wTotalPlayTime;
 	UI32						dwCharacters[7];
 	CChar *						lpCharacters[7];
 } CAccountBlock_st;

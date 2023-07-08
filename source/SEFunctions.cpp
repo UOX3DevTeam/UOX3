@@ -1958,7 +1958,7 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Notes		-	Takes 2 parameters, which is the script number to check and the
 //|					event name to check for
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesEventExist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesEventExist( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
 	{

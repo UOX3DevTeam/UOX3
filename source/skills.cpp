@@ -2495,7 +2495,7 @@ void CallGuards( CChar *mChar, CChar *targChar );
 void CSkills::Snooping( CSocket *s, CChar *target, CItem *pack )
 {
 	CChar *mChar = s->CurrcharObj();
-	CSocket *tSock = target->GetSocket();
+	[[maybe_unused]] CSocket *tSock = target->GetSocket();
 
 	std::vector<UI16> scriptTriggers = mChar->GetScriptTriggers();
 	for( auto scriptTrig : scriptTriggers )

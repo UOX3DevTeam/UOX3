@@ -211,7 +211,7 @@ std::string g_errorMessage;
 //| Notes		-	Relies on global variable g_errorMessage to pass in error message from
 //|					MethodError function.
 //o------------------------------------------------------------------------------------------------o
-const JSErrorFormatString* ScriptErrorCallback( void *userRef, const char *locale, const uintN errorNumber )
+const JSErrorFormatString* ScriptErrorCallback( [[maybe_unused]] void *userRef, [[maybe_unused]] const char *locale, [[maybe_unused]] const uintN errorNumber )
 {
 	// Return a pointer to a JSErrorFormatString, to the UOX3ErrorReporter function in cScript.cpp
 	static JSErrorFormatString errorFormat;

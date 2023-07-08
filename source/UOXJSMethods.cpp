@@ -3975,7 +3975,7 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if guild is at peace, i.e. not at war with any other guilds
 //o------------------------------------------------------------------------------------------------o
-JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -10988,7 +10988,7 @@ JSBool CRegion_GetOrePref( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get chance to find ore when mining in townregion
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_GetOreChance( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool CRegion_GetOreChance( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
