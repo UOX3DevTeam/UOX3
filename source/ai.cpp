@@ -68,7 +68,7 @@ bool IsValidAttackTarget( CChar& mChar, CChar *cTarget )
 				// Young players are not valid targets for NPCs outside of dungeons
 				if( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.IsNpc() && !cTarget->IsNpc() && IsOnline(( *cTarget )) && cTarget->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) && !cTarget->GetRegion()->IsDungeon() )
 				{
-					if( cTarget->GetSocket() && (cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow()) )
+					if( cTarget->GetSocket() && ( cTarget->GetTimer( tCHAR_YOUNGMESSAGE ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() ))
 					{
 						cTarget->SetTimer( tCHAR_YOUNGMESSAGE, BuildTimeValue( static_cast<R32>( 120 ))); // Only send them the warning message once couple of minutes
 						cTarget->GetSocket()->SysMessage( 18734 ); // A monster looks at you menacingly but does not attack.  You would be under attack now if not for your status as a new citizen of Britannia.
