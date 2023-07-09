@@ -56,7 +56,7 @@ protected:
 	UI16			maxUses;		// Max number of uses an item can have
 	UI16			usesLeft;		// Current number of uses left on an item
 	UI16			regionNum;
-	TIMERVAL	tempLastTraded;			// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
+	TIMERVAL		tempLastTraded;		// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
 	UI08			stealable;		// 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town rares, etc)
 
 	std::bitset<8>	bools;
