@@ -180,12 +180,12 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	}
 
 	int rndChoice = RandomNum( 0, sum_of_weight - 1 );
-	int npcWeight = 0;
+	[[maybe_unused]] int npcWeight = 0;
 
 	std::vector<int> matchingEntries;
 
 	int weightOfChosenNpc = 0;
-	for( int i = 0; i < npcListVector.size(); ++i )
+	for( size_t i = 0; i < npcListVector.size(); ++i )
 	{
 		//const std::string &sectionName = npcList[i].first;
 		const UI16 &sectionWeight = npcListVector[i].second;

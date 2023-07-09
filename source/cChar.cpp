@@ -1126,7 +1126,7 @@ void CChar::SetPassive( bool newValue )
 //|	Purpose		-	Returns/Sets whether the character has stolen something in the last X minutes
 //|					since their last death
 //o------------------------------------------------------------------------------------------------o
-auto CChar::HasStolen() -> const bool
+auto CChar::HasStolen() -> bool
 {
 	return bools.test( BIT_HASSTOLEN );
 }
@@ -5851,7 +5851,7 @@ void CChar::SetCreatedOn( UI32 newValue )
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Gets/Sets/Updates play time (in minutes) of character since it was created
 //o------------------------------------------------------------------------------------------------o
-auto CChar::GetPlayTime() const -> const UI32
+auto CChar::GetPlayTime() const -> UI32
 {
 	UI32 rVal = 0;
 	if( IsValidPlayer() )

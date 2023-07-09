@@ -1004,7 +1004,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				return;
 			}
 		}
-		CSocket *tSock	= nullptr;
+		[[maybe_unused]] CSocket *tSock	= nullptr;
 		//char outputline[128], temp[1024];
 		std::string outputline, temp;
 		SI32 indexcount	= 0;

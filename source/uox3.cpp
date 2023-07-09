@@ -231,7 +231,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 
 	// Start/Initalize classes, data, network
 	StartInitialize( serverdata );
-	
+
 	// Main Loop
 	Console.PrintSectionBegin();
 	EVENT_TIMER( stopwatch, EVENT_TIMER_OFF );
@@ -241,7 +241,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	// necessary to keep shard performance and responsiveness to player input at acceptable levels
 	auto apsPerfThreshold = cwmWorldState->ServerData()->APSPerfThreshold(); // Performance threshold from ini, 0 disables APS feature
 
-	int avgSimCycles = 0;
+	[[maybe_unused]] int avgSimCycles = 0;
 	UI16 apsMovingAvgOld = 0;
 	const int maxSimCycleSamples = 10;  // Max number of samples for moving average
 	std::vector<int> simCycleSamples;  // Store simulation cycle measurements for moving average
@@ -255,7 +255,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	// Setup initial values for apsDelay
 	std::chrono::milliseconds apsDelay = std::chrono::milliseconds( 0 );
 	std::chrono::time_point<std::chrono::system_clock> adaptivePerfTimer = std::chrono::system_clock::now() + apsDelay;
-	
+
 	// Set the interval for APS evaluation and adjustment, and set initial timestamp for first evaluation
 	const std::chrono::milliseconds evaluationInterval = std::chrono::milliseconds( cwmWorldState->ServerData()->APSInterval() );
 	std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;

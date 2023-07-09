@@ -3478,7 +3478,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			SI16 moveDist = RandomNum( 2, 5 );
 
 			double magnitude = sqrt( distanceX * distanceX + distanceY * distanceY );
-			int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
+			[[maybe_unused]] int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
 
 			SI16 evadeTargX = mCharX;
 			SI16 evadeTargY = mCharY;

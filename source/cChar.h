@@ -164,13 +164,13 @@ private:
 
 		std::string	lastOn; //Last time a character was on
 		UI32		lastOnSecs; //Last time a character was on in seconds.
-		UI32		playTime; // Character's full playtime
 
 		SERIAL		townVote;
 		SI08		townPriv;  //0=non resident (Other privledges added as more functionality added)
 		UI08		controlSlotsUsed; // The total number of control slots currently taken up by followers/pets
 		UI32		createdOn;	// Timestamp for when player character was created
 		UI32		npcGuildJoined;	// Timestamp for when player character joined NPC guild (0=never joined)
+		UI32		playTime;	// Character's full playtime
 
 		UI08		atrophy[INTELLECT+1];
 		SkillLock	lockState[INTELLECT+1];	// state of the skill locks
@@ -217,7 +217,6 @@ protected:
   	UI16    	advObj;			// Has used advance gate?
   	SERIAL  	guildFealty;	// Serial of player you are loyal to (default=yourself) (DasRaetsel)
   	SI16    	guildNumber;	// Number of guild player is in (0=no guild)     (DasRaetsel)
-	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
   	UI08    	flag;			// 1=red 2=grey 4=Blue 8=green 10=Orange // should it not be 0x10??? sounds like we're trying to do
   	SI08    	spellCast;
@@ -238,7 +237,8 @@ protected:
 
 	UI08		PoisonStrength;
 	BodyType	bodyType;
-	UI32		lastMoveTime; 			// Timestamp for when character moved last
+	UI32		lastMoveTime;		// Timestamp for when character moved last
+	UI16		npcGuild;		// ID of NPC guild character is in (0=no NPC guild)
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; 	// List of skills (with stat modifiers)
@@ -379,7 +379,7 @@ public:
 	bool		GetCanAttack( void ) const;
 	bool		IsAtWar( void ) const;
 	bool		IsPassive( void ) const;
-	auto		HasStolen() -> const bool;
+	auto		HasStolen() -> bool;
 	auto		HasStolen( bool newValue ) -> void;
 	bool		IsOnHorse( void ) const;
 	bool		GetTownTitle( void ) const;
@@ -818,7 +818,7 @@ public:
 	void		SetLastOnSecs( UI32 newValue );
 	UI32		GetLastOnSecs( void ) const;
 
-	auto		GetPlayTime() const -> const UI32;
+	auto		GetPlayTime() const -> UI32;
 	auto		SetPlayTime( UI32 newValue ) -> void;
 
 	void		SetCreatedOn( UI32 newValue );

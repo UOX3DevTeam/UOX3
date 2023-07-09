@@ -1566,7 +1566,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				}
 			case CCP_ORIGNAME:
 			{
-				CSocket *tSock = nullptr;
+				[[maybe_unused]] CSocket *tSock = nullptr;
 
 				std::string mCharName = gPriv->GetOrgName();
 				std::string convertedString = oldstrutil::stringToWstringToString( mCharName );
