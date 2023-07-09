@@ -238,7 +238,7 @@ protected:
 	UI08		PoisonStrength;
 	BodyType	bodyType;
 	UI32		lastMoveTime; 			// Timestamp for when character moved last
-	UI16		npcGuild;						// ID of NPC guild character is in (0=no NPC guild)
+	UI16		npcGuild;				// ID of NPC guild character is in (0=no NPC guild)
 
 	SKILLVAL	baseskill[ALLSKILLS]; 	// Base skills without stat modifiers
 	SKILLVAL	skill[INTELLECT+1]; 	// List of skills (with stat modifiers)

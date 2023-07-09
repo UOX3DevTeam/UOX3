@@ -48,16 +48,16 @@ protected:
 	UI16			entryMadeFrom;
 	SERIAL			creator;		// Store the serial of the player made this item
 	SI08			gridLoc;
-	SI32			weightMax;			// Maximum weight a container can hold
-	SI32			baseWeight;			// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
-	UI16			maxItems;				// Maximum amount of items a container can hold
-	UI08			maxRange;				// Max range of ranged weapon
-	UI08			baseRange;			// Base range of thrown weapon
-	UI16			maxUses;				// Max number of uses an item can have
-	UI16			usesLeft;				// Current number of uses left on an item
+	SI32			weightMax;		// Maximum weight a container can hold
+	SI32			baseWeight;		// Base weight of item. Applied when item is created for the first time, based on weight. Primarily used to determine base weight of containers
+	UI16			maxItems;		// Maximum amount of items a container can hold
+	UI08			maxRange;		// Max range of ranged weapon
+	UI08			baseRange;		// Base range of thrown weapon
+	UI16			maxUses;		// Max number of uses an item can have
+	UI16			usesLeft;		// Current number of uses left on an item
 	UI16			regionNum;
-	TIMERVAL	tempLastTraded;	// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
-	UI08			stealable;			// 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town rares, etc)
+	TIMERVAL	tempLastTraded;		// Temporary timestamp for when item was last traded between players via secure trade window (not saved)
+	UI08			stealable;		// 0=Not stealable, 1=Stealable (default, most items), 2=Special Stealable (town rares, etc)
 
 	std::bitset<8>	bools;
 	std::bitset<8>	priv; 			// Bit 0, decay off/on.  Bit 1, newbie item off/on.  Bit 2 Dispellable
