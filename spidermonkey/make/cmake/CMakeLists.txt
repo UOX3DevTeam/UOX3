@@ -1,24 +1,29 @@
 cmake_minimum_required(VERSION 3.18)
-project(jscript VERSION 1.7 LANGUAGES C)
+project(jscript VERSION 1.8.0-RC1 LANGUAGES C)
 
 add_library(jscript STATIC
+    ../../js.c
     ../../jsapi.c
     ../../jsarena.c
     ../../jsarray.c
     ../../jsatom.c
     ../../jsbool.c
     ../../jscntxt.c
+    ../../jscpucfg.c
     ../../jsdate.c
     ../../jsdbgapi.c
     ../../jsdhash.c
     ../../jsdtoa.c
     ../../jsemit.c
     ../../jsexn.c
+    ../../jsfile.c
     ../../jsfun.c
     ../../jsgc.c
     ../../jshash.c
     ../../jsinterp.c
+    ../../jsinvoke.c
     ../../jsiter.c
+    ../../jskwgen.c
     ../../jslock.c
     ../../jslog2.c
     ../../jslong.c
