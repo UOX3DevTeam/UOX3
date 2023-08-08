@@ -164,8 +164,8 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prepares a new packet stream, ready for network shenanigans in JS
 //o------------------------------------------------------------------------------------------------o
-JSBool Packet( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
-{
+JSBool JS_DLL_CALLBACK Packet(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
+                             [[maybe_unused]] jsval *rval) {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
@@ -376,10 +376,10 @@ JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	Gump()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Cosntructor for creating a new JS Gump object
+//|	Purpose		-	Constructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
-JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
-{
+JSBool JS_DLL_CALLBACK Gump(JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv,
+                           [[maybe_unused]] jsval *rval) {
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
 	toAdd->one = new std::vector<std::string>();

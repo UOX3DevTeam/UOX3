@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
-project(jscript VERSION 1.8.0-RC1 LANGUAGES C)
+project(jscript VERSION 1.8.0 LANGUAGES C)
 
 add_library(jscript STATIC
     ../../js.c

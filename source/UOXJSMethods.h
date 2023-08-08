@@ -15,7 +15,7 @@
 #define __UOXJSMethods__
 
 
-typedef JSBool ( JSMethodFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
+typedef JSBool ( JS_DLL_CALLBACK JSMethodFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
 
 // Object Constructors
 JSMethodFunc Gump;
