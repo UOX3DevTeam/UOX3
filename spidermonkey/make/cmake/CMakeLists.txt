@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 3.18)
 project(jscript VERSION 1.8.0 LANGUAGES C)
 
+add_executable(jscpucfg ../../jscpucfg.c)
+
+if(NOT WIN32)
+add_custom_command(
+    OUTPUT ../../jsautocfg.h
+    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
+    DEPENDS jscpucfg
+    COMMENT "Generating jsautocfg.h"
+)
+endif(NOT WIN32)
+
 add_library(jscript STATIC
     ../../js.c
     ../../jsapi.c
@@ -9,7 +20,6 @@ add_library(jscript STATIC
     ../../jsatom.c
     ../../jsbool.c
     ../../jscntxt.c
-    ../../jscpucfg.c
     ../../jsdate.c
     ../../jsdbgapi.c
     ../../jsdhash.c
@@ -81,6 +91,7 @@ add_library(jscript STATIC
     ../../jsxml.h
     ../../prmjtime.h
     ../../jsopcode.tbl
+    ../../jsautocfg.h
 )
 
 if (WIN32)
@@ -130,25 +141,24 @@ else()
 	)
 	
 	target_compile_options( jscript PRIVATE
-	
 		-Wno-shift-negative-value
 		-Wno-implicit-function-declaration
 		-Wno-strict-prototypes
 		-Wno-logical-not-parentheses
-		-Wno-int-to-void-pointer-cast
 		-Wno-pointer-to-int-cast
 		-Wno-switch
 		-Wno-incompatible-pointer-types
-		-Wno-non-literal-null-conversion
-		-Wno-tautological-constant-out-of-range-compare
 	)
 	if (APPLE)
 		target_compile_options( jscript PRIVATE
+			-Wno-non-literal-null-conversion
+			-Wno-tautological-constant-out-of-range-compare
 			$<$<CONFIG:Release>:-Os>
 		)
 	else()
 		target_compile_options(jscript PRIVATE
-			$<$<CONFIG:Release>:-O2>
+			-MMD
+			$<$<CONFIG:Release>:-Os>
 		)
 	endif()
 endif(WIN32)
