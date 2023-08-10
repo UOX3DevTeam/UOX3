@@ -4,95 +4,104 @@ project(jscript VERSION 1.8.0 LANGUAGES C)
 add_executable(jscpucfg ../../jscpucfg.c)
 
 if(NOT WIN32)
-add_custom_command(
-    OUTPUT ../../jsautocfg.h
-    COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
-    DEPENDS jscpucfg
-    COMMENT "Generating jsautocfg.h"
-)
+    add_custom_command(
+        OUTPUT ../../jsautocfg.h
+        COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
+        DEPENDS jscpucfg
+        COMMENT "Generating jsautocfg.h"
+    )
 endif(NOT WIN32)
 
-add_library(jscript STATIC
-    ../../js.c
-    ../../jsapi.c
-    ../../jsarena.c
-    ../../jsarray.c
-    ../../jsatom.c
-    ../../jsbool.c
-    ../../jscntxt.c
-    ../../jsdate.c
-    ../../jsdbgapi.c
-    ../../jsdhash.c
-    ../../jsdtoa.c
-    ../../jsemit.c
-    ../../jsexn.c
-    ../../jsfile.c
-    ../../jsfun.c
-    ../../jsgc.c
-    ../../jshash.c
-    ../../jsinterp.c
-    ../../jsinvoke.c
-    ../../jsiter.c
-    ../../jskwgen.c
-    ../../jslock.c
-    ../../jslog2.c
-    ../../jslong.c
-    ../../jsmath.c
-    ../../jsnum.c
-    ../../jsobj.c
-    ../../jsopcode.c
-    ../../jsparse.c
-    ../../jsprf.c
-    ../../jsregexp.c
-    ../../jsscan.c
-    ../../jsscope.c
-    ../../jsscript.c
-    ../../jsstr.c
-    ../../jsutil.c
-    ../../jsxdrapi.c
-    ../../jsxml.c
-    ../../prmjtime.c
-    ../../jsapi.h
-    ../../jsarena.h
-    ../../jsarray.h
-    ../../jsatom.h
-    ../../jsbool.h
-    ../../jscntxt.h
-    ../../jsdate.h
-    ../../jsdbgapi.h
-    ../../jsdhash.h
-    ../../jsdtoa.h
-    ../../jsemit.h
-    ../../jsexn.h
-    ../../jsfun.h
-    ../../jsgc.h
-    ../../jshash.h
-    ../../jsinterp.h
-    ../../jsiter.h
-    ../../jslock.h
-    ../../jslong.h
-    ../../jsmath.h
-    ../../jsnum.h
-    ../../jsobj.h
-    ../../jsopcode.h
-    ../../jsparse.h
-    ../../jsprf.h
-    ../../jsprvtd.h
-    ../../jspubtd.h
-    ../../jsregexp.h
-    ../../jsscan.h
-    ../../jsscope.h
-    ../../jsscript.h
-    ../../jsstddef.h
-    ../../jsstr.h
-    ../../jstypes.h
-    ../../jsutil.h
-    ../../jsxdrapi.h
-    ../../jsxml.h
-    ../../prmjtime.h
-    ../../jsopcode.tbl
-    ../../jsautocfg.h
+add_library(jscript STATIC)
+
+target_sources(jscript
+    PRIVATE
+        ../../js.c
+        ../../jsapi.c
+        ../../jsarena.c
+        ../../jsarray.c
+        ../../jsatom.c
+        ../../jsbool.c
+        ../../jscntxt.c
+        ../../jsdate.c
+        ../../jsdbgapi.c
+        ../../jsdhash.c
+        ../../jsdtoa.c
+        ../../jsemit.c
+        ../../jsexn.c
+        ../../jsfile.c
+        ../../jsfun.c
+        ../../jsgc.c
+        ../../jshash.c
+        ../../jsinterp.c
+        ../../jsinvoke.c
+        ../../jsiter.c
+        ../../jskwgen.c
+        ../../jslock.c
+        ../../jslog2.c
+        ../../jslong.c
+        ../../jsmath.c
+        ../../jsnum.c
+        ../../jsobj.c
+        ../../jsopcode.c
+        ../../jsparse.c
+        ../../jsprf.c
+        ../../jsregexp.c
+        ../../jsscan.c
+        ../../jsscope.c
+        ../../jsscript.c
+        ../../jsstr.c
+        ../../jsutil.c
+        ../../jsxdrapi.c
+        ../../jsxml.c
+        ../../prmjtime.c
+        ../../jsapi.h
+        ../../jsarena.h
+        ../../jsarray.h
+        ../../jsatom.h
+        ../../jsbool.h
+        ../../jscntxt.h
+        ../../jsdate.h
+        ../../jsdbgapi.h
+        ../../jsdhash.h
+        ../../jsdtoa.h
+        ../../jsemit.h
+        ../../jsexn.h
+        ../../jsfun.h
+        ../../jsgc.h
+        ../../jshash.h
+        ../../jsinterp.h
+        ../../jsiter.h
+        ../../jslock.h
+        ../../jslong.h
+        ../../jsmath.h
+        ../../jsnum.h
+        ../../jsobj.h
+        ../../jsopcode.h
+        ../../jsparse.h
+        ../../jsprf.h
+        ../../jsprvtd.h
+        ../../jspubtd.h
+        ../../jsregexp.h
+        ../../jsscan.h
+        ../../jsscope.h
+        ../../jsscript.h
+        ../../jsstddef.h
+        ../../jsstr.h
+        ../../jstypes.h
+        ../../jsutil.h
+        ../../jsxdrapi.h
+        ../../jsxml.h
+        ../../prmjtime.h
+        ../../jsopcode.tbl
 )
+
+# We only want this files for Unix platforms
+if( NOT WIN32 )
+    target_sources(jscript PRIVATE
+        ../../jsautocfg.h
+    )
+endif()
 
 if (WIN32)
 
