@@ -164,6 +164,10 @@ else()
 			-Wno-tautological-constant-out-of-range-compare
 			$<$<CONFIG:Release>:-Os>
 		)
+	if (UNIX AND NOT APPLE AND NOT LINUX)
+		target_compile_options( jscript PRIVATE
+  			$<$<CONFIG:Release>:-Os>
+     		)
 	else()
 		target_compile_options(jscript PRIVATE
 			-MMD
