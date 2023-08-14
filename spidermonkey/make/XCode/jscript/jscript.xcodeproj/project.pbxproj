@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		64A90005293E37E0009B54DA /* js.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE3293E37DF009B54DA /* js.c */; };
 		64A90006293E37E0009B54DA /* jsapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE4293E37DF009B54DA /* jsapi.c */; };
 		64A90007293E37E0009B54DA /* jsapi.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEE5293E37DF009B54DA /* jsapi.h */; };
 		64A90008293E37E0009B54DA /* jsarena.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE6293E37DF009B54DA /* jsarena.c */; };
@@ -15,7 +16,6 @@
 		64A9000B293E37E0009B54DA /* jsarray.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEE9293E37DF009B54DA /* jsarray.h */; };
 		64A9000C293E37E0009B54DA /* jsatom.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEEA293E37DF009B54DA /* jsatom.c */; };
 		64A9000D293E37E0009B54DA /* jsatom.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEB293E37DF009B54DA /* jsatom.h */; };
-		64A9000E293E37E0009B54DA /* jsautocfg.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEC293E37DF009B54DA /* jsautocfg.h */; };
 		64A9000F293E37E0009B54DA /* jsautokw.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEED293E37DF009B54DA /* jsautokw.h */; };
 		64A90010293E37E0009B54DA /* jsbit.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FEEE293E37DF009B54DA /* jsbit.h */; };
 		64A90011293E37E0009B54DA /* jsbool.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEEF293E37DF009B54DA /* jsbool.c */; };
@@ -49,6 +49,7 @@
 		64A9002D293E37E0009B54DA /* jshash.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FF0D293E37DF009B54DA /* jshash.h */; };
 		64A9002E293E37E0009B54DA /* jsinterp.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FF0F293E37DF009B54DA /* jsinterp.c */; };
 		64A9002F293E37E0009B54DA /* jsinterp.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FF10293E37DF009B54DA /* jsinterp.h */; };
+		64A90004293E37E0009B54DA /* jsinvoke.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FEE2293E37DF009B54DA /* jsinvoke.c */; };
 		64A90030293E37E0009B54DA /* jsiter.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FF11293E37DF009B54DA /* jsiter.c */; };
 		64A90031293E37E0009B54DA /* jsiter.h in Headers */ = {isa = PBXBuildFile; fileRef = 64A9FF12293E37DF009B54DA /* jsiter.h */; };
 		64A90032293E37E0009B54DA /* jskwgen.c in Sources */ = {isa = PBXBuildFile; fileRef = 64A9FF14293E37DF009B54DA /* jskwgen.c */; };
@@ -98,6 +99,7 @@
 
 /* Begin PBXFileReference section */
 		64A9FE47293E37BC009B54DA /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		64A9FEE3293E37DF009B54DA /* js.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = js.c; sourceTree = "<group>"; };
 		64A9FEE4293E37DF009B54DA /* jsapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsapi.c; sourceTree = "<group>"; };
 		64A9FEE5293E37DF009B54DA /* jsapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsapi.h; sourceTree = "<group>"; };
 		64A9FEE6293E37DF009B54DA /* jsarena.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsarena.c; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 		64A9FF0D293E37DF009B54DA /* jshash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jshash.h; sourceTree = "<group>"; };
 		64A9FF0F293E37DF009B54DA /* jsinterp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsinterp.c; sourceTree = "<group>"; };
 		64A9FF10293E37DF009B54DA /* jsinterp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsinterp.h; sourceTree = "<group>"; };
+		64A9FEE2293E37DF009B54DA /* jsinvoke.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsinvoke.c; sourceTree = "<group>"; };
 		64A9FF11293E37DF009B54DA /* jsiter.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = jsiter.c; sourceTree = "<group>"; };
 		64A9FF12293E37DF009B54DA /* jsiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = jsiter.h; sourceTree = "<group>"; };
 		64A9FF13293E37DF009B54DA /* jskeyword.tbl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = jskeyword.tbl; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		64A9FE4E293E37DF009B54DA /* spidermonkey */ = {
 			isa = PBXGroup;
 			children = (
+				64A9FEE3293E37DF009B54DA /* js.c */,
 				64A9FEE4293E37DF009B54DA /* jsapi.c */,
 				64A9FEE6293E37DF009B54DA /* jsarena.c */,
 				64A9FEE8293E37DF009B54DA /* jsarray.c */,
@@ -284,6 +288,7 @@
 				64A9FF0A293E37DF009B54DA /* jsgc.c */,
 				64A9FF0C293E37DF009B54DA /* jshash.c */,
 				64A9FF0F293E37DF009B54DA /* jsinterp.c */,
+				64A9FEE2293E37DF009B54DA /* jsinvoke.c */,
 				64A9FF11293E37DF009B54DA /* jsiter.c */,
 				64A9FF14293E37DF009B54DA /* jskwgen.c */,
 				64A9FF18293E37DF009B54DA /* jslock.c */,
@@ -893,6 +898,8 @@
 				64A90040293E37E0009B54DA /* jsopcode.c in Sources */,
 				64A9005D293E37E0009B54DA /* prmjtime.c in Sources */,
 				64A9001E293E37E0009B54DA /* jsdhash.c in Sources */,
+				64A90004293E37E0009B54DA /* jsinvoke.c in Sources */,
+				64A90005293E37E0009B54DA /* js.c in Sources */,
 				64A90006293E37E0009B54DA /* jsapi.c in Sources */,
 				64A9003E293E37E0009B54DA /* jsobj.c in Sources */,
 				64A90011293E37E0009B54DA /* jsbool.c in Sources */,
