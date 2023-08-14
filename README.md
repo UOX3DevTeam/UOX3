@@ -9,7 +9,7 @@
 
 Supported UO Client versions: **~4.0.0p** to at least **~7.0.97.25** (with encryption removed by [ClassicUO](https://www.classicuo.eu), [Razor](https://github.com/msturgill/razor/releases) or similar tools). For additional details on UO client compatibility, check https://www.uox3.org/forums/viewtopic.php?f=1&t=2289
 
-UOX3 relies on **SpiderMonkey v1.7.0** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
+UOX3 relies on **SpiderMonkey v1.8.0-RC1** for its JS-based scripting engine, and on **zlib-1.2.11** for data compression matters, and comes bundled with specific, compatible versions of these.
 
 Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick chat!
 
@@ -40,7 +40,7 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 ---
 
 ## Step 2: Clone the UOX3 Git Repository
-*Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.7.0) and a minimal set of files required to compile zlib-1.2.11.*
+*Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.2.11.*
 <details>
   <summary>Using <strong>GitHub Desktop</strong> (Windows/macOS)</summary>
 
