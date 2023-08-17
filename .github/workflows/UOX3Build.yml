@@ -2,7 +2,9 @@ name: UOX3 Build
 
 on:
   push:
-
+    branches:
+      - 'master'
+      - 'develop'
     paths-ignore:
       - '**.js'
       - '**.dfn'
