@@ -357,64 +357,46 @@ JSObject *CJSRuntime::MakeNewObject( IUEEntries iType )
 			toMake = JS_NewObject( jsContext, &UOXRace_class, protoList[JSP_RACE], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CRace_Methods );
-			//JS_DefineProperties( jsContext, toMake, CRaceProperties );
 			break;
 		case IUE_CHAR:
 			toMake = JS_NewObject( jsContext, &UOXChar_class.base, protoList[JSP_CHAR], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineProperties( jsContext, toMake, CCharacterProps );
-			//JS_DefineFunctions( jsContext, toMake, CChar_Methods );
 			break;
 		case IUE_ITEM:
 			toMake = JS_NewObject( jsContext, &UOXItem_class.base, protoList[JSP_ITEM], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CItem_Methods );
-			//JS_DefineProperties( jsContext, toMake, CItemProps );
 			break;
 		case IUE_SOCK:
 			toMake = JS_NewObject( jsContext, &UOXSocket_class.base, protoList[JSP_SOCK], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CSocket_Methods );
-			//JS_DefineProperties( jsContext, toMake, CSocketProps );
 			break;
 		case IUE_GUILD:
 			toMake = JS_NewObject( jsContext, &UOXGuild_class, protoList[JSP_GUILD], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CGuild_Methods );
-			//JS_DefineProperties( jsContext, toMake, CGuildProperties );
 			break;
 		case IUE_REGION:
 			toMake = JS_NewObject( jsContext, &UOXRegion_class, protoList[JSP_REGION], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CRegion_Methods );
-			//JS_DefineProperties( jsContext, toMake, CRegionProperties );
 			break;
 		case IUE_SPAWNREGION:
 			toMake = JS_NewObject( jsContext, &UOXSpawnRegion_class, protoList[JSP_SPAWNREGION], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CSpawnRegion_Methods );
-			//JS_DefineProperties( jsContext, toMake, CSpawnRegionProperties );
 			break;
 		case IUE_PARTY:
 			toMake = JS_NewObject( jsContext, &UOXParty_class.base, protoList[JSP_PARTY], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CParty_Methods );
-			//JS_DefineProperties( jsContext, toMake, CPartyProperties );
 			break;
 		case IUE_ACCOUNT:
 			toMake = JS_NewObject( jsContext, &UOXAccount_class, protoList[JSP_ACCOUNT], jsGlobal );
 			if( toMake == nullptr )
 				return nullptr;
-			//JS_DefineFunctions( jsContext, toMake, CAccount_Methods );
-			//JS_DefineProperties( jsContext, toMake, CAccountProperties );
 			break;
 		default:
 		case IUE_COUNT:

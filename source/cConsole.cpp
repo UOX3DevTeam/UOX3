@@ -998,7 +998,7 @@ auto CConsole::Process(std::int32_t c) -> void
 #if defined( UOX_DEBUG_MODE )
 					Print( oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
 #endif
-					jsval eventRetVal;
+					JS::Value eventRetVal;
 					[[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
 				}
 				return;

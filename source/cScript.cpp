@@ -248,11 +248,11 @@ void ScriptError( JSContext *cx, const char *txt, ... )
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	SI32 TryParseJSVal( jsval toParse )
+//|	Function	-	SI32 TryParseJSVal( JS::Value toParse )
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Helper function to parse jsval returned from script
+//|	Purpose		-	Helper function to parse JS::Value returned from script
 //o------------------------------------------------------------------------------------------------o
-SI32 TryParseJSVal( jsval toParse )
+SI32 TryParseJSVal( JS::Value toParse )
 {
 	if( JSVAL_IS_NULL( toParse ) || ( !JSVAL_IS_BOOLEAN( toParse ) && !JSVAL_IS_INT( toParse )))
 	{
