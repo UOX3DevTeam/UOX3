@@ -15,173 +15,171 @@
 // 1.4 		3rd  November, 2001
 //			Addition of Tag functions.
 
-typedef JSBool ( SEngineFunc )( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval );
-
 // 90 functions so far
 // *	== prototype
 // **	== active function
 
 // Character related functions (9)
 
-SEngineFunc SE_SpawnNPC;			// Create NPC								*
+JSNative SE_SpawnNPC;			// Create NPC								*
 
 // Effect related functions (3)
 
-SEngineFunc SE_DoMovingEffect;		// Does moving effect						***
-SEngineFunc SE_DoTempEffect;		// Does a temp effect						***
-SEngineFunc SE_DoStaticEffect;		// Does a static effect at location			***
+JSNative SE_DoMovingEffect;		// Does moving effect						***
+JSNative SE_DoTempEffect;		// Does a temp effect						***
+JSNative SE_DoStaticEffect;		// Does a static effect at location			***
 
 // Item related functions (2)
 
-SEngineFunc SE_CreateBlankItem;		// Create an item							***
-SEngineFunc SE_CreateDFNItem;		// Create an item							***
-SEngineFunc SE_CreateHouse;			// Create a house from houses.dfn			***
-SEngineFunc SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
+JSNative SE_CreateBlankItem;		// Create an item							***
+JSNative SE_CreateDFNItem;		// Create an item							***
+JSNative SE_CreateHouse;			// Create a house from houses.dfn			***
+JSNative SE_CreateBaseMulti;		// Create a raw multi based on multi ID		***
 
 // Speech related functions (7)
-SEngineFunc SE_BroadcastMessage;	//											***
+JSNative SE_BroadcastMessage;	//											***
 
 // Random functions(5)
-SEngineFunc SE_RandomNumber;		// Calculates a random number				***
-SEngineFunc SE_CalcCharFromSer;		//											***
-SEngineFunc SE_CalcItemFromSer;		//											***
-SEngineFunc SE_CalcMultiFromSer;	//											***
+JSNative SE_RandomNumber;		// Calculates a random number				***
+JSNative SE_CalcCharFromSer;		//											***
+JSNative SE_CalcItemFromSer;		//											***
+JSNative SE_CalcMultiFromSer;	//											***
 
-SEngineFunc SE_MakeItem;			//											***
+JSNative SE_MakeItem;			//											***
 
-SEngineFunc SE_CommandLevelReq;		//											*
-SEngineFunc SE_CommandExists;		//											*
-SEngineFunc SE_FirstCommand;		//											*
-SEngineFunc SE_NextCommand;			//											*
-SEngineFunc SE_FinishedCommandList;	//											*
+JSNative SE_CommandLevelReq;		//											*
+JSNative SE_CommandExists;		//											*
+JSNative SE_FirstCommand;		//											*
+JSNative SE_NextCommand;			//											*
+JSNative SE_FinishedCommandList;	//											*
 
-SEngineFunc SE_RegisterCommand;		//											***
-SEngineFunc SE_EnableCommand;		//											***
-SEngineFunc SE_DisableCommand;		//											***
+JSNative SE_RegisterCommand;		//											***
+JSNative SE_EnableCommand;		//											***
+JSNative SE_DisableCommand;		//											***
 
-SEngineFunc SE_RegisterKey;			//											***
-SEngineFunc SE_EnableKey;			//											***
-SEngineFunc SE_DisableKey;			//											***
+JSNative SE_RegisterKey;			//											***
+JSNative SE_EnableKey;			//											***
+JSNative SE_DisableKey;			//											***
 
-SEngineFunc SE_RegisterConsoleFunc;	//											***
-SEngineFunc SE_EnableConsoleFunc;	//											***
-SEngineFunc SE_DisableConsoleFunc;	//											***
+JSNative SE_RegisterConsoleFunc;	//											***
+JSNative SE_EnableConsoleFunc;	//											***
+JSNative SE_DisableConsoleFunc;	//											***
 
-SEngineFunc SE_RegisterSpell;		//											***
-SEngineFunc SE_EnableSpell;			//											***
-SEngineFunc SE_DisableSpell;		//											***
+JSNative SE_RegisterSpell;		//											***
+JSNative SE_EnableSpell;			//											***
+JSNative SE_DisableSpell;		//											***
 
-SEngineFunc SE_RegisterSkill;
-SEngineFunc SE_RegisterPacket;
+JSNative SE_RegisterSkill;
+JSNative SE_RegisterPacket;
 
-SEngineFunc SE_GetHour;					//										***
-SEngineFunc SE_GetMinute;				//										***
-SEngineFunc SE_GetDay;					//										***
-SEngineFunc SE_SecondsPerUOMinute;		//										***
+JSNative SE_GetHour;					//										***
+JSNative SE_GetMinute;				//										***
+JSNative SE_GetDay;					//										***
+JSNative SE_SecondsPerUOMinute;		//										***
 
-SEngineFunc SE_GetCurrentClock;			//										***
-SEngineFunc SE_GetStartTime;			//										***
-SEngineFunc SE_GetMurderThreshold;		//										***
-SEngineFunc SE_RollDice;				//										***
-SEngineFunc SE_RaceCompareByRace;		//										***
-SEngineFunc SE_GetRandomSOSArea;		//										***
+JSNative SE_GetCurrentClock;			//										***
+JSNative SE_GetStartTime;			//										***
+JSNative SE_GetMurderThreshold;		//										***
+JSNative SE_RollDice;				//										***
+JSNative SE_RaceCompareByRace;		//										***
+JSNative SE_GetRandomSOSArea;		//										***
 
-SEngineFunc SE_FindMulti;				//										***
-SEngineFunc SE_GetItem;					//										***
-SEngineFunc SE_FindItem;				//										***
+JSNative SE_FindMulti;				//										***
+JSNative SE_GetItem;					//										***
+JSNative SE_FindItem;				//										***
 
-SEngineFunc SE_CompareGuildByGuild;		//										**
+JSNative SE_CompareGuildByGuild;		//										**
 
-SEngineFunc SE_PossessTown;				//										***
+JSNative SE_PossessTown;				//										***
 
-SEngineFunc SE_IsRaceWeakToWeather;		//										***
-SEngineFunc SE_GetRaceSkillAdjustment;	//										***
+JSNative SE_IsRaceWeakToWeather;		//										***
+JSNative SE_GetRaceSkillAdjustment;	//										***
 
-SEngineFunc SE_UseItem;					//										***
-SEngineFunc SE_TriggerTrap;				//										***
+JSNative SE_UseItem;					//										***
+JSNative SE_TriggerTrap;				//										***
 
-SEngineFunc SE_TriggerEvent;			//										*
-SEngineFunc SE_DoesEventExist;			//										*
+JSNative SE_TriggerEvent;			//										*
+JSNative SE_DoesEventExist;			//										*
 
-SEngineFunc SE_GetPackOwner;			//										***
-SEngineFunc SE_FindRootContainer;		//										***
-SEngineFunc SE_CalcTargetedItem;		//										***
-SEngineFunc SE_CalcTargetedChar;		//										***
-SEngineFunc SE_GetTileIdAtMapCoord;		//										***
+JSNative SE_GetPackOwner;			//										***
+JSNative SE_FindRootContainer;		//										***
+JSNative SE_CalcTargetedItem;		//										***
+JSNative SE_CalcTargetedChar;		//										***
+JSNative SE_GetTileIdAtMapCoord;		//										***
 
-SEngineFunc SE_StringToNum;				// Marked for Deletion
-SEngineFunc SE_NumToString;				// Marked for Deletion
-SEngineFunc SE_NumToHexString;			// Marked for Deletion
-SEngineFunc SE_EraStringToNum;
+JSNative SE_StringToNum;				// Marked for Deletion
+JSNative SE_NumToString;				// Marked for Deletion
+JSNative SE_NumToHexString;			// Marked for Deletion
+JSNative SE_EraStringToNum;
 
-SEngineFunc SE_GetRaceCount;
-SEngineFunc SE_AreaCharacterFunction;
-SEngineFunc SE_AreaItemFunction;
-SEngineFunc SE_Reload;
+JSNative SE_GetRaceCount;
+JSNative SE_AreaCharacterFunction;
+JSNative SE_AreaItemFunction;
+JSNative SE_Reload;
 
-SEngineFunc SE_GetDictionaryEntry;
-SEngineFunc SE_Yell;
-SEngineFunc SE_SendStaticStats;
-SEngineFunc SE_GetTileHeight;
-SEngineFunc SE_IterateOver;
-SEngineFunc SE_IterateOverSpawnRegions;
-SEngineFunc SE_WorldBrightLevel;
-SEngineFunc SE_WorldDarkLevel;
-SEngineFunc SE_WorldDungeonLevel;
-SEngineFunc SE_GetSpawnRegionFacetStatus;
-SEngineFunc SE_SetSpawnRegionFacetStatus;
-SEngineFunc SE_GetSocketFromIndex;
-SEngineFunc SE_ResourceArea;
-SEngineFunc SE_ResourceAmount;
-SEngineFunc SE_ResourceTime;
-SEngineFunc SE_ResourceRegion;
-SEngineFunc SE_Moon;
+JSNative SE_GetDictionaryEntry;
+JSNative SE_Yell;
+JSNative SE_SendStaticStats;
+JSNative SE_GetTileHeight;
+JSNative SE_IterateOver;
+JSNative SE_IterateOverSpawnRegions;
+JSNative SE_WorldBrightLevel;
+JSNative SE_WorldDarkLevel;
+JSNative SE_WorldDungeonLevel;
+JSNative SE_GetSpawnRegionFacetStatus;
+JSNative SE_SetSpawnRegionFacetStatus;
+JSNative SE_GetSocketFromIndex;
+JSNative SE_ResourceArea;
+JSNative SE_ResourceAmount;
+JSNative SE_ResourceTime;
+JSNative SE_ResourceRegion;
+JSNative SE_Moon;
 
-SEngineFunc SE_GetTownRegion;
-SEngineFunc SE_GetSpawnRegion;
-SEngineFunc SE_GetSpawnRegionCount;
+JSNative SE_GetTownRegion;
+JSNative SE_GetSpawnRegion;
+JSNative SE_GetSpawnRegionCount;
 
-SEngineFunc SE_ReloadJSFile;
-SEngineFunc SE_StaticInRange;
-SEngineFunc SE_StaticAt;
-SEngineFunc SE_GetMapElevation;
-SEngineFunc SE_IsInBuilding;
-SEngineFunc SE_CheckStaticFlag;
-SEngineFunc SE_CheckDynamicFlag;
-SEngineFunc SE_CheckTileFlag;
-SEngineFunc SE_DoesStaticBlock;
-SEngineFunc SE_DoesDynamicBlock;
-SEngineFunc SE_DoesMapBlock;
-SEngineFunc SE_DoesCharacterBlock;
-SEngineFunc SE_DistanceBetween;
+JSNative SE_ReloadJSFile;
+JSNative SE_StaticInRange;
+JSNative SE_StaticAt;
+JSNative SE_GetMapElevation;
+JSNative SE_IsInBuilding;
+JSNative SE_CheckStaticFlag;
+JSNative SE_CheckDynamicFlag;
+JSNative SE_CheckTileFlag;
+JSNative SE_DoesStaticBlock;
+JSNative SE_DoesDynamicBlock;
+JSNative SE_DoesMapBlock;
+JSNative SE_DoesCharacterBlock;
+JSNative SE_DistanceBetween;
 
-SEngineFunc SE_ValidateObject;
-SEngineFunc SE_ApplyDamageBonuses;
-SEngineFunc SE_ApplyDefenseModifiers;
-SEngineFunc SE_WillResultInCriminal;
+JSNative SE_ValidateObject;
+JSNative SE_ApplyDamageBonuses;
+JSNative SE_ApplyDefenseModifiers;
+JSNative SE_WillResultInCriminal;
 
-SEngineFunc SE_CreateParty;
+JSNative SE_CreateParty;
 
 // Server settings
-SEngineFunc SE_GetClientFeature;
-SEngineFunc SE_GetServerFeature;
-SEngineFunc SE_GetServerSetting;
+JSNative SE_GetClientFeature;
+JSNative SE_GetServerFeature;
+JSNative SE_GetServerSetting;
 
-SEngineFunc SE_DeleteFile;
+JSNative SE_DeleteFile;
 
 // Account 
-SEngineFunc SE_GetAccountCount;			//										***
-SEngineFunc SE_GetPlayerCount;			//										***
-SEngineFunc SE_GetItemCount;			//										***
-SEngineFunc SE_GetMultiCount;			//										***
-SEngineFunc SE_GetCharacterCount;		//										***
-SEngineFunc SE_GetServerVersionString;	//										***
+JSNative SE_GetAccountCount;			//										***
+JSNative SE_GetPlayerCount;			//										***
+JSNative SE_GetItemCount;			//										***
+JSNative SE_GetMultiCount;			//										***
+JSNative SE_GetCharacterCount;		//										***
+JSNative SE_GetServerVersionString;	//										***
 
 // Server constants
-SEngineFunc SE_BASEITEMSERIAL;			//										***
-SEngineFunc SE_INVALIDSERIAL;			//										***
-SEngineFunc SE_INVALIDID;				//										***
-SEngineFunc SE_INVALIDCOLOUR;			//										***
+JSNative SE_BASEITEMSERIAL;			//										***
+JSNative SE_INVALIDSERIAL;			//										***
+JSNative SE_INVALIDID;				//										***
+JSNative SE_INVALIDCOLOUR;			//										***
 
 
 #endif
