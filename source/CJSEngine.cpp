@@ -17,6 +17,7 @@
 #include "UOXJSMethods.h"
 #include "UOXJSPropertySpecs.h"
 #include <algorithm>
+#include <js/Initialization.h>
 
 CJSEngine *JSEngine = nullptr;
 
@@ -24,7 +25,7 @@ CJSEngine *JSEngine = nullptr;
 auto CJSEngine::Startup() -> void
 {
 	runtimeList.resize( 0 );
-	const UI32 maxEngineSize = 0xFFFFFFFF; // 4 gb, hard max
+  const UI32 maxEngineSize = JS::DefaultHeapMaxBytes;
 
 	// 16 MB minimum. Any lower and UOX3 is prone to crashes from frequent JS reloads
 	auto maxBytesSize = std::max( static_cast<UI16>( 16 ), cwmWorldState->ServerData()->GetJSEngineSize() ); // from INI
@@ -36,6 +37,11 @@ auto CJSEngine::Startup() -> void
 	Console.PrintSectionBegin();
 	Console << "Starting JavaScript Engine...." << myendl;
 
+	if (!JS_Init())
+	{
+		throw new std::runtime_error("Unable to initialise JavaScript engine");
+  }
+
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Default Runtime
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
 
@@ -45,8 +51,6 @@ auto CJSEngine::Startup() -> void
 //===================================================================
 CJSEngine::~CJSEngine()
 {
-	// Why?  we are shutting down, the process memory will take care of this for us in theory
-	/*
 	for( RUNTIMELIST_ITERATOR rIter = runtimeList.begin(); rIter != runtimeList.end(); ++rIter )
 	{
 		if(( *rIter))
@@ -54,7 +58,7 @@ CJSEngine::~CJSEngine()
 			delete ( *rIter );
 		}
 	}
-	*/
+  JS_ShutDown();
 }
 
 void CJSEngine::Reload( void )
@@ -158,6 +162,8 @@ CJSRuntime::CJSRuntime( UI32 engineSize )
 {
   JS::RealmOptions options;
 	jsContext = JS_NewContext( engineSize );
+
+	JS::InitSelfHostedCode(jsContext);
 
 	jsGlobal = JS_NewGlobalObject(jsContext, &global_class, nullptr, JS::FireOnNewGlobalHook, options);
 	if( jsGlobal == nullptr )

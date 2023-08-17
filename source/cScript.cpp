@@ -289,7 +289,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		needsChecking[i].set();
 	}
 
-	targContext = JSEngine->GetContext( runTime ); //JS_NewContext( JSEngine->GetRuntime( runTime ), 0x2000 );
+	targContext = JSEngine->GetContext( runTime );
 	if( targContext == nullptr )
 		return;
 
