@@ -999,7 +999,7 @@ auto CConsole::Process(std::int32_t c) -> void
 					Print( oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
 #endif
 					JS::Value eventRetVal;
-					[[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
+					bool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
 				}
 				return;
 			}

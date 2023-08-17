@@ -752,7 +752,7 @@ inline JSPropertySpec CResourceProperties[] =
 	{ "oreTime",	CRESP_ORETIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fishAmount",	CRESP_FISHAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "fishTime",	CRESP_FISHTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CPartyProperties[] =

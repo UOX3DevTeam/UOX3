@@ -9,7 +9,7 @@
 #ifndef __UOXJSPropertyFuncs__
 #define __UOXJSPropertyFuncs__
 
-typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, JS::Value id, JS::Value *vp );
+typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, JS::Value id, JS::Value *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
 JSPropertyFunc CSpellProps_getProperty;

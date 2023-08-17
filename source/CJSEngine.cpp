@@ -156,32 +156,16 @@ void CJSEngine::ReleaseObject( IUEEntries iType, void *index )
 //======================================================================================================
 CJSRuntime::CJSRuntime( UI32 engineSize )
 {
-	jsRuntime = JS_NewRuntime( engineSize );
-	if( jsRuntime == nullptr )
-	{
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	}
+  JS::RealmOptions options;
+	jsContext = JS_NewContext( engineSize );
 
-	// No need to use a large number here, it's not stack size as documentation indicated,
-	// but "chunk size of the stack pool". Recommendations are to leave it at 8192. In
-	// debug builds, larger values can even degrade performance drastically
-	jsContext = JS_NewContext( jsRuntime, 8192 );
-
-	// Specify JS 1.7 as version to unlock const variables, let, etc
-	JS_SetVersion( jsContext, JSVERSION_1_8 );
-
-	if( jsContext == nullptr )
-	{
-		Shutdown( FATAL_UOX3_JAVASCRIPT );
-	}
-
-	jsGlobal = JS_NewObject( jsContext, &global_class, nullptr, nullptr );
+	jsGlobal = JS_NewGlobalObject(jsContext, &global_class, nullptr, JS::FireOnNewGlobalHook, options);
 	if( jsGlobal == nullptr )
 	{
 		Shutdown( FATAL_UOX3_JAVASCRIPT );
 	}
 	JS_LockGCThing( jsContext, jsGlobal );
-	JS_InitStandardClasses( jsContext, jsGlobal );
+	JS::InitRealmStandardClasses( jsContext );
 
 	objectList.resize( IUE_COUNT );
 
@@ -205,7 +189,6 @@ CJSRuntime::~CJSRuntime( void )
 	}
 	JS_UnlockGCThing( jsContext, jsGlobal );
 	JS_DestroyContext( jsContext );
-	JS_DestroyRuntime( jsRuntime );
 }
 
 void CJSRuntime::Cleanup( void )
