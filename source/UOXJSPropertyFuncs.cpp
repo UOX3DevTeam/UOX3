@@ -11,7 +11,6 @@
 #include "UOXJSPropertySpecs.h"
 #include "UOXJSPropertyEnums.h"
 #include "UOXJSPropertyFuncs.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 
 #include "cGuild.h"

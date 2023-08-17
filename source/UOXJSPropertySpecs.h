@@ -51,7 +51,7 @@ inline JSPropertySpec CSpellProperties[] =
 	{ "soundEffect",		CSP_SOUNDEFFECT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "enabled",			CSP_ENABLED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "baseDmg",			CSP_BASEDMG,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CGlobalSkillProperties[] =
@@ -63,7 +63,7 @@ inline JSPropertySpec CGlobalSkillProperties[] =
 	{ "intelligence",		CGSKILL_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "skillDelay",			CGSKILL_SKILLDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "scriptID",			CGSKILL_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CCreateEntryProperties[] =
@@ -81,7 +81,7 @@ inline JSPropertySpec CCreateEntryProperties[] =
 	{ "skills",				CMAKE_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "avgMinSkill",		CMAKE_AVGMINSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "avgMaxSkill",		CMAKE_AVGMAXSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CTimerProperties[] =
@@ -121,7 +121,7 @@ inline JSPropertySpec CTimerProperties[] =
 	{ "SOCK_MUTETIME",			TIMER_SOCK_MUTETIME,		JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRACKINGDISPLAY",	TIMER_SOCK_TRACKINGDISPLAY,	JSPROP_ENUMPERMRO, nullptr, nullptr },
 	{ "SOCK_TRAFFICWARDEN",		TIMER_SOCK_TRAFFICWARDEN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-	{ nullptr,					static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CRaceProperties[] =
@@ -140,7 +140,7 @@ inline JSPropertySpec CRaceProperties[] =
 	{ "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 
@@ -177,7 +177,7 @@ inline JSPropertySpec CRegionProperties[] =
 	{ "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CSpawnRegionProperties[] =
@@ -205,7 +205,7 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 	{ "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),				static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CGuildProperties[] =
@@ -221,7 +221,7 @@ inline JSPropertySpec CGuildProperties[] =
 	{ "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CCharacterProps[] =
@@ -415,7 +415,7 @@ inline JSPropertySpec CCharacterProps[] =
 	{ "playTime",		CCP_PLAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CItemProps[] =
@@ -572,7 +572,7 @@ inline JSPropertySpec CItemProps[] =
 	{ "tradeTimestamp",	CIP_TRADETIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
 	{ "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,			static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CSocketProps[] =
@@ -614,7 +614,7 @@ inline JSPropertySpec CSocketProps[] =
 	{ "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CSkillsProps[] =
@@ -678,14 +678,14 @@ inline JSPropertySpec CSkillsProps[] =
 	{ "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "throwing",			THROWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{ nullptr,				static_cast<SI08>(0),			static_cast<UI08>(0), nullptr, nullptr }
+	JS_PS_END
 };
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
 	{	"buttons",	CGumpData_Button,		JSPROP_ENUMANDPERM, nullptr, nullptr	},
 	{	"IDs",		CGumpData_ID ,			JSPROP_ENUMANDPERM, nullptr, nullptr	},
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CAccountProperties[] =
@@ -726,14 +726,14 @@ inline JSPropertySpec CAccountProperties[] =
 	{ "isSeer",			CACCOUNT_SEER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isCounselor",	CACCOUNT_COUNSELOR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "isGM",			CACCOUNT_GM,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),		static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CConsoleProperties[] =
 {
 	{ "mode",		CCONSOLE_MODE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "logEcho",	CCONSOLE_LOGECHO,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CScriptSectionProperties[] =
@@ -741,7 +741,7 @@ inline JSPropertySpec CScriptSectionProperties[] =
 	{ "numTags",	CSS_NUMTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "atEnd",		CSS_ATEND,				JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "atEndTags",	CSS_ATENDTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,	static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CResourceProperties[] =
@@ -760,13 +760,13 @@ inline JSPropertySpec CPartyProperties[] =
 	{ "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
 	{ "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr	},
 	{ "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 inline JSPropertySpec CScriptProperties[] =
 {
 	{ "script_id",		CSCRIPT_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-	{	nullptr,		static_cast<SI08>(0),	static_cast<UI08>(0), nullptr, nullptr	}
+	JS_PS_END
 };
 
 #endif

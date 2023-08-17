@@ -19,7 +19,6 @@
 #include "SEFunctions.h"
 #include "UOXJSClasses.h"
 #include "UOXJSMethods.h"
-#include "JSEncapsulate.h"
 #include "CJSEngine.h"
 
 #include "cMagic.h"
@@ -164,7 +163,7 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prepares a new packet stream, ready for network shenanigans in JS
 //o------------------------------------------------------------------------------------------------o
-JSBool Packet( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative Packet( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
@@ -172,7 +171,7 @@ JSBool Packet( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[mayb
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -181,19 +180,19 @@ JSBool Packet( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes a packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 
 	if( toDelete == nullptr )
-		return JS_FALSE;
+		return false;
 
 	delete toDelete;
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, obj );
 	JS_SetPrivate( cx, obj, nullptr );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -202,19 +201,19 @@ JSBool CPacket_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a single byte at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CPacket_WriteByte) Invalid Number of Arguments %d, needs: 2 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteByte) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
@@ -222,7 +221,7 @@ JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	myPacket->GetPacketStream().WriteByte( position, toWrite );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -231,19 +230,19 @@ JSBool CPacket_WriteByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes two bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CPacket_WriteShort) Invalid Number of Arguments %d, needs: 2 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteShort) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
@@ -251,7 +250,7 @@ JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 
 	myPacket->GetPacketStream().WriteShort( position, toWrite );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -260,19 +259,19 @@ JSBool CPacket_WriteShort( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes four bytes at the specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CPacket_WriteLong) Invalid Number of Arguments %d, needs: 2 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteLong) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
@@ -282,7 +281,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -291,19 +290,19 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes variable number of bytes at specified position in the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Number of Arguments %d, needs: 3 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
@@ -312,7 +311,7 @@ JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	myPacket->GetPacketStream().WriteString( position, toWrite, len );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -321,19 +320,19 @@ JSBool CPacket_WriteString( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reserves a specific size for the packet stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CPacket_ReserveSize) Invalid Number of Arguments %d, needs: 1 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_ReserveSize) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t len = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
@@ -341,7 +340,7 @@ JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	myPacket->GetPacketStream().ReserveSize( len );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -350,12 +349,12 @@ JSBool CPacket_ReserveSize( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends prepared packet stream to network socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CSocket_Send) Invalid Number of Arguments %d, needs: 1 ", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CSocket *mSock			= static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
@@ -365,12 +364,12 @@ JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( mSock == nullptr || myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Object Passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mSock->Send( myPacket );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -378,7 +377,7 @@ JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Constructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
-JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	// Allocate the GumpList here and "SetPrivate" it to the Object
 	SEGump_st *toAdd = new SEGump_st;
@@ -390,7 +389,7 @@ JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_
 	JS_SetPrivate( cx, obj, toAdd);
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -399,12 +398,12 @@ JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	SEGump_st *toDelete = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 
 	if( toDelete == nullptr )
-		return JS_FALSE;
+		return false;
 
 	delete toDelete->one;
 	delete toDelete->two;
@@ -414,7 +413,7 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[
 	//JS_RemoveRoot( cx, obj );
 	JS_SetPrivate( cx, obj, nullptr );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -423,19 +422,19 @@ JSBool CGump_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes JS Gump Data object and frees up associated memory
 //o------------------------------------------------------------------------------------------------o
-JSBool CGumpData_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	SEGumpData_st *toDelete = static_cast<SEGumpData_st*>( JS_GetPrivate( cx, obj ));
 
 	if( toDelete == nullptr )
-		return JS_FALSE;
+		return false;
 
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, &obj );
 	JS_SetPrivate( cx, obj, nullptr );
 
 	delete toDelete;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -444,13 +443,13 @@ JSBool CGumpData_Free( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets data input from TextEntr(y/ies) in JS Gump
 //o------------------------------------------------------------------------------------------------o
-JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CGumpData_GetEdit( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getEdit) Invalid Number of Arguments %d, needs: 1 ", argc );
 		*rval = STRING_TO_JSVAL( "" );
-		return JS_TRUE;
+		return true;
 	}
 
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
@@ -459,7 +458,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		ScriptError( cx, "(DataGump-getEdit) Invalid object assigned" );
 		*rval = STRING_TO_JSVAL( "" );
-		return JS_TRUE;
+		return true;
 	}
 
 	size_t index = JSVAL_TO_INT( argv[0] );
@@ -472,7 +471,7 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		*rval = STRING_TO_JSVAL( "" );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -481,13 +480,13 @@ JSBool CGumpData_GetEdit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets nID at specified index in Gump Data
 //o------------------------------------------------------------------------------------------------o
-JSBool CGumpData_GetId( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CGumpData_GetId( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getID) Invalid Number of Arguments %d, needs: 1 ", argc );
 		*rval = INT_TO_JSVAL( -1 );
-		return JS_TRUE;
+		return true;
 	}
 
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
@@ -496,7 +495,7 @@ JSBool CGumpData_GetId( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	{
 		ScriptError( cx, "(DataGump_getID) Invalid object assigned" );
 		*rval = INT_TO_JSVAL( -1 );
-		return JS_TRUE;
+		return true;
 	}
 	size_t index = JSVAL_TO_INT( argv[0] );
 
@@ -509,7 +508,7 @@ JSBool CGumpData_GetId( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		*rval = INT_TO_JSVAL( -1 );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -518,13 +517,13 @@ JSBool CGumpData_GetId( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets value of button at specified index in Gump Data
 //o------------------------------------------------------------------------------------------------o
-JSBool CGumpData_GetButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CGumpData_GetButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 )
 	{
 		ScriptError( cx, "(GumpData_getbutton) Invalid Number of Arguments %d, needs: 1 ", argc );
 		*rval = INT_TO_JSVAL( -1 );
-		return JS_TRUE;
+		return true;
 	}
 
 	SEGumpData_st *myItem = static_cast<SEGumpData_st *>( JS_GetPrivate( cx, obj ));
@@ -533,7 +532,7 @@ JSBool CGumpData_GetButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	{
 		ScriptError( cx, "(DataGump-getID) Invalid object assigned" );
 		*rval = INT_TO_JSVAL( -1 );
-		return JS_TRUE;
+		return true;
 	}
 	size_t index = JSVAL_TO_INT( argv[0] );
 	if( index < myItem->nButtons.size() )
@@ -545,7 +544,7 @@ JSBool CGumpData_GetButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		*rval = INT_TO_JSVAL( -1 );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -554,12 +553,12 @@ JSBool CGumpData_GetButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a checkbox gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddCheckbox( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 5 || argc > 6 )
 	{
 		ScriptError( cx, "AddCheckbox: Wrong count of Parameters, needs 5 or 6" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL = 0;
@@ -593,12 +592,12 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "Gump_AddCheckbox: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -608,12 +607,12 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Adds noclose element to gump stream; specifies that gump cannot be closed by
 //|					clicking the right mouse button
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_NoClose( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NoClose: Wrong count of Parameters, needs 0" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -621,12 +620,12 @@ JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "NoClose: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( "noclose" );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -636,12 +635,12 @@ JSBool CGump_NoClose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds nomove element to gump stream; specifies that gump cannot be moved
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_NoMove( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NoMove: Wrong count of Parameters, needs 0" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -649,12 +648,12 @@ JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "NoMove: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( "nomove" );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -668,12 +667,12 @@ JSBool CGump_NoMove( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 //|					using the "Close Dialogs" client macro
 //|					No response is sent to server upon closing the Gump in this manner.
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_NoDispose( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NoDispose: Wrong count of Parameters, needs 0" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
@@ -681,12 +680,12 @@ JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "NoDispose: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( "nodispose" );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -696,12 +695,12 @@ JSBool CGump_NoDispose( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds noresize element to gump stream; specifies that gump cannot be resized
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_NoResize( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NoResize: Wrong count of Parameters, needs 0" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st *>( JS_GetPrivate( cx, obj ));
@@ -709,12 +708,12 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "NoResize: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( "noresize" );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -723,12 +722,12 @@ JSBool CGump_NoResize( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Possible that the mastergump command itself only has any effect with client versions between 4.0.4d and 5.0.5b?
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_MasterGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "MasterGump: Wrong count of Parameters, needs 1" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 masterGumpId = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
@@ -737,13 +736,13 @@ JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "MasterGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Also send mastergump command with new gumpId
 	gList->one->push_back( oldstrutil::format( "mastergump %i %i %i %i %i", masterGumpId ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -752,12 +751,12 @@ JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds background gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddBackground( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
 		ScriptError( cx, "AddBackground: Invalid number of arguments (takes 5)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -770,12 +769,12 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddBackground: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -784,12 +783,12 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 6 || argc > 7 )
 	{
 		ScriptError( cx, "AddButton: Invalid number of arguments (takes 6 or 7)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
@@ -803,12 +802,12 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddButton: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -818,12 +817,12 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump with tileart to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddButtonTileArt( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 11 )
 	{
 		ScriptError( cx, "AddButtonTileArt: Invalid number of arguments (takes 11)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
@@ -842,12 +841,12 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddButtonTileArt: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -856,12 +855,12 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds button gump for navigating gump pages to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddPageButton( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 4 || argc > 5 )
 	{
 		ScriptError( cx, "AddPageButton: Invalid number of arguments (takes 4 or 5)" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
 	SI16 tR = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
@@ -873,12 +872,12 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPageButton: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -888,12 +887,12 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds transparent area gump to gump stream, turns underlying elements transparent
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddCheckerTrans( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "AddCheckerTrans: Invalid number of arguments (takes 5 x y width height)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -905,12 +904,12 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddCheckerTrans: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "checkertrans %i %i %i %i", x, y, width, height ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -920,12 +919,12 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds text field gump to gump stream, cropped to certain dimensions
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddCroppedText( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 6 )
 	{
 		ScriptError( cx, "AddCroppedText: Invalid number of arguments (takes 6 x y hue width height text)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 TextX		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -939,14 +938,14 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( TextString == nullptr )
 	{
 		ScriptError( cx, "AddCroppedText: Text is required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddCroppedText: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 textId = gList->textId;
@@ -955,7 +954,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	gList->one->push_back( oldstrutil::format( "croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, textId ));
 	gList->two->push_back( TextString );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -965,24 +964,24 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds new group element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddGroup: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGroup: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -991,24 +990,24 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Ends a previously started group element
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_EndGroup( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "EndGroup: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "EndGroup: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1017,12 +1016,12 @@ JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "AddGump: Invalid number of arguments (takes 3 or 4 - topLeft, topRight, imageID and hue (optional))" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1038,7 +1037,7 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( rgbColor == 0 )
@@ -1050,7 +1049,7 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1059,12 +1058,12 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "AddGumpColor: Invalid number of arguments (takes 4)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1076,12 +1075,12 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddGumpColor: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1098,19 +1097,19 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|					UOX3 will send the following gump command to add a tooltip element to previous
 //|					gump element: "tooltip 1042971 @My Custom Text@"
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddToolTip( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 11 )
 	{
 		ScriptError( cx, "AddToolTip: Invalid number of arguments (takes at least 1, maximum 11)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddToolTip: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 tooltip = static_cast<SI32>( JSVAL_TO_INT( argv[0] ));
@@ -1136,7 +1135,7 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	gList->one->push_back( temp.str() );
-	return JS_TRUE;
+	return true;
 }
 
 //o-------------------------------------------------------------------------------- ---------------o
@@ -1146,12 +1145,12 @@ JSBool CGump_AddToolTip( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new HTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
 		ScriptError( cx, "AddHTMLGump: Invalid number of arguments (takes 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -1166,14 +1165,14 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( TextString == nullptr )
 	{
 		ScriptError( cx, "AddHTMLGump: Text is required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddHTMLGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 textId = gList->textId;
@@ -1185,7 +1184,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	gList->one->push_back( oldstrutil::format( "htmlgump %i %i %i %i %u %i %i", x, y, width, height, textId, iBrd, iScrl ));
 	gList->two->push_back( TextString );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1194,24 +1193,24 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new page element to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddPage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddPage: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPage: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1220,12 +1219,12 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddPicture( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
 		ScriptError( cx, "AddPicture: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1236,12 +1235,12 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPicture: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "tilepic %i %i %i", tL, tR, gImage ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1250,12 +1249,12 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a tile image gump to gump stream, with additional parameter for hue
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddPictureColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "AddPicture: Invalid number of arguments (takes 4)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1267,12 +1266,12 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPictureColor: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1282,12 +1281,12 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //|	Purpose		-	Adds a picinpic gump to the gump stream
 //|	Notes		-	Requires client v7.0.80.0 or above
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddPicInPic( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
 		ScriptError( cx, "AddPicInPic: Invalid number of arguments (takes 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x			= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // starting x
@@ -1302,12 +1301,12 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddPicInPic: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1320,12 +1319,12 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|					object serial that was provided as a regular tooltip on cursor. Could be used to
 //|					show item stats for items on a custom paperdoll, for instance.
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddItemProperty( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddItemProperty: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
@@ -1334,7 +1333,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
 	{
 		ScriptError( cx, "SetCont: Invalid Object/Argument, takes 1 arg: item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SERIAL trgSer = trgObj->GetSerial();
@@ -1343,12 +1342,12 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddItemProperty: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "itemproperty %i", trgSer ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1357,12 +1356,12 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a radio button gump to gumps stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddRadio( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 5 || argc > 6 )
 	{
 		ScriptError( cx, "Gump_AddRadio: Invalid number of arguments (takes 5 or 6)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL = 0;
@@ -1396,12 +1395,12 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddRadio: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1410,12 +1409,12 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddText( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "AddText: Invalid number of arguments (takes 4)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 textId;
@@ -1429,14 +1428,14 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 	if( TextString == nullptr )
 	{
 		ScriptError( cx, "AddText: Text is required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddText: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	textId = gList->textId;
@@ -1445,7 +1444,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 	gList->one->push_back( oldstrutil::format( "text %i %i %i %u", TextX, TextY, TextHue, textId ));
 	gList->two->push_back( TextString );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1454,12 +1453,12 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddTextEntry( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
 		ScriptError( cx, "AddTextEntry: Invalid number of arguments (takes 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1474,20 +1473,20 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( test == nullptr )
 	{
 		ScriptError( cx, "AddTextEntry: Text is required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTextEntry: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex ));
 	gList->two->push_back( test );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1496,12 +1495,12 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a text entry gump with maximum length to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddTextEntryLimited( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 9 )
 	{
 		ScriptError( cx, "AddTextEntryLimited: Invalid number of arguments (takes 9)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 tL					= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -1517,20 +1516,20 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsva
 	if( test == nullptr )
 	{
 		ScriptError( cx, "AddTextEntryLimited: Text is required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SEGump_st *gList = static_cast<SEGump_st*>( JS_GetPrivate( cx, obj ));
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTextEntryLimited: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize ));
 	gList->two->push_back( test );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1540,12 +1539,12 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds tiled gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddTiledGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 5 )
 	{
 		ScriptError( cx, "AddTiledGump: Invalid number of arguments (takes 5 x y width height gump)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -1558,12 +1557,12 @@ JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddTiledGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	gList->one->push_back( oldstrutil::format( "gumppictiled %i %i %i %i %i", x, y, width, height, gumpId ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1573,12 +1572,12 @@ JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddXMFHTMLGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 7 )
 	{
 		ScriptError( cx, "AddXMFHTMLGump: Invalid number of arguments (takes 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -1593,7 +1592,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLGump: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
@@ -1601,7 +1600,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 
 	gList->one->push_back( oldstrutil::format( "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1611,12 +1610,12 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddXMFHTMLGumpColor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 8 )
 	{
 		ScriptError( cx, "AddXMFHTMLGumpColor: Invalid number of arguments (takes 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -1632,7 +1631,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLGumpColor: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
@@ -1640,7 +1639,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 
 	gList->one->push_back( oldstrutil::format( "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1649,12 +1648,12 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a new cliloc based XMFHTML gump to gump stream, with optional cliloc arguments
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_AddXMFHTMLTok( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 8 )
 	{
 		ScriptError( cx, "AddXMFHTMLTok: Invalid number of arguments (takes at least 8)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x				= static_cast<SI16>( JSVAL_TO_INT( argv[0] )); // x
@@ -1674,7 +1673,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( gList == nullptr )
 	{
 		ScriptError( cx, "AddXMFHTMLTok: Couldn't find gump associated with object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
@@ -1682,7 +1681,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 
 	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1691,12 +1690,12 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends gump stream to socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGump_Send( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Send: Invalid number of arguments (takes 1, socket or char)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
@@ -1714,7 +1713,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Send: Passed an invalid Socket" );
-			return JS_FALSE;
+			return false;
 		}
 		UI32 gumpId = ( 0xFFFF + JSMapping->GetScriptId( JS_GetGlobalObject( cx )));
 		SendVecsAsGump( mySock, *( myGump->one ), *( myGump->two ), gumpId, INVALIDSERIAL );
@@ -1725,7 +1724,7 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Send: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CSocket *mySock = myChar->GetSocket();
@@ -1735,10 +1734,10 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	else
 	{
 		ScriptError( cx, "Send: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 // Character related methods!
@@ -1751,12 +1750,12 @@ JSBool CGump_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to say a message
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_TextMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 7 )
 	{
 		ScriptError( cx, "TextMessage: Invalid number of arguments (takes 1 - 7)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -1767,7 +1766,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( trgMessage == nullptr )
 	{
 		ScriptError( cx, "You have to supply a message-text" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 txtHue = 0x0000;
@@ -1816,7 +1815,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "TextMessage: Invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 		if( !txtHue )
 		{
@@ -1838,7 +1837,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "TextMessage: Invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( argc >= 2 && argc <= 3 && JSVAL_TO_BOOLEAN( argv[1] ) != JS_TRUE )
@@ -1889,7 +1888,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1900,18 +1899,18 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kill all related timers that have been associated with an item or character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval)
+JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "KillTimers: Invalid count of arguments :%d, needs :0 or 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "KillTimers: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 triggerNum = -1;
 	if( argc == 1 )
@@ -1940,7 +1939,7 @@ JSBool CBase_KillTimers( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		cwmWorldState->tempEffects.Remove( Effect, true );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1954,14 +1953,14 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "GetJSTimer: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
@@ -1992,7 +1991,7 @@ JSBool CBase_GetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2006,14 +2005,14 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( argc != 3 )
 	{
 		ScriptError( cx, "SetJSTimer: Invalid count of arguments :%d, needs 3 (timerId, timeInMilliseconds, scriptId)", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "SetJSTimer: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value is 0 by default, indicating no timer was found or updated
@@ -2045,7 +2044,7 @@ JSBool CBase_SetJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2059,13 +2058,13 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( argc != 2 )
 	{
 		ScriptError( cx, "KillJSTimer: Invalid count of arguments :%d, needs 2 (timerId, scriptId)", argc );
-		return JS_FALSE;
+		return false;
 	}
 	auto myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "KillJSTimer: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( 0 ); // Return value 0 by default, to indicate no valid timer found
@@ -2103,7 +2102,7 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		*rval = INT_TO_JSVAL( 1 ); // Return 1 indicating timer was found and removed
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2112,14 +2111,14 @@ JSBool CBase_KillJSTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_Delete( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Delete: Invalid object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -2140,7 +2139,7 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2150,12 +2149,12 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Specifies a wander area for an NPC, as either a box or a circle
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Wander( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "Wander: Invalid number of arguments (takes 3-4, coordinates)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x1 = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -2172,7 +2171,7 @@ JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
 		ScriptError( cx, "WanderBox: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 	myChar->SetFx( x1, 0 );
 	myChar->SetFy( y1, 0 );
@@ -2188,7 +2187,7 @@ JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		myChar->SetNpcWander( WT_CIRCLE );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2197,19 +2196,19 @@ JSBool CChar_Wander( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Forces NPC to follow specified target
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Follow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Follow: Invalid number of arguments (takes 1, char object or null)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ) || !myChar->IsNpc() )
 	{
 		ScriptError( cx, "Follow: Invalid NPC character object referenced!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argv[0] == JSVAL_NULL )
@@ -2217,7 +2216,7 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		// Clear follow target if null was provided instead of a character object to follow
 		myChar->SetFTarg( nullptr );
 		myChar->SetNpcWander( WT_NONE );
-		return JS_TRUE;
+		return true;
 	}
 
 	JSObject *jsObj = JSVAL_TO_OBJECT( argv[0] );
@@ -2226,14 +2225,14 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( !ValidateObject( myObj ) || myObj->GetSerial() >= BASEITEMSERIAL )
 	{
 		ScriptError( cx, "Follow: Invalid character parameter provided!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	myChar->SetFTarg( static_cast<CChar*>( myObj ));
 	myChar->FlushPath();
 	myChar->SetNpcWander( WT_FOLLOW );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2242,12 +2241,12 @@ JSBool CChar_Follow( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes character do specified action
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_DoAction( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 5 )
 	{
 		ScriptError( cx, "DoAction: Invalid number of arguments (takes 1 - (actionID), 2 (actionID, subActionID), 3 (actionID, null, frameCount), 4 (actionID, null, frameCount, frameDelay ) or 5 (actionID, null, frameCount, frameDelay, playBackwards)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 targAction = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
@@ -2280,7 +2279,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Action: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Reset idle anim timer so it doesn't interrupt the DoAction anim
@@ -2295,7 +2294,7 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	{
 		Effects->PlayCharacterAnimation( myChar, targAction, frameDelay, frameCount, playBackwards );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2304,12 +2303,12 @@ JSBool CChar_DoAction( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to emote specified text
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_EmoteMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 5 )
 	{
 		ScriptError( cx, "EmoteMessage: Invalid number of arguments (takes 1 - 5: text, allSay, hue, speech target and speech serial)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -2319,7 +2318,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( myChar ) || trgMessage == nullptr )
 	{
 		ScriptError( cx, "EmoteMessage: Invalid character or speech" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 txtHue = 0x0000;
@@ -2356,7 +2355,7 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
 
 	MethodSpeech( *myChar, trgMessage, EMOTE, txtHue, static_cast<FontType>( myChar->GetFontType() ), speechTarget, speechTargetSerial, useUnicode );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2365,12 +2364,12 @@ JSBool CChar_EmoteMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dismounts character, if mounted
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Dismount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Dismount: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -2378,7 +2377,7 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Dismount: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 	if( myChar->IsOnHorse() )
 	{
@@ -2388,7 +2387,7 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	{
 		myChar->ToggleFlying();
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2397,12 +2396,12 @@ JSBool CChar_Dismount( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends a system message to the player
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_SysMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc == 0 || argc > 11 )
 	{
 		ScriptError( cx, "SysMessage: Invalid number of arguments (takes at least 1, and at most 11)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock = nullptr;
@@ -2421,7 +2420,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SysMessage: invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 msgColor = 0;
@@ -2437,7 +2436,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( trgMessage == nullptr )
 	{
 		ScriptError( cx, "SysMessage: Invalid speech (%s)", targMessage );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string msgArg;
@@ -2454,7 +2453,7 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	mySock->SysMessageJS( trgMessage, msgColor, msgArg );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2463,12 +2462,12 @@ JSBool CMisc_SysMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Disconnects specified client
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Disconnect: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *targSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
@@ -2476,7 +2475,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 	if( targSock == nullptr )
 	{
 		ScriptError( cx, "SysMessage: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -2497,7 +2496,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 			Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2510,7 +2509,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Teleports object to specified location
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_Teleport( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 
@@ -2528,7 +2527,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			if( myClass.ClassName() == "UOXChar" )
 			{
 				( static_cast<CChar*>( myObj ))->Teleport();
-				return JS_TRUE;
+				return true;
 			}
 			ScriptError( cx, "For Items you need at least one parameter for Teleport" );
 			break;
@@ -2644,7 +2643,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Teleport: Invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 
 		// Update old location of item, which will be used by RemoveFromSight()
@@ -2658,19 +2657,19 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Teleport: Invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if(( world != myChar->WorldNumber() || instanceId != myChar->GetInstanceId() ) && !myChar->IsNpc() )
 		{
 			CSocket *mySock = myChar->GetSocket();
 			if( mySock == nullptr )
-				return JS_TRUE;
+				return true;
 
 			if( !Map->InsideValidWorld( x, y, world) )
 			{
 				ScriptError( cx, "Teleport: Not a valid World" );
-				return JS_FALSE;
+				return false;
 			}
 			if( myChar->GetInstanceId() != instanceId )
 			{
@@ -2708,7 +2707,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2717,7 +2716,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a static effect for character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_StaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	UI16 effectId		= static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 	UI08 speed			= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
@@ -2729,7 +2728,7 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "StaticEffect: Invalid Object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( myClass.ClassName() == "UOXItem" )
@@ -2742,7 +2741,7 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN 
 		Effects->PlayStaticAnimation( myObj, effectId, speed, loop );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2751,12 +2750,12 @@ JSBool CBase_StaticEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends specified make menu to player
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_MakeMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "MakeMenu: Invalid number of arguments (takes 2, number of menu, skill used)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock		= nullptr;
@@ -2774,12 +2773,12 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "MakeMenu: invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 menu		= JSVAL_TO_INT( argv[0] );
 	UI08 skillNum	= static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 	Skills->NewMakeMenu( mySock, menu, skillNum );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2788,12 +2787,12 @@ JSBool CMisc_MakeMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays a sound effect at object's location
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_SoundEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 3 )
 	{
 		ScriptError( cx, "SoundEffect: Invalid number of arguments (takes min 2, max 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -2837,7 +2836,7 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2846,13 +2845,13 @@ JSBool CMisc_SoundEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up the shopkeeper gump for selling to specified vendor NPC
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMisc_SellTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	*rval = JSVAL_FALSE;
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SellTo: Invalid Number of Arguments: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -2860,7 +2859,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "SellTo: Invalid NPC" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -2874,7 +2873,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Passed an invalid socket to SellTo" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CChar *mChar = mySock->CurrcharObj();
@@ -2894,7 +2893,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to SellTo" );
-			return JS_FALSE;
+			return false;
 		}
 
 		myNPC->SetTimer( tNPC_MOVETIME, BuildTimeValue( 60.0f ));
@@ -2918,7 +2917,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2927,12 +2926,12 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Brings up the shopkeeper gump for buying from specified vendor NPC
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_BuyFrom( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SellTo: Invalid Number of Arguments: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -2940,7 +2939,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 	if( !ValidateObject( myNPC ))
 	{
 		ScriptError( cx, "BuyFrom: Invalid NPC" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -2953,7 +2952,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		if( mySock == nullptr )
 		{
 			ScriptError( cx, "Invalid source socket in BuyFrom" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( myNPC->GetNpcAiType() == AI_PLAYERVENDOR )
@@ -2973,7 +2972,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Passed an invalid char to BuyFrom" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CSocket *mySock = myChar->GetSocket();
@@ -3002,7 +3001,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3011,12 +3010,12 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks for specified spell in first spellbook found in player's inventory
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMisc_HasSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasSpell: Invalid Number of Arguments: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -3028,7 +3027,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Invalid char for HasSpell" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
@@ -3036,7 +3035,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if( !ValidateObject( myItem ))
 		{
 			*rval = BOOLEAN_TO_JSVAL( JS_FALSE );
-			return JS_TRUE;
+			return true;
 		}
 
 		if( Magic->HasSpell( myItem, spellId ))
@@ -3054,7 +3053,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for HasSpell" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( Magic->HasSpell( myItem, spellId ))
@@ -3067,7 +3066,7 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3076,12 +3075,12 @@ JSBool CMisc_HasSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes specified spell from first spellbook found in player's inventory
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_RemoveSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveSpell: Invalid Number of Arguments: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -3097,7 +3096,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "Invalid char for HasSpell" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CItem *myItem = FindItemOfType( myChar, IT_SPELLBOOK );
@@ -3113,7 +3112,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "Invalid item for RemoveSpell" );
-			return JS_FALSE;
+			return false;
 		}
 
 		Magic->RemoveSpell( myItem, spellId );
@@ -3131,7 +3130,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3140,7 +3139,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for tag with specified name, if tag has been stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_GetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3152,7 +3151,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "GetTag: Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -3170,7 +3169,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 	{
 		*rval = static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue ));
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3181,7 +3180,7 @@ JSBool CBase_GetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Stores persistent tag with specified name and value on object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_SetTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3193,7 +3192,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "SetTag: Invalid Object assigned (SetTag)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -3260,7 +3259,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		}
 		else
 		{
-			return JS_TRUE;
+			return true;
 		}
 		myObj->SetTag( localString, localObject );
 	}
@@ -3272,7 +3271,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		localObject.m_StringValue	= "";
 		myObj->SetTag( localString, localObject );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3281,7 +3280,7 @@ JSBool CBase_SetTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value for temporary tag with specified name, if tag has been stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_GetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
@@ -3293,7 +3292,7 @@ JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "GetTempTag: Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string localString		= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -3311,7 +3310,7 @@ JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		*rval = static_cast<jsval>( INT_TO_JSVAL( localObject.m_IntValue ));
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3323,7 +3322,7 @@ JSBool CBase_GetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Stores temporary tag with specified name and value on object, does not persist
 //|					across server restart (or character reconnect)
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_SetTempTag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 2 ) && ( argc != 1 ))
 	{
@@ -3335,7 +3334,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "SetTempTag: Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string localString = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -3402,7 +3401,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 		else
 		{
-			return JS_TRUE;
+			return true;
 		}
 		myObj->SetTempTag( localString, localObject );
 	}
@@ -3414,7 +3413,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		localObject.m_StringValue	= "";
 		myObj->SetTempTag( localString, localObject );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3423,7 +3422,7 @@ JSBool CBase_SetTempTag( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns number of tags stored on the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_GetNumTags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3435,11 +3434,11 @@ JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (GetNumTags)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( myObj->GetNumTags() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3448,7 +3447,7 @@ JSBool CBase_GetNumTags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map of tags stored on object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_GetTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3460,7 +3459,7 @@ JSBool CBase_GetTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (GetTagMap)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch tag map from object
@@ -3521,7 +3520,7 @@ JSBool CBase_GetTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	}
 
 	*rval = OBJECT_TO_JSVAL( jsTagMap );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3530,7 +3529,7 @@ JSBool CBase_GetTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns map of temporary tags stored on object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetTempTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_GetTempTagMap( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
@@ -3542,7 +3541,7 @@ JSBool CBase_GetTempTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (GetTempTagMap)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch tag map from object
@@ -3603,7 +3602,7 @@ JSBool CBase_GetTempTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	}
 
 	*rval = OBJECT_TO_JSVAL( jsTagMap );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3612,13 +3611,13 @@ JSBool CBase_GetTempTagMap( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens bankbox of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_OpenBank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "OpenBank: Invalid Character object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -3647,7 +3646,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 	else
 	{
 		ScriptError( cx, "OpenBank, Invalid count of Paramters: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -3662,7 +3661,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3671,19 +3670,19 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified container for specified socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_OpenContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_OpenContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "OpenContainer: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc < 1 || argc > 2 )
 	{
 		ScriptError( cx, "OpenContainer, Invalid count of Paramters: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *contToOpen = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
@@ -3708,7 +3707,7 @@ JSBool CSocket_OpenContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3717,19 +3716,19 @@ JSBool CSocket_OpenContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified layer of character for the specified socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_OpenLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "OpenLayer: Invalid Character object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc != 2 )
 	{
 		ScriptError( cx, "OpenLayer, Invalid count of Paramters: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( mySock != nullptr )
@@ -3757,7 +3756,7 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3767,14 +3766,14 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Turns character to face object/location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_TurnToward( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(TurnToward) Wrong object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x, y;
@@ -3784,14 +3783,14 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( !JSVAL_IS_OBJECT( argv[0] ))
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 		if( !ValidateObject( myObj ))
 		{
 			ScriptError( cx, "(TurnToward) Invalid Object passed" );
-			return JS_FALSE;
+			return false;
 		}
 
 		x = myObj->GetX();
@@ -3806,7 +3805,7 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	else
 	{
 		ScriptError( cx, "(TurnToward) Wrong paramter count: %d, needs either one char/item or x+y", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -3847,7 +3846,7 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3857,14 +3856,14 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets direction from character to target object/location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_DirectionTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(DirectionTo) Wrong object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 x, y;
@@ -3874,7 +3873,7 @@ JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !JSVAL_IS_OBJECT( argv[0] ))
 		{
 			ScriptError( cx, "(DirectionTo) Invalid Object passed" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
@@ -3891,7 +3890,7 @@ JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	else
 	{
 		ScriptError( cx, "(DirectionTo) Wrong paramter count: %d, needs either one char/item or x+y", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Just don't do anything if NewDir eq OldDir
@@ -3900,7 +3899,7 @@ JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	*rval = INT_TO_JSVAL( NewDir );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3909,12 +3908,12 @@ JSBool CChar_DirectionTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Executes specified command (with cmd params as part of cmdString) for character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_ExecuteCommand( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ExecuteCommand: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSString *targMessage	= JS_ValueToString( cx, argv[0] );
@@ -3924,10 +3923,10 @@ JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( targSock == nullptr || trgMessage == nullptr )
 	{
 		ScriptError( cx, "ExecuteCommand: Invalid socket or speech (%s)", targMessage );
-		return JS_FALSE;
+		return false;
 	}
 	Commands->Command( targSock, myChar, trgMessage );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3937,14 +3936,14 @@ JSBool CChar_ExecuteCommand( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Accepts specified character as a recruit in the guild
 //o------------------------------------------------------------------------------------------------o
-JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGuild_AcceptRecruit( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 
 	if( myGuild == nullptr )
 	{
 		ScriptError( cx, "(AcceptRecruit) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Two choices here... 0 paramteres = accept the JS_GetParent object
@@ -3963,10 +3962,10 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	else
 	{
 		ScriptError( cx, "(AcceptRecruit) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3975,24 +3974,24 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if guild is at peace, i.e. not at war with any other guilds
 //o------------------------------------------------------------------------------------------------o
-JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CGuild_IsAtPeace( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Parameter Count: %d", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CGuild *myGuild = static_cast<CGuild*>( JS_GetPrivate( cx, obj ));
 	if( myGuild == nullptr )
 	{
 		ScriptError( cx, "(IsAtPeace) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myGuild->IsAtPeace() );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4003,14 +4002,14 @@ JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the amount of the items of given ID, colour and moreVal character has in packs
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_ResourceCount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(ResourceCount) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 realId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
@@ -4021,7 +4020,7 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if(( argc < 1 ) || ( argc > 4 ))
 	{
 		ScriptError( cx, "(ResourceCount) Invalid count of parameters: %d, needs from 1 to 4 parameters", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc >= 2 )
@@ -4041,7 +4040,7 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	bool moreCheck = ( moreVal != -1 ? true : false );
 
 	*rval = INT_TO_JSVAL( GetItemAmount( myChar, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4054,7 +4053,7 @@ JSBool CChar_ResourceCount( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Removes specified amount of items of given ID, colour and MORE value from
 //|					char's packs, and returns amount deleted
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_UseResource( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 	CBaseObject *myObj = static_cast<CBaseObject*>( myClass.toObject() );
@@ -4062,7 +4061,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "(UseResource) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 amount		= static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
@@ -4075,7 +4074,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if(( argc < 2 ) || ( argc > 5 ))
 	{
 		ScriptError( cx, "(UseResource) Invalid count of parameters: %d, needs from 2 to 5 parameters", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc >= 3 )
@@ -4107,7 +4106,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		retVal			= DeleteSubItemAmount( myItem, amount, realId, static_cast<UI16>( itemColour ), static_cast<UI32>( moreVal ), colorCheck, moreCheck, sectionId );
 	}
 	*rval = INT_TO_JSVAL( retVal );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4116,7 +4115,7 @@ JSBool CBase_UseResource( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the lightning bolt effect on specified character to all nearby
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_BoltEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( ValidateObject( myChar ))
@@ -4124,7 +4123,7 @@ JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN ar
 		Effects->Bolteffect( myChar );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4143,14 +4142,14 @@ JSBool CChar_BoltEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN ar
 //|
 //|					Useable with both sockets and characters.
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_CustomTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSEncapsulate myClass( cx, obj );
 
 	if(( argc > 3 ) || ( argc < 1 ))
 	{
 		ScriptError( cx, "(CustomTarget) Invalid count of parameters: %d, either needs 1, 2 or 3 (targetID, textToShow, cursorType", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock = nullptr;
@@ -4163,7 +4162,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "(CustomTarget) Invalid Character assigned" );
-			return JS_FALSE;
+			return false;
 		}
 
 		mySock = myChar->GetSocket();
@@ -4178,7 +4177,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	{
 		// COULD be a NPC too so just exit here!
 		// and DONT create a non-running jscript
-		return JS_TRUE;
+		return true;
 	}
 	
 	mySock->scriptForCallBack = JSMapping->GetScript( JS_GetGlobalObject( cx ));
@@ -4210,7 +4209,7 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	{
 		mySock->SendTargetCursor( 1, tNum, toSay, cursorType );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4221,12 +4220,12 @@ JSBool CMisc_CustomTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //|					inclusive. Says toSay, and shows a cursor. Note that this allows access
 //|					potentially to GM functions.
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_PopUpTarget( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc > 2 ) || ( argc < 1 ))
 	{
 		ScriptError( cx, "(PopUpTarget) Invalid count of parameters: %d, either needs 1 or 2", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Either useable with sockets OR characters
@@ -4241,7 +4240,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "(PopUpTarget) Invalid Character assigned" );
-			return JS_FALSE;
+			return false;
 		}
 
 		mySock = myChar->GetSocket();
@@ -4257,7 +4256,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	{
 		// COULD be a NPC too so just exit here!
 		// and DONT create a non-running jscript
-		return JS_TRUE;
+		return true;
 	}
 
 	UI08 tNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4269,7 +4268,7 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	}
 
 	mySock->SendTargetCursor( 0, tNum, toSay );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4278,12 +4277,12 @@ JSBool CMisc_PopUpTarget( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the distance to trgObj is less than distance
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_InRange( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(InRange): Invalid count of parameters: %d needs 2 (Item/Char and distance)", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 distance = static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
@@ -4292,14 +4291,14 @@ JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	if( !ValidateObject( me ))
 	{
 		ScriptError( cx, "(InRange) Invalid Object assigned to self" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *them = static_cast<CBaseObject*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( them ))
 	{
 		ScriptError( cx, "(InRange) Invalid Object assigned to target" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if(( them->GetObjType() == OT_ITEM ) && ( me->GetObjType() == OT_CHAR ))
@@ -4308,12 +4307,12 @@ JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( myItem->GetCont() != nullptr )
 		{
 			*rval = BOOLEAN_TO_JSVAL( FindItemOwner( myItem ) == me );
-			return JS_TRUE;
+			return true;
 		}
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( ObjInRange( me, them, distance ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4329,20 +4328,20 @@ JSBool CBase_InRange( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|						true (calls back to existing script)
 //|						int (scriptId to call back to)
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_StartTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "(StartTimer) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc != 2 && argc != 3 )
 	{
 		ScriptError( cx, "(StartTimer) Invalid count of parameter: %d (needs 2 or 3)", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	// 1. Parameter Delay, 2. Parameter Callback
@@ -4382,7 +4381,7 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 
 	cwmWorldState->tempEffects.Add( Effect );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4395,12 +4394,12 @@ JSBool CBase_StartTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|					if true, an alternate skill check formula is used that gives player a minimum 50% chance
 //|					if they at least meat the minimum requirements for crafting an item
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_CheckSkill( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 && argc != 4 )
 	{
 		ScriptError( cx, "CheckSkill: Invalid number of arguments (takes 3 or 4, skillNum, minSkill, maxSkill and isCraftSkill (optional))" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4408,7 +4407,7 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "CheckSkill: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI08 skillNum = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4420,7 +4419,7 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		isCraftSkill = JSVAL_TO_BOOLEAN( argv[3] );
 	}
 	*rval = BOOLEAN_TO_JSVAL( Skills->CheckSkill( myChar, skillNum, minSkill, maxSkill, isCraftSkill ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4429,7 +4428,7 @@ JSBool CChar_CheckSkill( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item found on specified layer of character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_FindItemLayer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CItem *myItem = nullptr;
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4437,7 +4436,7 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(FindItemLayer) Invalid Charobject assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc == 1 )
@@ -4447,20 +4446,20 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	else
 	{
 		ScriptError( cx, "(FindItemLayer) Unknown Count of Arguments: %d, needs: 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !ValidateObject( myItem ))
 	{
 		*rval = JSVAL_NULL;
-		return JS_TRUE;
+		return true;
 	}
 
 	JSObject *myJSItem = JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 	*rval = OBJECT_TO_JSVAL( myJSItem );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4469,19 +4468,19 @@ JSBool CChar_FindItemLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item of specific item type in character's backpack
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_FindItemType( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemType) Invalid Count of Arguments, takes 1" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(FindItemType) Invalid Charobject assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI08 iType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4490,14 +4489,14 @@ JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( myItem ))
 	{
 		*rval = JSVAL_NULL;
-		return JS_TRUE;
+		return true;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 	*rval = OBJECT_TO_JSVAL( myJSItem );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4506,19 +4505,19 @@ JSBool CChar_FindItemType( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Looks for item with specific sectionId in character's backpack
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_FindItemSection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_FindItemSection( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Count of Arguments, takes 1" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(FindItemSection) Invalid Charobject assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string sectionID = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -4527,14 +4526,14 @@ JSBool CChar_FindItemSection( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( !ValidateObject( myItem ))
 	{
 		*rval = JSVAL_NULL;
-		return JS_TRUE;
+		return true;
 	}
 
 	JSObject *myJSItem	= JSEngine->AcquireObject( IUE_ITEM, myItem, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 	*rval = OBJECT_TO_JSVAL( myJSItem );
 
-	return JS_TRUE;
+	return true;
 }
 
 void OpenPlank( CItem *p );
@@ -4544,12 +4543,12 @@ void OpenPlank( CItem *p );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens plank for item (boat)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_OpenPlank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(OpenPlank) Invalid Count of Arguments: %d, needs: 0", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
@@ -4557,12 +4556,12 @@ JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "(OpenPlank) Invalid Object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	OpenPlank( myItem );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4571,7 +4570,7 @@ JSBool CItem_OpenPlank( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Calls up the onSpeechInput event using specified ID, with the text the user types
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SpeechInput( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	// Get our own Script ID
 	UI08 speechId		= 0;
@@ -4594,7 +4593,7 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	else
 	{
 		ScriptError( cx, "(SpeechInput) Invalid Count of parameters: %d, needs: either 1 or 2", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4602,7 +4601,7 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(SpeechInput) Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	myChar->SetSpeechMode( 9 );
@@ -4618,7 +4617,7 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	myChar->SetSpeechId( speechId );
 	myChar->SetSpeechCallback( JSMapping->GetScript( JS_GetGlobalObject( cx )));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4627,12 +4626,12 @@ JSBool CChar_SpeechInput( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes character to cast specified spell
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_CastSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if(( argc != 1 ) && ( argc != 2 ))
 	{
 		ScriptError( cx, "(CastSpell) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
@@ -4640,7 +4639,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "(CastSpell) Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI08 spellCast = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
@@ -4666,7 +4665,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 			*rval = BOOLEAN_TO_JSVAL( spellSuccess );
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4675,7 +4674,7 @@ JSBool CChar_CastSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies spell effects of specified spell to character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_MagicEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	SI08 spellId = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
 
@@ -4684,12 +4683,12 @@ JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN a
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "StaticEffect: Invalid Object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	Magic->DoStaticEffect( myObj, spellId );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4698,7 +4697,7 @@ JSBool CChar_MagicEffect( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of a character's serial
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *myObj = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4707,12 +4706,12 @@ JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
 		*rval = INT_TO_JSVAL( 0 );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4721,7 +4720,7 @@ JSBool CChar_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets a part (1-4) of an object's serial
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_GetSerial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	UI08 part = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -4730,12 +4729,12 @@ JSBool CBase_GetSerial( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN arg
 	{
 		ScriptError( cx, "GetSerial: Invalid Object/Argument, takes 1 arg: part of serial (1-4)" );
 		*rval = INT_TO_JSVAL( 0 );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( myObj->GetSerial( part ));
 
-	return JS_TRUE;
+	return true;
 }
 
 void UpdateStats( CBaseObject *mObj, UI08 x );
@@ -4746,12 +4745,12 @@ void UpdateStats( CBaseObject *mObj, UI08 x );
 //|	Purpose		-	Sends update to client with specified stat (health, mana or stamina) for object
 //| Notes		-	Can be used with any character, as well as with items/multis with damageable flag enabled
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval)
+JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateStats) Invalid Number of Arguments %d, needs: 1 (stat type - 0, 1 or 2 for Health, Mana or Stamina)", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
@@ -4760,7 +4759,7 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "UpdateStats: Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( myObj->CanBeObjType( OT_MULTI ) || myObj->CanBeObjType( OT_ITEM ))
@@ -4768,13 +4767,13 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( statType != 0 )
 		{
 			ScriptError( cx, "UpdateStatus: For Items/Multis, only the Health stat (type 0) can be sent as an update to the client" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( !myObj->IsDamageable() )
 		{
 			ScriptError( cx, "UpdateStatus: Can only be used with characters, or Items/Multis with damagable flag set to true" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 
@@ -4791,10 +4790,10 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 			break;
 		default:
 			ScriptError( cx, "UpdateStats: Argument can only contain values 0, 1 or 2 for Health, Mana or Stamina respectively" );
-			return JS_FALSE;
+			return false;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4804,12 +4803,12 @@ JSBool CBase_UpdateStats(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|	Purpose		-	Applies a specified level of poison to the character for a specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SetPoisoned( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 3 )
 	{
 		ScriptError( cx, "(SetPoisoned) Invalid Number of Arguments %d, needs: 2 or 3", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -4817,7 +4816,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( myChar ) || myChar->GetObjType() != OT_CHAR )
 	{
 		ScriptError( cx, "(SetPoisoned) Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI08 newVal = static_cast<SI08>( JSVAL_TO_INT( argv[0] ));
@@ -4838,7 +4837,7 @@ JSBool CChar_SetPoisoned( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 
 	//myChar->SetPoisonStrength( newVal );
 	myChar->SetPoisoned( newVal );
-	return JS_TRUE;
+	return true;
 }
 
 void ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, bool explodeNearby );
@@ -4848,12 +4847,12 @@ void ExplodeItem( CSocket *mSock, CItem *nItem, UI32 damage, UI08 damageType, bo
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Deletes specified item by exploding it, dealing 5-10 dmg to nearby characters
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_ExplodeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "(ExplodeItem) Invalid Number of Arguments %d, needs: 4", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -4863,7 +4862,7 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( trgObj ) || trgObj->GetObjType() != OT_ITEM || myChar->GetSocket() == nullptr )
 	{
 		ScriptError( cx, "(ExplodeItem) Invalid object" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 damage = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
@@ -4871,7 +4870,7 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	bool explodeNearby = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 
 	ExplodeItem( myChar->GetSocket(), static_cast<CItem *>( trgObj ), damage, damageType, explodeNearby );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4881,12 +4880,12 @@ JSBool CChar_ExplodeItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Sets character to the specified visibility level for the specified amount of
 //|					time (in milliseconds).
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SetInvisible( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 2 )
 	{
 		ScriptError( cx, "(SetInvisible) Invalid Number of Arguments %d, needs: 1 or 2", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -4898,7 +4897,7 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		UI32 TimeOut = static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 		myChar->SetTimer( tCHAR_INVIS, BuildTimeValue( static_cast<R32>( TimeOut ) / 1000.0f ));
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4907,7 +4906,7 @@ JSBool CChar_SetInvisible( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets container of item to be the specified object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, jsval *rval )
+JSNative CItem_SetCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CItem *myItem = static_cast<CItem*>( JS_GetPrivate( cx, obj ));
 	JSObject *tObj = JSVAL_TO_OBJECT( argv[0] );
@@ -4916,7 +4915,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
 	if( !ValidateObject( myItem ) || !ValidateObject( trgObj ) || ( trgObj->GetSerial() == INVALIDSERIAL ))
 	{
 		ScriptError( cx, "SetCont: Invalid Object/Argument, takes 1 arg: containerobject" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -4938,7 +4937,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4947,13 +4946,13 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CItem_IsMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsMulti) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
@@ -4962,11 +4961,11 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->CanBeObjType( OT_MULTI ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4975,13 +4974,13 @@ JSBool CItem_IsMulti( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is a boat
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_IsBoat( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(IsBoat) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CBaseObject *myObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, obj ));
@@ -4990,11 +4989,11 @@ JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 	{
 		ScriptError( cx, "(IsMulti) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myObject->CanBeObjType( OT_BOAT ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5003,13 +5002,13 @@ JSBool CBase_IsBoat( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if the object is in the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsInMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsInMulti) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5018,18 +5017,18 @@ JSBool CMulti_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CBaseObject *toFind = static_cast<CBaseObject *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsInMulti) Invalid object in house" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL(( toFind->GetMultiObj() == myItem ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5038,13 +5037,13 @@ JSBool CMulti_IsInMulti( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the ban-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsOnBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5053,18 +5052,18 @@ JSBool CMulti_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnBanList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnBanList( toFind ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5073,13 +5072,13 @@ JSBool CMulti_IsOnBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the friend-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsOnFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsOnFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5088,18 +5087,18 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnFriendList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnFriendList( toFind ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5108,13 +5107,13 @@ JSBool CMulti_IsOnFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the guest-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsOnGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsOnGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5123,18 +5122,18 @@ JSBool CMulti_IsOnGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnGuestList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnGuestList( toFind ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5143,13 +5142,13 @@ JSBool CMulti_IsOnGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is on the owner-list of the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsOnOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid Number of Arguments %d, needs: 1 or 2", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5158,18 +5157,18 @@ JSBool CMulti_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOnOwnerList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOnOwnerList( toFind ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5178,13 +5177,13 @@ JSBool CMulti_IsOnOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if pChar is the actual owner of the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(IsOwner) Invalid Number of Arguments %d, needs: 1 or 2", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5193,18 +5192,18 @@ JSBool CMulti_IsOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 	{
 		ScriptError( cx, "(IsOwner) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(IsOwner) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( myItem->IsOwner( toFind ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5213,12 +5212,12 @@ JSBool CMulti_IsOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to banlist of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_AddToBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToBanList) Invalid Number of Arguments %d, needs: 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5226,18 +5225,18 @@ JSBool CMulti_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddToBanList) Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToBanList) Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->AddToBanList( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5246,13 +5245,13 @@ JSBool CMulti_AddToBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the friend-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_AddToFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_AddToFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5261,19 +5260,19 @@ JSBool CMulti_AddToFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToFriendList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->AddAsFriend( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5282,13 +5281,13 @@ JSBool CMulti_AddToFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the guest-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_AddToGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_AddToGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5297,19 +5296,19 @@ JSBool CMulti_AddToGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToGuestList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->AddAsGuest( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5318,13 +5317,13 @@ JSBool CMulti_AddToGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds character pChar to the owner-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_AddToOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5333,19 +5332,19 @@ JSBool CMulti_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(AddToOwnerList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->AddAsOwner( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5354,13 +5353,13 @@ JSBool CMulti_AddToOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the ban-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_RemoveFromBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5369,19 +5368,19 @@ JSBool CMulti_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromBanList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->RemoveFromBanList( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5390,13 +5389,13 @@ JSBool CMulti_RemoveFromBanList( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the friend-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_RemoveFromFriendList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_RemoveFromFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5405,19 +5404,19 @@ JSBool CMulti_RemoveFromFriendList( JSContext *cx, JSObject *obj, uintN argc, js
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromFriendList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->RemoveAsFriend( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5426,13 +5425,13 @@ JSBool CMulti_RemoveFromFriendList( JSContext *cx, JSObject *obj, uintN argc, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the guest-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_RemoveFromGuestList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_RemoveFromGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5441,19 +5440,19 @@ JSBool CMulti_RemoveFromGuestList( JSContext *cx, JSObject *obj, uintN argc, jsv
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromGuestList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->RemoveAsGuest( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5462,13 +5461,13 @@ JSBool CMulti_RemoveFromGuestList( JSContext *cx, JSObject *obj, uintN argc, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character pChar from the owner-list of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_RemoveFromOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid Number of Arguments %d, needs: 1", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5477,19 +5476,19 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsv
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 	CChar *toFind = static_cast<CChar *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "(RemoveFromOwnerList) Invalid character" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->RemoveAsOwner( toFind );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5498,13 +5497,13 @@ JSBool CMulti_RemoveFromOwnerList( JSContext *cx, JSObject *obj, uintN argc, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears multi's list of banned players
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CMulti_ClearBanList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearBanList) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5513,12 +5512,12 @@ JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	{
 		ScriptError( cx, "(ClearBanList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->ClearBanList();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5527,13 +5526,13 @@ JSBool CMulti_ClearBanList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of friends
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CMulti_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5542,12 +5541,12 @@ JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe
 	{
 		ScriptError( cx, "(ClearFriendList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->ClearFriendList();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5556,13 +5555,13 @@ JSBool CMulti_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of guests
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CMulti_ClearGuestList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5571,12 +5570,12 @@ JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 	{
 		ScriptError( cx, "(ClearGuestList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->ClearGuestList();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5585,13 +5584,13 @@ JSBool CMulti_ClearGuestList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the multi's list of co-owners
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CMulti_ClearOwnerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid Number of Arguments %d, needs: 0", argc );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	CMultiObj *myItem = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -5600,12 +5599,12 @@ JSBool CMulti_ClearOwnerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 	{
 		ScriptError( cx, "(ClearOwnerList) Invalid object assigned" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_TRUE;
 	myItem->ClearOwnerList();
-	return JS_TRUE;
+	return true;
 }
 
 UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CChar *mChar = nullptr );
@@ -5617,18 +5616,18 @@ UI16 HandleAutoStack( CItem *mItem, CItem *mCont, CSocket *mSock = nullptr, CCha
 //|					If second parameter is true, UOX3 will attempt to stack the item with an existing item
 //|					instead.
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CItem_PlaceInPack( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid Number of Arguments %d, needs: 0 or 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myItem ) || !myItem->CanBeObjType( OT_ITEM ))
 	{
 		ScriptError( cx, "(PlaceInPack) Invalid object assigned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -5665,7 +5664,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5674,23 +5673,23 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified URL in player's browser
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_OpenURL( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "OpenURL: Invalid Number of Arguments %d, needs: 1" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "OpenURL: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	std::string url = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	mySock->OpenURL( url );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5699,23 +5698,23 @@ JSBool CSocket_OpenURL( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns value of a byte from the socket at offset, assumes 0 to 255 as values
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetByte: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset	= JSVAL_TO_INT( argv[0] );
 	*rval		= INT_TO_JSVAL( mySock->GetByte( offset ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5724,23 +5723,23 @@ JSBool CSocket_GetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 1 byte of data from socket buffer at offset, assumes -127 to 127 as values
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetSByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetSByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSByte: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSByte: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset	= JSVAL_TO_INT( argv[0] );
 	*rval		= INT_TO_JSVAL( static_cast<SI08>( mySock->GetByte( offset )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5749,23 +5748,23 @@ JSBool CSocket_GetSByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, assumes positive values
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( mySock->GetWord( offset ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5774,23 +5773,23 @@ JSBool CSocket_GetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 2 bytes of data from socket buffer at offset, negative values accepted
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetSWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetSWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( static_cast<SI16>(mySock->GetWord( offset )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5799,23 +5798,23 @@ JSBool CSocket_GetSWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, positive values assumed
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetDWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
 	JS_NewNumberValue( cx, mySock->GetDWord( offset ), rval );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5824,23 +5823,23 @@ JSBool CSocket_GetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns 4 bytes of data from socket buffer at offset, negative values accepted
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetSDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetSDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 ) // 1 parameters
 	{
 		ScriptError( cx, "GetSDWord: Invalid Number of Arguments %d, needs: 1 (offset)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "GetSDWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
 	*rval = INT_TO_JSVAL( static_cast<SI32>(mySock->GetDWord( offset )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5850,19 +5849,19 @@ JSBool CSocket_GetSDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Purpose		-	Returns data from socket buffer at offset with optional length param, string assumed
 //|					If no length param is provided, reads until next null terminator
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CSocket_GetString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "GetString: Invalid number of arguments. Takes 1 (offset) or 2 (offset, length)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "GetString: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 length		= -1;
@@ -5888,7 +5887,7 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
 	*rval = STRING_TO_JSVAL( strSpeech );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5897,24 +5896,24 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 1 byte at socket stream's offset to equal 8-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_SetByte( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetByte: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetByte: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 offset = JSVAL_TO_INT( argv[0] );
 	UI08 byteToSet = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 
 	mSock->SetByte( offset, byteToSet );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5923,26 +5922,26 @@ JSBool CSocket_SetByte( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 2 bytes at socket stream's offset to equal 16-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_SetWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetWord: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 offset		= JSVAL_TO_INT( argv[0] );
 	UI16 byteToSet	= static_cast<UI16>( JSVAL_TO_INT( argv[1] ));
 
 	mSock->SetWord( offset, byteToSet );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5951,26 +5950,26 @@ JSBool CSocket_SetWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets 4 bytes at socket stream's offset to equal 32-bit value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_SetDWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetDWord: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetDWord: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 offset		= JSVAL_TO_INT( argv[0] );
 	UI32 byteToSet	= JSVAL_TO_INT( argv[1] );
 
 	mSock->SetDWord( offset, byteToSet );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -5979,19 +5978,19 @@ JSBool CSocket_SetDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets data at socket stream's offset to equal string value
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_SetString( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetString: Invalid number of arguments (takes 3)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SetString: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 offset = JSVAL_TO_INT( argv[0] );
@@ -5999,12 +5998,12 @@ JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( trgMessage == nullptr )
 	{
 		ScriptError( cx, "SetString: No string to set" );
-		return JS_FALSE;
+		return false;
 	}
 	// FIXME
 	auto size = strlen( trgMessage );
 	strcopy(( char * ) & ( mSock->Buffer() )[offset], size + 1, trgMessage );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6013,24 +6012,24 @@ JSBool CSocket_SetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads specified amount of bytes from socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_ReadBytes( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadBytes: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "ReadBytes: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 bCount		= JSVAL_TO_INT( argv[0] );
 	mSock->Receive( bCount );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6040,13 +6039,13 @@ JSBool CSocket_ReadBytes( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gump populated with all online or offline (if param is false) players
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_WhoList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "WhoList: Invalid socket!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool sendOnList = true;
@@ -6065,7 +6064,7 @@ JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		OffList->SendSocket( mySock );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6074,12 +6073,12 @@ JSBool CSocket_WhoList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sends message to socket to play specified midi/mp3
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_Music( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Music: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 music = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
@@ -6091,7 +6090,7 @@ JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		Effects->PlayMusic( mySock, music );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6101,12 +6100,12 @@ JSBool CSocket_Music( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Yells a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_YellMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "YellMessage: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
@@ -6123,7 +6122,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "YellMessage: Invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
@@ -6153,7 +6152,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6163,12 +6162,12 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Whispers a text message to those in range
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_WhisperMessage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "WhisperMessage: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
@@ -6185,7 +6184,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "WhisperMessage: Invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool useUnicode = cwmWorldState->ServerData()->UseUnicodeMessages();
@@ -6215,7 +6214,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 void BuildGumpFromScripts( CSocket *s, UI16 m );
@@ -6225,12 +6224,12 @@ void BuildGumpFromScripts( CSocket *s, UI16 m );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens specified gumpmenu from dfnata/misc/gumps.dfn for socket
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_OpenGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "OpenGump: Invalid number of arguments (takes 1, number)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -6244,12 +6243,12 @@ JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "OpenGump: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	BuildGumpFromScripts( mySock, menuNumber );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6258,12 +6257,12 @@ JSBool CSocket_OpenGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes specified generic gump based on its ID, and provides a button ID response
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_CloseGump( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "CloseGump: Invalid number of arguments (takes 2 - gumpId to close, and buttonId to send as response)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
@@ -6271,7 +6270,7 @@ JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SysMessage: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI32 gumpId = static_cast<UI32>( JSVAL_TO_INT( argv[0] ));
@@ -6280,7 +6279,7 @@ JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	CPCloseGump gumpToClose( gumpId, buttonId );
 	mySock->Send( &gumpToClose );
 
-	return JS_TRUE;
+	return true;
 }
 
 // Race methods
@@ -6291,32 +6290,32 @@ JSBool CSocket_CloseGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if members of race can equip specified item
 //o------------------------------------------------------------------------------------------------o
-JSBool CRace_CanWearArmour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CRace_CanWearArmour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CanWearArmour: Invalid number of arguments (takes 1, number)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "CanWearArmour: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *toFind = static_cast<CItem *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( toFind ))
 	{
 		ScriptError( cx, "CanWearArmour: Invalid item passed" );
-		return JS_TRUE;
+		return true;
 	}
 
 	ARMORCLASS srcClass = myRace->ArmourClassRestriction();
 	ARMORCLASS trgClass = toFind->GetArmourClass();
 	*rval = BOOLEAN_TO_JSVAL(( trgClass == 0 ) || (( srcClass & trgClass ) != 0 ));	// they have a matching class
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6325,24 +6324,24 @@ JSBool CRace_CanWearArmour( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified hair-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSBool CRace_IsValidHairColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CRace_IsValidHairColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidHairColour: Invalid number of arguments (takes 1, number)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidHairColour: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidHair( cVal )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6351,24 +6350,24 @@ JSBool CRace_IsValidHairColour( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified skin-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSBool CRace_IsValidSkinColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CRace_IsValidSkinColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidSkinColour: Invalid number of arguments (takes 1, number)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidSkinColour: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidSkin( cVal )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6377,24 +6376,24 @@ JSBool CRace_IsValidSkinColour( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified beard-colour is allowed for members of race
 //o------------------------------------------------------------------------------------------------o
-JSBool CRace_IsValidBeardColour( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CRace_IsValidBeardColour( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsValidBeardColour: Invalid number of arguments (takes 1, number)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CRace *myRace = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 	if( myRace == nullptr )
 	{
 		ScriptError( cx, "IsValidBeardColour: Unknown Object has been passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	COLOUR cVal = static_cast<COLOUR>( JSVAL_TO_INT( argv[0] ));
 	*rval = BOOLEAN_TO_JSVAL(( myRace->IsValidBeard( cVal )));
-	return JS_TRUE;
+	return true;
 }
 
 
@@ -6406,12 +6405,12 @@ bool ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies the values from a DFN section to an Item/Character
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_ApplySection( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ApplySection: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -6421,7 +6420,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( trgSection.empty() || trgSection.length() == 0 )
 	{
 		ScriptError( cx, "You have to supply a section to apply" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( myClass.ClassName() == "UOXItem" )
@@ -6430,7 +6429,7 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( !ValidateObject( myItem ))
 		{
 			ScriptError( cx, "ApplySection: Invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 		CScriptSection *toFind = FileLookup->FindEntry( trgSection, items_def );
 		ApplyItemSection( myItem, toFind, trgSection );
@@ -6441,14 +6440,14 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( !ValidateObject( myChar ))
 		{
 			ScriptError( cx, "ApplySection: Invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		CScriptSection *toFind = FileLookup->FindEntry( trgSection, npc_def );
 		Npcs->ApplyNpcSection( myChar, toFind, trgSection );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6458,12 +6457,12 @@ JSBool CBase_ApplySection( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a spell to the first spell book found in character's pack
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_AddSpell( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddSpell: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar	= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -6489,7 +6488,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			}
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6499,12 +6498,12 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Does the actions associated with spell failure, called after the failure happens
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SpellFail( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "SpellFail: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -6519,7 +6518,7 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 			myChar->TextMessage( mSock, 771, EMOTE, false );
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6529,12 +6528,12 @@ JSBool CChar_SpellFail( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Causes the item to be refreshed to sockets that can see it
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_Refresh( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Refresh: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
@@ -6542,7 +6541,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Refresh: Invalid object assigned - only Charaacters or Items accepted" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -6568,7 +6567,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 	else
 	{
 		ScriptError( cx, "Refresh: Invalid object assigned - only Charaacters or Items accepted" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Active script-context might have been lost, so restore it...
@@ -6583,7 +6582,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6596,19 +6595,19 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 //|					values will increase base properties of item, lower will decrease base
 //|					properties). maxRank is the maximum amount of ranks in the rank system (10 by default).
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_ApplyRank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_ApplyRank( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "ApplyRank: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	SI32 rank		= JSVAL_TO_INT( argv[0] );
 	SI32 maxrank	= JSVAL_TO_INT( argv[1] );
 
 	Skills->ApplyRank( nullptr, myItem, rank, maxrank );
-	return JS_TRUE;
+	return true;
 }
 
 bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
@@ -6618,12 +6617,12 @@ bool IsOnFoodList( const std::string& sFoodList, const UI16 sItemId );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if item is on a specified food list
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CItem_IsOnFoodList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 || argc > 7 )
 	{
 		ScriptError( cx, "(IsOnFoodList) Invalid Number of Arguments %d, needs: 1 - foodlist name", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
@@ -6631,18 +6630,18 @@ JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( myItem ))
 	{
 		ScriptError( cx, "(IsOnFoodList) Invalid object assigned" );
-		return JS_TRUE;
+		return true;
 	}
 
 	if( !JSVAL_IS_STRING( argv[0] ))
 	{
 		ScriptError( cx, "IsOnFoodList: Invalid parameter specifled, string required!" );
-		return JS_FALSE;
+		return false;
 	}
 	std::string foodList = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 
 	*rval = BOOLEAN_TO_JSVAL( IsOnFoodList( foodList, myItem->GetId() ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6650,9 +6649,9 @@ JSBool CItem_IsOnFoodList( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_GetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_GetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	return JS_FALSE;
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6660,9 +6659,9 @@ JSBool CAccount_GetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_SetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_SetAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	return JS_FALSE;
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6675,18 +6674,18 @@ JSBool CAccount_SetAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_AddAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_AddAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 4 )
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid number of arguments (takes 4)" );
-		return JS_FALSE;
+		return false;
 	}
 	// Ok get our object from the global context
 	if( !JSVAL_IS_STRING( argv[0] ) || !JSVAL_IS_STRING( argv[1] ) || !JSVAL_IS_STRING( argv[2] ) || !( JSVAL_IS_INT( argv[3] ) || JSVAL_IS_STRING( argv[3] )))
 	{
 		ScriptError( cx, "Account.AddAccount(user,pass,email,flags): Invalid parameter specifled, please check param types." );
-		return JS_FALSE;
+		return false;
 	}
 	std::string lpszUsername	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	std::string lpszPassword	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
@@ -6703,15 +6702,15 @@ JSBool CAccount_AddAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 	}
 
 	if( lpszUsername.empty() || lpszPassword.empty() || lpszComment.empty() || lpszUsername.length() == 0 || lpszPassword.length() == 0 || lpszComment.length() == 0 )
-		return JS_FALSE;
+		return false;
 
 
 	if( !Accounts->AddAccount( lpszUsername, lpszPassword, lpszComment, u16Flags ))
 	{
 		ScriptError( cx, "Account.AddAccount( user, pass, email, flags ): Account was not added. Duplicate expected." );
-		return JS_FALSE;
+		return false;
 	}
-	return JS_TRUE;
+	return true;
 }
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CAccount_DelAccount()
@@ -6726,12 +6725,12 @@ JSBool CAccount_AddAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //| Changes		-	Removed UOXAccountWrapper and exposed global var Accounts
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_DelAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Account.DelAccount([username/id]): Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	// Ok get out object from the global context
 	if( JSVAL_IS_STRING( argv[0] ))
@@ -6741,7 +6740,7 @@ JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 		if( !Accounts->DelAccount( lpszUsername ))
 		{
 			ScriptError( cx, " Account.DelAccount(username): Unable to remove account specified." );
-			return JS_FALSE;
+			return false;
 		}
 
 	}
@@ -6751,14 +6750,14 @@ JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 		if( !Accounts->DelAccount( ui16AccountId ))
 		{
 			ScriptError( cx, " Account.DelAccount(accountID): Unable to remove account specified." );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
-		return JS_FALSE;
+		return false;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6766,9 +6765,9 @@ JSBool CAccount_DelAccount( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_ModAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_ModAccount( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	return JS_FALSE;
+	return false;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6776,14 +6775,14 @@ JSBool CAccount_ModAccount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	NOT IMPLEMENTED
 //o------------------------------------------------------------------------------------------------o
-JSBool CAccount_SaveAccounts( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CAccount_SaveAccounts( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	return JS_FALSE;
+	return false;
 }
 
 // Basic file wrapping structure for abstracting away file IO for the JS file funcs
 // UOXCFile constructor !
-JSBool UOXCFile( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative UOXCFile( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	UOXFileWrapper_st *toAdd = new UOXFileWrapper_st;
 	toAdd->mWrap = nullptr;
@@ -6793,7 +6792,7 @@ JSBool UOXCFile( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[ma
 	JS_SetPrivate( cx, obj, toAdd );
 	JS_LockGCThing( cx, obj );
 	//JS_AddRoot( cx, &obj );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6803,19 +6802,19 @@ JSBool UOXCFile( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Frees memory allocated by file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Free: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 	delete mFile;
 	JS_UnlockGCThing( cx, obj );
 	//JS_RemoveRoot( cx, &obj );
 	JS_SetPrivate( cx, obj, nullptr );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6825,12 +6824,12 @@ JSBool CFile_Free( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a file for reading, writing or appending
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CFile_Open( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 2 || argc > 4 )
 	{
 		ScriptError( cx, "Open: Invalid number of arguments (takes 2 to 4 - filename, file mode and - optionally - folderName and useScriptDataDir bool)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
@@ -6850,12 +6849,12 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	if( oldstrutil::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
 	{
 		ScriptError( cx, "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
-		return JS_FALSE;
+		return false;
 	}
 	if( strstr( fileName, ".." ) || strstr( fileName, "\\" ) || strstr( fileName, "/" ))
 	{
 		ScriptError( cx, "Open: file names may not contain \"..\", \"\\\", or \"/\"." );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string filePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
@@ -6867,7 +6866,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( strstr( folderName, ".." ) || strstr( folderName, "\\" ) || strstr( folderName, "/" ))
 		{
 			ScriptError( cx, "Open: folder names may not contain \"..\", \"\\\", or \"/\"." );
-			return JS_FALSE;
+			return false;
 		}
 
 		// If script wants to look in script-data folder instead of shared folder, let it
@@ -6892,7 +6891,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	FILE* stream;
 
 	mFile->mWrap = mfopen( &stream, filePath.c_str(), oldstrutil::lower( mode ).substr( 0, 1 ).c_str() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6902,17 +6901,17 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Closes a file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Close( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CFile_Close( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Open: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	fclose( mFile->mWrap );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6922,19 +6921,19 @@ JSBool CFile_Close( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns a string of length numBytes, reading numBytes from the opened file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CFile_Read( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Read: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
 		ScriptError( cx, "Read: Error reading file, is not opened or has reached EOF" );
-		return JS_FALSE;
+		return false;
 	}
 	SI32 bytes = JSVAL_TO_INT( argv[0] );
 	char data[512];
@@ -6942,14 +6941,14 @@ JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( bytes > 512 || bytes < 1 )
 	{
 		ScriptError( cx, "Read: Invalid byte count, must be from 1 to 512!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// We don't care about return value, so suppress compiler warning
-	[[maybe_unused]] size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
+	size_t bytesRead = fread( data, 1, bytes, mFile->mWrap );
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, data ));
-	return JS_TRUE;
+	return true;
 }
 
 
@@ -6960,19 +6959,19 @@ JSBool CFile_Read( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads a string until it encounters a newline or the string specified by delimeter.
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CFile_ReadUntil( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReadUntil: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
 		ScriptError( cx, "ReadUntil: Error reading file, is not opened or has reached EOF" );
-		return JS_FALSE;
+		return false;
 	}
 	char *until = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
 	char line[512];
@@ -6999,7 +6998,7 @@ JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	line[c < 512 ? c : 511] = 0;
 
 	*rval = STRING_TO_JSVAL( JS_NewStringCopyZ( cx, line ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7009,24 +7008,24 @@ JSBool CFile_ReadUntil( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a string out to the file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CFile_Write( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Write: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap || feof( mFile->mWrap ))
 	{
 		ScriptError( cx, "Write: Error writing to file, file was not opened sucessfully!" );
-		return JS_FALSE;
+		return false;
 	}
 	else if( ftell( mFile->mWrap ) > ( 10 * 1024 * 1024 ))
 	{
 		ScriptError( cx, "Write: Error writing to file.  File may not exceed 10mb." );
-		return JS_FALSE;
+		return false;
 	}
 
 	char *str = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
@@ -7035,7 +7034,7 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		fprintf( mFile->mWrap, "%s", str );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7045,21 +7044,21 @@ JSBool CFile_Write( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns if we have read to the end of a file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CFile_EOF( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "EOF: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap )
-		return JS_FALSE;
+		return false;
 
 	*rval = BOOLEAN_TO_JSVAL(( feof( mFile->mWrap ) != 0 ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7069,19 +7068,19 @@ JSBool CFile_EOF( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the length of the file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CFile_Length( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Length: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap )
 	{
 		*rval = INT_TO_JSVAL( -1 );
-		return JS_TRUE;
+		return true;
 	}
 
 	long fpos = ftell( mFile->mWrap );
@@ -7090,10 +7089,10 @@ JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 
 	if( fpos > -1 )
 	{
-		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, fpos, SEEK_SET ); // We don't care about return value, so suppress compiler warning
+		int newFPos = fseek( mFile->mWrap, fpos, SEEK_SET ); // We don't care about return value, so suppress compiler warning
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7103,26 +7102,26 @@ JSBool CFile_Length( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns or sets the position we are at in the file
 //o------------------------------------------------------------------------------------------------o
-JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CFile_Pos( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "Pos: Invalid number of arguments (takes 0 or 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 
 	if( !mFile || !mFile->mWrap )
-		return JS_FALSE;
+		return false;
 
 	if( argc == 1 )
 	{
-		[[maybe_unused]] int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
+		int newFPos = fseek( mFile->mWrap, JSVAL_TO_INT( argv[0] ), SEEK_SET );
 	}
 
 	*rval = INT_TO_JSVAL( ftell( mFile->mWrap ));
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7132,18 +7131,18 @@ JSBool CFile_Pos( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_FirstItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstItem: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FirstItem: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	CItem *firstItem = nullptr;
 	if( myObj->GetObjType() == OT_CHAR )
@@ -7161,7 +7160,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	else
 	{
 		ScriptError( cx, "FirstItem: Unknown object type assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( ValidateObject( firstItem ))
@@ -7173,7 +7172,7 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 	{
 		*rval = JSVAL_NULL;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7183,18 +7182,18 @@ JSBool CBase_FirstItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next object in the object's (container's) list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_NextItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextItem: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextItem: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	CItem *nextItem = nullptr;
 	if( myObj->GetObjType() == OT_CHAR )
@@ -7212,7 +7211,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	else
 	{
 		ScriptError( cx, "NextItem: Unknown object type assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( ValidateObject( nextItem ))
@@ -7224,7 +7223,7 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 	{
 		*rval = JSVAL_NULL;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7234,18 +7233,18 @@ JSBool CBase_NextItem( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all items in object's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CBase_FinishedItems( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedItems: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextItem: Invalid object assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	if( myObj->GetObjType() == OT_CHAR )
 	{
@@ -7259,7 +7258,7 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 	{
 		*rval = BOOLEAN_TO_JSVAL(( static_cast<CMultiObj *>( myObj ))->GetItemsInMultiList()->Finished() );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7271,18 +7270,18 @@ JSBool CBase_FinishedItems( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 //|	Purpose		-	Begins pathfinding for a character, making them walk to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_WalkTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 && argc != 3 )
 	{
 		ScriptError( cx, "WalkTo: Invalid number of arguments (takes 2 or 3)" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
 	{
 		ScriptError( cx, "WalkTo: Invalid source character" );
-		return JS_FALSE;
+		return false;
 	}
 	SI16 gx			= 0;
 	SI16 gy			= 0;
@@ -7299,7 +7298,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
-						return JS_FALSE;
+						return false;
 					}
 					gx = toGoTo->GetX();
 					gy = toGoTo->GetY();
@@ -7314,12 +7313,12 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 				else
 				{
 					ScriptError( cx, "Invalid class of object" );
-					return JS_FALSE;
+					return false;
 				}
 				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
-			return JS_FALSE;
+			return false;
 			// 2 Parameters, x + y
 		case 3:
 			gx			= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
@@ -7328,13 +7327,13 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to WalkTo, needs either 2 or 3" );
-			return JS_FALSE;
+			return false;
 	}
 
 	if( maxSteps == 0 )
 	{
 		ScriptError( cx, "WalkTo: Invalid number of maxSteps provided. Must be higher than 0!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -7371,7 +7370,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7383,18 +7382,18 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //|	Purpose		-	Begins pathfinding for a character, making them run to target location,
 //|					halting if max amount of steps is reached before reaching the location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_RunTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 && argc != 3 )
 	{
 		ScriptError( cx, "RunTo: Invalid number of arguments (takes 2 or 3)" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *cMove = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( cMove ))
 	{
 		ScriptError( cx, "RunTo: Invalid source character" );
-		return JS_FALSE;
+		return false;
 	}
 	UI16 gx			= 0;
 	UI16 gy			= 0;
@@ -7411,7 +7410,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 					if( !ValidateObject( toGoTo ))
 					{
 						ScriptError( cx, "No object associated with this object" );
-						return JS_FALSE;
+						return false;
 					}
 					gx = toGoTo->GetX();
 					gy = toGoTo->GetY();
@@ -7426,12 +7425,12 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 				else
 				{
 					ScriptError( cx, "Invalid class of object" );
-					return JS_FALSE;
+					return false;
 				}
 				maxSteps = static_cast<UI08>( JSVAL_TO_INT( argv[1] ));
 				break;
 			}
-			return JS_FALSE;
+			return false;
 
 			// 2 Parameters, x + y
 		case 3:
@@ -7441,13 +7440,13 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 			break;
 		default:
 			ScriptError( cx, "Invalid number of arguments passed to RunTo, needs either 2 or 3" );
-			return JS_FALSE;
+			return false;
 	}
 
 	if( maxSteps == 0 )
 	{
 		ScriptError( cx, "RunTo: Invalid number of maxSteps provided. Must be higher than 0!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -7486,7 +7485,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7495,12 +7494,12 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the specified timer value
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMisc_GetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetTimer: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate myClass( cx, obj );
@@ -7510,7 +7509,7 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "GetTimer: Invalid source character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		JS_NewNumberValue( cx, cMove->GetTimer( static_cast<cC_TID>( encaps.toInt() )), rval );
@@ -7521,13 +7520,13 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "GetTimer: Invalid source socket" );
-			return JS_FALSE;
+			return false;
 		}
 
 		JS_NewNumberValue( cx, mSock->GetTimer( static_cast<cS_TID>( encaps.toInt() )), rval );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7536,12 +7535,12 @@ JSBool CMisc_GetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Sets the specified timer with the amount of miliseconds until it expires
 //o------------------------------------------------------------------------------------------------o
-JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CMisc_SetTimer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetTimer: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate encaps( cx, &( argv[0] ));
 	JSEncapsulate encaps2( cx, &( argv[1] ));
@@ -7558,7 +7557,7 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( !ValidateObject( cMove ))
 		{
 			ScriptError( cx, "SetTimer: Invalid source character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		cMove->SetTimer( static_cast<cC_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
@@ -7569,13 +7568,13 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "SetTimer: Invalid source socket" );
-			return JS_FALSE;
+			return false;
 		}
 
 		mSock->SetTimer( static_cast<cS_TID>( encaps.toInt() ), static_cast<TIMERVAL>( timerVal ));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7584,12 +7583,12 @@ JSBool CMisc_SetTimer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the distance to the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_DistanceTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "DistanceTo: Invalid number of arguments (takes 1, game object)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
@@ -7600,11 +7599,11 @@ JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	if( !ValidateObject( thisObj ) || !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "DistanceTo: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( GetDist( thisObj, myObj ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7613,7 +7612,7 @@ JSBool CBase_DistanceTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attaches a light-emitting object to the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_Glow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
@@ -7624,22 +7623,22 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 	{
 		ScriptError( cx, "Glow: Invalid object" );
 		mySock->SysMessage( 1095 ); // No item found there, only items can be made to glow.
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = mySock->CurrcharObj();
 	if( !ValidateObject( mChar ))
-		return JS_FALSE;
+		return false;
 
 	if( mItem->GetGlow() != INVALIDSERIAL )
 	{
 		mySock->SysMessage( 1097 ); // That object already glows!
-		return JS_FALSE;
+		return false;
 	}
 	if( mItem->GetCont() == nullptr && FindItemOwner( mItem ) != mChar )
 	{
 		mySock->SysMessage( 1096 ); // You can't create glowing items in other people's packs or hands!
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -7650,7 +7649,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 
 	CItem *glowItem = Items->CreateItem( mySock, mChar, 0x1647, 1, 0, OT_ITEM ); // spawn light emitting object
 	if( glowItem == nullptr )
-		return JS_FALSE;
+		return false;
 
 	glowItem->SetDecayable( mItem->IsDecayable() );
 	glowItem->SetDecayTime( mItem->GetDecayTime() );
@@ -7675,7 +7674,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7684,7 +7683,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes light-emitting object from the object
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_UnGlow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	JSObject *mSock	= JSVAL_TO_OBJECT( argv[0] );
 	CSocket *mySock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
@@ -7695,24 +7694,24 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 	{
 		ScriptError( cx, "UnGlow: Invalid item" );
 		mySock->SysMessage( 1099 ); // No item found, only items can be made to unglow.
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = mySock->CurrcharObj();
 	if( !ValidateObject( mChar ))
-		return JS_FALSE;
+		return false;
 
 	if( mItem->GetCont() == nullptr && FindItemOwner( mItem ) != mChar )
 	{
 		mySock->SysMessage( 1100 ); // You can't unglow items in other people's packs or hands!
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *glowItem = CalcItemObjFromSer( mItem->GetGlow() );
 	if( mItem->GetGlow() == INVALIDSERIAL || !ValidateObject( glowItem ))
 	{
 		mySock->SysMessage( 1101 ); // That object doesn't glow!
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -7739,7 +7738,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7750,19 +7749,19 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Opens a gate to the location marked on an item, or to a specified set of coords
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Gate( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 4 && argc != 5 )
 	{
 		ScriptError( cx, "Gate: Invalid number of arguments (takes 1: item/place; 4: x y z worldNumber; or 5: x y z worldNumber instanceID)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Gate: Invalid source character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 destX = -1, destY = -1;
@@ -7779,7 +7778,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 			if( !ValidateObject( mItem ))
 			{
 				ScriptError( cx, "Gate: Invalid item passed" );
-				return JS_FALSE;
+				return false;
 			}
 
 			destX		= mItem->GetTempVar( CITV_MOREX );
@@ -7820,7 +7819,7 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 
 	SpawnGate( mChar, mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), destX, destY, destZ, destWorld, destInstanceId );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7829,19 +7828,19 @@ JSBool CChar_Gate( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Character recalls to the location marked on an item
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Recall( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Recall: Invalid number of arguments (takes 1, item)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Recall: Invalid source character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
@@ -7849,7 +7848,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "Recall: Invalid item passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI16 destX = mItem->GetTempVar( CITV_MOREX ), destY = mItem->GetTempVar( CITV_MOREY );
@@ -7888,7 +7887,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7897,19 +7896,19 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Marks item with character's current location
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Mark( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Mark: Invalid number of arguments (takes 1, character)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Mark: Invalid source character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *jsObj		= JSVAL_TO_OBJECT( argv[0] );
@@ -7917,7 +7916,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "Mark: Invalid item passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	mItem->SetTempVar( CITV_MOREX, mChar->GetX() );
@@ -7936,7 +7935,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		mItem->SetName( Dictionary->GetEntry( 685 ));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 void SetRandomName( CChar *s, const std::string& namelist );
@@ -7946,12 +7945,12 @@ void SetRandomName( CChar *s, const std::string& namelist );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Applies a random name from specified namelist to character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_SetRandomName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SetRandomName: Invalid number of arguments (takes 1, namelist string)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -7961,11 +7960,11 @@ JSBool CChar_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	{
 		SetRandomName( mChar, namelist );
 		*rval = JSVAL_TRUE;
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = JSVAL_FALSE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -7975,12 +7974,12 @@ JSBool CChar_SetRandomName( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Sets the skill specified by name to the value specified (name must be the same
 //|					as in skills.dfn, "ALLSKILLS" is also applicable.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_SetSkillByName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SetSkillByName: Invalid number of arguments (takes 2, string, value)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar			= static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -8003,11 +8002,11 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 				mSock->UpdateSkill( i );
 			}
 			*rval = JSVAL_TRUE;
-			return JS_TRUE;
+			return true;
 		}
 	}
 	*rval = JSVAL_FALSE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8016,18 +8015,18 @@ JSBool CChar_SetSkillByName( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kills the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Kill( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Kill: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Kill: Invalid character passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -8046,7 +8045,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 			// 0 == script returned false, 0, or nothing - don't execute hard code
 			// 1 == script returned true or 1
 			if( retStatus == 0 )
-				return JS_TRUE;
+				return true;
 		}
 	}
 
@@ -8064,7 +8063,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8073,18 +8072,18 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resurrects the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Resurrect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Resurrect: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Resurrect: Invalid character passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -8105,7 +8104,7 @@ JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8114,12 +8113,12 @@ JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Creates a duplicate of the item in character's pack
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CItem_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 1 - socket/null)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *mItem	= static_cast<CItem *>( JS_GetPrivate( cx, obj ));
@@ -8140,7 +8139,7 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	if( !ValidateObject( mItem ) || ( mSock == nullptr && dupeInPack ))
 	{
 		ScriptError( cx, "Dupe: Bad parameters passed. Either item or socket is invalid!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSObject *dupeItem = nullptr;
@@ -8155,7 +8154,7 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 	}
 
 	*rval = OBJECT_TO_JSVAL( dupeItem );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8164,12 +8163,12 @@ JSBool CItem_Dupe( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dupes specified character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CChar_Dupe( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Dupe: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Original character object
@@ -8177,7 +8176,7 @@ JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "Dupe: Invalid character object passed?" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Duped character object
@@ -8185,7 +8184,7 @@ JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 	if( !ValidateObject( dupeCharTemp ))
 	{
 		ScriptError( cx, "Dupe: Unable to duplicate character due to unknown error!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// JS Object for duped character
@@ -8193,7 +8192,7 @@ JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 	dupeChar = JSEngine->AcquireObject( IUE_CHAR, dupeCharTemp, JSEngine->FindActiveRuntime( JS_GetRuntime( cx )));
 
 	*rval = OBJECT_TO_JSVAL( dupeChar );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8203,19 +8202,19 @@ JSBool CChar_Dupe( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Jails character, either for ~27 hours or for specified amount of time in seconds
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Jail( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Jail: Invalid number of arguments (takes 0 or 1, seconds to Jail)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Jail: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	SI32 numSecsToJail = 86400;
@@ -8225,7 +8224,7 @@ JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	}
 
 	JailSys->JailPlayer( myChar, numSecsToJail );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8234,23 +8233,23 @@ JSBool CChar_Jail( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases character from jail
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Release( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Release( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "Release: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *myChar = static_cast<CChar*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myChar ))
 	{
 		ScriptError( cx, "Jail: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JailSys->ReleasePlayer( myChar );
-	return JS_TRUE;
+	return true;
 }
 
 void CPage( CSocket *s, const std::string& reason );
@@ -8261,19 +8260,19 @@ void GMPage( CSocket *s, const std::string& reason );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Triggers a page based on provided pageType
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_Page( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Page: Invalid number of arguments (takes 1, pageType)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SysMessage: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI08 pageType = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -8301,7 +8300,7 @@ JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 			break;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8310,16 +8309,16 @@ JSBool CSocket_Page( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a message in UOX3 console. Message should end with \n
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Print( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_Print( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Print: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.Print( arg0.toString() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8329,12 +8328,12 @@ JSBool CConsole_Print( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a message either in default log file or in specified file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Log( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_Log( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Log: Invalid number of arguments (takes 1 or 2)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1;
@@ -8347,7 +8346,7 @@ JSBool CConsole_Log( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
 		arg1.SetContext( cx, &( argv[1] ));
 		Console.Log( arg0.toString(), arg1.toString() );
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8356,16 +8355,16 @@ JSBool CConsole_Log( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs an error-message in default error log file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Error( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_Error( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Error: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.Error( arg0.toString() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8374,16 +8373,16 @@ JSBool CConsole_Error( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Logs a warning-message in default warnings log file
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Warning( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_Warning( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Warning: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.Warning( arg0.toString() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8392,15 +8391,15 @@ JSBool CConsole_Warning( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints a section separator in the console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintSectionBegin( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintSectionBegin( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "PrintSectionBegin: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.PrintSectionBegin();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8409,15 +8408,15 @@ JSBool CConsole_PrintSectionBegin( [[maybe_unused]] JSContext *cx, [[maybe_unuse
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnYellow( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnYellow( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnYellow: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnYellow();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8426,15 +8425,15 @@ JSBool CConsole_TurnYellow( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates yellow text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnRed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnRed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnRed: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnRed();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8443,15 +8442,15 @@ JSBool CConsole_TurnRed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates green text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnGreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnGreen( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnGreen: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnGreen();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8460,15 +8459,15 @@ JSBool CConsole_TurnGreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates blue text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBlue( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnBlue( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnBlue: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnBlue();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8477,15 +8476,15 @@ JSBool CConsole_TurnBlue( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates normal text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnNormal( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnNormal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnNormal: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnNormal();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8494,15 +8493,15 @@ JSBool CConsole_TurnNormal( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Activates bright white text in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_TurnBrightWhite( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_TurnBrightWhite( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "TurnBrightWhite: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.TurnBrightWhite();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8512,12 +8511,12 @@ JSBool CConsole_TurnBrightWhite( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [done] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintDone( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintDone( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintDone: Invalid number of arguments (takes 0 or 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	bool normalDone = true;
 	if( argc != 0 )
@@ -8533,7 +8532,7 @@ JSBool CConsole_PrintDone( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 	{
 		messageLoop << MSG_PRINTDONE;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8543,12 +8542,12 @@ JSBool CConsole_PrintDone( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [failed] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintFailed( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintFailed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "PrintFailed: Invalid number of arguments (takes 0 or 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	bool normalFailed = true;
 	if( argc != 0 )
@@ -8564,7 +8563,7 @@ JSBool CConsole_PrintFailed( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 	{
 		messageLoop << MSG_PRINTFAILED;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8573,15 +8572,15 @@ JSBool CConsole_PrintFailed( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints colored [skipped] message in console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintPassed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintPassed( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "PrintPassed: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.PrintPassed();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8590,15 +8589,15 @@ JSBool CConsole_PrintPassed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears the console
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_ClearScreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_ClearScreen( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "ClearScreen: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	Console.ClearScreen();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8607,16 +8606,16 @@ JSBool CConsole_ClearScreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Prints [done] or [failed] based on provided boolean
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintBasedOnVal( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintBasedOnVal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "PrintBasedOnVal: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	Console.PrintBasedOnVal( arg0.toBool() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8626,17 +8625,17 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, [[maybe_unused]] JSObject *obj, 
 //|	Purpose		-	Moves console cursor position to specified x, y location
 //|	Notes		-	If you want the same line,  y == -1
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_MoveTo( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_MoveTo( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "MoveTo: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
 	Console.MoveTo( arg0.toInt(), arg1.toInt() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8653,17 +8652,17 @@ JSBool CConsole_MoveTo( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //|					4 - Yellow
 //|					5 - Bright White
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_PrintSpecial( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_PrintSpecial( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "PrintSpecial: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
 	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8672,15 +8671,15 @@ JSBool CConsole_PrintSpecial( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Start the UOX3 shutdown sequence
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_BeginShutdown( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_BeginShutdown( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "BeginShutdown: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 	messageLoop << MSG_SHUTDOWN;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8698,22 +8697,22 @@ JSBool CConsole_BeginShutdown( [[maybe_unused]] JSContext *cx, [[maybe_unused]] 
 //|						7 Reload JS
 //|						8 Reload HTML
 //o------------------------------------------------------------------------------------------------o
-JSBool CConsole_Reload( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CConsole_Reload( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Reload: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	SI32 mArg = arg0.toInt();
 	if( mArg < 0 || mArg > 8 )
 	{
 		ScriptError( cx, "Reload: Section to reload must be between 0 and 8" );
-		return JS_FALSE;
+		return false;
 	}
 	messageLoop.NewMessage( MSG_RELOAD, oldstrutil::number( mArg ).c_str() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8723,19 +8722,19 @@ JSBool CConsole_Reload( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 //|	Purpose		-	Plays the MOVEFX effect of the specified spell in SPELLS.DFN, going from the
 //|					character to the target
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SpellMoveEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid number of arguments (takes 2)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[1] )));
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid spell" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *source = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
@@ -8743,7 +8742,7 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( !ValidateObject( source ) || !ValidateObject( target ))
 	{
 		ScriptError( cx, "SpellMoveEffect: Invalid object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CMagicMove temp = mySpell->MoveEffect();
@@ -8753,7 +8752,7 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		Effects->PlayMovingAnimation( source, target, temp.Effect(), temp.Speed(), temp.Loop(), ( temp.Explode() == 1 ));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8762,26 +8761,26 @@ JSBool CChar_SpellMoveEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Plays the STATFX effect of the specified spell in SPELLS.DFN, on the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_SpellStaticEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *source = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( source ))
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid character passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSpellInfo *mySpell = static_cast<CSpellInfo *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( mySpell == nullptr )
 	{
 		ScriptError( cx, "SpellStaticEffect: Invalid spell" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CMagicStat temp = mySpell->StaticEffect();
@@ -8791,7 +8790,7 @@ JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval 
 		Effects->PlayStaticAnimation( source, temp.Effect(), temp.Speed(), temp.Loop() );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8801,19 +8800,19 @@ JSBool CChar_SpellStaticEffect( JSContext *cx, JSObject *obj, uintN argc, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Break a caster's concentration. Provide socket as extra argument for player chars
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_BreakConcentration( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "BreakConcentration: Invalid number of arguments (takes 0 or 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "BreakConcentration: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = nullptr;
@@ -8823,13 +8822,13 @@ JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "BreakConcentration: Invalid socket" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 
 	mChar->BreakConcentration( mSock );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8838,26 +8837,26 @@ JSBool CChar_BreakConcentration( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Send the Add-menu to the character
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_SendAddMenu( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "SendAddMenu: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 menuNum = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
 
 	BuildAddMenuGump( mSock, menuNum );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8866,23 +8865,23 @@ JSBool CSocket_SendAddMenu( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks item down (sets movable value to 3)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_LockDown( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "LockDown: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	if( mItem == nullptr )
 	{
 		ScriptError( cx, "LockDown: Invalid item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	mItem->LockDown();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8892,16 +8891,16 @@ JSBool CItem_LockDown( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]
 //|	Purpose		-	Initializes a WanderArea (10x10 box, or 10 radius circle) for the NPC.
 //|					Will only work if they already have a wandermode set to box or circle.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_InitWanderArea( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ) || !mChar->IsNpc() )
 	{
 		ScriptError( cx, "InitWanderArea: Invalid character" );
-		return JS_FALSE;
+		return false;
 	}
 	InitializeWanderArea( mChar, 10, 10 );
-	return JS_TRUE;
+	return true;
 }
 
 auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
@@ -8911,26 +8910,26 @@ auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Makes the character belonging to socket carve up a corpse
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_Carve( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Carve: Invalid number of arguments (1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *toCarve = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( toCarve ))
 	{
 		ScriptError( cx, "Carve: Invalid item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( mSock == nullptr )
 	{
 		ScriptError( cx, "Carve: Invalid socket" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Keep track of original script that's executing
@@ -8951,7 +8950,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8959,19 +8958,19 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets the tile name of a specified tile (item)
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CItem_GetTileName( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetTileName: needs 0 arguments!" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *mItem = static_cast<CItem *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mItem ))
 	{
 		ScriptError( cx, "GetTileName: Invalid item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string itemName = "";
@@ -8980,7 +8979,7 @@ JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
 	JSString *tString;
 	tString = JS_NewStringCopyZ( cx, itemName.c_str() );
 	*rval = STRING_TO_JSVAL( tString );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -8989,12 +8988,12 @@ JSBool CItem_GetTileName( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets coordinates for specified corner ("NW", "NE", "SW" or "SE") of multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_GetMultiCorner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetMultiCorner: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CMultiObj *multiObject = static_cast<CMultiObj *>( JS_GetPrivate( cx, obj ));
@@ -9003,7 +9002,7 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	{
 		ScriptError( cx, "(GetMultiCorner) Invalid object referenced - multi required" );
 		*rval = JSVAL_FALSE;
-		return JS_TRUE;
+		return true;
 	}
 
 	UI08 cornerToFind = static_cast<UI08>( JSVAL_TO_INT( argv[0] ));
@@ -9033,7 +9032,7 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 			break;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9042,12 +9041,12 @@ JSBool CMulti_GetMultiCorner( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Secures a container in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_SecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_SecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "SecureContainer: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9056,25 +9055,25 @@ JSBool CMulti_SecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(SecureContainer) Invalid object referenced - multi required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToSecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToSecure ))
 	{
 		ScriptError( cx, "(SecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->SecureContainer( itemToSecure );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9083,12 +9082,12 @@ JSBool CMulti_SecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Unsecures a secured container in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_UnsecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_UnsecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "UnsecureContainer: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9097,25 +9096,25 @@ JSBool CMulti_UnsecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid object referenced - multi required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToUnsecure = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToUnsecure ))
 	{
 		ScriptError( cx, "(UnsecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->UnsecureContainer( itemToUnsecure );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9124,12 +9123,12 @@ JSBool CMulti_UnsecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if specified item is a secure container in the multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_IsSecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_IsSecureContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "IsSecureContainer: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9138,25 +9137,25 @@ JSBool CMulti_IsSecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid object referenced - multi required" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToCheck = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToCheck ))
 	{
 		ScriptError( cx, "(IsSecureContainer) Invalid Object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool isSecureContainer = multiObject->IsSecureContainer( itemToCheck );
 	*rval = BOOLEAN_TO_JSVAL( isSecureContainer );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9165,12 +9164,12 @@ JSBool CMulti_IsSecureContainer( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_LockDownItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_LockDownItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "LockDownItem: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9179,25 +9178,25 @@ JSBool CMulti_LockDownItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(LockDownItem) Invalid multi object referenced" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(LockDownItem) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->LockDownItem( itemToLockDown );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9206,12 +9205,12 @@ JSBool CMulti_LockDownItem( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases a locked down item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_ReleaseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_ReleaseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "ReleaseItem: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9220,25 +9219,25 @@ JSBool CMulti_ReleaseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid multi object referenced" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(ReleaseItem) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->ReleaseItem( itemToRemove );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9247,12 +9246,12 @@ JSBool CMulti_ReleaseItem( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Locks down an item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_AddTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_AddTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddTrashCont: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9261,25 +9260,25 @@ JSBool CMulti_AddTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid multi object referenced" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToLockDown = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToLockDown ))
 	{
 		ScriptError( cx, "(AddTrashCont) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->AddTrashContainer( itemToLockDown );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9288,12 +9287,12 @@ JSBool CMulti_AddTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Releases a locked down item in a multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_RemoveTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_RemoveTrashCont( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveTrashCont: Invalid number of arguments (1 required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9302,25 +9301,25 @@ JSBool CMulti_RemoveTrashCont( JSContext *cx, JSObject *obj, uintN argc, jsval *
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid multi object referenced" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_OBJECT( argv[0] ))
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CItem *itemToRemove = static_cast<CItem*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( itemToRemove ))
 	{
 		ScriptError( cx, "(RemoveTrashCont) Invalid item object passed" );
-		return JS_FALSE;
+		return false;
 	}
 
 	multiObject->RemoveTrashContainer( itemToRemove );
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
@@ -9330,12 +9329,12 @@ void KillKeys( SERIAL targSerial, SERIAL charSerial = INVALIDSERIAL );
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Kills all keys in the world associated with the particular multi
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_KillKeys( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 && argc != 1 )
 	{
 		ScriptError( cx, "KillKeys: Invalid number of arguments (0 or 1 (character) required)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = JSVAL_FALSE;
@@ -9344,7 +9343,7 @@ JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	if( !ValidateObject( multiObject ) || !multiObject->CanBeObjType( OT_MULTI ))
 	{
 		ScriptError( cx, "(KillKeys) Invalid multi object referenced" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( argc == 1 )
@@ -9355,7 +9354,7 @@ JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		if( !ValidateObject( myObj ))
 		{
 			ScriptError( cx, "(KillKeys) Invalid character object provided" );
-			return JS_FALSE;
+			return false;
 		}
 		KillKeys( multiObject->GetSerial(), myObj->GetSerial() );
 	}
@@ -9365,7 +9364,7 @@ JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	}
 
 	*rval = JSVAL_TRUE;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9374,18 +9373,18 @@ JSBool CMulti_KillKeys( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first char in the multi's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_FirstChar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FirstChar: Invalid count of arguments :%d, needs :0 or 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FirstChar: Invalid object assigned - multi required." );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string listType;
@@ -9422,7 +9421,7 @@ JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	else
 	{
 		ScriptError( cx, "FirstChar: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( ValidateObject( firstChar ))
@@ -9434,7 +9433,7 @@ JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	{
 		*rval = JSVAL_NULL;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9443,18 +9442,18 @@ JSBool CMulti_FirstChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next char in the multi's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_NextChar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "NextChar: Invalid count of arguments :%d, needs :0 or 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "NextChar: Invalid object assigned - multi required." );
-		return JS_FALSE;
+		return false;
 	}
 
 	std::string listType;
@@ -9491,7 +9490,7 @@ JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	else
 	{
 		ScriptError( cx, "FinishedChars: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( ValidateObject( nextChar ))
@@ -9503,7 +9502,7 @@ JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 	{
 		*rval = JSVAL_NULL;
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9512,18 +9511,18 @@ JSBool CMulti_NextChar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all characters in multi's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CMulti_FinishedChars( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CMulti_FinishedChars( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "FinishedChars: Invalid count of arguments :%d, needs :0 or 1", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CMultiObj *myObj = static_cast<CMultiObj*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "FinishedChars: Invalid object assigned - multi required." );
-		return JS_FALSE;
+		return false;
 	}
 
 	//char *listType;
@@ -9560,10 +9559,10 @@ JSBool CMulti_FinishedChars( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	else
 	{
 		ScriptError( cx, "FinishedChars: Unknown listType provided. Supported listTypes: visitor (default), owner, friend or banned" );
-		return JS_FALSE;
+		return false;
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9573,12 +9572,12 @@ JSBool CMulti_FinishedChars( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks Line of Sight from character to target object or location
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_CanSee( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 3 )
 	{
 		ScriptError( cx, "CanSee: Invalid number of arguments (takes 1, a char/item or 3, an x/y/z)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -9593,13 +9592,13 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( mSock == nullptr )
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Socket" );
-			return JS_FALSE;
+			return false;
 		}
 		mChar = mSock->CurrcharObj();
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "CanSee: Socket to look from has an invalid Character attached" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -9608,7 +9607,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "CanSee: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 		mSock = mChar->GetSocket();
 	}
@@ -9630,19 +9629,19 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			{
 				ScriptError( cx, "CanSee: Passed an invalid Socket to look at" );
 				*rval = JSVAL_FALSE;
-				return JS_TRUE;
+				return true;
 			}
 			CChar *tChar = tSock->CurrcharObj();
 			if( !ValidateObject( tChar ))
 			{
 				ScriptError( cx, "CanSee: Socket to look at has invalid Character attached" );
 				*rval = JSVAL_FALSE;
-				return JS_TRUE;
+				return true;
 			}
 			if( tChar->WorldNumber() != mChar->WorldNumber() || tChar->GetInstanceId() != mChar->GetInstanceId() )
 			{
 				*rval = JSVAL_FALSE;
-				return JS_TRUE;
+				return true;
 			}
 			x = tChar->GetX();
 			y = tChar->GetY();
@@ -9655,12 +9654,12 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			{
 				ScriptError( cx, "CanSee: Object to look at is invalid" );
 				*rval = JSVAL_FALSE;
-				return JS_TRUE;
+				return true;
 			}
 			if( tObj->WorldNumber() != mChar->WorldNumber() || tObj->GetInstanceId() != mChar->GetInstanceId() )
 			{
 				*rval = JSVAL_FALSE;
-				return JS_TRUE;
+				return true;
 			}
 			if( tObj->CanBeObjType( OT_ITEM ))
 			{
@@ -9668,7 +9667,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 				{
 					ScriptError( cx, "CanSee: Object to look at cannot be in a container" );
 					*rval = JSVAL_FALSE;
-					return JS_TRUE;
+					return true;
 				}
 
 				// Include top of item
@@ -9700,7 +9699,7 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		*rval = BOOLEAN_TO_JSVAL( false );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9709,12 +9708,12 @@ JSBool CBase_CanSee( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Displays specified damage value over character's head
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CSocket_DisplayDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage) Invalid Number of Arguments %d, needs: 2", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CSocket *mSock = static_cast<CSocket *>( JS_GetPrivate( cx, obj ));
@@ -9723,14 +9722,14 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	if( myClass.ClassName() != "UOXChar" )	// It must be a character!
 	{
 		ScriptError( cx, "CSocket_DisplayDamage: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *mChar = static_cast<CChar *>( myClass.toObject() );
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CSocket_DisplayDamage): Passed an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	JSEncapsulate damage( cx, &( argv[1] ));
@@ -9738,7 +9737,7 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 	CPDisplayDamage dispDamage(( *mChar ), static_cast<UI16>( damage.toInt() ));
 	mSock->Send( &dispDamage );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9748,12 +9747,12 @@ JSBool CSocket_DisplayDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Lets character react to damage taken
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_ReactOnDamage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage) Invalid Number of Arguments %d, needs: 1 (damageType) or 2 (damageType and attacker)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *attacker	= nullptr;
@@ -9761,7 +9760,7 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_ReactOnDamage): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 	JSEncapsulate damage( cx, &( argv[0] ));
 
@@ -9771,7 +9770,7 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		if( attackerClass.ClassName() != "UOXChar" ) // It must be a character!
 		{
 			ScriptError( cx, "CChar_ReactOnDamage: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
@@ -9784,12 +9783,12 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 			if( !ValidateObject( attacker ))
 			{
 				ScriptError( cx, "(CChar_ReactOnDamage): Passed an invalid Character" );
-				return JS_TRUE;
+				return true;
 			}
 		}
 	}
 	mChar->ReactOnDamage( static_cast<WeatherType>( damage.toInt() ), attacker );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9802,12 +9801,12 @@ JSBool CChar_ReactOnDamage( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 //|	Purpose		-	Deals damage of a specified damageType to a character, with optional parameters to include attacker and
 //|					whether or not attacker should be flagged as a criminal
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Damage( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc < 1 || argc > 4 )
 	{
 		ScriptError( cx, "(CChar_Damage) Invalid Number of Arguments %d, needs: 1 (amount), 2 (amount, damageType), 3 (amount, damageType and attacker) or 4 (amount, damageType, attacker and doRepsys)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *attacker	= nullptr;
@@ -9815,7 +9814,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_Damage): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 	JSEncapsulate damage( cx, &( argv[0] ));
 
@@ -9831,7 +9830,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( attackerClass.ClassName() != "UOXChar" )	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Damage: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( attackerClass.isType( JSOT_VOID ) || attackerClass.isType( JSOT_NULL ))
@@ -9844,7 +9843,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 			if( !ValidateObject( attacker ))
 			{
 				ScriptError( cx, "(CChar_Damage): Passed an invalid Character" );
-				return JS_TRUE;
+				return true;
 			}
 		}
 	}
@@ -9858,7 +9857,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	[[maybe_unused]] bool retVal = mChar->Damage( damage.toInt(), element, attacker, doRepsys );
+	bool retVal = mChar->Damage( damage.toInt(), element, attacker, doRepsys );
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -9872,7 +9871,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9881,26 +9880,26 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Attempts to initiate combat with target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_InitiateCombat( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(InitiateCombat) Invalid Number of Arguments %d, takes: 1 (targetChar))", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(InitiateCombat): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(InitiateCombat): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	// Keep track of original script that's executing
@@ -9921,7 +9920,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9930,19 +9929,19 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Resets the attacker attack so that it cancels attack setup.
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_InvalidateAttacker( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(InvalidateAttacker) Invalid Number of Arguments %d, takes: 0)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(InvalidateAttacker): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	// Keep track of original script that's executing
@@ -9963,7 +9962,7 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[may
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -9972,30 +9971,30 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds aggressor flag for character towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_AddAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddAggressorFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->AddAggressorFlag( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10004,30 +10003,30 @@ JSBool CChar_AddAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character's aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RemoveAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_RemoveAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemoveAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemoveAggressorFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->RemoveAggressorFlag( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10036,30 +10035,30 @@ JSBool CChar_RemoveAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has an aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_CheckAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_CheckAggressorFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckAggressorFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckAggressorFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->CheckAggressorFlag( ourTarget->GetSerial() ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10068,30 +10067,30 @@ JSBool CChar_CheckAggressorFlag( JSContext *cx, JSObject *obj, uintN argc, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's aggressor flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_UpdateAggressorFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdateAggressorFlagTimestamp): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->UpdateAggressorFlagTimestamp( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10100,23 +10099,23 @@ JSBool CChar_UpdateAggressorFlagTimestamp( JSContext *cx, JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all the character's aggressor flags towards other characters
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ClearAggressorFlags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_ClearAggressorFlags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearAggressorFlags) Invalid Number of Arguments %d, takes: 0)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(ClearAggressorFlags): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->ClearAggressorFlags();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10126,25 +10125,25 @@ JSBool CChar_ClearAggressorFlags( JSContext *cx, JSObject *obj, uintN argc, [[ma
 //|	Purpose		-	Returns true/false depending on whether character has any active aggressor flags
 //|					Optional parameter supported to check only flags towards players and ignore NPCs
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_IsAggressor( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_IsAggressor( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsAggressor) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(IsAggressor): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->IsAggressor( checkForPlayerOnly ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10153,30 +10152,30 @@ JSBool CChar_IsAggressor( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds aggressor flag for character towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_AddPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(AddPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(AddPermaGreyFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->AddPermaGreyFlag( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10185,30 +10184,30 @@ JSBool CChar_AddPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes character's permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RemovePermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_RemovePermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(RemovePermaGreyFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->RemovePermaGreyFlag( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10217,30 +10216,30 @@ JSBool CChar_RemovePermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Check if character has an active permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_CheckPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_CheckPermaGreyFlag( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(CheckPermaGreyFlag): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->CheckPermaGreyFlag( ourTarget->GetSerial() ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10249,30 +10248,30 @@ JSBool CChar_CheckPermaGreyFlag( JSContext *cx, JSObject *obj, uintN argc, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Updates the expiry timestamp of character's permagrey flag towards target character
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_UpdatePermaGreyFlagTimestamp( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp) Invalid Number of Arguments %d, takes: 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *ourTarget = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( ourTarget ))
 	{
 		ScriptError( cx, "(UpdatePermaGreyFlagTimestamp): Operating on an invalid Character (arg 0)" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->UpdatePermaGreyFlagTimestamp( ourTarget->GetSerial() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10281,23 +10280,23 @@ JSBool CChar_UpdatePermaGreyFlagTimestamp( JSContext *cx, JSObject *obj, uintN a
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears all the character's aggressor flags towards other characters
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ClearPermaGreyFlags( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_ClearPermaGreyFlags( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags) Invalid Number of Arguments %d, takes: 0)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(ClearPermaGreyFlags): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	mChar->ClearPermaGreyFlags();
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10307,25 +10306,25 @@ JSBool CChar_ClearPermaGreyFlags( JSContext *cx, JSObject *obj, uintN argc, [[ma
 //|	Purpose		-	Returns true/false depending on whether character has any active permagrey flags
 //|					Optional parameter supported to check only flags towards players and ignore NPCs
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_IsPermaGrey( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_IsPermaGrey( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "(IsPermaGrey) Invalid Number of Arguments %d, takes: 0 or 1)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *mChar = static_cast<CChar *>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(IsPermaGrey): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 
 	bool checkForPlayerOnly	= ( JSVAL_TO_BOOLEAN( argv[0] ) == JS_TRUE );
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->IsPermaGrey( checkForPlayerOnly ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10335,12 +10334,12 @@ JSBool CChar_IsPermaGrey( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unus
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Heals a character, with optional argument to provide character who healed
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CChar_Heal( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "(CChar_Heal) Invalid Number of Arguments %d, needs: 1 (amount) or 2 (amount and healer)", argc );
-		return JS_TRUE;
+		return true;
 	}
 
 	CChar *healer	= nullptr;
@@ -10348,7 +10347,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	if( !ValidateObject( mChar ))
 	{
 		ScriptError( cx, "(CChar_Heal): Operating on an invalid Character" );
-		return JS_TRUE;
+		return true;
 	}
 	JSEncapsulate Heal( cx, &( argv[0] ));
 
@@ -10358,7 +10357,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( healerClass.ClassName() != "UOXChar" )	// It must be a character!
 		{
 			ScriptError( cx, "CChar_Heal: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 
 		if( healerClass.isType( JSOT_VOID ) || healerClass.isType( JSOT_NULL ))
@@ -10371,7 +10370,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 			if( !ValidateObject( healer ))
 			{
 				ScriptError( cx, "(CChar_Heal): Passed an invalid Character" );
-				return JS_TRUE;
+				return true;
 			}
 		}
 	}
@@ -10394,7 +10393,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10413,12 +10412,12 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 //|						6 - Energy
 //|						7 - Poison
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_Resist( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 && argc != 2 )
 	{
 		ScriptError( cx, "Resist: Invalid number of arguments (takes 1, the resist type or 2, the resist type and value to set)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -10433,7 +10432,7 @@ JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( !ValidateObject( mItem ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else if( myClass.ClassName() == "UOXChar" )
@@ -10442,7 +10441,7 @@ JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "Resist: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 
@@ -10480,7 +10479,7 @@ JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 			*rval = JS_FALSE;
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10499,12 +10498,12 @@ JSBool CBase_Resist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 //|						5 the neck
 //|						6 the rest
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_Defense( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3)
 	{
 		ScriptError( cx, "Defense: Invalid number of arguments (takes 3, the hit location, the resist type and if the armor should get damaged)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -10517,13 +10516,13 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "Defense: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "Defense: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate hitLoc( cx, &( argv[0] ));
@@ -10531,7 +10530,7 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 	JSEncapsulate doArmorDamage( cx, &( argv[2] ));
 
 	*rval = INT_TO_JSVAL( Combat->CalcDef( mChar, static_cast<UI08>( hitLoc.toInt() ), doArmorDamage.toBool(), static_cast<WeatherType>( resistType.toInt() )));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10543,12 +10542,12 @@ JSBool CChar_Defense( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //|	Notes		-	Valid moreVarName values: "more", "more0", "more1", "more2", "morex", "morey", "morez"
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CItem_GetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 2 )
 	{
 		ScriptError( cx, "GetMoreVar: Invalid number of arguments (takes 2, the moreVarName (more, more0, more1, more2, morex, morey or morez - and the moreVarPart (1 to 4))" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -10561,13 +10560,13 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( !ValidateObject( mItem ))
 		{
 			ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "GetMoreVar: Passed an invalid Item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch data from the function arguments, and figure out which tempVar to get data from
@@ -10605,12 +10604,12 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	else
 	{
 		ScriptError( cx, "GetMoreVar: Passed an invalid argument: tempVarName" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
 	*rval = INT_TO_JSVAL( mItem->GetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10623,12 +10622,12 @@ JSBool CItem_GetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //|					Valid moreVarPart values: 1, 2, 3, 4
 //|					Valid moreVarValue values: 0 - 255
 //o------------------------------------------------------------------------------------------------o
-JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CItem_SetMoreVar( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 3 )
 	{
 		ScriptError( cx, "SetMoreVar: Invalid number of arguments (takes 3, the moreVarName (more, more0, more1, more2, morex, morey or morez); the moreVarPart (1 to 4) and the moreVarValue (0-255)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -10641,13 +10640,13 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( !ValidateObject( mItem ))
 		{
 			ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "SetMoreVar: Passed an invalid Item" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch data from the function arguments, and figure out which moreVar to set data for
@@ -10686,12 +10685,12 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	else
 	{
 		ScriptError( cx, "SetMoreVar: Passed an invalid argument: moreVarName" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch the value of the moreVarPart and return it to the script
 	mItem->SetTempVar( static_cast<CITempVars>( moreVar ), moreVarPart, moreVarValue );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10700,19 +10699,19 @@ JSBool CItem_SetMoreVar( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (AddScriptTrigger)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -10727,7 +10726,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		if( toExecute == nullptr )
 		{
 			ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
-			return JS_FALSE;
+			return false;
 		}
 		else
 		{
@@ -10735,7 +10734,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10744,19 +10743,19 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CBase_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (RemoveScriptTrigger)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -10774,7 +10773,7 @@ JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsva
 		myObj->ClearScriptTriggers();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10783,19 +10782,19 @@ JSBool CBase_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsva
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if object has a specific scriptTrigger in it's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CBase_HasScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasScriptTrigger: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CBaseObject *myObj = static_cast<CBaseObject*>( JS_GetPrivate( cx, obj ));
 	if( !ValidateObject( myObj ))
 	{
 		ScriptError( cx, "Invalid Object assigned (HasScriptTrigger)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -10809,7 +10808,7 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		*rval = BOOLEAN_TO_JSVAL( true );
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10818,25 +10817,25 @@ JSBool CBase_HasScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds a scriptTrigger to an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CRegion_AddScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddScriptTrigger: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (AddScriptTrigger)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
 	{
 		ScriptError( cx, "That is not a valid script trigger! Only integers between 0-65535 are accepted." );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 scriptId = static_cast<UI16>( JSVAL_TO_INT( argv[0] ));
@@ -10846,7 +10845,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 		if( toExecute == nullptr )
 		{
 			ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
-			return JS_FALSE;
+			return false;
 		}
 		else
 		{
@@ -10854,7 +10853,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 		}
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10863,19 +10862,19 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Remove a scriptTrigger from an object's list of scriptTriggers
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CRegion_RemoveScriptTrigger( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveScriptTrigger: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (RemoveScriptTrigger)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -10893,7 +10892,7 @@ JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, js
 		myObj->ClearScriptTriggers();
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10902,19 +10901,19 @@ JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, js
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get ore preference data for specified ore type
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_GetOrePref( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CRegion_GetOrePref( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "GetOrePref: Invalid number of arguments (takes 1 - oreId)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (GetOrePref)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	if( !JSVAL_IS_INT( argv[0] ))
@@ -10979,7 +10978,7 @@ JSBool CRegion_GetOrePref( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	// Convert orePref array object to jsval and pass it to script
 	*rval = OBJECT_TO_JSVAL( jsOrePref );
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -10988,23 +10987,23 @@ JSBool CRegion_GetOrePref( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Get chance to find ore when mining in townregion
 //o------------------------------------------------------------------------------------------------o
-JSBool CRegion_GetOreChance( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+JSNative CRegion_GetOreChance( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetOreChance: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
 	if( myObj == nullptr )
 	{
 		ScriptError( cx, "Invalid Object assigned (GetOreChance)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = INT_TO_JSVAL( myObj->GetOreChance() );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11013,12 +11012,12 @@ JSBool CRegion_GetOreChance( JSContext *cx, JSObject *obj, uintN argc, [[maybe_u
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds player to an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_AddFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFriend: Invalid number of arguments (takes 1 - playerObject)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11031,24 +11030,24 @@ JSBool CChar_AddFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "AddFriend: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "AddFriend: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *newFriend = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( newFriend ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->AddFriend( newFriend ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11057,12 +11056,12 @@ JSBool CChar_AddFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes player from an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_RemoveFriend( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFriend: Invalid number of arguments (takes 1 - playerObject)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11075,24 +11074,24 @@ JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "RemoveFriend: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *friendToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( friendToRemove ))
 	{
 		ScriptError( cx, "(AddFriend) Invalid Object passed as function parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFriend( friendToRemove ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11101,12 +11100,12 @@ JSBool CChar_RemoveFriend( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CChar_GetFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFriendList: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11119,13 +11118,13 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "GetFriendList: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "GetFriendList: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch actual friend list
@@ -11152,7 +11151,7 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 
 	// Convert ArrayObject to jsval and pass it to script
 	*rval = OBJECT_TO_JSVAL( jsFriendList );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11161,12 +11160,12 @@ JSBool CChar_GetFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_un
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Clears an NPC pet/follower's friend list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CChar_ClearFriendList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "ClearFriendList: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11179,20 +11178,20 @@ JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "ClearFriendList: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Clear friend list
 	mChar->ClearFriendList();
 
 	*rval = BOOLEAN_TO_JSVAL( true );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11201,12 +11200,12 @@ JSBool CChar_ClearFriendList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's owned pets
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CChar_GetPetList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetPetList: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11219,13 +11218,13 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "GetPetList: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "GetPetList: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch actual pet list
@@ -11258,7 +11257,7 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 
 	// Convert ArrayObject to jsval and pass it to script
 	*rval = OBJECT_TO_JSVAL( jsPetList );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11267,12 +11266,12 @@ JSBool CChar_GetPetList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unuse
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns whether character pChar has previously owned the pet (is on pet owner list)
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_HasBeenOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid number of arguments (takes 1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11285,13 +11284,13 @@ JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "HasBeenOwner: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 	
 	JSEncapsulate toCheck( cx, &( argv[0] ));
@@ -11299,13 +11298,13 @@ JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "HasBeenOwner: Invalid Character passed as parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	bool hasBeenOwner = mChar->IsOnPetOwnerList( pChar );
 
 	*rval = BOOLEAN_TO_JSVAL( hasBeenOwner );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11314,12 +11313,12 @@ JSBool CChar_HasBeenOwner( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns chance (in values ranging from 0 to 1000) of pChar (player) successfully controlling mChar (pet)
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_CalculateControlChance( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid number of arguments (takes 1 - pChar)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11332,13 +11331,13 @@ JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, j
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "CalculateControlChance: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate toCheck( cx, &( argv[0] ));
@@ -11346,13 +11345,13 @@ JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, j
 	if( !ValidateObject( pChar ))
 	{
 		ScriptError( cx, "CalculateControlChance: Invalid Character passed as parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	UI16 petControlChance = Skills->CalculatePetControlChance( mChar, pChar );
 
 	*rval = INT_TO_JSVAL( petControlChance );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11361,12 +11360,12 @@ JSBool CChar_CalculateControlChance( JSContext *cx, JSObject *obj, uintN argc, j
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds NPC to player's list of active followers
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_AddFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_AddFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "AddFollower: Invalid number of arguments (takes 1 - npcObject)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11379,24 +11378,24 @@ JSBool CChar_AddFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "AddFollower: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "AddFollower: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *newFollower = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( newFollower ))
 	{
 		ScriptError( cx, "(AddFollower) Invalid Object passed as function parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->AddFollower( newFollower ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11405,12 +11404,12 @@ JSBool CChar_AddFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes a follower from player's follower list
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_RemoveFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CChar_RemoveFollower( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "RemoveFollower: Invalid number of arguments (takes 1 - followerObject)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11423,24 +11422,24 @@ JSBool CChar_RemoveFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "RemoveFollower: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	CChar *followerToRemove = static_cast<CChar*>( JS_GetPrivate( cx, JSVAL_TO_OBJECT( argv[0] )));
 	if( !ValidateObject( followerToRemove ))
 	{
 		ScriptError( cx, "(RemoveFollower) Invalid Object passed as function parameter" );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mChar->RemoveFollower( followerToRemove ));
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11449,12 +11448,12 @@ JSBool CChar_RemoveFollower( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets list of character's active followers
 //o------------------------------------------------------------------------------------------------o
-JSBool CChar_GetFollowerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CChar_GetFollowerList( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "GetFollowerList: Invalid number of arguments (takes 0)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11467,13 +11466,13 @@ JSBool CChar_GetFollowerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 		if( !ValidateObject( mChar ))
 		{
 			ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
-			return JS_FALSE;
+			return false;
 		}
 	}
 	else
 	{
 		ScriptError( cx, "GetFollowerList: Passed an invalid Character" );
-		return JS_FALSE;
+		return false;
 	}
 
 	// Fetch actual active follower list
@@ -11506,7 +11505,7 @@ JSBool CChar_GetFollowerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 
 	// Convert ArrayObject to jsval and pass it to script
 	*rval = OBJECT_TO_JSVAL( jsFollowerList );
-	return JS_TRUE;
+	return true;
 }
 
 // Party Methods
@@ -11516,12 +11515,12 @@ JSBool CChar_GetFollowerList( JSContext *cx, JSObject *obj, uintN argc, [[maybe_
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Removes player from party
 //o------------------------------------------------------------------------------------------------o
-JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CParty_Remove( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "Remove: Invalid number of arguments (1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11531,7 +11530,7 @@ JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Remove: Invalid party" );
-			return JS_FALSE;
+			return false;
 		}
 
 		JSEncapsulate toRemove( cx, &( argv[0] ));
@@ -11539,12 +11538,12 @@ JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 		if( !ValidateObject( charToRemove ))
 		{
 			ScriptError( cx, "Remove: Invalid character to remove" );
-			return JS_FALSE;
+			return false;
 		}
 		*rval = BOOLEAN_TO_JSVAL( ourParty->RemoveMember( charToRemove ));
 	}
 
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11553,12 +11552,12 @@ JSBool CParty_Remove( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsv
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Adds player to party
 //o------------------------------------------------------------------------------------------------o
-JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CParty_Add( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 1 )
 	{
 		ScriptError( cx, "Add: Invalid number of arguments (1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11572,7 +11571,7 @@ JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "Add: Invalid party" );
-			return JS_FALSE;
+			return false;
 		}
 
 		JSEncapsulate toAdd( cx, &( argv[0] ));
@@ -11580,7 +11579,7 @@ JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 		if( !ValidateObject( charToAdd ))
 		{
 			ScriptError( cx, "Add: Invalid character to add" );
-			return JS_FALSE;
+			return false;
 		}
 		if( charToAdd->IsNpc() )
 		{
@@ -11635,7 +11634,7 @@ JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 			}
 		}
 	}
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11644,12 +11643,12 @@ JSBool CParty_Add( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets party member at specified index in list of party members
 //o------------------------------------------------------------------------------------------------o
-JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSNative CParty_GetMember( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc > 1 )
 	{
 		ScriptError( cx, "GetMember: Invalid number of arguments (1)" );
-		return JS_FALSE;
+		return false;
 	}
 
 	JSEncapsulate myClass( cx, obj );
@@ -11659,7 +11658,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( ourParty == nullptr )
 		{
 			ScriptError( cx, "GetMember: Invalid party" );
-			return JS_FALSE;
+			return false;
 		}
 
 		JSEncapsulate toGetMember( cx, &( argv[0] ));
@@ -11668,7 +11667,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		{
 			ScriptError( cx, "GetMember: Invalid character to get, index out of bounds" );
 			*rval = JSVAL_NULL;
-			return JS_TRUE;
+			return true;
 		}
 		CChar *mChar = (*( ourParty->MemberList() ))[memberOffset]->Member();
 		if( mChar == nullptr )
@@ -11683,7 +11682,7 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 	else
 		*rval = JSVAL_NULL;
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11693,22 +11692,22 @@ JSBool CParty_GetMember( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns first trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CSocket_FirstTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "FirstTriggerWord: Invalid socket assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	UI16 trigWord = mySock->FirstTrigWord();
 	*rval = INT_TO_JSVAL( trigWord );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11718,22 +11717,22 @@ JSBool CSocket_FirstTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[may
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns next trigger word in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CSocket_NextTriggerWord( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "NextTriggerWord: Invalid socket assigned." );
-		return JS_FALSE;
+		return false;
 	}
 	UI16 trigWord = mySock->NextTrigWord();
 	*rval = INT_TO_JSVAL( trigWord );
-	return JS_TRUE;
+	return true;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -11743,21 +11742,21 @@ JSBool CSocket_NextTriggerWord( JSContext *cx, JSObject *obj, uintN argc, [[mayb
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns true if finished all trigger words in the socket's list
 //o------------------------------------------------------------------------------------------------o
-JSBool CSocket_FinishedTriggerWords( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
+JSNative CSocket_FinishedTriggerWords( JSContext* cx, unsigned argc, JS::Value* vp )
 {
 	if( argc != 0 )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid count of arguments :%d, needs :0", argc );
-		return JS_FALSE;
+		return false;
 	}
 	CSocket *mySock = static_cast<CSocket*>( JS_GetPrivate( cx, obj ));
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "FinishedTriggerWords: Invalid socket assigned." );
-		return JS_FALSE;
+		return false;
 	}
 
 	*rval = BOOLEAN_TO_JSVAL( mySock->FinishedTrigWords() );
-	return JS_TRUE;
+	return true;
 }
 

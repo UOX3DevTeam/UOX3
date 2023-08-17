@@ -9,7 +9,7 @@
 #ifndef __UOXJSPropertyFuncs__
 #define __UOXJSPropertyFuncs__
 
-typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, jsval id, jsval *vp );
+typedef JSBool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, JS::Value id, JS::Value *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
 JSPropertyFunc CSpellProps_getProperty;
@@ -29,7 +29,8 @@ JSPropertyFunc CItemProps_getProperty;
 JSPropertyFunc CItemProps_setProperty;
 JSPropertyFunc CCharacterProps_getProperty;
 JSPropertyFunc CCharacterProps_setProperty;
-JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
+
+//JSBool CBaseObject_equality( JSContext *cx, JSObject *obj, JS::Value v, JS::BooleanValue *bp );
 
 JSPropertyFunc CRegionProps_getProperty;
 JSPropertyFunc CRegionProps_setProperty;
@@ -47,7 +48,7 @@ JSPropertyFunc CRaceProps_setProperty;
 
 JSPropertyFunc CSocketProps_getProperty;
 JSPropertyFunc CSocketProps_setProperty;
-JSBool CSocket_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
+//JSBool CSocket_equality( JSContext *cx, JSObject *obj, JS::Value v, JSBool *bp );
 
 JSPropertyFunc CSkillsProps_getProperty;
 JSPropertyFunc CSkillsProps_setProperty;
@@ -73,6 +74,6 @@ JSPropertyFunc CResourceProps_setProperty;
 
 JSPropertyFunc CPartyProps_getProperty;
 JSPropertyFunc CPartyProps_setProperty;
-JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp );
+//JSBool CParty_equality( JSContext *cx, JSObject *obj, JS::Value v, JSBool *bp );
 
 #endif

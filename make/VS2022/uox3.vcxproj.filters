@@ -248,9 +248,6 @@
     <ClCompile Include="..\..\source\cScript.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp">
-      <Filter>Source Files\JS Engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\SEFunctions.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
@@ -471,9 +468,6 @@
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cScript.h">
-      <Filter>Header Files\JS Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\source\JSEncapsulate.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\SEFunctions.h">

@@ -8,7 +8,6 @@
 #include "CJSMapping.h"
 #include "CPacketReceive.h"
 #include "CJSEngine.h"
-#include "JSEncapsulate.h"
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"

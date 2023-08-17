@@ -25,6 +25,8 @@
 #pragma warning (disable : 4244)
 // disable: "truncation from 'double' to 'float'
 #pragma warning (disable : 4305)
+// We don't want to deal with unknown pragma GCC messages
+#pragma warning(disable : 4068)
 #endif
 //o------------------------------------------------------------------------------------------------o
 

@@ -264,7 +264,7 @@ public:
 	SI08		OnFacetChange( CChar *mChar, const UI08 oldFacet, const UI08 newFacet );
 
 	bool		AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *tmpObject, CSocket *s );
-	bool		CallParticularEvent( const char *eventToCall, jsval *params, SI32 numParams, jsval *eventRetVal );
+	bool		CallParticularEvent( const char *eventToCall, JS::Value *params, SI32 numParams, JS::Value *eventRetVal );
 
 	bool		ScriptRegistration( std::string scriptType );
 

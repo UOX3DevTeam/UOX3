@@ -134,7 +134,6 @@
     <ClCompile Include="..\..\source\IP4Address.cpp" />
     <ClCompile Include="..\..\source\items.cpp" />
     <ClCompile Include="..\..\source\jail.cpp" />
-    <ClCompile Include="..\..\source\JSEncapsulate.cpp" />
     <ClCompile Include="..\..\source\lineofsight.cpp" />
     <ClCompile Include="..\..\source\magic.cpp" />
     <ClCompile Include="..\..\source\mapstuff.cpp" />
@@ -212,7 +211,6 @@
     <ClInclude Include="..\..\source\gump.h" />
     <ClInclude Include="..\..\source\IP4Address.hpp" />
     <ClInclude Include="..\..\source\jail.h" />
-    <ClInclude Include="..\..\source\JSEncapsulate.h" />
     <ClInclude Include="..\..\source\magic.h" />
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />
@@ -256,9 +254,6 @@
     <ResourceCompile Include="..\..\assets\uox3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\spidermonkey\make\vs2022\jscript\jscript.vcxproj">
-      <Project>{2af3a5ea-0cec-4d24-80f7-05e0b8b300c5}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\zlib\make\vs2022\zlib.vcxproj">
       <Project>{091529fd-5075-45f1-9d96-5708b3ab7c2b}</Project>
     </ProjectReference>
