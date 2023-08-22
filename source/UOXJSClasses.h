@@ -9,6 +9,19 @@
 #define __UOXJSClasses__
 #include "UOXJSPropertyFuncs.h"
 
+static constexpr JSClassOps defaultClassOps = {
+    nullptr, // addProperty
+    nullptr, // deleteProperty
+    nullptr, // enumerate
+    nullptr, // newEnumerate
+    nullptr, // resolve
+    nullptr, // mayResolve
+    nullptr, // finalize
+    nullptr, // call
+    nullptr, // construct
+    nullptr, // trace
+};
+
 inline JSClass global_class =
 {
 	"global",
@@ -20,163 +33,86 @@ inline JSClass uox_class =
 {
 	"uoxscript",
 	0,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CScriptProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+	&defaultClassOps
 };
 
 inline JSClass UOXSpell_class =
 {
 	"UOXSpell",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSpellProps_getProperty,
-	CSpellProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSpellProps_getProperty, CSpellProps_setProperty,
 
 inline JSClass UOXSpells_class =
 {
 	"UOXSpells",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSpellsProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+// CSpellsProps_getProperty,
 
 inline JSClass UOXGlobalSkill_class =
 {
 	"UOXGlobalSkill",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGlobalSkillProps_getProperty,
-	CGlobalSkillProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CGlobalSkillProps_getProperty,
+//	CGlobalSkillProps_setProperty,
 
 inline  JSClass UOXGlobalSkills_class =
 {
 	"UOXGlobalSkills",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGlobalSkillsProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CGlobalSkillsProps_getProperty,
 
 inline JSClass UOXCreateEntry_class =
 {
 	"UOXCreateEntry",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CCreateEntryProps_getProperty,
-	CCreateEntryProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CCreateEntryProps_getProperty,
+//	CCreateEntryProps_setProperty,
 
 inline JSClass UOXCreateEntries_class =
 {
 	"UOXCreateEntries",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CCreateEntriesProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CCreateEntriesProps_getProperty,
 
 inline JSClass UOXTimer_class =
 {
 	"UOXTimer",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CTimerProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CTimerProps_getProperty,
 
-inline JSExtendedClass UOXChar_class =
+inline JSClass UOXChar_class =
 {
-	{	"UOXChar",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CCharacterProps_getProperty,
-		CCharacterProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CBaseObject_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXChar",
+	JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+// CCharacterProps_getProperty,
+// CCharacterProps_setProperty,
+// CBaseObject_equality,
 
-inline JSExtendedClass UOXItem_class =
+inline JSClass UOXItem_class =
 {
-	{	"UOXItem",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CItemProps_getProperty,
-		CItemProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CBaseObject_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXItem",
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+// CItemProps_getProperty,
+// CItemProps_setProperty,
+// CBaseObject_equality,
 
 //
 // What this class does:
@@ -186,190 +122,98 @@ inline JSExtendedClass UOXItem_class =
 inline JSClass UOXSkills_class =
 {
 	"UOXSkills",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSkillsProps_getProperty,
-	CSkillsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSkillsProps_getProperty,
+//	CSkillsProps_setProperty,
 
 inline JSClass UOXBaseSkills_class =
 {
 	"UOXBaseSkills",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSkillsProps_getProperty,
-	CSkillsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSkillsProps_getProperty,
+//	CSkillsProps_setProperty,
 
 inline JSClass UOXSkillsUsed_class =
 {
 	"UOXSkillsUsed",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSkillsProps_getProperty,
-	CSkillsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSkillsProps_getProperty,
+//	CSkillsProps_setProperty,
 
 inline JSClass UOXSkillsLock_class =
 {
 	"UOXSkillsLock",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSkillsProps_getProperty,
-	CSkillsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSkillsProps_getProperty,
+//	CSkillsProps_setProperty,
 
 inline JSClass UOXRace_class =
 {
 	"UOXRace",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CRaceProps_getProperty,
-	CRaceProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CRaceProps_getProperty,
+//	CRaceProps_setProperty,
 
 inline JSClass UOXGuild_class =
 {
 	"UOXGuild",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGuildProps_getProperty,
-	CGuildProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
-
-/* Unused
-static JSClass UOXGuilds_class =
-{
-	"UOXGuilds",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGuildsProps_getProperty,
-	CGuildsProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
-};
-*/
+//	CGuildProps_getProperty,
+//	CGuildProps_setProperty,
 
 inline JSClass UOXRegion_class =
 {
 	"UOXRegion",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CRegionProps_getProperty,
-	CRegionProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CRegionProps_getProperty,
+//	CRegionProps_setProperty,
 
 inline JSClass UOXSpawnRegion_class =
 {
 	"UOXSpawnRegion",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CSpawnRegionProps_getProperty,
-	CSpawnRegionProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CSpawnRegionProps_getProperty,
+//	CSpawnRegionProps_setProperty,
 
-inline JSExtendedClass UOXSocket_class =
+inline JSClass UOXSocket_class =
 {
-	{	"UOXSocket",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CSocketProps_getProperty,
-		CSocketProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CSocket_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXSocket",
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//		CSocketProps_getProperty,
+//		CSocketProps_setProperty,
+//	CSocket_equality,
 
 inline JSClass UOXFile_class =
 {
 	"UOXCFile",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
 
 // var myGump = new Gump; // should be possible
 inline JSClass UOXGump_class =
 {
 	"Gump",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,			// addProperty
-	JS_PropertyStub,			// delProperty
-	JS_PropertyStub,			// getProperty
-	JS_PropertyStub,			// setProperty
-	JS_EnumerateStub,			// enumerate
-	JS_ResolveStub,				// resolve
-	JS_ConvertStub,				// convert
-	JS_FinalizeStub,			// finalize
-	JSCLASS_NO_OPTIONAL_MEMBERS		// reserved slots, checkAccess, call, construct, xdrObject, hasInstance, etc...
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
 
 //o------------------------------------------------------------------------------------------------o
@@ -379,114 +223,53 @@ inline JSClass UOXGump_class =
 inline JSClass UOXGumpData_class =
 {
 	"GumpData",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CGumpDataProps_getProperty,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CGumpDataProps_getProperty,
 
 inline JSClass UOXAccount_class =
 {
 	"CAccountClass",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CAccountProps_getProperty,
-	CAccountProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CAccountProps_getProperty,
+//	CAccountProps_setProperty,
 
 inline JSClass UOXConsole_class =
 {
 	"CConsoleClass",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CConsoleProps_getProperty,
-	CConsoleProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
-
-/* Unused
-static JSClass UOXScriptSection_class =
-{
-	"UOXScriptSection",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CScriptSectionProps_getProperty,
-	CScriptSectionProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
-};
-*/
+//	CConsoleProps_getProperty,
+//	CConsoleProps_setProperty,
 
 inline JSClass UOXResource_class =
 {
 	"UOXResource",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	CResourceProps_getProperty,
-	CResourceProps_setProperty,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//	CResourceProps_getProperty,
+//	CResourceProps_setProperty,
 
 inline JSClass UOXPacket_class =
 {
 	"Packet",
-	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+  JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
 
-inline JSExtendedClass UOXParty_class =
+inline JSClass UOXParty_class =
 {
-	{	"UOXParty",
-		JSCLASS_HAS_PRIVATE | JSCLASS_IS_EXTENDED,
-		JS_PropertyStub,
-		JS_PropertyStub,
-		CPartyProps_getProperty,
-		CPartyProps_setProperty,
-		JS_EnumerateStub,
-		JS_ResolveStub,
-		JS_ConvertStub,
-		JS_FinalizeStub,
-		nullptr, nullptr, nullptr, nullptr,
-		nullptr, nullptr, nullptr, nullptr
-	},
-	CParty_equality,
-	nullptr,
-	nullptr,
-	JSCLASS_NO_RESERVED_MEMBERS
+	"UOXParty",
+	JSCLASS_HAS_RESERVED_SLOTS(1),
+  &defaultClassOps
 };
+//		CPartyProps_getProperty,
+//		CPartyProps_setProperty,
+//	CParty_equality,
 
 #endif
