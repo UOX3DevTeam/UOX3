@@ -200,8 +200,12 @@ else()
 	target_compile_options( uox3 PRIVATE
 		-funsigned-char
 		 -Wno-shift-negative-value
+		 -Wno-deprecated-declarations
 	)
 	if (APPLE)
+# We always use the system zlib , as it is most likely better optimized
+		set(SYSTEM_ZLIB ON)
+
 		target_compile_options( uox3 PRIVATE
 			$<$<CONFIG:Release>:-Os>
 		)
@@ -223,15 +227,18 @@ target_include_directories(uox3
 	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../source
 		${PROJECT_SOURCE_DIR}/../../spidermonkey
+)
+if (NOT SYSTEM_ZLIB)
+target_include_directories(uox3
+	PUBLIC
 		${PROJECT_SOURCE_DIR}/../../zlib
 )
-
+endif (NOT SYSTEM_ZLIB)
 # *************************************************************************
 # The libraries we need
 # *************************************************************************
 target_link_libraries(uox3 PRIVATE
 	jscript
-	zlib 
 	$<$<PLATFORM_ID:Windows>:ws2_32>
 	$<$<PLATFORM_ID:Windows>:Kernel32>
 	$<$<PLATFORM_ID:Linux>:pthread>
@@ -239,8 +246,20 @@ target_link_libraries(uox3 PRIVATE
    $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>
 )
 
+if (NOT SYSTEM_ZLIB)
+target_link_libraries(uox3 PRIVATE
+	zlib
+)
+else()
+target_link_libraries(uox3 PRIVATE
+	z
+)
+endif(NOT SYSTEM_ZLIB)
+
 # *************************************************************************
 # The items we need built first
 # *************************************************************************
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../spidermonkey/make/cmake subproject/jscript)
+if (NOT SYSTEM_ZLIB)
 add_subdirectory(${PROJECT_SOURCE_DIR}/../../zlib/make/cmake subproject/zlib)
+endif(NOT SYSTEM_ZLIB)
