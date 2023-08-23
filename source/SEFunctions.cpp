@@ -34,6 +34,7 @@
 #include "PartySystem.h"
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
+#include <js/Object.h>
 
 
 
@@ -3215,7 +3216,7 @@ JSNative SE_ResourceRegion( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	JSObject *jsResource = JS_NewObject( cx, &UOXResource_class, nullptr, obj );
 	JS_DefineProperties( cx, jsResource, CResourceProperties );
-	JS_SetPrivate( cx, jsResource, mRes );
+  JS::SetReservedSlot( jsResource, 0, JS::PrivateValue(mRes) );
 
 	*rval = OBJECT_TO_JSVAL( jsResource );
 

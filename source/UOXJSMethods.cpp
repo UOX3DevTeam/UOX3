@@ -47,6 +47,7 @@
 #include "combat.h"
 #include "PartySystem.h"
 #include "osunique.hpp"
+#include <js/Object.h>
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
@@ -168,9 +169,8 @@ JSNative Packet( JSContext* cx, unsigned argc, JS::Value* vp )
 	CPUOXBuffer *toAdd = new CPUOXBuffer;
 
 	JS_DefineFunctions( cx, obj, CPacket_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue(toAdd) );
 	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	return true;
 }
 
@@ -189,8 +189,7 @@ JSNative CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	delete toDelete;
 	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -386,9 +385,8 @@ JSNative Gump( JSContext* cx, unsigned argc, JS::Value* vp )
 	toAdd->textId = 0;
 
 	JS_DefineFunctions( cx, obj, CGump_Methods );
-	JS_SetPrivate( cx, obj, toAdd);
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue(toAdd) );
 	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	return true;
 }
 
@@ -410,8 +408,7 @@ JSNative CGump_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 	delete toDelete;
 
 	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	return true;
 }
@@ -430,8 +427,7 @@ JSNative CGumpData_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 		return false;
 
 	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 
 	delete toDelete;
 	return true;
@@ -2483,7 +2479,7 @@ JSNative CSocket_Disconnect( JSContext* cx, unsigned argc, JS::Value* vp )
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
 	Network->Disconnect( targSock );
-	JS_SetPrivate( cx, obj, nullptr ); // yes we should do that...
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() ); // yes we should do that...
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -6789,9 +6785,8 @@ JSNative UOXCFile( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	//JSBool myVal = JS_DefineFunctions( cx, obj, CFile_Methods );
 	JS_DefineFunctions( cx, obj, CFile_Methods );
-	JS_SetPrivate( cx, obj, toAdd );
+	JS::SetReservedSlot( obj, 0, JS::PrivateValue(toAdd) );
 	JS_LockGCThing( cx, obj );
-	//JS_AddRoot( cx, &obj );
 	return true;
 }
 
@@ -6812,8 +6807,7 @@ JSNative CFile_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 	UOXFileWrapper_st *mFile = static_cast<UOXFileWrapper_st *>( JS_GetPrivate( cx, obj ));
 	delete mFile;
 	JS_UnlockGCThing( cx, obj );
-	//JS_RemoveRoot( cx, &obj );
-	JS_SetPrivate( cx, obj, nullptr );
+	JS::SetReservedSlot( obj, 0, JS::UndefinedValue() );
 	return true;
 }
 

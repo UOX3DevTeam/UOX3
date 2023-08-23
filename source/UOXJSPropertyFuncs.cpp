@@ -30,10 +30,9 @@
 #include "Dictionary.h"
 #include "cSpawnRegion.h"
 
-#include "jsobj.h"
-#include "jsutil.h"
-
 #include "PartySystem.h"
+
+#include <js/Object.h>
 
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
@@ -70,7 +69,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	JSObject *jsSpell = JS_NewObject( cx, &UOXSpell_class, nullptr, obj );
 	JS_DefineProperties( cx, jsSpell, CSpellProperties );
-	JS_SetPrivate( cx, jsSpell, mySpell );
+	JS::SetReservedSlot( jsSpell, 0, JS::PrivateValue(mySpell) );
 
 	*vp = OBJECT_TO_JSVAL( jsSpell );
 	return JS_TRUE;
@@ -184,7 +183,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 
 	JSObject *jsSkill = JS_NewObject( cx, &UOXGlobalSkill_class, nullptr, obj );
 	JS_DefineProperties( cx, jsSkill, CGlobalSkillProperties );
-	JS_SetPrivate( cx, jsSkill, mySkill );
+	JS::SetReservedSlot( jsSkill, 0, JS::PrivateValue(mySkill) );
 
 	*vp = OBJECT_TO_JSVAL( jsSkill );
 	return JS_TRUE;
@@ -291,7 +290,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 
 	JSObject *jsCreateEntry = JS_NewObject( cx, &UOXCreateEntry_class, nullptr, obj );
 	JS_DefineProperties( cx, jsCreateEntry, CCreateEntryProperties );
-	JS_SetPrivate( cx, jsCreateEntry, myCreateEntry );
+	JS::SetReservedSlot( jsCreateEntry, 0, JS::PrivateValue(myCreateEntry) );
 
 	*vp = OBJECT_TO_JSVAL( jsCreateEntry );
 	return JS_TRUE;
@@ -1692,19 +1691,19 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_BASESKILLS:
 				TempObject = JS_NewObject( cx, &UOXBaseSkills_class, nullptr, obj );
 				JS_DefineProperties( cx, TempObject, CSkillsProps );
-				JS_SetPrivate( cx, TempObject, gPriv );
+				JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
 				*vp = OBJECT_TO_JSVAL( TempObject );
 				break;
 			case CCP_SKILLS:
 				TempObject = JS_NewObject( cx, &UOXSkills_class, nullptr, obj );
 				JS_DefineProperties( cx, TempObject, CSkillsProps );
-				JS_SetPrivate( cx, TempObject, gPriv );
+				JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
 				*vp = OBJECT_TO_JSVAL( TempObject );
 				break;
 			case CCP_SKILLUSE:
 				TempObject = JS_NewObject( cx, &UOXSkillsUsed_class, nullptr, obj );
 				JS_DefineProperties( cx, TempObject, CSkillsProps );
-				JS_SetPrivate( cx, TempObject, gPriv );
+				JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
 				*vp = OBJECT_TO_JSVAL( TempObject );
 				break;
 			case CCP_MANA:			*vp = INT_TO_JSVAL( gPriv->GetMana() );			break;
@@ -1977,7 +1976,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 			case CCP_SKILLLOCK:
 				TempObject = JS_NewObject( cx, &UOXSkillsLock_class, nullptr, obj );
 				JS_DefineProperties( cx, TempObject, CSkillsProps );
-				JS_SetPrivate( cx, TempObject, gPriv );
+				JS::SetReservedSlot( TempObject, 0, JS::PrivateValue(gPriv) );
 				*vp	= OBJECT_TO_JSVAL( TempObject );
 				break;
 			case CCP_DEATHS:		*vp = INT_TO_JSVAL( gPriv->GetDeaths() );					break;

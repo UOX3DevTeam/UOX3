@@ -11,6 +11,7 @@
 #include "cSpawnRegion.h"
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include <js/Object.h>
 
 //o------------------------------------------------------------------------------------------------o
 //|	File		-	cScript.cpp
@@ -293,26 +294,29 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( targContext == nullptr )
 		return;
 
-	targObject = JS_NewObject( targContext, &uox_class, nullptr, nullptr );
+	targObject = JS_NewObject( targContext, &uox_class );
 	if( targObject == nullptr )
 		return;
 
 	JS_LockGCThing( targContext, targObject );
-	//JS_AddRoot( targContext, &targObject );
 
 	// Moved here so it reports errors during script-startup too
 	JS_SetErrorReporter( targContext, UOX3ErrorReporter );
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	JS_InitStandardClasses( targContext, targObject );
+	JS::InitRealmStandardClasses( targContext, targObject );
 	JS_DefineFunctions( targContext, targObject, my_functions );
-	targScript = JS_CompileFile( targContext, targObject, targFile.c_str() );
+  JS::CompileOptions compOpt( targContext );
+  JS::RootedScript script(targContext);
+  if (!JS::Compile(targContext, compOpt, targFile, &script)) {
+  
+	}
 	if( targScript == nullptr )
 	{
 		throw std::runtime_error( "Compilation failed" );
 	}
-	jsval rval;
+	JS::Value rval;
 	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
 	if( ok != JS_TRUE )
 	{
@@ -2722,9 +2726,8 @@ void cScript::HandleGumpPress( CPIGumpMenuSelect *packet )
 	JSObject *jsoObject			= JS_NewObject( targContext, &UOXGumpData_class, nullptr, nullptr );
 	JS_DefineFunctions( targContext, jsoObject, CGumpData_Methods );
 	JS_DefineProperties( targContext, jsoObject, CGumpDataProperties );
-	JS_SetPrivate( targContext, jsoObject, segdGumpData );
+	JS::SetReservedSlot( jsoObject, 0, JS::PrivateValue( segdGumpData ) );
 	JS_LockGCThing( targContext, jsoObject );
-	//JS_AddRoot( targContext, &jsoObject );
 
 	UI16 i;
 	// Loop through Buttons

@@ -18,6 +18,7 @@
 #include "UOXJSPropertySpecs.h"
 #include <algorithm>
 #include <js/Initialization.h>
+#include <js/Object.h>
 
 CJSEngine *JSEngine = nullptr;
 
@@ -206,7 +207,7 @@ void CJSRuntime::Cleanup( void )
 		for( JSOBJECTMAP_ITERATOR lIter = ourList.begin(); lIter != ourList.end(); ++lIter )
 		{
 			JS_UnlockGCThing( jsContext, ( *lIter ).second );
-			JS_SetPrivate( jsContext, ( *lIter ).second, nullptr );
+			JS::SetReservedSlot( ( *lIter ).second, 0, JS::UndefinedValue() );
 		}
 		ourList.clear();
 	}
@@ -308,7 +309,7 @@ JSObject *CJSRuntime::AcquireObject( IUEEntries iType, void *index )
 			if( retVal != nullptr )
 			{
 				objectList[iType][index] = retVal;
-				JS_SetPrivate( jsContext, retVal, index );
+				JS::SetReservedSlot( retVal, 0, JS::PrivateValue( index ) );
 			}
 		}
 	}
@@ -321,8 +322,7 @@ void CJSRuntime::ReleaseObject( IUEEntries iType, void *index )
 	{
 		JSObject *toRelease = ( *toSearch ).second;
 		JS_UnlockGCThing( jsContext, toRelease );
-		//JS_RemoveRoot( jsContext, &toRelease );
-		JS_SetPrivate( jsContext, toRelease, nullptr );
+		JS::SetReservedSlot( toRelease, 0, JS::UndefinedValue() );
 		objectList[iType].erase( toSearch );
 	}
 }
