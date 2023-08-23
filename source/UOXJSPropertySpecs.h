@@ -66,7 +66,7 @@ DECL_GET_SET( CGlobalSkill, intelligence )
 DECL_GET_SET( CGlobalSkill, skillDelay )
 DECL_GET_SET( CGlobalSkill, scriptID )
 
-//Create Entry
+// Create Entry
 DECL_GET_SET( CCreateEntry, id )
 DECL_GET_SET( CCreateEntry, name )
 DECL_GET_SET( CCreateEntry, addItem )
@@ -114,6 +114,22 @@ DECL_GET( CTimer, SOCK_FISHING )
 DECL_GET( CTimer, SOCK_MUTETIME )
 DECL_GET( CTimer, SOCK_TRACKINGDISPLAY )
 DECL_GET( CTimer, SOCK_TRAFFICWARDEN )
+
+// Race Properties
+DECL_GET_SET( CRace, id )
+DECL_GET_SET( CRace, name )
+DECL_GET_SET( CRace, weakToWeather )
+DECL_GET_SET( CRace, requiresBeard )
+DECL_GET_SET( CRace, requiresNoBeard )
+DECL_GET_SET( CRace, isPlayerRace )
+DECL_GET_SET( CRace, genderRestrict )
+DECL_GET_SET( CRace, armourClass )
+DECL_GET_SET( CRace, languageSkillMin )
+DECL_GET_SET( CRace, skillAdjustment )
+DECL_GET_SET( CRace, poisonResistance )
+DECL_GET_SET( CRace, magicResistance )
+DECL_GET_SET( CRace, visibleDistance )
+DECL_GET_SET( CRace, nightVision )
 
 // Property table
 
@@ -230,23 +246,22 @@ inline JSPropertySpec CTimerProperties[] =
 
 inline JSPropertySpec CRaceProperties[] =
 {
-  { "id",					CRP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "name",				CRP_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "weakToWeather",		CRP_WEAKTOWEATHER,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "requiresBeard",		CRP_REQUIRESBEARD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "requiresNoBeard",	CRP_REQUIRESNOBEARD,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isPlayerRace",		CRP_ISPLAYERRACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "genderRestrict",		CRP_GENDERRESTRICT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "armourClass",		CRP_ARMOURCLASS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "languageSkillMin",	CRP_LANGUAGESKILLMIN,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillAdjustment",	CRP_SKILLADJUSTMENT,	JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "poisonResistance",	CRP_POISONRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "magicResistance",	CRP_MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "visibleDistance",	CRP_VISIBLEDISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "nightVision",		CRP_NIGHTVISION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "id",				JSCRace_get_id,                JSCRace_set_id,           JSPROP_ENUMANDPERM ),
+  JS_PSGS( "name",				JSCRace_get_name,	           JSCRace_set_name,         JSPROP_ENUMANDPERM ),
+  JS_PSGS( "weakToWeather",		JSCRace_get_weakToWeather,	   JSCRace_set_weakToWeather,      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "requiresBeard",		JSCRace_get_requiresBeard,     JSCRace_set_requiresBeard,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "requiresNoBeard",	JSCRace_get_requiresNoBeard,   JSCRace_set_requiresNoBeard,        JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isPlayerRace",	    JSCRace_get_isPlayerRace,	   JSCRace_set_isPlayerRace,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "genderRestrict",	JSCRace_get_genderRestrict,	   JSCRace_set_genderRestrict,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "armourClass",		JSCRace_get_armourClass,	   JSCRace_set_armourClass,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "languageSkillMin",	JSCRace_get_languageSkillMin,  JSCRace_set_languageSkillMin,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillAdjustment",   JSCRace_get_skillAdjustment,   JSCRace_set_skillAdjustment,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "poisonResistance",	JSCRace_get_poisonResistance,  JSCRace_set_poisonResistance,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "magicResistance",   JSCRace_get_magicResistance,   JSCRace_set_magicResistance,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "visibleDistance",	JSCRace_get_visibleDistance,   JSCRace_set_visibleDistance,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "nightVision",	    JSCRace_get_nightVision,	   JSCRace_set_nightVision,  JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
-
 
 inline JSPropertySpec CRegionProperties[] =
 {
