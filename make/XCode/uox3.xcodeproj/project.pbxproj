@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		648153CA29466EF400784170 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 648153C929466EF400784170 /* libjscript.a */; };
+		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -90,6 +90,23 @@
 		64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 64A9016E293E3EF5009B54DA /* libz.tbd */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		56BA2FBB2A95BDF70064EB36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64A9FE47293E37BC009B54DA;
+			remoteInfo = jscript;
+		};
+		56BA2FBD2A95BDF70064EB36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 56BA2FA62A95B9980064EB36;
+			remoteInfo = jscpucfg;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		64A90068293E3DA3009B54DA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -103,6 +120,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -271,13 +289,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				64A9016F293E3EFD009B54DA /* libz.tbd in Frameworks */,
-				648153CA29466EF400784170 /* libjscript.a in Frameworks */,
+				56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		56BA2FB62A95BDF70064EB36 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56BA2FBC2A95BDF70064EB36 /* libjscript.a */,
+				56BA2FBE2A95BDF70064EB36 /* jscpucfg */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
@@ -318,6 +345,7 @@
 		64A9016B293E3EED009B54DA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */,
 				648153C929466EF400784170 /* libjscript.a */,
 				64A9016E293E3EF5009B54DA /* libz.tbd */,
 			);
@@ -586,12 +614,35 @@
 			mainGroup = 64A90061293E3DA3009B54DA;
 			productRefGroup = 64A9006B293E3DA3009B54DA /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 56BA2FB62A95BDF70064EB36 /* Products */;
+					ProjectRef = 56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				64A90069293E3DA3009B54DA /* uox3 */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		56BA2FBC2A95BDF70064EB36 /* libjscript.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libjscript.a;
+			remoteRef = 56BA2FBB2A95BDF70064EB36 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		56BA2FBE2A95BDF70064EB36 /* jscpucfg */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = jscpucfg;
+			remoteRef = 56BA2FBD2A95BDF70064EB36 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		64A90066293E3DA3009B54DA /* Sources */ = {
