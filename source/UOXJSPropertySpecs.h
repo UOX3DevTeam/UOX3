@@ -63,6 +63,21 @@ DECL_GET_SET( CGlobalSkill, intelligence )
 DECL_GET_SET( CGlobalSkill, skillDelay )
 DECL_GET_SET( CGlobalSkill, scriptID )
 
+//Create Entry
+DECL_GET_SET( CCreateEntry, id )
+DECL_GET_SET( CCreateEntry, name )
+DECL_GET_SET( CCreateEntry, addItem )
+DECL_GET_SET( CCreateEntry, colour )
+DECL_GET_SET( CCreateEntry, sound )
+DECL_GET_SET( CCreateEntry, minRank )
+DECL_GET_SET( CCreateEntry, maxRank )
+DECL_GET_SET( CCreateEntry, delay )
+DECL_GET_SET( CCreateEntry, spell )
+DECL_GET_SET( CCreateEntry, resources )
+DECL_GET_SET( CCreateEntry, skills )
+DECL_GET_SET( CCreateEntry, avgMinSkill )
+DECL_GET_SET( CCreateEntry, avgMaxSkill )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -106,7 +121,7 @@ inline JSPropertySpec CSpellProperties[] =
   JS_PS_END
 };
 
-inline JSPropertySpec CGlobalSkillProperties[] = 
+inline JSPropertySpec CGlobalSkillProperties[] =
 {
   JS_PSGS( "name",             JSCGlobalSkill_get_name,         JSCGlobalSkill_set_name,         JSPROP_ENUMANDPERM ),
   JS_PSGS( "madeWord",		   JSCGlobalSkill_get_madeWord,	    JSCGlobalSkill_set_madeWord,     JSPROP_ENUMANDPERM ),
@@ -120,19 +135,19 @@ inline JSPropertySpec CGlobalSkillProperties[] =
 
 inline JSPropertySpec CCreateEntryProperties[] =
 {
-  { "id",					CMAKE_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "name",				CMAKE_NAME,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "addItem",			CMAKE_ADDITEM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "colour",				CMAKE_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "sound",				CMAKE_SOUND,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "minRank",			CMAKE_MINRANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxRank",			CMAKE_MAXRANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "delay",				CMAKE_DELAY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spell",				CMAKE_SPELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resources",			CMAKE_RESOURCES,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skills",				CMAKE_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "avgMinSkill",		CMAKE_AVGMINSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "avgMaxSkill",		CMAKE_AVGMAXSKILL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "id",             JSCCreateEntry_get_id,             JSCCreateEntry_set_id,           JSPROP_ENUMANDPERM ),
+  JS_PSGS( "name",		     JSCCreateEntry_get_name,	        JSCCreateEntry_set_name,         JSPROP_ENUMANDPERM ),
+  JS_PSGS( "addItem",		 JSCCreateEntry_get_addItem,	    JSCCreateEntry_set_addItem,      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "colour",		 JSCCreateEntry_get_colour,         JSCCreateEntry_set_colour,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "sound",	         JSCCreateEntry_get_sound,          JSCCreateEntry_set_sound,        JSPROP_ENUMANDPERM ),
+  JS_PSGS( "minRank",	     JSCCreateEntry_get_minRank,	    JSCCreateEntry_set_minRank,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxRank",		 JSCCreateEntry_get_maxRank,	    JSCCreateEntry_set_maxRank,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "delay",		     JSCCreateEntry_get_delay,	        JSCCreateEntry_set_delay,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "spell",		     JSCCreateEntry_get_spell,	        JSCCreateEntry_set_spell,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "resources",		 JSCCreateEntry_get_resources,	    JSCCreateEntry_set_resources,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skills",		 JSCCreateEntry_get_skills,	        JSCCreateEntry_set_skills,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "avgMinSkill",    JSCCreateEntry_get_avgMinSkill,	JSCCreateEntry_set_avgMinSkill,	 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "avgMaxSkill",	 JSCCreateEntry_get_avgMaxSkill,	JSCCreateEntry_set_avgMaxSkill,	 JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
