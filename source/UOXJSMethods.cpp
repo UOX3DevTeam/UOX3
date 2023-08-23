@@ -182,7 +182,7 @@ JSNative Packet( JSContext* cx, unsigned argc, JS::Value* vp )
 //o------------------------------------------------------------------------------------------------o
 JSNative CPacket_Free( JSContext* cx, unsigned argc, JS::Value* vp )
 {
-	CPUOXBuffer *toDelete = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *toDelete = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 
 	if( toDelete == nullptr )
 		return false;
@@ -208,7 +208,7 @@ JSNative CPacket_WriteByte( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteByte) Invalid Object Passed" );
@@ -237,7 +237,7 @@ JSNative CPacket_WriteShort( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteShort) Invalid Object Passed" );
@@ -266,7 +266,7 @@ JSNative CPacket_WriteLong( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteLong) Invalid Object Passed" );
@@ -297,7 +297,7 @@ JSNative CPacket_WriteString( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_WriteString) Invalid Object Passed" );
@@ -327,7 +327,7 @@ JSNative CPacket_ReserveSize( JSContext* cx, unsigned argc, JS::Value* vp )
 		return true;
 	}
 
-	CPUOXBuffer *myPacket = static_cast<CPUOXBuffer *>( JS_GetPrivate( cx, obj ));
+	CPUOXBuffer *myPacket = JS::GetMaybePtrFromReservedSlot<CPUOXBuffer>( obj, 0 );
 	if( myPacket == nullptr )
 	{
 		ScriptError( cx, "(CPacket_ReserveSize) Invalid Object Passed" );

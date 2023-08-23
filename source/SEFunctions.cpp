@@ -104,18 +104,17 @@ JSNative SE_DoTempEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( argc == 8 )
 	{
-		JSObject *myitemptr = nullptr;
-		myitemptr = args.get( 7 ).toObject();
-		myItemPtr = static_cast<CItem *>( JS_GetPrivate( cx, myitemptr ));
+		JSObject *myitemptr = args.get( 7 ).toObjectOrNull();
+		myItemPtr = JS::GetMaybePtrFromReservedSlot<CItem>( myitemptr, 0 );
 	}
 
-	JSObject *mysrc		= JSVAL_TO_OBJECT( argv[1] );
+	JSObject *mysrc		= args.get( 1 ).toObjectOrNull();
 	CChar *mysrcChar	= nullptr;
 
 	// Check if mysrc is null before continuing - it could be this temp effect as no character-based source!
 	if( mysrc != nullptr )
 	{
-		mysrcChar = static_cast<CChar*>( JS_GetPrivate( cx, mysrc ));
+		mysrcChar = JS::GetMaybePtrFromReservedSlot<CChar>( mysrc, 0 );
 		if( !ValidateObject( mysrcChar ))
 		{
 			ScriptError( cx, "DoTempEffect: Invalid src" );
@@ -125,8 +124,8 @@ JSNative SE_DoTempEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 
 	if( iType == 0 )	// character
 	{
-		JSObject *mydestc = JSVAL_TO_OBJECT( argv[2] );
-		CChar *mydestChar = static_cast<CChar*>( JS_GetPrivate( cx, mydestc ));
+		JSObject *mydestc = args.get( 2 ).toObjectOrNull();
+		CChar *mydestChar = JS::GetMaybePtrFromReservedSlot<CChar>( mydestc, 0 );
 
 		if( !ValidateObject( mydestChar ))
 		{
@@ -144,8 +143,8 @@ JSNative SE_DoTempEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		JSObject *mydesti = JSVAL_TO_OBJECT( argv[2] );
-		CItem *mydestItem = static_cast<CItem *>( JS_GetPrivate( cx, mydesti ));
+		JSObject *mydesti = args.get( 2 ).toObjectOrNull();
+		CItem *mydestItem = JS::GetMaybePtrFromReservedSlot<CItem>( mydesti, 0 );
 
 		if( !ValidateObject( mydestItem ))
 		{
@@ -351,8 +350,8 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 	else
 	{
-		JSObject *srcObj = JSVAL_TO_OBJECT( argv[0] );
-		src				 = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
+		JSObject *srcObj = args.get( 0 ).toObjectOrNull();
+		src				 = JS::GetMaybePtrFromReservedSlot<CBaseObject>( srcObj, 0 );
 		if( !ValidateObject( src ))
 		{
 			ScriptError( cx, "DoMovingEffect: Invalid source object" );
@@ -391,7 +390,7 @@ JSNative SE_DoMovingEffect( JSContext* cx, unsigned argc, JS::Value* vp )
 			}
 
 			JSObject *trgObj	= JSVAL_TO_OBJECT( argv[1] );
-			trg = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
+			trg = JS::GetMaybePtrFromReservedSlot<CBaseObject>( trgObj, 0 );
 			if( !ValidateObject( trg ))
 			{
 				ScriptError( cx, "DoMovingEffect: Invalid target object" );
@@ -488,9 +487,9 @@ JSNative SE_MakeItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *mSock = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sock	= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+  CSocket *sock = JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	JSObject *mChar = JSVAL_TO_OBJECT( argv[1] );
-	CChar *player	= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+  CChar *player = JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
 	if( !ValidateObject( player ))
 	{
 		ScriptError( cx, "MakeItem: Invalid character" );
@@ -1210,14 +1209,14 @@ JSNative SE_CreateDFNItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argv[0] != JSVAL_NULL )
 	{
 		JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-		mySock					= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock					= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	}
 
 	CChar *myChar = nullptr;
 	if( argv[1] != JSVAL_NULL )
 	{
 		JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar					= JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
 	}
 
 	std::string bpSectNumber	= JS_GetStringBytes( JS_ValueToString( cx, argv[2] ));
@@ -1302,14 +1301,14 @@ JSNative SE_CreateBlankItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argv[0] != JSVAL_NULL )
 	{
 		JSObject *mSock		= JSVAL_TO_OBJECT( argv[0] );
-		mySock				= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+		mySock				= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	}
 
 	CChar *myChar = nullptr;
 	if( argv[1] != JSVAL_NULL )
 	{
 		JSObject *mChar			= JSVAL_TO_OBJECT( argv[1] );
-		myChar					= static_cast<CChar *>( JS_GetPrivate( cx, mChar ));
+		myChar					= JS::GetMaybePtrFromReservedSlot<CChar>( mChar, 0 );
 	}
 
 	SI32 amount				= static_cast<SI32>( JSVAL_TO_INT( argv[2] ));
@@ -1557,7 +1556,7 @@ JSNative SE_FindMulti( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argc == 1 )
 	{
 		JSObject *myitemptr = JSVAL_TO_OBJECT( argv[0] );
-		CBaseObject *myItemPtr = static_cast<CBaseObject *>( JS_GetPrivate( cx, myitemptr ));
+		CBaseObject *myItemPtr = JS::GetMaybePtrFromReservedSlot<CBaseObject>( myitemptr, 0 );
 		if( ValidateObject( myItemPtr ))
 		{
 			xLoc		= myItemPtr->GetX();
@@ -1805,7 +1804,7 @@ JSNative SE_UseItem( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSObject *mItem	= JSVAL_TO_OBJECT( argv[1] );
-	CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+	CItem *myItem	= JS::GetMaybePtrFromReservedSlot<CItem>( mItem, 0 );
 
 	if( !ValidateObject( myItem ))
 	{
@@ -1942,7 +1941,7 @@ JSNative SE_TriggerTrap( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSObject *mItem = JSVAL_TO_OBJECT( argv[1] );
-	CItem *myItem = static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+	CItem *myItem = JS::GetMaybePtrFromReservedSlot<CItem>( mItem, 0 );
 
 	if( !ValidateObject( myItem ))
 	{
@@ -2056,7 +2055,7 @@ JSNative SE_GetPackOwner( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( mType == 0 )	// item
 	{
 		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
-		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+		CItem *myItem	= JS::GetMaybePtrFromReservedSlot<CItem>( mItem, 0 );
 		pOwner			= FindItemOwner( myItem );
 	}
 	else				// serial
@@ -2096,7 +2095,7 @@ JSNative SE_FindRootContainer( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( mType == 0 )	// item
 	{
 		JSObject *mItem	= JSVAL_TO_OBJECT( argv[0] );
-		CItem *myItem	= static_cast<CItem *>( JS_GetPrivate( cx, mItem ));
+		CItem *myItem	= JS::GetMaybePtrFromReservedSlot<CItem>( mItem, 0 );
 		iRoot			= FindRootContainer( myItem );
 	}
 	else				// serial
@@ -2131,7 +2130,7 @@ JSNative SE_CalcTargetedItem( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
+	CSocket *sChar		= JS::GetMaybePtrFromReservedSlot<CSocket>( mysockptr, 0 );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedItem: Invalid socket" );
@@ -2166,7 +2165,7 @@ JSNative SE_CalcTargetedChar( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *mysockptr = JSVAL_TO_OBJECT( argv[0] );
-	CSocket *sChar		= static_cast<CSocket *>( JS_GetPrivate( cx, mysockptr ));
+	CSocket *sChar		= JS::GetMaybePtrFromReservedSlot<CSocket>( mysockptr, 0 );
 	if( sChar == nullptr )
 	{
 		ScriptError( cx, "CalcTargetedChar: Invalid socket" );
@@ -2402,7 +2401,7 @@ JSNative SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
+	CBaseObject *srcObject = JS::GetMaybePtrFromReservedSlot<CBaseObject>( srcBaseObj, 0 );
 
 	if( !ValidateObject( srcObject ))
 	{
@@ -2413,7 +2412,7 @@ JSNative SE_AreaCharacterFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argc == 4 && argv[3] != JSVAL_NULL )
 	{
 		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
-		srcSocket = static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
+		srcSocket = JS::GetMaybePtrFromReservedSlot<CSocket>( srcSocketObj, 0 );
 	}
 
 	std::vector<CChar *> charsFound;
@@ -2485,7 +2484,7 @@ JSNative SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 	}
 
 	JSObject *srcBaseObj = JSVAL_TO_OBJECT( argv[1] );
-	CBaseObject *srcObject = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcBaseObj ));
+	CBaseObject *srcObject = JS::GetMaybePtrFromReservedSlot<CBaseObject>( srcBaseObj, 0 );
 
 	if( !ValidateObject( srcObject ))
 	{
@@ -2498,7 +2497,7 @@ JSNative SE_AreaItemFunction( JSContext* cx, unsigned argc, JS::Value* vp )
 		srcSocketObj = JSVAL_TO_OBJECT( argv[3] );
 		if( srcSocketObj != nullptr )
 		{
-			srcSocket	= static_cast<CSocket *>( JS_GetPrivate( cx, srcSocketObj ));
+			srcSocket	= JS::GetMaybePtrFromReservedSlot<CSocket>( srcSocketObj, 0 );
 		}
 	}
 
@@ -2583,7 +2582,7 @@ JSNative SE_Yell( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	CSocket *mySock			= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	CChar *myChar			= mySock->CurrcharObj();
 	std::string textToYell	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
 	UI08 commandLevel		= static_cast<UI08>( JSVAL_TO_INT( argv[2] ));
@@ -2743,7 +2742,7 @@ JSNative SE_SendStaticStats( JSContext* cx, unsigned argc, JS::Value* vp )
 
   auto args		= JS::CallArgsFromVp(argc, vp);
 	JSObject *mSock			= JSVAL_TO_OBJECT( argv[0] );
-	CSocket *mySock			= static_cast<CSocket *>( JS_GetPrivate( cx, mSock ));
+	CSocket *mySock			= JS::GetMaybePtrFromReservedSlot<CSocket>( mSock, 0 );
 	if( mySock == nullptr )
 	{
 		ScriptError( cx, "SendStaticStats: passed an invalid socket!" );
@@ -3419,10 +3418,10 @@ JSNative SE_WillResultInCriminal( JSContext* cx, unsigned argc, JS::Value* vp )
 	if( argv[0] != JSVAL_NULL && argv[1] != JSVAL_NULL )
 	{
 		JSObject *srcCharObj = JSVAL_TO_OBJECT( argv[0] );
-		srcChar = static_cast<CChar *>( JS_GetPrivate( cx, srcCharObj ));
+		srcChar = JS::GetMaybePtrFromReservedSlot<CChar>( srcCharObj, 0 );
 
 		JSObject *trgCharObj = JSVAL_TO_OBJECT( argv[1] );
-		trgChar = static_cast<CChar *>( JS_GetPrivate( cx, trgCharObj ));
+		trgChar = JS::GetMaybePtrFromReservedSlot<CChar>( trgCharObj, 0 );
 
 		if( ValidateObject( srcChar ) && ValidateObject( trgChar ))
 		{
@@ -5243,8 +5242,8 @@ JSNative SE_DistanceBetween( JSContext* cx, unsigned argc, JS::Value* vp )
 		JSObject *srcObj = JSVAL_TO_OBJECT( argv[0] );
 		JSObject *trgObj = JSVAL_TO_OBJECT( argv[1] );
 		bool checkZ = argc == 3 ? ( JSVAL_TO_BOOLEAN( argv[2] ) == JS_TRUE ) : false;
-		CBaseObject *srcBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, srcObj ));
-		CBaseObject *trgBaseObj = static_cast<CBaseObject *>( JS_GetPrivate( cx, trgObj ));
+		CBaseObject *srcBaseObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( srcObj, 0 );
+		CBaseObject *trgBaseObj = JS::GetMaybePtrFromReservedSlot<CBaseObject>( trgObj, 0 );
 		if( !ValidateObject( srcBaseObj ) || !ValidateObject( trgBaseObj ))
 		{
 			ScriptError( cx, "DistanceBetween: Invalid source or target object" );
