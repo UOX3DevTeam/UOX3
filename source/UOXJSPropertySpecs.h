@@ -54,6 +54,15 @@ DECL_GET_SET( CSpell, soundEffect )
 DECL_GET_SET( CSpell, enabled )
 DECL_GET_SET( CSpell, baseDmg )
 
+// Global Skills
+DECL_GET_SET( CGlobalSkill, name )
+DECL_GET_SET( CGlobalSkill, madeWord )
+DECL_GET_SET( CGlobalSkill, strength )
+DECL_GET_SET( CGlobalSkill, dexterity )
+DECL_GET_SET( CGlobalSkill, intelligence )
+DECL_GET_SET( CGlobalSkill, skillDelay )
+DECL_GET_SET( CGlobalSkill, scriptID )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -97,15 +106,15 @@ inline JSPropertySpec CSpellProperties[] =
   JS_PS_END
 };
 
-inline JSPropertySpec CGlobalSkillProperties[] =
+inline JSPropertySpec CGlobalSkillProperties[] = 
 {
-  { "name",				CGSKILL_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "madeWord",			CGSKILL_MADEWORD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "strength",			CGSKILL_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "dexterity",			CGSKILL_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "intelligence",		CGSKILL_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillDelay",			CGSKILL_SKILLDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scriptID",			CGSKILL_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "name",             JSCGlobalSkill_get_name,         JSCGlobalSkill_set_name,         JSPROP_ENUMANDPERM ),
+  JS_PSGS( "madeWord",		   JSCGlobalSkill_get_madeWord,	    JSCGlobalSkill_set_madeWord,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "strength",		   JSCGlobalSkill_get_strength,	    JSCGlobalSkill_set_strength,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "dexterity",		   JSCGlobalSkill_get_dexterity,    JSCGlobalSkill_set_dexterity,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "intelligence",	   JSCGlobalSkill_get_intelligence, JSCGlobalSkill_set_intelligence, JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillDelay",	   JSCGlobalSkill_get_skillDelay,	JSCGlobalSkill_set_skillDelay,	 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scriptID",		   JSCGlobalSkill_get_scriptID,	    JSCGlobalSkill_set_scriptID,	 JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
