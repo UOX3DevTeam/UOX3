@@ -780,32 +780,8 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
-//*****************************************************************************************
-// This appears to be an optimization attempt.  But the issue is there is no releasing the memorh
-// so every pass through, it just consumes more memory
-//const size_t bufferSize = 1024 * 1024;
-//char* buffer = ( char* )malloc( bufferSize );
-// (and the corresponding: writeDestination.rdbuf()->pubsetbuf( buffer, bufferSize ); later on below).
-// Profiling should be done to even see if needed.  For now, I am removing this optimization
-//  If it is deemed to keep the concept of providing the buffer for the stream, the following choices
-// seem as reasonable candidates.
-// (first make bufferSize a constexpr so can use at compile
-// size_t bufferSize = 1024 * 1024;
-// Then:
-// 1. auto buffer = std::array<char,bufferSize> ;
-// 2. auto buffer = std::vector<char>(bufferSize,0) ;
-// 3. auto buffer = std::make_unique<char[]>(bufferSize) ; // (really would be last choice).
-// For the other line where it is used that would change to :
-// 1/2:  writeDestination.rdbuf()->pubsetbuf( buffer.data(), bufferSize );
-// 3: writeDestination.rdbuf()->pubsetbuf( buffer.get(), bufferSize ) ;
-// Any of these would solve the leak.
-//*****************************************************************************************
-//const size_t bufferSize = 1024 * 1024;
-//char* buffer = ( char* )malloc( bufferSize );
 constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-//auto streamBuffer = std::array<char,BUFFERSIZE>() ;
 static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
-//auto streamBuffer = std::make_unique<char[]>(BUFFERSIZE);
 
 void CMapHandler::Save( void )
 {
@@ -877,8 +853,6 @@ void CMapHandler::Save( void )
 			}
 
 			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
-            // Or if pointer
-            // writeDestination.rdbuf()->pubsetbuf( streamBuffer.get(), BUFFERSIZE );
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
