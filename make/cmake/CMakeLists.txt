@@ -7,13 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 # *************************************************************************
 
 add_executable(uox3
-
 # top group
-
 	../../source/uox3.cpp
 	../../source/uox3.h
-	
-	
 # Script group	
 	../../source/cServerData.cpp
 	../../source/cServerData.h
@@ -24,8 +20,7 @@ add_executable(uox3
 	../../source/scriptc.cpp
 	../../source/scriptc.h
 	../../source/ssection.cpp
-	../../source/ssection.h
-	
+	../../source/ssection.h	
 # Base Object group
 	../../source/boats.cpp
 	../../source/cBaseobject.cpp
@@ -51,7 +46,6 @@ add_executable(uox3
 	../../source/ObjectFactory.h
 	../../source/PageVector.h
 	../../source/uoxstruct.h
-
 # Subystem group
    ../../source/books.cpp
    ../../source/books.h
@@ -107,7 +101,6 @@ add_executable(uox3
    ../../source/wholist.h
    ../../source/worldmain.cpp
    ../../source/worldmain.h
-
 # Other group
    ../../source/ai.cpp
    ../../source/archive.cpp
@@ -137,7 +130,6 @@ add_executable(uox3
 	../../source/Prerequisites.h
    ../../source/typedefs.h
 	../../source/UOXStdHeaders.h
-
 # JS Engine group
    ../../source/CJSEngine.cpp
    ../../source/CJSEngine.h
@@ -156,7 +148,6 @@ add_executable(uox3
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
-   
 # Network group
    ../../source/CPacketReceive.cpp
    ../../source/CPacketReceive.h
@@ -166,7 +157,6 @@ add_executable(uox3
    ../../source/network.h
    ../../source/IP4Address.cpp
    ../../source/IP4Address.hpp
-   
 # Utility group
    ../../source/StringUtility.cpp
    ../../source/StringUtility.hpp
@@ -174,7 +164,6 @@ add_executable(uox3
    ../../source/TimeUtility.hpp
    ../../source/EventTimer.cpp
    ../../source/EventTimer.hpp
- 
  # UOData group
     ../../source/mapclasses.h
     ../../source/mapstuff.cpp
@@ -183,7 +172,6 @@ add_executable(uox3
     ../../source/MultiMul.hpp
     ../../source/UOPData.cpp
     ../../source/UOPData.hpp
-    
 # Assets
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
 )
