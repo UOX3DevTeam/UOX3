@@ -4,7 +4,7 @@
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 #include <filesystem>
-
+#include <vector>
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
@@ -778,6 +778,9 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
+constexpr size_t BUFFERSIZE = 1024 * 1024 ;
+static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
+
 void CMapHandler::Save( void )
 {
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
@@ -791,9 +794,6 @@ void CMapHandler::Save( void )
 		onePercent += static_cast<SI32>(( mapWidth / MapColSize ) * ( mapHeight / MapRowSize ));
 	}
 	onePercent /= 100.0f;
-	const size_t bufferSize = 1024 * 1024;
-	char* buffer = ( char* )malloc( bufferSize );
-
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
 	const UI32 s_t						= GetClock();
@@ -850,7 +850,7 @@ void CMapHandler::Save( void )
 				continue;
 			}
 
-			writeDestination.rdbuf()->pubsetbuf( buffer, bufferSize );
+			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
