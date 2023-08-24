@@ -5,6 +5,8 @@
 #include "ObjectFactory.h"
 #include <filesystem>
 #include <array>
+#include <vector>
+#include <memory>
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
@@ -814,8 +816,9 @@ void CMapHandler::Save( void )
 	//const size_t bufferSize = 1024 * 1024;
 	//char* buffer = ( char* )malloc( bufferSize );
     constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-    auto buffer = std::array<char,BUFFERSIZE>() ;
-    
+    //auto buffer = std::array<char,BUFFERSIZE>() ;
+    auto buffer = std::vector<char>(BUFFERSIZE,0) ;
+    //auto buffer = std::make_unique<char[]>(BUFFERSIZE);
 	const char blockDiscriminator[] = "\n\n---REGION---\n\n";
 	UI32 count						= 0;
 	const UI32 s_t						= GetClock();
@@ -873,6 +876,8 @@ void CMapHandler::Save( void )
 			}
 
 			writeDestination.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
+            // Or if pointer
+            // writeDestination.rdbuf()->pubsetbuf( buffer.get(), BUFFERSIZE );
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
