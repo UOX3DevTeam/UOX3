@@ -12,11 +12,6 @@ add_executable(uox3
 
 	../../source/uox3.cpp
 	../../source/uox3.h
-	../../source/osunique.cpp
-	../../source/ConfigOS.h
-	../../source/Prerequisites.h
-	../../source/UOXStdHeaders.h
-	../../source/UOXJSPropertySpecs.h
 	
 	
 # Script group	
@@ -55,8 +50,6 @@ add_executable(uox3
 	../../source/ObjectFactory.cpp
 	../../source/ObjectFactory.h
 	../../source/PageVector.h
-	../../source/queue.cpp
-	../../source/speech.h
 	../../source/uoxstruct.h
 
 # Subystem group
@@ -91,13 +84,17 @@ add_executable(uox3
    ../../source/movement.h
    ../../source/msgboard.cpp
    ../../source/msgboard.h
+   ../../source/PartySystem.cpp
+   ../../source/PartySystem.h
    ../../source/quantityfuncs.cpp
+	../../source/queue.cpp
    ../../source/regions.cpp
    ../../source/regions.h
    ../../source/skills.cpp
    ../../source/skills.h
    ../../source/sound.cpp
    ../../source/speech.cpp
+	../../source/speech.h
    ../../source/targeting.cpp
    ../../source/teffect.h
    ../../source/townregion.cpp
@@ -110,8 +107,6 @@ add_executable(uox3
    ../../source/wholist.h
    ../../source/worldmain.cpp
    ../../source/worldmain.h
-   ../../source/PartySystem.cpp
-   ../../source/PartySystem.h
 
 # Other group
    ../../source/ai.cpp
@@ -121,6 +116,7 @@ add_executable(uox3
    ../../source/cdice.h
    ../../source/classes.h
    ../../source/cmdtable.h
+	../../source/ConfigOS.h
    ../../source/cPlayerAction.cpp
    ../../source/CResponse.cpp
    ../../source/CResponse.h
@@ -132,10 +128,15 @@ add_executable(uox3
    ../../source/enums.h
    ../../source/fileio.cpp
    ../../source/findfuncs.cpp
+   ../../source/GenericList.h
    ../../source/npcs.cpp
+   ../../source/osunique.cpp
+   ../../source/osunique.hpp
    ../../source/pcmanage.cpp
    ../../source/power.h
+	../../source/Prerequisites.h
    ../../source/typedefs.h
+	../../source/UOXStdHeaders.h
 
 # JS Engine group
    ../../source/CJSEngine.cpp
@@ -154,6 +155,7 @@ add_executable(uox3
    ../../source/UOXJSPropertyEnums.h
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
+   ../../source/UOXJSPropertySpecs.h
    
 # Network group
    ../../source/CPacketReceive.cpp
@@ -174,13 +176,13 @@ add_executable(uox3
    ../../source/EventTimer.hpp
  
  # UOData group
-    ../../source/UOPData.cpp
-    ../../source/UOPData.hpp
+    ../../source/mapclasses.h
+    ../../source/mapstuff.cpp
+    ../../source/mapstuff.h
     ../../source/MultiMul.cpp
     ../../source/MultiMul.hpp
-    ../../source/mapclasses.h
-   ../../source/mapstuff.cpp
-   ../../source/mapstuff.h
+    ../../source/UOPData.cpp
+    ../../source/UOPData.hpp
     
 # Assets
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
