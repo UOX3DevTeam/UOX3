@@ -12,7 +12,7 @@
 inline JSClass global_class =
 {
 	"global",
-	0,
+	JSCLASS_GLOBAL_FLAGS,
 	JS_PropertyStub,
 	JS_PropertyStub,
 	JS_PropertyStub,
@@ -369,15 +369,15 @@ inline JSClass UOXGump_class =
 {
 	"Gump",
 	JSCLASS_HAS_PRIVATE,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_PropertyStub,
-	JS_EnumerateStub,
-	JS_ResolveStub,
-	JS_ConvertStub,
-	JS_FinalizeStub,
-	JSCLASS_NO_OPTIONAL_MEMBERS
+	JS_PropertyStub,			// addProperty
+	JS_PropertyStub,			// delProperty
+	JS_PropertyStub,			// getProperty
+	JS_PropertyStub,			// setProperty
+	JS_EnumerateStub,			// enumerate
+	JS_ResolveStub,				// resolve
+	JS_ConvertStub,				// convert
+	JS_FinalizeStub,			// finalize
+	JSCLASS_NO_OPTIONAL_MEMBERS		// reserved slots, checkAccess, call, construct, xdrObject, hasInstance, etc...
 };
 
 //o------------------------------------------------------------------------------------------------o

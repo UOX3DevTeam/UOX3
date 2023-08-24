@@ -82,9 +82,7 @@ ifeq ($(OS_ARCH), WINNT)
   NSPR_SHARED    = nspr20/$(NSPR_VERSION)/$(NSPR_OBJDIR)
 endif
 NSPR_VERSIONFILE = $(NSPR_LOCAL)/Version
-# The line below was commented in PR #150 since it attempts to cat a non-existent file
-# twice which results in a pair of error messages during the build of SpiderMonkey.
-#NSPR_CURVERSION := $(shell cat $(NSPR_VERSIONFILE))
+NSPR_CURVERSION := $(shell cat $(NSPR_VERSIONFILE))
 
 get_nspr:
 	@echo "Grabbing NSPR component..."

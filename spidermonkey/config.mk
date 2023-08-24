@@ -100,11 +100,7 @@ else
 ifeq ($(OS_ARCH),Darwin)
 OS_CONFIG      := Darwin
 else
-ifeq ($(OS_ARCH),FreeBSD)
-OS_CONFIG      := FreeBSD
-else
-OS_CONFIG      := $(OS_ARCH)$(OS_OBJTYPE)$(OS_RELEASE)
-endif
+OS_CONFIG       := $(OS_ARCH)$(OS_OBJTYPE)$(OS_RELEASE)
 endif
 endif
 endif
@@ -121,14 +117,23 @@ CP = cp
 endif
 
 ifdef BUILD_OPT
-OPTIMIZER  = -O
+ifdef USE_MSVC
+OPTIMIZER  = -O2 -GL
+INTERP_OPTIMIZER = -O2 -GL
+LDFLAGS    += -LTCG
+else
+OPTIMIZER  = -Os
+INTERP_OPTIMIZER = -Os
+endif
 DEFINES    += -UDEBUG -DNDEBUG -UDEBUG_$(USER)
 OBJDIR_TAG = _OPT
 else
 ifdef USE_MSVC
 OPTIMIZER  = -Zi
+INTERP_OPTIMIZER = -Zi
 else
-OPTIMIZER  = -g
+OPTIMIZER  = -g3
+INTERP_OPTIMIZER = -g3
 endif
 DEFINES    += -DDEBUG -DDEBUG_$(USER)
 OBJDIR_TAG = _DBG
@@ -176,9 +181,6 @@ else
 OBJDIR          = $(OS_CONFIG)$(OBJDIR_TAG).OBJ
 endif
 VPATH           = $(OBJDIR)
-
-# Automatic make dependencies file
-DEPENDENCIES    = $(OBJDIR)/.md
 
 LCJAR = js15lc30.jar
 

@@ -376,7 +376,7 @@ JSBool CSocket_Send( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	Gump()
 //o------------------------------------------------------------------------------------------------o
-//|	Purpose		-	Cosntructor for creating a new JS Gump object
+//|	Purpose		-	Constructor for creating a new JS Gump object
 //o------------------------------------------------------------------------------------------------o
 JSBool Gump( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
