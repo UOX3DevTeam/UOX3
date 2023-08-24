@@ -189,6 +189,19 @@ DECL_GET_SET( CSpawnRegion, minTime )
 DECL_GET_SET( CSpawnRegion, maxTime )
 DECL_GET_SET( CSpawnRegion, call )
 
+// Guild Properties
+DECL_GET_SET( CGuild, name )
+DECL_GET_SET( CGuild, type )
+DECL_GET_SET( CGuild, master )
+DECL_GET_SET( CGuild, stone )
+DECL_GET( CGuild, numMembers )
+DECL_GET( CGuild, numRecruits )
+DECL_GET( CGuild, members )
+DECL_GET( CGuild, recruits )
+DECL_GET_SET( CGuild, charter )
+DECL_GET_SET( CGuild, abbreviation )
+DECL_GET_SET( CGuild, webPage )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -325,36 +338,35 @@ inline JSPropertySpec CRegionProperties[] =
 {
   JS_PSGS( "name",				JSCRegion_get_name,                JSCRegion_set_name,           JSPROP_ENUMANDPERM ),
   JS_PSGS( "mayor",				JSCRegion_get_mayor,	           JSCRegion_set_mayor,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "race",		JSCRegion_get_race,	   JSCRegion_set_race,      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "tax",		JSCRegion_get_tax,     JSCRegion_set_tax,       JSPROP_ENUMANDPERM ),
-  JS_PSGS( "taxResource",	JSCRegion_get_taxResource,   JSCRegion_set_taxResource,        JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canMark",	    JSCRegion_get_canMark,	   JSCRegion_set_canMark,	  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canRecall",	JSCRegion_get_canRecall,	   JSCRegion_set_canRecall,	  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canGate",		JSCRegion_get_canGate,	   JSCRegion_set_canGate,	      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canTeleport",	JSCRegion_get_canTeleport,  JSCRegion_set_canTeleport,	      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canPlaceHouse",   JSCRegion_get_canPlaceHouse,   JSCRegion_set_canPlaceHouse,    JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isGuarded",	JSCRegion_get_isGuarded,  JSCRegion_set_isGuarded,	      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "canCastAggressive",   JSCRegion_get_canCastAggressive,   JSCRegion_set_canCastAggressive,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isSafeZone",	JSCRegion_get_isSafeZone,   JSCRegion_set_isSafeZone,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "health",	    JSCRegion_get_health,	   JSCRegion_set_health,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "isDungeon",	    JSCRegion_get_isDungeon,	   JSCRegion_set_isDungeon,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "worldNumber",	    JSCRegion_get_worldNumber,	   JSCRegion_set_worldNumber,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "instanceID",	    JSCRegion_get_instanceID,	   JSCRegion_set_instanceID,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "chanceBigOre",	    JSCRegion_get_chanceBigOre,	   JSCRegion_set_chanceBigOre,  JSPROP_ENUMANDPERM ),
-  JS_PSG( "numOrePrefs",		JSCRegion_get_numOrePrefs,	JSPROP_ENUMPERMRO ),
-  JS_PSG( "population",			JSCRegion_get_population,			JSPROP_ENUMPERMRO ),
-//  { "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  JS_PSG( "members",			JSCRegion_get_members,			JSPROP_ENUMERATE ), // trying to figure this one out
-  JS_PSGS( "id",	    JSCRegion_get_id,	   JSCRegion_set_id,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "race",		        JSCRegion_get_race,				   JSCRegion_set_race,      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tax",		        JSCRegion_get_tax,				   JSCRegion_set_tax,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "taxResource",	    JSCRegion_get_taxResource,		   JSCRegion_set_taxResource,        JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canMark",	        JSCRegion_get_canMark,			   JSCRegion_set_canMark,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canRecall",			JSCRegion_get_canRecall,		   JSCRegion_set_canRecall,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canGate",			JSCRegion_get_canGate,			   JSCRegion_set_canGate,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canTeleport",		JSCRegion_get_canTeleport,         JSCRegion_set_canTeleport,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canPlaceHouse",	    JSCRegion_get_canPlaceHouse,	   JSCRegion_set_canPlaceHouse,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGuarded",			JSCRegion_get_isGuarded,		   JSCRegion_set_isGuarded,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canCastAggressive", JSCRegion_get_canCastAggressive,   JSCRegion_set_canCastAggressive,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSafeZone",		JSCRegion_get_isSafeZone,		   JSCRegion_set_isSafeZone,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "health",			JSCRegion_get_health,			   JSCRegion_set_health,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isDungeon",			JSCRegion_get_isDungeon,		   JSCRegion_set_isDungeon,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "worldNumber",	    JSCRegion_get_worldNumber,		   JSCRegion_set_worldNumber,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "instanceID",	    JSCRegion_get_instanceID,		   JSCRegion_set_instanceID,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "chanceBigOre",	    JSCRegion_get_chanceBigOre,		   JSCRegion_set_chanceBigOre,  JSPROP_ENUMANDPERM ),
+  JS_PSG( "numOrePrefs",		JSCRegion_get_numOrePrefs,	       JSPROP_ENUMPERMRO ),
+  JS_PSG( "population",			JSCRegion_get_population,		   JSPROP_ENUMPERMRO ),
+  JS_PSG( "members",			JSCRegion_get_members,			   JSPROP_ENUMERATE ), // Looking for array jsprop old one was JSPROP_ENUMPERMIDX
+  JS_PSGS( "id",				JSCRegion_get_id,				   JSCRegion_set_id,  JSPROP_ENUMANDPERM ),
   JS_PSGS( "scriptTrigger",	    JSCRegion_get_scriptTrigger,	   JSCRegion_set_scriptTrigger,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "scriptTriggers",	    JSCRegion_get_scriptTriggers,	   JSCRegion_set_scriptTriggers,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "numGuards",	    JSCRegion_get_numGuards,	   JSCRegion_set_numGuards,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "taxes",	    JSCRegion_get_taxes,	   JSCRegion_set_taxes,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "reserves",	    JSCRegion_get_reserves,	   JSCRegion_set_reserves,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "appearance",	    JSCRegion_get_appearance,	   JSCRegion_set_appearance,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "music",	    JSCRegion_get_music,	   JSCRegion_set_music,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "weather",	    JSCRegion_get_weather,	   JSCRegion_set_weather,  JSPROP_ENUMANDPERM ),
-  JS_PSGS( "owner",	    JSCRegion_get_owner,	   JSCRegion_set_owner,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scriptTriggers",	JSCRegion_get_scriptTriggers,	   JSCRegion_set_scriptTriggers,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "numGuards",			JSCRegion_get_numGuards,	       JSCRegion_set_numGuards,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "taxes",				JSCRegion_get_taxes,			   JSCRegion_set_taxes,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "reserves",			JSCRegion_get_reserves,			   JSCRegion_set_reserves,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "appearance",	    JSCRegion_get_appearance,		   JSCRegion_set_appearance,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "music",				JSCRegion_get_music,			   JSCRegion_set_music,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "weather",			JSCRegion_get_weather,			   JSCRegion_set_weather,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "owner",				JSCRegion_get_owner,			   JSCRegion_set_owner,  JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
@@ -388,17 +400,17 @@ inline JSPropertySpec CSpawnRegionProperties[] =
 
 inline JSPropertySpec CGuildProperties[] =
 {
-  { "name",			CGP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "type",			CGP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "master",			CGP_MASTER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stone",			CGP_STONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "numMembers",		CGuild_get_numMembers,		JSPROP_ENUMPERMRO ),
-  JS_PSG( "numRecruits",	CGuild_get_numRecruits,	JSPROP_ENUMPERMRO ),
-  { "members",		CGP_MEMBERS,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "recruits",		CGP_RECRUITS,		JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "charter",		CGP_CHARTER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "abbreviation",	CGP_ABBREVIATION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "webPage",		CGP_WEBPAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "name",			JSCGuild_get_name,		   JSCGuild_set_name,			JSPROP_ENUMANDPERM ),
+  JS_PSGS( "type",			JSCGuild_get_type,	       JSCGuild_set_type,			JSPROP_ENUMANDPERM ),
+  JS_PSGS( "master",		JSCGuild_get_master,	   JSCGuild_set_master,			JSPROP_ENUMANDPERM ),
+  JS_PSGS( "stone",			JSCGuild_get_stone,		   JSCGuild_set_stone,			JSPROP_ENUMANDPERM ),
+  JS_PSG( "numMembers",		JSCGuild_get_numMembers,								JSPROP_ENUMPERMRO ),
+  JS_PSG( "numRecruits",	JSCGuild_get_numRecruits,								JSPROP_ENUMPERMRO ),
+  JS_PSG( "members",		JSCGuild_get_members,									JSPROP_ENUMERATE ),//JSPROP_ENUMPERMIDX
+  JS_PSG( "recruits",		JSCGuild_get_recruits,									JSPROP_ENUMERATE ),//JSPROP_ENUMPERMIDX
+  JS_PSGS( "charter",		JSCGuild_get_charter,	   JSCGuild_set_charter,		JSPROP_ENUMANDPERM ),
+  JS_PSGS( "abbreviation",	JSCGuild_get_abbreviation, JSCGuild_set_abbreviation,	JSPROP_ENUMANDPERM ),
+  JS_PSGS( "webPage",		JSCGuild_get_webPage,	   JSCGuild_set_webPage,	    JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
