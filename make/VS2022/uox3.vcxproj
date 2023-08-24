@@ -152,7 +152,6 @@
    <ClCompile Include="..\..\source\archive.cpp" />
    <ClCompile Include="..\..\source\calcfuncs.cpp" />
    <ClCompile Include="..\..\source\cDice.cpp" />
-   <ClCompile Include="..\..\source\calcfuncs.cpp" />
    <ClCompile Include="..\..\source\cPlayerAction.cpp" />
    <ClCompile Include="..\..\source\CResponse.cpp" />
    <ClCompile Include="..\..\source\cVersionClass.cpp" />
