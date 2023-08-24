@@ -4,9 +4,7 @@
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 #include <filesystem>
-#include <array>
 #include <vector>
-#include <memory>
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
