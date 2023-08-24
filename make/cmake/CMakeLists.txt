@@ -25,7 +25,7 @@ add_executable(uox3
 	../../source/ssection.h	
 # Base Object Group
 	../../source/boats.cpp   
-	../../source/cBaseoobject.cpp
+	../../source/cBaseobject.cpp
 	../../source/cBaseObject.h
 	../../source/cChar.cpp
 	../../source/cChar.h
