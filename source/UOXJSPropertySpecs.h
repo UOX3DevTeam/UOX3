@@ -164,6 +164,31 @@ DECL_GET_SET( CRegion, music )
 DECL_GET_SET( CRegion, weather )
 DECL_GET_SET( CRegion, owner )
 
+// Spawn Region Properties
+DECL_GET_SET( CSpawnRegion, name )
+DECL_GET_SET( CSpawnRegion, regionNum )
+DECL_GET_SET( CSpawnRegion, itemList )
+DECL_GET_SET( CSpawnRegion, npcList )
+DECL_GET_SET( CSpawnRegion, item )
+DECL_GET_SET( CSpawnRegion, npc )
+DECL_GET_SET( CSpawnRegion, maxItems )
+DECL_GET_SET( CSpawnRegion, maxNpcs )
+DECL_GET_SET( CSpawnRegion, itemCount )
+DECL_GET_SET( CSpawnRegion, npcCount )
+DECL_GET_SET( CSpawnRegion, onlyOutside )
+DECL_GET_SET( CSpawnRegion, isSpawner )
+DECL_GET_SET( CSpawnRegion, defZ )
+DECL_GET_SET( CSpawnRegion, prefZ )
+DECL_GET_SET( CSpawnRegion, x1 )
+DECL_GET_SET( CSpawnRegion, y1 )
+DECL_GET_SET( CSpawnRegion, x2 )
+DECL_GET_SET( CSpawnRegion, y2 )
+DECL_GET_SET( CSpawnRegion, world )
+DECL_GET_SET( CSpawnRegion, instanceID )
+DECL_GET_SET( CSpawnRegion, minTime )
+DECL_GET_SET( CSpawnRegion, maxTime )
+DECL_GET_SET( CSpawnRegion, call )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -335,29 +360,29 @@ inline JSPropertySpec CRegionProperties[] =
 
 inline JSPropertySpec CSpawnRegionProperties[] =
 {
-  { "name",				CSPAWNREGP_NAME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "regionNum",			CSPAWNREGP_REGIONNUM,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "itemList",			CSPAWNREGP_ITEMLIST,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "npcList",			CSPAWNREGP_NPCLIST,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "item",				CSPAWNREGP_ITEM,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "npc",				CSPAWNREGP_NPC,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxItems",			CSPAWNREGP_MAXITEMS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxNpcs",			CSPAWNREGP_MAXNPCS,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "itemCount",			CSPAWNREGP_ITEMCOUNT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "npcCount",			CSPAWNREGP_NPCCOUNT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "onlyOutside",		CSPAWNREGP_ONLYOUTSIDE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSpawner",			CSPAWNREGP_ISSPAWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "defZ",				CSPAWNREGP_DEFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "prefZ",				CSPAWNREGP_PREFZ,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "x1",					CSPAWNREGP_X1,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "y1",					CSPAWNREGP_X2,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "x2",					CSPAWNREGP_X2,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "y2",					CSPAWNREGP_Y2,						JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "world",				CSPAWNREGP_WORLD,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "instanceID",			CSPAWNREGP_INSTANCEID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "minTime",			CSPAWNREGP_MINTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxTime",			CSPAWNREGP_MAXTIME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "call",				CSPAWNREGP_CALL,					JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "name",				JSCSpawnRegion_get_name,	   JSCSpawnRegion_set_name,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "regionNum",			JSCSpawnRegion_get_regionNum,	   JSCSpawnRegion_set_regionNum,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "itemList",			JSCSpawnRegion_get_itemList,	   JSCSpawnRegion_set_itemList,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "npcList",			JSCSpawnRegion_get_npcList,	   JSCSpawnRegion_set_npcList,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "item",				JSCSpawnRegion_get_item,	   JSCSpawnRegion_set_item,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "npc",				JSCSpawnRegion_get_npc,	   JSCSpawnRegion_set_npc,						 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxItems",			JSCSpawnRegion_get_maxItems,	   JSCSpawnRegion_set_maxItems,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxNpcs",			JSCSpawnRegion_get_maxNpcs,	   JSCSpawnRegion_set_maxNpcs,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "itemCount",			JSCSpawnRegion_get_itemCount,	   JSCSpawnRegion_set_itemCount,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "npcCount",			JSCSpawnRegion_get_npcCount,	   JSCSpawnRegion_set_npcCount,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "onlyOutside",		JSCSpawnRegion_get_onlyOutside,	   JSCSpawnRegion_set_onlyOutside,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSpawner",			JSCSpawnRegion_get_isSpawner,	   JSCSpawnRegion_set_isSpawner,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "defZ",				JSCSpawnRegion_get_defZ,	   JSCSpawnRegion_set_defZ,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "prefZ",				JSCSpawnRegion_get_prefZ,	   JSCSpawnRegion_set_prefZ,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "x1",				JSCSpawnRegion_get_x1,	   JSCSpawnRegion_set_x1,						 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "y1",				JSCSpawnRegion_get_y1,	   JSCSpawnRegion_set_y1,						 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "x2",				JSCSpawnRegion_get_x2,	   JSCSpawnRegion_set_x2,						 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "y2",				JSCSpawnRegion_get_y2,	   JSCSpawnRegion_set_y2,						 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "world",				JSCSpawnRegion_get_world,	   JSCSpawnRegion_set_world,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "instanceID",		JSCSpawnRegion_get_instanceID,	   JSCSpawnRegion_set_instanceID,				 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "minTime",			JSCSpawnRegion_get_minTime,	   JSCSpawnRegion_set_minTime,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxTime",			JSCSpawnRegion_get_maxTime,	   JSCSpawnRegion_set_maxTime,					 JSPROP_ENUMANDPERM ),
+  JS_PSGS( "call",				JSCSpawnRegion_get_call,	   JSCSpawnRegion_set_call,					 JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
