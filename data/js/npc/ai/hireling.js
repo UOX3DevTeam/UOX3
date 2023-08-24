@@ -114,7 +114,7 @@ function onSpeech( pSpeech, pChar, hireling )
 	}
 
 	// If the hire time has expired, reset hireling
-	var hireExpire = hireling.GetTag( "hireExpire" );
+	var hireExpire = parseInt( hireling.GetTag( "hireExpire" ));
 	if( hireExpire < GetCurrentClock() && hireling.GetTag( "hired" ) && !hireling.GetTag( "gracePeriodActive" ))
 	{
 		if( ValidateObject( hirelingOwner ) && hirelingOwner.online )
@@ -726,7 +726,7 @@ function onDropItemOnNpc( pChar, hireling, iDropped )
 		iDropped.amount -= ( payRequired * daysToHire );
 		hireling.owner = pChar;
 		hireling.SetTag( "hired", true );
-		hireling.SetTag( "hireExpire", hireExpire );
+		hireling.SetTag( "hireExpire", hireExpire.toString() );
 
 		// Update control slots tracking
 		pChar.controlSlotsUsed = pChar.controlSlotsUsed + hireling.controlSlots;
@@ -1126,6 +1126,20 @@ function AddFriend( socket, pChar, myTarget )
 				return;
 			}
 
+			if( GetServerSetting( "YoungPlayerSystem" ))
+			{
+				if( !pChar.npc && pChar.account.isYoung && !myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18727, socket.language )); // As a young player, you may not friend pets to older players.
+					return;
+				}
+				else if( !pChar.npc && !pChar.account.isYoung && myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18728, socket.language )); // As an older player, you may not friend pets to young players.
+					return;
+				}
+			}
+
 			if( hireling.AddFriend( myTarget ))
 			{
 				if( hireling.isHuman )
@@ -1249,6 +1263,19 @@ function AttackTarget( socket, pChar, myTarget, allAttack )
 			{
 				// Hireling and/or target is in a safe zone where no aggressive actions can be taken, disallow
 				socket.SysMessage( GetDictionaryEntry( 1799, socket.language )); // Hostile actions are not permitted in this safe area.
+				return;
+			}
+
+			if( hireling.owner == pChar && pChar.account.isYoung )
+			{
+				socket.SysMessage( GetDictionaryEntry( 18708, socket.language )); // As a Young player, you cannot harm other players, or their followers.
+				return;
+			}
+
+			var targOwner = myTarget.owner;
+			if(( !myTarget.npc && myTarget.account.isYoung ) || ( ValidateObject( targOwner ) && !targOwner.npc && targOwner.account.isYoung ))
+			{
+				socket.SysMessage( GetDictionaryEntry( 18709, socket.language )); // You cannot harm Young players, or their followers.
 				return;
 			}
 
@@ -1490,6 +1517,20 @@ function TransferOwnership( socket, pChar, myTarget )
 			{
 				socket.SysMessage( GetDictionaryEntry( 2384, socket.language )); // You cannot transfer to someone that is dead.
 				return;
+			}
+
+			if( GetServerSetting( "YoungPlayerSystem" ))
+			{
+				if( !pChar.npc && pChar.account.isYoung && !myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18725, socket.language )); // As a young player, you may not transfer pets to older players.
+					return;
+				}
+				else if( !pChar.npc && !pChar.account.isYoung && myTarget.account.isYoung )
+				{
+					socket.SysMessage( GetDictionaryEntry( 18726, socket.language )); // As an older player, you may not transfer pets to young players.
+					return;
+				}
 			}
 
 			if( pChar.criminal )

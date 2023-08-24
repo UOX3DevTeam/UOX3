@@ -24,9 +24,16 @@
 Console.Print( oldstrutil::format( "Socket failure at %s", __FILE__LINE__) );	\
 return;	\
 }
+#define VALIDATESOCKET_WITH_RETURN( s ) if( s == nullptr ) \
+{ \
+Console.Print( oldstrutil::format( "Socket failure at %s", __FILE__LINE__) );	\
+return false; \
+}
 #else
 #define VALIDATESOCKET( s ) if( s == nullptr ) \
 return;
+#define VALIDATESOCKET_WITH_RETURN( s ) if( s == nullptr ) \
+return false;
 #endif
 
 #ifdef __NEED_VALIST__

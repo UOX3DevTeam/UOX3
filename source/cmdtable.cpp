@@ -563,7 +563,7 @@ void Command_Tell( CSocket *s )
 
 		CChar *mChar		= i->CurrcharObj();
 		CChar *tChar		= s->CurrcharObj();
-		std::string temp	= mChar->GetNameRequest( tChar ) + " tells " + tChar->GetNameRequest( mChar ) + ": " + txt;
+		std::string temp	= mChar->GetNameRequest( tChar, 0 ) + " tells " + tChar->GetNameRequest( mChar, NRS_SPEECH ) + ": " + txt;
 
 		if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 		{
@@ -584,7 +584,7 @@ void Command_Tell( CSocket *s )
 			}
 			unicodeMessage.Type( TALK );
 			unicodeMessage.Language( "ENG" );
-			unicodeMessage.Name( mChar->GetNameRequest( tChar ));
+			unicodeMessage.Name( mChar->GetNameRequest( tChar, NRS_SPEECH ));
 			unicodeMessage.ID( INVALIDID );
 			unicodeMessage.Serial( mChar->GetSerial() );
 			s->Send( &unicodeMessage );

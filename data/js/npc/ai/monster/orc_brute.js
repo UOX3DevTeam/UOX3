@@ -3,7 +3,7 @@
 
 const dispelSummonsDelay = 10;
 
-function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
+function onSpellTarget( myTarget, pCaster, spellID )
 {
 	var spell = Spells[spellID];
 	if( spell.aggressiveSpell )

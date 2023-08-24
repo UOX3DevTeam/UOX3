@@ -4794,7 +4794,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_KILL );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4816,7 +4816,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STOP );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4837,7 +4837,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FOLLOW );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4858,7 +4858,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STAY );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4879,7 +4879,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_GUARD );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4900,7 +4900,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_FRIEND );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4921,7 +4921,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_TRANSFER );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4942,7 +4942,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_RELEASE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4963,7 +4963,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_DISMISS );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4976,7 +4976,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_CLAIM );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -4989,7 +4989,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_STABLE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -5002,7 +5002,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTDEST );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -5015,7 +5015,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			{
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_QUESTTAKE );
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -5043,7 +5043,7 @@ bool CPIPopupMenuSelect::Handle( void )
 				{
 					tSock->ClearTrigWords();
 					tSock->AddTrigWord( TW_HIRE );
-					std::string targName = GetNpcDictName( targChar, tSock );
+					std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 					WhichResponse( tSock, mChar, targName, targChar );
 				}
 				else
@@ -5078,7 +5078,7 @@ bool CPIPopupMenuSelect::Handle( void )
 
 				tSock->ClearTrigWords();
 				tSock->AddTrigWord( TW_BODINFO ); // Custom UOX3 trigger word
-				std::string targName = GetNpcDictName( targChar, tSock );
+				std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 				WhichResponse( tSock, mChar, targName, targChar );
 			}
 			else
@@ -5097,7 +5097,7 @@ bool CPIPopupMenuSelect::Handle( void )
 	{
 		tSock->ClearTrigWords();
 		tSock->AddTrigWord( static_cast<TriggerWords>( popupEntry ));
-		std::string targName = GetNpcDictName( targChar, tSock );
+		std::string targName = GetNpcDictName( targChar, tSock, NRS_SYSTEM );
 		WhichResponse( tSock, mChar, targName, targChar );
 	}
 

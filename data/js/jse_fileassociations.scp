@@ -203,6 +203,7 @@
 4032=skill/craft/tinkering.js
 4033=skill/craft/crafting_complete.js
 4034=skill/craft/cooking.js
+4050=skill/mining.js
 4055=skill/snooping.js
 
 // Doors
@@ -261,6 +262,7 @@
 5043=item/equip_effects/skill_boosting_equipment.js
 5044=item/consumables/special_loot_consumables.js
 5045=item/consumables/gem_of_salvation.js
+5046=item/corpse.js
 
 //-------------------------------------------
 // Magic Related Scripts [6000-6500]
@@ -277,6 +279,7 @@
 // Misc Player Scripts [8000-8499]
 //-------------------------------------------
 8000=player/death/return_stolen_items.js
+8001=player/young_player.js
 
 // House Scripts [15000-15500]
 15000=server/house/house.js
@@ -356,6 +359,7 @@
 1059=commands/decorate.js
 1060=commands/custom/addsign.js
 1061=commands/spawn.js
+1062=commands/playtime.js
 }
 
 //-------------------------------------------
@@ -398,6 +402,7 @@
 { // 1500-1999
 1500=server/network/0xf1_freeshardServerPoll.js
 1501=server/network/0x7f_uogatewayServerPoll.js
+1502=server/network/0xa4_classicUoWebIdentity.js
 }
 
 [CONSOLE_SCRIPTS]

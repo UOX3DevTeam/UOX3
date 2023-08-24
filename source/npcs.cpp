@@ -153,7 +153,7 @@ CChar *CCharStuff::CreateBaseNPC( std::string ourNPC, bool shouldSave )
 			cScript *toExecute = JSMapping->GetScript( scriptTrig );
 			if( toExecute != nullptr )
 			{
-				toExecute->OnCreate( cCreated, true );
+				toExecute->OnCreate( cCreated, true, false );
 			}
 		}
 	}
@@ -171,7 +171,6 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	if( npcListSize <= 0 )
 		return "";
 
-	int npcEntryToSpawn = -1;
 	int sum_of_weight = 0;
 	for( const auto& it : npcListVector )
 	{
@@ -181,12 +180,12 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	}
 
 	int rndChoice = RandomNum( 0, sum_of_weight - 1 );
-	int npcWeight = 0;
+	[[maybe_unused]] int npcWeight = 0;
 
 	std::vector<int> matchingEntries;
 
 	int weightOfChosenNpc = 0;
-	for( int i = 0; i < npcListVector.size(); ++i )
+	for( size_t i = 0; i < npcListVector.size(); ++i )
 	{
 		//const std::string &sectionName = npcList[i].first;
 		const UI16 &sectionWeight = npcListVector[i].second;
@@ -197,7 +196,6 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 			// If we find another entry with same weight as the first one found, or if none have been found yet, add to list
 			if( weightOfChosenNpc == 0 || weightOfChosenNpc == sectionWeight )
 			{
-				npcEntryToSpawn = i;
 				weightOfChosenNpc = sectionWeight;
 
 				// Add the entry index to a temporary vector of all entries with shared weight, the continue looking for more!
@@ -209,7 +207,7 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 	}
 
 	// Did we find one or more entry that matched our random weight criteria?
-	npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
+	int npcEntryToSpawn = ( matchingEntries.size() > 0 ? matchingEntries[static_cast<int>( RandomNum( static_cast<size_t>( 0 ), matchingEntries.size() - 1 ))] : -1 );
 	matchingEntries.clear();
 
 	std::string chosenNpcSection = "";
@@ -2060,7 +2058,7 @@ bool CCharStuff::CanControlPet( CChar *mChar, CChar *Npc, bool isRestricted, boo
 					CSocket *mSock = mChar->GetSocket();
 					if( mSock != nullptr )
 					{
-						std::string npcName = GetNpcDictName( Npc, mSock );
+						std::string npcName = GetNpcDictName( Npc, mSock, NRS_SPEECH );
 						mSock->SysMessage( 2412, npcName.c_str() ); // %s disobeys your command
 					}
 				}
@@ -2088,7 +2086,7 @@ void CCharStuff::FinalizeTransfer( CChar *petChar, CChar *srcChar, CChar *targCh
 	// Clear pet's existing friend-list
 	petChar->ClearFriendList();
 
-	std::string petName = GetNpcDictName( petChar );
+	std::string petName = GetNpcDictName( petChar, nullptr, NRS_SPEECH );
 	petChar->TextMessage( nullptr, 1074, TALK, 0, petName.c_str(), targChar->GetName().c_str() ); // * %s will now take %s as his master *
 
 	// Transfer ownership
@@ -2121,7 +2119,7 @@ void CCharStuff::ReleasePet( CChar *pet )
 	// Remove owner
 	pet->SetOwner( nullptr );
 
-	std::string petName = GetNpcDictName( pet );
+	std::string petName = GetNpcDictName( pet, nullptr, NRS_SPEECH );
 	pet->TextMessage( nullptr, 1325, TALK, 0, petName.c_str() ); // *%s appears to have decided that it is better off without a master *
 
 	// If a summoned creature, unsummon it

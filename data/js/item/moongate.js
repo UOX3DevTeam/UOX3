@@ -38,30 +38,20 @@ function onUseChecked( pUser, iUsed )
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))
 		return false;
 
-	//Are we using the gate allready?
-	//Get the serial of the item we have just used
-	var Serial = new Array;
-	Serial[0] = iUsed.GetSerial( 1 );
-	Serial[1] = iUsed.GetSerial( 2 );
-	Serial[2] = iUsed.GetSerial( 3 );
-	Serial[3] = iUsed.GetSerial( 4 );
+	// Get the serial of the item we have just used
+	var gateSerial = iUsed.serial;
 
-	//Get the stored serial from tag
-	var oldSerial = new Array;
-	var iCheck = pUser.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-	}
+	// Get the stored serial from tag
+	var oldGateSerial = parseInt( pUser.GetTempTag( "LastGateUsed" ));
 
-	//Compare the 2, if the same, then we are allready using this gate
-	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	// Compare the 2, if the same, then we are already using this gate
+	if( gateSerial == oldGateSerial )
 	{
 		return false;
 	}
 	else
 	{
-		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
+		pUser.SetTempTag( "LastGateUsed", ( gateSerial ).toString() ); // Store serial as string to avoid issues because of size of int
 	}
 
 	// Create and display travel gump
@@ -74,25 +64,14 @@ function onCollide( srcSock, pUser, iUsed )
 	if( srcSock == null || !CanUseGate( srcSock, pUser ))
 		return false;
 
-	var Serial = new Array;
-	Serial[0] = iUsed.GetSerial( 1 );
-	Serial[1] = iUsed.GetSerial( 2 );
-	Serial[2] = iUsed.GetSerial( 3 );
-	Serial[3] = iUsed.GetSerial( 4 );
-	var oldSerial = new Array;
-	var iCheck = pUser.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-	}
-	if( oldSerial.length == 4 && Serial[0] == oldSerial[0] && Serial[1] == oldSerial[1] && Serial[2] == oldSerial[2] && Serial[3] == oldSerial[3] )
+	var gateSerial = iUsed.serial;
+	var oldGateSerial = parseInt( pUser.GetTempTag( "LastGateUsed" ));
+	if( gateSerial == oldGateSerial )
 	{
 		return;
 	}
-	else
-	{
-		pUser.SetTempTag( "ItemUsed", Serial[0] + "," + Serial[1] + "," + Serial[2] + "," + Serial[3] );
-	}
+	pUser.SetTempTag( "LastGateUsed", ( gateSerial ).toString() );
+
 	DisplayTravelGump( srcSock, pUser );
 }
 
@@ -148,39 +127,20 @@ function onGumpPress( srcSock, myButton )
 	// Get character from socket
 	var srcChar = srcSock.currentChar;
 
-	// Range check. Its possible to call up the gate and run away
-	// get the items's serial
-	var oldSerial = new Array;
-	var iCheck = srcChar.GetTempTag( "ItemUsed" );
-	if( iCheck )
-	{
-		oldSerial = iCheck.split( ',' );
-
-		// Convert serial into actual numbers not strings
-		oldSerial[0] = parseInt( oldSerial[0] );
-		oldSerial[1] = parseInt( oldSerial[1] );
-		oldSerial[2] = parseInt( oldSerial[2] );
-		oldSerial[3] = parseInt( oldSerial[3] );
-	}
-
-	// Find out what the item is from the serial
-	var iUsed = null;
-	if( oldSerial.length == 4 )
-	{
-		iUsed = CalcItemFromSer( oldSerial[0], oldSerial[1], oldSerial[2], oldSerial[3] );
-	}
-
+	// Retrieve details of gate that was used, so we can do a range check
+	var oldGateSerial = parseInt( srcChar.GetTempTag( "LastGateUsed" ));
+	var iUsed = CalcItemFromSer( oldGateSerial );
 	if( !ValidateObject( iUsed ))
 	{
 		// Clear the tag so we can use gate again?
-		srcChar.SetTempTag( "ItemUsed", null );
+		srcChar.SetTempTag( "LastGateUsed", null );
 		return;
 	}
 
 	var inRange = iUsed.InRange( srcChar, 5 );
 
 	// Clear the tag so we can use gate again?
-	srcChar.SetTempTag( "ItemUsed", null );
+	srcChar.SetTempTag( "LastGateUsed", null );
 
 	// Check var inRange and button (dont say anything if canceled)
 	if( inRange == false && myButton >= 0)

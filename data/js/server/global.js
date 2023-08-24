@@ -15,11 +15,49 @@ function onLogin( socket, pChar )
 		}
 	}
 
+	// Store login timestamp (in minutes) in temp tag
+	var loginTime = Math.round( GetCurrentClock() / 1000 / 60 );
+	pChar.SetTempTag( "loginTime", loginTime );
+
 	// Attach OnFacetChange to characters logging into the shard
 	if( !pChar.HasScriptTrigger( 2508 ))
     {
         pChar.AddScriptTrigger( 2508 );
     }
+
+    if( pChar.account.isYoung )
+    {
+  		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+    	// Check if "Young" player still meets requirement for being considered young
+    	TriggerEvent( 8001, "CheckYoungStatus", socket, pChar, true );
+    }
+}
+
+function onLogout( pSock, pChar )
+{
+	var minSinceLogin = Math.round( GetCurrentClock() / 1000 / 60 ) - pChar.GetTempTag( "loginTime" );
+	pChar.playTime += minSinceLogin;
+	pChar.account.totalPlayTime += minSinceLogin;
+}
+
+function onCreatePlayer( pChar )
+{
+	// If player character is created on a Young account, give them Young-specific items
+	if( pChar.account.isYoung )
+	{
+		// Attach "Young" player script, if the account is young and does not have script
+		if( !pChar.HasScriptTrigger( 8001 ))
+		{
+			pChar.AddScriptTrigger( 8001 );
+		}
+
+		TriggerEvent( 8001, "GiveYoungPlayerItems", pChar.socket, pChar );
+	}
 }
 
 // Generic global-script function to look up data in /shared/jsWorldData/ folder

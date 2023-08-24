@@ -58,6 +58,26 @@ function onCallback0( socket, myTarget)
 
 	if( !socket.GetWord( 1 ) && myTarget.isChar )
 	{
+		// Don't allow throwing bolas at Young players, or Young players throwing bolas at other players
+		if( GetServerSetting( "YoungPlayerStatus" ))
+		{
+			if(( !myTarget.npc && myTarget.account.isYoung )
+				|| ( myTarget.npc && ValidateObject( myTarget.owner ) && !myTarget.owner.npc && myTarget.owner.account.isYoung ))
+			{
+				// Disallow throwing bola at Young players
+				socket.SysMessage( GetDictionaryEntry( 2719, socket.language )); // You cannot throw a bola at that.
+				return;
+			}
+
+			if(( !pUser.npc && pUser.account.isYoung && !myTarget.npc )
+				|| ( myTarget.npc && ValidateObject( myTarget.owner ) && !myTarget.owner.npc ))
+			{
+				// Disallow throwing bolas at other players as a Young player
+				socket.SysMessage( GetDictionaryEntry( 2719, socket.language ));
+				return;
+			}
+		}
+
 		if( pUser.InRange( myTarget, 8 ))
 		{
 			if( myTarget.isonhorse )
@@ -67,23 +87,23 @@ function onCallback0( socket, myTarget)
 				DoMovingEffect( pUser, myTarget, 0x26AC, 0x10, 0x00, false );
 				if( myTarget.socket != null )
 				{
-					myTarget.SysMessage( GetDictionaryEntry( 2716, myTarget.socket.language )); // You have been knocked off your mount!
+					myTarget.socket.SysMessage( GetDictionaryEntry( 2716, myTarget.socket.language )); // You have been knocked off your mount!
 				}
 				iUsed.Delete();
 			}
 			else
 			{
-				pUser.SysMessage( GetDictionaryEntry( 2717, socket.language )); // Your target isn't mounted.
+				socket.SysMessage( GetDictionaryEntry( 2717, socket.language )); // Your target isn't mounted.
 			}
 		}
 		else
 		{
-			pUser.SysMessage( GetDictionaryEntry( 2718, socket.language )); // Your target is out of range.
+			socket.SysMessage( GetDictionaryEntry( 2718, socket.language )); // Your target is out of range.
 		}
 	}
 	else
 	{
-		pUser.SysMessage( GetDictionaryEntry( 2719, socket.language )); // You cannot throw a bola at that.
+		socket.SysMessage( GetDictionaryEntry( 2719, socket.language )); // You cannot throw a bola at that.
 	}
 }
 

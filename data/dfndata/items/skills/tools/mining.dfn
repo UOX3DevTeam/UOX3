@@ -14,6 +14,7 @@ good=57
 maxuses=75
 usesleft=25
 script=2200// uses left tooltip
+script=4050// mining.js
 sectionid=0x0f39
 }
 
@@ -50,6 +51,7 @@ good=57
 maxuses=75
 usesleft=25
 script=2200// uses left tooltip
+script=4050// mining.js
 sectionid=0x0e85
 }
 

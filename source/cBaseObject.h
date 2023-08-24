@@ -95,8 +95,6 @@ protected:
 	SI16				karma;
 	SI16				kills;
 	UI16				subRegion;
-	//std::string			origin; // Stores expansion item originates from
-	UI08				origin; // Stores expansion item originates from
 
 	void			RemoveFromMulti( bool fireTrigger = true );
 	void			AddToMulti( bool fireTrigger = true );
@@ -108,6 +106,8 @@ protected:
 	SERIAL			tempContainerSerial;
 
 	bool			nameRequestActive;
+	//std::string	origin;	// Stores expansion item originates from
+	UI08			origin;	// Stores expansion item originates from
 
 	void			CopyData( CBaseObject *target );
 
@@ -205,7 +205,7 @@ public:
 	RACEID					GetRace( void ) const;
 	void					SetRace( RACEID newValue );
 
-	std::string				GetNameRequest( CChar *nameRequester );
+	std::string				GetNameRequest( CChar *nameRequester, UI08 requestSource );
 	std::string				GetName( void ) const;
 	void					SetName( std::string newName );
 

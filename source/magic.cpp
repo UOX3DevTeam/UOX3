@@ -1015,6 +1015,12 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 		{
 			if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 			{
+				if( shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+				{
+					sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
+					return false;
+				}
+
 				// Teleport player's followers too
 				auto myFollowers = caster->GetFollowerList();
 				for( const auto &myFollower : myFollowers->collection() )
@@ -1062,6 +1068,12 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 				{
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 					{
+						if( shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+						{
+							sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
+							return false;
+						}
+
 						// Teleport player's followers too
 						auto myFollowers = caster->GetFollowerList();
 						for( const auto &myFollower : myFollowers->collection() )
@@ -1113,6 +1125,12 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 			{
 				if( cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
 				{
+					if( worldNum == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					{
+						sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
+						return false;
+					}
+
 					// Teleport player's followers too
 					auto myFollowers = caster->GetFollowerList();
 					for( const auto &myFollower : myFollowers->collection() )
@@ -1601,7 +1619,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curS
 			i->SetTag( "multiSerial", tagObject );
 			markedInMulti = true;
 
-			std::string tempRuneName = oldstrutil::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster ).c_str() ); // A recall rune for %s.
+			std::string tempRuneName = oldstrutil::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster, NRS_SYSTEM ).c_str() ); // A recall rune for %s.
 			if( tempRuneName.length() > 0 )
 			{
 				i->SetName( tempRuneName );
@@ -1923,6 +1941,12 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 				{
 					if(( shipMulti->WorldNumber() == caster->WorldNumber() || cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() ) && shipMulti->GetInstanceId() == caster->GetInstanceId() )
 					{
+						if( shipMulti->WorldNumber() == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+						{
+							sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
+							return false;
+						}
+
 						caster->SetLocation( shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3 );
 						SpawnGate( caster, caster->GetX() + 1, caster->GetY() + 1, caster->GetZ(), caster->WorldNumber(), shipMulti->GetX() + 1, shipMulti->GetY(), shipMulti->GetZ() + 3, shipMulti->WorldNumber(), shipMulti->GetInstanceId() );
 						return true;
@@ -1953,6 +1977,12 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 			if( caster->WorldNumber() != worldNum && !cwmWorldState->ServerData()->TravelSpellsBetweenWorlds() )
 			{
 				sock->SysMessage( 2061 ); // Travelling between worlds using Recall or Gate spells is not possible.
+				return false;
+			}
+
+			if( worldNum == 0 && caster->WorldNumber() != 0 && cwmWorldState->ServerData()->YoungPlayerSystem() && caster->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+			{
+				sock->SysMessage( 18733 ); //  You decide against traveling to Felucca while you are still young.
 				return false;
 			}
 
@@ -4474,6 +4504,28 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 							case 45: //////////// (45) MARK //////////////////
 							case 52: //////////// (52) GATE //////////////////
 							{
+								// Check for onSpellTargetSelect on spell caster
+								scriptTriggers.clear();
+								scriptTriggers.shrink_to_fit();
+								scriptTriggers = caster->GetScriptTriggers();
+								for( auto scriptTrig : scriptTriggers )
+								{
+									cScript *toExecute = JSMapping->GetScript( scriptTrig );
+									if( toExecute != nullptr )
+									{
+										auto retVal = toExecute->OnSpellTargetSelect( caster, i, curSpell );
+										if( retVal == 1 )
+										{
+											break;
+										}
+										else if( retVal == 2 )
+										{
+											return;
+										}
+									}
+								}
+
+								// Check for onSpellTarget on spell target
 								scriptTriggers.clear();
 								scriptTriggers.shrink_to_fit();
 								scriptTriggers = i->GetScriptTriggers();
@@ -4634,8 +4686,32 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 						case 53: // Mana Vampire
 						case 59: // Resurrection
 						{
-							// Check for onSpellTarget event on target
-							for( auto scriptTrig : c->GetScriptTriggers() )
+							// Check for onSpellTargetSelect on spell caster
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = caster->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != nullptr )
+								{
+									auto retVal = toExecute->OnSpellTargetSelect( caster, c, curSpell );
+									if( retVal == 1 )
+									{
+										break;
+									}
+									else if( retVal == 2 )
+									{
+										return;
+									}
+								}
+							}
+
+							// Check for onSpellTarget event on spell target
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = c->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
 							{
 								cScript *toExecute = JSMapping->GetScript( scriptTrig );
 								if( toExecute != nullptr )
@@ -4663,6 +4739,28 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 						case 54:	// Mass Dispel
 						case 55:	// Meteor Swarm
 						{
+							// Check for onSpellTargetSelect on spell caster
+							scriptTriggers.clear();
+							scriptTriggers.shrink_to_fit();
+							scriptTriggers = caster->GetScriptTriggers();
+							for( auto scriptTrig : scriptTriggers )
+							{
+								cScript *toExecute = JSMapping->GetScript( scriptTrig );
+								if( toExecute != nullptr )
+								{
+									auto retVal = toExecute->OnSpellTargetSelect( caster, c, curSpell );
+									if( retVal == 1 )
+									{
+										break;
+									}
+									else if( retVal == 2 )
+									{
+										return;
+									}
+								}
+							}
+
+							// Check for onSpellTarget on spell target
 							scriptTriggers.clear();
 							scriptTriggers.shrink_to_fit();
 							scriptTriggers = c->GetScriptTriggers();
@@ -5281,12 +5379,12 @@ void CMagic::LogSpell( std::string spell, CChar *player1, CChar *player2, const 
 
 	logDestination << "[" << dateTime << "] ";
 
-	std::string casterName = GetNpcDictName( player1 );
+	std::string casterName = GetNpcDictName( player1, nullptr, NRS_SYSTEM );
 	logDestination << casterName << " (serial: " << std::hex << player1->GetSerial() << " ) ";
 	logDestination << "cast spell <" << spell << "> ";
 	if( ValidateObject( player2 ))
 	{
-		std::string targetName = GetNpcDictName( player2 );
+		std::string targetName = GetNpcDictName( player2, nullptr, NRS_SYSTEM );
 		logDestination << "on player " << targetName << " (serial: " << player2->GetSerial() << " ) ";
 	}
 	logDestination << "Extra Info: " << extraInfo << std::endl;

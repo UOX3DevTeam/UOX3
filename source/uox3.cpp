@@ -37,6 +37,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <optional>
+#include <numeric>
 
 #include "uox3.h"
 #include "weight.h"
@@ -176,6 +177,7 @@ auto CheckConsoleKeyThread() -> void;
 auto DoMessageLoop() -> void;
 auto StartInitialize( CServerData &server_data ) -> void;
 auto InitOperatingSystem() -> std::optional<std::string>;
+auto AdjustInterval( std::chrono::milliseconds interval, std::chrono::milliseconds maxTimer ) -> std::chrono::milliseconds;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	main()
@@ -229,13 +231,39 @@ auto main( SI32 argc, char *argv[] ) ->int
 
 	// Start/Initalize classes, data, network
 	StartInitialize( serverdata );
-	
+
 	// Main Loop
 	Console.PrintSectionBegin();
 	EVENT_TIMER( stopwatch, EVENT_TIMER_OFF );
+
+	// Initiate APS - Adaptive Performance System
+	// Tracks simulation cycles over time and adjusts how often NPC AI/Pathfinding is updated as
+	// necessary to keep shard performance and responsiveness to player input at acceptable levels
+	auto apsPerfThreshold = cwmWorldState->ServerData()->APSPerfThreshold(); // Performance threshold from ini, 0 disables APS feature
+
+	[[maybe_unused]] int avgSimCycles = 0;
+	UI16 apsMovingAvgOld = 0;
+	const int maxSimCycleSamples = 10;  // Max number of samples for moving average
+	std::vector<int> simCycleSamples;  // Store simulation cycle measurements for moving average
+
+	// Fetch step value used by APS to gradually adjust delay in NPC AI/movement checking
+	const std::chrono::milliseconds apsDelayStep = std::chrono::milliseconds( cwmWorldState->ServerData()->APSDelayStep() );
+
+	// Fetch max cap for delay introduced into loop by APS for checking NPC AI/movement stuff
+	const std::chrono::milliseconds apsDelayMaxCap = std::chrono::milliseconds( cwmWorldState->ServerData()->APSDelayMaxCap() );
+
+	// Setup initial values for apsDelay
+	std::chrono::milliseconds apsDelay = std::chrono::milliseconds( 0 );
+	std::chrono::time_point<std::chrono::system_clock> adaptivePerfTimer = std::chrono::system_clock::now() + apsDelay;
+
+	// Set the interval for APS evaluation and adjustment, and set initial timestamp for first evaluation
+	const std::chrono::milliseconds evaluationInterval = std::chrono::milliseconds( cwmWorldState->ServerData()->APSInterval() );
+	std::chrono::time_point<std::chrono::system_clock> nextEvaluationTime = std::chrono::system_clock::now() + evaluationInterval;
+
+	// Core server loop
 	while( cwmWorldState->GetKeepRun() )
 	{
-		std::this_thread::sleep_for( std::chrono::milliseconds(( cwmWorldState->GetPlayersOnline() ? 5 : 90 )));
+		std::this_thread::sleep_for( std::chrono::milliseconds( cwmWorldState->GetPlayersOnline() ? 5 : 90 ));
 		if( cwmWorldState->ServerProfile()->LoopTimeCount() >= 1000 )
 		{
 			cwmWorldState->ServerProfile()->LoopTimeCount( 0 );
@@ -292,7 +320,20 @@ auto main( SI32 argc, char *argv[] ) ->int
 		{
 			//auto stopauto = EventTimer();
 			EVENT_TIMER( stopauto, EVENT_TIMER_OFF );
-			cwmWorldState->CheckAutoTimers();
+
+			std::chrono::time_point<std::chrono::system_clock> currentTime = std::chrono::system_clock::now();
+			if( apsPerfThreshold == static_cast<UI16>( 0 ) || apsDelay == std::chrono::milliseconds(0) || currentTime >= adaptivePerfTimer )
+			{
+				// Check autotimers if the APS feature is disabled, if there's no delay, or if timer has expired
+				cwmWorldState->CheckAutoTimers();
+
+				// Set timer for next update, if apsDelay is higher than 0
+				if( apsDelay > std::chrono::milliseconds( 0 ))
+				{
+					adaptivePerfTimer = std::chrono::system_clock::now() + apsDelay;
+				}
+			}
+
 			EVENT_TIMER_NOW( stopauto, CheckAutoTimers only, EVENT_TIMER_CLEAR );
 		}
 		
@@ -310,6 +351,60 @@ auto main( SI32 argc, char *argv[] ) ->int
 		EVENT_TIMER_RESET( stopwatch );
 		DoMessageLoop();
 		EVENT_TIMER_NOW( stopwatch, Delta for DoMessageLoop, EVENT_TIMER_CLEAR );
+
+		// Check if it's time for evaluation and adjustment
+		std::chrono::time_point<std::chrono::system_clock> currentTime = std::chrono::system_clock::now();
+		if( apsPerfThreshold > static_cast<UI16>( 0 ) && currentTime >= nextEvaluationTime )
+		{
+			// Get simulation cycles count
+			auto simCycles = ( 1000.0 * ( 1.0 / static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime() ) / static_cast<R32>( cwmWorldState->ServerProfile()->LoopTimeCount() ))));
+
+			// Store last X simCycle samples
+			simCycleSamples.push_back( simCycles );
+
+			// Limit the number of samples kept to X
+			if( simCycleSamples.size() > maxSimCycleSamples )
+			{
+				simCycleSamples.erase( simCycleSamples.begin() );
+			}
+
+			int sum = std::accumulate( simCycleSamples.begin(), simCycleSamples.end(), 0 );
+			UI16 apsMovingAvg = static_cast<UI16>( sum / simCycleSamples.size() );
+			if( apsMovingAvg < apsPerfThreshold )
+			{
+				// Performance is below threshold...
+				if( apsMovingAvg <= apsMovingAvgOld && apsDelay < apsDelayMaxCap )
+				{
+					// ... and dropping, or stable at low performance! DO SOMETHING...
+					apsDelay = apsDelay + apsDelayStep;
+#if defined( UOX_DEBUG_MODE )
+					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#endif
+				}
+				// If performance is below, but increasing, wait and see before reacting
+			}
+			else
+			{
+				// Performance exceeds threshold...
+				if( apsDelay >= apsDelayStep )
+				{
+					// ... reduce timer for snappier NPC AI/movement/etc.
+					apsDelay = apsDelay - apsDelayStep;
+#if defined( UOX_DEBUG_MODE )
+					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+#endif
+				}
+			}
+
+			// Update previous moving average
+			apsMovingAvgOld = apsMovingAvg;
+
+			// Adjust the interval based on the timer value
+			std::chrono::milliseconds adjustedInterval = AdjustInterval( evaluationInterval, apsDelay );
+
+			// Update the next evaluation time
+			nextEvaluationTime = currentTime + adjustedInterval;
+		}
 	}
 
 	// Shutdown/Cleanup
@@ -344,6 +439,15 @@ auto main( SI32 argc, char *argv[] ) ->int
 	
 	// Will never reach this, as Shutdown "exits"
 	return EXIT_SUCCESS;
+}
+
+// Scaling function to adjust the interval based on the timer value
+auto AdjustInterval( std::chrono::milliseconds interval, std::chrono::milliseconds maxTimer ) -> std::chrono::milliseconds
+{
+	double scaleFactor = static_cast<double>(maxTimer.count()) / interval.count();
+	double adjustmentFactor = 0.25; // Adjust this factor to control the rate of adjustment
+	long long adjustedCount = static_cast<long long>(interval.count() * (1.0 + scaleFactor * adjustmentFactor));
+	return std::chrono::milliseconds(adjustedCount);
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -921,7 +1025,7 @@ auto MountCreature( CSocket *sockPtr, CChar *s, CChar *x ) -> void
 		s->SetOnHorse( true );
 		auto c = Items->CreateItem( nullptr, s, 0x0915, 1, x->GetSkin(), OT_ITEM );
 
-		auto xName = GetNpcDictName( x, sockPtr );
+		auto xName = GetNpcDictName( x, sockPtr, NRS_SYSTEM );
 		c->SetName( xName );
 		c->SetDecayable( false );
 		c->SetLayer( IL_MOUNT );
@@ -1274,7 +1378,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 	{
 		mChar.SetEvadeState( false );
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
-		std::string mCharName = GetNpcDictName( &mChar );
+		std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
@@ -1294,7 +1398,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 			{
 				if( mChar.GetTimer( tCHAR_POISONWEAROFF ) > cwmWorldState->GetUICurrentTime() )
 				{
-					std::string mCharName = GetNpcDictName( &mChar );
+					std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SPEECH );
 
 					switch( mChar.GetPoisoned() )
 					{
@@ -1744,27 +1848,73 @@ auto CheckNPC( CChar& mChar, bool checkAI, bool doRestock, bool doPetOfflineChec
 		mChar.SetReattackAt( cwmWorldState->ServerData()->CombatNPCBaseReattackAt() );
 	}
 
-	if(( mChar.GetNpcWander() != WT_FLEE ) && ( mChar.GetNpcWander() != WT_FROZEN ) && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ))
+	auto mNpcWander = mChar.GetNpcWander();
+	if( mNpcWander == WT_SCARED )
 	{
-		// Make NPC try to flee away from their opponent, if still within range
-		CChar *mTarget = mChar.GetTarg();
-		if( ValidateObject( mTarget ) && !mTarget->IsDead() && ObjInRange( &mChar, mTarget, DIST_SAMESCREEN ))
+		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 		{
-			mChar.SetOldNpcWander( mChar.GetNpcWander() );
-			mChar.SetNpcWander( WT_FLEE );
-			if( mChar.GetMounted() )
+			if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ));
-			}
-			else
-			{
-				mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ));
+				mChar.SetFleeDistance( static_cast<UI08>( 0 ));
+				CChar *mTarget = mChar.GetTarg();
+				if( ValidateObject( mTarget ) && !mTarget->IsDead() && ObjInRange( &mChar, mTarget, DIST_INRANGE ))
+				{
+					if( mChar.GetMounted() )
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ));
+					}
+					else
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ));
+					}
+				}
+				else
+				{
+					// target no longer exists, or is out of range, stop running
+					mChar.SetTarg( nullptr );
+					if( mChar.GetOldNpcWander() != WT_NONE )
+					{
+						mChar.SetNpcWander( mChar.GetOldNpcWander() );
+					}
+					if( mChar.GetMounted() )
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ));
+					}
+					else
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ));
+					}
+					mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
+				}
 			}
 		}
 	}
-	else if(( mChar.GetNpcWander() == WT_FLEE ) && ( mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100 ))
+	else if( mNpcWander != WT_FLEE && mNpcWander != WT_FROZEN && ( mChar.GetHP() < mChar.GetMaxHP() * mChar.GetFleeAt() / 100 ))
+	{
+		if( mChar.GetTimer( tNPC_FLEECOOLDOWN ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
+		{
+			// Make NPC try to flee away from their opponent, if still within range
+			CChar *mTarget = mChar.GetTarg();
+			if( ValidateObject( mTarget ) && !mTarget->IsDead() && ObjInRange( &mChar, mTarget, DIST_SAMESCREEN ))
+			{
+				mChar.SetFleeDistance( static_cast<UI08>( 0 ));
+				mChar.SetOldNpcWander( mNpcWander );
+				mChar.SetNpcWander( WT_FLEE );
+				if( mChar.GetMounted() )
+				{
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedFleeingSpeed() ));
+				}
+				else
+				{
+					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetFleeingSpeed() ));
+				}
+			}
+		}
+	}
+	else if(( mNpcWander == WT_FLEE ) && ( mChar.GetHP() > mChar.GetMaxHP() * mChar.GetReattackAt() / 100 ))
 	{
 		// Bring NPC out of flee-mode and back to their original wandermode
+		mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 5 )); // Wait at least 5 seconds before reentring flee-mode!
 		mChar.SetNpcWander( mChar.GetOldNpcWander() );
 		if( mChar.GetMounted() )
 		{
@@ -3428,7 +3578,7 @@ auto GetTileName( CItem& mItem, std::string& itemname ) -> size_t
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns the dictionary name for a given NPC, if their name equals # or a dictionary ID
 //o------------------------------------------------------------------------------------------------o
-auto GetNpcDictName( CChar *mChar, CSocket *tSock ) -> std::string
+auto GetNpcDictName( CChar *mChar, CSocket *tSock, UI08 requestSource ) -> std::string
 {
 	CChar *tChar = nullptr;
 	if( tSock )
@@ -3436,7 +3586,7 @@ auto GetNpcDictName( CChar *mChar, CSocket *tSock ) -> std::string
 		tChar = tSock->CurrcharObj();
 	}
 
-	std::string dictName = mChar->GetNameRequest( tChar );
+	std::string dictName = mChar->GetNameRequest( tChar, requestSource );
 	SI32 dictEntryId = 0;
 
 	if( dictName == "#" )

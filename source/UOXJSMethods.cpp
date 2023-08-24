@@ -77,7 +77,7 @@ void MethodSpeech( CBaseObject &speaker, char *message, SpeechType sType, COLOUR
 		if( speaker.CanBeObjType( OT_CHAR ))
 		{
 			CChar *speakerChar = CalcCharObjFromSer( speaker.GetSerial() );
-			speakerName = GetNpcDictName( speakerChar );
+			speakerName = GetNpcDictName( speakerChar, nullptr, NRS_SPEECH );
 		}
 		else
 		{
@@ -2589,32 +2589,44 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 
 			// 2 Parameters, x + y
 		case 2:
-			x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ))
+			{
+				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+			}
 			break;
 
 			// x,y,z
 		case 3:
-			x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ))
+			{
+				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+			}
 			break;
 
 			// x,y,z,world
 		case 4:
-			x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ))
+			{
+				x		= static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+				y		= static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				z		= static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+				world	= static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+			}
 			break;
 
 			// x,y,z,world,instanceId
 		case 5:
-			x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
-			y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
-			z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
-			world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
-			instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			if( JSVAL_IS_INT( argv[0] ) && JSVAL_IS_INT( argv[1] ) && JSVAL_IS_INT( argv[2] ) && JSVAL_IS_INT( argv[3] ) && JSVAL_IS_INT( argv[4] ))
+			{
+				x = static_cast<SI16>( JSVAL_TO_INT( argv[0] ));
+				y = static_cast<SI16>( JSVAL_TO_INT( argv[1] ));
+				z = static_cast<SI08>( JSVAL_TO_INT( argv[2] ));
+				world = static_cast<UI08>( JSVAL_TO_INT( argv[3] ));
+				instanceId = static_cast<UI16>( JSVAL_TO_INT( argv[4] ));
+			}
 			break;
 
 		default:
@@ -3963,7 +3975,7 @@ JSBool CGuild_AcceptRecruit( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks if guild is at peace, i.e. not at war with any other guilds
 //o------------------------------------------------------------------------------------------------o
-JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+JSBool CGuild_IsAtPeace( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
 {
 	if( argc != 0 )
 	{
@@ -5836,12 +5848,13 @@ JSBool CSocket_GetSDWord( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 //|	Prototype	-	string GetString( offset [, length] )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Returns data from socket buffer at offset with optional length param, string assumed
+//|					If no length param is provided, reads until next null terminator
 //o------------------------------------------------------------------------------------------------o
 JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 1 && argc != 2 )
 	{
-		ScriptError( cx, "GetString: Invalid number of arguments (takes 1 or 2)" );
+		ScriptError( cx, "GetString: Invalid number of arguments. Takes 1 (offset) or 2 (offset, length)" );
 		return JS_FALSE;
 	}
 
@@ -5866,7 +5879,10 @@ JSBool CSocket_GetString( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		toReturn[length] = 0;
 	}
 	else
+	{
+		// If length is not defined, read until next null terminator
 		strcopy( toReturn, 128, ( char * ) & ( mSock->Buffer() )[offset] );
+	}
 
 	JSString *strSpeech = nullptr;
 	strSpeech = JS_NewStringCopyZ( cx, toReturn );
@@ -8888,7 +8904,7 @@ JSBool CChar_InitWanderArea( JSContext *cx, JSObject *obj, [[maybe_unused]] uint
 	return JS_TRUE;
 }
 
-void NewCarveTarget( CSocket *s, CItem *i );
+auto NewCarveTarget( CSocket *s, CItem *i ) -> bool;
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CItem_Carve()
 //|	Prototype	-	void Carve( socket )
@@ -8921,7 +8937,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
 	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 
-	NewCarveTarget( mSock, toCarve );
+	*rval = BOOLEAN_TO_JSVAL( NewCarveTarget( mSock, toCarve ));
 
 	// Active script-context might have been lost, so restore it...
 	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
@@ -10877,6 +10893,117 @@ JSBool CRegion_RemoveScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, js
 		myObj->ClearScriptTriggers();
 	}
 
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRegion_GetOrePref()
+//|	Prototype	-	void GetOrePref( oreType )
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get ore preference data for specified ore type
+//o------------------------------------------------------------------------------------------------o
+JSBool CRegion_GetOrePref( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 1 )
+	{
+		ScriptError( cx, "GetOrePref: Invalid number of arguments (takes 1 - oreId)" );
+		return JS_FALSE;
+	}
+
+	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "Invalid Object assigned (GetOrePref)" );
+		return JS_FALSE;
+	}
+
+	if( !JSVAL_IS_INT( argv[0] ))
+	{
+		ScriptError( cx, "That is not a valid ore ID! Only integers between 0-65535 are accepted." );
+	}
+
+	// OrePref_st
+	//	MiningData_st oreIndex
+	//	UI16 percentChance
+
+	// MiningData_st
+	//	std::string oreName - ore name from ORE_LIST in skills.dfn
+	//	UI16 colour
+	//	UI16 minSkill - min skill needed to make ingot from ore
+	//	std::string name - name of ingot
+	//	SI32 makemenu
+	//	UI16 oreChance - default chance of finding ore type if nothing else is specified
+	//	UI16 scriptID
+
+	// Fetch region's ore preference details for specified ore type
+	size_t oreType = static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
+	auto orePrefs = myObj->GetOrePreference( oreType );
+
+	// Prepare some temporary helper variables
+	JSObject *jsOrePref = JS_NewArrayObject( cx, 0, nullptr );
+	JSObject *jsMiningData = JS_NewArrayObject( cx, 0, nullptr );
+
+	// Set up the mining data info
+	// Start with name of ore
+	JSString *oreName = nullptr;
+	oreName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->oreName.c_str() );
+	auto jsOreName = STRING_TO_JSVAL( oreName );
+	JS_SetElement( cx, jsMiningData, 0, &jsOreName );
+
+	// Name of ingot
+	JSString *ingotName = nullptr;
+	ingotName = JS_NewStringCopyZ( cx, orePrefs->oreIndex->name.c_str() );
+	auto jsIngotName = STRING_TO_JSVAL( ingotName );
+	JS_SetElement( cx, jsMiningData, 3, &jsIngotName );
+
+	// Ore colour, min skill, Makemenu entry, oreChance, scriptID
+	auto jsOreColor = INT_TO_JSVAL( orePrefs->oreIndex->colour );
+	auto jsOreMinSkill = INT_TO_JSVAL( orePrefs->oreIndex->minSkill );
+	auto jsOreMakemenu = INT_TO_JSVAL( orePrefs->oreIndex->makemenu );
+	auto jsOreChance = INT_TO_JSVAL( orePrefs->oreIndex->oreChance );
+	auto jsOreScriptID = INT_TO_JSVAL( orePrefs->oreIndex->scriptID );
+	JS_SetElement( cx, jsMiningData, 1, &jsOreColor );
+	JS_SetElement( cx, jsMiningData, 2, &jsOreMinSkill );
+	JS_SetElement( cx, jsMiningData, 4, &jsOreMakemenu );
+	JS_SetElement( cx, jsMiningData, 5, &jsOreChance );
+	JS_SetElement( cx, jsMiningData, 6, &jsOreScriptID );
+
+	// Add mining data to the orePref array
+	jsval miningDataVal = OBJECT_TO_JSVAL( jsMiningData );
+	JS_SetElement( cx, jsOrePref, 0, &miningDataVal );
+
+	// Add percent chance to orePref array
+	jsval jsOrePrefChance = INT_TO_JSVAL( orePrefs->percentChance );
+	JS_SetElement( cx, jsOrePref, 1, &jsOrePrefChance );
+
+	// Convert orePref array object to jsval and pass it to script
+	*rval = OBJECT_TO_JSVAL( jsOrePref );
+
+	return JS_TRUE;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CRegion_GetOreChance()
+//|	Prototype	-	void GetOreChance()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Get chance to find ore when mining in townregion
+//o------------------------------------------------------------------------------------------------o
+JSBool CRegion_GetOreChance( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] jsval *argv, [[maybe_unused]] jsval *rval )
+{
+	if( argc != 0 )
+	{
+		ScriptError( cx, "GetOreChance: Invalid number of arguments (takes 0)" );
+		return JS_FALSE;
+	}
+
+	CTownRegion *myObj = static_cast<CTownRegion *>( JS_GetPrivate( cx, obj ));
+	if( myObj == nullptr )
+	{
+		ScriptError( cx, "Invalid Object assigned (GetOreChance)" );
+		return JS_FALSE;
+	}
+
+	*rval = INT_TO_JSVAL( myObj->GetOreChance() );
 	return JS_TRUE;
 }
 

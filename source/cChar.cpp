@@ -145,13 +145,14 @@ const SI08			DEFPLAYER_TOWNPRIV 			= 0;
 const UI16			DEFPLAYER_CONTROLSLOTSUSED	= 0;
 const UI32			DEFPLAYER_CREATEDON			= 0;
 const UI32			DEFPLAYER_NPCGUILDJOINED	= 0;
+const UI32			DEFPLAYER_PLAYTIME			= 0;
 
 CChar::PlayerValues_st::PlayerValues_st() : callNum( DEFPLAYER_CALLNUM ), playerCallNum( DEFPLAYER_PLAYERCALLNUM ), trackingTarget( DEFPLAYER_TRACKINGTARGET ),
 squelched( DEFPLAYER_SQUELCHED ), commandLevel( DEFPLAYER_COMMANDLEVEL ), postType( DEFPLAYER_POSTTYPE ), hairStyle( DEFPLAYER_HAIRSTYLE ), beardStyle( DEFPLAYER_BEARDSTYLE ),
 hairColour( DEFPLAYER_HAIRCOLOUR ), beardColour( DEFPLAYER_BEARDCOLOUR ), speechItem( nullptr ), speechMode( DEFPLAYER_SPEECHMODE ), speechId( DEFPLAYER_SPEECHID ),
 speechCallback( nullptr ), robe( DEFPLAYER_ROBE ), accountNum( DEFPLAYER_ACCOUNTNUM ), origSkin( DEFPLAYER_ORIGSKIN ), origId( DEFPLAYER_ORIGID ),
 fixedLight( DEFPLAYER_FIXEDLIGHT ), deaths( DEFPLAYER_DEATHS ), socket( nullptr ), townVote( DEFPLAYER_TOWNVOTE ), townPriv( DEFPLAYER_TOWNPRIV ), controlSlotsUsed( DEFPLAYER_CONTROLSLOTSUSED ),
-createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED )
+createdOn( DEFPLAYER_CREATEDON ), npcGuildJoined( DEFPLAYER_NPCGUILDJOINED ), playTime( DEFPLAYER_PLAYTIME )
 {
 	//memset( &lockState[0],		0, sizeof( UI08 )		* (INTELLECT+1) );
 	// Changed to the following, as only the 15?16? first lockStates would get initialized or whanot
@@ -180,6 +181,7 @@ const SI16			DEFNPC_PEACEING 			= 0x7FFF;
 const SI16			DEFNPC_PROVOING				= 0x7FFF;
 const SI16			DEFNPC_FLEEAT 				= 0;
 const SI16			DEFNPC_REATTACKAT 			= 0;
+const UI08			DEFNPC_FLEEDISTANCE			= 0;
 const UI08			DEFNPC_SPLIT 				= 0;
 const UI08			DEFNPC_SPLITCHANCE 			= 0;
 const UI08			DEFNPC_TRAININGPLAYERIN		= 0;
@@ -206,14 +208,14 @@ const UI16			DEFNPC_PATHTARGY			= 0;
 
 CChar::NPCValues_st::NPCValues_st() : wanderMode( DEFNPC_WANDER ), oldWanderMode( DEFNPC_OLDWANDER ), fTarg( DEFNPC_FTARG ), fz( DEFNPC_FZ1 ),
 aiType( DEFNPC_AITYPE ), spellAttack( DEFNPC_SPATTACK ), spellDelay( DEFNPC_SPADELAY ), taming( DEFNPC_TAMING ), fleeAt( DEFNPC_FLEEAT ),
-reAttackAt( DEFNPC_REATTACKAT ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
+reAttackAt( DEFNPC_REATTACKAT ), fleeDistance( DEFNPC_FLEEDISTANCE ), splitNum( DEFNPC_SPLIT ), splitChance( DEFNPC_SPLITCHANCE ), trainingPlayerIn( DEFNPC_TRAININGPLAYERIN ),
 goldOnHand( DEFNPC_HOLDG ), questType( DEFNPC_QUESTTYPE ), questDestRegion( DEFNPC_QUESTDESTREGION ), questOrigRegion( DEFNPC_QUESTORIGREGION ),
 petGuarding( nullptr ), npcFlag( DEFNPC_NPCFLAG ), boolFlags( DEFNPC_BOOLFLAG ), peaceing( DEFNPC_PEACEING ), provoing( DEFNPC_PROVOING ),
 tamedHungerRate( DEFNPC_TAMEDHUNGERRATE ), tamedThirstRate( DEFNPC_TAMEDTHIRSTRATE ), hungerWildChance( DEFNPC_HUNGERWILDCHANCE ), 
 thirstWildChance( DEFNPC_THIRSTWILDCHANCE ), walkingSpeed( DEFNPC_MOVEMENTSPEED ), runningSpeed( DEFNPC_MOVEMENTSPEED ), 
-fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), 
-loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ), mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ),
-mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
+fleeingSpeed( DEFNPC_MOVEMENTSPEED ), pathFail( DEFNPC_PATHFAIL ), pathResult( DEFNPC_PATHRESULT ), pathTargX( DEFNPC_PATHTARGX ), pathTargY( DEFNPC_PATHTARGY ),
+controlSlots( DEFNPC_CONTROLSLOTS ), maxLoyalty( DEFNPC_MAXLOYALTY ), loyalty( DEFNPC_LOYALTY ), orneriness( DEFNPC_ORNERINESS ), mountedWalkingSpeed( DEFNPC_MOVEMENTSPEED ),
+mountedRunningSpeed( DEFNPC_MOVEMENTSPEED ), mountedFleeingSpeed( DEFNPC_MOVEMENTSPEED )
 {
 	fx[0] = fx[1] = fy[0] = fy[1] = DEFNPC_WANDERAREA;
 	petFriends.resize( 0 );
@@ -1124,7 +1126,7 @@ void CChar::SetPassive( bool newValue )
 //|	Purpose		-	Returns/Sets whether the character has stolen something in the last X minutes
 //|					since their last death
 //o------------------------------------------------------------------------------------------------o
-auto CChar::HasStolen() -> const bool
+auto CChar::HasStolen() -> bool
 {
 	return bools.test( BIT_HASSTOLEN );
 }
@@ -2392,6 +2394,7 @@ void CChar::CopyData( CChar *target )
 	target->SetCanTrain( CanTrain() );
 	target->SetLastOn( GetLastOn() );
 	target->SetLastOnSecs( GetLastOnSecs() );
+	target->SetPlayTime( GetPlayTime() );
 	target->SetGuildTitle( guildTitle );
 	target->SetGuildFealty( guildFealty );
 	target->SetGuildNumber( guildNumber );
@@ -2669,7 +2672,7 @@ void CChar::SendToSocket( CSocket *s, bool drawGamePlayer )
 			alwaysSendItemHue = true;
 		}
 
-		if( mCharObj == this && drawGamePlayer && mCharObj->GetVisible() == 0 )
+		if( mCharObj == this && drawGamePlayer && ( mCharObj->GetVisible() == 0 || mCharObj->IsDead() ))
 		{
 			// Only send this when updating after a teleport/world change
 			CPDrawGamePlayer gpToSend(( *this ));
@@ -2898,7 +2901,7 @@ bool CChar::WearItem( CItem *toWear )
 		if( ValidateObject( GetItemAtLayer( tLayer )))
 		{
 #if defined( UOX_DEBUG_MODE )
-			std::string charName = GetNpcDictName( this );
+			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
 			Console.Warning( oldstrutil::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
 #endif
 			rValue = false;
@@ -3237,6 +3240,7 @@ void CChar::PlayerValues_st::DumpBody( std::ofstream& outStream )
 	outStream << "LastOn=" + lastOn + newLine;
 	outStream << "LastOnSecs=" + std::to_string( lastOnSecs ) + newLine;
 	outStream << "CreatedOn=" + std::to_string( createdOn ) + newLine;
+	outStream << "PlayTime=" + std::to_string( playTime ) + newLine;
 	outStream << "OrgName=" + origName + newLine;
 	outStream << "CommandLevel=" + std::to_string( commandLevel ) + newLine;	// command level
 	outStream << "Squelched=" + std::to_string( squelched ) + newLine;
@@ -3949,10 +3953,20 @@ SI16 CChar::ActualStrength( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetStrength( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	auto tempStr = static_cast<SI16>( CBaseObject::GetStrength() + GetStrength2() );
+	if( tempStr < 1 )
+	{
+		tempStr = 1;
+	}
+	return tempStr;
 }
 void CChar::SetStrength( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetStrength( newValue );
 	Dirty( UT_HITPOINTS );
 	UpdateRegion();
@@ -3978,10 +3992,20 @@ SI16 CChar::ActualIntelligence( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetIntelligence( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	auto tempInt = static_cast<SI16>( CBaseObject::GetIntelligence() + GetIntelligence2() );
+	if( tempInt < 1 )
+	{
+		tempInt = 1;
+	}
+	return tempInt;
 }
 void CChar::SetIntelligence( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+
 	CBaseObject::SetIntelligence( newValue );
 	Dirty( UT_MANA );
 	UpdateRegion();
@@ -4007,10 +4031,20 @@ SI16 CChar::ActualDexterity( void ) const
 //o------------------------------------------------------------------------------------------------o
 SI16 CChar::GetDexterity( void ) const
 {
-	return static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	auto tempDex = static_cast<SI16>( CBaseObject::GetDexterity() + GetDexterity2() );
+	if( tempDex < 1 )
+	{
+		tempDex = 1;
+	}
+	return tempDex;
 }
 void CChar::SetDexterity( SI16 newValue )
 {
+	if( newValue < 1 )
+	{
+		newValue = 1;
+	}
+	
 	CBaseObject::SetDexterity( newValue );
 	Dirty( UT_STAMINA );
 	UpdateRegion();
@@ -4627,6 +4661,11 @@ bool CChar::HandleLine( std::string &UTag, std::string &data )
 					SetTimer( tCHAR_PEACETIMER, BuildTimeValue( static_cast<R32>( std::stof( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ))))));
 					rValue = true;
 				}
+				else if( UTag == "PLAYTIME" )
+				{
+					SetPlayTime( static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( data, "//" )), nullptr, 0 )));
+					rValue = true;
+				}
 				break;
 			case 'Q':
 				if( UTag == "QUESTTYPE" )
@@ -4905,7 +4944,7 @@ bool CChar::LoadRemnants( void )
 	{
 		if( acct == AB_INVALID_ID )
 		{
-			std::string charName = GetNpcDictName( this );
+			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
 			Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial() ));
 			rValue = false;
 		}
@@ -4929,7 +4968,7 @@ bool CChar::LoadRemnants( void )
 		{
 			if( IsNpc() )
 			{
-				std::string charName = GetNpcDictName( this );
+				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
 				Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial() ));
 				rValue = false;
 			}
@@ -5123,7 +5162,7 @@ void CChar::TextMessage( CSocket *s, std::string toSay, SpeechType msgType, bool
 				unicodeMessage.Colour( txtColor );
 				unicodeMessage.Type( msgType );
 				unicodeMessage.Language( "ENG" );
-				unicodeMessage.Name( this->GetNameRequest( mChar ));
+				unicodeMessage.Name( this->GetNameRequest( mChar, NRS_SPEECH ));
 				unicodeMessage.ID( INVALIDID );
 				unicodeMessage.Serial( GetSerial() );
 
@@ -5802,6 +5841,30 @@ void CChar::SetCreatedOn( UI32 newValue )
 	if( IsValidPlayer() )
 	{
 		mPlayer->createdOn = newValue;
+		UpdateRegion();
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//| Function	-	CChar::GetPlayTime()
+//|					CChar::SetPlayTime()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose		-	Gets/Sets/Updates play time (in minutes) of character since it was created
+//o------------------------------------------------------------------------------------------------o
+auto CChar::GetPlayTime() const -> UI32
+{
+	UI32 rVal = 0;
+	if( IsValidPlayer() )
+	{
+		rVal = mPlayer->playTime;
+	}
+	return rVal;
+}
+auto CChar::SetPlayTime( UI32 newValue ) -> void
+{
+	if( IsValidPlayer() )
+	{
+		mPlayer->playTime = newValue;
 		UpdateRegion();
 	}
 }
@@ -7861,6 +7924,36 @@ void CChar::SetReattackAt( SI16 newValue )
 }
 
 //o------------------------------------------------------------------------------------------------o
+//| Function    -   CChar::GetFleeDistance()
+//|                 CChar::SetFleeDistance()
+//o------------------------------------------------------------------------------------------------o
+//| Purpose     -   Gets/Sets the distance an NPC has moved since entering flee/scared wander mode
+//o------------------------------------------------------------------------------------------------o
+UI08 CChar::GetFleeDistance( void ) const
+{
+	UI08 retVal = DEFNPC_FLEEDISTANCE;
+	if( IsValidNPC() )
+	{
+		retVal = mNPC->fleeDistance;
+	}
+	return retVal;
+}
+void CChar::SetFleeDistance( UI08 newValue )
+{
+	if( !IsValidNPC() )
+	{
+		if( DEFNPC_FLEEDISTANCE != newValue )
+		{
+			CreateNPC();
+		}
+	}
+	if( IsValidNPC() )
+	{
+		mNPC->fleeDistance = newValue;
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
 //| Function	-	CChar::PopDirection()
 //|					CChar::PushDirection()
 //o------------------------------------------------------------------------------------------------o
@@ -8658,6 +8751,24 @@ void CChar::ReactOnDamage( [[maybe_unused]] WeatherType damageType, CChar *attac
 //o------------------------------------------------------------------------------------------------o
 bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, bool doRepsys )
 {
+	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
+
+	if( ValidateObject( attacker ))
+	{
+		std::vector<UI16> attScriptTriggers = attacker->GetScriptTriggers();
+		for( auto i : attScriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( i );
+			if( toExecute != nullptr )
+			{
+				// If event returns false, prevent damage!
+				auto retVal = toExecute->OnDamageDeal( attacker, this, damageValue, damageType );
+				if( retVal == 0 )
+					return false;
+			}
+		}
+	}
+
 	std::vector<UI16> scriptTriggers = GetScriptTriggers();
 	for( auto i : scriptTriggers )
 	{
@@ -8670,8 +8781,6 @@ bool CChar::Damage( SI16 damageValue, WeatherType damageType, CChar *attacker, b
 				return false;
 		}
 	}
-
-	CSocket *mSock = GetSocket(), *attSock = nullptr, *attOwnerSock = nullptr;
 
 	if( ValidateObject( attacker ))
 	{

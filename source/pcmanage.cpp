@@ -805,10 +805,22 @@ bool CPICreateCharacter::Handle( void )
 			}
 
 			// Fetch player's chosen start location
-			auto toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
-
-			CServerData *sd = cwmWorldState->ServerData();
-			size_t serverCount = sd->NumServerLocations();
+			size_t serverCount = 0;
+			__STARTLOCATIONDATA__ *toGo = nullptr;
+			auto useYoungLocations = false;
+			if( cwmWorldState->ServerData()->YoungPlayerSystem() && tSock->GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+			{
+				// Young player! Let's use young player start locations
+				toGo = cwmWorldState->ServerData()->YoungServerLocation( locationNumber );
+				serverCount = cwmWorldState->ServerData()->NumYoungServerLocations();
+				useYoungLocations = true;
+			}
+			else
+			{
+				// Use normal player start locations
+				toGo = cwmWorldState->ServerData()->ServerLocation( locationNumber );
+				serverCount = cwmWorldState->ServerData()->NumServerLocations();
+			}
 
 			// Use random start location if enabled in uox.ini
 			if( cwmWorldState->ServerData()->ServerRandomStartingLocation() )
@@ -816,7 +828,15 @@ bool CPICreateCharacter::Handle( void )
 				if( serverCount > 0 )
 				{
 					size_t rndStartingLocation = RandomNum( static_cast<size_t>( 0 ), serverCount - 1 );
-					toGo = cwmWorldState->ServerData()->ServerLocation( rndStartingLocation );
+
+					if( useYoungLocations )
+					{
+						toGo = cwmWorldState->ServerData()->YoungServerLocation( rndStartingLocation );
+					}
+					else
+					{
+						toGo = cwmWorldState->ServerData()->ServerLocation( rndStartingLocation );
+					}
 				}
 			}
 
@@ -826,7 +846,14 @@ bool CPICreateCharacter::Handle( void )
 				if( serverCount == 0 )
 				{
 					// No start locations found, use a default hardcoded one
-					Console.Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					if( useYoungLocations )
+					{
+						Console.Error( "No young starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					}
+					else
+					{
+						Console.Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+					}
 					SI16 startX;
 					SI16 startY;
 					SI08 startZ;
@@ -842,7 +869,14 @@ bool CPICreateCharacter::Handle( void )
 				else
 				{
 					// Use first start location, which we know exists
-					toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+					if( useYoungLocations )
+					{
+						toGo = cwmWorldState->ServerData()->YoungServerLocation( 0 );
+					}
+					else
+					{
+						toGo = cwmWorldState->ServerData()->ServerLocation( 0 );
+					}
 					mChar->SetLocation( toGo->x, toGo->y, static_cast<SI08>( toGo->z ), static_cast<UI08>( toGo->worldNum ), static_cast<UI16>( toGo->instanceId ));
 				}
 			}
@@ -1379,7 +1413,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 				cScript *onCreateScp = JSMapping->GetScript( static_cast<UI16>( 0 ));	// 0 == global script
 				if( onCreateScp != nullptr )
 				{
-					onCreateScp->OnCreate( mChar, true );
+					onCreateScp->OnCreate( mChar, false, true );
 				}
 			}
 
@@ -1478,7 +1512,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 //o------------------------------------------------------------------------------------------------o
 CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 {
-	std::string corpseName = GetNpcDictName( &mChar );
+	std::string corpseName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
 
 	CItem *iCorpse = nullptr;
 	bool shouldSave = mChar.ShouldSave();
@@ -1538,6 +1572,9 @@ CItem *CreateCorpseItem( CChar& mChar, CChar *killer, UI08 fallDirection )
 		iCorpse->SetTempVar( CITV_MOREX, killer->GetSerial() );
 	}
 
+	// Add default corpse carving script to all corpses
+	iCorpse->AddScriptTrigger( 5046 ); // js/item/corpse.js
+
 	return iCorpse;
 }
 
@@ -1581,44 +1618,50 @@ auto MoveItemsToCorpse( CChar &mChar, CItem *iCorpse ) -> void
 				break;
 			case IL_PACKITEM:
 			{
-				std::vector<CItem *> moveItems;
-				auto jCont = j->GetContainsList();
-				for( const auto &k : jCont->collection() )
+				// Only move player's items from backpack to corpse if young system is disabled OR player is not on a young account
+				if( !cwmWorldState->ServerData()->YoungPlayerSystem() || !mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 				{
-					if( ValidateObject( k ))
+					std::vector<CItem *> moveItems;
+					auto jCont = j->GetContainsList();
+					for( const auto &k : jCont->collection() )
 					{
-						// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
-						if(( mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 || mChar.GetId() == 0x0317 ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
+						if( ValidateObject( k ))
 						{
-							// Store a reference to the item we want to move...
-							moveItems.push_back( k );
+							// If the character dying is a pack animal, drop everything they're carrying - including newbie items and spellbooks
+							if(( mChar.GetId() == 0x0123 || mChar.GetId() == 0x0124 || mChar.GetId() == 0x0317 ) || ( !k->IsNewbie() && k->GetType() != IT_SPELLBOOK ))
+							{
+								// Store a reference to the item we want to move...
+								moveItems.push_back( k );
+							}
 						}
 					}
-				}
 
-				// Loop through the items we want to move - and move them!
-				std::for_each( moveItems.begin(), moveItems.end(), [iCorpse]( CItem *item )
-				{
-					item->SetCont( iCorpse );
-					item->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
-					item->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 75 ))));
-					item->SetZ( 9 );
-				});
+					// Loop through the items we want to move - and move them!
+					std::for_each( moveItems.begin(), moveItems.end(), [iCorpse]( CItem *item )
+					{
+						item->SetCont( iCorpse );
+						item->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
+						item->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 75 ))));
+						item->SetZ( 9 );
+					});
 
-				if( !mChar.IsShop() )
-				{
-					// Move player's backpack to the BUYCONTAINER layer for safekeeping
-					j->SetLayer( IL_BUYCONTAINER );
+					if( !mChar.IsShop() )
+					{
+						// Move player's backpack to the BUYCONTAINER layer for safekeeping
+						j->SetLayer( IL_BUYCONTAINER );
+					}
 				}
 				break;
 			}
 			default:
-				if( packIsValid && j->IsNewbie() )
+				// Move equipped items from character to pack if newbie, or if player is on a Young account
+				if( packIsValid && ( j->IsNewbie() || ( cwmWorldState->ServerData()->YoungPlayerSystem() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ))))
 				{
 					j->SetCont( packItem );
 				}
 				else
 				{
+					// Otherwise, move them to corpse
 					j->SetCont( iCorpse );
 					j->SetX( static_cast<SI16>( 20 + ( RandomNum( 0, 49 ))));
 					j->SetY( static_cast<SI16>( 85 + ( RandomNum( 0, 74 ))));
@@ -1666,7 +1709,9 @@ void HandleDeath( CChar *mChar, CChar *attacker )
 	CItem *iCorpse = CreateCorpseItem(( *mChar ), attacker, fallDirection );
 	if( iCorpse != nullptr )
 	{
+		// Move items on player to corpse (special exceptions for Young players)
 		MoveItemsToCorpse(( *mChar ), iCorpse );
+
 		if( cwmWorldState->ServerData()->DeathAnimationStatus() )
 		{
 			Effects->DeathAction( mChar, iCorpse, fallDirection );

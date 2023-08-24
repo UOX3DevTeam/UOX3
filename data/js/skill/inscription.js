@@ -42,7 +42,7 @@ function onCallback0( pSock, ourObj )
 		{
 			if( ourObj.id == 0x1f14 )
 			{
-				pUser.SysMessage( "That rune is not blank." );
+				pUser.SysMessage( GetDictionaryEntry( 2783, pSock.language )); // That rune is not blank.
 				return;
 			}
 

@@ -359,7 +359,14 @@ const std::map<std::string, SI32> CServerData::uox3IniCaseValue
 	{"AGGRESSORFLAGTIMER"s, 336},
 	{"PERMAGREYFLAGTIMER"s, 337},
 	{"STEALINGFLAGTIMER"s, 338},
-	{"SNOOPAWARENESS"s, 339}
+	{"SNOOPAWARENESS"s, 339},
+	{"APSPERFTHRESHOLD"s, 340},
+	{"APSINTERVAL"s, 341},
+	{"APSDELAYSTEP"s, 342},
+	{"APSDELAYMAXCAP"s, 343},
+	{"YOUNGPLAYERSYSTEM"s, 344},
+	{"YOUNGLOCATION"s, 345},
+	{"SECRETSHARDKEY"s, 346}
 
 };
 constexpr auto MAX_TRACKINGTARGETS = 128;
@@ -428,7 +435,7 @@ constexpr auto BIT_TRAVELSPELLSWHILEOVERWEIGHT	= UI32( 58 );
 constexpr auto BIT_MARKRUNESINMULTIS			= UI32( 59 );
 constexpr auto BIT_TRAVELSPELLSBETWEENWORLDS	= UI32( 60 );
 constexpr auto BIT_TRAVELSPELLSWHILEAGGRESSOR	= UI32( 61 );
-[[maybe_unused]] constexpr auto BIT_CONSOLELOG					= UI32( 62 );
+[[maybe_unused]] constexpr auto BIT_CONSOLELOG	= UI32( 62 );
 constexpr auto BIT_NETWORKLOG					= UI32( 63 );
 constexpr auto BIT_SPEECHLOG					= UI32( 64 );
 constexpr auto BIT_CONTEXTMENUS					= UI32( 65 );
@@ -469,6 +476,7 @@ constexpr auto BIT_BODSFROMCRAFTEDITEMSONLY			= UI32( 99 );
 constexpr auto BIT_ENABLENPCGUILDDISCOUNTS			= UI32( 100 );
 constexpr auto BIT_ENABLENPCGUILDPREMIUMS			= UI32( 101 );
 constexpr auto BIT_SNOOPAWARENESS					= UI32( 102 );
+constexpr auto BIT_YOUNGPLAYERSYSTEM				= UI32( 103 );
 
 
 // New uox3.ini format lookup
@@ -570,6 +578,7 @@ auto CServerData::ResetDefaults() -> void
 	ExternalIP( "127.0.0.1" );
 	serverList[0].SetPort( 2593 );
 	ServerName( "My UOX3 Shard" );
+	SecretShardKey( "None" );
 
 	// Set default gcMaxBytes limit in MB per JS runtime
 	// If set too low, UOX3 might crash when reloading (full) JS engine
@@ -595,6 +604,12 @@ auto CServerData::ResetDefaults() -> void
 	MaxClientBytesOut( 100000 );
 	NetTrafficTimeban( 30 );
 
+	// Adaptive Performance System
+	APSPerfThreshold( 50 ); // Default to 50 simulation cycles as performance threshold
+	APSInterval( 100 ); // Default to APS checking performance at 250 ms intervals
+	APSDelayStep( 50 ); // Default to 25 ms as the value at which APS gradually increments the delay to NPC AI/movement checking
+	APSDelayMaxCap( 2000 ); // Default to 1500 ms as max cap on delay APS can introduce to NPC AI/movement checking
+
 	ServerSecondsPerUOMinute( 5 );
 	ServerTimeDay( 0 );
 	ServerTimeHours( 0 );
@@ -602,7 +617,8 @@ auto CServerData::ResetDefaults() -> void
 	ServerTimeSeconds( 0 );
 	ServerTimeAMPM( 0 );
 
-	InternalAccountStatus( false );
+	InternalAccountStatus( true );
+	YoungPlayerSystem( true );
 	CombatMaxRange( 10 );
 	CombatMaxSpellRange( 10 );
 
@@ -938,6 +954,7 @@ auto CServerData::ResetDefaults() -> void
 	SystemTimer( tSERVER_BLOODDECAYCORPSE, 210 ); // Default to half the decay timer of a npc corpse
 	SystemTimer( tSERVER_BLOODDECAY, 3 ); // Keep it short and sweet
 	startlocations.clear();
+	youngStartlocations.clear();
 	resettingDefaults = false;
 }
 //==================================================================================================
@@ -971,6 +988,24 @@ auto CServerData::ServerName( const std::string &setname ) -> void
 	if( setname.empty() )
 	{
 		serverList[0].SetName( "My UOX3 Shard" );
+	}
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::SecretShardKey()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets secret shard key used to only allows connections from specific
+//|					custom clients that provide a matching secret key
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::SecretShardKey() const -> const std::string&
+{
+	return secretShardKey;
+}
+auto CServerData::SecretShardKey( const std::string &newName ) -> void
+{
+	if( !newName.empty() )
+	{
+		secretShardKey = newName;
 	}
 }
 
@@ -2009,6 +2044,20 @@ auto CServerData::InternalAccountStatus() const -> bool
 auto CServerData::InternalAccountStatus( bool newVal ) -> void
 {
 	boolVals.set( BIT_INTERNALACCOUNTS, newVal );
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::YoungPlayerSystem()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets whether the Young Player system is enabled
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::YoungPlayerSystem() const -> bool
+{
+	return boolVals.test( BIT_YOUNGPLAYERSYSTEM );
+}
+auto CServerData::YoungPlayerSystem( bool newVal ) -> void
+{
+	boolVals.set( BIT_YOUNGPLAYERSYSTEM, newVal );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -4772,6 +4821,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "SERVERNAME=" << ServerName() << '\n';
 		ofsOutput << "EXTERNALIP=" << ExternalIP() << '\n';
 		ofsOutput << "PORT=" << ServerPort() << '\n';
+		ofsOutput << "SECRETSHARDKEY=" << SecretShardKey() << '\n';
 		ofsOutput << "SERVERLANGUAGE=" << ServerLanguage() << '\n';
 		ofsOutput << "NETRCVTIMEOUT=" << ServerNetRcvTimeout() << '\n';
 		ofsOutput << "NETSNDTIMEOUT=" << ServerNetSndTimeout() << '\n';
@@ -4799,6 +4849,10 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "MAXCLIENTBYTESIN=" << static_cast<UI32>( MaxClientBytesIn() ) << '\n';
 		ofsOutput << "MAXCLIENTBYTESOUT=" << static_cast<UI32>( MaxClientBytesOut() ) << '\n';
 		ofsOutput << "NETTRAFFICTIMEBAN=" << static_cast<UI32>( NetTrafficTimeban() ) << '\n';
+		ofsOutput << "APSPERFTHRESHOLD=" << static_cast<UI16>( APSPerfThreshold() ) << '\n';
+		ofsOutput << "APSINTERVAL=" << static_cast<UI16>( APSInterval() ) << '\n';
+		ofsOutput << "APSDELAYSTEP=" << static_cast<UI16>( APSDelayStep() ) << '\n';
+		ofsOutput << "APSDELAYMAXCAP=" << static_cast<UI16>( APSDelayMaxCap() ) << '\n';
 		ofsOutput << "}" << '\n' << '\n';
 
 		ofsOutput << "[clientsupport]" << '\n' << "{" << '\n';
@@ -4949,6 +5003,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		ofsOutput << "ALLOWAWAKENPCS=" << ( AllowAwakeNPCs() ? 1 : 0 ) << '\n';
 		ofsOutput << "ENABLENPCGUILDDISCOUNTS=" << ( EnableNPCGuildDiscounts() ? 1 : 0 ) << '\n';
 		ofsOutput << "ENABLENPCGUILDPREMIUMS=" << ( EnableNPCGuildPremiums() ? 1 : 0 ) << '\n';
+		ofsOutput << "YOUNGPLAYERSYSTEM=" << ( YoungPlayerSystem() ? 1 : 0 ) << '\n';
 		ofsOutput << "}" << '\n';
 
 		ofsOutput << '\n' << "[pets and followers]" << '\n' << "{" << '\n';
@@ -5090,6 +5145,13 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 		for( size_t lCtr = 0; lCtr < startlocations.size(); ++lCtr )
 		{
 			ofsOutput << "LOCATION=" << startlocations[lCtr].newTown << "," << startlocations[lCtr].newDescription << "," << startlocations[lCtr].x << "," << startlocations[lCtr].y << "," << startlocations[lCtr].z << "," << startlocations[lCtr].worldNum << "," << startlocations[lCtr].instanceId << "," << startlocations[lCtr].clilocDesc << '\n';
+		}
+		ofsOutput << "}" << '\n';
+
+		ofsOutput << '\n' << "[young start locations]" << '\n' << "{" << '\n';
+		for( size_t lCtr = 0; lCtr < youngStartlocations.size(); ++lCtr )
+		{
+			ofsOutput << "YOUNGLOCATION=" << youngStartlocations[lCtr].newTown << "," << youngStartlocations[lCtr].newDescription << "," << youngStartlocations[lCtr].x << "," << youngStartlocations[lCtr].y << "," << youngStartlocations[lCtr].z << "," << youngStartlocations[lCtr].worldNum << "," << youngStartlocations[lCtr].instanceId << "," << youngStartlocations[lCtr].clilocDesc << '\n';
 		}
 		ofsOutput << "}" << '\n';
 
@@ -5298,6 +5360,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	if( input.is_open() )
 	{
 		startlocations.clear();
+		youngStartlocations.clear();
 		char input_buffer[4096];
 		while( input.good() && !input.eof() )
 		{
@@ -6403,6 +6466,27 @@ auto CServerData::HandleLine( const std::string& tag, const std::string& value )
 		case 339:	 // SNOOPAWARENESS
 			SnoopAwareness( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
 			break;
+		case 340:	 // APSPERFTHRESHOLD
+			APSPerfThreshold( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 341:	 // APSINTERVAL
+			APSInterval( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 342:	 // APSDELAYSTEP
+			APSDelayStep( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 343:	 // APSDELAYMAXCAP
+			APSDelayMaxCap( static_cast<UI16>( std::stoul( value, nullptr, 0 )));
+			break;
+		case 344:	 // YOUNGPLAYERSYSTEM
+			YoungPlayerSystem( static_cast<UI16>( std::stoul( value, nullptr, 0 )) != 0 );
+			break;
+		case 345:	 // YOUNGLOCATION
+			YoungServerLocation( value );
+			break;
+		case 346:	 // SECRETSHARDKEY
+			SecretShardKey( value );
+			break;
 		default:
 			rValue = false;
 			break;
@@ -6538,6 +6622,20 @@ auto CServerData::PostLoadDefaults() -> void
 		ServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
 		ServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );
 	}
+	
+	// Also load young player start locations, which default to same as normal players
+	if( YoungPlayerSystem() && youngStartlocations.empty() )
+	{
+		YoungServerLocation( "Yew,Center,545,982,0,0,0,1075072" );
+		YoungServerLocation( "Minoc,Tavern,2477,411,15,0,0,1075073" );
+		YoungServerLocation( "Britain,Sweet Dreams Inn,1495,1629,10,0,0,1075074" );
+		YoungServerLocation( "Moonglow,Docks,4406,1045,0,0,0,1075075" );
+		YoungServerLocation( "Trinsic,West Gate,1832,2779,0,0,0,1075076" );
+		YoungServerLocation( "Magincia,Docks,3675,2259,26,0,0,1075077" );
+		YoungServerLocation( "Jhelom,Docks,1492,3696,0,0,0,1075078" );
+		YoungServerLocation( "Skara Brae,Docks,639,2236,0,0,0,1075079" );
+		YoungServerLocation( "Vesper,Ironwood Inn,2771,977,0,0,0,1075080" );
+	}
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6593,6 +6691,61 @@ auto CServerData::ServerLocation( std::string toSet ) -> void
 auto CServerData::NumServerLocations() const -> size_t
 {
 	return startlocations.size();
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::YoungServerLocation()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets server start location(s) for Young players
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::YoungServerLocation( size_t locNum ) -> __STARTLOCATIONDATA__*
+{
+	__STARTLOCATIONDATA__ *rValue = nullptr;
+	if( locNum < youngStartlocations.size() )
+	{
+		rValue = &youngStartlocations[locNum];
+	}
+	return rValue;
+}
+
+auto CServerData::YoungServerLocation( std::string toSet ) -> void
+{
+	auto temp = toSet;
+	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
+	auto csecs = oldstrutil::sections( temp, "," );
+
+	__STARTLOCATIONDATA__ toAdd;
+	if( csecs.size() >= 7 )
+	{
+		toAdd.oldTown 			= oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" ));
+		toAdd.oldDescription 	= oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ));
+		toAdd.newTown 			= toAdd.oldTown;
+		toAdd.newDescription 	= toAdd.oldDescription;
+
+		toAdd.x 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+		toAdd.y 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+		toAdd.z 		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
+		toAdd.worldNum 	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 ));
+		if( csecs.size() == 7 )
+		{
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
+		}
+		else
+		{
+			toAdd.instanceId	= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 ));
+			toAdd.clilocDesc	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 ));
+		}
+		youngStartlocations.push_back( toAdd );
+	}
+	else
+	{
+		Console.Error( "Malformed young start location entry in ini file" );
+	}
+}
+
+auto CServerData::NumYoungServerLocations() const -> size_t
+{
+	return youngStartlocations.size();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -6689,6 +6842,66 @@ auto CServerData::GetJSEngineSize() const -> UI16
 auto CServerData::SetJSEngineSize( UI16 newVal ) -> void
 {
 	jsEngineSize = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSPerfThreshold()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the performance threshold (simulation cycles) below which the
+//|					APS - Adaptive Performance System - kicks in. A value of 0 disables the system
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSPerfThreshold() const -> UI16
+{
+	return apsPerfThreshold;
+}
+auto CServerData::APSPerfThreshold( UI16 newVal ) -> void
+{
+	apsPerfThreshold = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSInterval()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the interval at which APS will check shard performance and make
+//|					adjustments if necessary
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSInterval() const -> UI16
+{
+	return apsInterval;
+}
+auto CServerData::APSInterval( UI16 newVal ) -> void
+{
+	apsInterval = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSDelayStep()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the step value - in milliseconds - that is used by APS to
+//|					gradually increase/decrease the delay effect for checking NPC AI/movement stuff
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSDelayStep() const -> UI16
+{
+	return apsDelayStep;
+}
+auto CServerData::APSDelayStep( UI16 newVal ) -> void
+{
+	apsDelayStep = newVal;
+}
+
+//o------------------------------------------------------------------------------------------------o
+//|	Function	-	CServerData::APSDelayMaxCap()
+//o------------------------------------------------------------------------------------------------o
+//|	Purpose		-	Gets/Sets the max cap - in milliseconds - for how much NPC AI/movement stuff can
+//|					be delayed by APS in an effort to restore shard performance to above threshold levels
+//o------------------------------------------------------------------------------------------------o
+auto CServerData::APSDelayMaxCap() const -> UI16
+{
+	return apsDelayMaxCap;
+}
+auto CServerData::APSDelayMaxCap( UI16 newVal ) -> void
+{
+	apsDelayMaxCap = newVal;
 }
 
 //o------------------------------------------------------------------------------------------------o

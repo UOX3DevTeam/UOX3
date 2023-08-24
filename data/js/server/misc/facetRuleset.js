@@ -76,7 +76,7 @@ function onCombatStart( pAttacker, pDefender )
 }
 
 // Players cannot cast aggressive spells at other players in Trammel/Ilshenar/Malas
-function onSpellTarget( myTarget, myTargetType, pCaster, spellID )
+function onSpellTarget( myTarget, pCaster, spellID )
 {
 	// We don't care if caster and target is the same
 	if( myTarget == pCaster )
@@ -505,33 +505,27 @@ function CheckGuildRelationShip( pAttacker, pDefender )
 	return -1; // Either player does not belong to a guild
 }
 
-// This event might need to be in global.js, as it contains rules for both trammel-ruleset and felucca-ruleset
-function onCarveCorpse( pChar, iCorpse )
+function CheckCorpseCarving( pChar, corpseOwner, iCorpse )
 {
-	var corpseOwner = iCorpse.owner;
-	if( ValidateObject( corpseOwner ))
+	var worldNum = pChar.worldnumber;
+	if( regionCorpseCarveOverride.indexOf( pChar.region.id ) == -1 && facetCorpseCarveRestrict.indexOf( pChar.worldnumber ) != -1 )
 	{
-		var worldNum = pChar.worldnumber;
-		if( regionCorpseCarveOverride.indexOf( pChar.region.id ) == -1 && facetCorpseCarveRestrict.indexOf( pChar.worldnumber ) != -1 )
+		if( !corpseOwner.npc )
 		{
-			if( !corpseOwner.npc )
-			{
-				// Disallow carving up corpses of players in Trammel/Ilshenar/Malas
-				return false;
-			}
+			// Disallow carving up corpses of players in Trammel/Ilshenar/Malas
+			return false;
 		}
-		else // Felucca, Tokuno?
+	}
+	else // Felucca, Tokuno?
+	{
+		if( !corpseOwner.npc && !corpseOwner.murderer && !pChar.murderer )
 		{
-			if( !corpseOwner.murderer && !pChar.murderer )
-			{
-				// Disallow carving up corpses of non-murderers in Felucca, unless pChar is a murderer
-				return false;
-			}
+			// Disallow carving up corpses of non-murderers in Felucca, unless pChar is a murderer
+			return false;
 		}
 	}
 
-	// Default to allow carving up corpses
-	return false;
+	return true;
 }
 
 // Dummy function to restore script context after other JS events have triggered and executed

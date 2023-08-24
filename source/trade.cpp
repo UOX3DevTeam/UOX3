@@ -47,7 +47,7 @@ CItem *CreateTradeWindow( CSocket *mSock, CSocket *nSock, CChar *mChar )
 	if( !ValidateObject( mPack ))
 	{
 		mSock->SysMessage( 773 ); // Time to buy a backpack.
-		nSock->SysMessage( 1357, mChar->GetNameRequest( nSock->CurrcharObj() ).c_str() ); // %s doesn't have a backpack!
+		nSock->SysMessage( 1357, mChar->GetNameRequest( nSock->CurrcharObj(), NRS_SPEECH ).c_str() ); // %s doesn't have a backpack!
 		return nullptr;
 	}
 
@@ -105,11 +105,11 @@ CItem *StartTrade( CSocket *mSock, CChar *nChar )
 	tradeWindowTwo->SetTempVar( CITV_MOREX, tw1Serial );
 
 	CPSecureTrading cpstOne(( *nChar ), tw1Serial, tw2Serial );
-	cpstOne.Name( nChar->GetNameRequest( mChar ));
+	cpstOne.Name( nChar->GetNameRequest( mChar, NRS_SECURETRADE ));
 	mSock->Send( &cpstOne );
 
 	CPSecureTrading cpstTwo(( *mChar ), tw2Serial, tw1Serial );
-	cpstTwo.Name( mChar->GetNameRequest( nChar ));
+	cpstTwo.Name( mChar->GetNameRequest( nChar, NRS_SECURETRADE ));
 	nSock->Send( &cpstTwo );
 
 	CPWornItem toWear = ( *tradeWindowOne );

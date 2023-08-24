@@ -2556,7 +2556,7 @@ auto CItem::TextMessage( CSocket *s, SI32 dictEntry, R32 secsFromNow, UI16 Colou
 		unicodeMessage.Colour( 0x000B );
 		unicodeMessage.Type( SYSTEM );
 		unicodeMessage.Language( "ENG" );
-		unicodeMessage.Name( GetNameRequest( mChar ));
+		unicodeMessage.Name( GetNameRequest( mChar, NRS_SPEECH ));
 		unicodeMessage.ID( GetId() );
 		unicodeMessage.Serial( GetSerial() );
 
@@ -2683,8 +2683,8 @@ void CItem::SendToSocket( CSocket *mSock, [[maybe_unused]] bool drawGamePlayer )
 			auto iVisible = GetVisible();
 			auto ownerObj = GetOwnerObj();
 			if(( iVisible != VT_VISIBLE && iVisible != VT_TEMPHIDDEN )
-				|| iVisible == VT_TEMPHIDDEN &&
-				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() )))
+				|| ( iVisible == VT_TEMPHIDDEN &&
+				( !ValidateObject( ownerObj ) || ( ValidateObject( ownerObj ) && ownerObj->GetSerial() != mChar->GetSerial() ))))
 			{
 				return;
 			}
@@ -2853,11 +2853,51 @@ void CItem::RemoveFromSight( CSocket *mSock )
 		}
 		else
 		{
-			for( auto &nSock : Network->connClients )
+			// Iterate through list of players who have opened the container the item was in
+			auto itemCont = static_cast<CItem *>( iCont );
+			auto contOpenedByList = itemCont->GetContOpenedByList();
+			for( const auto &oSock : contOpenedByList->collection() )
 			{
-				if( nSock->LoginComplete() )
+				// For any of those players who are still within range, send remove item packet
+				// We don't know if they still have eyes on the inside of the container, but we
+				// can still minimize sending the packet to those who
+				//  A) opened the container at some point, and are still on the container's list of players who opened it
+				//  B) are within range of the container
+				// have to rely on range to cover it instead
+				if( oSock != nullptr && oSock->LoginComplete() )
 				{
-					nSock->Send( &toRemove );
+					auto oChar = oSock->CurrcharObj();
+					if( ValidateObject( oChar ))
+					{
+						// Get character's visual range
+						auto visRange = static_cast<UI16>( oSock->Range() + Races->VisRange( oChar->GetRace() ));
+
+						// Find the root container (if any) of the container
+						auto rootCont = FindRootContainer( itemCont );
+						if( !ValidateObject( rootCont ))
+						{
+							rootCont = itemCont;
+						}
+
+						// Find the owner of the root container (if for instance it's a container inside player's backpack - or their backpack)
+						CChar *rootContOwner = FindItemOwner( rootCont );
+
+						CBaseObject *objToCheck = nullptr;
+						if( ValidateObject( rootContOwner ))
+						{
+							objToCheck = static_cast<CBaseObject *>( rootContOwner );
+						}
+						else
+						{
+							objToCheck = static_cast<CBaseObject *>( rootCont );
+						}
+
+						// If owner of root container exists, use that in range check
+						if( ObjInRangeSquare( objToCheck, oChar, visRange ))
+						{
+							oSock->Send( &toRemove );
+						}
+					}
 				}
 			}
 		}
@@ -3181,6 +3221,11 @@ void CItem::Delete( void )
 auto CItem::GetContainsList() -> GenericList<CItem *> *
 {
 	return &Contains;
+}
+
+auto CItem::GetContOpenedByList() -> GenericList<CSocket *> *
+{
+	return &contOpenedBy;
 }
 
 //o------------------------------------------------------------------------------------------------o

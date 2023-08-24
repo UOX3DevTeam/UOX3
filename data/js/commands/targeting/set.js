@@ -868,12 +868,12 @@ function HandleSetChar( socket, ourChar, uKey, splitString )
 			okMsg( socket );
 		}
 		break;
-	case "UNUSED9":
+	case "ISYOUNG":
 		if( !ourChar.npc )
 		{
 			var myAccount = ourChar.account;
-			myAccount.unused9 = ( nVal == 1 );
-			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET UNUSED9 " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
+			myAccount.isYoung = ( nVal == 1 );
+			Console.Log( socket.currentChar.name + " (serial: " + socket.currentChar.serial + ") used command <SET ISYOUNG " + nVal + "> on account #" + myAccount.id + ". Extra Info: Cleared", "command.log" );
 			okMsg( socket );
 		}
 		break;

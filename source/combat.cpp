@@ -53,6 +53,9 @@ bool CHandleCombat::StartAttack( CChar *cAttack, CChar *cTarget )
 	if( cTarget->GetVisible() > 2 )
 		return false;
 
+	if( cTarget->WorldNumber() != cAttack->WorldNumber() || cTarget->GetInstanceId() != cAttack->GetInstanceId() )
+		return false;
+
 	if( !ObjInRange( cAttack, cTarget, DIST_NEXTTILE ) && !LineOfSight( nullptr, cAttack, cTarget->GetX(), cTarget->GetY(), ( cTarget->GetZ() + 15 ), WALLS_CHIMNEYS + DOORS + FLOORS_FLAT_ROOFING, false ))
 		return false;
 
@@ -393,6 +396,27 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			}
 		}
 
+		if( i->GetTarg() != ourChar )
+		{
+			// Also trigger same event for other party in combat, if they're not already engaged in combat with this character
+			std::vector<UI16> scriptTriggers = i->GetScriptTriggers();
+			for( auto scriptTrig : scriptTriggers )
+			{
+				cScript *toExecute = JSMapping->GetScript( scriptTrig );
+				if( toExecute != nullptr )
+				{
+					// -1 == script doesn't exist, or returned -1
+					// 0 == script returned false, 0, or nothing - don't execute hard code
+					// 1 == script returned true or 1
+					if( toExecute->OnCombatStart( ourChar, i ) == 0 )
+					{
+						return;
+					}
+				}
+			}
+
+		}
+
 		if( !ourChar->GetCanAttack() ) // Is our char allowed to attack
 		{
 			s->SysMessage( 1778 ); // You are currently under the effect of peace and can not attack!
@@ -476,8 +500,8 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 					if( ValidateObject( witness ))
 					{
 						// Fetch names of attacker and target
-						std::string attackerName = GetNpcDictName( ourChar, tSock );
-						std::string targetName = GetNpcDictName( i, tSock );
+						std::string attackerName = GetNpcDictName( ourChar, tSock, NRS_SPEECH );
+						std::string targetName = GetNpcDictName( i, tSock, NRS_SPEECH );
 
 						// Send an emote about attacking target to nearby witness
 						ourChar->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking %s!
@@ -492,7 +516,7 @@ void CHandleCombat::PlayerAttack( CSocket *s )
 			CSocket *iSock = i->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = GetNpcDictName( ourChar, iSock );
+				std::string attackerName = GetNpcDictName( ourChar, iSock, NRS_SPEECH );
 				i->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
@@ -568,8 +592,8 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 				if( ValidateObject( witness ))
 				{
 					// Fetch names of attacker and target
-					std::string attackerName = GetNpcDictName( cAttack, tSock );
-					std::string targetName = GetNpcDictName( cTarget, tSock );
+					std::string attackerName = GetNpcDictName( cAttack, tSock, NRS_SPEECH );
+					std::string targetName = GetNpcDictName( cTarget, tSock, NRS_SPEECH );
 
 					// Send an emote about attacking target to nearby witness
 					cAttack->TextMessage( tSock, 334, EMOTE, 0, attackerName.c_str(), targetName.c_str() ); // You see %s attacking target
@@ -582,7 +606,7 @@ void CHandleCombat::AttackTarget( CChar *cAttack, CChar *cTarget )
 			CSocket *iSock = cTarget->GetSocket();
 			if( iSock != nullptr )
 			{
-				std::string attackerName = GetNpcDictName( cAttack, iSock );
+				std::string attackerName = GetNpcDictName( cAttack, iSock, NRS_SPEECH );
 				cTarget->TextMessage( iSock, 1281, EMOTE, 1, attackerName.c_str() ); // %s is attacking you!
 			}
 		}
@@ -1894,7 +1918,7 @@ void CHandleCombat::DoHitMessage( CChar *mChar, CChar *ourTarg, SI08 hitLoc, SI1
 
 	if( cwmWorldState->ServerData()->CombatDisplayHitMessage() && targSock != nullptr )
 	{
-		std::string attackerName = GetNpcDictName( mChar, targSock );
+		std::string attackerName = GetNpcDictName( mChar, targSock, NRS_SPEECH );
 
 		// Don't show hit messages for very low amounts of damage
 		if( damage < 5 )
@@ -2760,7 +2784,7 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 
 		if( mChar.IsNpc() )
 		{
-			if( mChar.GetNpcWander() != WT_FLEE )
+			if( mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED )
 			{
 				UI08 charDir = Movement->Direction( &mChar, ourTarg->GetX(), ourTarg->GetY() );
 				if( mChar.GetDir() != charDir && charDir < 8 )
@@ -2925,18 +2949,39 @@ bool CHandleCombat::HandleCombat( CSocket *mSock, CChar& mChar, CChar *ourTarg )
 			{
 				if((( getFightSkill == FENCING || getFightSkill == SWORDSMANSHIP ) && !RandomNum( 0, 2 )) || mChar.IsNpc() )
 				{
-					// Apply poison on target
-					ourTarg->SetPoisoned( poisonStrength );
-
-					// Set time until next time poison "ticks"
-					ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
-
-					// Set time until poison wears off completely
-					ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
-
-					if( targSock != nullptr )
+					auto doPoison = true;
+					if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !ourTarg->IsNpc() && ourTarg->GetAccount().wFlags.test( AB_FLAGS_YOUNG ))
 					{
-						targSock->SysMessage( 282 ); // You have been poisoned!
+						doPoison = false;
+						if( targSock != nullptr )
+						{
+							targSock->SysMessage( 18735 ); // You would have been poisoned, were you not new to the land of Britannia. Be careful in the future.
+						}
+					}
+					else if( !mChar.IsNpc() && cwmWorldState->ServerData()->YoungPlayerSystem() && !mChar.IsNpc() && mChar.GetAccount().wFlags.test( AB_FLAGS_YOUNG ) )
+					{
+						doPoison = false;
+						if( mSock != nullptr )
+						{
+							ourTarg->TextMessage( mSock, 18738, TALK, false ); // * The poison seems to have no effect. *
+						}
+					}
+
+					if( doPoison )
+					{
+						// Apply poison on target
+						ourTarg->SetPoisoned( poisonStrength );
+
+						// Set time until next time poison "ticks"
+						ourTarg->SetTimer( tCHAR_POISONTIME, BuildTimeValue( static_cast<R32>( GetPoisonTickTime( poisonStrength ))));
+
+						// Set time until poison wears off completely
+						ourTarg->SetTimer( tCHAR_POISONWEAROFF, ourTarg->GetTimer( tCHAR_POISONTIME ) + ( 1000 * GetPoisonDuration( poisonStrength ))); //wear off starts after poison takes effect
+
+						if( targSock != nullptr )
+						{
+							targSock->SysMessage( 282 ); // You have been poisoned!
+						}
 					}
 				}
 			}
@@ -3412,7 +3457,7 @@ R32 CHandleCombat::GetCombatTimeout( CChar *mChar )
 	//Allow faster strikes on fleeing targets
 	if( ValidateObject( ourTarg ))
 	{
-		if( ourTarg->GetNpcWander() == WT_FLEE)
+		if( ourTarg->GetNpcWander() == WT_FLEE || ourTarg->GetNpcWander() == WT_SCARED )
 		{
 			baseValue = 10000;
 		}
@@ -3453,6 +3498,33 @@ void CHandleCombat::InvalidateAttacker( CChar *mChar )
 			if( toExecute->OnCombatEnd( mChar, ourTarg ) == 0 )	// if it exists and we don't want hard code, return
 			{
 				return;
+			}
+		}
+	}
+
+	// Do the same for the opposite party in combat
+	if( ValidateObject( ourTarg ))
+	{
+		scriptTriggers.clear();
+		scriptTriggers = ourTarg->GetScriptTriggers();
+		for( auto scriptTrig : scriptTriggers )
+		{
+			cScript *toExecute = JSMapping->GetScript( scriptTrig );
+			if( toExecute != nullptr )
+			{
+				//Check if ourTarg validates as another character. If not, don't use
+				if( !ValidateObject( ourTarg ))
+				{
+					ourTarg = nullptr;
+				}
+
+				// -1 == event doesn't exist, or returned -1
+				// 0 == script returned false, 0, or nothing - don't execute hard code
+				// 1 == script returned true or 1
+				if( toExecute->OnCombatEnd( ourTarg, mChar ) == 0 )	// if it exists and we don't want hard code, return
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -3597,12 +3669,12 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 					{
 						HandleNPCSpellAttack( &mChar, ourTarg, GetDist( &mChar, ourTarg ));
 					}
-					else if( mChar.IsNpc() || !mChar.IsPassive() ) // Don't trigger for players who are marked as passive combatants
+					else if(( mChar.IsNpc() && mChar.IsAtWar() ) || ( !mChar.IsNpc() && !mChar.IsPassive() )) // Don't trigger for players who are marked as passive combatants
 					{
 						combatHandled = HandleCombat( mSock, mChar, ourTarg );
 					}
 
-					if( !ValidateObject( ourTarg->GetTarg() ) || !ObjInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE ))		//if the defender is swung at, and they don't have a target already, set this as their target
+					if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_SCARED && ( !ValidateObject( ourTarg->GetTarg() ) || !ObjInRange( ourTarg, ourTarg->GetTarg(), DIST_INRANGE )))		//if the defender is swung at, and they don't have a target already, set this as their target
 					{
 						StartAttack( ourTarg, &mChar );
 					}
@@ -3617,7 +3689,14 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 				}
 				else
 				{
-					InvalidateAttacker( &mChar );
+					if( !ObjInRange( &mChar, ourTarg, DIST_COMBATRESETRANGE ))
+					{
+						InvalidateAttacker( &mChar );
+					}
+					else
+					{
+						validTarg = true;
+					}
 				}
 			}
 		}

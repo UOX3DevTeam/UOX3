@@ -2,11 +2,11 @@
 {
 Travel Menu=Menu
 <=Towns
-ITEMMENU=6001
+ITEMMENU=6100
 <=Dungeons
-ITEMMENU=6002
+ITEMMENU=7100
 <=Shrines
-ITEMMENU=6003
+ITEMMENU=8100
 <=GM Locations
 ITEMMENU=6004
 <=Previous Menu
@@ -15,36 +15,36 @@ ITEMMENU=0
 
 [ITEMMENU 6001]
 {
-Towns
-0x0BD1=Britain
+Towns (Fel/Trammel)
+<=Britain
 ITEMMENU=6005
-0x0BD1=Buccaneer's Den
+<=Buccaneer's Den
 ITEMMENU=6006
-0x0BD1=Cove
+<=Cove
 ITEMMENU=6007
-0x0BD1=Jhelom
+<=Jhelom
 ITEMMENU=6008
-0x0BD1=Magincia
+<=Magincia
 ITEMMENU=6009
-0x0BD1=Minoc
+<=Minoc
 ITEMMENU=6010
-0x0BD1=Moonglow
+<=Moonglow
 ITEMMENU=6011
-0x0BD1=Nujelm
+<=Nujelm
 ITEMMENU=6012
-0x0BD1=Ocllo
+<=Ocllo
 ITEMMENU=6013
-0x0BD1=Serpents Hold
+<=Serpents Hold
 ITEMMENU=6014
-0x0BD1=Skara Brae
+<=Skara Brae
 ITEMMENU=6015
-0x0BD1=Trinsic
+<=Trinsic
 ITEMMENU=6016
-0x0BD1=Vesper
+<=Vesper
 ITEMMENU=6017
-0x0BD1=Wind
+<=Wind
 ITEMMENU=6018
-0x0BD1=Yew
+<=Yew
 ITEMMENU=6019
 <=Papua - T2A
 ITEMMENU=6020
@@ -119,6 +119,57 @@ GOPLACE=14
 GOPLACE=13
 <=Jail Cells
 ITEMMENU=6029
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 6100]
+{
+Towns
+<=Felucca/Trammel
+ITEMMENU=6001
+<=Ilshenar
+ITEMMENU=6200
+<=Malas
+ITEMMENU=6300
+<=Tokuno Islands
+ITEMMENU=6400
+<=Ter Mur
+ITEMMENU=6500
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 7100]
+{
+Dungeons
+<=Felucca/Trammel
+ITEMMENU=6002
+<=Ilshenar
+ITEMMENU=7200
+<=Malas
+ITEMMENU=7300
+<=Tokuno Islands
+ITEMMENU=7400
+<=Ter Mur
+ITEMMENU=7500
+<=Previous Menu
+ITEMMENU=6000
+}
+
+[ITEMMENU 8100]
+{
+Shrines
+<=Felucca/Trammel
+ITEMMENU=6003
+<=Ilshenar
+ITEMMENU=8200
+<=Malas
+ITEMMENU=8300
+<=Tokuno Islands
+ITEMMENU=8400
+<=Ter Mur
+ITEMMENU=8500
 <=Previous Menu
 ITEMMENU=6000
 }

@@ -373,7 +373,7 @@ function onCallback0( mSock, ourTarg )
 		{
 			if( DoesEventExist( 2507, "onSpellTarget" ))
 			{
-				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, 0, mChar, mChar.spellCast ) != false )
+				if( TriggerEvent( 2507, "onSpellTarget", ourTarg, mChar, mChar.spellCast ) != false )
 				{
 					return;
 				}

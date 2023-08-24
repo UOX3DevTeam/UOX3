@@ -1958,7 +1958,7 @@ JSBool SE_TriggerEvent( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, j
 //|	Notes		-	Takes 2 parameters, which is the script number to check and the
 //|					event name to check for
 //o------------------------------------------------------------------------------------------------o
-JSBool SE_DoesEventExist( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval )
+JSBool SE_DoesEventExist( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval *argv, jsval *rval )
 {
 	if( argc != 2 )
 	{
@@ -2528,7 +2528,7 @@ JSBool SE_Yell( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, jsval
 		case CL_ADMIN:			yellTo = " (ADMIN YELL): ";		break;
 	}
 
-	std::string tmpString = GetNpcDictName( myChar, mySock ) + yellTo + textToYell;
+	std::string tmpString = GetNpcDictName( myChar, mySock, NRS_SPEECH ) + yellTo + textToYell;
 
 	if( cwmWorldState->ServerData()->UseUnicodeMessages() )
 	{
@@ -4967,6 +4967,30 @@ JSBool SE_GetServerSetting( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN
 			case 339:	 // SNOOPAWARENESS
 				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->SnoopAwareness() );
 				break;
+			case 340:	 // APSPERFTHRESHOLD
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ));
+				break;
+			case 341:	 // APSINTERVAL
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSPerfThreshold() ));
+				break;
+			case 342:	 // APSDELAYSTEP
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayStep() ));
+				break;
+			case 343:	 // APSDELAYMAXCAP
+				*rval = INT_TO_JSVAL( static_cast<UI16>( cwmWorldState->ServerData()->APSDelayMaxCap() ));
+				break;
+			case 344:	 // YOUNGPLAYERSYSTEM
+				*rval = BOOLEAN_TO_JSVAL( cwmWorldState->ServerData()->YoungPlayerSystem() );
+				break;
+			//case 345:	 // YOUNGLOCATION
+				//break;
+			case 346:	 // SECRETSHARDKEY
+			{
+				std::string tempString = { cwmWorldState->ServerData()->SecretShardKey() };
+				tString = JS_NewStringCopyZ( cx, tempString.c_str() );
+				*rval = STRING_TO_JSVAL( tString );
+				break;
+			}
 			default:
 				ScriptError( cx, "GetServerSetting: Invalid server setting name provided" );
 				return false;

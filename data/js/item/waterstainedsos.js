@@ -113,7 +113,7 @@ function onUseChecked( pUser, iUsed )
 		// Make sure the SOS message actually contains valid coordinates
 		if( iUsed.morex == 0 || iUsed.morey == 0 )
 		{
-			socket.SysMessage( "This message has sustained too much water damage, and any writing on it is no longer legible." );
+			socket.SysMessage( GetDictionaryEntry( 2787, socket.language )); // This message has sustained too much water damage, and any writing on it is no longer legible.
 			return false;
 		}
 

@@ -219,7 +219,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 {
 	if( !IsValidDirection( dir ))
 	{
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Error( oldstrutil::format( "%s (CMovement::Walking) caught bad direction = %s %d 0x%x\n", DBGFILE, charName.c_str(), dir, dir ));
 		// If I don't do this, the NPC will keep trying to walk on the same step, which is
 		// where he's already at. Can cause an infinite loop. (Trust me, was one of the things
@@ -262,7 +262,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 		if( !CalcMove( c, oldx, oldy, myz, dir ))
 		{
 #if DEBUG_WALKING
-			std::string charName = GetNpcDictName( c );
+			std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Failed for %s\n", DBGFILE, charName ));
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 			Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -289,11 +289,10 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 					UI16 fx2Actual = 0;
 					UI16 fy2Actual = 0;
 					SI08 npcWanderType = c->GetNpcWander();
-					if( npcWanderType == WT_FLEE )
+					if( npcWanderType == WT_FLEE || npcWanderType == WT_SCARED )
 					{
-						// If NPC fails to flee, make him re-attack instead!
-						c->SetFleeAt( 0 );
-						c->SetReattackAt( 1 );
+						// If NPC fails to flee, reset to original wandermode instead, and put a cooldown on the fleeing
+						c->SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30 ));
 						c->SetNpcWander( c->GetOldNpcWander() );
 						if( c->GetMounted() )
 						{
@@ -335,7 +334,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			return;
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -359,7 +358,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 						c->SetPathResult( 0 ); // partial success
 					}
 #if DEBUG_WALKING
-					std::string charName = GetNpcDictName( c );
+					std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 					Console.Print( oldstrutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind (%d times). Calculating new path!\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				}
@@ -368,7 +367,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			else if( c->GetPathFail() < 10 && !c->IsEvading() )
 			{
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) Character Walk Passed for %s\n", DBGFILE, charName ));
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) sx (%d) sy (%d) sz (%d)\n", DBGFILE, oldx, oldy, c->GetZ() ));
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) dx (%d) dy (%d) dz (%d)\n", DBGFILE, myx, myy, myz ));
@@ -383,7 +382,8 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 				c->SetOldTargLocY( 0 );
 
 				// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
-				if( c->GetNpcWander() != WT_NONE )
+				auto npcWander = c->GetNpcWander();
+				if( npcWander != WT_NONE  && npcWander != WT_SCARED && npcWander != WT_FLEE && npcWander != WT_PATHFIND && npcWander != WT_FROZEN )
 				{
 					c->SetOldNpcWander( c->GetNpcWander() );
 				}
@@ -394,7 +394,7 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 			else
 			{
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: Walking() - NPC (%s) failed to pathfind %d times! Pausing pathfinding for some time.\n", charName.c_str(), c->GetPathFail() ));
 #endif
 				c->FlushPath();
@@ -421,6 +421,10 @@ void CMovement::Walking( CSocket *mSock, CChar *c, UI08 dir, SI16 sequence )
 
 		MoveCharForDirection( c, myx, myy, myz );
 		c->SetPathFail( 0 );
+		if( c->GetNpcWander() == WT_FLEE || c->GetNpcWander() == WT_SCARED )
+		{
+			c->SetFleeDistance( static_cast<UI08>( c->GetFleeDistance() + 1 ));
+		}
 
 		// i actually moved this for now after the z =  illegal_z, in the end of CrazyXYBlockStuff()
 		// can't see how that would hurt anything
@@ -499,7 +503,7 @@ bool CMovement::IsFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			DenyMovement( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::IsFrozen) casting char %s\n", DBGFILE, charName ));
 #endif
 		return true;
@@ -512,7 +516,7 @@ bool CMovement::IsFrozen( CChar *c, CSocket *mSock, SI16 sequence )
 			DenyMovement( mSock, c, sequence );
 		}
 #if DEBUG_WALKING
-		std::string charName = GetNpcDictName( c );
+		std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::IsFrozen) frozen char %s\n", DBGFILE, charName ));
 #endif
 		return true;
@@ -550,7 +554,7 @@ bool CMovement::IsOverloaded( CChar *c, CSocket *mSock, SI16 sequence )
 				mSock->SysMessage( 1783 ); // You are too fatigued to move, because you are carrying too much weight!
 				DenyMovement( mSock, c, sequence );
 #if DEBUG_WALKING
-				std::string charName = GetNpcDictName( c );
+				std::string charName = GetNpcDictName( c, nullptr, NRS_SYSTEM );
 				Console.Print( oldstrutil::format( "DEBUG: %s (CMovement::Walking) overloaded char %s\n", DBGFILE, charName ));
 #endif
 				return true;
@@ -1069,7 +1073,7 @@ auto CMovement::OutputShoveMessage( CChar *c, CSocket *mSock ) -> void
 						}
 						else
 						{
-							std::string charName = GetNpcDictName( ourChar );
+							std::string charName = GetNpcDictName( ourChar, nullptr, NRS_SYSTEM );
 							mSock->SysMessage( 1383, charName.c_str() ); // Being perfectly rested, you shove %s out of the way.
 						}
 					}
@@ -1158,6 +1162,14 @@ bool UpdateItemsOnPlane( CSocket *mSock, CChar *mChar, CItem *tItem, UI16 id, UI
 			if( mSock != nullptr )
 			{
 				tItem->RemoveFromSight( mSock );
+
+				// If tItem is a container, attempt to remove player from container's list of players who may have opened the container
+				auto iType = tItem->GetType();
+				if( iType == IT_CONTAINER || iType == IT_SPAWNCONT || iType == IT_UNLOCKABLESPAWNCONT || iType == IT_TRASHCONT )
+				{
+					tItem->GetContOpenedByList()->Remove( mSock );
+					mSock->GetContsOpenedList()->Remove( tItem );
+				}
 			}
 			DoJSOutOfRange( mChar, tItem );
 			DoJSOutOfRange( tItem, mChar );
@@ -1607,16 +1619,23 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 	{
 		case WT_FREE:	// Wander freely
 		case WT_FLEE:	// Wander freely after fleeing
+		case WT_SCARED:	// Wander freely after running scared
 			Walking( nullptr, i, jMod, 256 );
 			break;
 		case WT_BOX:	// Wander inside a box
-			if( CheckBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ))
+		{
+			// If still within bounding box, keep walking - and also keep walking if a valid target is still
+			// nearby, or if there's a delay on pathfinding
+			auto iTarg = i->GetTarg();
+			if( CheckBoundingBox( newx, newy, fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ) ||
+				( ValidateObject( iTarg ) && ObjInRange( i, iTarg, DIST_SAMESCREEN )) ||
+				( i->GetTimer( tNPC_PATHFINDDELAY ) > cwmWorldState->GetUICurrentTime() ))
 			{
 				Walking( nullptr, i, jMod, 256 );
 			}
-			// The NPC is outside it's area, send it back
 			else if( !CheckBoundingBox( i->GetX(), i->GetY(), fx1, fy1, fz1, fx2, fy2, worldNumber, instanceId ))
 			{
+				// The NPC is outside it's area, send it back
 				i->SetOldNpcWander( WT_BOX );
 				i->SetNpcWander( WT_PATHFIND );
 
@@ -1639,8 +1658,15 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				}
 			}
 			break;
+		}
 		case WT_CIRCLE:	// Wander inside a circle
-			if( CheckBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId ))
+		{			
+			// If still within bounding box, keep walking - and also keep walking if a valid target is still
+			// nearby, or if there's a delay on pathfinding
+			auto iTarg = i->GetTarg();
+			if( CheckBoundingCircle( newx, newy, fx1, fy1, fz1, fx2, worldNumber, instanceId ) ||
+				( ValidateObject( iTarg ) && ObjInRange( i, iTarg, DIST_SAMESCREEN )) ||
+				( i->GetTimer( tNPC_PATHFINDDELAY ) > cwmWorldState->GetUICurrentTime() ))
 			{
 				Walking( nullptr, i, jMod, 256 );
 			}
@@ -1668,6 +1694,7 @@ void CMovement::NpcWalk( CChar *i, UI08 j, SI08 getWander )
 				}
 			}
 			break;
+		}
 		default:
 			Console.Error( oldstrutil::format( "Bad NPC Wander type passed to NpcWalk: %i", getWander ));
 			break;
@@ -1738,7 +1765,7 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 				if( boundingBoxTeleport == true )
 				{
 #if defined( UOX_DEBUG_MODE )
-					std::string charName = GetNpcDictName( nChar );
+					std::string charName = GetNpcDictName( nChar, nullptr, NRS_SYSTEM );
 					Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X was unable to path back to bounding box, teleporting NPC back.\n", charName.c_str(), nChar->GetSerial() ));
 #endif
 					nChar->SetLocation( m, n, fz1, nChar->WorldNumber(), nChar->GetInstanceId() );
@@ -1750,7 +1777,7 @@ void CMovement::BoundingBoxTeleport( CChar *nChar, UI16 fx2Actual, UI16 fy2Actua
 		}
 		// If a valid teleport-location hasn't been found at this point, despawn NPC
 #if defined( UOX_DEBUG_MODE )
-		std::string charName = GetNpcDictName( nChar );
+		std::string charName = GetNpcDictName( nChar, nullptr, NRS_SYSTEM );
 		Console.Warning( oldstrutil::format( "NPC: %s with serial 0x%X was unable to path back to bounding box, no valid teleport location found. Deleting NPC!\n", charName.c_str(), nChar->GetSerial() ));
 #endif
 		nChar->Delete();
@@ -2043,105 +2070,152 @@ bool CMovement::HandleNPCWander( CChar& mChar )
 			break;
 		case WT_FROZEN: // No movement whatsoever!
 			break;
+		case WT_SCARED: // Run away scared!
 		case WT_FLEE: // FLEE!!!!!!
-			kChar = mChar.GetTarg();
-			if( !ValidateObject( kChar ))
-				break;
-
-			if(( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )
-				||  GetDist( &mChar, kChar ) < P_PF_MFD )
-			{	// calculate a x,y to flee towards
-				const UI16 mydist	= P_PF_MFD - GetDist( &mChar, kChar ) + 1;
-				j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
-				SI16 myx			= GetXfromDir( j, mChar.GetX() );
-				SI16 myy			= GetYfromDir( j, mChar.GetY() );
-
-				SI16 xFactor = 0;
-				SI16 yFactor = 0;
-				// Sept 22, 2002
-				if( myx != mChar.GetX() )
-				{
-					if( myx < mChar.GetX() )
-					{
-						xFactor = 1;
-					}
-					else
-					{
-						xFactor = -1;
-					}
-				}
-
-				if( myy != mChar.GetY() )
-				{
-					if( myy < mChar.GetY() )
-					{
-						yFactor = 1;
-					}
-					else
-					{
-						yFactor = -1;
-					}
-				}
-
-				myx += static_cast<SI16>( xFactor * mydist );
-				myy += static_cast<SI16>( yFactor * mydist );
-
-				canRun = ( mChar.GetStamina() > 0 );
-
-				// now, got myx, myy... lets go.
-
-				// Don't re-calculate pathfinding on every step. Use what we have, with a random chance to recalculate
-				if( !mChar.StillGotDirs() || RandomNum( 0, 10 ) >= 6 )
-				{
-					if( cwmWorldState->ServerData()->AdvancedPathfinding() )
-					{
-						if( !AdvancedPathfinding( &mChar, myx, myy, true ))
-						{
-							// If NPC fails to flee, make him re-attack instead!
-							mChar.SetFleeAt( 0 );
-							mChar.SetReattackAt( 1 );
-							mChar.SetNpcWander( mChar.GetOldNpcWander() );
-							if( mChar.GetMounted() )
-							{
-								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedRunningSpeed() ));
-							}
-							else
-							{
-								mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() ));
-							}
-							mChar.SetOldNpcWander( WT_NONE ); // so it won't save this at the wsc file
-						}
-					}
-					else
-					{
-						PathFind( &mChar, myx, myy, true );
-					}
-				}
-
-				j = mChar.PopDirection();
-				shouldRun = (( j&0x80 ) != 0);
-				Walking( nullptr, &mChar, j, 256 );
+		{
+			// Has NPC been running further than the maximum fleeing distance?
+			auto resetWanderMode = false;
+			if( mChar.GetFleeDistance() > P_PF_MAXFD )
+			{
+				// Don't let them run for ever! Take them out of flee/scared mode, and set a cooldown on re-entering
+				mChar.SetTimer( tNPC_FLEECOOLDOWN, BuildTimeValue( 30 ));
+				resetWanderMode = true;
+				mChar.TextMessage( nullptr, 2792, EMOTE, false );
 			}
 			else
 			{
-				// wander freely... don't just stop because I'm out of range.
-				j = RandomNum( 1, 5 );
-				if( j == 1 )
+				auto targInRange = false;
+				auto wanderAimlessly = true;
+				kChar = mChar.GetTarg();
+				if( ValidateObject( kChar ) && (( mChar.WorldNumber() == kChar->WorldNumber() && mChar.GetInstanceId() == kChar->GetInstanceId() )))
 				{
-					break;
+					// Target exists, and is in same world/instance
+					auto distToTarg = GetDist( &mChar, kChar );
+					if( distToTarg < P_PF_MFD )
+					{
+						// Target is within minimum flee distance - flee!
+						// calculate a x,y to flee towards
+						targInRange = true;
+						const UI16 mydist	= P_PF_MFD - GetDist( &mChar, kChar ) + 1;
+						j					= Direction( &mChar, kChar->GetX(), kChar->GetY() );
+						SI16 myx			= GetXfromDir( j, mChar.GetX() );
+						SI16 myy			= GetYfromDir( j, mChar.GetY() );
+
+						SI16 xFactor = 0;
+						SI16 yFactor = 0;
+						// Sept 22, 2002
+						if( myx != mChar.GetX() )
+						{
+							if( myx < mChar.GetX() )
+							{
+								xFactor = 1;
+							}
+							else
+							{
+								xFactor = -1;
+							}
+						}
+
+						if( myy != mChar.GetY() )
+						{
+							if( myy < mChar.GetY() )
+							{
+								yFactor = 1;
+							}
+							else
+							{
+								yFactor = -1;
+							}
+						}
+
+						myx += static_cast<SI16>( xFactor * mydist );
+						myy += static_cast<SI16>( yFactor * mydist );
+
+						canRun = ( mChar.GetStamina() > 0 );
+
+						// now, got myx, myy... lets go.
+
+						// Don't re-calculate pathfinding on every step. Use what we have, with a random chance to recalculate
+						if( !mChar.StillGotDirs() || RandomNum( 0, 10 ) >= 6 )
+						{
+							if( cwmWorldState->ServerData()->AdvancedPathfinding() )
+							{
+								if( AdvancedPathfinding( &mChar, myx, myy, canRun ))
+								{
+									// As long as pathfinding succeeds, avoid random wandering
+									wanderAimlessly = false;
+								}
+							}
+							else
+							{
+								wanderAimlessly = false;
+								PathFind( &mChar, myx, myy, true );
+							}
+						}
+
+						// Continue follow direction set by pathfinding
+						j = mChar.PopDirection();
+						shouldRun = (( j&0x80 ) != 0);
+						Walking( nullptr, &mChar, j, 256 );
+					}
+
+					if( !mChar.StillGotDirs() && wanderAimlessly && distToTarg < ( P_PF_MFD * 2 ))
+					{
+						// Target is still within min flee distance x2, keep wandering in same area
+						// Keep the same wandermode for now
+						targInRange = true;
+						j = RandomNum( 1, 5 );
+						if( j == 1 )
+						{
+							break;
+						}
+						else if( j == 2 )
+						{
+							j = RandomNum( 0, 8 );
+						}
+						else	// Move in the same direction the majority of the time
+						{
+							j = mChar.GetDir();
+						}
+						shouldRun = (( j&0x80 ) != 0);
+						NpcWalk( &mChar, j, npcWanderType );
+					}
 				}
-				else if( j == 2 )
+			
+				if( !targInRange )
 				{
-					j = RandomNum( 0, 8 );
+					// Target no longer exists, is no longer in the same world/instance (might as well not exist), or
+					// is far enough away that it's potentially safe to return to old wander mode and location
+					// Reset target if out of combat range for scared animals
+					if( mChar.GetNpcWander() == WT_SCARED && ValidateObject( mChar.GetTarg() ) && ObjInRange( &mChar, mChar.GetTarg(), DIST_COMBATRESETRANGE ))
+					{
+						mChar.SetTarg( nullptr );
+					}
+
+					resetWanderMode = true;
 				}
-				else	// Move in the same direction the majority of the time
+			}
+
+			if( resetWanderMode )
+			{
+				auto oldNpcWander = mChar.GetOldNpcWander();
+				if( oldNpcWander != WT_FLEE && oldNpcWander != WT_SCARED && oldNpcWander != WT_PATHFIND && oldNpcWander != WT_FROZEN )
 				{
-					j = mChar.GetDir();
+					mChar.SetNpcWander( mChar.GetOldNpcWander() );
+					mChar.SetOldNpcWander( WT_NONE );
+
+					if( mChar.GetMounted() )
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetMountedWalkingSpeed() ));
+					}
+					else
+					{
+						mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetWalkingSpeed() ));
+					}
 				}
-				shouldRun = (( j&0x80 ) != 0);
-				NpcWalk( &mChar, j, npcWanderType );
 			}
 			break;
+		}
 		case WT_PATHFIND:		// Pathfinding!!!!
 			if( mChar.StillGotDirs() )
 			{
@@ -2193,11 +2267,11 @@ void CMovement::NpcMovement( CChar& mChar )
 	if( mChar.GetTimer( tNPC_MOVETIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 	{
 #if DEBUG_NPCWALK
-		std::string charName = GetNpcDictName( mChar );
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 		Console.Print( oldstrutil::format( "DEBUG: ENTER (%s): %d AI %d WAR %d J\n", charName, mChar.GetNpcWander(), mChar.IsAtWar(), j ));
 #endif
 		bool shouldRun = false;
-		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+		if( mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE && ( mChar.GetNpcWander() != WT_SCARED || ( ValidateObject( mChar.GetTarg() ) && GetDist( &mChar, mChar.GetTarg() ) <= 1 )))
 		{
 			//CChar *l = mChar.GetAttacker();
 			CChar *l = mChar.GetTarg();
@@ -2287,7 +2361,8 @@ void CMovement::NpcMovement( CChar& mChar )
 						mChar.SetPathFail( 0 );
 
 						// Temporary change NPC's wandermode to none, and try pathfinding again in 5 seconds
-						if( mChar.GetNpcWander() != WT_NONE )
+						auto npcWander = mChar.GetNpcWander();
+						if( npcWander != WT_NONE  && npcWander != WT_SCARED && npcWander != WT_FLEE && npcWander != WT_PATHFIND && npcWander != WT_FROZEN )
 						{
 							mChar.SetOldNpcWander( mChar.GetNpcWander() );
 						}
@@ -2423,7 +2498,7 @@ void CMovement::NpcMovement( CChar& mChar )
 					mChar.SetTimer( tNPC_MOVETIME, BuildTimeValue( mChar.GetRunningSpeed() / 1.5 )); // Increase follow speed so NPC pets/escorts can keep up with players
 				}
 			}
-			else if( npcWanderType != WT_FLEE )
+			else if( npcWanderType != WT_FLEE && npcWanderType != WT_SCARED )
 			{
 				if( mChar.GetMounted() )
 				{
@@ -2465,7 +2540,7 @@ void CMovement::NpcMovement( CChar& mChar )
 	else
 	{
 		// Play some idle/fidgeting animation instead - if character is not busy doing something else
-		if( !mChar.IsAtWar() && mChar.GetNpcWander() != WT_FLEE )
+		if( !mChar.IsAtWar() && !ValidateObject( mChar.GetTarg() ) && mChar.GetNpcWander() != WT_FLEE && mChar.GetNpcWander() != WT_SCARED && mChar.GetNpcWander() != WT_FROZEN )
 		{
 			if( mChar.GetTimer( tNPC_IDLEANIMTIME ) <= cwmWorldState->GetUICurrentTime() || cwmWorldState->GetOverflow() )
 			{
@@ -3236,7 +3311,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 					maxSteps = 2; // Out of combat wandering
 				}
 			}
-			else if( npcWanderType == WT_FLEE )
+			else if( npcWanderType == WT_FLEE || npcWanderType == WT_SCARED )
 			{
 				maxSteps = 37;
 			}
@@ -3309,7 +3384,7 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 	if( loopCtr == maxSteps )
 	{
 #if defined( UOX_DEBUG_MODE )
-		std::string charName = GetNpcDictName( mChar );
+		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
 		Console.Warning( oldstrutil::format( "AdvancedPathfinding: NPC (%s at %i %i %i %i) unable to find a path, max steps limit (%i) reached, aborting.\n",
 			charName.c_str(), mChar->GetX(), mChar->GetY(), mChar->GetZ(), mChar->WorldNumber(), maxSteps ));
 #endif
@@ -3373,13 +3448,14 @@ bool CMovement::AdvancedPathfinding( CChar *mChar, UI16 targX, UI16 targY, bool 
 auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 {
 	auto mTarget = mChar->GetTarg();
-	if( mChar->IsAtWar() && ValidateObject( mTarget ) && mChar->GetNpcWander() != WT_FLEE && mChar->GetNpcWander() != WT_PATHFIND )
+	auto mNpcWander = mChar->GetNpcWander();
+	if( mChar->IsAtWar() && ValidateObject( mTarget ) && mNpcWander != WT_FLEE && mNpcWander != WT_SCARED && mNpcWander != WT_PATHFIND )
 	{
 		// Unable to reach target, add target to ignore list and clear target
 		if( !mChar->CheckCombatIgnore( mTarget->GetSerial() ))
 		{
 			mChar->AddToCombatIgnore( mTarget->GetSerial(), mTarget->IsNpc() );
-			mChar->TextMessage( nullptr, 2781, TALK, 0, GetNpcDictName( mTarget ).c_str() ); // * ignores %s *
+			mChar->TextMessage( nullptr, 2781, TALK, 0, GetNpcDictName( mTarget, nullptr, NRS_SPEECH ).c_str() ); // * ignores %s *
 		}
 
 		// If target attacked mChar within last 10 seconds, also enter evade state
@@ -3402,7 +3478,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			SI16 moveDist = RandomNum( 2, 5 );
 
 			double magnitude = sqrt( distanceX * distanceX + distanceY * distanceY );
-			int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
+			[[maybe_unused]] int moveDir = Direction( mCharX, mCharY, mTargX, mTargY );
 
 			SI16 evadeTargX = mCharX;
 			SI16 evadeTargY = mCharY;
@@ -3429,7 +3505,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 				}
 				else
 				{
-					evadeTargY = mCharY - static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
+					evadeTargY = mCharY + static_cast<SI16>( std::round( moveDist * ( distanceY / magnitude )));
 				}
 				evadeTargX += RandomNum( -1, 1 ); // Add a small variation along the X-axis
 			}
@@ -3438,7 +3514,7 @@ auto CMovement::IgnoreAndEvadeTarget( CChar *mChar ) -> void
 			evadeTargX = round( evadeTargX );
 			evadeTargY = round( evadeTargY );
 
-			if( mChar->GetNpcWander() != WT_PATHFIND )
+			if( mNpcWander != WT_NONE  && mNpcWander != WT_SCARED && mNpcWander != WT_FLEE && mNpcWander != WT_PATHFIND && mNpcWander != WT_FROZEN )
 			{
 				mChar->SetOldNpcWander( mChar->GetNpcWander() );
 			}

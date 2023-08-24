@@ -15,6 +15,7 @@ function command_ADD( socket, cmdString )
 	{
 		var stringID = "";
 		var splitString = cmdString.split( " " );
+		socket.tempInt2 = 0;
 		switch( splitString[0].toUpperCase() )
 		{
 			case "NPCLIST":

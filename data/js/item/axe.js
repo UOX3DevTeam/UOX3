@@ -39,7 +39,7 @@ function onCallback1( socket, ourObj )
 			tileID = socket.GetWord( 17 );
 			if( !tileID )
 			{
-				tileID = GetTileIDAtMapCoord( socket.GetWord( 11 ), socket.GetWord( 13 ), mChar.worldNumber );
+				tileID = GetTileIDAtMapCoord( socket.GetWord( 11 ), socket.GetWord( 13 ), mChar.worldnumber );
 			}
 		}
 		else if( ourObj && ourObj.isItem )
