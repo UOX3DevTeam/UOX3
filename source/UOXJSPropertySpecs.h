@@ -131,6 +131,39 @@ DECL_GET_SET( CRace, magicResistance )
 DECL_GET_SET( CRace, visibleDistance )
 DECL_GET_SET( CRace, nightVision )
 
+// Region Properties
+DECL_GET_SET( CRegion, name )
+DECL_GET_SET( CRegion, mayor )
+DECL_GET_SET( CRegion, race )
+DECL_GET_SET( CRegion, tax )
+DECL_GET_SET( CRegion, taxResource )
+DECL_GET_SET( CRegion, canMark )
+DECL_GET_SET( CRegion, canRecall )
+DECL_GET_SET( CRegion, canGate )
+DECL_GET_SET( CRegion, canTeleport )
+DECL_GET_SET( CRegion, canPlaceHouse )
+DECL_GET_SET( CRegion, isGuarded )
+DECL_GET_SET( CRegion, canCastAggressive )
+DECL_GET_SET( CRegion, isSafeZone )
+DECL_GET_SET( CRegion, health )
+DECL_GET_SET( CRegion, isDungeon )
+DECL_GET_SET( CRegion, worldNumber )
+DECL_GET_SET( CRegion, instanceID )
+DECL_GET_SET( CRegion, chanceBigOre )
+DECL_GET( CRegion, numOrePrefs )
+DECL_GET( CRegion, population )
+DECL_GET( CRegion, members )
+DECL_GET_SET( CRegion, id )
+DECL_GET_SET( CRegion, scriptTrigger )
+DECL_GET_SET( CRegion, scriptTriggers )
+DECL_GET_SET( CRegion, numGuards )
+DECL_GET_SET( CRegion, taxes )
+DECL_GET_SET( CRegion, reserves )
+DECL_GET_SET( CRegion, appearance )
+DECL_GET_SET( CRegion, music )
+DECL_GET_SET( CRegion, weather )
+DECL_GET_SET( CRegion, owner )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -265,37 +298,38 @@ inline JSPropertySpec CRaceProperties[] =
 
 inline JSPropertySpec CRegionProperties[] =
 {
-  { "name",				CREGP_NAME,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mayor",				CREGP_MAYOR,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "race",				CREGP_RACE,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tax",				CREGP_TAX,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "taxResource",		CREGP_TAXRESOURCE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canMark",			CREGP_CANMARK,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canRecall",			CREGP_CANRECALL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canGate",			CREGP_CANGATE,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canTeleport",		CREGP_CANTELEPORT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canPlaceHouse",		CREGP_CANPLACEHOUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGuarded",			CREGP_ISGUARDED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canCastAggressive",	CREGP_CANCASTAGGRESSIVE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSafeZone",			CREGP_ISSAFEZONE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "health",				CREGP_HEALTH,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDungeon",			CREGP_ISDUNGEON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "worldNumber",		CREGP_WORLDNUMBER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "instanceID",			CREGP_INSTANCEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "chanceBigOre",		CREGP_CHANCEBIGORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "name",				JSCRegion_get_name,                JSCRegion_set_name,           JSPROP_ENUMANDPERM ),
+  JS_PSGS( "mayor",				JSCRegion_get_mayor,	           JSCRegion_set_mayor,         JSPROP_ENUMANDPERM ),
+  JS_PSGS( "race",		JSCRegion_get_race,	   JSCRegion_set_race,      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tax",		JSCRegion_get_tax,     JSCRegion_set_tax,       JSPROP_ENUMANDPERM ),
+  JS_PSGS( "taxResource",	JSCRegion_get_taxResource,   JSCRegion_set_taxResource,        JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canMark",	    JSCRegion_get_canMark,	   JSCRegion_set_canMark,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canRecall",	JSCRegion_get_canRecall,	   JSCRegion_set_canRecall,	  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canGate",		JSCRegion_get_canGate,	   JSCRegion_set_canGate,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canTeleport",	JSCRegion_get_canTeleport,  JSCRegion_set_canTeleport,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canPlaceHouse",   JSCRegion_get_canPlaceHouse,   JSCRegion_set_canPlaceHouse,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGuarded",	JSCRegion_get_isGuarded,  JSCRegion_set_isGuarded,	      JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canCastAggressive",   JSCRegion_get_canCastAggressive,   JSCRegion_set_canCastAggressive,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isSafeZone",	JSCRegion_get_isSafeZone,   JSCRegion_set_isSafeZone,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "health",	    JSCRegion_get_health,	   JSCRegion_set_health,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isDungeon",	    JSCRegion_get_isDungeon,	   JSCRegion_set_isDungeon,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "worldNumber",	    JSCRegion_get_worldNumber,	   JSCRegion_set_worldNumber,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "instanceID",	    JSCRegion_get_instanceID,	   JSCRegion_set_instanceID,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "chanceBigOre",	    JSCRegion_get_chanceBigOre,	   JSCRegion_set_chanceBigOre,  JSPROP_ENUMANDPERM ),
   JS_PSG( "numOrePrefs",		JSCRegion_get_numOrePrefs,	JSPROP_ENUMPERMRO ),
   JS_PSG( "population",			JSCRegion_get_population,			JSPROP_ENUMPERMRO ),
-  { "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "id",					CREGP_ID,					JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scriptTrigger",		CREGP_SCRIPTTRIGGER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scriptTriggers",		CREGP_SCRIPTTRIGGERS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "numGuards",			CREGP_NUMGUARDS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "taxes",				CREGP_TAXES,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "reserves",			CREGP_RESERVES,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "appearance",			CREGP_APPEARANCE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "music",				CREGP_MUSIC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "weather",			CREGP_WEATHER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "owner",				CREGP_OWNER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+//  { "members",			CREGP_MEMBERS,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
+  JS_PSG( "members",			JSCRegion_get_members,			JSPROP_ENUMERATE ), // trying to figure this one out
+  JS_PSGS( "id",	    JSCRegion_get_id,	   JSCRegion_set_id,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scriptTrigger",	    JSCRegion_get_scriptTrigger,	   JSCRegion_set_scriptTrigger,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scriptTriggers",	    JSCRegion_get_scriptTriggers,	   JSCRegion_set_scriptTriggers,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "numGuards",	    JSCRegion_get_numGuards,	   JSCRegion_set_numGuards,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "taxes",	    JSCRegion_get_taxes,	   JSCRegion_set_taxes,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "reserves",	    JSCRegion_get_reserves,	   JSCRegion_set_reserves,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "appearance",	    JSCRegion_get_appearance,	   JSCRegion_set_appearance,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "music",	    JSCRegion_get_music,	   JSCRegion_set_music,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "weather",	    JSCRegion_get_weather,	   JSCRegion_set_weather,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "owner",	    JSCRegion_get_owner,	   JSCRegion_set_owner,  JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
