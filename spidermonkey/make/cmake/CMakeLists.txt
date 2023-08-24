@@ -4,6 +4,12 @@ project(jscript VERSION 1.8.0 LANGUAGES C)
 add_executable(jscpucfg ../../jscpucfg.c)
 
 if(NOT WIN32)
+		target_compile_options( jscpucfg PRIVATE
+			-Wno-format-security
+			-Wno-deprecated-declarations
+			$<$<CONFIG:Release>:-Os>
+		)
+
     add_custom_command(
         OUTPUT ../../jsautocfg.h
         COMMAND echo ${CMAKE_CURRENT_SOURCE_DIR} && ./jscpucfg > ${CMAKE_CURRENT_SOURCE_DIR}/../../jsautocfg.h && echo "Build complete"
@@ -157,11 +163,14 @@ else()
 		-Wno-pointer-to-int-cast
 		-Wno-switch
 		-Wno-incompatible-pointer-types
+		-Wno-deprecated-declarations
+		-Wno-format-security
 	)
 	if (APPLE)
 		target_compile_options( jscript PRIVATE
 			-Wno-non-literal-null-conversion
 			-Wno-tautological-constant-out-of-range-compare
+			-Wno-tautological-constant-compare
 			$<$<CONFIG:Release>:-Os>
 		)
 	elseif (UNIX AND NOT APPLE AND NOT LINUX)

@@ -82,14 +82,10 @@ Join the [UOX3 Discord](https://discord.gg/uBAXxhF) for support and/or a quick c
 
   > If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compiling with IDEs:
   > - Navigate to root of cloned UOX3 git repository, and execute these commands:\
-  > `cd make/cmake`\
-  > `mkdir build`\
-  > `cd build`\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release` (Windows/Linux/FreeBSD)\
-  > `cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"` (macOS)\
-  > `cmake --build . --config Release`\
+  > `cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release`\
+  > `cmake --build ./build --config Release`
 
-  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **make/cmake/build** directory to do clean builds.
+  > Replace "Release" with "Debug" in the above instructions to create a debug-build; delete **build** directory to do clean builds.
 </details>
 
 <details>

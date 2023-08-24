@@ -1052,7 +1052,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WARNING_CFLAGS = "-Wno-format-security";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Debug;
 		};
@@ -1065,7 +1068,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				WARNING_CFLAGS = "-Wno-format-security";
+				WARNING_CFLAGS = (
+					"-Wno-format-security",
+					"-Wno-deprecated-declarations",
+				);
 			};
 			name = Release;
 		};
@@ -1223,6 +1229,8 @@
 					"-Wno-tautological-constant-out-of-range-compare",
 					"-Wno-pointer-to-int-cast",
 					"-Wno-format-security",
+					"-Wno-tautological-constant-compare",
+					"-Wno-deprecated-declarations",
 				);
 			};
 			name = Debug;
@@ -1270,6 +1278,8 @@
 					"-Wno-tautological-constant-out-of-range-compare",
 					"-Wno-pointer-to-int-cast",
 					"-Wno-format-security",
+					"-Wno-tautological-constant-compare",
+					"-Wno-deprecated-declarations",
 				);
 			};
 			name = Release;
