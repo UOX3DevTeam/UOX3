@@ -1,3 +1,6 @@
+24/08/2023 - punt
+	Fixed a memory leak with regions.cpp, related to worldsaves
+
 07/07/2023 - Xuri
 	Fixed an issue which could cause lamp posts to turn into tall candelabras when light levels change
 
