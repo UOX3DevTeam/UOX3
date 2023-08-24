@@ -7,11 +7,9 @@ set(CMAKE_CXX_STANDARD 17)
 # *************************************************************************
 
 add_executable(uox3
-# top group
 	../../source/uox3.cpp
 	../../source/uox3.h
-# Script group	
-	../../source/cServerData.cpp
+	../../source/cServerData.cpp   # Script group	
 	../../source/cServerData.h
 	../../source/cServerDefinitions.cpp
 	../../source/cServerDefinitions.h
@@ -21,8 +19,7 @@ add_executable(uox3
 	../../source/scriptc.h
 	../../source/ssection.cpp
 	../../source/ssection.h	
-# Base Object group
-	../../source/boats.cpp
+	../../source/boats.cpp     # Base Object group
 	../../source/cBaseobject.cpp
 	../../source/cBaseobject.h
 	../../source/cChar.cpp
@@ -46,8 +43,7 @@ add_executable(uox3
 	../../source/ObjectFactory.h
 	../../source/PageVector.h
 	../../source/uoxstruct.h
-# Subystem group
-   ../../source/books.cpp
+   ../../source/books.cpp # Subystem group
    ../../source/books.h
    ../../source/cAccountClass.cpp
    ../../source/cAccountClass.h
@@ -101,8 +97,7 @@ add_executable(uox3
    ../../source/wholist.h
    ../../source/worldmain.cpp
    ../../source/worldmain.h
-# Other group
-   ../../source/ai.cpp
+   ../../source/ai.cpp  # Other group
    ../../source/archive.cpp
    ../../source/calcfuncs.cpp
    ../../source/cDice.cpp
@@ -130,8 +125,7 @@ add_executable(uox3
 	../../source/Prerequisites.h
    ../../source/typedefs.h
 	../../source/UOXStdHeaders.h
-# JS Engine group
-   ../../source/CJSEngine.cpp
+   ../../source/CJSEngine.cpp  # JS Engine group
    ../../source/CJSEngine.h
    ../../source/CJSMapping.cpp
    ../../source/CJSMapping.h
@@ -148,8 +142,7 @@ add_executable(uox3
    ../../source/UOXJSPropertyFuncs.cpp
    ../../source/UOXJSPropertyFuncs.h
    ../../source/UOXJSPropertySpecs.h
-# Network group
-   ../../source/CPacketReceive.cpp
+   ../../source/CPacketReceive.cpp  # Network group
    ../../source/CPacketReceive.h
    ../../source/CPacketSend.cpp
    ../../source/CPacketSend.h
@@ -157,22 +150,19 @@ add_executable(uox3
    ../../source/network.h
    ../../source/IP4Address.cpp
    ../../source/IP4Address.hpp
-# Utility group
-   ../../source/StringUtility.cpp
+   ../../source/StringUtility.cpp  # Utility group
    ../../source/StringUtility.hpp
    ../../source/TimeUtility.cpp
    ../../source/TimeUtility.hpp
    ../../source/EventTimer.cpp
    ../../source/EventTimer.hpp
- # UOData group
-    ../../source/mapclasses.h
+    ../../source/mapclasses.h  # UOData group
     ../../source/mapstuff.cpp
     ../../source/mapstuff.h
     ../../source/MultiMul.cpp
     ../../source/MultiMul.hpp
     ../../source/UOPData.cpp
     ../../source/UOPData.hpp
-# Assets
 	$<$<STREQUAL:${CMAKE_SYSTEM_NAME},Windows>:${PROJECT_SOURCE_DIR}/../../assets/uox3.rc>
 )
 
