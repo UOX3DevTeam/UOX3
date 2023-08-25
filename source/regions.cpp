@@ -2,6 +2,9 @@
 
 #include <filesystem>
 #include <fstream>
+#include <future>
+#include <sstream>
+#include <thread>
 #include <vector>
 
 
@@ -782,11 +785,40 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
-constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
+// CHANGE
+//constexpr size_t BUFFERSIZE = 1024 * 1024 ;
+//static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
+//================================================
+// Test stuff
+struct PathStream {
+    static constexpr auto BUFFERSIZE = static_cast<size_t>(1024 * 1024) ;
+
+    std::array<char,1024 * 1024> buffer;
+    std::stringstream stream;
+    std::filesystem::path path ;
+    PathStream() {
+        stream.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
+    }
+    PathStream(const std::filesystem::path &path) : PathStream() {
+        this->path = path ;
+    }
+};
+
+auto saveStream( const PathStream &entry) ->void {
+    auto output = std::ofstream(entry.path) ;
+    if (output.is_open()){
+        output << entry.stream.str();
+    }
+}
+// END CHANGE
 
 void CMapHandler::Save( void )
 {
+    // CHANGE
+
+    auto saveStreams = std::vector< std::future<void> >() ;
+    // END CHANGE
+
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
 	std::ofstream writeDestination, houseDestination;
@@ -845,16 +877,18 @@ void CMapHandler::Save( void )
 			
 			if( !changesDetected )
 				continue;
+            // CHANGE
+            auto streamCont = PathStream(filename) ;
+			//writeDestination.open( filename.c_str(), std::ios::binary );
 
-			writeDestination.open( filename.c_str(), std::ios::binary );
+			//if( !writeDestination )
+			//{
+				//Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
+				//continue;
+			//}
 
-			if( !writeDestination )
-			{
-				Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-				continue;
-			}
-
-			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
+//			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
+            // END CHANGE
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
@@ -878,17 +912,25 @@ void CMapHandler::Save( void )
 						CMapRegion * mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
 						if( mRegion != nullptr )
 						{
-							mRegion->SaveToDisk( writeDestination );
+                            // CHANGE
+							//mRegion->SaveToDisk( writeDestination );
+                            mRegion->SaveToDisk(streamCont.stream) ;
+                            // End Change
 
 							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
 							mRegion->HasRegionChanged( false );
 						}
 
-						writeDestination << blockDiscriminator;
+                        // CHANGE
+						//writeDestination << blockDiscriminator;
+                        streamCont.stream << blockDiscriminator;
 					}
 				}
 			}
-			writeDestination.close();
+            // CHANGE
+            saveStreams.push_back(std::async(std::launch::async,&saveStream,std::ref(streamCont)));
+			//writeDestination.close();
+            // END CHANGE
 		}
 	}
 	Console << "\b\b\b\b" << static_cast<UI32>( 100 ) << "%";
@@ -919,6 +961,12 @@ void CMapHandler::Save( void )
 		( *wIter )->SaveResources( i );
 		++i;
 	}
+    // CHANGE
+    for (auto &entry:saveStreams){
+        entry.wait() ;
+    }
+    saveStreams.clear();
+    // END CHANGE
 }
 
 bool PostLoadFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )
