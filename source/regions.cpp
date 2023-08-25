@@ -785,38 +785,47 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
+#define CHANGE
+#if !defined(CHANGE)
 // CHANGE
-//constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-//static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
+constexpr size_t BUFFERSIZE = 1024 * 1024 ;
+static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
 //================================================
 // Test stuff
+#else
 struct PathStream {
     static constexpr auto BUFFERSIZE = static_cast<size_t>(1024 * 1024) ;
 
-    std::array<char,1024 * 1024> buffer;
+    //std::array<char,1024 * 1024> buffer;
     std::stringstream stream;
     std::filesystem::path path ;
     PathStream() {
-        stream.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
+        //stream.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
     }
     PathStream(const std::filesystem::path &path) : PathStream() {
         this->path = path ;
     }
 };
 
-auto saveStream( const PathStream &entry) ->void {
-    auto output = std::ofstream(entry.path) ;
+auto saveStream( PathStream *entry) ->void {
+    std::string line ;
+    auto output = std::ofstream(entry->path) ;
     if (output.is_open()){
-        output << entry.stream.str();
+        while (std::getline(entry->stream,line)){
+                output << line <<"\n" ;
+        }
     }
 }
+#endif
 // END CHANGE
 
 void CMapHandler::Save( void )
 {
     // CHANGE
-
+#if defined(CHANGE)
     auto saveStreams = std::vector< std::future<void> >() ;
+    auto dataPtrs = std::vector<std::unique_ptr<PathStream>>() ;
+#endif
     // END CHANGE
 
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
@@ -878,16 +887,20 @@ void CMapHandler::Save( void )
 			if( !changesDetected )
 				continue;
             // CHANGE
-            auto streamCont = PathStream(filename) ;
-			//writeDestination.open( filename.c_str(), std::ios::binary );
+#if defined(CHANGE)
+            
+            dataPtrs.push_back(std::make_unique<PathStream>(filename)) ;
+#else
+			writeDestination.open( filename.c_str(), std::ios::binary );
 
-			//if( !writeDestination )
-			//{
-				//Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-				//continue;
-			//}
+			if( !writeDestination )
+			{
+				Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
+            continue;
+			}
 
-//			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
+			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
+#endif
             // END CHANGE
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
@@ -912,9 +925,12 @@ void CMapHandler::Save( void )
 						CMapRegion * mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
 						if( mRegion != nullptr )
 						{
+#if !defined(CHANGE)
                             // CHANGE
-							//mRegion->SaveToDisk( writeDestination );
-                            mRegion->SaveToDisk(streamCont.stream) ;
+							mRegion->SaveToDisk( writeDestination );
+#else
+                            mRegion->SaveToDisk((*dataPtrs.rbegin()).get()->stream) ;
+#endif
                             // End Change
 
 							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
@@ -922,14 +938,20 @@ void CMapHandler::Save( void )
 						}
 
                         // CHANGE
-						//writeDestination << blockDiscriminator;
-                        streamCont.stream << blockDiscriminator;
+#if !defined (CHANGE)
+						writeDestination << blockDiscriminator;
+#else
+                        (*dataPtrs.rbegin()).get()->stream << blockDiscriminator;
+#endif
 					}
 				}
 			}
             // CHANGE
-            saveStreams.push_back(std::async(std::launch::async,&saveStream,std::ref(streamCont)));
-			//writeDestination.close();
+#if defined(CHANGE)
+            saveStreams.push_back(std::async(std::launch::async,&saveStream,(*dataPtrs.rbegin()).get()));
+#else
+			writeDestination.close();
+#endif
             // END CHANGE
 		}
 	}
@@ -962,10 +984,12 @@ void CMapHandler::Save( void )
 		++i;
 	}
     // CHANGE
+#if defined(CHANGE)
     for (auto &entry:saveStreams){
         entry.wait() ;
     }
     saveStreams.clear();
+#endif 
     // END CHANGE
 }
 
