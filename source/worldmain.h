@@ -10,6 +10,7 @@
 #include <future>
 #include <memory>
 #include <vector>
+#include <filesystem>
 
 #include "cServerData.h"
 #include "GenericList.h"
