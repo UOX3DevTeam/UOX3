@@ -4,8 +4,8 @@
 #include "ssection.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
+#include "worldmain.h"
 
-#include <memory>
 using namespace std::string_literals;
 
 
@@ -352,20 +352,15 @@ auto CJailSystem::ReadData() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save out details about jailed players to jails.wsc in shared folder
 //o------------------------------------------------------------------------------------------------o
-void CJailSystem::WriteData( void )
+auto CJailSystem::WriteData() ->std::unique_ptr<PathStream>
 {
-	std::string jailsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
-	std::ofstream jailsDestination( jailsFile.c_str() );
-	if( !jailsDestination )
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", jailsFile.c_str() ));
-		return;
-	}
+	auto jailsFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc"s);
+    auto stream = std::make_unique<PathStream>(jailsFile);
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )
 	{
-		jails[jCtr].WriteData( jailsDestination, jCtr );
+		jails[jCtr].WriteData( stream->stream, jCtr );
 	}
-	jailsDestination.close();
+    return stream ;
 }
 
 //o------------------------------------------------------------------------------------------------o

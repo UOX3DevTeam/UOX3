@@ -786,51 +786,12 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
 #define CHANGE
-#if !defined(CHANGE)
-// CHANGE
-constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
-//================================================
-// Test stuff
-#else
-struct PathStream {
-    static constexpr auto BUFFERSIZE = static_cast<size_t>(1024 * 1024) ;
 
-    //std::array<char,1024 * 1024> buffer;
-    std::stringstream stream;
-    std::filesystem::path path ;
-    PathStream() {
-        //stream.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
-    }
-    PathStream(const std::filesystem::path &path) : PathStream() {
-        this->path = path ;
-    }
-};
-
-auto saveStream( PathStream *entry) ->void {
-    std::string line ;
-    auto output = std::ofstream(entry->path) ;
-    if (output.is_open()){
-        while (std::getline(entry->stream,line)){
-                output << line <<"\n" ;
-        }
-    }
-}
-#endif
-// END CHANGE
-
-void CMapHandler::Save( void )
+auto CMapHandler::Save() ->std::vector<std::unique_ptr<PathStream>>
 {
-    // CHANGE
-#if defined(CHANGE)
-    auto saveStreams = std::vector< std::future<void> >() ;
-    auto dataPtrs = std::vector<std::unique_ptr<PathStream>>() ;
-#endif
-    // END CHANGE
 
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
-	std::ofstream writeDestination, houseDestination;
 	SI32 onePercent = 0;
 	UI08 i = 0;
 	for( i = 0; i < Map->MapCount(); ++i )
@@ -854,6 +815,8 @@ void CMapHandler::Save( void )
 	std::filesystem::path houseFilePath = basePath + "house.wsc";
 	std::filesystem::remove( houseFilePath );
 
+    auto dataPaths = std::vector<std::unique_ptr<PathStream>>() ;
+    
 	std::string filename = "";
 	for( SI16 counter1 = 0; counter1 < AreaX; ++counter1 )	// move left->right
 	{
@@ -886,22 +849,7 @@ void CMapHandler::Save( void )
 			
 			if( !changesDetected )
 				continue;
-            // CHANGE
-#if defined(CHANGE)
-            
-            dataPtrs.push_back(std::make_unique<PathStream>(filename)) ;
-#else
-			writeDestination.open( filename.c_str(), std::ios::binary );
-
-			if( !writeDestination )
-			{
-				Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-            continue;
-			}
-
-			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
-#endif
-            // END CHANGE
+            dataPaths.push_back(std::make_unique<PathStream>(std::filesystem::path(filename))) ;
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
@@ -925,51 +873,24 @@ void CMapHandler::Save( void )
 						CMapRegion * mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
 						if( mRegion != nullptr )
 						{
-#if !defined(CHANGE)
-                            // CHANGE
-							mRegion->SaveToDisk( writeDestination );
-#else
-                            mRegion->SaveToDisk((*dataPtrs.rbegin()).get()->stream) ;
-#endif
-                            // End Change
+                            mRegion->SaveToDisk((*dataPaths.rbegin()).get()->stream) ;
 
 							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
 							mRegion->HasRegionChanged( false );
 						}
 
                         // CHANGE
-#if !defined (CHANGE)
-						writeDestination << blockDiscriminator;
-#else
-                        (*dataPtrs.rbegin()).get()->stream << blockDiscriminator;
-#endif
+                        (*dataPaths.rbegin()).get()->stream << blockDiscriminator;
 					}
 				}
 			}
-            // CHANGE
-#if defined(CHANGE)
-            saveStreams.push_back(std::async(std::launch::async,&saveStream,(*dataPtrs.rbegin()).get()));
-#else
-			writeDestination.close();
-#endif
-            // END CHANGE
 		}
 	}
 	Console << "\b\b\b\b" << static_cast<UI32>( 100 ) << "%";
 
 	filename = basePath + "overflow.wsc";
-	writeDestination.open( filename.c_str() );
-
-	if( writeDestination.is_open() )
-	{
-		overFlow.SaveToDisk( writeDestination );
-		writeDestination.close();
-	}
-	else
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-		return;
-	}
+    dataPaths.push_back(std::make_unique<PathStream>(std::filesystem::path(filename)));
+    overFlow.SaveToDisk( (*dataPaths.rbegin()).get()->stream );
 
 	Console << "\b\b\b\b";
 	Console.PrintDone();
@@ -983,14 +904,7 @@ void CMapHandler::Save( void )
 		( *wIter )->SaveResources( i );
 		++i;
 	}
-    // CHANGE
-#if defined(CHANGE)
-    for (auto &entry:saveStreams){
-        entry.wait() ;
-    }
-    saveStreams.clear();
-#endif 
-    // END CHANGE
+    return dataPaths ;
 }
 
 bool PostLoadFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )

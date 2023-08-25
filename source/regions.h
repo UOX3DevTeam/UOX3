@@ -11,9 +11,12 @@
 #ifndef __Region_h
 #define __Region_h
 
+#include <memory>
 #include <ostream>
+#include <vector>
 
 #include "mapstuff.h"
+struct PathStream ;
 
 const SI16 MapColSize = 32;
 const SI16 MapRowSize = 128;
@@ -98,7 +101,7 @@ public:
 	~CMapHandler();
 	auto Startup() -> void;
 
-	void		Save( void );
+    auto Save() -> std::vector<std::unique_ptr<PathStream>> ;
 	void		Load( void );
 
 	bool		AddItem( CItem *nItem );

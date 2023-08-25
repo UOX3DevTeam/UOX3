@@ -1,7 +1,10 @@
 #ifndef __CGUILD__
 #define __CGUILD__
 
+#include <memory>
 #include <ostream>
+
+struct PathStream ;
 
 class CPIGumpInput;
 
@@ -144,7 +147,7 @@ public:
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
-	void			Save();
+    auto			Save() -> std::unique_ptr<PathStream> ;
 	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;

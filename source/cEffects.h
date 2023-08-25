@@ -1,5 +1,7 @@
 #ifndef __CEFFECTS_H__
 #define __CEFFECTS_H__
+#include <memory>
+struct PathStream;
 
 class cEffects
 {
@@ -9,7 +11,7 @@ public:
 	void	TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3, CItem *targItemPtr = nullptr);
 	void	TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI16 more2, UI16 more3 );
 	void	CheckTempeffects( void );
-	void	SaveEffects( void );
+	auto	SaveEffects() -> std::unique_ptr<PathStream>;
 	void	LoadEffects( void );
 
 	// Visual Effects

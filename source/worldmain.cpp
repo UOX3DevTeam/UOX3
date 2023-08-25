@@ -30,7 +30,21 @@
 #include "ObjectFactory.h"
 #include "osunique.hpp"
 
+using namespace std::string_literals ;
+
 CWorldMain *cwmWorldState = nullptr;
+
+auto saveStream( PathStream *entry) ->void {
+    std::string line ;
+    auto output = std::ofstream(entry->path) ;
+    if (output.is_open()){
+        while (std::getline(entry->stream,line)){
+                output << line <<"\n" ;
+        }
+    }
+}
+
+// ================================================================================================
 
 //o------------------------------------------------------------------------------------------------o
 //| CWorldMain Constructor & Destructor
@@ -543,6 +557,48 @@ void CWorldMain::SaveNewWorld( bool x )
 				FileArchive();
 			}
 		}
+        
+        
+        // ================================================================================================
+        // Modifications for world saving
+        for (auto &entry: streamsWriting){
+            entry.wait();
+        }
+        streamsWriting.clear() ;
+        streamsToWrite.clear() ;
+        Console << "Saving Misc. data... ";
+        //ServerData()->SaveIni();  // Still believe this is a terrible ide, overwriting user data
+        Console.Log( "Server data save", "server.log" );
+
+        auto stream = RegionSave() ;
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        
+        auto morePaths = MapRegion->Save() ; // we could impove this by starting the write in the Region Save, and return a std::pair
+        for (auto iter = morePaths.begin() ; iter != morePaths.end();) {
+            streamsToWrite.push_back(std::move(*iter));
+            iter = morePaths.erase(iter) ;
+            streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        }
+        stream = GuildSys->Save();
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        stream = JailSys->WriteData();
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        stream = Effects->SaveEffects();
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        stream = ServerData()->SaveTime();
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+        stream = SaveStatistics();
+        streamsToWrite.push_back(std::move(stream));
+        streamsWriting.push_back(std::async(std::launch::async,&saveStream,(*streamsToWrite.rbegin()).get()));
+
+        // End Modifications for world saving
+        // ================================================================================================
+/*
 		Console << "Saving Misc. data... ";
 		ServerData()->SaveIni();
 		Console.Log( "Server data save", "server.log" );
@@ -554,7 +610,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		Effects->SaveEffects();
 		ServerData()->SaveTime();
 		SaveStatistics();
-
+*/
 		if( ServerData()->ServerAnnounceSavesStatus() )
 		{
 			SysBroadcast( "World Save Complete." );
@@ -585,23 +641,26 @@ void CWorldMain::SaveNewWorld( bool x )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Loops through all town regions and saves them to disk
 //o------------------------------------------------------------------------------------------------o
-void CWorldMain::RegionSave()
+auto CWorldMain::RegionSave() -> std::unique_ptr<PathStream>
 {
-	std::string regionsFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc";
-	std::ofstream regionsDestination( regionsFile.c_str() );
+	auto path 	= std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "regions.wsc"s);
+    auto stream = std::make_unique<PathStream>(path);
+	//std::ofstream regionsDestination( regionsFile.c_str() );
+    /*
 	if( !regionsDestination )
 	{
 		Console.Error( oldstrutil::format( "Failed to open %s for writing", regionsFile.c_str() ));
 		return;
 	}
-	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<UI16, CTownRegion*> &town )
+     */
+	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&stream]( const std::pair<UI16, CTownRegion*> &town )
 	{
 		if( town.second )
 		{
-			town.second->Save( regionsDestination );
+			town.second->Save( stream->stream );
 		}
 	});
-	regionsDestination.close();
+    return stream ;
 }
 
 //==================================================================================================
@@ -623,22 +682,17 @@ auto CWorldMain::ServerProfile() -> CServerProfile *
 //|	Purpose		-	Saves out some useful statistics so that some tools
 //|						such as WorldBuilder can do some memory reserve shortcuts
 //o------------------------------------------------------------------------------------------------o
-void CWorldMain::SaveStatistics( void )
+auto CWorldMain::SaveStatistics() -> std::unique_ptr<PathStream>
 {
-	std::string		statsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "statistics.wsc";
-	std::ofstream	statsDestination( statsFile.c_str() );
-	if( !statsDestination )
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", statsFile.c_str() ));
-		return;
-	}
-	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';
-	statsDestination << "PLAYERCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) << '\n';
-	statsDestination << "ITEMCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) << '\n';
-	statsDestination << "MULTICOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ) << '\n';
-	statsDestination << "}" << '\n' << '\n';
+	auto statsFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "statistics.wsc"s);
+    auto stream = std::make_unique<PathStream>(statsFile);
+	stream->stream << "[STATISTICS]" << '\n' << "{" << '\n';
+    stream->stream << "PLAYERCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ) << '\n';
+    stream->stream << "ITEMCOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ) << '\n';
+    stream->stream << "MULTICOUNT=" << ObjectFactory::GetSingleton().CountOfObjects( OT_MULTI ) << '\n';
+    stream->stream << "}" << '\n' << '\n';
 
-	statsDestination.close();
+    return stream ;
 }
 
 //o------------------------------------------------------------------------------------------------o

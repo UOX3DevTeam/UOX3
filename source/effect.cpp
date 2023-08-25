@@ -15,6 +15,11 @@
 #include "townregion.h"
 #include "StringUtility.hpp"
 #include <algorithm>
+#include <filesystem>
+
+#include "worldmain.h"
+
+using namespace std::string_literals ;
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	cEffects::DeathAction()
@@ -1763,7 +1768,7 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out the TempEffects to effects.wsc
 //o------------------------------------------------------------------------------------------------o
-void cEffects::SaveEffects( void )
+auto cEffects::SaveEffects() ->std::unique_ptr<PathStream>
 {
 	std::ofstream effectDestination;
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
@@ -1772,29 +1777,25 @@ void cEffects::SaveEffects( void )
 	Console << "Saving Effects...   ";
 	Console.TurnYellow();
 
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "effects.wsc";
-	effectDestination.open( filename.c_str() );
-	if( !effectDestination )
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-		return;
-	}
-
+	auto filename = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "effects.wsc"s);
+	
+    auto stream = std::make_unique<PathStream>(filename);
 	for( const auto &currEffect : cwmWorldState->tempEffects.collection() )
 	{
 		if( currEffect )
 		{
-			currEffect->Save( effectDestination );
-			effectDestination << blockDiscriminator;
+			currEffect->Save( stream->stream );
+            stream->stream << blockDiscriminator;
 		}
 	}
-	effectDestination.close();
+	
 
 	Console << "\b\b\b\b";
 	Console.PrintDone();
 
 	SI32 e_t = GetClock();
 	Console.Print( oldstrutil::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
+    return stream;
 }
 
 void ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data );

@@ -1,6 +1,8 @@
 
 #ifndef __JAIL_H__
 #define __JAIL_H__
+#include <memory>
+struct PathStream ;
 
 struct JailOccupant_st
 {
@@ -59,7 +61,7 @@ public:
 	~CJailSystem() = default;
 	void	ReadSetup( void );
 	void	ReadData( void );
-	void	WriteData( void );
+	auto	WriteData() -> std::unique_ptr<PathStream>;
 	void	PeriodicCheck( void );
 	bool	JailPlayer( CChar *toJail, SI32 numSecsToJail );
 	void	ReleasePlayer( CChar *toRelase );

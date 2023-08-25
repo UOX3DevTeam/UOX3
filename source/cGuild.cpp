@@ -1,3 +1,6 @@
+
+#include <filesystem>
+
 #include "uox3.h"
 #include "cGuild.h"
 #include "speech.h"
@@ -12,7 +15,7 @@
 #ifndef va_start
 #include <cstdarg>
 #endif
-
+#include "worldmain.h"
 using namespace std::string_literals;
 
 CGuildCollection *GuildSys;
@@ -983,18 +986,20 @@ CGuild *CGuildCollection::operator[]( GUILDID num )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves guild to worldfile
 //o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Save( void )
+
+auto CGuildCollection::Save() -> std::unique_ptr<PathStream> 
 {
 	Console << "Saving guild data.... ";
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc";
-	std::ofstream toSave( filename.c_str() );
+	auto filename = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc"s) ;
+    auto stream = std::make_unique<PathStream>(filename) ;
 	GUILDLIST::const_iterator pMove = gList.begin();
 	while( pMove != gList.end() )
 	{
-		( pMove->second )->Save( toSave, pMove->first );
+		( pMove->second )->Save( stream->stream, pMove->first );
 		++pMove;
 	}
 	Console.PrintDone();
+    return stream ;
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -5,9 +5,14 @@
 #include <string>
 #include <cstdint>
 #include <array>
+#include <memory>
+
+
 
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
+
+struct PathStream ;
 //o------------------------------------------------------------------------------------------------o
 enum ClientFeatures
 {
@@ -1208,7 +1213,7 @@ public:
 	auto		ServerTimeSeconds( UI08 nValue ) -> void;
 	auto		ServerTimeAMPM( bool nValue ) -> void;
 
-	auto		SaveTime() -> void;
+	auto		SaveTime() -> std::unique_ptr<PathStream>;
 	auto		LoadTime() -> void;
 	auto		LoadTimeTags( std::ifstream &input ) -> void;
 

@@ -7,6 +7,10 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
+#include <future>
+#include <memory>
+#include <vector>
+
 #include "cServerData.h"
 #include "GenericList.h"
 #if PLATFORM == WINDOWS
@@ -14,6 +18,23 @@
 #undef min
 #undef max
 #endif
+
+// ================================================================================================
+// Modifications for world saving
+struct PathStream {
+    
+    std::stringstream stream;
+    std::filesystem::path path ;
+    PathStream() {
+    }
+    PathStream(const std::filesystem::path &path) : PathStream() {
+        this->path = path ;
+    }
+};
+
+// End Modifications for world saving
+// ================================================================================================
+
 enum CWM_TID
 {
 	tWORLD_NEXTFIELDEFFECT = 0,
@@ -231,15 +252,25 @@ public:
 	void SaveNewWorld( bool x );
 	auto Startup() -> void;
 	CWorldMain();
+    ~CWorldMain() {
+        for (auto &entry:streamsWriting){
+            entry.wait() ;
+        }
+        streamsWriting.clear() ;
+        streamsToWrite.clear() ;
+    }
 	auto ServerData() ->CServerData *;
 	auto SetServerData(CServerData &server_data) -> void;
 	auto ServerProfile()->CServerProfile *;
 private:
-	void			RegionSave( void );
-	void			SaveStatistics( void );
+	auto RegionSave()->std::unique_ptr<PathStream> ;
+	auto SaveStatistics() ->std::unique_ptr<PathStream>;
 
 	CServerData  *sData;
 	CServerProfile sProfile;
+    std::vector<std::unique_ptr<PathStream>> streamsToWrite ;
+    std::vector<std::future<void>> streamsWriting ;
+
 };
 
 extern CWorldMain	 *cwmWorldState;

@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <limits>
 #include <optional>
+#include <filesystem>
+
 #include "IP4Address.hpp"
 #if PLATFORM != WINDOWS
 #include <netdb.h>
@@ -15,6 +17,7 @@
 
 #include "StringUtility.hpp"
 #include "osunique.hpp"
+#include "worldmain.h"
 
 using namespace std::string_literals;
 //==================================================================================================
@@ -6910,26 +6913,20 @@ auto CServerData::APSDelayMaxCap( UI16 newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Outputs server time information to time.wsc in the /shared/ directory
 //o------------------------------------------------------------------------------------------------o
-auto CServerData::SaveTime() -> void
+auto CServerData::SaveTime() -> std::unique_ptr<PathStream>
 {
-	std::string		timeFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc";
-	std::ofstream	timeDestination( timeFile.c_str() );
-	if( !timeDestination )
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", timeFile.c_str() ));
-		return;
-	}
+	auto timeFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "time.wsc"s);
+    auto stream = std::make_unique<PathStream>(timeFile);
+	stream->stream << "[TIME]" << '\n' << "{" << '\n';
+    stream->stream << "CURRENTLIGHT=" << static_cast<UI16>( WorldLightCurrentLevel() ) << '\n';
+    stream->stream << "DAY=" << ServerTimeDay() << '\n';
+    stream->stream << "HOUR=" << static_cast<UI16>( ServerTimeHours() ) << '\n';
+    stream->stream << "MINUTE=" << static_cast<UI16>( ServerTimeMinutes() ) << '\n';
+    stream->stream << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
+    stream->stream << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
+    stream->stream << "}" << '\n' << '\n';
 
-	timeDestination << "[TIME]" << '\n' << "{" << '\n';
-	timeDestination << "CURRENTLIGHT=" << static_cast<UI16>( WorldLightCurrentLevel() ) << '\n';
-	timeDestination << "DAY=" << ServerTimeDay() << '\n';
-	timeDestination << "HOUR=" << static_cast<UI16>( ServerTimeHours() ) << '\n';
-	timeDestination << "MINUTE=" << static_cast<UI16>( ServerTimeMinutes() ) << '\n';
-	timeDestination << "AMPM=" << ( ServerTimeAMPM() ? 1 : 0 ) << '\n';
-	timeDestination << "MOON=" << ServerMoon( 0 ) << "," << ServerMoon( 1 ) << '\n';
-	timeDestination << "}" << '\n' << '\n';
-
-	timeDestination.close();
+    return stream ;
 }
 
 auto ReadWorldTagData( std::ifstream &inStream, std::string &tag, std::string &data ) -> void;
