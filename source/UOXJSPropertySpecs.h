@@ -202,6 +202,197 @@ DECL_GET_SET( CGuild, charter )
 DECL_GET_SET( CGuild, abbreviation )
 DECL_GET_SET( CGuild, webPage )
 
+// Character Properties
+DECL_GET_SET( CCharacter, sectionID )
+DECL_GET_SET( CCharacter, name )
+DECL_GET_SET( CCharacter, origName )
+DECL_GET_SET( CCharacter, title )
+DECL_GET_SET( CCharacter, x )
+DECL_GET_SET( CCharacter, y )
+DECL_GET_SET( CCharacter, z )
+DECL_GET_SET( CCharacter, oldX )
+DECL_GET_SET( CCharacter, oldY )
+DECL_GET_SET( CCharacter, oldZ )
+DECL_GET_SET( CCharacter, id )
+DECL_GET_SET( CCharacter, colour )
+DECL_GET_SET( CCharacter, color )
+DECL_GET_SET( CCharacter, skin )
+DECL_GET_SET( CCharacter, hue )
+DECL_GET_SET( CCharacter, controlSlots )
+DECL_GET_SET( CCharacter, controlSlotsUsed )
+DECL_GET_SET( CCharacter, orneriness )
+DECL_GET_SET( CCharacter, owner )
+DECL_GET_SET( CCharacter, visible )
+DECL_GET_SET( CCharacter, serial )
+DECL_GET_SET( CCharacter, health )
+DECL_GET_SET( CCharacter, scripttrigger )
+DECL_GET_SET( CCharacter, scriptTriggers )
+DECL_GET_SET( CCharacter, worldnumber )
+DECL_GET_SET( CCharacter, instanceID )
+DECL_GET_SET( CCharacter, target )
+DECL_GET_SET( CCharacter, dexterity )
+DECL_GET_SET( CCharacter, intelligence )
+DECL_GET_SET( CCharacter, strength )
+DECL_GET_SET( CCharacter, actualDexterity )
+DECL_GET_SET( CCharacter, actualIntelligence )
+DECL_GET_SET( CCharacter, actualStrength )
+DECL_GET_SET( CCharacter, skills )
+DECL_GET_SET( CCharacter, mana )
+DECL_GET_SET( CCharacter, stamina )
+DECL_GET_SET( CCharacter, pack )
+DECL_GET_SET( CCharacter, fame )
+DECL_GET_SET( CCharacter, karma )
+DECL_GET( CCharacter, attack )
+DECL_GET_SET( CCharacter, canAttack )
+DECL_GET_SET( CCharacter, fleeAt )
+DECL_GET_SET( CCharacter, reAttackAt )
+DECL_GET_SET( CCharacter, brkPeaceChance )
+DECL_GET_SET( CCharacter, setPeace )
+DECL_GET_SET( CCharacter, hunger )
+DECL_GET( CCharacter, hungerRate )
+DECL_GET_SET( CCharacter, thirst )
+DECL_GET( CCharacter, thirstRate )
+DECL_GET_SET( CCharacter, frozen )
+DECL_GET_SET( CCharacter, commandlevel )
+DECL_GET_SET( CCharacter, race )
+DECL_GET_SET( CCharacter, hasStolen )
+DECL_GET_SET( CCharacter, criminal )
+DECL_GET( CCharacter, murderer )
+DECL_GET_SET( CCharacter, innocent )
+DECL_GET_SET( CCharacter, murdercount )
+DECL_GET_SET( CCharacter, neutral )
+DECL_GET_SET( CCharacter, npcFlag )
+DECL_GET_SET( CCharacter, npCCharacter )
+DECL_GET_SET( CCharacter, gender )
+DECL_GET_SET( CCharacter, dead )
+DECL_GET_SET( CCharacter, npc )
+DECL_GET_SET( CCharacter, isAwake )
+DECL_GET( CCharacter, online )
+DECL_GET_SET( CCharacter, direction )
+DECL_GET_SET( CCharacter, isRunning )
+DECL_GET_SET( CCharacter, region )
+DECL_GET_SET( CCharacter, town )
+DECL_GET_SET( CCharacter, guild )
+DECL_GET_SET( CCharacter, baseskills )
+DECL_GET_SET( CCharacter, skillsused )
+DECL_GET_SET( CCharacter, socket )
+DECL_GET( CCharacter, isChar )
+DECL_GET( CCharacter, isItem )
+DECL_GET( CCharacter, isSpawner )
+DECL_GET( CCharacter, spawnSerial )
+DECL_GET_SET( CCharacter, maxhp )
+DECL_GET_SET( CCharacter, maxstamina )
+DECL_GET_SET( CCharacter, maxmana )
+DECL_GET_SET( CCharacter, oldWandertype )
+DECL_GET_SET( CCharacter, wandertype )
+DECL_GET_SET( CCharacter, fx1 )
+DECL_GET_SET( CCharacter, fy1 )
+DECL_GET_SET( CCharacter, fx2 )
+DECL_GET_SET( CCharacter, fy2 )
+DECL_GET_SET( CCharacter, fz )
+DECL_GET_SET( CCharacter, isonhorse )
+DECL_GET_SET( CCharacter, isFlying )
+DECL_GET_SET( CCharacter, isGuarded )
+DECL_GET_SET( CCharacter, guarding )
+DECL_GET_SET( CCharacter, tempdex )
+DECL_GET_SET( CCharacter, tempint )
+DECL_GET_SET( CCharacter, tempstr )
+DECL_GET_SET( CCharacter, poison )
+DECL_GET_SET( CCharacter, lightlevel )
+DECL_GET_SET( CCharacter, vulnerable )
+DECL_GET_SET( CCharacter, willhunger )
+DECL_GET_SET( CCharacter, willthirst )
+DECL_GET_SET( CCharacter, lodamage )
+DECL_GET_SET( CCharacter, hidamage )
+DECL_GET( CCharacter, flag )
+DECL_GET_SET( CCharacter, atWar )
+DECL_GET_SET( CCharacter, spellCast )
+DECL_GET_SET( CCharacter, isCasting )
+DECL_GET_SET( CCharacter, priv )
+DECL_GET_SET( CCharacter, townPriv )
+DECL_GET_SET( CCharacter, guildTitle )
+DECL_GET_SET( CCharacter, hairStyle )
+DECL_GET_SET( CCharacter, hairColour )
+DECL_GET_SET( CCharacter, hairColor )
+DECL_GET_SET( CCharacter, beardStyle )
+DECL_GET_SET( CCharacter, beardColour )
+DECL_GET_SET( CCharacter, beardColor )
+DECL_GET_SET( CCharacter, fontType )
+DECL_GET_SET( CCharacter, sayColour )
+DECL_GET_SET( CCharacter, emoteColour )
+DECL_GET_SET( CCharacter, attacker )
+DECL_GET_SET( CCharacter, raceGate )
+DECL_GET_SET( CCharacter, skillLock )
+DECL_GET_SET( CCharacter, deaths )
+DECL_GET_SET( CCharacter, ownerCount )
+DECL_GET_SET( CCharacter, nextAct )
+DECL_GET( CCharacter, petCount )
+DECL_GET( CCharacter, followerCount )
+DECL_GET( CCharacter, ownedItemsCount )
+DECL_GET_SET( CCharacter, cell )
+DECL_GET_SET( CCharacter, allmove )
+DECL_GET_SET( CCharacter, houseicons )
+DECL_GET_SET( CCharacter, spattack )
+DECL_GET_SET( CCharacter, spdelay )
+DECL_GET_SET( CCharacter, aitype )
+DECL_GET_SET( CCharacter, split )
+DECL_GET_SET( CCharacter, splitchance )
+DECL_GET_SET( CCharacter, hireling )
+DECL_GET_SET( CCharacter, trainer )
+DECL_GET_SET( CCharacter, weight )
+DECL_GET_SET( CCharacter, squelch )
+DECL_GET( CCharacter, isJailed )
+DECL_GET_SET( CCharacter, magicReflect )
+DECL_GET_SET( CCharacter, permanentMagicReflect )
+DECL_GET_SET( CCharacter, tamed )
+DECL_GET_SET( CCharacter, tamedHungerRate )
+DECL_GET_SET( CCharacter, tamedThirstRate )
+DECL_GET_SET( CCharacter, hungerWildChance )
+DECL_GET_SET( CCharacter, thirstWildChance )
+DECL_GET_SET( CCharacter, foodList )
+DECL_GET_SET( CCharacter, mounted )
+DECL_GET_SET( CCharacter, stabled )
+DECL_GET_SET( CCharacter, isUsingPotion )
+DECL_GET_SET( CCharacter, stealth )
+DECL_GET_SET( CCharacter, skillToTame )
+DECL_GET_SET( CCharacter, skillToProv )
+DECL_GET_SET( CCharacter, skillToPeace )
+DECL_GET_SET( CCharacter, poisonStrength )
+DECL_GET_SET( CCharacter, isPolymorphed )
+DECL_GET_SET( CCharacter, isIncognito )
+DECL_GET_SET( CCharacter, isDisguised )
+DECL_GET_SET( CCharacter, canRun )
+DECL_GET_SET( CCharacter, isMeditating )
+DECL_GET_SET( CCharacter, isGM )
+DECL_GET_SET( CCharacter, canBroadcast )
+DECL_GET_SET( CCharacter, singClickSer )
+DECL_GET_SET( CCharacter, noSkillTitles )
+DECL_GET_SET( CCharacter, isGMPageable )
+DECL_GET_SET( CCharacter, canSnoop )
+DECL_GET_SET( CCharacter, isCounselor )
+DECL_GET_SET( CCharacter, noNeedMana )
+DECL_GET_SET( CCharacter, isDispellable )
+DECL_GET_SET( CCharacter, noNeedReags )
+DECL_GET_SET( CCharacter, orgID )
+DECL_GET_SET( CCharacter, orgSkin )
+DECL_GET( CCharacter, isAnimal )
+DECL_GET( CCharacter, isHuman )
+DECL_GET_SET( CCharacter, isShop )
+DECL_GET_SET( CCharacter, maxLoyalty )
+DECL_GET_SET( CCharacter, loyalty )
+DECL_GET_SET( CCharacter, loyaltyRate )
+DECL_GET_SET( CCharacter, shouldSave )
+DECL_GET_SET( CCharacter, origin )
+DECL_GET_SET( CCharacter, partyLootable )
+DECL_GET( CCharacter, party )
+DECL_GET_SET( CCharacter, multi )
+DECL_GET_SET( CCharacter, accountNum )
+DECL_GET_SET( CCharacter, account )
+DECL_GET_SET( CCharacter, createdOn )
+DECL_GET_SET( CCharacter, playTime )
+DECL_GET_SET( CCharacter, housesOwned )
+DECL_GET_SET( CCharacter, housesCoOwned )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -416,195 +607,195 @@ inline JSPropertySpec CGuildProperties[] =
 
 inline JSPropertySpec CCharacterProps[] =
 {
-  { "sectionID",		CCP_SECTIONID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "name",			CCP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "origName",		CCP_ORIGNAME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "title",			CCP_TITLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "x",				CCP_X,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "y",				CCP_Y,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "z",				CCP_Z,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldX",			CCP_OLDX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldY",			CCP_OLDY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldZ",			CCP_OLDZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "id",				CCP_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "colour",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "color",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skin",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hue",			CCP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "controlSlots",	CCP_CONTROLSLOTS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "controlSlotsUsed",	CCP_CONTROLSLOTSUSED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "orneriness",		CCP_ORNERINESS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "owner",			CCP_OWNER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "visible",		CCP_VISIBLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "serial",			CCP_SERIAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "health",			CCP_HEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scripttrigger",	CCP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scriptTriggers",	CCP_SCRIPTTRIGGERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "worldnumber",	CCP_WORLDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "instanceID",		CCP_INSTANCEID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "target",			CCP_TARGET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "dexterity",		CCP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "intelligence",	CCP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "strength",		CCP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "actualDexterity",	CCP_ACTUALDEXTERITY,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "actualIntelligence",	CCP_ACTUALINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "actualStrength",		CCP_ACTUALSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skills",			CCP_SKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mana",			CCP_MANA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stamina",		CCP_STAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pack",			CCP_CHARPACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fame",			CCP_FAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "karma",			CCP_KARMA,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "attack",			CCharacter_get_attack,			JSPROP_ENUMPERMRO ),
-  { "canAttack",		CCP_CANATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fleeAt",			CCP_FLEEAT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "reAttackAt",		CCP_REATTACKAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "brkPeaceChance",	CCP_BRKPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "setPeace",		CCP_SETPEACE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hunger",			CCP_HUNGER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "hungerRate",		CCharacter_get_hungerRate,		JSPROP_ENUMPERMRO ),
-  { "thirst",			CCP_THIRST,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "thirstRate",		CCharacter_get_thirstRate,		JSPROP_ENUMPERMRO ),
-  { "frozen",			CCP_FROZEN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "commandlevel",	CCP_COMMANDLEVEL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "race",			CCP_RACE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hasStolen",		CCP_HASSTOLEN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "criminal",		CCP_CRIMINAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "murderer",		CCharacter_get_murderer,		JSPROP_ENUMPERMRO ),
-  { "innocent",		CCP_INNOCENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "murdercount",	CCP_MURDERCOUNT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "neutral",		CCP_NEUTRAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "npcFlag",		CCP_NPCFLAG,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "npcGuild",		CCP_NPCGUILD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "gender",			CCP_GENDER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "dead",			CCharacter_get_dead,			JSPROP_ENUMPERMRO ),
-  { "npc",			CCP_NPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isAwake",		CCP_AWAKE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "online",			CCharacter_get_online,			JSPROP_ENUMPERMRO ),
-  { "direction",		CCP_DIRECTION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isRunning",		CCP_ISRUNNING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "region",			CCP_REGION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "town",			CCP_TOWN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "guild",			CCP_GUILD,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "baseskills",		CCP_BASESKILLS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillsused",		CCP_SKILLUSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "socket",			CCP_SOCKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  JS_PSG( "isChar",			CCharacter_get_isChar,			JSPROP_ENUMPERMRO ),
-  JS_PSG( "isItem",			CCharacter_get_isItem,			JSPROP_ENUMPERMRO ),
-  JS_PSG( "isSpawner",		CCharacter_get_isSpawner,		JSPROP_ENUMPERMRO ),
-  JS_PSG( "spawnSerial",	CCharacter_get_spawnSerial,	JSPROP_ENUMPERMRO ),
-  { "maxhp",			CCP_MAXHP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxstamina",		CCP_MAXSTAMINA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxmana",		CCP_MAXMANA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldWandertype",	CCP_OLDWANDERTYPE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "wandertype",		CCP_WANDERTYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fx1",			CCP_FX1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fy1",			CCP_FY1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fx2",			CCP_FX2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fy2",			CCP_FY2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fz",				CCP_FZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isonhorse",		CCP_ISONHORSE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isFlying",		CCP_ISFLYING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGuarded",		CCP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "guarding",		CCP_GUARDING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempdex",		CCP_TDEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempint",		CCP_TINTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempstr",		CCP_TSTRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "poison",			CCP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lightlevel",		CCP_LIGHTLEVEL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "vulnerable",		CCP_VULNERABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "willhunger",		CCP_HUNGERSTATUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "willthirst",		CCP_THIRSTSTATUS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lodamage",		CCP_LODAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hidamage",		CCP_HIDAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "flag",			CCP_FLAG,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "atWar",			CCP_ATWAR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spellCast",		CCP_SPELLCAST,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isCasting",		CCP_ISCASTING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "priv",			CCP_PRIV,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "townPriv",		CCP_TOWNPRIV,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "guildTitle",		CCP_GUILDTITLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hairStyle",		CCP_HAIRSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hairColour",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hairColor",		CCP_HAIRCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "beardStyle",		CCP_BEARDSTYLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "beardColour",	CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "beardColor",		CCP_BEARDCOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fontType",		CCP_FONTTYPE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "sayColour",		CCP_SAYCOLOUR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "emoteColour",	CCP_EMOTECOLOUR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "attacker",		CCP_ATTACKER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "raceGate",		CCP_RACEGATE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillLock",		CCP_SKILLLOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "deaths",			CCP_DEATHS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ownerCount",		CCP_OWNERCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "nextAct",		CCP_NEXTACT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "petCount",		CCP_PETCOUNT,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "followerCount",	CCP_FOLLOWERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "ownedItemsCount",CCP_OWNEDITEMSCOUNT,JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "cell",			CCP_CELL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "allmove",		CCP_ALLMOVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "houseicons",		CCP_HOUSEICONS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spattack",		CCP_SPATTACK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spdelay",		CCP_SPDELAY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "aitype",			CCP_AITYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "split",			CCP_SPLIT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "splitchance",	CCP_SPLITCHANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hireling",		CCP_HIRELING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "trainer",		CCP_TRAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "weight",			CCP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "squelch",		CCP_SQUELCH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isJailed",		CCP_ISJAILED,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "magicReflect",	CCP_MAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "permanentMagicReflect",	CCP_PERMMAGICREFLECT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tamed",			CCP_TAMED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tamedHungerRate",CCP_TAMEDHUNGERRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tamedThirstRate",CCP_TAMEDTHIRSTRATE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hungerWildChance",CCP_HUNGERWILDCHANCE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "thirstWildChance",CCP_THIRSTWILDCHANCE,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "foodList",		CCP_FOODLIST,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mounted",		CCP_MOUNTED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stabled",		CCP_STABLED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isUsingPotion",	CCP_USINGPOTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stealth",		CCP_STEALTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillToTame",	CCP_SKILLTOTAME,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillToProv",	CCP_SKILLTOPROV,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skillToPeace",	CCP_SKILLTOPEACE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "poisonStrength",	CCP_POISONSTRENGTH,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isPolymorphed",	CCP_ISPOLYMORPHED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isIncognito",	CCP_ISINCOGNITO,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDisguised",	CCP_ISDISGUISED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canRun",			CCP_CANRUN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isMeditating",	CCP_ISMEDITATING,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGM",			CCP_ISGM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canBroadcast",	CCP_CANBROADCAST,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "singClickSer",	CCP_SINGCLICKSER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "noSkillTitles",	CCP_NOSKILLTITLES,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGMPageable",	CCP_ISGMPAGEABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "canSnoop",		CCP_CANSNOOP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isCounselor",	CCP_ISCOUNSELOR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "noNeedMana",		CCP_NONEEDMANA,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDispellable",	CCP_ISDISPELLABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "noNeedReags",	CCP_NONEEDREAGS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "orgID",			CCP_ORGID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "orgSkin",		CCP_ORGSKIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isAnimal",		CCP_ISANIMAL,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isHuman",		CCP_ISHUMAN,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isShop",			CCP_ISSHOP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxLoyalty",		CCP_MAXLOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "loyalty",		CCP_LOYALTY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "loyaltyRate",	CCP_LOYALTYRATE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "shouldSave",		CCP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "origin",			CCP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "partyLootable",	CCP_PARTYLOOTABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "party",			CCP_PARTY,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "multi",			CCP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "accountNum",		CCP_ACCOUNTNUM,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "account",		CCP_ACCOUNT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "createdOn",		CCP_CREATEDON,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "playTime",		CCP_PLAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "housesOwned",	CCP_HOUSESOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "housesCoOwned",	CCP_HOUSESCOOWNED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "sectionID",				JSCCharacter_get_sectionID,	   JSCCharacter_set_sectionID,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "name",					JSCCharacter_get_name,	   JSCCharacter_set_name,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "origName",				JSCCharacter_get_origName,	   JSCCharacter_set_origName,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "title",					JSCCharacter_get_title,	   JSCCharacter_set_title,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "x",						JSCCharacter_get_x,	   JSCCharacter_set_x,				     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "y",						JSCCharacter_get_y,	   JSCCharacter_set_y,				     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "z",						JSCCharacter_get_z,	   JSCCharacter_set_z,				     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oldX",					JSCCharacter_get_oldX,	   JSCCharacter_set_oldX,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oldY",					JSCCharacter_get_oldY,	   JSCCharacter_set_oldY,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oldZ",					JSCCharacter_get_oldZ,	   JSCCharacter_set_oldZ,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "id",						JSCCharacter_get_id,	   JSCCharacter_set_id,				     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "colour",					JSCCharacter_get_colour,	   JSCCharacter_set_colour,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "color",					JSCCharacter_get_color,	   JSCCharacter_set_color,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skin",					JSCCharacter_get_skin,	   JSCCharacter_set_skin,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hue",					JSCCharacter_get_hue,	   JSCCharacter_set_hue,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "controlSlots",			JSCCharacter_get_controlSlots,	   JSCCharacter_set_controlSlots,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "controlSlotsUsed",			JSCCharacter_get_controlSlotsUsed,	   JSCCharacter_set_controlSlotsUsed,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "orneriness",				JSCCharacter_get_orneriness,	   JSCCharacter_set_orneriness,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "owner",					JSCCharacter_get_owner,	   JSCCharacter_set_owner,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "visible",				JSCCharacter_get_visible,	   JSCCharacter_set_visible,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "serial",							JSCCharacter_get_serial,	   JSCCharacter_set_serial,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "health",							JSCCharacter_get_health,	   JSCCharacter_set_health,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scripttrigger",					JSCCharacter_get_scripttrigger,	   JSCCharacter_set_scripttrigger,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "scriptTriggers",					JSCCharacter_get_scriptTriggers,	   JSCCharacter_set_scriptTriggers,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "worldnumber",					JSCCharacter_get_worldnumber,	   JSCCharacter_set_worldnumber,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "instanceID",						JSCCharacter_get_instanceID,	   JSCCharacter_set_instanceID,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "target",							JSCCharacter_get_target,	   JSCCharacter_set_target,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "dexterity",						JSCCharacter_get_dexterity,	   JSCCharacter_set_dexterity,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "intelligence",					JSCCharacter_get_intelligence,	   JSCCharacter_set_intelligence,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "strength",						JSCCharacter_get_strength,	   JSCCharacter_set_strength,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "actualDexterity",					JSCCharacter_get_actualDexterity,	   JSCCharacter_set_actualDexterity,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "actualIntelligence",					JSCCharacter_get_actualIntelligence,	   JSCCharacter_set_actualIntelligence,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "actualStrength",						JSCCharacter_get_actualStrength,	   JSCCharacter_set_actualStrength,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skills",							JSCCharacter_get_skills,	   JSCCharacter_set_skills,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "mana",							JSCCharacter_get_mana,	   JSCCharacter_set_mana,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "stamina",						JSCCharacter_get_stamina,	   JSCCharacter_set_stamina,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "pack",							JSCCharacter_get_pack,	   JSCCharacter_set_pack,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fame",							JSCCharacter_get_fame,	   JSCCharacter_set_fame,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "karma",							JSCCharacter_get_karma,	   JSCCharacter_set_karma,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "attack",			JSCCharacter_get_attack,			JSPROP_ENUMPERMRO ),
+  JS_PSGS( "canAttack",						JSCCharacter_get_canAttack,	   JSCCharacter_set_canAttack,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fleeAt",						JSCCharacter_get_fleeAt,	   JSCCharacter_set_fleeAt,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "reAttackAt",					JSCCharacter_get_reAttackAt,	   JSCCharacter_set_reAttackAt,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "brkPeaceChance",				JSCCharacter_get_brkPeaceChance,	   JSCCharacter_set_brkPeaceChance,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "setPeace",						JSCCharacter_get_setPeace,	   JSCCharacter_set_setPeace,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hunger",						JSCCharacter_get_hunger,	   JSCCharacter_set_hunger,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "hungerRate",		JSCCharacter_get_hungerRate,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "thirst",						JSCCharacter_get_thirst,	   JSCCharacter_set_thirst,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "thirstRate",		JSCCharacter_get_thirstRate,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "frozen",						JSCCharacter_get_frozen,	   JSCCharacter_set_frozen,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "commandlevel",							JSCCharacter_get_commandlevel,	   JSCCharacter_set_commandlevel,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "race",									JSCCharacter_get_race,	   JSCCharacter_set_race,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hasStolen",								JSCCharacter_get_hasStolen,	   JSCCharacter_set_hasStolen,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "criminal",								JSCCharacter_get_criminal,	   JSCCharacter_set_criminal,		     JSPROP_ENUMANDPERM ),
+  JS_PSG( "murderer",		JSCCharacter_get_murderer,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "innocent",								JSCCharacter_get_innocent,	   JSCCharacter_set_innocent,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "murdercount",								JSCCharacter_get_murdercount,	   JSCCharacter_set_murdercount,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "neutral",								JSCCharacter_get_neutral,	   JSCCharacter_set_neutral,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "npcFlag",								JSCCharacter_get_npcFlag,	   JSCCharacter_set_npcFlag,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "npCCharacter",								JSCCharacter_get_npCCharacter,	   JSCCharacter_set_npCCharacter,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "gender",								JSCCharacter_get_gender,	   JSCCharacter_set_gender,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "dead",								JSCCharacter_get_dead,			JSPROP_ENUMPERMRO ),
+  JS_PSGS( "npc",								JSCCharacter_get_npc,	   JSCCharacter_set_npc,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isAwake",								JSCCharacter_get_isAwake,	   JSCCharacter_set_isAwake,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "online",			JSCCharacter_get_online,			JSPROP_ENUMPERMRO ),
+  JS_PSGS( "direction",						JSCCharacter_get_direction,	   JSCCharacter_set_direction,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isRunning",						JSCCharacter_get_isRunning,	   JSCCharacter_set_isRunning,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "region",						JSCCharacter_get_region,	   JSCCharacter_set_region,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "town",						JSCCharacter_get_town,	   JSCCharacter_set_town,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "guild",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "baseskills",						JSCCharacter_get_baseskills,	   JSCCharacter_set_baseskills,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillsused",						JSCCharacter_get_skillsused,	   JSCCharacter_set_skillsused,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "socket",						JSCCharacter_get_socket,	   JSCCharacter_set_socket,			     JSPROP_ENUMANDPERM ),
+  JS_PSG( "isChar",			JSCCharacter_get_isChar,			JSPROP_ENUMPERMRO ),
+  JS_PSG( "isItem",			JSCCharacter_get_isItem,			JSPROP_ENUMPERMRO ),
+  JS_PSG( "isSpawner",		JSCCharacter_get_isSpawner,		JSPROP_ENUMPERMRO ),
+  JS_PSG( "spawnSerial",	JSCCharacter_get_spawnSerial,	JSPROP_ENUMPERMRO ),
+  JS_PSGS( "maxhp",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxstamina",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxmana",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oldWandertype",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "wandertype",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fx1",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fy1",						JSCCharacter_get_guild,	   JSCCharacter_set_guild,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fx2",						JSCCharacter_get_fx2,	   JSCCharacter_set_fx2,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fy2",						JSCCharacter_get_fy2,	   JSCCharacter_set_fy2,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fz",						JSCCharacter_get_fz,	   JSCCharacter_set_fz,				     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isonhorse",						JSCCharacter_get_isonhorse,	   JSCCharacter_set_isonhorse,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isFlying",						JSCCharacter_get_isFlying,	   JSCCharacter_set_isFlying,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGuarded",						JSCCharacter_get_isGuarded,	   JSCCharacter_set_isGuarded,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "guarding",						JSCCharacter_get_guarding,	   JSCCharacter_set_guarding,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tempdex",						JSCCharacter_get_tempdex,	   JSCCharacter_set_tempdex,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tempint",						JSCCharacter_get_tempint,	   JSCCharacter_set_tempint,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tempstr",						JSCCharacter_get_tempstr,	   JSCCharacter_set_tempstr,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "poison",						JSCCharacter_get_poison,	   JSCCharacter_set_poison,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "lightlevel",						JSCCharacter_get_lightlevel,	   JSCCharacter_set_lightlevel,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "vulnerable",						JSCCharacter_get_vulnerable,	   JSCCharacter_set_vulnerable,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "willhunger",						JSCCharacter_get_willhunger,	   JSCCharacter_set_willhunger,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "willthirst",						JSCCharacter_get_willthirst,	   JSCCharacter_set_willthirst,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "lodamage",						JSCCharacter_get_lodamage,	   JSCCharacter_set_lodamage,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hidamage",						JSCCharacter_get_hidamage,	   JSCCharacter_set_hidamage,		     JSPROP_ENUMANDPERM ),
+  JS_PSG( "flag",			JSCCharacter_get_flag,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "atWar",						JSCCharacter_get_atWar,	   JSCCharacter_set_atWar,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "spellCast",						JSCCharacter_get_spellCast,	   JSCCharacter_set_spellCast,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isCasting",						JSCCharacter_get_isCasting,	   JSCCharacter_set_isCasting,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "priv",						JSCCharacter_get_priv,	   JSCCharacter_set_priv,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "townPriv",						JSCCharacter_get_townPriv,	   JSCCharacter_set_townPriv,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "guildTitle",						JSCCharacter_get_guildTitle,	   JSCCharacter_set_guildTitle,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hairStyle",						JSCCharacter_get_hairStyle,	   JSCCharacter_set_hairStyle,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hairColour",						JSCCharacter_get_hairColour,	   JSCCharacter_set_hairColour,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hairColor",						JSCCharacter_get_hairColor,	   JSCCharacter_set_hairColor,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "beardStyle",						JSCCharacter_get_beardStyle,	   JSCCharacter_set_beardStyle,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "beardColour",						JSCCharacter_get_beardColour,	   JSCCharacter_set_beardColour,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "beardColor",						JSCCharacter_get_beardColor,	   JSCCharacter_set_beardColor,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fontType",						JSCCharacter_get_fontType,	   JSCCharacter_set_fontType,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "sayColour",						JSCCharacter_get_sayColour,	   JSCCharacter_set_sayColour,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "emoteColour",						JSCCharacter_get_emoteColour,	   JSCCharacter_set_emoteColour,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "attacker",						JSCCharacter_get_attacker,	   JSCCharacter_set_attacker,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "raceGate",						JSCCharacter_get_raceGate,	   JSCCharacter_set_raceGate,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillLock",						JSCCharacter_get_skillLock,	   JSCCharacter_set_skillLock,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "deaths",						JSCCharacter_get_deaths,	   JSCCharacter_set_deaths,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "ownerCount",						JSCCharacter_get_ownerCount,	   JSCCharacter_set_ownerCount,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "nextAct",						JSCCharacter_get_nextAct,	   JSCCharacter_set_nextAct,		     JSPROP_ENUMANDPERM ),
+  JS_PSG( "petCount",		JSCCharacter_get_petCount,		JSPROP_ENUMPERMRO ),
+  JS_PSG( "followerCount",	JSCCharacter_get_followerCount,		JSPROP_ENUMPERMRO ),
+  JS_PSG( "ownedItemsCount",JSCCharacter_get_ownedItemsCount,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "cell",						JSCCharacter_get_cell,	   JSCCharacter_set_cell,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "allmove",						JSCCharacter_get_allmove,	   JSCCharacter_set_allmove,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "houseicons",						JSCCharacter_get_houseicons,	   JSCCharacter_set_houseicons,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "spattack",						JSCCharacter_get_spattack,	   JSCCharacter_set_spattack,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "spdelay",						JSCCharacter_get_spdelay,	   JSCCharacter_set_spdelay,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "aitype",						JSCCharacter_get_aitype,	   JSCCharacter_set_aitype,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "split",						JSCCharacter_get_split,	   JSCCharacter_set_split,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "splitchance",						JSCCharacter_get_splitchance,	   JSCCharacter_set_splitchance,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hireling",						JSCCharacter_get_hireling,	   JSCCharacter_set_hireling,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "trainer",						JSCCharacter_get_trainer,	   JSCCharacter_set_trainer,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "weight",						JSCCharacter_get_weight,	   JSCCharacter_set_weight,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "squelch",						JSCCharacter_get_squelch,	   JSCCharacter_set_squelch,		     JSPROP_ENUMANDPERM ),
+  JS_PSG( "isJailed",		JSCCharacter_get_isJailed,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "magicReflect",						JSCCharacter_get_magicReflect,	   JSCCharacter_set_magicReflect,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "permanentMagicReflect",						JSCCharacter_get_permanentMagicReflect,	   JSCCharacter_set_permanentMagicReflect,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tamed",						JSCCharacter_get_tamed,	   JSCCharacter_set_tamed,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tamedHungerRate",						JSCCharacter_get_tamedHungerRate,	   JSCCharacter_set_tamedHungerRate,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "tamedThirstRate",						JSCCharacter_get_tamedThirstRate,	   JSCCharacter_set_tamedThirstRate,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "hungerWildChance",						JSCCharacter_get_hungerWildChance,	   JSCCharacter_set_hungerWildChance,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "thirstWildChance",						JSCCharacter_get_thirstWildChance,	   JSCCharacter_set_thirstWildChance,     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "foodList",						JSCCharacter_get_foodList,	   JSCCharacter_set_foodList,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "mounted",						JSCCharacter_get_mounted,	   JSCCharacter_set_mounted,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "stabled",						JSCCharacter_get_stabled,	   JSCCharacter_set_stabled,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isUsingPotion",						JSCCharacter_get_isUsingPotion,	   JSCCharacter_set_isUsingPotion,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "stealth",						JSCCharacter_get_stealth,	   JSCCharacter_set_stealth,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillToTame",						JSCCharacter_get_skillToTame,	   JSCCharacter_set_skillToTame,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillToProv",						JSCCharacter_get_skillToProv,	   JSCCharacter_set_skillToProv,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "skillToPeace",						JSCCharacter_get_skillToPeace,	   JSCCharacter_set_skillToPeace,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "poisonStrength",						JSCCharacter_get_poisonStrength,	   JSCCharacter_set_poisonStrength,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isPolymorphed",						JSCCharacter_get_isPolymorphed,	   JSCCharacter_set_isPolymorphed,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isIncognito",						JSCCharacter_get_isIncognito,	   JSCCharacter_set_isIncognito,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isDisguised",						JSCCharacter_get_isDisguised,	   JSCCharacter_set_isDisguised,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canRun",						JSCCharacter_get_canRun,	   JSCCharacter_set_canRun,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isMeditating",						JSCCharacter_get_isMeditating,	   JSCCharacter_set_isMeditating,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGM",						JSCCharacter_get_isGM,	   JSCCharacter_set_isGM,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canBroadcast",						JSCCharacter_get_canBroadcast,	   JSCCharacter_set_canBroadcast,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "singClickSer",						JSCCharacter_get_singClickSer,	   JSCCharacter_set_singClickSer,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "noSkillTitles",						JSCCharacter_get_noSkillTitles,	   JSCCharacter_set_noSkillTitles,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isGMPageable",						JSCCharacter_get_isGMPageable,	   JSCCharacter_set_isGMPageable,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "canSnoop",						JSCCharacter_get_canSnoop,	   JSCCharacter_set_canSnoop,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isCounselor",						JSCCharacter_get_isCounselor,	   JSCCharacter_set_isCounselor,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "noNeedMana",						JSCCharacter_get_noNeedMana,	   JSCCharacter_set_noNeedMana,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "isDispellable",						JSCCharacter_get_isDispellable,	   JSCCharacter_set_isDispellable,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "noNeedReags",						JSCCharacter_get_noNeedReags,	   JSCCharacter_set_noNeedReags,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "orgID",						JSCCharacter_get_orgID,	   JSCCharacter_set_orgID,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "orgSkin",						JSCCharacter_get_orgSkin,	   JSCCharacter_set_orgSkin,		     JSPROP_ENUMANDPERM ),
+  JS_PSG( "isAnimal",		JSCCharacter_get_isAnimal,		JSPROP_ENUMPERMRO ),
+  JS_PSG( "isHuman",		JSCCharacter_get_isHuman,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "isShop",						JSCCharacter_get_isShop,	   JSCCharacter_set_isShop,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "maxLoyalty",						JSCCharacter_get_maxLoyalty,	   JSCCharacter_set_maxLoyalty,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "loyalty",						JSCCharacter_get_loyalty,	   JSCCharacter_set_loyalty,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "loyaltyRate",						JSCCharacter_get_loyaltyRate,	   JSCCharacter_set_loyaltyRate,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "shouldSave",						JSCCharacter_get_shouldSave,	   JSCCharacter_set_shouldSave,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "origin",						JSCCharacter_get_origin,	   JSCCharacter_set_origin,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "partyLootable",						JSCCharacter_get_partyLootable,	   JSCCharacter_set_partyLootable,	     JSPROP_ENUMANDPERM ),
+  JS_PSG( "party",			JSCCharacter_get_party,		JSPROP_ENUMPERMRO ),
+  JS_PSGS( "multi",							JSCCharacter_get_multi,	   JSCCharacter_set_multi,			     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "accountNum",						JSCCharacter_get_accountNum,	   JSCCharacter_set_accountNum,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "account",						JSCCharacter_get_account,	   JSCCharacter_set_account,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "createdOn",						JSCCharacter_get_createdOn,	   JSCCharacter_set_createdOn,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "playTime",						JSCCharacter_get_playTime,	   JSCCharacter_set_playTime,		     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "housesOwned",						JSCCharacter_get_housesOwned,	   JSCCharacter_set_housesOwned,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "housesCoOwned",						JSCCharacter_get_housesCoOwned,	   JSCCharacter_set_housesCoOwned,	     JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
