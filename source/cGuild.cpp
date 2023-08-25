@@ -645,7 +645,7 @@ GUILDREL *CGuild::GuildRelationList( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save guild data to worldfiles
 //o------------------------------------------------------------------------------------------------o
-void CGuild::Save( std::ofstream &toSave, GUILDID gNum )
+void CGuild::Save( std::ostream &toSave, GUILDID gNum )
 {
 	toSave << "[GUILD " << gNum << ']' << '\n' << "{" << '\n';
 	toSave << "NAME=" << name << '\n';

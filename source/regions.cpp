@@ -1,10 +1,14 @@
+#include "regions.h"
+
+#include <filesystem>
+#include <fstream>
+#include <vector>
+
+
 #include "uox3.h"
 #include "classes.h"
-#include "regions.h"
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
-#include <filesystem>
-#include <vector>
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
@@ -117,7 +121,7 @@ void LoadSpawnItem( std::ifstream& readDestination )
 //|					to deal with pointer based stuff in region rather than index based stuff in array
 //|					Also saves out all data regardless (in preparation for a simple binary save)
 //o------------------------------------------------------------------------------------------------o
-void CMapRegion::SaveToDisk( std::ofstream& writeDestination )
+void CMapRegion::SaveToDisk( std::ostream& writeDestination )
 {
 	std::vector<CChar *> removeChar;
 	for( const auto &charToWrite : charData.collection() )

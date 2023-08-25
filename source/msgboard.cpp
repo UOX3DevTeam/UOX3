@@ -300,7 +300,7 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgId, const PostTypes
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file
 //o------------------------------------------------------------------------------------------------o
-void MsgBoardWritePost( std::ofstream& mFile, const MsgBoardPost_st& msgBoardPost )
+void MsgBoardWritePost( std::ostream& mFile, const MsgBoardPost_st& msgBoardPost )
 {
 	char wBuffer[4];
 

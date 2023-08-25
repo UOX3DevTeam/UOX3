@@ -2,6 +2,9 @@
 #define __CCHAR_H__
 #include "cBaseObject.h"
 #include "cAccountClass.h"
+
+#include <ostream>
+
 enum cNPC_FLAG
 {
 	fNPC_NEUTRAL = 0,
@@ -74,7 +77,7 @@ private:
 	struct NPCValues_st
 	{
 		NPCValues_st();
-		void				DumpBody( std::ofstream& outStream );
+		void				DumpBody( std::ostream& outStream );
 
 		SI08				wanderMode; // NPC Wander Mode
 		SI08				oldWanderMode; // Used for fleeing npcs
@@ -134,7 +137,7 @@ private:
 	struct PlayerValues_st
 	{
 		PlayerValues_st();
-		void		DumpBody( std::ofstream& outStream );
+		void		DumpBody( std::ostream& outStream );
 
 		SERIAL		callNum;        // Callnum GM or Counsellor is on
 		SERIAL		playerCallNum;  // Players call number in GM or Counsellor requestQueue
@@ -257,8 +260,8 @@ protected:
 	DAMAGETRACK		damageDealt;
 	DAMAGETRACK		damageHealed;
 
-	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool	DumpBody( std::ofstream &outStream ) const override;
+	virtual bool	DumpHeader( std::ostream &outStream ) const override;
+	virtual bool	DumpBody( std::ostream &outStream ) const override;
 	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual bool	LoadRemnants( void ) override;
 
@@ -570,7 +573,7 @@ public:
 
 	void			BreakConcentration( CSocket *sock = nullptr );
 
-	virtual bool	Save( std::ofstream &outStream ) override;
+	virtual bool	Save( std::ostream &outStream ) override;
 	virtual void	PostLoadProcessing( void ) override;
 
 	SI16			ActualStrength( void ) const;

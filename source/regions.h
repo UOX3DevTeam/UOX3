@@ -11,6 +11,8 @@
 #ifndef __Region_h
 #define __Region_h
 
+#include <ostream>
+
 #include "mapstuff.h"
 
 const SI16 MapColSize = 32;
@@ -55,7 +57,7 @@ public:
 	{
 	};
 
-	void					SaveToDisk( std::ofstream& writeDestination );
+	void					SaveToDisk( std::ostream& writeDestination );
 };
 
 class CMapWorld

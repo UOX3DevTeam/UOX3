@@ -1954,7 +1954,7 @@ void cEffects::LoadEffects( void )
 //|	Purpose		-	Output the effect data to the effect destination. Returns true/false
 //|					indicating the success of the write operation
 //o------------------------------------------------------------------------------------------------o
-bool CTEffect::Save( std::ofstream &effectDestination ) const
+bool CTEffect::Save( std::ostream &effectDestination ) const
 {
 	CBaseObject *getPtr = nullptr;
 	const char newLine = '\n';

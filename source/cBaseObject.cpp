@@ -717,7 +717,7 @@ void CBaseObject::SetOwner( CChar *newOwner )
 //|	Purpose		-	Dumps out body information of the object
 //|					This is tag/data pairing information
 //o------------------------------------------------------------------------------------------------o
-bool CBaseObject::DumpBody( std::ofstream &outStream ) const
+bool CBaseObject::DumpBody( std::ostream &outStream ) const
 {
 	SI16 temp_st2, temp_dx2, temp_in2;
 	const char newLine = '\n';
@@ -1669,7 +1669,7 @@ void CBaseObject::IncIntelligence( SI16 toInc )
 //|						Mode 0 - Text
 //|						Mode 1 - Binary
 //o------------------------------------------------------------------------------------------------o
-bool CBaseObject::DumpFooter( std::ofstream &outStream ) const
+bool CBaseObject::DumpFooter( std::ostream &outStream ) const
 {
 	outStream << "\no---o\n\n";
 	return true;

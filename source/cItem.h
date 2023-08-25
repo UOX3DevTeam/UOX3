@@ -2,6 +2,8 @@
 #define __CITEM_H__
 #include "GenericList.h"
 #include <array>
+#include <ostream>
+
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -80,7 +82,7 @@ protected:
 	virtual void	AddSelfToOwner( void ) override;
 
 	auto			CheckItemIntegrity() -> void;
-	virtual bool	DumpHeader( std::ofstream &outStream ) const override;
+	virtual bool	DumpHeader( std::ostream &outStream ) const override;
 	virtual bool	LoadRemnants( void ) override;
 
 	UI32			spells[3];		// For spellbooks (eventually should be a derived class)
@@ -306,8 +308,8 @@ public:
 	auto			SendPackItemToSocket( CSocket *mSock ) -> void;
 	virtual void	RemoveFromSight( CSocket *mSock = nullptr );
 
-	virtual bool	Save( std::ofstream &outStream ) override;
-	virtual bool	DumpBody( std::ofstream &outStream ) const override;
+	virtual bool	Save( std::ostream &outStream ) override;
+	virtual bool	DumpBody( std::ostream &outStream ) const override;
 	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
@@ -341,8 +343,8 @@ public:
 	auto				IsSectionAList() const -> bool;
 	auto				IsSectionAList( bool newVal ) -> void;
 
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 

@@ -101,7 +101,7 @@
     
  <!-- Base Object group -->   
    <ClCompile Include="..\..\source\boats.cpp" />
-   <ClCompile Include="..\..\source\cBaseobject.cpp" />
+   <ClCompile Include="..\..\source\cBaseObject.cpp" />
    <ClCompile Include="..\..\source\cChar.cpp" />
    <ClCompile Include="..\..\source\cConsole.cpp" />
    <ClCompile Include="..\..\source\cGuild.cpp" />
@@ -118,7 +118,6 @@
    <ClCompile Include="..\..\source\cAccountClass.cpp" />
    <ClCompile Include="..\..\source\CGump.cpp" />
    <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
-   <ClCompile Include="..\..\source\cmdtable.cpp" />
    <ClCompile Include="..\..\source\combat.cpp" />
    <ClCompile Include="..\..\source\commands.cpp" />
    <ClCompile Include="..\..\source\cRaces.cpp" />
@@ -153,6 +152,7 @@
    <ClCompile Include="..\..\source\calcfuncs.cpp" />
    <ClCompile Include="..\..\source\cDice.cpp" />
    <ClCompile Include="..\..\source\cPlayerAction.cpp" />
+   <ClCompile Include="..\..\source\cmdtable.cpp" />
    <ClCompile Include="..\..\source\CResponse.cpp" />
    <ClCompile Include="..\..\source\cVersionClass.cpp" />
    <ClCompile Include="..\..\source\dist.cpp" />
@@ -219,13 +219,13 @@
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\cAccountClass.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
+    <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\cHTMLSystem.h" />
     <ClInclude Include="..\..\source\cMagic.h" />
     <ClInclude Include="..\..\source\combat.h" />
     <ClInclude Include="..\..\source\commands.h" />
     <ClInclude Include="..\..\source\cRaces.h" />
     <ClInclude Include="..\..\source\cWeather.hpp" />
-    <ClInclude Include="..\..\source\gump.h" />
     <ClInclude Include="..\..\source\jail.h" />
     <ClInclude Include="..\..\source\magic.h" />
     <ClInclude Include="..\..\source\movement.h" />

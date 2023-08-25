@@ -21,7 +21,7 @@ public:
 	virtual const std::string Pass( void );
 	virtual UI08		Unknown( void );
 	virtual bool		Handle( void ) override;
-	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void		Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIServerSelect : public CPInputBuffer
@@ -37,7 +37,7 @@ public:
 	virtual void	Receive( void ) override;
 	virtual SI16	ServerNum( void );
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPISecondLogin : public CPInputBuffer
@@ -58,7 +58,7 @@ public:
 	virtual const std::string Name( void );
 	virtual const std::string Pass( void );
 	virtual bool		Handle( void ) override;
-	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void		Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIClientVersion : public CPInputBuffer
@@ -75,7 +75,7 @@ public:
 	CPIClientVersion( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 	virtual void	SetClientVersionShortAndType( CSocket *s, char *verString );
 };
 
@@ -99,7 +99,7 @@ public:
 	CPINewClientVersion( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIUpdateRangeChange : public CPInputBuffer
@@ -114,7 +114,7 @@ public:
 	CPIUpdateRangeChange( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPILogoutStatus : public CPInputBuffer
@@ -129,7 +129,7 @@ public:
 	CPILogoutStatus( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIKrriosClientSpecial : public CPInputBuffer
@@ -147,7 +147,7 @@ public:
 	CPIKrriosClientSpecial( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPITips : public CPInputBuffer
@@ -203,7 +203,7 @@ public:
 	CPIStatusRequest( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPISpy : public CPInputBuffer
@@ -266,7 +266,7 @@ public:
 	CPIDblClick( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPISingleClick : public CPInputBuffer
@@ -281,7 +281,7 @@ public:
 	CPISingleClick( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIMoveRequest : public CPInputBuffer
@@ -294,7 +294,7 @@ public:
 	CPIMoveRequest( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIResyncReq : public CPInputBuffer
@@ -343,7 +343,7 @@ public:
 	CPITargetCursor( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader ) override;
 };
 
 class CPIEquipItem : public CPInputBuffer
@@ -597,7 +597,7 @@ public:
 	virtual bool	Handle( void ) override;
 	virtual void	SetNewCharGenderAndRace( CChar *mChar );
 	virtual void	SetNewCharSkillsStats( CChar *mChar );
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIPlayCharacter : public CPInputBuffer
@@ -616,7 +616,7 @@ public:
 	CPIPlayCharacter( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIGumpInput : public CPInputBuffer
@@ -643,7 +643,7 @@ public:
 	UI08				Index( void ) const;
 	UI08				Unk( SI32 offset ) const;
 	const std::string	Reply( void ) const;
-	virtual void		Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void		Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIHelpRequest : public CPInputBuffer
@@ -686,7 +686,7 @@ public:
 	CPIDyeWindow( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIMsgBoardEvent : public CPInputBuffer
@@ -740,7 +740,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -759,7 +759,7 @@ public:
 	CPISubcommands( CSocket *s );
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 };
 
 class CPIPartyCommand : public CPInputBuffer
@@ -773,7 +773,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -788,7 +788,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -805,7 +805,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -822,7 +822,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -839,7 +839,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -856,7 +856,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -873,7 +873,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -891,7 +891,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -909,7 +909,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -924,7 +924,7 @@ public:
 
 	virtual void	Receive(void) override;
 	virtual bool	Handle(void) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -939,7 +939,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -954,7 +954,7 @@ public:
 
 	virtual void	Receive(void) override;
 	virtual bool	Handle(void) override;
-	virtual void	Log(std::ofstream &outStream, bool fullHeader = true) override;
+	virtual void	Log(std::ostream &outStream, bool fullHeader = true) override;
 
 };
 
@@ -969,7 +969,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 
@@ -984,7 +984,7 @@ public:
 
 	virtual void	Receive( void ) override;
 	virtual bool	Handle( void ) override;
-	virtual void	Log( std::ofstream &outStream, bool fullHeader = true ) override;
+	virtual void	Log( std::ostream &outStream, bool fullHeader = true ) override;
 
 };
 

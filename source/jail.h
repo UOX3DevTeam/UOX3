@@ -47,7 +47,7 @@ public:
 	JailOccupant_st *Occupant( size_t occupantId );
 	void	PeriodicCheck( void );
 	void	AddOccupant( JailOccupant_st *toAdd );
-	void	WriteData( std::ofstream &outStream, size_t cellNum );
+	void	WriteData( std::ostream &outStream, size_t cellNum );
 };
 
 class CJailSystem

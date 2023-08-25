@@ -194,7 +194,7 @@ void CJailCell::PeriodicCheck( void )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save out data on jailed players to stream
 //o------------------------------------------------------------------------------------------------o
-void CJailCell::WriteData( std::ofstream &outStream, size_t cellNumber )
+void CJailCell::WriteData( std::ostream &outStream, size_t cellNumber )
 {
 	std::vector<JailOccupant_st *>::const_iterator jIter;
 	for( jIter = playersInJail.begin(); jIter != playersInJail.end(); ++jIter )

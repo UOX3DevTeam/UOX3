@@ -92,7 +92,7 @@
     <ClCompile Include="..\..\source\boats.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cBaseobject.cpp">
+    <ClCompile Include="..\..\source\cBaseObject.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cChar.cpp">
@@ -134,9 +134,6 @@
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cHTMLSystem.cpp">
-      <Filter>Source Files\Subsystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\source\cmdtable.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\combat.cpp">
@@ -226,6 +223,9 @@
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\calcfuncs.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\cmdtable.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cDice.cpp">
