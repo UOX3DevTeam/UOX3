@@ -10041,7 +10041,7 @@ Changed:
 2001-09-12 22:19  darkangelab
 
 	* cItem.cpp, cItem.h, cmdtable.cpp, commands.cpp, effect.cpp,
-	funcdecl.h, gump.h, gumps.cpp, magic.cpp, magic.h, targeting.cpp,
+	funcdecl.h, CGump.h, gumps.cpp, magic.cpp, magic.h, targeting.cpp,
 	uox3.cpp, uoxstruct.h:
 	create.scp item creation now tracks which entry it was made from
 	CItem now has some more const'd functions (weather related)
@@ -10381,7 +10381,7 @@ Changed:
 2001-08-20 13:09  toinzane
 
 	* cGuild.cpp, cItem.cpp, cItem.h, cScript.cpp, cmdtable.cpp,
-	commands.cpp, funcdecl.h, gump.h, gumps.cpp, items.cpp, queue.cpp,
+	commands.cpp, funcdecl.h, CGump.h, gumps.cpp, items.cpp, queue.cpp,
 	skills.cpp, targeting.cpp, townregion.cpp, wholist.cpp:
 	Removed ItemHand() stuff entirely, (This will cause your worldfile
 	to report invalid tags, this is normal, just save and reload the
@@ -10638,7 +10638,7 @@ Changed:
 2001-08-08 14:23  toinzane
 
 	* ai.cpp, books.cpp, books.h, cClick.cpp, cGuild.cpp, cmdtable.cpp,
-	commands.cpp, commands.h, funcdecl.h, gump.h, gumps.cpp, html.cpp,
+	commands.cpp, commands.h, funcdecl.h, CGump.h, gumps.cpp, html.cpp,
 	jail.cpp, necro.cpp, network.cpp, speech.cpp, targeting.cpp,
 	uox3.cpp, vendor.cpp:
 	Many more object conversions.
@@ -12349,7 +12349,7 @@ Changed:
 	cServerDefinitions.h, cSocket.cpp, cSocket.h, cThreadQueue.cpp,
 	cThreadQueue.h, calcfuncs.cpp, cdice.h, classes.h, combat.h,
 	commands.h, configure, configure.in, enums.h, fileio.cpp,
-	funcdecl.h, gump.h, handlers.h, hash.h, install-sh, magic.cpp,
+	funcdecl.h, CGump.h, handlers.h, hash.h, install-sh, magic.cpp,
 	magic.h, mapclasses.h, mapstuff.cpp, mapstuff.h, missing,
 	mkinstalldirs, movement.h, network.cpp, network.h, packets.h,
 	regions.h, skills.h, speech.h, ssection.h, targeting.cpp,
@@ -12607,7 +12607,7 @@ Changed:
 	* Dictionary.cpp, Dictionary.h, cSkillClass.h, cSocket.cpp,
 	cSocket.h, cThreadQueue.cpp, cThreadQueue.h, cWeather.cpp,
 	cWeather.hpp, debug.cpp, debug.h, dist.cpp, effect.cpp, enums.h,
-	fileio.cpp, fileio.h, funcdecl.h, globals.cpp, gump.h, gumps.cpp,
+	fileio.cpp, fileio.h, funcdecl.h, globals.cpp, CGump.h, gumps.cpp,
 	handlers.h, hash.cpp, hash.h, house.cpp, html.cpp, im.cpp, im.h,
 	itemhandler.cpp, PageVector.h, items.cpp, magic.cpp, magic.h,
 	mapclasses.h, mapstuff.cpp, mapstuff.h, movement.cpp, movement.h,

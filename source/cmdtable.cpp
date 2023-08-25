@@ -19,7 +19,7 @@
 #include "PageVector.h"
 #include "speech.h"
 #include "cHTMLSystem.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cEffects.h"
 #include "classes.h"
 #include "regions.h"

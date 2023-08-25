@@ -60,7 +60,7 @@
 #include "cVersionClass.h"
 #include "ssection.h"
 #include "cHTMLSystem.h"
-#include "gump.h"
+#include "CGump.h"
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"

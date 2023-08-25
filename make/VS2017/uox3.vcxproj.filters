@@ -77,7 +77,7 @@
     <ClCompile Include="..\..\source\ssection.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cBaseobject.cpp">
+    <ClCompile Include="..\..\source\cBaseObject.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cChar.cpp">
@@ -385,7 +385,7 @@
     <ClInclude Include="..\..\source\cWeather.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\gump.h">
+    <ClInclude Include="..\..\source\CGump.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jail.h">

@@ -25,7 +25,7 @@ add_executable(uox3
 	../../source/ssection.h	
 # Base Object Group
 	../../source/boats.cpp   
-	../../source/cBaseobject.cpp
+	../../source/cBaseObject.cpp
 	../../source/cBaseObject.h
 	../../source/cChar.cpp
 	../../source/cChar.h
@@ -55,10 +55,10 @@ add_executable(uox3
    ../../source/cAccountClass.h
    ../../source/cEffects.h
    ../../source/CGump.cpp
+   ../../source/CGump.h
    ../../source/cHTMLSystem.cpp
    ../../source/cHTMLSystem.h  
    ../../source/cMagic.h
-   ../../source/cmdtable.cpp
    ../../source/combat.cpp
    ../../source/combat.h
    ../../source/commands.cpp
@@ -68,7 +68,6 @@ add_executable(uox3
    ../../source/cWeather.cpp
    ../../source/cWeather.hpp
    ../../source/gumps.cpp
-   ../../source/gump.h
    ../../source/house.cpp
    ../../source/items.cpp
    ../../source/jail.cpp
@@ -83,14 +82,14 @@ add_executable(uox3
    ../../source/PartySystem.cpp
    ../../source/PartySystem.h
    ../../source/quantityfuncs.cpp
-	../../source/queue.cpp
+   ../../source/queue.cpp
    ../../source/regions.cpp
    ../../source/regions.h
    ../../source/skills.cpp
    ../../source/skills.h
    ../../source/sound.cpp
    ../../source/speech.cpp
-	../../source/speech.h
+   ../../source/speech.h
    ../../source/targeting.cpp
    ../../source/teffect.h
    ../../source/townregion.cpp
@@ -110,6 +109,7 @@ add_executable(uox3
    ../../source/cDice.cpp
    ../../source/cdice.h
    ../../source/classes.h
+   ../../source/cmdtable.cpp
    ../../source/cmdtable.h
    ../../source/ConfigOS.h
    ../../source/cPlayerAction.cpp
@@ -129,7 +129,7 @@ add_executable(uox3
    ../../source/osunique.hpp
    ../../source/pcmanage.cpp
    ../../source/power.h
-	../../source/Prerequisites.h
+   ../../source/Prerequisites.h
    ../../source/typedefs.h
 	../../source/UOXStdHeaders.h
 # JS Engine group
