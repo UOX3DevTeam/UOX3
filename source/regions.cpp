@@ -333,7 +333,7 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 //o------------------------------------------------------------------------------------------------o
 auto CMapWorld::SaveResources( UI08 worldNum )->std::unique_ptr<BaseStream>
 {
-	char wBuffer[2];
+	
 	auto resourceFile	= std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].bin"s);
     auto stream = new BinaryStream(resourceFile);
     stream->data = std::vector<std::uint8_t>(mapResources.size()*6,0) ;
