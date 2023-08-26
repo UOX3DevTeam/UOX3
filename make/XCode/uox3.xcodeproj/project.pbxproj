@@ -121,6 +121,9 @@
 
 /* Begin PBXFileReference section */
 		56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
+		56C9E3A72A9A6BEE004D9F38 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = CMakeLists.txt; path = ../cmake/CMakeLists.txt; sourceTree = "<group>"; };
+		56C9E3A92A9A6C0A004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2022/uox3.vcxproj; sourceTree = "<group>"; };
+		56C9E3AA2A9A6C0A004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2022/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -305,9 +308,28 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		56C9E3A42A9A6BBD004D9F38 /* support */ = {
+			isa = PBXGroup;
+			children = (
+				56C9E3A82A9A6BF6004D9F38 /* vs2022 */,
+				56C9E3A72A9A6BEE004D9F38 /* CMakeLists.txt */,
+			);
+			name = support;
+			sourceTree = "<group>";
+		};
+		56C9E3A82A9A6BF6004D9F38 /* vs2022 */ = {
+			isa = PBXGroup;
+			children = (
+				56C9E3A92A9A6C0A004D9F38 /* uox3.vcxproj */,
+				56C9E3AA2A9A6C0A004D9F38 /* uox3.vcxproj.filters */,
+			);
+			name = vs2022;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
+				56C9E3A42A9A6BBD004D9F38 /* support */,
 				64A90074293E3DD4009B54DA /* source */,
 				64A9006B293E3DA3009B54DA /* Products */,
 				64A9016B293E3EED009B54DA /* Frameworks */,
