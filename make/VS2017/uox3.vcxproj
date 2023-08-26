@@ -474,6 +474,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
+    <ClCompile Include="..\..\source\filestream.cpp"/>
     <ClCompile Include="..\..\source\cBaseObject.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
@@ -1418,6 +1419,7 @@
     <ClInclude Include="..\..\source\enums.h" />
     <ClInclude Include="..\..\source\EventTimer.hpp" />
     <ClInclude Include="..\..\source\funcdecl.h" />
+    <ClInclude Include="..\..\source\filestream.hpp" />
     <ClInclude Include="..\..\source\GenericList.h" />
     <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\IP4Address.hpp" />

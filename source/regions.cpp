@@ -1,5 +1,6 @@
 #include "regions.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <future>
@@ -13,6 +14,8 @@
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 #define DEBUG_REGIONS		0
+
+using namespace std::string_literals ;
 
 CMapHandler *MapRegion;
 //o------------------------------------------------------------------------------------------------o
@@ -328,34 +331,31 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the Resource data to disk
 //o------------------------------------------------------------------------------------------------o
-void CMapWorld::SaveResources( UI08 worldNum )
+auto CMapWorld::SaveResources( UI08 worldNum )->std::unique_ptr<BaseStream>
 {
 	char wBuffer[2];
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + std::to_string( worldNum ) + "].bin";
-	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
+	auto resourceFile	= std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].bin"s);
+    auto stream = new BinaryStream(resourceFile);
+    stream->data = std::vector<std::uint8_t>(mapResources.size()*6,0) ;
+    auto offset = 0 ;
+    for( std::vector<MapResource_st>::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
+    {
+        stream->data[offset] =static_cast<std::uint8_t>(( *mIter ).oreAmt >> 8 );
+        offset += 1 ;
+        stream->data[offset] = static_cast<std::uint8_t>(( *mIter ).oreAmt % 256 );
+        offset += 1 ;
+        
+        stream->data[offset] = static_cast<std::uint8_t>(( *mIter ).logAmt >> 8 );
+        offset += 1 ;
+        stream->data[offset] = static_cast<std::uint8_t>(( *mIter ).logAmt % 256 );
+        offset += 1 ;
 
-	if( toWrite )
-	{
-		for( std::vector<MapResource_st>::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-		{
-			wBuffer[0] = static_cast<SI08>(( *mIter ).oreAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).oreAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).logAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).logAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).fishAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).fishAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-		}
-		toWrite.close();
-	}
-	else // Can't save resources
-	{
-		Console.Error( "Failed to open resource.bin for writing" );
-	}
+        stream->data[offset] = static_cast<std::uint8_t>(( *mIter ).fishAmt >> 8 );
+        offset += 1 ;
+        stream->data[offset] = static_cast<std::uint8_t>(( *mIter ).fishAmt % 256 );
+        offset += 1 ;
+    }
+    return std::unique_ptr<BaseStream>(static_cast<BaseStream*>(stream));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -372,48 +372,43 @@ void CMapWorld::LoadResources( UI08 worldNum )
 	const UI32 oreTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() ));
 	const UI32 logTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() ));
 	const UI32 fishTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ));
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + oldstrutil::number( worldNum ) + std::string("].bin");
+	auto resourceFile	= std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s);
 
-	char rBuffer[2];
-	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
-
-	bool fileExists	= ( toRead.is_open() );
-
-	if( fileExists )
-	{
-		toRead.seekg( 0, std::ios::beg );
-	}
-
-	for( std::vector<MapResource_st>::iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-	{
-		if( fileExists )
-		{
-			toRead.read( rBuffer, 2 );
-			( *mIter ).oreAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			toRead.read( rBuffer, 2 );
-			( *mIter ).logAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			toRead.read( rBuffer, 2 );
-			( *mIter ).fishAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			fileExists = toRead.eof();
-		}
-		else
-		{
-			( *mIter ).oreAmt  = resOre;
-			( *mIter ).logAmt  = resLog;
-			( *mIter ).fishAmt  = resFish;
-		}
-		// No need to preserve time.  Do a refresh automatically
-		( *mIter ).oreTime = oreTime;
-		( *mIter ).logTime = logTime;
-		( *mIter ).fishTime = fishTime;
-	}
-	if( fileExists )
-	{
-		toRead.close();
-	}
+    auto buffer = std::vector<std::int16_t>(3,0) ;
+    
+    auto input = std::ifstream(resourceFile.string(),std::ios::binary);
+    auto iter = mapResources.begin() ;
+    if (input.is_open()){
+        
+        while(input.good() && !input.eof()){
+            input.read(reinterpret_cast<char*>(buffer.data()),6);
+            if (input.gcount()==6){
+                // we read in 6 bytes
+                if (iter == mapResources.end()){
+                    break ; // THe file is bigger then the number of regions
+                }
+                // For whatever reason, the data was stored in big endian, so we need to reverse it
+                for (auto &entry:buffer){
+                    std::reverse(reinterpret_cast<char*>(&entry),reinterpret_cast<char*>(&entry)+2) ;
+                 }
+                iter->oreAmt = buffer[0];
+                iter->oreTime = oreTime ;
+                iter->logAmt = buffer[1];
+                iter->logTime = logTime ;
+                iter->fishAmt = buffer[2];
+                iter->fishTime = fishTime ;
+                iter++ ;
+            }
+        }
+    }
+    for (;iter!= mapResources.end();iter++){
+        iter->oreAmt = resOre;
+        iter->oreTime = oreTime ;
+        iter->logAmt = resLog;
+        iter->logTime = logTime ;
+        iter->fishAmt = resFish;
+        iter->fishTime = fishTime ;
+    }
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -785,52 +780,14 @@ auto CMapHandler::PopulateList( SI16 x, SI16 y, UI08 worldNumber ) -> std::vecto
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves out data from MapRegions to worldfiles
 //o------------------------------------------------------------------------------------------------o
-#define CHANGE
-#if !defined(CHANGE)
-// CHANGE
-constexpr size_t BUFFERSIZE = 1024 * 1024 ;
-static auto streamBuffer = std::vector<char>(BUFFERSIZE,0) ;
-//================================================
-// Test stuff
-#else
-struct PathStream {
-    static constexpr auto BUFFERSIZE = static_cast<size_t>(1024 * 1024) ;
 
-    //std::array<char,1024 * 1024> buffer;
-    std::stringstream stream;
-    std::filesystem::path path ;
-    PathStream() {
-        //stream.rdbuf()->pubsetbuf( buffer.data(), BUFFERSIZE );
-    }
-    PathStream(const std::filesystem::path &path) : PathStream() {
-        this->path = path ;
-    }
-};
-
-auto saveStream( PathStream *entry) ->void {
-    std::string line ;
-    auto output = std::ofstream(entry->path) ;
-    if (output.is_open()){
-        while (std::getline(entry->stream,line)){
-                output << line <<"\n" ;
-        }
-    }
-}
-#endif
-// END CHANGE
-
-void CMapHandler::Save( void )
+auto CMapHandler::Save()->std::vector<std::unique_ptr<BaseStream>>
 {
-    // CHANGE
-#if defined(CHANGE)
-    auto saveStreams = std::vector< std::future<void> >() ;
-    auto dataPtrs = std::vector<std::unique_ptr<PathStream>>() ;
-#endif
-    // END CHANGE
-
+    auto streamBuffer = std::vector<std::unique_ptr<BaseStream>>() ;
+    
 	const SI16 AreaX				= UpperX / 8;	// we're storing 8x8 grid arrays together
 	const SI16 AreaY				= UpperY / 8;
-	std::ofstream writeDestination, houseDestination;
+	std::ofstream  houseDestination;
 	SI32 onePercent = 0;
 	UI08 i = 0;
 	for( i = 0; i < Map->MapCount(); ++i )
@@ -886,22 +843,7 @@ void CMapHandler::Save( void )
 			
 			if( !changesDetected )
 				continue;
-            // CHANGE
-#if defined(CHANGE)
-            
-            dataPtrs.push_back(std::make_unique<PathStream>(filename)) ;
-#else
-			writeDestination.open( filename.c_str(), std::ios::binary );
-
-			if( !writeDestination )
-			{
-				Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-            continue;
-			}
-
-			writeDestination.rdbuf()->pubsetbuf( streamBuffer.data(), BUFFERSIZE );
-#endif
-            // END CHANGE
+            auto stream = new PathStream(std::filesystem::path(filename));
 
 			for( UI08 xCnt = 0; xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
 			{
@@ -925,12 +867,8 @@ void CMapHandler::Save( void )
 						CMapRegion * mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
 						if( mRegion != nullptr )
 						{
-#if !defined(CHANGE)
                             // CHANGE
-							mRegion->SaveToDisk( writeDestination );
-#else
-                            mRegion->SaveToDisk((*dataPtrs.rbegin()).get()->stream) ;
-#endif
+							mRegion->SaveToDisk( stream->stream );
                             // End Change
 
 							// Remove "changed" flag from region, to avoid it saving again needlessly on next save
@@ -938,38 +876,20 @@ void CMapHandler::Save( void )
 						}
 
                         // CHANGE
-#if !defined (CHANGE)
-						writeDestination << blockDiscriminator;
-#else
-                        (*dataPtrs.rbegin()).get()->stream << blockDiscriminator;
-#endif
+						stream->stream << blockDiscriminator;
 					}
 				}
 			}
-            // CHANGE
-#if defined(CHANGE)
-            saveStreams.push_back(std::async(std::launch::async,&saveStream,(*dataPtrs.rbegin()).get()));
-#else
-			writeDestination.close();
-#endif
-            // END CHANGE
+            streamBuffer.push_back(std::unique_ptr<BaseStream>(static_cast<BaseStream*>(stream)));
 		}
 	}
 	Console << "\b\b\b\b" << static_cast<UI32>( 100 ) << "%";
 
 	filename = basePath + "overflow.wsc";
-	writeDestination.open( filename.c_str() );
-
-	if( writeDestination.is_open() )
-	{
-		overFlow.SaveToDisk( writeDestination );
-		writeDestination.close();
-	}
-	else
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-		return;
-	}
+    auto overStream = new PathStream(std::filesystem::path(filename));
+	
+    overFlow.SaveToDisk( overStream->stream );
+    streamBuffer.push_back(std::unique_ptr<BaseStream>(static_cast<BaseStream*>(overStream)));
 
 	Console << "\b\b\b\b";
 	Console.PrintDone();
@@ -980,17 +900,10 @@ void CMapHandler::Save( void )
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
 	{
-		( *wIter )->SaveResources( i );
+        streamBuffer.push_back(( *wIter )->SaveResources( i ));
 		++i;
 	}
-    // CHANGE
-#if defined(CHANGE)
-    for (auto &entry:saveStreams){
-        entry.wait() ;
-    }
-    saveStreams.clear();
-#endif 
-    // END CHANGE
+    return streamBuffer ;
 }
 
 bool PostLoadFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]] void *extraData )

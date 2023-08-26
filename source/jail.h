@@ -1,7 +1,8 @@
 
 #ifndef __JAIL_H__
 #define __JAIL_H__
-
+#include <memory>
+#include "filestream.hpp"
 struct JailOccupant_st
 {
 	SERIAL pSerial;
@@ -59,7 +60,7 @@ public:
 	~CJailSystem() = default;
 	void	ReadSetup( void );
 	void	ReadData( void );
-	void	WriteData( void );
+	auto	WriteData()->std::unique_ptr<BaseStream>;
 	void	PeriodicCheck( void );
 	bool	JailPlayer( CChar *toJail, SI32 numSecsToJail );
 	void	ReleasePlayer( CChar *toRelase );

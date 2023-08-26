@@ -249,6 +249,9 @@
     <ClCompile Include="..\..\source\fileio.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\filestream.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\findfuncs.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
@@ -481,6 +484,9 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\enums.h">
+      <Filter>Header Files\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\filestream.hpp">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\GenericList.h">

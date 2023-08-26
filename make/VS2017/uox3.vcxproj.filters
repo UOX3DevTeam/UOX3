@@ -128,6 +128,9 @@
     <ClCompile Include="..\..\source\cmdtable.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\filestream.cpp">
+      <Filter>Source Files\Other</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\combat.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -420,6 +423,9 @@
     </ClInclude>
     <ClInclude Include="..\..\source\worldmain.h">
       <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\filestream.hpp">
+      <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cdice.h">
       <Filter>Header Files\Other</Filter>

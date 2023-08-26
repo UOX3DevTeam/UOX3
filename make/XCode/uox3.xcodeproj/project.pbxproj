@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
+		56C9E3952A99BAC0004D9F38 /* filestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C9E38F2A99B34B004D9F38 /* filestream.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -121,6 +122,8 @@
 
 /* Begin PBXFileReference section */
 		56BA2FB52A95BDF70064EB36 /* jscript.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = jscript.xcodeproj; path = ../../spidermonkey/make/XCode/jscript/jscript.xcodeproj; sourceTree = "<group>"; };
+		56C9E38F2A99B34B004D9F38 /* filestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filestream.cpp; sourceTree = "<group>"; };
+		56C9E3902A99B34B004D9F38 /* filestream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = filestream.hpp; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -474,6 +477,8 @@
 				64A900E6293E3DD4009B54DA /* Prerequisites.h */,
 				64A90100293E3DD4009B54DA /* typedefs.h */,
 				64A90111293E3DD4009B54DA /* UOXStdHeaders.h */,
+				56C9E38F2A99B34B004D9F38 /* filestream.cpp */,
+				56C9E3902A99B34B004D9F38 /* filestream.hpp */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -684,6 +689,7 @@
 				64A90138293E3DD4009B54DA /* cThreadQueue.cpp in Sources */,
 				64A9014B293E3DD4009B54DA /* movement.cpp in Sources */,
 				64A90145293E3DD4009B54DA /* jail.cpp in Sources */,
+				56C9E3952A99BAC0004D9F38 /* filestream.cpp in Sources */,
 				64A9014F293E3DD4009B54DA /* npcs.cpp in Sources */,
 				64A9013B293E3DD4009B54DA /* Dictionary.cpp in Sources */,
 				64A90136293E3DD4009B54DA /* cSocket.cpp in Sources */,

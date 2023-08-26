@@ -1046,6 +1046,7 @@
 		56BA2FAB2A95B9990064EB36 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_COMMA = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;
@@ -1062,6 +1063,7 @@
 		56BA2FAC2A95B9990064EB36 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_COMMA = NO;
 				CODE_SIGN_STYLE = Automatic;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = CF264WE69M;

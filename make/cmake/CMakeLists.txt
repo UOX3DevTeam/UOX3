@@ -122,6 +122,8 @@ add_executable(uox3
    ../../source/effect.cpp
    ../../source/enums.h
    ../../source/fileio.cpp
+   ../../source/filestream.cpp
+   ../../source/filestream.hpp 
    ../../source/findfuncs.cpp
    ../../source/GenericList.h
    ../../source/npcs.cpp

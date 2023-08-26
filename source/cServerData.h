@@ -5,7 +5,9 @@
 #include <string>
 #include <cstdint>
 #include <array>
+#include <memory>
 
+#include "filestream.hpp"
 #include "StringUtility.hpp"
 #include "IP4Address.hpp"
 //o------------------------------------------------------------------------------------------------o
@@ -1208,7 +1210,7 @@ public:
 	auto		ServerTimeSeconds( UI08 nValue ) -> void;
 	auto		ServerTimeAMPM( bool nValue ) -> void;
 
-	auto		SaveTime() -> void;
+	auto		SaveTime() -> std::unique_ptr<BaseStream>;
 	auto		LoadTime() -> void;
 	auto		LoadTimeTags( std::ifstream &input ) -> void;
 

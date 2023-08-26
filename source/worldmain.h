@@ -7,6 +7,12 @@
 #if !defined(__WORLDMAIN_H__)
 #define __WORLDMAIN_H__
 
+#include <memory>
+#include <future>
+#include <vector>
+
+#include "filestream.hpp"
+
 #include "cServerData.h"
 #include "GenericList.h"
 #if PLATFORM == WINDOWS
@@ -122,6 +128,8 @@ private:
 	bool		reloadingScripts;
 	bool		classesInitialized;
 
+    std::vector<std::unique_ptr<BaseStream>> streamData ;
+    std::vector<std::future<void>> streamWrite ;
 public:
 	struct Skill_st
 	{
@@ -231,12 +239,13 @@ public:
 	void SaveNewWorld( bool x );
 	auto Startup() -> void;
 	CWorldMain();
+    ~CWorldMain();
 	auto ServerData() ->CServerData *;
 	auto SetServerData(CServerData &server_data) -> void;
 	auto ServerProfile()->CServerProfile *;
 private:
-	void			RegionSave( void );
-	void			SaveStatistics( void );
+	auto RegionSave()->std::unique_ptr<BaseStream> ;
+	auto SaveStatistics()->std::unique_ptr<BaseStream> ;
 
 	CServerData  *sData;
 	CServerProfile sProfile;

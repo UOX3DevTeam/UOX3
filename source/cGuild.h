@@ -2,7 +2,8 @@
 #define __CGUILD__
 
 #include <ostream>
-
+#include <memory>
+#include "filestream.hpp"
 class CPIGumpInput;
 
 enum GuildType
@@ -144,7 +145,7 @@ public:
 	GUILDID			NewGuild( void );
 	CGuild *		Guild( GUILDID num ) const;
 	CGuild *		operator[]( GUILDID num );
-	void			Save();
+	auto			Save() ->std::unique_ptr<BaseStream>;
 	void			Load();
 	GUILDRELATION	Compare( GUILDID srcGuild, GUILDID trgGuild ) const;
 	GUILDRELATION	Compare( CChar *src, CChar *trg ) const;

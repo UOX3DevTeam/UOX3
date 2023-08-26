@@ -983,18 +983,19 @@ CGuild *CGuildCollection::operator[]( GUILDID num )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves guild to worldfile
 //o------------------------------------------------------------------------------------------------o
-void CGuildCollection::Save( void )
+auto CGuildCollection::Save()->std::unique_ptr<BaseStream>
 {
 	Console << "Saving guild data.... ";
-	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc";
-	std::ofstream toSave( filename.c_str() );
+	auto filename = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc"s);
+    auto stream = new PathStream(filename) ;
 	GUILDLIST::const_iterator pMove = gList.begin();
 	while( pMove != gList.end() )
 	{
-		( pMove->second )->Save( toSave, pMove->first );
+		( pMove->second )->Save( stream->stream, pMove->first );
 		++pMove;
 	}
 	Console.PrintDone();
+    return std::unique_ptr<BaseStream>(static_cast<BaseStream*>(stream));
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -352,20 +352,15 @@ auto CJailSystem::ReadData() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Save out details about jailed players to jails.wsc in shared folder
 //o------------------------------------------------------------------------------------------------o
-void CJailSystem::WriteData( void )
+auto CJailSystem::WriteData()->std::unique_ptr<BaseStream>
 {
-	std::string jailsFile = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc";
-	std::ofstream jailsDestination( jailsFile.c_str() );
-	if( !jailsDestination )
-	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", jailsFile.c_str() ));
-		return;
-	}
+	auto  jailsFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "jails.wsc"s);
+    auto stream = new PathStream(jailsFile) ;
 	for( size_t jCtr = 0; jCtr < jails.size(); ++jCtr )
 	{
-		jails[jCtr].WriteData( jailsDestination, jCtr );
+		jails[jCtr].WriteData( stream->stream, jCtr );
 	}
-	jailsDestination.close();
+    return std::unique_ptr<BaseStream>(static_cast<BaseStream*>(stream));
 }
 
 //o------------------------------------------------------------------------------------------------o

@@ -12,6 +12,9 @@
 #define __Region_h
 
 #include <ostream>
+#include <memory>
+#include <vector>
+#include "filestream.hpp"
 
 #include "mapstuff.h"
 
@@ -80,7 +83,7 @@ public:
 	MapResource_st&	GetResource( SI16 x, SI16 y );
 
 	void			LoadResources( UI08 worldNum );
-	void			SaveResources( UI08 worldNUm );
+	auto			SaveResources( UI08 worldNUm )->std::unique_ptr<BaseStream>;
 };
 
 class CMapHandler
@@ -98,7 +101,7 @@ public:
 	~CMapHandler();
 	auto Startup() -> void;
 
-	void		Save( void );
+	auto		Save() ->std::vector<std::unique_ptr<BaseStream>> ;
 	void		Load( void );
 
 	bool		AddItem( CItem *nItem );
