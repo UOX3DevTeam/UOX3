@@ -83,7 +83,7 @@ public:
 	MapResource_st&	GetResource( SI16 x, SI16 y );
 
 	void			LoadResources( UI08 worldNum );
-	void			SaveResources( UI08 worldNUm );
+    auto SaveResources( UI08 worldNUm ) ->std::unique_ptr<PathStream>;
 };
 
 class CMapHandler

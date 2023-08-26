@@ -12,6 +12,8 @@
 #include "classes.h"
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
+
+using namespace std::string_literals ;
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
@@ -328,34 +330,19 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves the Resource data to disk
 //o------------------------------------------------------------------------------------------------o
-void CMapWorld::SaveResources( UI08 worldNum )
+auto CMapWorld::SaveResources( UI08 worldNum ) ->std::unique_ptr<PathStream>
 {
-	char wBuffer[2];
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + std::to_string( worldNum ) + "].bin";
-	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
-
-	if( toWrite )
-	{
-		for( std::vector<MapResource_st>::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-		{
-			wBuffer[0] = static_cast<SI08>(( *mIter ).oreAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).oreAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).logAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).logAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).fishAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).fishAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-		}
-		toWrite.close();
-	}
-	else // Can't save resources
-	{
-		Console.Error( "Failed to open resource.bin for writing" );
-	}
+	//char wBuffer[2];
+	auto  resourceFile	= std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].wsc"s);
+	//std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
+    auto stream = std::make_unique<PathStream>(resourceFile) ;
+    for( std::vector<MapResource_st>::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
+    {
+        stream->stream <<"ore = " << mIter->oreAmt<<"\n";
+        stream->stream <<"log = " << mIter->logAmt<<"\n";
+        stream->stream <<"fish = " << mIter->fishAmt<<"\n";
+    }
+    return stream ;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -372,48 +359,96 @@ void CMapWorld::LoadResources( UI08 worldNum )
 	const UI32 oreTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() ));
 	const UI32 logTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() ));
 	const UI32 fishTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ));
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + oldstrutil::number( worldNum ) + std::string("].bin");
+	const std::string oldResourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + oldstrutil::number( worldNum ) + std::string("].bin");
+    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].wsc"s);
+    if (std::filesystem::exists(resourceFile)){
+        auto input = std::ifstream(resourceFile.string());
+        auto buffer = std::vector<char>(4096,0) ;
+        auto iter = mapResources.begin() ;
+        
+        while (input.good() && !input.eof()){
+            input.getline(buffer.data(),buffer.size()-1);
+            if (input.gcount()>0){
+                buffer[input.gcount()] = 0 ;
+                std::string line = buffer.data() ;
+                line = oldstrutil::trim(oldstrutil::removeTrailing(line,"//")) ;
+                if (!line.empty()){
+                    auto [key,value] = oldstrutil::split(line,"=");
+                    auto lkey = oldstrutil::lower(key) ;
+                    if (lkey == "ore"){
+                        (*iter).oreAmt = static_cast<SI16>(std::stoi(value,nullptr,0)) ;
+                        (*iter).oreTime = oreTime ;
+                    }
+                    else if (lkey == "log"){
+                        (*iter).logAmt = static_cast<SI16>(std::stoi(value,nullptr,0)) ;
+                        (*iter).logTime = logTime ;
+                    }
+                    else if (lkey == "fish"){
+                        (*iter).fishAmt = static_cast<SI16>(std::stoi(value,nullptr,0)) ;
+                        (*iter).fishTime = fishTime ;
 
-	char rBuffer[2];
-	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
+                        iter++ ;
+                        if (iter == mapResources.end()){
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        for (;iter!= mapResources.end();iter++){
+            (*iter).oreAmt = resOre ;
+            (*iter).oreTime = oreTime ;
+            (*iter).logAmt = resLog ;
+            (*iter).logTime = logTime ;
+            (*iter).fishAmt = resFish ;
+            (*iter).fishTime = fishTime ;
 
-	bool fileExists	= ( toRead.is_open() );
+        }
 
-	if( fileExists )
-	{
-		toRead.seekg( 0, std::ios::beg );
-	}
-
-	for( std::vector<MapResource_st>::iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-	{
-		if( fileExists )
-		{
-			toRead.read( rBuffer, 2 );
-			( *mIter ).oreAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			toRead.read( rBuffer, 2 );
-			( *mIter ).logAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			toRead.read( rBuffer, 2 );
-			( *mIter ).fishAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			fileExists = toRead.eof();
-		}
-		else
-		{
-			( *mIter ).oreAmt  = resOre;
-			( *mIter ).logAmt  = resLog;
-			( *mIter ).fishAmt  = resFish;
-		}
-		// No need to preserve time.  Do a refresh automatically
-		( *mIter ).oreTime = oreTime;
-		( *mIter ).logTime = logTime;
-		( *mIter ).fishTime = fishTime;
-	}
-	if( fileExists )
-	{
-		toRead.close();
-	}
+    }
+    else {
+        char rBuffer[2];
+        std::ifstream toRead ( oldResourceFile.c_str(), std::ios::in | std::ios::binary );
+        
+        bool fileExists	= ( toRead.is_open() );
+        
+        if( fileExists )
+        {
+            toRead.seekg( 0, std::ios::beg );
+        }
+        
+        for( std::vector<MapResource_st>::iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
+        {
+            if( fileExists )
+            {
+                toRead.read( rBuffer, 2 );
+                ( *mIter ).oreAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
+                
+                toRead.read( rBuffer, 2 );
+                ( *mIter ).logAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
+                
+                toRead.read( rBuffer, 2 );
+                ( *mIter ).fishAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
+                
+                fileExists = toRead.eof();
+            }
+            else
+            {
+                ( *mIter ).oreAmt  = resOre;
+                ( *mIter ).logAmt  = resLog;
+                ( *mIter ).fishAmt  = resFish;
+            }
+            // No need to preserve time.  Do a refresh automatically
+            ( *mIter ).oreTime = oreTime;
+            ( *mIter ).logTime = logTime;
+            ( *mIter ).fishTime = fishTime;
+        }
+        if( fileExists )
+        {
+            toRead.close();
+            std::filesystem::remove(oldResourceFile); // We can get rid of this
+        }
+    }
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -901,7 +936,8 @@ auto CMapHandler::Save() ->std::vector<std::unique_ptr<PathStream>>
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
 	{
-		( *wIter )->SaveResources( i );
+		auto temp = ( *wIter )->SaveResources( i );
+        dataPaths.push_back(std::move(temp));
 		++i;
 	}
     return dataPaths ;
