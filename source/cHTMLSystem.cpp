@@ -8,7 +8,7 @@
 #include "cRaces.h"
 #include "cServerDefinitions.h"
 #include "ssection.h"
-#include "gump.h"
+#include "CGump.h"
 #include "scriptc.h"
 #include "CPacketSend.h"
 #include "ObjectFactory.h"

@@ -6,7 +6,7 @@
 #include "commands.h"
 #include "cMagic.h"
 #include "ssection.h"
-#include "gump.h"
+#include "CGump.h"
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"

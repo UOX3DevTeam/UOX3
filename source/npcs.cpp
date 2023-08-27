@@ -199,7 +199,7 @@ auto CCharStuff::ChooseNpcToCreate( const std::vector<std::pair<std::string, UI1
 				weightOfChosenNpc = sectionWeight;
 
 				// Add the entry index to a temporary vector of all entries with shared weight, the continue looking for more!
-				matchingEntries.push_back( i );
+				matchingEntries.push_back( static_cast<int>(i) );
 				continue;
 			}
 		}

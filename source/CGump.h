@@ -1,5 +1,5 @@
-#ifndef __GUMP_H__
-#define __GUMP_H__
+#ifndef __CGUMP_H__
+#define __CGUMP_H__
 
 void MultiGumpCallback( CSocket *mySocket, SERIAL GumpSerial, UI32 Button );
 
