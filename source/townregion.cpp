@@ -6,7 +6,7 @@
 #include "skills.h"
 #include "speech.h"
 #include "ssection.h"
-#include "gump.h"
+#include "CGump.h"
 #include "mapstuff.h"
 #include "scriptc.h"
 #include "CPacketSend.h"

@@ -1,4 +1,3 @@
-# -*- Mode: makefile -*-
 #
 # ***** BEGIN LICENSE BLOCK *****
 # Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -37,67 +36,8 @@
 #
 # ***** END LICENSE BLOCK *****
 
-#
-# Config for all versions of Linux
-#
+JDK = /share/builds/components/jdk/1.1.5/HP-UX
 
-CC = clang
-CCC = clang++
-CFLAGS +=  -Wall -Wno-format -fPIC -lm
-OS_CFLAGS = -DXP_UNIX -DSVR4 -DSYSV -D_BSD_SOURCE -DPOSIX_SOURCE -DHAVE_LOCALTIME_R
+INCLUDES   += -I$(JDK)/include -I$(JDK)/include/hp-ux
 
-RANLIB = echo
-MKSHLIB = $(LD) -shared $(XMKSHLIBOPTS)
-
-#.c.o:
-#      $(CC) -c -MD $*.d $(CFLAGS) $<
-
-CPU_ARCH = $(shell uname -m)
-# don't filter in x86-64 architecture
-ifneq (x86_64,$(CPU_ARCH))
-ifeq (86,$(findstring 86,$(CPU_ARCH)))
-CPU_ARCH = x86
-OS_CFLAGS+= -DX86_LINUX
-
-ifeq (gcc, $(CC))
-# if using gcc on x86, check version for opt bug
-# (http://bugzilla.mozilla.org/show_bug.cgi?id=24892)
-GCC_VERSION := $(shell gcc -v 2>&1 | grep version | awk '{ print $$3 }')
-GCC_LIST:=$(sort 2.91.66 $(GCC_VERSION) )
-
-ifeq (2.91.66, $(firstword $(GCC_LIST)))
-CFLAGS+= -DGCC_OPT_BUG
-endif
-endif
-endif
-endif
-
-GFX_ARCH = x
-
-OS_LIBS = -lc
-
-ASFLAGS += -x assembler-with-cpp
-
-
-ifeq ($(CPU_ARCH),alpha)
-
-# Ask the C compiler on alpha linux to let us work with denormalized
-# double values, which are required by the ECMA spec.
-
-OS_CFLAGS += -mieee
-endif
-
-# Use the editline library to provide line-editing support.
-JS_EDITLINE = 1
-
-ifeq ($(CPU_ARCH),x86_64)
-# Use VA_COPY() standard macro on x86-64
-# FIXME: better use it everywhere
-OS_CFLAGS += -DHAVE_VA_COPY -DVA_COPY=va_copy
-endif
-
-ifeq ($(CPU_ARCH),x86_64)
-# We need PIC code for shared libraries
-# FIXME: better patch rules.mk & fdlibm/Makefile*
-OS_CFLAGS += -DPIC -fPIC
-endif
+OTHER_LIBS += -L$(JDK)/lib/PA_RISC/native_threads -ljava

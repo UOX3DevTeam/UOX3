@@ -67,7 +67,7 @@ typedef JSIntn intn;
 #else
 
 /* SVR4 typedef of uint is commonly found on UNIX machines. */
-#if defined(XP_UNIX) && !defined(__QNXNTO__)
+#ifdef XP_UNIX
 #include <sys/types.h>
 #else
 typedef JSUintn uint;

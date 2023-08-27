@@ -25,7 +25,7 @@
 #include "cVersionClass.h"
 #include "Dictionary.h"
 #include "speech.h"
-#include "gump.h"
+#include "CGump.h"
 #include "ObjectFactory.h"
 #include "network.h"
 #include "UOXJSClasses.h"

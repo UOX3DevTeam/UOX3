@@ -1,4 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: Java; tab-width: 8; c-basic-offset: 4 -*-
  *
  * ***** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -36,80 +36,24 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
+/* ** */
 
-#ifndef jsosdep_h___
-#define jsosdep_h___
-/*
- * OS (and machine, and compiler XXX) dependent information.
- */
+package netscape.javascript;
+import java.io.*;
 
-#if defined(XP_WIN) || defined(XP_OS2)
+public class JSUtil {
 
-#if defined(_WIN32) || defined (XP_OS2)
-#define JS_HAVE_LONG_LONG
-#else
-#undef JS_HAVE_LONG_LONG
-#endif
-#endif /* XP_WIN || XP_OS2 */
+    /* Return the stack trace of an exception or error as a String */
+    public static String getStackTrace(Throwable t) {
+	ByteArrayOutputStream captureStream;
+	PrintWriter p;
+	
+	captureStream = new ByteArrayOutputStream();
+	p = new PrintWriter(captureStream);
 
-#ifdef XP_BEOS
-#define JS_HAVE_LONG_LONG
-#endif
+	t.printStackTrace(p);
+	p.flush();
 
-
-#ifdef XP_UNIX
-
-/*
- * Get OS specific header information.
- */
-#if defined(XP_MACOSX) || defined(DARWIN)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(AIXV3) || defined(AIX)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(BSDI)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(HPUX)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(IRIX)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(linux)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(OSF1)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(_SCO_DS)
-#undef JS_HAVE_LONG_LONG
-
-#elif defined(SOLARIS)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(FREEBSD)
-#define JS_HAVE_LONG_LONG
-
-#elif defined(SUNOS4)
-#undef JS_HAVE_LONG_LONG
-
-/*
-** Missing function prototypes
-*/
-
-extern void *sbrk(int);
-
-#elif defined(UNIXWARE)
-#undef JS_HAVE_LONG_LONG
-
-#elif defined(VMS) && defined(__ALPHA)
-#define JS_HAVE_LONG_LONG
-
-#endif
-
-#endif /* XP_UNIX */
-
-#endif /* jsosdep_h___ */
-
+	return captureStream.toString();
+    }
+}
