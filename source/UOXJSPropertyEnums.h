@@ -2,7 +2,8 @@
 #define __UOXJSPropertyEnums__
 
 const uint8_t JSPROP_ENUMANDPERM	= JSPROP_ENUMERATE | JSPROP_PERMANENT;
-const uint8_t JSPROP_ENUMPERMRO = JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_READONLY;
+// This used to include JSPROP_READONLY, but that no longer exists - just don't define a Setter
+const uint8_t JSPROP_ENUMPERMRO = JSPROP_ENUMANDPERM;
 //const uint8_t JSPROP_ENUMPERMIDX = JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_INDEX;
 
 enum CSpell_Properties
