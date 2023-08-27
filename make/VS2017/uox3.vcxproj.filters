@@ -385,7 +385,7 @@
     <ClInclude Include="..\..\source\cWeather.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\gump.h">
+    <ClInclude Include="..\..\source\CGump.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\jail.h">

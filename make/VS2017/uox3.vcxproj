@@ -1419,7 +1419,7 @@
     <ClInclude Include="..\..\source\EventTimer.hpp" />
     <ClInclude Include="..\..\source\funcdecl.h" />
     <ClInclude Include="..\..\source\GenericList.h" />
-    <ClInclude Include="..\..\source\gump.h" />
+    <ClInclude Include="..\..\source\CGump.h" />
     <ClInclude Include="..\..\source\IP4Address.hpp" />
     <ClInclude Include="..\..\source\jail.h" />
     <ClInclude Include="..\..\source\JSEncapsulate.h" />

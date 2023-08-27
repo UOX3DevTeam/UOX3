@@ -124,7 +124,7 @@ add_executable(uox3
    ../../source/EventTimer.hpp
    ../../source/funcdecl.h
    ../../source/GenericList.h
-   ../../source/gump.h
+   ../../source/CGump.h
    ../../source/IP4Address.hpp
    ../../source/jail.h
    ../../source/JSEncapsulate.h

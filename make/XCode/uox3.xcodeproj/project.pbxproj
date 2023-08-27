@@ -182,7 +182,7 @@
 		64A900C0293E3DD4009B54DA /* findfuncs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = findfuncs.cpp; sourceTree = "<group>"; };
 		64A900C1293E3DD4009B54DA /* funcdecl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = funcdecl.h; sourceTree = "<group>"; };
 		64A900C2293E3DD4009B54DA /* GenericList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericList.h; sourceTree = "<group>"; };
-		64A900C3293E3DD4009B54DA /* gump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gump.h; sourceTree = "<group>"; };
+		64A900C3293E3DD4009B54DA /* CGump.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CGump.h; sourceTree = "<group>"; };
 		64A900C4293E3DD4009B54DA /* gumps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gumps.cpp; sourceTree = "<group>"; };
 		64A900C5293E3DD4009B54DA /* house.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = house.cpp; sourceTree = "<group>"; };
 		64A900C6293E3DD4009B54DA /* IP4Address.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IP4Address.cpp; sourceTree = "<group>"; };
@@ -359,7 +359,7 @@
 				64A900FA293E3DD4009B54DA /* teffect.h */,
 				64A900E7293E3DD4009B54DA /* quantityfuncs.cpp */,
 				64A900CA293E3DD4009B54DA /* jail.h */,
-				64A900C3293E3DD4009B54DA /* gump.h */,
+				64A900C3293E3DD4009B54DA /* CGump.h */,
 				64A90093293E3DD4009B54DA /* cMagic.h */,
 				64A90085293E3DD4009B54DA /* cEffects.h */,
 				64A90077293E3DD4009B54DA /* boats.cpp */,

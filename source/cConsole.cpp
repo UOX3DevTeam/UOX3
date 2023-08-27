@@ -497,7 +497,7 @@ auto CConsole::Error(const std::string& msg) -> void
 	}
 	catch( const std::exception &e )
 	{
-		std::cerr << "Error print reporting 'error'.  Error was: " << msg << std::endl;
+		std::cerr << "Error print reporting 'error'.  Error was: " << e.what() << std::endl;
 		exit( 1 );
 	}
 }

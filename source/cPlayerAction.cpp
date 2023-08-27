@@ -14,7 +14,7 @@
 #include "books.h"
 #include "magic.h"
 #include "townregion.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cGuild.h"
 #include "ssection.h"
 #include "cServerDefinitions.h"

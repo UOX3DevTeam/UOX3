@@ -25,7 +25,7 @@
 #include "cGuild.h"
 #include "skills.h"
 #include "speech.h"
-#include "gump.h"
+#include "CGump.h"
 #include "CJSMapping.h"
 #include "cScript.h"
 #include "cEffects.h"

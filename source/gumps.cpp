@@ -1,5 +1,5 @@
 #include "uox3.h"
-#include "gump.h"
+#include "CGump.h"
 #include "cGuild.h"
 #include "townregion.h"
 #include "cServerDefinitions.h"
