@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Base Objects">
       <UniqueIdentifier>{cd40ad04-825d-48bb-9a86-ff3ee1b2925e}</UniqueIdentifier>
     </Filter>
@@ -27,6 +19,10 @@
     </Filter>
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{5dc0e64e-1161-4bdd-b7a9-08309a58eb14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Header Files\Script">
       <UniqueIdentifier>{e69fb852-15bb-499d-a73e-13f7b97c87b5}</UniqueIdentifier>
@@ -58,20 +54,19 @@
     <Filter Include="Header Files\Subsystem">
       <UniqueIdentifier>{4e9f44ee-ffe6-4241-9ba9-faa06b8bcd9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
     <Filter Include="Source Files\Script">
       <UniqueIdentifier>{47123d74-35f3-41ba-b7ee-c4d15af5c6af}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\assets\uox3.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\source\uox3.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<!-- Script group -->    
+<!-- Script group -->
     <ClCompile Include="..\..\source\cServerData.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
@@ -87,8 +82,8 @@
     <ClCompile Include="..\..\source\ssection.cpp">
       <Filter>Source Files\Script</Filter>
     </ClCompile>
-    
-<!-- Base Objects group -->    
+
+<!-- Base Objects group -->
     <ClCompile Include="..\..\source\boats.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
@@ -122,8 +117,8 @@
     <ClCompile Include="..\..\source\ObjectFactory.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    
-<!-- Subsystem group -->    
+
+<!-- Subsystem group -->
     <ClCompile Include="..\..\source\books.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -214,8 +209,8 @@
     <ClCompile Include="..\..\source\worldmain.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
-    
-<!-- Other group -->    
+
+<!-- Other group -->
     <ClCompile Include="..\..\source\ai.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
@@ -225,10 +220,10 @@
     <ClCompile Include="..\..\source\calcfuncs.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cmdtable.cpp">
+    <ClCompile Include="..\..\source\cDice.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cDice.cpp">
+    <ClCompile Include="..\..\source\cmdtable.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cPlayerAction.cpp">
@@ -261,8 +256,8 @@
     <ClCompile Include="..\..\source\pcmanage.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    
-<!-- JS Engine group -->    
+
+<!-- JS Engine group -->
     <ClCompile Include="..\..\source\CJSEngine.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
@@ -284,22 +279,22 @@
     <ClCompile Include="..\..\source\UOXJSPropertyFuncs.cpp">
       <Filter>Source Files\JS Engine</Filter>
     </ClCompile>
-    
-<!-- Network group -->    
+
+<!-- Network group -->
     <ClCompile Include="..\..\source\CPacketReceive.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\CPacketSend.cpp">
       <Filter>Source Files\Network</Filter>
-    </ClCompile>   
+    </ClCompile>
     <ClCompile Include="..\..\source\network.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\IP4Address.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
-    
-<!-- Utility group -->    
+
+<!-- Utility group -->
     <ClCompile Include="..\..\source\StringUtility.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
@@ -309,9 +304,8 @@
     <ClCompile Include="..\..\source\EventTimer.cpp">
       <Filter>Source Files\Utility</Filter>
     </ClCompile>
-    
-    
-<!-- UOData group -->    
+
+<!-- UOData group -->
     <ClCompile Include="..\..\source\mapstuff.cpp">
       <Filter>Source Files\UOData</Filter>
     </ClCompile>
@@ -323,13 +317,12 @@
     </ClCompile>
 
   </ItemGroup>
-  
   <ItemGroup>
     <ClInclude Include="..\..\source\uox3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
         
-<!-- Script group -->    
+<!-- Script group -->
     <ClInclude Include="..\..\source\cServerData.h">
       <Filter>Header Files\Script</Filter>
     </ClInclude>
@@ -346,7 +339,7 @@
       <Filter>Header Files\Script</Filter>
     </ClInclude>
 
-<!-- Base Objects group -->    
+<!-- Base Objects group -->
     <ClInclude Include="..\..\source\cBaseObject.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
@@ -387,7 +380,7 @@
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
     
-<!-- Subsystem group -->    
+<!-- Subsystem group -->
     <ClInclude Include="..\..\source\books.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
@@ -395,6 +388,9 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cEffects.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\cGump.h">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cHTMLSystem.h">
@@ -458,7 +454,7 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     
-<!-- Other group -->    
+<!-- Other group -->
     <ClInclude Include="..\..\source\cdice.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
@@ -502,7 +498,7 @@
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     
-<!-- JS Engine group -->    
+<!-- JS Engine group -->
     <ClInclude Include="..\..\source\CJSEngine.h">
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
@@ -534,7 +530,7 @@
       <Filter>Header Files\JS Engine</Filter>
     </ClInclude>
    
-<!-- Network group -->    
+<!-- Network group -->
     <ClInclude Include="..\..\source\CPacketReceive.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
@@ -549,7 +545,7 @@
     </ClInclude>
     
     
-<!-- Utility group -->    
+<!-- Utility group -->
     <ClInclude Include="..\..\source\StringUtility.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
@@ -560,7 +556,7 @@
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     
-<!-- UOData group -->    
+<!-- UOData group -->
     <ClInclude Include="..\..\source\mapstuff.h">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
@@ -573,11 +569,16 @@
     <ClInclude Include="..\..\source\UOPData.hpp">
       <Filter>Header Files\UOData</Filter>
     </ClInclude>
-   
+
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\assets\uox3.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\assets\uox3.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
