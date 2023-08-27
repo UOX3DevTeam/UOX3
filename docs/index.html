@@ -27,7 +27,7 @@
 </div>
 
 <div style="text-align: center; margin-top: 0; margin-bottom: 0">
-	<p style="margin:0"><small>Last Updated: 1. July, 2023</small></p>
+	<p style="margin:0"><small>Last Updated: 28. August, 2023</small></p>
 	<p style="margin:0"><small>Written for UOX3 Version: v0.99.6-RC6</small></p>
 </div>
 
@@ -4857,7 +4857,7 @@ packitem=0x0f8d,30
 					</div>
 
 					<h4>Step 2: Clone the UOX3 Git Repository</h4>
-					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.7.0) and a minimal set of files required to compile zlib-1.2.11.</em>
+					<em>Next up, clone the UOX3 git repository, which also includes the latest verified compatible version of SpiderMonkey (v1.8.0-RC1) and a minimal set of files required to compile zlib-1.2.11.</em>
 					<input type="checkbox" id="spoiler_clone_with_github_desktop">
 					<label for="spoiler_clone_with_github_desktop">Using <strong>GitHub Desktop (Windows/macOS) </strong> <i class="fas fa-angle-down"></i></label>
 					<div class="spoiler">
@@ -4896,12 +4896,8 @@ packitem=0x0f8d,30
 						<p>If you don't wish to rely on the automake.sh script, but want control over the process yourself, follow these steps (same as what automake.sh does) in a Terminal. This also works on Windows/macOS as an alternative to compile with IDEs:</p>
 						<ul>
 							<li>Navigate to root of cloned UOX3 git repository</li>
-							<li><span class="hl">cd make/cmake</span></li>
-							<li><span class="hl">mkdir build</span></li>
-							<li><span class="hl">cd build</span></li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release</span> (Windows/Linux/FreeBSD)</li>
-							<li><span class="hl">cmake .. -DCMAKE_BUILD_TYPE=Release -G"Unix Makefiles"</span> (macOS)</li>
-							<li><span class="hl">cmake --build . --config Release</span></li>
+							<li><span class="hl">cmake make/cmake -B ./build -DCMAKE_BUILD_TYPE=Release</span></li>
+							<li><span class="hl">cmake --build ./build --config Release</span></li>
 						</ul>
 						<p>Replace "Release" with "Debug" in the above instructions to create a debug-build; delete <strong>make/cmake/build</strong> directory to do clean builds.</p>
 					</div>
@@ -8167,7 +8163,7 @@ id|name|hue|type|x|y|z|world|instance|movable|visible|dir|  weight|weightmax|max
 				<a class="cd-faq__trigger" href="#jsIntro" id="jsIntro"><span>Introduction to JS Engine in UOX3</span></a>
 				<div class="cd-faq__content">
 				  <div class="text-component">
-					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">v1.7.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
+					<p>UOX3's scripting engine is based on an embedded C++ implementation of JavaScript called <strong>SpiderMonkey</strong> (<a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">v1.8.0</a>). It allows UOX3 to load, read and interpret JavaScript files containing JS events, methods, functions, objects and properties written specifically for UOX3 in order to expose the inner workings of the server to prospective shard admins and script writers.</p>
 					<p>UOX3's JavaScripts can be reloaded dynamically without restarting the server, making it very easy to iterate on new features or modify existing ones.</p>
 					<p>Example of a simple JavaScript in UOX3, used with the Dice and Cup object to allow players to roll a dice and have the number displayed for others to see:<br>
 <pre><code class="language-javascript">// The onUseChecked event triggers when the player double-clicks an item
@@ -8264,7 +8260,7 @@ function commandTitle()
 				<div class="cd-faq__content">
 				  <div class="text-component">
 					<p>The <a href="jsdocs.html">UOX3 JSE Documentation</a> covers all the UOX3-specific events, triggers, methods, functions and properties available to script writers. You can also find some tutorials and/or tips for achieving specific things with UOX3's scripting engine in this document!</p>
-					<p>UOX3 contains an embedded scripting engine based on <a href="https://www-archive.mozilla.org/js/spidermonkey/release-notes/js_170" target="_blank" title="SpiderMonkey 1.7.0 Change Log">SpiderMonkey v1.7.0</a>, which offers an equivalent JavaScript feature set to <a href="https://developer.mozilla.org/en-US/docs/Archive/Web/JavaScript/New_in_JavaScript/1.7" target="_blank" title="developer.mozilla.com - New in JavaScript 1.7">JavaScript 1.7</a> or <a href="https://www.w3schools.com/js/js_es5.asp" target="_blank" title="w3schools.com - ECMAScript 5">ECMAScript 5</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
+					<p>UOX3 contains an embedded scripting engine based on <a href="https://udn.realityripple.com/docs/Mozilla/Projects/SpiderMonkey/Releases/1.8" target="_blank" title="SpiderMonkey 1.8.0-RC1 Change Log">SpiderMonkey v1.8.0-RC1</a>, which offers an equivalent JavaScript feature set to <a href="https://web.archive.org/web/20120612114822/https://developer.mozilla.org/en/New_in_JavaScript_1.8" target="_blank" title="developer.mozilla.com - New in JavaScript 1.8">JavaScript 1.8</a>, though certain features (especially browser-specific ones) might not be fully supported.</p>
 					<p>For additional help with or discussion around any of these, don't hesitate to make use of the <a href="https://www.uox3.org/forums/" target="_blank" title="UOX3 Community Forums">UOX3.org forums</a> or the <a href="https://discord.gg/uBAXxhF" target="_blank" title="UOX3 Discord Server">UOX3 Discord chat</a>!</p>
 				  </div>
 				</div> <!-- cd-faq__content -->
