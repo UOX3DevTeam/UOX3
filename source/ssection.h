@@ -325,7 +325,7 @@ public:
 	auto collection2()  -> std::vector<SectDataV2_st *>&;
 
 	CScriptSection();
-	CScriptSection( std::ifstream& input, DEFINITIONCATEGORIES d );
+	CScriptSection( std::istream& input, DEFINITIONCATEGORIES d );
 	~CScriptSection();
 	auto First() -> std::string;
 	auto Next() -> std::string;
@@ -347,7 +347,7 @@ public:
 	auto NpcListExist() const -> bool;
 	auto ItemListData() const -> std::string;
 	auto NpcListData() const -> std::string;
-	auto CreateSection( std::ifstream& inputbuf ) -> void;
+	auto CreateSection( std::istream& inputbuf ) -> void;
 };
 
 #endif

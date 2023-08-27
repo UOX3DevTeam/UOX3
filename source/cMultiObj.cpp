@@ -844,7 +844,7 @@ auto CMultiObj::UnsecureContainer( CItem *toUnsecure ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Saves a multi out to disk. outStream is the file to write to
 //o------------------------------------------------------------------------------------------------o
-bool CMultiObj::Save( std::ofstream &outStream )
+bool CMultiObj::Save( std::ostream &outStream )
 {
 	bool rValue = false;
 	if( !IsFree() )
@@ -965,7 +965,7 @@ void CMultiObj::SetMaxOwners( UI16 newValue )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out the header for the CMultiObj
 //o------------------------------------------------------------------------------------------------o
-bool CMultiObj::DumpHeader( std::ofstream &outStream ) const
+bool CMultiObj::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[HOUSE]" << '\n';
 	return true;
@@ -977,7 +977,7 @@ bool CMultiObj::DumpHeader( std::ofstream &outStream ) const
 //|	Purpose		-	Writes out all CMultiObj specific information to a world
 //|					file.  Also prints out the Item and BaseObject portions
 //o------------------------------------------------------------------------------------------------o
-bool CMultiObj::DumpBody( std::ofstream &outStream ) const
+bool CMultiObj::DumpBody( std::ostream &outStream ) const
 {
 	CItem::DumpBody( outStream );
 
@@ -1493,7 +1493,7 @@ CBoatObj::~CBoatObj()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Dumps out the header for the CMultiObj
 //o------------------------------------------------------------------------------------------------o
-bool CBoatObj::DumpHeader( std::ofstream &outStream ) const
+bool CBoatObj::DumpHeader( std::ostream &outStream ) const
 {
 	outStream << "[BOAT]" << '\n';
 	return true;
@@ -1505,7 +1505,7 @@ bool CBoatObj::DumpHeader( std::ofstream &outStream ) const
 //|	Purpose		-	Writes out all CMultiObj specific information to a world
 //|					file.  Also prints out the Item and BaseObject portions
 //o------------------------------------------------------------------------------------------------o
-bool CBoatObj::DumpBody( std::ofstream &outStream ) const
+bool CBoatObj::DumpBody( std::ostream &outStream ) const
 {
 	CMultiObj::DumpBody( outStream );
 

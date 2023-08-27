@@ -72,7 +72,7 @@ using namespace std::string_literals;
 //|
 //|						Note: Only send once after login. It’s mandatory to send it once.
 //o------------------------------------------------------------------------------------------------o
-void CPCharLocBody::Log( std::ofstream &outStream, bool fullHeader )
+void CPCharLocBody::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -1901,7 +1901,7 @@ void CPDrawContainer::Serial( SERIAL toSet )
 //|							BYTE response text length
 //|							BYTE[response text length] response text
 //o------------------------------------------------------------------------------------------------o
-void CPOpenGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPOpenGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3132,7 +3132,7 @@ CPEnableClientFeatures::CPEnableClientFeatures( CSocket *mSock )
 	}
 }
 
-void CPEnableClientFeatures::Log( std::ofstream &outStream, bool fullHeader )
+void CPEnableClientFeatures::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -3271,7 +3271,7 @@ CPNegotiateAssistantFeatures::CPNegotiateAssistantFeatures( [[maybe_unused]] CSo
 	pStream.WriteLong( 8, cwmWorldState->ServerData()->GetDisabledAssistantFeatures() & 0xFFFFFFFF );
 }
 
-void CPNegotiateAssistantFeatures::Log( std::ofstream &outStream, bool fullHeader )
+void CPNegotiateAssistantFeatures::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4342,7 +4342,7 @@ CPKrriosClientSpecial::CPKrriosClientSpecial( CSocket * mSock, CChar * mChar, UI
 	}
 }
 
-void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
+void CPKrriosClientSpecial::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4375,7 +4375,7 @@ void CPKrriosClientSpecial::Log( std::ofstream &outStream, bool fullHeader )
 //|								0x04 = Tokuno
 //|								0x05 = TerMur)
 //o------------------------------------------------------------------------------------------------o
-void CPMapChange::Log( std::ofstream &outStream, bool fullHeader )
+void CPMapChange::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4461,7 +4461,7 @@ void CPCloseGump::InternalReset( void )
 	pStream.WriteLong( 5, _gumpId );	// gumpId - which gump to destroy
 	pStream.WriteLong( 9, _buttonId );	// buttonId - response buttonId for packet 0xB1
 }
-void CPCloseGump::Log( std::ofstream &outStream, bool fullHeader )
+void CPCloseGump::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4640,7 +4640,7 @@ void CPItemsInContainer::CopyData( CSocket *mSock, CItem& toCopy )
 	NumberOfItems( itemCount );
 }
 
-void CPItemsInContainer::Log( std::ofstream &outStream, bool fullHeader )
+void CPItemsInContainer::Log( std::ostream &outStream, bool fullHeader )
 {
 	size_t numItems = pStream.GetUShort( 3 );
 	if( fullHeader )
@@ -4807,7 +4807,7 @@ auto CPOpenBuyWindow::CopyData( CItem& toCopy, CChar *vendorId, CPItemsInContain
 	pStream.WriteShort( 1, length );
 }
 
-void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
+void CPOpenBuyWindow::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -4886,7 +4886,7 @@ void CPOpenBuyWindow::Log( std::ofstream &outStream, bool fullHeader )
 //|							0x4000	= new movement packets 0xF0 -> 0xF2
 //|							0x8000	= unlock new felucca areas (faction areas)
 //o------------------------------------------------------------------------------------------------o
-void CPCharAndStartLoc::Log( std::ofstream &outStream, bool fullHeader )
+void CPCharAndStartLoc::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 		outStream << "[SEND]Packet   : CPCharAndStartLoc 0xA9 --> Length: " << pStream.GetSize() << TimeStamp() << std::endl;
@@ -6880,7 +6880,7 @@ void CPSendGumpMenu::Finalize( void )
 	pStream.WriteShort( tlOff, static_cast<UI16>( tlines ));
 }
 
-void CPSendGumpMenu::Log( std::ofstream &outStream, bool fullHeader )
+void CPSendGumpMenu::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9453,7 +9453,7 @@ void CPPartyMemberList::AddMember( CChar *member )
 	pStream.WriteShort( 1, static_cast<SI32>( curPos ) + 4 );
 }
 
-void CPPartyMemberList::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyMemberList::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9508,7 +9508,7 @@ void CPPartyInvitation::Leader( CChar *leader )
 	pStream.WriteLong( 6, leader->GetSerial() );
 }
 
-void CPPartyInvitation::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyInvitation::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9569,7 +9569,7 @@ void CPPartyMemberRemove::AddMember( CChar *member )
 	pStream.WriteShort( 1, static_cast<SI32>( curPos ) + 4 );
 }
 
-void CPPartyMemberRemove::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyMemberRemove::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
@@ -9643,7 +9643,7 @@ void CPPartyTell::InternalReset( void )
 	pStream.WriteByte( 5, 3 );		// subcommand
 }
 
-void CPPartyTell::Log( std::ofstream &outStream, bool fullHeader )
+void CPPartyTell::Log( std::ostream &outStream, bool fullHeader )
 {
 	if( fullHeader )
 	{
