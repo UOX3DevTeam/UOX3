@@ -402,6 +402,156 @@ DECL_GET_SET( CCharacter, playTime )
 DECL_GET_SET( CCharacter, housesOwned )
 DECL_GET_SET( CCharacter, housesCoOwned )
 
+// Item Properties
+DECL_GET_SET( CItem, sectionID )
+DECL_GET_SET( CItem, name )
+DECL_GET_SET( CItem, origName )
+DECL_GET_SET( CItem, title )
+DECL_GET_SET( CItem, x )
+DECL_GET_SET( CItem, y )
+DECL_GET_SET( CItem, z )
+DECL_GET_SET( CItem, oldX )
+DECL_GET_SET( CItem, oldY )
+DECL_GET_SET( CItem, oldZ )
+DECL_GET_SET( CItem, id )
+DECL_GET_SET( CItem, colour )
+DECL_GET_SET( CItem, color )
+DECL_GET_SET( CItem, skin )
+DECL_GET_SET( CItem, hue )
+DECL_GET_SET( CItem, owner )
+DECL_GET_SET( CItem, visible )
+DECL_GET_SET( CItem, serial )
+DECL_GET_SET( CItem, health )
+DECL_GET_SET( CItem, scripttrigger )
+DECL_GET_SET( CItem, scriptTriggers )
+DECL_GET_SET( CItem, worldnumber )
+DECL_GET_SET( CItem, instanceID )
+DECL_GET_SET( CItem, amount )
+DECL_GET_SET( CItem, container )
+DECL_GET_SET( CItem, type )
+DECL_GET_SET( CItem, more )
+DECL_GET_SET( CItem, more0 )
+DECL_GET_SET( CItem, more1 )
+DECL_GET_SET( CItem, more2 )
+DECL_GET_SET( CItem, morex )
+DECL_GET_SET( CItem, morey )
+DECL_GET_SET( CItem, morez )
+DECL_GET_SET( CItem, movable )
+DECL_GET_SET( CItem, att )
+DECL_GET_SET( CItem, layer )
+DECL_GET_SET( CItem, itemsinside )
+DECL_GET_SET( CItem, totalItemCount )
+DECL_GET_SET( CItem, decayable )
+DECL_GET_SET( CItem, decaytime )
+DECL_GET_SET( CItem, lodamage )
+DECL_GET_SET( CItem, hidamage )
+DECL_GET_SET( CItem, ac )
+DECL_GET_SET( CItem, def )
+DECL_GET_SET( CItem, resistCold )
+DECL_GET_SET( CItem, resistHeat )
+DECL_GET_SET( CItem, resistLight )
+DECL_GET_SET( CItem, resistLightning )
+DECL_GET_SET( CItem, resistPoison )
+DECL_GET_SET( CItem, resistRain )
+DECL_GET_SET( CItem, resistSnow )
+DECL_GET_SET( CItem, damageHeat )
+DECL_GET_SET( CItem, damageCold )
+DECL_GET_SET( CItem, damageLight )
+DECL_GET_SET( CItem, damageLightning )
+DECL_GET_SET( CItem, damagePoison )
+DECL_GET_SET( CItem, damageRain )
+DECL_GET_SET( CItem, damageSnow )
+DECL_GET_SET( CItem, name2 )
+DECL_GET_SET( CItem, isChar )
+DECL_GET_SET( CItem, isItem )
+DECL_GET_SET( CItem, isSpawner )
+DECL_GET_SET( CItem, race )
+DECL_GET_SET( CItem, maxhp )
+DECL_GET_SET( CItem, maxUses )
+DECL_GET_SET( CItem, usesLeft )
+DECL_GET_SET( CItem, rank )
+DECL_GET_SET( CItem, creator )
+DECL_GET_SET( CItem, poison )
+DECL_GET_SET( CItem, dir )
+DECL_GET_SET( CItem, wipable )
+DECL_GET_SET( CItem, buyvalue )
+DECL_GET_SET( CItem, sellvalue )
+DECL_GET_SET( CItem, vendorPrice )
+DECL_GET_SET( CItem, restock )
+DECL_GET_SET( CItem, divinelock )
+DECL_GET_SET( CItem, baseWeight )
+DECL_GET_SET( CItem, weight )
+DECL_GET_SET( CItem, weightMax )
+DECL_GET_SET( CItem, maxItems )
+DECL_GET_SET( CItem, strength )
+DECL_GET_SET( CItem, dexterity )
+DECL_GET_SET( CItem, intelligence )
+DECL_GET_SET( CItem, corpse )
+DECL_GET_SET( CItem, desc )
+DECL_GET_SET( CItem, event )
+DECL_GET_SET( CItem, tempLastTraded )
+DECL_GET_SET( CItem, tempTimer )
+DECL_GET_SET( CItem, shouldSave )
+DECL_GET_SET( CItem, isNewbie )
+DECL_GET_SET( CItem, isDispellable )
+DECL_GET_SET( CItem, madeWith )
+DECL_GET_SET( CItem, entryMadeFrom )
+DECL_GET_SET( CItem, isPileable )
+DECL_GET_SET( CItem, isMarkedByMaker )
+DECL_GET_SET( CItem, isDyeable )
+DECL_GET_SET( CItem, isDamageable )
+DECL_GET_SET( CItem, isWipeable )
+DECL_GET_SET( CItem, isGuarded )
+DECL_GET_SET( CItem, isDoorOpen )
+DECL_GET_SET( CItem, isFieldSpell )
+DECL_GET_SET( CItem, isLockedDown )
+DECL_GET_SET( CItem, isShieldType )
+DECL_GET_SET( CItem, isMetalType )
+DECL_GET_SET( CItem, isLeatherType )
+DECL_GET_SET( CItem, canBeLockedDown )
+DECL_GET_SET( CItem, isContType )
+DECL_GET_SET( CItem, carveSection )
+DECL_GET_SET( CItem, ammoID )
+DECL_GET_SET( CItem, ammoHue )
+DECL_GET_SET( CItem, ammoFX )
+DECL_GET_SET( CItem, ammoFXHue )
+DECL_GET_SET( CItem, ammoFXRender )
+DECL_GET_SET( CItem, speed )
+DECL_GET_SET( CItem, multi )
+DECL_GET_SET( CItem, maxRange )
+DECL_GET_SET( CItem, baseRange )
+DECL_GET_SET( CItem, region )
+DECL_GET_SET( CItem, spawnSerial )
+DECL_GET_SET( CItem, origin )
+DECL_GET_SET( CItem, isItemHeld )
+DECL_GET_SET( CItem, stealable )
+DECL_GET_SET( CItem, spawnsection )
+DECL_GET_SET( CItem, sectionalist )
+DECL_GET_SET( CItem, mininterval )
+DECL_GET_SET( CItem, maxinterval )
+DECL_GET_SET( CItem, lockdowns )
+DECL_GET_SET( CItem, maxLockdowns )
+DECL_GET_SET( CItem, trashContainers )
+DECL_GET_SET( CItem, maxTrashContainers )
+DECL_GET_SET( CItem, secureContainers )
+DECL_GET_SET( CItem, maxSecureContainers )
+DECL_GET_SET( CItem, friends )
+DECL_GET_SET( CItem, maxFriends )
+DECL_GET_SET( CItem, guests )
+DECL_GET_SET( CItem, maxGuests )
+DECL_GET_SET( CItem, owners )
+DECL_GET_SET( CItem, maxOwners )
+DECL_GET_SET( CItem, bans )
+DECL_GET_SET( CItem, maxBans )
+DECL_GET_SET( CItem, vendors )
+DECL_GET_SET( CItem, maxVendors )
+DECL_GET_SET( CItem, deed )
+DECL_GET_SET( CItem, isPublic )
+DECL_GET_SET( CItem, buildTimestamp )
+DECL_GET_SET( CItem, tradeTimestamp )
+DECL_GET_SET( CItem, banX )
+DECL_GET_SET( CItem, banY )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -810,158 +960,157 @@ inline JSPropertySpec CCharacterProps[] =
 
 inline JSPropertySpec CItemProps[] =
 {
-  { "sectionID",		CIP_SECTIONID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "name",			CIP_NAME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "title",			CIP_TITLE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "x",				CIP_X,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "y",				CIP_Y,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "z",				CIP_Z,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldX",			CIP_OLDX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldY",			CIP_OLDY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oldZ",			CIP_OLDZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "id",				CIP_ID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "colour",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "color",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "skin",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hue",			CIP_COLOUR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "owner",			CIP_OWNER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "visible",		CIP_VISIBLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "serial",			CIP_SERIAL,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "health",			CIP_HEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scripttrigger",	CIP_SCRIPTTRIGGER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "scriptTriggers",	CIP_SCRIPTTRIGGERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "worldnumber",	CIP_WORLDNUMBER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "instanceID",		CIP_INSTANCEID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "amount",			CIP_AMOUNT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "container",		CIP_CONTAINER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "type",			CIP_TYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "more",			CIP_MORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "more0",			CIP_MORE0,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "more1",			CIP_MORE1,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "more2",			CIP_MORE2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "morex",			CIP_MOREX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "morey",			CIP_MOREY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "morez",			CIP_MOREZ,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "movable",		CIP_MOVABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "att",			CIP_ATT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "layer",			CIP_LAYER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "itemsinside",	CIP_ITEMSINSIDE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "totalItemCount",	CIP_TOTALITEMCOUNT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "decayable",		CIP_DECAYABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "decaytime",		CIP_DECAYTIME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lodamage",		CIP_LODAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hidamage",		CIP_HIDAMAGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ac",				CIP_AC,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "def",			CIP_DEF,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistCold",		CIP_RESISTCOLD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistHeat",		CIP_RESISTHEAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistLight",	CIP_RESISTLIGHT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistLightning",CIP_RESISTLIGHTNING,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistPoison",	CIP_RESISTPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistRain",		CIP_RESISTRAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "resistSnow",		CIP_RESISTSNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageHeat",		CIP_DAMAGEHEAT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageCold",		CIP_DAMAGECOLD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageLight",	CIP_DAMAGELIGHT,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageLightning",CIP_DAMAGELIGHTNING,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damagePoison",	CIP_DAMAGEPOISON,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageRain",		CIP_DAMAGERAIN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "damageSnow",		CIP_DAMAGESNOW,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "name2",			CIP_NAME2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isChar",			CIP_ISCHAR,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isItem",			CIP_ISITEM,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isSpawner",		CIP_ISSPAWNER,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "race",			CIP_RACE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxhp",			CIP_MAXHP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxUses",		CIP_MAXUSES,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "usesLeft",		CIP_USESLEFT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "rank",			CIP_RANK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "creator",		CIP_CREATOR,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "poison",			CIP_POISON,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "dir",			CIP_DIR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "wipable",		CIP_WIPABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "buyvalue",		CIP_BUYVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "sellvalue",		CIP_SELLVALUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "vendorPrice",	CIP_VENDORPRICE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "restock",		CIP_RESTOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "divinelock",		CIP_DIVINELOCK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "baseWeight",		CIP_BASEWEIGHT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "weight",			CIP_WEIGHT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "weightMax",		CIP_WEIGHTMAX,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxItems",		CIP_MAXITEMS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "strength",		CIP_STRENGTH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "dexterity",		CIP_DEXTERITY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "intelligence",	CIP_INTELLIGENCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "corpse",			CIP_CORPSE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "desc",			CIP_DESC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "event",			CIP_EVENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempLastTraded",	CIP_TEMPLASTTRADED,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempTimer",		CIP_TEMPTIMER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "shouldSave",		CIP_SHOULDSAVE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-
-  { "isNewbie",		CIP_ISNEWBIE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDispellable",	CIP_ISDISPELLABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "madeWith",		CIP_MADEWITH,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "entryMadeFrom",	CIP_ENTRYMADEFROM,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isPileable",		CIP_ISPILEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isMarkedByMaker",CIP_ISMARKEDBYMAKER,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDyeable",		CIP_ISDYEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDamageable",	CIP_ISDAMAGEABLE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isWipeable",		CIP_ISWIPEABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGuarded",		CIP_ISGUARDED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isDoorOpen",		CIP_ISDOOROPEN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isFieldSpell",	CIP_ISFIELDSPELL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isLockedDown",	CIP_ISLOCKEDDOWN,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isShieldType",	CIP_ISSHIELDTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isMetalType",	CIP_ISMETALTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isLeatherType",	CIP_ISLEATHERTYPE,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "canBeLockedDown",CIP_CANBELOCKEDDOWN,JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "isContType",		CIP_ISCONTTYPE,		JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "carveSection",	CIP_CARVESECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ammoID",			CIP_AMMOID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ammoHue",		CIP_AMMOHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ammoFX",			CIP_AMMOFX,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ammoFXHue",		CIP_AMMOFXHUE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ammoFXRender",	CIP_AMMOFXRENDER,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "speed",			CIP_SPEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "multi",			CIP_MULTI,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxRange",		CIP_MAXRANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "baseRange",		CIP_BASERANGE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "region",			CIP_REGION,			JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "spawnSerial",	CIP_SPAWNSERIAL,	JSPROP_ENUMPERMRO, nullptr, nullptr },
-  { "origin",			CIP_ORIGIN,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isItemHeld",		CIP_ISITEMHELD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stealable",		CIP_STEALABLE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "sectionID",					JSCItem_get_sectionID,	   JSCItem_set_sectionID,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "name",						JSCItem_get_name,		   JSCItem_set_name,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "title",						JSCItem_get_title,	   JSCItem_set_title,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "x",						JSCItem_get_x,	   JSCItem_set_x,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "y",						JSCItem_get_y,	   JSCItem_set_y,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "z",						JSCItem_get_z,	   JSCItem_set_z,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "oldX",						JSCItem_get_oldX,	   JSCItem_set_oldX,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "oldY",						JSCItem_get_oldY,	   JSCItem_set_oldY,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "oldZ",						JSCItem_get_oldZ,	   JSCItem_set_oldZ,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "id",						JSCItem_get_id,	   JSCItem_set_id,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "colour",						JSCItem_get_colour,	   JSCItem_set_colour,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "color",						JSCItem_get_color,	   JSCItem_set_color,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "skin",						JSCItem_get_skin,	   JSCItem_set_skin,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "hue",						JSCItem_get_hue,	   JSCItem_set_hue,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "owner",						JSCItem_get_owner,	   JSCItem_set_owner,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "visible",						JSCItem_get_visible,	   JSCItem_set_visible,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "serial",						JSCItem_get_serial,	   JSCItem_set_serial,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "health",						JSCItem_get_health,	   JSCItem_set_health,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "scripttrigger",						JSCItem_get_scripttrigger,	   JSCItem_set_scripttrigger,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "scriptTriggers",						JSCItem_get_scriptTriggers,	   JSCItem_set_scriptTriggers,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "worldnumber",						JSCItem_get_worldnumber,	   JSCItem_set_worldnumber,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "instanceID",						JSCItem_get_instanceID,	   JSCItem_set_instanceID,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "amount",						JSCItem_get_amount,	   JSCItem_set_amount,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "container",						JSCItem_get_container,	   JSCItem_set_container,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "type",						JSCItem_get_type,	   JSCItem_set_type,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "more",						JSCItem_get_more,	   JSCItem_set_more,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "more0",						JSCItem_get_more0,	   JSCItem_set_more0,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "more1",						JSCItem_get_more1,	   JSCItem_set_more1,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "more2",						JSCItem_get_more2,	   JSCItem_set_more2,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "morex",						JSCItem_get_morex,	   JSCItem_set_morex,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "morey",						JSCItem_get_morey,	   JSCItem_set_morey,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "morez",						JSCItem_get_morez,	   JSCItem_set_morez,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "movable",						JSCItem_get_movable,	   JSCItem_set_movable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "att",						JSCItem_get_att,	   JSCItem_set_att,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "layer",						JSCItem_get_layer,	   JSCItem_set_layer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "itemsinside",						JSCItem_get_itemsinside,	   JSCItem_set_itemsinside,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "totalItemCount",						JSCItem_get_totalItemCount,	   JSCItem_set_totalItemCount,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "decayable",						JSCItem_get_decayable,	   JSCItem_set_decayable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "decaytime",						JSCItem_get_decaytime,	   JSCItem_set_decaytime,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "lodamage",						JSCItem_get_lodamage,	   JSCItem_set_lodamage,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "hidamage",						JSCItem_get_hidamage,	   JSCItem_set_hidamage,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ac",						JSCItem_get_ac,	   JSCItem_set_ac,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "def",						JSCItem_get_def,	   JSCItem_set_def,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistCold",						JSCItem_get_resistCold,	   JSCItem_set_resistCold,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistHeat",						JSCItem_get_resistHeat,	   JSCItem_set_resistHeat,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistLight",						JSCItem_get_resistLight,	   JSCItem_set_resistLight,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistLightning",						JSCItem_get_resistLightning,	   JSCItem_set_resistLightning,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistPoison",						JSCItem_get_resistPoison,	   JSCItem_set_resistPoison,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistRain",						JSCItem_get_resistRain,	   JSCItem_set_resistRain,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "resistSnow",						JSCItem_get_resistSnow,	   JSCItem_set_resistSnow,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageHeat",						JSCItem_get_damageHeat,	   JSCItem_set_damageHeat,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageCold",						JSCItem_get_damageCold,	   JSCItem_set_damageCold,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageLight",						JSCItem_get_damageLight,	   JSCItem_set_damageLight,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageLightning",						JSCItem_get_damageLightning,	   JSCItem_set_damageLightning,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damagePoison",						JSCItem_get_damagePoison,	   JSCItem_set_damagePoison,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageRain",						JSCItem_get_damageRain,	   JSCItem_set_damageRain,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "damageSnow",						JSCItem_get_damageSnow,	   JSCItem_set_damageSnow,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "name2",						JSCItem_get_name2,	   JSCItem_set_name2,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isChar",						JSCItem_get_isChar,	   JSCItem_set_isChar,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isItem",						JSCItem_get_isItem,	   JSCItem_set_isItem,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isSpawner",						JSCItem_get_isSpawner,	   JSCItem_set_isSpawner,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "race",						JSCItem_get_race,	   JSCItem_set_race,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxhp",						JSCItem_get_maxhp,	   JSCItem_set_maxhp,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxUses",						JSCItem_get_maxUses,	   JSCItem_set_maxUses,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "usesLeft",						JSCItem_get_usesLeft,	   JSCItem_set_usesLeft,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "rank",						JSCItem_get_rank,	   JSCItem_set_rank,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "creator",						JSCItem_get_creator,	   JSCItem_set_creator,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "poison",						JSCItem_get_poison,	   JSCItem_set_poison,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "dir",						JSCItem_get_dir,	   JSCItem_set_dir,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "wipable",						JSCItem_get_wipable,	   JSCItem_set_wipable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "buyvalue",						JSCItem_get_buyvalue,	   JSCItem_set_buyvalue,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "sellvalue",						JSCItem_get_sellvalue,	   JSCItem_set_sellvalue,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "vendorPrice",						JSCItem_get_vendorPrice,	   JSCItem_set_vendorPrice,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "restock",						JSCItem_get_restock,	   JSCItem_set_restock,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "divinelock",						JSCItem_get_divinelock,	   JSCItem_set_divinelock,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "baseWeight",						JSCItem_get_baseWeight,	   JSCItem_set_baseWeight,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "weight",						JSCItem_get_weight,	   JSCItem_set_weight,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "weightMax",						JSCItem_get_weightMax,	   JSCItem_set_weightMax,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxItems",						JSCItem_get_maxItems,	   JSCItem_set_maxItems,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "strength",						JSCItem_get_strength,	   JSCItem_set_strength,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "dexterity",						JSCItem_get_dexterity,	   JSCItem_set_dexterity,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "intelligence",						JSCItem_get_intelligence,	   JSCItem_set_intelligence,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "corpse",						JSCItem_get_corpse,	   JSCItem_set_corpse,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "desc",						JSCItem_get_desc,	   JSCItem_set_desc,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "event",						JSCItem_get_event,	   JSCItem_set_event,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempLastTraded",						JSCItem_get_tempLastTraded,	   JSCItem_set_tempLastTraded,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempTimer",						JSCItem_get_tempTimer,	   JSCItem_set_tempTimer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "shouldSave",						JSCItem_get_shouldSave,	   JSCItem_set_shouldSave,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isNewbie",						JSCItem_get_isNewbie,	   JSCItem_set_isNewbie,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isDispellable",						JSCItem_get_isDispellable,	   JSCItem_set_isDispellable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "madeWith",						JSCItem_get_madeWith,	   JSCItem_set_madeWith,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "entryMadeFrom",						JSCItem_get_entryMadeFrom,	   JSCItem_set_entryMadeFrom,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isPileable",						JSCItem_get_isPileable,	   JSCItem_set_isPileable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isMarkedByMaker",						JSCItem_get_isMarkedByMaker,	   JSCItem_set_isMarkedByMaker,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isDyeable",						JSCItem_get_isDyeable,	   JSCItem_set_isDyeable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isDamageable",						JSCItem_get_isDamageable,	   JSCItem_set_isDamageable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isWipeable",						JSCItem_get_isWipeable,	   JSCItem_set_isWipeable,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isGuarded",						JSCItem_get_isGuarded,	   JSCItem_set_isGuarded,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isDoorOpen",						JSCItem_get_isDoorOpen,	   JSCItem_set_isDoorOpen,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isFieldSpell",						JSCItem_get_isFieldSpell,	   JSCItem_set_isFieldSpell,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isLockedDown",						JSCItem_get_isLockedDown,	   JSCItem_set_isLockedDown,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isShieldType",						JSCItem_get_isShieldType,	   JSCItem_set_isShieldType,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isMetalType",						JSCItem_get_isMetalType,	   JSCItem_set_isMetalType,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isLeatherType",						JSCItem_get_isLeatherType,	   JSCItem_set_isLeatherType,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "canBeLockedDown",						JSCItem_get_canBeLockedDown,	   JSCItem_set_canBeLockedDown,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isContType",						JSCItem_get_isContType,	   JSCItem_set_isContType,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "carveSection",						JSCItem_get_carveSection,	   JSCItem_set_carveSection,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ammoID",						JSCItem_get_ammoID,	   JSCItem_set_ammoID,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ammoHue",						JSCItem_get_ammoHue,	   JSCItem_set_ammoHue,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ammoFX",						JSCItem_get_ammoFX,	   JSCItem_set_ammoFX,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ammoFXHue",						JSCItem_get_ammoFXHue,	   JSCItem_set_ammoFXHue,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ammoFXRender",						JSCItem_get_ammoFXRender,	   JSCItem_set_ammoFXRender,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "speed",						JSCItem_get_speed,	   JSCItem_set_speed,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "multi",						JSCItem_get_multi,	   JSCItem_set_multi,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxRange",						JSCItem_get_maxRange,	   JSCItem_set_maxRange,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "baseRange",						JSCItem_get_baseRange,	   JSCItem_set_baseRange,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "region",						JSCItem_get_region,	   JSCItem_set_region,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "spawnSerial",						JSCItem_get_spawnSerial,	   JSCItem_set_spawnSerial,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "origin",						JSCItem_get_origin,	   JSCItem_set_origin,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isItemHeld",						JSCItem_get_isItemHeld,	   JSCItem_set_isItemHeld,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "stealable",						JSCItem_get_stealable,	   JSCItem_set_stealable,	     JSPROP_ENUMANDPERM, ),
 
   // The Following vars are specific to CSpawnItem objects
-  { "spawnsection",	CIP_SPAWNSECTION,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "sectionalist",	CIP_SECTIONALIST,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mininterval",	CIP_MININTERVAL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxinterval",	CIP_MAXINTERVAL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "spawnsection",						JSCItem_get_spawnsection,	   JSCItem_set_spawnsection,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "sectionalist",						JSCItem_get_sectionalist,	   JSCItem_set_sectionalist,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "mininterval",						JSCItem_get_mininterval,	   JSCItem_set_mininterval,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxinterval",						JSCItem_get_maxinterval,	   JSCItem_set_maxinterval,	     JSPROP_ENUMANDPERM, ),
 
   // The Following vars are specific to cMultiObj objects
-  { "lockdowns",		CIP_LOCKDDOWNS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxLockdowns",	CIP_MAXLOCKDOWNS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "trashContainers",	CIP_TRASHCONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxTrashContainers",	CIP_MAXTRASHCONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "secureContainers",	CIP_SECURECONTAINERS,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxSecureContainers",CIP_MAXSECURECONTAINERS,JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "friends",		CIP_FRIENDS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxFriends",		CIP_MAXFRIENDS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "guests",			CIP_GUESTS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxGuests",		CIP_MAXGUESTS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "owners",			CIP_OWNERS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxOwners",		CIP_MAXOWNERS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "bans",			CIP_BANS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxBans",		CIP_MAXBANS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "vendors",		CIP_VENDORS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "maxVendors",		CIP_MAXVENDORS,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "deed",			CIP_DEED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isPublic",		CIP_ISPUBLIC,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "buildTimestamp",	CIP_BUILDTIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tradeTimestamp",	CIP_TRADETIMESTAMP,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "banX",			CIP_BANX,			JSPROP_ENUMANDPERM, nullptr, nullptr},
-  { "banY",			CIP_BANY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "lockdowns",						JSCItem_get_lockdowns,	   JSCItem_set_lockdowns,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxLockdowns",						JSCItem_get_maxLockdowns,	   JSCItem_set_maxLockdowns,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "trashContainers",						JSCItem_get_trashContainers,	   JSCItem_set_trashContainers,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxTrashContainers",						JSCItem_get_secureContainers,	   JSCItem_set_secureContainers,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "secureContainers",						JSCItem_get_secureContainers,	   JSCItem_set_secureContainers,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxSecureContainers",						JSCItem_get_maxSecureContainers,	   JSCItem_set_maxSecureContainers,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "friends",						JSCItem_get_friends,	   JSCItem_set_friends,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxFriends",						JSCItem_get_maxFriends,	   JSCItem_set_maxFriends,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "guests",						JSCItem_get_guests,	   JSCItem_set_guests,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxGuests",						JSCItem_get_maxGuests,	   JSCItem_set_maxGuests,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "owners",						JSCItem_get_owners,	   JSCItem_set_owners,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxOwners",						JSCItem_get_maxOwners,	   JSCItem_set_maxOwners,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "bans",						JSCItem_get_bans,	   JSCItem_set_bans,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxBans",						JSCItem_get_maxBans,	   JSCItem_set_maxBans,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "vendors",						JSCItem_get_vendors,	   JSCItem_set_vendors,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "maxVendors",						JSCItem_get_maxVendors,	   JSCItem_set_maxVendors,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "deed",						JSCItem_get_deed,	   JSCItem_set_deed,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isPublic",						JSCItem_get_isPublic,	   JSCItem_set_isPublic,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "buildTimestamp",						JSCItem_get_buildTimestamp,	   JSCItem_set_buildTimestamp,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tradeTimestamp",						JSCItem_get_tradeTimestamp,	   JSCItem_set_tradeTimestamp,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "banX",						JSCItem_get_banX,	   JSCItem_set_banX,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "banY",						JSCItem_get_banY,	   JSCItem_set_banY,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
