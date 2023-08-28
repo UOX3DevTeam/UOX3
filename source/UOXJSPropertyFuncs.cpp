@@ -75,13 +75,27 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	return JS_TRUE;
 }
 
-JSBool CSpellProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
-{
-	return JS_TRUE;
+
+bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
+    auto args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject thisObj(cx);
+    auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>(thisObj, 0);
+    for (auto i = 0; i < Magic->spells.size(); ++i) {
+        if (&Magic->spells[i] == priv) {
+            args.rval().setInt32(i);
+            return true;
+        }
+    }
+    return false;
 }
 
-JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
+IMPL_GET( CSpell, action,  CSpellInfo, setInt32, Action )
+IMPL_GET( CSpell, baseDmg, CSpellInfo, setInt32, BaseDmg )
+IMPL_GET( CSpell, health,  CSpellInfo, setInt32, Health )
+IMPL_GET( CSpell, stamina, CSpellInfo, setInt32, Stamina )
+IMPL_GET( CSpell, mana,    CSpellInfo, setInt32, Mana )
+
+JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
 	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));
 	if( gPriv == nullptr )
 		return JS_FALSE;
@@ -95,24 +109,9 @@ JSBool CSpellProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		size_t i = 0;
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CSP_ID:
-				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
-				{
-					if( &Magic->spells[i] == gPriv )
-					{
-						*vp = INT_TO_JSVAL( i );
-						bDone = true;
-					}
-				}
-				break;
-			case CSP_ACTION:			*vp = INT_TO_JSVAL( gPriv->Action() );					break;
-			case CSP_BASEDMG:			*vp = INT_TO_JSVAL( gPriv->BaseDmg() );					break;
 			case CSP_DELAY:				JS_NewNumberValue( cx, gPriv->Delay(), vp );			break;
 			case CSP_DAMAGEDELAY:		JS_NewNumberValue( cx, gPriv->DamageDelay(), vp );		break;
 			case CSP_RECOVERYDELAY:		JS_NewNumberValue( cx, gPriv->RecoveryDelay(), vp );	break;
-			case CSP_HEALTH:			*vp = INT_TO_JSVAL( gPriv->Health() );					break;
-			case CSP_STAMINA:			*vp = INT_TO_JSVAL( gPriv->Stamina() );					break;
-			case CSP_MANA:				*vp = INT_TO_JSVAL( gPriv->Mana() );					break;
 			case CSP_MANTRA:			tString = JS_NewStringCopyZ( cx, gPriv->Mantra().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;

@@ -14,48 +14,57 @@
 
 #define DECL_GET( main, attr ) JSNative JS##main ## _get_ ## attr;
 #define DECL_SET( main, attr ) JSNative JS##main ## _set_ ## attr;
+#define IMPL_GET( main, attr, type, method, accessor ) \
+bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
+  auto args = JS::CallArgsFromVp(argc, vp); \
+  JS::RootedObject thisObj(cx); \
+  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
+  args.rval().method(priv->accessor()); \
+  return true; \
+}
+
 
 #define DECL_GET_SET( main, attr ) \
 DECL_GET( main, attr ) \
 DECL_SET( main, attr )
 
 // Forward declares
-DECL_GET_SET( CSpell, id )
-DECL_GET_SET( CSpell, action )
-DECL_GET_SET( CSpell, delay )
-DECL_GET_SET( CSpell, damageDelay )
-DECL_GET_SET( CSpell, recoveryDelay )
-DECL_GET_SET( CSpell, health )
-DECL_GET_SET( CSpell, stamina )
-DECL_GET_SET( CSpell, mana )
-DECL_GET_SET( CSpell, mantra )
-DECL_GET_SET( CSpell, name )
-DECL_GET_SET( CSpell, strToSay )
-DECL_GET_SET( CSpell, scrollLow )
-DECL_GET_SET( CSpell, scrollHigh )
-DECL_GET_SET( CSpell, circle )
-DECL_GET_SET( CSpell, lowSkill )
-DECL_GET_SET( CSpell, highSkill )
-DECL_GET_SET( CSpell, ginseng )
-DECL_GET_SET( CSpell, moss )
-DECL_GET_SET( CSpell, drake )
-DECL_GET_SET( CSpell, pearl )
-DECL_GET_SET( CSpell, silk )
-DECL_GET_SET( CSpell, ash )
-DECL_GET_SET( CSpell, shade )
-DECL_GET_SET( CSpell, garlic )
-DECL_GET_SET( CSpell, requireTarget )
-DECL_GET_SET( CSpell, requireItem )
-DECL_GET_SET( CSpell, requireLocation )
-DECL_GET_SET( CSpell, requireChar )
-DECL_GET_SET( CSpell, travelSpell )
-DECL_GET_SET( CSpell, fieldSpell )
-DECL_GET_SET( CSpell, reflectable )
-DECL_GET_SET( CSpell, aggressiveSpell )
-DECL_GET_SET( CSpell, resistable )
-DECL_GET_SET( CSpell, soundEffect )
-DECL_GET_SET( CSpell, enabled )
-DECL_GET_SET( CSpell, baseDmg )
+DECL_GET( CSpell, id )
+DECL_GET( CSpell, action )
+DECL_GET( CSpell, delay )
+DECL_GET( CSpell, damageDelay )
+DECL_GET( CSpell, recoveryDelay )
+DECL_GET( CSpell, health )
+DECL_GET( CSpell, stamina )
+DECL_GET( CSpell, mana )
+DECL_GET( CSpell, mantra )
+DECL_GET( CSpell, name )
+DECL_GET( CSpell, strToSay )
+DECL_GET( CSpell, scrollLow )
+DECL_GET( CSpell, scrollHigh )
+DECL_GET( CSpell, circle )
+DECL_GET( CSpell, lowSkill )
+DECL_GET( CSpell, highSkill )
+DECL_GET( CSpell, ginseng )
+DECL_GET( CSpell, moss )
+DECL_GET( CSpell, drake )
+DECL_GET( CSpell, pearl )
+DECL_GET( CSpell, silk )
+DECL_GET( CSpell, ash )
+DECL_GET( CSpell, shade )
+DECL_GET( CSpell, garlic )
+DECL_GET( CSpell, requireTarget )
+DECL_GET( CSpell, requireItem )
+DECL_GET( CSpell, requireLocation )
+DECL_GET( CSpell, requireChar )
+DECL_GET( CSpell, travelSpell )
+DECL_GET( CSpell, fieldSpell )
+DECL_GET( CSpell, reflectable )
+DECL_GET( CSpell, aggressiveSpell )
+DECL_GET( CSpell, resistable )
+DECL_GET( CSpell, soundEffect )
+DECL_GET( CSpell, enabled )
+DECL_GET( CSpell, baseDmg )
 
 // Global Skills
 DECL_GET_SET( CGlobalSkill, name )
@@ -397,42 +406,42 @@ DECL_GET_SET( CCharacter, housesCoOwned )
 
 inline JSPropertySpec CSpellProperties[] =
 {
-  JS_PSGS( "id",               JSCSpell_get_id,              JSCSpell_set_id,              JSPROP_ENUMANDPERM ),
-  JS_PSGS( "action",           JSCSpell_get_action,          JSCSpell_set_action,          JSPROP_ENUMANDPERM ),
-  JS_PSGS( "delay",            JSCSpell_get_delay,           JSCSpell_set_delay,           JSPROP_ENUMANDPERM ),
-  JS_PSGS( "damageDelay",      JSCSpell_get_damageDelay,     JSCSpell_set_damageDelay,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "recoveryDelay",    JSCSpell_get_recoveryDelay,   JSCSpell_set_recoveryDelay,   JSPROP_ENUMANDPERM ),
-  JS_PSGS( "health",           JSCSpell_get_health,          JSCSpell_set_health,          JSPROP_ENUMANDPERM ),
-  JS_PSGS( "stamina",          JSCSpell_get_stamina,         JSCSpell_set_stamina,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "mana",             JSCSpell_get_mana,            JSCSpell_set_mana,            JSPROP_ENUMANDPERM ),
-  JS_PSGS( "mantra",           JSCSpell_get_mantra,          JSCSpell_set_mantra,          JSPROP_ENUMANDPERM ),
-  JS_PSGS( "name",             JSCSpell_get_name,            JSCSpell_set_name,            JSPROP_ENUMANDPERM ),
-  JS_PSGS( "strToSay",         JSCSpell_get_strToSay,        JSCSpell_set_strToSay,        JSPROP_ENUMANDPERM ),
-  JS_PSGS( "scrollLow",        JSCSpell_get_scrollLow,       JSCSpell_set_scrollLow,       JSPROP_ENUMANDPERM ),
-  JS_PSGS( "scrollHigh",       JSCSpell_get_scrollHigh,      JSCSpell_set_scrollHigh,      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "circle",           JSCSpell_get_circle,          JSCSpell_set_circle,          JSPROP_ENUMANDPERM ),
-  JS_PSGS( "lowSkill",         JSCSpell_get_lowSkill,        JSCSpell_set_lowSkill,        JSPROP_ENUMANDPERM ),
-  JS_PSGS( "highSkill",        JSCSpell_get_highSkill,       JSCSpell_set_highSkill,       JSPROP_ENUMANDPERM ),
-  JS_PSGS( "ginseng",          JSCSpell_get_ginseng,         JSCSpell_set_ginseng,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "moss",             JSCSpell_get_moss,            JSCSpell_set_moss,            JSPROP_ENUMANDPERM ),
-  JS_PSGS( "drake",            JSCSpell_get_drake,           JSCSpell_set_drake,           JSPROP_ENUMANDPERM ),
-  JS_PSGS( "pearl",            JSCSpell_get_pearl,           JSCSpell_set_pearl,           JSPROP_ENUMANDPERM ),
-  JS_PSGS( "silk",             JSCSpell_get_silk,            JSCSpell_set_silk,            JSPROP_ENUMANDPERM ),
-  JS_PSGS( "ash",              JSCSpell_get_ash,             JSCSpell_set_ash,             JSPROP_ENUMANDPERM ),
-  JS_PSGS( "shade",            JSCSpell_get_shade,           JSCSpell_set_shade,           JSPROP_ENUMANDPERM ),
-  JS_PSGS( "garlic",           JSCSpell_get_garlic,          JSCSpell_set_garlic,          JSPROP_ENUMANDPERM ),
-  JS_PSGS( "requireTarget",    JSCSpell_get_requireTarget,   JSCSpell_set_requireTarget,   JSPROP_ENUMANDPERM ),
-  JS_PSGS( "requireItem",      JSCSpell_get_requireItem,     JSCSpell_set_requireItem,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "requireLocation",  JSCSpell_get_requireLocation, JSCSpell_set_requireLocation, JSPROP_ENUMANDPERM ),
-  JS_PSGS( "requireChar",      JSCSpell_get_requireChar,     JSCSpell_set_requireChar,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "travelSpell",      JSCSpell_get_travelSpell,     JSCSpell_set_travelSpell,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "fieldSpell",       JSCSpell_get_fieldSpell,      JSCSpell_set_fieldSpell,      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "reflectable",      JSCSpell_get_reflectable,     JSCSpell_set_reflectable,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "aggressiveSpell",  JSCSpell_get_aggressiveSpell, JSCSpell_set_aggressiveSpell, JSPROP_ENUMANDPERM ),
-  JS_PSGS( "resistable",       JSCSpell_get_resistable,      JSCSpell_set_resistable,      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "soundEffect",      JSCSpell_get_soundEffect,     JSCSpell_set_soundEffect,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "enabled",          JSCSpell_get_enabled,         JSCSpell_set_enabled,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "baseDmg",          JSCSpell_get_baseDmg,         JSCSpell_set_baseDmg,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "id",               JSCSpell_get_id,              JSPROP_ENUMANDPERM ),
+  JS_PSG( "action",           JSCSpell_get_action,          JSPROP_ENUMANDPERM ),
+  JS_PSG( "delay",            JSCSpell_get_delay,           JSPROP_ENUMANDPERM ),
+  JS_PSG( "damageDelay",      JSCSpell_get_damageDelay,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "recoveryDelay",    JSCSpell_get_recoveryDelay,   JSPROP_ENUMANDPERM ),
+  JS_PSG( "health",           JSCSpell_get_health,          JSPROP_ENUMANDPERM ),
+  JS_PSG( "stamina",          JSCSpell_get_stamina,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "mana",             JSCSpell_get_mana,            JSPROP_ENUMANDPERM ),
+  JS_PSG( "mantra",           JSCSpell_get_mantra,          JSPROP_ENUMANDPERM ),
+  JS_PSG( "name",             JSCSpell_get_name,            JSPROP_ENUMANDPERM ),
+  JS_PSG( "strToSay",         JSCSpell_get_strToSay,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "scrollLow",        JSCSpell_get_scrollLow,       JSPROP_ENUMANDPERM ),
+  JS_PSG( "scrollHigh",       JSCSpell_get_scrollHigh,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "circle",           JSCSpell_get_circle,          JSPROP_ENUMANDPERM ),
+  JS_PSG( "lowSkill",         JSCSpell_get_lowSkill,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "highSkill",        JSCSpell_get_highSkill,       JSPROP_ENUMANDPERM ),
+  JS_PSG( "ginseng",          JSCSpell_get_ginseng,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "moss",             JSCSpell_get_moss,            JSPROP_ENUMANDPERM ),
+  JS_PSG( "drake",            JSCSpell_get_drake,           JSPROP_ENUMANDPERM ),
+  JS_PSG( "pearl",            JSCSpell_get_pearl,           JSPROP_ENUMANDPERM ),
+  JS_PSG( "silk",             JSCSpell_get_silk,            JSPROP_ENUMANDPERM ),
+  JS_PSG( "ash",              JSCSpell_get_ash,             JSPROP_ENUMANDPERM ),
+  JS_PSG( "shade",            JSCSpell_get_shade,           JSPROP_ENUMANDPERM ),
+  JS_PSG( "garlic",           JSCSpell_get_garlic,          JSPROP_ENUMANDPERM ),
+  JS_PSG( "requireTarget",    JSCSpell_get_requireTarget,   JSPROP_ENUMANDPERM ),
+  JS_PSG( "requireItem",      JSCSpell_get_requireItem,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "requireLocation",  JSCSpell_get_requireLocation, JSPROP_ENUMANDPERM ),
+  JS_PSG( "requireChar",      JSCSpell_get_requireChar,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "travelSpell",      JSCSpell_get_travelSpell,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "fieldSpell",       JSCSpell_get_fieldSpell,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "reflectable",      JSCSpell_get_reflectable,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "aggressiveSpell",  JSCSpell_get_aggressiveSpell, JSPROP_ENUMANDPERM ),
+  JS_PSG( "resistable",       JSCSpell_get_resistable,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "soundEffect",      JSCSpell_get_soundEffect,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "enabled",          JSCSpell_get_enabled,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "baseDmg",          JSCSpell_get_baseDmg,         JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
