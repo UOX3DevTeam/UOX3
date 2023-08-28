@@ -121,6 +121,7 @@ IMPL_GET( CSpell, reflectable,     CSpellInfo, setBoolean, SpellReflectable() )
 IMPL_GET( CSpell, aggressiveSpell, CSpellInfo, setBoolean, AggressiveSpell() )
 IMPL_GET( CSpell, resistable,      CSpellInfo, setBoolean, Resistable() )
 IMPL_GET( CSpell, enabled,         CSpellInfo, setBoolean, Enabled() )
+IMPL_GETS( CSpell, mantra,         CSpellInfo, setString, Mantra().c_str() )
 
 JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
 	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));

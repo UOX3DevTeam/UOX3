@@ -4,7 +4,8 @@
 const uint8_t JSPROP_ENUMANDPERM	= JSPROP_ENUMERATE | JSPROP_PERMANENT;
 // This used to include JSPROP_READONLY, but that no longer exists - just don't define a Setter
 const uint8_t JSPROP_ENUMPERMRO = JSPROP_ENUMANDPERM;
-//const uint8_t JSPROP_ENUMPERMIDX = JSPROP_ENUMERATE | JSPROP_PERMANENT | JSPROP_INDEX;
+// This used to include JSPROP_READONLY, but that no longer exists - need to figure it out
+const uint8_t JSPROP_ENUMPERMIDX = JSPROP_ENUMERATE | JSPROP_PERMANENT;
 
 enum CSpell_Properties
 {
