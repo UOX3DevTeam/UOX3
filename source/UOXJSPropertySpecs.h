@@ -664,6 +664,67 @@ DECL_GET_SET( CSkills, allskills )
 DECL_GET_SET( CGumpData, buttons )
 DECL_GET_SET( CGumpData, IDs )
 
+// Account Properties
+DECL_GET_SET( CAccount, id )
+DECL_GET_SET( CAccount, username )
+DECL_GET_SET( CAccount, password )
+DECL_GET_SET( CAccount, flags )
+DECL_GET_SET( CAccount, path )
+DECL_GET_SET( CAccount, comment )
+DECL_GET_SET( CAccount, timeban )
+DECL_GET_SET( CAccount, firstLogin )
+DECL_GET_SET( CAccount, totalPlayTime )
+DECL_GET_SET( CAccount, character1 )
+DECL_GET_SET( CAccount, character2 )
+DECL_GET_SET( CAccount, character3 )
+DECL_GET_SET( CAccount, character4 )
+DECL_GET_SET( CAccount, character5 )
+DECL_GET_SET( CAccount, character6 )
+DECL_GET_SET( CAccount, character7 )
+DECL_GET_SET( CAccount, currentChar )
+DECL_GET_SET( CAccount, lastIP )
+DECL_GET_SET( CAccount, isBanned )
+DECL_GET_SET( CAccount, isSuspended )
+DECL_GET_SET( CAccount, isPublic )
+DECL_GET_SET( CAccount, isOnline )
+DECL_GET_SET( CAccount, isSlot1Blocked )
+DECL_GET_SET( CAccount, isSlot2Blocked )
+DECL_GET_SET( CAccount, isSlot3Blocked )
+DECL_GET_SET( CAccount, isSlot4Blocked )
+DECL_GET_SET( CAccount, isSlot5Blocked )
+DECL_GET_SET( CAccount, isSlot6Blocked )
+DECL_GET_SET( CAccount, isSlot7Blocked )
+DECL_GET_SET( CAccount, isYoung )
+DECL_GET_SET( CAccount, unused10 )
+DECL_GET_SET( CAccount, isSeer )
+DECL_GET_SET( CAccount, isCounselor )
+DECL_GET_SET( CAccount, isGM )
+
+// Console Properties
+DECL_GET_SET( CConsole, mode )
+DECL_GET_SET( CConsole, logEcho )
+
+// Script Section Properties
+DECL_GET_SET( CScriptSection, numTags )
+DECL_GET_SET( CScriptSection, atEnd )
+DECL_GET_SET( CScriptSection, atEndTags )
+
+// Resource Properties
+DECL_GET_SET( CResource, logAmount )
+DECL_GET_SET( CResource, logTime )
+DECL_GET_SET( CResource, oreAmount )
+DECL_GET_SET( CResource, oreTime )
+DECL_GET_SET( CResource, fishAmount )
+DECL_GET_SET( CResource, fishTime )
+
+// Party Properties
+DECL_GET_SET( CParty, leader )
+DECL_GET( CParty, memberCount )
+DECL_GET_SET( CParty, isNPC )
+
+// Script Properties
+DECL_GET_SET( CScript, script_id )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -1334,91 +1395,90 @@ inline JSPropertySpec CSkillsProps[] =
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
-  JS_PSGS(	"buttons",	JSCGumpData_get_buttons,   JSCGumpData_set_buttons,	 JSPROP_ENUMANDPERM, ),
-  JS_PSGS(	"IDs",		JSCGumpData_get_IDs,	   JSCGumpData_set_IDs,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "buttons",	JSCGumpData_get_buttons,   JSCGumpData_set_buttons,	 JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "IDs",		JSCGumpData_get_IDs,	   JSCGumpData_set_IDs,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
-/*
 inline JSPropertySpec CAccountProperties[] =
 {
-  { "id",			CACCOUNT_ID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "username",	CACCOUNT_USERNAME,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "password",	CACCOUNT_PASSWORD,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "flags",		CACCOUNT_FLAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "path",		CACCOUNT_PATH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "comment",	CACCOUNT_COMMENT,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "timeban",	CACCOUNT_TIMEBAN,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "firstLogin",	CACCOUNT_FIRSTLOGIN, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "totalPlayTime",	CACCOUNT_TOTALPLAYTIME,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character1",	CACCOUNT_CHARACTER1, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character2",	CACCOUNT_CHARACTER2, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character3",	CACCOUNT_CHARACTER3, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character4",	CACCOUNT_CHARACTER4, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character5",	CACCOUNT_CHARACTER5, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character6",	CACCOUNT_CHARACTER6, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "character7",	CACCOUNT_CHARACTER7, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "currentChar",	CACCOUNT_CURRENTCHAR,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lastIP",			CACCOUNT_LASTIP, 		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "id",			JSCAccount_get_id,		   JSCAccount_set_id,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "username",	    JSCAccount_get_username,	   JSCAccount_set_username,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "password",	    JSCAccount_get_password,	   JSCAccount_set_password,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "flags",		    JSCAccount_get_flags,	   JSCAccount_set_flags,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "path",		    JSCAccount_get_path,	   JSCAccount_set_path,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "comment",	    JSCAccount_get_comment,	   JSCAccount_set_comment,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "timeban",	    JSCAccount_get_timeban,	   JSCAccount_set_timeban,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "firstLogin",	JSCAccount_get_firstLogin,	   JSCAccount_set_firstLogin,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "totalPlayTime",	JSCAccount_get_totalPlayTime,	   JSCAccount_set_totalPlayTime,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character1",	JSCAccount_get_character1,	   JSCAccount_set_character1,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character2",	JSCAccount_get_character2,	   JSCAccount_set_character2,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character3",	JSCAccount_get_character3,	   JSCAccount_set_character3,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character4",	JSCAccount_get_character4,	   JSCAccount_set_character4,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character5",	JSCAccount_get_character5,	   JSCAccount_set_character5,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character6",	JSCAccount_get_character6,	   JSCAccount_set_character6,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "character7",	JSCAccount_get_character7,	   JSCAccount_set_character7,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "currentChar",	JSCAccount_get_currentChar,	   JSCAccount_set_currentChar,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "lastIP",		JSCAccount_get_lastIP,	   JSCAccount_set_lastIP,	     JSPROP_ENUMANDPERM, ),
 
   // Flags
-  { "isBanned",		CACCOUNT_BANNED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSuspended",	CACCOUNT_SUSPENDED,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isPublic",		CACCOUNT_PUBLIC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isOnline",		CACCOUNT_ONLINE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot1Blocked",	CACCOUNT_CHARSLOT1BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot2Blocked",	CACCOUNT_CHARSLOT2BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot3Blocked",	CACCOUNT_CHARSLOT3BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot4Blocked",	CACCOUNT_CHARSLOT4BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot5Blocked",	CACCOUNT_CHARSLOT5BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot6Blocked",	CACCOUNT_CHARSLOT6BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSlot7Blocked",	CACCOUNT_CHARSLOT7BLOCKED, 	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isYoung",		CACCOUNT_YOUNG,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "unused10",		CACCOUNT_UNUSED10,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isSeer",			CACCOUNT_SEER,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isCounselor",	CACCOUNT_COUNSELOR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "isGM",			CACCOUNT_GM,				JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "isBanned",			JSCAccount_get_isBanned,	   JSCAccount_set_isBanned,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSuspended",		JSCAccount_get_isSuspended,	   JSCAccount_set_isSuspended,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isPublic",			JSCAccount_get_isPublic,	   JSCAccount_set_isPublic,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isOnline",			JSCAccount_get_isOnline,	   JSCAccount_set_isOnline,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot1Blocked",	JSCAccount_get_isSlot1Blocked,	   JSCAccount_set_isSlot1Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot2Blocked",	JSCAccount_get_isSlot2Blocked,	   JSCAccount_set_isSlot2Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot3Blocked",	JSCAccount_get_isSlot3Blocked,	   JSCAccount_set_isSlot3Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot4Blocked",	JSCAccount_get_isSlot4Blocked,	   JSCAccount_set_isSlot4Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot5Blocked",	JSCAccount_get_isSlot5Blocked,	   JSCAccount_set_isSlot5Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot6Blocked",	JSCAccount_get_isSlot6Blocked,	   JSCAccount_set_isSlot6Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSlot7Blocked",	JSCAccount_get_isSlot7Blocked,	   JSCAccount_set_isSlot7Blocked,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isYoung",			JSCAccount_get_isYoung,	   JSCAccount_set_isYoung,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "unused10",			JSCAccount_get_unused10,	   JSCAccount_set_unused10,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isSeer",			JSCAccount_get_isSeer,	   JSCAccount_set_isSeer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isCounselor",		JSCAccount_get_isCounselor,	   JSCAccount_set_isCounselor,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "isGM",				JSCAccount_get_isGM,	   JSCAccount_set_isGM,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CConsoleProperties[] =
 {
-  { "mode",		CCONSOLE_MODE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "logEcho",	CCONSOLE_LOGECHO,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "mode",		JSCConsole_get_mode,	   JSCConsole_set_mode,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "logEcho",	JSCConsole_get_logEcho,	   JSCConsole_set_logEcho,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CScriptSectionProperties[] =
 {
-  { "numTags",	CSS_NUMTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "atEnd",		CSS_ATEND,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "atEndTags",	CSS_ATENDTAGS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "numTags",	JSCScriptSection_get_numTags,	   JSCScriptSection_set_numTags,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "atEnd",		JSCScriptSection_get_atEnd,	       JSCScriptSection_set_atEnd,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "atEndTags",	JSCScriptSection_get_atEndTags,	   JSCScriptSection_set_atEndTags,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CResourceProperties[] =
 {
-  { "logAmount",	CRESP_LOGAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "logTime",	CRESP_LOGTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oreAmount",	CRESP_OREAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "oreTime",	CRESP_ORETIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fishAmount",	CRESP_FISHAMT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fishTime",	CRESP_FISHTIME,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "logAmount",	JSCResource_get_logAmount,	   JSCResource_set_logAmount,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "logTime",	JSCResource_get_logTime,	   JSCResource_set_logTime,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "oreAmount",	JSCResource_get_oreAmount,	   JSCResource_set_oreAmount,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "oreTime",	JSCResource_get_oreTime,	   JSCResource_set_oreTime,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "fishAmount",JSCResource_get_fishAmount,	   JSCResource_set_fishAmount,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "fishTime",	JSCResource_get_fishTime,	   JSCResource_set_fishTime,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CPartyProperties[] =
 {
-  { "leader",			CPARTYP_LEADER,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "memberCount",	CPARTYP_MEMBERCOUNT,	JSPROP_ENUMPERMRO, nullptr, nullptr	},
-  { "isNPC",			CPARTYP_ISNPC,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "leader",		JSCParty_get_leader,	   JSCParty_set_leader,	     JSPROP_ENUMANDPERM, ),
+  JS_PSG( "memberCount",	JSCParty_get_memberCount,	     JSPROP_ENUMPERMRO, ),
+  JS_PSGS( "isNPC",			JSCParty_get_isNPC,		   JSCParty_set_isNPC,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CScriptProperties[] =
 {
-  { "script_id",		CSCRIPT_SCRIPTID,		JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "script_id",		JSCScript_get_script_id,	   JSCScript_set_script_id,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
-*/
+
 #endif
