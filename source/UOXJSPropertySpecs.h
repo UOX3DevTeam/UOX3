@@ -599,6 +599,71 @@ DECL_GET_SET( CSocket, target )
 DECL_GET_SET( CSocket, tempObj )
 DECL_GET_SET( CSocket, tempObj2 )
 
+// Skills Properties
+DECL_GET_SET( CSkills, alchemy )
+DECL_GET_SET( CSkills, anatomy )
+DECL_GET_SET( CSkills, animallore )
+DECL_GET_SET( CSkills, itemid )
+DECL_GET_SET( CSkills, armslore )
+DECL_GET_SET( CSkills, parrying )
+DECL_GET_SET( CSkills, begging )
+DECL_GET_SET( CSkills, blacksmithing )
+DECL_GET_SET( CSkills, bowcraft )
+DECL_GET_SET( CSkills, peacemaking )
+DECL_GET_SET( CSkills, camping )
+DECL_GET_SET( CSkills, carpentry )
+DECL_GET_SET( CSkills, cartography )
+DECL_GET_SET( CSkills, cooking )
+DECL_GET_SET( CSkills, detectinghidden )
+DECL_GET_SET( CSkills, enticement )
+DECL_GET_SET( CSkills, evaluatingintel )
+DECL_GET_SET( CSkills, healing )
+DECL_GET_SET( CSkills, fishing )
+DECL_GET_SET( CSkills, forensics )
+DECL_GET_SET( CSkills, herding )
+DECL_GET_SET( CSkills, hiding )
+DECL_GET_SET( CSkills, provocation )
+DECL_GET_SET( CSkills, inscription )
+DECL_GET_SET( CSkills, lockpicking )
+DECL_GET_SET( CSkills, magery )
+DECL_GET_SET( CSkills, magicresistance )
+DECL_GET_SET( CSkills, tactics )
+DECL_GET_SET( CSkills, snooping )
+DECL_GET_SET( CSkills, musicianship )
+DECL_GET_SET( CSkills, poisoning )
+DECL_GET_SET( CSkills, archery )
+DECL_GET_SET( CSkills, spiritspeak )
+DECL_GET_SET( CSkills, stealing )
+DECL_GET_SET( CSkills, tailoring )
+DECL_GET_SET( CSkills, taming )
+DECL_GET_SET( CSkills, tasteid )
+DECL_GET_SET( CSkills, tinkering )
+DECL_GET_SET( CSkills, tracking )
+DECL_GET_SET( CSkills, veterinary )
+DECL_GET_SET( CSkills, swordsmanship )
+DECL_GET_SET( CSkills, macefighting )
+DECL_GET_SET( CSkills, fencing )
+DECL_GET_SET( CSkills, wrestling )
+DECL_GET_SET( CSkills, lumberjacking )
+DECL_GET_SET( CSkills, mining )
+DECL_GET_SET( CSkills, meditation )
+DECL_GET_SET( CSkills, stealth )
+DECL_GET_SET( CSkills, removetrap )
+DECL_GET_SET( CSkills, necromancy )
+DECL_GET_SET( CSkills, focus )
+DECL_GET_SET( CSkills, chivalry )
+DECL_GET_SET( CSkills, bushido )
+DECL_GET_SET( CSkills, ninjitsu )
+DECL_GET_SET( CSkills, spellweaving )
+DECL_GET_SET( CSkills, imbuing )
+DECL_GET_SET( CSkills, mysticism )
+DECL_GET_SET( CSkills, throwing )
+DECL_GET_SET( CSkills, allskills )
+
+// Gump Properties
+DECL_GET_SET( CGumpData, buttons )
+DECL_GET_SET( CGumpData, IDs )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -1202,78 +1267,79 @@ inline JSPropertySpec CSocketProps[] =
   JS_PSGS( "tempObj2",			JSCSocket_get_tempObj2,	   JSCSocket_set_tempObj2,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
-/*
+
 inline JSPropertySpec CSkillsProps[] =
 {
-  { "alchemy",			ALCHEMY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "anatomy",			ANATOMY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "animallore",			ANIMALLORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "itemid",				ITEMID,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "armslore",			ARMSLORE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "parrying",			PARRYING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "begging",			BEGGING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "blacksmithing",		BLACKSMITHING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "bowcraft",			BOWCRAFT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "peacemaking",		PEACEMAKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "camping",			CAMPING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "carpentry",			CARPENTRY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "cartography",		CARTOGRAPHY,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "cooking",			COOKING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "detectinghidden",	DETECTINGHIDDEN,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "enticement",			ENTICEMENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "evaluatingintel",	EVALUATINGINTEL,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "healing",			HEALING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fishing",			FISHING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "forensics",			FORENSICS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "herding",			HERDING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "hiding",				HIDING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "provocation",		PROVOCATION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "inscription",		INSCRIPTION,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lockpicking",		LOCKPICKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "magery",				MAGERY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "magicresistance",	MAGICRESISTANCE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tactics",			TACTICS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "snooping",			SNOOPING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "musicianship",		MUSICIANSHIP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "poisoning",			POISONING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "archery",			ARCHERY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spiritspeak",		SPIRITSPEAK,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stealing",			STEALING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tailoring",			TAILORING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "taming",				TAMING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tasteid",			TASTEID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tinkering",			TINKERING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tracking",			TRACKING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "veterinary",			VETERINARY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "swordsmanship",		SWORDSMANSHIP,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "macefighting",		MACEFIGHTING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "fencing",			FENCING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "wrestling",			WRESTLING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "lumberjacking",		LUMBERJACKING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mining",				MINING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "meditation",			MEDITATION,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "stealth",			STEALTH,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "removetrap",			REMOVETRAP,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "necromancy",			NECROMANCY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "focus",				FOCUS,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "chivalry",			CHIVALRY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "bushido",			BUSHIDO,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "ninjitsu",			NINJITSU,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "spellweaving",		SPELLWEAVING,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "imbuing",			IMBUING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "mysticism",			MYSTICISM,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "throwing",			THROWING,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "allskills",			ALLSKILLS,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "alchemy",			JSCSkills_get_alchemy,	   JSCSkills_set_alchemy,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "anatomy",			JSCSkills_get_anatomy,	   JSCSkills_set_anatomy,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "animallore",		JSCSkills_get_animallore,	   JSCSkills_set_animallore,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "itemid",			JSCSkills_get_itemid,	   JSCSkills_set_itemid,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "armslore",			JSCSkills_get_armslore,	   JSCSkills_set_armslore,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "parrying",			JSCSkills_get_parrying,	   JSCSkills_set_parrying,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "begging",			JSCSkills_get_begging,	   JSCSkills_set_begging,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "blacksmithing",		JSCSkills_get_blacksmithing,	   JSCSkills_set_blacksmithing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "bowcraft",			JSCSkills_get_bowcraft,	   JSCSkills_set_bowcraft,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "peacemaking",		JSCSkills_get_peacemaking,	   JSCSkills_set_peacemaking,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "camping",			JSCSkills_get_camping,	   JSCSkills_set_camping,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "carpentry",			JSCSkills_get_carpentry,	   JSCSkills_set_carpentry,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "cartography",		JSCSkills_get_cartography,	   JSCSkills_set_cartography,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "cooking",			JSCSkills_get_cooking,	   JSCSkills_set_cooking,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "detectinghidden",	JSCSkills_get_detectinghidden,	   JSCSkills_set_detectinghidden,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "enticement",		JSCSkills_get_enticement,	   JSCSkills_set_enticement,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "evaluatingintel",	JSCSkills_get_evaluatingintel,	   JSCSkills_set_evaluatingintel,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "healing",			JSCSkills_get_healing,	   JSCSkills_set_healing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "fishing",			JSCSkills_get_fishing,	   JSCSkills_set_fishing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "forensics",			JSCSkills_get_forensics,	   JSCSkills_set_forensics,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "herding",			JSCSkills_get_herding,	   JSCSkills_set_herding,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "hiding",			JSCSkills_get_hiding,	   JSCSkills_set_hiding,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "provocation",		JSCSkills_get_provocation,	   JSCSkills_set_provocation,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "inscription",		JSCSkills_get_inscription,	   JSCSkills_set_inscription,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "lockpicking",		JSCSkills_get_lockpicking,	   JSCSkills_set_lockpicking,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "magery",			JSCSkills_get_magery,	   JSCSkills_set_magery,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "magicresistance",	JSCSkills_get_magicresistance,	   JSCSkills_set_magicresistance,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tactics",			JSCSkills_get_tactics,	   JSCSkills_set_tactics,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "snooping",			JSCSkills_get_snooping,	   JSCSkills_set_snooping,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "musicianship",		JSCSkills_get_musicianship,	   JSCSkills_set_musicianship,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "poisoning",			JSCSkills_get_poisoning,	   JSCSkills_set_poisoning,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "archery",			JSCSkills_get_archery,	   JSCSkills_set_archery,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "spiritspeak",		JSCSkills_get_spiritspeak,	   JSCSkills_set_spiritspeak,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "stealing",			JSCSkills_get_stealing,	   JSCSkills_set_stealing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tailoring",			JSCSkills_get_tailoring,	   JSCSkills_set_tailoring,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "taming",			JSCSkills_get_taming,	   JSCSkills_set_taming,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tasteid",			JSCSkills_get_tasteid,	   JSCSkills_set_tasteid,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tinkering",			JSCSkills_get_tinkering,	   JSCSkills_set_tinkering,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tracking",			JSCSkills_get_tracking,	   JSCSkills_set_tracking,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "veterinary",		JSCSkills_get_veterinary,	   JSCSkills_set_veterinary,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "swordsmanship",		JSCSkills_get_swordsmanship,	   JSCSkills_set_swordsmanship,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "macefighting",		JSCSkills_get_macefighting,	   JSCSkills_set_macefighting,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "fencing",			JSCSkills_get_fencing,	   JSCSkills_set_fencing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "wrestling",			JSCSkills_get_wrestling,	   JSCSkills_set_wrestling,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "lumberjacking",		JSCSkills_get_lumberjacking,	   JSCSkills_set_lumberjacking,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "mining",			JSCSkills_get_mining,	   JSCSkills_set_mining,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "meditation",		JSCSkills_get_meditation,	   JSCSkills_set_meditation,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "stealth",			JSCSkills_get_stealth,	   JSCSkills_set_stealth,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "removetrap",		JSCSkills_get_removetrap,	   JSCSkills_set_removetrap,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "necromancy",		JSCSkills_get_necromancy,	   JSCSkills_set_necromancy,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "focus",				JSCSkills_get_focus,	   JSCSkills_set_focus,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "chivalry",			JSCSkills_get_chivalry,	   JSCSkills_set_chivalry,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "bushido",			JSCSkills_get_bushido,	   JSCSkills_set_bushido,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "ninjitsu",			JSCSkills_get_ninjitsu,	   JSCSkills_set_ninjitsu,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "spellweaving",		JSCSkills_get_spellweaving,	   JSCSkills_set_spellweaving,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "imbuing",			JSCSkills_get_imbuing,	   JSCSkills_set_imbuing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "mysticism",			JSCSkills_get_mysticism,	   JSCSkills_set_mysticism,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "throwing",			JSCSkills_get_throwing,	   JSCSkills_set_throwing,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "allskills",			JSCSkills_get_allskills,	   JSCSkills_set_allskills,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
 inline JSPropertySpec CGumpDataProperties[] =
 {
-  {	"buttons",	CGumpData_Button,		JSPROP_ENUMANDPERM, nullptr, nullptr	},
-  {	"IDs",		CGumpData_ID ,			JSPROP_ENUMANDPERM, nullptr, nullptr	},
+  JS_PSGS(	"buttons",	JSCGumpData_get_buttons,   JSCGumpData_set_buttons,	 JSPROP_ENUMANDPERM, ),
+  JS_PSGS(	"IDs",		JSCGumpData_get_IDs,	   JSCGumpData_set_IDs,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
 
+/*
 inline JSPropertySpec CAccountProperties[] =
 {
   { "id",			CACCOUNT_ID,			JSPROP_ENUMANDPERM, nullptr, nullptr },
