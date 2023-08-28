@@ -560,6 +560,45 @@ DECL_GET_SET( CItem, tradeTimestamp )
 DECL_GET_SET( CItem, banX )
 DECL_GET_SET( CItem, banY )
 
+// Socket Properties
+DECL_GET_SET( CSocket, account )
+DECL_GET_SET( CSocket, currentChar )
+DECL_GET_SET( CSocket, idleTimeout )
+DECL_GET_SET( CSocket, wasIdleWarned )
+DECL_GET_SET( CSocket, tempInt )
+DECL_GET_SET( CSocket, tempInt2 )
+DECL_GET( CSocket, buffer )
+DECL_GET( CSocket, xText )
+DECL_GET( CSocket, xText2 )
+DECL_GET_SET( CSocket, clickZ )
+DECL_GET( CSocket, addID )
+DECL_GET_SET( CSocket, newClient )
+DECL_GET_SET( CSocket, firstPacket )
+DECL_GET_SET( CSocket, cryptClient )
+DECL_GET( CSocket, clientIP )
+DECL_GET_SET( CSocket, walkSequence )
+DECL_GET_SET( CSocket, currentSpellType )
+DECL_GET_SET( CSocket, logging )
+DECL_GET_SET( CSocket, bytesSent )
+DECL_GET_SET( CSocket, bytesReceived )
+DECL_GET_SET( CSocket, targetOK )
+DECL_GET_SET( CSocket, clickX )
+DECL_GET_SET( CSocket, clickY )
+DECL_GET_SET( CSocket, pickupX )
+DECL_GET_SET( CSocket, pickupY )
+DECL_GET_SET( CSocket, pickupZ )
+DECL_GET_SET( CSocket, pickupSpot )
+DECL_GET_SET( CSocket, pickupSerial )
+DECL_GET_SET( CSocket, language )
+DECL_GET_SET( CSocket, clientMajorVer )
+DECL_GET_SET( CSocket, clientMinorVer )
+DECL_GET_SET( CSocket, clientSubVer )
+DECL_GET_SET( CSocket, clientLetterVer )
+DECL_GET_SET( CSocket, clientType )
+DECL_GET_SET( CSocket, target )
+DECL_GET_SET( CSocket, tempObj )
+DECL_GET_SET( CSocket, tempObj2 )
+
 // Property table
 
 inline JSPropertySpec CSpellProperties[] =
@@ -1121,49 +1160,49 @@ inline JSPropertySpec CItemProps[] =
   JS_PSGS( "banY",						JSCItem_get_banY,	   JSCItem_set_banY,	     JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
-/*
+
 inline JSPropertySpec CSocketProps[] =
 {
-  { "account",			CSOCKP_ACCOUNT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "currentChar",		CSOCKP_CURRENTCHAR,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "idleTimeout",		CSOCKP_IDLETIMEOUT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "wasIdleWarned",		CSOCKP_WASIDLEWARNED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempInt",			CSOCKP_TEMPINT,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempInt2",			CSOCKP_TEMPINT2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "buffer",				CSOCKP_BUFFER,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "xText",				CSOCKP_XTEXT,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "xText2",				CSOCKP_XTEXT2,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "clickZ",				CSOCKP_CLICKZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "addID",				CSOCKP_ADDID,				JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "newClient",			CSOCKP_NEWCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "firstPacket",		CSOCKP_FIRSTPACKET,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "cryptClient",		CSOCKP_CRYPTCLIENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientIP",			CSOCKP_CLIENTIP,			JSPROP_ENUMPERMIDX, nullptr, nullptr },
-  { "walkSequence",		CSOCKP_WALKSEQUENCE,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "currentSpellType",	CSOCKP_CURRENTSPELLTYPE,	JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "logging",			CSOCKP_LOGGING,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "bytesSent",			CSOCKP_BYTESSENT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "bytesReceived",		CSOCKP_BYTESRECEIVED,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "targetOK",			CSOCKP_TARGETOK,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clickX",				CSOCKP_CLICKX,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clickY",				CSOCKP_CLICKY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pickupX",			CSOCKP_PICKUPX,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pickupY",			CSOCKP_PICKUPY,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pickupZ",			CSOCKP_PICKUPZ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pickupSpot",			CSOCKP_PICKUPSPOT,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "pickupSerial",		CSOCKP_PICKUPSERIAL,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "language",			CSOCKP_LANGUAGE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientMajorVer",		CSOCKP_CLIENTMAJORVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientMinorVer",		CSOCKP_CLIENTMINORVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientSubVer",		CSOCKP_CLIENTSUBVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientLetterVer",	CSOCKP_CLIENTLETTERVER,		JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "clientType",			CSOCKP_CLIENTTYPE,			JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "target",				CSOCKP_TARGET,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempObj",			CSOCKP_TEMPOBJ,				JSPROP_ENUMANDPERM, nullptr, nullptr },
-  { "tempObj2",			CSOCKP_TEMPOBJ2,			JSPROP_ENUMANDPERM, nullptr, nullptr },
+  JS_PSGS( "account",			JSCSocket_get_account,	   JSCSocket_set_account,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "currentChar",			JSCSocket_get_currentChar,	   JSCSocket_set_currentChar,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "idleTimeout",			JSCSocket_get_idleTimeout,	   JSCSocket_set_idleTimeout,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "wasIdleWarned",			JSCSocket_get_wasIdleWarned,	   JSCSocket_set_wasIdleWarned,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempInt",			JSCSocket_get_tempInt,	   JSCSocket_set_tempInt,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempInt2",			JSCSocket_get_tempInt2,	   JSCSocket_set_tempInt2,	     JSPROP_ENUMANDPERM, ),
+  JS_PSG( "buffer",			JSCSocket_get_buffer,	     JSPROP_ENUMPERMIDX, ),
+  JS_PSG( "xText",			JSCSocket_get_xText,	   JSPROP_ENUMPERMIDX, ),
+  JS_PSG( "xText2",			JSCSocket_get_xText2,      JSPROP_ENUMPERMIDX, ),
+  JS_PSGS( "clickZ",			JSCSocket_get_clickZ,	   JSCSocket_set_clickZ,	     JSPROP_ENUMANDPERM, ),
+  JS_PSG( "addID",				JSCSocket_get_addID,     JSPROP_ENUMPERMIDX, ),
+  JS_PSGS( "newClient",			JSCSocket_get_newClient,	   JSCSocket_set_newClient,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "firstPacket",			JSCSocket_get_firstPacket,	   JSCSocket_set_firstPacket,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "cryptClient",			JSCSocket_get_cryptClient,	   JSCSocket_set_cryptClient,	     JSPROP_ENUMANDPERM, ),
+  JS_PSG( "clientIP",			JSCSocket_get_clientIP,        JSPROP_ENUMPERMIDX, ),
+  JS_PSGS( "walkSequence",			JSCSocket_get_walkSequence,	   JSCSocket_set_walkSequence,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "currentSpellType",			JSCSocket_get_currentSpellType,	   JSCSocket_set_currentSpellType,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "logging",			JSCSocket_get_logging,	   JSCSocket_set_logging,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "bytesSent",			JSCSocket_get_bytesSent,	   JSCSocket_set_bytesSent,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "bytesReceived",			JSCSocket_get_bytesReceived,	   JSCSocket_set_bytesReceived,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "targetOK",			JSCSocket_get_targetOK,	   JSCSocket_set_targetOK,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clickX",			JSCSocket_get_clickX,	   JSCSocket_set_clickX,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clickY",			JSCSocket_get_clickY,	   JSCSocket_set_clickY,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "pickupX",			JSCSocket_get_pickupX,	   JSCSocket_set_pickupX,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "pickupY",			JSCSocket_get_pickupY,	   JSCSocket_set_pickupY,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "pickupZ",			JSCSocket_get_pickupZ,	   JSCSocket_set_pickupZ,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "pickupSpot",			JSCSocket_get_pickupSpot,	   JSCSocket_set_pickupSpot,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "pickupSerial",			JSCSocket_get_pickupSerial,	   JSCSocket_set_pickupSerial,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "language",			JSCSocket_get_language,	   JSCSocket_set_language,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clientMajorVer",			JSCSocket_get_clientMajorVer,	   JSCSocket_set_clientMajorVer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clientMinorVer",			JSCSocket_get_clientMinorVer,	   JSCSocket_set_clientMinorVer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clientSubVer",			JSCSocket_get_clientSubVer,	   JSCSocket_set_clientSubVer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clientLetterVer",			JSCSocket_get_clientLetterVer,	   JSCSocket_set_clientLetterVer,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "clientType",			JSCSocket_get_clientType,	   JSCSocket_set_clientType,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "target",			JSCSocket_get_target,	   JSCSocket_set_target,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempObj",			JSCSocket_get_tempObj,	   JSCSocket_set_tempObj,	     JSPROP_ENUMANDPERM, ),
+  JS_PSGS( "tempObj2",			JSCSocket_get_tempObj2,	   JSCSocket_set_tempObj2,	     JSPROP_ENUMANDPERM, ),
   JS_PS_END
 };
-
+/*
 inline JSPropertySpec CSkillsProps[] =
 {
   { "alchemy",			ALCHEMY,			JSPROP_ENUMANDPERM, nullptr, nullptr },
