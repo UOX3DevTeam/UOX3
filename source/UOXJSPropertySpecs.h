@@ -19,7 +19,7 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   auto args = JS::CallArgsFromVp(argc, vp); \
   JS::RootedObject thisObj(cx); \
   auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
-  args.rval().method(priv->accessor()); \
+  args.rval().method(priv->accessor); \
   return true; \
 }
 

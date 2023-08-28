@@ -89,11 +89,25 @@ bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
     return false;
 }
 
-IMPL_GET( CSpell, action,  CSpellInfo, setInt32, Action )
-IMPL_GET( CSpell, baseDmg, CSpellInfo, setInt32, BaseDmg )
-IMPL_GET( CSpell, health,  CSpellInfo, setInt32, Health )
-IMPL_GET( CSpell, stamina, CSpellInfo, setInt32, Stamina )
-IMPL_GET( CSpell, mana,    CSpellInfo, setInt32, Mana )
+IMPL_GET( CSpell, action,      CSpellInfo, setInt32, Action() )
+IMPL_GET( CSpell, baseDmg,     CSpellInfo, setInt32, BaseDmg() )
+IMPL_GET( CSpell, health,      CSpellInfo, setInt32, Health() )
+IMPL_GET( CSpell, stamina,     CSpellInfo, setInt32, Stamina() )
+IMPL_GET( CSpell, mana,        CSpellInfo, setInt32, Mana() )
+IMPL_GET( CSpell, scrollLow,   CSpellInfo, setInt32, ScrollLow() )
+IMPL_GET( CSpell, scrollHigh,  CSpellInfo, setInt32, ScrollHigh() )
+IMPL_GET( CSpell, circle,      CSpellInfo, setInt32, Circle() )
+IMPL_GET( CSpell, lowSkill,    CSpellInfo, setInt32, LowSkill() )
+IMPL_GET( CSpell, highSkill,   CSpellInfo, setInt32, HighSkill() )
+IMPL_GET( CSpell, ginseng,     CSpellInfo, setInt32, Reagants().ginseng )
+IMPL_GET( CSpell, moss,        CSpellInfo, setInt32, Reagants().moss )
+IMPL_GET( CSpell, drake,       CSpellInfo, setInt32, Reagants().drake )
+IMPL_GET( CSpell, pearl,       CSpellInfo, setInt32, Reagants().pearl )
+IMPL_GET( CSpell, silk,        CSpellInfo, setInt32, Reagants().silk )
+IMPL_GET( CSpell, ash,         CSpellInfo, setInt32, Reagants().ash )
+IMPL_GET( CSpell, shade,       CSpellInfo, setInt32, Reagants().shade )
+IMPL_GET( CSpell, garlic,      CSpellInfo, setInt32, Reagants().garlic )
+IMPL_GET( CSpell, soundEffect, CSpellInfo, setInt32, Effect() )
 
 JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
 	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));
@@ -131,19 +145,6 @@ JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				tString = JS_NewStringCopyZ( cx, gPriv->StringToSay().c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
-			case CSP_SCROLLLOW:			*vp = INT_TO_JSVAL( gPriv->ScrollLow() );				break;
-			case CSP_SCROLLHIGH:		*vp = INT_TO_JSVAL( gPriv->ScrollHigh() );				break;
-			case CSP_CIRCLE:			*vp = INT_TO_JSVAL( gPriv->Circle() );					break;
-			case CSP_LOWSKILL:			*vp = INT_TO_JSVAL( gPriv->LowSkill() );				break;
-			case CSP_HIGHSKILL:			*vp = INT_TO_JSVAL( gPriv->HighSkill() );				break;
-			case CSP_GINSENG:			*vp = INT_TO_JSVAL( gPriv->Reagants().ginseng );		break;
-			case CSP_MOSS:				*vp = INT_TO_JSVAL( gPriv->Reagants().moss );			break;
-			case CSP_DRAKE:				*vp = INT_TO_JSVAL( gPriv->Reagants().drake );			break;
-			case CSP_PEARL:				*vp = INT_TO_JSVAL( gPriv->Reagants().pearl );			break;
-			case CSP_SILK:				*vp = INT_TO_JSVAL( gPriv->Reagants().silk );			break;
-			case CSP_ASH:				*vp = INT_TO_JSVAL( gPriv->Reagants().ash );			break;
-			case CSP_SHADE:				*vp = INT_TO_JSVAL( gPriv->Reagants().shade );			break;
-			case CSP_GARLIC:			*vp = INT_TO_JSVAL( gPriv->Reagants().garlic );			break;
 			case CSP_REQUIRETARGET:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireTarget() );		break;
 			case CSP_REQUIREITEM:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireItemTarget() );	break;
 			case CSP_REQUIRECHAR:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequireCharTarget() );	break;
@@ -153,7 +154,6 @@ JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CSP_REFLECTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->SpellReflectable() );	break;
 			case CSP_AGGRESSIVESPELL:	*vp = BOOLEAN_TO_JSVAL( gPriv->AggressiveSpell() );		break;
 			case CSP_RESISTABLE:		*vp = BOOLEAN_TO_JSVAL( gPriv->Resistable() );			break;
-			case CSP_SOUNDEFFECT:		*vp = INT_TO_JSVAL( gPriv->Effect() );					break;
 			case CSP_ENABLED:			*vp = BOOLEAN_TO_JSVAL( gPriv->Enabled() );				break;
 			default:																			break;
 		}
