@@ -89,6 +89,21 @@ bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
     return false;
 }
 
+bool JSCSpell_get_name(JSContext *cx, unsigned int argc, JS::Value *vp) {
+    auto args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject thisObj(cx);
+    auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>(thisObj, 0);
+    for (auto i = 0; i < Magic->spells.size(); ++i) {
+        if (&Magic->spells[i] == priv) {
+            auto spellName = Dictionary->GetEntry( magic_table[i].spell_name );
+            auto tString = JS_NewStringCopyZ( cx, spellName.c_str() );
+            args.rval().setString(i);
+            return true;
+        }
+    }
+    return false;
+}
+
 IMPL_GET( CSpell, action,          CSpellInfo, setInt32, Action() )
 IMPL_GET( CSpell, baseDmg,         CSpellInfo, setInt32, BaseDmg() )
 IMPL_GET( CSpell, health,          CSpellInfo, setInt32, Health() )
@@ -122,45 +137,7 @@ IMPL_GET( CSpell, aggressiveSpell, CSpellInfo, setBoolean, AggressiveSpell() )
 IMPL_GET( CSpell, resistable,      CSpellInfo, setBoolean, Resistable() )
 IMPL_GET( CSpell, enabled,         CSpellInfo, setBoolean, Enabled() )
 IMPL_GETS( CSpell, mantra,         CSpellInfo, setString, Mantra().c_str() )
-
-JSBool CSpellProps_getProperty(JSContext *cx, JSObject *obj, jsval id, jsval *vp) {
-	CSpellInfo *gPriv = static_cast<CSpellInfo*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	std::string spellName = "";
-
-	if( JSVAL_IS_INT( id ))
-	{
-		JSString *tString = nullptr;
-		bool bDone = false;
-		size_t i = 0;
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CSP_MANTRA:			tString = JS_NewStringCopyZ( cx, gPriv->Mantra().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CSP_NAME:
-				for( i = 0; i < Magic->spells.size() && !bDone; ++i )
-				{
-					if( &Magic->spells[i] == gPriv - 1  )
-					{
-						spellName = Dictionary->GetEntry( magic_table[i].spell_name );
-						tString = JS_NewStringCopyZ( cx, spellName.c_str() );
-						*vp = STRING_TO_JSVAL( tString );
-						bDone = true;
-					}
-				}
-				break;
-			case CSP_STRTOSAY:
-				tString = JS_NewStringCopyZ( cx, gPriv->StringToSay().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			default:																			break;
-		}
-	}
-	return JS_TRUE;
-}
+IMPL_GETS( CSpell, strToSay,       CSpellInfo, setString, StringToSay().c_str() )
 
 JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
