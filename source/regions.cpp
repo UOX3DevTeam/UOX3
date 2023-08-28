@@ -1,10 +1,16 @@
-#include "uox3.h"
-#include "classes.h"
 #include "regions.h"
-#include "StringUtility.hpp"
-#include "ObjectFactory.h"
+
+#include <algorithm>
 #include <filesystem>
 #include <vector>
+
+#include "uox3.h"
+#include "classes.h"
+#include "StringUtility.hpp"
+#include "ObjectFactory.h"
+
+using namespace std::string_literals ;
+
 #define DEBUG_REGIONS		0
 
 CMapHandler *MapRegion;
@@ -323,30 +329,24 @@ MapResource_st& CMapWorld::GetResource( SI16 x, SI16 y )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::SaveResources( UI08 worldNum )
 {
-	char wBuffer[2];
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource[" + std::to_string( worldNum ) + "].bin";
-	std::ofstream toWrite( resourceFile.c_str(), std::ios::out | std::ios::trunc | std::ios::binary );
-
-	if( toWrite )
-	{
-		for( std::vector<MapResource_st>::const_iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-		{
-			wBuffer[0] = static_cast<SI08>(( *mIter ).oreAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).oreAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).logAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).logAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-
-			wBuffer[0] = static_cast<SI08>(( *mIter ).fishAmt >> 8 );
-			wBuffer[1] = static_cast<SI08>(( *mIter ).fishAmt % 256 );
-			toWrite.write(( const char * )&wBuffer, 2 );
-		}
-		toWrite.close();
-	}
-	else // Can't save resources
-	{
+    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + std::to_string( worldNum ) + "].bin"s);
+    auto output = std::ofstream(resourceFile.string(), std::ios::binary);
+    auto buffer = std::vector<std::int16_t>(3,0) ;
+    
+    if (output.is_open()) {
+        for (auto iter = mapResources.begin(); iter != mapResources.end();iter++) {
+            buffer[0] = iter->oreAmt ;
+            std::reverse(reinterpret_cast<char*>(buffer.data()),reinterpret_cast<char*>(buffer.data())+2);  // Make it big endian
+            buffer[1] = iter->logAmt ;
+            std::reverse(reinterpret_cast<char*>(buffer.data())+2,reinterpret_cast<char*>(buffer.data())+4);
+            buffer[2] = iter->fishAmt ;
+            std::reverse(reinterpret_cast<char*>(buffer.data())+4,reinterpret_cast<char*>(buffer.data())+6);
+            // Now write it
+            output.write(reinterpret_cast<char*>(buffer.data()),buffer.size()*2);
+        }
+    }
+	else {
+        // Can't save resources
 		Console.Error( "Failed to open resource.bin for writing" );
 	}
 }
@@ -359,54 +359,54 @@ void CMapWorld::SaveResources( UI08 worldNum )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources( UI08 worldNum )
 {
-	const SI16 resOre				= cwmWorldState->ServerData()->ResOre();
-	const SI16 resLog				= cwmWorldState->ServerData()->ResLogs();
-	const SI16 resFish				= cwmWorldState->ServerData()->ResFish();
-	const UI32 oreTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() ));
-	const UI32 logTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() ));
-	const UI32 fishTime				= BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ));
-	const std::string resourceFile	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + std::string("resource[") + oldstrutil::number( worldNum ) + std::string("].bin");
 
-	char rBuffer[2];
-	std::ifstream toRead ( resourceFile.c_str(), std::ios::in | std::ios::binary );
+    const auto resOre                = cwmWorldState->ServerData()->ResOre();
+    const auto resLog                = cwmWorldState->ServerData()->ResLogs();
+    const auto resFish                = cwmWorldState->ServerData()->ResFish();
+    const auto oreTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() ));
+    const auto logTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() ));
+    const auto fishTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ));
+    
+    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s);
 
-	bool fileExists	= ( toRead.is_open() );
+    // The data is grouped as three shorts (for each resource), so we read in that format
+    auto buffer = std::vector<std::int16_t>(3,0) ;
+    auto input = std::ifstream(resourceFile.string(),std::ios::binary) ;
 
-	if( fileExists )
-	{
-		toRead.seekg( 0, std::ios::beg );
-	}
+    // We want to get the iteratro for the first mapResources ;
+    auto iter = mapResources.begin() ;
+    if (input.is_open()){
+        while(input.good() && !input.eof() && iter != mapResources.end()){
+            input.read(reinterpret_cast<char*>(buffer.data()),buffer.size()*2) ;
+            if (input.gcount() != buffer.size()*2) {
+                // We had issues reading the full amount, break out of this
+                break;
+            }
+            // For whatever reason the resources are stored in big endidan, which on int/arm machines , we need little endian, so reverse them
+            std::for_each(buffer.begin(), buffer.end(), [](std::int16_t &value){
+                std::reverse(reinterpret_cast<char*>(&value),reinterpret_cast<char*>(&value)+2);
+            });
+            // Now set the values
+            (*iter).oreAmt = buffer[0] ;
+            (*iter).oreTime = oreTime;
+            (*iter).logAmt = buffer[1] ;
+            (*iter).logTime = logTime;
+            (*iter).fishAmt = buffer[2] ;
+            (*iter).fishTime = fishTime;
+            iter++ ;
+        }
+    }
+    for (;iter<mapResources.end();iter++){
+        (*iter).oreAmt = resOre ;
+        (*iter).oreTime = oreTime;
+        (*iter).logAmt = resLog ;
+        (*iter).logTime = logTime;
+        (*iter).fishAmt = resFish ;
+        (*iter).fishTime = fishTime;
 
-	for( std::vector<MapResource_st>::iterator mIter = mapResources.begin(); mIter != mapResources.end(); ++mIter )
-	{
-		if( fileExists )
-		{
-			toRead.read( rBuffer, 2 );
-			( *mIter ).oreAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
+    }
 
-			toRead.read( rBuffer, 2 );
-			( *mIter ).logAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
 
-			toRead.read( rBuffer, 2 );
-			( *mIter ).fishAmt = (( rBuffer[0] << 8 ) + rBuffer[1] );
-
-			fileExists = toRead.eof();
-		}
-		else
-		{
-			( *mIter ).oreAmt  = resOre;
-			( *mIter ).logAmt  = resLog;
-			( *mIter ).fishAmt  = resFish;
-		}
-		// No need to preserve time.  Do a refresh automatically
-		( *mIter ).oreTime = oreTime;
-		( *mIter ).logTime = logTime;
-		( *mIter ).fishTime = fishTime;
-	}
-	if( fileExists )
-	{
-		toRead.close();
-	}
 }
 
 //o------------------------------------------------------------------------------------------------o
