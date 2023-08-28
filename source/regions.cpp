@@ -359,13 +359,7 @@ void CMapWorld::SaveResources( UI08 worldNum )
 //o------------------------------------------------------------------------------------------------o
 void CMapWorld::LoadResources( UI08 worldNum )
 {
-
-    const auto resOre                = cwmWorldState->ServerData()->ResOre();
-    const auto resLog                = cwmWorldState->ServerData()->ResLogs();
-    const auto resFish                = cwmWorldState->ServerData()->ResFish();
-    const auto oreTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() ));
-    const auto logTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() ));
-    const auto fishTime                = BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ));
+    mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(cwmWorldState->ServerData()->ResOre(),cwmWorldState->ServerData()->ResLogs(),cwmWorldState->ServerData()->ResFish(),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))))  ;
     
     auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s);
 
@@ -388,22 +382,10 @@ void CMapWorld::LoadResources( UI08 worldNum )
             });
             // Now set the values
             (*iter).oreAmt = buffer[0] ;
-            (*iter).oreTime = oreTime;
             (*iter).logAmt = buffer[1] ;
-            (*iter).logTime = logTime;
             (*iter).fishAmt = buffer[2] ;
-            (*iter).fishTime = fishTime;
-            iter++ ;
+             iter++ ;
         }
-    }
-    for (;iter<mapResources.end();iter++){
-        (*iter).oreAmt = resOre ;
-        (*iter).oreTime = oreTime;
-        (*iter).logAmt = resLog ;
-        (*iter).logTime = logTime;
-        (*iter).fishAmt = resFish ;
-        (*iter).fishTime = fishTime;
-
     }
 
 

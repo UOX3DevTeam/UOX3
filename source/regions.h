@@ -28,7 +28,7 @@ struct MapResource_st
 	SI16	fishAmt;
 	UI32	fishTime;
 
-	MapResource_st() : oreAmt( 0 ), oreTime( 0 ), logAmt( 0 ), logTime( 0 ), fishAmt( 0 ), fishTime( 0 )
+	MapResource_st(std::int16_t defOre = 0, std::int16_t defLog = 0, std::int16_t defFish = 0, std::uint32_t defOreTime = 0, std::uint32_t defLogTIme = 0, std::uint32_t defFishTIme=0) : oreAmt( defOre ), oreTime( defOreTime ), logAmt( defLog ), logTime( defLogTIme ), fishAmt( defFish ), fishTime( defFishTIme )
 	{
 	}
 };
