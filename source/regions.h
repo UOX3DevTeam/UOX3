@@ -55,7 +55,7 @@ public:
 	{
 	};
 
-	void					SaveToDisk( std::ofstream& writeDestination );
+	void					SaveToDisk( std::ostream& writeDestination );
 };
 
 class CMapWorld
@@ -90,7 +90,7 @@ private:
 	WORLDLIST		mapWorlds;
 	CMapRegion		overFlow;
 
-	void		LoadFromDisk( std::ifstream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
+	void		LoadFromDisk( std::istream& readDestination, SI32 baseValue, SI32 fileSize, UI32 maxSize );
 public:
 	CMapHandler() = default;
 	~CMapHandler();

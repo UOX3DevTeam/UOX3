@@ -133,9 +133,9 @@ public:
 	std::string			GetTradeTimestamp( void ) const;
 	void				SetTradeTimestamp( time_t newTime );
 
-	virtual bool		Save( std::ofstream &outStream ) override;
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		Save( std::ostream &outStream ) override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
 	virtual void		SetOwner( CChar *newOwner ) override;
@@ -167,8 +167,8 @@ protected:
 	TIMERVAL			nextMoveTime;
 
 private:
-	virtual bool		DumpHeader( std::ofstream &outStream ) const override;
-	virtual bool		DumpBody( std::ofstream &outStream ) const override;
+	virtual bool		DumpHeader( std::ostream &outStream ) const override;
+	virtual bool		DumpBody( std::ostream &outStream ) const override;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 

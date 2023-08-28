@@ -576,7 +576,7 @@ public:
 	UI32					PackedLength( void ) const;
 	const UI08 *			PackedPointer( void ) const;
 
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual void			Log( std::ostream &outStream, bool fullHeader = true );
 };
 
 class CPInputBuffer
@@ -592,7 +592,7 @@ public:
 	}
 
 	virtual void			Receive( void ) = 0;
-	virtual void			Log( std::ofstream &outStream, bool fullHeader = true );
+	virtual void			Log( std::ostream &outStream, bool fullHeader = true );
 	virtual bool			Handle( void );
 	void					SetSocket( CSocket *toSet );
 	CSocket *				GetSocket( void ) const;

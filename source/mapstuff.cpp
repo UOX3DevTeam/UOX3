@@ -1505,7 +1505,7 @@ auto TileInfo::CollectionArt() -> std::vector<CTile>&
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process terrain data read from tiledata file
 //o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessTerrain( std::ifstream &input ) -> void
+auto TileInfo::ProcessTerrain( std::istream &input ) -> void
 {
 	terrainData.reserve( 0x4000 );
 	std::uint32_t value32 = 0;
@@ -1567,7 +1567,7 @@ auto TileInfo::ProcessTerrain( std::ifstream &input ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Process art/statics data read from tiledata file
 //o------------------------------------------------------------------------------------------------o
-auto TileInfo::ProcessArt( std::ifstream &input ) -> void
+auto TileInfo::ProcessArt( std::istream &input ) -> void
 {
 	artData.reserve( 0xFFFF );
 	std::uint32_t value32 = 0;

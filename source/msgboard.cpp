@@ -300,7 +300,7 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgId, const PostTypes
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes a new post to the .bbf file
 //o------------------------------------------------------------------------------------------------o
-void MsgBoardWritePost( std::ofstream& mFile, const MsgBoardPost_st& msgBoardPost )
+void MsgBoardWritePost( std::ostream& mFile, const MsgBoardPost_st& msgBoardPost )
 {
 	char wBuffer[4];
 
@@ -526,7 +526,7 @@ void MsgBoardPost( CSocket *tSock )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reads in a post from its specified file.
 //o------------------------------------------------------------------------------------------------o
-bool MsgBoardReadPost( std::ifstream& file, MsgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
+bool MsgBoardReadPost( std::istream& file, MsgBoardPost_st& msgBoardPost, SERIAL msgSerial = INVALIDSERIAL )
 {
 	char buffer[4];
 

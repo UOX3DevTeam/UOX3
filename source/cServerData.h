@@ -1210,7 +1210,7 @@ public:
 
 	auto		SaveTime() -> void;
 	auto		LoadTime() -> void;
-	auto		LoadTimeTags( std::ifstream &input ) -> void;
+	auto		LoadTimeTags( std::istream &input ) -> void;
 
 	// These functions return true if it's a new day
 	auto		IncSecond() -> bool;
