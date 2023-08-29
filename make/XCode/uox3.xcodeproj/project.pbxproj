@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
+		56C9E3E42A9E059A004D9F38 /* filestream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56C9E3E22A9E059A004D9F38 /* filestream.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -128,6 +129,8 @@
 		56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
 		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
+		56C9E3E22A9E059A004D9F38 /* filestream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = filestream.cpp; sourceTree = "<group>"; };
+		56C9E3E32A9E059A004D9F38 /* filestream.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = filestream.hpp; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -461,6 +464,8 @@
 				64A900E7293E3DD4009B54DA /* quantityfuncs.cpp */,
 				64A900E9293E3DD4009B54DA /* regions.cpp */,
 				64A900EA293E3DD4009B54DA /* regions.h */,
+				56C9E3E22A9E059A004D9F38 /* filestream.cpp */,
+				56C9E3E32A9E059A004D9F38 /* filestream.hpp */,
 				64A900F0293E3DD4009B54DA /* skills.cpp */,
 				64A900F1293E3DD4009B54DA /* skills.h */,
 				64A900F2293E3DD4009B54DA /* sound.cpp */,
@@ -722,6 +727,7 @@
 				64A90138293E3DD4009B54DA /* cThreadQueue.cpp in Sources */,
 				64A9014B293E3DD4009B54DA /* movement.cpp in Sources */,
 				64A90145293E3DD4009B54DA /* jail.cpp in Sources */,
+				56C9E3E42A9E059A004D9F38 /* filestream.cpp in Sources */,
 				64A9014F293E3DD4009B54DA /* npcs.cpp in Sources */,
 				64A9013B293E3DD4009B54DA /* Dictionary.cpp in Sources */,
 				64A90136293E3DD4009B54DA /* cSocket.cpp in Sources */,

@@ -123,6 +123,7 @@
    <ClCompile Include="..\..\source\cRaces.cpp" />
    <ClCompile Include="..\..\source\cWeather.cpp" />
    <ClCompile Include="..\..\source\gumps.cpp" />
+   <ClCompile Include="..\..\source\filestream.cpp" />
    <ClCompile Include="..\..\source\house.cpp" />
    <ClCompile Include="..\..\source\items.cpp" />
    <ClCompile Include="..\..\source\jail.cpp" />
@@ -226,6 +227,8 @@
     <ClInclude Include="..\..\source\commands.h" />
     <ClInclude Include="..\..\source\cRaces.h" />
     <ClInclude Include="..\..\source\cWeather.hpp" />
+    <ClInclude Include="..\..\source\filestream.hpp" />
+    <ClInclude Include="..\..\source\gump.h" />
     <ClInclude Include="..\..\source\jail.h" />
     <ClInclude Include="..\..\source\magic.h" />
     <ClInclude Include="..\..\source\movement.h" />

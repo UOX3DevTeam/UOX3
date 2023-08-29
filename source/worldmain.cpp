@@ -548,7 +548,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		Console.Log( "Server data save", "server.log" );
 		RegionSave();
 		Console.PrintDone();
-		MapRegion->Save();
+		MapRegion->SaveTest();
 		GuildSys->Save();
 		JailSys->WriteData();
 		Effects->SaveEffects();

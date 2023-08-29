@@ -68,6 +68,8 @@ add_executable(uox3
    ../../source/cWeather.cpp
    ../../source/cWeather.hpp
    ../../source/gumps.cpp
+   ../../source/filestream.cpp
+   ../../source/filestream.hpp
    ../../source/house.cpp
    ../../source/items.cpp
    ../../source/jail.cpp

@@ -143,6 +143,9 @@
     <ClCompile Include="..\..\source\cWeather.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\source\filestream.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\source\gumps.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
@@ -409,6 +412,9 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cWeather.hpp">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\filestream.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\gump.h">

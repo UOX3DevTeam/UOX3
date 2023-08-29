@@ -7,13 +7,13 @@
 
 #include "uox3.h"
 #include "classes.h"
+#include "filestream.hpp"
 #include "StringUtility.hpp"
 #include "ObjectFactory.h"
 
 using namespace std::string_literals ;
 
 #define DEBUG_REGIONS		0
-#define SAVE_CONSOLE
 
 CMapHandler *MapRegion;
 
@@ -86,6 +86,61 @@ auto LoadSpawnItem( std::istream& readDestination ) ->void {
 		ourSpawner->Cleanup();
 		ObjectFactory::GetSingleton().DestroyObject( ourSpawner );
 	}
+}
+//===================================================================================
+auto CMapRegion::SaveToVectors() -> std::vector<std::vector<std::pair<std::string,std::string>>>{
+    auto removeChar = std::vector<CChar *>() ;
+    auto rvalue =std::vector<std::vector<std::pair<std::string,std::string>>>() ;
+    for( const auto &charToWrite : charData.collection() )
+    {
+        if( !ValidateObject( charToWrite )){
+            removeChar.push_back( charToWrite );
+        }
+        else {
+#if defined( _MSC_VER )
+#pragma todo( "PlayerHTML Dumping needs to be reimplemented" )
+#endif
+            if( charToWrite->ShouldSave() ) {
+                rvalue.push_back(charToWrite->describe());
+                //charToWrite->Save( writeDestination );
+            }
+        }
+    }
+    std::for_each( removeChar.begin(), removeChar.end(), [this]( CChar *character ) {
+        charData.Remove( character );
+    });
+
+    auto removeItem = std::vector<CItem *>();
+    for( const auto &itemToWrite : itemData.collection() ) {
+        if( !ValidateObject( itemToWrite )) {
+            removeItem.push_back( itemToWrite );
+        }
+        else {
+            if( itemToWrite->ShouldSave() ) {
+                if( itemToWrite->GetObjType() == OT_MULTI ) {
+                    CMultiObj *iMulti = static_cast<CMultiObj *>( itemToWrite );
+                    rvalue.push_back(iMulti->describe());
+
+                    //iMulti->Save( writeDestination );
+                }
+                else if( itemToWrite->GetObjType() == OT_BOAT ) {
+                    CBoatObj *iBoat = static_cast<CBoatObj *>( itemToWrite );
+                    rvalue.push_back(iBoat->describe());
+
+                    //iBoat->Save( writeDestination );
+                }
+                else {
+                    rvalue.push_back(itemToWrite->describe());
+
+                    //itemToWrite->Save( writeDestination );
+                }
+            }
+        }
+    }
+    std::for_each( removeItem.begin(), removeItem.end(), [this]( CItem *item ) {
+        itemData.Remove( item );
+    });
+    return rvalue ;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -635,6 +690,92 @@ auto CMapHandler::PopulateList( std::int16_t x, std::int16_t y, std::uint8_t wor
 	}
 	return nearbyRegions;
 }
+//=================================================================================================
+auto CMapHandler::SaveTest() ->void {
+    const auto AreaX = static_cast<int16_t>(UpperX / 8);    // we're storing 8x8 grid arrays together
+    const auto AreaY = static_cast<int16_t>(UpperY / 8);
+    auto onePercent = 0;
+    auto i = static_cast<std::uint8_t>(0);
+    for( i = 0; i < Map->MapCount(); ++i ) {
+        auto [mapWidth, mapHeight] = Map->SizeOfMap( i );
+        onePercent += static_cast<std::int32_t>(( mapWidth / MapColSize ) * ( mapHeight / MapRowSize ));
+    }
+    onePercent /= 100.0f;
+    const auto blockDiscriminator = "\n\n---REGION---\n\n"s;
+    
+    auto count= static_cast<std::uint32_t>(0);
+    auto s_t = static_cast<std::uint32_t>(GetClock());
+
+    Console << "Saving Character and Item Map Region data...   ";
+    Console.TurnYellow();
+    Console << "0%";
+    auto basePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
+
+    // Legacy - deletes house.wsc on next world save, since house data is now saved in the regional
+    // wsc files along with other objects, so we don't want this file loaded again on next startup
+    auto houseFilePath = std::filesystem::path( basePath + "house.wsc"s);
+    if (std::filesystem::exists(houseFilePath)){
+        std::filesystem::remove( houseFilePath );
+    }
+    for( std::int16_t counter1 = 0; counter1 < AreaX; ++counter1 ){    // move left->right
+        const std::int32_t baseX = counter1 * 8;
+        for( std::int16_t counter2 = 0; counter2 < AreaY; ++counter2 ){    // move up->down
+            const std::int32_t baseY = counter2 * 8;                                // calculate x grid offset
+            auto filename = basePath + oldstrutil::number( counter1 ) + "."s + oldstrutil::number( counter2 ) + ".wsc"s;    // let's name our file
+
+            bool changesDetected = false;
+            for( std::uint8_t xCnt = 0; !changesDetected && xCnt < 8; ++xCnt ){ // walk through each part of the 8x8 grid, left->right
+                for( std::uint8_t yCnt = 0; !changesDetected && yCnt < 8; ++yCnt )    {            // walk the row
+                    for( auto mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter ) {
+                        auto mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
+                        if( mRegion != nullptr ) {
+                            // Only save objects mapRegions marked as "changed" by objects updated in said regions
+                            if( mRegion->HasRegionChanged() ) {
+                                changesDetected = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            if( !changesDetected )
+                continue;
+            auto streamData = new filestream(std::filesystem::path(filename));
+
+            for( std::uint8_t xCnt = 0; xCnt < 8; ++xCnt )    {                // walk through each part of the 8x8 grid, left->right
+                for( std::uint8_t yCnt = 0; yCnt < 8; ++yCnt )    {            // walk the row
+                    for( auto mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter ) {
+
+                        ++count;
+                        if( count%onePercent == 0 ) {
+                            if( count/onePercent <= 10 ) {
+                                Console << "\b\b" << std::to_string( count / onePercent ) << "%";
+                            }
+                            else if( count/onePercent <= 100 ) {
+                                Console << "\b\b\b" << std::to_string( count / onePercent ) << "%";
+                            }
+                        }
+                        auto mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
+                        if( mRegion != nullptr ) {
+                            auto temp = mRegion->SaveToVectors() ;
+                            streamData->contents.insert(streamData->contents.end(),std::make_move_iterator(temp.begin()),std::make_move_iterator(temp.end()));
+                            //mRegion->SaveToDisk( writeDestination );
+
+                            // Remove "changed" flag from region, to avoid it saving again needlessly on next save
+                            mRegion->HasRegionChanged( false );
+                        }
+
+                        //writeDestination << blockDiscriminator;  // Lets not do this, just to see performance difference
+                    }
+                }
+            }
+            startSave(streamData);
+
+        }
+    }
+
+}
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CMapHandler::Save()
@@ -662,9 +803,7 @@ auto CMapHandler::Save()->void {
 
 	Console << "Saving Character and Item Map Region data...   ";
 	Console.TurnYellow();
-#if defined(SAVE_CONSOLE)
 	Console << "0%";
-#endif
 	auto basePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
 	// Legacy - deletes house.wsc on next world save, since house data is now saved in the regional
@@ -711,7 +850,6 @@ auto CMapHandler::Save()->void {
             for( std::uint8_t xCnt = 0; xCnt < 8; ++xCnt )	{				// walk through each part of the 8x8 grid, left->right
                 for( std::uint8_t yCnt = 0; yCnt < 8; ++yCnt )	{			// walk the row
 					for( auto mIter = mapWorlds.begin(); mIter != mapWorlds.end(); ++mIter ) {
-#if defined(SAVE_CONSOLE)
 
 						++count;
 						if( count%onePercent == 0 ) {
@@ -722,7 +860,6 @@ auto CMapHandler::Save()->void {
 								Console << "\b\b\b" << std::to_string( count / onePercent ) << "%";
 							}
 						}
-#endif
 						auto mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
 						if( mRegion != nullptr ) {
 							mRegion->SaveToDisk( writeDestination );
@@ -738,10 +875,8 @@ auto CMapHandler::Save()->void {
 			writeDestination.close();
 		}
 	}
-#if defined(SAVE_CONSOLE)
 
 	Console << "\b\b\b\b" << static_cast<std::uint32_t>( 100 ) << "%";
-#endif
 	auto filename = basePath + "overflow.wsc"s;
 	auto writeDestination = std::ofstream( filename.c_str() );
 

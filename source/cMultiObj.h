@@ -137,6 +137,8 @@ public:
 	virtual bool		DumpHeader( std::ostream &outStream ) const override;
 	virtual bool		DumpBody( std::ostream &outStream ) const override;
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
+    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> override;
+    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> override;
 
 	virtual void		SetOwner( CChar *newOwner ) override;
 
@@ -172,9 +174,12 @@ private:
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
+    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> final;
+    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> final;
+
 public:
 	CBoatObj();
-	virtual				~CBoatObj();
+	~CBoatObj() = default;
 
 	SERIAL				GetTiller( void ) const;
 	SERIAL				GetPlank( UI08 plankNum ) const;

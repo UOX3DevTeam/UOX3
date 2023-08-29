@@ -13,6 +13,8 @@
 
 #include <algorithm>
 #include <memory>
+#include <vector>
+#include <utility>
 
 #include "mapstuff.h"
 
@@ -55,6 +57,7 @@ public:
     ~CMapRegion()=default ;
     
     auto SaveToDisk( std::ostream& writeDestination ) ->void;
+    auto SaveToVectors() -> std::vector<std::vector<std::pair<std::string,std::string>>>;
 };
 //========================================================================
 class CMapWorld {
@@ -92,7 +95,7 @@ public:
     ~CMapHandler() = default;
     
     auto Startup() -> void;
-    
+    auto SaveTest() ->void ;
     auto Save() -> void;
     auto Load() -> void;
     

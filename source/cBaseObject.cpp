@@ -19,6 +19,8 @@
 //|							Addition of basic script trigger stuff. Function documentation
 //|							finished for all functions
 //o------------------------------------------------------------------------------------------------o
+#include <bitset>
+
 #include "uox3.h"
 #include "power.h"
 #include "CJSMapping.h"
@@ -27,7 +29,8 @@
 #include "ObjectFactory.h"
 #include "weight.h"
 #include "Dictionary.h"
-#include <bitset>
+
+using namespace std::string_literals ;
 
 const UI32 BIT_FREE			=	0;
 const UI32 BIT_DELETED		=	1;
@@ -710,7 +713,109 @@ void CBaseObject::SetOwner( CChar *newOwner )
 		}
 	}
 }
+//=====================================================================================
+auto CBaseObject::describe()  ->std::vector<std::pair<std::string,std::string>> {
+    auto rvalue = describeHeader();
+    auto body = describeBody() ;
+    auto footer = describeFooter() ;
+    rvalue.insert(rvalue.end(),std::make_move_iterator(body.begin()),std::make_move_iterator(body.end()));
+    rvalue.insert(rvalue.end(),footer.begin(),footer.end());
+    return rvalue ;
+}
 
+//=================================================================================================
+auto CBaseObject::describeBody() -> std::vector<std::pair<std::string,std::string>> {
+    auto rvalue = std::vector<std::pair<std::string,std::string>>() ;
+    rvalue.reserve(45) ;
+    rvalue.push_back(std::make_pair("Serial = 0x"s,oldstrutil::number(serial,16)));
+    rvalue.push_back(std::make_pair("ID = 0x"s,oldstrutil::number(id,16)));
+    rvalue.push_back(std::make_pair("Colour = 0x"s,oldstrutil::number(colour,16)));
+    rvalue.push_back(std::make_pair("Direction = 0x"s,oldstrutil::number(static_cast<std::int16_t>(dir),16)));
+    if (ValidateObject(multis)){
+        auto serial = "FFFFFFFF"s;
+        try{
+            serial = oldstrutil::number(multis->GetSerial(),16);
+        }
+        catch(...){
+            Console << "EXCEPTION: CBaseObject::describe(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory."<< myendl;
+        }
+        rvalue.push_back(std::make_pair("MultiID = 0x"s,serial));
+    }
+    rvalue.push_back(std::make_pair("SpawnerID = 0x"s,oldstrutil::number(spawnSerial,16)));
+    rvalue.push_back(std::make_pair("OwnerID = 0x"s,oldstrutil::number(owner,16)));
+
+    auto objName = name ;
+    if (CanBeObjType(OT_CHAR)){
+        if (objName == "#"){
+            // If character name is #, use default name from dictionary files instead - using base entry 3000 + character's ID
+            objName = "#//"s + Dictionary->GetEntry( 3000 + id );
+        }
+    }
+    rvalue.push_back(std::make_pair("SectionID = "s,sectionId));
+    rvalue.push_back(std::make_pair("Name = "s,objName));
+    rvalue.push_back(std::make_pair("Location = "s,std::to_string(x) + ","s + std::to_string(y) + ","s +std::to_string(z) + ","s + std::to_string(worldNumber) + ","s + std::to_string(instanceId)));
+    rvalue.push_back(std::make_pair("Title = "s,title));
+    rvalue.push_back(std::make_pair("Origin = "s,cwmWorldState->ServerData()->EraEnumToString(static_cast<ExpansionRuleset>(origin))));
+    //=========== BUG (= For Characters the dex+str+int malis get saved and get rebuilt on next serverstartup = increasing malis)
+    auto temp_st2 = st2;
+    auto temp_dx2 = dx2;
+    auto temp_in2 = in2;
+    if(objType == OT_CHAR){
+        auto myChar = static_cast<CChar *>(this);
+
+        // For every equipped item
+        // We need to reduce Str2+Dex2+Int2
+        for( auto myItem = myChar->FirstItem(); !myChar->FinishedItems(); myItem = myChar->NextItem() ){
+            if( ValidateObject( myItem )){
+                temp_st2 -= myItem->GetStrength2();
+                temp_dx2 -= myItem->GetDexterity2();
+                temp_in2 -= myItem->GetIntelligence2();
+            }
+        }
+    }
+    //=========== BUGFIX END
+    rvalue.push_back(std::make_pair("Weight = "s,std::to_string(weight)));
+    rvalue.push_back(std::make_pair("Mana = "s,std::to_string(mana)));
+    rvalue.push_back(std::make_pair("Stamina = "s,std::to_string(stamina)));
+    rvalue.push_back(std::make_pair("Dexterity = "s,std::to_string(dexterity)+","+std::to_string(temp_dx2)));
+    rvalue.push_back(std::make_pair("Intelligence = "s,std::to_string(intelligence)+","+std::to_string(temp_in2)));
+    rvalue.push_back(std::make_pair("Strength = "s,std::to_string(strength)+","+std::to_string(temp_st2)));
+    rvalue.push_back(std::make_pair("HitPoints = "s,std::to_string(hitpoints)));
+    rvalue.push_back(std::make_pair("Race = "s,std::to_string(race)));
+    rvalue.push_back(std::make_pair("Visible = "s,std::to_string(visible)));
+    rvalue.push_back(std::make_pair("Disabled = "s,IsDisabled()?"1"s:"0"s));
+    rvalue.push_back(std::make_pair("Damage = "s,std::to_string(loDamage)+","+std::to_string(hiDamage)));
+    rvalue.push_back(std::make_pair("Poisoned = "s,std::to_string(poisoned)));
+    rvalue.push_back(std::make_pair("Carve = "s,std::to_string(GetCarve())));
+    rvalue.push_back(std::make_pair("Damageable = "s,IsDamageable()?"1"s:"0"s));
+    auto resistance = std::string() ;
+    for (std::uint8_t resist = 1; resist< WEATHNUM;++resist){
+        resistance += std::to_string(GetResist( static_cast<WeatherType>( resist ))) + ","s;
+    }
+    resistance += "[END]"s;
+    rvalue.push_back(std::make_pair("Defense = ",resistance));
+    if (!scriptTriggers.empty()){
+         for (const auto &scriptTrig:scriptTriggers){
+             rvalue.push_back(std::make_pair("ScpTrig = "s,std::to_string(scriptTrig)));
+        }
+    }
+    else {
+        rvalue.push_back(std::make_pair("ScpTrig = "s,"0"s));
+    }
+    rvalue.push_back(std::make_pair("Reputation = ",std::to_string(GetFame()) + ","s + std::to_string(GetKarma()) + ","s + std::to_string(GetKills())));
+    for( auto CI = tags.begin(); CI != tags.end(); ++CI ){
+        rvalue.push_back(std::make_pair("TAGNAME = "s,CI->first));
+        
+        if( CI->second.m_ObjectType == TAGMAP_TYPE_STRING ){
+            rvalue.push_back(std::make_pair("TAGVALS = "s,CI->second.m_StringValue ));
+        }
+        else {
+            rvalue.push_back(std::make_pair("TAGVAL = "s,std::to_string(CI->second.m_IntValue) ));
+        }
+    }
+    return rvalue;
+
+}
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBaseObject::DumpBody()
 //o------------------------------------------------------------------------------------------------o

@@ -1223,6 +1223,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
     <ClCompile Include="..\..\source\osunique.cpp" />
+    <ClCompile Include="..\..\source\filestream.cpp" />
     <ClCompile Include="..\..\source\StringUtility.cpp" />
     <ClCompile Include="..\..\source\targeting.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
@@ -1381,6 +1382,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\filestream.hpp" />
     <ClInclude Include="..\..\source\osunique.hpp" />
     <ClInclude Include="..\..\source\books.h" />
     <ClInclude Include="..\..\source\cAccountClass.h" />

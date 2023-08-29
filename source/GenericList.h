@@ -104,7 +104,7 @@ public:
 		return rValue;
 	}
 
-	auto Finished() -> bool
+	auto Finished() const -> bool
 	{
 		return ( objIterator == objData.end() );
 	}

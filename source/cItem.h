@@ -1,7 +1,12 @@
 #ifndef __CITEM_H__
 #define __CITEM_H__
 #include "GenericList.h"
+
 #include <array>
+#include <string>
+#include <utility>
+#include <vector>
+
 enum CITempVars
 {
 	CITV_MORE	= 0,
@@ -13,7 +18,7 @@ enum CITempVars
 	CITV_MORE2,
 	CITV_COUNT
 };
-
+//============================================================================================
 class CItem : public CBaseObject
 {
 protected:
@@ -308,7 +313,10 @@ public:
 
 	virtual bool	Save( std::ostream &outStream ) override;
 	virtual bool	DumpBody( std::ostream &outStream ) const override;
-	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
+    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> override;
+    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> override;
+
+    virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
 	virtual void	Cleanup( void ) override;
 	virtual void	Delete( void ) override;
@@ -318,6 +326,7 @@ public:
 	auto			SetSpell( UI08 part, UI32 newValue ) -> void;
 };
 
+//============================================================================================
 class CSpawnItem : public CItem
 {
 protected:
@@ -343,6 +352,8 @@ public:
 
 	virtual bool		DumpHeader( std::ostream &outStream ) const override;
 	virtual bool		DumpBody( std::ostream &outStream ) const override;
+    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> final;
+    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> final;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 

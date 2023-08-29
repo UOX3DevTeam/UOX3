@@ -6,6 +6,11 @@
 #ifndef __CBO_H__
 #define __CBO_H__
 
+#include <string>
+#include <vector>
+#include <utility>
+
+
 #include "typedefs.h"
 #include "uoxstruct.h"
 
@@ -198,7 +203,13 @@ public:
 	virtual bool			DumpHeader( std::ostream &outStream ) const = 0;
 	virtual bool			DumpBody( std::ostream &outStream ) const;
 	bool					DumpFooter( std::ostream &outStream ) const;
-	bool					Load( std::istream &inStream );
+ 
+    virtual auto describe() -> std::vector<std::pair<std::string,std::string>>;
+    virtual auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> = 0 ;
+    virtual auto describeBody()  -> std::vector<std::pair<std::string,std::string>>;
+    auto describeFooter() ->  std::vector<std::pair<std::string,std::string>>{return std::vector<std::pair<std::string,std::string>>(1,std::make_pair(std::string("o---o"),std::string()));}
+
+    bool					Load( std::istream &inStream );
 
 	virtual bool			HandleLine( std::string &UTag, std::string &data );
 
