@@ -137,8 +137,8 @@ public:
 	virtual bool		DumpHeader( std::ostream &outStream ) const override;
 	virtual bool		DumpBody( std::ostream &outStream ) const override;
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
-    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> override;
-    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> override;
+    auto describeHeader(ObjectDescription &descrip) const -> void override;
+    auto describeBody(ObjectDescription &descript)  -> void override;
 
 	virtual void		SetOwner( CChar *newOwner ) override;
 
@@ -174,8 +174,8 @@ private:
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
-    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> final;
-    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> final;
+    auto describeHeader(ObjectDescription &descrip) const -> void final;
+    auto describeBody(ObjectDescription &descript)  -> void final;
 
 public:
 	CBoatObj();

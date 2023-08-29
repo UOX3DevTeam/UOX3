@@ -12,17 +12,31 @@
 #include <future>
 
 
+
+
 //======================================================================
-struct filestream {
+struct basestream {
     std::filesystem::path path;
-    std::vector<std::vector<std::pair<std::string,std::string>>> contents ;
-    filestream(const std::filesystem::path &path){this->path = path;}
-    
+    basestream(const std::filesystem::path &path){this->path = path;}
+    basestream() = default ;
+    virtual ~basestream() = default ;
+    virtual auto save() const ->void {}
 };
-auto saveStream(filestream *stream) ->void ;
+//======================================================================
+struct ObjectDescription {
+    std::vector<std::pair<std::string,std::string>> description ;
+    ObjectDescription() { description.reserve(500);}
+};
+//======================================================================
+struct ObjectStream : public basestream {
+    std::vector<ObjectDescription> contents ;
+    ObjectStream():basestream(){contents.reserve(2500);}
+    ObjectStream(const std::filesystem::path &path):basestream(path){contents.reserve(2500);}
+    auto save() const -> void final ;
+};
 
-extern std::vector<std::future<void>> saveFutures;
+
 auto waitOnAllFuture() -> void ;
-auto startSave(filestream *stream) ->void ;
-
+auto queueStream(basestream *stream) ->void ;
+auto saveStream(basestream *stream) ->void;
 #endif /* filestream_hpp */

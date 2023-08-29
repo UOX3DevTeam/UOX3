@@ -57,7 +57,7 @@ public:
     ~CMapRegion()=default ;
     
     auto SaveToDisk( std::ostream& writeDestination ) ->void;
-    auto SaveToVectors() -> std::vector<std::vector<std::pair<std::string,std::string>>>;
+    auto SaveToVectors(ObjectStream *stream) -> void;
 };
 //========================================================================
 class CMapWorld {

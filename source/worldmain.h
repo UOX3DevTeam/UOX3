@@ -9,6 +9,8 @@
 
 #include "cServerData.h"
 #include "GenericList.h"
+#include "filestream.hpp"
+
 #if PLATFORM == WINDOWS
 #include <winsock2.h>
 #undef min
@@ -231,6 +233,7 @@ public:
 	void SaveNewWorld( bool x );
 	auto Startup() -> void;
 	CWorldMain();
+    ~CWorldMain() { waitOnAllFuture();}
 	auto ServerData() ->CServerData *;
 	auto SetServerData(CServerData &server_data) -> void;
 	auto ServerProfile()->CServerProfile *;

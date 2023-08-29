@@ -1692,73 +1692,73 @@ auto CItem::SetWeatherDamage( WeatherType effectNum, bool value ) -> void
 }
 
 //=================================================================================
-auto CSpawnItem::describeHeader() const -> std::vector<std::pair<std::string,std::string>> {
-    return std::vector<std::pair<std::string,std::string>>(1,std::make_pair("[SPAWNITEM]"s,""s));
+auto CSpawnItem::describeHeader(ObjectDescription &descrip) const -> void {
+    descrip.description.push_back(std::make_pair("[SPAWNITEM]"s,""s));
 
 }
 //=================================================================================
-auto CSpawnItem::describeBody()  -> std::vector<std::pair<std::string,std::string>> {
-    auto rvalue = CItem::describeBody() ;
-    rvalue.push_back(std::make_pair("Interval = "s,std::to_string(static_cast<UI16>( GetInterval(0))) + ","s + std::to_string(static_cast<UI16>( GetInterval(1)))));
-    rvalue.push_back(std::make_pair("SpawnSection = "s,GetSpawnSection() ));
-    rvalue.push_back(std::make_pair("IsSectionAList = "s,std::to_string(static_cast<UI16>( IsSectionAList() ? 1 : 0 )) ));
-    return rvalue ;
+auto CSpawnItem::describeBody(ObjectDescription &descrip)  -> void{
+    CItem::describeBody(descrip) ;
+    descrip.description.push_back(std::make_pair("Interval = "s,std::to_string(static_cast<UI16>( GetInterval(0))) + ","s + std::to_string(static_cast<UI16>( GetInterval(1)))));
+    descrip.description.push_back(std::make_pair("SpawnSection = "s,GetSpawnSection() ));
+    descrip.description.push_back(std::make_pair("IsSectionAList = "s,std::to_string(static_cast<UI16>( IsSectionAList() ? 1 : 0 )) ));
+    
 }
 //=================================================================================
-auto CItem::describeHeader() const -> std::vector<std::pair<std::string,std::string>> {
-    return std::vector<std::pair<std::string,std::string>>(1,std::make_pair("[ITEM]"s,""s));
+auto CItem::describeHeader(ObjectDescription &descrip) const -> void {
+    descrip.description.push_back(std::make_pair("[ITEM]"s,""s));
 
 }
 //=================================================================================
-auto CItem::describeBody()  -> std::vector<std::pair<std::string,std::string>>{
-    auto rvalue = CBaseObject::describeBody() ;
-    rvalue.push_back(std::make_pair("GridLoc = 0x"s,oldstrutil::number(static_cast<SI16>(GetGridLocation()),16)));
-    rvalue.push_back(std::make_pair("Layer = 0x"s,oldstrutil::number(static_cast<SI16>(GetLayer()),16)));
-    rvalue.push_back(std::make_pair("Cont = 0x"s,oldstrutil::number(GetContSerial(),16)));
-    rvalue.push_back(std::make_pair("Creator = 0x"s,oldstrutil::number(GetCreator(),16)));
-    rvalue.push_back(std::make_pair("More = 0x"s,oldstrutil::number(GetTempVar( CITV_MORE ),16)));
-    rvalue.push_back(std::make_pair("More012 = 0x"s,oldstrutil::number(GetTempVar( CITV_MORE0 ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MORE1 ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MORE2 ),16)));
-    rvalue.push_back(std::make_pair("MoreXYZ = 0x"s,oldstrutil::number(GetTempVar( CITV_MOREX ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MOREY ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MOREZ ),16)));
-    rvalue.push_back(std::make_pair("Glow = 0x"s,oldstrutil::number(GetGlow(),16)));
-    rvalue.push_back(std::make_pair("GlowBC = 0x"s,oldstrutil::number(GetGlowColour(),16)));
-    rvalue.push_back(std::make_pair("Ammo = 0x"s,oldstrutil::number(GetAmmoId(),16)+",0x"s + oldstrutil::number(GetAmmoHue(),16)));
-    rvalue.push_back(std::make_pair("AmmoFX = 0x"s,oldstrutil::number(GetAmmoFX(),16)+",0x"s + oldstrutil::number(GetAmmoFXHue(),16)+",0x"s + oldstrutil::number(GetAmmoFXRender(),16)));
-    rvalue.push_back(std::make_pair("Spells = 0x"s,oldstrutil::number(GetSpell(0),16)+",0x"s + oldstrutil::number(GetSpell(1),16)+",0x"s + oldstrutil::number(GetSpell(2),16)));
+auto CItem::describeBody(ObjectDescription &descrip)  -> void{
+    CBaseObject::describeBody(descrip) ;
+    descrip.description.push_back(std::make_pair("GridLoc = 0x"s,oldstrutil::number(static_cast<SI16>(GetGridLocation()),16)));
+    descrip.description.push_back(std::make_pair("Layer = 0x"s,oldstrutil::number(static_cast<SI16>(GetLayer()),16)));
+    descrip.description.push_back(std::make_pair("Cont = 0x"s,oldstrutil::number(GetContSerial(),16)));
+    descrip.description.push_back(std::make_pair("Creator = 0x"s,oldstrutil::number(GetCreator(),16)));
+    descrip.description.push_back(std::make_pair("More = 0x"s,oldstrutil::number(GetTempVar( CITV_MORE ),16)));
+    descrip.description.push_back(std::make_pair("More012 = 0x"s,oldstrutil::number(GetTempVar( CITV_MORE0 ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MORE1 ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MORE2 ),16)));
+    descrip.description.push_back(std::make_pair("MoreXYZ = 0x"s,oldstrutil::number(GetTempVar( CITV_MOREX ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MOREY ),16)+",0x"s+oldstrutil::number(GetTempVar( CITV_MOREZ ),16)));
+    descrip.description.push_back(std::make_pair("Glow = 0x"s,oldstrutil::number(GetGlow(),16)));
+    descrip.description.push_back(std::make_pair("GlowBC = 0x"s,oldstrutil::number(GetGlowColour(),16)));
+    descrip.description.push_back(std::make_pair("Ammo = 0x"s,oldstrutil::number(GetAmmoId(),16)+",0x"s + oldstrutil::number(GetAmmoHue(),16)));
+    descrip.description.push_back(std::make_pair("AmmoFX = 0x"s,oldstrutil::number(GetAmmoFX(),16)+",0x"s + oldstrutil::number(GetAmmoFXHue(),16)+",0x"s + oldstrutil::number(GetAmmoFXRender(),16)));
+    descrip.description.push_back(std::make_pair("Spells = 0x"s,oldstrutil::number(GetSpell(0),16)+",0x"s + oldstrutil::number(GetSpell(1),16)+",0x"s + oldstrutil::number(GetSpell(2),16)));
 
-    rvalue.push_back(std::make_pair("Name2 = "s,GetName2()));
-    rvalue.push_back(std::make_pair("Desc = "s,GetDesc()));
-    rvalue.push_back(std::make_pair("Event = "s,GetEvent()));
-    rvalue.push_back(std::make_pair("Type = "s,std::to_string(GetType())));
-    rvalue.push_back(std::make_pair("Offspell = "s,std::to_string(GetOffSpell())));
-    rvalue.push_back(std::make_pair("Amount = "s,std::to_string(GetAmount())));
-    rvalue.push_back(std::make_pair("WeightMax = "s,std::to_string(GetWeightMax())));
-    rvalue.push_back(std::make_pair("BaseWeight = "s,std::to_string(GetBaseWeight())));
-    rvalue.push_back(std::make_pair("MaxItems = "s,std::to_string(GetMaxItems())));
-    rvalue.push_back(std::make_pair("MaxHP = "s,std::to_string(GetMaxHP())));
-    rvalue.push_back(std::make_pair("Speed = "s,std::to_string(GetSpeed())));
-    rvalue.push_back(std::make_pair("Movable = "s,std::to_string(GetMovable())));
-    rvalue.push_back(std::make_pair("Priv = "s,std::to_string(GetPriv())));
-    rvalue.push_back(std::make_pair("Value = "s,std::to_string(GetBuyValue())+","s+std::to_string(GetSellValue()) + ","s + std::to_string(GetVendorPrice()) ));
-    rvalue.push_back(std::make_pair("Restock = "s,std::to_string(GetRestock())));
-    rvalue.push_back(std::make_pair("AC = "s,std::to_string(GetArmourClass())));
-    rvalue.push_back(std::make_pair("Rank = "s,std::to_string(GetRank())));
-    rvalue.push_back(std::make_pair("Sk_Made = "s,std::to_string(GetMadeWith())));
-    rvalue.push_back(std::make_pair("Bools = "s,std::to_string(bools.to_ulong())));
-    rvalue.push_back(std::make_pair("Good = "s,std::to_string(GetGood())));
-    rvalue.push_back(std::make_pair("GlowType = "s,std::to_string(GetGlowEffect())));
-    rvalue.push_back(std::make_pair("Range = "s,std::to_string(GetBaseRange())+","s+std::to_string(GetMaxRange())));
-    rvalue.push_back(std::make_pair("MaxUses = "s,std::to_string(GetMaxUses())));
-    rvalue.push_back(std::make_pair("UsesLeft = "s,std::to_string(GetUsesLeft())));
-    rvalue.push_back(std::make_pair("EntryMadeFrom = "s,std::to_string(EntryMadeFrom())));
-    rvalue.push_back(std::make_pair("Stealable = "s,std::to_string(GetStealable())));
-    rvalue.push_back(std::make_pair("RaceDamage = "s,std::to_string(static_cast<SI16>( GetWeatherDamage( LIGHT )) ? 1 : 0 ) + ","s +
+    descrip.description.push_back(std::make_pair("Name2 = "s,GetName2()));
+    descrip.description.push_back(std::make_pair("Desc = "s,GetDesc()));
+    descrip.description.push_back(std::make_pair("Event = "s,GetEvent()));
+    descrip.description.push_back(std::make_pair("Type = "s,std::to_string(GetType())));
+    descrip.description.push_back(std::make_pair("Offspell = "s,std::to_string(GetOffSpell())));
+    descrip.description.push_back(std::make_pair("Amount = "s,std::to_string(GetAmount())));
+    descrip.description.push_back(std::make_pair("WeightMax = "s,std::to_string(GetWeightMax())));
+    descrip.description.push_back(std::make_pair("BaseWeight = "s,std::to_string(GetBaseWeight())));
+    descrip.description.push_back(std::make_pair("MaxItems = "s,std::to_string(GetMaxItems())));
+    descrip.description.push_back(std::make_pair("MaxHP = "s,std::to_string(GetMaxHP())));
+    descrip.description.push_back(std::make_pair("Speed = "s,std::to_string(GetSpeed())));
+    descrip.description.push_back(std::make_pair("Movable = "s,std::to_string(GetMovable())));
+    descrip.description.push_back(std::make_pair("Priv = "s,std::to_string(GetPriv())));
+    descrip.description.push_back(std::make_pair("Value = "s,std::to_string(GetBuyValue())+","s+std::to_string(GetSellValue()) + ","s + std::to_string(GetVendorPrice()) ));
+    descrip.description.push_back(std::make_pair("Restock = "s,std::to_string(GetRestock())));
+    descrip.description.push_back(std::make_pair("AC = "s,std::to_string(GetArmourClass())));
+    descrip.description.push_back(std::make_pair("Rank = "s,std::to_string(GetRank())));
+    descrip.description.push_back(std::make_pair("Sk_Made = "s,std::to_string(GetMadeWith())));
+    descrip.description.push_back(std::make_pair("Bools = "s,std::to_string(bools.to_ulong())));
+    descrip.description.push_back(std::make_pair("Good = "s,std::to_string(GetGood())));
+    descrip.description.push_back(std::make_pair("GlowType = "s,std::to_string(GetGlowEffect())));
+    descrip.description.push_back(std::make_pair("Range = "s,std::to_string(GetBaseRange())+","s+std::to_string(GetMaxRange())));
+    descrip.description.push_back(std::make_pair("MaxUses = "s,std::to_string(GetMaxUses())));
+    descrip.description.push_back(std::make_pair("UsesLeft = "s,std::to_string(GetUsesLeft())));
+    descrip.description.push_back(std::make_pair("EntryMadeFrom = "s,std::to_string(EntryMadeFrom())));
+    descrip.description.push_back(std::make_pair("Stealable = "s,std::to_string(GetStealable())));
+    descrip.description.push_back(std::make_pair("RaceDamage = "s,std::to_string(static_cast<SI16>( GetWeatherDamage( LIGHT )) ? 1 : 0 ) + ","s +
                                     std::to_string(static_cast<SI16>( GetWeatherDamage( RAIN ) ? 1 : 0 )) + ","s +
                                     std::to_string(static_cast<SI16>(GetWeatherDamage( HEAT ) ? 1 : 0 )) + ","s +
                                     std::to_string(static_cast<SI16>(GetWeatherDamage( COLD ) ? 1 : 0 )) + ","s +
                                     std::to_string(static_cast<SI16>(GetWeatherDamage( SNOW ) ? 1 : 0 )) + ","s +
                                     std::to_string(static_cast<SI16>(GetWeatherDamage( LIGHTNING ) ? 1 : 0 ))
                                     ));
-    return rvalue ;
+
 }
 
 

@@ -29,7 +29,7 @@
 #include "Dictionary.h"
 #include "ObjectFactory.h"
 #include "osunique.hpp"
-
+#include "filestream.hpp"
 CWorldMain *cwmWorldState = nullptr;
 
 //o------------------------------------------------------------------------------------------------o
@@ -548,6 +548,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		Console.Log( "Server data save", "server.log" );
 		RegionSave();
 		Console.PrintDone();
+        waitOnAllFuture() ;
 		MapRegion->SaveTest();
 		GuildSys->Save();
 		JailSys->WriteData();

@@ -88,9 +88,9 @@ auto LoadSpawnItem( std::istream& readDestination ) ->void {
 	}
 }
 //===================================================================================
-auto CMapRegion::SaveToVectors() -> std::vector<std::vector<std::pair<std::string,std::string>>>{
+auto CMapRegion::SaveToVectors(ObjectStream *stream) -> void {
     auto removeChar = std::vector<CChar *>() ;
-    auto rvalue =std::vector<std::vector<std::pair<std::string,std::string>>>() ;
+    
     for( const auto &charToWrite : charData.collection() )
     {
         if( !ValidateObject( charToWrite )){
@@ -101,7 +101,7 @@ auto CMapRegion::SaveToVectors() -> std::vector<std::vector<std::pair<std::strin
 #pragma todo( "PlayerHTML Dumping needs to be reimplemented" )
 #endif
             if( charToWrite->ShouldSave() ) {
-                rvalue.push_back(charToWrite->describe());
+                stream->contents.push_back(charToWrite->describe());
                 //charToWrite->Save( writeDestination );
             }
         }
@@ -119,18 +119,18 @@ auto CMapRegion::SaveToVectors() -> std::vector<std::vector<std::pair<std::strin
             if( itemToWrite->ShouldSave() ) {
                 if( itemToWrite->GetObjType() == OT_MULTI ) {
                     CMultiObj *iMulti = static_cast<CMultiObj *>( itemToWrite );
-                    rvalue.push_back(iMulti->describe());
+                    stream->contents.push_back(iMulti->describe());
 
                     //iMulti->Save( writeDestination );
                 }
                 else if( itemToWrite->GetObjType() == OT_BOAT ) {
                     CBoatObj *iBoat = static_cast<CBoatObj *>( itemToWrite );
-                    rvalue.push_back(iBoat->describe());
+                    stream->contents.push_back(iBoat->describe());
 
                     //iBoat->Save( writeDestination );
                 }
                 else {
-                    rvalue.push_back(itemToWrite->describe());
+                    stream->contents.push_back(itemToWrite->describe());
 
                     //itemToWrite->Save( writeDestination );
                 }
@@ -140,7 +140,7 @@ auto CMapRegion::SaveToVectors() -> std::vector<std::vector<std::pair<std::strin
     std::for_each( removeItem.begin(), removeItem.end(), [this]( CItem *item ) {
         itemData.Remove( item );
     });
-    return rvalue ;
+   
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -741,7 +741,7 @@ auto CMapHandler::SaveTest() ->void {
             
             if( !changesDetected )
                 continue;
-            auto streamData = new filestream(std::filesystem::path(filename));
+            auto streamData = new ObjectStream(std::filesystem::path(filename));
 
             for( std::uint8_t xCnt = 0; xCnt < 8; ++xCnt )    {                // walk through each part of the 8x8 grid, left->right
                 for( std::uint8_t yCnt = 0; yCnt < 8; ++yCnt )    {            // walk the row
@@ -758,11 +758,7 @@ auto CMapHandler::SaveTest() ->void {
                         }
                         auto mRegion = ( *mIter )->GetMapRegion(( baseX + xCnt ), ( baseY + yCnt ));
                         if( mRegion != nullptr ) {
-                            auto temp = mRegion->SaveToVectors() ;
-                            streamData->contents.insert(streamData->contents.end(),std::make_move_iterator(temp.begin()),std::make_move_iterator(temp.end()));
-                            //mRegion->SaveToDisk( writeDestination );
-
-                            // Remove "changed" flag from region, to avoid it saving again needlessly on next save
+                            mRegion->SaveToVectors(streamData) ;
                             mRegion->HasRegionChanged( false );
                         }
 
@@ -770,21 +766,14 @@ auto CMapHandler::SaveTest() ->void {
                     }
                 }
             }
-            startSave(streamData);
+            queueStream(streamData);
        }
     }
     Console << "\b\b\b\b" << static_cast<std::uint32_t>( 100 ) << "%";
     auto filename = basePath + "overflow.wsc"s;
-    auto writeDestination = std::ofstream( filename.c_str() );
-
-    if( writeDestination.is_open() ) {
-        overFlow.SaveToDisk( writeDestination );
-        writeDestination.close();
-    }
-    else {
-        Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
-        return;
-    }
+    auto streamData = new ObjectStream(std::filesystem::path(filename));
+    overFlow.SaveToVectors(streamData);
+    queueStream(streamData);
 
     Console << "\b\b\b\b";
     Console.PrintDone();

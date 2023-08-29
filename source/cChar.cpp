@@ -3069,111 +3069,112 @@ bool CChar::DumpHeader( std::ostream &outStream ) const
 }
 
 //=====================================================================================
-auto CChar::describeHeader() const ->std::vector<std::pair<std::string,std::string>> {
-    return std::vector<std::pair<std::string,std::string>>(1,std::make_pair("[CHARACTER]"s,""s));
+auto CChar::describeHeader(ObjectDescription &descrip) const ->void {
+    descrip.description.push_back(std::make_pair("[CHARACTER]"s,""s));
 }
 //=====================================================================================
-auto CChar::describeBody()  -> std::vector<std::pair<std::string,std::string>> {
-    auto rvalue = CBaseObject::describeBody();
-    rvalue.push_back(std::make_pair("GuildFealty = 0x"s,oldstrutil::number(GetGuildFealty(),16)));
-    rvalue.push_back(std::make_pair("Speech = 0x"s,oldstrutil::number(GetSayColour(),16)+",0x"s+oldstrutil::number(GetEmoteColour(),16)));
-    rvalue.push_back(std::make_pair("Privileges = 0x"s,oldstrutil::number(GetPriv(),16)));
+auto CChar::describeBody(ObjectDescription &descrip)  -> void {
+    CBaseObject::describeBody(descrip);
+    
+    descrip.description.push_back(std::make_pair("GuildFealty = 0x"s,oldstrutil::number(GetGuildFealty(),16)));
+    descrip.description.push_back(std::make_pair("Speech = 0x"s,oldstrutil::number(GetSayColour(),16)+",0x"s+oldstrutil::number(GetEmoteColour(),16)));
+    descrip.description.push_back(std::make_pair("Privileges = 0x"s,oldstrutil::number(GetPriv(),16)));
     if (ValidateObject(packItem)){
-        rvalue.push_back(std::make_pair("PackItem = 0x"s,oldstrutil::number(packItem->GetSerial(),16)));
+        descrip.description.push_back(std::make_pair("PackItem = 0x"s,oldstrutil::number(packItem->GetSerial(),16)));
     }
     else {
-        rvalue.push_back( std::make_pair("PackItem = 0x"s,"FFFFFFFF"s) ) ;  // Why do we even write this, it should be the default
+        descrip.description.push_back( std::make_pair("PackItem = 0x"s,"FFFFFFFF"s) ) ;  // Why do we even write this, it should be the default
     }
-    rvalue.push_back( std::make_pair("GuildTitle = "s,GetGuildTitle()) );
-    rvalue.push_back( std::make_pair("Hunger = "s,std::to_string(GetHunger())) );
-    rvalue.push_back( std::make_pair("Thirst = "s,std::to_string(GetThirst())) );
-    rvalue.push_back( std::make_pair("BrkPeaceChanceGain = "s,std::to_string(GetBrkPeaceChanceGain())) );
-    rvalue.push_back( std::make_pair("BrkPeaceChance = "s,std::to_string(GetBrkPeaceChance())) );
+    descrip.description.push_back( std::make_pair("GuildTitle = "s,GetGuildTitle()) );
+    descrip.description.push_back( std::make_pair("Hunger = "s,std::to_string(GetHunger())) );
+    descrip.description.push_back( std::make_pair("Thirst = "s,std::to_string(GetThirst())) );
+    descrip.description.push_back( std::make_pair("BrkPeaceChanceGain = "s,std::to_string(GetBrkPeaceChanceGain())) );
+    descrip.description.push_back( std::make_pair("BrkPeaceChance = "s,std::to_string(GetBrkPeaceChance())) );
     if (GetMaxHPFixed()){
-        rvalue.push_back( std::make_pair("MAXHP = "s,std::to_string(maxHP)) );
+        descrip.description.push_back( std::make_pair("MAXHP = "s,std::to_string(maxHP)) );
     }
     if (GetMaxManaFixed()){
-        rvalue.push_back( std::make_pair("MAXMANA = "s,std::to_string(maxMana)) );
+        descrip.description.push_back( std::make_pair("MAXMANA = "s,std::to_string(maxMana)) );
     }
     if (GetMaxStamFixed()){
-        rvalue.push_back( std::make_pair("MAXSTAM = "s,std::to_string(maxStam)) );
+        descrip.description.push_back( std::make_pair("MAXSTAM = "s,std::to_string(maxStam)) );
     }
-    rvalue.push_back( std::make_pair("Town = "s,std::to_string(GetTown())) );
-    rvalue.push_back( std::make_pair("SummonTimer = "s,std::to_string(GetTimer(tNPC_SUMMONTIME))) );
-    rvalue.push_back( std::make_pair("MayLevitate = "s,std::to_string((MayLevitate() ? 1 : 0))) );
-    rvalue.push_back( std::make_pair("Stealth = "s,std::to_string(GetStealth())) );
-    rvalue.push_back( std::make_pair("Reserved = "s,std::to_string(GetCell())) );
-    rvalue.push_back( std::make_pair("Region = "s,std::to_string(GetRegionNum())) );
-    rvalue.push_back( std::make_pair("AdvanceObject = "s,std::to_string(GetAdvObj())) );
-    rvalue.push_back( std::make_pair("AdvRaceObject = "s,std::to_string(GetRaceGate())) );
+    descrip.description.push_back( std::make_pair("Town = "s,std::to_string(GetTown())) );
+    descrip.description.push_back( std::make_pair("SummonTimer = "s,std::to_string(GetTimer(tNPC_SUMMONTIME))) );
+    descrip.description.push_back( std::make_pair("MayLevitate = "s,std::to_string((MayLevitate() ? 1 : 0))) );
+    descrip.description.push_back( std::make_pair("Stealth = "s,std::to_string(GetStealth())) );
+    descrip.description.push_back( std::make_pair("Reserved = "s,std::to_string(GetCell())) );
+    descrip.description.push_back( std::make_pair("Region = "s,std::to_string(GetRegionNum())) );
+    descrip.description.push_back( std::make_pair("AdvanceObject = "s,std::to_string(GetAdvObj())) );
+    descrip.description.push_back( std::make_pair("AdvRaceObject = "s,std::to_string(GetRaceGate())) );
     auto skillvalue = std::string() ;
     for (std::uint8_t bsc = 0 ; bsc<ALLSKILLS; ++bsc) {
         skillvalue += "["s + std::to_string(bsc)+","s+std::to_string(GetBaseSkill(bsc))+"]-";
     }
     skillvalue += "[END]"s ;
-    rvalue.push_back( std::make_pair("BaseSkills = "s,skillvalue) );
+    descrip.description.push_back( std::make_pair("BaseSkills = "s,skillvalue) );
     // ALl of these, we could just static cast them to a int, perhaps a tad faster.
-    rvalue.push_back( std::make_pair("GuildNumber = "s,std::to_string(GetGuildNumber())) );
-    rvalue.push_back( std::make_pair("NpcGuild = "s,std::to_string(GetNPCGuild())) );
-    rvalue.push_back( std::make_pair("FontType = "s,std::to_string(GetFontType())) );
-    rvalue.push_back( std::make_pair("TownTitle = "s,std::to_string((GetTownTitle()?1:0))) );
-    rvalue.push_back( std::make_pair("CanRun = "s,std::to_string(((CanRun()&&IsNpc())?1:0))) );
-    rvalue.push_back( std::make_pair("CanAttack = "s,std::to_string(((GetCanAttack())?1:0))) );
-    rvalue.push_back( std::make_pair("AllMove = "s,std::to_string(((AllMove())?1:0))) );
-    rvalue.push_back( std::make_pair("IsNpc = "s,std::to_string(((IsNpc())?1:0))) );
-    rvalue.push_back( std::make_pair("IsShop = "s,std::to_string(((IsShop())?1:0))) );
-    rvalue.push_back( std::make_pair("Dead = "s,std::to_string(((IsDead())?1:0))) );
-    rvalue.push_back( std::make_pair("CanBeHired = "s,std::to_string(((CanBeHired())?1:0))) );
-    rvalue.push_back( std::make_pair("CanTrain = "s,std::to_string(((CanTrain())?1:0))) );
-    rvalue.push_back( std::make_pair("IsWarring = "s,std::to_string(((IsAtWar())?1:0))) );
-    rvalue.push_back( std::make_pair("GuildToggle = "s,std::to_string(((GetGuildToggle())?1:0))) );
-    rvalue.push_back( std::make_pair("PoisonStrength = "s,std::to_string(((GetPoisonStrength())?1:0))) );
-    rvalue.push_back( std::make_pair("WillHunger = "s,std::to_string(((WillHunger())?1:0))) );
+    descrip.description.push_back( std::make_pair("GuildNumber = "s,std::to_string(GetGuildNumber())) );
+    descrip.description.push_back( std::make_pair("NpcGuild = "s,std::to_string(GetNPCGuild())) );
+    descrip.description.push_back( std::make_pair("FontType = "s,std::to_string(GetFontType())) );
+    descrip.description.push_back( std::make_pair("TownTitle = "s,std::to_string((GetTownTitle()?1:0))) );
+    descrip.description.push_back( std::make_pair("CanRun = "s,std::to_string(((CanRun()&&IsNpc())?1:0))) );
+    descrip.description.push_back( std::make_pair("CanAttack = "s,std::to_string(((GetCanAttack())?1:0))) );
+    descrip.description.push_back( std::make_pair("AllMove = "s,std::to_string(((AllMove())?1:0))) );
+    descrip.description.push_back( std::make_pair("IsNpc = "s,std::to_string(((IsNpc())?1:0))) );
+    descrip.description.push_back( std::make_pair("IsShop = "s,std::to_string(((IsShop())?1:0))) );
+    descrip.description.push_back( std::make_pair("Dead = "s,std::to_string(((IsDead())?1:0))) );
+    descrip.description.push_back( std::make_pair("CanBeHired = "s,std::to_string(((CanBeHired())?1:0))) );
+    descrip.description.push_back( std::make_pair("CanTrain = "s,std::to_string(((CanTrain())?1:0))) );
+    descrip.description.push_back( std::make_pair("IsWarring = "s,std::to_string(((IsAtWar())?1:0))) );
+    descrip.description.push_back( std::make_pair("GuildToggle = "s,std::to_string(((GetGuildToggle())?1:0))) );
+    descrip.description.push_back( std::make_pair("PoisonStrength = "s,std::to_string(((GetPoisonStrength())?1:0))) );
+    descrip.description.push_back( std::make_pair("WillHunger = "s,std::to_string(((WillHunger())?1:0))) );
     auto murderTime = "0"s ;
     if (GetTimer( tCHAR_MURDERRATE )!=0 && (GetTimer( tCHAR_MURDERRATE )>=cwmWorldState->GetUICurrentTime())){
         murderTime = std::to_string( GetTimer( tCHAR_MURDERRATE ) - cwmWorldState->GetUICurrentTime() );
     }
-    rvalue.push_back( std::make_pair("MurderTimer = "s,murderTime) );
+    descrip.description.push_back( std::make_pair("MurderTimer = "s,murderTime) );
     auto peaceTime = "0"s ;
     if (GetTimer( tCHAR_PEACETIMER )!=0 && (GetTimer( tCHAR_PEACETIMER )>=cwmWorldState->GetUICurrentTime())){
         peaceTime = std::to_string( GetTimer( tCHAR_PEACETIMER ) - cwmWorldState->GetUICurrentTime() );
     }
-    rvalue.push_back( std::make_pair("PeaceTimer = "s,peaceTime) );
+    descrip.description.push_back( std::make_pair("PeaceTimer = "s,peaceTime) );
     if (IsValidPlayer()){
-        mPlayer->describe(rvalue) ;
+        mPlayer->describe(descrip) ;
     }
     if (IsValidNPC()){
-        mNPC->describe(rvalue) ;
+        mNPC->describe(descrip) ;
     }
-    return rvalue ;
+    
 }
 //=====================================================================================
-auto CChar::PlayerValues_st::describe(std::vector<std::pair<std::string,std::string>> &repo)  ->void {
-    repo.push_back(std::make_pair("RobeSerial = 0x"s,oldstrutil::number(robe,16)));
-    repo.push_back(std::make_pair("OriginalID = 0x"s,oldstrutil::number(robe,16)+",0x"s+oldstrutil::number(origSkin,16)));
-    repo.push_back(std::make_pair("Hair = 0x"s,oldstrutil::number(hairStyle,16)+",0x"s+oldstrutil::number(hairColour,16)));
-    repo.push_back(std::make_pair("Beard = 0x"s,oldstrutil::number(beardStyle,16)+",0x"s+oldstrutil::number(beardColour,16)));
-    repo.push_back(std::make_pair("TownVote = 0x"s,oldstrutil::number(townVote,16)));
+auto CChar::PlayerValues_st::describe(ObjectDescription &repo)  ->void {
+    repo.description.push_back(std::make_pair("RobeSerial = 0x"s,oldstrutil::number(robe,16)));
+    repo.description.push_back(std::make_pair("OriginalID = 0x"s,oldstrutil::number(robe,16)+",0x"s+oldstrutil::number(origSkin,16)));
+    repo.description.push_back(std::make_pair("Hair = 0x"s,oldstrutil::number(hairStyle,16)+",0x"s+oldstrutil::number(hairColour,16)));
+    repo.description.push_back(std::make_pair("Beard = 0x"s,oldstrutil::number(beardStyle,16)+",0x"s+oldstrutil::number(beardColour,16)));
+    repo.description.push_back(std::make_pair("TownVote = 0x"s,oldstrutil::number(townVote,16)));
     
-    repo.push_back( std::make_pair("Account = "s,std::to_string(accountNum)) );
-    repo.push_back( std::make_pair("LastOn = "s,lastOn) );
-    repo.push_back( std::make_pair("LastOnSecs = "s,std::to_string(lastOnSecs)) );
-    repo.push_back( std::make_pair("CreatedOn = "s,std::to_string(createdOn)) );
-    repo.push_back( std::make_pair("PlayTime = "s,std::to_string(playTime)) );
-    repo.push_back( std::make_pair("OrgName = "s,origName) );
-    repo.push_back( std::make_pair("CommandLevel = "s,std::to_string(commandLevel)) );
-    repo.push_back( std::make_pair("Squelched = "s,std::to_string(squelched)) );
-    repo.push_back( std::make_pair("Deaths = "s,std::to_string(deaths)) );
-    repo.push_back( std::make_pair("ControlSlotsUsed = "s,std::to_string(controlSlotsUsed)) );
-    repo.push_back( std::make_pair("FixedLight = "s,std::to_string(fixedLight)) );
-    repo.push_back( std::make_pair("TownPrivileges = "s,std::to_string(townPriv)) );
+    repo.description.push_back( std::make_pair("Account = "s,std::to_string(accountNum)) );
+    repo.description.push_back( std::make_pair("LastOn = "s,lastOn) );
+    repo.description.push_back( std::make_pair("LastOnSecs = "s,std::to_string(lastOnSecs)) );
+    repo.description.push_back( std::make_pair("CreatedOn = "s,std::to_string(createdOn)) );
+    repo.description.push_back( std::make_pair("PlayTime = "s,std::to_string(playTime)) );
+    repo.description.push_back( std::make_pair("OrgName = "s,origName) );
+    repo.description.push_back( std::make_pair("CommandLevel = "s,std::to_string(commandLevel)) );
+    repo.description.push_back( std::make_pair("Squelched = "s,std::to_string(squelched)) );
+    repo.description.push_back( std::make_pair("Deaths = "s,std::to_string(deaths)) );
+    repo.description.push_back( std::make_pair("ControlSlotsUsed = "s,std::to_string(controlSlotsUsed)) );
+    repo.description.push_back( std::make_pair("FixedLight = "s,std::to_string(fixedLight)) );
+    repo.description.push_back( std::make_pair("TownPrivileges = "s,std::to_string(townPriv)) );
 
     auto atrophyString = std::string() ;
     for (std::uint8_t atc = 0 ; atc<=INTELLECT; ++atc){
         atrophyString += std::to_string(atrophy[atc])+","s ;
     }
     atrophyString += "[END]"s ;
-    repo.push_back( std::make_pair("Atrophy = "s,atrophyString) );
+    repo.description.push_back( std::make_pair("Atrophy = "s,atrophyString) );
     auto skillLock = std::string() ;
     for (std::uint8_t slc = 0 ; slc<=INTELLECT; ++slc){
         skillLock += "["s + std::to_string(slc)+","s ;
@@ -3184,49 +3185,49 @@ auto CChar::PlayerValues_st::describe(std::vector<std::pair<std::string,std::str
             skillLock += "0]-"s ;
         }
     }
-    repo.push_back( std::make_pair("SkillLocks = "s,skillLock) );
+    repo.description.push_back( std::make_pair("SkillLocks = "s,skillLock) );
 }
 //=====================================================================================
-auto CChar::NPCValues_st::describe(std::vector<std::pair<std::string,std::string>> &repo)  ->void {
-    repo.push_back( std::make_pair("NpcAIType = "s,std::to_string(aiType)) );
-    repo.push_back( std::make_pair("Taming = "s,std::to_string(taming)) );
-    repo.push_back( std::make_pair("Peaceing = "s,std::to_string(peaceing)) );
-    repo.push_back( std::make_pair("Provoing = "s,std::to_string(provoing)) );
-    repo.push_back( std::make_pair("HoldG = "s,std::to_string(goldOnHand)) );
-    repo.push_back( std::make_pair("Split = "s,std::to_string(splitNum) +","s+std::to_string(splitChance)) );
-    repo.push_back( std::make_pair("WanderArea = "s,std::to_string(fx[0]) +","s+std::to_string(fy[0])+","s+std::to_string(fx[1])+","s+std::to_string(fy[1])+","s+std::to_string(fz)) );
-    repo.push_back( std::make_pair("NpcWander = "s,std::to_string(wanderMode) +","s+std::to_string(oldWanderMode)) );
-    repo.push_back( std::make_pair("SPAttack = "s,std::to_string(spellAttack) +","s+std::to_string(spellDelay)) );
-    repo.push_back( std::make_pair("QuestType = "s,std::to_string(questType) ) );
-    repo.push_back( std::make_pair("QuestRegions = "s,std::to_string(questOrigRegion) +","s+std::to_string(questDestRegion)) );
-    repo.push_back( std::make_pair("FleeAt = "s,std::to_string(fleeAt)) );
-    repo.push_back( std::make_pair("ReAttackAt = "s,std::to_string(reAttackAt)) );
-    repo.push_back( std::make_pair("NPCFlag = "s,std::to_string(npcFlag)) );
-    repo.push_back( std::make_pair("Mounted = "s,std::to_string(( boolFlags.test( BIT_MOUNTED ) ? 1 : 0 ))) );
-    repo.push_back( std::make_pair("Stabled = "s,std::to_string(( boolFlags.test( BIT_MOUNTED ) ? 1 : 0 ))) );
-    repo.push_back( std::make_pair("TamedHungerRate = "s,std::to_string(tamedHungerRate)) );
-    repo.push_back( std::make_pair("TamedThirstRate = "s,std::to_string(tamedThirstRate)) );
-    repo.push_back( std::make_pair("TamedHungerWildChance = "s,std::to_string(hungerWildChance)) );
-    repo.push_back( std::make_pair("TamedThirstWildChance = "s,std::to_string(thirstWildChance)) );
-    repo.push_back( std::make_pair("Foodlist = "s,foodList) );
-    repo.push_back( std::make_pair("WalkingSpeed = "s,std::to_string(walkingSpeed)) );
-    repo.push_back( std::make_pair("RunningSpeed = "s,std::to_string(runningSpeed)) );
-    repo.push_back( std::make_pair("FleeingSpeed = "s,std::to_string(fleeingSpeed)) );
-    repo.push_back( std::make_pair("WalkingSpeed = "s,std::to_string(walkingSpeed)) );
-    repo.push_back( std::make_pair("RunningSpeed = "s,std::to_string(runningSpeed)) );
-    repo.push_back( std::make_pair("FleeingSpeed = "s,std::to_string(fleeingSpeed)) );
-    repo.push_back( std::make_pair("WalkingSpeedMounted = "s,std::to_string(mountedWalkingSpeed)) );
-    repo.push_back( std::make_pair("RunningSpeedMounted = "s,std::to_string(mountedRunningSpeed)) );
-    repo.push_back( std::make_pair("FleeingSpeedMounted = "s,std::to_string(mountedFleeingSpeed)) );
-    repo.push_back( std::make_pair("ControlSlots = "s,std::to_string(controlSlots)) );
-    repo.push_back( std::make_pair("MaxLoyalty = "s,std::to_string(maxLoyalty)) );
-    repo.push_back( std::make_pair("Loyalty = "s,std::to_string(loyalty)) );
-    repo.push_back( std::make_pair("Orneriness = "s,std::to_string(orneriness)) );
-    repo.push_back( std::make_pair("Awake = "s,std::to_string(boolFlags.test( BIT_AWAKE ) ? 1 : 0)) );
+auto CChar::NPCValues_st::describe(ObjectDescription &repo)  ->void {
+    repo.description.push_back( std::make_pair("NpcAIType = "s,std::to_string(aiType)) );
+    repo.description.push_back( std::make_pair("Taming = "s,std::to_string(taming)) );
+    repo.description.push_back( std::make_pair("Peaceing = "s,std::to_string(peaceing)) );
+    repo.description.push_back( std::make_pair("Provoing = "s,std::to_string(provoing)) );
+    repo.description.push_back( std::make_pair("HoldG = "s,std::to_string(goldOnHand)) );
+    repo.description.push_back( std::make_pair("Split = "s,std::to_string(splitNum) +","s+std::to_string(splitChance)) );
+    repo.description.push_back( std::make_pair("WanderArea = "s,std::to_string(fx[0]) +","s+std::to_string(fy[0])+","s+std::to_string(fx[1])+","s+std::to_string(fy[1])+","s+std::to_string(fz)) );
+    repo.description.push_back( std::make_pair("NpcWander = "s,std::to_string(wanderMode) +","s+std::to_string(oldWanderMode)) );
+    repo.description.push_back( std::make_pair("SPAttack = "s,std::to_string(spellAttack) +","s+std::to_string(spellDelay)) );
+    repo.description.push_back( std::make_pair("QuestType = "s,std::to_string(questType) ) );
+    repo.description.push_back( std::make_pair("QuestRegions = "s,std::to_string(questOrigRegion) +","s+std::to_string(questDestRegion)) );
+    repo.description.push_back( std::make_pair("FleeAt = "s,std::to_string(fleeAt)) );
+    repo.description.push_back( std::make_pair("ReAttackAt = "s,std::to_string(reAttackAt)) );
+    repo.description.push_back( std::make_pair("NPCFlag = "s,std::to_string(npcFlag)) );
+    repo.description.push_back( std::make_pair("Mounted = "s,std::to_string(( boolFlags.test( BIT_MOUNTED ) ? 1 : 0 ))) );
+    repo.description.push_back( std::make_pair("Stabled = "s,std::to_string(( boolFlags.test( BIT_MOUNTED ) ? 1 : 0 ))) );
+    repo.description.push_back( std::make_pair("TamedHungerRate = "s,std::to_string(tamedHungerRate)) );
+    repo.description.push_back( std::make_pair("TamedThirstRate = "s,std::to_string(tamedThirstRate)) );
+    repo.description.push_back( std::make_pair("TamedHungerWildChance = "s,std::to_string(hungerWildChance)) );
+    repo.description.push_back( std::make_pair("TamedThirstWildChance = "s,std::to_string(thirstWildChance)) );
+    repo.description.push_back( std::make_pair("Foodlist = "s,foodList) );
+    repo.description.push_back( std::make_pair("WalkingSpeed = "s,std::to_string(walkingSpeed)) );
+    repo.description.push_back( std::make_pair("RunningSpeed = "s,std::to_string(runningSpeed)) );
+    repo.description.push_back( std::make_pair("FleeingSpeed = "s,std::to_string(fleeingSpeed)) );
+    repo.description.push_back( std::make_pair("WalkingSpeed = "s,std::to_string(walkingSpeed)) );
+    repo.description.push_back( std::make_pair("RunningSpeed = "s,std::to_string(runningSpeed)) );
+    repo.description.push_back( std::make_pair("FleeingSpeed = "s,std::to_string(fleeingSpeed)) );
+    repo.description.push_back( std::make_pair("WalkingSpeedMounted = "s,std::to_string(mountedWalkingSpeed)) );
+    repo.description.push_back( std::make_pair("RunningSpeedMounted = "s,std::to_string(mountedRunningSpeed)) );
+    repo.description.push_back( std::make_pair("FleeingSpeedMounted = "s,std::to_string(mountedFleeingSpeed)) );
+    repo.description.push_back( std::make_pair("ControlSlots = "s,std::to_string(controlSlots)) );
+    repo.description.push_back( std::make_pair("MaxLoyalty = "s,std::to_string(maxLoyalty)) );
+    repo.description.push_back( std::make_pair("Loyalty = "s,std::to_string(loyalty)) );
+    repo.description.push_back( std::make_pair("Orneriness = "s,std::to_string(orneriness)) );
+    repo.description.push_back( std::make_pair("Awake = "s,std::to_string(boolFlags.test( BIT_AWAKE ) ? 1 : 0)) );
     for (auto temp = petOwnerList.First(); !petOwnerList.Finished();temp = petOwnerList.Next()){
         // all describes should be const, we need to see how t do the underline pewOnwerList
         if (ValidateObject(temp)){
-            repo.push_back( std::make_pair("PetOwner = "s,std::to_string(temp->GetSerial())) );
+            repo.description.push_back( std::make_pair("PetOwner = "s,std::to_string(temp->GetSerial())) );
         }
     }
 }

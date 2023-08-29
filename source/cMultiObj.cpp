@@ -964,12 +964,12 @@ void CMultiObj::SetMaxOwners( UI16 newValue )
 }
 
 //=========================================================================================
-auto CMultiObj::describeHeader() const -> std::vector<std::pair<std::string,std::string>> {
-    return std::vector<std::pair<std::string,std::string>>(1,std::make_pair("[HOUSE]"s,""s));
+auto CMultiObj::describeHeader(ObjectDescription &descrip) const -> void {
+    descrip.description.push_back(std::make_pair("[HOUSE]"s,""s));
 }
 //=========================================================================================
-auto CMultiObj::describeBody()  -> std::vector<std::pair<std::string,std::string>> {
-    auto rvalue = CItem::describeBody();
+auto CMultiObj::describeBody(ObjectDescription &descrip)  -> void {
+    CItem::describeBody(descrip);
     for (auto iter = housePrivList.begin(); iter != housePrivList.end();++iter){
         if (ValidateObject(iter->first)){
             auto name = std::string() ;
@@ -988,34 +988,34 @@ auto CMultiObj::describeBody()  -> std::vector<std::pair<std::string,std::string
             else {
                 continue ;
             }
-            rvalue.push_back(std::make_pair(name,std::to_string(iter->first->GetSerial())));
+            descrip.description.push_back(std::make_pair(name,std::to_string(iter->first->GetSerial())));
         }
     }
-    rvalue.push_back(std::make_pair("IsPublic = ",std::to_string(( isPublic ? 1 : 0 ))));
-    rvalue.push_back(std::make_pair("MaxBans = ",std::to_string(maxBans)));
-    rvalue.push_back(std::make_pair("MaxFriends = ",std::to_string(maxFriends)));
-    rvalue.push_back(std::make_pair("MaxGuests = ",std::to_string(maxGuests)));
-    std::for_each( lockedList.begin(), lockedList.end(), [&rvalue]( CItem *entry ){
+    descrip.description.push_back(std::make_pair("IsPublic = ",std::to_string(( isPublic ? 1 : 0 ))));
+    descrip.description.push_back(std::make_pair("MaxBans = ",std::to_string(maxBans)));
+    descrip.description.push_back(std::make_pair("MaxFriends = ",std::to_string(maxFriends)));
+    descrip.description.push_back(std::make_pair("MaxGuests = ",std::to_string(maxGuests)));
+    std::for_each( lockedList.begin(), lockedList.end(), [&descrip]( CItem *entry ){
         if (ValidateObject(entry)){
-            rvalue.push_back(std::make_pair("LockedItem = "s,std::to_string(entry->GetSerial())));
+            descrip.description.push_back(std::make_pair("LockedItem = "s,std::to_string(entry->GetSerial())));
         }
     });
-    std::for_each( secureContainerList.begin(), secureContainerList.end(), [&rvalue]( CItem *entry ){
+    std::for_each( secureContainerList.begin(), secureContainerList.end(), [&descrip]( CItem *entry ){
         if (ValidateObject(entry)){
-            rvalue.push_back(std::make_pair("SecureContainer = "s,std::to_string(entry->GetSerial())));
+            descrip.description.push_back(std::make_pair("SecureContainer = "s,std::to_string(entry->GetSerial())));
         }
     });
-    rvalue.push_back(std::make_pair("MaxLockdowns = "s,std::to_string(maxLockdowns)));
-    rvalue.push_back(std::make_pair("MaxSecureContainers = "s,std::to_string(maxSecureContainers)));
+    descrip.description.push_back(std::make_pair("MaxLockdowns = "s,std::to_string(maxLockdowns)));
+    descrip.description.push_back(std::make_pair("MaxSecureContainers = "s,std::to_string(maxSecureContainers)));
     for (auto &vendor:vendorList){
         if (ValidateObject(vendor)){
-            rvalue.push_back(std::make_pair("Vendor = "s,std::to_string(vendor->GetSerial())));
+            descrip.description.push_back(std::make_pair("Vendor = "s,std::to_string(vendor->GetSerial())));
         }
     }
-    rvalue.push_back(std::make_pair("DeedName = "s,deed));
-    rvalue.push_back(std::make_pair("BuildTime = "s,std::to_string(buildTimestamp)));
-    rvalue.push_back(std::make_pair("TradeTime = "s,std::to_string(tradeTimestamp)));
-    return rvalue ;
+    descrip.description.push_back(std::make_pair("DeedName = "s,deed));
+    descrip.description.push_back(std::make_pair("BuildTime = "s,std::to_string(buildTimestamp)));
+    descrip.description.push_back(std::make_pair("TradeTime = "s,std::to_string(tradeTimestamp)));
+    
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1530,16 +1530,16 @@ moveType( DEFBOAT_MOVETYPE ), nextMoveTime( DEFBOAT_MOVETIME )
 }
 
 //=========================================================================================
-auto CBoatObj::describeHeader() const -> std::vector<std::pair<std::string,std::string>> {
-    return std::vector<std::pair<std::string,std::string>>(1,std::make_pair("[BOAT]"s,""s));
+auto CBoatObj::describeHeader(ObjectDescription &descrip) const -> void {
+    descrip.description.push_back(std::make_pair("[BOAT]"s,""s));
 }
 //=========================================================================================
-auto CBoatObj::describeBody()  -> std::vector<std::pair<std::string,std::string>> {
-    auto rvalue = CMultiObj::describeBody() ;
-    rvalue.push_back(std::make_pair("Hold = 0x"s,oldstrutil::number(hold,16)));
-    rvalue.push_back(std::make_pair("Planks = 0x"s,oldstrutil::number(planks[0],16)+",0x"s +oldstrutil::number(planks[1],16) ));
-    rvalue.push_back(std::make_pair("Tiller = 0x"s,oldstrutil::number(tiller,16)));
-    return rvalue ;
+auto CBoatObj::describeBody(ObjectDescription &descrip)  -> void {
+    CMultiObj::describeBody(descrip) ;
+    descrip.description.push_back(std::make_pair("Hold = 0x"s,oldstrutil::number(hold,16)));
+    descrip.description.push_back(std::make_pair("Planks = 0x"s,oldstrutil::number(planks[0],16)+",0x"s +oldstrutil::number(planks[1],16) ));
+    descrip.description.push_back(std::make_pair("Tiller = 0x"s,oldstrutil::number(tiller,16)));
+   
 }
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	CBoatObj::DumpHeader()

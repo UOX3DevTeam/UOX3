@@ -1,23 +1,13 @@
 //
 
 #include "filestream.hpp"
-#include <stdexcept>
+
+#include <algorithm>
 #include <fstream>
+#include <stdexcept>
 
 using namespace std::string_literals ;
-std::vector<std::future<void>> saveFutures ;
-//======================================================================
-auto saveStream(filestream *stream) ->void {
-    auto output = std::ofstream(stream->path.string());
-    if (output.is_open()) {
-        for (const auto &entry:stream->contents){
-            for (const auto &[key,value]:entry){
-                output<<key<<value<<"\n";
-            }
-        }
-    }
-    delete stream ;
-}
+auto saveFutures =std::vector<std::future<void>>() ;
 //======================================================================
 auto waitOnAllFuture() -> void {
     for (auto &future:saveFutures){
@@ -26,6 +16,20 @@ auto waitOnAllFuture() -> void {
     saveFutures = std::vector<std::future<void>>();
 }
 //======================================================================
-auto startSave(filestream *stream) ->void {
+auto queueStream(basestream *stream) ->void {
     saveFutures.push_back(std::async(std::launch::async,&saveStream,stream)) ;
+}
+//======================================================================
+auto saveStream(basestream *stream) ->void {
+    stream->save();
+    delete stream ;
+}
+//======================================================================
+auto ObjectStream::save() const ->void {
+    auto output = std::ofstream(path.string());
+    std::for_each(contents.begin(),contents.end(),[&output](const ObjectDescription &entry){
+        std::for_each(entry.description.begin(), entry.description.end(), [&output](const std::pair<std::string,std::string> &values){
+            output<<values.first<<values.second<<"\n" ;
+        });
+    });
 }

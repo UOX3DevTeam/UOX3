@@ -10,10 +10,11 @@
 #include <vector>
 #include <utility>
 
-
+#include "filestream.hpp"
 #include "typedefs.h"
 #include "uoxstruct.h"
 
+//=============================================================================================
 enum TAGMAPOBJECT_TYPE
 {
 	TAGMAP_TYPE_INT		= 0,
@@ -21,6 +22,7 @@ enum TAGMAPOBJECT_TYPE
 	TAGMAP_TYPE_BOOL
 };
 
+//=============================================================================================
 typedef struct __TAGMAP_STRUCT__
 {
 	UI08	m_ObjectType;
@@ -29,10 +31,12 @@ typedef struct __TAGMAP_STRUCT__
 	std::string m_StringValue;
 } TAGMAPOBJECT, *LPTAGMAPOBJECT;
 
-typedef std::map<std::string, TAGMAPOBJECT> TAGMAP2;
-typedef std::map<std::string, TAGMAPOBJECT>::iterator TAGMAP2_ITERATOR;
-typedef std::map<std::string, TAGMAPOBJECT>::const_iterator TAGMAP2_CITERATOR;
+//=============================================================================================
+using TAGMAP2 = std::map<std::string, TAGMAPOBJECT> ;
+using TAGMAP2_ITERATOR = std::map<std::string, TAGMAPOBJECT>::iterator ;
+using TAGMAP2_CITERATOR = std::map<std::string, TAGMAPOBJECT>::const_iterator ;
 
+//=============================================================================================
 enum UpdateTypes
 {
 	UT_UPDATE = 0,
@@ -44,12 +48,12 @@ enum UpdateTypes
 	UT_STATWINDOW,
 	UT_COUNT
 };
-
 //o------------------------------------------------------------------------------------------------o
 //|	Class		-	class CBaseObject
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	BaseObject class with common, shared properties for all object types
 //o------------------------------------------------------------------------------------------------o
+//=============================================================================================
 class CBaseObject
 {
 protected:
@@ -204,10 +208,13 @@ public:
 	virtual bool			DumpBody( std::ostream &outStream ) const;
 	bool					DumpFooter( std::ostream &outStream ) const;
  
-    virtual auto describe() -> std::vector<std::pair<std::string,std::string>>;
-    virtual auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> = 0 ;
-    virtual auto describeBody()  -> std::vector<std::pair<std::string,std::string>>;
-    auto describeFooter() ->  std::vector<std::pair<std::string,std::string>>{return std::vector<std::pair<std::string,std::string>>(1,std::make_pair(std::string("o---o"),std::string()));}
+    //=============================================================================================
+    virtual auto describe() -> ObjectDescription;
+    virtual auto describeHeader(ObjectDescription &description) const -> void = 0 ;
+    virtual auto describeBody(ObjectDescription &description) ->void;
+    auto describeFooter(ObjectDescription &description) -> void {
+        return description.description.push_back(std::make_pair(std::string("o---o"),std::string()));
+     }
 
     bool					Load( std::istream &inStream );
 

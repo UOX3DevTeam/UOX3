@@ -129,7 +129,7 @@ private:
 		R32					mountedWalkingSpeed;
 		R32					mountedRunningSpeed;
 		R32					mountedFleeingSpeed;
-        auto describe(std::vector<std::pair<std::string,std::string>> &repo)  -> void ;
+        auto describe(ObjectDescription &repo)  -> void ;
 
 	};
 
@@ -137,7 +137,7 @@ private:
 	{
 		PlayerValues_st();
 		void		DumpBody( std::ostream& outStream );
-        auto describe(std::vector<std::pair<std::string,std::string>> &repo)  -> void ;
+        auto describe(ObjectDescription &repo)  -> void ;
 
 		SERIAL		callNum;        // Callnum GM or Counsellor is on
 		SERIAL		playerCallNum;  // Players call number in GM or Counsellor requestQueue
@@ -264,8 +264,8 @@ protected:
 	virtual bool	DumpBody( std::ostream &outStream ) const override;
 	virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual bool	LoadRemnants( void ) override;
-    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> final;
-    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> final;
+    auto describeHeader(ObjectDescription &descrip) const -> void final;
+    auto describeBody(ObjectDescription &descrip)  -> void final;
 
 	void		CopyData( CChar *target );
 

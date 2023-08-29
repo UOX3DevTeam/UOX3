@@ -313,8 +313,8 @@ public:
 
 	virtual bool	Save( std::ostream &outStream ) override;
 	virtual bool	DumpBody( std::ostream &outStream ) const override;
-    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> override;
-    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> override;
+    auto describeHeader(ObjectDescription &descrip) const -> void override;
+    auto describeBody(ObjectDescription &descrip)  -> void override;
 
     virtual bool	HandleLine( std::string &UTag, std::string &data ) override;
 	virtual void	PostLoadProcessing( void ) override;
@@ -352,8 +352,8 @@ public:
 
 	virtual bool		DumpHeader( std::ostream &outStream ) const override;
 	virtual bool		DumpBody( std::ostream &outStream ) const override;
-    auto describeHeader() const -> std::vector<std::pair<std::string,std::string>> final;
-    auto describeBody()  -> std::vector<std::pair<std::string,std::string>> final;
+    auto describeHeader(ObjectDescription &descrip) const -> void final;
+    auto describeBody(ObjectDescription &descrip)  -> void final;
 
 	virtual bool		HandleLine( std::string &UTag, std::string &data ) override;
 
