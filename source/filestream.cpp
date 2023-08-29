@@ -5,7 +5,7 @@
 #include <fstream>
 
 using namespace std::string_literals ;
-auto saveFutures = std::vector<std::future<void>>() ;
+std::vector<std::future<void>> saveFutures ;
 //======================================================================
 auto saveStream(filestream *stream) ->void {
     auto output = std::ofstream(stream->path.string());
