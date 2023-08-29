@@ -771,8 +771,32 @@ auto CMapHandler::SaveTest() ->void {
                 }
             }
             startSave(streamData);
+       }
+    }
+    Console << "\b\b\b\b" << static_cast<std::uint32_t>( 100 ) << "%";
+    auto filename = basePath + "overflow.wsc"s;
+    auto writeDestination = std::ofstream( filename.c_str() );
 
-        }
+    if( writeDestination.is_open() ) {
+        overFlow.SaveToDisk( writeDestination );
+        writeDestination.close();
+    }
+    else {
+        Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
+        return;
+    }
+
+    Console << "\b\b\b\b";
+    Console.PrintDone();
+
+    const auto e_t = static_cast<std::uint32_t>(GetClock());
+    Console.Print( oldstrutil::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+
+    i = 0;
+    for( auto wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
+    {
+        ( *wIter )->SaveResources( i );
+        ++i;
     }
 
 }
