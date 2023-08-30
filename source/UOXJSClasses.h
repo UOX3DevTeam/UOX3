@@ -58,8 +58,6 @@ inline JSClass UOXGlobalSkill_class =
   JSCLASS_HAS_RESERVED_SLOTS(1),
   &defaultClassOps
 };
-//	CGlobalSkillProps_getProperty,
-//	CGlobalSkillProps_setProperty,
 
 inline  JSClass UOXGlobalSkills_class =
 {

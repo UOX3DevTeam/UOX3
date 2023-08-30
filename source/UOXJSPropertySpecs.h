@@ -770,13 +770,13 @@ inline JSPropertySpec CSpellProperties[] =
 
 inline JSPropertySpec CGlobalSkillProperties[] =
 {
-  JS_PSGS( "name",           JSCGlobalSkill_get_name,         JSCGlobalSkill_set_name,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "madeWord",       JSCGlobalSkill_get_madeWord,     JSCGlobalSkill_set_madeWord,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "strength",       JSCGlobalSkill_get_strength,     JSCGlobalSkill_set_strength,     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "dexterity",      JSCGlobalSkill_get_dexterity,    JSCGlobalSkill_set_dexterity,    JSPROP_ENUMANDPERM ),
-  JS_PSGS( "intelligence",   JSCGlobalSkill_get_intelligence, JSCGlobalSkill_set_intelligence, JSPROP_ENUMANDPERM ),
-  JS_PSGS( "skillDelay",     JSCGlobalSkill_get_skillDelay,   JSCGlobalSkill_set_skillDelay,   JSPROP_ENUMANDPERM ),
-  JS_PSGS( "scriptID",       JSCGlobalSkill_get_scriptID,     JSCGlobalSkill_set_scriptID,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "name",           JSCGlobalSkill_get_name,         JSCGlobalSkill_set_name,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "madeWord",       JSCGlobalSkill_get_madeWord,     JSCGlobalSkill_set_madeWord,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "strength",       JSCGlobalSkill_get_strength,     JSCGlobalSkill_set_strength,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "dexterity",      JSCGlobalSkill_get_dexterity,    JSCGlobalSkill_set_dexterity,    JSPROP_ENUMANDPERM ),
+  JS_PSG( "intelligence",   JSCGlobalSkill_get_intelligence, JSCGlobalSkill_set_intelligence, JSPROP_ENUMANDPERM ),
+  JS_PSG( "skillDelay",     JSCGlobalSkill_get_skillDelay,   JSCGlobalSkill_set_skillDelay,   JSPROP_ENUMANDPERM ),
+  JS_PSG( "scriptID",       JSCGlobalSkill_get_scriptID,     JSCGlobalSkill_set_scriptID,     JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
