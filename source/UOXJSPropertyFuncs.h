@@ -17,7 +17,6 @@ JSPropertyFunc CSpellProps_setProperty;
 
 JSPropertyFunc CGlobalSkillsProps_getProperty;
 JSPropertyFunc CGlobalSkillProps_getProperty;
-JSPropertyFunc CGlobalSkillProps_setProperty;
 
 JSPropertyFunc CCreateEntriesProps_getProperty;
 JSPropertyFunc CCreateEntryProps_getProperty;

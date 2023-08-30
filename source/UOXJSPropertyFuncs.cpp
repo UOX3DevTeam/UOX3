@@ -104,6 +104,7 @@ bool JSCSpell_get_name(JSContext *cx, unsigned int argc, JS::Value *vp) {
     return false;
 }
 
+// clang-format off
 IMPL_GET( CSpell, action,          CSpellInfo, setInt32, Action() )
 IMPL_GET( CSpell, baseDmg,         CSpellInfo, setInt32, BaseDmg() )
 IMPL_GET( CSpell, health,          CSpellInfo, setInt32, Health() )
@@ -138,6 +139,9 @@ IMPL_GET( CSpell, resistable,      CSpellInfo, setBoolean, Resistable() )
 IMPL_GET( CSpell, enabled,         CSpellInfo, setBoolean, Enabled() )
 IMPL_GETS( CSpell, mantra,         CSpellInfo, setString, Mantra().c_str() )
 IMPL_GETS( CSpell, strToSay,       CSpellInfo, setString, StringToSay().c_str() )
+// clang-format on
+
+
 
 JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
@@ -166,42 +170,15 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	return JS_TRUE;
 }
 
-JSBool CGlobalSkillProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
-{
-	return JS_TRUE;
-}
-
-JSBool CGlobalSkillProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-	CWorldMain::Skill_st *gPriv = static_cast<CWorldMain::Skill_st*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	std::string skillName = "";
-
-	if( JSVAL_IS_INT( id ))
-	{
-		JSString *tString = nullptr;
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CGSKILL_NAME:
-				tString = JS_NewStringCopyZ( cx, gPriv->name.c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CGSKILL_MADEWORD:
-				tString = JS_NewStringCopyZ( cx, gPriv->madeWord.c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CGSKILL_STRENGTH:		*vp = INT_TO_JSVAL( gPriv->strength );		break;
-			case CGSKILL_DEXTERITY:		*vp = INT_TO_JSVAL( gPriv->dexterity );		break;
-			case CGSKILL_INTELLIGENCE:	*vp = INT_TO_JSVAL( gPriv->intelligence );	break;
-			case CGSKILL_SKILLDELAY:	*vp = INT_TO_JSVAL( gPriv->skillDelay );	break;
-			case CGSKILL_SCRIPTID:		*vp = INT_TO_JSVAL( gPriv->jsScript );		break;
-			default:																break;
-		}
-	}
-	return JS_TRUE;
-}
+// clang-format off
+IMPL_GETS( CGlobalSkill, name,         CWorldMain::Skill_st, setString, name.c_str() )
+IMPL_GETS( CGlobalSkill, madeWord,     CWorldMain::Skill_st, setString, madeWord.c_str() )
+IMPL_GET(  CGlobalSkill, strength,     CWorldMain::Skill_st, setInt32,  strength )
+IMPL_GET(  CGlobalSkill, dexterity,    CWorldMain::Skill_st, setInt32,  dexterity )
+IMPL_GET(  CGlobalSkill, intelligence, CWorldMain::Skill_st, setInt32,  intelligence )
+IMPL_GET(  CGlobalSkill, skillDelay,   CWorldMain::Skill_st, setInt32,  skillDelay )
+IMPL_GET(  CGlobalSkill, scriptID,     CWorldMain::Skill_st, setInt32,  jsScript )
+// clang-format on
 
 JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
 {
