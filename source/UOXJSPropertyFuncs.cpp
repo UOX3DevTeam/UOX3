@@ -250,7 +250,16 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
+IMPL_GET(  CCreateEntry, targId,   CreateEntry_st, setInt32,  targId )
+IMPL_GETS( CCreateEntry, name,     CreateEntry_st, setString, createName.c_str() )
+IMPL_GET(  CCreateEntry, colour,   CreateEntry_st, setInt32,  colour )
+IMPL_GET(  CCreateEntry, soundPlayed,   CreateEntry_st, setInt32,  soundPlayed )
+IMPL_GET(  CCreateEntry, minRank,   CreateEntry_st, setInt32,  minRank )
+IMPL_GET(  CCreateEntry, maxRank,   CreateEntry_st, setInt32,  maxRank )
+IMPL_GET(  CCreateEntry, delay,   CreateEntry_st, setInt32,  delay )
+IMPL_GET(  CCreateEntry, spell,   CreateEntry_st, setInt32,  spell )
+
+/*JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
 {
 	return JS_TRUE;
 }
@@ -363,7 +372,7 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 		}
 	}
 	return JS_TRUE;
-}
+}*/
 
 JSBool CItemProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
