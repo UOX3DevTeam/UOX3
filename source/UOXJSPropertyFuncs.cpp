@@ -171,57 +171,45 @@ IMPL_GET(  CGlobalSkill, dexterity,    CWorldMain::Skill_st, setInt32,  dexterit
 IMPL_GET(  CGlobalSkill, intelligence, CWorldMain::Skill_st, setInt32,  intelligence )
 IMPL_GET(  CGlobalSkill, skillDelay,   CWorldMain::Skill_st, setInt32,  skillDelay )
 IMPL_GET(  CGlobalSkill, scriptID,     CWorldMain::Skill_st, setInt32,  jsScript )
+
+// NP is No Private data
+IMPL_GET_NP( CTimer, TIMEOUT,            setInt32, tCHAR_TIMEOUT )
+IMPL_GET_NP( CTimer, INVIS,              setInt32, tCHAR_INVIS )
+IMPL_GET_NP( CTimer, HUNGER,             setInt32, tCHAR_HUNGER )
+IMPL_GET_NP( CTimer, THIRST,             setInt32, tCHAR_THIRST )
+IMPL_GET_NP( CTimer, POISONTIME,         setInt32, tCHAR_POISONTIME )
+IMPL_GET_NP( CTimer, POISONTEXT,         setInt32, tCHAR_POISONTEXT )
+IMPL_GET_NP( CTimer, POISONWEAROFF,      setInt32, tCHAR_POISONWEAROFF )
+IMPL_GET_NP( CTimer, SPELLTIME,          setInt32, tCHAR_SPELLTIME )
+IMPL_GET_NP( CTimer, SPELLRECOVERYTIME,  setInt32, tCHAR_SPELLRECOVERYTIME )
+IMPL_GET_NP( CTimer, CRIMFLAG,           setInt32, tCHAR_CRIMFLAG )
+IMPL_GET_NP( CTimer, ANTISPAM,           setInt32, tCHAR_ANTISPAM )
+IMPL_GET_NP( CTimer, MURDERRATE,         setInt32, tCHAR_MURDERRATE )
+IMPL_GET_NP( CTimer, PEACETIMER,         setInt32, tCHAR_PEACETIMER )
+IMPL_GET_NP( CTimer, FLYINGTOGGLE,       setInt32, tCHAR_FLYINGTOGGLE )
+IMPL_GET_NP( CTimer, FIREFIELDTICK,      setInt32, tCHAR_FIREFIELDTICK )
+IMPL_GET_NP( CTimer, POISONFIELDTICK,    setInt32, tCHAR_POISONFIELDTICK )
+IMPL_GET_NP( CTimer, PARAFIELDTICK,      setInt32, tCHAR_PARAFIELDTICK )
+IMPL_GET_NP( CTimer, MOVETIME,           setInt32, tNPC_MOVETIME )
+IMPL_GET_NP( CTimer, SPATIMER,           setInt32, tNPC_SPATIMER )
+IMPL_GET_NP( CTimer, SUMMONTIME,         setInt32, tNPC_SUMMONTIME )
+IMPL_GET_NP( CTimer, EVADETIME,          setInt32, tNPC_EVADETIME )
+IMPL_GET_NP( CTimer, LOYALTYTIME,        setInt32, tNPC_LOYALTYTIME )
+IMPL_GET_NP( CTimer, IDLEANIMTIME,       setInt32, tNPC_IDLEANIMTIME )
+IMPL_GET_NP( CTimer, LOGOUT,             setInt32, tPC_LOGOUT )
+IMPL_GET_NP( CTimer, YOUNGHEAL,          setInt32, tCHAR_YOUNGHEAL )
+IMPL_GET_NP( CTimer, YOUNGMESSAGE,       setInt32, tCHAR_YOUNGMESSAGE )
+
+// Socket Timers
+IMPL_GET_NP( CTimer, SOCK_SKILLDELAY,      setInt32, tPC_SKILLDELAY )
+IMPL_GET_NP( CTimer, SOCK_OBJDELAY,        setInt32, tPC_OBJDELAY )
+IMPL_GET_NP( CTimer, SOCK_SPIRITSPEAK,     setInt32, tPC_SPIRITSPEAK )
+IMPL_GET_NP( CTimer, SOCK_TRACKING,        setInt32, tPC_TRACKING )
+IMPL_GET_NP( CTimer, SOCK_FISHING,         setInt32, tPC_FISHING )
+IMPL_GET_NP( CTimer, SOCK_MUTETIME,        setInt32, tPC_MUTETIME )
+IMPL_GET_NP( CTimer, SOCK_TRACKINGDISPLAY, setInt32, tPC_TRACKINGDISPLAY )
+IMPL_GET_NP( CTimer, SOCK_TRAFFICWARDEN,   setInt32, tPC_TRAFFICWARDEN )
 // clang-format on
-
-JSBool CTimerProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, jsval id, jsval *vp )
-{
-	if( JSVAL_IS_INT( id ))
-	{
-		switch( JSVAL_TO_INT( id ))
-		{
-			// Character timers (PC and NPC)
-			case TIMER_TIMEOUT:			*vp = INT_TO_JSVAL( tCHAR_TIMEOUT );		break;
-			case TIMER_INVIS:			*vp = INT_TO_JSVAL( tCHAR_INVIS );			break;
-			case TIMER_HUNGER:			*vp = INT_TO_JSVAL( tCHAR_HUNGER );			break;
-			case TIMER_THIRST:			*vp = INT_TO_JSVAL( tCHAR_THIRST );			break;
-			case TIMER_POISONTIME:		*vp = INT_TO_JSVAL( tCHAR_POISONTIME );		break;
-			case TIMER_POISONTEXT:		*vp = INT_TO_JSVAL( tCHAR_POISONTEXT );		break;
-			case TIMER_POISONWEAROFF:	*vp = INT_TO_JSVAL( tCHAR_POISONWEAROFF );	break;
-			case TIMER_SPELLTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLTIME );		break;
-			case TIMER_SPELLRECOVERYTIME:		*vp = INT_TO_JSVAL( tCHAR_SPELLRECOVERYTIME );		break;
-			case TIMER_ANTISPAM:		*vp = INT_TO_JSVAL( tCHAR_ANTISPAM );		break;
-			case TIMER_CRIMFLAG:		*vp = INT_TO_JSVAL( tCHAR_CRIMFLAG );		break;
-			case TIMER_MURDERRATE:		*vp = INT_TO_JSVAL( tCHAR_MURDERRATE );		break;
-			case TIMER_PEACETIMER:		*vp = INT_TO_JSVAL( tCHAR_PEACETIMER );		break;
-			case TIMER_FLYINGTOGGLE:	*vp = INT_TO_JSVAL( tCHAR_FLYINGTOGGLE );	break;
-			case TIMER_FIREFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_FIREFIELDTICK );	break;
-			case TIMER_POISONFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_POISONFIELDTICK );break;
-			case TIMER_PARAFIELDTICK:	*vp = INT_TO_JSVAL( tCHAR_PARAFIELDTICK );	break;
-			case TIMER_YOUNGHEAL:		*vp = INT_TO_JSVAL( tCHAR_YOUNGHEAL );		break;
-			case TIMER_YOUNGMESSAGE:	*vp = INT_TO_JSVAL( tCHAR_YOUNGMESSAGE );	break;
-			case TIMER_MOVETIME:		*vp = INT_TO_JSVAL( tNPC_MOVETIME );		break;
-			case TIMER_SPATIMER:		*vp = INT_TO_JSVAL( tNPC_SPATIMER );		break;
-			case TIMER_SUMMONTIME:		*vp = INT_TO_JSVAL( tNPC_SUMMONTIME );		break;
-			case TIMER_EVADETIME:		*vp = INT_TO_JSVAL( tNPC_EVADETIME );		break;
-			case TIMER_LOYALTYTIME:		*vp = INT_TO_JSVAL( tNPC_LOYALTYTIME );		break;
-			case TIMER_IDLEANIMTIME:	*vp = INT_TO_JSVAL( tNPC_IDLEANIMTIME );	break;
-			case TIMER_LOGOUT:			*vp = INT_TO_JSVAL( tPC_LOGOUT );			break;
-
-			// Socket Timers (PC only)
-			case TIMER_SOCK_SKILLDELAY:		*vp = INT_TO_JSVAL( tPC_SKILLDELAY );		break;
-			case TIMER_SOCK_OBJDELAY:		*vp = INT_TO_JSVAL( tPC_OBJDELAY );			break;
-			case TIMER_SOCK_SPIRITSPEAK:	*vp = INT_TO_JSVAL( tPC_SPIRITSPEAK );		break;
-			case TIMER_SOCK_TRACKING:		*vp = INT_TO_JSVAL( tPC_TRACKING );			break;
-			case TIMER_SOCK_FISHING:		*vp = INT_TO_JSVAL( tPC_FISHING );			break;
-			case TIMER_SOCK_MUTETIME:		*vp = INT_TO_JSVAL( tPC_MUTETIME );			break;
-			case TIMER_SOCK_TRACKINGDISPLAY: *vp = INT_TO_JSVAL( tPC_TRACKINGDISPLAY );	break;
-			case TIMER_SOCK_TRAFFICWARDEN: *vp = INT_TO_JSVAL( tPC_TRAFFICWARDEN );		break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
-}
 
 JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
@@ -4194,3 +4182,16 @@ JSBool CParty_equality( JSContext *cx, JSObject *obj, jsval v, JSBool *bp )
 	}
 	return JS_TRUE;
 }
+
+template <typename Main, typename Attr, typename Type, auto Method, auto Accessor>
+bool JSMain_get_Attr(JSContext *cx, unsigned int argc, JS::Value *vp) {
+    auto args = JS::CallArgsFromVp(argc, vp);
+    JS::RootedObject thisObj(cx);
+    if (!args.computeThis(cx, &thisObj))
+        return false;
+    auto priv = JS::GetMaybePtrFromReservedSlot<Type>(thisObj, 0);
+    args.rval().Method(priv->Accessor);
+    return true;
+}
+
+JSMain_get_Attr<CSpell, action, CSpellInfo, setInt32, Action()>;

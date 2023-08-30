@@ -25,6 +25,16 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   return true; \
 }
 
+#define IMPL_GET_NP(main, attr, method, accessor)                                                          \
+bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                              \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                \
+  JS::RootedObject thisObj(cx);                                                                            \
+  if (!args.computeThis(cx, &thisObj))                                                                     \
+      return false;                                                                                        \
+  args.rval().method( accessor );                                                                          \
+  return true;                                                                                             \
+}
+
 #define IMPL_GETS(main, attr, type, method, accessor) \
 bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   auto args = JS::CallArgsFromVp(argc, vp); \
@@ -159,6 +169,8 @@ DECL_GET( CTimer, SOCK_FISHING )
 DECL_GET( CTimer, SOCK_MUTETIME )
 DECL_GET( CTimer, SOCK_TRACKINGDISPLAY )
 DECL_GET( CTimer, SOCK_TRAFFICWARDEN )
+DECL_GET( CTimer, YOUNGHEAL )
+DECL_GET( CTimer, YOUNGMESSAGE )
 
 // Race Properties
 DECL_GET_SET( CRace, id )

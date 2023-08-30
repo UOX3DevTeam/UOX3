@@ -89,7 +89,6 @@ inline JSClass UOXTimer_class =
   JSCLASS_HAS_RESERVED_SLOTS(1),
   &defaultClassOps
 };
-//	CTimerProps_getProperty,
 
 inline JSClass UOXChar_class =
 {
