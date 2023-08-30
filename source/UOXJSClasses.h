@@ -42,7 +42,6 @@ inline JSClass UOXSpell_class =
   JSCLASS_HAS_RESERVED_SLOTS(1),
   &defaultClassOps
 };
-//	CSpellProps_getProperty, CSpellProps_setProperty,
 
 inline JSClass UOXSpells_class =
 {
@@ -159,7 +158,6 @@ inline JSClass UOXRace_class =
   JSCLASS_HAS_RESERVED_SLOTS(1),
   &defaultClassOps
 };
-//	CRaceProps_getProperty,
 //	CRaceProps_setProperty,
 
 inline JSClass UOXGuild_class =
@@ -206,7 +204,6 @@ inline JSClass UOXFile_class =
   &defaultClassOps
 };
 
-// var myGump = new Gump; // should be possible
 inline JSClass UOXGump_class =
 {
 	"Gump",

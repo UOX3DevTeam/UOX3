@@ -36,6 +36,30 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   return true; \
 }
 
+#define IMPL_SET(main, attr, type, method, accessor)                                                             \
+bool JS##main##_set_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) {                                    \
+  auto args = JS::CallArgsFromVp(argc, vp);                                                                      \
+  JS::RootedObject thisObj(cx);                                                                                  \
+  if (!args.computeThis(cx, &thisObj))                                                                           \
+      return false;                                                                                              \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0);                                                 \
+  auto origScript = JSMapping->GetScript(JS::CurrentGlobalOrNull(cx));                                           \
+  auto origScriptID = JSMapping->GetScriptId(JS::CurrentGlobalOrNull(cx));                                       \
+  priv->accessor(args.get(0).method());                                                                          \
+  if (origScript != JSMapping->GetScript(JS::CurrentGlobalOrNull(cx))) {                                         \
+  }                                                                                                              \
+  return true;                                                                                                   \
+}
+
+// This is the restore context we need to fix up
+// bool retVal = origScript->CallParticularEvent("_restorecontext_", &id, 0, vp);
+//    if( !retVal ) \
+//    { \
+//      Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function
+// _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID )); \
+//    } \
+
+
 #define DECL_GET_SET( main, attr ) \
 DECL_GET( main, attr ) \
 DECL_SET( main, attr )

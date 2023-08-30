@@ -12,8 +12,6 @@
 typedef bool ( JSPropertyFunc )( JSContext *cx, JSObject *obj, JS::Value id, JS::Value *vp );
 
 JSPropertyFunc CSpellsProps_getProperty;
-JSPropertyFunc CSpellProps_getProperty;
-JSPropertyFunc CSpellProps_setProperty;
 
 JSPropertyFunc CGlobalSkillsProps_getProperty;
 JSPropertyFunc CGlobalSkillProps_getProperty;
@@ -39,10 +37,7 @@ JSPropertyFunc CSpawnRegionProps_setProperty;
 
 JSPropertyFunc CGuildProps_getProperty;
 JSPropertyFunc CGuildProps_setProperty;
-JSPropertyFunc CGuildsProps_getProperty;
-JSPropertyFunc CGuildsProps_setProperty;
 
-JSPropertyFunc CRaceProps_getProperty;
 JSPropertyFunc CRaceProps_setProperty;
 
 JSPropertyFunc CSocketProps_getProperty;

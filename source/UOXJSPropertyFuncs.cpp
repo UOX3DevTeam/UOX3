@@ -37,17 +37,6 @@
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
-JSBool CGuildsProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, jsval *vp )
-{
-	*vp = INT_TO_JSVAL( 0 );
-	return JS_TRUE;
-}
-
-JSBool CGuildsProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
-{
-	return JS_TRUE;
-}
-
 JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	size_t spellId = JSVAL_TO_INT( id );
@@ -81,7 +70,6 @@ bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
     JS::RootedObject thisObj(cx);
     if( !args.computeThis( cx, &thisObj ) )
         return false;
-    args.rval().setPrivateUint32();
     auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>(thisObj, 0);
     for (auto i = 0; i < Magic->spells.size(); ++i) {
         if (&Magic->spells[i] == priv) {
@@ -1001,8 +989,8 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -1446,7 +1434,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -1468,8 +1456,8 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	if( JSVAL_IS_INT( id ))
 	{
@@ -2058,7 +2046,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		// ... but keep track of the property value we're trying to retrieve, stored in vp!
@@ -2082,8 +2070,8 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 
@@ -2542,7 +2530,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -2660,8 +2648,8 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -2738,7 +2726,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -2842,8 +2830,8 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -2877,7 +2865,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -2967,8 +2955,8 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -3017,7 +3005,7 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -3030,94 +3018,84 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 
 	return JS_TRUE;
 }
-JSBool CRaceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
 
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	if( JSVAL_IS_INT( id ))
-	{
-		JSString *tString = nullptr;
-		UI08 TempRace = 0;
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CRP_ID:
-				for( TempRace = 0; TempRace < Races->Count(); ++TempRace )
-				{
-					if( Races->Race( TempRace ) == gPriv )
-					{
-						*vp = INT_TO_JSVAL( TempRace );
-						break;
-					}
-				}
-				break;
-			case CRP_NAME:
-				tString = JS_NewStringCopyZ( cx, gPriv->Name().c_str() );
-				*vp = STRING_TO_JSVAL( tString );
-				break;
-			case CRP_WEAKTOWEATHER:
-				break;
-			case CRP_REQUIRESBEARD:		*vp = BOOLEAN_TO_JSVAL( gPriv->RequiresBeard() );		break;
-			case CRP_REQUIRESNOBEARD:	*vp = BOOLEAN_TO_JSVAL( gPriv->NoBeard() );				break;
-			case CRP_ISPLAYERRACE:		*vp = BOOLEAN_TO_JSVAL( gPriv->IsPlayerRace() );		break;
-			case CRP_GENDERRESTRICT:	*vp = INT_TO_JSVAL( gPriv->GenderRestriction() );		break;
-			case CRP_ARMOURCLASS:		*vp = INT_TO_JSVAL( gPriv->ArmourClassRestriction() );	break;
-			case CRP_LANGUAGESKILLMIN:	*vp = INT_TO_JSVAL( gPriv->LanguageMin() );				break;
-			case CRP_SKILLADJUSTMENT:
-				break;
-			case CRP_POISONRESISTANCE:	JS_NewNumberValue( cx, gPriv->PoisonResistance(), vp ); break;
-			case CRP_MAGICRESISTANCE:	JS_NewNumberValue( cx, gPriv->MagicResistance(), vp );  break;
-			case CRP_VISIBLEDISTANCE:	*vp = INT_TO_JSVAL( gPriv->VisibilityRange() );			break;
-			case CRP_NIGHTVISION:		*vp = INT_TO_JSVAL( gPriv->NightVision() );				break;
-			default:
-				break;
-		}
-	}
-	return JS_TRUE;
+// clang-format off
+//IMPL_GET( CRace, id, CRace, setInt32, id )
+bool JSCRace_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject thisObj(cx);
+  if( !args.computeThis( cx, &thisObj ) )
+      return false;
+  auto priv = JS::GetMaybePtrFromReservedSlot<CRace>(thisObj, 0);
+  for (auto i = 0; i < Races->Count(); ++i) {
+    if ( Races->Race( i ) == priv ) {
+      args.rval().setInt32(i);
+      return true;
+    }
+  }
+  return false;
 }
 
-JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-	CRace *gPriv = static_cast<CRace *>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
+IMPL_GETS( CRace, name,             CRace, setString, Name().c_str() )
+IMPL_GET(  CRace, requiresBeard,    CRace, setBoolean, RequiresBeard() )
+IMPL_GET(  CRace, requiresNoBeard,  CRace, setBoolean, NoBeard() )
+IMPL_GET(  CRace, isPlayerRace,     CRace, setBoolean, IsPlayerRace() )
+IMPL_GET(  CRace, genderRestrict,   CRace, setInt32,   GenderRestriction() )
+IMPL_GET(  CRace, armourClass,      CRace, setInt32,   ArmourClassRestriction() )
+IMPL_GET(  CRace, languageSkillMin, CRace, setInt32,   LanguageMin() )
+IMPL_GET(  CRace, poisonResistance, CRace, setDouble,  PoisonResistance() )
+IMPL_GET(  CRace, magicResistance,  CRace, setDouble,  MagicResistance() )
+IMPL_GET(  CRace, visibleDistance,  CRace, setInt32,   VisibilityRange() )
+IMPL_GET(  CRace, nightVision,      CRace, setInt32,   NightVision() )
+// clang-format on
+
+
+// clang-format off
+//IMPL_SET( CRace, name, CRace, Name, args.)
+IMPL_SET(  CRace, requiresBeard,    CRace, toBoolean, RequiresBeard )
+IMPL_SET(  CRace, requiresNoBeard,  CRace, toBoolean, NoBeard )
+IMPL_SET(  CRace, isPlayerRace,     CRace, toBoolean, IsPlayerRace )
+IMPL_SET(  CRace, genderRestrict,   CRace, toInt32,   GenderRestriction )
+IMPL_SET(  CRace, armourClass,      CRace, toInt32,   ArmourClassRestriction )
+IMPL_SET(  CRace, languageSkillMin, CRace, toInt32,   LanguageMin )
+IMPL_SET(  CRace, poisonResistance, CRace, toDouble,  PoisonResistance )
+IMPL_SET(  CRace, magicResistance,  CRace, toDouble,  MagicResistance )
+IMPL_SET(  CRace, visibleDistance,  CRace, toInt32,   VisibilityRange )
+IMPL_SET(  CRace, nightVision,      CRace, toInt32,   NightVision )
+// clang-format on
+
+bool CRaceProps_setProperty(JSContext *cx, unsigned int argc, JS::Value *vp) {
+
+  auto args = JS::CallArgsFromVp(argc, vp);
+  JS::RootedObject thisObj(cx);
+  if (!args.computeThis(cx, &thisObj))
+    return false;
+  auto priv = JS::GetMaybePtrFromReservedSlot<CRace>(thisObj, 0);
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ) );
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ) );
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
 	{
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CRP_NAME:				gPriv->Name( encaps.toString() );						break;
+			case CRP_NAME:				gPriv->Name( argsencaps.toString() );						break;
 			case CRP_WEAKTOWEATHER:
 				break;
-			case CRP_REQUIRESBEARD:		gPriv->RequiresBeard( encaps.toBool() );				break;
-			case CRP_REQUIRESNOBEARD:	gPriv->NoBeard( encaps.toBool() );						break;
-			case CRP_ISPLAYERRACE:		gPriv->IsPlayerRace( encaps.toBool() );					break;
-			case CRP_GENDERRESTRICT:	gPriv->GenderRestriction( static_cast<GENDER>( encaps.toInt() ));		break;
-			case CRP_ARMOURCLASS:		gPriv->ArmourClassRestriction( static_cast<UI08>( encaps.toInt() ));	break;
-			case CRP_LANGUAGESKILLMIN:	gPriv->LanguageMin( static_cast<UI16>( encaps.toInt() ));				break;
 			case CRP_SKILLADJUSTMENT:
 				break;
-			case CRP_POISONRESISTANCE:	gPriv->PoisonResistance( encaps.toFloat() );					break;
-			case CRP_MAGICRESISTANCE:	gPriv->MagicResistance( encaps.toFloat() );						break;
-			case CRP_VISIBLEDISTANCE:	gPriv->VisibilityRange( static_cast<SI08>( encaps.toInt() ));	break;
-			case CRP_NIGHTVISION:		gPriv->NightVision( static_cast<UI08>( encaps.toInt() ));		break;
 			default:
 				break;
 		}
 	}
 
 	// Active script-context might have been lost, so restore it!
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
-		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
-		if( retVal == JS_FALSE )
+		bool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
+		if( !retVal )
 		{
 			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
@@ -3133,8 +3111,8 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -3216,7 +3194,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -3434,8 +3412,8 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	UI08 skillId		= static_cast<UI08>( JSVAL_TO_INT( id ));
@@ -3521,7 +3499,7 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -3811,8 +3789,8 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 
@@ -3887,7 +3865,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -3974,8 +3952,8 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -4005,7 +3983,7 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -4035,8 +4013,8 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		return JS_FALSE;
 
 	// Keep track of original script that's executing
-	auto origScript = JSMapping->GetScript( JS_GetGlobalObject( cx ));
-	auto origScriptID = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
+	auto origScript = JSMapping->GetScript( JS::CurrentGlobalOrNull( cx ));
+	auto origScriptID = JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx ));
 
 	JSEncapsulate encaps( cx, vp );
 	if( JSVAL_IS_INT( id ))
@@ -4073,7 +4051,7 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 	}
 
 	// Active script-context might have been lost, so restore it...
-	if( origScript != JSMapping->GetScript( JS_GetGlobalObject( cx )))
+	if( origScript != JSMapping->GetScript( JS::CurrentGlobalOrNull( cx )))
 	{
 		// ... by calling a dummy function in original script!
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
@@ -4124,7 +4102,7 @@ JSBool CScriptProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 		switch( JSVAL_TO_INT( id ))
 		{
 			case CSCRIPT_SCRIPTID:		
-				*vp = INT_TO_JSVAL( JSMapping->GetScriptId( JS_GetGlobalObject( cx )) );
+				*vp = INT_TO_JSVAL( JSMapping->GetScriptId( JS::CurrentGlobalOrNull( cx )) );
 				break;
 			default:
 				break;
