@@ -79,6 +79,9 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
     auto args = JS::CallArgsFromVp(argc, vp);
     JS::RootedObject thisObj(cx);
+    if( !args.computeThis( cx, &thisObj ) )
+        return false;
+    args.rval().setPrivateUint32();
     auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>(thisObj, 0);
     for (auto i = 0; i < Magic->spells.size(); ++i) {
         if (&Magic->spells[i] == priv) {
@@ -92,6 +95,8 @@ bool JSCSpell_get_id(JSContext *cx, unsigned int argc, JS::Value *vp) {
 bool JSCSpell_get_name(JSContext *cx, unsigned int argc, JS::Value *vp) {
     auto args = JS::CallArgsFromVp(argc, vp);
     JS::RootedObject thisObj(cx);
+    if (!args.computeThis(cx, &thisObj))
+        return false;
     auto priv = JS::GetMaybePtrFromReservedSlot<CSpellInfo>(thisObj, 0);
     for (auto i = 0; i < Magic->spells.size(); ++i) {
         if (&Magic->spells[i] == priv) {
@@ -4014,27 +4019,14 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 	return JS_TRUE;
 }
 
-JSBool CResourceProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
-{
-	MapResource_st *gPriv = static_cast<MapResource_st*>( JS_GetPrivate( cx, obj ));
-	if( gPriv == nullptr )
-		return JS_FALSE;
-
-	if( JSVAL_IS_INT( id ))
-	{
-		switch( JSVAL_TO_INT( id ))
-		{
-			case CRESP_LOGAMT:				*vp = INT_TO_JSVAL( gPriv->logAmt );			break;
-			case CRESP_LOGTIME:				JS_NewNumberValue( cx, gPriv->logTime, vp );	break;
-			case CRESP_OREAMT:				*vp = INT_TO_JSVAL( gPriv->oreAmt );			break;
-			case CRESP_ORETIME:				JS_NewNumberValue( cx, gPriv->oreTime, vp );	break;
-			case CRESP_FISHAMT:				*vp = INT_TO_JSVAL( gPriv->fishAmt );			break;
-			case CRESP_FISHTIME:			JS_NewNumberValue( cx, gPriv->fishTime, vp );	break;
-			default:																		break;
-		}
-	}
-	return JS_TRUE;
-}
+// clang-format off
+IMPL_GET( CResource, logAmount , MapResource_st, setInt32,         logAmt   )
+IMPL_GET( CResource, logTime,    MapResource_st, setPrivateUint32, logTime  )
+IMPL_GET( CResource, oreAmount , MapResource_st, setInt32,         oreAmt   )
+IMPL_GET( CResource, oreTime,    MapResource_st, setPrivateUint32, oreTime  )
+IMPL_GET( CResource, fishAmount, MapResource_st, setInt32,         fishAmt  )
+IMPL_GET( CResource, fishTime,   MapResource_st, setPrivateUint32, fishTime )
+// clang-format on
 
 JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {

@@ -18,7 +18,9 @@
 bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   auto args = JS::CallArgsFromVp(argc, vp); \
   JS::RootedObject thisObj(cx); \
-  auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
+  if (!args.computeThis(cx, &thisObj)) \
+    return false; \
+  auto priv = JS::GetMaybePtrFromReservedSlot<type>(thisObj, 0); \
   args.rval().method(priv->accessor); \
   return true; \
 }
@@ -27,6 +29,8 @@ bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
 bool JS##main##_get_##attr(JSContext *cx, unsigned int argc, JS::Value *vp) { \
   auto args = JS::CallArgsFromVp(argc, vp); \
   JS::RootedObject thisObj(cx); \
+  if (!args.computeThis(cx, &thisObj)) \
+    return false; \
   auto priv = JS::GetMaybePtrFromReservedSlot< type >(thisObj, 0); \
   args.rval().method( JS_NewStringCopyZ( cx, priv->accessor ) ); \
   return true; \
@@ -1459,16 +1463,18 @@ inline JSPropertySpec CScriptSectionProperties[] =
   JS_PS_END
 };
 
+// clang-format off
 inline JSPropertySpec CResourceProperties[] =
 {
-  JS_PSGS( "logAmount",	JSCResource_get_logAmount,	   JSCResource_set_logAmount,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "logTime",	JSCResource_get_logTime,	   JSCResource_set_logTime,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "oreAmount",	JSCResource_get_oreAmount,	   JSCResource_set_oreAmount,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "oreTime",	JSCResource_get_oreTime,	   JSCResource_set_oreTime,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "fishAmount",JSCResource_get_fishAmount,	   JSCResource_set_fishAmount,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "fishTime",	JSCResource_get_fishTime,	   JSCResource_set_fishTime,	     JSPROP_ENUMANDPERM ),
+  JS_PSGS( "logAmount",  JSCResource_get_logAmount,   JSCResource_set_logAmount,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "logTime",    JSCResource_get_logTime,     JSCResource_set_logTime,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oreAmount",  JSCResource_get_oreAmount,   JSCResource_set_oreAmount,  JSPROP_ENUMANDPERM ),
+  JS_PSGS( "oreTime",    JSCResource_get_oreTime,     JSCResource_set_oreTime,    JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fishAmount", JSCResource_get_fishAmount,  JSCResource_set_fishAmount, JSPROP_ENUMANDPERM ),
+  JS_PSGS( "fishTime",   JSCResource_get_fishTime,    JSCResource_set_fishTime,   JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
+// clang-format on
 
 inline JSPropertySpec CPartyProperties[] =
 {
