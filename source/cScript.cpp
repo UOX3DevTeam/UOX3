@@ -239,12 +239,12 @@ void ScriptError( JSContext *cx, const char *txt, ... )
 	va_end( argptr );
 
 	// Define a custom error number. Needed, but not really used for anything
-	const uintN customErrorNumber = 1000;
+	const uint32_t customErrorNumber = 1000;
 
 	// Manually trigger an error using SpiderMonkey's internal error reporting,
 	// which makes use of JSErrorFormatString from ScriptErrorCallback function
 	// to call upon UOX3ErrorReporter function in cScript.cpp
-	JS_ReportErrorNumber( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
+	JS_ReportErrorNumberASCII( cx, ScriptErrorCallback, nullptr, customErrorNumber, "" );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -254,27 +254,20 @@ void ScriptError( JSContext *cx, const char *txt, ... )
 //o------------------------------------------------------------------------------------------------o
 SI32 TryParseJSVal( JS::Value toParse )
 {
-	if( JSVAL_IS_NULL( toParse ) || ( !JSVAL_IS_BOOLEAN( toParse ) && !JSVAL_IS_INT( toParse )))
+	if( toParse.isNull() || ( !toParse.isBoolean() && !toParse.isInt32() ) )
 	{
 		// jsval is neither a bool nor an int - possibly an object!
 		return 0;
 	}
-	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_FALSE && JSVAL_IS_INT( toParse ))
+	else if( !toParse.isBoolean() && toParse.isInt32() )
 	{
 		// jsval is an int!
-		return static_cast<SI32>( JSVAL_TO_INT( toParse ));
+		return toParse.toInt32();
 	}
-	else if( JSVAL_IS_BOOLEAN( toParse ) == JS_TRUE )
+	else if( toParse.isBoolean() )
 	{
 		// jsval is a bool! convert it to int
-		if( JSVAL_TO_BOOLEAN( toParse ) == JS_TRUE )
-		{
-			return 1;
-		}
-		else
-		{
-			return 0;
-		}
+    return (toParse.toBoolean() ? 1 : 0);
 	}
 	else
 	{
@@ -305,7 +298,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 
 	JS_SetGlobalObject( targContext, targObject );
 
-	JS::InitRealmStandardClasses( targContext, targObject );
+	JS::InitRealmStandardClasses( targContext );
 	JS_DefineFunctions( targContext, targObject, my_functions );
   JS::CompileOptions compOpt( targContext );
   JS::RootedScript script(targContext);
@@ -317,8 +310,8 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 		throw std::runtime_error( "Compilation failed" );
 	}
 	JS::Value rval;
-	JSBool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
-	if( ok != JS_TRUE )
+	bool ok = JS_ExecuteScript( targContext, targObject, targScript, &rval );
+	if( !ok )
 	{
 		JSString *str = JS_ValueToString( targContext, rval );
 		Console << "script result: " << JS_GetStringBytes( str ) << myendl;
@@ -410,7 +403,8 @@ bool cScript::OnStop( void )
 //o------------------------------------------------------------------------------------------------o
 bool cScript::DoesEventExist( char *eventToFind )
 {
-	jsval Func = JSVAL_NULL;
+	JS::Value Func;
+  Func.setNull();
 	JS_GetProperty( targContext, targObject, eventToFind, &Func );
 	if( Func == JSVAL_VOID )
 	{
