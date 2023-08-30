@@ -250,20 +250,21 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	return JS_TRUE;
 }
 
-IMPL_GET(  CCreateEntry, targId,   CreateEntry_st, setInt32,  targId )
-IMPL_GETS( CCreateEntry, name,     CreateEntry_st, setString, createName.c_str() )
-IMPL_GET(  CCreateEntry, colour,   CreateEntry_st, setInt32,  colour )
-IMPL_GET(  CCreateEntry, soundPlayed,   CreateEntry_st, setInt32,  soundPlayed )
-IMPL_GET(  CCreateEntry, minRank,   CreateEntry_st, setInt32,  minRank )
-IMPL_GET(  CCreateEntry, maxRank,   CreateEntry_st, setInt32,  maxRank )
-IMPL_GET(  CCreateEntry, delay,   CreateEntry_st, setInt32,  delay )
-IMPL_GET(  CCreateEntry, spell,   CreateEntry_st, setInt32,  spell )
+// clang-format off
+IMPL_GET(  CCreateEntry, id,          CreateEntry_st, setInt32,  targId )
+IMPL_GETS( CCreateEntry, name,        CreateEntry_st, setString, name.c_str() )
+IMPL_GETS( CCreateEntry, addItem,     CreateEntry_st, setString, addItem.c_str() )
+IMPL_GET(  CCreateEntry, colour,      CreateEntry_st, setInt32,  colour )
+IMPL_GET(  CCreateEntry, sound,       CreateEntry_st, setInt32,  soundPlayed )
+IMPL_GET(  CCreateEntry, minRank,     CreateEntry_st, setInt32,  minRank )
+IMPL_GET(  CCreateEntry, maxRank,     CreateEntry_st, setInt32,  maxRank )
+IMPL_GET(  CCreateEntry, delay,       CreateEntry_st, setInt32,  delay )
+IMPL_GET(  CCreateEntry, spell,       CreateEntry_st, setInt32,  spell )
+IMPL_GET(  CCreateEntry, avgMinSkill, CreateEntry_st, setInt32,  AverageMinSkill() )
+IMPL_GET(  CCreateEntry, avgMaxSkill, CreateEntry_st, setInt32,  AverageMaxSkill() )
+// clang-format on
 
-/*JSBool CCreateEntryProps_setProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] jsval id, [[maybe_unused]] jsval *vp )
-{
-	return JS_TRUE;
-}
-
+/*
 JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp )
 {
 	CreateEntry_st *gPriv = static_cast<CreateEntry_st*>( JS_GetPrivate( cx, obj ));
@@ -275,29 +276,6 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 		JSString *tString = nullptr;
 		switch( JSVAL_TO_INT( id ))
 		{
-		case CMAKE_ID:
-			*vp = INT_TO_JSVAL( gPriv->targId );
-			break;
-		case CMAKE_NAME:
-		{
-			std::string createName = gPriv->name;
-			tString = JS_NewStringCopyZ( cx, createName.c_str() );
-			*vp = STRING_TO_JSVAL( tString );
-			break;
-		}
-		case CMAKE_ADDITEM:
-		{
-			std::string addItem = gPriv->addItem;
-			tString = JS_NewStringCopyZ( cx, addItem.c_str() );
-			*vp = STRING_TO_JSVAL( tString );
-			break;
-		}
-		case CMAKE_COLOUR:			*vp = INT_TO_JSVAL( gPriv->colour );				break;
-		case CMAKE_SOUND:			*vp = INT_TO_JSVAL( gPriv->soundPlayed );			break;
-		case CMAKE_MINRANK:			*vp = INT_TO_JSVAL( gPriv->minRank );				break;
-		case CMAKE_MAXRANK:			*vp = INT_TO_JSVAL( gPriv->maxRank );				break;
-		case CMAKE_DELAY:			*vp = INT_TO_JSVAL( gPriv->delay );					break;
-		case CMAKE_SPELL:			*vp = INT_TO_JSVAL( gPriv->spell );					break;
 		case CMAKE_RESOURCES:
 		{
 			ResAmountPair_st resEntry;
@@ -367,8 +345,6 @@ JSBool CCreateEntryProps_getProperty( JSContext *cx, JSObject *obj, jsval id, js
 			*vp = OBJECT_TO_JSVAL( skills );
 			break;
 		}
-		case CMAKE_AVGMINSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMinSkill() );		break;
-		case CMAKE_AVGMAXSKILL:		*vp = INT_TO_JSVAL( gPriv->AverageMaxSkill() );		break;
 		}
 	}
 	return JS_TRUE;

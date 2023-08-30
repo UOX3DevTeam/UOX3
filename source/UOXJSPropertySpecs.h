@@ -727,6 +727,7 @@ DECL_GET_SET( CScript, script_id )
 
 // Property table
 
+// clang-format off
 inline JSPropertySpec CSpellProperties[] =
 {
   JS_PSG( "id",               JSCSpell_get_id,              JSPROP_ENUMANDPERM ),
@@ -770,33 +771,35 @@ inline JSPropertySpec CSpellProperties[] =
 
 inline JSPropertySpec CGlobalSkillProperties[] =
 {
-  JS_PSG( "name",           JSCGlobalSkill_get_name,         JSCGlobalSkill_set_name,         JSPROP_ENUMANDPERM ),
-  JS_PSG( "madeWord",       JSCGlobalSkill_get_madeWord,     JSCGlobalSkill_set_madeWord,     JSPROP_ENUMANDPERM ),
-  JS_PSG( "strength",       JSCGlobalSkill_get_strength,     JSCGlobalSkill_set_strength,     JSPROP_ENUMANDPERM ),
-  JS_PSG( "dexterity",      JSCGlobalSkill_get_dexterity,    JSCGlobalSkill_set_dexterity,    JSPROP_ENUMANDPERM ),
-  JS_PSG( "intelligence",   JSCGlobalSkill_get_intelligence, JSCGlobalSkill_set_intelligence, JSPROP_ENUMANDPERM ),
-  JS_PSG( "skillDelay",     JSCGlobalSkill_get_skillDelay,   JSCGlobalSkill_set_skillDelay,   JSPROP_ENUMANDPERM ),
-  JS_PSG( "scriptID",       JSCGlobalSkill_get_scriptID,     JSCGlobalSkill_set_scriptID,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "name",           JSCGlobalSkill_get_name,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "madeWord",       JSCGlobalSkill_get_madeWord,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "strength",       JSCGlobalSkill_get_strength,     JSPROP_ENUMANDPERM ),
+  JS_PSG( "dexterity",      JSCGlobalSkill_get_dexterity,    JSPROP_ENUMANDPERM ),
+  JS_PSG( "intelligence",   JSCGlobalSkill_get_intelligence, JSPROP_ENUMANDPERM ),
+  JS_PSG( "skillDelay",     JSCGlobalSkill_get_skillDelay,   JSPROP_ENUMANDPERM ),
+  JS_PSG( "scriptID",       JSCGlobalSkill_get_scriptID,     JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
 
 inline JSPropertySpec CCreateEntryProperties[] =
 {
-  JS_PSGS( "id",             JSCCreateEntry_get_id,             JSCCreateEntry_set_id,           JSPROP_ENUMANDPERM ),
-  JS_PSGS( "name",		     JSCCreateEntry_get_name,	        JSCCreateEntry_set_name,         JSPROP_ENUMANDPERM ),
-  JS_PSGS( "addItem",		 JSCCreateEntry_get_addItem,	    JSCCreateEntry_set_addItem,      JSPROP_ENUMANDPERM ),
-  JS_PSGS( "colour",		 JSCCreateEntry_get_colour,         JSCCreateEntry_set_colour,       JSPROP_ENUMANDPERM ),
-  JS_PSGS( "sound",	         JSCCreateEntry_get_sound,          JSCCreateEntry_set_sound,        JSPROP_ENUMANDPERM ),
-  JS_PSGS( "minRank",	     JSCCreateEntry_get_minRank,	    JSCCreateEntry_set_minRank,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "maxRank",		 JSCCreateEntry_get_maxRank,	    JSCCreateEntry_set_maxRank,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "delay",		     JSCCreateEntry_get_delay,	        JSCCreateEntry_set_delay,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "spell",		     JSCCreateEntry_get_spell,	        JSCCreateEntry_set_spell,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "resources",		 JSCCreateEntry_get_resources,	    JSCCreateEntry_set_resources,    JSPROP_ENUMANDPERM ),
-  JS_PSGS( "skills",		 JSCCreateEntry_get_skills,	        JSCCreateEntry_set_skills,	     JSPROP_ENUMANDPERM ),
-  JS_PSGS( "avgMinSkill",    JSCCreateEntry_get_avgMinSkill,	JSCCreateEntry_set_avgMinSkill,	 JSPROP_ENUMANDPERM ),
-  JS_PSGS( "avgMaxSkill",	 JSCCreateEntry_get_avgMaxSkill,	JSCCreateEntry_set_avgMaxSkill,	 JSPROP_ENUMANDPERM ),
+  JS_PSG( "id",          JSCCreateEntry_get_id,           JSPROP_ENUMANDPERM ),
+  JS_PSG( "name",        JSCCreateEntry_get_name,         JSPROP_ENUMANDPERM ),
+  JS_PSG( "addItem",     JSCCreateEntry_get_addItem,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "colour",      JSCCreateEntry_get_colour,       JSPROP_ENUMANDPERM ),
+  JS_PSG( "sound",       JSCCreateEntry_get_sound,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "minRank",     JSCCreateEntry_get_minRank,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "maxRank",     JSCCreateEntry_get_maxRank,      JSPROP_ENUMANDPERM ),
+  JS_PSG( "delay",       JSCCreateEntry_get_delay,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "spell",       JSCCreateEntry_get_spell,        JSPROP_ENUMANDPERM ),
+  JS_PSG( "resources",   JSCCreateEntry_get_resources,    JSPROP_ENUMANDPERM ),
+  JS_PSG( "skills",      JSCCreateEntry_get_skills,       JSPROP_ENUMANDPERM ),
+  JS_PSG( "avgMinSkill", JSCCreateEntry_get_avgMinSkill,  JSPROP_ENUMANDPERM ),
+  JS_PSG( "avgMaxSkill", JSCCreateEntry_get_avgMaxSkill,  JSPROP_ENUMANDPERM ),
   JS_PS_END
 };
+
+// clang-format on
 
 inline JSPropertySpec CTimerProperties[] =
 {
