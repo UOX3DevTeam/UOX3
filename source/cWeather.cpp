@@ -11,7 +11,7 @@
 #include "cScript.h"
 #include "CJSMapping.h"
 #include "combat.h"
-
+#include "utility/strutil.hpp"
 
 #define EFFECTIVE 2
 const UI08 MAXVAL	= 0;
@@ -913,7 +913,7 @@ auto cWeatherAb::Load() -> bool
 			{
 				tag = sec->tag;
 				data = sec->data;
-				UTag = oldstrutil::upper( tag );
+				UTag = util::upper( tag );
 				switch( tag[0] )
 				{
 					case 'c':
@@ -979,8 +979,8 @@ auto cWeatherAb::Load() -> bool
 							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								RainIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-								RainIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+								RainIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )));
+								RainIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )));
 							}
 							else
 							{
@@ -1004,8 +1004,8 @@ auto cWeatherAb::Load() -> bool
 							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+								SnowIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )));
+								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )));
 							}
 							else
 							{
@@ -1026,8 +1026,8 @@ auto cWeatherAb::Load() -> bool
 							auto csecs = oldstrutil::sections( data, "," );
 							if( csecs.size() > 1 )
 							{
-								SnowIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )));
-								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )));
+								SnowIntensityLow( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )));
+								SnowIntensityHigh( static_cast<WEATHID>( i ), static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )));
 							}
 							else
 							{

@@ -1,6 +1,8 @@
 #include "JSEncapsulate.h"
 #include <string>
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include "jsobj.h"
 #include "jsutil.h"
 
@@ -240,7 +242,7 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 				case JSOT_BOOL:		boolVal = ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );	break;
 				case JSOT_STRING:
 					svalue	= JS_GetStringBytes( JS_ValueToString( cx, *vp ));
-					boolVal = ( oldstrutil::upper( svalue ) == "TRUE" );
+					boolVal = ( util::upper( svalue ) == "TRUE" );
 					break;
 				default:
 				case JSOT_COUNT:
@@ -252,11 +254,11 @@ void JSEncapsulate::Parse( JSEncapsObjectType typeConvert )
 			{
 				case JSOT_INT:
 					ivalue		= JSVAL_TO_INT(( *vp ));
-					stringVal	= oldstrutil::number( ivalue );
+					stringVal	= util::ntos( ivalue );
 					break;
 				case JSOT_DOUBLE:
 					JS_ValueToNumber( cx, ( *vp ), &fvalue );
-					stringVal	= oldstrutil::number( fvalue );
+					stringVal	= std::to_string( fvalue );
 					break;
 				case JSOT_BOOL:
 					bvalue	= ( JSVAL_TO_BOOLEAN(( *vp )) == JS_TRUE );

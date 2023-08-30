@@ -48,6 +48,7 @@
 #include "combat.h"
 #include "PartySystem.h"
 #include "osunique.hpp"
+#include "utility/strutil.hpp"
 
 void BuildAddMenuGump( CSocket *s, UI16 m );	// Menus for item creation
 void SpawnGate( CChar *caster, SI16 srcX, SI16 srcY, SI08 srcZ, UI08 srcWorld, SI16 trgX, SI16 trgY, SI08 trgZ, UI08 trgWorld, UI16 trgInstanceId = 0 );
@@ -278,7 +279,7 @@ JSBool CPacket_WriteLong( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	size_t	position	= static_cast<size_t>( JSVAL_TO_INT( argv[0] ));
 	//UI32	toWrite		= static_cast<UI32>( JSVAL_TO_INT( argv[1] ));
 	char *	toWriteChar	= JS_GetStringBytes( JS_ValueToString( cx, argv[1] ));
-	UI32 toWrite = oldstrutil::value<UI32>( toWriteChar );
+	UI32 toWrite = util::ston<UI32>( toWriteChar );
 
 	myPacket->GetPacketStream().WriteLong( position, toWrite );
 
@@ -596,7 +597,7 @@ JSBool CGump_AddCheckbox( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ));
+	gList->one->push_back( util::format( "checkbox %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initState, relay ));
 
 	return JS_TRUE;
 }
@@ -741,7 +742,7 @@ JSBool CGump_MasterGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 	}
 
 	// Also send mastergump command with new gumpId
-	gList->one->push_back( oldstrutil::format( "mastergump %i %i %i %i %i", masterGumpId ));
+	gList->one->push_back( util::format( "mastergump %i %i %i %i %i", masterGumpId ));
 
 	return JS_TRUE;
 }
@@ -773,7 +774,7 @@ JSBool CGump_AddBackground( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ));
+	gList->one->push_back( util::format( "resizepic %i %i %i %i %i", tL, tR, gImage, bL, bR ));
 
 	return JS_TRUE;
 }
@@ -806,7 +807,7 @@ JSBool CGump_AddButton( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
+	gList->one->push_back( util::format( "button %i %i %i %i %i %i %i", tL, tR, gImage, gImage2, x1, x2, x3 ));
 
 	return JS_TRUE;
 }
@@ -845,7 +846,7 @@ JSBool CGump_AddButtonTileArt( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
+	gList->one->push_back( util::format( "buttontileart %i %i %i %i %i %i %i %i %i %i %i", tL, tR, tileIdNorm, tileIdPush, buttonType, pageNum, buttonId, tileId, hue, tileX, tileY ));
 
 	return JS_TRUE;
 }
@@ -876,7 +877,7 @@ JSBool CGump_AddPageButton( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ));
+	gList->one->push_back( util::format( "button %i %i %i %i 0 %i", tL, tR, gImage, gImage2, pageNum ));
 
 	return JS_TRUE;
 }
@@ -908,7 +909,7 @@ JSBool CGump_AddCheckerTrans( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "checkertrans %i %i %i %i", x, y, width, height ));
+	gList->one->push_back( util::format( "checkertrans %i %i %i %i", x, y, width, height ));
 
 	return JS_TRUE;
 }
@@ -952,7 +953,7 @@ JSBool CGump_AddCroppedText( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	UI32 textId = gList->textId;
 	++gList->textId;
 
-	gList->one->push_back( oldstrutil::format( "croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, textId ));
+	gList->one->push_back( util::format( "croppedtext %i %i %i %i %i %u", TextX, TextY, TextWidth, TextHeight, TextHue, textId ));
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -980,7 +981,7 @@ JSBool CGump_AddGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "group %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( util::format( "group %d", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
 }
@@ -1006,7 +1007,7 @@ JSBool CGump_EndGroup( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "endgroup", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( util::format( "endgroup", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
 }
@@ -1043,11 +1044,11 @@ JSBool CGump_AddGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 
 	if( rgbColor == 0 )
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i", tL, tR, gImage ));
+		gList->one->push_back( util::format( "gumppic %i %i %i", tL, tR, gImage ));
 	}
 	else
 	{
-		gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ));
+		gList->one->push_back( util::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColor ));
 	}
 
 	return JS_TRUE;
@@ -1079,7 +1080,7 @@ JSBool CGump_AddGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( util::format( "gumppic %i %i %i hue=%i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1182,7 +1183,7 @@ JSBool CGump_AddHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "htmlgump %i %i %i %i %u %i %i", x, y, width, height, textId, iBrd, iScrl ));
+	gList->one->push_back( util::format( "htmlgump %i %i %i %i %u %i %i", x, y, width, height, textId, iBrd, iScrl ));
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -1209,7 +1210,7 @@ JSBool CGump_AddPage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "page %d", JSVAL_TO_INT( argv[0] )));
+	gList->one->push_back( util::format( "page %d", JSVAL_TO_INT( argv[0] )));
 
 	return JS_TRUE;
 }
@@ -1239,7 +1240,7 @@ JSBool CGump_AddPicture( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepic %i %i %i", tL, tR, gImage ));
+	gList->one->push_back( util::format( "tilepic %i %i %i", tL, tR, gImage ));
 
 	return JS_TRUE;
 }
@@ -1270,7 +1271,7 @@ JSBool CGump_AddPictureColor( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ));
+	gList->one->push_back( util::format( "tilepichue %i %i %i %i", tL, tR, gImage, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1305,7 +1306,7 @@ JSBool CGump_AddPicInPic( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
+	gList->one->push_back( util::format( "picinpic %i %i %i %i %i %i %i", x, y, gImage, spriteX, spriteY, width, height ));
 
 	return JS_TRUE;
 }
@@ -1346,7 +1347,7 @@ JSBool CGump_AddItemProperty( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "itemproperty %i", trgSer ));
+	gList->one->push_back( util::format( "itemproperty %i", trgSer ));
 
 	return JS_TRUE;
 }
@@ -1399,7 +1400,7 @@ JSBool CGump_AddRadio( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
+	gList->one->push_back( util::format( "radio %i %i %i %i %i %i", tL, tR, gImage, gImageChk, initialState, relay ));
 
 	return JS_TRUE;
 }
@@ -1442,7 +1443,7 @@ JSBool CGump_AddText( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 	textId = gList->textId;
 	++gList->textId;
 
-	gList->one->push_back( oldstrutil::format( "text %i %i %i %u", TextX, TextY, TextHue, textId ));
+	gList->one->push_back( util::format( "text %i %i %i %u", TextX, TextY, TextHue, textId ));
 	gList->two->push_back( TextString );
 
 	return JS_TRUE;
@@ -1484,7 +1485,7 @@ JSBool CGump_AddTextEntry( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex ));
+	gList->one->push_back( util::format( "textentry %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex ));
 	gList->two->push_back( test );
 
 	return JS_TRUE;
@@ -1527,7 +1528,7 @@ JSBool CGump_AddTextEntryLimited( JSContext *cx, JSObject *obj, uintN argc, jsva
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize ));
+	gList->one->push_back( util::format( "textentrylimited %i %i %i %i %i %i %i %i", tL, tR, width, height, hue, relay, initialTextIndex, textEntrySize ));
 	gList->two->push_back( test );
 
 	return JS_TRUE;
@@ -1561,7 +1562,7 @@ JSBool CGump_AddTiledGump( JSContext *cx, JSObject *obj, uintN argc, jsval *argv
 		return JS_FALSE;
 	}
 
-	gList->one->push_back( oldstrutil::format( "gumppictiled %i %i %i %i %i", x, y, width, height, gumpId ));
+	gList->one->push_back( util::format( "gumppictiled %i %i %i %i %i", x, y, width, height, gumpId ));
 
 	return JS_TRUE;
 }
@@ -1599,7 +1600,7 @@ JSBool CGump_AddXMFHTMLGump( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl ));
+	gList->one->push_back( util::format( "xmfhtmlgump %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl ));
 
 	return JS_TRUE;
 }
@@ -1638,7 +1639,7 @@ JSBool CGump_AddXMFHTMLGumpColor( JSContext *cx, JSObject *obj, uintN argc, jsva
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour ));
+	gList->one->push_back( util::format( "xmfhtmlgumpcolor %i %i %i %i %i %i %i %i", x, y, width, height, number, iBrd, iScrl, rgbColour ));
 
 	return JS_TRUE;
 }
@@ -1680,7 +1681,7 @@ JSBool CGump_AddXMFHTMLTok( JSContext *cx, JSObject *obj, uintN argc, jsval *arg
 	SI32 iBrd	= ( hasBorder ? 1 : 0 );
 	SI32 iScrl	= ( hasScrollbar ? 1 : 0 );
 
-	gList->one->push_back( oldstrutil::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ));
+	gList->one->push_back( util::format( "xmfhtmltok %i %i %i %i %i %i %i %i @%s\t%s\t%s@", x, y, width, height, iBrd, iScrl, rgbColour, number, TextString1, TextString2, TextString3 ));
 
 	return JS_TRUE;
 }
@@ -1885,7 +1886,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2136,7 +2137,7 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2494,7 +2495,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 	return JS_TRUE;
@@ -2704,7 +2705,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2914,7 +2915,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2998,7 +2999,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3127,7 +3128,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3658,7 +3659,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3703,7 +3704,7 @@ JSBool CSocket_OpenContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 			if( retVal == JS_FALSE )
 			{
 				// Dummy function not found, let shard admin know!
-				Console.Warning( oldstrutil::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+				Console.Warning( util::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 			}
 		}
 	}
@@ -3751,7 +3752,7 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 				if( retVal == JS_FALSE )
 				{
 					// Dummy function not found, let shard admin know!
-					Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+					Console.Warning( util::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 				}
 			}
 		}
@@ -3843,7 +3844,7 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -4934,7 +4935,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -5661,7 +5662,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6149,7 +6150,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6211,7 +6212,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6485,7 +6486,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			if( retVal == JS_FALSE )
 			{
 				// Dummy function not found, let shard admin know!
-				Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+				Console.Warning( util::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 			}
 		}
 	}
@@ -6579,7 +6580,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6847,7 +6848,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		useScriptDataDir = ( JSVAL_TO_BOOLEAN( argv[3] ) == JS_TRUE );
 	}
 
-	if( oldstrutil::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
+	if( util::lower( mode ).find_first_of( "rwa", 0, 3 ) == std::string::npos )
 	{
 		ScriptError( cx, "Open: Invalid mode must be \"read\", \"write\", or \"append\"!" );
 		return JS_FALSE;
@@ -6891,7 +6892,7 @@ JSBool CFile_Open( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 	filePath.append( fileName );
 	FILE* stream;
 
-	mFile->mWrap = mfopen( &stream, filePath.c_str(), oldstrutil::lower( mode ).substr( 0, 1 ).c_str() );
+	mFile->mWrap = mfopen( &stream, filePath.c_str(), util::lower( mode ).substr( 0, 1 ).c_str() );
 	return JS_TRUE;
 }
 
@@ -7343,7 +7344,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
+	Console.Print( util::format( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -7368,7 +7369,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 	return JS_TRUE;
@@ -7456,7 +7457,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
+	Console.Print( util::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -7482,7 +7483,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7671,7 +7672,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7735,7 +7736,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7884,7 +7885,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7929,7 +7930,7 @@ JSBool CChar_Mark( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 
 	if( mChar->GetRegion()->GetName()[0] != 0 )
 	{
-		mItem->SetName( oldstrutil::format( Dictionary->GetEntry( 684 ), mChar->GetRegion()->GetName().c_str() ));
+		mItem->SetName( util::format( Dictionary->GetEntry( 684 ), mChar->GetRegion()->GetName().c_str() ));
 	}
 	else
 	{
@@ -8060,7 +8061,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -8101,7 +8102,7 @@ JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -8712,7 +8713,7 @@ JSBool CConsole_Reload( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 		ScriptError( cx, "Reload: Section to reload must be between 0 and 8" );
 		return JS_FALSE;
 	}
-	messageLoop.NewMessage( MSG_RELOAD, oldstrutil::number( mArg ).c_str() );
+	messageLoop.NewMessage( MSG_RELOAD, util::ntos( mArg ).c_str() );
 	return JS_TRUE;
 }
 
@@ -8947,7 +8948,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9868,7 +9869,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9917,7 +9918,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9959,7 +9960,7 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -10390,7 +10391,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+			Console.Warning( util::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -10726,7 +10727,7 @@ JSBool CBase_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval *
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
 		if( toExecute == nullptr )
 		{
-			ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+			ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 			return JS_FALSE;
 		}
 		else
@@ -10845,7 +10846,7 @@ JSBool CRegion_AddScriptTrigger( JSContext *cx, JSObject *obj, uintN argc, jsval
 		cScript *toExecute	= JSMapping->GetScript( scriptId );
 		if( toExecute == nullptr )
 		{
-			ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+			ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 			return JS_FALSE;
 		}
 		else

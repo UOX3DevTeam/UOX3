@@ -36,6 +36,8 @@
 
 #include "PartySystem.h"
 
+#include "utility/strutil.hpp"
+
 void MakeShop( CChar *c );
 void ScriptError( JSContext *cx, const char *txt, ... );
 
@@ -56,7 +58,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 
 	if( spellId >= Magic->spells.size() )
 	{
-		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
+		ScriptError( cx, util::format( "Spells: Invalid Spell ID (%i) provided", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -64,7 +66,7 @@ JSBool CSpellsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 	CSpellInfo *mySpell = &Magic->spells[spellId];
 	if( mySpell == nullptr )
 	{
-		ScriptError( cx, oldstrutil::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
+		ScriptError( cx, util::format( "Spells: Invalid Spell with spellId %i", spellId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -170,7 +172,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 
 	if( skillId > THROWING )
 	{
-		ScriptError( cx, oldstrutil::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
+		ScriptError( cx, util::format( "Invalid Skill ID, must be between 0 and 57" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -178,7 +180,7 @@ JSBool CGlobalSkillsProps_getProperty( JSContext *cx, JSObject *obj, jsval id, j
 	CWorldMain::Skill_st *mySkill = &cwmWorldState->skill[skillId];
 	if( mySkill == nullptr )
 	{
-		ScriptError( cx, oldstrutil::format( "Invalid Skill" ).c_str() );
+		ScriptError( cx, util::format( "Invalid Skill" ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -285,7 +287,7 @@ JSBool CCreateEntriesProps_getProperty( JSContext *cx, JSObject *obj, jsval id, 
 	CreateEntry_st *myCreateEntry = Skills->FindItem( createEntryId );
 	if( myCreateEntry == nullptr )
 	{
-		ScriptError( cx, oldstrutil::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
+		ScriptError( cx, util::format( "Invalid create entry ID (%i)", createEntryId ).c_str() );
 		*vp = JSVAL_NULL;
 		return JS_FALSE;
 	}
@@ -1099,7 +1101,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+					ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -1116,7 +1118,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+						ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -1162,14 +1164,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				sEncaps = util::trim( util::strip( sEncaps, "//" ));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1180,14 +1182,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE0:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				sEncaps = util::trim( util::strip( sEncaps, "//" ));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE0, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE0, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE0, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE0, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1198,14 +1200,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE1:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				sEncaps = util::trim( util::strip( sEncaps, "//" ));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE1, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE1, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE1, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE1, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1216,14 +1218,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MORE2:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				sEncaps = util::trim( util::strip( sEncaps, "//" ));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE2, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE2, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MORE2, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MORE2, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1234,14 +1236,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREX:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//"));
+				sEncaps = util::trim( util::strip( sEncaps, "//"));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREX, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1252,14 +1254,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREY:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//"));
+				sEncaps = util::trim( util::strip( sEncaps, "//"));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREY, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1270,14 +1272,14 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 			case CIP_MOREZ:
 			{
 				auto sEncaps = encaps.toString();
-				sEncaps = oldstrutil::trim( oldstrutil::removeTrailing( sEncaps, "//" ));
+				sEncaps = util::trim( util::strip( sEncaps, "//" ));
 				auto encapsSections = oldstrutil::sections( sEncaps, " " );
 				if( encapsSections.size() >= 4 )
 				{
-					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[0], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[1], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[2], "//" )), nullptr, 0 )));
-					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( encapsSections[3], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 1, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[0], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 2, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[1], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 3, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[2], "//" )), nullptr, 0 )));
+					gPriv->SetTempVar( CITV_MOREZ, 4, static_cast<UI08>( std::stoul( util::trim( util::strip( encapsSections[3], "//" )), nullptr, 0 )));
 				}
 				else
 				{
@@ -1511,7 +1513,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2126,7 +2128,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2188,7 +2190,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+					ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2205,7 +2207,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+						ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2607,7 +2609,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2750,7 +2752,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 				cScript *toExecute	= JSMapping->GetScript( scriptId );
 				if( toExecute == nullptr )
 				{
-					ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+					ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 				}
 				else
 				{
@@ -2767,7 +2769,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						ScriptError( cx, oldstrutil::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
+						ScriptError( cx, util::format( "Unable to assign script trigger - script ID (%i) not found in jse_fileassociations.scp!", scriptId ).c_str() );
 					}
 					else
 					{
@@ -2803,7 +2805,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2942,7 +2944,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3082,7 +3084,7 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3177,7 +3179,7 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
 		if( retVal == JS_FALSE )
 		{
-			Console.Warning( oldstrutil::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3281,7 +3283,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3586,7 +3588,7 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3830,10 +3832,10 @@ JSBool CAccountProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 			}
 			case CACCOUNT_LASTIP:
 			{
-				std::string ipString = oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
-					+ "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
-					+ "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
-					+ "." + oldstrutil::number( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
+				std::string ipString = util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0xFF000000 ) >> 24 )) 
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x00FF0000 ) >> 16 ))
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x0000FF00 ) >> 8 ))
+					+ "." + util::ntos( static_cast<SI32>(( myAccount->dwLastIP & 0x000000FF ) % 256 ));
 				tString = JS_NewStringCopyZ( cx, ipString.c_str() );
 				*vp = STRING_TO_JSVAL( tString );
 				break;
@@ -3952,7 +3954,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4070,7 +4072,7 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4151,7 +4153,7 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( oldstrutil::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+			Console.Warning( util::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 

@@ -4,6 +4,9 @@
 #include "cServerDefinitions.h"
 #include "ssection.h"
 #include "scriptc.h"
+
+#include "utility/strutil.hpp"
+
 #include <filesystem>
 
 #include <algorithm>
@@ -48,8 +51,8 @@ auto CMulHandler::LoadMapsDFN( const std::string &uodir ) -> std::map<int, MapDf
 		auto entry = MapDfnData_st();
 		for( const auto &sec :toFind->collection() )
 		{
-			auto uTag = oldstrutil::upper( sec->tag );
-			auto data = oldstrutil::trim( oldstrutil::removeTrailing( sec->data ));
+			auto uTag = util::upper( sec->tag );
+			auto data = util::trim( util::strip( sec->data ));
 			switch( uTag.data()[0] )
 			{
 				case 'M':
@@ -178,8 +181,8 @@ auto CMulHandler::LoadDFNOverrides() -> void
 			if( toScan == nullptr )
 				continue;
 
-			entryNum		= oldstrutil::value<std::uint16_t>( oldstrutil::extractSection( entryName, " ", 1, 1 ));
-			auto titlePart 	= oldstrutil::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
+			entryNum		= util::ston<std::uint16_t>( oldstrutil::extractSection( entryName, " ", 1, 1 ));
+			auto titlePart 	= util::upper( oldstrutil::extractSection( entryName, " ", 0, 0 ));
 			// have we got an entry starting with TILE ?
 			if( titlePart == "TILE" && entryNum )
 			{
@@ -191,8 +194,8 @@ auto CMulHandler::LoadDFNOverrides() -> void
 				{
 					for( const auto &sec : toScan->collection() )
 					{
-						auto UTag = oldstrutil::upper( sec->tag );
-						auto data = oldstrutil::trim( oldstrutil::removeTrailing( sec->data, "//" ));
+						auto UTag = util::upper( sec->tag );
+						auto data = util::trim( util::strip( sec->data, "//" ));
 						// CTile properties
 						if( UTag == "WEIGHT" )
 						{
@@ -1164,7 +1167,7 @@ auto CMulHandler::SeekTile( std::uint16_t tileNum ) -> CTile&
 {
 	if( !IsValidTile( tileNum ))
 	{
-		Console.Warning( oldstrutil::format( "Invalid tile access, the offending tile number is %u", tileNum ));
+		Console.Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -1178,7 +1181,7 @@ auto CMulHandler::SeekTile( std::uint16_t tileNum ) const -> const CTile&
 {
 	if( !IsValidTile( tileNum ))
 	{
-		Console.Warning( oldstrutil::format( "Invalid tile access, the offending tile number is %u", tileNum ));
+		Console.Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -1197,7 +1200,7 @@ auto CMulHandler::SeekLand( std::uint16_t landNum ) ->CLand&
 {
 	if( landNum == INVALIDID || landNum >= tileInfo.SizeTerrain() )
 	{
-		Console.Warning( oldstrutil::format( "Invalid land access, the offending land number is %u", landNum ));
+		Console.Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -1211,7 +1214,7 @@ auto CMulHandler::SeekLand( std::uint16_t landNum ) const -> const CLand&
 {
 	if( landNum == INVALIDID || landNum >= tileInfo.SizeTerrain() )
 	{
-		Console.Warning( oldstrutil::format( "Invalid land access, the offending land number is %u", landNum ));
+		Console.Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
 		static CLand emptyTile;
 		return emptyTile;
 	}

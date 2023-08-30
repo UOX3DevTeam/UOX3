@@ -1442,6 +1442,7 @@
     <ClInclude Include="..\..\source\speech.h" />
     <ClInclude Include="..\..\source\ssection.h" />
     <ClInclude Include="..\..\source\StringUtility.hpp" />
+    <ClInclude Include="..\..\source\utility\strutil.hpp" />
     <ClInclude Include="..\..\source\teffect.h" />
     <ClInclude Include="..\..\source\townregion.h" />
     <ClInclude Include="..\..\source\typedefs.h" />

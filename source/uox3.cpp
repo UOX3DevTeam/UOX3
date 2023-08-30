@@ -76,6 +76,7 @@
 #include "PartySystem.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include "EventTimer.hpp"
 #include <atomic>
 
@@ -208,7 +209,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	// Ok, we probably want the Console now
 	Console.Initialize();
 
-	Console.Start( oldstrutil::format( "%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ));
+	Console.Start( util::format( "%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ));
 	Console.PrintSectionBegin();
 	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
 	Console.PrintSectionBegin();
@@ -218,13 +219,13 @@ auto main( SI32 argc, char *argv[] ) ->int
 	Console << "Processing INI Settings  ";
 	if( !std::filesystem::exists( std::filesystem::path( configFile )))
 	{
-		Console.Error( configFile.empty() ? "Cannot find UOX3 ini file." : oldstrutil::format( "Cannot find UOX3 ini file: %s", configFile.c_str() ));
+		Console.Error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format( "Cannot find UOX3 ini file: %s", configFile.c_str() ));
 		return EXIT_FAILURE;
 	}
 	auto serverdata = CServerData();
 	if( !serverdata.Load( configFile ))
 	{
-		Console.Error( configFile.empty() ? "Error loading UOX3 ini file." : oldstrutil::format( "Error loading UOX3 ini file: %s", configFile.c_str() ));
+		Console.Error( configFile.empty() ? "Error loading UOX3 ini file." : util::format( "Error loading UOX3 ini file: %s", configFile.c_str() ));
 		return EXIT_FAILURE;
 	}
 	Console.PrintDone();
@@ -1127,7 +1128,7 @@ auto EndMessage( [[maybe_unused]] SI32 x ) -> void
 	{
 		cwmWorldState->SetEndTime( iGetClock );
 	}
-	SysBroadcast( oldstrutil::format( Dictionary->GetEntry( 1209 ), (( cwmWorldState->GetEndTime() - iGetClock ) / 1000 ) / 60 )); // Server going down in %i minutes!
+	SysBroadcast( util::format( Dictionary->GetEntry( 1209 ), (( cwmWorldState->GetEndTime() - iGetClock ) / 1000 ) / 60 )); // Server going down in %i minutes!
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1379,7 +1380,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.SetEvadeState( false );
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
 		std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
-		Console.Print( oldstrutil::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+		Console.Print( util::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
 
@@ -2998,8 +2999,8 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 		Effects->PlayStaticAnimation( applyTo, 0x373A, 0, 15);
 		Effects->PlaySound( applyTo, 0x01E9 );
 		applyTo->SetAdvObj( advObj );
-		auto sect = "ADVANCEMENT "s + oldstrutil::number( advObj );
-		sect						= oldstrutil::trim( oldstrutil::removeTrailing( sect, "//" ));
+		auto sect = "ADVANCEMENT "s + util::ntos( advObj );
+		sect						= util::trim( util::strip( sect, "//" ));
 		auto Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr )
 		{
@@ -3123,7 +3124,7 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 						{
 							if( csecs.size() > 1 )
 							{
-								retItem = Items->CreateScriptItem( nullptr, applyTo, oldstrutil::trim( oldstrutil::removeTrailing( csecs[0],"//") ), oldstrutil::value<UI16>( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" ))), OT_ITEM, true );
+								retItem = Items->CreateScriptItem( nullptr, applyTo, util::trim( util::strip( csecs[0],"//") ), util::ston<UI16>( util::trim( util::strip( csecs[1], "//" ))), OT_ITEM, true );
 							}
 							else
 							{
@@ -3526,7 +3527,7 @@ auto GetPoisonTickTime( UI08 poisonStrength )->TIMERVAL
 auto GetTileName( CItem& mItem, std::string& itemname ) -> size_t
 {
 	std::string temp = mItem.GetName();
-	temp = oldstrutil::trim( oldstrutil::removeTrailing( temp, "//" ));
+	temp = util::trim( util::strip( temp, "//" ));
 	const UI16 getAmount = mItem.GetAmount();
 	CTile& tile = Map->SeekTile( mItem.GetId() );
 	if( temp.substr( 0, 1 ) == "#" )
@@ -3569,7 +3570,7 @@ auto GetTileName( CItem& mItem, std::string& itemname ) -> size_t
 			temp = first + plural + rest;
 		}
 	}
-	itemname = oldstrutil::simplify( temp );
+	itemname = util::simplify( temp );
 	return itemname.size() + 1;
 }
 
@@ -3605,7 +3606,7 @@ auto GetNpcDictName( CChar *mChar, CSocket *tSock, UI08 requestSource ) -> std::
 	else if( IsNumber( dictName ))
 	{
 		// If name is a number, assume it's a direct dictionary entry reference, and use that
-		dictEntryId = static_cast<SI32>( oldstrutil::value<SI32>( dictName ));
+		dictEntryId = static_cast<SI32>( util::ston<SI32>( dictName ));
 		if( tSock )
 		{
 			dictName = Dictionary->GetEntry( dictEntryId, tSock->Language() );
@@ -3633,7 +3634,7 @@ auto GetNpcDictTitle( CChar *mChar, CSocket *tSock ) -> std::string
 	if( !dictTitle.empty() && IsNumber( dictTitle ))
 	{
 		// If title is a number, assume it's a direct dictionary entry reference, and use that
-		dictEntryId = static_cast<SI32>( oldstrutil::value<SI32>( dictTitle ));
+		dictEntryId = static_cast<SI32>( util::ston<SI32>( dictTitle ));
 		if( tSock )
 		{
 			dictTitle = Dictionary->GetEntry( dictEntryId, tSock->Language() );
@@ -3942,7 +3943,7 @@ auto UpdateFlag( CChar *mChar ) -> void
 		{
 			// Default to blue, invalid owner detected
 			mChar->SetFlagBlue();
-			Console.Warning( oldstrutil::format( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() ));
+			Console.Warning( util::format( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() ));
 		}
 	}
 	else

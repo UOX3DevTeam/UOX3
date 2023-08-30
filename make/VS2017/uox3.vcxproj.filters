@@ -555,7 +555,10 @@
      <ClInclude Include="..\..\source\EventTimer.hpp">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
-    
+     <ClInclude Include="..\..\source\utility\strutil.hpp">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
+
 <!-- UOData group -->
     <ClInclude Include="..\..\source\mapstuff.h">
       <Filter>Header Files\UOData</Filter>

@@ -30,6 +30,8 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include <iostream>
 #include <cctype>
 #include <stdexcept>
@@ -455,7 +457,7 @@ auto CConsole::Log( const std::string& msg, const std::string& filename ) -> voi
 			toWrite.close();
 			if( LogEcho() )
 			{
-				Print( oldstrutil::format( "%s%s\n", timeStr, msg.c_str() ));
+				Print( util::format( "%s%s\n", timeStr, msg.c_str() ));
 			}
 		}
 	}
@@ -996,7 +998,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				{
 					// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-					Print( oldstrutil::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
+					Print( util::format( "Executing JS keystroke %c %s\n", c, toFind->second.cmdName.c_str() ));
 #endif
 					jsval eventRetVal;
 					[[maybe_unused]] JSBool retVal = toExecute->CallParticularEvent( toFind->second.cmdName.c_str(), nullptr, 0, &eventRetVal );
@@ -1059,7 +1061,7 @@ auto CConsole::Process(std::int32_t c) -> void
 							indexcount = 0;
 							kill = true;
 							std::cout << std::endl;
-							temp = oldstrutil::format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
+							temp = util::format( "CMD: System broadcast sent message \"%s\"", outputline.c_str() );
 							outputline = "";
 							messageLoop << temp;
 							break;
@@ -1090,7 +1092,7 @@ auto CConsole::Process(std::int32_t c) -> void
 					{
 						localMap.insert( std::make_pair( CJ->first, 0 ));
 						szBuffer = "";
-						szBuffer = oldstrutil::format( "AddMenuGroup %u:", CJ->first );
+						szBuffer = util::format( "AddMenuGroup %u:", CJ->first );
 						messageLoop << szBuffer;
 						std::pair< ADDMENUMAP_CITERATOR, ADDMENUMAP_CITERATOR > pairRange = g_mmapAddMenuMap.equal_range( CJ->first );
 						SI32 count = 0;
@@ -1099,7 +1101,7 @@ auto CConsole::Process(std::int32_t c) -> void
 							count++;
 						}
 						szBuffer = "";
-						szBuffer = oldstrutil::format( "   Found %i Auto-AddMenu Item(s).", count );
+						szBuffer = util::format( "   Found %i Auto-AddMenu Item(s).", count );
 						messageLoop << szBuffer;
 					}
 				}
@@ -1206,15 +1208,15 @@ auto CConsole::Process(std::int32_t c) -> void
 				LogEcho( true );
 				Log( "--- Starting Performance Dump ---", "performance.log");
 				Log( "\tPerformance Dump:", "performance.log");
-				Log( oldstrutil::format( "\tNetwork code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->NetworkTime() ) / static_cast<R32>( networkTimeCount )), networkTimeCount ), "performance.log" );
-				Log( oldstrutil::format( "\tTimer code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->TimerTime() ) / static_cast<R32>( timerTimeCount )), timerTimeCount ), "performance.log" );
-				Log( oldstrutil::format( "\tAuto code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->AutoTime() ) / static_cast<R32>( autoTimeCount )), autoTimeCount ), "performance.log" );
-				Log( oldstrutil::format( "\tLoop Time: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime() ) / static_cast<R32>( loopTimeCount )), loopTimeCount ), "performance.log" );
+				Log( util::format( "\tNetwork code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->NetworkTime() ) / static_cast<R32>( networkTimeCount )), networkTimeCount ), "performance.log" );
+				Log( util::format( "\tTimer code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->TimerTime() ) / static_cast<R32>( timerTimeCount )), timerTimeCount ), "performance.log" );
+				Log( util::format( "\tAuto code: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->AutoTime() ) / static_cast<R32>( autoTimeCount )), autoTimeCount ), "performance.log" );
+				Log( util::format( "\tLoop Time: %.2fmsec [%i samples]", static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime() ) / static_cast<R32>( loopTimeCount )), loopTimeCount ), "performance.log" );
 
-				Log( oldstrutil::format( "\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::GetSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::GetSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
-				Log( oldstrutil::format( "\tSimulation Cycles: %f per sec", (1000.0*(1.0/static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime() ) / static_cast<R32>( loopTimeCount ))))), "performance.log" );
-				Log( oldstrutil::format( "\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent() ), "performance.log" );
-				Log( oldstrutil::format( "\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived() ), "performance.log" );
+				Log( util::format( "\tCharacters: %i/%i - Items: %i/%i (Dynamic)", ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ), ObjectFactory::GetSingleton().SizeOfObjects( OT_CHAR ), ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), ObjectFactory::GetSingleton().SizeOfObjects( OT_ITEM )), "performance.log" );
+				Log( util::format( "\tSimulation Cycles: %f per sec", (1000.0*(1.0/static_cast<R32>( static_cast<R32>( cwmWorldState->ServerProfile()->LoopTime() ) / static_cast<R32>( loopTimeCount ))))), "performance.log" );
+				Log( util::format( "\tBytes sent: %i", cwmWorldState->ServerProfile()->GlobalSent() ), "performance.log" );
+				Log( util::format( "\tBytes Received: %i", cwmWorldState->ServerProfile()->GlobalReceived() ), "performance.log" );
 				Log( "--- Performance Dump Complete ---", "performance.log");
 				LogEcho( false );
 				break;
@@ -1229,12 +1231,12 @@ auto CConsole::Process(std::int32_t c) -> void
 						++j;
 						CChar *mChar = iSock->CurrcharObj();
 						
-						temp = oldstrutil::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ));
+						temp = util::format( "     %i) %s [%x %x %x %x]", j - 1, mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ));
 						messageLoop << temp;
 					}
 				}
 
-				temp = oldstrutil::format( "     Total users online: %i", j );
+				temp = util::format( "     Total users online: %i", j );
 				messageLoop << temp;
 				break;
 			}
@@ -1246,23 +1248,23 @@ auto CConsole::Process(std::int32_t c) -> void
 				UI32 m, n;
 				m = static_cast<std::uint32_t>( ObjectFactory::GetSingleton().SizeOfObjects( OT_CHAR ));
 				total += tmp = m + m * sizeof( CTEffect ) + m * sizeof( SI08 ) + m * sizeof( intptr_t ) * 5;
-				temp = oldstrutil::format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ), m );
+				temp = util::format( "     Characters: %u bytes [%u chars ( %u allocated )]", tmp, ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ), m );
 				messageLoop << temp;
 				n = static_cast<std::uint32_t>( ObjectFactory::GetSingleton().SizeOfObjects( OT_ITEM ));
 				total += tmp = n + n * sizeof( intptr_t ) * 4;
-				temp = oldstrutil::format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), n );
+				temp = util::format( "     Items: %u bytes [%u items ( %u allocated )]", tmp, ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), n );
 				messageLoop << temp;
-				temp = oldstrutil::format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
+				temp = util::format( "        You save I: %lu & C: %lu bytes!", m * sizeof(CItem) - ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ), m * sizeof( CChar ) - ObjectFactory::GetSingleton().CountOfObjects( OT_CHAR ));
 				total += tmp = 69 * sizeof( CSpellInfo );
-				temp = oldstrutil::format( temp, "     Spells: %i bytes", tmp );
+				temp = util::format( temp, "     Spells: %i bytes", tmp );
 				messageLoop << "     Sizes:";
-				temp = oldstrutil::format("        CItem  : %lu bytes", sizeof( CItem ));
+				temp = util::format("        CItem  : %lu bytes", sizeof( CItem ));
 				messageLoop << temp;
-				temp = oldstrutil::format( "        CChar  : %lu bytes", sizeof( CChar ));
+				temp = util::format( "        CChar  : %lu bytes", sizeof( CChar ));
 				messageLoop << temp;
-				temp = oldstrutil::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
+				temp = util::format( "        TEffect: %lu bytes %lui total)", sizeof( CTEffect ), sizeof( CTEffect ) * cwmWorldState->tempEffects.Num() );
 				messageLoop << temp;
-				temp = oldstrutil::format( "        Approximate Total: %i bytes", total );
+				temp = util::format( "        Approximate Total: %i bytes", total );
 				messageLoop << temp;
 				break;
 			case '?':
@@ -1332,7 +1334,7 @@ auto CConsole::Process(std::int32_t c) -> void
 				FileLookup->DisplayPriorityMap();
 				break;
 			default:
-				temp = oldstrutil::format( "Key \'%c\' [%i] does not perform a function", static_cast<SI08>( c ), c );
+				temp = util::format( "Key \'%c\' [%i] does not perform a function", static_cast<SI08>( c ), c );
 				messageLoop << temp;
 				break;
 		}
@@ -1398,7 +1400,7 @@ auto CConsole::DisplaySettings() -> void
 auto CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptId ) -> void
 {
 #if defined( UOX_DEBUG_MODE )
-	messageLoop << oldstrutil::format( "         Registering key \"%c\"", key );
+	messageLoop << util::format( "         Registering key \"%c\"", key );
 #endif
 	JSKeyHandler[key] = JSConsoleEntry_st( scriptId, cmdName );
 }
@@ -1425,9 +1427,9 @@ auto CConsole::SetKeyStatus( SI32 key, bool isEnabled ) -> void
 auto CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptId ) -> void
 {
 #if defined( UOX_DEBUG_MODE )
-	Print( oldstrutil::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
+	Print( util::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
 #endif
-	JSConsoleFunctions[oldstrutil::upper( cmdFunc )]	= JSConsoleEntry_st( scriptId, cmdName );
+	JSConsoleFunctions[util::upper( cmdFunc )]	= JSConsoleEntry_st( scriptId, cmdName );
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1437,7 +1439,7 @@ auto CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 //o------------------------------------------------------------------------------------------------o
 auto CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) -> void
 {
-	auto upper	 = oldstrutil::upper( cmdFunc );
+	auto upper	 = util::upper( cmdFunc );
 	auto toFind	= JSConsoleFunctions.find( upper );
 	if( toFind != JSConsoleFunctions.end() )
 	{

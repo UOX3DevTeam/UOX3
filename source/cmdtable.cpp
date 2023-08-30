@@ -29,6 +29,7 @@
 #include "ObjectFactory.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 
 #include "Dictionary.h"
 
@@ -199,7 +200,7 @@ void Command_AddAccount( CSocket *s)
 
 		if( Commands->NumArguments() > 2 )
 		{
-			newFlags = oldstrutil::value<UI16>( Commands->CommandString( 4, 4 ));
+			newFlags = util::ston<UI16>( Commands->CommandString( 4, 4 ));
 		}
 
 		if( newUsername == "" || newPassword == "" )
@@ -282,7 +283,7 @@ void Command_SetPost( CSocket *s )
 		return;
 
 	PostTypes type = PT_LOCAL;
-	std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
+	std::string upperCommand = util::upper( Commands->CommandString( 2, 2 ));
 	if( upperCommand == "GLOBAL" ) // user's next post appears in ALL bulletin boards
 	{
 		type = PT_GLOBAL;
@@ -372,7 +373,7 @@ void Command_Tile( CSocket *s )
 		return;
 
 	UI16 targId = 0;
-	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
+	if( util::upper( Commands->CommandString( 2, 2 )) == "STATIC" )
 	{
 		targId = static_cast<UI16>( Commands->Argument( 2 ));
 	}
@@ -433,7 +434,7 @@ void Command_Tile( CSocket *s )
 		// tile static itemId
 		s->ClickX( -1 );
 		s->ClickY( -1 );
-		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
+		if( util::upper( Commands->CommandString( 2, 2 )) != "STATIC" )
 		{
 			s->TempInt2( static_cast<SI32>( Commands->Argument( 2 )));
 		}
@@ -640,7 +641,7 @@ void Command_Command( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() > 1 )
 	{
-		HandleGumpCommand( s, oldstrutil::upper( Commands->CommandString( 2, 2 )), oldstrutil::upper( Commands->CommandString( 3 )));
+		HandleGumpCommand( s, util::upper( Commands->CommandString( 2, 2 )), util::upper( Commands->CommandString( 3 )));
 	}
 }
 
@@ -689,7 +690,7 @@ void Command_MemStats( CSocket *s )
 void Command_Restock( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
+	if( util::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 	{
 		Restock( true );
 		s->SysMessage( 55 ); // Restocking all shops to their maximums
@@ -781,7 +782,7 @@ void Command_RegSpawn( CSocket *s )
 		UI32 itemsSpawned	= 0;
 		UI32 npcsSpawned	= 0;
 
-		if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ALL" )
+		if( util::upper( Commands->CommandString( 2, 2 )) == "ALL" )
 		{
 			std::for_each( cwmWorldState->spawnRegions.begin(), cwmWorldState->spawnRegions.end(), [&itemsSpawned, &npcsSpawned]( std::pair<UI16, CSpawnRegion *> entry )
 			{
@@ -845,7 +846,7 @@ void Command_CQ( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = util::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in Counselor queue
 		{
 			NextCall( s, false );
@@ -904,7 +905,7 @@ void Command_GQ( CSocket *s )
 	VALIDATESOCKET( s );
 	if( Commands->NumArguments() == 2 )
 	{
-		std::string upperCommand = oldstrutil::upper( Commands->CommandString( 2, 2 ));
+		std::string upperCommand = util::upper( Commands->CommandString( 2, 2 ));
 		if( upperCommand == "NEXT" ) // Go to next call in GM queue
 		{
 			NextCall( s, true );
@@ -947,12 +948,12 @@ void Command_MineCheck( void )
 //o------------------------------------------------------------------------------------------------o
 void Command_Guards( void )
 {
-	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( util::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( true );
 		SysBroadcast( Dictionary->GetEntry( 61 )); // Guards have been reactivated.
 	}
-	else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( util::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->GuardStatus( false );
 		SysBroadcast( Dictionary->GetEntry( 62 )); // Warning: Guards have been deactivated globally.
@@ -966,12 +967,12 @@ void Command_Guards( void )
 //o------------------------------------------------------------------------------------------------o
 void Command_Announce( void )
 {
-	if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "ON" )
+	if( util::upper( Commands->CommandString( 2, 2 )) == "ON" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( true );
 		SysBroadcast( Dictionary->GetEntry( 63 )); // WorldStat Saves will be displayed.
 	}
-	else if( oldstrutil::upper( Commands->CommandString( 2, 2 )) == "OFF" )
+	else if( util::upper( Commands->CommandString( 2, 2 )) == "OFF" )
 	{
 		cwmWorldState->ServerData()->ServerAnnounceSaves( false );
 		SysBroadcast( Dictionary->GetEntry( 64 )); // WorldStat Saves will not be displayed.
@@ -1064,7 +1065,7 @@ void BuildWhoGump( CSocket *s, UI08 commandLevel, std::string title )
 			CChar *iChar = iSock->CurrcharObj();
 			if( iChar->GetCommandLevel() >= commandLevel )
 			{
-				auto temp = oldstrutil::format( "%i) %s", j, iChar->GetName().c_str() );
+				auto temp = util::format( "%i) %s", j, iChar->GetName().c_str() );
 				Who.AddData( temp, iChar->GetSerial(), 3 );
 			}
 			++j;
@@ -1113,7 +1114,7 @@ void Command_ReportBug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( oldstrutil::format( "Unable to open bugs log file %s!", logName.c_str() ));
+		Console.Error( util::format( "Unable to open bugs log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -1208,7 +1209,7 @@ void Command_ValidCmd( CSocket *s )
 void Command_HowTo( CSocket *s )
 {
 	VALIDATESOCKET( s );
-	std::string commandStart = oldstrutil::upper( Commands->CommandString( 2 ));
+	std::string commandStart = util::upper( Commands->CommandString( 2 ));
 	if( commandStart.empty() )
 	{
 		CChar *mChar = s->CurrcharObj();
@@ -1225,11 +1226,11 @@ void Command_HowTo( CSocket *s )
 		toSend.UserId( INVALIDSERIAL );
 		toSend.GumpId( 13 );
 
-		toSend.addCommand( oldstrutil::format( "resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic() ));
+		toSend.addCommand( util::format( "resizepic 0 0 %u 480 320", cwmWorldState->ServerData()->BackgroundPic() ));
 		toSend.addCommand( "page 0" );
 		toSend.addCommand( "text 200 20 0 0" );
 		toSend.addText( "HOWTO" );
-		toSend.addCommand( oldstrutil::format( "button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
+		toSend.addCommand( util::format( "button 440 20 %u %i 1 0 1", cwmWorldState->ServerData()->ButtonCancel(), cwmWorldState->ServerData()->ButtonCancel() + 1 ));
 
 		UI08 currentLevel			= mChar->GetCommandLevel();
 		COMMANDMAP_ITERATOR gAdd	= CommandMap.begin();
@@ -1245,14 +1246,14 @@ void Command_HowTo( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( oldstrutil::format( "page %u", pagenum ));
+				toSend.addCommand( util::format( "page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( gAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( oldstrutil::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( oldstrutil::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( util::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( util::format("button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( gAdd->first );
 				++numAdded;
 				++linenum;
@@ -1267,14 +1268,14 @@ void Command_HowTo( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( oldstrutil::format( "page %u", pagenum ));
+				toSend.addCommand( util::format( "page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( tAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( oldstrutil::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( oldstrutil::format( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( util::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( util::format( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( tAdd->first );
 				++numAdded;
 				++linenum;
@@ -1289,14 +1290,14 @@ void Command_HowTo( CSocket *s )
 			{
 				position = 40;
 				++pagenum;
-				toSend.addCommand( oldstrutil::format( "page %u", pagenum ));
+				toSend.addCommand( util::format( "page %u", pagenum ));
 				justDonePageAdd = true;
 			}
 			if( jAdd->second.cmdLevelReq <= currentLevel )
 			{
 				justDonePageAdd = false;
-				toSend.addCommand( oldstrutil::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
-				toSend.addCommand( oldstrutil::format( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
+				toSend.addCommand( util::format( "text 50 %u %u %u", position, cwmWorldState->ServerData()->LeftTextColour(), linenum ));
+				toSend.addCommand( util::format( "button 20 %u %u %i %u 0 %i", position, cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum, iCmd ));
 				toSend.addText( jAdd->first );
 				++numAdded;
 				++linenum;
@@ -1308,14 +1309,14 @@ void Command_HowTo( CSocket *s )
 		pagenum = 1;
 		for( SI32 i = 0; i < numAdded; i += 10 )
 		{
-			toSend.addCommand( oldstrutil::format( "page %u", pagenum ));
+			toSend.addCommand( util::format( "page %u", pagenum ));
 			if( i >= 10 )
 			{
-				toSend.addCommand( oldstrutil::format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
+				toSend.addCommand( util::format( "button 30 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonLeft(), cwmWorldState->ServerData()->ButtonLeft() + 1, pagenum - 1 )); //back button
 			}
 			if(( numAdded > 10 ) && (( i + 10 ) < numAdded ))
 			{
-				toSend.addCommand( oldstrutil::format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
+				toSend.addCommand( util::format("button 440 290 %u %i 0 %i", cwmWorldState->ServerData()->ButtonRight(), cwmWorldState->ServerData()->ButtonRight() + 1, pagenum + 1 ));
 			}
 			++pagenum;
 		}
@@ -1511,10 +1512,10 @@ void CCommands::CommandReset()
 void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "   UnRegistering command %s\n", cmdName.c_str() ));
+	Console.Print( util::format( "   UnRegistering command %s\n", cmdName.c_str() ));
 #endif
 	std::string upper	= cmdName;
-	upper				= oldstrutil::upper( upper );
+	upper				= util::upper( upper );
 	JSCOMMANDMAP_ITERATOR p = JSCommandMap.find( upper );
 	if( p != JSCommandMap.end() )
 	{
@@ -1523,7 +1524,7 @@ void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript
 #if defined( UOX_DEBUG_MODE )
 	else
 	{
-		Console.Print( oldstrutil::format( "         Command \"%s\" was not found.\n", cmdName.c_str() ));
+		Console.Print( util::format( "         Command \"%s\" was not found.\n", cmdName.c_str() ));
 	}
 #endif
 }
@@ -1545,11 +1546,11 @@ void CCommands::Register( const std::string &cmdName, UI16 scriptId, UI08 cmdLev
 	Console.MoveTo( 50 );
 	Console.Print( "@ command level " );
 	Console.TurnYellow();
-	Console.Print( oldstrutil::format( "%i\n", cmdLevel ));
+	Console.Print( util::format( "%i\n", cmdLevel ));
 	Console.TurnNormal();
 #endif
 	std::string upper	= cmdName;
-	upper				= oldstrutil::upper( upper );
+	upper				= util::upper( upper );
 	JSCommandMap[upper]	= JSCommandEntry_st( cmdLevel, scriptId, isEnabled );
 }
 
@@ -1561,7 +1562,7 @@ void CCommands::Register( const std::string &cmdName, UI16 scriptId, UI08 cmdLev
 void CCommands::SetCommandStatus( const std::string &cmdName, bool isEnabled )
 {
 	std::string upper				= cmdName;
-	upper							= oldstrutil::upper( upper );
+	upper							= util::upper( upper );
 	JSCOMMANDMAP_ITERATOR	toFind	= JSCommandMap.find( upper );
 	if( toFind != JSCommandMap.end() )
 	{

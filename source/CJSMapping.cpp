@@ -4,6 +4,8 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include <memory>
 
 using namespace std::string_literals;
@@ -100,7 +102,7 @@ void CJSMapping::Reload( UI16 scriptId )
 {
 	if( scriptId != 0xFFFF )
 	{
-		Console.Print( oldstrutil::format( "CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId ));
+		Console.Print( util::format( "CMD: Attempting Reload of JavaScript (ScriptId %u)\n", scriptId ));
 		for( size_t i = SCPT_NORMAL; i < SCPT_COUNT; ++i )
 		{
 			if( mapSection[i]->IsInMap( scriptId ))
@@ -109,11 +111,11 @@ void CJSMapping::Reload( UI16 scriptId )
 				return;
 			}
 		}
-		Console.Warning( oldstrutil::format( "Unable to locate specified JavaScript in the map (ScriptId %u)", scriptId ));
+		Console.Warning( util::format( "Unable to locate specified JavaScript in the map (ScriptId %u)", scriptId ));
 	}
 	else
 	{
-		Console.Print( oldstrutil::format( "CMD: Loading JSE Scripts... \n" ));
+		Console.Print( util::format( "CMD: Loading JSE Scripts... \n" ));
 		Cleanup();
 		ResetDefaults();
 		envokeById->Parse();
@@ -129,7 +131,7 @@ void CJSMapping::Reload( UI16 scriptId )
 //o------------------------------------------------------------------------------------------------o
 void CJSMapping::Reload( SCRIPTTYPE sectionId )
 {
-	Console.Print( oldstrutil::format( "CMD: Attempting Reload of JavaScript (SectionId %u)\n", static_cast<SI32>( sectionId )));
+	Console.Print( util::format( "CMD: Attempting Reload of JavaScript (SectionId %u)\n", static_cast<SI32>( sectionId )));
 	if( mapSection[sectionId] != nullptr )
 	{
 		delete mapSection[sectionId];
@@ -153,7 +155,7 @@ void CJSMapping::Parse( SCRIPTTYPE toParse )
 	std::string scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp";
 	if( !FileExists( scpFileName ))
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s", scpFileName.c_str() ));
+		Console.Error( util::format( "Failed to open %s", scpFileName.c_str() ));
 		return;
 	}
 
@@ -345,7 +347,7 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 
 			if( !FileExists( fullPath ))
 			{
-				Console.Error( oldstrutil::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
+				Console.Error( util::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
 			}
 			else
 			{
@@ -361,22 +363,22 @@ auto CJSMappingSection::Parse( Script *fileAssocData ) -> void
 				}
 				catch( std::runtime_error &e )
 				{
-					Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
+					Console.Error( util::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
 				}
 			}
 		}
 		Console.Print( "  o Loaded " );
 		Console.TurnYellow();
-		Console.Print( oldstrutil::format( "%4u ", i ));
+		Console.Print( util::format( "%4u ", i ));
 		Console.TurnNormal();
 		Console.Print( "scripts from section " );
 		Console.TurnYellow();
-		Console.Print( oldstrutil::format( "%s\n", ScriptNames[scriptType].c_str() ));
+		Console.Print( util::format( "%s\n", ScriptNames[scriptType].c_str() ));
 		Console.TurnNormal();
 	}
 	else
 	{
-		Console.Warning( oldstrutil::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
+		Console.Warning( util::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
 	}
 }
 
@@ -391,7 +393,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 	auto scpFileName = cwmWorldState->ServerData()->Directory( CSDDP_SCRIPTS ) + "jse_fileassociations.scp"s;
 	if( !FileExists( scpFileName ))
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s", scpFileName.c_str() ));
+		Console.Error( util::format( "Failed to open %s", scpFileName.c_str() ));
 		return;
 	}
 
@@ -420,7 +422,7 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 
 					if( !FileExists( fullPath ))
 					{
-						Console.Error( oldstrutil::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
+						Console.Error( util::format( "SE mapping of %i to %s failed, file does not exist!", scriptId, data.c_str() ));
 					}
 					else
 					{
@@ -447,22 +449,22 @@ auto CJSMappingSection::Reload( UI16 toLoad ) -> void
 							{
 								scriptIdMap[scriptId]			= toAdd;
 								scriptJSMap[toAdd->Object()]	= scriptId;
-								Console.Print( oldstrutil::format( "Reload of JavaScript (ScriptId %u) Successful\n", toLoad ));
+								Console.Print( util::format( "Reload of JavaScript (ScriptId %u) Successful\n", toLoad ));
 							}
 						}
 						catch( std::runtime_error &e )
 						{
-							Console.Error( oldstrutil::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
+							Console.Error( util::format( "Compiling %s caused a construction failure (Details: %s)", fullPath.c_str(), e.what() ));
 						}
 					}
 					return;
 				}
 			}
-			Console.Warning( oldstrutil::format( "Unable to locate the specified JavaScript in the file (ScriptId %u)", toLoad ));
+			Console.Warning( util::format( "Unable to locate the specified JavaScript in the file (ScriptId %u)", toLoad ));
 		}
 		else
 		{
-			Console.Warning( oldstrutil::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
+			Console.Warning( util::format( "No JS file mappings found in section %s", ScriptNames[scriptType].c_str() ));
 		}
 	}
 }
@@ -660,7 +662,7 @@ auto CEnvoke::Parse() -> void
 					}
 					else
 					{
-						Console.Error( oldstrutil::format( "(ENVOKE) Item %s refers to scriptId %u which does not exist.", tag.c_str(), scriptId ));
+						Console.Error( util::format( "(ENVOKE) Item %s refers to scriptId %u which does not exist.", tag.c_str(), scriptId ));
 					}
 				}
 			}

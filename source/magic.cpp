@@ -20,6 +20,8 @@
 #include "movement.h"
 #include "scriptc.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include "ObjectFactory.h"
 #include <algorithm>
 #include "osunique.hpp"
@@ -1060,7 +1062,7 @@ auto splRecall( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 cu
 		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
 		if( runeMore.m_StringValue != "" )
 		{
-			SERIAL mSerial = oldstrutil::value<SERIAL>( runeMore.m_StringValue );
+			SERIAL mSerial = util::ston<SERIAL>( runeMore.m_StringValue );
 			if( mSerial != 0 && mSerial != INVALIDSERIAL )
 			{
 				CMultiObj *shipMulti = CalcMultiFromSer( mSerial );
@@ -1619,7 +1621,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curS
 			i->SetTag( "multiSerial", tagObject );
 			markedInMulti = true;
 
-			std::string tempRuneName = oldstrutil::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster, NRS_SYSTEM ).c_str() ); // A recall rune for %s.
+			std::string tempRuneName = util::format( Dictionary->GetEntry( 684 ), multi->GetNameRequest( caster, NRS_SYSTEM ).c_str() ); // A recall rune for %s.
 			if( tempRuneName.length() > 0 )
 			{
 				i->SetName( tempRuneName );
@@ -1639,7 +1641,7 @@ bool splMark( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI08 curS
 
 		if( caster->GetRegion()->GetName()[0] != 0 )
 		{
-			tempitemname = oldstrutil::format( Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() ); // A recall rune for %s.
+			tempitemname = util::format( Dictionary->GetEntry( 684 ), caster->GetRegion()->GetName().c_str() ); // A recall rune for %s.
 		}
 		else
 		{
@@ -1933,7 +1935,7 @@ bool splGateTravel( CSocket *sock, CChar *caster, CItem *i, [[maybe_unused]] SI0
 		TAGMAPOBJECT runeMore = i->GetTag( "multiSerial" );
 		if( runeMore.m_StringValue != "" )
 		{
-			SERIAL mSerial = oldstrutil::value<SERIAL>( runeMore.m_StringValue );
+			SERIAL mSerial = util::ston<SERIAL>( runeMore.m_StringValue );
 			if( mSerial != 0 && mSerial != INVALIDSERIAL )
 			{
 				CMultiObj *shipMulti = CalcMultiFromSer( mSerial );
@@ -4552,7 +4554,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 								break;
 							}
 							default:
-								Console.Error( oldstrutil::format( " Unknown Travel spell %i, magic.cpp", curSpell ));
+								Console.Error( util::format( " Unknown Travel spell %i, magic.cpp", curSpell ));
 								break;
 						}
 					}
@@ -4784,7 +4786,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 							break;
 						}
 						default:
-							Console.Error( oldstrutil::format( " Unknown CharacterTarget spell %i, magic.cpp", curSpell ));
+							Console.Error( util::format( " Unknown CharacterTarget spell %i, magic.cpp", curSpell ));
 							break;
 					}
 				}
@@ -4922,7 +4924,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 							(*(( MAGIC_LOCFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, x, y, z, curSpell );
 							break;
 						default:
-							Console.Error(oldstrutil::format( " Unknown LocationTarget spell %i", curSpell ));
+							Console.Error(util::format( " Unknown LocationTarget spell %i", curSpell ));
 							break;
 					}
 				}
@@ -4966,7 +4968,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 						(*(( MAGIC_ITEMFUNC )magic_table[curSpell-1].mag_extra))( s, caster, i, curSpell );
 						break;
 					default:
-						Console.Error( oldstrutil::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell ));
+						Console.Error( util::format(" Unknown ItemTarget spell %i, magic.cpp", curSpell ));
 						break;
 				}
 			}
@@ -5004,7 +5006,7 @@ void CMagic::CastSpell( CSocket *s, CChar *caster )
 				(*(( MAGIC_NOFUNC )magic_table[curSpell-1].mag_extra ))( s, caster, curSpell );
 				break;
 			default:
-				Console.Error( oldstrutil::format( " Unknown NonTarget spell %i, magic.cpp", curSpell ));
+				Console.Error( util::format( " Unknown NonTarget spell %i, magic.cpp", curSpell ));
 				break;
 		}
 		return;
@@ -5044,7 +5046,7 @@ void CMagic::LoadScript( void )
 			auto ssecs = oldstrutil::sections( spEntry, " " );
 			if( ssecs[0] == "SPELL" )
 			{
-				i = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				i = static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 0 ));
 				if( i <= SPELL_MAX )
 				{
 					++spellCount;
@@ -5056,8 +5058,8 @@ void CMagic::LoadScript( void )
 					{
 						tag = sec->tag;
 						data = sec->data;
-						UTag = oldstrutil::upper( tag );
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+						UTag = util::upper( tag );
+						data = util::trim( util::strip( data, "//" ));
 						//Console.Log( "Tag: %s\tData: %s", "spell.log", UTag.c_str(), data.c_str() ); // Disabled for performance reasons
 						switch(( UTag.data()[0] ))
 						{
@@ -5110,8 +5112,8 @@ void CMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{
 										// This is used to load flags from old-style spells.dfn, where flags are written as FLAGS=## ## instead of FLAGS=0x####
-										spells[i].Flags((( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 ))) << 8 ) |
-												    static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
+										spells[i].Flags((( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[0], "//" )), nullptr, 16 ))) << 8 ) |
+												    static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 16 )));
 									}
 									else
 									{
@@ -5164,10 +5166,10 @@ void CMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{
 										CMagicMove *mv = spells[i].MoveEffectPtr();
-										mv->Effect( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
-										mv->Speed( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
-										mv->Loop( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
-										mv->Explode( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[4], "//" )), nullptr, 16 )));
+										mv->Effect( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 16 )));
+										mv->Speed( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[2], "//" )), nullptr, 16 )));
+										mv->Loop( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[3], "//" )), nullptr, 16 )));
+										mv->Explode( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[4], "//" )), nullptr, 16 )));
 									}
 								}
 								break;
@@ -5198,8 +5200,8 @@ void CMagic::LoadScript( void )
 									if( ssecs.size() > 1 )
 									{
 										// This is used to load sounds from old-style spells.dfn, where soundfx are written as SOUNDFX=## ## instead of SOUNDFX=0x####
-										spells[i].Effect(((static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
-													 static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 ))));
+										spells[i].Effect(((static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[0], "//" )), nullptr, 16 )) << 8 ) |
+													 static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 16 ))));
 									}
 									else
 									{
@@ -5213,9 +5215,9 @@ void CMagic::LoadScript( void )
 									{
 										CMagicStat *stat = spells[i].StaticEffectPtr();
 
-										stat->Effect( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 16 )));
-										stat->Speed( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[2], "//" )), nullptr, 16 )));
-										stat->Loop( static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[3], "//" )), nullptr, 16 )));
+										stat->Effect( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[0], "//" )), nullptr, 16 )), static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 16 )));
+										stat->Speed( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[2], "//" )), nullptr, 16 )));
+										stat->Loop( static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[3], "//" )), nullptr, 16 )));
 									}
 								}
 								else if( UTag == "SCLO" )
@@ -5329,7 +5331,7 @@ void HandleCommonGump( CSocket *mSock, CScriptSection *gumpScript, UI16 gumpInde
 //o------------------------------------------------------------------------------------------------o
 void CMagic::PolymorphMenu( CSocket *s, UI16 gmindex )
 {
-	std::string sect			= "POLYMORPHMENU " + oldstrutil::number( gmindex );
+	std::string sect			= "POLYMORPHMENU " + util::ntos( gmindex );
 	CScriptSection *polyStuff	= FileLookup->FindEntry( sect, menus_def );
 	if( polyStuff == nullptr )
 		return;
@@ -5371,7 +5373,7 @@ void CMagic::LogSpell( std::string spell, CChar *player1, CChar *player2, const 
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error(oldstrutil::format( "Unable to open spell log file %s!", logName.c_str() ));
+		Console.Error(util::format( "Unable to open spell log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -5399,7 +5401,7 @@ void CMagic::LogSpell( std::string spell, CChar *player1, CChar *player2, const 
 void CMagic::Register( cScript *toRegister, SI32 spellNumber, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( oldstrutil::format( "Registering spell number %i\n", spellNumber ));
+	Console.Print( util::format( "Registering spell number %i\n", spellNumber ));
 #endif
 	if( spellNumber < 0 || static_cast<size_t>( spellNumber ) >= spells.size() )
 		return;

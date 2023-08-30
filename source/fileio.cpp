@@ -4,6 +4,9 @@
 #include "cSpawnRegion.h"
 #include "scriptc.h"
 #include "townregion.h"
+
+#include "utility/strutil.hpp"
+
 #include <stdexcept>
 #include <vector>
 #include <map>
@@ -107,19 +110,19 @@ void LoadSkills( void )
 
 			skEntry = creatScp->EntryName();
 			auto ssecs = oldstrutil::sections( skEntry, " " );
-			if( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "// ")) == "SKILL" )
+			if( util::trim( util::strip( ssecs[0], "// ")) == "SKILL" )
 			{
 				if( ssecs.size() > 1 )
 				{
-					i = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" ))));
+					i = static_cast<UI08>( std::stoul( util::trim( util::strip( ssecs[1], "//" ))));
 					if( i <= INTELLECT )
 					{
 						cwmWorldState->skill[i].ResetDefaults();
 						for( tag = SkillList->First(); !SkillList->AtEnd(); tag = SkillList->Next() )
 						{
-							UTag = oldstrutil::upper( tag );
+							UTag = util::upper( tag );
 							data = SkillList->GrabData();
-							data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+							data = util::trim( util::strip( data, "//" ));
 							if( UTag == "STR" )
 							{
 								cwmWorldState->skill[i].strength = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
@@ -135,14 +138,14 @@ void LoadSkills( void )
 							else if( UTag == "SKILLPOINT" )
 							{
 								Advance_st tempAdvance;
-								data = oldstrutil::simplify( data );
+								data = util::simplify( data );
 								auto csecs = oldstrutil::sections( data, "," );
-								tempAdvance.base	= static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-								tempAdvance.success = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-								tempAdvance.failure = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+								tempAdvance.base	= static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
+								tempAdvance.success = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 ));
+								tempAdvance.failure = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[2], "//" )), nullptr, 0 ));
 								if( csecs.size() == 4 )
 								{
-									tempAdvance.amtToGain = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+									tempAdvance.amtToGain = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[3], "//" )), nullptr, 0 ));
 								}
 								cwmWorldState->skill[i].advancement.push_back( tempAdvance );
 							}
@@ -160,7 +163,7 @@ void LoadSkills( void )
 							}
 							else
 							{
-								Console.Warning( oldstrutil::format( "Unknown tag in skills.dfn: %s", data.c_str() ));
+								Console.Warning( util::format( "Unknown tag in skills.dfn: %s", data.c_str() ));
 							}
 						}
 					}
@@ -193,7 +196,7 @@ void LoadSpawnRegions( void )
 			auto ssecs = oldstrutil::sections( sectionName, " " );
 			if( "REGIONSPAWN" == ssecs[0] ) // Is it a region spawn entry?
 			{
-				i = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				i = static_cast<UI16>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 0 ));
 				if( cwmWorldState->spawnRegions.find( i ) == cwmWorldState->spawnRegions.end() )
 				{
 					cwmWorldState->spawnRegions[i] = new CSpawnRegion( i );
@@ -201,7 +204,7 @@ void LoadSpawnRegions( void )
 				}
 				else
 				{
-					Console.Warning( oldstrutil::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i ));
+					Console.Warning( util::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i ));
 				}
 			}
 		}
@@ -239,9 +242,9 @@ void LoadRegions( void )
 
 			regEntry = regScp->EntryName();
 			auto ssecs = oldstrutil::sections( regEntry, " " );
-			if( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" )) == "REGION" )
+			if( util::trim( util::strip( ssecs[0], "//" )) == "REGION" )
 			{
-				i = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				i = static_cast<UI16>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 0 ));
 				if( cwmWorldState->townRegions.find( i ) == cwmWorldState->townRegions.end() )
 				{
 					cwmWorldState->townRegions[i] = new CTownRegion( i );
@@ -253,7 +256,7 @@ void LoadRegions( void )
 				}
 				else
 				{
-					Console.Warning( oldstrutil::format( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i ));
+					Console.Warning( util::format( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i ));
 				}
 			}				
 		}
@@ -281,9 +284,9 @@ void LoadRegions( void )
 	std::string data, UTag;
 	for( std::string tag = InstaLog->First(); !InstaLog->AtEnd(); tag = InstaLog->Next() )
 	{
-		UTag = oldstrutil::upper( tag );
+		UTag = util::upper( tag );
 		data	= InstaLog->GrabData();
-		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+		data = util::trim( util::strip( data, "//" ));
 		if( UTag == "X1" )
 		{
 			toAdd.x1 = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
@@ -320,9 +323,9 @@ void LoadRegions( void )
 	SOSLocationEntry_st toAddSOS;
 	for( std::string tag = sosAreas->First(); !sosAreas->AtEnd(); tag = sosAreas->Next() )
 	{
-		UTag = oldstrutil::upper( tag );
+		UTag = util::upper( tag );
 		data = sosAreas->GrabData();
-		data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
+		data = util::trim( util::strip( data, "//" ));
 		if( UTag == "X1" )
 		{
 			toAddSOS.x1 = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
@@ -364,8 +367,8 @@ void LoadTeleportLocations( void )
 	if( !FileExists( filename ))
 	{
 		Console << myendl;
-		Console.Error( oldstrutil::format( " Failed to open teleport data script %s", filename.c_str() ));
-		Console.Error( oldstrutil::format( " Teleport Data not found" ));
+		Console.Error( util::format( " Failed to open teleport data script %s", filename.c_str() ));
+		Console.Error( util::format( " Teleport Data not found" ));
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -387,36 +390,36 @@ void LoadTeleportLocations( void )
 				for( tag = teleportSect->First(); !teleportSect->AtEnd(); tag = teleportSect->Next() )
 				{
 					CTeleLocationEntry toAdd;
-					if( oldstrutil::upper( tag ) == "ENTRY" )
+					if( util::upper( tag ) == "ENTRY" )
 					{
 						tempX = 0;
 						tempY = 0;
 						tempZ = ILLEGAL_Z;
-						data = oldstrutil::simplify( teleportSect->GrabData() );
+						data = util::simplify( teleportSect->GrabData() );
 						auto csecs = oldstrutil::sections( data, "," );
 						SI32 sectCount = static_cast<SI32>( csecs.size() );
 						if( sectCount >= 6 )
 						{
-							tempX	= static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-							tempY	= static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-							temp	= oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )));
+							tempX	= static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
+							tempY	= static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 ));
+							temp	= util::upper( util::trim( util::strip( csecs[2], "//" )));
 							if( temp != "ALL" && temp != "A" )
 							{
 								tempZ =  static_cast<UI16>( std::stoul( temp, nullptr, 0 ));
 							}
 							toAdd.SourceLocation( tempX, tempY, tempZ );
 
-							tempX	=  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
-							tempY	=  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
-							tempZ	=  static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[5], "//" )), nullptr, 0 ));
+							tempX	=  static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[3], "//" )), nullptr, 0 ));
+							tempY	=  static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[4], "//" )), nullptr, 0 ));
+							tempZ	=  static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[5], "//" )), nullptr, 0 ));
 							toAdd.TargetLocation( tempX, tempY, tempZ );
 
 							if( sectCount >= 7 )
 							{
-								toAdd.SourceWorld(  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[6], "//" )), nullptr, 0 )));
+								toAdd.SourceWorld(  static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[6], "//" )), nullptr, 0 )));
 								if( sectCount >= 8 )
 								{
-									toAdd.TargetWorld(  static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[7], "//" )), nullptr, 0 )));
+									toAdd.TargetWorld(  static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[7], "//" )), nullptr, 0 )));
 								}
 							}
 							cwmWorldState->teleLocs.push_back( toAdd );
@@ -461,7 +464,7 @@ void LoadCreatures( void )
 			auto ssecs = oldstrutil::sections( cEntry, " " );
 			if( ssecs[0] == "CREATURE" )
 			{
-				i = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+				i = static_cast<UI16>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 0 ));
 				cwmWorldState->creatures[i].CreatureId( i );
 
 				for( tag = creatureData->First(); !creatureData->AtEnd(); tag = creatureData->Next() )
@@ -471,8 +474,8 @@ void LoadCreatures( void )
 						continue;
 					}
 					data = creatureData->GrabData();
-					data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-					UTag = oldstrutil::upper( tag );
+					data = util::trim( util::strip( data, "//" ));
+					UTag = util::upper( tag );
 					switch(( UTag.data()[0] ))
 					{
 						case 'A':
@@ -492,12 +495,12 @@ void LoadCreatures( void )
 								auto csecs = oldstrutil::sections( data, "," );
 								if( csecs.size() > 1 )
 								{
-									animId = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-									animLength = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
+									animId = static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
+									animLength = static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 ));
 								}
 								else
 								{
-									animId = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+									animId = static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
 									animLength = 7; // default to 7 frames if nothing is specified
 								}
 
@@ -555,11 +558,11 @@ void LoadCreatures( void )
 						case 'M':
 							if( UTag == "MOVEMENT" )
 							{
-								if( oldstrutil::upper( data ) == "WATER" )
+								if( util::upper( data ) == "WATER" )
 								{
 									cwmWorldState->creatures[i].IsWater( true );
 								}
-								else if( oldstrutil::upper( data ) == "BOTH" )
+								else if( util::upper( data ) == "BOTH" )
 								{
 									cwmWorldState->creatures[i].IsAmphibian( true );
 								}
@@ -701,13 +704,13 @@ void LoadPlaces( void )
 			entryName = locScp->EntryName();
 			auto ssecs = oldstrutil::sections( entryName, " " );
 			
-			size_t entryNum	= static_cast<UI32>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[1], "//" )), nullptr, 0 ));
+			size_t entryNum	= static_cast<UI32>( std::stoul( util::trim( util::strip( ssecs[1], "//" )), nullptr, 0 ));
 			
-			if(( oldstrutil::upper( oldstrutil::trim( oldstrutil::removeTrailing( ssecs[0], "//" ))) == "LOCATION" ) && entryNum )
+			if(( util::upper( util::trim( util::strip( ssecs[0], "//" ))) == "LOCATION" ) && entryNum )
 			{
 				if( cwmWorldState->goPlaces.find( static_cast<UI16>( entryNum )) != cwmWorldState->goPlaces.end() )
 				{
-					Console.Warning( oldstrutil::format( "Doubled up entry in Location.dfn (%u)", entryNum ));
+					Console.Warning( util::format( "Doubled up entry in Location.dfn (%u)", entryNum ));
 				}
 				toAdd = &cwmWorldState->goPlaces[static_cast<UI16>( entryNum )];
 				if( toAdd != nullptr )
@@ -715,8 +718,8 @@ void LoadPlaces( void )
 					for( std::string tag = toScan->First(); !toScan->AtEnd(); tag = toScan->Next() )
 					{
 						data = toScan->GrabData();
-						data = oldstrutil::trim( oldstrutil::removeTrailing( data, "//" ));
-						UTag = oldstrutil::upper( tag );
+						data = util::trim( util::strip( data, "//" ));
+						UTag = util::upper( tag );
 						if( UTag == "X" )
 						{
 							toAdd->x = static_cast<SI16>( std::stoi( data, nullptr, 0 ));
@@ -743,15 +746,15 @@ void LoadPlaces( void )
 							size_t sectionCount = csecs.size() + 1;
 							if( sectionCount >= 3 )
 							{
-								toAdd->x		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
-								toAdd->y		= static_cast<SI16>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 ));
-								toAdd->z		= static_cast<SI08>( std::stoi( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
-								toAdd->worldNum = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[3], "//" )), nullptr, 0 ));
+								toAdd->x		= static_cast<SI16>( std::stoi( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
+								toAdd->y		= static_cast<SI16>( std::stoi( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 ));
+								toAdd->z		= static_cast<SI08>( std::stoi( util::trim( util::strip( csecs[2], "//" )), nullptr, 0 ));
+								toAdd->worldNum = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[3], "//" )), nullptr, 0 ));
 							}
 
 							if( sectionCount == 4 )
 							{
-								toAdd->instanceId = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[4], "//" )), nullptr, 0 ));
+								toAdd->instanceId = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[4], "//" )), nullptr, 0 ));
 							}
 						}
 					}

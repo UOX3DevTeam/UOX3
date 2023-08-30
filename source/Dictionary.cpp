@@ -8,6 +8,7 @@
 #include "scriptc.h"
 #include "ssection.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 
 #include <memory>
 #include <filesystem>
@@ -169,8 +170,8 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 			{
 				input_buffer[input.gcount()] = 0;
 				auto line = std::string( input_buffer );
-				line = oldstrutil::removeTrailing( line, "//" );
-				line = oldstrutil::trim( line );
+				line = util::strip( line, "//" );
+				line = util::trim( line );
 				if( !line.empty() )
 				{
 					switch( static_cast<int>( state ))
@@ -180,8 +181,8 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 							if(( line[0] == '[' ) && ( *( line.rbegin() ) == ']' ))
 							{
 								// it is a section header!
-								line = oldstrutil::upper( oldstrutil::simplify( line.substr( 1, line.size() - 2 )));
-								auto [key, value] = oldstrutil::split( line, " " );
+								line = util::upper( util::simplify( line.substr( 1, line.size() - 2 )));
+								auto [key, value] = util::split( line, " " );
 								if(( key == "DICTIONARY" ) && ( value == "CLIENTMSG" ))
 								{
 									// This is a good section start!
@@ -204,7 +205,7 @@ auto CDictionary::ParseFile( const std::string &dictionaryfile ) -> bool
 						{
 							if( line != "}" )
 							{
-								auto [key, value] = oldstrutil::split( line, "=" );
+								auto [key, value] = util::split( line, "=" );
 								try
 								{
 									auto number = std::stoi( key, nullptr, 0 );

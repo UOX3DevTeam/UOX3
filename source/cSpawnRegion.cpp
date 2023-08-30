@@ -6,6 +6,8 @@
 #include "classes.h"
 #include "Dictionary.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include <sstream>
 #include <iostream>
 #include <regex>
@@ -505,7 +507,7 @@ void CSpawnRegion::LoadNPCList( const std::string &npcList )
 	{
 		for( std::string npc = CharList->First(); !CharList->AtEnd(); npc = CharList->Next() )
 		{
-			if( oldstrutil::upper( npc ) == "NPCLIST" )
+			if( util::upper( npc ) == "NPCLIST" )
 			{
 				LoadNPCList( CharList->GrabData() );
 			}
@@ -530,7 +532,7 @@ void CSpawnRegion::LoadItemList( const std::string &itemList )
 	{
 		for( std::string itm = ItemList->First(); !ItemList->AtEnd(); itm = ItemList->Next() )
 		{
-			if( oldstrutil::upper( itm ) == "ITEMLIST" )
+			if( util::upper( itm ) == "ITEMLIST" )
 			{
 				LoadItemList( ItemList->GrabData() );
 			}
@@ -557,7 +559,7 @@ void CSpawnRegion::Load( CScriptSection *toScan )
 	{
 		if( !tag.empty() )
 		{
-			UTag = oldstrutil::upper( tag );
+			UTag = util::upper( tag );
 			data = toScan->GrabData();
 
 			// Default to instanceId 0, in case nothing else is specified in DFN
@@ -645,22 +647,22 @@ void CSpawnRegion::Load( CScriptSection *toScan )
 			}
 			else if( UTag == "VALIDLANDPOS" )
 			{
-				data = oldstrutil::simplify( data );
+				data = util::simplify( data );
 				auto csecs = oldstrutil::sections( data, "," );
 				if( csecs.size() == 3 )
 				{
-					validLandPos.push_back( Point3_st( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0)), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//") ), nullptr, 0 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ))));
-					validLandPosCheck[ static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>(std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+					validLandPos.push_back( Point3_st( static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0)), static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//") ), nullptr, 0 )), static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ))));
+					validLandPosCheck[ static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>(std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[2], "//" )), nullptr, 0 ));
 				}
 			}
 			else if( UTag == "VALIDWATERPOS" )
 			{
-				data = oldstrutil::simplify( data );
+				data = util::simplify( data );
 				auto csecs = oldstrutil::sections( data, "," );
 				if( csecs.size() == 3 )
 				{
-					validWaterPos.push_back( Point3_st( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )), static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )), static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ))));
-					validWaterPosCheck[ static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[2], "//" )), nullptr, 0 ));
+					validWaterPos.push_back( Point3_st( static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )), static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )), static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ))));
+					validWaterPosCheck[ static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[1], "//" )), nullptr, 0 )) + ( static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 )) << 16 ) ] = static_cast<UI08>( std::stoul( util::trim( util::strip( csecs[2], "//" )), nullptr, 0 ));
 				}
 			}
 		}
@@ -741,12 +743,12 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	for( size_t i = 0; i < sNpcs.size(); i++ )
 	{
 		// Split string for entry into a stringlist based on | as separator
-		auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( sNpcs[i], "//" )), "|" );
+		auto csecs = oldstrutil::sections( util::trim( util::strip( sNpcs[i], "//" )), "|" );
 
 		UI16 sectionWeight = 1;
 		if( csecs.size() > 1 )
 		{
-			sectionWeight = static_cast<UI16>( std::stoul( oldstrutil::trim( oldstrutil::removeTrailing( csecs[0], "//" )), nullptr, 0 ));
+			sectionWeight = static_cast<UI16>( std::stoul( util::trim( util::strip( csecs[0], "//" )), nullptr, 0 ));
 		}
 
 		auto npcSection = ( csecs.size() > 1 ? csecs[1] : csecs[0] );
@@ -757,8 +759,8 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	if( ourNPC.empty() )
 		return nullptr;
 
-	auto csecs = oldstrutil::sections( oldstrutil::trim( oldstrutil::removeTrailing( ourNPC, "//" )), "=" );
-	if( oldstrutil::upper( csecs[0] ) == "NPCLIST" )
+	auto csecs = oldstrutil::sections( util::trim( util::strip( ourNPC, "//" )), "=" );
+	if( util::upper( csecs[0] ) == "NPCLIST" )
 	{
 		// Chosen entry contained another NPCLIST! Let's dive back into it...
 		ourNPC = Npcs->NpcListLookup( ourNPC );
@@ -778,7 +780,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 		switch( tag )
 		{
 			case DFNTAG_ID:
-				npcId = oldstrutil::value<UI16>( cdata ); // static_cast<UI16>( ndata );
+				npcId = util::ston<UI16>( cdata ); // static_cast<UI16>( ndata );
 				goto foundNpcId;
 			default:
 				break;
@@ -820,7 +822,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	}
 	else
 	{
-		Console.Warning( oldstrutil::format( "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
+		Console.Warning( util::format( "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
 	}
 	return nullptr;
 }

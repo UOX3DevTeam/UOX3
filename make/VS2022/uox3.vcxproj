@@ -278,7 +278,8 @@
     <ClInclude Include="..\..\source\StringUtility.hpp" />
     <ClInclude Include="..\..\source\TimeUtility.hpp" />
     <ClInclude Include="..\..\source\EventTimer.hpp" />
-    
+    <ClInclude Include="..\..\source\strutil.hpp" />
+
 <!-- UOData group -->    
     <ClInclude Include="..\..\source\mapclasses.h" />
     <ClInclude Include="..\..\source\mapstuff.h" />

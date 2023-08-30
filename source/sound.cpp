@@ -6,6 +6,7 @@
 #include "cEffects.h"
 #include "CPacketSend.h"
 #include "regions.h"
+#include "utility/strutil.hpp"
 
 using namespace std::string_literals;
 
@@ -329,7 +330,7 @@ auto cEffects::DoSocketMusic( CSocket *s ) -> void
 		}
 		else
 		{
-			sect = std::string( "MUSICLIST " ) + oldstrutil::number( musicList );
+			sect = std::string( "MUSICLIST " ) + util::ntos( musicList );
 		}
 		
 		auto MusicList = FileLookup->FindEntry( sect, regions_def );
@@ -337,7 +338,7 @@ auto cEffects::DoSocketMusic( CSocket *s ) -> void
 		{
 			for( const auto &sec : MusicList->collection() )
 			{
-				if( oldstrutil::upper( sec->tag ) == "MUSIC" )
+				if( util::upper( sec->tag ) == "MUSIC" )
 				{
 					musicArray[i++] = static_cast<SI08>( std::stoi( sec->data, nullptr, 0 ));
 				}

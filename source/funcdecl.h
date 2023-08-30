@@ -16,6 +16,7 @@
 #include <random>
 #include "uoxstruct.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 #include <iostream>
 #include <type_traits>
 #include <algorithm>
@@ -251,7 +252,7 @@ inline bool ValidateObject( const CBaseObject *toValidate )
 	catch( ... )
 	{
 		rValue = false;
-		Console.Error( oldstrutil::format( "Invalid Object found: 0x%X", (UI64)toValidate ));
+		Console.Error( util::format( "Invalid Object found: 0x%X", (UI64)toValidate ));
 	}
 	return rValue;
 }

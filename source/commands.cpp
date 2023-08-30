@@ -6,6 +6,7 @@
 #include "cScript.h"
 #include "CPacketSend.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
 
 
 CCommands *Commands			= nullptr;
@@ -57,7 +58,7 @@ SI32 CCommands::Argument( UI08 argNum )
 		} 
 		catch( const std::invalid_argument & e )
 		{
-			Console.Error( oldstrutil::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+			Console.Error( util::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
 		}
 	}
 
@@ -99,12 +100,12 @@ void CCommands::CommandString( std::string newValue )
 //o------------------------------------------------------------------------------------------------o
 void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkSocketAccess )
 {
-	CommandString( oldstrutil::simplify( text ));
+	CommandString( util::simplify( text ));
 	if( NumArguments() < 1 )
 		return;
 	
 	// Discard the leading command prefix
-	std::string command = oldstrutil::upper( CommandString( 1, 1 ));
+	std::string command = util::upper( CommandString( 1, 1 ));
 
 	JSCOMMANDMAP_ITERATOR toFind = JSCommandMap.find( command );
 	if( toFind != JSCommandMap.end() )
@@ -138,7 +139,7 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.Print( oldstrutil::format( "Executing JS command %s\n", command.c_str() ));
+				Console.Print( util::format( "Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ));
 			}
@@ -393,7 +394,7 @@ void CCommands::Load( void )
 					{
 						tag = sec->tag;
 						data = sec->data;
-						UTag = oldstrutil::upper( tag );
+						UTag = util::upper( tag );
 						if( UTag == "NICKCOLOUR" )
 						{
 							ourClear->nickColour = static_cast<UI16>( std::stoul( data, nullptr, 0 ));
@@ -459,7 +460,7 @@ void CCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( oldstrutil::format( "Unable to open command log file %s!", logName.c_str() ));
+		Console.Error( util::format( "Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -492,7 +493,7 @@ CommandLevel_st *CCommands::GetClearance( std::string clearName )
 	for( clearIter = clearance.begin(); clearIter != clearance.end(); ++clearIter )
 	{
 		clearPointer = ( *clearIter );
-		if( oldstrutil::upper( clearName ) == clearPointer->name )
+		if( util::upper( clearName ) == clearPointer->name )
 		{
 			return clearPointer;
 		}

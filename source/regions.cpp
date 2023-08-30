@@ -7,6 +7,8 @@
 #include "uox3.h"
 #include "classes.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include "ObjectFactory.h"
 
 using namespace std::string_literals ;
@@ -361,7 +363,7 @@ void CMapWorld::LoadResources( UI08 worldNum )
 {
     mapResources = std::vector<MapResource_st>(mapResources.size(),MapResource_st(cwmWorldState->ServerData()->ResOre(),cwmWorldState->ServerData()->ResLogs(),cwmWorldState->ServerData()->ResFish(),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResOreTime() )), BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResLogTime() )),BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->ResFishTime() ))))  ;
     
-    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + oldstrutil::number( worldNum ) + "].bin"s);
+    auto resourceFile = std::filesystem::path(cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "resource["s + util::ntos( worldNum ) + "].bin"s);
 
     // The data is grouped as three shorts (for each resource), so we read in that format
     auto buffer = std::vector<std::int16_t>(3,0) ;
@@ -439,7 +441,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) || !curCell->GetItemList()->Remove( nItem ))
 		{
 #if DEBUG_REGIONS
-			Console.Warning( oldstrutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+			Console.Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
 		else
@@ -462,7 +464,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.Warning( oldstrutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+			Console.Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		}
 	}
@@ -488,7 +490,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nChar->GetSerial() ) || !curCell->GetCharList()->Remove( nChar ))
 		{
 #if DEBUG_REGIONS
-			Console.Warning( oldstrutil::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
+			Console.Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
 		else
@@ -511,7 +513,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.Warning( oldstrutil::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
+			Console.Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
 #endif
 		}
 	}
@@ -542,7 +544,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( oldstrutil::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+		Console.Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 	}
 	return false;
@@ -571,7 +573,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( oldstrutil::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+		Console.Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		return false;
 	}
@@ -602,7 +604,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( oldstrutil::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
+		Console.Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
 #endif
 	}
 	return false;
@@ -631,7 +633,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( oldstrutil::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
+		Console.Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
 #endif
 		return false;
 	}
@@ -798,7 +800,7 @@ void CMapHandler::Save( void )
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
 			const SI32 baseY = counter2 * 8;								// calculate x grid offset
-			filename = basePath + oldstrutil::number( counter1 ) + std::string( "." ) + oldstrutil::number( counter2 ) + std::string( ".wsc" );	// let's name our file
+			filename = basePath + util::ntos( counter1 ) + std::string( "." ) + util::ntos( counter2 ) + std::string( ".wsc" );	// let's name our file
 
 			bool changesDetected = false;
 			for( UI08 xCnt = 0; !changesDetected && xCnt < 8; ++xCnt )					// walk through each part of the 8x8 grid, left->right
@@ -828,7 +830,7 @@ void CMapHandler::Save( void )
 
 			if( !writeDestination )
 			{
-				Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
+				Console.Error( util::format( "Failed to open %s for writing", filename.c_str() ));
 				continue;
 			}
 
@@ -881,7 +883,7 @@ void CMapHandler::Save( void )
 	}
 	else
 	{
-		Console.Error( oldstrutil::format( "Failed to open %s for writing", filename.c_str() ));
+		Console.Error( util::format( "Failed to open %s for writing", filename.c_str() ));
 		return;
 	}
 
@@ -889,7 +891,7 @@ void CMapHandler::Save( void )
 	Console.PrintDone();
 
 	const UI32 e_t = GetClock();
-	Console.Print( oldstrutil::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+	Console.Print( util::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -935,7 +937,7 @@ void CMapHandler::Load( void )
 	{
 		for( SI16 cy = 0; cy < AreaY; ++cy )
 		{
-			filename = basePath + oldstrutil::number( cx ) + std::string( "." ) + oldstrutil::number( cy ) + std::string( ".wsc" );	// let's name our file
+			filename = basePath + util::ntos( cx ) + std::string( "." ) + util::ntos( cy ) + std::string( ".wsc" );	// let's name our file
 			fileSizes[cx][cy] = FileSize( filename );
 			runningCount += fileSizes[cx][cy];
 		}
@@ -951,7 +953,7 @@ void CMapHandler::Load( void )
 	{
 		for( SI16 counter2 = 0; counter2 < AreaY; ++counter2 )	// move up->down
 		{
-			filename = basePath + oldstrutil::number( counter1 ) + std::string( "." ) + oldstrutil::number( counter2 ) + std::string( ".wsc" );	// let's name our file
+			filename = basePath + util::ntos( counter1 ) + std::string( "." ) + util::ntos( counter2 ) + std::string( ".wsc" );	// let's name our file
 			readDestination.open( filename.c_str() );					// let's open it
 			readDestination.seekg( 0, std::ios::beg );
 
@@ -1007,7 +1009,7 @@ void CMapHandler::Load( void )
 	houseDestination.close();
 
 	UI32 e_t	= GetClock();
-	Console.Print( oldstrutil::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+	Console.Print( util::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	UI08 i		= 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -1036,12 +1038,12 @@ void CMapHandler::LoadFromDisk( std::istream& readDestination, SI32 baseValue, S
 		readDestination.getline( line, 1023 );
 		line[readDestination.gcount()] = 0;
 		std::string sLine( line );
-		sLine = oldstrutil::trim( sLine );
+		sLine = util::trim( sLine );
 
 		if( sLine.substr( 0, 1 ) == "[" )	// in a section
 		{
 			sLine = sLine.substr( 1, sLine.size() - 2 );
-			sLine = oldstrutil::upper( oldstrutil::trim( sLine ));
+			sLine = util::upper( util::trim( sLine ));
 			if( sLine == "CHARACTER" )
 			{
 				LoadChar( readDestination );

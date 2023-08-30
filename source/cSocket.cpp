@@ -11,6 +11,8 @@
 #include "Dictionary.h"
 #include "CJSEngine.h"
 #include "StringUtility.hpp"
+#include "utility/strutil.hpp"
+
 #include "typedefs.h"
 
 #if PLATFORM != WINDOWS
@@ -769,7 +771,7 @@ bool CSocket::FlushBuffer( bool doLog )
 			{
 				toPrint = currCharObj->GetSerial();
 			}
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + oldstrutil::number( toPrint ) + std::string( ".snd" );
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + util::ntos( toPrint ) + std::string( ".snd" );
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -780,7 +782,7 @@ bool CSocket::FlushBuffer( bool doLog )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Failed to open socket log %s", logFile.c_str() ));
+				Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			}
 			bytesSent += outlength;
 		}
@@ -833,7 +835,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 			{
 				toPrint = currCharObj->GetSerial();
 			}
-			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + oldstrutil::number( toPrint ) + std::string( ".snd" );
+			std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + util::ntos( toPrint ) + std::string( ".snd" );
 			std::ofstream logDestination;
 			logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 			if( logDestination.is_open() )
@@ -844,7 +846,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 			}
 			else
 			{
-				Console.Error( oldstrutil::format( "Failed to open socket log %s", logFile.c_str() ));
+				Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			}
 			bytesSent += outlength;
 		}
@@ -969,13 +971,13 @@ void CSocket::Send( const void *point, SI32 length )
 	}
 	if( outlength > 0 )
 	{
-		Console.Print( oldstrutil::format( "Fragmented packet! [packet: %i]\n", outbuffer[0] ));
+		Console.Print( util::format( "Fragmented packet! [packet: %i]\n", outbuffer[0] ));
 	}
 	// sometimes we send enormous packets... oh what fun
 	if( length > MAXBUFFER )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( oldstrutil::format( "Large packet found [%i]\n", outbuffer[0] ));
+		Console.Print( util::format( "Large packet found [%i]\n", outbuffer[0] ));
 #endif
 		largeBuffer.resize( length );
 		memcpy( &largeBuffer[0], point, length );
@@ -1030,12 +1032,12 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 		{
 			toPrint = currCharObj->GetSerial();
 		}
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + oldstrutil::number( toPrint ) + std::string( ".rcv" );
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + util::ntos( toPrint ) + std::string( ".rcv" );
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( oldstrutil::format( "Failed to open socket log %s", logFile.c_str() ));
+			Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		if( toLog != nullptr )
@@ -1280,7 +1282,7 @@ UI32 CSocket::GetDWord( size_t offset )
 	UI32 retVal = 0;
 	if( offset + 3 >= MAXBUFFER )
 	{
-		Console.Error( oldstrutil::format( "GetDWord was passed an invalid offset value 0x%X", offset ));
+		Console.Error( util::format( "GetDWord was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1299,7 +1301,7 @@ UI16 CSocket::GetWord( size_t offset )
 	UI16 retVal = 0;
 	if( offset+1 >= MAXBUFFER )
 	{
-		Console.Error( oldstrutil::format( "GetWord was passed an invalid offset value 0x%X", offset ));
+		Console.Error( util::format( "GetWord was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1318,7 +1320,7 @@ UI08 CSocket::GetByte( size_t offset )
 	UI08 retVal = 0;
 	if( offset >= MAXBUFFER )
 	{
-		Console.Error( oldstrutil::format( "GetByte was passed an invalid offset value 0x%X", offset ));
+		Console.Error( util::format( "GetByte was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1579,12 +1581,12 @@ void CSocket::Send( CPUOXBuffer *toSend )
 		{
 			toPrint = currCharObj->GetSerial();
 		}
-		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + oldstrutil::number( toPrint ) + std::string( ".snd" );
+		std::string logFile = cwmWorldState->ServerData()->Directory( CSDDP_LOGS ) + util::ntos( toPrint ) + std::string( ".snd" );
 		std::ofstream logDestination;
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( oldstrutil::format( "Failed to open socket log %s", logFile.c_str() ));
+			Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		toSend->Log( logDestination );
@@ -2163,11 +2165,11 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		{
 			if( i->GetId( 2 ) == 0x91 )
 			{
-				charName = oldstrutil::format( Dictionary->GetEntry( 1740, Language() ).c_str(), charName.c_str() );	// Morrolan, added Lord/Lady to title overhead
+				charName = util::format( Dictionary->GetEntry( 1740, Language() ).c_str(), charName.c_str() );	// Morrolan, added Lord/Lady to title overhead
 			}
 			else if( i->GetId( 1 ) == 0x90 )
 			{
-				charName = oldstrutil::format( Dictionary->GetEntry( 1739, Language() ).c_str(), charName.c_str() );
+				charName = util::format( Dictionary->GetEntry( 1739, Language() ).c_str(), charName.c_str() );
 			}
 		}
 		if( cwmWorldState->ServerData()->ShowRaceWithName() && i->GetRace() != 0 && i->GetRace() != 65535 )	// need to check for placeholder race ( )
@@ -2178,7 +2180,7 @@ void CSocket::ShowCharName( CChar *i, bool showSer )
 		}
 		if( i->GetTownPriv() == 2 )
 		{
-			charName = oldstrutil::format( Dictionary->GetEntry( 1738, Language() ).c_str(), charName.c_str() );
+			charName = util::format( Dictionary->GetEntry( 1738, Language() ).c_str(), charName.c_str() );
 		}
 		if( !IsOnline(( *i )))
 		{
@@ -2765,7 +2767,7 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 				contSend.Model( 0x11A ); // Square gray mailbox
 				break;
 			case PT_UNKNOWN:
-				Console.Warning( oldstrutil::format( "OpenPack() passed an invalid container type: 0x%X", i->GetSerial() ));
+				Console.Warning( util::format( "OpenPack() passed an invalid container type: 0x%X", i->GetSerial() ));
 				return;
 		}
 	}

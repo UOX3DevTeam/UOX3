@@ -166,6 +166,7 @@ add_executable(uox3
    ../../source/TimeUtility.hpp
    ../../source/EventTimer.cpp
    ../../source/EventTimer.hpp
+   ../../source/utility/strutil.hpp
 # UOData group
     ../../source/mapclasses.h  
     ../../source/mapstuff.cpp
@@ -211,6 +212,7 @@ else()
 		-funsigned-char
 		 -Wno-shift-negative-value
 		 -Wno-deprecated-declarations
+         -Wno-format-security
 	)
 	if (APPLE)
 # We always use the system zlib , as it is most likely better optimized

@@ -128,6 +128,7 @@
 		56C9E3DB2A9C9035004D9F38 /* uox3.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj; path = ../VS2017/uox3.vcxproj; sourceTree = "<group>"; };
 		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
+		56D6EEC32A9F7707005355FA /* strutil.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strutil.hpp; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -342,6 +343,14 @@
 			name = vs2017;
 			sourceTree = "<group>";
 		};
+		56D6EEC22A9F76DD005355FA /* utility */ = {
+			isa = PBXGroup;
+			children = (
+				56D6EEC32A9F7707005355FA /* strutil.hpp */,
+			);
+			path = utility;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
@@ -363,13 +372,14 @@
 		64A90074293E3DD4009B54DA /* source */ = {
 			isa = PBXGroup;
 			children = (
+				56D6EEC22A9F76DD005355FA /* utility */,
 				64E2F795293FCE7500546A08 /* Script */,
 				64E2F790293FCE3800546A08 /* Base Objects */,
 				64E2F791293FCE4800546A08 /* Subsystem */,
 				64E2F792293FCE5900546A08 /* Other */,
 				64E2F793293FCE6200546A08 /* JS Engine */,
 				64E2F794293FCE6C00546A08 /* Network */,
-				64E2F797293FCE8C00546A08 /* Utility */,
+				64E2F797293FCE8C00546A08 /* OldUtility */,
 				64E2F796293FCE8400546A08 /* UOData */,
 				64A90089293E3DD4009B54DA /* Changelog.txt */,
 				64A90103293E3DD4009B54DA /* uox3.cpp */,
@@ -586,7 +596,7 @@
 			name = UOData;
 			sourceTree = "<group>";
 		};
-		64E2F797293FCE8C00546A08 /* Utility */ = {
+		64E2F797293FCE8C00546A08 /* OldUtility */ = {
 			isa = PBXGroup;
 			children = (
 				64A900BD293E3DD4009B54DA /* EventTimer.cpp */,
@@ -596,7 +606,7 @@
 				64A900FB293E3DD4009B54DA /* TimeUtility.cpp */,
 				64A900FC293E3DD4009B54DA /* TimeUtility.hpp */,
 			);
-			name = Utility;
+			name = OldUtility;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -891,7 +901,10 @@
 					../../source,
 					../../spidermonkey,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+				);
 			};
 			name = Debug;
 		};
@@ -911,7 +924,10 @@
 					../../source,
 					../../spidermonkey,
 				);
-				WARNING_CFLAGS = "-Wno-shift-negative-value";
+				WARNING_CFLAGS = (
+					"-Wno-shift-negative-value",
+					"-Wno-format-security",
+				);
 			};
 			name = Release;
 		};
