@@ -2073,7 +2073,7 @@ auto UltimaMap::ProcessEntry( [[maybe_unused]] std::size_t entry, std::size_t in
 		auto ptr = data.data() + ( i * 196 );
 		if( block < _terrain.size() )
 		{
-			LoadTerrainBlock( block, ptr );
+			LoadTerrainBlock( static_cast<int>(block), ptr );
 		}
 		++block;
 	}
