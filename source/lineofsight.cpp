@@ -406,7 +406,7 @@ UI16 DynamicCanBlock( CItem *toCheck, Vector3D_st *collisions, SI32 collisioncou
 
 		if( !Map->MultiExists( multiId ))
 		{
-			Console << "LoS - Bad length in multi file. Avoiding stall" << myendl;
+            Console::shared() << "LoS - Bad length in multi file. Avoiding stall" << myendl;
 			auto map1 = Map->SeekMap( curX, curY, toCheck->WorldNumber() );
 
 			if( map1.CheckFlag( TF_WET )) // is it water?

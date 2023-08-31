@@ -2903,7 +2903,7 @@ bool CChar::WearItem( CItem *toWear )
 		{
 #if defined( UOX_DEBUG_MODE )
 			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
-			Console.Warning( util::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
+            Console::shared().Warning( util::format( "Failed to equip item %s(0x%X) to layer 0x%X on character %s(0x%X, from section [%s]) - another item (%s) is already equipped in that layer!", toWear->GetName().c_str(), toWear->GetSerial(), tLayer, charName.c_str(), serial, GetSectionId().c_str(), GetItemAtLayer( tLayer )->GetName().c_str() ));
 #endif
 			rValue = false;
 		}
@@ -4946,7 +4946,7 @@ bool CChar::LoadRemnants( void )
 		if( acct == AB_INVALID_ID )
 		{
 			std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
-			Console.Warning( util::format( "NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial() ));
+            Console::shared().Warning( util::format( "NPC: %s with serial 0x%X with bugged body found, deleting", charName.c_str(), GetSerial() ));
 			rValue = false;
 		}
 		else
@@ -4970,7 +4970,7 @@ bool CChar::LoadRemnants( void )
 			if( IsNpc() )
 			{
 				std::string charName = GetNpcDictName( this, nullptr, NRS_SYSTEM );
-				Console.Warning( util::format( "NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial() ));
+                Console::shared().Warning( util::format( "NPC: %s with serial 0x%X found outside valid world locations, deleting", charName.c_str(), GetSerial() ));
 				rValue = false;
 			}
 			else
@@ -8984,7 +8984,7 @@ void CChar::Die( CChar *attacker, bool doRepsys )
 		}
 		if(( !attacker->IsNpc() ) && (!IsNpc() ))
 		{
-			Console.Log( util::format( Dictionary->GetEntry( 1617 ), GetName().c_str(), attacker->GetName().c_str() ), "PvP.log" );
+            Console::shared().Log( util::format( Dictionary->GetEntry( 1617 ), GetName().c_str(), attacker->GetName().c_str() ), "PvP.log" );
 		}
 
 		Combat->Kill( attacker, this );

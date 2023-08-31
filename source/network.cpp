@@ -299,7 +299,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 {
 	SetLastOn( connClients[s] );
 	CChar *currChar = connClients[s]->CurrcharObj();
-	Console << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
+    Console::shared() << "Client " << static_cast<UI32>( s ) << " disconnected. [Total:" << static_cast<SI32>( cwmWorldState->GetPlayersOnline() - 1 ) << "]" << myendl;
 
 	if( connClients[s]->AcctNo() != AB_INVALID_ID )
 	{
@@ -354,7 +354,7 @@ void CNetworkStuff::Disconnect( UOXSOCKET s )
 	}
 	catch( ... )
 	{
-		Console << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
+        Console::shared() << "| CATCH: Invalid connClients[] encountered. Ignoring." << myendl;
 	}
 	cwmWorldState->DecPlayersOnline();
 	WhoList->FlagUpdate();
@@ -492,11 +492,11 @@ void CNetworkStuff::sockInit( void )
 	a_socket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
 	if( a_socket < 0 )
 	{
-		Console.Error( " Unable to create socket");
+        Console::shared().Error( " Unable to create socket");
 #if PLATFORM == WINDOWS
-		Console.Error( util::format( " Code %i", WSAGetLastError() ));
+        Console::shared().Error( util::format( " Code %i", WSAGetLastError() ));
 #else
-		Console << myendl;
+        Console::shared() << myendl;
 #endif
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
@@ -517,7 +517,7 @@ void CNetworkStuff::sockInit( void )
 
 	if( bcode < 0 )
 	{
-		Console.Error( util::format( " Unable to bind socket 1 - Error code: %i", bcode ));
+        Console::shared().Error( util::format( " Unable to bind socket 1 - Error code: %i", bcode ));
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		Shutdown( FATAL_UOX3_ALLOC_NETWORK );
@@ -577,7 +577,7 @@ void CNetworkStuff::CheckConn( void )
 		newClient = accept( a_socket, ( struct sockaddr * )&client_addr, ( socklen_t * )&len );
 		if( newClient >= FD_SETSIZE )
 		{
-			Console.Error( "accept() returning unselectable fd!" );
+            Console::shared().Error( "accept() returning unselectable fd!" );
 			closesocket( static_cast<UOXSOCKET>( newClient ));
 			return;
 		}
@@ -599,7 +599,7 @@ void CNetworkStuff::CheckConn( void )
 				delete toMake;
 				return;
 			}
-			Console.Error( "Error at client connection!" );
+            Console::shared().Error( "Error at client connection!" );
 			cwmWorldState->SetKeepRun( true );
 			cwmWorldState->SetError( true );
 			delete toMake;
@@ -634,7 +634,7 @@ void CNetworkStuff::CheckConn( void )
 	}
 	if( s < 0 )
 	{
-		Console.Error( " Select (Conn) failed!" );
+        Console::shared().Error( " Select (Conn) failed!" );
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -732,15 +732,15 @@ void CNetworkStuff::CheckMessage( void )
 				catch( socket_error& blah )
 				{
 #if PLATFORM != WINDOWS
-					Console << "Client disconnected" << myendl;
+                    Console::shared() << "Client disconnected" << myendl;
 #else
 					if( blah.ErrorNumber() == WSAECONNRESET )
 					{
-						Console << "Client disconnected" << myendl;
+                        Console::shared() << "Client disconnected" << myendl;
 					}
 					else if( blah.ErrorNumber() != -1 )
 					{
-						Console << "Socket error: " << static_cast<SI32>( blah.ErrorNumber() ) << myendl;
+                        Console::shared() << "Socket error: " << static_cast<SI32>( blah.ErrorNumber() ) << myendl;
 					}
 #endif
 					Disconnect( static_cast<UOXSOCKET>( i ));	// abnormal error
@@ -828,17 +828,17 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 				// April 5, 2004 - There is a great chance that alot of the times this will be UOG2 connecting to get information from the server
 				if( cwmWorldState->ServerData()->ServerUOGEnabled() )
 				{
-					Console << "UOG Stats request completed. Disconnecting client. [" << static_cast<SI32>( mSock->ClientIP4() ) << "." << static_cast<SI32>( mSock->ClientIP3() ) << "." << static_cast<SI32>( mSock->ClientIP2() ) << "." << static_cast<SI32>( mSock->ClientIP1() ) << "]" << myendl;
+                    Console::shared() << "UOG Stats request completed. Disconnecting client. [" << static_cast<SI32>( mSock->ClientIP4() ) << "." << static_cast<SI32>( mSock->ClientIP3() ) << "." << static_cast<SI32>( mSock->ClientIP2() ) << "." << static_cast<SI32>( mSock->ClientIP1() ) << "]" << myendl;
 				}
 				else
 				{
-					Console << "Encrypted client attempting to cut in, disconnecting them: IP " << static_cast<SI32>( mSock->ClientIP1() ) << "." << static_cast<SI32>( mSock->ClientIP2() ) << "." << static_cast<SI32>( mSock->ClientIP3() ) << "." << static_cast<SI32>( mSock->ClientIP4() ) << myendl;
+                    Console::shared() << "Encrypted client attempting to cut in, disconnecting them: IP " << static_cast<SI32>( mSock->ClientIP1() ) << "." << static_cast<SI32>( mSock->ClientIP2() ) << "." << static_cast<SI32>( mSock->ClientIP3() ) << "." << static_cast<SI32>( mSock->ClientIP4() ) << myendl;
 				}
 				Disconnect( s );
 				return;
 			}
 #if _DEBUG_PACKET
-			Console.Print( util::format( "Packet ID: 0x%x\n", packetId ));
+            Console::shared().Print( util::format( "Packet ID: 0x%x\n", packetId ));
 #endif
 			if( packetId != 0x73 && packetId != 0xA4 && packetId != 0x80 && packetId != 0x91 )
 			{
@@ -1165,7 +1165,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 						ourChar->SetSkillLock( static_cast<SkillLock>( buffer[5] ), static_cast<UI08>( skillNum ));
 						break;
 					case 0x56:
-						Console << "'Plot Course' button on a map clicked." << myendl;
+                        Console::shared() << "'Plot Course' button on a map clicked." << myendl;
 						break;
 					case 0xD0:
 						// Configuration file
@@ -1189,7 +1189,7 @@ void CNetworkStuff::GetMsg( UOXSOCKET s )
 							mSock->Receive( MAXBUFFER );
 						}
 
-						Console << util::format( "Unknown message from client: 0x%02X - Ignored", packetId ) << myendl;
+                        Console::shared() << util::format( "Unknown message from client: 0x%02X - Ignored", packetId ) << myendl;
 						break;
 				}
 			}
@@ -1272,7 +1272,7 @@ void CNetworkStuff::CheckLoginMessage( void )
 		SI32 errorCode = WSAGetLastError();
 		if( errorCode != 10022 )
 		{
-			Console << static_cast<SI32>( errorCode ) << myendl;
+            Console::shared() << static_cast<SI32>( errorCode ) << myendl;
 		}
 #endif
 	}
@@ -1443,14 +1443,14 @@ void CNetworkStuff::GetLoginMsg( UOXSOCKET s )
 				}
 				catch( socket_error& )
 				{
-					Console.Warning( util::format( "Bad packet request thrown! [packet ID: 0x%x]", packetId ));
+                    Console::shared().Warning( util::format( "Bad packet request thrown! [packet ID: 0x%x]", packetId ));
 					mSock->FlushIncoming();
 					return;
 				}
 				if( test != nullptr )
 				{
 #ifdef _DEBUG_PACKET
-					Console.Log( util::format( "Logging packet ID: 0x%X", packetId ), "loginthread.txt" );
+                    Console::shared().Log( util::format( "Logging packet ID: 0x%X", packetId ), "loginthread.txt" );
 #endif
 					mSock->ReceiveLogging( test );
 					if( test->Handle() )
@@ -1576,7 +1576,7 @@ auto CNetworkStuff::LoadFirewallEntries() -> void
 								}
 								else if( data != "\n" && data != "\r" )
 								{
-									Console.Error( util::format( "Malformed IP address in banlist.ini (line: %s)", data.c_str() ));
+                                    Console::shared().Error( util::format( "Malformed IP address in banlist.ini (line: %s)", data.c_str() ));
 								}
 							}
 						}

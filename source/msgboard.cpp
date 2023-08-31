@@ -62,7 +62,7 @@ std::string GetMsgBoardFile( const SERIAL msgBoardSer, const UI08 msgType )
 			fileName = util::ntos( msgBoardSer, 16 ) + std::string( ".bbf" );
 			break;
 		default:
-			Console.Error( "GetMsgBoardFile() Invalid post type, aborting" );
+            Console::shared().Error( "GetMsgBoardFile() Invalid post type, aborting" );
 			break;
 	}
 	return fileName;
@@ -225,7 +225,7 @@ void MsgBoardList( CSocket *mSock )
 
 						if( file.fail() )
 						{
-							Console.Warning( util::format( "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.serial ));
+                            Console::shared().Warning( util::format( "Malformed MessageBoard post, MessageID: 0x%X", msgBoardPost.serial ));
 							file.close();
 						}
 						else
@@ -254,7 +254,7 @@ void MsgBoardList( CSocket *mSock )
 	if( !mSock->FinishedPostAck() )
 	{
 		mSock->PostClear();
-		Console.Error( util::format( "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )));
+        Console::shared().Error( util::format( "Failed to list all posts for MessageBoard ID: 0x%X", mSock->GetDWord( 4 )));
 	}
 }
 
@@ -288,7 +288,7 @@ bool GetMaxSerial( const std::string& fileName, UI08 *nextMsgId, const PostTypes
 
 	if( nextMsgId[1] == 0xFF && nextMsgId[2] == 0xFF && nextMsgId[3] == 0xFF )
 	{
-		Console.Warning( util::format( "Maximum Posts reached for board %s, no further posts can be created", fileName.c_str() ));
+        Console::shared().Warning( util::format( "Maximum Posts reached for board %s, no further posts can be created", fileName.c_str() ));
 		return false;
 	}
 
@@ -640,7 +640,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.Error( util::format( "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
+        Console::shared().Error( util::format( "Failed to open MessageBoard file for reading MessageID: 0x%X", msgSerial) );
 	}
 
 	if( foundEntry )
@@ -650,7 +650,7 @@ void MsgBoardOpenPost( CSocket *mSock )
 	}
 	else
 	{
-		Console.Warning( util::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
+        Console::shared().Warning( util::format( "Failed to find MessageBoard file for MessageID: 0x%X", msgSerial ));
 	}
 }
 
@@ -716,7 +716,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 		{
 			mSock->SysMessage( 9038 ); // Failed to remove post; file size not found! Check server log for more details.
 		}
-		Console.Error( util::format( "Could not fetch file size for file %s", fileName.c_str() ));
+        Console::shared().Error( util::format( "Could not fetch file size for file %s", fileName.c_str() ));
 		return;
 	}
 
@@ -805,7 +805,7 @@ void MsgBoardRemovePost( CSocket *mSock )
 	}
 	else
 	{
-		Console.Error( util::format( "Could not open file %s for reading", fileName.c_str() ));
+        Console::shared().Error( util::format( "Could not open file %s for reading", fileName.c_str() ));
 	}
 
 	// If we found the post to remove previously, remove it at this point, since all potential replies to it have been removed already
@@ -880,7 +880,7 @@ auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType ) -> bool
 			totalEntries = Escort->NumEntries();
 			if( totalEntries == 0 )
 			{
-				Console.Error( "MsgBoardPostQuest() No msgboard dfn entries found" );
+                Console::shared().Error( "MsgBoardPostQuest() No msgboard dfn entries found" );
 				return false;
 			}
 
@@ -889,7 +889,7 @@ auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType ) -> bool
 			EscortData	= FileLookup->FindEntry( sect, msgboard_def );
 			if( EscortData == nullptr )
 			{
-				Console.Error( util::format( "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() ));
+                Console::shared().Error( util::format( "MsgBoardPostQuest() Couldn't find entry %s", sect.c_str() ));
 				return false;
 			}
 			for( const auto &sec : EscortData->collection() )
@@ -946,7 +946,7 @@ auto MsgBoardPostQuest( CChar *mNPC, const QuestTypes questType ) -> bool
 			msgBoardPost.toggle		= QT_ITEMQUEST;
 			break;
 		default:
-			Console.Error( util::format( "MsgBoardPostQuest() Invalid questType %d", questType ));
+            Console::shared().Error( util::format( "MsgBoardPostQuest() Invalid questType %d", questType ));
 			return false;
 	}
 
@@ -995,7 +995,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 	// Abort out if there are no valid escort region candidates
 	if( regionCandidates.empty() )
 	{
-		Console.Error( util::format( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" ) );
+        Console::shared().Error( util::format( "MsgBoardQuestEscortCreate() No valid regions defined for escort quests" ) );
 		mNPC->Delete();
 		return;
 	}
@@ -1018,7 +1018,7 @@ void MsgBoardQuestEscortCreate( CChar *mNPC )
 
 	if( !MsgBoardPostQuest( mNPC, QT_ESCORTQUEST ))
 	{
-		Console.Error( util::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
+        Console::shared().Error( util::format( "MsgBoardQuestEscortCreate() Failed to add quest post for %s", mNPC->GetName().c_str() ));
 		mNPC->Delete();
 	}
 }
@@ -1139,7 +1139,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 				}
 				else
 				{
-					Console.Error( util::format( "Attempting to seek past end of file in %s", fileName.c_str() ));
+                    Console::shared().Error( util::format( "Attempting to seek past end of file in %s", fileName.c_str() ));
 					break;
 				}
 			}
@@ -1148,7 +1148,7 @@ void MsgBoardQuestEscortRemovePost( CChar *mNPC )
 	}
 	else
 	{
-		Console.Error( util::format( "Could not open file %s for reading", fileName.c_str() ));
+        Console::shared().Error( util::format( "Could not open file %s for reading", fileName.c_str() ));
 	}
 }
 
@@ -1171,7 +1171,7 @@ void MsgBoardRemoveFile( const SERIAL msgBoardSer )
 
 	[[maybe_unused]] int removeResult = remove( fileName.c_str() );
 
-	Console.Print( util::format( "Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer ));
+    Console::shared().Print( util::format( "Deleted MessageBoard file for Board Serial 0x%X\n", msgBoardSer ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1244,7 +1244,7 @@ void MsgBoardMaintenance( void )
 				}
 				else
 				{
-					Console.Error( util::format( "Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
+                    Console::shared().Error( util::format( "Failed to open MessageBoard file for reading: %s", entry.path().string().c_str() ));
 				}
 			}
 		}

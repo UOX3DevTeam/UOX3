@@ -368,7 +368,7 @@ bool CPIBuyItem::Handle( void )
 							}
 							break;
 						default:
-							Console.Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
+                            Console::shared().Error( " Fallout of switch statement without default. vendor.cpp, buyItem()" );
 							break;
 					}
 				}

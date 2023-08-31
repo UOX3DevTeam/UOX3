@@ -89,7 +89,7 @@ void Script::Reload( bool disp )
 	}
 	if( disp )
 	{
-		Console.Print( util::format( "Reloading %-15s: ", filename.c_str() ));
+        Console::shared().Print( util::format( "Reloading %-15s: ", filename.c_str() ));
 	}
 
 	fflush( stdout );

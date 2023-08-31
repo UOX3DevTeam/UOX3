@@ -15,7 +15,9 @@
 #include "cEffects.h"
 #include "cRaces.h"
 #include "StringUtility.hpp"
+
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
 
 #include "cServerData.h"
 #include "ObjectFactory.h"
@@ -363,13 +365,13 @@ bool CPIPlayCharacter::Handle( void )
 					{
 						CPKAccept AckGM( 0x02 );
 						tSock->Send( &AckGM );
-						Console.Print( "Accepted a Krrios client with GM Privs\n" );
+                        Console::shared().Print( "Accepted a Krrios client with GM Privs\n" );
 					}
 					else
 					{
 						CPKAccept AckNoGM( 0x01 );
 						tSock->Send( &AckNoGM );
-						Console.Print( "Accepted a Krrios client without GM Privs\n" );
+						Console::shared().Print( "Accepted a Krrios client without GM Privs\n" );
 					}
 				}
 				if( !disconnect )
@@ -850,11 +852,11 @@ bool CPICreateCharacter::Handle( void )
 					// No start locations found, use a default hardcoded one
 					if( useYoungLocations )
 					{
-						Console.Error( "No young starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+                        Console::shared().Error( "No young starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
 					}
 					else
 					{
-						Console.Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
+                        Console::shared().Error( "No starting locations found in ini file; sending new character to Sweet Dreams Inn (1495, 1629, 10)." );
 					}
 					SI16 startX;
 					SI16 startY;
@@ -899,13 +901,13 @@ bool CPICreateCharacter::Handle( void )
 				{
 					CPKAccept AckGM( 0x02 );
 					tSock->Send( &AckGM );
-					Console.Print( "Accepted a Krrios client with GM Privs\n" );
+                    Console::shared().Print( "Accepted a Krrios client with GM Privs\n" );
 				}
 				else
 				{
 					CPKAccept AckNoGM( 0x01 );
 					tSock->Send( &AckNoGM );
-					Console.Print( "Accepted a Krrios client without GM Privs\n" );
+                    Console::shared().Print( "Accepted a Krrios client without GM Privs\n" );
 				}
 			}
 
@@ -1032,7 +1034,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 				mChar->SetIntelligence( extStats ? 20 : 10 );
 				break;
 			default:
-				Console.Error( util::format( "Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid profession - no skills or stats assigned! (0x%X, %s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				break;
 		}
 	}
@@ -1049,7 +1051,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 80 )
 			{
 				// If ExtendedStartingStats() is false, allow a total of 80 starting statpoints
-				Console.Error( util::format( "Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid stats (over 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / static_cast<R32>( totalstats ));
 				mChar->SetStrength( static_cast<UI08>(Capped( percheck * 80, 10.0f, 60.0f )));
 				percheck = ( mChar->GetDexterity() / static_cast<R32>( totalstats ));
@@ -1059,7 +1061,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.Error( util::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid stats (under 80 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else if( totalstats != 90 && cwmWorldState->ServerData()->ExtendedStartingStats() )
@@ -1067,7 +1069,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			if( totalstats > 90 )
 			{
 				// If ExtendedStartingStats() is true, allow a total of 90 starting statpoints
-				Console.Error( util::format( "Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid stats (over 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 				percheck = ( mChar->GetStrength() / static_cast<R32>( totalstats ));
 				mChar->SetStrength( static_cast<UI08>(Capped( percheck * 90, 10.0f, 60.0f )));
 				percheck = ( mChar->GetDexterity() / static_cast<R32>( totalstats ));
@@ -1077,7 +1079,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			}
 			else
 			{
-				Console.Error( util::format( "Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid stats (under 90 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 
@@ -1104,7 +1106,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[2];
 			if( totalskills < 100 )
 			{
-				Console.Error( util::format( "Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid skills (under 100 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 		else // If ExtendedStartingSkills is enabled, allow for the fourth starting skill
@@ -1125,7 +1127,7 @@ void CPICreateCharacter::SetNewCharSkillsStats( CChar *mChar )
 			totalskills += skillValue[3];
 			if( totalskills < 120 )
 			{
-				Console.Error( util::format( "Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
+                Console::shared().Error( util::format( "Character created with invalid skills (under 120 total): 0x%X, (%s)", mChar->GetSerial(), mChar->GetName().c_str() ));
 			}
 		}
 	}
@@ -1399,7 +1401,7 @@ void StartChar( CSocket *mSock, bool onCreate )
 
 			CPTime tmPckt( currentHour, currentMins, currentSecs );	mSock->Send( &tmPckt );
 
-			mSock->SysMessage( "%s v%s.%s [%s] ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR );
+			mSock->SysMessage( "%s v%s.%s [%s] ", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR );
 
 			if( cwmWorldState->ServerData()->ServerJoinPartAnnouncementsStatus() )
 			{

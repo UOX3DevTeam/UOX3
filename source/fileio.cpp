@@ -163,7 +163,7 @@ void LoadSkills( void )
 							}
 							else
 							{
-								Console.Warning( util::format( "Unknown tag in skills.dfn: %s", data.c_str() ));
+                                Console::shared().Warning( util::format( "Unknown tag in skills.dfn: %s", data.c_str() ));
 							}
 						}
 					}
@@ -204,7 +204,7 @@ void LoadSpawnRegions( void )
 				}
 				else
 				{
-					Console.Warning( util::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i ));
+					Console::shared().Warning( util::format( "spawn.dfn has a duplicate REGIONSPAWN entry, Entry Number: %u", i ));
 				}
 			}
 		}
@@ -256,7 +256,7 @@ void LoadRegions( void )
 				}
 				else
 				{
-					Console.Warning( util::format( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i ));
+                    Console::shared().Warning( util::format( "regions.dfn has a duplicate REGION entry, Entry Number: %u", i ));
 				}
 			}				
 		}
@@ -264,7 +264,7 @@ void LoadRegions( void )
 	if( regEntry == "" )
 	{
 		// No regions found? :O Shut down UOX3, or we'll run into trouble later.
-		Console.PrintFailed();
+        Console::shared().PrintFailed();
 		Shutdown( FATAL_UOX3_ALLOC_MAPREGIONS );
 	}
 
@@ -366,9 +366,9 @@ void LoadTeleportLocations( void )
 
 	if( !FileExists( filename ))
 	{
-		Console << myendl;
-		Console.Error( util::format( " Failed to open teleport data script %s", filename.c_str() ));
-		Console.Error( util::format( " Teleport Data not found" ));
+        Console::shared() << myendl;
+        Console::shared().Error( util::format( " Failed to open teleport data script %s", filename.c_str() ));
+        Console::shared().Error( util::format( " Teleport Data not found" ));
 		cwmWorldState->SetKeepRun( false );
 		cwmWorldState->SetError( true );
 		return;
@@ -426,7 +426,7 @@ void LoadTeleportLocations( void )
 						}
 						else
 						{
-							Console.Error( "Insufficient parameters for teleport entry" );
+                            Console::shared().Error( "Insufficient parameters for teleport entry" );
 						}
 					}
 				}
@@ -710,7 +710,7 @@ void LoadPlaces( void )
 			{
 				if( cwmWorldState->goPlaces.find( static_cast<UI16>( entryNum )) != cwmWorldState->goPlaces.end() )
 				{
-					Console.Warning( util::format( "Doubled up entry in Location.dfn (%u)", entryNum ));
+                    Console::shared().Warning( util::format( "Doubled up entry in Location.dfn (%u)", entryNum ));
 				}
 				toAdd = &cwmWorldState->goPlaces[static_cast<UI16>( entryNum )];
 				if( toAdd != nullptr )

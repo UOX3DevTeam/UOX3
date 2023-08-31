@@ -1886,7 +1886,7 @@ JSBool CBase_TextMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Item JS Method .TextMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2137,7 +2137,7 @@ JSBool CBase_Delete( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Item JS Method .Delete(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2495,7 +2495,7 @@ JSBool CSocket_Disconnect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unu
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Socket JS Method .Disconnect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 	return JS_TRUE;
@@ -2705,7 +2705,7 @@ JSBool CBase_Teleport( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Item JS Method .Teleport(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2915,7 +2915,7 @@ JSBool CMisc_SellTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Socket JS Method .SellTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -2999,7 +2999,7 @@ JSBool CMisc_BuyFrom( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[m
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Socket JS Method .BuyFrom(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3128,7 +3128,7 @@ JSBool CMisc_RemoveSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Item JS Method .RemoveSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3659,7 +3659,7 @@ JSBool CChar_OpenBank( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char JS Method .OpenBank(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -3704,7 +3704,7 @@ JSBool CSocket_OpenContainer( JSContext *cx, JSObject *obj, uintN argc, jsval *a
 			if( retVal == JS_FALSE )
 			{
 				// Dummy function not found, let shard admin know!
-				Console.Warning( util::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+                Console::shared().Warning( util::format( "Script context lost after using Socket JS Method .OpenContainer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 			}
 		}
 	}
@@ -3752,7 +3752,7 @@ JSBool CChar_OpenLayer( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [
 				if( retVal == JS_FALSE )
 				{
 					// Dummy function not found, let shard admin know!
-					Console.Warning( util::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+                    Console::shared().Warning( util::format( "Script context lost after using Char JS Method .OpenLayer(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 				}
 			}
 		}
@@ -3844,7 +3844,7 @@ JSBool CChar_TurnToward( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .TurnToward(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -4935,7 +4935,7 @@ JSBool CItem_SetCont( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Item JS Method .SetCont(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -5662,7 +5662,7 @@ JSBool CItem_PlaceInPack( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Item JS Method .PlaceInPack(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6150,7 +6150,7 @@ JSBool CChar_YellMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv,
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char JS Method .YellMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6212,7 +6212,7 @@ JSBool CChar_WhisperMessage( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char JS Method .WhisperMessage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -6486,7 +6486,7 @@ JSBool CChar_AddSpell( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[
 			if( retVal == JS_FALSE )
 			{
 				// Dummy function not found, let shard admin know!
-				Console.Warning( util::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+                Console::shared().Warning( util::format( "Script context lost after using Char JS Method .AddSpell(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 			}
 		}
 	}
@@ -6580,7 +6580,7 @@ JSBool CBase_Refresh( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]]
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char/Item JS Method .Refresh(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7344,7 +7344,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( util::format( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
+    Console::shared().Print( util::format( "WalkTo: Moving character 0x%X to (%i,%i) with a maximum of %i steps\n", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -7369,7 +7369,7 @@ JSBool CChar_WalkTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char JS Method .WalkTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 	return JS_TRUE;
@@ -7457,7 +7457,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 
 	cMove->FlushPath();
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( util::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
+    Console::shared().Print( util::format( "RunTo: Moving character %i to (%i,%i) with a maximum of %i steps", cMove->GetSerial(), gx, gy, maxSteps ));
 #endif
 	if( cMove->GetNpcWander() != WT_PATHFIND )
 	{
@@ -7483,7 +7483,7 @@ JSBool CChar_RunTo( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Char JS Method .RunTo(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7672,7 +7672,7 @@ JSBool CItem_Glow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Item JS Method .Glow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7736,7 +7736,7 @@ JSBool CItem_UnGlow( JSContext *cx, JSObject *obj, [[maybe_unused]] uintN argc, 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Item JS Method .UnGlow(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -7885,7 +7885,7 @@ JSBool CChar_Recall( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .Recall(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -8061,7 +8061,7 @@ JSBool CChar_Kill( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused]] js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .Kill(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -8102,7 +8102,7 @@ JSBool CChar_Resurrect( JSContext *cx, JSObject *obj, uintN argc, [[maybe_unused
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .Resurrect(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -8319,7 +8319,7 @@ JSBool CConsole_Print( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Print( arg0.toString() );
+    Console::shared().Print( arg0.toString() );
 	return JS_TRUE;
 }
 
@@ -8341,12 +8341,12 @@ JSBool CConsole_Log( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc, 
 	JSEncapsulate arg1;
 	if( argc == 1 )
 	{
-		Console.Log( arg0.toString() );
+        Console::shared().Log( arg0.toString() );
 	}
 	else
 	{
 		arg1.SetContext( cx, &( argv[1] ));
-		Console.Log( arg0.toString(), arg1.toString() );
+        Console::shared().Log( arg0.toString(), arg1.toString() );
 	}
 	return JS_TRUE;
 }
@@ -8365,7 +8365,7 @@ JSBool CConsole_Error( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Error( arg0.toString() );
+    Console::shared().Error( arg0.toString() );
 	return JS_TRUE;
 }
 
@@ -8383,7 +8383,7 @@ JSBool CConsole_Warning( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.Warning( arg0.toString() );
+    Console::shared().Warning( arg0.toString() );
 	return JS_TRUE;
 }
 
@@ -8400,7 +8400,7 @@ JSBool CConsole_PrintSectionBegin( [[maybe_unused]] JSContext *cx, [[maybe_unuse
 		ScriptError( cx, "PrintSectionBegin: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 	return JS_TRUE;
 }
 
@@ -8417,7 +8417,7 @@ JSBool CConsole_TurnYellow( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 		ScriptError( cx, "TurnYellow: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnYellow();
+    Console::shared().TurnYellow();
 	return JS_TRUE;
 }
 
@@ -8434,7 +8434,7 @@ JSBool CConsole_TurnRed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObje
 		ScriptError( cx, "TurnRed: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnRed();
+    Console::shared().TurnRed();
 	return JS_TRUE;
 }
 
@@ -8451,7 +8451,7 @@ JSBool CConsole_TurnGreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSOb
 		ScriptError( cx, "TurnGreen: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnGreen();
+    Console::shared().TurnGreen();
 	return JS_TRUE;
 }
 
@@ -8468,7 +8468,7 @@ JSBool CConsole_TurnBlue( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObj
 		ScriptError( cx, "TurnBlue: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnBlue();
+    Console::shared().TurnBlue();
 	return JS_TRUE;
 }
 
@@ -8485,7 +8485,7 @@ JSBool CConsole_TurnNormal( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSO
 		ScriptError( cx, "TurnNormal: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnNormal();
+    Console::shared().TurnNormal();
 	return JS_TRUE;
 }
 
@@ -8502,7 +8502,7 @@ JSBool CConsole_TurnBrightWhite( [[maybe_unused]] JSContext *cx, [[maybe_unused]
 		ScriptError( cx, "TurnBrightWhite: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.TurnBrightWhite();
+    Console::shared().TurnBrightWhite();
 	return JS_TRUE;
 }
 
@@ -8528,7 +8528,7 @@ JSBool CConsole_PrintDone( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN 
 	}
 	if( normalDone )
 	{
-		Console.PrintDone();
+        Console::shared().PrintDone();
 	}
 	else
 	{
@@ -8559,7 +8559,7 @@ JSBool CConsole_PrintFailed( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 	}
 	if( normalFailed )
 	{
-		Console.PrintFailed();
+        Console::shared().PrintFailed();
 	}
 	else
 	{
@@ -8581,7 +8581,7 @@ JSBool CConsole_PrintPassed( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 		ScriptError( cx, "PrintPassed: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.PrintPassed();
+    Console::shared().PrintPassed();
 	return JS_TRUE;
 }
 
@@ -8598,7 +8598,7 @@ JSBool CConsole_ClearScreen( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 		ScriptError( cx, "ClearScreen: Invalid number of arguments (takes 0)" );
 		return JS_FALSE;
 	}
-	Console.ClearScreen();
+    Console::shared().ClearScreen();
 	return JS_TRUE;
 }
 
@@ -8616,7 +8616,7 @@ JSBool CConsole_PrintBasedOnVal( JSContext *cx, [[maybe_unused]] JSObject *obj, 
 		return JS_FALSE;
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
-	Console.PrintBasedOnVal( arg0.toBool() );
+    Console::shared().PrintBasedOnVal( arg0.toBool() );
 	return JS_TRUE;
 }
 
@@ -8636,7 +8636,7 @@ JSBool CConsole_MoveTo( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN arg
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
-	Console.MoveTo( arg0.toInt(), arg1.toInt() );
+    Console::shared().MoveTo( arg0.toInt(), arg1.toInt() );
 	return JS_TRUE;
 }
 
@@ -8663,7 +8663,7 @@ JSBool CConsole_PrintSpecial( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 	}
 	JSEncapsulate arg0( cx, &( argv[0] ));
 	JSEncapsulate arg1( cx, &( argv[1] ));
-	Console.PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
+    Console::shared().PrintSpecial( arg0.toInt(), arg1.toString().c_str() );
 	return JS_TRUE;
 }
 
@@ -8948,7 +8948,7 @@ JSBool CItem_Carve( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Item JS Method .Carve(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9869,7 +9869,7 @@ JSBool CChar_Damage( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[ma
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .Damage(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9918,7 +9918,7 @@ JSBool CChar_InitiateCombat( JSContext *cx, JSObject *obj, uintN argc, jsval *ar
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .InitiateCombat(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -9960,7 +9960,7 @@ JSBool CChar_InvalidateAttacker( JSContext *cx, JSObject *obj, uintN argc, [[may
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .InvalidateAttacker(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 
@@ -10391,7 +10391,7 @@ JSBool CChar_Heal( JSContext *cx, JSObject *obj, uintN argc, jsval *argv, [[mayb
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after using Character JS Method .Heal(). Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", origScriptID ));
 		}
 	}
 

@@ -120,7 +120,7 @@ void cRaces::Load()
 		{
 			if( util::upper( tag ) != "MODCOUNT" )
 			{
-				Console.Error( "MODCOUNT must come before any entries!" );
+                Console::shared().Error( "MODCOUNT must come before any entries!" );
 				DefaultInitCombat();
 			}
 			else
@@ -128,7 +128,7 @@ void cRaces::Load()
 				UI32 modifierCount = static_cast<UI32>( std::stoul( CombatMods->GrabData(), nullptr, 0 ));
 				if( modifierCount < 4 )
 				{
-					Console.Warning( "MODCOUNT must be more >= 4, or it uses the defaults!" );
+                    Console::shared().Warning( "MODCOUNT must be more >= 4, or it uses the defaults!" );
 					DefaultInitCombat();
 				}
 				else
@@ -1025,38 +1025,38 @@ void cRaces::DebugPrint( RACEID x )
 	if( InvalidRace( x ))
 		return;
 
-	Console << "Race ID: " << x << myendl;
-	Console << "Race: " << races[x]->Name() << myendl;
+    Console::shared() << "Race ID: " << x << myendl;
+    Console::shared() << "Race: " << races[x]->Name() << myendl;
 	if( races[x]->RequiresBeard() )
 	{
-		Console << "Req Beard: Yes" << myendl;
+        Console::shared() << "Req Beard: Yes" << myendl;
 	}
 	else
 	{
-		Console << "Req Beard: No" << myendl;
+        Console::shared() << "Req Beard: No" << myendl;
 	}
 	if( races[x]->NoBeard() )
 	{
-		Console << "No Beard: Yes" << myendl;
+        Console::shared() << "No Beard: Yes" << myendl;
 	}
 	else
 	{
-		Console << "No Beard: No" << myendl;
+        Console::shared() << "No Beard: No" << myendl;
 	}
 	if( races[x]->IsPlayerRace() )
 	{
-		Console << "Player Race: Yes" << myendl;
+        Console::shared() << "Player Race: Yes" << myendl;
 	}
 	else
 	{
-		Console << "Player Race: No" << myendl;
+        Console::shared() << "Player Race: No" << myendl;
 	}
-	Console << "Restrict Gender: " << races[x]->GenderRestriction() << myendl;
-	Console << "LightLevel: " << races[x]->LightLevel() << myendl;
-	Console << "NightVistion: " << races[x]->NightVision() << myendl;
-	Console << "ArmorRestrict: " << races[x]->ArmourClassRestriction() << myendl;
-	Console << "LangMin: " << races[x]->LanguageMin() << myendl;
-	Console << "Vis Distance: " << races[x]->VisibilityRange() << myendl << myendl;
+    Console::shared() << "Restrict Gender: " << races[x]->GenderRestriction() << myendl;
+    Console::shared() << "LightLevel: " << races[x]->LightLevel() << myendl;
+    Console::shared() << "NightVistion: " << races[x]->NightVision() << myendl;
+    Console::shared() << "ArmorRestrict: " << races[x]->ArmourClassRestriction() << myendl;
+    Console::shared() << "LangMin: " << races[x]->LanguageMin() << myendl;
+    Console::shared() << "Vis Distance: " << races[x]->VisibilityRange() << myendl << myendl;
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2036,7 +2036,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					raceDiff = std::stoi( data, nullptr, 0 );
 					if( raceDiff > static_cast<SI32>( racialEnemies.size() ))
 					{
-						Console << "Error in race " << static_cast<UI32>( sectNum ) << ", invalid enemy race " << raceDiff << myendl;
+                        Console::shared() << "Error in race " << static_cast<UI32>( sectNum ) << ", invalid enemy race " << raceDiff << myendl;
 					}
 					else
 					{
@@ -2048,7 +2048,7 @@ void CRace::Load( size_t sectNum, SI32 modCount )
 					raceDiff = std::stoi( data, nullptr, 0 );
 					if( raceDiff > static_cast<SI32>( racialEnemies.size() ))
 					{
-						Console << "Error in race " << static_cast<UI32>( sectNum ) << ", invalid ally race " <<  raceDiff << myendl;
+                        Console::shared() << "Error in race " << static_cast<UI32>( sectNum ) << ", invalid ally race " <<  raceDiff << myendl;
 					}
 					else
 					{

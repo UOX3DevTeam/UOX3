@@ -214,12 +214,12 @@ void Command_AddAccount( CSocket *s)
 		if( actbTemp.wAccountIndex == AB_INVALID_ID )
 		{
 			Accounts->AddAccount( newUsername, newPassword, "NA", newFlags );
-			Console << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
+            Console::shared() << "o Account added ingame: " << newUsername << ":" << newPassword << ":" << newFlags << myendl;
 			s->SysMessage( 9019, newUsername.c_str(), newPassword.c_str(), newFlags ); // Account Added: %s:%s:%i
 		}
 		else
 		{
-			Console << "o Account was not added, an account with that username already exists!" << myendl;
+            Console::shared() << "o Account was not added, an account with that username already exists!" << myendl;
 			s->SysMessage( 9020 ); // Account not added, an account with that username already exists!
 		}
 	}
@@ -1114,7 +1114,7 @@ void Command_ReportBug( CSocket *s )
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( util::format( "Unable to open bugs log file %s!", logName.c_str() ));
+        Console::shared().Error( util::format( "Unable to open bugs log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];
@@ -1512,7 +1512,7 @@ void CCommands::CommandReset()
 void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript *toRegister )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( util::format( "   UnRegistering command %s\n", cmdName.c_str() ));
+    Console::shared().Print( util::format( "   UnRegistering command %s\n", cmdName.c_str() ));
 #endif
 	std::string upper	= cmdName;
 	upper				= util::upper( upper );
@@ -1524,7 +1524,7 @@ void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript
 #if defined( UOX_DEBUG_MODE )
 	else
 	{
-		Console.Print( util::format( "         Command \"%s\" was not found.\n", cmdName.c_str() ));
+        Console::shared().Print( util::format( "         Command \"%s\" was not found.\n", cmdName.c_str() ));
 	}
 #endif
 }
@@ -1537,17 +1537,17 @@ void CCommands::UnRegister( const std::string &cmdName, [[maybe_unused]] cScript
 void CCommands::Register( const std::string &cmdName, UI16 scriptId, UI08 cmdLevel, bool isEnabled )
 {
 #if defined( UOX_DEBUG_MODE )
-	Console.Print( " " );
-	Console.MoveTo( 15 );
-	Console.Print( "Registering " );
-	Console.TurnYellow();
-	Console.Print( cmdName );
-	Console.TurnNormal();
-	Console.MoveTo( 50 );
-	Console.Print( "@ command level " );
-	Console.TurnYellow();
-	Console.Print( util::format( "%i\n", cmdLevel ));
-	Console.TurnNormal();
+    Console::shared().Print( " " );
+    Console::shared().MoveTo( 15 );
+    Console::shared().Print( "Registering " );
+    Console::shared().TurnYellow();
+    Console::shared().Print( cmdName );
+    Console::shared().TurnNormal();
+    Console::shared().MoveTo( 50 );
+    Console::shared().Print( "@ command level " );
+    Console::shared().TurnYellow();
+    Console::shared().Print( util::format( "%i\n", cmdLevel ));
+    Console::shared().TurnNormal();
 #endif
 	std::string upper	= cmdName;
 	upper				= util::upper( upper );

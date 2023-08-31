@@ -114,7 +114,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in AMOUNT tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_DAMAGE:
@@ -134,7 +134,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in ATT/DAMAGE tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_AC:				applyTo->SetArmourClass( static_cast<UI08>( ndata ));	break;
@@ -177,7 +177,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					}
 				}
 				else
-					Console.Warning( util::format( "Invalid data found in DEF tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in DEF tag inside item script [%s]", sectionId.c_str() ));
 				break;
 			case DFNTAG_DEFBONUS:
 				if( ndata >= 0 )
@@ -193,7 +193,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in DEFBONUS tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in DEFBONUS tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_DEX:
@@ -210,7 +210,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in DEX tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in DEX tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_DEXADD:			applyTo->SetDexterity2( static_cast<SI16>( ndata ));					break;
@@ -249,11 +249,11 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				auto toFind = FileLookup->FindEntry( scriptEntry, items_def );
 				if( toFind == nullptr )
 				{
-					Console.Warning( util::format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
+                    Console::shared().Warning( util::format( "Invalid script entry (%s) called with GET tag, item serial 0x%X", scriptEntry.c_str(), applyTo->GetSerial() ));
 				}
 				else if( toFind == toApply )
 				{
-					Console.Warning( util::format( "Infinite loop avoided with GET tag inside item script [%s]", scriptEntry.c_str() ));
+                    Console::shared().Warning( util::format( "Infinite loop avoided with GET tag inside item script [%s]", scriptEntry.c_str() ));
 				}
 				else
 				{
@@ -307,11 +307,11 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					CScriptSection *toFind = FileLookup->FindEntry( scriptEntry, items_def );
 					if( toFind == NULL )
 					{
-						Console.Warning( util::format( "Invalid script entry (%s) called with %s tag, item serial 0x%X", scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial() ));
+                        Console::shared().Warning( util::format( "Invalid script entry (%s) called with %s tag, item serial 0x%X", scriptEntry.c_str(), tagName.c_str(), applyTo->GetSerial() ));
 					}
 					else if( toFind == toApply )
 					{
-						Console.Warning( util::format( "Infinite loop avoided with %s tag inside item script [%s]", tagName.c_str(), scriptEntry.c_str() ));
+                        Console::shared().Warning( util::format( "Infinite loop avoided with %s tag inside item script [%s]", tagName.c_str(), scriptEntry.c_str() ));
 					}
 					else
 					{
@@ -334,7 +334,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in HP tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in HP tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_HIDAMAGE:		applyTo->SetHiDamage( static_cast<SI16>( ndata ));		break;
@@ -483,7 +483,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in RESISTFIRE tag inside Item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in RESISTFIRE tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_RESISTCOLD:
@@ -500,7 +500,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in RESISTCOLD tag inside Item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in RESISTCOLD tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_RESISTLIGHTNING:
@@ -517,7 +517,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in RESISTLIGHTNING tag inside Item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in RESISTLIGHTNING tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_RESISTPOISON:
@@ -534,7 +534,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in RESISTPOISON tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_RESTOCK:	
@@ -562,7 +562,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in SPELLS tag inside Item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_TYPE:
@@ -596,7 +596,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in VALUE tag inside item script [%s]", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in VALUE tag inside item script [%s]", sectionId.c_str() ));
 				}
 				break;
 			case DFNTAG_WEIGHT:
@@ -606,7 +606,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			case DFNTAG_WEIGHTMAX:		applyTo->SetWeightMax( ndata );				break;
 			case DFNTAG_WIPE:			applyTo->SetWipeable( ndata != 0 );			break;
 			case DFNTAG_ADDMENUITEM:
-				Console.Print( cdata );
+                Console::shared().Print( cdata );
 				break;
 			case DFNTAG_CUSTOMSTRINGTAG:
 			{
@@ -640,7 +640,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in CUSTOMSTRINGTAG tag inside Item script [%s] - Supported data format: <tagName> <text>", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in CUSTOMSTRINGTAG tag inside Item script [%s] - Supported data format: <tagName> <text>", sectionId.c_str() ));
 				}
 				break;
 			}
@@ -670,12 +670,12 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 					applyTo->SetTag( customTagName, customTag );
 					if( count > 2 )
 					{
-						Console.Warning( util::format( "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionId.c_str() ));
+                        Console::shared().Warning( util::format( "Multiple values detected for CUSTOMINTTAG in Item script [%s] - only first value will be used! Supported data format: <tagName> <value>", sectionId.c_str() ));
 					}
 				}
 				else
 				{
-					Console.Warning( util::format( "Invalid data found in CUSTOMINTTAG tag in Item script [%s] - Supported data format: <tagName> <value>", sectionId.c_str() ));
+                    Console::shared().Warning( util::format( "Invalid data found in CUSTOMINTTAG tag in Item script [%s] - Supported data format: <tagName> <value>", sectionId.c_str() ));
 				}
 				break;
 			}
@@ -733,7 +733,7 @@ auto ApplyItemSection( CItem *applyTo, CScriptSection *toApply, std::string sect
 			}
 			default:
 			{
-				Console.Warning( util::format( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));
+                Console::shared().Warning( util::format( "Unknown items dfn tag %i %s %i %i ", tag, cdata.c_str(), ndata, odata ));
 				break;
 			}
 		}
@@ -759,7 +759,7 @@ CItem * cItem::CreateItem( CSocket *mSock, CChar *mChar, const UI16 itemId, cons
 		if( inPack && !ValidateObject( mChar->GetPackItem() ))
 		{
 			std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
-			Console.Warning( util::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
+            Console::shared().Warning( util::format( "CreateItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 			return nullptr;
 		}
 
@@ -838,7 +838,7 @@ CItem * cItem::CreateScriptItem( CSocket *mSock, CChar *mChar, const std::string
 	if( inPack && !ValidateObject( mChar->GetPackItem() ))
 	{
 		std::string charName = GetNpcDictName( mChar, nullptr, NRS_SYSTEM );
-		Console.Warning( util::format( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
+        Console::shared().Warning( util::format( "CreateScriptItem(): Character %s(0x%X) has no pack, item creation aborted.", charName.c_str(), mChar->GetSerial() ));
 		return nullptr;
 	}
 
@@ -1166,7 +1166,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 	CScriptSection *itemCreate = FileLookup->FindEntry( ourItem, items_def );
 	if( itemCreate == nullptr )
 	{
-		Console.Error( util::format( "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() ));
+        Console::shared().Error( util::format( "CreateBaseScriptItem(): Bad script item %s (Item Not Found).", ourItem.c_str() ));
 		return nullptr;
 	}
 
@@ -1189,7 +1189,7 @@ CItem * cItem::CreateBaseScriptItem( CItem *mCont, std::string ourItem, const UI
 
 		if( !ApplyItemSection( iCreated, itemCreate, ourItem ))
 		{
-			Console.Error( "Trying to apply an item section failed" );
+            Console::shared().Error( "Trying to apply an item section failed" );
 		}
 
 		// If maxHP has not been defined for a new item, set it to the same value as HP
@@ -1370,7 +1370,7 @@ auto DecayItem( CItem& toDecay, const UI32 nextDecayItems, UI32 nextDecayItemsIn
 	if( toDecay.CanBeObjType( OT_MULTI ))
 	{
 		toDecay.SetDecayTime( nextDecayItems );
-		Console.Warning( util::format( "Warning: Prevented multi (serial: 0x%X) from decaying!", toDecay.GetSerial() ));
+        Console::shared().Warning( util::format( "Warning: Prevented multi (serial: 0x%X) from decaying!", toDecay.GetSerial() ));
 	}
 	toDecay.Delete();  // This is a problem, if done in a ierator loop
 	return true;

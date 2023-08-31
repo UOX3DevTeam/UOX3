@@ -248,7 +248,7 @@ bool CPIFirstLogin::Handle( void )
 				if( !cwmWorldState->ServerData()->ClientSupport4000() && !cwmWorldState->ServerData()->ClientSupport5000() && !cwmWorldState->ServerData()->ClientSupport6000() )
 				{
 					t = LDR_COMMSFAILURE;
-					Console << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
+                    Console::shared() << "Login denied - unsupported client (4.0.0 - 6.0.4.x). See UOX.INI..." << myendl;
 				}
 			}
 			else if( tSock->ClientType() <= CV_KR3D && tSock->ClientType() != CV_DEFAULT )
@@ -256,7 +256,7 @@ bool CPIFirstLogin::Handle( void )
 				if( !cwmWorldState->ServerData()->ClientSupport6050() )
 				{
 					t = LDR_COMMSFAILURE;
-					Console << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
+                    Console::shared() << "Login denied - unsupported client (6.0.5.0 - 6.0.14.2). See UOX.INI..." << myendl;
 				}
 			}
 			else if( tSock->ClientType() <= CV_SA3D && tSock->ClientType() != CV_DEFAULT )
@@ -264,7 +264,7 @@ bool CPIFirstLogin::Handle( void )
 				if( !cwmWorldState->ServerData()->ClientSupport7000() )
 				{
 					t = LDR_COMMSFAILURE;
-					Console << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
+                    Console::shared() << "Login denied - unsupported client (7.0.0.0 - 7.0.8.2). See UOX.INI..." << myendl;
 				}
 			}
 			else if( tSock->ClientType() <= CV_HS3D && tSock->ClientType() != CV_DEFAULT  )
@@ -274,7 +274,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport7090() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.9.0 - 7.0.15.1). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.9.0 - 7.0.15.1). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() < CVS_70240 )
@@ -282,7 +282,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport70160() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.16.0 - 7.0.23.1). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() < CVS_70300 )
@@ -290,7 +290,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport70240() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.24.0+). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() < CVS_70331 )
@@ -298,7 +298,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport70300() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.30.0+). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() < CVS_704565 )
@@ -306,7 +306,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport70331() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.33.1+). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() < CVS_70610 )
@@ -314,7 +314,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport704565() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.45.65+). See UOX.INI..." << myendl;
 					}
 				}
 				else if( tSock->ClientVerShort() >= CVS_70610 )
@@ -322,7 +322,7 @@ bool CPIFirstLogin::Handle( void )
 					if( !cwmWorldState->ServerData()->ClientSupport70610() )
 					{
 						t = LDR_COMMSFAILURE;
-						Console << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..." << myendl;
+                        Console::shared() << "Login denied - unsupported client (7.0.61.0+). See UOX.INI..." << myendl;
 					}
 				}
 			}
@@ -349,7 +349,7 @@ bool CPIFirstLogin::Handle( void )
 	{
 		actbTemp->dwLastIP = CalcSerial( tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1() );
 		auto temp = util::format( "Client [%i.%i.%i.%i] connected using Account '%s'.", tSock->ClientIP4(), tSock->ClientIP3(), tSock->ClientIP2(), tSock->ClientIP1(), username.c_str() );
-		Console.Log( temp , "server.log" );
+        Console::shared().Log( temp , "server.log" );
 		messageLoop << temp;
 
 		actbTemp->wFlags.set( AB_FLAGS_ONLINE, true );
@@ -722,7 +722,7 @@ void CPINewClientVersion::Receive( void )
 		std::string verString = util::ntos( majorVersion ) + std::string( "." ) + 
 			util::ntos( minorVersion ) + std::string( ". ") + util::ntos( clientRevision ) +
 			std::string( "." ) + util::ntos( clientPrototype );
-		Console << verString << myendl;
+        Console::shared() << verString << myendl;
 
 		// Set client-version based on information received so far. We need this to be able to send the correct info during login
 		// Needs to be refined in second client-version pass (CPIClientVersion)
@@ -960,7 +960,7 @@ bool CPIClientVersion::Handle( void )
 		}
 
 		tSock->ClientVersion( major, minor, sub, letter );
-		Console << verString << myendl;
+        Console::shared() << verString << myendl;
 	}
 
 	if( strstr( verString, "Dawn" ))
@@ -1009,7 +1009,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
 				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
-				Console << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
+                Console::shared() << "Login denied - unsupported client (4.0.0.0 - 4.0.11f). See UOX.INI..." << myendl;
 			}
 		}
 		else if( CliVerMajor == 5 )
@@ -1032,7 +1032,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
 				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
-				Console << "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..." << myendl;
+                Console::shared() << "Login denied - unsupported client (5.0.0.0 - 5.0.9.1). See UOX.INI..." << myendl;
 			}
 		}
 	}
@@ -1058,7 +1058,7 @@ void CPIClientVersion::SetClientVersionShortAndType( CSocket *tSock, char *verSt
 				tSock->ForceOffline( true );
 				tSock->IdleTimeout( cwmWorldState->GetUICurrentTime() + 200 );
 				tSock->SysMessage( 1796, verString ); // Your current client-version (%s) is not supported by this shard. You will be disconnected.
-				Console << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
+                Console::shared() << "Login denied - unsupported client (6.0.0.0 - 6.0.4.0). See UOX.INI..." << myendl;
 			}
 		}
 	}
@@ -1650,7 +1650,7 @@ bool CPIGodModeToggle::Handle( void )
 	else
 	{
 		tSock->SysMessage( 1641 ); // You don't have the privs needed to run the Godclient on this server!
-		Console << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Username[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
+        Console::shared() << "Godclient detected - Account[" << ourChar->GetAccount().wAccountIndex << "] Username[" << ourChar->GetAccount().sUsername << ". Client disconnected!" << myendl;
 		Network->Disconnect( tSock );
 	}
 	return true;
@@ -3026,7 +3026,7 @@ void CPICreateCharacter::Create3DCharacter( void )
 {
 	if( ValidateObject( tSock->CurrcharObj() ))
 	{
-		Console.Error( util::format( "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+        Console::shared().Error( util::format( "CreateCharacter packet 0x8D detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
 		Network->Disconnect( tSock );
 		return;
 	}
@@ -3125,7 +3125,7 @@ void CPICreateCharacter::Create2DCharacter( void )
 {
 	if( ValidateObject( tSock->CurrcharObj() ))
 	{
-		Console.Error( util::format( "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
+        Console::shared().Error( util::format( "CreateCharacter packet 0x00 or 0xF8 detected for socket with pre-existing character (%i) attached. Disconnecting socket as safeguard against corruption!", tSock->CurrcharObj()->GetSerial() ));
 		Network->Disconnect( tSock );
 		return;
 	}
@@ -3976,7 +3976,7 @@ void CPISubcommands::Receive( void )
 		case 0x0C: {	subPacket = new CPIClosedStatusGump( tSock );		}	break;	// Closed Status Gump
 		case 0x0F:	skipOver = true;	break;	// Unknown, Sent once at Login
 		case 0x24:	skipOver = true;	break;
-		default:	Console.Print( util::format( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
+		default:	Console::shared().Print( util::format( "Packet 0xBF: Unhandled Subcommand: 0x%X\n", subCmd ));	skipOver = true;	break;
 		case 0x06:	{	subPacket = new CPIPartyCommand( tSock );		}	break;
 		case 0x07:	{	subPacket = new CPITrackingArrow( tSock );		}	break;	// Click on Quest/Tracking Arrow
 		case 0x0B:	{	subPacket = new CPIClientLanguage( tSock );		}	break;	// Client language.  3 bytes.  "ENU" for english
@@ -4706,7 +4706,7 @@ bool CPIPopupMenuSelect::Handle( void )
 					}
 					else
 					{
-						Console.Warning( util::format( "Character 0x%X has no backpack!", targChar->GetSerial() ));
+                        Console::shared().Warning( util::format( "Character 0x%X has no backpack!", targChar->GetSerial() ));
 					}
 				}
 			}
@@ -5088,7 +5088,7 @@ bool CPIPopupMenuSelect::Handle( void )
 			}
 			break;
 		default:
-			Console.Print( util::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
+            Console::shared().Print( util::format( "Popup Menu Selection Called, Player: 0x%X Selection: 0x%X\n", tSock->GetDWord( 5 ), tSock->GetWord( 9 )));
 			break;
 	}
 
@@ -5206,13 +5206,13 @@ bool CPIBandageMacro::Handle(void)
 
 				if( bandageSerial == INVALIDSERIAL )
 				{
-					Console << "Bandage Macro detected, but no bandage found!\n";
+                    Console::shared() << "Bandage Macro detected, but no bandage found!\n";
 					return false;
 				}
 
 				if( targetSerial == INVALIDSERIAL )
 				{
-					Console << "Bandage Macro detected, but no target found!\n";
+                    Console::shared() << "Bandage Macro detected, but no target found!\n";
 					return false;
 				}
 

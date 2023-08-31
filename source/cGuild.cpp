@@ -987,7 +987,7 @@ CGuild *CGuildCollection::operator[]( GUILDID num )
 //o------------------------------------------------------------------------------------------------o
 void CGuildCollection::Save( void )
 {
-	Console << "Saving guild data.... ";
+    Console::shared() << "Saving guild data.... ";
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "guilds.wsc";
 	std::ofstream toSave( filename.c_str() );
 	GUILDLIST::const_iterator pMove = gList.begin();
@@ -996,7 +996,7 @@ void CGuildCollection::Save( void )
 		( pMove->second )->Save( toSave, pMove->first );
 		++pMove;
 	}
-	Console.PrintDone();
+    Console::shared().PrintDone();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1892,7 +1892,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == nullptr )
 		{
 			s->ObjMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
-			Console.Error( util::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
+            Console::shared().Error( util::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
 			return;
 		}
 		mChar->SetGuildNumber( gNum );
@@ -1902,7 +1902,7 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( !ValidateObject( stone ))
 		{
 			s->ObjMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
-			Console.Error( util::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
+            Console::shared().Error( util::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
 			return;
 		}
 		stone->SetName( Dictionary->GetEntry( 175 )); // Guildstone for an unnamed guild
@@ -1939,14 +1939,14 @@ void CGuildCollection::PlaceStone( CSocket *s, CItem *deed )
 		if( nGuild == nullptr )
 		{
 			s->ObjMessage( 174, deed ); // Critical error adding guildstone, please contact a GM!
-			Console.Error( util::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
+            Console::shared().Error( util::format( "Critical error adding guildstone, memory allocation failed.  Attempted by player 0x%X", mChar->GetSerial() ));
 			return;
 		}
 		CItem *stone = Items->CreateItem( nullptr, mChar, 0x0ED5, 1, 0, OT_ITEM );
 		if( !ValidateObject( stone ))
 		{
 			s->ObjMessage( 176, deed ); // Critical error, unable to spawn guildstone, please contact a GM!
-			Console.Error( util::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
+            Console::shared().Error( util::format( "Critical error spawning guildstone, no stone made.  Attempted by player 0x%X", mChar->GetSerial() ));
 			return;
 		}
 		stone->SetName( util::format( Dictionary->GetEntry( 101 ), nGuild->Name().c_str() ));

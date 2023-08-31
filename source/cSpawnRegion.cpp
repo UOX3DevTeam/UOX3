@@ -822,7 +822,7 @@ auto CSpawnRegion::RegionSpawnChar() -> CChar *
 	}
 	else
 	{
-		Console.Warning( util::format( "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
+        Console::shared().Warning( util::format( "Unable to find valid location to spawn NPC in region %i", this->GetRegionNum() ));
 	}
 	return nullptr;
 }
@@ -1175,7 +1175,7 @@ void CSpawnRegion::CheckSpawned( void )
 		}
 		else
 		{
-			Console.Warning( "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
+            Console::shared().Warning( "Invalid Object found in CSpawnRegion character list, AutoCorrecting." );
 			spawnedChars.Remove( cCheck );
 		}
 	}
@@ -1192,7 +1192,7 @@ void CSpawnRegion::CheckSpawned( void )
 		}
 		else
 		{
-			Console.Warning( "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
+            Console::shared().Warning( "Invalid Object found in CSpawnRegion item list, AutoCorrecting." );
 			spawnedItems.Remove( iCheck );
 		}
 	}

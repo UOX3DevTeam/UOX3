@@ -1,7 +1,7 @@
-#ifndef __CCONSOLE__
-#define __CCONSOLE__
+#ifndef console_hpp
+#define console_hpp
 
-// In essence, CConsole is our nice generic class for outputting display
+// In essence, Console is our nice generic class for outputting display
 // As long as the interface is kept the same, we can display whatever we wish to
 // We store a set of coordinates being the window corner and size, for systems with windowing support, which describes the window we are in
 #include <utility>
@@ -17,13 +17,20 @@ const UI08 CYELLOW	= 4;
 const UI08 CBWHITE	= 5;
 
 //o------------------------------------------------------------------------------------------------o
-// CConsole
+// Console
 //o------------------------------------------------------------------------------------------------o
-class CConsole
+class Console
 {
+    Console();
+
 public:
-	CConsole();
-	~CConsole();
+    Console(const Console&) = delete ;
+    Console(Console &&) = delete ;
+    auto operator=(const Console&)->Console& = delete ;
+    auto operator=(Console&&) ->Console& = delete ;
+    static auto shared() -> Console& ;
+    
+	~Console();
 	auto Initialize() -> void;
 
 	auto Flush() -> void
@@ -32,29 +39,29 @@ public:
 	}
 	// streaming overloads, we take pointers and references
 
-	auto operator << ( const char *output ) -> CConsole&;
-	auto operator << ( const std::int8_t *output ) -> CConsole&;
-	auto operator << ( const std::uint8_t *output ) -> CConsole&;
+	auto operator << ( const char *output ) -> Console&;
+	auto operator << ( const std::int8_t *output ) -> Console&;
+	auto operator << ( const std::uint8_t *output ) -> Console&;
 
-	auto operator << ( const std::uint8_t &output ) -> CConsole&;
-	auto operator << ( const std::int8_t &output ) -> CConsole&;
-	auto operator << ( const std::uint16_t &output ) -> CConsole&;
-	auto operator << ( const std::int16_t &output ) -> CConsole&;
-	auto operator << ( const std::uint32_t &output ) -> CConsole&;
-	auto operator << ( const std::int32_t &output ) -> CConsole&;
-	auto operator << ( const std::uint64_t &output ) -> CConsole&;
-	auto operator << ( const std::int64_t &output ) -> CConsole&;
-	auto operator << ( const float &output ) -> CConsole&;
-	auto operator << ( const double &output ) -> CConsole&;
-	auto operator << ( const long double &output ) -> CConsole&;
+	auto operator << ( const std::uint8_t &output ) -> Console&;
+	auto operator << ( const std::int8_t &output ) -> Console&;
+	auto operator << ( const std::uint16_t &output ) -> Console&;
+	auto operator << ( const std::int16_t &output ) -> Console&;
+	auto operator << ( const std::uint32_t &output ) -> Console&;
+	auto operator << ( const std::int32_t &output ) -> Console&;
+	auto operator << ( const std::uint64_t &output ) -> Console&;
+	auto operator << ( const std::int64_t &output ) -> Console&;
+	auto operator << ( const float &output ) -> Console&;
+	auto operator << ( const double &output ) -> Console&;
+	auto operator << ( const long double &output ) -> Console&;
 
-	auto operator<<( CBaseObject *output) -> CConsole&;
-	auto operator<<( const CBaseObject *output) -> CConsole&;
-	auto operator<<( const CBaseObject &output) -> CConsole&;
+	auto operator<<( CBaseObject *output) -> Console&;
+	auto operator<<( const CBaseObject *output) -> Console&;
+	auto operator<<( const CBaseObject &output) -> Console&;
 
-	auto operator<<( const std::string &outPut ) -> CConsole&;
+	auto operator<<( const std::string &outPut ) -> Console&;
 
-	auto operator << ( CEndL& myObj ) -> CConsole&;
+	auto operator << ( CEndL& myObj ) -> Console&;
 
 	auto Print( const std::string& toPrint) -> void;
 	auto Log(const std::string& msg, const std::string& filename) -> void;
@@ -98,7 +105,7 @@ private:
 	auto WindowSize() -> std::pair<int, int>;
 	auto DoClearScreen() -> void;
 	auto SetTitle( const std::string& title ) -> void;
-	auto SendCMD( const std::string& cmd ) -> CConsole&;
+	auto SendCMD( const std::string& cmd ) -> Console&;
 
 	auto PrintStartOfLine() -> void;
 	auto StartOfLineCheck() -> void;
@@ -160,14 +167,13 @@ private:
 class CEndL
 {
 public:
-	void Action( CConsole& test )
+	void Action( Console& test )
 	{
 		test << "\n"; test.Flush();
 	}
 
 };
 //o------------------------------------------------------------------------------------------------o
-extern CConsole Console;
 extern CEndL myendl;
 
 #endif

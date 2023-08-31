@@ -84,7 +84,7 @@ auto CDictionary::GetEntry( int message_number ) const -> const std::string&
 	}
 	catch(...)
 	{
-		Console.Warning( "Dictionary reference "s + std::to_string( message_number ) + " not found in "s + pathToDictionary );
+		Console::shared().Warning( "Dictionary reference "s + std::to_string( message_number ) + " not found in "s + pathToDictionary );
 		return invalid_dictionary_string;
 	}
 }
@@ -97,7 +97,7 @@ auto CDictionary::GetEntry( int message_number ) -> std::string&
 	}
 	catch(...)
 	{
-		Console.Warning( "Dictionary reference "s + std::to_string( message_number ) +" not found in "s + pathToDictionary );
+        Console::shared().Warning( "Dictionary reference "s + std::to_string( message_number ) +" not found in "s + pathToDictionary );
 		return invalid_dictionary_string;
 	}
 }
@@ -109,10 +109,10 @@ auto CDictionary::GetEntry( int message_number ) -> std::string&
 //o------------------------------------------------------------------------------------------------o
 auto CDictionary::ShowList() -> void
 {
-	Console << "Dictionary Entries for language: " << dictLanguage << " file: "<< pathToDictionary << myendl;
+    Console::shared() << "Dictionary Entries for language: " << dictLanguage << " file: "<< pathToDictionary << myendl;
 	for( auto &[entrynum, text] : msgdata )
 	{
-		Console << entrynum << " : "s << text << myendl;
+        Console::shared() << entrynum << " : "s << text << myendl;
 	}
 }
 
@@ -134,16 +134,16 @@ auto CDictionary::LoadDictionary( const std::string filepath, const std::string 
 	msgdata.clear();
 
 	auto status = ParseFile(pathToDictionary);
-	Console.Print( " " );
-	Console.MoveTo( 15 );
-	Console << "Dictionary." << dictLanguage;
+    Console::shared().Print( " " );
+    Console::shared().MoveTo( 15 );
+    Console::shared() << "Dictionary." << dictLanguage;
 	if( status )
 	{
-		Console.PrintSpecial( CGREEN, "done" );
+        Console::shared().PrintSpecial( CGREEN, "done" );
 	}
 	else
 	{
-		Console.PrintSpecial(CRED, "failed");
+        Console::shared().PrintSpecial(CRED, "failed");
 	}
 
 	return static_cast<SI32>( msgdata.size() );
@@ -278,7 +278,7 @@ auto CDictionaryContainer::LoadDictionaries( const std::string &filepath ) -> SI
 	}
 	if( !dictList[LanguageCodesLang[ZERO]].GetValid() )
 	{
-		Console.Error( "Dictionary.ZRO is bad or nonexistant" );
+        Console::shared().Error( "Dictionary.ZRO is bad or nonexistant" );
 		Shutdown( FATAL_UOX3_BAD_DEF_DICT );
 		rValue = -1;
 	}

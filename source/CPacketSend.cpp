@@ -1946,7 +1946,7 @@ void CPOpenGump::Question( std::string toAdd )
 #if defined( UOX_DEBUG_MODE )
 	if( toAdd.length() >= 255 )
 	{
-		Console.Error( util::format( "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() ));
+        Console::shared().Error( util::format( "CPOpenGump::Question toAdd.length() is too long (%i)", toAdd.length() ));
 	}
 #endif
 	pStream.WriteByte( 9, static_cast<UI08>( toAdd.length() + 1 ));
@@ -1959,7 +1959,7 @@ void CPOpenGump::AddResponse( UI16 modelNum, UI16 colour, std::string responseTe
 #if defined( UOX_DEBUG_MODE )
 	if( responseText.length() >= 255 )
 	{
-		Console.Error( util::format( "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() ));
+        Console::shared().Error( util::format( "CPOpenGump::AddResponse responseText is too long (%i)", responseText.length() ));
 	}
 #endif
 	UI16 toAdd = static_cast<UI16>( 5 + responseText.length() );
@@ -6784,7 +6784,7 @@ void CPSendGumpMenu::addCommand( const std::string& msg )
 	}
 
 #if defined( UOX_DEBUG_MODE )
-	Console << temp << myendl;
+    Console::shared() << temp << myendl;
 #endif
 	commands.push_back( temp );
 }
@@ -6794,7 +6794,7 @@ void CPSendGumpMenu::addText( const std::string& msg )
 	if( msg.empty() || msg.size() == 0 )
 	{
 		//throw new std::runtime_error( "Blank text field added!" );
-		Console.Error( "Blank text field added!" );
+        Console::shared().Error( "Blank text field added!" );
 		return;
 	}
 	auto temp = msg;
@@ -6803,7 +6803,7 @@ void CPSendGumpMenu::addText( const std::string& msg )
 		temp = temp.substr( 0, 512 );
 	}
 #if defined( UOX_DEBUG_MODE )
-	Console << msg << myendl;
+    Console::shared() << msg << myendl;
 #endif
 
 	text.push_back( msg );
@@ -6824,7 +6824,7 @@ void CPSendGumpMenu::Finalize( void )
 			increment = static_cast<UI16>( lineLen + 4 );
 			if(( length + increment ) >= 0xFFFF )
 			{
-				Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+                Console::shared().Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 				break;
 			}
 
@@ -6857,7 +6857,7 @@ void CPSendGumpMenu::Finalize( void )
 			increment	= lineLen * 2 + 2;
 			if(( length + increment ) >= 0xFFFF )
 			{
-				Console.Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
+                Console::shared().Warning( "SendGump Packet (0xB0) attempted to send a packet that exceeds 65355 bytes!" );
 				break;
 			}
 

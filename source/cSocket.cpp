@@ -782,7 +782,7 @@ bool CSocket::FlushBuffer( bool doLog )
 			}
 			else
 			{
-				Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
+                Console::shared().Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			}
 			bytesSent += outlength;
 		}
@@ -846,7 +846,7 @@ bool CSocket::FlushLargeBuffer( bool doLog )
 			}
 			else
 			{
-				Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
+                Console::shared().Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			}
 			bytesSent += outlength;
 		}
@@ -971,13 +971,13 @@ void CSocket::Send( const void *point, SI32 length )
 	}
 	if( outlength > 0 )
 	{
-		Console.Print( util::format( "Fragmented packet! [packet: %i]\n", outbuffer[0] ));
+        Console::shared().Print( util::format( "Fragmented packet! [packet: %i]\n", outbuffer[0] ));
 	}
 	// sometimes we send enormous packets... oh what fun
 	if( length > MAXBUFFER )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( util::format( "Large packet found [%i]\n", outbuffer[0] ));
+        Console::shared().Print( util::format( "Large packet found [%i]\n", outbuffer[0] ));
 #endif
 		largeBuffer.resize( length );
 		memcpy( &largeBuffer[0], point, length );
@@ -1037,7 +1037,7 @@ void CSocket::ReceiveLogging( CPInputBuffer *toLog )
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
+            Console::shared().Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		if( toLog != nullptr )
@@ -1282,7 +1282,7 @@ UI32 CSocket::GetDWord( size_t offset )
 	UI32 retVal = 0;
 	if( offset + 3 >= MAXBUFFER )
 	{
-		Console.Error( util::format( "GetDWord was passed an invalid offset value 0x%X", offset ));
+        Console::shared().Error( util::format( "GetDWord was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1301,7 +1301,7 @@ UI16 CSocket::GetWord( size_t offset )
 	UI16 retVal = 0;
 	if( offset+1 >= MAXBUFFER )
 	{
-		Console.Error( util::format( "GetWord was passed an invalid offset value 0x%X", offset ));
+        Console::shared().Error( util::format( "GetWord was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1320,7 +1320,7 @@ UI08 CSocket::GetByte( size_t offset )
 	UI08 retVal = 0;
 	if( offset >= MAXBUFFER )
 	{
-		Console.Error( util::format( "GetByte was passed an invalid offset value 0x%X", offset ));
+        Console::shared().Error( util::format( "GetByte was passed an invalid offset value 0x%X", offset ));
 	}
 	else
 	{
@@ -1586,7 +1586,7 @@ void CSocket::Send( CPUOXBuffer *toSend )
 		logDestination.open( logFile.c_str(), std::ios::out | std::ios::app );
 		if( !logDestination.is_open() )
 		{
-			Console.Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
+            Console::shared().Error( util::format( "Failed to open socket log %s", logFile.c_str() ));
 			return;
 		}
 		toSend->Log( logDestination );
@@ -2615,7 +2615,7 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 {
 	if( !ValidateObject( i ))
 	{
-		Console.Warning( "OpenPack() was passed an invalid item" );
+        Console::shared().Warning( "OpenPack() was passed an invalid item" );
 		return;
 	}
 	CPDrawContainer contSend = ( *i );
@@ -2767,7 +2767,7 @@ void CSocket::OpenPack( CItem *i, bool isPlayerVendor )
 				contSend.Model( 0x11A ); // Square gray mailbox
 				break;
 			case PT_UNKNOWN:
-				Console.Warning( util::format( "OpenPack() passed an invalid container type: 0x%X", i->GetSerial() ));
+                Console::shared().Warning( util::format( "OpenPack() passed an invalid container type: 0x%X", i->GetSerial() ));
 				return;
 		}
 	}

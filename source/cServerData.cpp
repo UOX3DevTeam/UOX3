@@ -15,7 +15,7 @@
 
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
-#include "utility/strutil.hpp"
+#include "subsystem/console.hpp"
 #include "osunique.hpp"
 
 using namespace std::string_literals;
@@ -1436,7 +1436,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 
 		if( sText.empty() )
 		{
-			Console.Error( util::format( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
+			Console::shared().Error( util::format( " %s directory is blank, set in uox.ini", verboseDirectory.c_str() ));
 			Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 		}
 		else
@@ -1469,7 +1469,7 @@ auto CServerData::Directory( CSDDirectoryPaths dp, std::string value ) -> void
 			
 			if( error )
 			{
-				Console.Error( util::format( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() ));
+				Console::shared().Error( util::format( "%s %s does not exist", verboseDirectory.c_str(), sText.c_str() ));
 				Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 			}
 			else
@@ -1939,22 +1939,22 @@ auto CServerData::NPCTrainingStatus( bool newVal ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerData::DumpPaths() -> void
 {
-	Console.PrintSectionBegin();
-	Console << "PathDump: \n";
-	Console << "    Root        : " << Directory( CSDDP_ROOT ) << "\n";
-	Console << "    Accounts    : " << Directory( CSDDP_ACCOUNTS ) << "\n";
-	Console << "    Access      : " << Directory( CSDDP_ACCESS ) << "\n";
-	Console << "    Mul(Data)   : " << Directory( CSDDP_DATA ) << "\n";
-	Console << "    DFN(Defs)   : " << Directory( CSDDP_DEFS ) << "\n";
-	Console << "    JScript     : " << Directory( CSDDP_SCRIPTS ) << "\n";
-	Console << "    JScriptData : " << Directory( CSDDP_SCRIPTDATA ) << "\n";
-	Console << "    HTML        : " << Directory( CSDDP_HTML ) << "\n";
-	Console << "    MSGBoards   : " << Directory( CSDDP_MSGBOARD ) << "\n";
-	Console << "    Books       : " << Directory( CSDDP_BOOKS ) << "\n";
-	Console << "    Shared      : " << Directory( CSDDP_SHARED ) << "\n";
-	Console << "    Backups     : " << Directory( CSDDP_BACKUP ) << "\n";
-	Console << "    Logs        : " << Directory( CSDDP_LOGS ) << "\n";
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "PathDump: \n";
+    Console::shared() << "    Root        : " << Directory( CSDDP_ROOT ) << "\n";
+    Console::shared() << "    Accounts    : " << Directory( CSDDP_ACCOUNTS ) << "\n";
+    Console::shared() << "    Access      : " << Directory( CSDDP_ACCESS ) << "\n";
+    Console::shared() << "    Mul(Data)   : " << Directory( CSDDP_DATA ) << "\n";
+    Console::shared() << "    DFN(Defs)   : " << Directory( CSDDP_DEFS ) << "\n";
+    Console::shared() << "    JScript     : " << Directory( CSDDP_SCRIPTS ) << "\n";
+    Console::shared() << "    JScriptData : " << Directory( CSDDP_SCRIPTDATA ) << "\n";
+    Console::shared() << "    HTML        : " << Directory( CSDDP_HTML ) << "\n";
+    Console::shared() << "    MSGBoards   : " << Directory( CSDDP_MSGBOARD ) << "\n";
+    Console::shared() << "    Books       : " << Directory( CSDDP_BOOKS ) << "\n";
+    Console::shared() << "    Shared      : " << Directory( CSDDP_SHARED ) << "\n";
+    Console::shared() << "    Backups     : " << Directory( CSDDP_BACKUP ) << "\n";
+    Console::shared() << "    Logs        : " << Directory( CSDDP_LOGS ) << "\n";
+    Console::shared().PrintSectionBegin();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2746,7 +2746,7 @@ auto CServerData::ForceNewAnimationPacket( bool newVal ) -> void
 		|| ClientSupport6050() )
 	{
 		boolVals.set( BIT_FORCENEWANIMATIONPACKET, false );
-		Console.Warning( "FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!" );
+        Console::shared().Warning( "FORCENEWANIMATIONPACKET setting not compatible with support for client versions below 7.0.0.0. Setting disabled!" );
 	}
 	else
 	{
@@ -4739,7 +4739,7 @@ auto CServerData::EraEnumToString( ExpansionRuleset eraEnum, bool coreEnum ) -> 
 		}
 		catch( const std::out_of_range &e )
 		{
-			Console.Error( util::format( "Unknown era enum detected, exception thrown: %s", e.what() ));
+            Console::shared().Error( util::format( "Unknown era enum detected, exception thrown: %s", e.what() ));
 		}
 	}
 
@@ -5239,7 +5239,7 @@ auto CServerData::SaveIni( const std::string &filename ) -> bool
 	}
 	else
 	{
-		Console.Error( util::format( "Unable to open file %s for writing", filename.c_str() ));
+        Console::shared().Error( util::format( "Unable to open file %s for writing", filename.c_str() ));
 	}
 	return rValue;
 }
@@ -5409,9 +5409,9 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 								}
 								catch( const std::exception &e )
 								{
-									Console.Error( "Error parsing ini file" );
-									Console.Error( util::format( "Entry was: %s = %s", key.c_str(), value.c_str() ));
-									Console.Error( util::format( "Exception was: %s", e.what() ));
+                                    Console::shared().Error( "Error parsing ini file" );
+                                    Console::shared().Error( util::format( "Entry was: %s = %s", key.c_str(), value.c_str() ));
+                                    Console::shared().Error( util::format( "Exception was: %s", e.what() ));
 									exit( 1 );
 								}
 							}
@@ -5430,7 +5430,7 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	 bool rValue = false;
 	 if( !filename.empty() ) {
 	 
-	 Console << "Processing INI Settings  ";
+     Console::shared() << "Processing INI Settings  ";
 	 
 	 Script toParse( filename, NUM_DEFS, false );
 	 // Lock this file tight, No access at anytime when open(should only be open and closed anyhow. For Thread blocking)
@@ -5443,17 +5443,17 @@ auto CServerData::ParseIni( const std::string& filename ) -> bool
 	 auto tag = sec->tag;
 	 auto data = util::simplify( sec->data );
 	 if( !HandleLine( tag, data )) {
-	 Console.Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
+     Console::shared().Warning( util::format( "Unhandled tag '%s'", tag.c_str() ));
 	 }
 	 }
 	 }
 	 }
-	 Console.PrintDone();
+     Console::shared().PrintDone();
 	 rValue = true;
 	 }
 	 else
 	 {
-	 Console.Warning( util::format( "%s File not found, Using default settings.", filename.c_str() ));
+     Console::shared().Warning( util::format( "%s File not found, Using default settings.", filename.c_str() ));
 	 cwmWorldState->ServerData()->save();
 	 }
 	 }
@@ -6686,7 +6686,7 @@ auto CServerData::ServerLocation( std::string toSet ) -> void
 	}
 	else
 	{
-		Console.Error( "Malformed location entry in ini file" );
+        Console::shared().Error( "Malformed location entry in ini file" );
 	}
 }
 
@@ -6741,7 +6741,7 @@ auto CServerData::YoungServerLocation( std::string toSet ) -> void
 	}
 	else
 	{
-		Console.Error( "Malformed young start location entry in ini file" );
+        Console::shared().Error( "Malformed young start location entry in ini file" );
 	}
 }
 
@@ -6918,7 +6918,7 @@ auto CServerData::SaveTime() -> void
 	std::ofstream	timeDestination( timeFile.c_str() );
 	if( !timeDestination )
 	{
-		Console.Error( util::format( "Failed to open %s for writing", timeFile.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", timeFile.c_str() ));
 		return;
 	}
 

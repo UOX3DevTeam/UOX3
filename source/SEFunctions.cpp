@@ -22,7 +22,6 @@
 #include "cThreadQueue.h"
 #include "cHTMLSystem.h"
 #include "cServerDefinitions.h"
-#include "cVersionClass.h"
 #include "Dictionary.h"
 #include "speech.h"
 #include "CGump.h"
@@ -36,7 +35,7 @@
 #include "cSpawnRegion.h"
 #include "CPacketSend.h"
 #include "utility/strutil.hpp"
-
+#include "other/uoxversion.hpp"
 
 void		LoadTeleportLocations( void );
 void		LoadSpawnRegions( void );
@@ -686,18 +685,18 @@ JSBool SE_RegisterSkill( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN ar
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( " " );
-		Console.MoveTo( 15 );
-		Console.Print( "Registering skill number " );
-		Console.TurnYellow();
-		Console.Print( util::format( "%i", skillNumber ));
+        Console::shared().Print( " " );
+        Console::shared().MoveTo( 15 );
+        Console::shared().Print( "Registering skill number " );
+        Console::shared().TurnYellow();
+        Console::shared().Print( util::format( "%i", skillNumber ));
 		if( !isEnabled )
 		{
-			Console.TurnRed();
-			Console.Print( " [DISABLED]" );
+            Console::shared().TurnRed();
+            Console::shared().Print( " [DISABLED]" );
 		}
-		Console.Print( "\n" );
-		Console.TurnNormal();
+        Console::shared().Print( "\n" );
+        Console::shared().TurnNormal();
 #endif
 		// If skill is not enabled, unset scriptId from skill data
 		if( !isEnabled )
@@ -737,7 +736,7 @@ JSBool SE_RegisterPacket( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN a
 	if( scriptId != 0xFFFF )
 	{
 #if defined( UOX_DEBUG_MODE )
-		Console.Print( util::format( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd ));
+        Console::shared().Print( util::format( "Registering packet number 0x%X, subcommand 0x%x\n", packet, subCmd ));
 #endif
 		Network->RegisterPacket( packet, subCmd, scriptId );
 	}
@@ -786,7 +785,7 @@ JSBool SE_RegisterKey( JSContext *cx, [[maybe_unused]] JSObject *obj, uintN argc
 	{
 		toPass = encaps.toInt();
 	}
-	Console.RegisterKey( toPass, toRegister, scriptId );
+    Console::shared().RegisterKey( toPass, toRegister, scriptId );
 	return JS_TRUE;
 }
 
@@ -812,7 +811,7 @@ JSBool SE_RegisterConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, ui
 		return JS_FALSE;
 	}
 
-	Console.RegisterFunc( funcToRegister, toRegister, scriptId );
+    Console::shared().RegisterFunc( funcToRegister, toRegister, scriptId );
 	return JS_TRUE;
 }
 
@@ -846,7 +845,7 @@ JSBool SE_DisableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject 
 		return JS_FALSE;
 	}
 	SI32 toDisable = JSVAL_TO_INT( argv[0] );
-	Console.SetKeyStatus( toDisable, false );
+    Console::shared().SetKeyStatus( toDisable, false );
 	return JS_TRUE;
 }
 
@@ -863,7 +862,7 @@ JSBool SE_DisableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uin
 		return JS_FALSE;
 	}
 	std::string toDisable = JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	Console.SetFuncStatus( toDisable, false );
+    Console::shared().SetFuncStatus( toDisable, false );
 	return JS_TRUE;
 }
 
@@ -931,7 +930,7 @@ JSBool SE_EnableKey( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JSObject *
 		return JS_FALSE;
 	}
 	SI32 toEnable = JSVAL_TO_INT( argv[0] );
-	Console.SetKeyStatus( toEnable, true );
+    Console::shared().SetKeyStatus( toEnable, true );
 	return JS_TRUE;
 }
 
@@ -948,7 +947,7 @@ JSBool SE_EnableConsoleFunc( JSContext *cx, [[maybe_unused]] JSObject *obj, uint
 		return JS_FALSE;
 	}
 	std::string toEnable	= JS_GetStringBytes( JS_ValueToString( cx, argv[0] ));
-	Console.SetFuncStatus( toEnable, false );
+    Console::shared().SetFuncStatus( toEnable, false );
 	return JS_TRUE;
 }
 
@@ -5102,7 +5101,7 @@ JSBool SE_GetCharacterCount( [[maybe_unused]] JSContext *cx, [[maybe_unused]] JS
 //o------------------------------------------------------------------------------------------------o
 JSBool SE_GetServerVersionString( JSContext *cx, [[maybe_unused]] JSObject *obj, [[maybe_unused]] uintN argc, [[maybe_unused]] jsval *argv, jsval *rval )
 {
-	std::string versionString = CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]";
+	std::string versionString = UOXVersion::version + "." + UOXVersion::build + " [" + OS_STR + "]";
 	JSString *tString = JS_NewStringCopyZ( cx, versionString.c_str() );
 	*rval = STRING_TO_JSVAL( tString );
 	return JS_TRUE;

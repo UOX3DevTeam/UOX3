@@ -129,20 +129,20 @@ auto CMulHandler::Load() -> void
 {
 	auto uodir = cwmWorldState->ServerData()->Directory( CSDDP_DATA );
 	auto mapinfo = LoadMapsDFN( uodir );
-	Console.PrintSectionBegin();
-	Console << "Loading UO Data..." << myendl << "(If they fail to load, check your DATADIRECTORY path in uox.ini or filenames in maps.dfn)" << myendl;
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "Loading UO Data..." << myendl << "(If they fail to load, check your DATADIRECTORY path in uox.ini or filenames in maps.dfn)" << myendl;
 	LoadTileData( uodir );
 	LoadDFNOverrides();
 	LoadMapAndStatics( mapinfo );
 	if( uoWorlds.empty() )
 	{
-		Console.Error( " Fatal Error: No maps found" );
-		Console.Error( " Check the settings for DATADIRECTORY in uox.ini" );
+        Console::shared().Error( " Fatal Error: No maps found" );
+        Console::shared().Error( " Check the settings for DATADIRECTORY in uox.ini" );
 		Shutdown( FATAL_UOX3_MAP_NOT_FOUND );
 	}
 	LoadMultis( uodir );
 	FileLookup->Dispose( maps_def );
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -153,14 +153,14 @@ auto CMulHandler::Load() -> void
 auto CMulHandler::LoadTileData( const std::string& uodir ) -> void
 {
 	std::string lName = uodir + "tiledata.mul"s;
-	Console << "\t" << lName << "\t";
+    Console::shared() << "\t" << lName << "\t";
 
 	if( !tileInfo.LoadTiles( lName ))
 	{
-		Console.PrintFailed();
+        Console::shared().PrintFailed();
 		Shutdown( FATAL_UOX3_TILEDATA_NOT_FOUND );
 	}
-	Console.PrintDone();
+    Console::shared().PrintDone();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -384,14 +384,14 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 		// Load Terrain/Map data from UOP > MUL
 		if( std::filesystem::exists( dfndata.mapUop ))
 		{
-			//Console << "\t" << dfndata.mapUop.string() << "(/" << dfndata.mapUop.filename().string() << ")\t\t";
-			Console << "\t" << dfndata.mapUop.string() << "\t\t";
+			//Console::shared() << "\t" << dfndata.mapUop.string() << "(/" << dfndata.mapUop.filename().string() << ")\t\t";
+            Console::shared() << "\t" << dfndata.mapUop.string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadUOPTerrainFile( dfndata.mapUop.string() );
 		}
 		else
 		{
-			//Console << "\t" << dfndata.mapFile.string() << "(/" << dfndata.mapFile.filename().string() << ")\t\t";
-			Console << "\t" << dfndata.mapFile.string() << "\t\t";
+			//Console::shared() << "\t" << dfndata.mapFile.string() << "(/" << dfndata.mapFile.filename().string() << ")\t\t";
+            Console::shared() << "\t" << dfndata.mapFile.string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadMulTerrainFile( dfndata.mapFile.string() );
 			if( rValue )
 			{
@@ -401,17 +401,17 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 
 		if( !rValue )
 		{
-			Console.PrintFailed();
+            Console::shared().PrintFailed();
 		}
 		else
 		{
-			Console.PrintDone();
+            Console::shared().PrintDone();
 		}
 
 		// Load Art/Statics data
 		if( rValue )
 		{
-			Console << "\t" << dfndata.staMul.string() << " / " << dfndata.staIdx.filename().string() << "\t\t";
+            Console::shared() << "\t" << dfndata.staMul.string() << " / " << dfndata.staIdx.filename().string() << "\t\t";
 			rValue = uoWorlds[mapNum].LoadArt( dfndata.staMul.string(), dfndata.staIdx.string() );
 			if( rValue )
 			{
@@ -429,11 +429,11 @@ auto CMulHandler::LoadMapAndStatics( const std::map<int, MapDfnData_st> &info ) 
 
 			if( !rValue )
 			{
-				Console.PrintFailed();
+                Console::shared().PrintFailed();
 			}
 			else
 			{
-				Console.PrintDone();
+                Console::shared().PrintDone();
 			}
 		}
 	}
@@ -450,10 +450,10 @@ auto CMulHandler::LoadMultis( const std::string& uodir ) -> void
 	// Odd we do no check?
 	if( !multiData.LoadMultiCollection( std::filesystem::path( uodir ), &tileInfo ))
 	{
-		Console.PrintFailed();
+        Console::shared().PrintFailed();
 		Shutdown( FATAL_UOX3_MULTI_DATA_NOT_FOUND );
 	}
-	Console.PrintDone();
+    Console::shared().PrintDone();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -570,7 +570,7 @@ auto CMulHandler::MultiTile( CItem *i, std::int16_t x, std::int16_t y, std::int8
 
 	if( !MultiExists( multiId ))
 	{
-		Console << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
+        Console::shared() << "CMulHandler::MultiTile->Bad length in multi file. Avoiding stall." << myendl;
 		auto map1 = Map->SeekMap( i->GetX(), i->GetY(), i->WorldNumber() );
 		if( map1.CheckFlag( TF_WET )) // is it water?
 		{
@@ -1167,7 +1167,7 @@ auto CMulHandler::SeekTile( std::uint16_t tileNum ) -> CTile&
 {
 	if( !IsValidTile( tileNum ))
 	{
-		Console.Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
+        Console::shared().Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -1181,7 +1181,7 @@ auto CMulHandler::SeekTile( std::uint16_t tileNum ) const -> const CTile&
 {
 	if( !IsValidTile( tileNum ))
 	{
-		Console.Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
+        Console::shared().Warning( util::format( "Invalid tile access, the offending tile number is %u", tileNum ));
 		static CTile emptyTile;
 		return emptyTile;
 	}
@@ -1200,7 +1200,7 @@ auto CMulHandler::SeekLand( std::uint16_t landNum ) ->CLand&
 {
 	if( landNum == INVALIDID || landNum >= tileInfo.SizeTerrain() )
 	{
-		Console.Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
+        Console::shared().Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
 		static CLand emptyTile;
 		return emptyTile;
 	}
@@ -1214,7 +1214,7 @@ auto CMulHandler::SeekLand( std::uint16_t landNum ) const -> const CLand&
 {
 	if( landNum == INVALIDID || landNum >= tileInfo.SizeTerrain() )
 	{
-		Console.Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
+        Console::shared().Warning( util::format( "Invalid land access, the offending land number is %u", landNum ));
 		static CLand emptyTile;
 		return emptyTile;
 	}

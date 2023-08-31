@@ -1402,7 +1402,7 @@ bool CSkills::LoadMiningData( void )
 								}
 								break;
 							default:
-								Console << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
+                                Console::shared() << "Unknown mining tag " << tag << " with data " << data << " in SECTION " << oreName << myendl;
 								break;
 						}
 					}
@@ -1421,7 +1421,7 @@ bool CSkills::LoadMiningData( void )
 //o------------------------------------------------------------------------------------------------o
 void CSkills::Load( void )
 {
-	Console << "Loading custom ore data        ";
+    Console::shared() << "Loading custom ore data        ";
 
 	if( !LoadMiningData() )
 	{
@@ -1429,11 +1429,11 @@ void CSkills::Load( void )
 		return;
 	}
 
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading creation menus         ";
+    Console::shared() << "Loading creation menus         ";
 	LoadCreateMenus();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	CJSMappingSection *skillSection = JSMapping->GetSection( SCPT_SKILLUSE );
 	for( cScript *ourScript = skillSection->First(); !skillSection->Finished(); ourScript = skillSection->Next() )
@@ -1444,7 +1444,7 @@ void CSkills::Load( void )
 		}
 	}
 
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 }
 
 //o------------------------------------------------------------------------------------------------o

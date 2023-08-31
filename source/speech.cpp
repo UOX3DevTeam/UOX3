@@ -13,6 +13,7 @@
 #include "Dictionary.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
 
 //o------------------------------------------------------------------------------------------------o
 //|	Function	-	ClilocMessage()
@@ -187,7 +188,7 @@ UnicodeTypes FindLanguage( CSocket *s, UI16 offset )
 		}
 		else
 		{
-			Console.Error( util::format( "Unknown language type \"%s\". PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str() ));
+            Console::shared().Error( util::format( "Unknown language type \"%s\". PLEASE report this in the Bugs section of the forums at https://www.uox3.org!", ulangCode.c_str() ));
 		}
 	}
 	return cLang;
@@ -368,13 +369,13 @@ bool CPITalkRequest::Handle( void )
 			{
 				auto temp = util::format( "%s.log", mChar->GetName().c_str() );
 				auto temp2 = util::format( "%s [%x %x %x %x] [%i]: %s\n", mChar->GetName().c_str(), mChar->GetSerial( 1 ), mChar->GetSerial( 2 ), mChar->GetSerial( 3 ), mChar->GetSerial( 4 ), mChar->GetAccount().wAccountIndex, asciiText );
-				Console.Log( temp, temp2 );
+                Console::shared().Log( temp, temp2 );
 			}
 
 			std::string upperText = util::upper( text );
 			if( upperText.find( "DEVTEAM033070" ) != std::string::npos )
 			{
-				std::string temp3 = "RBuild: " + CVersionClass::GetRealBuild() + " PBuild: " + CVersionClass::GetBuild() + " --> Version: " + CVersionClass::GetVersion();
+				std::string temp3 = "RBuild: " + UOXVersion::realBuild + " PBuild: " + UOXVersion::build + " --> Version: " + UOXVersion::version;
 				tSock->SysMessage( temp3.c_str() );
 			}
 
@@ -710,7 +711,7 @@ void CSpeechQueue::DumpInFile( void )
 	std::ofstream speechDestination( speechFile.c_str() );
 	if( !speechDestination )
 	{
-		Console.Error( util::format( "Failed to open %s for writing", speechFile.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", speechFile.c_str() ));
 		return;
 	}
 	SPEECHLIST_ITERATOR toWrite;

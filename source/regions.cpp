@@ -349,7 +349,7 @@ void CMapWorld::SaveResources( UI08 worldNum )
     }
 	else {
         // Can't save resources
-		Console.Error( "Failed to open resource.bin for writing" );
+        Console::shared().Error( "Failed to open resource.bin for writing" );
 	}
 }
 
@@ -441,7 +441,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nItem->GetSerial() ) || !curCell->GetItemList()->Remove( nItem ))
 		{
 #if DEBUG_REGIONS
-			Console.Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+            Console::shared().Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		}
 		else
@@ -464,7 +464,7 @@ bool CMapHandler::ChangeRegion( CItem *nItem, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+            Console::shared().Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 		}
 	}
@@ -490,7 +490,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		if( !curCell->GetRegionSerialList()->Remove( nChar->GetSerial() ) || !curCell->GetCharList()->Remove( nChar ))
 		{
 #if DEBUG_REGIONS
-			Console.Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
+            Console::shared().Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", nChar->GetSerial() ));
 #endif
 		}
 		else
@@ -513,7 +513,7 @@ bool CMapHandler::ChangeRegion( CChar *nChar, SI16 x, SI16 y, UI08 worldNum )
 		else
 		{
 #if DEBUG_REGIONS
-			Console.Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
+            Console::shared().Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", nChar->GetSerial() ));
 #endif
 		}
 	}
@@ -544,7 +544,7 @@ bool CMapHandler::AddItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
+		CConsole::shared()onsole.Warning( util::format( "Item 0x%X already exists in MapRegion, add failed", nItem->GetSerial() ));
 #endif
 	}
 	return false;
@@ -573,7 +573,7 @@ bool CMapHandler::RemoveItem( CItem *nItem )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
+        Console::shared().Warning( util::format( "Item 0x%X does not exist in MapRegion, remove failed", nItem->GetSerial() ));
 #endif
 		return false;
 	}
@@ -604,7 +604,7 @@ bool CMapHandler::AddChar( CChar *toAdd )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
+        Console::shared().Warning( util::format( "Character 0x%X already exists in MapRegion, add failed", toAdd->GetSerial() ));
 #endif
 	}
 	return false;
@@ -633,7 +633,7 @@ bool CMapHandler::RemoveChar( CChar *toRemove )
 	else
 	{
 #if DEBUG_REGIONS
-		Console.Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
+        Console::shared().Warning( util::format( "Character 0x%X does not exist in MapRegion, remove failed", toRemove->GetSerial() ));
 #endif
 		return false;
 	}
@@ -782,9 +782,9 @@ void CMapHandler::Save( void )
 	UI32 count						= 0;
 	const UI32 s_t						= GetClock();
 
-	Console << "Saving Character and Item Map Region data...   ";
-	Console.TurnYellow();
-	Console << "0%";
+    Console::shared() << "Saving Character and Item Map Region data...   ";
+    Console::shared().TurnYellow();
+    Console::shared() << "0%";
 
 	std::string basePath = cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 
@@ -830,7 +830,7 @@ void CMapHandler::Save( void )
 
 			if( !writeDestination )
 			{
-				Console.Error( util::format( "Failed to open %s for writing", filename.c_str() ));
+                Console::shared().Error( util::format( "Failed to open %s for writing", filename.c_str() ));
 				continue;
 			}
 
@@ -847,11 +847,11 @@ void CMapHandler::Save( void )
 						{
 							if( count/onePercent <= 10 )
 							{
-								Console << "\b\b" << std::to_string( count / onePercent ) << "%";
+                                Console::shared() << "\b\b" << std::to_string( count / onePercent ) << "%";
 							}
 							else if( count/onePercent <= 100 )
 							{
-								Console << "\b\b\b" << std::to_string( count / onePercent ) << "%";
+                                Console::shared() << "\b\b\b" << std::to_string( count / onePercent ) << "%";
 							}
 						}
 
@@ -871,7 +871,7 @@ void CMapHandler::Save( void )
 			writeDestination.close();
 		}
 	}
-	Console << "\b\b\b\b" << static_cast<UI32>( 100 ) << "%";
+    Console::shared() << "\b\b\b\b" << static_cast<UI32>( 100 ) << "%";
 
 	filename = basePath + "overflow.wsc";
 	writeDestination.open( filename.c_str() );
@@ -883,15 +883,15 @@ void CMapHandler::Save( void )
 	}
 	else
 	{
-		Console.Error( util::format( "Failed to open %s for writing", filename.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", filename.c_str() ));
 		return;
 	}
 
-	Console << "\b\b\b\b";
-	Console.PrintDone();
+    Console::shared() << "\b\b\b\b";
+    Console::shared().PrintDone();
 
 	const UI32 e_t = GetClock();
-	Console.Print( util::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+    Console::shared().Print( util::format( "World saved in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	i = 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -925,8 +925,8 @@ void CMapHandler::Load( void )
 	const SI16 AreaY		= UpperY / 8;
 	UI32 count				= 0;
 	std::ifstream readDestination;
-	Console.TurnYellow();
-	Console << "0%";
+    Console::shared().TurnYellow();
+    Console::shared() << "0%";
 	UI32 s_t				= GetClock();
 	std::string basePath	= cwmWorldState->ServerData()->Directory( CSDDP_SHARED );
 	std::string filename;
@@ -971,11 +971,11 @@ void CMapHandler::Load( void )
 			float tempVal	= static_cast<R32>( runningDone ) / static_cast<R32>( runningCount ) * 100.0f;
 			if( tempVal <= 10 )
 			{
-				Console << "\b\b" << static_cast<UI32>( tempVal ) << "%";
+                Console::shared() << "\b\b" << static_cast<UI32>( tempVal ) << "%";
 			}
 			else if( tempVal <= 100 )
 			{
-				Console << "\b\b\b" << static_cast<UI32>( tempVal ) << "%";
+                Console::shared() << "\b\b\b" << static_cast<UI32>( tempVal ) << "%";
 			}
 
 			readDestination.close();
@@ -986,12 +986,12 @@ void CMapHandler::Load( void )
 	// If runningDone is still 0, there was nothing to load! 100% it
 	if( runningDone == 0 )
 	{
-		Console << "\b\b" << static_cast<UI32>( 100 ) << "%";
+        Console::shared() << "\b\b" << static_cast<UI32>( 100 ) << "%";
 	}
 
-	Console.TurnNormal();
-	Console << "\b\b\b";
-	Console.PrintDone();
+    Console::shared().TurnNormal();
+    Console::shared() << "\b\b\b";
+    Console::shared().PrintDone();
 
 	filename	= basePath + "overflow.wsc";
 	std::ifstream flowDestination( filename.c_str() );
@@ -1009,7 +1009,7 @@ void CMapHandler::Load( void )
 	houseDestination.close();
 
 	UI32 e_t	= GetClock();
-	Console.Print( util::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
+    Console::shared().Print( util::format( "ASCII world loaded in %.02fsec\n", ( static_cast<R32>( e_t - s_t )) / 1000.0f ));
 
 	UI08 i		= 0;
 	for( WORLDLIST_ITERATOR wIter = mapWorlds.begin(); wIter != mapWorlds.end(); ++wIter )
@@ -1071,11 +1071,11 @@ void CMapHandler::LoadFromDisk( std::istream& readDestination, SI32 baseValue, S
 				R32 tempVal	= basePercent + ( curPos / fileSize * diffValue );
 				if( tempVal <= 10 )
 				{
-					Console << "\b\b" << static_cast<UI32>( tempVal ) << "%";
+                    Console::shared() << "\b\b" << static_cast<UI32>( tempVal ) << "%";
 				}
 				else
 				{
-					Console << "\b\b\b" << static_cast<UI32>( tempVal ) << "%";
+                    Console::shared() << "\b\b\b" << static_cast<UI32>( tempVal ) << "%";
 				}
 			}
 		}

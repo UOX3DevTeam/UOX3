@@ -1513,7 +1513,7 @@ JSBool CItemProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2128,7 +2128,7 @@ JSBool CCharacterProps_getProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Item property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2609,7 +2609,7 @@ JSBool CCharacterProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsva
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Character property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2805,7 +2805,7 @@ JSBool CRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Region property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -2944,7 +2944,7 @@ JSBool CSpawnRegionProps_setProperty( JSContext *cx, JSObject *obj, jsval id, js
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting SpawnRegion property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3084,7 +3084,7 @@ JSBool CGuildProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Guild property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3179,7 +3179,7 @@ JSBool CRaceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *vp
 		JSBool retVal = origScript->CallParticularEvent( "_restorecontext_", &id, 0, vp );
 		if( retVal == JS_FALSE )
 		{
-			Console.Warning( util::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Race property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3283,7 +3283,7 @@ JSBool CSocketProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Socket property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3588,7 +3588,7 @@ JSBool CSkillsProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Skill property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3954,7 +3954,7 @@ JSBool CAccountProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval 
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Account property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -3967,8 +3967,8 @@ JSBool CConsoleProps_getProperty( [[maybe_unused]] JSContext *cx, [[maybe_unused
 	{
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console.CurrentMode() );	break;
-			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console.LogEcho() );		break;
+			case CCONSOLE_MODE:		*vp = INT_TO_JSVAL( Console::shared().CurrentMode() );	break;
+			case CCONSOLE_LOGECHO:	*vp = INT_TO_JSVAL( Console::shared().LogEcho() );		break;
 			default:
 				break;
 		}
@@ -3983,8 +3983,8 @@ JSBool CConsoleProps_setProperty( JSContext *cx, [[maybe_unused]] JSObject *obj,
 	{
 		switch( JSVAL_TO_INT( id ))
 		{
-			case CCONSOLE_MODE:		Console.CurrentMode( encaps.toInt() );		break;
-			case CCONSOLE_LOGECHO:	Console.LogEcho( encaps.toBool() );			break;
+			case CCONSOLE_MODE:		Console::shared().CurrentMode( encaps.toInt() );		break;
+			case CCONSOLE_LOGECHO:	Console::shared().LogEcho( encaps.toBool() );			break;
 			default:
 				break;
 		}
@@ -4072,7 +4072,7 @@ JSBool CResourceProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Resource property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 
@@ -4153,7 +4153,7 @@ JSBool CPartyProps_setProperty( JSContext *cx, JSObject *obj, jsval id, jsval *v
 		if( retVal == JS_FALSE )
 		{
 			// Dummy function not found, let shard admin know!
-			Console.Warning( util::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
+            Console::shared().Warning( util::format( "Script context lost after setting Party property %u. Add 'function _restorecontext_() {}' to original script (%u) as safeguard!", JSVAL_TO_INT( id ), origScriptID ));
 		}
 	}
 

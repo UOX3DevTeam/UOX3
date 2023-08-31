@@ -207,7 +207,7 @@ void OpenPlank( CItem *p )
 		case 0xD5: p->SetId( 0xB1, 2 ); break;
 		case 0xD4: p->SetId( 0xB2, 2 ); break;
 		case 0x89: p->SetId( 0x8A, 2 ); break;
-		default: 	Console.Warning( util::format( "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetId() ));
+		default: 	Console::shared().Warning( util::format( "Invalid plank ID called! Plank 0x%X '%s' [%u]", p->GetSerial(), p->GetName().c_str(), p->GetId() ));
 			break;
 	}
 }
@@ -307,7 +307,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves N/S
 						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves N/S
 						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves N/S
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console::shared().Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
 				case EAST: // E
@@ -321,10 +321,10 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves N/S
 						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves N/S
 						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves N/S
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console::shared().Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console::shared().Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		case EAST: // E
@@ -344,7 +344,7 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: x1 = cx - 6; x2 = cx + 6; break; //Length of E/W ship as it moves E/W
 						case 2: x1 = cx - 7; x2 = cx + 7; break; //Length of E/W ship as it moves E/W
 						case 3: x1 = cx - 8; x2 = cx + 8; break; //Length of E/W ship as it moves E/W
-						default:	Console.Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console::shared().Error( " Fallout of East/West switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
 				case NORTHEAST:	// U
@@ -358,10 +358,10 @@ bool BlockBoat( CBoatObj *b, SI16 xmove, SI16 ymove, UI08 moveDir, UI08 boatDir,
 						case 1: y1 = cy - 6; y2 = cy + 6; break; //Length of N/S ship as it moves E/W
 						case 2: y1 = cy - 7; y2 = cy + 7; break; //Length of N/S ship as it moves E/W
 						case 3: y1 = cy - 8; y2 = cy + 8; break; //Length of N/S ship as it moves E/W
-						default:	Console.Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
+						default:	Console::shared().Error( " Fallout of North/South switch() statement in cBoats::BlockBoat()" );	break;
 					}
 					break;
-				default:	Console.Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
+				default:	Console::shared().Error( " Fallout of boatDir.switch() statement in cBoats::BlockBoat()" );	break;
 			}
 			break;
 		default: return true;
@@ -892,7 +892,7 @@ void TurnBoat( CBoatObj *b, bool rightTurn, bool disableChecks )
 			tiller->IncLocation( iLargeShipOffsets[dir][TILLER][XP], iLargeShipOffsets[dir][TILLER][YP] );
 			hold->IncLocation( iLargeShipOffsets[dir][HOLD][XP], iLargeShipOffsets[dir][HOLD][YP] );
 			break;
-		default: Console.Error( util::format( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 )));
+		default: Console::shared().Error( util::format( "TurnBoat() more1 error! more1 = %c not found!", b->GetTempVar( CITV_MOREZ, 1 )));
 	}
 
 	for( auto &tSock :nearbyChars )

@@ -3640,7 +3640,7 @@ void CHandleCombat::CombatLoop( CSocket *mSock, CChar& mChar )
 	if( mChar.IsNpc() && mChar.GetTimer( tNPC_EVADETIME ) > cwmWorldState->GetUICurrentTime() )
 	{
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
-		Console.Warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
+        Console::shared().Warning( "DEBUG: Exited CombatLoop for NPC due to EvadeTimer.\n" );
 #endif
 		return;
 	}

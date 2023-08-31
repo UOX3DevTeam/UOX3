@@ -58,7 +58,7 @@ SI32 CCommands::Argument( UI08 argNum )
 		} 
 		catch( const std::invalid_argument & e )
 		{
-			Console.Error( util::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
+            Console::shared().Error( util::format( "[%s] Unable to convert command argument ('%s') to integer.", e.what(), tempString.c_str() ));
 		}
 	}
 
@@ -139,7 +139,7 @@ void CCommands::Command( CSocket *s, CChar *mChar, std::string text, bool checkS
 			if( toExecute != nullptr )
 			{	// All commands that execute are of the form: command_commandname (to avoid possible clashes)
 #if defined( UOX_DEBUG_MODE )
-				Console.Print( util::format( "Executing JS command %s\n", command.c_str() ));
+                Console::shared().Print( util::format( "Executing JS command %s\n", command.c_str() ));
 #endif
 				toExecute->executeCommand( s, "command_" + command, CommandString( 2 ));
 			}
@@ -353,16 +353,16 @@ void CCommands::Load( void )
 	}
 	if( !badCommands.empty() )
 	{
-		Console << myendl;
+        Console::shared() << myendl;
 		std::for_each( badCommands.begin(), badCommands.end(), []( const std::string &entry )
 		{
-			Console << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
+            Console::shared() << "Invalid command '" << entry.c_str() << "' found in commands.dfn!" << myendl;
 		});
 	}
 
-	Console << "   o Loading command levels";
+    Console::shared() << "   o Loading command levels";
 #if defined( UOX_DEBUG_MODE )
-	Console << myendl;
+    Console::shared() << myendl;
 #endif
 	CScriptSection *cmdClearance = FileLookup->FindEntry( "COMMANDLEVELS", command_def );
 	if( cmdClearance == nullptr )
@@ -429,7 +429,7 @@ void CCommands::Load( void )
 						}
 						else
 						{
-							Console << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
+                            Console::shared() << myendl << "Unknown tag in " << ourClear->name << ": " << tag << " with data of " << data << myendl;
 						}
 					}
 				}
@@ -460,7 +460,7 @@ void CCommands::Log( const std::string &command, CChar *player1, CChar *player2,
 	logDestination.open( logName.c_str(), std::ios::out | std::ios::app );
 	if( !logDestination.is_open() )
 	{
-		Console.Error( util::format( "Unable to open command log file %s!", logName.c_str() ));
+        Console::shared().Error( util::format( "Unable to open command log file %s!", logName.c_str() ));
 		return;
 	}
 	char dateTime[1024];

@@ -80,6 +80,9 @@
 #include "EventTimer.hpp"
 #include <atomic>
 
+#include "other/uoxversion.hpp"
+#include "subsystem/console.hpp"
+
 #if PLATFORM == WINDOWS
 #include <process.h>
 #include <conio.h>
@@ -107,7 +110,6 @@ auto saveOnShutdown = false;
 //o------------------------------------------------------------------------------------------------o
 // Classes we will use
 //o------------------------------------------------------------------------------------------------o
-CConsole Console;      // non pointer  class, has initialize
 // Non depdendent class
 auto aWorld			= CWorldMain();
 auto aDictionary	= CDictionaryContainer(); // no startup
@@ -207,34 +209,34 @@ auto main( SI32 argc, char *argv[] ) ->int
 	}
 
 	// Ok, we probably want the Console now
-	Console.Initialize();
+    Console::shared().Initialize();
 
-	Console.Start( util::format( "%s v%s.%s (%s)", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR ));
-	Console.PrintSectionBegin();
-	Console << "UOX Server start up!" << myendl << "Welcome to " << CVersionClass::GetProductName() << " v" << CVersionClass::GetVersion() << "." << CVersionClass::GetBuild() << " (" << OS_STR << ")" << myendl;
-	Console.PrintSectionBegin();
+    Console::shared().Start( util::format( "%s v%s.%s (%s)", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR ));
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "UOX Server start up!" << myendl << "Welcome to " << UOXVersion::productName << " v" << UOXVersion::version << "." << UOXVersion::build << " (" << OS_STR << ")" << myendl;
+    Console::shared().PrintSectionBegin();
 
 	// We are going to load some of our basic data, if that goes ok, we then initialize classes, data, network
 	// and the classes
-	Console << "Processing INI Settings  ";
+    Console::shared() << "Processing INI Settings  ";
 	if( !std::filesystem::exists( std::filesystem::path( configFile )))
 	{
-		Console.Error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format( "Cannot find UOX3 ini file: %s", configFile.c_str() ));
+        Console::shared().Error( configFile.empty() ? "Cannot find UOX3 ini file." : util::format( "Cannot find UOX3 ini file: %s", configFile.c_str() ));
 		return EXIT_FAILURE;
 	}
 	auto serverdata = CServerData();
 	if( !serverdata.Load( configFile ))
 	{
-		Console.Error( configFile.empty() ? "Error loading UOX3 ini file." : util::format( "Error loading UOX3 ini file: %s", configFile.c_str() ));
+        Console::shared().Error( configFile.empty() ? "Error loading UOX3 ini file." : util::format( "Error loading UOX3 ini file: %s", configFile.c_str() ));
 		return EXIT_FAILURE;
 	}
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	// Start/Initalize classes, data, network
 	StartInitialize( serverdata );
 
 	// Main Loop
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 	EVENT_TIMER( stopwatch, EVENT_TIMER_OFF );
 
 	// Initiate APS - Adaptive Performance System
@@ -379,7 +381,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 					// ... and dropping, or stable at low performance! DO SOMETHING...
 					apsDelay = apsDelay + apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
-					Console << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+                    Console::shared() << "Performance below threshold! Increasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
 #endif
 				}
 				// If performance is below, but increasing, wait and see before reacting
@@ -392,7 +394,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 					// ... reduce timer for snappier NPC AI/movement/etc.
 					apsDelay = apsDelay - apsDelayStep;
 #if defined( UOX_DEBUG_MODE )
-					Console << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
+                    Console::shared() << "Performance exceeds threshold. Decreasing adaptive performance timer: " << apsDelay.count() << "ms" << "\n";
 #endif
 				}
 			}
@@ -410,11 +412,11 @@ auto main( SI32 argc, char *argv[] ) ->int
 
 	// Shutdown/Cleanup
 	SysBroadcast( "The server is shutting down." );
-	Console << "Closing sockets...";
+    Console::shared() << "Closing sockets...";
 	netpollthreadclose = true;
 	///HERE
 	Network->SockClose();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 	
 #if PLATFORM == WINDOWS
 	SetConsoleCtrlHandler( exit_handler, true );
@@ -433,7 +435,7 @@ auto main( SI32 argc, char *argv[] ) ->int
 	SetConsoleCtrlHandler( exit_handler, false );
 #endif
 	
-	Console.Log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
+    Console::shared().Log( "Server Shutdown!\n=======================================================================\n" , "server.log" );
 	
 	conThreadCloseOk = true;	//	This will signal the console thread to close
 	Shutdown( 0 );
@@ -486,29 +488,29 @@ auto StartInitialize( CServerData &serverdata ) -> void
 	cwmWorldState = &aWorld;
 	cwmWorldState->SetServerData( serverdata );
 
-	Console << "Initializing and creating class pointers... " << myendl;
+    Console::shared() << "Initializing and creating class pointers... " << myendl;
 	InitClasses();
 	cwmWorldState->SetUICurrentTime( GetClock() );
 
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 
 	cwmWorldState->ServerData()->LoadTime();
 
-	Console << "Loading skill advancement      ";
+    Console::shared() << "Loading skill advancement      ";
 	LoadSkills();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	// Moved BulkStartup here, dunno why that function was there...
-	Console << "Loading dictionaries...        " << myendl;
-	Console.PrintBasedOnVal( Dictionary->LoadDictionaries( cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES )) >= 0 );
+    Console::shared() << "Loading dictionaries...        " << myendl;
+    Console::shared().PrintBasedOnVal( Dictionary->LoadDictionaries( cwmWorldState->ServerData()->Directory( CSDDP_DICTIONARIES )) >= 0 );
 
-	Console << "Loading teleport               ";
+    Console::shared() << "Loading teleport               ";
 	LoadTeleportLocations();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading GoPlaces               ";
+    Console::shared() << "Loading GoPlaces               ";
 	LoadPlaces();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 	generator = std::mt19937( rd() ); // Standard mersenne_twister_engine seeded with rd()
 
 	auto packetSection = JSMapping->GetSection( SCPT_PACKET );
@@ -522,42 +524,42 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	Skills->Load();
 
-	Console << "Loading Spawn Regions          ";
+    Console::shared() << "Loading Spawn Regions          ";
 	LoadSpawnRegions();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading Regions                ";
+    Console::shared() << "Loading Regions                ";
 	LoadRegions();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	Magic->LoadScript();
 
-	Console << "Loading Races                  ";
+    Console::shared() << "Loading Races                  ";
 	Races->Load();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading Weather                ";
+    Console::shared() << "Loading Weather                ";
 	Weather->Load();
 	Weather->NewDay();
 	Weather->NewHour();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading Commands               " << myendl;
+    Console::shared() << "Loading Commands               " << myendl;
 	Commands->Load();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	// Rework that...
-	Console << "Loading World now              ";
+    Console::shared() << "Loading World now              ";
 	MapRegion->Load();
 
-	Console << "Loading Guilds                 ";
+    Console::shared() << "Loading Guilds                 ";
 	GuildSys->Load();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console.PrintSectionBegin();
-	Console << "Clearing all trades            ";
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "Clearing all trades            ";
 	ClearTrades();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 	InitMultis();
 
 	cwmWorldState->SetStartTime( cwmWorldState->GetUICurrentTime() );
@@ -566,57 +568,57 @@ auto StartInitialize( CServerData &serverdata ) -> void
 	cwmWorldState->SetLClock( 0 );
 
 	// no longer Que, because that's taken care of by PageVector
-	Console << "Initializing Jail system       ";
+    Console::shared() << "Initializing Jail system       ";
 	JailSys->ReadSetup();
 	JailSys->ReadData();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Initializing Status system     ";
+    Console::shared() << "Initializing Status system     ";
 	HTMLTemplates->Load();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading custom titles          ";
+    Console::shared() << "Loading custom titles          ";
 	LoadCustomTitle();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading temporary Effects      ";
+    Console::shared() << "Loading temporary Effects      ";
 	Effects->LoadEffects();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Loading creatures              ";
+    Console::shared() << "Loading creatures              ";
 	LoadCreatures();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console << "Starting World Timers          ";
+    Console::shared() << "Starting World Timers          ";
 	cwmWorldState->SetTimer( tWORLD_LIGHTTIME, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_WEATHER ));
 	cwmWorldState->SetTimer( tWORLD_NEXTNPCAI, BuildTimeValue( static_cast<R32>( cwmWorldState->ServerData()->CheckNpcAISpeed() )));
 	cwmWorldState->SetTimer( tWORLD_NEXTFIELDEFFECT, BuildTimeValue( 0.5f ));
 	cwmWorldState->SetTimer( tWORLD_SHOPRESTOCK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_SHOPSPAWN ));
 	cwmWorldState->SetTimer( tWORLD_PETOFFLINECHECK, cwmWorldState->ServerData()->BuildSystemTimeValue( tSERVER_PETOFFLINECHECK ));
 
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	DisplayBanner();
 
-	Console << "Loading Accounts               ";
+    Console::shared() << "Loading Accounts               ";
 	Accounts->Load();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
-	Console.Log( "-=Server Startup=-\n=======================================================================", "server.log" );
+    Console::shared().Log( "-=Server Startup=-\n=======================================================================", "server.log" );
 
-	Console << "Creating and Initializing Console Thread      ";
+    Console::shared() << "Creating and Initializing Console Thread      ";
 
 	cons = std::thread( &CheckConsoleKeyThread );
 
-	Console.PrintDone();
+    Console::shared().PrintDone();
 
 	// Shows information about IPs and ports being listened on
-	Console.TurnYellow();
+    Console::shared().TurnYellow();
 
 	auto externalIP = cwmWorldState->ServerData()->ExternalIP();
 	if( externalIP != "" && externalIP != "localhost" && externalIP != "127.0.0.1" )
 	{
-		Console << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
+        Console::shared() << "UOX: listening for incoming connections on External/WAN IP: " << externalIP.c_str() << myendl;
 	}
 
 	auto deviceIPs = ip4list_t::available();
@@ -625,20 +627,20 @@ auto StartInitialize( CServerData &serverdata ) -> void
 		switch( entry.type() )
 		{
 			case Ip4Addr_st::ip4type_t::lan:
-				Console << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
+                Console::shared() << "UOX: listening for incoming connections on LAN IP: " << entry.description() << myendl;
 				break;
 			case Ip4Addr_st::ip4type_t::local:
-				Console << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
+                Console::shared() << "UOX: listening for incoming connections on Local IP: " << entry.description() << myendl;
 				break;
 			case Ip4Addr_st::ip4type_t::wan:
-				Console << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
+                Console::shared() << "UOX: listening for incoming connections on WAN IP: " << entry.description() << myendl;
 				break;
 			default:
-				Console << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
+                Console::shared() << "UOX: listening for incoming connections on IP: " << entry.description() << myendl;
 				break;
 		}
 	}
-	Console.TurnNormal();
+    Console::shared().TurnNormal();
 
 	// we've really finished loading here
 	cwmWorldState->SetLoaded( true );
@@ -648,9 +650,9 @@ auto StartInitialize( CServerData &serverdata ) -> void
 
 	// Calculate startup time in milliseconds
 	auto startupDuration = std::chrono::duration_cast<std::chrono::milliseconds>( startupEndTime - startupStartTime ).count();
-	Console.TurnGreen();
-	Console << "UOX: Startup Completed in " << static_cast<R32>( startupDuration ) / 1000 << " seconds." << myendl;
-	Console.TurnNormal();
+    Console::shared().TurnGreen();
+    Console::shared() << "UOX: Startup Completed in " << static_cast<R32>( startupDuration ) / 1000 << " seconds." << myendl;
+    Console::shared().TurnNormal();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -693,12 +695,12 @@ BOOL WINAPI exit_handler( DWORD dwCtrlType )
 auto illinst( SI32 x = 0 ) -> void
 {
 	SysBroadcast( "Fatal Server Error! Bailing out - Have a nice day!" );
-	Console.Error( "Illegal Instruction Signal caught - attempting shutdown" );
+	Console::shared().Error( "Illegal Instruction Signal caught - attempting shutdown" );
 	EndMessage( x );
 }
 auto aus( [[maybe_unused]] SI32 signal ) -> void
 {
-	Console.Error( "Server crash averted! Floating point exception caught." );
+    Console::shared().Error( "Server crash averted! Floating point exception caught." );
 }
 void app_stopped( [[maybe_unused]] int sig )
 {
@@ -801,17 +803,17 @@ auto DoMessageLoop() -> void
 			case MSG_SHUTDOWN: 	cwmWorldState->SetKeepRun( false ); break;
 			case MSG_COUNT: 	break;
 			case MSG_WORLDSAVE: cwmWorldState->SetOldTime( 0 ); break;
-			case MSG_PRINT: 	Console << tVal.data << myendl; break;
+			case MSG_PRINT: 	Console::shared() << tVal.data << myendl; break;
 			case MSG_RELOADJS:
 				JSEngine->Reload();
 				JSMapping->Reload();
-				Console.PrintDone();
+                Console::shared().PrintDone();
 				Commands->Load();
 				break;
 			case MSG_CONSOLEBCAST:	SysBroadcast( tVal.data ); break;
-			case MSG_PRINTDONE: 	Console.PrintDone(); break;
-			case MSG_PRINTFAILED:	Console.PrintFailed(); break;
-			case MSG_SECTIONBEGIN:	Console.PrintSectionBegin(); break;
+			case MSG_PRINTDONE: 	Console::shared().PrintDone(); break;
+			case MSG_PRINTFAILED:	Console::shared().PrintFailed(); break;
+			case MSG_SECTIONBEGIN:	Console::shared().PrintSectionBegin(); break;
 			case MSG_RELOAD:
 				if( !cwmWorldState->GetReloadingScripts() )
 				{
@@ -841,7 +843,7 @@ auto DoMessageLoop() -> void
 						case '7': // Reload JS
 							JSEngine->Reload();
 							JSMapping->Reload();
-							Console.PrintDone();
+                            Console::shared().PrintDone();
 							Commands->Load();
 							Skills->Load(); break;
 						case '8': // Reload HTML
@@ -852,7 +854,7 @@ auto DoMessageLoop() -> void
 				}
 				break;
 			case MSG_UNKNOWN:
-			default: Console.Error( "Unknown message type" ); break;
+			default: Console::shared().Error( "Unknown message type" ); break;
 		}
 	}
 }
@@ -887,11 +889,11 @@ auto NetworkPollConnectionThread() -> void
 auto CheckConsoleKeyThread() -> void
 {
 	messageLoop << "Thread: CheckConsoleThread has started";
-	Console.Registration();
+    Console::shared().Registration();
 	conThreadCloseOk = false;
 	while( !conThreadCloseOk )
 	{
-		Console.Poll();
+        Console::shared().Poll();
 		std::this_thread::sleep_for( std::chrono::milliseconds( 500 ));
 	}
 	messageLoop << "Thread: CheckConsoleKeyThread Closed";
@@ -968,7 +970,7 @@ auto UpdateStats( CBaseObject *mObj, UI08 x ) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CollectGarbage() -> void
 {
-	Console << "Performing Garbage Collection...";
+    Console::shared() << "Performing Garbage Collection...";
 	auto objectsDeleted = UI32( 0 );
 	std::for_each( cwmWorldState->deletionQueue.begin(), cwmWorldState->deletionQueue.end(), [&objectsDeleted]( std::pair<CBaseObject*, UI32> entry )
 	{
@@ -976,7 +978,7 @@ auto CollectGarbage() -> void
 		{
 			if( entry.first->IsFree() && entry.first->IsDeleted() )
 			{
-				Console.Warning( "Invalid object found in Deletion Queue" );
+                Console::shared().Warning( "Invalid object found in Deletion Queue" );
 			}
 			else
 			{
@@ -988,10 +990,10 @@ auto CollectGarbage() -> void
 
 	cwmWorldState->deletionQueue.clear();
 
-	Console << " Removed " << objectsDeleted << " objects";
+    Console::shared() << " Removed " << objectsDeleted << " objects";
 
 	JSEngine->CollectGarbage();
-	Console.PrintDone();
+    Console::shared().PrintDone();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -1380,7 +1382,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 		mChar.SetEvadeState( false );
 #if defined( UOX_DEBUG_MODE ) && defined( DEBUG_COMBAT )
 		std::string mCharName = GetNpcDictName( &mChar, nullptr, NRS_SYSTEM );
-		Console.Print( util::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
+        Console::shared().Print( util::format( "DEBUG: EvadeTimer ended for NPC (%s, 0x%X, at %i, %i, %i, %i).\n", mCharName.c_str(), mChar.GetSerial(), mChar.GetX(), mChar.GetY(), mChar.GetZ(), mChar.WorldNumber() ));
 #endif
 	}
 
@@ -1469,7 +1471,7 @@ auto GenericCheck( CSocket *mSock, CChar& mChar, bool checkFieldEffects, bool do
 							break;
 						}
 						default:
-							Console.Error( " Fallout of switch statement without default. uox3.cpp, GenericCheck(), mChar.GetPoisoned() not within valid range." );
+                            Console::shared().Error( " Fallout of switch statement without default. uox3.cpp, GenericCheck(), mChar.GetPoisoned() not within valid range." );
 							mChar.SetPoisoned( 0 );
 							break;
 					}
@@ -2024,7 +2026,7 @@ auto CheckItem( CMapRegion *toCheck, bool checkItems, UI32 nextDecayItems, UI32 
 						else
 						{
 							itemCheck->SetType( IT_NOTYPE );
-							Console.Warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
+                            Console::shared().Warning( "Invalid spawner object detected; item type reverted to 0. All spawner objects have to be added using 'ADD SPAWNER # command." );
 						}
 					}
 					break;
@@ -2453,8 +2455,8 @@ auto CWorldMain::CheckAutoTimers() -> void
 			// Lets do some maintenance on the bulletin boards.
 			if( !GetPlayersOnline() && ( GetWorldSaveProgress() != SS_SAVING ))
 			{
-				Console << "No players currently online. Starting bulletin board maintenance" << myendl;
-				Console.Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
+                Console::shared() << "No players currently online. Starting bulletin board maintenance" << myendl;
+                Console::shared().Log( "Bulletin Board Maintenance routine running (AUTO)", "server.log" );
 				MsgBoardMaintenance();
 			}
 
@@ -2861,12 +2863,12 @@ auto FindMultiFunctor( CBaseObject *a, [[maybe_unused]] UI32 &b, [[maybe_unused]
 //o------------------------------------------------------------------------------------------------o
 auto InitMultis() -> void
 {
-	Console << "Initializing multis            ";
+    Console::shared() << "Initializing multis            ";
 
 	UI32 b = 0;
 	ObjectFactory::GetSingleton().IterateOver( OT_MULTI, b, nullptr, &FindMultiFunctor );
 
-	Console.PrintDone();
+    Console::shared().PrintDone();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -2876,24 +2878,24 @@ auto InitMultis() -> void
 //o------------------------------------------------------------------------------------------------o
 auto DisplayBanner() -> void
 {
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 
-	Console.TurnYellow();
-	Console << "Compiled on ";
-	Console.TurnNormal();
-	Console << __DATE__ << " (" << __TIME__ << ")" << myendl;
+    Console::shared().TurnYellow();
+    Console::shared() << "Compiled on ";
+    Console::shared().TurnNormal();
+    Console::shared() << __DATE__ << " (" << __TIME__ << ")" << myendl;
 
-	Console.TurnYellow();
-	Console << "Compiled by ";
-	Console.TurnNormal();
-	Console << CVersionClass::GetName() << myendl;
+    Console::shared().TurnYellow();
+    Console::shared() << "Compiled by ";
+    Console::shared().TurnNormal();
+    Console::shared() << UOXVersion::name << myendl;
 
-	Console.TurnYellow();
-	Console << "Contact: ";
-	Console.TurnNormal();
-	Console << CVersionClass::GetEmail() << myendl;
+    Console::shared().TurnYellow();
+    Console::shared() << "Contact: ";
+    Console::shared().TurnNormal();
+    Console::shared() << UOXVersion::email << myendl;
 
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 	saveOnShutdown = true;
 }
 
@@ -2907,8 +2909,8 @@ auto DisplayBanner() -> void
 //o------------------------------------------------------------------------------------------------o
 auto Shutdown( SI32 retCode ) -> void
 {
-	Console.PrintSectionBegin();
-	Console << "Beginning UOX final shut down sequence..." << myendl;
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "Beginning UOX final shut down sequence..." << myendl;
 	if( retCode && saveOnShutdown )
 	{
 		//they want us to save, there has been an error, we have loaded the world, and WorldState is a valid pointer.
@@ -2930,21 +2932,21 @@ auto Shutdown( SI32 retCode ) -> void
 	{
 		if( HTMLTemplates )
 		{
-			Console << "HTMLTemplates object detected. Writing Offline HTML Now...";
+            Console::shared() << "HTMLTemplates object detected. Writing Offline HTML Now...";
 			HTMLTemplates->Poll( ETT_OFFLINE );
-			Console.PrintDone();
+            Console::shared().PrintDone();
 		}
 		else
 		{
-			Console << "HTMLTemplates object not found." << myendl;
+            Console::shared() << "HTMLTemplates object not found." << myendl;
 		}
 
-		Console << "Destroying class objects and pointers... ";
+        Console::shared() << "Destroying class objects and pointers... ";
 		// delete any objects that were created (delete takes care of nullptr check =)
 		UnloadSpawnRegions();
 
 		UnloadRegions();
-		Console.PrintDone();
+        Console::shared().PrintDone();
 	}
 
 	//Lets wait for console thread to quit here
@@ -2955,35 +2957,38 @@ auto Shutdown( SI32 retCode ) -> void
 
 	// don't leave file pointers open, could lead to file corruption
 
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 
-	Console.TurnGreen();
-	Console << "Server shutdown complete!" << myendl;
-	Console << "Thank you for supporting " << CVersionClass::GetName() << myendl;
-	Console.TurnNormal();
-	Console.PrintSectionBegin();
+    Console::shared().TurnGreen();
+    Console::shared() << "Server shutdown complete!" << myendl;
+    Console::shared() << "Thank you for supporting " << UOXVersion::name << myendl;
+    Console::shared().TurnNormal();
+	Console::shared().PrintSectionBegin();
 
 	// dispay what error code we had
 	// don't report errorlevel for no errors, this is confusing ppl
 	if( retCode )
 	{
-		Console.TurnRed();
-		Console << "Exiting UOX with errorlevel " << retCode << myendl;
-		Console.TurnNormal();
+        Console::shared().TurnRed();
+        Console::shared() << "Exiting UOX with errorlevel " << retCode << myendl;
+        Console::shared().TurnNormal();
 #if PLATFORM == WINDOWS
-		Console << "Press Return to exit " << myendl;
+        Console::shared() << "Press Return to exit " << myendl;
 		std::string throwAway;
 		std::getline( std::cin, throwAway );
 #endif
 	}
 	else
 	{
-		Console.TurnGreen();
-		Console << "Exiting UOX with no errors..." << myendl;
-		Console.TurnNormal();
+        Console::shared().TurnGreen();
+        Console::shared() << "Exiting UOX with no errors..." << myendl;
+        Console::shared().TurnNormal();
 	}
 
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
+    if (cons.joinable()){
+        cons.join();
+    }
 	exit( retCode );
 }
 
@@ -3004,7 +3009,7 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 		auto Advancement	= FileLookup->FindEntry( sect, advance_def );
 		if( Advancement == nullptr )
 		{
-			Console << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
+            Console::shared() << "ADVANCEMENT OBJECT: Script section not found, Aborting" << myendl;
 			applyTo->SetAdvObj( 0 );
 			return;
 		}
@@ -3134,7 +3139,7 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 					}
 					else
 					{
-						Console << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
+                        Console::shared() << "Warning: Bad NPC Script with problem no backpack for packitem" << myendl;
 					}
 					break;
 				case DFNTAG_REMOVETRAP:			skillToSet = REMOVETRAP;					break;
@@ -3156,7 +3161,7 @@ auto AdvanceObj( CChar *applyTo, UI16 advObj, bool multiUse ) -> void
 				case DFNTAG_TRACKING:			skillToSet = TRACKING;						break;
 				case DFNTAG_VETERINARY:			skillToSet = VETERINARY;					break;
 				case DFNTAG_WRESTLING:			skillToSet = WRESTLING;						break;
-				default:						Console << "Unknown tag in AdvanceObj(): " << static_cast<SI32>( tag ) << myendl;		break;
+				default:						Console::shared() << "Unknown tag in AdvanceObj(): " << static_cast<SI32>( tag ) << myendl;		break;
 			}
 			if( skillToSet > 0 )
 			{
@@ -3943,7 +3948,7 @@ auto UpdateFlag( CChar *mChar ) -> void
 		{
 			// Default to blue, invalid owner detected
 			mChar->SetFlagBlue();
-			Console.Warning( util::format( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() ));
+            Console::shared().Warning( util::format( "Tamed Creature has an invalid owner, Serial: 0x%X", mChar->GetSerial() ));
 		}
 	}
 	else

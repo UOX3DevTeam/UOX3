@@ -502,7 +502,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cConsole.cpp">
+    <ClCompile Include="..\..\source\subsystem\console.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -798,7 +798,7 @@
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</BrowseInformation>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BrowseInformation>
     </ClCompile>
-    <ClCompile Include="..\..\source\cVersionClass.cpp">
+    <ClCompile Include="..\..\source\other\uoxversion.cpp">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">Disabled</Optimization>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='DebugProfile|x64'">Disabled</Optimization>
       <BrowseInformation Condition="'$(Configuration)|$(Platform)'=='DebugProfile|Win32'">true</BrowseInformation>
@@ -1386,7 +1386,7 @@
     <ClInclude Include="..\..\source\cAccountClass.h" />
     <ClInclude Include="..\..\source\cBaseObject.h" />
     <ClInclude Include="..\..\source\cChar.h" />
-    <ClInclude Include="..\..\source\cConsole.h" />
+    <ClInclude Include="..\..\source\subsystem\console.hpp" />
     <ClInclude Include="..\..\source\cdice.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
     <ClInclude Include="..\..\source\cGuild.h" />
@@ -1412,7 +1412,7 @@
     <ClInclude Include="..\..\source\cSocket.h" />
     <ClInclude Include="..\..\source\cSpawnRegion.h" />
     <ClInclude Include="..\..\source\cThreadQueue.h" />
-    <ClInclude Include="..\..\source\cVersionClass.h" />
+    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <ClInclude Include="..\..\source\cWeather.hpp" />
     <ClInclude Include="..\..\source\Dictionary.h" />
     <ClInclude Include="..\..\source\enums.h" />

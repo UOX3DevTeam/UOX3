@@ -190,16 +190,16 @@ void UOX3ErrorReporter( JSContext *cx, const char *message, JSErrorReport *repor
 {
 	UI16 scriptNum = JSMapping->GetScriptId( JS_GetGlobalObject( cx ));
 	// If we're loading the world then do NOT print out anything!
-	Console.Error( util::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
+    Console::shared().Error( util::format( "JS script failure: Script Number (%u) Message (%s)", scriptNum, message ));
 	if( report == nullptr || report->filename == nullptr )
 	{
-		Console.Error( "No detailed data" );
+        Console::shared().Error( "No detailed data" );
 		return;
 	}
-	Console.Error( util::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
+    Console::shared().Error( util::format( "Filename: %s\n| Line Number: %i", report->filename, report->lineno ));
 	if( report->linebuf != nullptr || report->tokenptr != nullptr )
 	{
-		Console.Error( util::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
+        Console::shared().Error( util::format( "Erroneous Line: %s\n| Token Ptr: %s", report->linebuf, report->tokenptr ));
 	}
 }
 
@@ -318,7 +318,7 @@ cScript::cScript( std::string targFile, UI08 rT ) : isFiring( false ), runTime( 
 	if( ok != JS_TRUE )
 	{
 		JSString *str = JS_ValueToString( targContext, rval );
-		Console << "script result: " << JS_GetStringBytes( str ) << myendl;
+        Console::shared() << "script result: " << JS_GetStringBytes( str ) << myendl;
 	}
 }
 
@@ -868,7 +868,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 	// an error. Abort attempt to turn it into a string - it might crash the server!
 	if( rval < 0 )
 	{
-		Console.Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
+        Console::shared().Error( "Handled exception in cScript.cpp OnTooltip() - invalid return value/error encountered!" );
 		return "";
 	}
 
@@ -881,7 +881,7 @@ std::string cScript::OnTooltip( CBaseObject *myObj, CSocket *pSocket )
 	}
 	catch( ... )
 	{
-		Console.Error( "Handled exception in cScript.cpp OnTooltip()" );
+        Console::shared().Error( "Handled exception in cScript.cpp OnTooltip()" );
 		return "";
 	}
 }
@@ -941,7 +941,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 		// an error. Abort attempt to turn it into a string - it might crash the server!
 		if( rval < 0 )
 		{
-			Console.Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
+            Console::shared().Error( "Handled exception in cScript.cpp OnNameRequest() - invalid return value/error encountered!" );
 			return "";
 		}
 
@@ -961,7 +961,7 @@ std::string cScript::OnNameRequest( CBaseObject *myObj, CChar *nameRequester, UI
 	}
 	catch(...)
 	{
-		Console.Error( "Handled exception in cScript.cpp OnNameRequest()" );
+        Console::shared().Error( "Handled exception in cScript.cpp OnNameRequest()" );
 
 		// Clear flag that marks object as having an active name lookup via onNameRequest
 		myObj->NameRequestActive( false );
@@ -2443,7 +2443,7 @@ bool cScript::DoCallback( CSocket *tSock, SERIAL targeted, UI08 callNum )
 	}
 	catch( ... )
 	{
-		Console.Error( "Handled exception in cScript.cpp DoCallback()" );
+        Console::shared().Error( "Handled exception in cScript.cpp DoCallback()" );
 	}
 	return false;
 }
@@ -3328,7 +3328,7 @@ bool cScript::AreaObjFunc( char *funcName, CBaseObject *srcObject, CBaseObject *
 	}
 	catch( ... )
 	{
-		Console.Error( "Some error!" );
+        Console::shared().Error( "Some error!" );
 	}
 
 	return ( JSVAL_TO_BOOLEAN( rval ) == JS_TRUE );
@@ -3409,7 +3409,7 @@ bool cScript::ScriptRegistration( std::string scriptType )
 	JS_GetProperty( targContext, targObject, scriptType.c_str(), &Func );
 	if( Func == JSVAL_VOID )
 	{
-		Console.Warning( util::format( "Script Number (%u) does not have a %s function", JSMapping->GetScriptId( targObject ), scriptType.c_str() ));
+        Console::shared().Warning( util::format( "Script Number (%u) does not have a %s function", JSMapping->GetScriptId( targObject ), scriptType.c_str() ));
 		return false;
 	}
 

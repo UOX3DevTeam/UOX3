@@ -2283,24 +2283,24 @@ void CItem::CheckItemIntegrity( void )
 	SERIAL getSerial = GetSerial();
 	if( getSerial == INVALIDSERIAL )
 	{
-		Console.Warning( util::format( "Item (%s, from DFN section [%s]) has an invalid serial number, Deleting", GetName().c_str(), GetSectionId().c_str() ));
+		Console::shared().Warning( util::format( "Item (%s, from DFN section [%s]) has an invalid serial number, Deleting", GetName().c_str(), GetSectionId().c_str() ));
 		Delete();
 		return;
 	}
 
 	if( getSerial == GetContSerial() )
 	{
-		Console.Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
+        Console::shared().Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous container value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetCont( nullptr );
 	}
 	if( getSerial == GetOwner() )
 	{
-		Console.Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
+        Console::shared().Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous owner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetOwner( nullptr );
 	}
 	if( getSerial == GetSpawn() )
 	{
-		Console.Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
+        Console::shared().Warning( util::format( "Item 0x%X (%s, from DFN section [%s]) has dangerous spawner value, Auto-Correcting", getSerial, GetName().c_str(), GetSectionId().c_str() ));
 		SetSpawn( INVALIDSERIAL );
 	}
 
@@ -2309,12 +2309,12 @@ void CItem::CheckItemIntegrity( void )
 		if( GetMaxItems() == 0 )
 		{
 			SetMaxItems( cwmWorldState->ServerData()->MaxPlayerPackItems() );
-			Console.Warning( util::format( "Container (%s, from DFN section [%s]) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
+            Console::shared().Warning( util::format( "Container (%s, from DFN section [%s]) with maxItems set to 0 detected on character (%s). Resetting maxItems for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
 		}
 		if( GetWeightMax() == 0 )
 		{
 			SetWeightMax( cwmWorldState->ServerData()->MaxPlayerPackWeight() );
-			Console.Warning( util::format( "Container (%s, from DFN section [%s]) with weightMax set to 0 detected on character (%s). Resetting weightMax for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
+            Console::shared().Warning( util::format( "Container (%s, from DFN section [%s]) with weightMax set to 0 detected on character (%s). Resetting weightMax for container to default value.", std::to_string( GetSerial() ).c_str(), GetSectionId().c_str(), std::to_string( contObj->GetSerial() ).c_str() ));
 		}
 	}
 }
@@ -2600,7 +2600,7 @@ void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawG
 
 	if( GetCont() == this )
 	{
-		Console.Warning( util::format( "Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
+        Console::shared().Warning( util::format( "Item %s(0x%X) has a dangerous container value, auto-correcting", GetName().c_str(), GetSerial() ));
 		SetCont( nullptr );
 	}
 
@@ -2662,7 +2662,7 @@ void CItem::Update( [[maybe_unused]] CSocket *mSock, [[maybe_unused]] bool drawG
 			return;
 		}
 	}
-	Console.Error( util::format( " CItem::Update(0x%X): cannot determine container type!", GetSerial() ));
+    Console::shared().Error( util::format( " CItem::Update(0x%X): cannot determine container type!", GetSerial() ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -3430,7 +3430,7 @@ auto CSpawnItem::HandleItemSpawner() -> bool
 		}
 		else
 		{
-			Console.Warning( "Bad Item Spawner Found, Deleting" );
+            Console::shared().Warning( "Bad Item Spawner Found, Deleting" );
 			Delete();
 			return true;
 		}
@@ -3453,7 +3453,7 @@ auto CSpawnItem::HandleNPCSpawner() -> bool
 		}
 		else
 		{
-			Console.Warning( "Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner." );
+            Console::shared().Warning( "Bad Npc/Area Spawner found; SPAWNSECTION or MOREX values missing! Deleting Spawner." );
 			Delete();
 			return true;
 		}
@@ -3596,7 +3596,7 @@ auto CSpawnItem::HandleSpawnContainer() -> bool
 		}
 		else
 		{
-			Console.Warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
+            Console::shared().Warning( "Bad Spawn Container found; missing SPAWNSECTION or MOREX! Deleting Spawner." );
 			Delete();
 			return true;
 		}

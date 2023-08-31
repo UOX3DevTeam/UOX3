@@ -15,6 +15,8 @@
 #include <filesystem>
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
+#include "subsystem/console.hpp"
 
 #include "osunique.hpp"
 #if PLATFORM != WINDOWS
@@ -510,7 +512,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 			SI32 charNum = std::stoi( l.substr( 10 ) , nullptr, 0 );
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
 			{
-				Console.Error( "Invalid character found in accounts" );
+				Console::shared().Error( "Invalid character found in accounts" );
 			}
 			else
 			{
@@ -568,7 +570,7 @@ UI16 cAccountClass::CreateAccountSystem( void )
 				auto create_status = std::filesystem::create_directory( std::filesystem::path( sNewPath ));
 				if( !create_status )
 				{
-					Console.Error( util::format( "CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str() ));
+                    Console::shared().Error( util::format( "CreateAccountSystem(): Couldn't create directory %s", sNewPath.c_str() ));
 					m_mapUsernameIdMap.clear();
 					m_mapUsernameMap.clear();
 					return 0L;
@@ -740,7 +742,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	if( sUsername.length() < 4 || sPassword.length() < 5 )
 	{
 		// Username and password must be 4 and 5 characters or more in length, respectively
-		Console.Log( util::format( "ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short", sUsername.c_str(), sPassword.c_str() ), "accounts.log" );
+        Console::shared().Log( util::format( "ERROR: Unable to create account for username '%s' with password of '%s'. Username/Password to short", sUsername.c_str(), sPassword.c_str() ), "accounts.log" );
 		return 0x0000;
 	}
 	// Next thing were going to do is make sure there isn't a duplicate username.
@@ -797,7 +799,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 		auto create_status = std::filesystem::create_directory( std::filesystem::path( actbTemp.sPath ));
 		if( !create_status )
 		{
-			Console.Error( util::format( "AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str() ));
+            Console::shared().Error( util::format( "AddAccount(): Couldn't create directory %s", actbTemp.sPath.c_str() ));
 			return 0x0000;
 
 		}
@@ -828,7 +830,7 @@ UI16 cAccountClass::AddAccount( std::string sUsername, std::string sPassword, co
 	// were using the ID due to its numbering, it will always show the account blocks in ID order least to greatest.
 	actbTemp.wAccountIndex = m_wHighestAccount + 1;
 	// Ok we have to write the new username.uad file in the directory
-	fsAccountsUAD << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << "\n";
+	fsAccountsUAD << "//AI3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << "\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------" << std::endl;
 	fsAccountsUAD << "// UAD Path: " << actbTemp.sPath << std::endl;//"\n";
 	fsAccountsUAD << "//------------------------------------------------------------------------------" << std::endl;
@@ -945,16 +947,16 @@ UI16 cAccountClass::Load( void )
 	{
 		// CreateAccountSystem renames accounts.adm for back up purposes, so we need to release its file isntance before calling
 		fsAccountsADMTest.close();
-		Console << myendl << "  o Processing legacy UOX3 accounts.adm file";
+        Console::shared() << myendl << "  o Processing legacy UOX3 accounts.adm file";
 		UI16 wResponse = CreateAccountSystem();
-		Console.PrintDone();
-		Console << "    - Processed " << wResponse << " account blocks." << myendl;
+        Console::shared().PrintDone();
+        Console::shared() << "    - Processed " << wResponse << " account blocks." << myendl;
 		// Nope, not a v3 file.. so we should attempt a convert
 		return wResponse;
 	}
 	else
 	{
-		Console << myendl << " o Processing accounts file";
+        Console::shared() << myendl << " o Processing accounts file";
 	}
 
 	if( fsAccountsADMTest.is_open() )
@@ -1251,7 +1253,7 @@ UI16 cAccountClass::Load( void )
 			auto charNum = static_cast<UI08>( std::stoul( l.substr( 10 ), nullptr, 0 ));
 			if( charNum < 1 || charNum > CHARACTERCOUNT )
 			{
-				Console.Error( "Invalid character found in accounts" );
+                Console::shared().Error( "Invalid character found in accounts" );
 			}
 			else
 			{
@@ -1845,7 +1847,7 @@ UI16 cAccountClass::Save( [[maybe_unused]] bool bForceLoad )
 		if( actbId.sUsername != actbName.sUsername || actbId.sPassword != actbName.sPassword )
 		{
 			// there was an error between blocks
-			Console.Error( util::format( "Save(): Mismatch %s - %s (Duplicate username in accounts file?)", actbId.sUsername.c_str(), actbName.sUsername.c_str() ));
+            Console::shared().Error( util::format( "Save(): Mismatch %s - %s (Duplicate username in accounts file?)", actbId.sUsername.c_str(), actbName.sUsername.c_str() ));
 			fsAccountsAdm.close();
 			return 0xFFFF;
 		}
@@ -1884,7 +1886,7 @@ UI16 cAccountClass::Save( [[maybe_unused]] bool bForceLoad )
 			auto create_status = std::filesystem::create_directory( std::filesystem::path( actbId.sPath ));
 			if( !create_status )
 			{
-				Console.Error( util::format( "Save(): Couldn't create directory %s", actbId.sPath.c_str() ));
+                Console::shared().Error( util::format( "Save(): Couldn't create directory %s", actbId.sPath.c_str() ));
 				fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
 				continue;
 
@@ -1911,7 +1913,7 @@ UI16 cAccountClass::Save( [[maybe_unused]] bool bForceLoad )
 		if( !fsAccountsUad.is_open() )
 		{
 			// Ok we were unable to open the file so this user will not be added.
-			Console.Error( util::format( "Save(): Couldn't open file %s", sUsernameUadPath.c_str() ));
+            Console::shared().Error( util::format( "Save(): Couldn't open file %s", sUsernameUadPath.c_str() ));
 			fsAccountsAdm << "// !!! Couldn't save .uad file !!!" << std::endl;
 			continue;
 		}
@@ -2047,7 +2049,7 @@ UI16 cAccountClass::ImportAccounts( void )
 				fsOutputBadAccounts << sLine << std::endl;
 				fsOutputBadAccounts.close();
 				// OK there was a problem entering this accounts into the system. Possibly a duplicate? or Other issues
-				Console << "NOTICE: New account was not processed. Please see failed_accounts.log for details." << myendl;
+                Console::shared() << "NOTICE: New account was not processed. Please see failed_accounts.log for details." << myendl;
 				std::getline( fsInputAccountsTest, sLine );
 				sLine = util::trim( util::strip( sLine, "//" ));
 				continue;
@@ -2154,7 +2156,7 @@ cAccountClass& cAccountClass::operator -- ( SI32 )
 //o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 {
-	fsOut << "//AV3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AV3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "//accounts.adm[TEXT] : UOX3 uses this file for shared accounts access between servers" << std::endl;
 	fsOut << "//" << std::endl;
@@ -2209,7 +2211,7 @@ void cAccountClass::WriteAccountsHeader( std::fstream &fsOut )
 //o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteAccessHeader( std::fstream &fsOut )
 {
-	fsOut << "//SA3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//SA3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "//access.adm[TEXT] : UOX3 uses this file for shared accounts access between servers" << std::endl;
 	fsOut << "// " << std::endl;
@@ -2238,7 +2240,7 @@ void cAccountClass::WriteAccessHeader( std::fstream &fsOut )
 //o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteOrphanHeader( std::fstream &fsOut )
 {
-	fsOut << "//OI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << "\n";
+	fsOut << "//OI3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << "\n";
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// Orphans.Adm " << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2263,7 +2265,7 @@ void cAccountClass::WriteOrphanHeader( std::fstream &fsOut )
 //o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock_st& actbTemp )
 {
-	fsOut << "//AI3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AI3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// UAD Path: " << actbTemp.sPath << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
@@ -2290,7 +2292,7 @@ void cAccountClass::WriteUADHeader( std::fstream &fsOut, CAccountBlock_st& actbT
 //o------------------------------------------------------------------------------------------------o
 void cAccountClass::WriteImportHeader( std::fstream &fsOut )
 {
-	fsOut << "//AIMP3.0" << "-UV" << CVersionClass::GetVersion() << "-BD" << CVersionClass::GetBuild() << "-DS" << time( nullptr ) << "-ED" << CVersionClass::GetRealBuild() << std::endl;
+	fsOut << "//AIMP3.0" << "-UV" << UOXVersion::version << "-BD" << UOXVersion::build << "-DS" << time( nullptr ) << "-ED" << UOXVersion::realBuild << std::endl;
 	fsOut << "//------------------------------------------------------------------------------" << std::endl;
 	fsOut << "// UOX3 uses this file to store new accounts that are to be imported on the next" << std::endl;
 	fsOut << "// time the server does a world save, or world load." << std::endl;

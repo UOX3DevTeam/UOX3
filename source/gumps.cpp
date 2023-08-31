@@ -20,6 +20,7 @@
 #include "ObjectFactory.h"
 #include "StringUtility.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
 
 #include <algorithm>
 #include "osunique.hpp"
@@ -42,7 +43,7 @@ void TextEntryGump( CSocket *s, SERIAL ser, UI08 type, UI08 index, SI16 maxlengt
 	std::string txt = Dictionary->GetEntry( dictEntry, s->Language() );
 	if( txt.empty() )
 	{
-		Console.Error( "Invalid text in TextEntryGump()" );
+        Console::shared().Error( "Invalid text in TextEntryGump()" );
 		return;
 	}
 
@@ -327,7 +328,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 			case 1001:	password	= packet->GetTextString( i );	break;
 			case 1002:	emailAddy	= packet->GetTextString( i );	break;
 			default:
-				Console.Warning( util::format( "Unknown textId %i with string %s", textId, packet->GetTextString( i ).c_str() ));
+                Console::shared().Warning( util::format( "Unknown textId %i with string %s", textId, packet->GetTextString( i ).c_str() ));
 		}
 	}
 
@@ -337,7 +338,7 @@ void HandleAccountModButton( CPIGumpMenuSelect *packet )
 		s->SysMessage( 555 ); // An account by that name already exists!
 		return;
 	}
-	Console.Print( util::format( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() ));
+    Console::shared().Print( util::format( "Attempting to add username %s with password %s at emailaddy %s", username.c_str(), password.c_str(), emailAddy.c_str() ));
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -363,7 +364,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	}
 
 #if defined( UOX_DEBUG_MODE )
-	Console << "Menu: " << m << myendl;
+    Console::shared() << "Menu: " << m << myendl;
 #endif
 
 	CPSendGumpMenu toSend;
@@ -484,7 +485,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 		toSend.addText( "<CENTER><BIG><BASEFONT color=#F64040>Ultima Offline eXperiment 3</BASEFONT></BIG></CENTER>" );
 
 		// Shard Menu Version
-		szBuffer = "v" + CVersionClass::GetVersion() + "." + CVersionClass::GetBuild();
+		szBuffer = "v"s + UOXVersion::version + "."s + UOXVersion::build;
 		toSend.addCommand( util::format( "text %u %u %u %u", 320, 90, 27, linenum++ ));
 		toSend.addText( szBuffer );
 
@@ -892,7 +893,7 @@ void BuildAddMenuGump( CSocket *s, UI16 m )
 	toSend.addCommand( util::format( "button %u %u %u %u %u %u %u", 104, yStart + 300, 0x138E, 0x138E, 0, 1, tabNumber++ ));
 
 #if defined( UOX_DEBUG_MODE )
-	Console << "==============================" << myendl;
+    Console::shared() << "==============================" << myendl;
 #endif
 	// Finish up and send the gump to the client socket.
 	toSend.Finalize();
@@ -1321,10 +1322,10 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 			else if( cmd == "GUIINFORMATION" )
 			{
 				CGumpDisplay guiInfo( s, 400, 300 );
-				guiInfo.SetTitle( CVersionClass::GetProductName() + " Status" );
+				guiInfo.SetTitle( UOXVersion::productName + " Status"s );
 				builtString = GetUptime();
-				guiInfo.AddData( "Version", CVersionClass::GetVersion() + "." + CVersionClass::GetBuild() + " [" + OS_STR + "]" );
-				guiInfo.AddData( "Compiled By", CVersionClass::GetName() );
+				guiInfo.AddData( "Version", UOXVersion::version + "."s + UOXVersion::build + " ["s + OS_STR + "]"s );
+				guiInfo.AddData( "Compiled By", UOXVersion::name );
 				guiInfo.AddData( "Uptime", builtString );
 				guiInfo.AddData( "Accounts", Accounts->size() );
 				guiInfo.AddData( "Items", ObjectFactory::GetSingleton().CountOfObjects( OT_ITEM ));
@@ -1410,7 +1411,7 @@ void HandleGumpCommand( CSocket *s, std::string cmd, std::string data )
 		case 'V':
 			if( cmd == "VERSION" )
 			{
-				s->SysMessage( "%s v%s(%s) [%s] Compiled by %s ", CVersionClass::GetProductName().c_str(), CVersionClass::GetVersion().c_str(), CVersionClass::GetBuild().c_str(), OS_STR, CVersionClass::GetName().c_str() );
+				s->SysMessage( "%s v%s(%s) [%s] Compiled by %s ", UOXVersion::productName.c_str(), UOXVersion::version.c_str(), UOXVersion::build.c_str(), OS_STR, UOXVersion::name.c_str() );
 			}
 			break;
 		case 'W':
@@ -1805,10 +1806,10 @@ bool CPIGumpMenuSelect::Handle( void )
 	switchCount	= tSock->GetDWord( 15 );
 
 #if defined( UOX_DEBUG_MODE )
-	Console << "CPIGumpMenuSelect::Handle(void)" << myendl;
-	Console << "        GumpId : " << gumpId << myendl;
-	Console << "      ButtonId : " << buttonId << myendl;
-	Console << "   SwitchCount : " << switchCount << myendl;
+    Console::shared() << "CPIGumpMenuSelect::Handle(void)" << myendl;
+    Console::shared() << "        GumpId : " << gumpId << myendl;
+    Console::shared() << "      ButtonId : " << buttonId << myendl;
+    Console::shared() << "   SwitchCount : " << switchCount << myendl;
 #endif
 
 	if( gumpId == 461 ) // Virtue gump
@@ -1851,8 +1852,8 @@ bool CPIGumpMenuSelect::Handle( void )
 	textCount	= tSock->GetDWord( textOffset );
 
 #if defined( UOX_DEBUG_MODE )
-	Console << "    TextOffset : " << textOffset << myendl;
-	Console << "     TextCount : " << textCount << myendl;
+    Console::shared() << "    TextOffset : " << textOffset << myendl;
+    Console::shared() << "     TextCount : " << textCount << myendl;
 #endif
 
 	BuildTextLocations();
@@ -1913,7 +1914,7 @@ bool CPIGumpMenuSelect::Handle( void )
 	// 13	HOWTO
 
 #if defined( UOX_DEBUG_MODE )
-	Console << "Type is " << gumpId << " button is " <<  buttonId << myendl;
+    Console::shared() << "Type is " << gumpId << " button is " <<  buttonId << myendl;
 #endif
 
 	switch( gumpId )

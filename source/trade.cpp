@@ -361,7 +361,7 @@ bool CPITradeMessage::Handle( void )
 				CancelTrade( tradeWindowOne );
 				break;
 			default:
-				Console.Error( " Fallout of switch statement without default. trade.cpp, trademsg()" );
+                Console::shared().Error( " Fallout of switch statement without default. trade.cpp, trademsg()" );
 				break;
 		}
 	}

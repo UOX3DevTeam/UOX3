@@ -103,7 +103,6 @@
    <ClCompile Include="..\..\source\boats.cpp" />
    <ClCompile Include="..\..\source\cBaseObject.cpp" />
    <ClCompile Include="..\..\source\cChar.cpp" />
-   <ClCompile Include="..\..\source\cConsole.cpp" />
    <ClCompile Include="..\..\source\cGuild.cpp" />
    <ClCompile Include="..\..\source\cItem.cpp" />
    <ClCompile Include="..\..\source\cMultiObj.cpp" />
@@ -118,6 +117,7 @@
    <ClCompile Include="..\..\source\cAccountClass.cpp" />
    <ClCompile Include="..\..\source\CGump.cpp" />
    <ClCompile Include="..\..\source\cHTMLSystem.cpp" />
+   <ClCompile Include="..\..\source\subsystem\console.cpp" />
    <ClCompile Include="..\..\source\combat.cpp" />
    <ClCompile Include="..\..\source\commands.cpp" />
    <ClCompile Include="..\..\source\cRaces.cpp" />
@@ -154,7 +154,7 @@
    <ClCompile Include="..\..\source\cPlayerAction.cpp" />
    <ClCompile Include="..\..\source\cmdtable.cpp" />
    <ClCompile Include="..\..\source\CResponse.cpp" />
-   <ClCompile Include="..\..\source\cVersionClass.cpp" />
+   <ClCompile Include="..\..\source\other\uoxversion.cpp" />
    <ClCompile Include="..\..\source\dist.cpp" />
    <ClCompile Include="..\..\source\effect.cpp" />
    <ClCompile Include="..\..\source\fileio.cpp" />
@@ -204,7 +204,6 @@
   <!-- Base Object group -->    
     <ClInclude Include="..\..\source\cBaseobject.h" />
     <ClInclude Include="..\..\source\cChar.h" />
-    <ClInclude Include="..\..\source\cConsole.h" />
     <ClInclude Include="..\..\source\cGuild.h" />
     <ClInclude Include="..\..\source\cItem.h" />
     <ClInclude Include="..\..\source\cMultiObj.h" />
@@ -220,6 +219,7 @@
     <ClInclude Include="..\..\source\cAccountClass.h" />
     <ClInclude Include="..\..\source\cEffects.h" />
     <ClInclude Include="..\..\source\CGump.h" />
+    <ClInclude Include="..\..\source\subsystem\console.hpp" />
     <ClInclude Include="..\..\source\cHTMLSystem.h" />
     <ClInclude Include="..\..\source\cMagic.h" />
     <ClInclude Include="..\..\source\combat.h" />
@@ -247,7 +247,7 @@
     <ClInclude Include="..\..\source\ConfigOS.h" />
     <ClInclude Include="..\..\source\CResponse.h" />
     <ClInclude Include="..\..\source\cSkillClass.h" />
-    <ClInclude Include="..\..\source\cVersionClass.h" />
+    <ClInclude Include="..\..\source\other\uoxversion.hpp" />
     <ClInclude Include="..\..\source\enums.h" />
     <ClInclude Include="..\..\source\GenericList.h" />
     <ClInclude Include="..\..\source\osunique.hpp" />

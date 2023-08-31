@@ -63,7 +63,6 @@ class CThreadQueue;
 class CTile;
 struct Tile_st;
 class CTownRegion;
-class CVersionClass;
 class CWeather;
 class cWeatherAb;
 class CWeight;

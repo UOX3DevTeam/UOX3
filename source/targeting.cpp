@@ -1415,7 +1415,7 @@ void NpcResurrectTarget( CChar *i )
 
 	if( i->IsNpc() )
 	{
-		Console.Error( util::format( Dictionary->GetEntry( 1079 ), i )); // Resurrect attempted on character %i.
+        Console::shared().Error( util::format( Dictionary->GetEntry( 1079 ), i )); // Resurrect attempted on character %i.
 		return;
 	}
 	CSocket *mSock = i->GetSocket();
@@ -1508,7 +1508,7 @@ void NpcResurrectTarget( CChar *i )
 	}
 	else
 	{
-		Console.Warning( util::format( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() ));
+        Console::shared().Warning( util::format( "Attempt made to resurrect a PC (serial: 0x%X) that's not logged in", i->GetSerial() ));
 	}
 }
 
@@ -1867,7 +1867,7 @@ void MakeStatusTarget( CSocket *sock )
 	auto temp = util::format( "account%i.log", mChar->GetAccount().wAccountIndex );
 	auto temp2 = util::format( "%s has made %s a %s.\n", mChar->GetName().c_str(), targetChar->GetName().c_str(), targLevel->name.c_str() );
 
-	Console.Log( temp2, temp );
+    Console::shared().Log( temp2, temp );
 
 	DismountCreature( targetChar );
 

@@ -410,7 +410,7 @@ bool InMulti( SI16 x, SI16 y, SI08 z, CMultiObj *m )
 		// the multi it's trying to reference is NOT in the multis.mul file
 		// so as a measure... if it's wet, we'll make it a boat
 		// if it's dry, we'll make it a house
-		Console << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
+        Console::shared() << "inmulti() - Bad length in multi file, avoiding stall. Item Name: " << m->GetName() << " " << m->GetSerial() << myendl;
 		length = 0;
 
 		auto map1 = Map->SeekMap( m->GetX(), m->GetY(), m->WorldNumber() );

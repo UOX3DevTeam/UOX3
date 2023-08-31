@@ -2671,7 +2671,7 @@ void handleCharDoubleClick( CSocket *mSock, SERIAL serial, bool keyboard )
 						}
 						else
 						{
-							Console << "Pack animal " << c->GetSerial() << " has no backpack!" << myendl;
+                            Console::shared() << "Pack animal " << c->GetSerial() << " has no backpack!" << myendl;
 						}
 					}
 					else
@@ -3112,7 +3112,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 			}
 			else
 			{
-				Console << "Unhandled guild item type named: " << iUsed->GetName() << " with ID of: " << itemId << myendl;
+                Console::shared() << "Unhandled guild item type named: " << iUsed->GetName() << " with ID of: " << itemId << myendl;
 			}
 			return true;
 		case IT_METALREPAIRTOOL:
@@ -3314,7 +3314,7 @@ bool HandleDoubleClickTypes( CSocket *mSock, CChar *mChar, CItem *iUsed, ItemTyp
 		default:
 			if( iType )
 			{
-				Console << "Unhandled item type for item: " << iUsed->GetName() << "[" << iUsed->GetSerial() << "] of type: " << static_cast<UI16>( iType ) << myendl;
+                Console::shared() << "Unhandled item type for item: " << iUsed->GetName() << "[" << iUsed->GetSerial() << "] of type: " << static_cast<UI16>( iType ) << myendl;
 			}
 			break;
 	}

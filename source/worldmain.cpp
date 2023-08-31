@@ -517,7 +517,7 @@ void CWorldMain::SaveNewWorld( bool x )
 	if( GetWorldSaveProgress() != SS_SAVING )
 	{
 		SetWorldSaveProgress( SS_SAVING );
-		Console.PrintSectionBegin();
+        Console::shared().PrintSectionBegin();
 		if( ServerData()->ServerAnnounceSavesStatus() )
 		{
 			SysBroadcast( Dictionary->GetEntry( 1615 )); // World data saving, you may experience some lag for the next several minutes.
@@ -527,11 +527,11 @@ void CWorldMain::SaveNewWorld( bool x )
 
 		if( x )
 		{
-			Console << "Starting manual world data save...." << myendl;
+            Console::shared() << "Starting manual world data save...." << myendl;
 		}
 		else
 		{
-			Console << "Starting automatic world data save...." << myendl;
+            Console::shared() << "Starting automatic world data save...." << myendl;
 		}
 
 		if( ServerData()->ServerBackupStatus() && ServerData()->Directory( CSDDP_BACKUP ).length() > 1 )
@@ -539,15 +539,15 @@ void CWorldMain::SaveNewWorld( bool x )
 			++save_counter;
 			if(( save_counter % ServerData()->BackupRatio() ) == 0 )
 			{
-				Console << "Archiving world files." << myendl;
+                Console::shared() << "Archiving world files." << myendl;
 				FileArchive();
 			}
 		}
-		Console << "Saving Misc. data... ";
+        Console::shared() << "Saving Misc. data... ";
 		ServerData()->SaveIni();
-		Console.Log( "Server data save", "server.log" );
+        Console::shared().Log( "Server data save", "server.log" );
 		RegionSave();
-		Console.PrintDone();
+        Console::shared().PrintDone();
 		MapRegion->Save();
 		GuildSys->Save();
 		JailSys->WriteData();
@@ -564,7 +564,7 @@ void CWorldMain::SaveNewWorld( bool x )
 		//	all the time if using the web interface
 		Accounts->Save();
 		// Make sure to import the new accounts so they have access too.
-		Console << "New accounts processed: " << Accounts->ImportAccounts() << myendl;
+        Console::shared() << "New accounts processed: " << Accounts->ImportAccounts() << myendl;
 		SetWorldSaveProgress( SS_JUSTSAVED );
 
 		char saveTimestamp[100];
@@ -573,8 +573,8 @@ void CWorldMain::SaveNewWorld( bool x )
 		lcltime( tempTimestamp, curtime );
 		strftime( saveTimestamp, 50, "%F at %T", &curtime );
 
-		Console << "World save complete on " << saveTimestamp << myendl;
-		Console.PrintSectionBegin();
+        Console::shared() << "World save complete on " << saveTimestamp << myendl;
+        Console::shared().PrintSectionBegin();
 	}
 	CollectGarbage();
 	uiCurrentTime = GetClock();
@@ -591,7 +591,7 @@ void CWorldMain::RegionSave()
 	std::ofstream regionsDestination( regionsFile.c_str() );
 	if( !regionsDestination )
 	{
-		Console.Error( util::format( "Failed to open %s for writing", regionsFile.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", regionsFile.c_str() ));
 		return;
 	}
 	std::for_each( cwmWorldState->townRegions.begin(), cwmWorldState->townRegions.end(), [&regionsDestination]( const std::pair<UI16, CTownRegion*> &town )
@@ -629,7 +629,7 @@ void CWorldMain::SaveStatistics( void )
 	std::ofstream	statsDestination( statsFile.c_str() );
 	if( !statsDestination )
 	{
-		Console.Error( util::format( "Failed to open %s for writing", statsFile.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", statsFile.c_str() ));
 		return;
 	}
 	statsDestination << "[STATISTICS]" << '\n' << "{" << '\n';

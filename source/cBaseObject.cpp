@@ -526,7 +526,7 @@ void CBaseObject::SetId( UI08 newValue, UI08 part )
 	}
 	else
 	{
-		Console << "Invalid part requested on SetId" << myendl;
+        Console::shared() << "Invalid part requested on SetId" << myendl;
 	}
 }
 
@@ -743,7 +743,7 @@ bool CBaseObject::DumpBody( std::ostream &outStream ) const
 		catch( ... )
 		{
 			outStream << "FFFFFFFF" << newLine;
-			Console << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
+            Console::shared() << "EXCEPTION: CBaseObject::DumpBody(" << name << "[" << serial << "]) - 'MultiID' points to invalid memory." << myendl;
 		}
 	}
 	outStream << "SpawnerID=0x" << spawnSerial << newLine;
@@ -1176,7 +1176,7 @@ void CBaseObject::RemoveFromMulti( bool fireTrigger )
 		}
 		else
 		{
-			Console.Error( util::format( "Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial() ));
+            Console::shared().Error( util::format( "Object of type %i with serial 0x%X has a bad multi setting of %i", GetObjType(), serial, multis->GetSerial() ));
 		}
 	}
 }
@@ -1238,7 +1238,7 @@ void CBaseObject::AddToMulti( bool fireTrigger )
 		}
 		else
 		{
-			Console.Error( util::format( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() ));
+			Console::shared().Error( util::format( "Object of type %i with serial 0x%X has a bad multi setting of %X", GetObjType(), serial, multis->GetSerial() ));
 		}
 	}
 }
@@ -1698,7 +1698,7 @@ bool CBaseObject::Load( std::istream &inStream )
 			UTag = util::upper( tag );
 			if( !HandleLine( UTag, data ))
 			{
-				Console.Warning( util::format( "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() ));
+                Console::shared().Warning( util::format( "Unknown world file tag %s with contents of %s", tag.c_str(), data.c_str() ));
 			}
 		}
 	}
@@ -2035,7 +2035,7 @@ bool CBaseObject::HandleLine( std::string &UTag, std::string &data )
 					cScript *toExecute	= JSMapping->GetScript( scriptId );
 					if( toExecute == nullptr )
 					{
-						Console.Warning( util::format( "SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str() ));
+                        Console::shared().Warning( util::format( "SCPTRIG tag found with invalid script ID (%s) while loading world data!", data.c_str() ));
 					}
 					else
 					{
@@ -2497,7 +2497,7 @@ void CBaseObject::Dirty( [[maybe_unused]] UpdateTypes updateType )
 {
 	if( IsDeleted() )
 	{
-		Console.Error( util::format( "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial() ));
+        Console::shared().Error( util::format( "Attempt was made to add deleted item (name: %s, id: %i, serial: %i) to refreshQueue!", GetName().c_str(), GetId(), GetSerial() ));
 	}
 	else if( IsPostLoaded() )
 	{

@@ -92,9 +92,6 @@
     <ClCompile Include="..\..\source\cChar.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cConsole.cpp">
-      <Filter>Source Files\Base Objects</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\source\cGuild.cpp">
       <Filter>Source Files\Base Objects</Filter>
     </ClCompile>
@@ -124,6 +121,9 @@
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\CGump.cpp">
+      <Filter>Source Files\Subsystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\source\console.cpp">
       <Filter>Source Files\Subsystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\cHTMLSystem.cpp">
@@ -229,7 +229,7 @@
     <ClCompile Include="..\..\source\CResponse.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\source\cVersionClass.cpp">
+    <ClCompile Include="..\..\source\other\uoxversion.cpp">
       <Filter>Source Files\Other</Filter>
     </ClCompile>
     <ClCompile Include="..\..\source\dist.cpp">
@@ -336,9 +336,6 @@
     <ClInclude Include="..\..\source\cChar.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cConsole.h">
-      <Filter>Header Files\Base Objects</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\source\cGuild.h">
       <Filter>Header Files\Base Objects</Filter>
     </ClInclude>
@@ -380,6 +377,9 @@
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cGump.h">
+      <Filter>Header Files\Subsystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\source\console.hpp">
       <Filter>Header Files\Subsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\cHTMLSystem.h">
@@ -458,7 +458,7 @@
     <ClInclude Include="..\..\source\cSkillClass.h">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\source\cVersionClass.h">
+    <ClInclude Include="..\..\source\other\uoxversion.hpp">
       <Filter>Header Files\Other</Filter>
     </ClInclude>
     <ClInclude Include="..\..\source\enums.h">

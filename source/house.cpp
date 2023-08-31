@@ -47,7 +47,7 @@ auto DoHouseTarget( CSocket *mSock, UI16 houseEntry ) -> void
 		}
 		if( !houseId )
 		{
-			Console.Error( util::format( "Bad house script: #%u\n", houseEntry ));
+            Console::shared().Error( util::format( "Bad house script: #%u\n", houseEntry ));
 		}
 		else
 		{
@@ -134,7 +134,7 @@ auto CreateHouseItems( CChar *mChar, std::vector<std::string> houseItems, CItem 
 					hItem = Items->CreateBaseScriptItem( nullptr, data, worldNum, 1, hInstanceId );
 					if( hItem == nullptr )
 					{
-						Console << "Error in house creation, item " << data << " could not be made" << myendl;
+                        Console::shared() << "Error in house creation, item " << data << " could not be made" << myendl;
 						break;
 					}
 					else
@@ -750,7 +750,7 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 			}
 			else
 			{
-				Console.Warning( util::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ));
+                Console::shared().Warning( util::format( "Invalid data found in CUSTOMSTRINGTAG tag inside House script [%s] - Supported data format: <tagName> <text>", sect.c_str() ));
 			}
 			break;
 		}
@@ -781,19 +781,19 @@ CMultiObj * BuildHouse( CSocket *mSock, UI16 houseEntry, bool checkLocation = tr
 				customTagMap.insert( std::pair<std::string, TAGMAPOBJECT>( customTagName, customTag ));
 				if( count > 1 )
 				{
-					Console.Warning( util::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ));
+                    Console::shared().Warning( util::format( "Multiple values detected for CUSTOMINTTAG in House script [%s] - only first value will be used! Supported data format: <tagName> <value>", sect.c_str() ));
 				}
 			}
 			else
 			{
-				Console.Warning( util::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ));
+                Console::shared().Warning( util::format( "Invalid data found in CUSTOMINTTAG tag in House script [%s] - Supported data format: <tagName> <value>", sect.c_str() ));
 			}
 		}
 	}
 
 	if( !houseId )
 	{
-		Console.Error( util::format( "Bad house script # %u!", houseEntry ));
+        Console::shared().Error( util::format( "Bad house script # %u!", houseEntry ));
 		return nullptr;
 	}
 

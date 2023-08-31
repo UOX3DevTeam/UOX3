@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		56BA2FBF2A95BDFC0064EB36 /* libjscript.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56BA2FBC2A95BDF70064EB36 /* libjscript.a */; };
+		56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */; };
 		64A9011A293E3DD4009B54DA /* ai.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90075293E3DD4009B54DA /* ai.cpp */; };
 		64A9011B293E3DD4009B54DA /* archive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90076293E3DD4009B54DA /* archive.cpp */; };
 		64A9011C293E3DD4009B54DA /* boats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90077293E3DD4009B54DA /* boats.cpp */; };
@@ -16,7 +17,7 @@
 		64A9011F293E3DD4009B54DA /* calcfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007C293E3DD4009B54DA /* calcfuncs.cpp */; };
 		64A90120293E3DD4009B54DA /* cBaseObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007D293E3DD4009B54DA /* cBaseObject.cpp */; };
 		64A90121293E3DD4009B54DA /* cChar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A9007F293E3DD4009B54DA /* cChar.cpp */; };
-		64A90122293E3DD4009B54DA /* cConsole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90081293E3DD4009B54DA /* cConsole.cpp */; };
+		64A90122293E3DD4009B54DA /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90081293E3DD4009B54DA /* console.cpp */; };
 		64A90123293E3DD4009B54DA /* cDice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90083293E3DD4009B54DA /* cDice.cpp */; };
 		64A90124293E3DD4009B54DA /* cGuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90086293E3DD4009B54DA /* cGuild.cpp */; };
 		64A90125293E3DD4009B54DA /* CGump.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A90088293E3DD4009B54DA /* CGump.cpp */; };
@@ -39,7 +40,6 @@
 		64A90136293E3DD4009B54DA /* cSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900AE293E3DD4009B54DA /* cSocket.cpp */; };
 		64A90137293E3DD4009B54DA /* cSpawnRegion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B0293E3DD4009B54DA /* cSpawnRegion.cpp */; };
 		64A90138293E3DD4009B54DA /* cThreadQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B2293E3DD4009B54DA /* cThreadQueue.cpp */; };
-		64A90139293E3DD4009B54DA /* cVersionClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B4293E3DD4009B54DA /* cVersionClass.cpp */; };
 		64A9013A293E3DD4009B54DA /* cWeather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B6293E3DD4009B54DA /* cWeather.cpp */; };
 		64A9013B293E3DD4009B54DA /* Dictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900B8293E3DD4009B54DA /* Dictionary.cpp */; };
 		64A9013C293E3DD4009B54DA /* dist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64A900BA293E3DD4009B54DA /* dist.cpp */; };
@@ -129,6 +129,8 @@
 		56C9E3DC2A9C9035004D9F38 /* uox3.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = uox3.vcxproj.filters; path = ../VS2017/uox3.vcxproj.filters; sourceTree = "<group>"; };
 		56C9E3DD2A9C9035004D9F38 /* uox3.sln */ = {isa = PBXFileReference; lastKnownFileType = text; name = uox3.sln; path = ../VS2017/uox3.sln; sourceTree = "<group>"; };
 		56D6EEC32A9F7707005355FA /* strutil.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strutil.hpp; sourceTree = "<group>"; };
+		56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = uoxversion.cpp; sourceTree = "<group>"; };
+		56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = uoxversion.hpp; sourceTree = "<group>"; };
 		648153C929466EF400784170 /* libjscript.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libjscript.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A9006A293E3DA3009B54DA /* uox3 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = uox3; sourceTree = BUILT_PRODUCTS_DIR; };
 		64A90075293E3DD4009B54DA /* ai.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ai.cpp; sourceTree = "<group>"; };
@@ -143,8 +145,8 @@
 		64A9007E293E3DD4009B54DA /* cBaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cBaseObject.h; sourceTree = "<group>"; };
 		64A9007F293E3DD4009B54DA /* cChar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cChar.cpp; sourceTree = "<group>"; };
 		64A90080293E3DD4009B54DA /* cChar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cChar.h; sourceTree = "<group>"; };
-		64A90081293E3DD4009B54DA /* cConsole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cConsole.cpp; sourceTree = "<group>"; };
-		64A90082293E3DD4009B54DA /* cConsole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cConsole.h; sourceTree = "<group>"; };
+		64A90081293E3DD4009B54DA /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
+		64A90082293E3DD4009B54DA /* console.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = console.hpp; sourceTree = "<group>"; };
 		64A90083293E3DD4009B54DA /* cDice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cDice.cpp; sourceTree = "<group>"; };
 		64A90084293E3DD4009B54DA /* cdice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdice.h; sourceTree = "<group>"; };
 		64A90085293E3DD4009B54DA /* cEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cEffects.h; sourceTree = "<group>"; };
@@ -351,6 +353,33 @@
 			path = utility;
 			sourceTree = "<group>";
 		};
+		56D6EEDE2AA0AC5B005355FA /* other */ = {
+			isa = PBXGroup;
+			children = (
+				56D6EEE22AA0ACA7005355FA /* uoxversion.cpp */,
+				56D6EEE32AA0ACA7005355FA /* uoxversion.hpp */,
+			);
+			path = other;
+			sourceTree = "<group>";
+		};
+		56D6EEE12AA0AC66005355FA /* expired */ = {
+			isa = PBXGroup;
+			children = (
+				64A900B4293E3DD4009B54DA /* cVersionClass.cpp */,
+				64A900B5293E3DD4009B54DA /* cVersionClass.h */,
+			);
+			path = expired;
+			sourceTree = "<group>";
+		};
+		56D6EEE62AA0B861005355FA /* subsystem */ = {
+			isa = PBXGroup;
+			children = (
+				64A90081293E3DD4009B54DA /* console.cpp */,
+				64A90082293E3DD4009B54DA /* console.hpp */,
+			);
+			path = subsystem;
+			sourceTree = "<group>";
+		};
 		64A90061293E3DA3009B54DA = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +401,9 @@
 		64A90074293E3DD4009B54DA /* source */ = {
 			isa = PBXGroup;
 			children = (
+				56D6EEE62AA0B861005355FA /* subsystem */,
+				56D6EEE12AA0AC66005355FA /* expired */,
+				56D6EEDE2AA0AC5B005355FA /* other */,
 				56D6EEC22A9F76DD005355FA /* utility */,
 				64E2F795293FCE7500546A08 /* Script */,
 				64E2F790293FCE3800546A08 /* Base Objects */,
@@ -407,8 +439,6 @@
 				64A9007E293E3DD4009B54DA /* cBaseObject.h */,
 				64A9007F293E3DD4009B54DA /* cChar.cpp */,
 				64A90080293E3DD4009B54DA /* cChar.h */,
-				64A90081293E3DD4009B54DA /* cConsole.cpp */,
-				64A90082293E3DD4009B54DA /* cConsole.h */,
 				64A90086293E3DD4009B54DA /* cGuild.cpp */,
 				64A90087293E3DD4009B54DA /* cGuild.h */,
 				64A9008C293E3DD4009B54DA /* cItem.cpp */,
@@ -506,8 +536,6 @@
 				64A900A5293E3DD4009B54DA /* CResponse.cpp */,
 				64A900A6293E3DD4009B54DA /* CResponse.h */,
 				64A900AD293E3DD4009B54DA /* cSkillClass.h */,
-				64A900B4293E3DD4009B54DA /* cVersionClass.cpp */,
-				64A900B5293E3DD4009B54DA /* cVersionClass.h */,
 				64A900BA293E3DD4009B54DA /* dist.cpp */,
 				64A900BB293E3DD4009B54DA /* effect.cpp */,
 				64A900BC293E3DD4009B54DA /* enums.h */,
@@ -693,8 +721,7 @@
 				64A90168293E3DD4009B54DA /* wholist.cpp in Sources */,
 				64A90124293E3DD4009B54DA /* cGuild.cpp in Sources */,
 				64A90160293E3DD4009B54DA /* townregion.cpp in Sources */,
-				64A90139293E3DD4009B54DA /* cVersionClass.cpp in Sources */,
-				64A90122293E3DD4009B54DA /* cConsole.cpp in Sources */,
+				64A90122293E3DD4009B54DA /* console.cpp in Sources */,
 				64A90152293E3DD4009B54DA /* PartySystem.cpp in Sources */,
 				64A90163293E3DD4009B54DA /* uox3.cpp in Sources */,
 				64A90125293E3DD4009B54DA /* CGump.cpp in Sources */,
@@ -738,6 +765,7 @@
 				64A90126293E3DD4009B54DA /* cHTMLSystem.cpp in Sources */,
 				64A90150293E3DD4009B54DA /* ObjectFactory.cpp in Sources */,
 				64A90121293E3DD4009B54DA /* cChar.cpp in Sources */,
+				56D6EEE52AA0B62C005355FA /* uoxversion.cpp in Sources */,
 				64A90154293E3DD4009B54DA /* quantityfuncs.cpp in Sources */,
 				64A90165293E3DD4009B54DA /* UOXJSPropertyFuncs.cpp in Sources */,
 				64A9012C293E3DD4009B54DA /* combat.cpp in Sources */,

@@ -548,7 +548,7 @@ void cEffects::HandleMakeItemEffect( CTEffect *tMake )
 	}
 	if( targItem == nullptr )
 	{
-		Console.Error( util::format( "CSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() ));
+        Console::shared().Error( util::format( "CSkills::MakeItem() bad script item # %s, made by player 0x%X", addItem.c_str(), src->GetSerial() ));
 		return;
 	}
 	else
@@ -1083,7 +1083,7 @@ auto cEffects::CheckTempeffects() -> void
 				break;
 			}
 			default:
-				Console.Error( util::format( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() ));
+                Console::shared().Error( util::format( " Fallout of switch statement without default (%i). checktempeffects()", Effect->Number() ));
 				break;
 		}
 		if( validChar && equipCheckNeeded )
@@ -1176,7 +1176,7 @@ void ReverseEffect( CTEffect *Effect )
 				s->SetUsingPotion( false );
 				break;
 			default:
-				Console.Error( " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
+                Console::shared().Error( " Fallout of switch statement without default. uox3.cpp, reverseEffect()");
 				break;
 		}
 	}
@@ -1685,7 +1685,7 @@ void cEffects::TempEffect( CChar *source, CChar *dest, UI08 num, UI16 more1, UI1
 			toAdd->ExpireTime( BuildTimeValue( static_cast<R32>( more1 )));
 			break;
 		default:
-			Console.Error( util::format( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
+            Console::shared().Error( util::format( " Fallout of switch statement (%d) without default. uox3.cpp, tempeffect()", num ));
 			delete toAdd;
 			return;
 	}
@@ -1752,7 +1752,7 @@ void cEffects::TempEffect( CChar *source, CItem *dest, UI08 num, UI16 more1, UI1
 			toAdd->Dispellable( false );
 			break;
 		default:
-			Console.Error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()" );
+            Console::shared().Error( " Fallout of switch statement without default. uox3.cpp, tempeffect2()" );
 			delete toAdd;
 			return;
 	}
@@ -1771,14 +1771,14 @@ void cEffects::SaveEffects( void )
 	const char blockDiscriminator[] = "\n\n---EFFECT---\n\n";
 	SI32 s_t = GetClock();
 
-	Console << "Saving Effects...   ";
-	Console.TurnYellow();
+    Console::shared() << "Saving Effects...   ";
+    Console::shared().TurnYellow();
 
 	std::string filename = cwmWorldState->ServerData()->Directory( CSDDP_SHARED ) + "effects.wsc";
 	effectDestination.open( filename.c_str() );
 	if( !effectDestination )
 	{
-		Console.Error( util::format( "Failed to open %s for writing", filename.c_str() ));
+        Console::shared().Error( util::format( "Failed to open %s for writing", filename.c_str() ));
 		return;
 	}
 
@@ -1792,11 +1792,11 @@ void cEffects::SaveEffects( void )
 	}
 	effectDestination.close();
 
-	Console << "\b\b\b\b";
-	Console.PrintDone();
+    Console::shared() << "\b\b\b\b";
+    Console::shared().PrintDone();
 
 	SI32 e_t = GetClock();
-	Console.Print( util::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
+    Console::shared().Print( util::format("Effects saved in %.02fsec\n", ( static_cast<R32>( e_t-s_t )) / 1000.0f ));
 }
 
 void ReadWorldTagData( std::istream &inStream, std::string &tag, std::string &data );
@@ -1935,7 +1935,7 @@ void cEffects::LoadEffects( void )
 									}
 									break;
 								default:
-									Console.Error( util::format( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() ));
+                                    Console::shared().Error( util::format( "Unknown effects tag %s with contents of %s", tag.c_str(), data.c_str() ));
 									break;
 							}
 						}

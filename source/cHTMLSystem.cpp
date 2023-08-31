@@ -14,6 +14,7 @@
 #include "ObjectFactory.h"
 #include "osunique.hpp"
 #include "utility/strutil.hpp"
+#include "other/uoxversion.hpp"
 
 cHTMLTemplates *HTMLTemplates;
 
@@ -109,9 +110,9 @@ void cHTMLTemplate::Process( void )
 	}
 
 	// Version
-	std::string Version = CVersionClass::GetVersion();
+	std::string Version = UOXVersion::version;
 	Version += ".";
-	Version += CVersionClass::GetBuild();
+	Version += UOXVersion::build;
 	Version += " [";
 	Version += OS_STR;
 	Version += "]";
@@ -400,7 +401,7 @@ void cHTMLTemplate::Process( void )
 				}
 				catch( ... )
 				{
-					Console << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
+                    Console::shared() << "| EXCEPTION: Invalid character/socket pointer found. Ignored." << myendl;
 				}
 			}
 		}
@@ -582,7 +583,7 @@ void cHTMLTemplate::Process( void )
 	}
 	else
 	{
-		Console.Error( util::format( " Couldn't open the template file %s for writing", outputFile.c_str() ));
+        Console::shared().Error( util::format( " Couldn't open the template file %s for writing", outputFile.c_str() ));
 	}
 }
 
@@ -616,7 +617,7 @@ void cHTMLTemplate::LoadTemplate( void )
 
 	if( !InputFile1.is_open() )
 	{
-		Console.Error( util::format( "Couldn't open HTML Template File %s", inputFile.c_str() ));
+        Console::shared().Error( util::format( "Couldn't open HTML Template File %s", inputFile.c_str() ));
 		return;
 	}
 

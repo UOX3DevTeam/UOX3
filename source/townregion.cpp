@@ -542,7 +542,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 					}
 					else
 					{
-						Console.Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
+                        Console::shared().Error( "regions dfn -> You must write BUYABLE after GOOD <num>!" );
 					}
 				}
 				break;
@@ -660,7 +660,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 					}
 					else
 					{
-						Console.Error( util::format( "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() ));
+                        Console::shared().Error( util::format( "Invalid ore preference in region %i as %s", regionNum, oreName.c_str() ));
 					}
 				}
 				break;
@@ -696,13 +696,13 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 						}
 						if( goodList[actgood].rand2 < goodList[actgood].rand1 )
 						{
-							Console.Error( util::format( " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 ));
+                            Console::shared().Error( util::format( " regions dfn -> You must write RANDOMVALUE NUM2[%i] greater than NUM1[%i].", goodList[actgood].rand2, goodList[actgood].rand1 ));
 							goodList[actgood].rand2 = goodList[actgood].rand1 = 0;
 						}
 					}
 					else
 					{
-						Console.Error( " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
+                        Console::shared().Error( " regions dfn -> You must write RANDOMVALUE after GOOD <num>!" );
 					}
 				}
 				else if( UTag == "RACE" )
@@ -723,7 +723,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 					}
 					else
 					{
-						Console.Error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
+                        Console::shared().Error( " regions dfn -> You must write SELLABLE after GOOD <num>!" );
 					}
 				}
 				else if( UTag == "SPAWN" )
@@ -732,7 +732,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 					CScriptSection *predefSpawn = FileLookup->FindEntry( sect, spawn_def );
 					if( predefSpawn == nullptr )
 					{
-						Console.Warning( util::format( "Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str() ));
+                        Console::shared().Warning( util::format( "Undefined region spawn %s, check your regions.dfn and spawn.dfn files", data.c_str() ));
 					}
 					else
 					{
@@ -763,7 +763,7 @@ bool CTownRegion::InitFromScript( CScriptSection *toScan )
 						cScript *toExecute	= JSMapping->GetScript( scriptId );
 						if( toExecute == nullptr )
 						{
-							Console.Warning( util::format( "SCRIPT tag found with invalid script ID (%s) when loading region data!", util::ntos(scriptId).c_str() ));
+                            Console::shared().Warning( util::format( "SCRIPT tag found with invalid script ID (%s) when loading region data!", util::ntos(scriptId).c_str() ));
 						}
 						else
 						{

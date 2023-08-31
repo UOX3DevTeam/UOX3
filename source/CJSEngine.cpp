@@ -33,14 +33,14 @@ auto CJSEngine::Startup() -> void
 	// maxBytes definition: "Maximum nominal heap before last ditch GC"
 	UI32 engineMaxBytes = std::min( static_cast<UI32>( static_cast<UI32>( maxBytesSize ) * 1024 * 1024 ), maxEngineSize );
 
-	Console.PrintSectionBegin();
-	Console << "Starting JavaScript Engine...." << myendl;
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "Starting JavaScript Engine...." << myendl;
 
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Default Runtime
 	runtimeList.push_back( new CJSRuntime( engineMaxBytes ));	// Console Runtime
 
-	Console << "JavaScript engine startup complete." << myendl;
-	Console.PrintSectionBegin();
+    Console::shared() << "JavaScript engine startup complete." << myendl;
+    Console::shared().PrintSectionBegin();
 }
 //===================================================================
 CJSEngine::~CJSEngine()

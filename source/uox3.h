@@ -91,7 +91,6 @@ class CThreadQueue;
 class CTile;
 struct Tile_st;
 class CTownRegion;
-class CVersionClass;
 class CWeather;
 class cWeatherAb;
 class CWeight;
@@ -125,7 +124,6 @@ class CSpellInfo;
 #include "cChar.h"
 #include "cItem.h"
 #include "cMultiObj.h"
-#include "cConsole.h"
 #include "cSocket.h"
 #include "cServerData.h"
 #include "worldmain.h"

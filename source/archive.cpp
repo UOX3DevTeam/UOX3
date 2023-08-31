@@ -30,7 +30,7 @@ static void BackupFile( const std::string &filename, std::string backupDir )
 //o------------------------------------------------------------------------------------------------o
 void FileArchive( void )
 {
-	Console << "Beginning backup... ";
+    Console::shared() << "Beginning backup... ";
 	auto mytime = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 	struct tm ttemp;
 	char tbuffer[100];
@@ -43,7 +43,7 @@ void FileArchive( void )
 
 	if( makeResult  )
 	{
-		Console << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
+        Console::shared() << "NOTICE: Accounts not backed up. Archiving will change. Sorry for the trouble." << myendl;
 
 		BackupFile( "house.wsc", backupRoot );
 
@@ -70,7 +70,7 @@ void FileArchive( void )
 	}
 	else
 	{
-		Console << "Cannot create backup directory, please check available disk space" << myendl;
+        Console::shared() << "Cannot create backup directory, please check available disk space" << myendl;
 	}
-	Console << "Finished backup" << myendl;
+    Console::shared() << "Finished backup" << myendl;
 }

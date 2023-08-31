@@ -1,7 +1,7 @@
 //o------------------------------------------------------------------------------------------------o
-//| cConsole.cpp
+//| console.cpp
 //o------------------------------------------------------------------------------------------------o
-//| In essence, CConsole is our nice generic class for outputting display.
+//| In essence, Console is our nice generic class for outputting display.
 //| As long as the interface is kept the same, we can display whatever we wish
 //| too. We store a set of coordinates being the window corner and size, for
 //| systems with windowing support, which describes the window we are in.
@@ -13,7 +13,6 @@
 
 // Header
 #include "uox3.h"
-#include "cConsole.h"
 #include "cThreadQueue.h"
 #include "ObjectFactory.h"
 #include "network.h"
@@ -30,6 +29,8 @@
 #include "cGuild.h"
 #include "cScript.h"
 #include "StringUtility.hpp"
+
+#include "subsystem/console.hpp"
 #include "utility/strutil.hpp"
 
 #include <iostream>
@@ -57,23 +58,23 @@ constexpr auto NORMALMODE = std::uint8_t( 0 );
 constexpr auto WARNINGMODE = std::uint8_t( 1 );
 constexpr auto ERRORMODE = std::uint8_t( 2 );
 //const UI08 COLOURMODE			= 3;
-const std::string	CConsole::ESC			= "\x1b"s;
-const std::string	CConsole::CSI			= CConsole::ESC + "["s;
-const std::string	CConsole::BEL			= "\x07"s;
+const std::string	Console::ESC			= "\x1b"s;
+const std::string	Console::CSI			= Console::ESC + "["s;
+const std::string	Console::BEL			= "\x07"s;
 //  Command sequences
-const std::string	CConsole::ATTRIBUTE		= CConsole::CSI +"#m"s;  // find/replace on # with attribute number
-const std::string	CConsole::MOVE			= CConsole::CSI + "ROW;COLH"s; // we are going to find/replace on ROW/COL
-const std::string	CConsole::HORIZMOVE		= CConsole::CSI + "COLG"s;
-const std::string	CConsole::VERTMOVE		= CConsole::CSI + "ROWd"s;
-const std::string	CConsole::OFFCURSOR		= CConsole::CSI + "?25l"s;
-const std::string	CConsole::ONCURSOR		= CConsole::CSI + "?25h"s;
+const std::string	Console::ATTRIBUTE		= Console::CSI +"#m"s;  // find/replace on # with attribute number
+const std::string	Console::MOVE			= Console::CSI + "ROW;COLH"s; // we are going to find/replace on ROW/COL
+const std::string	Console::HORIZMOVE		= Console::CSI + "COLG"s;
+const std::string	Console::VERTMOVE		= Console::CSI + "ROWd"s;
+const std::string	Console::OFFCURSOR		= Console::CSI + "?25l"s;
+const std::string	Console::ONCURSOR		= Console::CSI + "?25h"s;
 
-const std::string	CConsole::ONGRAPHIC		= CConsole::ESC + "(0"s;
-const std::string	CConsole::OFFGRAPHIC	= CConsole::ESC + "(B"s;
+const std::string	Console::ONGRAPHIC		= Console::ESC + "(0"s;
+const std::string	Console::OFFGRAPHIC	= Console::ESC + "(B"s;
 
-const std::string	CConsole::SETTITLE		= CConsole::ESC + "]2;TITLEs"s + CConsole::BEL;
+const std::string	Console::SETTITLE		= Console::ESC + "]2;TITLEs"s + Console::BEL;
 
-const std::string	CConsole::CLEAR			= CConsole::CSI +"2J"s;
+const std::string	Console::CLEAR			= Console::CSI +"2J"s;
 
 // Forward function declarations
 auto EndMessage( SI32 x ) -> void;
@@ -89,17 +90,22 @@ auto UnloadSpawnRegions() -> void;
 auto LoadTeleportLocations() -> void;
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole()
+//|	Function	-	Console()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Class Constructor and deconstructor
 //o------------------------------------------------------------------------------------------------o
-CConsole::CConsole() : width( 80 ), height( 25 ),
+Console::Console() : width( 80 ), height( 25 ),
 currentMode( NORMALMODE ), previousColour( CNORMAL ), logEcho( false )
 {
 	is_initialized = false;
 }
-
-CConsole::~CConsole()
+//===============================================================================
+auto Console::shared() -> Console& {
+    static Console instance ;
+    return instance ;
+}
+//===============================================================================
+Console::~Console()
 {
 	if( is_initialized )
 	{
@@ -109,11 +115,11 @@ CConsole::~CConsole()
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::Initialize()
+//|	Function	-	Console::Initialize()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prepare console/terminal for UOX3 output
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Initialize() -> void
+auto Console::Initialize() -> void
 {
 	is_initialized = true;
 #if !defined(_WIN32)
@@ -134,11 +140,11 @@ auto CConsole::Initialize() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole()::Reset()
+//|	Function	-	Console()::Reset()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Reset console/terminal to its original state
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Reset() -> void
+auto Console::Reset() -> void
 {
 	std::cout.flush();
 #if !defined( _WIN32 )
@@ -151,11 +157,11 @@ auto CConsole::Reset() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::SetTitle()
+//|	Function	-	Console::SetTitle()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Set console/terminal window title
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::SetTitle( const std::string &value ) -> void
+auto Console::SetTitle( const std::string &value ) -> void
 {
 #if !defined( _WIN32 )
 	auto cmd = SETTITLE;
@@ -168,11 +174,11 @@ auto CConsole::SetTitle( const std::string &value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::SendCMD()
+//|	Function	-	Console::SendCMD()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Send cmd to terminal
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::SendCMD( const std::string& cmd ) ->CConsole&
+auto Console::SendCMD( const std::string& cmd ) ->Console&
 {
 	std::cout << cmd;
 	std::cout.flush();
@@ -180,11 +186,11 @@ auto CConsole::SendCMD( const std::string& cmd ) ->CConsole&
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::WindowSize()
+//|	Function	-	Console::WindowSize()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Set window size in columns and rows
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::WindowSize() -> std::pair<int, int>
+auto Console::WindowSize() -> std::pair<int, int>
 {
 	int row =0;
 	int col =0;
@@ -206,11 +212,11 @@ auto CConsole::WindowSize() -> std::pair<int, int>
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole()::DoClearScreen()
+//|	Function	-	Console()::DoClearScreen()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the screen
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::DoClearScreen() -> void
+auto Console::DoClearScreen() -> void
 {
 #if defined( _WIN32 )
 	unsigned long y;
@@ -233,7 +239,7 @@ auto CConsole::DoClearScreen() -> void
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Let you use << and >>
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::operator << ( const char *output ) ->CConsole&
+auto Console::operator << ( const char *output ) ->Console&
 {
 	StartOfLineCheck();
 #if PLATFORM == WINDOWS
@@ -272,71 +278,56 @@ auto CConsole::operator << ( const char *output ) ->CConsole&
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::uint8_t *output ) -> CConsole&
+auto Console::operator << ( const std::uint8_t *output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << reinterpret_cast<const char*>( output );
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::int8_t *output ) -> CConsole&
+auto Console::operator << ( const std::int8_t *output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << reinterpret_cast<const char*>( output );
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::uint8_t &output ) -> CConsole&
+auto Console::operator << ( const std::uint8_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << static_cast<UI16>( output );
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::int8_t &output ) -> CConsole&
+auto Console::operator << ( const std::int8_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << static_cast<std::int16_t>( output );
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const UI16 &output ) -> CConsole&
+auto Console::operator << ( const UI16 &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::int16_t &output ) -> CConsole&
+auto Console::operator << ( const std::int16_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::uint32_t &output ) -> CConsole&
+auto Console::operator << ( const std::uint32_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const std::int32_t &output ) -> CConsole&
-{
-	StartOfLineCheck();
-	std::cout << output;
-	return ( *this );
-}
-
-//================================================================================================
-auto CConsole::operator << ( const std::uint64_t &output ) -> CConsole&
-{
-	StartOfLineCheck();
-	std::cout << output;
-	return ( *this );
-}
-//================================================================================================
-auto CConsole::operator << ( const std::int64_t &output ) -> CConsole&
+auto Console::operator << ( const std::int32_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
@@ -344,22 +335,14 @@ auto CConsole::operator << ( const std::int64_t &output ) -> CConsole&
 }
 
 //================================================================================================
-auto CConsole::operator << ( const float &output ) -> CConsole&
-{
-	StartOfLineCheck();
-	std::cout << output;
-	return ( *this );
-
-}
-//================================================================================================
-auto CConsole::operator << ( const double &output ) -> CConsole&
+auto Console::operator << ( const std::uint64_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const long double &output ) -> CConsole&
+auto Console::operator << ( const std::int64_t &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
@@ -367,21 +350,44 @@ auto CConsole::operator << ( const long double &output ) -> CConsole&
 }
 
 //================================================================================================
-auto CConsole::operator << ( CBaseObject *output ) -> CConsole&
+auto Console::operator << ( const float &output ) -> Console&
+{
+	StartOfLineCheck();
+	std::cout << output;
+	return ( *this );
+
+}
+//================================================================================================
+auto Console::operator << ( const double &output ) -> Console&
+{
+	StartOfLineCheck();
+	std::cout << output;
+	return ( *this );
+}
+//================================================================================================
+auto Console::operator << ( const long double &output ) -> Console&
+{
+	StartOfLineCheck();
+	std::cout << output;
+	return ( *this );
+}
+
+//================================================================================================
+auto Console::operator << ( CBaseObject *output ) -> Console&
 {
 	StartOfLineCheck();
 	(*this) << output->GetSerial();
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const CBaseObject *output ) -> CConsole&
+auto Console::operator << ( const CBaseObject *output ) -> Console&
 {
 	StartOfLineCheck();
 	(*this) << output->GetSerial();
 	return ( *this );
 }
 //================================================================================================
-auto CConsole::operator << ( const CBaseObject &output ) -> CConsole&
+auto Console::operator << ( const CBaseObject &output ) -> Console&
 {
 	StartOfLineCheck();
 	(*this) << output.GetSerial();
@@ -389,7 +395,7 @@ auto CConsole::operator << ( const CBaseObject &output ) -> CConsole&
 }
 
 //================================================================================================
-auto CConsole::operator << ( const std::string &output ) -> CConsole&
+auto Console::operator << ( const std::string &output ) -> Console&
 {
 	StartOfLineCheck();
 	std::cout << output;
@@ -397,7 +403,7 @@ auto CConsole::operator << ( const std::string &output ) -> CConsole&
 }
 
 //================================================================================================
-auto CConsole::operator << ( [[maybe_unused]] CEndL& myObj ) -> CConsole&
+auto Console::operator << ( [[maybe_unused]] CEndL& myObj ) -> Console&
 {
 	if( curLeft == 0 )
 	{
@@ -410,11 +416,11 @@ auto CConsole::operator << ( [[maybe_unused]] CEndL& myObj ) -> CConsole&
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Print()
+//| Function	-	Console::Print()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints the console with the "|"
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Print( const std::string& msg ) -> void
+auto Console::Print( const std::string& msg ) -> void
 {
 	StartOfLineCheck();
 	std::cout << msg;
@@ -425,11 +431,11 @@ auto CConsole::Print( const std::string& msg ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Log()
+//| Function	-	Console::Log()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Writes to the logfile
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Log( const std::string& msg, const std::string& filename ) -> void
+auto Console::Log( const std::string& msg, const std::string& filename ) -> void
 {
 	if( cwmWorldState )
 	{
@@ -464,11 +470,11 @@ auto CConsole::Log( const std::string& msg, const std::string& filename ) -> voi
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Log()
+//| Function	-	Console::Log()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Log to the console.log file
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Log( const std::string& msg ) -> void
+auto Console::Log( const std::string& msg ) -> void
 {
 	if( cwmWorldState->ServerData()->ServerConsoleLog() )
 	{
@@ -477,11 +483,11 @@ auto CConsole::Log( const std::string& msg ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Error()
+//| Function	-	Console::Error()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Writes to the error log and the console.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Error(const std::string& msg) -> void
+auto Console::Error(const std::string& msg) -> void
 {
 	try
 	{
@@ -500,16 +506,16 @@ auto CConsole::Error(const std::string& msg) -> void
 	catch( const std::exception &e )
 	{
 		std::cerr << "Error print reporting 'error'.  Error was: " << e.what() << std::endl;
-		exit( 1 );
+		exit( 1 ); // This seems pretty dangerous, as UOX3 starts other threads this doenst let them get joined
 	}
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::PrintSectionBegin()
+//| Function	-	Console::PrintSectionBegin()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints a section seperator
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintSectionBegin() -> void
+auto Console::PrintSectionBegin() -> void
 {
 	TurnBrightWhite();
 	std::cout << "o";
@@ -524,11 +530,11 @@ auto CConsole::PrintSectionBegin() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Start()
+//| Function	-	Console::Start()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Migration of constart function to here
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Start(const std::string& temp) -> void
+auto Console::Start(const std::string& temp) -> void
 {
 	auto size = WindowSize();
 	width = std::get<1>( size );
@@ -537,11 +543,11 @@ auto CConsole::Start(const std::string& temp) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnYellow()
+//| Function	-	Console::TurnYellow()
 ///o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text yellow
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnYellow() -> void
+auto Console::TurnYellow() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -553,11 +559,11 @@ auto CConsole::TurnYellow() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnRed()
+//| Function	-	Console::TurnRed()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text red
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnRed() -> void
+auto Console::TurnRed() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -569,11 +575,11 @@ auto CConsole::TurnRed() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnGreen()
+//| Function	-	Console::TurnGreen()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text green
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnGreen() -> void
+auto Console::TurnGreen() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -585,11 +591,11 @@ auto CConsole::TurnGreen() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnBlue()
+//| Function	-	Console::TurnBlue()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Turns the text blue
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnBlue() -> void
+auto Console::TurnBlue() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -601,11 +607,11 @@ auto CConsole::TurnBlue() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnNormal()
+//| Function	-	Console::TurnNormal()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns text to normal white
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnNormal() -> void
+auto Console::TurnNormal() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -617,11 +623,11 @@ auto CConsole::TurnNormal() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::TurnBrightWhite()
+//| Function	-	Console::TurnBrightWhite()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Returns text to bright white
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::TurnBrightWhite() -> void
+auto Console::TurnBrightWhite() -> void
 {
 #if PLATFORM == WINDOWS
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
@@ -632,51 +638,51 @@ auto CConsole::TurnBrightWhite() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::PrintDone()
+//|	Function	-	Console::PrintDone()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[done]" message
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintDone() -> void
+auto Console::PrintDone() -> void
 {
 	PrintSpecial( CGREEN, "done" );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::PrintFailed()
+//|	Function	-	Console::PrintFailed()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[failed]" message
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintFailed() -> void
+auto Console::PrintFailed() -> void
 {
 	PrintSpecial( CRED, "Failed" );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::PrintPassed()
+//|	Function	-	Console::PrintPassed()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints colored "[skipped]" message
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintPassed() -> void
+auto Console::PrintPassed() -> void
 {
 	PrintSpecial( CYELLOW, "Skipped" );
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::ClearScreen()
+//| Function	-	Console::ClearScreen()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Clears the screen
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::ClearScreen() -> void
+auto Console::ClearScreen() -> void
 {
 	DoClearScreen();
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::PrintBasedOnVal()
+//| Function	-	Console::PrintBasedOnVal()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Prints "done" or "failed" messages based on boolean passed in
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintBasedOnVal( bool value ) -> void
+auto Console::PrintBasedOnVal( bool value ) -> void
 {
 	if( value )
 	{
@@ -689,11 +695,11 @@ auto CConsole::PrintBasedOnVal( bool value ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::Warning()
+//|	Function	-	Console::Warning()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Writes to the warning log and the console.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Warning( const std::string& msg ) -> void
+auto Console::Warning( const std::string& msg ) -> void
 {
 	UI08 oldMode = CurrentMode();
 	CurrentMode( WARNINGMODE );
@@ -713,21 +719,21 @@ auto CConsole::Warning( const std::string& msg ) -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Gets/Sets console's output mode
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::CurrentMode() const -> std::uint8_t
+auto Console::CurrentMode() const -> std::uint8_t
 {
 	return currentMode;
 }
-auto CConsole::CurrentMode( std::uint8_t value ) -> void
+auto Console::CurrentMode( std::uint8_t value ) -> void
 {
 	currentMode = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::PrintStartOfLine()
+//|	Function	-	Console::PrintStartOfLine()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set colour of console text at start of a new line
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintStartOfLine() -> void
+auto Console::PrintStartOfLine() -> void
 {
 	TurnBrightWhite();
 	std::cout << "| ";
@@ -744,12 +750,12 @@ auto CConsole::PrintStartOfLine() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::MoveTo( SI32 x, SI32 y )
+//|	Function	-	Console::MoveTo( SI32 x, SI32 y )
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Set console cursor position
 //o------------------------------------------------------------------------------------------------o
 #if PLATFORM == WINDOWS
-auto CConsole::MoveTo( SI32 x, SI32 y ) -> void
+auto Console::MoveTo( SI32 x, SI32 y ) -> void
 {
 	auto hco = GetStdHandle( STD_OUTPUT_HANDLE );
 	COORD Pos;
@@ -770,7 +776,7 @@ auto CConsole::MoveTo( SI32 x, SI32 y ) -> void
 	}
 }
 #else
-void CConsole::MoveTo( SI32 x, [[maybe_unused]] SI32 y )
+void Console::MoveTo( SI32 x, [[maybe_unused]] SI32 y )
 {
 	std::cout << "\033[255D";
 	std::cout << "\033[" << x << "C";
@@ -778,33 +784,33 @@ void CConsole::MoveTo( SI32 x, [[maybe_unused]] SI32 y )
 #endif
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::LogEcho()
+//|	Function	-	Console::LogEcho()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Checks whether console should echo log messages
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::LogEcho() const -> bool
+auto Console::LogEcho() const -> bool
 {
 	return logEcho;
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::LogEcho()
+//|	Function	-	Console::LogEcho()
 //|	Date		-	2/03/2003
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables/Disables whether console should echo log messages
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::LogEcho( bool value ) -> void
+auto Console::LogEcho( bool value ) -> void
 {
 	logEcho = value;
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::StartOfLineCheck()
+//|	Function	-	Console::StartOfLineCheck()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Reduces excess work in overloaded functions by checking
 //|					to see if the start of line has to be done here
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::StartOfLineCheck() -> void
+auto Console::StartOfLineCheck() -> void
 {
 	if( curLeft == 0 )
 	{
@@ -814,12 +820,12 @@ auto CConsole::StartOfLineCheck() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::PrintSpecial()
+//|	Function	-	Console::PrintSpecial()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	This is much like PrintFailed, PrintDone and so on except
 //|					we specify the text and the colour
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::PrintSpecial( UI08 colour, const std::string& msg ) -> void
+auto Console::PrintSpecial( UI08 colour, const std::string& msg ) -> void
 {
 	StartOfLineCheck();
 	size_t stringLength = msg.size() + 3;
@@ -842,7 +848,7 @@ auto CConsole::PrintSpecial( UI08 colour, const std::string& msg ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::cl_getch()
+//|	Function	-	Console::cl_getch()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Read a character from stdin, in a cluox compatble way.
 //|					This routine is non-blocking!
@@ -859,7 +865,7 @@ auto CConsole::PrintSpecial( UI08 colour, const std::string& msg ) -> void
 //|					a charecter, if it is again the same ZERO just putted in nothing was entered. However
 //|					it is not a zero the user has entered a char.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::cl_getch() -> std::int32_t
+auto Console::cl_getch() -> std::int32_t
 {
 #if PLATFORM != WINDOWS
 	char data = 0;
@@ -940,12 +946,12 @@ auto CConsole::cl_getch() -> std::int32_t
 }
 
 //o------------------------------------------------------------------------------------------------o
-//| Function	-	CConsole::Poll()
+//| Function	-	Console::Poll()
 //o------------------------------------------------------------------------------------------------o
 //| Purpose		-	Facilitate console control. SysOp keys, and localhost
 //|					controls.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Poll() -> void
+auto Console::Poll() -> void
 {
 	SI32 c = cl_getch();
 	if( c > 0 )
@@ -956,7 +962,7 @@ auto CConsole::Poll() -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::Process()
+//|	Function	-	Console::Process()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Handle keypresses in console
 //|	Changes		-	05042004 - added some console debugging stuff.
@@ -965,7 +971,7 @@ auto CConsole::Poll() -> void
 //|					respectivly. This functionality hasn't been implemented
 //|					at the current time of writing, but will be when possible.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Process(std::int32_t c) -> void
+auto Console::Process(std::int32_t c) -> void
 {
 	if( c == '*' )
 	{
@@ -1342,7 +1348,7 @@ auto CConsole::Process(std::int32_t c) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::DisplaySettings()
+//|	Function	-	Console::DisplaySettings()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	UOX startup stuff
 //|					Moved that here because we need it in processkey now
@@ -1350,7 +1356,7 @@ auto CConsole::Process(std::int32_t c) -> void
 //|	Changes		-	10/21/2002 - found the bug in one spot, just
 //|									happened upon this quick fix. for BackUp operation.
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::DisplaySettings() -> void
+auto Console::DisplaySettings() -> void
 {
 	std::map< bool, std::string > activeMap;
 	activeMap[true] = "Activated!";
@@ -1397,7 +1403,7 @@ auto CConsole::DisplaySettings() -> void
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers key input for detection in console
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptId ) -> void
+auto Console::RegisterKey( SI32 key, std::string cmdName, UI16 scriptId ) -> void
 {
 #if defined( UOX_DEBUG_MODE )
 	messageLoop << util::format( "         Registering key \"%c\"", key );
@@ -1406,11 +1412,11 @@ auto CConsole::RegisterKey( SI32 key, std::string cmdName, UI16 scriptId ) -> vo
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::SetKeyStatus()
+//|	Function	-	Console::SetKeyStatus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enabling/Disabling specific key input in console
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::SetKeyStatus( SI32 key, bool isEnabled ) -> void
+auto Console::SetKeyStatus( SI32 key, bool isEnabled ) -> void
 {
 	auto toFind	= JSKeyHandler.find( key );
 	if( toFind != JSKeyHandler.end() )
@@ -1420,11 +1426,11 @@ auto CConsole::SetKeyStatus( SI32 key, bool isEnabled ) -> void
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::RegisterFunc()
+//|	Function	-	Console::RegisterFunc()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console function
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptId ) -> void
+auto Console::RegisterFunc( const std::string &cmdFunc, const std::string &cmdName, UI16 scriptId ) -> void
 {
 #if defined( UOX_DEBUG_MODE )
 	Print( util::format( "         Registering console func \"%s\"\n", cmdFunc.c_str() ));
@@ -1433,11 +1439,11 @@ auto CConsole::RegisterFunc( const std::string &cmdFunc, const std::string &cmdN
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::SetFuncStatus()
+//|	Function	-	Console::SetFuncStatus()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Enables/disables console function
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) -> void
+auto Console::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) -> void
 {
 	auto upper	 = util::upper( cmdFunc );
 	auto toFind	= JSConsoleFunctions.find( upper );
@@ -1448,11 +1454,11 @@ auto CConsole::SetFuncStatus( const std::string &cmdFunc, bool isEnabled ) -> vo
 }
 
 //o------------------------------------------------------------------------------------------------o
-//|	Function	-	CConsole::Registration()
+//|	Function	-	Console::Registration()
 //o------------------------------------------------------------------------------------------------o
 //|	Purpose		-	Registers console script
 //o------------------------------------------------------------------------------------------------o
-auto CConsole::Registration() -> void
+auto Console::Registration() -> void
 {
 	auto spellSection = JSMapping->GetSection( SCPT_CONSOLE );
 	for( const auto &[spellname, ourScript] : spellSection->collection() )

@@ -310,7 +310,7 @@ void CWhoList::ButtonSelect( CSocket *toSendTo, UI16 buttonPressed, UI08 type )
 			Commands->Command( toSendTo, targetChar, "tweak", true );
 			break;
 		default:
-			Console.Error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
+            Console::shared().Error( " Fallout of switch statement without default. wholist.cpp, ButtonSelect()" );
 			break;
 	}
 }

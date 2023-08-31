@@ -655,7 +655,7 @@ CScriptSection::~CScriptSection()
 {
 	if( !FlushData() )
 	{
-		Console.Error( "Section unable to flush data!" );
+        Console::shared().Error( "Section unable to flush data!" );
 	}
 }
 
@@ -984,7 +984,7 @@ auto CScriptSection::CreateSection( std::istream& input ) -> void
 									catch (...)
 									{
 										toAdd2->ndata = 0;
-										Console.Warning( util::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
+                                        Console::shared().Warning( util::format( "Invalid data (%s) found for %s tag in advance/harditems/item or character DFNs", value.c_str(), utag.c_str() ));
 									}
 									break;
 								case DFN_DOUBLENUMERIC:

@@ -70,13 +70,13 @@ CServerDefinitions::CServerDefinitions() : defaultPriority( 0 )
 //==================================================================================================
 auto CServerDefinitions::Startup() -> void
 {
-	Console.PrintSectionBegin();
-	Console << "Loading server scripts..." << myendl;
-	Console << "   o Clearing AddMenuMap entries(" << static_cast<UI64>( g_mmapAddMenuMap.size() ) << ")" << myendl;
+    Console::shared().PrintSectionBegin();
+    Console::shared() << "Loading server scripts..." << myendl;
+    Console::shared() << "   o Clearing AddMenuMap entries(" << static_cast<UI64>( g_mmapAddMenuMap.size() ) << ")" << myendl;
 	g_mmapAddMenuMap.clear();
 	ScriptListings.resize( NUM_DEFS );
 	ReloadScriptObjects();
-	Console.PrintSectionBegin();
+    Console::shared().PrintSectionBegin();
 }
 
 //o------------------------------------------------------------------------------------------------o
@@ -256,33 +256,33 @@ auto CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad) -> void
 	if( !mSort.empty() )
 	{
 		std::sort( mSort.begin(), mSort.end() );
-		Console.Print( util::format( "Section %20s : %6i", dirNames[toLoad].c_str(), 0 ));
+        Console::shared().Print( util::format( "Section %20s : %6i", dirNames[toLoad].c_str(), 0 ));
 		size_t iTotal = 0;
-		Console.TurnYellow();
+        Console::shared().TurnYellow();
 
 		std::vector<PrioScan_st>::const_iterator mIter;
 		for( mIter = mSort.begin(); mIter != mSort.end(); ++mIter )
 		{
-			Console.Print( "\b\b\b\b\b\b" );
+            Console::shared().Print( "\b\b\b\b\b\b" );
 			ScriptListings[toLoad].push_back( new Script(( *mIter ).filename, toLoad, false ));
 			iTotal += ScriptListings[toLoad].back()->NumEntries();
-			Console.Print( util::format( "%6i", iTotal ));
+            Console::shared().Print( util::format( "%6i", iTotal ));
 		}
 
-		Console.Print( util::format( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad )));
-		Console.TurnNormal();
-		Console.Print( " entries" );
+        Console::shared().Print( util::format( "\b\b\b\b\b\b%6i", CountOfEntries( toLoad )));
+        Console::shared().TurnNormal();
+        Console::shared().Print( " entries" );
 		switch( wasPriod )
 		{
 			case 0:
-				Console.PrintSpecial( CGREEN, "prioritized" );
+                Console::shared().PrintSpecial( CGREEN, "prioritized" );
 				break;	// prioritized
 			case 1:
-				Console.PrintSpecial( CGREEN, "done" );
+                Console::shared().PrintSpecial( CGREEN, "done" );
 				break;	// file exist, no section
 			default:
 			case 2:
-				Console.PrintSpecial( CBLUE, "done" );
+                Console::shared().PrintSpecial( CBLUE, "done" );
 				break;	// no file
 		};
 	}
@@ -295,7 +295,7 @@ auto CServerDefinitions::LoadDFNCategory( DEFINITIONCATEGORIES toLoad) -> void
 //o------------------------------------------------------------------------------------------------o
 auto CServerDefinitions::ReloadScriptObjects() -> void
 {
-	Console << myendl;
+	Console::shared() << myendl;
 
 	for( SI32 sCtr = 0; sCtr < NUM_DEFS; ++sCtr )
 	{
@@ -412,7 +412,7 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 		}
 	}
 #if defined( UOX_DEBUG_MODE )
-	//	Console.Warning( util::format( "Failed to open priority.nfo for reading in %s DFN", dirNames[category].c_str() ));
+	//	Console::shared().Warning( util::format( "Failed to open priority.nfo for reading in %s DFN", dirNames[category].c_str() ));
 #endif
 	wasPrioritized = 2;
 }
@@ -424,12 +424,12 @@ auto CServerDefinitions::BuildPriorityMap( DEFINITIONCATEGORIES category, UI08& 
 //o------------------------------------------------------------------------------------------------o
 void CServerDefinitions::DisplayPriorityMap()
 {
-	Console << "Dumping map... " << myendl;
+    Console::shared() << "Dumping map... " << myendl;
 	for( auto &[name, priority] : priorityMap )
 	{
-		Console << name << " : " << priority << myendl;
+        Console::shared() << name << " : " << priority << myendl;
 	}
-	Console << "Dumped" << myendl;
+    Console::shared() << "Dumped" << myendl;
 }
 
 //==================================================================================================
@@ -461,7 +461,7 @@ auto CDirectoryListing::PushDir( std::string toMove ) -> bool
 	auto rValue = true;
 	if( !std::filesystem::exists( path ))
 	{
-		Console.Error( util::format( "DFN directory %s does not exist", toMove.c_str() ));
+        Console::shared().Error( util::format( "DFN directory %s does not exist", toMove.c_str() ));
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	std::filesystem::current_path( path );
@@ -475,7 +475,7 @@ auto CDirectoryListing::PopDir() -> void
 {
 	if( dirs.empty() )
 	{
-		Console.Error( "cServerDefinition::PopDir called, but dirs is empty" );
+        Console::shared().Error( "cServerDefinition::PopDir called, but dirs is empty" );
 		Shutdown( FATAL_UOX3_DIR_NOT_FOUND );
 	}
 	else
