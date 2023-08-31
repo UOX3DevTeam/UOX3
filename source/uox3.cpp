@@ -57,7 +57,6 @@
 #include "cMagic.h"
 #include "PageVector.h"
 #include "speech.h"
-#include "cVersionClass.h"
 #include "ssection.h"
 #include "cHTMLSystem.h"
 #include "CGump.h"

@@ -1,5 +1,4 @@
 #include "uox3.h"
-#include "cVersionClass.h"
 #include "cSkillClass.h"
 #include "cServerDefinitions.h"
 #include "wholist.h"

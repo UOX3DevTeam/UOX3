@@ -2,7 +2,6 @@
 
 #include "uox3.h"
 #include "cHTMLSystem.h"
-#include "cVersionClass.h"
 #include "cGuild.h"
 #include "townregion.h"
 #include "cRaces.h"

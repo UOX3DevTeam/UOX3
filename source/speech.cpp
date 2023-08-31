@@ -1,6 +1,5 @@
 #include "uox3.h"
 #include "speech.h"
-#include "cVersionClass.h"
 #include "cRaces.h"
 #include "commands.h"
 #include "skills.h"

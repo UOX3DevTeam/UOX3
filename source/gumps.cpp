@@ -6,7 +6,6 @@
 #include "wholist.h"
 #include "skills.h"
 #include "cMagic.h"
-#include "cVersionClass.h"
 #include "ssection.h"
 #include "CJSMapping.h"
 #include "cScript.h"

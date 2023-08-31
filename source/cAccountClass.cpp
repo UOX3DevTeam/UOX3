@@ -9,7 +9,6 @@
 //|					information.
 //o------------------------------------------------------------------------------------------------o
 #include "uox3.h"
-#include "cVersionClass.h"
 #include "enums.h"
 #include <cstdint>
 #include <filesystem>

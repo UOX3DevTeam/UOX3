@@ -29,8 +29,6 @@ add_executable(uox3
 	../../source/cBaseObject.h
 	../../source/cChar.cpp
 	../../source/cChar.h
-	../../source/console.cpp
-	../../source/console.hpp
 	../../source/cGuild.cpp
 	../../source/cGuild.h
 	../../source/cItem.cpp
@@ -59,6 +57,8 @@ add_executable(uox3
    ../../source/cHTMLSystem.cpp
    ../../source/cHTMLSystem.h  
    ../../source/cMagic.h
+	../../source/subsystem/console.cpp
+	../../source/subsystem/console.hpp
    ../../source/combat.cpp
    ../../source/combat.h
    ../../source/commands.cpp
@@ -116,8 +116,8 @@ add_executable(uox3
    ../../source/CResponse.cpp
    ../../source/CResponse.h
    ../../source/cSkillClass.h
-   ../../source/other/version.cpp
-   ../../source/other/version.hpp 
+   ../../source/other/uoxversion.cpp
+   ../../source/other/uoxversion.hpp 
    ../../source/dist.cpp
    ../../source/effect.cpp
    ../../source/enums.h
